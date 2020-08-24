@@ -35,11 +35,11 @@ class ConnectedApplicationItem extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action, label );
 	};
 
-	getClickHandler = action => {
+	getClickHandler = ( action ) => {
 		return () => this.recordClickEvent( action );
 	};
 
-	disconnect = event => {
+	disconnect = ( event ) => {
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
@@ -121,7 +121,7 @@ class ConnectedApplicationItem extends React.Component {
 		return (
 			<div>
 				<h2>
-					{ this.props.translate( 'Access Scope' ) }
+					{ this.props.translate( 'Access scope' ) }
 					{ this.renderAccessScopeBadge() }
 				</h2>
 
@@ -140,7 +140,7 @@ class ConnectedApplicationItem extends React.Component {
 
 		return (
 			<div>
-				<h2>{ this.props.translate( 'Application Website' ) }</h2>
+				<h2>{ this.props.translate( 'Application website' ) }</h2>
 				<p>
 					<a
 						href={ safeProtocolUrl( URL ) }
@@ -153,7 +153,7 @@ class ConnectedApplicationItem extends React.Component {
 				</p>
 
 				{ this.props.translate(
-					'{{detailTitle}}Authorized On{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}',
+					'{{detailTitle}}Authorized on{{/detailTitle}}{{detailDescription}}%(date)s{{/detailDescription}}',
 					{
 						components: {
 							// eslint-disable-next-line jsx-a11y/heading-has-content
@@ -169,7 +169,7 @@ class ConnectedApplicationItem extends React.Component {
 				) }
 				<div>{ this.renderScopeMessage() }</div>
 
-				<h2>{ this.props.translate( 'Access Permissions' ) }</h2>
+				<h2>{ this.props.translate( 'Access permissions' ) }</h2>
 				<ul className="connected-application-item__connection-detail-descriptions">
 					{ permissions.map( ( { name, description } ) => (
 						<li key={ `permission-${ name }` }>{ description }</li>

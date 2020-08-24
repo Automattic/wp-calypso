@@ -52,7 +52,7 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 	// Overlay the current edits on top of (a copy of) the wc-api methods
 	const { creates, updates, deletes } = edits;
 	deletes.forEach( ( { id } ) => remove( methods, { id } ) );
-	updates.forEach( update => {
+	updates.forEach( ( update ) => {
 		const index = findIndex( methods, { id: update.id } );
 		if ( -1 === index ) {
 			return;
@@ -62,7 +62,7 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
 			...methods[ index ],
 			settings: { ...methods[ index ].settings },
 		};
-		Object.keys( update ).map( function( updateKey ) {
+		Object.keys( update ).map( function ( updateKey ) {
 			if ( 'id' === updateKey ) {
 				return;
 			}
@@ -97,7 +97,7 @@ export const getPaymentMethodsWithEdits = ( state, siteId = getSelectedSiteId( s
  * @returns {boolean} Bool indicating if payments are setup
  */
 export const arePaymentsSetup = ( state, siteId = getSelectedSiteId( state ) ) => {
-	return !! filter( getPaymentMethodsWithEdits( state, siteId ), function( method ) {
+	return !! filter( getPaymentMethodsWithEdits( state, siteId ), function ( method ) {
 		return method.enabled && 'cheque' !== method.id;
 	} ).length;
 };
@@ -137,7 +137,7 @@ export const getCurrentlyEditingPaymentMethod = ( state, siteId = getSelectedSit
 	}
 	const settings = { ...method.settings };
 	let description = method.description;
-	Object.keys( edits.currentlyEditingChanges ).forEach( function( edit ) {
+	Object.keys( edits.currentlyEditingChanges ).forEach( function ( edit ) {
 		if ( 'description' === edit ) {
 			description = edits.currentlyEditingChanges[ edit ].value;
 		} else {

@@ -9,13 +9,14 @@ import { get, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
+import TranslatableString from 'components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'layout/sidebar/menu';
 
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
 
-	React.Children.forEach( children, child => {
+	React.Children.forEach( children, ( child ) => {
 		if ( selectedItemFound ) {
 			return true;
 		}
@@ -34,8 +35,17 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
-export const ExpandableSidebarMenu = props => {
-	const { className, title, count, onClick, icon, materialIcon, materialIconStyle } = props;
+export const ExpandableSidebarMenu = ( props ) => {
+	const {
+		className,
+		title,
+		count,
+		onClick,
+		icon,
+		materialIcon,
+		materialIconStyle,
+		customIcon,
+	} = props;
 
 	let { expanded } = props;
 
@@ -56,6 +66,7 @@ export const ExpandableSidebarMenu = props => {
 				title={ title }
 				count={ count }
 				onClick={ onClick }
+				customIcon={ customIcon }
 				icon={ icon }
 				materialIcon={ materialIcon }
 				materialIconStyle={ materialIconStyle }
@@ -75,9 +86,10 @@ export const ExpandableSidebarMenu = props => {
 };
 
 ExpandableSidebarMenu.propTypes = {
-	title: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ).isRequired,
+	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
+	customIcon: PropTypes.node,
 	icon: PropTypes.string,
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,

@@ -22,6 +22,7 @@ render() {
 
 #### Props
 
+* `brandFont` (`bool`) - use the WP.com brand font for `headerText`
 * `id` (`string`) - ID for the header (optional)
 * `headerText` (`string`) - The main header text
 * `subHeaderText` (`node`) - Sub header text (optional)

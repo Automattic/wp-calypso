@@ -11,6 +11,7 @@ import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection as setSectionAction } from 'state/ui/actions';
 import { setLocale } from 'state/ui/language/actions';
+import { isTranslatedIncompletely } from 'lib/i18n-utils/utils';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
@@ -44,7 +45,13 @@ export function setUpLocale( context, next ) {
 	if ( context.params.lang ) {
 		context.lang = context.params.lang;
 	} else if ( currentUser ) {
-		context.lang = currentUser.localeSlug;
+		const shouldFallbackToDefaultLocale =
+			currentUser.use_fallback_for_incomplete_languages &&
+			isTranslatedIncompletely( currentUser.localeSlug );
+
+		context.lang = shouldFallbackToDefaultLocale
+			? config( 'i18n_default_locale_slug' )
+			: currentUser.localeSlug;
 	}
 
 	context.store.dispatch( setLocale( context.lang || config( 'i18n_default_locale_slug' ) ) );

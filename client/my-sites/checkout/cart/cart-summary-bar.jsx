@@ -15,7 +15,7 @@ class CartSummaryBar extends React.Component {
 	render() {
 		const { itemCount, showItemCount, translate } = this.props;
 
-		let text = translate( 'Order Summary' );
+		let text = translate( 'Order summary' );
 		if ( showItemCount && itemCount ) {
 			text = translate( 'Cart - %(count)d item', 'Cart - %(count)d items', {
 				count: itemCount,
@@ -32,7 +32,7 @@ class CartSummaryBar extends React.Component {
 		);
 	}
 
-	toggleVisibility = event => {
+	toggleVisibility = ( event ) => {
 		event.preventDefault();
 
 		if ( this.props.onClick ) {

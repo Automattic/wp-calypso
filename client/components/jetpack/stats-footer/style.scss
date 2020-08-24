@@ -1,0 +1,55 @@
+.stats-footer {
+	border-top: 1px solid var( --color-neutral-5 );
+	color: var( --color-neutral-80 );
+	display: flex;
+	margin: 40px 0 20px;
+	flex-shrink: 0;
+	flex-wrap: wrap;
+	padding: 10px 16px 0;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-bottom: 0;
+		padding: 10px 0 0;
+	}
+}
+
+.stats-footer__header {
+	color: var( --color-neutral-50 );
+	font-size: $font-body-small;
+	font-weight: normal;
+	text-transform: uppercase;
+	margin: 0 0 20px;
+	flex-basis: 100%;
+}
+
+.stats-footer__stat {
+	font-size: $font-title-small;
+	margin: 0 24px 20px 0;
+	flex: 1;
+	max-width: 110px;
+}
+
+.stats-footer > div:last-child {
+	margin-right: 0;
+}
+
+.stats-footer__stat-number {
+	font-size: $font-title-large;
+	display: block;
+}
+
+.stats-footer__notice {
+	position: relative;
+	padding-left: 40px;
+	flex-basis: 100%;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		flex: 1;
+	}
+}
+
+.stats-footer__notice-icon {
+	fill: var( --color-neutral-50 );
+	position: absolute;
+	left: 0;
+}

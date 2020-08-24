@@ -1,15 +1,12 @@
 /**
  * External dependencies
  */
-
-const lodash = require( 'lodash' );
-const camelCase = lodash.camelCase;
-const forEach = lodash.forEach;
-const fs = require( 'fs' );
-const path = require( 'path' );
-const express = require( 'express' );
-const Fuse = require( 'fuse.js' );
-const doctrine = require( 'doctrine' );
+import { camelCase, forEach, once } from 'lodash';
+import fs from 'fs';
+import path from 'path';
+import express from 'express';
+import Fuse from 'fuse.js';
+import doctrine from 'doctrine';
 
 /**
  * Constants
@@ -17,13 +14,6 @@ const doctrine = require( 'doctrine' );
 
 const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
 const SELECTORS_DIR = path.resolve( __dirname, '../../../../client/state/selectors' );
-
-/**
- * Module variables
- */
-
-const router = express.Router();
-let prepareFuse;
 
 function parseSelectorFile( file ) {
 	return new Promise( ( resolve, reject ) => {
@@ -36,7 +26,7 @@ function parseSelectorFile( file ) {
 				name: camelCase( path.basename( file, '.js' ) ),
 			};
 
-			forEach( contents.match( REGEXP_DOCBLOCKS ), docblock => {
+			forEach( contents.match( REGEXP_DOCBLOCKS ), ( docblock ) => {
 				const doc = doctrine.parse( docblock, { unwrap: true } );
 				if ( doc.tags.length > 0 ) {
 					Object.assign( selector, doc );
@@ -49,21 +39,17 @@ function parseSelectorFile( file ) {
 	} );
 }
 
-function prime() {
-	if ( prepareFuse ) {
-		return;
-	}
-
-	prepareFuse = new Promise( resolve => {
+export const primeSelectorsCache = once( () => {
+	return new Promise( ( resolve ) => {
 		fs.readdir( SELECTORS_DIR, ( error, files ) => {
 			if ( error ) {
 				files = [];
 			}
 
 			// Omit index, system files, and subdirectories
-			files = files.filter( file => 'index.js' !== file && /\.js$/.test( file ) );
+			files = files.filter( ( file ) => 'index.js' !== file && /\.js$/.test( file ) );
 
-			Promise.all( files.map( parseSelectorFile ) ).then( selectors => {
+			Promise.all( files.map( parseSelectorFile ) ).then( ( selectors ) => {
 				// Sort selectors by name alphabetically
 				selectors.sort( ( a, b ) => a.name > b.name );
 
@@ -85,15 +71,14 @@ function prime() {
 				);
 			} );
 		} );
-	} ).then( fuse => {
-		prepareFuse = Promise.resolve( fuse );
-		return fuse;
 	} );
-}
+} );
 
-router.get( '/', ( request, response ) => {
-	prepareFuse
-		.then( fuse => {
+export const selectorsRouter = express.Router();
+
+selectorsRouter.get( '/', ( request, response ) => {
+	primeSelectorsCache()
+		.then( ( fuse ) => {
 			let results;
 			if ( request.query.search ) {
 				results = fuse.search( request.query.search );
@@ -103,10 +88,7 @@ router.get( '/', ( request, response ) => {
 
 			response.json( results );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			response.status( 500 ).json( error );
 		} );
 } );
-
-module.exports.prime = prime;
-module.exports.router = router;

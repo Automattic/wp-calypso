@@ -1,6 +1,6 @@
 .wpcom-help__dialog {
 	&.dialog.card {
-		@include breakpoint('>660px') {
+		@include breakpoint-deprecated('>660px') {
 			flex: 1 0 100%;
 			max-width: 700px;
 		}
@@ -8,12 +8,12 @@
 }
 
 .wpcom-help__heading {
-	font-size: 24px;
+	font-size: $font-title-medium;
 }
 
 .wpcom-help__action {
 	border: 1px solid var( --color-neutral-10 );
-	font-weight: normal;
+	font-weight: 400;
 	padding: 4px;
 }
 
@@ -23,8 +23,8 @@
 	border: 1px solid var( --color-neutral-10 );
 	border-width: 0 0 1px;
 	text-align: center;
-	font-weight: 700;
-	@include breakpoint( '>480px' ) {
+	font-weight: 600;
+	@include breakpoint-deprecated( '>480px' ) {
 		width: 60px;
 		padding: 4px;
 	}
@@ -43,7 +43,7 @@
 	table-layout: fixed; /* Prevents HTML tables from becoming too wide */
 
 	th {
-		font-weight: 700;
+		font-weight: 600;
 	}
 
 	kbd {

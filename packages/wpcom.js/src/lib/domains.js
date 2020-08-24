@@ -66,6 +66,6 @@ class Domains {
 }
 
 /**
-* Expose `Domains` module
-*/
+ * Expose `Domains` module
+ */
 export default Domains;

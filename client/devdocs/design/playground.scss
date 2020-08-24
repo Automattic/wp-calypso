@@ -4,7 +4,7 @@
 		background: #000000;
 		box-sizing: border-box;
 		color: #eaeaea;
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 1.4;
 		margin: 0;
 		padding: 24px;
@@ -13,7 +13,7 @@
 
 .design__playground {
 	margin: -24px;
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin: -32px;
 	}
 }
@@ -33,19 +33,19 @@
 .react-live-error,
 .design__preview {
 	padding: 24px;
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		padding: 32px;
 	}
 }
 
 .design__preview {
 	position: relative;
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		position: static;
 	}
 }
 
-@include breakpoint( '>960px' ) {
+@include breakpoint-deprecated( '>960px' ) {
 	.design__playground {
 		display: flex;
 		height: calc( 100vh - 47px );

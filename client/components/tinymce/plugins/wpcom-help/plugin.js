@@ -14,17 +14,17 @@ import HelpModal from './help-modal';
 function wpcomHelpPlugin( editor ) {
 	let node;
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
-	editor.on( 'remove', function() {
+	editor.on( 'remove', function () {
 		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
 
-	editor.addCommand( 'WP_Help', function() {
+	editor.addCommand( 'WP_Help', function () {
 		function onClose() {
 			editor.focus();
 			render( 'hide' );
@@ -45,6 +45,6 @@ function wpcomHelpPlugin( editor ) {
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/help', wpcomHelpPlugin );
 }

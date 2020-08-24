@@ -22,7 +22,7 @@ import {
 } from 'state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getPluginKeys, requestPluginKeys } from 'state/data-getters/wpcom/jetpack-blogs/keys';
-import { SiteId, TimeoutMS } from 'client/types';
+import { SiteId, TimeoutMS } from 'wp-calypso-client/types';
 import { logToLogstash } from 'state/logstash/actions';
 
 type PluginStateDescriptor = string;
@@ -70,8 +70,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 		initiatedInstalls: new Set< PluginSlug >(),
 	};
 
-	retries: number = 0;
-	tracksEventSent: boolean = false;
+	retries = 0;
+	tracksEventSent = false;
 
 	componentDidMount() {
 		this.requestInstallationStatus();
@@ -107,7 +107,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 		}
 
 		// We're already installing
-		if ( this.props.requestedInstalls.every( slug => this.state.initiatedInstalls.has( slug ) ) ) {
+		if (
+			this.props.requestedInstalls.every( ( slug ) => this.state.initiatedInstalls.has( slug ) )
+		) {
 			return;
 		}
 
@@ -132,7 +134,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 		}
 
 		const installerPositionalArguments: [ 'akismet', 'vaultpress' ] = [ 'akismet', 'vaultpress' ];
-		const startJetpackProductInstallArgs = installerPositionalArguments.map( slug =>
+		const startJetpackProductInstallArgs = installerPositionalArguments.map( ( slug ) =>
 			// Installation hasn't been initiated for the plugin
 			! this.state.initiatedInstalls.has( slug ) &&
 			// The plugin install was requested
@@ -181,7 +183,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return false;
 		}
 
-		return PLUGINS.some( pluginSlug => pluginStates.includes( status[ pluginSlug + '_status' ] ) );
+		return PLUGINS.some( ( pluginSlug ) =>
+			pluginStates.includes( status[ pluginSlug + '_status' ] )
+		);
 	}
 
 	/**
@@ -269,7 +273,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 			return true;
 		}
 
-		return requestedInstalls.some( slug => ! pluginKeys.hasOwnProperty( slug ) );
+		return requestedInstalls.some( ( slug ) => ! pluginKeys.hasOwnProperty( slug ) );
 	}
 
 	render() {
@@ -313,7 +317,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 		return (
 			<Fragment>
-				<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
+				{ progressComplete !== 100 && (
+					<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
+				) }
 				{ hasErrorInstalling && (
 					<Notice
 						status="is-error"
@@ -357,7 +363,7 @@ function mapStateToProps( state ): ConnectedProps {
 
 	const requestedInstalls: PluginSlug[] = installQuery.includes( 'all' )
 		? /* If we want 'all', clone our known plugins */ [ ...PLUGINS ]
-		: PLUGINS.filter( slug => installQuery.includes( slug ) );
+		: PLUGINS.filter( ( slug ) => installQuery.includes( slug ) );
 
 	const keyRequest = getPluginKeys( siteId );
 

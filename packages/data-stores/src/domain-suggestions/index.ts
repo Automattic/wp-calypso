@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { controls } from '@wordpress/data-controls';
 import { registerStore } from '@wordpress/data';
 
 /**
@@ -11,22 +10,30 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as resolvers from './resolvers';
-import * as selectors from './selectors';
-import { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import createSelectors, { Selectors } from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import { controls } from '../wpcom-request-controls';
 
 export * from './types';
 export { State };
 
 let isRegistered = false;
-export function register(): typeof STORE_KEY {
+interface StoreConfiguration {
+	/**
+	 * The default vendor to pass to domain queries.
+	 * Can be overridden in individual queries.
+	 */
+	vendor: string;
+}
+export function register( { vendor }: StoreConfiguration ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			actions,
-			controls,
+			controls: controls as any,
 			reducer: reducer as any,
 			resolvers,
-			selectors,
+			selectors: createSelectors( vendor ),
 		} );
 	}
 	return STORE_KEY;
@@ -34,5 +41,5 @@ export function register(): typeof STORE_KEY {
 
 declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
+	function select( key: typeof STORE_KEY ): SelectFromMap< Selectors >;
 }

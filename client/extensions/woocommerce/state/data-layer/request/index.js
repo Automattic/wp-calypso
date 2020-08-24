@@ -23,7 +23,7 @@ export function handleRequest( { dispatch, getState }, action ) {
 
 	return request( siteId )
 		[ method ]( path, body )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( {
 				type: WOOCOMMERCE_API_REQUEST_SUCCESS,
 				action,
@@ -32,7 +32,7 @@ export function handleRequest( { dispatch, getState }, action ) {
 
 			dispatchWithProps( dispatch, getState, onSuccessAction, { data } );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			debug( 'Caught error while handling request: ', error );
 
 			// TODO: Maybe phase out usage of this in favor of the failure action?

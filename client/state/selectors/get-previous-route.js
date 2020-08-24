@@ -15,7 +15,7 @@ import getPreviousQuery from 'state/selectors/get-previous-query';
  * @returns {string} previous route value
  */
 
-export const getPreviousRoute = state => {
+export const getPreviousRoute = ( state ) => {
 	const previousPath = getPreviousPath( state );
 	const previousQuery = getPreviousQuery( state );
 	let query = '';

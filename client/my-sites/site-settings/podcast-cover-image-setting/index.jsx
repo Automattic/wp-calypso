@@ -16,23 +16,17 @@ import { Button } from '@automattic/components';
 import EditorMediaModalDialog from 'post-editor/media-modal/dialog';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
+import getMediaItem from 'state/media/thunks/get-media-item';
 import Image from 'components/image';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaLibrarySelectedStore from 'lib/media/library-selected-store';
-import MediaStore from 'lib/media/store';
-import { isItemBeingUploaded } from 'lib/media/utils';
-import MediaActions from 'lib/media/actions';
-import { receiveMedia, deleteMedia } from 'state/media/actions';
+import { addMedia } from 'state/media/thunks';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { resetAllImageEditorState } from 'state/ui/editor/image-editor/actions';
-import {
-	getImageEditorCrop,
-	getImageEditorTransform,
-} from 'state/ui/editor/image-editor/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { resetAllImageEditorState } from 'state/editor/image-editor/actions';
+import { getImageEditorCrop, getImageEditorTransform } from 'state/editor/image-editor/selectors';
+import { setEditorMediaModalView } from 'state/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import resizeImageUrl from 'lib/resize-image-url';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
+import { AspectRatios } from 'state/editor/image-editor/constants';
 import Spinner from 'components/spinner';
 
 /**
@@ -55,6 +49,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		onSelect: PropTypes.func,
 		onUploadStateChange: PropTypes.func,
 		isDisabled: PropTypes.bool,
+		addMedia: PropTypes.func,
 	};
 
 	state = {
@@ -64,7 +59,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		transientMediaId: null,
 	};
 
-	toggleModal = isModalVisible => {
+	toggleModal = ( isModalVisible ) => {
 		const { isEditingCoverImage } = this.state;
 
 		this.setState( {
@@ -78,7 +73,7 @@ class PodcastCoverImageSetting extends PureComponent {
 
 	hideModal = () => this.toggleModal( false );
 
-	editSelectedMedia = value => {
+	editSelectedMedia = ( value ) => {
 		if ( value ) {
 			this.setState( { isEditingCoverImage: true } );
 			this.props.onEditSelectedMedia();
@@ -87,9 +82,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		}
 	};
 
-	uploadCoverImage( blob, fileName ) {
-		const { siteId, site } = this.props;
-
+	async uploadCoverImage( blob, fileName ) {
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
 		const transientMediaId = uniqueId( 'podcast-cover-image' );
@@ -97,46 +90,23 @@ class PodcastCoverImageSetting extends PureComponent {
 		this.setState( { transientMediaId } );
 		this.onUploadStateChange( true );
 
-		const checkUploadComplete = () => {
-			// MediaStore tracks pointers from transient media to the persisted
-			// copy, so if our request is for a media which is not transient,
-			// we can assume the upload has finished.
-			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-			const isFailedUpload = ! media;
-
-			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteId, transientMediaId );
-			} else {
-				this.props.receiveMedia( siteId, media );
-			}
-
-			if ( isUploadInProgress ) {
-				return;
-			}
-
-			MediaStore.off( 'change', checkUploadComplete );
-
-			if ( ! isFailedUpload ) {
-				debug( 'upload media', media );
-				this.props.onSelect( media.ID, media.URL );
-			}
-
+		try {
+			const file = {
+				ID: transientMediaId,
+				fileContents: blob,
+				fileName,
+			};
+			const [ uploadedMedia ] = await this.props.addMedia( file, this.props.site );
+			debug( 'upload media', uploadedMedia );
+			this.props.onSelect( uploadedMedia.ID, uploadedMedia.URL );
+		} finally {
 			// Remove transient image so that new image shows or if failed upload, the prior image
 			this.setState( { transientMediaId: null } );
 			this.onUploadStateChange( false );
-		};
-
-		MediaStore.on( 'change', checkUploadComplete );
-
-		MediaActions.add( site, {
-			ID: transientMediaId,
-			fileContents: blob,
-			fileName,
-		} );
+		}
 	}
 
-	onUploadStateChange = isUploading => {
+	onUploadStateChange = ( isUploading ) => {
 		this.props.onUploadStateChange( isUploading );
 		this.setState( { isUploading } );
 	};
@@ -146,8 +116,8 @@ class PodcastCoverImageSetting extends PureComponent {
 			return;
 		}
 
-		const { siteId } = this.props;
-		const selectedItem = head( MediaLibrarySelectedStore.getAll( siteId ) );
+		const { selectedItems } = this.props;
+		const selectedItem = head( selectedItems );
 		if ( ! selectedItem ) {
 			return;
 		}
@@ -189,7 +159,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	};
 
 	isParentReady( selectedMedia ) {
-		return ! selectedMedia.some( item => item.external );
+		return ! selectedMedia.some( ( item ) => item.external );
 	}
 
 	preloadModal() {
@@ -217,7 +187,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	renderCoverPreview() {
 		const { coverImageUrl, siteId, translate, isDisabled } = this.props;
 		const { transientMediaId, isUploading } = this.state;
-		const media = transientMediaId && MediaStore.get( siteId, transientMediaId );
+		const media = transientMediaId && this.props.getMediaItem( siteId, transientMediaId );
 		const imageUrl = ( media && media.URL ) || coverImageUrl;
 		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
 		const isTransient = !! transientMediaId;
@@ -254,31 +224,29 @@ class PodcastCoverImageSetting extends PureComponent {
 
 		return (
 			hasToggledModal && (
-				<MediaLibrarySelectedData siteId={ siteId }>
-					<AsyncLoad
-						require="post-editor/media-modal"
-						placeholder={ <EditorMediaModalDialog isVisible /> }
-						siteId={ siteId }
-						onClose={ this.editSelectedMedia }
-						isParentReady={ this.isParentReady }
-						enabledFilters={ [ 'images' ] }
-						{ ...( isEditingCoverImage
-							? {
-									imageEditorProps: {
-										allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
-										onDone: this.setCoverImage,
-										onCancel: this.cancelEditingCoverImage,
-									},
-							  }
-							: {} ) }
-						visible={ isModalVisible }
-						labels={ {
-							confirm: translate( 'Continue' ),
-						} }
-						disableLargeImageSources={ true }
-						single
-					/>
-				</MediaLibrarySelectedData>
+				<AsyncLoad
+					require="post-editor/media-modal"
+					placeholder={ <EditorMediaModalDialog isVisible /> }
+					siteId={ siteId }
+					onClose={ this.editSelectedMedia }
+					isParentReady={ this.isParentReady }
+					enabledFilters={ [ 'images' ] }
+					{ ...( isEditingCoverImage
+						? {
+								imageEditorProps: {
+									allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ],
+									onDone: this.setCoverImage,
+									onCancel: this.cancelEditingCoverImage,
+								},
+						  }
+						: {} ) }
+					visible={ isModalVisible }
+					labels={ {
+						confirm: translate( 'Continue' ),
+					} }
+					disableLargeImageSources={ true }
+					single
+				/>
 			)
 		);
 	}
@@ -319,7 +287,7 @@ class PodcastCoverImageSetting extends PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -327,13 +295,14 @@ export default connect(
 			site: getSelectedSite( state ),
 			crop: getImageEditorCrop( state ),
 			transform: getImageEditorTransform( state ),
+			selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 		};
 	},
 	{
 		resetAllImageEditorState,
 		onEditSelectedMedia: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR ),
 		onCancelEditingCoverImage: partial( setEditorMediaModalView, ModalViews.LIST ),
-		receiveMedia,
-		deleteMedia,
+		addMedia,
+		getMediaItem,
 	}
 )( localize( PodcastCoverImageSetting ) );

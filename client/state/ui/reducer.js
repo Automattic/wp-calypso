@@ -9,27 +9,16 @@ import {
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 import actionLog from './action-log/reducer';
-import billingTransactions from './billing-transactions/reducer';
 import checkout from './checkout/reducer';
-import comments from './comments/reducer';
-import dropZone from './drop-zone/reducer';
-import editor from './editor/reducer';
-import googleMyBusiness from './google-my-business/reducer';
-import guidedTour from './guided-tours/reducer';
+import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
 import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import masterbarVisibility from './masterbar-visibility/reducer';
 import mediaModal from './media-modal/reducer';
-import npsSurveyNotice from './nps-survey-notice/reducer';
-import oauth2Clients from './oauth2-clients/reducer';
-import payment from './payment/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
-import reader from './reader/reducer';
-import route from './route/reducer';
 import section from './section/reducer';
-import themeSetup from './theme-setup/reducers';
 
 /**
  * Tracks the currently selected site ID.
@@ -90,7 +79,7 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
  * @param  {object} action Action payload
  * @returns {object}        Updated state
  */
-export const isNotificationsOpen = function( state = false, { type } ) {
+export const isNotificationsOpen = function ( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
 		return ! state;
 	}
@@ -99,13 +88,8 @@ export const isNotificationsOpen = function( state = false, { type } ) {
 
 const reducer = combineReducers( {
 	actionLog,
-	billingTransactions,
 	checkout,
-	comments,
-	dropZone,
-	editor,
-	googleMyBusiness,
-	guidedTour,
+	editorDeprecationDialog,
 	gutenbergOptInDialog,
 	hasSidebar,
 	isLoading,
@@ -115,17 +99,11 @@ const reducer = combineReducers( {
 	layoutFocus,
 	masterbarVisibility,
 	mediaModal,
-	npsSurveyNotice,
-	oauth2Clients,
-	payment,
 	postTypeList,
 	preview,
-	reader,
-	route,
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,
-	themeSetup,
 } );
 
 export default reducer;

@@ -2,11 +2,6 @@
 	"extends": [ "config:base", "default:pinDigestsDisabled" ],
 	"packageRules": [
 		{
-			"paths": [ "packages/**" ],
-			"packagePatterns": [ "*" ],
-			"rangeStrategy": "replace"
-		},
-		{
 			"extends": "monorepo:wordpress",
 			"separateMajorMinor": false,
 			"prPriority": 2,
@@ -48,9 +43,16 @@
 		{
 			"extends": "monorepo:storybook",
 			"prPriority": 1
+		},
+		{
+			"paths": [ "apps/full-site-editing/package.json" ],
+			"packageName": "newspack-blocks",
+			"reviewers": [ "team:@Automattic/create", "team:@Automattic/ajax" ],
+			"groupName": "Newspack Blog Posts Block Update"
 		}
 	],
 	"statusCheckVerify": true,
+	"rangeStrategy": "bump",
 	"ignoreDeps": [ "jquery" ],
 	"labels": [ "Framework", "[Type] Task" ],
 	"lockFileMaintenance": {

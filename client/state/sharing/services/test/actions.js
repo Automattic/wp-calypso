@@ -14,17 +14,17 @@ import {
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 	const getState = () => ( { ui: { selectedSiteId: '2916284' } } );
 
 	describe( 'requestKeyringServices()', () => {
 		describe( 'successful requests', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/wpcom/v2/sites/2916284/external-services' )
@@ -66,7 +66,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failing requests', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/wpcom/v2/sites/2916284/external-services' )

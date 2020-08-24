@@ -19,8 +19,8 @@ import wp from 'lib/wp';
  * @param  {Int}       siteId  ID of the site.
  * @returns {Function}          Action thunk to request the Jetpack monitor settings when called.
  */
-export const requestSiteMonitorSettings = siteId => {
-	return dispatch => {
+export const requestSiteMonitorSettings = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_MONITOR_SETTINGS_REQUEST,
 			siteId,
@@ -29,7 +29,7 @@ export const requestSiteMonitorSettings = siteId => {
 		return wp
 			.undocumented()
 			.fetchMonitorSettings( siteId )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_RECEIVE,
 					siteId,
@@ -41,7 +41,7 @@ export const requestSiteMonitorSettings = siteId => {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_REQUEST_FAILURE,
 					siteId,
@@ -59,7 +59,7 @@ export const requestSiteMonitorSettings = siteId => {
  * @returns {Function}            Action thunk to update the Jetpack monitor settings when called.
  */
 export const updateSiteMonitorSettings = ( siteId, settings ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		const { email_notifications, wp_note_notifications } = settings;
 
 		dispatch( {
@@ -78,7 +78,7 @@ export const updateSiteMonitorSettings = ( siteId, settings ) => {
 					settings,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 					siteId,

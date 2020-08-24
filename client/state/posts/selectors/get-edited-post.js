@@ -26,5 +26,5 @@ export const getEditedPost = createSelector(
 
 		return applyPostEdits( post, edits );
 	},
-	state => [ state.posts.queries, state.posts.edits ]
+	( state ) => [ state.posts.queries, state.posts.edits ]
 );

@@ -135,7 +135,7 @@ class ManageNoOrdersView extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	hasProducts: getCountProducts( state ) > 0,
 	shopPageId: getProductsSettingValue( state, 'woocommerce_shop_page_id' ),
 } ) )( localize( ManageNoOrdersView ) );

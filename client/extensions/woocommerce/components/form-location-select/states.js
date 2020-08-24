@@ -61,7 +61,7 @@ class FormStateSelectFromApi extends Component {
 		}
 	};
 
-	renderOption = option => {
+	renderOption = ( option ) => {
 		return (
 			<option key={ option.code } value={ option.code }>
 				{ option.name }
@@ -143,5 +143,5 @@ export default connect(
 			value,
 		};
 	},
-	dispatch => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchLocations, fetchSettingsGeneral }, dispatch )
 )( localize( FormStateSelectFromApi ) );

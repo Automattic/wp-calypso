@@ -14,7 +14,7 @@ import {
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test-helpers/use-sinon';
 
 const siteId = 1916284;
 
@@ -48,7 +48,7 @@ describe( 'requestStatus', () => {
 
 describe( 'receiveStatus', () => {
 	let clock;
-	useFakeTimers( fakeClock => ( clock = fakeClock ) );
+	useFakeTimers( ( fakeClock ) => ( clock = fakeClock ) );
 
 	test( 'should dispatch set status action', () => {
 		const dispatch = sinon.spy();

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
@@ -18,6 +17,8 @@ import FormTextarea from 'components/forms/form-textarea';
 import ReduxFormFieldset from 'components/redux-forms/redux-form-fieldset';
 import SectionHeader from 'components/section-header';
 
+import 'state/form/init';
+
 const form = 'extensions.zoninator.zoneDetails';
 
 class ZoneDetailsForm extends PureComponent {
@@ -31,7 +32,7 @@ class ZoneDetailsForm extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	save = data => this.props.onSubmit( form, mapValues( data, trim ) );
+	save = ( data ) => this.props.onSubmit( form, mapValues( data, trim ) );
 
 	render() {
 		const { disabled, handleSubmit, label, requesting, submitting, translate } = this.props;

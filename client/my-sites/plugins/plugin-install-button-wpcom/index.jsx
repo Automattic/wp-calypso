@@ -18,7 +18,7 @@ import { initiateThemeTransfer } from 'state/themes/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { transferStates } from 'state/automated-transfer/constants';
 
-export const WpcomPluginInstallButton = props => {
+export const WpcomPluginInstallButton = ( props ) => {
 	const {
 		translate,
 		disabled,
@@ -60,7 +60,7 @@ export const WpcomPluginInstallButton = props => {
 	);
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 
 	return {
@@ -73,11 +73,11 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
 	initiateTransfer: initiateThemeTransfer,
-	trackButtonAction: plugin =>
+	trackButtonAction: ( plugin ) =>
 		recordTracksEvent( 'calypso_automated_transfer_click_plugin_install', { plugin } ),
 };
 
-const withNavigation = WrappedComponent => props => (
+const withNavigation = ( WrappedComponent ) => ( props ) => (
 	<WrappedComponent { ...{ ...props, navigateTo: page } } />
 );
 

@@ -9,7 +9,6 @@ import styled from '@emotion/styled';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { renderDisplayValueMarkdown } from '../public-api';
 
 export function OrderReviewSection( { children, className } ) {
 	return (
@@ -32,9 +31,7 @@ function LineItem( { item, className } ) {
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<span id={ itemSpanId }>{ item.label }</span>
-			<span aria-labelledby={ itemSpanId }>
-				{ renderDisplayValueMarkdown( item.amount.displayValue ) }
-			</span>
+			<span aria-labelledby={ itemSpanId }>{ item.amount.displayValue }</span>
 		</div>
 	);
 }
@@ -55,12 +52,12 @@ const LineItemUI = styled( LineItem )`
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
-	font-weight: ${( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal )};
-	color: ${( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit' )};
-	font-size: ${( { total } ) => ( total ? '1.2em' : '1em' )};
-	padding: ${( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' )};
-	border-bottom: ${( { theme, total, isSummaryVisible } ) =>
-		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight};
+	font-weight: ${ ( { theme, total } ) => ( total ? theme.weights.bold : theme.weights.normal ) };
+	color: ${ ( { theme, total } ) => ( total ? theme.colors.textColorDark : 'inherit' ) };
+	font-size: ${ ( { total } ) => ( total ? '1.2em' : '1em' ) };
+	padding: ${ ( { total, isSummaryVisible } ) => ( isSummaryVisible || total ? 0 : '24px 0' ) };
+	border-bottom: ${ ( { theme, total, isSummaryVisible } ) =>
+		isSummaryVisible || total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 
 	:first-of-type {
 		padding-top: 0;
@@ -78,7 +75,7 @@ export function OrderReviewTotal( { total, className } ) {
 export function OrderReviewLineItems( { items, className, isSummaryVisible } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ items.map( item => (
+			{ items.map( ( item ) => (
 				<LineItemUI isSummaryVisible={ isSummaryVisible } key={ item.id } item={ item } />
 			) ) }
 		</div>

@@ -33,7 +33,7 @@ describe( 'cart-plan-discount-ad', () => {
 
 	const props = {
 		cart: CART,
-		translate: str => str,
+		translate: ( str ) => str,
 		sitePlans: {
 			hasLoadedFromServer: true,
 			data: [

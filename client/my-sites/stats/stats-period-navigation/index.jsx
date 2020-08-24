@@ -49,7 +49,7 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleClickArrow( 'previous' );
 	};
 
-	handleClickArrow = arrow => {
+	handleClickArrow = ( arrow ) => {
 		const { date, onPeriodChange, period, recordGoogleEvent } = this.props;
 		recordGoogleEvent( 'Stats Period Navigation', `Clicked ${ arrow } ${ period }` );
 
@@ -76,16 +76,12 @@ class StatsPeriodNavigation extends PureComponent {
 		} = this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
-		const previousDay = moment( date )
-			.subtract( 1, period )
-			.format( 'YYYY-MM-DD' );
+		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
 		const previousDayQuery = qs.stringify(
 			Object.assign( {}, queryParams, { startDate: previousDay } ),
 			{ addQueryPrefix: true }
 		);
-		const nextDay = moment( date )
-			.add( 1, period )
-			.format( 'YYYY-MM-DD' );
+		const nextDay = moment( date ).add( 1, period ).format( 'YYYY-MM-DD' );
 		const nextDayQuery = qs.stringify( Object.assign( {}, queryParams, { startDate: nextDay } ), {
 			addQueryPrefix: true,
 		} );

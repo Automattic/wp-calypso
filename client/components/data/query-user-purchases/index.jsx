@@ -49,7 +49,7 @@ QueryUserPurchases.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			isFetchingUserPurchases: isFetchingUserPurchases( state ),

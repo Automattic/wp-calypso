@@ -165,15 +165,12 @@ const ExpiryTime = ( {
 		);
 	};
 
-	const formatUnixTimestamp = timestamp => {
+	const formatUnixTimestamp = ( timestamp ) => {
 		if ( ! timestamp ) {
 			return;
 		}
 
-		return moment
-			.unix( timestamp )
-			.utc()
-			.format( 'YYYY-MM-DD H:mm:ss' );
+		return moment.unix( timestamp ).utc().format( 'YYYY-MM-DD H:mm:ss' );
 	};
 
 	return (
@@ -185,10 +182,7 @@ const ExpiryTime = ( {
 			</SectionHeader>
 			<Card>
 				<p>
-					{ translate( 'UTC time is ' ) +
-						moment()
-							.utc()
-							.format( 'YYYY-MM-DD H:mm:ss' ) }
+					{ translate( 'UTC time is ' ) + moment().utc().format( 'YYYY-MM-DD H:mm:ss' ) }
 					<br />
 					{ translate( 'Local time is ' ) + moment().format( 'YYYY-MM-DD H:mm:ss' ) }
 				</p>
@@ -219,7 +213,7 @@ const ExpiryTime = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_gc_email_me',
 		'cache_max_time',

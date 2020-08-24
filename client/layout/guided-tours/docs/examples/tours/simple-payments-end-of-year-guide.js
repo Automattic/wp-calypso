@@ -21,6 +21,7 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour
@@ -60,14 +61,15 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 						<img
 							src="/calypso/images/illustrations/illustration-shopping-bags.svg"
 							style={ { width: '210px', height: '160px', marginBottom: '10px' } }
+							alt=""
 						/>
 					</div>
 					<ButtonRow>
 						<Next step="add-new-page">{ translate( 'Get started!' ) }</Next>
 						<Quit>{ translate( 'No thanks.' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments/">
-						{ translate( 'Learn more about Simple Payments.' ) }
+					<Link href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' ) }>
+						{ translate( 'Learn more about Pay with PayPal.' ) }
 					</Link>
 				</Fragment>
 			) }
@@ -185,7 +187,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 					<ButtonRow>
 						<Quit primary>{ translate( 'Got it, thanks!' ) }</Quit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/menus/">
+					<Link href="https://wordpress.com/support/menus/">
 						{ translate( 'Learn about managing menus' ) }
 					</Link>
 				</Fragment>

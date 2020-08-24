@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { Action } from 'redux';
+import type { Action } from 'redux';
 
 export interface CurrentUser {
 	ID: number;
@@ -14,10 +14,20 @@ export interface CurrentUser {
 	language: string;
 
 	/**
+	 * The bootstraped user's locale slug, e.g. `es`.
+	 */
+	localeSlug: string;
+
+	/**
 	 * The user's locale variant, e.g. `es-mx`.
 	 * If there is no variant, `""` empty string is returned.
 	 */
 	locale_variant: string;
+
+	/**
+	 * The bootstrapped user's locale variant, e.g. `es-mx`.
+	 */
+	localeVariant: string;
 }
 
 export interface NewUser {
@@ -33,7 +43,7 @@ export interface NewUserSuccessResponse {
 	username?: string;
 	signup_sandbox_username?: string;
 	user_id?: number;
-	signup_sandbox_user_id?: string;
+	signup_sandbox_user_id?: number;
 }
 
 export interface NewUserErrorResponse {
@@ -52,10 +62,12 @@ export interface CreateAccountParams {
 	is_passwordless?: boolean;
 	signup_flow_name?: string;
 	locale?: string;
+	'g-recaptcha-error'?: string;
+	'g-recaptcha-response'?: string;
 	extra?: {
 		first_name?: string;
 		last_name?: string;
-		username_hint?: string;
+		username_hint: string | null | undefined;
 	};
 }
 

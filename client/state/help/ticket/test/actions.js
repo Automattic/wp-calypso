@@ -20,12 +20,12 @@ import {
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 	HELP_TICKET_CONFIGURATION_DISMISS_ERROR,
 } from 'state/action-types';
-import { useNock } from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useNock } from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'ticket-support/configuration actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#ticketSupportConfigurationRequestSuccess', () => {
 		test( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
@@ -53,16 +53,14 @@ describe( 'ticket-support/configuration actions', () => {
 	const endpoint = '/rest/v1.1/help/tickets/kayako/mine';
 
 	describe( '#ticketSupportConfigurationRequest success', () => {
-		useNock( nock => {
-			nock( apiUrl )
-				.get( endpoint )
-				.reply( 200, dummyConfiguration );
+		useNock( ( nock ) => {
+			nock( apiUrl ).get( endpoint ).reply( 200, dummyConfiguration );
 		} );
 
 		test( 'should be successful.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
+			assert( spy.calledWith( sinon.match( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) ) );
 
 			action.then( () => {
 				assert(
@@ -76,16 +74,14 @@ describe( 'ticket-support/configuration actions', () => {
 	} );
 
 	describe( '#ticketSupportConfigurationRequest failed', () => {
-		useNock( nock => {
-			nock( apiUrl )
-				.get( endpoint )
-				.reply( dummyError.status, dummyError );
+		useNock( ( nock ) => {
+			nock( apiUrl ).get( endpoint ).reply( dummyError.status, dummyError );
 		} );
 
 		test( 'should be failed.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			assert( spy.calledWith( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) );
+			assert( spy.calledWith( sinon.match( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) ) );
 
 			action.then( () => {
 				assert(

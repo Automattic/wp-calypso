@@ -1,7 +1,7 @@
 Action Log
 ==========
 
-**A Redux [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer)**
+**A Redux [store enhancer](https://github.com/reactjs/redux/blob/HEAD/docs/Glossary.md#store-enhancer)**
 
 The Action Log is a Redux store enhancer which records the most recently dispatched Redux action so
 they can be inspected in the development environment for debugging and interactive design.

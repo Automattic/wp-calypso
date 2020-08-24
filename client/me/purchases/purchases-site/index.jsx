@@ -15,7 +15,7 @@ import AsyncLoad from 'components/async-load';
 import { getSite, isRequestingSite } from 'state/sites/selectors';
 import { isJetpackPlan } from 'lib/products-values';
 import { JETPACK_PLANS } from 'lib/plans/constants';
-import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
@@ -38,12 +38,12 @@ const PurchasesSite = ( {
 } ) => {
 	let items;
 
-	const isJetpack = ! isPlaceholder && some( purchases, purchase => isJetpackPlan( purchase ) );
+	const isJetpack = ! isPlaceholder && some( purchases, ( purchase ) => isJetpackPlan( purchase ) );
 
 	if ( isPlaceholder ) {
-		items = times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
+		items = times( 2, ( index ) => <PurchaseItem isPlaceholder key={ index } /> );
 	} else {
-		items = purchases.map( purchase => (
+		items = purchases.map( ( purchase ) => (
 			<PurchaseItem
 				key={ purchase.id }
 				slug={ slug }
@@ -71,7 +71,7 @@ const PurchasesSite = ( {
 				require="blocks/product-plan-overlap-notices"
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
-				products={ JETPACK_BACKUP_PRODUCTS }
+				products={ JETPACK_PRODUCTS_LIST }
 				siteId={ siteId }
 			/>
 

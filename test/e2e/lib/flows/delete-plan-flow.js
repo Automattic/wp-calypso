@@ -48,7 +48,7 @@ export default class DeletePlanFlow {
 
 			const noticesComponent = await NoticesComponent.Expect( this.driver );
 			return await noticesComponent.dismissNotice();
-		} )().catch( err => {
+		} )().catch( ( err ) => {
 			SlackNotifier.warn(
 				`There was an error in the hooks that clean up the test account (delete plan) but since it is cleaning up we really don't care: '${ err }'`,
 				{ suppressDuplicateMessages: true }

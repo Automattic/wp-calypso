@@ -80,6 +80,8 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	let driver;
 	let options;
 	let builder;
+	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
+	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 	const pref = new webdriver.logging.Preferences();
 	pref.setLevel( 'browser', webdriver.logging.Level.SEVERE );
 	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
@@ -111,6 +113,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		if ( caps.browserName === 'chrome' ) {
 			options = new chrome.Options();
 			options.addArguments( '--app=https://www.wordpress.com' );
+			options.addArguments( userAgent );
 			builder.setChromeOptions( options );
 		}
 
@@ -120,14 +123,11 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 		} );
 
 		global.browserName = caps.browserName;
-		global.__BROWSER__ = driver = builder
-			.usingServer( sauceURL )
-			.withCapabilities( caps )
-			.build();
+		global.__BROWSER__ = driver = builder.usingServer( sauceURL ).withCapabilities( caps ).build();
 
 		driver.setFileDetector( new remote.FileDetector() );
 
-		driver.getSession().then( function( sessionid ) {
+		driver.getSession().then( function ( sessionid ) {
 			driver.allPassed = true;
 			driver.sessionID = sessionid.id_;
 		} );
@@ -144,8 +144,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 				options.addArguments( '--no-first-run' );
 
 				if ( useCustomUA ) {
-					const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
-					const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 					options.addArguments( userAgent );
 				}
 				if (
@@ -218,28 +216,16 @@ export async function resizeBrowser( driver, screenSize ) {
 	if ( typeof screenSize === 'string' ) {
 		switch ( screenSize.toLowerCase() ) {
 			case 'mobile':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 400, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 400, height: 1000 } );
 				break;
 			case 'tablet':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 1024, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1024, height: 1000 } );
 				break;
 			case 'desktop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 1440, height: 1000 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1440, height: 1000 } );
 				break;
 			case 'laptop':
-				await driver
-					.manage()
-					.window()
-					.setRect( { x: 0, y: 0, width: 1400, height: 790 } );
+				await driver.manage().window().setRect( { x: 0, y: 0, width: 1400, height: 790 } );
 				break;
 			default:
 				throw new Error(

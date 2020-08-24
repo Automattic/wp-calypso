@@ -13,6 +13,8 @@ There are two editors supported:
 
 ## Features
 
+Skip down to **structure** if you'd like to know how this relates to the code and directory structure!
+
 The block editor integration provides features for the following combination of sites and editors:
 
 <table>
@@ -155,11 +157,29 @@ The block editor integration provides features for the following combination of 
 
 ## Structure
 
-Features in the `wpcom-block-editor/src` folder loosely follow this structure:
+Features in the `wpcom-block-editor/src` folder follow this structure. This roughly corresponds to three main bundles which are created by webpack, and allows us to support (or not support) various features according to the grid above.
 
 ```
 .
-└── bundle-name/
+└── src/
+	├── default ← Always loaded.
+	├── calypso ← Only loaded when you access Gutenberg through the iFrame.
+	├── wpcom   ← Only loaded when you access Gutenberg on Simple and Atomic sites.
+```
+
+You can access Gutenberg through the iFrame or directly through wp-admin on any Simple, Atomic, and connected Jetpack site. (Note that Atomic sites are a subset of connected Jetpack sites.) The best way to explain the structure is with an example.
+
+Say you have an Atomic site. You visit the block-editor through the iFrame. In this scenario, the [Jetpack plugin code here](https://github.com/Automattic/jetpack/blob/13c47f276b5b5f30e2347c6486d7fd158bc3a025/modules/wpcom-block-editor/class-jetpack-wpcom-block-editor.php#L282-L335) determines which bundles to load. It will load the **default** bundle because that is always loaded. **calypso** is loaded because it knows we are in an iFrame. It also loads the **wpcom** directory because it knows this is an Atomic site. As a result, all features are supported in this situation.
+
+If we access Gutenberg on the same Atomic site through wp-admin, the same PHP code will run. However, this time it can tell that we are not in the iFrame, so it does _not_ load the **calypso** directory, but still loads default and wpcom.
+
+Say you have a connected Jetpack site that is non-Atomic. In this scenario, if you access Gutenberg through the iFrame, the PHP code will detect the iFrame, so it loads **calypso**, and it also loads the **default** directory by default. 
+
+Then, each bundle contains features for different types of pages. For example, the `editor.js` file is in every directory, since the main goal of this app is to provide features for the editor. Additionally, the `view.js` file exists in the `default` directory in order to provide some code which is always loaded on the front end.
+
+```
+.
+└── $bundle_name/
 	├── features    ← Directory with all features that are bundled under this group.
 	├── editor.js   ← script importing features that will be loaded only in the editor.
 	├── editor.scss ← stylesheet importing styles of features that will be loaded only in the editor.
@@ -167,17 +187,38 @@ Features in the `wpcom-block-editor/src` folder loosely follow this structure:
 	└── view.scss   ← stylesheet importing styles of features that will loaded in both editor and front-end.
 ```
 
+
 ## Build
+
+### Dev workflow 
+
+The wpcom-block-editor needs an active wpcom sandbox to test.
+
+Ensure that your sandbox is set up, aliased to `wpcom-sandbox` and currently active
+
+The following will build wpcom-block-editor, and upload the results to the `widgets.wp.com/wpcom-block-editor` folder on your sandbox.
+
+```bash
+# Watch for file changes and upload build output to your sandbox
+yarn dev --sync
+```
 
 ### Manual
 
 To manually build the package, execute the command below passing the directory where the distributable files will be generated:
 
-```
-npx lerna run build --scope='@automattic/wpcom-block-editor' -- -- --output-path=/path-to-folder
-```
+```sh
+cd apps/wpcom-block-editor
 
-_Wonky double `--` is needed for first skipping Lerna args and then NPM args to reach Webpack._
+# Watch for changes:
+yarn build --watch
+
+# Production build:
+yarn build
+
+# Change output directory (default is ./dist)
+yarn build --output-path=/path-to-folder
+```
 
 ### Automatic
 

@@ -27,7 +27,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 		onUpdateSetting: noop,
 	};
 
-	onOrderChanged = order => {
+	onOrderChanged = ( order ) => {
 		const items = [];
 
 		this.props.settings.items.forEach( ( item, i ) => {
@@ -66,7 +66,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 					} ) }
 				</EllipsisMenu>
 				<SortableList onChange={ this.onOrderChanged }>
-					{ settings.items.map( item => {
+					{ settings.items.map( ( item ) => {
 						return (
 							<EditorMediaModalGalleryEditItem
 								key={ item.ID }

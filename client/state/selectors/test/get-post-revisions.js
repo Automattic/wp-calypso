@@ -1,13 +1,13 @@
 /**
  * Internal dependencies
  */
-import getPostRevisions from 'state/selectors/get-post-revisions';
+import { getPostRevisions } from 'state/posts/selectors/get-post-revisions';
 
 describe( 'getPostRevisions', () => {
 	const SITE_ID = 12345678;
 	const POST_ID = 10;
 
-	const stateWithRevisions = revisions => ( {
+	const stateWithRevisions = ( revisions ) => ( {
 		posts: {
 			revisions: {
 				diffs: {
@@ -58,7 +58,7 @@ describe( 'getPostRevisions', () => {
 		};
 
 		const sortedRevisions = getPostRevisions( stateWithRevisions( revisions ), SITE_ID, POST_ID );
-		const sortedRevisionIds = sortedRevisions.map( revision => revision.id );
+		const sortedRevisionIds = sortedRevisions.map( ( revision ) => revision.id );
 
 		// revisions with the same `post_modified_gmt` timestamp should be further desc-sorted by ID
 		expect( sortedRevisionIds ).toEqual( [ 170, 169, 168 ] );

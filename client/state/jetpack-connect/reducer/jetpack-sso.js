@@ -8,7 +8,7 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
-} from 'state/action-types';
+} from 'state/jetpack-connect/action-types';
 
 export default function jetpackSSO( state = {}, action ) {
 	switch ( action.type ) {

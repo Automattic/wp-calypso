@@ -32,7 +32,7 @@ describe( 'isEligibleForUpworkSupport()', () => {
 	 */
 	const nonUpworkPlans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
-	describe.each( UPWORK_LOCALES )( 'when locale %s', localeSlug => {
+	describe.each( UPWORK_LOCALES )( 'when locale %s', ( localeSlug ) => {
 		test( 'returns true for users without Business and E-Commerce plans', () => {
 			const state = {
 				currentUser: { id: 1 },
@@ -47,7 +47,7 @@ describe( 'isEligibleForUpworkSupport()', () => {
 			expect( isEligibleForUpworkSupport( state ) ).to.be.true;
 		} );
 
-		describe.each( nonUpworkPlans )( 'with plan %s', product_slug => {
+		describe.each( nonUpworkPlans )( 'with plan %s', ( product_slug ) => {
 			test( 'returns false', () => {
 				const state = {
 					currentUser: { id: 1 },

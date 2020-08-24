@@ -42,7 +42,7 @@ function generateSourceAuthorIds( customData ) {
 	}
 
 	return Object.assign( {}, customData, {
-		sourceAuthors: customData.sourceAuthors.map( author =>
+		sourceAuthors: customData.sourceAuthors.map( ( author ) =>
 			author.id ? author : Object.assign( {}, author, { id: author.login } )
 		),
 	} );
@@ -54,7 +54,7 @@ function replaceUserInfoWithIds( customData ) {
 	}
 
 	return Object.assign( {}, customData, {
-		sourceAuthors: customData.sourceAuthors.map( author =>
+		sourceAuthors: customData.sourceAuthors.map( ( author ) =>
 			author.mappedTo
 				? Object.assign( {}, author, {
 						mappedTo: author.mappedTo.ID,

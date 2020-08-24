@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { NonUndefined } from 'utility-types';
+import type { NonUndefined } from 'utility-types';
 
 // Web stuff
 export type URL = string;
@@ -31,6 +31,13 @@ export type TimeoutMS = NonUndefined< Parameters< typeof setTimeout >[ 1 ] >;
 export type TimestampMS = ReturnType< typeof Date.now >;
 export type TimerHandle = ReturnType< typeof setTimeout >;
 export type IntervalHandle = ReturnType< typeof setInterval >;
+export type JSONSerializable =
+	| null
+	| boolean
+	| number
+	| string
+	| JSONSerializable[]
+	| { [ prop: string ]: JSONSerializable };
 
 /**
  * Calypso application state
@@ -46,7 +53,7 @@ export type AppState = __TodoAny__;
  *
  * **Please, use sparingly!**
  */
-export type __TodoAny__ = any;
+export type __TodoAny__ = any; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 
 // Properties added to the `window` object:
 declare global {

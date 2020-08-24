@@ -11,7 +11,7 @@ import MediaComponent from 'my-sites/media/main';
 import { getSiteFragment } from 'lib/route';
 
 export default {
-	media: function( context, next ) {
+	media: function ( context, next ) {
 		if ( ! getSiteFragment( context.path ) ) {
 			return page.redirect( '/media' );
 		}

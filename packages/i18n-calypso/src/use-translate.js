@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-export default function( i18n ) {
+export default function ( i18n ) {
 	function bindTranslate() {
 		const translate = i18n.translate.bind( i18n );
 		Object.defineProperty( translate, 'localeSlug', { get: i18n.getLocaleSlug.bind( i18n ) } );

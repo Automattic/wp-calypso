@@ -70,7 +70,6 @@ $z-layers: (
 		'.auth__form .form-fieldset input': 1,
 		'.chart__empty': 2,
 		'.chart__bar-marker': 1,
-		'.chart__bar-section.is-ghost::after': 1,
 		'.module-content-table::after': 1,
 		'.stats-popular__empty': 1,
 		'.is-actionable .theme__thumbnail-label': 1,
@@ -131,6 +130,7 @@ $z-layers: (
 		'.accessible-focus .select-dropdown.is-open .select-dropdown__container': 170,
 		'.sites-dropdown.is-open .sites-dropdown__wrapper' : 170,
 		'.editor-publish-date.is-open .editor-publish-date__wrapper': 170,
+		'.inline-help__mobile-overlay': 175,
 		'.floating-help': 176,
 		'.directly-rtm.is-minimized': 176,
 		'.editor-confirmation-sidebar__overlay': 176,
@@ -178,13 +178,13 @@ $z-layers: (
 		'.fullscreen-fader': 200000,
 		'.guided-tours__overlay': 200050,
 		'.guided-tours__step': 201000,
+		'.support-article-dialog__base.dialog__backdrop': 201001,
 		'.wpcom-site__global-noscript': 300000, // JS off always visible
 		'.is-section-woocommerce .global-notices': 999999, //render notices on top of dialogs
 		'.webpack-build-monitor': 99999999,
 		'.image-selector__item.is-transient::after': 1,
 		'.image-selector__item .spinner': 2,
 		'.upwork-stats-nudge__close-icon': 1,
-		'.gsuite-stats-nudge__close-icon': 1,
 		'.people-list-item.card.is-compact:focus': 1,
 		'.themes-banner__close': 1,
 	),
@@ -236,7 +236,8 @@ $z-layers: (
 		'.editor-media-modal .section-nav': 10,
 		'.editor-media-modal .notice': 10,
 		'.editor-contact-form-modal .section-nav': 10,
-		'.editor-media-modal-gallery__preview-toggle': 100
+		'.editor-media-modal-gallery__preview-toggle': 100,
+		'.memberships__dialog-section.is-visible': 1,
 	),
 	'.site-settings__taxonomies': (
 		'.card__link-indicator': 1

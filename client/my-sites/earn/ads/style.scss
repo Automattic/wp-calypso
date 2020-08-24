@@ -32,7 +32,7 @@
 	text-align: center;
 	border-left: 1px solid var( --color-neutral-0 );
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;
 		float: none;
 		padding: 10px 24px;
@@ -48,13 +48,13 @@
 
 .ads__earnings-breakdown-label {
 	color: var( --color-neutral-60 );
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	letter-spacing: 0.1em;
 	line-height: 1.6;
 	text-transform: uppercase;
 
-	@include breakpoint( '<480px' ) {
-		font-size: 14px;
+	@include breakpoint-deprecated( '<480px' ) {
+		font-size: $font-body-small;
 		line-height: 1.8;
 	}
 }
@@ -62,12 +62,12 @@
 .ads__earnings-breakdown-value {
 	width: 100%;
 	display: block;
-	font-size: 25px;
+	font-size: $font-title-medium;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: auto;
 		float: right;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 
@@ -108,7 +108,7 @@
 	border: 1px solid var( --color-neutral-0 );
 	border-left: none;
 	border-right: none;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 50px;
 	justify-content: center;
 	text-transform: uppercase;
@@ -119,13 +119,13 @@
 	line-height: 40px;
 	text-align: center;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		&:first-child, &:last-child {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 }
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.ads__settings-state {
 		max-width: 75%;
 	}
@@ -159,4 +159,8 @@
 .ads__activate-description {
 	border-top: 1px solid var( --color-border-subtle );
 	padding: 24px;
+}
+
+.ads__child-settings {
+	margin: 16px 36px 0;
 }

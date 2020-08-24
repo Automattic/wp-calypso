@@ -15,7 +15,7 @@ import { errorNotice } from 'state/notices/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const deactivateRewind = action =>
+const deactivateRewind = ( action ) =>
 	http(
 		{
 			method: 'POST',

@@ -44,7 +44,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		}
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		const { site } = this.props;
 
 		const newSiteId = ( newProps.site && newProps.site.ID ) || null;
@@ -55,7 +55,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		}
 	};
 
-	renderOption = currency => {
+	renderOption = ( currency ) => {
 		const { currencies } = this.props;
 		const option = find( currencies, { code: currency } );
 		return (
@@ -65,7 +65,7 @@ class SettingsPaymentsLocationCurrency extends Component {
 		);
 	};
 
-	onChange = e => {
+	onChange = ( e ) => {
 		const { site } = this.props;
 		const newCurrency = e.target.value;
 		this.props.changeCurrency( site.ID, newCurrency );

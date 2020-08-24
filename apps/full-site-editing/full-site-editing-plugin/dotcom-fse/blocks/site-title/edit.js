@@ -52,30 +52,33 @@ function SiteTitleEdit( {
 			<BlockControls>
 				<AlignmentToolbar
 					value={ textAlign }
-					onChange={ nextAlign => {
+					onChange={ ( nextAlign ) => {
 						setAttributes( { textAlign: nextAlign } );
 					} }
 				/>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
+				<PanelBody
+					className="blocks-font-size"
+					title={ __( 'Text Settings', 'full-site-editing' ) }
+				>
 					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Color Settings' ) }
+					title={ __( 'Color Settings', 'full-site-editing' ) }
 					initialOpen={ false }
 					colorSettings={ [
 						{
 							value: textColor.color,
 							onChange: setTextColor,
-							label: __( 'Text Color' ),
+							label: __( 'Text Color', 'full-site-editing' ),
 						},
 					] }
 				/>
 			</InspectorControls>
 			<RichText
 				allowedFormats={ [] }
-				aria-label={ __( 'Site Title' ) }
+				aria-label={ __( 'Site Title', 'full-site-editing' ) }
 				className={ classNames( 'site-title', className, {
 					'has-text-color': textColor.color,
 					[ `has-text-align-${ textAlign }` ]: textAlign,
@@ -86,7 +89,7 @@ function SiteTitleEdit( {
 				onChange={ updateValue }
 				onReplace={ insertDefaultBlock }
 				onSplit={ noop }
-				placeholder={ __( 'Add a Site Title' ) }
+				placeholder={ __( 'Add a Site Title', 'full-site-editing' ) }
 				style={ {
 					color: textColor.color,
 					fontSize: actualFontSize ? actualFontSize + 'px' : undefined,
@@ -116,6 +119,9 @@ export default compose( [
 			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
 	} ) ),
 	withSiteOptions( {
-		siteTitle: { optionName: 'title', defaultValue: __( 'Site title loading…' ) },
+		siteTitle: {
+			optionName: 'title',
+			defaultValue: __( 'Site title loading…', 'full-site-editing' ),
+		},
 	} ),
 ] )( SiteTitleEdit );

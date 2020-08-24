@@ -48,7 +48,7 @@ export function editProductAddCategory( siteId, product, categoryId ) {
 }
 
 export function editProductRemoveCategory( siteId, product, categoryId ) {
-	const categories = product.categories.filter( c => categoryId !== c.id );
+	const categories = product.categories.filter( ( c ) => categoryId !== c.id );
 
 	return editProduct( siteId, product, { categories } );
 }

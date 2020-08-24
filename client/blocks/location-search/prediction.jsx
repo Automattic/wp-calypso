@@ -29,7 +29,7 @@ export default class Prediction extends Component {
 		}
 	};
 
-	handlePredictionKeyDown = event => {
+	handlePredictionKeyDown = ( event ) => {
 		if ( event.key === 'Enter' ) {
 			this.handlePredictionClick();
 		}

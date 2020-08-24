@@ -80,7 +80,7 @@ export function combine( postKey1, postKey2 ) {
 	return combined;
 }
 
-export const combineCards = postKeys =>
+export const combineCards = ( postKeys ) =>
 	postKeys.reduce( ( accumulator, postKey ) => {
 		const lastPostKey = last( accumulator );
 		if (

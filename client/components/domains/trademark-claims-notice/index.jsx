@@ -70,7 +70,7 @@ class TrademarkClaimsNotice extends React.Component {
 	checkDomainAvailability = () => {
 		const { domain } = this.props;
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
 				{
 					domainName: domain,
@@ -243,7 +243,7 @@ class TrademarkClaimsNotice extends React.Component {
 	}
 }
 
-export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = domainName =>
+export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -257,7 +257,7 @@ export const recordShowTrademarkNoticeButtonClickInTrademarkNotice = domainName 
 		} )
 	);
 
-export const recordChooseAnotherDomainButtonClickInTrademarkNotice = domainName =>
+export const recordChooseAnotherDomainButtonClickInTrademarkNotice = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -271,7 +271,7 @@ export const recordChooseAnotherDomainButtonClickInTrademarkNotice = domainName 
 		} )
 	);
 
-export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName =>
+export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -285,7 +285,7 @@ export const recordAcknowledgeTrademarkButtonClickInTrademarkNotice = domainName
 		} )
 	);
 
-export default connect( state => ( { selectedSite: getSelectedSite( state ) } ), {
+export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ), {
 	recordAcknowledgeTrademarkButtonClickInTrademarkNotice,
 	recordChooseAnotherDomainButtonClickInTrademarkNotice,
 	recordShowTrademarkNoticeButtonClickInTrademarkNotice,

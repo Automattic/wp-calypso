@@ -43,17 +43,17 @@ function wpLink( editor ) {
 		}
 	}
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		node = editor.getContainer().appendChild( document.createElement( 'div' ) );
 	} );
 
-	editor.on( 'remove', function() {
+	editor.on( 'remove', function () {
 		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
 
-	editor.addCommand( 'WP_Link', function() {
+	editor.addCommand( 'WP_Link', function () {
 		return render();
 	} );
 
@@ -84,7 +84,7 @@ function wpLink( editor ) {
 		prependToContext: true,
 	} );
 
-	editor.on( 'pastepreprocess', function( event ) {
+	editor.on( 'pastepreprocess', function ( event ) {
 		let pastedStr = event.content;
 
 		if ( ! editor.selection.isCollapsed() ) {
@@ -109,7 +109,7 @@ function wpLink( editor ) {
 		'WPLinkPreview',
 		tinymce.ui.Control.extend( {
 			url: '#',
-			renderHtml: function() {
+			renderHtml: function () {
 				return (
 					'<div id="' +
 					this._id +
@@ -122,7 +122,7 @@ function wpLink( editor ) {
 					'</div>'
 				);
 			},
-			setURL: function( url ) {
+			setURL: function ( url ) {
 				let index, lastIndex;
 
 				if ( this.url !== url ) {
@@ -161,10 +161,7 @@ function wpLink( editor ) {
 						url = url.slice( 0, index + 1 ) + '\u2026' + url.slice( lastIndex );
 					}
 
-					tinymce
-						.$( this.getEl().firstChild )
-						.attr( 'href', this.url )
-						.text( url );
+					tinymce.$( this.getEl().firstChild ).attr( 'href', this.url ).text( url );
 				}
 			},
 		} )
@@ -172,10 +169,10 @@ function wpLink( editor ) {
 
 	editor.addButton( 'wp_link_preview', {
 		type: 'WPLinkPreview',
-		onPostRender: function() {
+		onPostRender: function () {
 			const self = this;
 
-			editor.on( 'wptoolbar', function( event ) {
+			editor.on( 'wptoolbar', function ( event ) {
 				const anchor = editor.dom.getParent( event.element, 'a' );
 				let $anchor;
 				let href;
@@ -206,7 +203,7 @@ function wpLink( editor ) {
 		cmd: 'unlink',
 	} );
 
-	editor.on( 'preinit', function() {
+	editor.on( 'preinit', function () {
 		if ( editor.wp && editor.wp._createToolbar ) {
 			toolbar = editor.wp._createToolbar(
 				[ 'wp_link_preview', 'wp_link_edit', 'wp_link_remove' ],
@@ -216,6 +213,6 @@ function wpLink( editor ) {
 	} );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wplink', wpLink );
 }

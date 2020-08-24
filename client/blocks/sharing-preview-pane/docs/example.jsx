@@ -41,7 +41,7 @@ const SharingPreviewPaneExample = ( { postId, site, siteId } ) => (
 	</div>
 );
 
-const ConnectedSharingPreviewPaneExample = connect( state => {
+const ConnectedSharingPreviewPaneExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	const siteId = get( user, 'primary_blog' );
 	const site = getSite( state, siteId );

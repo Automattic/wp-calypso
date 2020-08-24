@@ -7,8 +7,8 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
 const TRACKING_URL_MAP = {
-	usps: tracking => `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${ tracking }`,
-	fedex: tracking =>
+	usps: ( tracking ) => `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${ tracking }`,
+	fedex: ( tracking ) =>
 		`https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=${ tracking }`,
 };
 

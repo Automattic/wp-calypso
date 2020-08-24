@@ -28,17 +28,17 @@ class ReplyBlock extends React.Component {
 export const NoteBody = createReactClass( {
 	displayName: 'NoteBody',
 
-	getInitialState: function() {
+	getInitialState: function () {
 		return {
 			reply: null,
 		};
 	},
 
-	componentDidMount: function() {
+	componentDidMount: function () {
 		bumpStat( 'notes-click-type', this.props.note.type );
 	},
 
-	replyLoaded: function( error, data ) {
+	replyLoaded: function ( error, data ) {
 		if ( error || ! this.isMounted() ) {
 			return;
 		}
@@ -46,13 +46,13 @@ export const NoteBody = createReactClass( {
 		this.setState( { reply: data } );
 	},
 
-	UNSAFE_componentWillMount: function() {
+	UNSAFE_componentWillMount: function () {
 		var note = this.props.note,
 			hasReplyBlock;
 
 		if ( note.meta && note.meta.ids.reply_comment ) {
 			hasReplyBlock =
-				note.body.filter( function( block ) {
+				note.body.filter( function ( block ) {
 					return (
 						block.ranges &&
 						block.ranges.length > 1 &&
@@ -69,7 +69,7 @@ export const NoteBody = createReactClass( {
 		}
 	},
 
-	render: function() {
+	render: function () {
 		var blocks = zipWithSignature( this.props.note.body, this.props.note );
 		var actions = '';
 		var preface = '';

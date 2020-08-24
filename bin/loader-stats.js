@@ -5,11 +5,11 @@ const _ = require( 'lodash' );
 const gzipSize = require( 'gzip-size' );
 
 function getChunkByName( name ) {
-	return stats.chunks.find( chunk => chunk.names.indexOf( name ) !== -1 );
+	return stats.chunks.find( ( chunk ) => chunk.names.indexOf( name ) !== -1 );
 }
 
 function getChunkById( id ) {
-	return stats.chunks.find( chunk => chunk.id === id );
+	return stats.chunks.find( ( chunk ) => chunk.id === id );
 }
 
 function getChunkAndSiblings( which ) {
@@ -29,21 +29,21 @@ sectionsToLoad.push( {
 	name: 'boot',
 	chunks: getChunkAndSiblings( 'entry-main' ),
 } );
-sectionChunks.forEach( section => {
+sectionChunks.forEach( ( section ) => {
 	sectionsToLoad.push( {
 		name: section.names.join( ',' ),
 		chunks: _.difference(
 			getChunkAndSiblings( section.names[ 0 ] ),
-			_.flatMap( sectionsToLoad, s => s.chunks )
+			_.flatMap( sectionsToLoad, ( s ) => s.chunks )
 		),
 	} );
 } );
 
-const filesToLoadPerSection = sectionsToLoad.map( section => {
+const filesToLoadPerSection = sectionsToLoad.map( ( section ) => {
 	return {
 		name: section.name,
-		filesToLoad: _.flatMap( section.chunks, chunk => {
-			return chunk.files.map( file =>
+		filesToLoad: _.flatMap( section.chunks, ( chunk ) => {
+			return chunk.files.map( ( file ) =>
 				path.join( __dirname, '..', 'public', file.replace( '/calypso/', '' ) )
 			);
 		} ),
@@ -51,14 +51,14 @@ const filesToLoadPerSection = sectionsToLoad.map( section => {
 } );
 
 async function calculateSizes( section ) {
-	const fileSizePromises = section.filesToLoad.map( f => gzipSize.file( f ) );
+	const fileSizePromises = section.filesToLoad.map( ( f ) => gzipSize.file( f ) );
 	const fileSizes = await Promise.all( fileSizePromises );
 
 	const filesWithSizes = _.zipObject( section.filesToLoad, fileSizes );
 
 	console.log( `${ section.name }:` );
 
-	section.filesToLoad.forEach( f => {
+	section.filesToLoad.forEach( ( f ) => {
 		console.log( `   ${ f }: (${ filesWithSizes[ f ] / 1000 }kb)` );
 	} );
 

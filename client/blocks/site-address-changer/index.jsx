@@ -134,7 +134,7 @@ export class SiteAddressChanger extends Component {
 		} );
 	}
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.state.validationMessage ) {
@@ -165,12 +165,12 @@ export class SiteAddressChanger extends Component {
 		);
 	}
 
-	onFieldChange = event => {
+	onFieldChange = ( event ) => {
 		const domainFieldValue = get( event, 'target.value', '' ).toLowerCase();
 		this.handleDomainChange( domainFieldValue );
 	};
 
-	onDomainSuffixChange = event => {
+	onDomainSuffixChange = ( event ) => {
 		const newDomainSuffix = get( event, 'target.value', '' );
 		this.setState( { newDomainSuffix } );
 		this.handleDomainChange( this.state.domainFieldValue );
@@ -250,7 +250,7 @@ export class SiteAddressChanger extends Component {
 					value={ newDomainSuffix }
 					onChange={ this.onDomainSuffixChange }
 				>
-					{ suffixesList.map( suffix => (
+					{ suffixesList.map( ( suffix ) => (
 						<option key={ suffix } value={ suffix }>
 							{ suffix }
 						</option>
@@ -359,7 +359,7 @@ export class SiteAddressChanger extends Component {
 						/>
 						<FormButtonsBar className="site-address-changer__form-footer">
 							<FormButton disabled={ isDisabled } busy={ isBusy } type="submit">
-								{ translate( 'Change Site Address' ) }
+								{ translate( 'Change site address' ) }
 							</FormButton>
 						</FormButtonsBar>
 					</Card>
@@ -372,7 +372,7 @@ export class SiteAddressChanger extends Component {
 export default flow(
 	localize,
 	connect(
-		state => {
+		( state ) => {
 			const selectedSite = getSelectedSite( state );
 			const siteId = selectedSite.ID;
 			const selectedSiteSlug = selectedSite.slug;

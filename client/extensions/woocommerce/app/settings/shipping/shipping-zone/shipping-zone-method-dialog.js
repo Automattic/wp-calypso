@@ -68,8 +68,9 @@ const ShippingZoneMethodDialog = ( {
 	const onDelete = () => {
 		actions.removeMethodFromShippingZone( method.id );
 	};
-	const onMethodTitleChange = event => actions.changeShippingZoneMethodTitle( event.target.value );
-	const onMethodTypeChange = event => {
+	const onMethodTitleChange = ( event ) =>
+		actions.changeShippingZoneMethodTitle( event.target.value );
+	const onMethodTypeChange = ( event ) => {
 		const newType = event.target.value;
 		actions.changeShippingZoneMethodType( newType, methodNamesMap( newType ) );
 	};

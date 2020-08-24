@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +11,7 @@ import { includes } from 'lodash';
  */
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { getEditorPostId, getEditorNewPostPath } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypes, getPostType } from 'state/post-types/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -102,7 +101,7 @@ function EditorPostTypeUnsupported( {
 					'For more information, visit our {{supportLink}}support page on custom content types{{/supportLink}}.',
 					{
 						components: {
-							supportLink: <a href="https://support.wordpress.com/custom-post-types/" />,
+							supportLink: <a href="https://wordpress.com/support/custom-post-types/" />,
 						},
 					}
 				) }

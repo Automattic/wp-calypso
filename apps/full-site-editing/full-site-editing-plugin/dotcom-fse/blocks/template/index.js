@@ -11,16 +11,17 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies
  */
 import edit from './edit';
+import { getCategoryWithFallbacks } from '../../../block-helpers';
 import './style.scss';
 import './site-logo';
 
 if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 	registerBlockType( 'a8c/template', {
-		title: __( 'Template Part' ),
+		title: __( 'Template Part', 'full-site-editing' ),
 		__experimentalDisplayName: 'label',
-		description: __( 'Display a Template Part.' ),
+		description: __( 'Display a Template Part.', 'full-site-editing' ),
 		icon: 'layout',
-		category: 'layout',
+		category: getCategoryWithFallbacks( 'design', 'layout' ),
 		attributes: {
 			templateId: { type: 'number' },
 			className: { type: 'string' },
@@ -41,8 +42,8 @@ if ( 'wp_template_part' !== fullSiteEditing.editorPostType ) {
 	} );
 }
 
-const addFSETemplateClassname = createHigherOrderComponent( BlockListBlock => {
-	return props => {
+const addFSETemplateClassname = createHigherOrderComponent( ( BlockListBlock ) => {
+	return ( props ) => {
 		if ( props.name !== 'a8c/template' ) {
 			return <BlockListBlock { ...props } />;
 		}

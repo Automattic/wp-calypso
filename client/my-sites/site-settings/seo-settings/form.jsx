@@ -20,7 +20,7 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
@@ -31,6 +31,7 @@ import getCurrentRouteParameterized from 'state/selectors/get-current-route-para
 import isHiddenSite from 'state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
@@ -182,7 +183,7 @@ export class SeoForm extends React.Component {
 		);
 	};
 
-	updateTitleFormats = seoTitleFormats => {
+	updateTitleFormats = ( seoTitleFormats ) => {
 		const dirtyFields = new Set( this.state.dirtyFields );
 		dirtyFields.add( 'seoTitleFormats' );
 
@@ -192,7 +193,7 @@ export class SeoForm extends React.Component {
 		} );
 	};
 
-	submitSeoForm = event => {
+	submitSeoForm = ( event ) => {
 		const { siteId, storedTitleFormats, showAdvancedSeo, showWebsiteMeta } = this.props;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
@@ -229,7 +230,7 @@ export class SeoForm extends React.Component {
 		// We will pass an empty string in this case.
 		updatedOptions.advanced_seo_title_formats = mapValues(
 			updatedOptions.advanced_seo_title_formats,
-			format => ( isArray( format ) && 0 === format.length ? '' : format )
+			( format ) => ( isArray( format ) && 0 === format.length ? '' : format )
 		);
 
 		this.props.saveSiteSettings( siteId, updatedOptions );
@@ -282,6 +283,7 @@ export class SeoForm extends React.Component {
 			isFetchingSite,
 			siteId,
 			siteIsJetpack,
+			siteIsComingSoon,
 			showAdvancedSeo,
 			showWebsiteMeta,
 			selectedSite,
@@ -316,6 +318,7 @@ export class SeoForm extends React.Component {
 			: translate(
 					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 			  );
+
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
@@ -325,15 +328,22 @@ export class SeoForm extends React.Component {
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
-						text={
-							isSitePrivate
-								? translate(
-										"SEO settings aren't recognized by search engines while your site is Private."
-								  )
-								: translate(
-										"SEO settings aren't recognized by search engines while your site is Hidden."
-								  )
-						}
+						text={ ( function () {
+							if ( isSitePrivate ) {
+								if ( siteIsComingSoon ) {
+									return translate(
+										"SEO settings aren't recognized by search engines while your site is Coming Soon."
+									);
+								}
+
+								return translate(
+									"SEO settings aren't recognized by search engines while your site is Private."
+								);
+							}
+							return translate(
+								"SEO settings aren't recognized by search engines while your site is Hidden."
+							);
+						} )() }
 					>
 						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
 					</Notice>
@@ -356,7 +366,7 @@ export class SeoForm extends React.Component {
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature &&
 					selectedSite.plan && (
-						<Banner
+						<UpsellNudge
 							description={ translate(
 								'Get tools to optimize your site for improved performance in search engine results.'
 							) }
@@ -366,6 +376,7 @@ export class SeoForm extends React.Component {
 								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
 								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 							} ) }
+							showIcon={ true }
 							title={ nudgeTitle }
 						/>
 					) }
@@ -469,7 +480,7 @@ export class SeoForm extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible = selectedSite.plan && hasSupportingPlan( selectedSite.plan );
@@ -492,6 +503,7 @@ const mapStateToProps = state => {
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
+		siteIsComingSoon: isSiteComingSoon( state, siteId ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),

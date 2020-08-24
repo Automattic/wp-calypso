@@ -11,7 +11,7 @@ import page from 'page';
 import * as controller from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'me/my-profile' ) ) {
 		page( '/me', controller.sidebar, controller.profile, makeLayout, clientRender );
 

@@ -222,7 +222,7 @@ class ContentsTab extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const stats = getStats( state, siteId );
 		const isGenerating = isGeneratingStats( state, siteId );
@@ -239,7 +239,7 @@ const connectComponent = connect(
 	{ generateStats }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_max_time' ] );
 };
 

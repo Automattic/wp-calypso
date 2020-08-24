@@ -52,7 +52,7 @@ export function updateSharingButtons( siteId, settings ) {
  * @returns {Function}      Action thunk
  */
 export function requestSharingButtons( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHARING_BUTTONS_REQUEST,
 			siteId,
@@ -68,7 +68,7 @@ export function requestSharingButtons( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHARING_BUTTONS_REQUEST_FAILURE,
 					siteId,
@@ -87,7 +87,7 @@ export function requestSharingButtons( siteId ) {
  * @returns {Function}      Action thunk
  */
 export function saveSharingButtons( siteId, settings ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHARING_BUTTONS_SAVE,
 			siteId,
@@ -104,7 +104,7 @@ export function saveSharingButtons( siteId, settings ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHARING_BUTTONS_SAVE_FAILURE,
 					siteId,

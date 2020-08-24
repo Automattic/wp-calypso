@@ -50,7 +50,7 @@ export default connect(
 			shouldFeedBeFetched: shouldFeedBeFetched( state, feedId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestFeed,

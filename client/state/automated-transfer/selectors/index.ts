@@ -55,7 +55,7 @@ export const getEligibility = compose( getEligibilityData, getAutomatedTransfer 
  * @param {object} state global app state
  * @returns {boolean} eligibility status for site
  */
-export const getEligibilityStatus = state =>
+export const getEligibilityStatus = ( state ) =>
 	!! get( state, 'lastUpdate', 0 ) && ! get( state, 'eligibilityHolds', [] ).length;
 
 /**

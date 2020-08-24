@@ -11,12 +11,12 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import MediaStore from 'lib/media/store';
 import { url } from 'lib/media/utils';
 import Spinner from 'components/spinner';
 import SpinnerLine from 'components/spinner-line';
 import ImagePreloader from 'components/image-preloader';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getMediaItem from 'state/media/thunks/get-media-item';
 
 class EditorFeaturedImagePreview extends Component {
 	static propTypes = {
@@ -34,6 +34,12 @@ class EditorFeaturedImagePreview extends Component {
 
 	state = this.constructor.initialState;
 
+	constructor( props ) {
+		super( props );
+
+		this.previewRef = React.createRef();
+	}
+
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		const currentSrc = this.src();
 		if ( ! currentSrc || currentSrc === this.src( nextProps ) ) {
@@ -43,7 +49,7 @@ class EditorFeaturedImagePreview extends Component {
 		// To prevent container height from collapsing and expanding rapidly,
 		// we preserve the current height while the next image loads
 		const nextState = {
-			height: this.refs.preview.clientHeight,
+			height: this.previewRef.current.clientHeight,
 		};
 
 		// If the next image is the persisted copy of an in-progress upload, we
@@ -68,9 +74,9 @@ class EditorFeaturedImagePreview extends Component {
 		}
 
 		// Compare images by resolving the media store reference for the
-		// transient copy. MediaStore tracks pointers from transient media
+		// transient copy. Media state tracks pointers from transient media
 		// to its persisted copy, so we can compare the resolved object IDs
-		const media = MediaStore.get( siteId, image.ID );
+		const media = this.props.getMediaItem( siteId, image.ID );
 		return media && media.ID === nextProps.image.ID;
 	};
 
@@ -114,7 +120,7 @@ class EditorFeaturedImagePreview extends Component {
 		}
 
 		return (
-			<div ref="preview" className={ classes } style={ { height } }>
+			<div ref={ this.previewRef } className={ classes } style={ { height } }>
 				<Spinner />
 				<ImagePreloader
 					placeholder={ placeholder }
@@ -130,8 +136,11 @@ class EditorFeaturedImagePreview extends Component {
 	}
 }
 
-export default connect( state => {
-	return {
-		siteId: getSelectedSiteId( state ),
-	};
-} )( EditorFeaturedImagePreview );
+export default connect(
+	( state ) => {
+		return {
+			siteId: getSelectedSiteId( state ),
+		};
+	},
+	{ getMediaItem }
+)( EditorFeaturedImagePreview );

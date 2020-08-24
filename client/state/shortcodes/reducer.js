@@ -7,7 +7,12 @@ import { intersection, merge, pickBy } from 'lodash';
  * Internal dependencies
  */
 import { shortcodesSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
@@ -20,7 +25,7 @@ import { parse } from 'lib/shortcode';
 registerActionForward( 'RECEIVE_MEDIA_ITEMS' );
 registerActionForward( 'RECEIVE_MEDIA_ITEM' );
 
-const createRequestingReducer = requesting => {
+const createRequestingReducer = ( requesting ) => {
 	return ( state, { siteId, shortcode } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -61,11 +66,11 @@ function mediaItemsReducer( state, { siteId, data } ) {
 		return state;
 	}
 	const media = Array.isArray( data.media ) ? data.media : [ data ];
-	const updatedIds = media.map( item => String( item.ID ) );
+	const updatedIds = media.map( ( item ) => String( item.ID ) );
 
 	return {
 		...state,
-		[ siteId ]: pickBy( state[ siteId ], shortcode => {
+		[ siteId ]: pickBy( state[ siteId ], ( shortcode ) => {
 			const parsed = parse( shortcode.shortcode );
 			if (
 				parsed.tag !== 'gallery' ||
@@ -109,7 +114,8 @@ export const items = withSchemaValidation( shortcodesSchema, ( state = {}, actio
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	requesting,
 	items,
 } );
+export default withStorageKey( 'shortcodes', combinedReducer );

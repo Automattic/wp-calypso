@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	ACTIVE_PROMOTIONS_RECEIVE,
 	ACTIVE_PROMOTIONS_REQUEST,
@@ -10,6 +9,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/active-promotions';
+import 'state/active-promotions/init';
 
 /**
  * Action creator function: RECEIVE
@@ -17,21 +17,21 @@ import 'state/data-layer/wpcom/active-promotions';
  * @param {Array} activePromotions - WordPress.com activePromotions list
  * @returns {object} action object
  */
-export const activePromotionsReceiveAction = activePromotions => {
+export function activePromotionsReceiveAction( activePromotions ) {
 	return {
 		type: ACTIVE_PROMOTIONS_RECEIVE,
 		activePromotions,
 	};
-};
+}
 
 /**
  * Action creator function: REQUEST_SUCCESS
  *
  * @returns {object} action object
  */
-export const activePromotionsRequestSuccessAction = () => {
+export function activePromotionsRequestSuccessAction() {
 	return { type: ACTIVE_PROMOTIONS_REQUEST_SUCCESS };
-};
+}
 
 /**
  * Action creator function: REQUEST_FAILURE
@@ -39,18 +39,16 @@ export const activePromotionsRequestSuccessAction = () => {
  * @param {string} error - error message
  * @returns {object} action object
  */
-export const activePromotionsRequestFailureAction = error => {
+export function activePromotionsRequestFailureAction( error ) {
 	return {
 		type: ACTIVE_PROMOTIONS_REQUEST_FAILURE,
 		error: error,
 	};
-};
+}
 
 /**
  * Action creator to request WordPress.com activePromotions: REQUEST
  *
  * @returns {object} action object
  */
-export const requestActivePromotions = () => ( {
-	type: ACTIVE_PROMOTIONS_REQUEST,
-} );
+export const requestActivePromotions = () => ( { type: ACTIVE_PROMOTIONS_REQUEST } );

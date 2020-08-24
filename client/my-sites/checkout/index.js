@@ -20,7 +20,7 @@ import { noSite, siteSelection } from 'my-sites/controller';
 import config from 'config';
 import userFactory from 'lib/user';
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	const user = userFactory();
@@ -28,6 +28,8 @@ export default function() {
 
 	if ( isLoggedOut ) {
 		page( '/checkout/offer-quickstart-session', upsellNudge, makeLayout, clientRender );
+
+		page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
 		page( '/checkout*', redirectLoggedOut );
 

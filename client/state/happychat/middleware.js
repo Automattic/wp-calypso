@@ -35,7 +35,7 @@ export const socketMiddleware = ( connection = null ) => {
 		connection = buildConnection();
 	}
 
-	return store => next => action => {
+	return ( store ) => ( next ) => ( action ) => {
 		switch ( action.type ) {
 			case HAPPYCHAT_IO_INIT:
 				connection.init( store.dispatch, action.auth );

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
@@ -11,7 +10,9 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'state/action-types';
 
-export const requestWordAdsApproval = siteId => dispatch => {
+import 'state/wordads/init';
+
+export const requestWordAdsApproval = ( siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: WORDADS_SITE_APPROVE_REQUEST,
 		siteId,
@@ -20,14 +21,14 @@ export const requestWordAdsApproval = siteId => dispatch => {
 	return wpcom
 		.undocumented()
 		.wordAdsApprove( siteId )
-		.then( result => {
+		.then( ( result ) => {
 			dispatch( {
 				type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 				approved: result.approved,
 				siteId,
 			} );
 		} )
-		.catch( error =>
+		.catch( ( error ) =>
 			dispatch( {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 				siteId,
@@ -36,11 +37,11 @@ export const requestWordAdsApproval = siteId => dispatch => {
 		);
 };
 
-export const dismissWordAdsError = siteId => ( {
+export const dismissWordAdsError = ( siteId ) => ( {
 	type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	siteId,
 } );
-export const dismissWordAdsSuccess = siteId => ( {
+export const dismissWordAdsSuccess = ( siteId ) => ( {
 	type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 	siteId,
 } );

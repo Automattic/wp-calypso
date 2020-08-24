@@ -11,13 +11,14 @@ import {
 import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/memberships/subscriptions';
+import 'state/memberships/init';
 
 export const requestSubscriptionsList = () => ( {
 	type: MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
 } );
 
-export const requestSubscriptionStop = subscriptionId => {
-	return dispatch => {
+export const requestSubscriptionStop = ( subscriptionId ) => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MEMBERSHIPS_SUBSCRIPTION_STOP,
 			subscriptionId,
@@ -30,7 +31,7 @@ export const requestSubscriptionStop = subscriptionId => {
 					subscriptionId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 					subscriptionId,

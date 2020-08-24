@@ -6,7 +6,13 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getLanguageFilePathUrl, getLanguageFileUrl } from 'lib/i18n-utils/switch-locale';
+import {
+	getLanguageFilePathUrl,
+	getLanguageFileUrl,
+	getLanguageManifestFileUrl,
+	getLanguagesInternalBasePath,
+	getTranslationChunkFileUrl,
+} from 'lib/i18n-utils/switch-locale';
 
 describe( 'getLanguageFileUrl()', () => {
 	test( 'should return a JS url.', () => {
@@ -58,5 +64,84 @@ describe( 'getLanguageFileUrl()', () => {
 		const expected = getLanguageFilePathUrl() + 'zh-v1.1.js';
 
 		expect( getLanguageFileUrl( 'zh', 'js', { zh: 'what-is-this?' } ) ).toEqual( expected );
+	} );
+} );
+
+describe( 'getLanguagesInternalBasePath()', () => {
+	test( 'should return base path for languages.', () => {
+		expect( getLanguagesInternalBasePath() ).toEqual( '/calypso/evergreen/languages' );
+		expect( getLanguagesInternalBasePath( 'fallback' ) ).toEqual( '/calypso/fallback/languages' );
+	} );
+} );
+
+describe( 'getLanguageManifestFileUrl()', () => {
+	test( 'should return language manifest url for a given locale.', () => {
+		const expected = getLanguagesInternalBasePath() + '/ja-language-manifest.json';
+
+		expect( getLanguageManifestFileUrl( { localeSlug: 'ja' } ) ).toEqual( expected );
+	} );
+
+	test( 'should return language manifest url for a given locale and target build.', () => {
+		const targetBuild = 'fallback';
+		const expected = getLanguagesInternalBasePath( targetBuild ) + '/ja-language-manifest.json';
+
+		expect( getLanguageManifestFileUrl( { localeSlug: 'ja', targetBuild } ) ).toEqual( expected );
+	} );
+
+	test( 'should append a revision cache buster.', () => {
+		const hash = '123';
+		const expected = `${ getLanguagesInternalBasePath() }/zh-language-manifest.json?v=${ hash }`;
+
+		expect( getLanguageManifestFileUrl( { localeSlug: 'zh', hash } ) ).toEqual( expected );
+	} );
+
+	test( 'should not append a revision cache buster for an unknown locale.', () => {
+		const expected = getLanguagesInternalBasePath() + '/kr-language-manifest.json';
+
+		expect(
+			getLanguageManifestFileUrl( { localeSlug: 'kr', languageRevisions: { xd: 222 } } )
+		).toEqual( expected );
+	} );
+} );
+
+describe( 'getTranslationChunkFileUrl()', () => {
+	test( 'should return translation chunk url for a given locale.', () => {
+		const localeSlug = 'ja';
+		const chunkId = 'chunk-abc.min';
+		const expected = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json`;
+
+		expect( getTranslationChunkFileUrl( { chunkId, localeSlug } ) ).toEqual( expected );
+	} );
+
+	test( 'should return translation chunk url for a given locale and target build.', () => {
+		const targetBuild = 'fallback';
+		const localeSlug = 'ja';
+		const chunkId = 'chunk-abc.min';
+		const expected = `${ getLanguagesInternalBasePath(
+			targetBuild
+		) }/${ localeSlug }-${ chunkId }.json`;
+
+		expect( getTranslationChunkFileUrl( { chunkId, localeSlug, targetBuild } ) ).toEqual(
+			expected
+		);
+	} );
+
+	test( 'should append a revision cache buster.', () => {
+		const localeSlug = 'zh';
+		const chunkId = 'chunk-abc.min';
+		const hash = '123';
+		const expected = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json?v=${ hash }`;
+
+		expect( getTranslationChunkFileUrl( { chunkId, localeSlug, hash } ) ).toEqual( expected );
+	} );
+
+	test( 'should not append a revision cache buster for an unknown locale.', () => {
+		const localeSlug = 'kr';
+		const chunkId = 'chunk-abc.min';
+		const expected = `${ getLanguagesInternalBasePath() }/${ localeSlug }-${ chunkId }.json`;
+
+		expect(
+			getTranslationChunkFileUrl( { chunkId, localeSlug, languageRevisions: { xd: 222 } } )
+		).toEqual( expected );
 	} );
 } );

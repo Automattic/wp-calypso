@@ -27,7 +27,7 @@
 		margin-bottom: 10px;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		.host-credentials-page__account-username-fieldset,
 		.host-credentials-page__account-password-fieldset,
 		.host-credentials-page__account-email-fieldset {
@@ -64,15 +64,11 @@
 
 .guided-transfer__issue-title {
 	margin-left: -24px;
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .guided-transfer__issue-icon {
 	margin-right: 6px;
 	color: red;
 	vertical-align: text-bottom;
-}
-
-.guided-transfer__issue-description {
-	font-weight: 300;
 }

@@ -11,26 +11,25 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import notices from 'notices';
 import EmptyContent from 'components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
-import { CreditCardPaymentBox } from './credit-card-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
 import { submit } from 'lib/store-transactions';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { setPayment, setTransactionStep } from 'lib/transaction/actions';
 import {
 	fullCreditsPayment,
 	newStripeCardPayment,
 	storedCardPayment,
 } from 'lib/transaction/payments';
+import { getCheckoutIncompatibleProducts } from 'state/sites/products/conflicts';
 import { saveSiteSettings } from 'state/site-settings/actions';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'state/selectors/is-private-site';
@@ -51,6 +50,7 @@ import { displayError, clear } from './notices';
 import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
 import { isWpComEcommercePlan } from 'lib/plans';
 import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
+import { isExternal } from 'lib/url';
 
 /**
  * Module variables
@@ -64,6 +64,7 @@ export class SecurePaymentForm extends Component {
 		handleCheckoutExternalRedirect: PropTypes.func.isRequired,
 		products: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		isMultisite: PropTypes.bool,
 	};
 
 	state = { userSelectedPaymentBox: null };
@@ -126,7 +127,7 @@ export class SecurePaymentForm extends Component {
 			// is called.
 			// Note: If this defer() is ever able to be removed, the corresponding
 			// defer() in NewCardForm::handleFieldChange() can likely be removed too.
-			defer( function() {
+			defer( function () {
 				setPayment( newPayment );
 			} );
 		}
@@ -154,8 +155,8 @@ export class SecurePaymentForm extends Component {
 		return null;
 	}
 
-	handlePaymentBoxSubmit = event => {
-		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
+	handlePaymentBoxSubmit = ( event ) => {
+		gaRecordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		this.submitTransaction( event );
 	};
@@ -164,7 +165,7 @@ export class SecurePaymentForm extends Component {
 		return this.props.cards[ 0 ];
 	}
 
-	selectPaymentBox = paymentBox => {
+	selectPaymentBox = ( paymentBox ) => {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
 		} );
@@ -176,7 +177,8 @@ export class SecurePaymentForm extends Component {
 		const { cart, transaction } = this.props;
 
 		const origin = getLocationOrigin( window.location );
-		const successUrl = origin + this.props.redirectTo();
+		const successPath = this.props.redirectTo();
+		const successUrl = isExternal( successPath ) ? successPath : origin + successPath;
 		const cancelUrl = origin + '/checkout/' + get( this.props.selectedSite, 'slug', 'no-site' );
 
 		const cardDetailsCountry = get( transaction, 'payment.newCardDetails.country', null );
@@ -197,12 +199,12 @@ export class SecurePaymentForm extends Component {
 			// Execute every step handler in its own event loop tick, so that a complete React
 			// rendering cycle happens on each step and `componentWillReceiveProps` of objects
 			// like the `TransactionStepsMixin` are called with every step.
-			step => defer( () => setTransactionStep( step ) )
+			( step ) => defer( () => setTransactionStep( step ) )
 		);
 	}
 
 	async maybeSetSiteToPublic( { cart } ) {
-		const { isJetpack, selectedSiteId, siteIsPrivate } = this.props;
+		const { isJetpack, siteIsPrivate } = this.props;
 
 		if ( isJetpack || ! siteIsPrivate ) {
 			return;
@@ -216,18 +218,6 @@ export class SecurePaymentForm extends Component {
 			} )
 		) {
 			return;
-		}
-
-		if ( ! config.isEnabled( 'coming-soon' ) ) {
-			// Until Atomic sites support being private / unlaunched, set them to public on upgrade
-			debug( 'Setting site to public because it is an Atomic plan' );
-			const response = await this.props.saveSiteSettings( selectedSiteId, {
-				blog_public: 1,
-			} );
-
-			if ( ! get( response, [ 'updated', 'blog_public' ] ) ) {
-				throw 'Invalid response';
-			}
 		}
 	}
 
@@ -293,6 +283,8 @@ export class SecurePaymentForm extends Component {
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
 				presaleChatAvailable={ this.props.presaleChatAvailable }
+				infoMessage={ this.props.infoMessage }
+				incompatibleProducts={ this.props.incompatibleProducts }
 			>
 				{ this.props.children }
 			</CreditsPaymentBox>
@@ -305,6 +297,7 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				onSubmit={ this.handlePaymentBoxSubmit }
 				transactionStep={ this.props.transaction.step }
+				infoMessage={ this.props.infoMessage }
 			/>
 		);
 	}
@@ -317,46 +310,22 @@ export class SecurePaymentForm extends Component {
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				transactionStep={ this.props.transaction.step }
+				infoMessage={ this.props.infoMessage }
 			/>
 		);
 	}
 
-	renderCreditCardPaymentBox() {
-		return (
-			<PaymentBox
-				classSet="credit-card-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="credit-card"
-				onSelectPaymentMethod={ this.selectPaymentBox }
-			>
-				<QueryPaymentCountries />
-				<CreditCardPaymentBox
-					translate={ this.props.translate }
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
-					cart={ this.props.cart }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.getInitialCard() }
-					selectedSite={ this.props.selectedSite }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-				>
-					{ this.props.children }
-				</CreditCardPaymentBox>
-			</PaymentBox>
-		);
-	}
-
 	renderStripeElementsPaymentBox() {
+		const incompatibleProducts = this.props.incompatibleProducts;
 		return (
 			<PaymentBox
 				classSet="credit-card-payment-box"
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="credit-card"
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
+				incompatibleProducts={ incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<StripeElementsPaymentBox
@@ -369,6 +338,7 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					onSubmit={ this.handlePaymentBoxSubmit }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					incompatibleProducts={ incompatibleProducts }
 				>
 					{ this.props.children }
 				</StripeElementsPaymentBox>
@@ -377,13 +347,16 @@ export class SecurePaymentForm extends Component {
 	}
 
 	renderPayPalPaymentBox() {
+		const incompatibleProducts = this.props.incompatibleProducts;
 		return (
 			<PaymentBox
 				classSet="paypal-payment-box"
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="paypal"
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
+				incompatibleProducts={ incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<PayPalPaymentBox
@@ -393,6 +366,7 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					incompatibleProducts={ incompatibleProducts }
 				>
 					{ this.props.children }
 				</PayPalPaymentBox>
@@ -401,13 +375,16 @@ export class SecurePaymentForm extends Component {
 	}
 
 	renderRedirectPaymentBox( paymentType ) {
+		const incompatibleProducts = this.props.incompatibleProducts;
 		return (
 			<PaymentBox
 				classSet="redirect-payment-box"
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ paymentType }
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
+				incompatibleProducts={ incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<RedirectPaymentBox
@@ -418,6 +395,7 @@ export class SecurePaymentForm extends Component {
 					paymentType={ paymentType }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					incompatibleProducts={ incompatibleProducts }
 				>
 					{ this.props.children }
 				</RedirectPaymentBox>
@@ -432,7 +410,9 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod={ 'wechat' }
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
+				incompatibleProducts={ this.props.incompatibleProducts }
 			>
 				<QueryPaymentCountries />
 				<WechatPaymentBox
@@ -441,6 +421,7 @@ export class SecurePaymentForm extends Component {
 					selectedSite={ this.props.selectedSite }
 					redirectTo={ this.props.redirectTo }
 					presaleChatAvailable={ this.props.presaleChatAvailable }
+					incompatibleProducts={ this.props.incompatibleProducts }
 				>
 					{ this.props.children }
 				</WechatPaymentBox>
@@ -455,7 +436,9 @@ export class SecurePaymentForm extends Component {
 				cart={ this.props.cart }
 				paymentMethods={ this.props.paymentMethods }
 				currentPaymentMethod="web-payment"
+				infoMessage={ this.props.infoMessage }
 				onSelectPaymentMethod={ this.selectPaymentBox }
+				incompatibleProducts={ this.props.incompatibleProducts }
 			>
 				<WebPaymentBox
 					cart={ this.props.cart }
@@ -469,7 +452,7 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderPaymentBox = visiblePaymentBox => {
+	renderPaymentBox = ( visiblePaymentBox ) => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
 		switch ( visiblePaymentBox ) {
@@ -508,6 +491,7 @@ export class SecurePaymentForm extends Component {
 			case 'bancontact':
 			case 'eps':
 			case 'giropay':
+			case 'id_wallet':
 			case 'ideal':
 			case 'netbanking':
 			case 'p24':
@@ -566,7 +550,7 @@ export class SecurePaymentForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
@@ -575,6 +559,11 @@ export default connect(
 			presaleChatAvailable: isPresalesChatAvailable( state ),
 			selectedSiteId,
 			siteIsPrivate: isPrivateSite( state, selectedSiteId ),
+			incompatibleProducts: getCheckoutIncompatibleProducts(
+				state,
+				selectedSiteId,
+				props.cart.products
+			),
 		};
 	},
 	{ saveSiteSettings }

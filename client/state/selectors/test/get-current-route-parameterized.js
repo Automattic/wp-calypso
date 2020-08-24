@@ -9,11 +9,9 @@ import { expect } from 'chai';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 
 describe( 'getCurrentRouteParameterized()', () => {
-	const ui = {
-		route: {
-			path: {
-				current: '/test/url/testsite.blog',
-			},
+	const route = {
+		path: {
+			current: '/test/url/testsite.blog',
 		},
 	};
 
@@ -23,7 +21,7 @@ describe( 'getCurrentRouteParameterized()', () => {
 
 	test( 'it returns null when state is missing the path', () => {
 		const state = {
-			ui: {},
+			route: {},
 			sites: sites,
 		};
 
@@ -32,7 +30,7 @@ describe( 'getCurrentRouteParameterized()', () => {
 
 	test( 'it returns null when state is missing the site', () => {
 		const state = {
-			ui: ui,
+			route,
 			sites: { items: {} },
 		};
 
@@ -41,7 +39,7 @@ describe( 'getCurrentRouteParameterized()', () => {
 
 	test( 'it replaces the site slug with :site', () => {
 		const state = {
-			ui,
+			route,
 			sites,
 		};
 
@@ -50,11 +48,9 @@ describe( 'getCurrentRouteParameterized()', () => {
 
 	test( 'it replaces the site ID with :siteid', () => {
 		const state = {
-			ui: {
-				route: {
-					path: {
-						current: '/test/url/12345',
-					},
+			route: {
+				path: {
+					current: '/test/url/12345',
 				},
 			},
 			sites: sites,

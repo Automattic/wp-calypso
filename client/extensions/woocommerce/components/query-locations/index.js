@@ -31,6 +31,6 @@ class QueryLocations extends Component {
 	};
 }
 
-export default connect( null, dispatch => bindActionCreators( { fetchLocations }, dispatch ) )(
+export default connect( null, ( dispatch ) => bindActionCreators( { fetchLocations }, dispatch ) )(
 	QueryLocations
 );

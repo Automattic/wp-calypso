@@ -25,19 +25,19 @@ describe( 'isExternal', () => {
 	} );
 
 	test( 'should return true for url without http', () => {
-		const urlWithoutHttp = 'en.support.wordpress.com';
+		const urlWithoutHttp = 'wordpress.com/support';
 		const actual = isExternal( urlWithoutHttp );
 		expect( actual ).toBe( true );
 	} );
 
 	test( 'should return true for url without http and path', () => {
-		const urlWithoutHttp = 'en.support.wordpress.com/start';
+		const urlWithoutHttp = 'wordpress.com/support/start';
 		const actual = isExternal( urlWithoutHttp );
 		expect( actual ).toBe( true );
 	} );
 
 	test( 'should return true for url without http and // path', () => {
-		const urlWithoutHttp = 'en.support.wordpress.com//start';
+		const urlWithoutHttp = 'wordpress.com/support//start';
 		const actual = isExternal( urlWithoutHttp );
 		expect( actual ).toBe( true );
 	} );

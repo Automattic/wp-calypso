@@ -45,6 +45,6 @@ export const isRequestingPostsForQueryIgnoringPage = createSelector(
 			return isEqual( normalizedQueryWithoutPage, omit( queryDetails.query, 'page' ) );
 		} );
 	},
-	state => state.posts.queryRequests,
+	( state ) => state.posts.queryRequests,
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
 );

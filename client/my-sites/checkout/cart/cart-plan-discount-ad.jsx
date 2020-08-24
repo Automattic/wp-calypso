@@ -42,7 +42,7 @@ export class CartPlanDiscountAd extends Component {
 		}
 
 		const cartPlan = getAllCartItems( cart ).find( isPlan );
-		const plan = sitePlans.data.filter( function( sitePlan ) {
+		const plan = sitePlans.data.filter( function ( sitePlan ) {
 			return sitePlan.productSlug === this.product_slug;
 		}, cartPlan )[ 0 ];
 
@@ -77,7 +77,7 @@ export default connect(
 			sitePlans: getPlansBySite( state, selectedSite ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			fetchSitePlans: ( sitePlans, site ) => {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {

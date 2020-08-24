@@ -16,17 +16,16 @@ import InviteAccept from 'my-sites/invites/invite-accept';
 import { hideSidebar } from 'state/ui/actions';
 import { getRedirectAfterAccept } from 'my-sites/invites/utils';
 import { acceptInvite as acceptInviteAction } from 'lib/invites/actions';
-import _user from 'lib/user';
+import user from 'lib/user';
 import { getLocaleFromPath, removeLocaleFromPath } from 'lib/i18n-utils';
 
 /**
  * Module variables
  */
-const user = _user();
 const debug = debugModule( 'calypso:invite-accept:controller' );
 
 export function redirectWithoutLocaleifLoggedIn( context, next ) {
-	if ( user.get() && getLocaleFromPath( context.path ) ) {
+	if ( user().get() && getLocaleFromPath( context.path ) ) {
 		return page.redirect( removeLocaleFromPath( context.path ) );
 	}
 
@@ -42,12 +41,12 @@ export function acceptInvite( context, next ) {
 	const acceptedInvite = store.get( 'invite_accepted' );
 	if ( acceptedInvite ) {
 		debug( 'invite_accepted is set in localStorage' );
-		if ( user.get().email === acceptedInvite.sentTo ) {
+		if ( user().get().email === acceptedInvite.sentTo ) {
 			debug( 'Setting email_verified in user object' );
-			user.set( { email_verified: true } );
+			user().set( { email_verified: true } );
 		}
 		store.remove( 'invite_accepted' );
-		const acceptInviteCallback = error => {
+		const acceptInviteCallback = ( error ) => {
 			if ( error ) {
 				debug( 'Accept invite error: ' + JSON.stringify( error ) );
 				page( window.location.href );
@@ -56,6 +55,7 @@ export function acceptInvite( context, next ) {
 				window.location.href = getRedirectAfterAccept( acceptedInvite );
 			} else {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
+
 				debug( 'Accepted invite and redirecting to:  ' + redirect );
 				page( redirect );
 			}

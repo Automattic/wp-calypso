@@ -42,7 +42,7 @@ export function isRequesting( state = {}, action ) {
  * Helper function to update a plugin's state after a successful plugin action
  * (multiple action-types are possible)
  */
-const updatePlugin = function( state, action ) {
+const updatePlugin = function ( state, action ) {
 	if ( typeof state[ action.siteId ] !== 'undefined' ) {
 		return Object.assign( {}, state, {
 			[ action.siteId ]: pluginsForSite( state[ action.siteId ], action ),
@@ -88,7 +88,7 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
-			return state.map( p => plugin( p, action ) );
+			return state.map( ( p ) => plugin( p, action ) );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
 			return [ ...state, action.data ];
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:

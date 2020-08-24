@@ -10,7 +10,9 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
-export const requestBillingTransaction = transactionId => dispatch => {
+import 'state/billing-transactions/init';
+
+export const requestBillingTransaction = ( transactionId ) => ( dispatch ) => {
 	dispatch( {
 		type: BILLING_TRANSACTION_REQUEST,
 		transactionId,
@@ -20,7 +22,7 @@ export const requestBillingTransaction = transactionId => dispatch => {
 		.undocumented()
 		.me()
 		.getReceipt( transactionId, { format: 'display' } )
-		.then( receipt => {
+		.then( ( receipt ) => {
 			dispatch( {
 				type: BILLING_TRANSACTION_REQUEST_SUCCESS,
 				transactionId,
@@ -31,7 +33,7 @@ export const requestBillingTransaction = transactionId => dispatch => {
 				receipt: receipt,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: BILLING_TRANSACTION_REQUEST_FAILURE,
 				transactionId,
@@ -40,7 +42,7 @@ export const requestBillingTransaction = transactionId => dispatch => {
 		} );
 };
 
-export const clearBillingTransactionError = transactionId => ( {
+export const clearBillingTransactionError = ( transactionId ) => ( {
 	type: BILLING_TRANSACTION_ERROR_CLEAR,
 	transactionId,
 } );

@@ -17,7 +17,7 @@ import { requestSiteChecklist } from 'state/checklist/actions';
 import { requestEligibility } from 'state/automated-transfer/actions';
 
 const handleLaunchSiteRequest = dispatchRequest( {
-	fetch: action => [
+	fetch: ( action ) => [
 		infoNotice( translate( 'Launching your site…' ), { duration: 1000 } ),
 		http(
 			{

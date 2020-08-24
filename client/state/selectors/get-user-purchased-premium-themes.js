@@ -3,6 +3,8 @@
  */
 import { getUserPurchases } from 'state/purchases/selectors';
 
+import 'state/purchases/init';
+
 /**
  * Return the details of any premium themes the user has purchased
  *
@@ -16,7 +18,7 @@ export const getUserPurchasedPremiumThemes = ( state, userId ) => {
 	}
 
 	return getUserPurchases( state, userId ).filter(
-		purchase => purchase.productSlug === 'premium_theme'
+		( purchase ) => purchase.productSlug === 'premium_theme'
 	);
 };
 

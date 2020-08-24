@@ -38,12 +38,11 @@ import {
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
-} from 'state/action-types';
+} from 'state/themes/action-types';
+import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 
 const twentysixteen = {
 	id: 'twentysixteen',

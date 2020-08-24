@@ -10,6 +10,30 @@ import QueryManager from '../';
 import PaginatedQueryKey from './key';
 import { DEFAULT_PAGINATED_QUERY, PAGINATION_QUERY_KEYS } from './constants';
 
+const pageCache = new WeakMap();
+
+/*
+ * Compute paginated slices of the `items` array, with memoization
+ */
+function getPaginatedItems( items, start, count ) {
+	// retrieve cache for the `items` array, create a new record if doesn't exist
+	let itemsCache = pageCache.get( items );
+	if ( ! itemsCache ) {
+		itemsCache = new Map();
+		pageCache.set( items, itemsCache );
+	}
+
+	// cache the computed page slices
+	const pageKey = `${ start }/${ count }`;
+	let pageResult = itemsCache.get( pageKey );
+	if ( ! pageResult ) {
+		pageResult = items.slice( start, start + count );
+		itemsCache.set( pageKey, pageResult );
+	}
+
+	return pageResult;
+}
+
 /**
  * PaginatedQueryManager manages paginated data which can be queried and
  * change over time
@@ -26,13 +50,7 @@ export default class PaginatedQueryManager extends QueryManager {
 	 * @returns {boolean}       Whether query contains pagination key
 	 */
 	static hasQueryPaginationKeys( query ) {
-		if ( ! query ) {
-			return false;
-		}
-
-		return PAGINATION_QUERY_KEYS.some( key => {
-			return query.hasOwnProperty( key );
-		} );
+		return !! query && PAGINATION_QUERY_KEYS.some( ( key ) => query.hasOwnProperty( key ) );
 	}
 
 	/**
@@ -59,7 +77,7 @@ export default class PaginatedQueryManager extends QueryManager {
 		const perPage = query.number || this.constructor.DefaultQuery.number;
 		const startOffset = ( page - 1 ) * perPage;
 
-		return dataIgnoringPage.slice( startOffset, startOffset + perPage );
+		return getPaginatedItems( dataIgnoringPage, startOffset, perPage );
 	}
 
 	/**
@@ -82,7 +100,7 @@ export default class PaginatedQueryManager extends QueryManager {
 			return items;
 		}
 
-		return items.filter( item => undefined !== item );
+		return items.filter( ( item ) => undefined !== item );
 	}
 
 	/**
@@ -162,7 +180,7 @@ export default class PaginatedQueryManager extends QueryManager {
 
 		// If the item set for the queried page is identical, there are no
 		// updates to be made
-		const pageItemKeys = items.map( item => item[ this.options.itemKey ] );
+		const pageItemKeys = items.map( ( item ) => item[ this.options.itemKey ] );
 
 		// If we've reached this point, we know that we've received a paged
 		// set of data where our assumed item set is incorrect.
@@ -195,7 +213,7 @@ export default class PaginatedQueryManager extends QueryManager {
 
 		// Replace the assumed set with the received items.
 		modifiedNextQuery.itemKeys = [
-			...range( 0, startOffset ).map( index => {
+			...range( 0, startOffset ).map( ( index ) => {
 				// Ensure that item set is comprised of all indices leading up
 				// to received page, even if those items are not known.
 				const itemKey = nextQuery.itemKeys[ index ];
@@ -203,12 +221,12 @@ export default class PaginatedQueryManager extends QueryManager {
 					return itemKey;
 				}
 			} ),
-			...range( 0, perPage ).map( index => {
+			...range( 0, perPage ).map( ( index ) => {
 				// Fill page with items from the received set, or undefined to
 				// at least ensure page matches expected range
 				return pageItemKeys[ index ];
 			} ),
-			...nextQuery.itemKeys.slice( startOffset + perPage ).filter( itemKey => {
+			...nextQuery.itemKeys.slice( startOffset + perPage ).filter( ( itemKey ) => {
 				// Filter out any item keys which exist in the page set, as
 				// this indicates that they've trickled down from later page
 				return itemKey && ! includes( pageItemKeys, itemKey );
@@ -218,7 +236,7 @@ export default class PaginatedQueryManager extends QueryManager {
 		// If found is known from options, ensure that we fill the end of the
 		// array with undefined entries until found count
 		if ( modifiedNextQuery.hasOwnProperty( 'found' ) ) {
-			modifiedNextQuery.itemKeys = range( 0, modifiedNextQuery.found ).map( index => {
+			modifiedNextQuery.itemKeys = range( 0, modifiedNextQuery.found ).map( ( index ) => {
 				return modifiedNextQuery.itemKeys[ index ];
 			} );
 		}

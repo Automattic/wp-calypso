@@ -20,10 +20,11 @@ import { UserStep as User } from '../';
 jest.mock( 'blocks/signup-form', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
+	getABTestVariation: () => null,
 } ) );
 jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
 jest.mock( 'signup/utils', () => ( {
-	getFlowSteps: flow => {
+	getFlowSteps: ( flow ) => {
 		let flowSteps = null;
 
 		if ( 'userAsFirstStepInFlow' === flow ) {
@@ -34,9 +35,9 @@ jest.mock( 'signup/utils', () => ( {
 
 		return flowSteps;
 	},
-	getNextStepName: x => x,
-	getStepUrl: x => x,
-	getPreviousStepName: x => x,
+	getNextStepName: ( x ) => x,
+	getStepUrl: ( x ) => x,
+	getPreviousStepName: ( x ) => x,
 } ) );
 
 describe( '#signupStep User', () => {

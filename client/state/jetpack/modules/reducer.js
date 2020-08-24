@@ -23,7 +23,7 @@ import {
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 
-const createItemsReducer = active => {
+const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -43,7 +43,7 @@ const createItemsListReducer = () => {
 	};
 };
 
-const createRequestsReducer = data => {
+const createRequestsReducer = ( data ) => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -53,7 +53,7 @@ const createRequestsReducer = data => {
 	};
 };
 
-const createModuleListRequestReducer = fetchingModules => {
+const createModuleListRequestReducer = ( fetchingModules ) => {
 	return ( state, { siteId } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {

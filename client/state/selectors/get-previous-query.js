@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import 'state/route/init';
 
 /**
  * Gets the previous query set by a ROUTE_SET action
@@ -14,6 +14,6 @@ import { get } from 'lodash';
  * @param {object} state - global redux state
  * @returns {string} previous query value
  */
-export const getPreviousQuery = state => get( state, 'ui.route.query.previous', '' );
+export const getPreviousQuery = ( state ) => get( state, 'route.query.previous', '' );
 
 export default getPreviousQuery;

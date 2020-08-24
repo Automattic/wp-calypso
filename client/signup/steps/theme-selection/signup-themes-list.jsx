@@ -54,7 +54,7 @@ class SignupThemesList extends Component {
 		const actionLabel = this.props.translate( 'Pick' );
 		const getActionLabel = () => actionLabel;
 
-		const themes = this.getComputedThemes().map( theme => {
+		const themes = this.getComputedThemes().map( ( theme ) => {
 			return {
 				...theme,
 				id: theme.slug,

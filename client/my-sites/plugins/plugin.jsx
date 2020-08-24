@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
@@ -30,13 +29,13 @@ import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
 import DocumentHead from 'components/data/document-head';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { canJetpackSiteManage, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
+import { isJetpackSite, isRequestingSites } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import NoPermissionsError from './no-permissions-error';
-import getToursHistory from 'state/ui/guided-tours/selectors/get-tours-history';
+import getToursHistory from 'state/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'state/selectors/has-navigated';
 
 /* eslint-disable react/prefer-es6-class */
@@ -239,16 +238,6 @@ const SinglePlugin = createReactClass( {
 		return !! PluginsStore.getSitePlugin( this.props.selectedSite, this.state.plugin.slug );
 	},
 
-	renderDocumentHead() {
-		return <DocumentHead title={ this.getPageTitle() } />;
-	},
-
-	renderPageViewTracker() {
-		const analyticsPath = this.props.selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
-
-		return <PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />;
-	},
-
 	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
 			return;
@@ -303,42 +292,6 @@ const SinglePlugin = createReactClass( {
 		);
 	},
 
-	getMockPlugin() {
-		const selectedSite = {
-			slug: 'no-slug',
-			canUpdateFiles: true,
-			name: 'Not a real site',
-			options: {
-				software_version: '1',
-			},
-			plan: {
-				expired: false,
-				free_trial: false,
-				product_id: 2002,
-				product_name_short: 'Free',
-				product_slug: 'jetpack_free',
-				user_is_owner: false,
-			},
-		};
-
-		return (
-			<MainComponent>
-				<div className="plugin__page">
-					{ this.displayHeader() }
-					<PluginMeta
-						isInstalledOnSite={ this.isPluginInstalledOnsite() }
-						plugin={ this.getPlugin() }
-						siteUrl={ 'no-real-url' }
-						sites={ [ selectedSite ] }
-						selectedSite={ selectedSite }
-						isMock={ true }
-						isAtomicSite={ this.props.isAtomicSite }
-					/>
-				</div>
-			</MainComponent>
-		);
-	},
-
 	render() {
 		const { selectedSite } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
@@ -357,34 +310,18 @@ const SinglePlugin = createReactClass( {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
-		if ( selectedSite && this.props.isJetpackSite && ! this.props.canJetpackSiteManage ) {
-			return (
-				<MainComponent>
-					{ this.renderDocumentHead() }
-					{ this.renderPageViewTracker() }
-					<SidebarNavigation />
-					<JetpackManageErrorPage
-						template="optInManage"
-						title={ this.props.translate( "Looking to manage this site's plugins?" ) }
-						siteId={ selectedSite.ID }
-						section="plugins"
-						featureExample={ this.getMockPlugin() }
-					/>
-				</MainComponent>
-			);
-		}
-
 		const installing =
 			selectedSite &&
 			PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
 
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
 		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
+		const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 
 		return (
 			<MainComponent>
-				{ this.renderDocumentHead() }
-				{ this.renderPageViewTracker() }
+				<DocumentHead title={ this.getPageTitle() } />
+				<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 				<SidebarNavigation />
 				<div className="plugin__page">
 					{ this.displayHeader( calypsoify ) }
@@ -420,7 +357,6 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
-			canJetpackSiteManage: selectedSiteId && canJetpackSiteManage( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )

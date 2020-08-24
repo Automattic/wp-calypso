@@ -42,7 +42,7 @@ class EllipsisMenu extends Component {
 
 	popoverContext = React.createRef();
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		const { onClick } = this.props;
 		const { isMenuVisible } = this.state;
 

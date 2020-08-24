@@ -54,6 +54,14 @@ const CREDIT_CARD_EXAMPLES = [
 		name: 'Holly Baker',
 		expiry: '2027-11-30',
 	},
+	{
+		lastDigits: '',
+		cardType: '',
+		paymentPartner: 'paypal_express',
+		name: 'Eduardo Aute',
+		email: 'mail@example.org',
+		expiry: '0000-00-00',
+	},
 ];
 
 class CreditCards extends Component {

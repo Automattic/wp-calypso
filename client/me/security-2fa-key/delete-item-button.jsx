@@ -42,7 +42,7 @@ class Security2faKeyDeleteButton extends Component {
 		this.setState( { showDialog: false } );
 	};
 
-	onDeleteKey = closeDialog => {
+	onDeleteKey = ( closeDialog ) => {
 		// Actually delete the key
 		if ( this.props.onDelete ) {
 			this.props.onDelete( this.props.securityKey );

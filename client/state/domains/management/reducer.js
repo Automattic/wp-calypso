@@ -109,7 +109,7 @@ export const isSaving = withoutPersistence( ( state = {}, action ) => {
 
 function mergeDomainRegistrantContactDetails( domainState, registrantContactDetails ) {
 	return isArray( domainState )
-		? domainState.map( item => {
+		? domainState.map( ( item ) => {
 				if ( item.type === whoisType.REGISTRANT ) {
 					return {
 						...item,

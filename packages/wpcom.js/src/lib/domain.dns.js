@@ -45,7 +45,7 @@ class DomainDns {
 	 */
 	delete( record, query, fn ) {
 		return this.wpcom.req.post( this._subpath + '/delete', query, record, fn );
-	};
+	}
 }
 
 /**

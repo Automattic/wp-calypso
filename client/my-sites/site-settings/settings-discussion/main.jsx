@@ -23,6 +23,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
 		<FormattedHeader
+			brandFont
 			className="settings-discussion__page-heading"
 			headerText={ translate( 'Settings' ) }
 			align="left"
@@ -32,6 +33,6 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 	</Main>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( SiteSettingsDiscussion ) );

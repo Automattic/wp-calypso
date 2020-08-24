@@ -28,7 +28,7 @@ import request from 'woocommerce/state/sites/request';
  * @param {number} siteId The id of the site for which to clear.
  * @returns {object} Action object
  */
-export const clearCompletedNotification = siteId => ( dispatch, getState ) => {
+export const clearCompletedNotification = ( siteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -48,7 +48,7 @@ export const clearCompletedNotification = siteId => ( dispatch, getState ) => {
  * @param {number} siteId The id of the site for which to clear errors.
  * @returns {object} Action object
  */
-export const clearError = siteId => ( dispatch, getState ) => {
+export const clearError = ( siteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -95,13 +95,13 @@ export const createAccount = (
 
 	return request( siteId )
 		.post( 'connect/stripe/account', { email, country }, 'wc/v1' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( createSuccess( siteId, createAction, data ) );
 			if ( successAction ) {
 				dispatch( successAction( siteId, createAction, data ) );
 			}
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( createFailure( siteId, createAction, error ) );
 			if ( failureAction ) {
 				dispatch( failureAction( siteId, createAction, error ) );
@@ -168,13 +168,13 @@ export const fetchAccountDetails = ( siteId, successAction = null, failureAction
 
 	return request( siteId )
 		.get( 'connect/stripe/account', 'wc/v1' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( fetchSuccess( siteId, fetchAction, data ) );
 			if ( successAction ) {
 				dispatch( successAction( siteId, fetchAction, data ) );
 			}
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( fetchFailure( siteId, fetchAction, error ) );
 			if ( failureAction ) {
 				dispatch( failureAction( error ) );
@@ -247,13 +247,13 @@ export const deauthorizeAccount = ( siteId, successAction = null, failureAction 
 
 	return request( siteId )
 		.post( 'connect/stripe/account/deauthorize', {}, 'wc/v1' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( deauthorizeSuccess( siteId, deauthorizeAction, data ) );
 			if ( successAction ) {
 				dispatch( successAction( siteId, deauthorizeAction, data ) );
 			}
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( deauthorizeFailure( siteId, deauthorizeAction, error ) );
 			if ( failureAction ) {
 				dispatch( failureAction( error ) );
@@ -321,13 +321,13 @@ export const oauthInit = ( siteId, returnUrl, successAction = null, failureActio
 
 	return request( siteId )
 		.post( 'connect/stripe/oauth/init', { returnUrl }, 'wc/v1' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( oauthInitSuccess( siteId, initAction, data ) );
 			if ( successAction ) {
 				dispatch( successAction( siteId, initAction, data ) );
 			}
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( oauthInitFailure( siteId, initAction, error ) );
 			if ( failureAction ) {
 				dispatch( failureAction( siteId, initAction, error ) );
@@ -400,7 +400,7 @@ export const oauthConnect = (
 
 	return request( siteId )
 		.post( 'connect/stripe/oauth/connect', { code: stripeCode, state: stripeState }, 'wc/v1' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( oauthConnectSuccess( siteId, connectAction, data ) );
 			if ( successAction ) {
 				dispatch( successAction( siteId, connectAction, data ) );
@@ -409,7 +409,7 @@ export const oauthConnect = (
 		.then( () => {
 			dispatch( fetchAccountDetails( siteId ) );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( oauthConnectFailure( siteId, connectAction, error ) );
 			if ( failureAction ) {
 				dispatch( failureAction( siteId, connectAction, error ) );

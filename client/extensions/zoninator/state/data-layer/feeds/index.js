@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
@@ -17,10 +16,12 @@ import { resetLock } from '../../locks/actions';
 import { getZone } from '../../zones/selectors';
 import { ZONINATOR_REQUEST_FEED, ZONINATOR_SAVE_FEED } from 'zoninator/state/action-types';
 
+import 'state/form/init';
+
 const requestFeedNotice = 'zoninator-request-feed';
 const saveFeedNotice = 'zoninator-save-feed';
 
-export const requestZoneFeed = action => [
+export const requestZoneFeed = ( action ) => [
 	removeNotice( requestFeedNotice ),
 	http(
 		{
@@ -35,7 +36,7 @@ export const requestZoneFeed = action => [
 export const updateZoneFeed = ( action, response ) =>
 	updateFeed( action.siteId, action.zoneId, fromApi( response.data, action.siteId ) );
 
-export const requestZoneFeedError = action => ( dispatch, getState ) => {
+export const requestZoneFeedError = ( action ) => ( dispatch, getState ) => {
 	const { name } = getZone( getState(), action.siteId, action.zoneId );
 
 	dispatch(
@@ -48,7 +49,7 @@ export const requestZoneFeedError = action => ( dispatch, getState ) => {
 	);
 };
 
-export const saveZoneFeed = action => [
+export const saveZoneFeed = ( action ) => [
 	startSubmit( action.form ),
 	removeNotice( saveFeedNotice ),
 	resetLock( action.siteId, action.zoneId ),
@@ -73,7 +74,7 @@ export const announceSuccess = ( { form, posts, siteId, zoneId } ) => [
 	successNotice( translate( 'Zone feed saved!' ), { id: saveFeedNotice } ),
 ];
 
-export const announceFailure = action => [
+export const announceFailure = ( action ) => [
 	stopSubmit( action.form ),
 	errorNotice( translate( 'There was a problem saving your changes. Please try again' ), {
 		id: saveFeedNotice,

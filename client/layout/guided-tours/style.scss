@@ -10,7 +10,7 @@
 	padding-top: 19px;
 	margin-left: 5px;
 	margin-right: 5px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	animation-duration: 0.15s;
 	animation-name: guided-tours__step-fadein;
 	animation-timing-function: ease-in-out;
@@ -22,6 +22,10 @@
 		&:hover {
 			text-decoration: none;
 		}
+	}
+
+	a.button {
+		text-decoration: none;
 	}
 
 	p {
@@ -49,7 +53,6 @@
 
 	.tours__title {
 		font-size: 140%;
-	    font-weight: 300;
 	    display: flex;
 	    align-items: center;
 	    color: var( --color-text-inverted );

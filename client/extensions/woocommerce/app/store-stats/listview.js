@@ -79,7 +79,7 @@ class StoreStatsListView extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	slug: getSelectedSiteSlug( state ),
 	siteId: getSelectedSiteId( state ),
 } ) )( StoreStatsListView );

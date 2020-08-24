@@ -17,6 +17,7 @@ import {
 	Link,
 	Quit,
 } from 'layout/guided-tours/config-elements';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export const SimplePaymentsTour = makeTour(
 	<Tour { ...meta }>
@@ -53,8 +54,8 @@ export const SimplePaymentsTour = makeTour(
 							<span>{ translate( 'Upgrade' ) }</span>
 						</SiteLink>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments">
-						{ translate( 'Learn more about Simple Payments.' ) }
+					<Link href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal-button/' ) }>
+						{ translate( 'Learn more about Pay with PayPal.' ) }
 					</Link>
 				</Fragment>
 			) }

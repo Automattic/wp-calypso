@@ -7,6 +7,6 @@ Depending on the use case, this may be appropriate.
 
 Further reading:
 
-https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+https://github.com/Modernizr/Modernizr/blob/HEAD/feature-detects/touchevents.js
 http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
 http://www.html5rocks.com/en/mobile/touchandmouse/

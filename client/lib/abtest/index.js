@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
+import { every, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -10,14 +10,13 @@ import { getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import activeTests from 'lib/abtest/active-tests';
-import analytics from 'lib/analytics';
-import userFactory from 'lib/user';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import user from 'lib/user';
 import wpcom from 'lib/wp';
 import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso:abtests' );
-const user = userFactory();
 
 function ABTest( name, geoLocation ) {
 	if ( ! ( this instanceof ABTest ) ) {
@@ -43,7 +42,7 @@ export const abtest = ( name, geoLocation = false ) =>
  * @param {string} name - The name of the A/B test
  * @returns {string} - The user's variation or null if the user is not a participant
  */
-export const getABTestVariation = name => new ABTest( name ).getVariation();
+export const getABTestVariation = ( name ) => new ABTest( name ).getVariation();
 
 /**
  * Returns a user's variations from localStorage.
@@ -64,9 +63,9 @@ export const saveABTestVariation = ( name, variation ) =>
 
 export const getAllTests = () => keys( activeTests ).map( ABTest );
 
-const isUserSignedIn = () => user && user.get() !== false;
+const isUserSignedIn = () => user() && user().get() !== false;
 
-const parseDateStamp = datestamp => {
+const parseDateStamp = ( datestamp ) => {
 	const format = 'YYYYMMDD';
 
 	if ( datestamp.length === format.length ) {
@@ -86,9 +85,9 @@ const parseDateStamp = datestamp => {
 };
 
 const languageSlugs = getLanguageSlugs();
-const langSlugIsValid = slug => languageSlugs.indexOf( slug ) !== -1;
+const langSlugIsValid = ( slug ) => languageSlugs.indexOf( slug ) !== -1;
 
-ABTest.prototype.init = function( name, geoLocation ) {
+ABTest.prototype.init = function ( name, geoLocation ) {
 	if ( ! /^[A-Za-z\d]+$/.test( name ) ) {
 		throw new Error( 'The test name "' + name + '" should be camel case' );
 	}
@@ -170,7 +169,7 @@ ABTest.prototype.init = function( name, geoLocation ) {
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
 
-ABTest.prototype.getVariationAndSetAsNeeded = function() {
+ABTest.prototype.getVariationAndSetAsNeeded = function () {
 	if ( 'test' === process.env.NODE_ENV ) {
 		return this.defaultVariation;
 	}
@@ -198,18 +197,18 @@ ABTest.prototype.getVariationAndSetAsNeeded = function() {
 	return newVariation;
 };
 
-ABTest.prototype.getVariation = function() {
+ABTest.prototype.getVariation = function () {
 	return this.getSavedVariation( this.experimentId );
 };
 
 export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
-	const client = typeof navigator !== 'undefined' ? navigator : {};
+	const client = typeof navigator !== 'undefined' ? window.navigator : {};
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary =
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
 	const localeFromSession = getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
-	const userLocale = user.get().localeSlug || 'en';
+	const userLocale = user().get().localeSlug || 'en';
 
 	if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
 		debug( '%s: User has a %s locale', experimentId, userLocale );
@@ -238,7 +237,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 	return true;
 };
 
-ABTest.prototype.isEligibleForAbTest = function() {
+ABTest.prototype.isEligibleForAbTest = function () {
 	if ( ! store.enabled ) {
 		debug( '%s: Local storage is not enabled', this.experimentId );
 		return false;
@@ -279,17 +278,17 @@ ABTest.prototype.isEligibleForAbTest = function() {
 	return true;
 };
 
-ABTest.prototype.hasTestStartedYet = function() {
+ABTest.prototype.hasTestStartedYet = function () {
 	return new Date() > new Date( this.startDate );
 };
 
-ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
+ABTest.prototype.hasBeenInPreviousSeriesTest = function () {
 	const previousExperimentIds = keys( getSavedVariations() );
 	let previousName;
 
 	return some(
 		previousExperimentIds,
-		function( previousExperimentId ) {
+		function ( previousExperimentId ) {
 			previousName = previousExperimentId.substring(
 				0,
 				previousExperimentId.length - '_YYYYMMDD'.length
@@ -299,19 +298,19 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function() {
 	);
 };
 
-ABTest.prototype.hasRegisteredBeforeTestBegan = function() {
-	return user && user.get() && new Date( user.get().date ) < new Date( this.startDate );
+ABTest.prototype.hasRegisteredBeforeTestBegan = function () {
+	return user() && user().get() && new Date( user().get().date ) < new Date( this.startDate );
 };
 
-ABTest.prototype.getSavedVariation = function() {
+ABTest.prototype.getSavedVariation = function () {
 	return getSavedVariations()[ this.experimentId ] || null;
 };
 
-ABTest.prototype.assignVariation = function() {
+ABTest.prototype.assignVariation = function () {
 	let variationName, randomAllocationAmount;
 	let sum = 0;
 
-	const userId = get( user, 'data.ID' );
+	const userId = user()?.get()?.ID;
 	const allocationsTotal = reduce(
 		this.variationDetails,
 		( allocations, allocation ) => {
@@ -321,7 +320,7 @@ ABTest.prototype.assignVariation = function() {
 	);
 
 	if ( this.assignmentMethod === 'userId' && ! isNaN( +userId ) ) {
-		randomAllocationAmount = Number( user.data.ID ) % allocationsTotal;
+		randomAllocationAmount = Number( userId ) % allocationsTotal;
 	} else {
 		randomAllocationAmount = Math.random() * allocationsTotal;
 	}
@@ -334,14 +333,14 @@ ABTest.prototype.assignVariation = function() {
 	}
 };
 
-ABTest.prototype.recordVariation = function( variation ) {
-	analytics.tracks.recordEvent( 'calypso_abtest_start', {
+ABTest.prototype.recordVariation = function ( variation ) {
+	recordTracksEvent( 'calypso_abtest_start', {
 		abtest_name: this.experimentId,
 		abtest_variation: variation,
 	} );
 };
 
-ABTest.prototype.saveVariation = function( variation ) {
+ABTest.prototype.saveVariation = function ( variation ) {
 	if ( isUserSignedIn() ) {
 		// Note that for logged-in users, we fire the Tracks event from the API abtest endpoint
 		// to ensure that the numbers match up exactly with the user attributes data
@@ -352,11 +351,11 @@ ABTest.prototype.saveVariation = function( variation ) {
 	this.saveVariationInLocalStorage( variation );
 };
 
-ABTest.prototype.saveVariationOnBackend = function( variation ) {
+ABTest.prototype.saveVariationOnBackend = function ( variation ) {
 	wpcom.undocumented().saveABTestData(
 		this.experimentId,
 		variation,
-		function( error ) {
+		function ( error ) {
 			if ( error ) {
 				debug( '%s: Error saving variation %s: %s', this.experimentId, variation, error );
 			} else {
@@ -366,7 +365,7 @@ ABTest.prototype.saveVariationOnBackend = function( variation ) {
 	);
 };
 
-ABTest.prototype.saveVariationInLocalStorage = function( variation ) {
+ABTest.prototype.saveVariationInLocalStorage = function ( variation ) {
 	const savedVariations = getSavedVariations();
 	savedVariations[ this.experimentId ] = variation;
 	store.set( ABTEST_LOCALSTORAGE_KEY, savedVariations );

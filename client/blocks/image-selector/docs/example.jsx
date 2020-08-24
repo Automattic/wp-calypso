@@ -20,26 +20,26 @@ class ImageSelectorExample extends Component {
 		};
 	}
 
-	setImage = media => {
+	setImage = ( media ) => {
 		if ( ! media || ! media.items.length ) {
 			return;
 		}
-		const itemIds = media.items.map( item => item.ID );
+		const itemIds = media.items.map( ( item ) => item.ID );
 		this.setState( { imageIds: itemIds } );
 	};
 
-	changeImages = images => {
-		const imageIds = images.map( image => image.ID );
+	changeImages = ( images ) => {
+		const imageIds = images.map( ( image ) => image.ID );
 		this.setState( { imageIds: imageIds } );
 	};
 
-	removeImage = image => {
+	removeImage = ( image ) => {
 		const itemIds = [ ...this.state.imageIds ];
 		itemIds.splice( itemIds.indexOf( image.ID ), 1 );
 		this.setState( { imageIds: itemIds } );
 	};
 
-	addImage = image => {
+	addImage = ( image ) => {
 		if ( this.state.imageIds.indexOf( image.ID ) === -1 ) {
 			this.setState( {
 				imageIds: [ ...this.state.imageIds, image.ID ],
@@ -69,7 +69,7 @@ class ImageSelectorExample extends Component {
 	}
 }
 
-const ConnectedImageSelectorExample = connect( state => {
+const ConnectedImageSelectorExample = connect( ( state ) => {
 	const siteId = get( getCurrentUser( state ), 'primary_blog', null );
 
 	return {

@@ -90,7 +90,7 @@ import {
 	isNewUser,
 	isEnabled,
 	isSelectedSitePreviewable,
-} from 'state/ui/guided-tours/contexts';
+} from 'state/guided-tours/contexts';
 
 export const TutorialSitePreviewTour = makeTour(
 );
@@ -122,7 +122,7 @@ And to the [tour list](../all-tours.js):
 +    tutorialSitePreview: TutorialSitePreviewTour,
 ```
 
-And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/master/config/development.json) for the appropriate environment(s), such as `"guided-tours/tutorial-site-preview": true,`.
+And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/HEAD/config/development.json) for the appropriate environment(s), such as `"guided-tours/tutorial-site-preview": true,`.
 
 **Important:** use the feature flag to ensure that the tour is only triggered in environments where all the required features are available. E.g. especially the `desktop` environment may differ from general Calypso because of the different context that it runs in and the different release cycles.
 
@@ -181,7 +181,7 @@ Note that we've set the `enabled` variation to 0% so we don't show the tour to a
 
 Now we need to make sure the tour only triggers if the user in the `enabled` variant.
 
-First, add an import for `isAbTestInVariant` to the list of things we import from `state/ui/guided-tours/contexts` in `meta.js`.
+First, add an import for `isAbTestInVariant` to the list of things we import from `state/guided-tours/contexts` in `meta.js`.
 
 Now, use the import in the `when` property like so:
 
@@ -303,7 +303,7 @@ If neither the code chunk nor the site data required for `/settings` are availab
 
 _The [fix][pr-10521]:_ We make Guided Tours "subscribe" to the corresponding data requests using its all-purpose [`actionLog`][action-log]: simply add the action type signaling the satisfaction of a data need — _e.g._, `RECEIVE_FOOS` or `REQUEST_FOOS_SUCCESS` — to the log's [white list][relevant-types]. Any change to `actionLog` triggers all of Guided Tours' view layer to update, thereby allowing a correct and timely positioning of steps.
 
-[async-load]: https://github.com/Automattic/wp-calypso/blob/master/client/components/async-load/README.md
+[async-load]: https://github.com/Automattic/wp-calypso/blob/HEAD/client/components/async-load/README.md
 [async-load-usage]: https://github.com/Automattic/wp-calypso/blob/791003963e72c39589073b4de634bf946d1d288f/client/post-editor/editor-sidebar/index.jsx#L43
 [pr-10521]: https://github.com/Automattic/wp-calypso/pull/10521
 [action-log]: https://github.com/Automattic/wp-calypso/tree/791003963e72c39589073b4de634bf946d1d288f/client/state/ui/action-log

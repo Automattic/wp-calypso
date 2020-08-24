@@ -77,7 +77,7 @@ export const getSiteStatsPostStreakData = treeSelect(
 		const response = {};
 		// ensure streakData.data exists and it is not an array
 		if ( streakData && streakData.data && ! isArray( streakData.data ) ) {
-			Object.keys( streakData.data ).forEach( timestamp => {
+			Object.keys( streakData.data ).forEach( ( timestamp ) => {
 				const postDay = moment.unix( timestamp );
 				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
 
@@ -140,7 +140,7 @@ export function getSiteStatsCSVData( state, siteId, statType, query ) {
 	}
 
 	return flatten(
-		map( data, item => {
+		map( data, ( item ) => {
 			return buildExportArray( item );
 		} )
 	);
@@ -180,7 +180,7 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	const viewSummary = {};
 
-	viewData.data.forEach( item => {
+	viewData.data.forEach( ( item ) => {
 		const [ date, value ] = item;
 		const momentDate = moment( date );
 		const { years, months } = momentDate.toObject();
@@ -206,3 +206,56 @@ export function getSiteStatsViewSummary( state, siteId ) {
 
 	return viewSummary;
 }
+
+export const getMostPopularDatetime = ( state, siteId, query ) => {
+	const insightsData = getSiteStatsNormalizedData( state, siteId, 'statsInsights', query );
+	return {
+		day: insightsData?.day,
+		time: insightsData?.hour,
+	};
+};
+
+export const getTopPostAndPage = ( state, siteId, query ) => {
+	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
+
+	if ( ! data ) {
+		return {
+			post: null,
+			page: null,
+		};
+	}
+
+	const topPosts = {};
+
+	Object.values( data.days ).forEach( ( { postviews: posts } ) => {
+		posts.forEach( ( post ) => {
+			if ( post.id in topPosts ) {
+				topPosts[ post.id ].views += post.views;
+			} else {
+				topPosts[ post.id ] = post;
+			}
+		} );
+	} );
+
+	const sortedTopPosts = Object.values( topPosts ).sort( ( a, b ) => {
+		if ( a.views > b.views ) {
+			return -1;
+		}
+		if ( a.views < b.views ) {
+			return 1;
+		}
+		return 0;
+	} );
+
+	if ( ! sortedTopPosts.length ) {
+		return {
+			post: null,
+			page: null,
+		};
+	}
+
+	return {
+		post: sortedTopPosts.find( ( { type } ) => type === 'post' ),
+		page: sortedTopPosts.find( ( { type } ) => type === 'page' ),
+	};
+};

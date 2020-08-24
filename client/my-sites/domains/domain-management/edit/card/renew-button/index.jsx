@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,8 +12,6 @@ import classNames from 'classnames';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@automattic/components';
 import { handleRenewNowClick, getRenewalPrice } from 'lib/purchases';
-import { getByPurchaseId } from 'state/purchases/selectors';
-import QuerySitePurchases from 'components/data/query-site-purchases';
 
 /**
  * Style dependencies
@@ -31,6 +28,7 @@ class RenewButton extends React.Component {
 		reactivate: PropTypes.bool,
 		customLabel: PropTypes.string,
 		tracksProps: PropTypes.object,
+		purchase: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -72,7 +70,7 @@ class RenewButton extends React.Component {
 		}
 
 		const buttonClasses = classNames( 'renew-button', { 'is-loading': loading } );
-		let buttonLabel = translate( 'Renew for {{strong}}%(price)s{{/strong}}', {
+		let buttonLabel = translate( 'Renew now for {{strong}}%(price)s{{/strong}}', {
 			components: { strong: <strong /> },
 			args: { price: formattedPrice },
 		} );
@@ -87,8 +85,6 @@ class RenewButton extends React.Component {
 
 		return (
 			<React.Fragment>
-				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-
 				<Button
 					compact={ this.props.compact }
 					primary={ this.props.primary }
@@ -102,8 +98,4 @@ class RenewButton extends React.Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		purchase: getByPurchaseId( state, ownProps.subscriptionId ),
-	};
-} )( localize( RenewButton ) );
+export default localize( RenewButton );

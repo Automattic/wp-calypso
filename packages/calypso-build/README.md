@@ -13,7 +13,7 @@ It is designed in a way that in its simplest form is very easy to invoke, with v
 Add add `@automattic/calypso-build` to your project's `devDependencies` by running
 
 ```
-npm install --save-dev @automattic/calypso-build
+yarn add --dev @automattic/calypso-build
 ```
 
 Then, add a `build` script that invokes the `calypso-build` command:
@@ -106,7 +106,7 @@ module.exports = getWebpackConfig;
 
 ## Advanced Usage: Use own Babel Config
 
-It is also possible to customize how Babel transpiles a project. Simply add a `babel.config.js` to your project's root (i.e. the location you call `npm run build` from), and the build tool will pick it up over its own `babel.config.js` to transpile your project.
+It is also possible to customize how Babel transpiles a project. Simply add a `babel.config.js` to your project's root (i.e. the location you call `yarn run build` from), and the build tool will pick it up over its own `babel.config.js` to transpile your project.
 
 To extend the default behavior provided by `@automattic/calypso-build`, you can use presets found in its `babel/` directory, and add your own presets and/or plugins, e.g.
 

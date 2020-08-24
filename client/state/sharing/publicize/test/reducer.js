@@ -22,7 +22,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	describe( 'fetchConnection()', () => {
@@ -347,7 +347,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

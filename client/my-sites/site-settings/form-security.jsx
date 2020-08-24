@@ -102,7 +102,7 @@ class SiteSettingsFormSecurity extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const selectedSite = getSelectedSite( state );
 	const protectModuleActive = !! isJetpackModuleActive( state, siteId, 'protect' );

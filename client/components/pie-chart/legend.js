@@ -14,7 +14,7 @@ import LegendItem from 'components/legend-item';
 const NUM_COLOR_SECTIONS = 3;
 
 function transformData( data ) {
-	return sortBy( data, datum => datum.value )
+	return sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
 			...datum,
@@ -36,7 +36,7 @@ class PieChartLegend extends Component {
 		if ( nextProps.data !== prevState.data ) {
 			return {
 				data: nextProps.data,
-				dataTotal: sumBy( nextProps.data, datum => datum.value ),
+				dataTotal: sumBy( nextProps.data, ( datum ) => datum.value ),
 				transformedData: transformData( nextProps.data ),
 			};
 		}
@@ -49,7 +49,7 @@ class PieChartLegend extends Component {
 
 		return (
 			<div className="pie-chart__legend">
-				{ transformedData.map( datum => {
+				{ transformedData.map( ( datum ) => {
 					const percent =
 						dataTotal > 0 ? Math.round( ( datum.value / dataTotal ) * 100 ).toString() : '0';
 

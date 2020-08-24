@@ -11,8 +11,10 @@ import config from 'config';
 import HappychatConnection from 'components/happychat/connection-connected';
 import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
 import QueryLanguageNames from 'components/data/query-language-names';
+import QuerySupportHistory from 'components/data/query-support-history';
 import { openChat as openHappychat } from 'state/happychat/ui/actions';
 import { initialize as initializeDirectly } from 'state/help/directly/actions';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import { getHelpSelectedSiteId } from 'state/help/selectors';
 import {
@@ -59,6 +61,7 @@ class QueryInlineHelpSupportTypes extends Component {
 		return (
 			<React.Fragment>
 				<QueryTicketSupportConfiguration />
+				<QuerySupportHistory email={ this.props.currentUserEmail } />
 				<QueryLanguageNames />
 				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
 			</React.Fragment>
@@ -67,13 +70,14 @@ class QueryInlineHelpSupportTypes extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		shouldStartHappychatConnection:
 			! isRequestingSites( state ) && !! getHelpSelectedSiteId( state ),
 		ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 		ticketSupportRequestError: getTicketSupportRequestError( state ),
 		isHappychatUserEligible: isHappychatUserEligible( state ),
 		isDirectlyUninitialized: isDirectlyUninitialized( state ),
+		currentUserEmail: getCurrentUserEmail( state ),
 	} ),
 	{
 		initializeDirectly,

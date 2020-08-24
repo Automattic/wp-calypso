@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,13 +9,12 @@ import { some, partial, map, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaModal from 'post-editor/media-modal';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import markup from 'post-editor/media-modal/markup';
 import { bumpStat } from 'state/analytics/actions';
 import { getSelectedSite } from 'state/ui/selectors';
-import { blockSave } from 'state/ui/editor/save-blockers/actions';
+import { blockSave } from 'state/editor/save-blockers/actions';
 
 class EditorMediaModal extends Component {
 	static propTypes = {
@@ -69,7 +67,7 @@ class EditorMediaModal extends Component {
 		this.props.onClose();
 	}
 
-	onClose = value => {
+	onClose = ( value ) => {
 		if ( value ) {
 			// `isGutenberg` means that the Media Modal has been opened by a Gutenberg media block,
 			// as opposed to the Classic editor or the Classic block in Gutenberg.
@@ -81,18 +79,12 @@ class EditorMediaModal extends Component {
 	};
 
 	render() {
-		const { site } = this.props;
-
-		return (
-			<MediaLibrarySelectedData siteId={ get( site, 'ID' ) }>
-				<MediaModal { ...this.props } onClose={ this.onClose } />
-			</MediaLibrarySelectedData>
-		);
+		return <MediaModal { ...this.props } onClose={ this.onClose } />;
 	}
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSite( state ),
 	} ),
 	{

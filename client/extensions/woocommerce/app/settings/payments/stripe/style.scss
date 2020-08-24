@@ -1,6 +1,6 @@
 .stripe__connect-account {
 	.stripe__connect-account-heading {
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
 		margin-bottom: 8px;
 	}
@@ -32,7 +32,7 @@
 			flex-direction: column;
 
 			.stripe__connect-account-name {
-				font-size: 14px;
+				font-size: $font-body-small;
 				font-weight: 400;
 				margin-bottom: 1px;
 				margin-right: 4px;
@@ -45,7 +45,7 @@
 			.stripe__connect-account-status {
 				border-radius: 3px;
 				color: var( --color-text-inverted );
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				margin-right: 8px;
 				padding: 3px 8px;
 
@@ -59,7 +59,7 @@
 			}
 
 			.stripe__connect-account-disconnect {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				padding-top: 3px;
 				padding-bottom: 0;
 			}
@@ -77,7 +77,7 @@
 }
 
 .stripe__method-edit-header {
-	font-size: 18px;
+	font-size: $font-title-small;
 	justify-content: space-between;
 	padding: 0 0 16px;
 	font-weight: 600;

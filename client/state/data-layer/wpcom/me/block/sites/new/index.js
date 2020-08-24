@@ -43,7 +43,7 @@ export function receiveSiteBlock() {
 	} );
 }
 
-export const receiveSiteBlockError = ( { payload: { siteId } } ) => dispatch => {
+export const receiveSiteBlockError = ( { payload: { siteId } } ) => ( dispatch ) => {
 	dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
 	dispatch( bypassDataLayer( unblockSite( siteId ) ) );
 };

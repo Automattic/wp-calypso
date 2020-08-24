@@ -27,6 +27,6 @@ const render = ( context, next ) => {
 	next();
 };
 
-export default function() {
+export default function () {
 	page( '/extensions/sensei/:site?', siteSelection, navigation, render, makeLayout, clientRender );
 }

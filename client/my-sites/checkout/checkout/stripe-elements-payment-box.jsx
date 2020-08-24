@@ -21,6 +21,7 @@ export function StripeElementsPaymentBox( {
 	transaction,
 	presaleChatAvailable,
 	cards,
+	incompatibleProducts,
 } ) {
 	return (
 		<StripeHookProvider>
@@ -35,6 +36,7 @@ export function StripeElementsPaymentBox( {
 				onSubmit={ onSubmit }
 				transactionStep={ transaction.step }
 				presaleChatAvailable={ presaleChatAvailable }
+				incompatibleProducts={ incompatibleProducts }
 			>
 				{ children }
 			</CreditCardPaymentBox>

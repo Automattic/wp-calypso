@@ -48,7 +48,7 @@ const Sso = ( {
 						siteId={ selectedSiteId }
 						moduleSlug="sso"
 						label={ translate( 'Allow users to log in to this site using WordPress.com accounts' ) }
-						description="Use WordPress.com's secure authentication"
+						description={ translate( "Use WordPress.com's secure authentication" ) }
 						disabled={ isRequestingSettings || isSavingSettings || ssoModuleUnavailable }
 					/>
 
@@ -98,7 +98,7 @@ Sso.propTypes = {
 	fields: PropTypes.object,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

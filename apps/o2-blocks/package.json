@@ -18,15 +18,23 @@
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prebuild": "npm run clean",
-		"build": "calypso-build editor='./src/editor.js' --env.WP"
+		"prebuild": "yarn run clean",
+		"build": "calypso-build editor='./src/editor.js' view='./src/view.js' --env.WP"
 	},
 	"dependencies": {
-		"@wordpress/blocks": "6.12.0",
-		"@wordpress/components": "9.2.1",
-		"@wordpress/editor": "9.12.1",
-		"@wordpress/element": "2.11.0",
-		"@wordpress/i18n": "3.9.0",
-		"classnames": "2.2.6"
+		"@wordpress/api-fetch": "^3.18.0",
+		"@wordpress/base-styles": "^2.0.1",
+		"@wordpress/block-editor": "^4.3.3",
+		"@wordpress/blocks": "^6.20.3",
+		"@wordpress/components": "^10.0.3",
+		"@wordpress/data": "^4.22.3",
+		"@wordpress/editor": "^9.20.3",
+		"@wordpress/element": "^2.16.0",
+		"@wordpress/hooks": "^2.9.0",
+		"@wordpress/i18n": "^3.14.0",
+		"classnames": "^2.2.6",
+		"lodash": "^4.17.15",
+		"moment": "^2.26.0",
+		"new-github-issue-url": "^0.2.1"
 	}
 }

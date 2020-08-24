@@ -13,6 +13,7 @@ export const ValidationErrors = {
 	EXCEEDS_PLAN_STORAGE_LIMIT: 'EXCEEDS_PLAN_STORAGE_LIMIT',
 	NOT_ENOUGH_SPACE: 'NOT_ENOUGH_SPACE',
 	SERVICE_FAILED: 'SERVICE_FAILED',
+	SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
 	SERVICE_AUTH_FAILED: 'SERVICE_AUTH_FAILED',
 };
 
@@ -60,7 +61,7 @@ export const GalleryDefaultAttrs = {
  * Adapted from WordPress
  *
  * @copyright 2015 by the WordPress contributors.
- * @license See CREDITS.md.
+ * See CREDITS.md file in root directory for full license.
  * @see https://github.com/WordPress/WordPress/blob/4.2.4/wp-includes/functions.php#L2156-L2277
  */
 export const MimeTypes = {

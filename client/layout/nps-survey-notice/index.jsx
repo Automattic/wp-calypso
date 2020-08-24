@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
@@ -15,8 +14,8 @@ import NpsSurvey from 'blocks/nps-survey';
 import {
 	setNpsSurveyDialogShowing,
 	setupNpsSurveyDevTrigger,
-} from 'state/ui/nps-survey-notice/actions';
-import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
+} from 'state/nps-survey/notice/actions';
+import { isNpsSurveyDialogShowing } from 'state/nps-survey/notice/selectors';
 import {
 	submitNpsSurveyWithNoScore,
 	setupNpsSurveyEligibility,
@@ -32,7 +31,8 @@ import {
 import { isSupportSession } from 'state/support/selectors';
 import getSites from 'state/selectors/get-sites';
 import { isBusinessPlan } from 'lib/plans';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { bumpStat } from 'lib/analytics/mc';
 
 /**
  * Style dependencies
@@ -68,14 +68,14 @@ class NpsSurveyNotice extends Component {
 		this.props.setNpsSurveyDialogShowing( false );
 	};
 
-	handleSurveyClose = afterClose => {
+	handleSurveyClose = ( afterClose ) => {
 		this.props.setNpsSurveyDialogShowing( false );
 
 		// slightly delay the showing of the thank you notice
 		setTimeout( afterClose, 500 );
 	};
 
-	handleSurveyFormChange = currentForm => {
+	handleSurveyFormChange = ( currentForm ) => {
 		this.setState( { currentForm } );
 	};
 
@@ -93,8 +93,8 @@ class NpsSurveyNotice extends Component {
 			this.props.setNpsSurveyDialogShowing( true );
 			this.props.markNpsSurveyShownThisSession();
 
-			analytics.mc.bumpStat( 'calypso_nps_survey', 'notice_displayed' );
-			analytics.tracks.recordEvent( 'calypso_nps_notice_displayed' );
+			bumpStat( 'calypso_nps_survey', 'notice_displayed' );
+			recordTracksEvent( 'calypso_nps_notice_displayed' );
 		}
 	}
 
@@ -125,7 +125,7 @@ function isOwnBusinessSite( site ) {
 	return isBusinessPlan( get( site, 'plan.product_slug' ) ) && get( site, 'plan.user_is_owner' );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		isSupportSession: isSupportSession( state ),
 		isNpsSurveyDialogShowing: isNpsSurveyDialogShowing( state ),

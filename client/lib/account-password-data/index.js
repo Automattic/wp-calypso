@@ -31,7 +31,7 @@ function AccountPasswordData() {
 
 makeEmitter( AccountPasswordData.prototype );
 
-AccountPasswordData.prototype.validate = function( password, callback ) {
+AccountPasswordData.prototype.validate = function ( password, callback ) {
 	debug( 'Password validate method called' );
 
 	if ( '' === password ) {
@@ -42,7 +42,7 @@ AccountPasswordData.prototype.validate = function( password, callback ) {
 
 	wpcom.me().validatePassword(
 		password,
-		function( error, data ) {
+		function ( error, data ) {
 			if ( error ) {
 				debug( 'Password is not valid. Please try again.' );
 				callback( error );
@@ -61,7 +61,7 @@ AccountPasswordData.prototype.validate = function( password, callback ) {
 	);
 };
 
-AccountPasswordData.prototype.passwordValidationSuccess = function() {
+AccountPasswordData.prototype.passwordValidationSuccess = function () {
 	if ( null !== this.validatedPassword ) {
 		return !! this.validatedPassword.passed;
 	}
@@ -69,7 +69,7 @@ AccountPasswordData.prototype.passwordValidationSuccess = function() {
 	return false;
 };
 
-AccountPasswordData.prototype.passwordValidationFailed = function() {
+AccountPasswordData.prototype.passwordValidationFailed = function () {
 	if ( null !== this.validatedPassword ) {
 		return ! this.validatedPassword.passed;
 	}
@@ -77,15 +77,15 @@ AccountPasswordData.prototype.passwordValidationFailed = function() {
 	return true;
 };
 
-AccountPasswordData.prototype.hasValidatedPassword = function() {
+AccountPasswordData.prototype.hasValidatedPassword = function () {
 	return null !== this.validatedPassword;
 };
 
-AccountPasswordData.prototype.clearValidatedPassword = function() {
+AccountPasswordData.prototype.clearValidatedPassword = function () {
 	this.validatedPassword = null;
 };
 
-AccountPasswordData.prototype.getValidationFailures = function() {
+AccountPasswordData.prototype.getValidationFailures = function () {
 	if ( null === this.validatedPassword ) {
 		return [];
 	}
@@ -93,10 +93,10 @@ AccountPasswordData.prototype.getValidationFailures = function() {
 	return this.validatedPassword.test_results.failed;
 };
 
-AccountPasswordData.prototype.generate = function() {
+AccountPasswordData.prototype.generate = function () {
 	let i,
 		length = random( 12, 35 ),
-		chars = map( this.charsets, function( charset ) {
+		chars = map( this.charsets, function ( charset ) {
 			// Ensure one character from each character set is in the password
 			return sample( charset );
 		} );

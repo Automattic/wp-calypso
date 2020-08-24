@@ -18,7 +18,7 @@ import { infoNotice } from 'state/notices/actions';
 function PostActionsEllipsisMenuCopyLink( { onCopyLinkClick, copyLink } ) {
 	return (
 		<PopoverMenuItemClipboard text={ copyLink } onCopy={ onCopyLinkClick } icon={ 'link' }>
-			{ translate( 'Copy Link' ) }
+			{ translate( 'Copy link' ) }
 		</PopoverMenuItemClipboard>
 	);
 }

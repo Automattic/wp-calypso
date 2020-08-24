@@ -74,7 +74,7 @@ class Month extends PureComponent {
 	}
 }
 
-const StatsViewsMonths = props => {
+const StatsViewsMonths = ( props ) => {
 	const { translate, dataKey, data, numberFormat, moment, siteSlug } = props;
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
@@ -128,7 +128,7 @@ const StatsViewsMonths = props => {
 	};
 
 	const years = map( data, ( item, year ) => {
-		const cells = map( range( 0, 12 ), month => {
+		const cells = map( range( 0, 12 ), ( month ) => {
 			let value = item[ month ] ? item[ month ][ dataKey ] : null;
 			let displayValue;
 			const momentMonth = momentFromMonthYear( month, year );

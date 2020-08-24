@@ -8,7 +8,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -16,7 +16,7 @@ import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSitePlanRawPrice, getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 
-export const UpgradeToPremiumNudgePure = props => {
+export const UpgradeToPremiumNudgePure = ( props ) => {
 	const { price, planSlug, translate, userCurrency, canUserUpgrade, isJetpack } = props;
 
 	let featureList;
@@ -42,14 +42,16 @@ export const UpgradeToPremiumNudgePure = props => {
 	}
 
 	return (
-		<Banner
+		<UpsellNudge
 			className="post-share__actions-list-upgrade-nudge"
 			callToAction={ translate( 'Upgrade for %s', {
 				args: formatCurrency( price, userCurrency ),
 				comment: '%s will be replaced by a formatted price, i.e $9.99',
 			} ) }
+			forceDisplay
 			list={ featureList }
 			plan={ planSlug }
+			showIcon
 			title={ translate( 'Upgrade to a Premium Plan!' ) }
 		/>
 	);

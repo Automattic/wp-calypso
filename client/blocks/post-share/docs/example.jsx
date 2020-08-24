@@ -70,7 +70,7 @@ class PostShareExample extends Component {
 	}
 }
 
-const ConnectedPostShareExample = connect( state => {
+const ConnectedPostShareExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	const siteId = get( user, 'primary_blog' );
 	const site = getSite( state, siteId );

@@ -47,6 +47,6 @@ export default class SubMasterbarNav extends Component {
 	}
 
 	getSelected() {
-		return find( this.props.options, option => option.uri === this.props.uri );
+		return find( this.props.options, ( option ) => option.uri === this.props.uri );
 	}
 }

@@ -63,8 +63,8 @@ const loaders = {};
 function loadAndRun( scriptUrl, callback ) {
 	let loader = loaders[ scriptUrl ];
 	if ( ! loader ) {
-		loader = new Promise( function( resolve, reject ) {
-			loadScript( scriptUrl, function( err ) {
+		loader = new Promise( function ( resolve, reject ) {
+			loadScript( scriptUrl, function ( err ) {
 				if ( err ) {
 					reject( err );
 				} else {
@@ -74,7 +74,7 @@ function loadAndRun( scriptUrl, callback ) {
 		} );
 		loaders[ scriptUrl ] = loader;
 	}
-	loader.then( callback, function( err ) {
+	loader.then( callback, function ( err ) {
 		debug( 'error loading ' + scriptUrl, err );
 		loaders[ scriptUrl ] = null;
 	} );
@@ -135,14 +135,14 @@ function embedTumblr( domNode ) {
 	function removeScript() {
 		forEach(
 			document.querySelectorAll( 'script[src="https://secure.assets.tumblr.com/post.js"]' ),
-			function( el ) {
+			function ( el ) {
 				el.parentNode.removeChild( el );
 			}
 		);
 		tumblrLoader = false;
 	}
 
-	setTimeout( function() {
+	setTimeout( function () {
 		loadScript( 'https://secure.assets.tumblr.com/post.js', removeScript );
 	}, 30 );
 }
@@ -179,7 +179,7 @@ function embedSlideshow( domNode ) {
 
 	// Remove no JS warning so user doesn't have to look at it while several scripts load
 	const warningElements = domNode.parentNode.getElementsByClassName( 'jetpack-slideshow-noscript' );
-	forEach( warningElements, el => {
+	forEach( warningElements, ( el ) => {
 		el.classList.add( 'hidden' );
 	} );
 

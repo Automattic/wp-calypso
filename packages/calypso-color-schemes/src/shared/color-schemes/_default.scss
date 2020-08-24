@@ -251,11 +251,11 @@
 	--color-jetpack-plan-premium: var( --studio-jetpack-green-30 );
 	--color-jetpack-plan-professional: var( --studio-purple-30 );
 
-	--color-masterbar-background: var( --studio-wordpress-blue-50 );
-	--color-masterbar-border: var( --studio-wordpress-blue-60 );
+	--color-masterbar-background: var( --studio-blue-60 );
+	--color-masterbar-border: var( --studio-blue-70 );
 	--color-masterbar-text: var( --studio-white );
-	--color-masterbar-item-hover-background: var( --studio-wordpress-blue-60 );
-	--color-masterbar-item-active-background: var( --studio-wordpress-blue-80 );
+	--color-masterbar-item-hover-background: var( --studio-blue-70 );
+	--color-masterbar-item-active-background: var( --studio-blue-90 );
 	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
 	--color-masterbar-item-new-editor-hover-background: var( --studio-gray-40 );
 	--color-masterbar-unread-dot-background: var( --color-accent-20 );
@@ -263,15 +263,23 @@
 	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
 	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
 
+	--color-jetpack-masterbar-background: var( --studio-white );
+	--color-jetpack-masterbar-border: var( --studio-gray-5 );
+	--color-jetpack-masterbar-text: var( --studio-gray-50 );
+	--color-jetpack-masterbar-item-hover-background: var( --studio-gray-5 );
+	--color-jetpack-masterbar-item-active-background: var( --studio-gray-20 );
+
 	--color-sidebar-background: var( --color-surface );
 	--color-sidebar-background-rgb: var( --studio-white-rgb );
 	--color-sidebar-border: var( --studio-gray-5 );
 	--color-sidebar-text: var( --studio-gray-80 );
+	--color-sidebar-text-rgb: var( --studio-gray-80-rgb );
 	--color-sidebar-text-alternative: var( --studio-gray-50 );
 	--color-sidebar-gridicon-fill: var( --studio-gray-50 );
 	--color-sidebar-menu-selected-background: var( --studio-blue-5 );
 	--color-sidebar-menu-selected-background-rgb: var( --studio-blue-5-rgb );
 	--color-sidebar-menu-selected-text: var( --studio-blue-70 );
+	--color-sidebar-menu-selected-text-rgb: var( --studio-blue-70-rgb );
 	--color-sidebar-menu-hover-background: var( --studio-gray-5 );
 	--color-sidebar-menu-hover-background-rgb: var( --studio-gray-5-rgb );
 	--color-sidebar-menu-hover-text: var( --studio-gray-90 );
@@ -284,7 +292,7 @@
 	/* Brand Color Properties */
 	--color-automattic: var( --studio-blue-40 );
 	--color-jetpack: var( --studio-jetpack-green );
-	--color-simplenote:var( --studio-blue-30 );
+	--color-simplenote: var( --studio-simplenote-blue );
 	--color-woocommerce: var( --studio-woocommerce-purple );
 	--color-wordpress-com: var( --studio-wordpress-blue );
 	--color-wordpress-org: #585c60;

@@ -20,7 +20,6 @@ import ProfileLinksAddOther from 'me/profile-links-add-other';
 import { deleteUserProfileLink, resetUserProfileLinkErrors } from 'state/profile-links/actions';
 import getProfileLinks from 'state/selectors/get-profile-links';
 import getProfileLinksErrorType from 'state/selectors/get-profile-links-error-type';
-import ListEnd from 'components/list-end';
 
 /**
  * Style dependencies
@@ -65,7 +64,7 @@ class ProfileLinks extends React.Component {
 		} );
 	};
 
-	onRemoveLink = profileLink => {
+	onRemoveLink = ( profileLink ) => {
 		return () => this.props.deleteUserProfileLink( profileLink.link_slug );
 	};
 
@@ -102,7 +101,7 @@ class ProfileLinks extends React.Component {
 	renderProfileLinksList() {
 		return (
 			<ul className="profile-links__list">
-				{ this.props.profileLinks.map( profileLink => (
+				{ this.props.profileLinks.map( ( profileLink ) => (
 					<ProfileLink
 						key={ profileLink.link_slug }
 						title={ profileLink.title }
@@ -128,7 +127,7 @@ class ProfileLinks extends React.Component {
 	renderPlaceholders() {
 		return (
 			<ul className="profile-links__list">
-				{ times( 2, index => (
+				{ times( 2, ( index ) => (
 					<ProfileLink
 						title="Loading Profile Links"
 						url="http://wordpress.com"
@@ -174,7 +173,7 @@ class ProfileLinks extends React.Component {
 		return (
 			<Fragment>
 				<QueryProfileLinks />
-				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
+				<SectionHeader label={ this.props.translate( 'Profile links' ) }>
 					<AddProfileLinksButtons
 						showingForm={ this.state.showingForm }
 						onShowAddOther={ this.showAddOther }
@@ -185,14 +184,13 @@ class ProfileLinks extends React.Component {
 					/>
 				</SectionHeader>
 				<Card>{ this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }</Card>
-				<ListEnd />
 			</Fragment>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		profileLinks: getProfileLinks( state ),
 		errorType: getProfileLinksErrorType( state ),
 	} ),

@@ -22,7 +22,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{string} action saveDomainIpsTag action
  * @returns {Array} array of further actions
  */
-export const saveDomainIpsTag = action => {
+export const saveDomainIpsTag = ( action ) => {
 	const { domain, ipsTag } = action;
 
 	return [

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 import i18n from 'i18n-calypso';
-import { getCurrencyDefaults } from '@automattic/format-currency';
 
 /**
  * Internal Dependencies
@@ -35,7 +34,7 @@ const CancelPurchaseRefundInformation = ( {
 	const { refundPeriodInDays } = purchase;
 	let text;
 	let showSupportLink = true;
-	const onCancelBundledDomainChange = event => {
+	const onCancelBundledDomainChange = ( event ) => {
 		const newCancelBundledDomainValue = event.currentTarget.value === 'cancel';
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain: newCancelBundledDomainValue,
@@ -43,7 +42,7 @@ const CancelPurchaseRefundInformation = ( {
 		} );
 	};
 
-	const onConfirmCancelBundledDomainChange = event => {
+	const onConfirmCancelBundledDomainChange = ( event ) => {
 		onCancelConfirmationStateChange( {
 			cancelBundledDomain,
 			confirmCancelBundledDomain: event.target.checked,
@@ -105,12 +104,7 @@ const CancelPurchaseRefundInformation = ( {
 
 				showSupportLink = false;
 			} else if ( includedDomainPurchase && isDomainRegistration( includedDomainPurchase ) ) {
-				const { precision } = getCurrencyDefaults( purchase.currencyCode );
-				const planCostText =
-					purchase.currencySymbol +
-					parseFloat( purchase.refundAmount + includedDomainPurchase.costToUnbundle ).toFixed(
-						precision
-					);
+				const planCostText = purchase.totalRefundText;
 				if ( isRefundable( includedDomainPurchase ) ) {
 					text.push(
 						i18n.translate(

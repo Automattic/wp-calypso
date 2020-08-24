@@ -28,6 +28,7 @@ class DismissibleCard extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		dismissCard: PropTypes.func,
+		highlight: PropTypes.oneOf( [ 'error', 'info', 'success', 'warning' ] ),
 		isDismissed: PropTypes.bool,
 		temporary: PropTypes.bool,
 		onClick: PropTypes.func,
@@ -39,14 +40,21 @@ class DismissibleCard extends Component {
 	};
 
 	render() {
-		const { className, isDismissed, onClick, dismissCard, hasReceivedPreferences } = this.props;
+		const {
+			className,
+			highlight,
+			isDismissed,
+			onClick,
+			dismissCard,
+			hasReceivedPreferences,
+		} = this.props;
 
 		if ( isDismissed || ! hasReceivedPreferences ) {
 			return null;
 		}
 
 		return (
-			<Card className={ className }>
+			<Card className={ className } highlight={ highlight }>
 				<QueryPreferences />
 				<Gridicon
 					icon="cross"

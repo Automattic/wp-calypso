@@ -1,96 +1,32 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
+@import '../mixins.scss';
 
-// This should match the timeout used in the component.
-$onboarding-block-css-transition-duration: 750ms;
-
-.onboarding-block__acquire-intent {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top: 40px;
-	position: fixed;
-
-	top: 20%;
-	left: 0%;
-	width: 100%;
+.onboarding-block {
+	@include onboarding-block-margin;
 }
 
-.onboarding-block__questions {
-	display: inline-block;
-	min-width: 800px;
-}
+.gutenboarding-page {
+	animation: gutenboarding-page-appear 300ms ease-out forwards;
 
-.onboarding-block__questions-heading {
-	margin-bottom: 10px;
-	text-align: left;
-	font-size: 20px;
-}
-
-.onboarding-block__footer {
-	text-align: right;
-}
-
-.components-button.is-link.onboarding-block__question-skip {
-	color: $dark-gray-500;
-	font-size: 20px;
-	line-height: 2em;
-	margin: 10px 0;
-	text-decoration: none;
-	position: relative;
-
-	&:hover,
-	&:focus {
-		background: none;
-		border: none;
-		color: $blue-medium-focus;
-		outline: none;
-		box-shadow: none;
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
 	}
 
-	&:focus {
-		border-bottom: 2px solid $blue-medium-focus;
+	max-width: 1440px;
+	margin: auto;
+}
+
+@keyframes gutenboarding-page-appear {
+	from {
+		opacity: 0;
+		// using this instead of 'transform: translateY' because of this bug:
+		// https://achrafkassioui.com/blog/position-fixed-and-CSS-transforms/
+		// and the need to render children of the .gutenboarding-page as sticky footer in components/action-buttons
+		margin-top: -10px;
 	}
-}
 
-.onboarding-block__question input {
-	background: transparent;
-}
-
-.onboarding-block__background {
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background-size: cover;
-	z-index: -1;
-}
-
-.onboarding-block__background.has-background::before {
-	background-color: $white;
-	content: '';
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	opacity: 0.7;
-	transition: opacity $onboarding-block-css-transition-duration linear;
-}
-
-.onboarding-block__background-fade-enter {
-	&.onboarding-block__background::before {
-		opacity: 0.8;
+	to {
+		opacity: 1;
+		margin-top: 0;
 	}
-}
-.onboarding-block__background-fade-enter,
-.onboarding-block__background-fade-exit,
-.onboarding-block__background-fade-exit-done {
-	opacity: 0;
-}
-
-.onboarding-block__background-fade-enter,
-.onboarding-block__background-fade-exit,
-.onboarding-block__background-fade-enter-done {
-	transition: opacity $onboarding-block-css-transition-duration linear;
 }

@@ -3,18 +3,18 @@ $faq-gutter-width: 24px;
 .faq {
 	padding: 0 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 0 24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
 	}
 }
 
 .faq__heading {
 	margin-bottom: 32px;
-	font-size: 24px;
+	font-size: $font-title-medium;
 	color: var( --color-neutral-40 );
 }
 
@@ -28,21 +28,21 @@ $faq-gutter-width: 24px;
 .faq__item {
 	width: 100%;
 	margin-bottom: 16px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 21px;
 	box-sizing: border-box;
 	padding-left: ($faq-gutter-width / 2);
 	padding-right: ($faq-gutter-width / 2);
 
-	@include breakpoint( '480px-660px' ) {
+	@include breakpoint-deprecated( '480px-660px' ) {
 		width: 50%;
 	}
 
-	@include breakpoint( '800px-1040px' ) {
+	@include breakpoint-deprecated( '800px-1040px' ) {
 		width: 50%;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		width: (100% / 3);
 	}
 }

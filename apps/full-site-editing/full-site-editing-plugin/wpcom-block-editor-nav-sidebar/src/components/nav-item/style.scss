@@ -1,0 +1,57 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/variables';
+
+.wpcom-block-editor-nav-item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding: ( $grid-unit-20 / 2 ) $grid-unit-20;
+	text-align: initial;
+	color: $white;
+
+	&:hover,
+	&:not( [aria-disabled='true'] ):active {
+		color: $white;
+	}
+
+	&:focus {
+		color: $white;
+		border: 1px solid $white;
+		box-shadow: none !important;
+		outline: none !important;
+		border-radius: 0;
+		padding: ( ( $grid-unit-20 / 2 ) - 1 ) ( $grid-unit-20 - 1 );
+	}
+
+	&.is-selected {
+		background: $dark-gray-600;
+
+		.wpcom-block-editor-nav-item__label {
+			background: $dark-gray-500;
+		}
+	}
+}
+
+.wpcom-block-editor-nav-item__title {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	&.is-untitled {
+		font-style: italic;
+		color: $light-gray-800;
+	}
+}
+
+.wpcom-block-editor-nav-item__label {
+	display: inline-block;
+	padding: 4px;
+	border-radius: $radius-block-ui;
+	background: $dark-gray-500;
+	font-weight: 600;
+	margin-left: 4px;
+}

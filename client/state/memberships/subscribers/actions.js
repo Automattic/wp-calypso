@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
 	MEMBERSHIPS_SUBSCRIPTION_STOP,
@@ -9,9 +8,10 @@ import {
 	MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 	NOTICE_CREATE,
 } from 'state/action-types';
+import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/memberships';
-import wpcom from 'lib/wp';
+import 'state/memberships/init';
 
 export const requestSubscribers = ( siteId, offset ) => ( {
 	siteId,
@@ -20,7 +20,7 @@ export const requestSubscribers = ( siteId, offset ) => ( {
 } );
 
 export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			siteId,
 			type: MEMBERSHIPS_SUBSCRIPTION_STOP,
@@ -31,7 +31,7 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 			.post( `/sites/${ siteId }/memberships/subscriptions/${ subscriber.id }/cancel`, {
 				user_id: subscriber.user.ID,
 			} )
-			.then( result => {
+			.then( ( result ) => {
 				const errorMsg = result.error || '';
 
 				if ( errorMsg.length > 0 ) {
@@ -65,7 +65,7 @@ export const requestSubscriptionStop = ( siteId, subscriber, noticeText ) => {
 					},
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MEMBERSHIPS_SUBSCRIPTION_STOP_FAILURE,
 					subscriptionId: subscriber.id,

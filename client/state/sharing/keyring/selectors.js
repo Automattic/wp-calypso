@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { filter, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/sharing/init';
 
 /**
  * Returns an array of keyring connection objects.
@@ -39,7 +40,7 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
  */
 export const getKeyringConnectionsByName = createSelector(
 	( state, service ) => filter( getKeyringConnections( state ), { service } ),
-	state => [ state.sharing.keyring.items ]
+	( state ) => [ state.sharing.keyring.items ]
 );
 
 /**
@@ -65,7 +66,7 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
 export function getUserConnections( state, userId ) {
 	return filter(
 		state.sharing.keyring.items,
-		connection => connection.shared || connection.keyring_connection_user_ID === userId
+		( connection ) => connection.shared || connection.keyring_connection_user_ID === userId
 	);
 }
 

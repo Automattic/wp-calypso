@@ -1,5 +1,5 @@
 // Returns a function that returns a translated text when applied
-const translate = text => tr => tr( text );
+const translate = ( text ) => ( tr ) => tr( text );
 
 const KEY_BINDINGS = {
 	listNavigation: [

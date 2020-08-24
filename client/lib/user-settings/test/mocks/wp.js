@@ -1,4 +1,4 @@
-const me = function() {
+const me = function () {
 	return {
 		get: async () => ( {} ),
 		settings() {

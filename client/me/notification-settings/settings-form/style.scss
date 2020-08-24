@@ -8,7 +8,7 @@
 		margin: 0;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: none;
 	}
 }
@@ -38,7 +38,7 @@
 .notification-settings-form-header {
 	display: none;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: flex;
 		border-top: solid 1px var( --color-neutral-0 );
 		border-bottom: solid 1px var( --color-neutral-0 );
@@ -53,7 +53,7 @@
 	text-transform: uppercase;
 	justify-content: center;
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	padding: 10px;
 
 	.form-select {
@@ -70,7 +70,7 @@
 		flex-direction: column;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: flex;
 		flex: 1 0 auto;
 		flex-direction: column;

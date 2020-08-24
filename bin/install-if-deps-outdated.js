@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Installs `node_modules` with `npm ci`. Since that's a costly operation,
+ * Installs `node_modules` with `yarn install --frozen-lockfile`. Since that's a costly operation,
  * it will only perform it if needed, that is, if the packages
  * installed at `node_modules` aren't in sync over what
- * `package-lock.json` has. For that, modification times of both
+ * `yarn.lock` has. For that, modification times of both
  * files will be compared. If the lockfile is newer, it means that
  * the packages at node_modules may be outdated. That will happen,
  * for example, when switching branches.
@@ -20,8 +20,8 @@ const needsInstall = () => {
 	try {
 		let lockfileTime = 0;
 		const packageDir = path.dirname( '.' );
-		if ( fs.existsSync( path.join( packageDir, 'package-lock.json' ) ) ) {
-			lockfileTime = fs.statSync( path.join( packageDir, 'package-lock.json' ) ).mtime;
+		if ( fs.existsSync( path.join( packageDir, 'yarn.lock' ) ) ) {
+			lockfileTime = fs.statSync( path.join( packageDir, 'yarn.lock' ) ).mtime;
 		}
 
 		if ( ! lockfileTime ) {
@@ -43,7 +43,7 @@ if ( needsInstall() ) {
 
 function install() {
 	// run a distclean to clean things up. just ci is not enough with the monorepo.
-	const cleanResult = spawnSync( 'npm', [ 'run', 'distclean' ], {
+	const cleanResult = spawnSync( 'yarn', [ 'run', 'distclean' ], {
 		shell: true,
 		stdio: 'inherit',
 	} );
@@ -52,7 +52,7 @@ function install() {
 		process.exit( cleanResult.status );
 	}
 
-	const installResult = spawnSync( 'npm', [ 'ci' ], {
+	const installResult = spawnSync( 'yarn', [ 'install', '--frozen-lockfile' ], {
 		shell: true,
 		stdio: 'inherit',
 		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },

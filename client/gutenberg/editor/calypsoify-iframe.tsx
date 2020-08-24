@@ -4,17 +4,16 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith, isArray } from 'lodash';
+import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+/* eslint-disable no-restricted-imports */
 import url from 'url';
-
+import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getCustomizerUrl,
 	getSiteOption,
@@ -22,28 +21,37 @@ import {
 	isRequestingSites,
 	isRequestingSite,
 	isJetpackSite,
+	getSite,
 } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
-import { replaceHistory, setRoute, navigate } from 'state/ui/actions';
+import { replaceHistory, navigate } from 'state/ui/actions';
+import { clearLastNonEditorRoute, setRoute } from 'state/route/actions';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
-import { setEditorIframeLoaded, startEditingPost } from 'state/ui/editor/actions';
+import { setEditorIframeLoaded, startEditingPost } from 'state/editor/actions';
+import { notifyDesktopViewPostClicked, notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 import { Placeholder } from './placeholder';
 import WebPreview from 'components/web-preview';
 import { editPost, trashPost } from 'state/posts/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'lib/protect-form';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ConvertToBlocksDialog from 'components/convert-to-blocks';
 import config from 'config';
 import EditorDocumentHead from 'post-editor/editor-document-head';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
+import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { fetchMediaItem, getMediaItem } from 'state/media/thunks';
 
 /**
  * Types
@@ -60,9 +68,11 @@ interface Props {
 	duplicatePostId: T.PostId;
 	postId: T.PostId;
 	postType: T.PostType;
+	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThis: any;
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
+	parentPostId: T.PostId;
 }
 
 interface State {
@@ -74,7 +84,6 @@ interface State {
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
-	isConversionPromptVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
@@ -93,37 +102,71 @@ enum EditorActions {
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
+	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
-	ConversionRequest = 'triggerConversionRequest',
 	OpenCustomizer = 'openCustomizer',
 	GetTemplateEditorUrl = 'getTemplateEditorUrl',
 	OpenTemplatePart = 'openTemplatePart',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
+	GetNavSidebarLabels = 'getNavSidebarLabels',
+	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
+	TrackPerformance = 'trackPerformance',
 }
 
-class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedFormProps, State > {
+class CalypsoifyIframe extends Component<
+	Props & ConnectedProps & ProtectedFormProps & LocalizeProps & PerformanceTrackProps,
+	State
+> {
 	state: State = {
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
-		isConversionPromptVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
 	iframePort: MessagePort | null = null;
-	conversionPort: MessagePort | null = null;
 	mediaSelectPort: MessagePort | null = null;
+	mediaCancelPort: MessagePort | null = null;
 	revisionsPort: MessagePort | null = null;
 	successfulIframeLoad = false;
+	waitForIframeToInit: ReturnType< typeof setInterval > | undefined = undefined;
+	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
+
+		const isDesktop = config.isEnabled( 'desktop' );
+		// If the iframe fails to load for some reson, eg. an unexpected auth loop, this timeout
+		// provides a redirect to wpadmin for web users - this should now be a rare occurance with
+		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
+		this.waitForIframeToInit = setInterval( () => {
+			if ( this.props.shouldLoadIframe ) {
+				clearInterval( this.waitForIframeToInit );
+				this.waitForIframeToLoad = setTimeout( () => {
+					isDesktop
+						? this.props.notifyDesktopCannotOpenEditor(
+								this.props.site,
+								REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
+								this.props.iframeUrl
+						  )
+						: window.location.replace( this.props.iframeUrl );
+				}, 25000 );
+			}
+		}, 1000 );
+
+		// An earlier page with no access to the Calypso store (probably `/new`) has asked
+		// for the `lastNonEditorRoute` state to be cleared so that `getEditorCloseConfig()`
+		// will return the default close location.
+		if ( window.sessionStorage.getItem( 'a8c-clearLastNonEditorRoute' ) ) {
+			window.sessionStorage.removeItem( 'a8c-clearLastNonEditorRoute' );
+			this.props.clearLastNonEditorRoute();
+		}
 	}
 
 	componentWillUnmount() {
@@ -175,8 +218,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				const image = MediaStore.get( siteId, data.imageId );
-				MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+				this.props.setMediaLibrarySelectedItems( siteId, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
@@ -190,6 +232,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	};
 
 	onIframePortMessage = ( { data, ports }: MessageEvent ) => {
+		/* eslint-disable @typescript-eslint/no-explicit-any */
 		const { action, payload }: { action: EditorActions; payload: any } = data;
 
 		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {
@@ -200,15 +243,16 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// the kind of assignment which causes re-renders and we
 			// want it set immediately
 			this.mediaSelectPort = ports[ 0 ];
+			this.mediaCancelPort = ports[ 1 ];
 
 			if ( value ) {
 				const ids = Array.isArray( value )
-					? value.map( item => parseInt( item, 10 ) )
+					? value.map( ( item ) => parseInt( item, 10 ) )
 					: [ parseInt( value, 10 ) ];
-				const selectedItems = ids.map( id => {
-					const media = MediaStore.get( siteId, id );
+				const selectedItems = ids.map( ( id ) => {
+					const media = this.props.getMediaItem( siteId, id );
 					if ( ! media ) {
-						MediaActions.fetch( siteId, id );
+						this.props.fetchMediaItem( siteId, id );
 					}
 					return {
 						ID: id,
@@ -216,17 +260,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 					};
 				} );
 
-				MediaActions.setLibrarySelectedItems( siteId, selectedItems );
+				this.props.setMediaLibrarySelectedItems( siteId, selectedItems );
 			} else {
-				MediaActions.setLibrarySelectedItems( siteId, [] );
+				this.props.setMediaLibrarySelectedItems( siteId, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
-		}
-
-		if ( EditorActions.ConversionRequest === action ) {
-			this.conversionPort = ports[ 0 ];
-			this.setState( { isConversionPromptVisible: true } );
 		}
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
@@ -237,7 +276,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 
-				//set postId on state.ui.editor.postId, so components like editor revisions can read from it
+				//set postId on state.editor.postId, so components like editor revisions can read from it
 				this.props.startEditingPost( siteId, postId );
 
 				//set post type on state.posts.[ id ].type, so components like document head can read from it
@@ -273,6 +312,13 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			this.openPreviewModal( postUrl, ports[ 0 ] );
 		}
 
+		if ( EditorActions.ViewPost === action ) {
+			const { postUrl } = payload;
+			config.isEnabled( 'desktop' )
+				? this.props.notifyDesktopViewPostClicked( postUrl )
+				: window.open( postUrl, '_top' );
+		}
+
 		if ( EditorActions.OpenCustomizer === action ) {
 			const { autofocus = null, unsavedChanges = false } = payload;
 			this.openCustomizer( autofocus, unsavedChanges );
@@ -293,13 +339,41 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			// TODO - In future iterations, replace window param with gutenboarding site info.
-			const urlParams = new URLSearchParams( window.location.search );
 			const isGutenboarding =
-				config.isEnabled( 'gutenboarding' ) && urlParams.has( 'is-gutenboarding' );
+				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
+			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
+			const isGutenboardingNewLaunch = config.isEnabled( 'gutenboarding/new-launch' );
+
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl: `${ window.location.origin }/start/frankenflow?siteSlug=${ this.props.siteId }`,
+				frankenflowUrl,
+				isNewLaunch: isGutenboardingNewLaunch,
+			} );
+		}
+
+		if ( EditorActions.GetNavSidebarLabels === action ) {
+			const { translate } = this.props;
+
+			ports[ 0 ].postMessage( {
+				allPostsLabels: {
+					page: translate( 'View all pages' ),
+					post: translate( 'View all posts' ),
+				},
+				createPostLabels: {
+					page: translate( 'Add new page' ),
+					post: translate( 'Add new post' ),
+				},
+				listHeadings: {
+					page: translate( 'Recent Pages' ),
+					post: translate( 'Recent Posts' ),
+				},
+			} );
+		}
+
+		if ( EditorActions.GetCalypsoUrlInfo === action ) {
+			ports[ 0 ].postMessage( {
+				origin: window.location.origin,
+				siteSlug: this.props.siteSlug,
 			} );
 		}
 
@@ -316,6 +390,15 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		if ( EditorActions.PostStatusChange === action ) {
 			const { status } = payload;
 			this.handlePostStatusChange( status );
+		}
+
+		if ( EditorActions.TrackPerformance === action ) {
+			if ( payload.mark === 'editor.ready' ) {
+				this.props.stopPerformanceTracking( {
+					isNew: payload.isNew,
+					blockCount: payload.blockCount,
+				} );
+			}
 		}
 	};
 
@@ -367,7 +450,7 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 	closeMediaModal = ( media: { items: Parameters< typeof mediaCalypsoToGutenberg >[] } ) => {
 		if ( ! this.state.classicBlockEditorId && media && this.mediaSelectPort ) {
 			const { multiple } = this.state;
-			const formattedMedia = map( media.items, item => mediaCalypsoToGutenberg( item ) );
+			const formattedMedia = map( media.items, ( item ) => mediaCalypsoToGutenberg( item ) );
 			const payload = multiple ? formattedMedia : formattedMedia[ 0 ];
 
 			this.mediaSelectPort.postMessage( payload );
@@ -377,6 +460,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			// and prevent sending more messages (which will be ignored)
 			this.mediaSelectPort.close();
 			this.mediaSelectPort = null;
+		}
+
+		if ( ! this.state.classicBlockEditorId && ! media && this.mediaCancelPort ) {
+			this.mediaCancelPort.postMessage( true );
+			this.mediaCancelPort.close();
+			this.mediaCancelPort = null;
 		}
 
 		this.setState( { classicBlockEditorId: null, isMediaModalVisible: false } );
@@ -439,15 +528,22 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		previewPort.onmessage = ( message: MessageEvent ) => {
 			previewPort.close();
 
-			const { frameNonce } = this.props;
+			const { frameNonce, unmappedSiteUrl } = this.props;
 			const { previewUrl, editedPost } = message.data;
-
 			const parsedPreviewUrl = url.parse( previewUrl, true );
+
 			if ( frameNonce ) {
 				parsedPreviewUrl.query[ 'frame-nonce' ] = frameNonce;
 			}
+
 			parsedPreviewUrl.query.iframe = 'true';
 			delete parsedPreviewUrl.search;
+
+			const { host: unmappedSiteUrlHost } = url.parse( unmappedSiteUrl );
+			if ( unmappedSiteUrlHost ) {
+				parsedPreviewUrl.host = unmappedSiteUrlHost;
+				parsedPreviewUrl.hostname = unmappedSiteUrlHost;
+			}
 
 			this.setState( {
 				previewUrl: url.format( parsedPreviewUrl ),
@@ -489,19 +585,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 		this.props.navigate( navUrl );
 	};
 
-	handleConversionResponse = ( confirmed: boolean ) => {
-		this.setState( { isConversionPromptVisible: false } );
-
-		if ( ! this.conversionPort ) {
-			return;
-		}
-
-		this.conversionPort.postMessage( confirmed );
-
-		this.conversionPort.close();
-		this.conversionPort = null;
-	};
-
 	getStatsPath = () => {
 		const { postId } = this.props;
 		return postId ? '/block-editor/:post_type/:site/:post_id' : '/block-editor/:post_type/:site';
@@ -533,16 +616,38 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
-	onIframeLoaded = ( iframeUrl: string ) => {
+	onIframeLoaded = async ( iframeUrl: string ) => {
+		clearTimeout( this.waitForIframeToLoad );
 		if ( ! this.successfulIframeLoad ) {
-			window.location.replace( iframeUrl );
-			return;
+			// Sometimes (like in IE) the WindowActions.Loaded message arrives after
+			// the onLoad event is fired. To deal with this case we'll poll
+			// `this.successfulIframeLoad` for a while before redirecting.
+
+			// Checks to see if the iFrame has loaded every 200ms. If it has
+			// loaded, then resolve the promise.
+			let pendingIsLoadedInterval;
+			const pollForLoadedFlag = new Promise( ( resolve ) => {
+				pendingIsLoadedInterval = setInterval(
+					() => this.successfulIframeLoad && resolve( 'iframe-loaded' ),
+					200
+				);
+			} );
+
+			const fiveSeconds = new Promise( ( resolve ) => setTimeout( resolve, 5000, 'timeout' ) );
+
+			const finishCondition = await Promise.race( [ pollForLoadedFlag, fiveSeconds ] );
+			clearInterval( pendingIsLoadedInterval );
+
+			if ( finishCondition === 'timeout' ) {
+				window.location.replace( iframeUrl );
+				return;
+			}
 		}
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};
 
 	render() {
-		const { iframeUrl, siteId, shouldLoadIframe } = this.props;
+		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -550,7 +655,6 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 			multiple,
 			isIframeLoaded,
 			isPreviewVisible,
-			isConversionPromptVisible,
 			previewUrl,
 			postUrl,
 			editedPost,
@@ -568,19 +672,12 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 				/>
 				<EditorDocumentHead />
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<ConvertToBlocksDialog
-					showDialog={ isConversionPromptVisible }
-					handleResponse={ this.handleConversionResponse }
-				/>
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						/* eslint-disable jsx-a11y/iframe-has-title */
 						<iframe
 							ref={ this.iframeRef }
-							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
 							// in Jetpack sites
@@ -591,25 +688,24 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
-				<MediaLibrarySelectedData siteId={ siteId }>
-					<EditorMediaModal
-						disabledDataSources={ getDisabledDataSources( allowedTypes ) }
-						enabledFilters={ getEnabledFilters( allowedTypes ) }
-						galleryViewEnabled={ isUsingClassicBlock }
-						isGutenberg={ ! isUsingClassicBlock }
-						onClose={ this.closeMediaModal }
-						onInsertMedia={ this.insertClassicBlockMedia }
-						single={ ! multiple }
-						source=""
-						visible={ isMediaModalVisible }
-					/>
-				</MediaLibrarySelectedData>
+				<EditorMediaModal
+					disabledDataSources={ getDisabledDataSources( allowedTypes ) }
+					enabledFilters={ getEnabledFilters( allowedTypes ) }
+					galleryViewEnabled={ isUsingClassicBlock }
+					isGutenberg={ ! isUsingClassicBlock }
+					onClose={ this.closeMediaModal }
+					onInsertMedia={ this.insertClassicBlockMedia }
+					single={ ! multiple }
+					source=""
+					visible={ isMediaModalVisible }
+				/>
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
 					externalUrl={ postUrl }
 					onClose={ this.closePreviewModal }
 					overridePost={ editedPost }
 					previewUrl={ previewUrl }
+					showEditHeaderLink={ true }
 					showPreview={ isPreviewVisible }
 				/>
 			</Fragment>
@@ -619,9 +715,18 @@ class CalypsoifyIframe extends Component< Props & ConnectedProps & ProtectedForm
 
 const mapStateToProps = (
 	state: T.AppState,
-	{ postId, postType, duplicatePostId, fseParentPageId, creatingNewHomepage }: Props
+	{
+		postId,
+		postType,
+		duplicatePostId,
+		fseParentPageId,
+		parentPostId,
+		creatingNewHomepage,
+		editorType = 'post',
+	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
@@ -632,6 +737,7 @@ const mapStateToProps = (
 		post_type: postType !== 'post' && postType, // Use postType if it's different than post.
 		calypsoify: 1,
 		fse_parent_post: fseParentPageId != null && fseParentPageId,
+		parent_post: parentPostId != null && parentPostId,
 		'block-editor': 1,
 		'frame-nonce': getSiteOption( state, siteId, siteOption ) || '',
 		'jetpack-copy': duplicatePostId,
@@ -645,7 +751,15 @@ const mapStateToProps = (
 		queryArgs = wpcom.addSupportParams( queryArgs );
 	}
 
-	const siteAdminUrl = getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
+	// Pass through to iframed editor if user is in editor deprecation group.
+	if ( inEditorDeprecationGroup( state ) && 'classic' === getSelectedEditor( state, siteId ) ) {
+		queryArgs[ 'in-editor-deprecation-group' ] = 1;
+	}
+
+	const siteAdminUrl =
+		editorType === 'site'
+			? getSiteAdminUrl( state, siteId, 'admin.php?page=gutenberg-edit-site' )
+			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
@@ -670,6 +784,7 @@ const mapStateToProps = (
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
+		siteSlug,
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
@@ -679,6 +794,11 @@ const mapStateToProps = (
 			partial.placeholder,
 			'wp_template_part'
 		),
+		unmappedSiteUrl: getSiteOption( state, siteId, 'unmapped_url' ),
+		siteCreationFlow: getSiteOption( state, siteId, 'site_creation_flow' ),
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+		site: getSite( state, siteId ),
+		parentPostId,
 	};
 };
 
@@ -689,11 +809,22 @@ const mapDispatchToProps = {
 	openPostRevisionsDialog,
 	setEditorIframeLoaded,
 	startEditingPost,
+	notifyDesktopViewPostClicked,
 	editPost,
 	trashPost,
 	updateSiteFrontPage,
+	notifyDesktopCannotOpenEditor,
+	setMediaLibrarySelectedItems,
+	fetchMediaItem,
+	getMediaItem,
+	clearLastNonEditorRoute,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
-export default connect( mapStateToProps, mapDispatchToProps )( protectForm( CalypsoifyIframe ) );
+export default flowRight(
+	withStopPerformanceTrackingProp,
+	connect( mapStateToProps, mapDispatchToProps ),
+	localize,
+	protectForm
+)( CalypsoifyIframe );

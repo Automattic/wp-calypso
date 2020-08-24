@@ -22,13 +22,13 @@ class SitePicker extends Component {
 		siteSlug: null,
 	};
 
-	handleSiteSelect = siteSlug => {
+	handleSiteSelect = ( siteSlug ) => {
 		this.setState( {
 			siteSlug,
 		} );
 	};
 
-	filterSites = site => {
+	filterSites = ( site ) => {
 		return site.capabilities.manage_options && ! site.jetpack;
 	};
 

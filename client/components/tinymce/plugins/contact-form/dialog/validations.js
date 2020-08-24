@@ -9,7 +9,7 @@ export function validateFormFields( fields ) {
 	if ( ! Array.isArray( fields ) || fields.length === 0 ) {
 		return false;
 	}
-	return every( fields, field => {
+	return every( fields, ( field ) => {
 		if ( field.type !== 'radio' && field.type !== 'select' ) {
 			return !! field.label;
 		}
@@ -19,6 +19,6 @@ export function validateFormFields( fields ) {
 }
 
 export function validateSettingsToEmail( to ) {
-	const emails = to ? to.split( ',' ).map( email => email.trim() ) : [];
+	const emails = to ? to.split( ',' ).map( ( email ) => email.trim() ) : [];
 	return every( emails, emailValidator.validate );
 }

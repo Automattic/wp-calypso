@@ -4,12 +4,12 @@
 
 	&.is-single-line,
 	&.is-single-line .comments__comment-content {
-		max-height: 15px * 1.6;
+		max-height: $font-body * 1.6;
 	}
 
 	&.is-excerpt,
 	&.is-excerpt .comments__comment-content {
-		max-height: 16px * 1.4375 * 3; // Needs to be exactly 69px so a 3-liner only and 3-liner excerpt align
+		max-height: $font-body * 1.6 * 3; // 3 lines
 	}
 
 	&.is-single-line .comments__comment-content,
@@ -35,7 +35,7 @@
 
 .comments__comment-content {
 	@extend %content-font;
-	font-size: 15px;
+	font-size: $font-body;
 	line-height: 1.56;
 	word-break: break-word;
 
@@ -59,5 +59,12 @@
 	pre {
 		white-space: pre-wrap;
 	}
-}
 
+	figure figcaption {
+		padding: 12px;
+		margin: 0;
+		font-size: $font-body-small;
+		text-align: center;
+		color: var( --color-neutral-40 );
+	}
+}

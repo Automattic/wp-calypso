@@ -5,7 +5,7 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import wpcom from 'lib/wp';
 import {
 	JETPACK_CONNECT_AUTHORIZE,
@@ -21,8 +21,8 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	SITE_RECEIVE,
-} from 'state/action-types';
+} from 'state/jetpack-connect/action-types';
+import { SITE_RECEIVE } from 'state/action-types';
 
 describe( '#confirmJetpackInstallStatus()', () => {
 	test( 'should dispatch confirm status action when called', () => {
@@ -78,7 +78,7 @@ describe( '#authorize()', () => {
 
 	describe( 'success', () => {
 		const mySitesPath = '/rest/v1.1/me/sites';
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
@@ -175,7 +175,7 @@ describe( '#authorize()', () => {
 	} );
 
 	describe( 'failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
@@ -243,7 +243,7 @@ describe( '#validateSSONonce()', () => {
 	};
 
 	describe( 'success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
@@ -286,7 +286,7 @@ describe( '#validateSSONonce()', () => {
 	} );
 
 	describe( 'failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
@@ -325,7 +325,7 @@ describe( '#authorizeSSO()', () => {
 	const ssoUrl = 'http://example.wordpress.com';
 
 	describe( 'success', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {
@@ -359,7 +359,7 @@ describe( '#authorizeSSO()', () => {
 	} );
 
 	describe( 'failure', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {

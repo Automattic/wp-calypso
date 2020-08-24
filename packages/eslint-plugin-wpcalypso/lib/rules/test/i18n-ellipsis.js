@@ -184,6 +184,7 @@ new RuleTester( config ).run( 'i18n-ellipsis', rule, {
 		{
 			code: "_x( '...', 'ellipsis' );",
 			errors: [ { message: rule.ERROR_MESSAGE } ],
+			output: "_x( '…', 'ellipsis' );",
 		},
 		{
 			code: "_n( '...', '...s', 1 );",

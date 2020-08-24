@@ -22,7 +22,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param {object} action Redux action
  * @returns {object} original action
  */
-export const requestActivePromotions = action =>
+export const requestActivePromotions = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

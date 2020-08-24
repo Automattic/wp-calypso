@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	PREFERENCES_SET,
@@ -14,6 +13,8 @@ import {
 	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './constants';
+
+import 'state/preferences/init';
 
 /**
  * Returns an action object signalling the remote preferences have been
@@ -35,7 +36,7 @@ export function receivePreferences( values ) {
  * @returns { Function }                      Action thunk
  */
 export function fetchPreferences() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( { type: PREFERENCES_FETCH } );
 
 		return wpcom
@@ -43,7 +44,7 @@ export function fetchPreferences() {
 			.me()
 			.preferences()
 			.get()
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 				dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
 			} )
@@ -78,7 +79,7 @@ export const setPreference = ( key, value ) => ( {
  * @param   {string|number|object}      value User preference value
  * @returns { Function }                      Action thunk
  */
-export const savePreference = ( key, value ) => dispatch => {
+export const savePreference = ( key, value ) => ( dispatch ) => {
 	dispatch( setPreference( key, value ) );
 	dispatch( {
 		type: PREFERENCES_SAVE,
@@ -97,7 +98,7 @@ export const savePreference = ( key, value ) => dispatch => {
 		.me()
 		.preferences()
 		.update( payload )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 			dispatch( {
 				type: PREFERENCES_SAVE_SUCCESS,
@@ -105,7 +106,7 @@ export const savePreference = ( key, value ) => dispatch => {
 				value,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( {
 				type: PREFERENCES_SAVE_FAILURE,
 				error,

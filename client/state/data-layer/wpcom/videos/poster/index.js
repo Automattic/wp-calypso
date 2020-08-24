@@ -1,15 +1,18 @@
 /**
  * Internal dependencies
  */
-
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
-import { setPosterUrl, showError, showUploadProgress } from 'state/ui/editor/video-editor/actions';
+import { setPosterUrl, showError, showUploadProgress } from 'state/editor/video-editor/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import getMediaItem from 'state/selectors/get-media-item';
+import { dispatchFluxUpdateMediaItem } from 'state/media/utils/flux-adapter';
+import { assign } from 'lodash';
 
-const fetch = action => {
+const fetch = ( action ) => {
 	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
 		return;
 	}
@@ -28,7 +31,27 @@ const fetch = action => {
 	return http( params, action );
 };
 
-const onSuccess = ( action, { poster: posterUrl } ) => setPosterUrl( posterUrl );
+const onSuccess = ( action, { poster: posterUrl } ) => ( dispatch, getState ) => {
+	dispatch( setPosterUrl( posterUrl ) );
+
+	const currentState = getState();
+
+	const siteId = getSelectedSiteId( currentState );
+	const mediaItem = getMediaItem( currentState, siteId, action.meta.mediaId );
+
+	// Photon does not support URLs with a querystring component.
+	const urlBeforeQuery = ( posterUrl || '' ).split( '?' )[ 0 ];
+
+	const updatedMediaItem = assign( {}, mediaItem, {
+		thumbnails: {
+			fmt_hd: urlBeforeQuery,
+			fmt_dvd: urlBeforeQuery,
+			fmt_std: urlBeforeQuery,
+		},
+	} );
+
+	dispatchFluxUpdateMediaItem( siteId, updatedMediaItem );
+};
 
 const onError = () => showError();
 

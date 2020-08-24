@@ -14,9 +14,6 @@ import { noop } from 'lodash';
  */
 import { MediaLibraryContent } from 'my-sites/media-library/content';
 import { ValidationErrors } from 'lib/media/constants';
-import MediaActions from 'lib/media/actions';
-
-jest.mock( 'lib/media/actions' );
 
 const googleConnection = {
 	service: 'google_photos',
@@ -48,12 +45,12 @@ function getMediaContentInstance( props ) {
 describe( 'MediaLibraryContent', () => {
 	let beforeWindow;
 
-	beforeAll( function() {
+	beforeAll( function () {
 		beforeWindow = global.window;
 		global.window = {};
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		global.window = beforeWindow;
 	} );
 
@@ -205,37 +202,43 @@ describe( 'MediaLibraryContent', () => {
 		} );
 
 		test( 'sourceChanged issued when expired google service goes from invalid to ok', () => {
+			const changeMediaSource = jest.fn();
 			const propsBefore = {
 				source: 'google_photos',
 				isConnected: false,
 				googleConnection: null,
 				mediaValidationErrorTypes,
+				changeMediaSource,
 			};
 			const propsAfter = {
 				source: 'google_photos',
 				isConnected: false,
 				googleConnection,
+				changeMediaSource,
 			};
 			const wrapper = getMediaContent( propsBefore );
 
-			MediaActions.sourceChanged.mockReset();
+			changeMediaSource.mockReset();
 			wrapper.setProps( propsAfter );
 
-			expect( MediaActions.sourceChanged.mock.calls.length ).toEqual( 1 );
+			expect( changeMediaSource ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'sourceChanged not issued when google service remains constant', () => {
+			const changeMediaSource = jest.fn();
+
 			const propsBefore = {
 				source: 'google_photos',
 				isConnected: false,
 				googleConnection: googleConnectionInvalid,
+				changeMediaSource,
 			};
 			const wrapper = getMediaContent( propsBefore );
 
-			MediaActions.sourceChanged.mockReset();
+			changeMediaSource.mockReset();
 			wrapper.setProps( propsBefore );
 
-			expect( MediaActions.sourceChanged.mock.calls.length ).toEqual( 0 );
+			expect( changeMediaSource ).toHaveBeenCalledTimes( 0 );
 		} );
 	} );
 } );

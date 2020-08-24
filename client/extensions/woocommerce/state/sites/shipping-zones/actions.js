@@ -25,7 +25,7 @@ export const fetchShippingZonesSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchShippingZones = siteId => ( dispatch, getState ) => {
+export const fetchShippingZones = ( siteId ) => ( dispatch, getState ) => {
 	if (
 		areShippingZonesLoaded( getState(), siteId ) ||
 		areShippingZonesLoading( getState(), siteId )
@@ -42,21 +42,21 @@ export const fetchShippingZones = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'shipping/zones' )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} )
-		.then( data => {
+		.then( ( data ) => {
 			if ( ! data ) {
 				return;
 			}
 			dispatch( fetchShippingZonesSuccess( siteId, data ) );
 			return Promise.all(
 				data
-					.map( zone => {
+					.map( ( zone ) => {
 						return fetchShippingZoneMethods( siteId, zone.id )( dispatch, getState );
 					} )
 					.concat(
-						data.map( zone => {
+						data.map( ( zone ) => {
 							return fetchShippingZoneLocations( siteId, zone.id )( dispatch, getState );
 						} )
 					)

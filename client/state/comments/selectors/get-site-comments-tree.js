@@ -28,7 +28,7 @@ export const getSiteCommentsTree = createSelector(
 		return 'all' === status
 			? filter(
 					siteTree,
-					comment => 'approved' === comment.status || 'unapproved' === comment.status
+					( comment ) => 'approved' === comment.status || 'unapproved' === comment.status
 			  )
 			: filter( siteTree, { status } );
 	},

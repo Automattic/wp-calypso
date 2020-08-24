@@ -62,12 +62,12 @@ const site_at = {
 
 describe( 'isATEnabled basic tests', () => {
 	let beforeWindow;
-	beforeAll( function() {
+	beforeAll( function () {
 		beforeWindow = global.window;
 		global.window = {};
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		global.window = beforeWindow;
 	} );
 
@@ -119,7 +119,7 @@ describe( 'isATEnabled basic tests', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 		];
 
-		plans.forEach( product_slug => {
+		plans.forEach( ( product_slug ) => {
 			const mySite = {
 				...site,
 				plan: { product_slug },
@@ -135,7 +135,7 @@ describe( 'isATEnabled basic tests', () => {
 
 	test( 'should return true otherwise', () => {
 		const plans = [ PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS, PLAN_ECOMMERCE, PLAN_ECOMMERCE_2_YEARS ];
-		plans.forEach( product_slug => {
+		plans.forEach( ( product_slug ) => {
 			const mySite = {
 				...site,
 				plan: { product_slug },

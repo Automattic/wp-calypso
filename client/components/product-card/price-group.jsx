@@ -10,7 +10,7 @@ import classNames from 'classnames';
  */
 import PlanPrice from 'my-sites/plan-price';
 
-const ProductCardPriceGroup = props => {
+const ProductCardPriceGroup = ( props ) => {
 	const { billingTimeFrame, currencyCode, discountedPrice, fullPrice } = props;
 	const isDiscounted = !! discountedPrice;
 	const priceGroupClasses = classNames( 'product-card__price-group', {

@@ -36,13 +36,13 @@ export class MediaLibraryDataSource extends Component {
 
 	state = { popover: false };
 
-	storeButtonRef = ref => ( this.buttonRef = ref );
+	storeButtonRef = ( ref ) => ( this.buttonRef = ref );
 
 	togglePopover = () => {
 		this.setState( { popover: ! this.state.popover } );
 	};
 
-	changeSource = newSource => () => {
+	changeSource = ( newSource ) => () => {
 		if ( newSource !== this.props.source ) {
 			this.props.onSourceChange( newSource );
 		}
@@ -54,21 +54,21 @@ export class MediaLibraryDataSource extends Component {
 		const sources = [
 			{
 				value: '',
-				label: translate( 'WordPress library' ),
+				label: translate( 'Media library' ),
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
 		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'google_photos',
-				label: translate( 'Google Photos library' ),
+				label: translate( 'Google Photos' ),
 				icon: <GooglePhotosIcon />,
 			} );
 		}
 		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
-				label: translate( 'Free photo library' ),
+				label: translate( 'Pexels free photos' ),
 				icon: <Gridicon icon="image-multiple" size={ 24 } />,
 			} );
 		}
@@ -91,7 +91,7 @@ export class MediaLibraryDataSource extends Component {
 	render() {
 		const { translate, source } = this.props;
 		const sources = this.getSources();
-		const currentSelected = find( sources, item => item.value === source );
+		const currentSelected = find( sources, ( item ) => item.value === source );
 		const classes = classnames( 'media-library__datasource', {
 			'is-single-source': 1 === sources.length,
 		} );
@@ -132,7 +132,7 @@ export class MediaLibraryDataSource extends Component {
 	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	canUserUploadFiles: canCurrentUser( state, getSelectedSiteId( state ), 'upload_files' ),
 } );
 

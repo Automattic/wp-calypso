@@ -26,6 +26,7 @@ const config = {
 	...defaults,
 	rootDir: path.normalize( '../../../' ), // To detect wp-calypso root node_modules
 	testMatch: [ `${ pluginRoot }/**/?(*.)test.[jt]s?(x)` ],
+	transform: { '^.+\\.[jt]sx?$': path.join( __dirname, 'babel-transform' ) },
 	setupFilesAfterEnv: [
 		...( defaults.setupFilesAfterEnv || [] ), // extend if present
 		'<rootDir>/apps/full-site-editing/bin/js-unit-setup',

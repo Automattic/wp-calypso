@@ -15,7 +15,7 @@
 
 // Change loading logo's color while Calypso boots
 .wpcom-site__logo {
-	fill: $light-gray-500;
+	fill: $gray-200;
 }
 
 // Hide Calypso header while Calypso boots
@@ -27,5 +27,5 @@
 html,
 body {
 	font-family: $default-font;
-	font-size: $default-font-size;
+	font-size: $font-body;
 }

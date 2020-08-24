@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { times } from 'lodash';
 
@@ -14,6 +14,7 @@ import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
 } from 'state/sharing/services/selectors';
+import { getExpandedService } from 'state/sharing/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
@@ -31,7 +32,7 @@ import './services-group.scss';
  */
 const NUMBER_OF_PLACEHOLDERS = 4;
 
-const serviceWarningLevelToNoticeStatus = level => {
+const serviceWarningLevelToNoticeStatus = ( level ) => {
 	switch ( level ) {
 		case 'error':
 			return 'is-error';
@@ -43,7 +44,18 @@ const serviceWarningLevelToNoticeStatus = level => {
 	}
 };
 
-const SharingServicesGroup = ( { isFetching, services, title } ) => {
+const SharingServicesGroup = ( { isFetching, services, title, expandedService } ) => {
+	useEffect( () => {
+		if ( expandedService && ! isFetching ) {
+			const serviceElement = document.querySelector(
+				'.sharing-service.' + expandedService.replace( /_/g, '-' )
+			);
+			if ( serviceElement ) {
+				serviceElement.scrollIntoView();
+			}
+		}
+	}, [ expandedService, isFetching ] );
+
 	if ( ! services.length && ! isFetching ) {
 		return null;
 	}
@@ -54,10 +66,8 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 			<SectionHeader label={ title } />
 			<ul className="sharing-services-group__services">
 				{ services.length
-					? services.map( service => {
-							const Component = Components.hasOwnProperty( service.ID )
-								? Components[ service.ID ]
-								: Service;
+					? services.map( ( service ) => {
+							const Component = Components[ service.ID.replace( /-/g, '_' ) ] || Service;
 
 							if ( service.warnings ) {
 								return (
@@ -78,7 +88,7 @@ const SharingServicesGroup = ( { isFetching, services, title } ) => {
 
 							return <Component key={ service.ID } service={ service } />;
 					  } )
-					: times( NUMBER_OF_PLACEHOLDERS, index => (
+					: times( NUMBER_OF_PLACEHOLDERS, ( index ) => (
 							<ServicePlaceholder key={ 'service-placeholder-' + index } />
 					  ) ) }
 			</ul>
@@ -92,14 +102,17 @@ SharingServicesGroup.propTypes = {
 	services: PropTypes.array,
 	title: PropTypes.string.isRequired,
 	type: PropTypes.string.isRequired,
+	expandedService: PropTypes.string,
 };
 
 SharingServicesGroup.defaultProps = {
 	isFetching: false,
 	services: [],
+	expandedService: '',
 };
 
 export default connect( ( state, { type } ) => ( {
 	isFetching: isKeyringServicesFetching( state ),
 	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
+	expandedService: getExpandedService( state ),
 } ) )( SharingServicesGroup );

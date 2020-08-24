@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { concat } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,7 +13,7 @@ import FormattedHeader from 'components/formatted-header';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { retrievePlan } from './persistence-utils';
 
-class JetpackConnectMainHeader extends PureComponent {
+class JetpackConnectMainHeader extends Component {
 	static propTypes = {
 		type: PropTypes.oneOf( concat( FLOW_TYPES, false ) ),
 	};
@@ -70,6 +70,16 @@ class JetpackConnectMainHeader extends PureComponent {
 				subtitle: translate(
 					'Jetpack brings free themes, security services, and essential marketing tools ' +
 						'to your self-hosted WordPress site.'
+				),
+			};
+		}
+
+		if ( type === 'jetpack_search' ) {
+			return {
+				title: translate( 'Get Jetpack Search' ),
+				subtitle: translate(
+					'Incredibly powerful and customizable, Jetpack Search helps your visitors ' +
+						'instantly find the right content – right when they need it.'
 				),
 			};
 		}

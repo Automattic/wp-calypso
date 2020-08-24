@@ -57,7 +57,7 @@ export class FormPhoneInput extends React.Component {
 			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-fieldset__country">
 					<FormLabel htmlFor="country_code">
-						{ this.props.translate( 'Country Code', {
+						{ this.props.translate( 'Country code', {
 							context: 'The country code for the phone for the user.',
 						} ) }
 					</FormLabel>
@@ -73,7 +73,7 @@ export class FormPhoneInput extends React.Component {
 				</FormFieldset>
 
 				<FormFieldset className="form-fieldset__phone-number">
-					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone Number' ) }</FormLabel>
+					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone number' ) }</FormLabel>
 					<FormTelInput
 						{ ...this.props.phoneInputProps }
 						disabled={ this.props.isDisabled }
@@ -93,11 +93,11 @@ export class FormPhoneInput extends React.Component {
 		} );
 	}
 
-	handleCountryChange = event => {
+	handleCountryChange = ( event ) => {
 		this.setState( { countryCode: event.target.value }, this.triggerOnChange );
 	};
 
-	handlePhoneChange = event => {
+	handlePhoneChange = ( event ) => {
 		this.setState( { phoneNumber: event.target.value }, this.triggerOnChange );
 	};
 

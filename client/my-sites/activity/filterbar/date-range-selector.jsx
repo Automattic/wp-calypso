@@ -44,17 +44,8 @@ export class DateRangeSelector extends Component {
 		} );
 
 		const formattedFromDate =
-			fromDate &&
-			moment( fromDate )
-				.startOf( 'day' )
-				.utc()
-				.format( DATE_FORMAT );
-		const formattedToDate =
-			toDate &&
-			moment( toDate )
-				.endOf( 'day' )
-				.utc()
-				.format( DATE_FORMAT );
+			fromDate && moment( fromDate ).startOf( 'day' ).utc().format( DATE_FORMAT );
+		const formattedToDate = toDate && moment( toDate ).endOf( 'day' ).utc().format( DATE_FORMAT );
 		if ( formattedFromDate && formattedToDate && formattedFromDate !== formattedToDate ) {
 			selectDateRange( siteId, formattedFromDate, formattedToDate );
 			onClose();
@@ -71,16 +62,10 @@ export class DateRangeSelector extends Component {
 	handleDateRangeCommit = ( startDate, endDate ) => {
 		const { moment, selectDateRange } = this.props;
 		const formattedStartDate = startDate
-			? moment( startDate )
-					.startOf( 'day' )
-					.utc()
-					.format( DATE_FORMAT )
+			? moment( startDate ).startOf( 'day' ).utc().format( DATE_FORMAT )
 			: null;
 		const formattedEndDate = endDate
-			? moment( endDate )
-					.endOf( 'day' )
-					.utc()
-					.format( DATE_FORMAT )
+			? moment( endDate ).endOf( 'day' ).utc().format( DATE_FORMAT )
 			: null;
 
 		selectDateRange( this.props.siteId, formattedStartDate, formattedEndDate ); // enough?
@@ -92,12 +77,12 @@ export class DateRangeSelector extends Component {
 		return ! from || isBeforeFirstDay || isRangeSelected;
 	};
 
-	isSelectingDayInPast = day => {
+	isSelectingDayInPast = ( day ) => {
 		const today = new Date();
 		return day.getTime() <= today.getTime();
 	};
 
-	handleDayClick = date => {
+	handleDayClick = ( date ) => {
 		const { filter } = this.props;
 		const day = date.toDate();
 
@@ -124,7 +109,7 @@ export class DateRangeSelector extends Component {
 		} );
 	};
 
-	handleDayMouseEnter = day => {
+	handleDayMouseEnter = ( day ) => {
 		const { filter } = this.props;
 		const fromDate = this.getFromDate( filter );
 		const toDate = this.getToDate( filter );
@@ -266,7 +251,7 @@ export class DateRangeSelector extends Component {
 				selectedEndDate={ to }
 				lastSelectableDate={ now }
 				onDateCommit={ this.handleDateRangeCommit }
-				renderTrigger={ props => (
+				renderTrigger={ ( props ) => (
 					<Fragment>
 						<Button
 							className={ buttonClass }
@@ -294,7 +279,7 @@ export class DateRangeSelector extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	selectDateRange: ( siteId, from, to ) => {
 		if ( ! from && ! to ) {
 			return dispatch(

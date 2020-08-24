@@ -61,7 +61,7 @@ More information:
 A Publicize connection is created when a user chooses an account to connect from the options available using the Keyring token associated with a third-party service, so long as the Keyring service supports Publicize. In the context of the connections page, this almost always occurs immediately following the Keyring authorization step, though a user can choose to grant us authorization to their account and never create a connection. By creating a Publicize connection, a user opts in to automatic sharing of new posts to their connected account. For example, if a user creates a Publicize connection for Twitter, each new blog post will be shared automatically to their Twitter feed by default, unless the user chooses not to publicize that particular post.
 
 More information
-- [Publicize - WordPress.com Support](https://support.wordpress.com/publicize/)
+- [Publicize - WordPress.com Support](https://wordpress.com/support/publicize/)
 
 ### Account
 

@@ -1,0 +1,281 @@
+@import '~@automattic/calypso-color-schemes';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/fonts';
+
+.domain-picker__empty-state {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+
+	&--text {
+		max-width: 320px;
+		font-size: 0.9em;
+		margin: 10px 0;
+		color: $dark-gray-500;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+		align-items: center;
+
+		&--text {
+			margin: 15px 0;
+		}
+	}
+}
+
+.domain-picker__show-more {
+	padding: 10px;
+	text-align: center;
+}
+
+.domain-picker__search {
+	position: relative;
+	margin-bottom: 20px;
+
+	input[type='text'].components-text-control__input {
+		padding: 6px 40px 6px 16px;
+		height: 38px;
+		background: $gray-100;
+		border: none;
+
+		&::placeholder {
+			color: var( --studio-black );
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px var( --studio-blue-30 );
+			background: var( --studio-white );
+		}
+	}
+
+	svg {
+		position: absolute;
+		top: 6px;
+		right: 8px;
+	}
+}
+
+.domain-picker__suggestion-item-group {
+	flex-grow: 1;
+}
+
+.domain-picker__suggestion-sections {
+	flex: 1;
+}
+
+.domain-picker__suggestion-group-label {
+	margin: 0;
+	margin-top: 1.5em;
+	margin-bottom: 0.5em;
+	text-transform: uppercase;
+	color: var( --studio-gray-40 );
+	font-size: 12px;
+	letter-spacing: 1px;
+	font-weight: bold;
+}
+
+.domain-picker__suggestion-item {
+	@include onboarding-medium-text;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	min-height: 36px + ( 10px * 2 ) + ( 1px * 2 ); // button height + padding height + border height
+	background: var( --studio-white );
+	border: 1px solid var( --studio-gray-5 );
+	padding: 10px 14px;
+	margin: 0;
+	position: relative;
+	z-index: 1;
+	text-align: left;
+	cursor: pointer;
+
+	&.placeholder {
+		cursor: default;
+	}
+
+	&:first-of-type {
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+
+	&:last-of-type {
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+	}
+
+	+ .domain-picker__suggestion-item {
+		margin-top: -1px;
+	}
+
+	// animate the added domains after you click expand
+	@for $i from 7 through 14 {
+		&:nth-child( #{$i} ) {
+			transform: translateY( 20px );
+			opacity: 0;
+			animation: domain-picker-item-slide-up 0.1s ease-in forwards;
+			animation-delay: #{( $i - 7 ) * 40ms};
+		}
+	}
+
+	@keyframes domain-picker-item-slide-up {
+		100% {
+			transform: translateY( 0 );
+			opacity: 1;
+		}
+	}
+
+	$radio-button-size: 16px;
+
+	input[type='radio'].domain-picker__suggestion-radio-button {
+		@include radio-control; // explicitly include Gutenberg's radio-control style mixin, see https://github.com/WordPress/gutenberg/pull/22596
+
+		width: $radio-button-size;
+		height: $radio-button-size;
+		min-width: $radio-button-size; // prevents long domain from squishing the radio button
+		padding: 0;
+		margin: 1px 12px 0 0;
+		vertical-align: middle;
+		position: relative;
+
+		&:checked {
+			border-color: var( --studio-blue-30 );
+			background-color: var( --studio-blue-30 );
+
+			// wp-admin's forms.css uses ::before on radio button
+			&::before {
+				display: none;
+			}
+
+			&::after {
+				content: '';
+				width: $radio-button-size - 2 * $border-width;
+				height: $radio-button-size - 2 * $border-width;
+				border: 2px solid white;
+				border-radius: 50%;
+				position: absolute;
+				margin: 0;
+				background: transparent;
+			}
+
+			&:focus {
+				border-color: var( --studio-blue-30 );
+				box-shadow: 0 0 0 1px var( --studio-blue-30 );
+			}
+		}
+
+		&:not( :disabled ):focus,
+		&:not( :disabled ):hover {
+			border-color: var( --studio-blue-30 );
+			box-shadow: 0 0 0 1px var( --studio-blue-30 );
+		}
+	}
+}
+
+.domain-picker__suggestion-item-name {
+	flex-grow: 1;
+	letter-spacing: 0.4px;
+
+	.domain-picker__suggestion-item:not( .is-free ) & {
+		margin-right: 0;
+
+		@include break-mobile {
+			margin-right: 24px;
+		}
+	}
+
+	.domain-picker__domain-name {
+		word-break: break-word; // use hyphens if any to break domain name
+	}
+
+	&.placeholder {
+		@include onboarding-placeholder();
+		max-width: 30%;
+		margin-right: auto; // position the placeholder to the left overriding justify-content: space-between
+	}
+}
+
+.domain-picker__domain-tld {
+	color: var( --studio-blue-40 );
+	// margin for recommended badge. this margin shouldn't
+	// be placed on the badge because if the badge falls
+	// on a newline, it will have whitespace on the left.
+	margin-right: 10px;
+}
+
+.domain-picker__badge {
+	display: inline-flex;
+	border-radius: 2px;
+	padding: 0 10px;
+	line-height: 20px;
+	height: 20px;
+	align-items: center;
+	font-size: 10px;
+	text-transform: uppercase;
+	vertical-align: middle;
+	background-color: var( --studio-blue-50 );
+	color: var( --color-text-inverted );
+}
+
+.domain-picker__price {
+	color: var( --studio-gray-40 );
+	text-align: right;
+	flex-basis: 0;
+	transition: opacity 200ms ease-in-out;
+	// Don't show free text on mobile view
+	&:not( .is-paid ) {
+		display: none;
+	}
+
+	@include break-small {
+		flex-basis: auto;
+
+		&:not( .is-paid ) {
+			display: inline;
+		}
+	}
+
+	&.placeholder {
+		@include onboarding-placeholder();
+		min-width: 64px;
+	}
+}
+
+.domain-picker__price-inclusive {
+	color: var( --studio-green-40 );
+	display: none;
+
+	@include break-small {
+		display: inline;
+	}
+}
+
+.domain-picker__price-cost {
+	text-decoration: line-through;
+}
+
+.domain-picker__body {
+	display: flex;
+
+	// When in mobile, domain categories appear above
+	// the list of domain suggestions.
+	@media ( max-width: $break-mobile ) {
+		display: block;
+
+		.domain-picker__aside {
+			width: 100%;
+			padding: 0;
+		}
+	}
+}
+
+.domain-picker__aside {
+	width: 220px;
+	padding-right: 30px;
+}
+
+.domain-picker__change-subdomain-tip {
+	font-size: $font-body-extra-small;
+	color: var( --studio-gray-40 );
+}

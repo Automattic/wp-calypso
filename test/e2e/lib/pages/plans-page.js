@@ -27,6 +27,13 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
+	async openAdvancedPlansSegment() {
+		const selector = by.css(
+			'.plans-features-main ul.segmented-control.is-primary.plan-features__interval-type.is-customer-type-toggle li:nth-child(2)'
+		);
+		return await driverHelper.clickWhenClickable( this.driver, selector );
+	}
+
 	async waitForComparison() {
 		return await driverHelper.waitTillPresentAndDisplayed(
 			this.driver,
@@ -48,7 +55,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	}
 
 	async confirmCurrentPlan( planName ) {
-		let selector = by.css( `.is-current.is-${ planName }-plan` );
+		let selector = by.css( `.is-${ planName }-plan .plan-pill` );
 		if ( host !== 'WPCOM' ) {
 			selector = by.css( `.is-${ planName }-plan` );
 		}

@@ -13,14 +13,14 @@
 
 .plan-storage__storage-label,
 .plan-storage__storage-link {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 1;
 	margin-top: 6px;
 }
 
 .plan-storage__storage-label {
 	color: var( --color-neutral-70 );
-	font-weight: 500;
+	font-weight: 600;
 }
 
 .plan-storage__storage-link {

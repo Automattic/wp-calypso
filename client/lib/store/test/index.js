@@ -11,7 +11,7 @@ import { createReducerStore } from './../index';
 import Dispatcher from 'dispatcher';
 
 describe( 'index', () => {
-	const reducer = state => {
+	const reducer = ( state ) => {
 		return state;
 	};
 

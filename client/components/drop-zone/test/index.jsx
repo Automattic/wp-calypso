@@ -29,7 +29,7 @@ describe( 'index', () => {
 		showDropZone: () => {},
 	};
 
-	beforeAll( function() {
+	beforeAll( function () {
 		container = document.createElement( 'div' );
 		container.id = 'container';
 		window.MutationObserver = sinon.stub().returns( {
@@ -38,7 +38,7 @@ describe( 'index', () => {
 		} );
 	} );
 
-	afterAll( function() {
+	afterAll( function () {
 		if ( global.window && global.window.MutationObserver ) {
 			delete global.window.MutationObserver;
 		}
@@ -115,19 +115,19 @@ describe( 'index', () => {
 		expect( tree.state.isDraggingOverElement ).to.not.be.ok;
 	} );
 
-	test( 'should start observing the body for mutations when dragging over', done => {
+	test( 'should start observing the body for mutations when dragging over', ( done ) => {
 		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
 			dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
 		window.dispatchEvent( dragEnterEvent );
 
-		process.nextTick( function() {
+		process.nextTick( function () {
 			expect( tree.observer ).to.be.ok;
 			done();
 		} );
 	} );
 
-	test( 'should stop observing the body for mutations upon drag ending', done => {
+	test( 'should stop observing the body for mutations upon drag ending', ( done ) => {
 		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
 			dragEnterEvent = new window.MouseEvent( 'dragenter' ),
 			dragLeaveEvent = new window.MouseEvent( 'dragleave' );
@@ -135,7 +135,7 @@ describe( 'index', () => {
 		window.dispatchEvent( dragEnterEvent );
 		window.dispatchEvent( dragLeaveEvent );
 
-		process.nextTick( function() {
+		process.nextTick( function () {
 			expect( tree.observer ).to.be.undefined;
 			done();
 		} );
@@ -147,7 +147,7 @@ describe( 'index', () => {
 		const tree = ReactDom.render(
 			React.createElement( DropZone, {
 				...requiredProps,
-				onVerifyValidTransfer: function() {
+				onVerifyValidTransfer: function () {
 					return false;
 				},
 			} ),
@@ -236,7 +236,7 @@ describe( 'index', () => {
 				...requiredProps,
 				fullScreen: true, // bypass a Node.contains check on the drop event
 				onFilesDrop: spyDrop,
-				onVerifyValidTransfer: function() {
+				onVerifyValidTransfer: function () {
 					return false;
 				},
 			} ),
@@ -266,7 +266,7 @@ describe( 'index', () => {
 		window.dispatchEvent( dragEnterEvent );
 
 		expect( rendered ).to.have.lengthOf( 2 );
-		rendered.forEach( function( zone ) {
+		rendered.forEach( function ( zone ) {
 			expect( zone.state.isDraggingOverDocument ).to.be.ok;
 			expect( zone.state.isDraggingOverElement ).to.not.be.ok;
 		} );

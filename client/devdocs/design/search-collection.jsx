@@ -62,7 +62,11 @@ const Collection = ( {
 	let showCounter = 0;
 	const summary = [];
 
-	const examples = React.Children.map( children, example => {
+	const scroll = () => {
+		window.scrollTo( 0, 0 );
+	};
+
+	const examples = React.Children.map( children, ( example ) => {
 		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
 			return null;
 		}
@@ -102,7 +106,12 @@ const Collection = ( {
 
 		return (
 			<div>
-				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
+				<DocsExampleWrapper
+					name={ exampleName }
+					unique={ !! component }
+					url={ exampleLink }
+					onTitleClick={ scroll }
+				>
 					{ example }
 				</DocsExampleWrapper>
 				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }
@@ -123,11 +132,11 @@ const Collection = ( {
 
 			{ examples.slice( 0, examplesToMount ) }
 
-			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), exampleGroup => {
-				const groupKey = map( exampleGroup, example => example.key ).join( '_' );
+			{ map( chunk( examples.slice( examplesToMount ), examplesToMount ), ( exampleGroup ) => {
+				const groupKey = map( exampleGroup, ( example ) => example.key ).join( '_' );
 				return (
 					<LazyRender key={ groupKey }>
-						{ shouldRender =>
+						{ ( shouldRender ) =>
 							shouldRender ? exampleGroup : <Placeholder count={ examplesToMount } />
 						}
 					</LazyRender>

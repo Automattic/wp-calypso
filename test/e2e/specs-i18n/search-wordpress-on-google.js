@@ -21,12 +21,12 @@ const test_data = localization_data[ locale ];
 
 let driver;
 
-before( async function() {
+before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 } );
 
-after( function( done ) {
+after( function ( done ) {
 	// Wait between tests to not overload Google
 	const wait_seconds = 10;
 	this.timeout( ( wait_seconds + 2 ) * 1e3 );
@@ -42,19 +42,19 @@ function doGoogleAdSearch( search_params ) {
 		' from ' +
 		search_params.comment_location;
 
-	describe.skip( description + ' @i18n (' + locale + ')', function() {
+	describe.skip( description + ' @i18n (' + locale + ')', function () {
 		this.timeout( mochaTimeOut );
-		before( function() {
+		before( function () {
 			if ( locale === 'tr' || locale === 'ar' || locale === 'zh-tw' ) {
 				this.skip( 'Currently no advertising in this locale' );
 			}
 		} );
 
-		beforeEach( async function() {
+		beforeEach( async function () {
 			await driverManager.clearCookiesAndDeleteLocalStorage( driver );
 		} );
 
-		step( 'Google search contains our ad', async function() {
+		step( 'Google search contains our ad', async function () {
 			const googleFlow = new GoogleFlow( driver );
 			await googleFlow.resize( 'desktop' );
 			const that = this;
@@ -66,19 +66,19 @@ function doGoogleAdSearch( search_params ) {
 			}
 		} );
 
-		step( 'Our landing page exists', async function() {
+		step( 'Our landing page exists', async function () {
 			const that = this;
 			const url = await this.searchPage.getAdUrl();
 			that.landingPage = await LandingPage.Visit( driver, url );
 			return await that.landingPage.checkURL();
 		} );
 
-		step( 'Localized string found on landing page', async function() {
+		step( 'Localized string found on landing page', async function () {
 			await this.landingPage.checkLocalizedString( test_data.wpcom_landing_page_string );
 		} );
 	} );
 }
 
-test_data.google_searches.forEach( function( search_params ) {
+test_data.google_searches.forEach( function ( search_params ) {
 	doGoogleAdSearch( search_params );
 } );

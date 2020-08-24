@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
  */
 import { like, unlike } from 'state/posts/likes/actions';
 import LikeButton from './button';
-import getPostLikeCount from 'state/selectors/get-post-like-count';
-import isLikedPost from 'state/selectors/is-liked-post';
+import { getPostLikeCount } from 'state/posts/selectors/get-post-like-count';
+import { isLikedPost } from 'state/posts/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 
 class LikeButtonContainer extends Component {
@@ -31,7 +31,7 @@ class LikeButtonContainer extends Component {
 		onLikeToggle: noop,
 	};
 
-	handleLikeToggle = liked => {
+	handleLikeToggle = ( liked ) => {
 		const toggler = liked ? this.props.like : this.props.unlike;
 		toggler( this.props.siteId, this.props.postId, { source: this.props.likeSource } );
 

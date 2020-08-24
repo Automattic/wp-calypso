@@ -1,22 +1,22 @@
 @import 'jetpack-connect/colors.scss';
 
-@mixin section-border ( $position ) {
-  &::before {
-  	display: block;
-  	content: '';
-  	position: absolute;
-  	#{ $position }: 0;
-  	left: -8px;
-  	width: calc( 100% + 16px );
-  	height: 1px;
-  	box-sizing: border-box;
-  	background: var( --color-border-subtle );
+@mixin section-border( $position ) {
+	&::before {
+		display: block;
+		content: '';
+		position: absolute;
+		#{ $position }: 0;
+		left: -8px;
+		width: calc( 100% + 16px );
+		height: 1px;
+		box-sizing: border-box;
+		background: var( --color-border-subtle );
 
-  	@include breakpoint( '>660px' ) {
-  		width: calc( 100% + 60px );
-  		left: -30px;
-  	}
-  }
+		@include breakpoint-deprecated( '>660px' ) {
+			width: calc( 100% + 60px );
+			left: -30px;
+		}
+	}
 }
 
 .checkout {
@@ -45,7 +45,7 @@
 		}
 
 		&:not( .domain-details ) {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				box-shadow: none;
 			}
 		}
@@ -96,7 +96,7 @@
 				flex: 1 1 auto;
 				margin-bottom: 15px;
 
-				@include breakpoint( '>480px' ) {
+				@include breakpoint-deprecated( '>480px' ) {
 					flex: 2 1 auto;
 				}
 			}
@@ -106,7 +106,7 @@
 			}
 
 			.placeholder-inline-pad-only-wide {
-				@include breakpoint( '>480px' ) {
+				@include breakpoint-deprecated( '>480px' ) {
 					padding-right: 15px;
 				}
 			}
@@ -116,7 +116,7 @@
 				margin-bottom: 15px;
 				flex: 0 0 100%;
 
-				@include breakpoint( '>480px' ) {
+				@include breakpoint-deprecated( '>480px' ) {
 					flex: 6 3 auto;
 				}
 			}
@@ -125,7 +125,7 @@
 				height: 50px;
 				width: 100%;
 
-				@include breakpoint( '>480px' ) {
+				@include breakpoint-deprecated( '>480px' ) {
 					width: 80px;
 					height: 40px;
 				}
@@ -134,7 +134,7 @@
 			.placeholder-button-container {
 				margin-top: 55px;
 
-				@include breakpoint( '>480px' ) {
+				@include breakpoint-deprecated( '>480px' ) {
 					margin-top: 20px;
 				}
 			}
@@ -145,7 +145,7 @@
 				height: 0;
 				border-bottom: 1px solid var( --color-neutral-0 );
 
-				@include breakpoint( '<480px' ) {
+				@include breakpoint-deprecated( '<480px' ) {
 					display: none;
 				}
 			}
@@ -162,7 +162,7 @@
 
 	h5 {
 		color: var( --color-neutral-40 );
-		font-size: 15px;
+		font-size: $font-body;
 		font-weight: 600;
 		opacity: 0.7;
 		text-transform: uppercase;
@@ -171,14 +171,14 @@
 	.checkout__box-padding {
 		padding: 16px 8px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 10px 30px 20px;
 		}
 	}
 
 	.domain-details {
 		.box-padding {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				padding: 16px;
 			}
 		}
@@ -187,14 +187,14 @@
 	form {
 		margin-top: 5px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			@include clear-fix;
 		}
 	}
 
 	button[type='submit'].checkout__pay-button-button,
 	button[type='submit'].button-pay {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			width: 100%;
 
 			.wpcom-site & {
@@ -202,7 +202,7 @@
 			}
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			clear: both;
 			float: left;
 		}
@@ -228,7 +228,7 @@
 		position: relative;
 
 		select {
-			font-size: 15px;
+			font-size: $font-body;
 			width: 100%;
 		}
 
@@ -240,7 +240,7 @@
 	.form-button {
 		margin-top: 20px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-bottom: 20px;
 		}
 	}
@@ -253,11 +253,12 @@
 	}
 
 	.checkout__recent-renewals li {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.checkout__terms,
 	.checkout__domain-refund-policy,
+	.checkout__bundled-domain-notice,
 	.checkout__concierge-refund-policy,
 	.checkout__domain-registration-agreement-link,
 	.checkout__domain-registration-hsts {
@@ -265,16 +266,16 @@
 		margin: 16px 0;
 		padding: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 0;
 			text-align: left;
 		}
 
 		p {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			margin: 0;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				margin-left: 24px;
 			}
 		}
@@ -282,7 +283,7 @@
 		.gridicon {
 			float: left;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: none;
 			}
 		}
@@ -291,12 +292,12 @@
 	.cart__coupon {
 		cursor: pointer;
 		display: none;
-		font-size: 14px;
+		font-size: $font-body-small;
 		margin: 0;
 		padding: 10px 0;
 
 		// On larger screens, users can use the coupon functionality present on the sidebar
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: block;
 			text-align: center;
 		}
@@ -314,12 +315,25 @@
 		@include clear-fix;
 	}
 
+	.payment-box-multisite {
+		display: flex;
+		align-items: flex-start;
+		font-size: $font-body-extra-small;
+		font-style: italic;
+		color: var( --color-error-40 );
+		margin-top: 16px;
+
+		p {
+			margin: 0 0 0 8px;
+		}
+	}
+
 	.credit-card-payment-box {
 		.payment-box-sections {
 			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				box-shadow: none;
 			}
 		}
@@ -339,7 +353,7 @@
 		.checkout__payment-box-section .checkout__new-card-toggle {
 			box-shadow: none;
 			cursor: pointer;
-			font-size: 13px;
+			font-size: $font-body-small;
 			position: absolute;
 		}
 
@@ -366,7 +380,7 @@
 		}
 
 		.checkout__new-card-header {
-			font-weight: bold;
+			font-weight: 600;
 			margin-bottom: 15px;
 		}
 	}
@@ -378,11 +392,11 @@
 	.checkout__summary-toggle {
 		cursor: pointer;
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		padding: 10px;
 		margin: 0 auto;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: none;
 		}
 	}
@@ -395,7 +409,7 @@
 		padding-bottom: 10px;
 		margin: 15px 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding-bottom: 30px;
 			margin-bottom: 20px;
 		}
@@ -408,7 +422,7 @@
 		padding-top: 10px;
 		position: relative;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin-top: 30px;
 			padding-top: 20px;
 		}
@@ -427,7 +441,7 @@
 			background-color: var( --color-surface );
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.075 );
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				box-shadow: none;
 			}
 		}
@@ -463,6 +477,35 @@
 		}
 	}
 
+	// Redirect Payment Box
+	// -----------------------------------
+	.redirect-payment-box,
+	.wechat-payment-box {
+		.checkout__payment-box-section {
+			.checkout__checkout-field {
+				padding: 0 15px 15px;
+			}
+
+			.checkout__country-payment-fields {
+				.checkout__checkout-field {
+					padding-left: 0;
+					flex-basis: calc( 100% - 30px );
+				}
+				.checkout__checkout-field.pan,
+				.checkout__checkout-field.gstin {
+					flex-basis: calc( 50% - 30px );
+					.form-label {
+						max-height: 21px;
+					}
+				}
+
+				.checkout__pan-number-popover svg {
+					max-height: 16px;
+				}
+			}
+		}
+	}
+
 	// Credits Payment Box
 	// -----------------------------------
 	.credits-payment-box {
@@ -476,21 +519,20 @@
 			.wordpress-logo {
 				fill: var( --color-primary );
 				margin: 0 10px;
-				@include breakpoint( '>660px' ) {
+				@include breakpoint-deprecated( '>660px' ) {
 					margin: 0 20px;
 				}
 			}
 
 			.checkout__payment-box-section-content {
-
 				> h6 {
 					color: var( --color-primary );
-					font-size: 18px;
+					font-size: $font-title-small;
 				}
 
 				> span {
 					color: var( --color-text-subtle );
-					font-size: 15px;
+					font-size: $font-body;
 				}
 			}
 
@@ -506,7 +548,7 @@
 					max-height: 100px;
 				}
 
-				@include breakpoint( '>960px' ) {
+				@include breakpoint-deprecated( '>960px' ) {
 					float: right;
 					margin-left: 20px;
 					width: calc( 20% - 20px );
@@ -519,7 +561,7 @@
 			.checkout__free-stand-alone-domain-mapping-illustration + h6 + span {
 				display: block;
 
-				@include breakpoint( '>960px' ) {
+				@include breakpoint-deprecated( '>960px' ) {
 					clear: none;
 					float: left;
 					width: calc( 75% - 20px );
@@ -539,7 +581,7 @@
 			}
 			.checkout__wechat-qrcode-redirect {
 				color: var( --color-text-subtle );
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 
@@ -569,13 +611,13 @@
 	// -----------------------------------
 	.supporting-text {
 		border-top: 1px solid var( --color-neutral-10 );
-		font-size: 13px;
+		font-size: $font-body-small;
 		list-style: none;
 		margin: 0;
 		padding: 15px 0;
 		@include clear-fix;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			border-bottom: 1px solid var( --color-neutral-10 );
 			margin: 30px 0;
 		}
@@ -584,26 +626,26 @@
 			color: var( --color-neutral-20 );
 			text-align: center;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				float: left;
 				margin: 0 5%;
 				width: 40%;
 			}
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				margin: 0;
 				padding: 15px;
 			}
 
 			h6 {
 				color: var( --color-neutral-50 );
-				font-size: 14px;
+				font-size: $font-body-small;
 				font-weight: 600;
 			}
 
 			p {
-				font-size: 12px;
-				font-weight: 100;
+				font-size: $font-body-extra-small;
+				font-weight: 400;
 				margin: 10px 0 0;
 			}
 		}
@@ -623,7 +665,7 @@
 	margin-top: 15px;
 	padding: 10px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		box-sizing: border-box;
 		padding: 15px;
 		width: 100%;
@@ -634,7 +676,7 @@
 	}
 
 	h6 {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 600;
 	}
 
@@ -651,7 +693,7 @@
 			border-color: #00aadc;
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
@@ -666,14 +708,14 @@
 
 	strong {
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: normal;
 		line-height: 130%;
 	}
 
 	p {
 		color: #7096af;
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 0;
 		margin-top: 5px;
 	}
@@ -691,7 +733,7 @@
 
 // If there's no sidebar, we don't show the cart on the checkout page.
 
-@include breakpoint( '>660px' ) {
+@include breakpoint-deprecated( '>660px' ) {
 	.pay-button,
 	.checkout__pay-button {
 		float: left;
@@ -701,11 +743,11 @@
 .credit-card-payment-box__switch-link {
 	color: var( --color-link-dark );
 	font-style: italic;
-	font-weight: 800;
+	font-weight: 600;
 	line-height: 40px;
 	display: block;
 	clear: both;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding-bottom: 5px;
 
 	img {
@@ -722,20 +764,20 @@
 		margin-left: 1em;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		border-bottom: 1px solid var( --color-neutral-0 );
 		margin: 10px 0 0;
 		text-align: center;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		float: right;
 		clear: none;
 	}
 }
 
 .credit-card-payment-box__switch-link-left {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		float: left;
 		padding-left: 20px;
 	}
@@ -743,7 +785,7 @@
 
 .checkout__payment-box-buttons,
 .payment-box__payment-buttons {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
@@ -752,25 +794,25 @@
 	.pay-button {
 		margin-right: 10px;
 
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			flex: 1 0 50%;
 		}
 	}
 
 	.checkout__pay-button-button,
 	.pay-button__button {
-		@include breakpoint( '<960px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			width: 100%;
 		}
 	}
 }
 
 .checkout__secure-payment {
-	color: var( --color-neutral-20 );
+	color: var( --color-text-subtle );
 	flex-grow: 1;
 	margin-top: 10px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex: 1 0 40%;
 	}
 }
@@ -780,23 +822,22 @@
 	align-items: center;
 	justify-content: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		justify-content: left;
 	}
 }
-
 
 .checkout__payment-chat-button.is-borderless {
 	color: var( --color-accent );
 	text-align: left;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		text-align: center;
 		margin-top: 5px;
 		width: 100%;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		justify-content: flex-end;
 	}
 
@@ -815,7 +856,7 @@
 }
 
 .credits-payment-box .checkout__payment-chat-button {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		float: right;
 	}
 }
@@ -827,7 +868,7 @@
 .checkout__privacy-protection-price-text {
 	color: var( --color-neutral-light );
 	margin: 4px 0 0;
-	font-size: 15px;
+	font-size: $font-body;
 
 	span {
 		&.free-with-plan {
@@ -838,7 +879,7 @@
 
 .checkout__credit-card-payment-box-progress-bar {
 	color: var( --color-neutral-light );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding-bottom: 1em;
 	text-align: center;
 }
@@ -881,7 +922,7 @@
 .checkout__privacy-protection-radio-price-text {
 	color: var( --color-primary );
 	margin: 4px 0 0 10px;
-	font-size: 15px;
+	font-size: $font-body;
 }
 
 .checkout__alternative-payment-methods {
@@ -903,13 +944,13 @@
 		margin-bottom: 0;
 
 		.section-nav-tabs__list > span {
-			font-weight: bold;
+			font-weight: 600;
 		}
 
 		.section-nav-tab__link {
 			background: transparent;
 			color: var( --color-primary );
-			font-weight: bold;
+			font-weight: 600;
 		}
 
 		.section-nav-tab.is-selected {
@@ -919,7 +960,7 @@
 				color: var( --color-primary );
 				background-color: var( --color-neutral-0 );
 
-				@include breakpoint( '>480px' ) {
+				@include breakpoint-deprecated( '>480px' ) {
 					background-color: transparent;
 				}
 			}
@@ -995,10 +1036,19 @@
 	.checkout__apple-pay {
 		height: 35px;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin: -5px 0;
 		}
 	}
+
+	.checkout__ovo {
+		height: 35px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			margin: -5px 0;
+		}
+	}
+
 	.select-dropdown__container {
 		.checkout__apple-pay {
 			margin: 0;
@@ -1018,14 +1068,14 @@
 
 	.select-dropdown__item-text {
 		top: 4px;
-		font-weight: bold;
+		font-weight: 600;
 
 		img {
 			vertical-align: middle;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		.is-open .section-nav__panel {
 			padding-bottom: 0;
 		}
@@ -1035,13 +1085,13 @@
 	}
 }
 
-// Ebanx checkout fields
+// country-specific checkout fields
 // -----------------------------------
 .checkout__country-payment-fields {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	margin: 15px 0 0 -15px;
+	margin-top: 15px;
 	.checkout__checkout-field,
 	.checkout__form-state-field {
 		flex-basis: calc( 100% - 15px );
@@ -1056,7 +1106,7 @@
 	.checkout__form-state-field {
 		margin-left: 0;
 	}
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.address-2,
 		.city {
 			flex-basis: calc( 100% - 15px );
@@ -1079,7 +1129,7 @@
 	}
 	.form__hidden-input a {
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-left: 15px;
 	}
 	select {
@@ -1094,31 +1144,8 @@
 	margin-left: 15px;
 	color: var( --color-neutral-20 );
 	display: block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-style: italic;
-}
-
-.is-section-checkout.is-jetpack-site {
-	.layout__content {
-		position: static;
-		// Adjust the padding as we no longer
-		// show the masterbar.
-		padding-top: 48px;
-
-		@include breakpoint( '<660px' ) {
-			padding-top: 0;
-		}
-	}
-
-	// Move the sidebar up top
-	.layout__secondary {
-		top: 0;
-	}
-
-	// Hide the masterbar for real
-	.masterbar {
-		display: none;
-	}
 }
 
 .is-section-checkout.is-jetpack-site,
@@ -1130,45 +1157,6 @@
 	}
 }
 
-.is-section-checkout.is-jetpack-site {
-	min-height: 100%;
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.formatted-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.formatted-header__subtitle {
-		color: var( --color-primary-10 );
-	}
-
-	.card {
-		box-shadow: none;
-		border-radius: 3px;
-
-		&.section-header {
-			border-bottom-left-radius: 0;
-			border-bottom-right-radius: 0;
-		}
-
-		&.payment-box {
-			border-top-left-radius: 0;
-			border-top-right-radius: 0;
-		}
-	}
-}
-
-.is-section-checkout-thank-you.is-jetpack-site {
-	min-height: 100%;
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card,
-	.checkout-thank-you__jetpack .plan-thank-you-card .thank-you-card {
-		box-shadow: none;
-	}
-}
-
 .checkout__site-created-notice-wrapper {
 	overflow: hidden;
 	float: none;
@@ -1177,7 +1165,7 @@
 	width: 100%;
 	display: flex;
 	justify-content: center;
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 	.checkout__site-created-copy {
@@ -1188,14 +1176,44 @@
 	}
 }
 
-.composite-checkout__testing-banner {
-  @media( min-width: 700px ) {
-    margin: auto;
-    max-width: 556px;
-  }
+.checkout .notice {
+	margin: 36px 0;
 }
 
-.is-section-checkout.is-frankenflow {
+.checkout .notice.is-info .notice__icon-wrapper-drop {
+	background-color: var( --color-accent-40 );
+}
+
+.checkout__conflict-notice {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.checkout__conflict-notice-message {
+	max-width: 600px;
+}
+
+.checkout .notice__text .checkout__conflict-notice-link {
+	margin-left: 20px;
+
+	color: var( --color-neutral-10 );
+
+	text-decoration: none;
+
+	&:visited {
+		color: var( --color-neutral-10 );
+	}
+}
+
+.composite-checkout__testing-banner {
+	@media ( min-width: 700px ) {
+		margin: auto;
+		max-width: 556px;
+	}
+}
+
+.is-section-checkout.is-new-launch-flow {
 	.layout__content {
 		padding-top: 48px;
 	}
@@ -1204,16 +1222,5 @@
 		top: 6px;
 		left: 11px;
 		padding: 0;
-	}
-	.checkout__site-created--gutenboarding {
-		display: flex;
-		flex-direction: column;
-		text-align: center;
-		margin-bottom: 60px;
-
-		.checkout__site-created-image {
-			height: 50px;
-			margin-bottom: 16px;
-		}
 	}
 }

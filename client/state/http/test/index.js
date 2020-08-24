@@ -36,7 +36,7 @@ describe( '#httpHandler', () => {
 
 	beforeEach( () => {
 		fetch.resetMocks();
-		completed = new Promise( resolve => {
+		completed = new Promise( ( resolve ) => {
 			dispatch = jest.fn( () => resolve( true ) );
 		} );
 	} );

@@ -57,9 +57,12 @@ class Data_Point_Theme implements Data_Point {
 	 * Implements the \Automattic\Jetpack\Global_Styles\Data_Point interface.
 	 */
 	public function get_value() {
-		$theme_support = get_theme_support( $this->feature_name )[0];
+		$theme_support = get_theme_support( $this->feature_name );
+		if ( is_array( $theme_support ) ) {
+			$theme_support = $theme_support[0];
+		}
 
-		if ( false === $theme_support || true === $theme_support ) {
+		if ( is_bool( $theme_support ) ) {
 			return $this->default_value;
 		}
 

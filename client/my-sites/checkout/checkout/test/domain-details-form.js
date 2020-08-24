@@ -16,10 +16,8 @@ import React from 'react';
 import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
 import { domainRegistration } from 'lib/cart-values/cart-items';
 
-jest.mock( 'lib/analytics', () => ( {
-	pageView: {
-		record: () => {},
-	},
+jest.mock( 'lib/analytics/page-view', () => ( {
+	recordPageView: () => {},
 } ) );
 
 jest.mock( 'lib/wp', () => {

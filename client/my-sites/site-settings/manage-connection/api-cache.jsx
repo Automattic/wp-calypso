@@ -43,11 +43,11 @@ const ApiCache = ( {
 	);
 };
 
-const connectComponent = connect( state => ( {
+const connectComponent = connect( ( state ) => ( {
 	siteIsJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
 } ) );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'api_cache' ] );
 };
 

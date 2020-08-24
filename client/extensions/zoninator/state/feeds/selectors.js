@@ -4,7 +4,7 @@
 
 import { get } from 'lodash';
 
-const getFeedsState = state => get( state, 'extensions.zoninator.feeds', {} );
+const getFeedsState = ( state ) => get( state, 'extensions.zoninator.feeds', {} );
 
 export const isRequestingFeed = ( state, siteId, zoneId ) =>
 	get( getFeedsState( state ), [ 'requesting', siteId, zoneId ], false );

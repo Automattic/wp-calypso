@@ -24,8 +24,8 @@ import {
 import { Button } from '@automattic/components';
 import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSearchQuery } from 'state/inline-help/selectors';
-import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+import getSearchQuery from 'state/inline-help/selectors/get-search-query';
+import { requestGuidedTour } from 'state/guided-tours/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
 const amendYouTubeLink = ( link = '' ) =>
@@ -60,7 +60,7 @@ class InlineHelpRichResult extends Component {
 		showDialog: false,
 	};
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		const isLocaleEnglish = 'en' === getLocaleSlug();
 		const { type, tour, link, searchQuery, postId } = this.props;
 
@@ -69,6 +69,7 @@ class InlineHelpRichResult extends Component {
 				search_query: searchQuery,
 				tour,
 				result_url: link,
+				location: 'inline-help-popover',
 			},
 			isUndefined
 		);
@@ -102,7 +103,9 @@ class InlineHelpRichResult extends Component {
 
 		return (
 			<div>
-				<h2 className={ classes }>{ preventWidows( decodeEntities( title ) ) }</h2>
+				<h2 className={ classes } tabIndex="-1">
+					{ preventWidows( decodeEntities( title ) ) }
+				</h2>
 				<p>{ preventWidows( decodeEntities( description ) ) }</p>
 				<Button primary onClick={ this.handleClick } href={ link }>
 					{ buttonIcon && <Gridicon icon={ buttonIcon } size={ 12 } /> }

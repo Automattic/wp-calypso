@@ -37,7 +37,7 @@ import QueryJetpackSettings from 'components/data/query-jetpack-settings';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
-const wrapSettingsForm = getFormSettings => SettingsForm => {
+const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 	class WrappedSettingsForm extends Component {
 		state = {
 			uniqueEvents: {},
@@ -97,7 +97,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			// Compute the dirty fields by comparing the persisted and the current fields
 			const previousDirtyFields = this.props.dirtyFields;
 			/*eslint-disable eqeqeq*/
-			const nextDirtyFields = previousDirtyFields.filter( field =>
+			const nextDirtyFields = previousDirtyFields.filter( ( field ) =>
 				isObjectLike( currentFields[ field ] )
 					? ! isEqual( currentFields[ field ], persistedFields[ field ] )
 					: ! ( currentFields[ field ] == persistedFields[ field ] )
@@ -119,14 +119,14 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 		}
 
 		// Some Utils
-		handleSubmitForm = event => {
+		handleSubmitForm = ( event ) => {
 			const { dirtyFields, fields, trackTracksEvent, path } = this.props;
 
 			if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 				event.preventDefault();
 			}
 
-			dirtyFields.map( function( value ) {
+			dirtyFields.map( function ( value ) {
 				switch ( value ) {
 					case 'blogdescription':
 						trackTracksEvent( 'calypso_settings_site_tagline_updated', { path } );
@@ -163,7 +163,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			this.props.saveSiteSettings( siteId, { ...siteFields, apiVersion: '1.4' } );
 		};
 
-		handleRadio = event => {
+		handleRadio = ( event ) => {
 			const currentTargetName = event.currentTarget.name,
 				currentTargetValue = event.currentTarget.value;
 
@@ -183,19 +183,19 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
-		handleSelect = event => {
+		handleSelect = ( event ) => {
 			const { name, value } = event.currentTarget;
 			// Attempt to cast numeric fields value to int
 			const parsedValue = parseInt( value, 10 );
 			this.props.updateFields( { [ name ]: isNaN( parsedValue ) ? value : parsedValue } );
 		};
 
-		handleToggle = name => () => {
+		handleToggle = ( name ) => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.updateFields( { [ name ]: ! this.props.fields[ name ] } );
 		};
 
-		handleAutosavingToggle = name => () => {
+		handleAutosavingToggle = ( name ) => () => {
 			this.props.trackEvent( `Toggled ${ name }` );
 			this.props.trackTracksEvent( 'calypso_settings_autosaving_toggle_updated', {
 				name,
@@ -206,7 +206,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			} );
 		};
 
-		onChangeField = field => event => {
+		onChangeField = ( field ) => ( event ) => {
 			const value = event.target.value;
 			debug( 'onChangeField', { field, value } );
 			this.props.updateFields( {
@@ -226,7 +226,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 			);
 		};
 
-		uniqueEventTracker = message => () => {
+		uniqueEventTracker = ( message ) => () => {
 			if ( this.state.uniqueEvents[ message ] ) {
 				return;
 			}
@@ -315,7 +315,7 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				siteId,
 			};
 		},
-		dispatch => {
+		( dispatch ) => {
 			const boundActionCreators = bindActionCreators(
 				{
 					errorNotice,
@@ -327,11 +327,11 @@ const wrapSettingsForm = getFormSettings => SettingsForm => {
 				},
 				dispatch
 			);
-			const trackEvent = name => dispatch( recordGoogleEvent( 'Site Settings', name ) );
+			const trackEvent = ( name ) => dispatch( recordGoogleEvent( 'Site Settings', name ) );
 			const trackTracksEvent = ( name, props ) => dispatch( recordTracksEvent( name, props ) );
 			return {
 				...boundActionCreators,
-				eventTracker: message => () => trackEvent( message ),
+				eventTracker: ( message ) => () => trackEvent( message ),
 				trackTracksEvent,
 				trackEvent,
 			};

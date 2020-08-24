@@ -18,10 +18,10 @@ import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
  * @param  {string}   path       The path fragment indicating the plan we want to upgrade to
  * @returns {string}              The plan slug that corresponds to the given path, or null if the site cannot be upgraded
  */
-export default function( state, siteId, path ) {
+export default function ( state, siteId, path ) {
 	return find(
 		Object.keys( PLANS_LIST ),
-		planKey =>
+		( planKey ) =>
 			( planKey === path || getPlanPath( planKey ) === path ) &&
 			canUpgradeToPlan( state, siteId, planKey )
 	);

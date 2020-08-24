@@ -1,26 +1,33 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
 	INLINE_HELP_SELECT_RESULT,
-	INLINE_HELP_SELECT_NEXT_RESULT,
-	INLINE_HELP_SELECT_PREVIOUS_RESULT,
+	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_HIDE,
 	INLINE_HELP_POPOVER_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
-	SERIALIZE,
+	INLINE_HELP_SHOW,
+	INLINE_HELP_HIDE,
+	INLINE_HELP_SEARCH_RESET,
 } from 'state/action-types';
+
+export const ui = withoutPersistence( ( state = { isVisible: true }, action ) => {
+	switch ( action.type ) {
+		case INLINE_HELP_SHOW:
+			return { ...state, isVisible: true };
+		case INLINE_HELP_HIDE:
+			return { ...state, isVisible: false };
+	}
+
+	return state;
+} );
 
 export const popover = withoutPersistence( ( state = { isVisible: false }, action ) => {
 	switch ( action.type ) {
@@ -33,61 +40,6 @@ export const popover = withoutPersistence( ( state = { isVisible: false }, actio
 	return state;
 } );
 
-export const checklistPrompt = (
-	state = {
-		isVisible: false,
-		taskId: null,
-		step: 0,
-	},
-	action
-) => {
-	switch ( action.type ) {
-		case INLINE_HELP_CHECKLIST_PROMPT_SHOW:
-			return { ...state, isVisible: true };
-		case INLINE_HELP_CHECKLIST_PROMPT_HIDE:
-			return {
-				...state,
-				isVisible: false,
-				taskId: null,
-				step: 0,
-			};
-		case INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID: {
-			const { taskId } = action;
-			return { ...state, taskId };
-		}
-		case INLINE_HELP_CHECKLIST_PROMPT_SET_STEP: {
-			const { step } = action;
-			return { ...state, step };
-		}
-		case SERIALIZE:
-			return state;
-	}
-
-	return state;
-};
-
-checklistPrompt.hasCustomPersistence = true;
-
-export const onboardingWelcomePrompt = withoutPersistence(
-	(
-		state = {
-			isVisible: false,
-		},
-		action
-	) => {
-		switch ( action.type ) {
-			case INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW:
-				return { ...state, isVisible: true };
-			case INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE:
-				return { ...state, isVisible: false };
-			case INLINE_HELP_POPOVER_HIDE:
-				return { ...state, isVisible: false };
-		}
-
-		return state;
-	}
-);
-
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
 		case INLINE_HELP_SEARCH_REQUEST:
@@ -97,6 +49,7 @@ export function requesting( state = {}, action ) {
 			};
 		case INLINE_HELP_SEARCH_REQUEST_SUCCESS:
 		case INLINE_HELP_SEARCH_REQUEST_FAILURE:
+		case INLINE_HELP_SEARCH_RESET:
 			return {
 				...state,
 				[ action.searchQuery ]: false,
@@ -113,10 +66,26 @@ export const search = withoutPersistence(
 			items: {},
 			selectedResult: -1,
 			shouldOpenSelectedResult: false,
+			hasAPIResults: false,
 		},
 		action
 	) => {
 		switch ( action.type ) {
+			case INLINE_HELP_SEARCH_RESET:
+				return {
+					searchQuery: '',
+					items: {
+						...state.items,
+						'': action.searchResults,
+					},
+					selectedResult: -1,
+					hasAPIResults: false,
+				};
+			case INLINE_HELP_SET_SEARCH_QUERY:
+				return {
+					...state,
+					searchQuery: action.searchQuery,
+				};
 			case INLINE_HELP_SEARCH_REQUEST:
 				return {
 					...state,
@@ -131,38 +100,16 @@ export const search = withoutPersistence(
 						[ action.searchQuery ]: action.searchResults,
 					},
 				};
+			case INLINE_HELP_SEARCH_REQUEST_API_RESULTS:
+				return {
+					...state,
+					hasAPIResults: action.hasAPIResults,
+				};
 			case INLINE_HELP_SELECT_RESULT:
 				return {
 					...state,
 					selectedResult: action.resultIndex,
 				};
-			case INLINE_HELP_SELECT_NEXT_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-					return {
-						...state,
-						selectedResult: ( state.selectedResult + 1 ) % state.items[ state.searchQuery ].length,
-					};
-				}
-
-				return {
-					...state,
-					selectedResult: -1,
-				};
-			}
-			case INLINE_HELP_SELECT_PREVIOUS_RESULT: {
-				if ( state.items[ state.searchQuery ] && state.items[ state.searchQuery ].length ) {
-					const newResult = ( state.selectedResult - 1 ) % state.items[ state.searchQuery ].length;
-					return {
-						...state,
-						selectedResult: newResult < 0 ? state.items[ state.searchQuery ].length - 1 : newResult,
-					};
-				}
-
-				return {
-					...state,
-					selectedResult: -1,
-				};
-			}
 		}
 
 		return state;
@@ -195,10 +142,11 @@ export const contactForm = withoutPersistence(
 	}
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
+	ui,
 	popover,
-	checklistPrompt,
-	onboardingWelcomePrompt,
 	contactForm,
 	searchResults,
 } );
+
+export default withStorageKey( 'inlineHelp', combinedReducer );

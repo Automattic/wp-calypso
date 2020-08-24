@@ -10,6 +10,6 @@ import { siteBlockList } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 
-export default function() {
+export default function () {
 	page( '/me/site-blocks', sidebar, siteBlockList, makeLayout, clientRender );
 }

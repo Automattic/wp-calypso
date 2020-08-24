@@ -24,6 +24,7 @@ export function generateSteps( {
 	addPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -34,6 +35,8 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	addOrRemoveFromProgressStore = noop,
+	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -143,7 +146,30 @@ export function generateSteps( {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-new': {
+			stepName: 'user-new',
+			apiRequestFunction: createAccount,
+			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
+			providesToken: true,
+			dependencies: [ 'cartItem', 'domainItem' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
+			optionalDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -162,6 +188,12 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-new': {
+			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -249,6 +281,23 @@ export function generateSteps( {
 			},
 		},
 
+		'upsell-plan': {
+			stepName: 'upsell-plan',
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+		},
+
+		'plans-plan-only': {
+			stepName: 'plans-plan-only',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
+			},
+		},
+
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
@@ -277,6 +326,16 @@ export function generateSteps( {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
+				isDomainOnly: true,
+				shouldShowDomainTestCopy: false,
+			},
+		},
+
+		'select-domain': {
+			stepName: 'select-domain',
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			props: {
+				isAllDomains: true,
 				isDomainOnly: true,
 				shouldShowDomainTestCopy: false,
 			},
@@ -329,14 +388,26 @@ export function generateSteps( {
 				oauth2Signup: true,
 			},
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+			],
 		},
 
 		'oauth2-name': {
 			stepName: 'oauth2-name',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
@@ -589,6 +660,16 @@ export function generateSteps( {
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
+		},
+
+		'p2-details': {
+			stepName: 'p2-details',
+		},
+
+		'p2-site': {
+			stepName: 'p2-site',
+			apiRequestFunction: createWpForTeamsSite,
+			providesDependencies: [ 'siteSlug' ],
 		},
 	};
 }

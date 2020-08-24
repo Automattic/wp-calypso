@@ -17,7 +17,7 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestBlogStickerAdd = action =>
+export const requestBlogStickerAdd = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -28,12 +28,12 @@ export const requestBlogStickerAdd = action =>
 		action
 	);
 
-export const receiveBlogStickerAddError = action => [
+export const receiveBlogStickerAddError = ( action ) => [
 	errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) ),
 	bypassDataLayer( removeBlogSticker( action.payload.blogId, action.payload.stickerName ) ),
 ];
 
-export const receiveBlogStickerAdd = action => {
+export const receiveBlogStickerAdd = ( action ) => {
 	return successNotice(
 		translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
 			args: action.payload.stickerName,

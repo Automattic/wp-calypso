@@ -202,7 +202,7 @@ const Miscellaneous = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_compression',
 		'cache_hello_world',

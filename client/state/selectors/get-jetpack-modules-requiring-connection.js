@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/jetpack/init';
 
 /**
  * Returns an array of modules that require connection in order to work.
@@ -25,10 +26,10 @@ const getJetpackModulesRequiringConnection = createSelector(
 		}
 
 		return Object.keys( modules ).filter(
-			module_slug => modules[ module_slug ].requires_connection
+			( module_slug ) => modules[ module_slug ].requires_connection
 		);
 	},
-	state => [ state.jetpack.modules.items ]
+	( state ) => [ state.jetpack.modules.items ]
 );
 
 export default getJetpackModulesRequiringConnection;

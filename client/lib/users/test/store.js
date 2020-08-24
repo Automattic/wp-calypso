@@ -141,7 +141,7 @@ describe( 'Users Store', () => {
 			assert.equal( updatedUsers.length, usersData.found );
 
 			// The last two users should have a 'contributor' role
-			updatedUsers.slice( -2, 2 ).forEach( user => {
+			updatedUsers.slice( -2, 2 ).forEach( ( user ) => {
 				assert.equal( user.roles[ 0 ], 'contributor' );
 			} );
 		} );
@@ -154,7 +154,7 @@ describe( 'Users Store', () => {
 
 		test( 'Should update a specific user with new attributes', () => {
 			const users = UsersStore.getUsers( options ),
-				testUserIndex = findIndex( users, user => user.name === 'Test One' );
+				testUserIndex = findIndex( users, ( user ) => user.name === 'Test One' );
 			let usersAgain;
 
 			Dispatcher.handleServerAction( actions.updateSingleUser );

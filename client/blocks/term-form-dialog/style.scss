@@ -7,7 +7,7 @@
 	padding-bottom: 0;
 }
 
-@include breakpoint( '<660px' ) {
+@include breakpoint-deprecated( '<660px' ) {
 	.term-form-dialog {
 		width: 90%;
 	}

@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 class SearchEmptyContent extends React.Component {
 	static propTypes = {
@@ -51,7 +52,7 @@ class SearchEmptyContent extends React.Component {
 				onClick={ this.recordSecondaryAction }
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore Discover' ) }
+				{ this.props.translate( 'Explore' ) }
 			</a>
 		) : null;
 
@@ -63,7 +64,7 @@ class SearchEmptyContent extends React.Component {
 
 		return (
 			<EmptyContent
-				title={ this.props.translate( 'No Results' ) }
+				title={ this.props.translate( 'No results' ) }
 				line={ message }
 				action={ action }
 				secondaryAction={ secondaryAction }
@@ -75,4 +76,4 @@ class SearchEmptyContent extends React.Component {
 	}
 }
 
-export default localize( SearchEmptyContent );
+export default withPerformanceTrackerStop( localize( SearchEmptyContent ) );

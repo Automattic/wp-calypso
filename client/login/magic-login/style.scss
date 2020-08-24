@@ -1,3 +1,7 @@
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 @media ( max-height: 450px ) {
 	.magic-login__handle-link,
 	.magic-login__check-email,
@@ -34,7 +38,7 @@
 		max-width: 400px;
 		padding: 16px;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			padding: 24px;
 		}
 
@@ -45,7 +49,7 @@
 }
 
 .magic-login__form-header {
-	font-size: 22px;
+	font-size: $font-title-small;
 	margin-bottom: 24px;
 	margin-top: 16px;
 	text-align: center;
@@ -62,9 +66,9 @@
 .magic-login__form-label {
 	color: var( --color-neutral-70 );
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.5;
-	font-weight: 500;
+	font-weight: 600;
 	margin-bottom: 5px;
 }
 
@@ -83,8 +87,8 @@
 		color: var( --color-neutral-50 );
 		display: block;
 		line-height: 4em;
-		font-size: 14px;
-		font-weight: 500;
+		font-size: $font-body-small;
+		font-weight: 600;
 		padding: 0 24px;
 		text-align: center;
 		text-decoration: none;
@@ -109,4 +113,41 @@
 	display: block;
 	height: 132px;
 	margin: 0 auto 1.5em;
+}
+
+.magic-login.is-gutenboarding-login {
+	.magic-login__form-header {
+		@include onboarding-heading-text-mobile;
+
+		@include break-mobile {
+			@include onboarding-heading-text;
+		}
+	}
+
+	.card {
+		box-shadow: none;
+	}
+
+	.magic-login__form-action .button.is-primary:not( [disabled] ) {
+		// Match primary button color in Gutenboarding and
+		// change border color to remove 3D effect
+		background-color: #007cba;
+		border-color: #007cba;
+	}
+}
+
+.magic-login__gutenboarding-wordpress-logo {
+	height: 64px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	padding: 0 16px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	@include break-mobile {
+		padding: 8px 24px;
+	}
 }

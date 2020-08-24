@@ -45,6 +45,6 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	shouldRequestThumbnail: ! getThumbnailForIframe( state, ownProps.embedUrl ),
 } );
 
-const mapDispatchToProps = dispatch => bindActionCreators( { requestThumbnail }, dispatch );
+const mapDispatchToProps = ( dispatch ) => bindActionCreators( { requestThumbnail }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( QueryReaderThumbnails );

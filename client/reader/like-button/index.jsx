@@ -14,8 +14,8 @@ import { markPostSeen } from 'state/reader/posts/actions';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import QueryPostLikes from 'components/data/query-post-likes';
-import getPostLikeCount from 'state/selectors/get-post-like-count';
-import isLikedPost from 'state/selectors/is-liked-post';
+import { getPostLikeCount } from 'state/posts/selectors/get-post-like-count';
+import { isLikedPost } from 'state/posts/selectors/is-liked-post';
 
 /**
  * Style dependencies
@@ -34,7 +34,7 @@ class ReaderLikeButton extends React.Component {
 		clearTimeout( this.hidePopoverTimeout );
 	}
 
-	recordLikeToggle = liked => {
+	recordLikeToggle = ( liked ) => {
 		const post =
 			this.props.post ||
 			getPostByKey( reduxGetState(), {

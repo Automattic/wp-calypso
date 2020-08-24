@@ -12,7 +12,7 @@ import { useLocalizedMoment } from 'components/localized-moment';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'lib/url/support';
 import { getSelectedDomain } from 'lib/domains';
 
-const TransferLock = props => {
+const TransferLock = ( props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const { transferAwayEligibleAt } = getSelectedDomain( props );

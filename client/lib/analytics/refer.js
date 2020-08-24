@@ -1,76 +1,29 @@
-/**
- * External dependencies
- */
-import { pick } from 'lodash';
-import debug from 'debug';
+// Refer platform tracking.
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { urlParseAmpCompatible } from 'lib/analytics/utils';
+import { trackAffiliateReferral } from './track-affiliate-referral';
+import { recordTracksEvent } from './tracks';
 
-const referDebug = debug( 'calypso:analytics:refer' );
+export function referRecordPageView() {
+	if ( ! window || ! window.location ) {
+		return; // Not possible.
+	}
 
-const whitelistedEventProps = [
-	'status',
-	'success',
-	'duplicate',
-	'description',
-	'cookie_id',
-	'vendor_id',
-	'affiliate_id',
-	'campaign_id',
-	'sub_id',
-	'referrer',
-];
+	const referrer = window.location.href;
+	const parsedUrl = urlParseAmpCompatible( referrer );
+	const affiliateId =
+		parsedUrl?.searchParams.get( 'aff' ) || parsedUrl?.searchParams.get( 'affiliate' );
+	const campaignId = parsedUrl?.searchParams.get( 'cid' );
+	const subId = parsedUrl?.searchParams.get( 'sid' );
 
-export async function trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } ) {
-	referDebug( 'Recording affiliate referral.', { affiliateId, campaignId, subId, referrer } );
-
-	const headers = {
-		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-		Accept: 'application/json',
-	};
-
-	const body = new URLSearchParams( {
-		affiliate_id: affiliateId,
-		campaign_id: campaignId || '',
-		sub_id: subId || '',
-		referrer: referrer || '',
-	} ).toString();
-
-	referDebug( 'Fetching Refer platform response.' );
-
-	try {
-		const response = await window.fetch( 'https://refer.wordpress.com/clicks/67402', {
-			withCredentials: true, // Needed to check and set the 'wp-affiliate-tracker' cookie.
-			method: 'POST',
-			headers,
-			body,
+	if ( affiliateId && ! isNaN( affiliateId ) ) {
+		recordTracksEvent( 'calypso_refer_visit', {
+			page: parsedUrl.host + parsedUrl.pathname,
 		} );
 
-		const json = await response.json();
-
-		if ( response.ok ) {
-			referDebug( 'Recording Refer platform success response.', json );
-			analytics.tracks.recordEvent( 'calypso_refer_visit_response', {
-				...pick( json.data, whitelistedEventProps ),
-				status: response.status || '',
-				success: json.success || true,
-				description: json.message || 'success',
-			} );
-			return;
-		}
-
-		referDebug( 'Recording Refer platform error response.', json );
-		analytics.tracks.recordEvent( 'calypso_refer_visit_response', {
-			...pick( json.data, whitelistedEventProps ),
-			status: response.status || '',
-			success: json.success || false,
-			description: json.message || 'error',
-		} );
-	} catch ( error ) {
-		// Exception from `fetch` usually means network error. Don't report these to Tracks.
-		referDebug( 'Failed to fetch Refer platform response.', error );
+		trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } );
 	}
 }

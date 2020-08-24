@@ -109,9 +109,9 @@ class WP_Template_Inserter {
 
 		$request_url = 'https://public-api.wordpress.com/wpcom/v2/full-site-editing/templates';
 
-		$request_args = [
-			'body' => [ 'theme_slug' => $this->theme_slug ],
-		];
+		$request_args = array(
+			'body' => array( 'theme_slug' => $this->theme_slug ),
+		);
 
 		$response = $this->fetch_retry( $request_url, $request_args );
 
@@ -119,11 +119,11 @@ class WP_Template_Inserter {
 			do_action(
 				'a8c_fse_log',
 				'template_population_failure',
-				[
+				array(
 					'context'    => 'WP_Template_Inserter->fetch_template_parts',
 					'error'      => 'Fetch retry timeout',
 					'theme_slug' => $this->theme_slug,
-				]
+				)
 			);
 			$this->header_content = $this->get_default_header();
 			$this->footer_content = $this->get_default_footer();
@@ -135,11 +135,11 @@ class WP_Template_Inserter {
 			do_action(
 				'a8c_fse_log',
 				'template_population_failure',
-				[
+				array(
 					'context'    => 'WP_Template_Inserter->fetch_template_parts',
 					'error'      => 'Did not find remote template data for the given theme.',
 					'theme_slug' => $this->theme_slug,
-				]
+				)
 			);
 			return;
 		}
@@ -222,10 +222,10 @@ class WP_Template_Inserter {
 		do_action(
 			'a8c_fse_log',
 			'before_template_population',
-			[
+			array(
 				'context'    => 'WP_Template_Inserter->insert_default_template_data',
 				'theme_slug' => $this->theme_slug,
-			]
+			)
 		);
 
 		if ( $this->is_template_data_inserted() ) {
@@ -236,11 +236,11 @@ class WP_Template_Inserter {
 			do_action(
 				'a8c_fse_log',
 				'template_population_failure',
-				[
+				array(
 					'context'    => 'WP_Template_Inserter->insert_default_template_data',
 					'error'      => 'Data already exist',
 					'theme_slug' => $this->theme_slug,
-				]
+				)
 			);
 			return;
 		}
@@ -256,14 +256,14 @@ class WP_Template_Inserter {
 		$this->register_template_post_types();
 
 		$header_id = wp_insert_post(
-			[
+			array(
 				'post_title'     => 'Header',
 				'post_content'   => $this->header_content,
 				'post_status'    => 'publish',
 				'post_type'      => 'wp_template_part',
 				'comment_status' => 'closed',
 				'ping_status'    => 'closed',
-			]
+			)
 		);
 
 		if ( ! term_exists( "$this->theme_slug-header", 'wp_template_part_type' ) ) {
@@ -273,14 +273,14 @@ class WP_Template_Inserter {
 		wp_set_object_terms( $header_id, "$this->theme_slug-header", 'wp_template_part_type' );
 
 		$footer_id = wp_insert_post(
-			[
+			array(
 				'post_title'     => 'Footer',
 				'post_content'   => $this->footer_content,
 				'post_status'    => 'publish',
 				'post_type'      => 'wp_template_part',
 				'comment_status' => 'closed',
 				'ping_status'    => 'closed',
-			]
+			)
 		);
 
 		if ( ! term_exists( "$this->theme_slug-footer", 'wp_template_part_type' ) ) {
@@ -298,20 +298,20 @@ class WP_Template_Inserter {
 			// Uploading images locally does not work in the WordPress.com environment,
 			// so we use an action to handle it with Headstart there.
 			if ( has_action( 'a8c_fse_upload_template_part_images' ) ) {
-				do_action( 'a8c_fse_upload_template_part_images', $image_urls, [ $header_id, $footer_id ] );
+				do_action( 'a8c_fse_upload_template_part_images', $image_urls, array( $header_id, $footer_id ) );
 			} else {
 				$image_inserter = new Template_Image_Inserter();
-				$image_inserter->copy_images_and_update_posts( $image_urls, [ $header_id, $footer_id ] );
+				$image_inserter->copy_images_and_update_posts( $image_urls, array( $header_id, $footer_id ) );
 			}
 		}
 
 		do_action(
 			'a8c_fse_log',
 			'template_population_success',
-			[
+			array(
 				'context'    => 'WP_Template_Inserter->insert_default_template_data',
 				'theme_slug' => $this->theme_slug,
-			]
+			)
 		);
 	}
 
@@ -334,10 +334,10 @@ class WP_Template_Inserter {
 		do_action(
 			'a8c_fse_log',
 			'before_pages_population',
-			[
+			array(
 				'context'    => 'WP_Template_Inserter->insert_default_pages',
 				'theme_slug' => $this->theme_slug,
-			]
+			)
 		);
 
 		// Bail if this data has already been inserted.
@@ -345,19 +345,19 @@ class WP_Template_Inserter {
 			do_action(
 				'a8c_fse_log',
 				'pages_population_failure',
-				[
+				array(
 					'context'    => 'WP_Template_Inserter->insert_default_pages',
 					'error'      => 'Data already exist',
 					'theme_slug' => $this->theme_slug,
-				]
+				)
 			);
 			return;
 		}
 
 		$request_url = add_query_arg(
-			[
+			array(
 				'_locale' => $this->get_iso_639_locale(),
-			],
+			),
 			'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates'
 		);
 
@@ -367,11 +367,11 @@ class WP_Template_Inserter {
 			do_action(
 				'a8c_fse_log',
 				'pages_population_failure',
-				[
+				array(
 					'context'    => 'WP_Template_Inserter->insert_default_pages',
 					'error'      => 'Fetch retry timeout',
 					'theme_slug' => $this->theme_slug,
-				]
+				)
 			);
 			return;
 		}
@@ -383,25 +383,25 @@ class WP_Template_Inserter {
 
 		if ( empty( get_page_by_title( 'About' ) ) && ! empty( $template_content_by_slug['about'] ) ) {
 			wp_insert_post(
-				[
+				array(
 					'post_title'   => _x( 'About', 'Default page title', 'full-site-editing' ),
 					'post_content' => $template_content_by_slug['about'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
 					'menu_order'   => 1,
-				]
+				)
 			);
 		}
 
 		if ( empty( get_page_by_title( 'Contact' ) ) && ! empty( $template_content_by_slug['contact'] ) ) {
 			wp_insert_post(
-				[
+				array(
 					'post_title'   => _x( 'Contact', 'Default page title', 'full-site-editing' ),
 					'post_content' => $template_content_by_slug['contact'],
 					'post_status'  => 'publish',
 					'post_type'    => 'page',
 					'menu_order'   => 1,
-				]
+				)
 			);
 		}
 
@@ -410,10 +410,10 @@ class WP_Template_Inserter {
 		do_action(
 			'a8c_fse_log',
 			'pages_population_success',
-			[
+			array(
 				'context'    => 'WP_Template_Inserter->insert_default_pages',
 				'theme_slug' => $this->theme_slug,
-			]
+			)
 		);
 	}
 
@@ -425,7 +425,7 @@ class WP_Template_Inserter {
 	public function get_iso_639_locale() {
 		$language = strtolower( get_locale() );
 
-		if ( in_array( $language, [ 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ], true ) ) {
+		if ( in_array( $language, array( 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
 			$language = str_replace( '_', '-', $language );
 		} else {
 			$language = preg_replace( '/([-_].*)$/i', '', $language );

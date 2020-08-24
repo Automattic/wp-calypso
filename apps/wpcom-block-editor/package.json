@@ -18,12 +18,39 @@
 	"scripts": {
 		"bundle": "calypso-build --env.WP",
 		"build:dev": "npm run bundle --",
-		"build:prod": "NODE_ENV=production npm run bundle --",
+		"build:prod": "NODE_ENV=production yarn run bundle --",
 		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
 		"clean": "npx rimraf dist",
-		"prebuild": "npm run clean"
+		"prebuild": "yarn run clean",
+		"dev": "node bin/npm-run-build.js --dev",
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
-		"debug": "4.1.1"
+		"@wordpress/block-editor": "^4.3.3",
+		"@wordpress/blocks": "^6.20.3",
+		"@wordpress/components": "^10.0.3",
+		"@wordpress/compose": "^3.19.3",
+		"@wordpress/data": "^4.22.3",
+		"@wordpress/dom-ready": "^2.10.0",
+		"@wordpress/editor": "^9.20.3",
+		"@wordpress/element": "^2.16.0",
+		"@wordpress/hooks": "^2.9.0",
+		"@wordpress/i18n": "^3.14.0",
+		"@wordpress/icons": "^2.4.0",
+		"@wordpress/interface": "^0.7.3",
+		"@wordpress/plugins": "^2.20.3",
+		"@wordpress/rich-text": "^3.20.3",
+		"@wordpress/url": "^2.17.0",
+		"debug": "^4.1.1",
+		"jquery": "^1.12.3",
+		"lodash": "^4.17.15",
+		"react": "^16.12.0",
+		"tinymce": "^4.9.6"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "^6.1.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^2.8.0",
+		"enzyme": "^3.11.0",
+		"npm-run-all": "^4.1.5"
 	}
 }

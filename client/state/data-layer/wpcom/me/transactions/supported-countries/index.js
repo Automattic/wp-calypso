@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{object} action The action to dispatch next
  * @returns {object} WordPress.com API HTTP Request action object
  */
-export const fetchCountriesTransactions = action =>
+export const fetchCountriesTransactions = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import MediaListData from 'components/data/media-list-data';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaActions from 'lib/media/actions';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_RESIZER,
@@ -34,11 +34,11 @@ import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
 } from 'state/sharing/keyring/selectors';
-import { pauseGuidedTour, resumeGuidedTour } from 'state/ui/guided-tours/actions';
+import { pauseGuidedTour, resumeGuidedTour } from 'state/guided-tours/actions';
 import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { getGuidedTourState } from 'state/guided-tours/selectors';
 import { withoutNotice } from 'state/notices/actions';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { clearMediaErrors, changeMediaSource } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -91,7 +91,7 @@ export class MediaLibraryContent extends React.Component {
 		) {
 			// We have transitioned from an invalid Google status to a valid one - migration is complete
 			// Force a refresh of the list - this won't happen automatically as we've cached our previous failed query.
-			MediaActions.sourceChanged( this.props.site.ID );
+			this.props.changeMediaSource( this.props.site.ID );
 		}
 	}
 
@@ -128,7 +128,7 @@ export class MediaLibraryContent extends React.Component {
 			};
 
 			if ( site ) {
-				onDismiss = MediaActions.clearValidationErrorsByType.bind( null, site.ID, errorType );
+				onDismiss = () => this.props.clearMediaErrors( site.ID, errorType );
 			}
 
 			let status = 'is-error';
@@ -196,6 +196,12 @@ export class MediaLibraryContent extends React.Component {
 					message = translate( 'We are unable to retrieve your full media library.' );
 					tryAgain = true;
 					break;
+
+				case MediaValidationErrors.SERVICE_UNAVAILABLE:
+					message = this.getServiceUnavailableMessageForSource();
+					tryAgain = true;
+					break;
+
 				default:
 					message = translate(
 						'%d file could not be uploaded because an error occurred while uploading.',
@@ -227,6 +233,20 @@ export class MediaLibraryContent extends React.Component {
 		return translate( 'Your service has been disconnected. Please reconnect to continue.' );
 	}
 
+	getServiceUnavailableMessageForSource() {
+		const { translate, source } = this.props;
+
+		if ( source === 'pexels' ) {
+			return translate(
+				'We were unable to connect to the Pexels service. Please try again later.'
+			);
+		}
+
+		return translate(
+			'We were unable to connect to the external service. Please try again later.'
+		);
+	}
+
 	renderTryAgain() {
 		return (
 			<NoticeAction onClick={ this.retryList }>{ this.props.translate( 'Retry' ) }</NoticeAction>
@@ -234,7 +254,7 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	retryList = () => {
-		MediaActions.sourceChanged( this.props.site.ID );
+		this.props.changeMediaSource( this.props.site.ID );
 	};
 
 	renderNoticeAction( upgradeNudgeName, upgradeNudgeFeature ) {
@@ -267,11 +287,11 @@ export class MediaLibraryContent extends React.Component {
 	}
 
 	recordPlansNavigation( tracksEvent, tracksData ) {
-		analytics.ga.recordEvent( 'Media', 'Clicked Upload Error Action' );
-		analytics.tracks.recordEvent( tracksEvent, tracksData );
+		gaRecordEvent( 'Media', 'Clicked Upload Error Action' );
+		recordTracksEvent( tracksEvent, tracksData );
 	}
 
-	goToSharing = ev => {
+	goToSharing = ( ev ) => {
 		ev.preventDefault();
 		page( `/marketing/connections/${ this.props.site.slug }` );
 	};
@@ -346,20 +366,18 @@ export class MediaLibraryContent extends React.Component {
 				search={ this.props.search }
 				source={ this.props.source }
 			>
-				<MediaLibrarySelectedData siteId={ this.props.site.ID }>
-					<MediaLibraryList
-						key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
-						site={ this.props.site }
-						filter={ this.props.filter }
-						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
-						search={ this.props.search }
-						containerWidth={ this.props.containerWidth }
-						thumbnailType={ this.getThumbnailType() }
-						single={ this.props.single }
-						scrollable={ this.props.scrollable }
-						onEditItem={ this.props.onEditItem }
-					/>
-				</MediaLibrarySelectedData>
+				<MediaLibraryList
+					key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
+					site={ this.props.site }
+					filter={ this.props.filter }
+					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
+					search={ this.props.search }
+					containerWidth={ this.props.containerWidth }
+					thumbnailType={ this.getThumbnailType() }
+					single={ this.props.single }
+					scrollable={ this.props.scrollable }
+					onEditItem={ this.props.onEditItem }
+				/>
 			</MediaListData>
 		);
 	}
@@ -435,21 +453,22 @@ export default connect(
 			mediaValidationErrorTypes,
 			shouldPauseGuidedTour,
 			googleConnection: googleConnection.length === 1 ? googleConnection[ 0 ] : null, // There can be only one
+			selectedItems: getMediaLibrarySelectedItems( state, ownProps.site?.ID ),
 		};
 	},
-	() => ( {
-		toggleGuidedTour: shouldPause => {
-			// We're using `reduxDispatch` to avoid dispatch clashes with the media data Flux implementation.
-			// The eventual Reduxification of the media store should prevent this. See: #26168
-			reduxDispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
+	{
+		toggleGuidedTour: ( shouldPause ) => ( dispatch ) => {
+			dispatch( shouldPause ? pauseGuidedTour() : resumeGuidedTour() );
 		},
-		deleteKeyringConnection: connection => {
+		deleteKeyringConnection: ( connection ) => ( dispatch ) => {
 			// We don't want this to trigger a global notice - a notice is shown inline
 			const deleteKeyring = withoutNotice( () => deleteKeyringConnection( connection ) );
 
-			reduxDispatch( deleteKeyring() );
+			dispatch( deleteKeyring() );
 		},
-	} ),
+		clearMediaErrors,
+		changeMediaSource,
+	},
 	null,
 	{ pure: false }
 )( localize( MediaLibraryContent ) );

@@ -1,7 +1,7 @@
 // Comment Base Style
 
 .card.comment {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin: 0 auto;
 	padding: 0;
 
@@ -16,7 +16,7 @@
 			0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 10px auto;
 	}
 }
@@ -105,7 +105,7 @@
 
 	.comment__date,
 	.comment__author-url {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
 	.comment__author-url-separator {
@@ -142,7 +142,7 @@
 
 	.popover__inner {
 		color: var( --color-text-subtle );
-		font-size: 13px;
+		font-size: $font-body-small;
 		max-width: 220px;
 		padding: 16px;
 		text-align: left;
@@ -194,7 +194,7 @@
 	.comment__status-label {
 		border-radius: 9px;
 		float: right;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-left: 8px;
 		padding: 0 10px;
 
@@ -308,7 +308,7 @@
 	padding-top: 8px;
 	padding-bottom: 8px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		justify-content: flex-start;
 		margin-left: 40px;
 		padding-top: 0;
@@ -346,13 +346,13 @@
 		color: var( --color-primary );
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		span {
 			display: block;
 		}
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		flex-basis: auto;
 		flex-grow: 0;
 		padding: 8px 16px;
@@ -385,7 +385,7 @@
 }
 
 .comment__reply-textarea {
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 47px; // 1 line
 	line-height: 21px;
 	min-height: 47px; // 1 line
@@ -439,7 +439,7 @@
 		padding: 0 8px;
 		width: 50%;
 
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint-deprecated( '>1280px' ) {
 			width: 33%;
 		}
 	}
@@ -458,7 +458,7 @@
 
 	input[type='text'],
 	textarea {
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.info-popover {
@@ -596,7 +596,7 @@
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 90%;
 		.dialog__content {
 			min-width: none;

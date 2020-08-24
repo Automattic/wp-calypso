@@ -8,6 +8,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/jetpack-install';
+import 'state/jetpack-remote-install/init';
 
 /**
  * Install the jetpack plugin on a remote .org site.
@@ -51,7 +52,7 @@ export const jetpackRemoteInstallUpdateError = ( url, errorCode, errorMessage ) 
  * @param {string} url - the remote site url
  * @returns {object} action object
  */
-export const jetpackRemoteInstallComplete = url => ( {
+export const jetpackRemoteInstallComplete = ( url ) => ( {
 	type: JETPACK_REMOTE_INSTALL_SUCCESS,
 	url,
 } );

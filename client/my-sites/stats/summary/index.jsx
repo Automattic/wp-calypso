@@ -108,7 +108,7 @@ class StatsSummary extends Component {
 				break;
 
 			case 'posts':
-				title = translate( 'Posts & Pages' );
+				title = translate( 'Posts & pages' );
 				summaryView = (
 					<StatsModule
 						key="posts-summary"
@@ -213,7 +213,7 @@ class StatsSummary extends Component {
 				);
 				break;
 			case 'annualstats':
-				title = translate( 'Annual Site Stats' );
+				title = translate( 'Annual site stats' );
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
 		}

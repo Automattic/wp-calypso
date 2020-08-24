@@ -3,75 +3,128 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __experimentalCreateInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam } from '../../path';
+import { useLangRouteParam, usePath, Step, useCurrentStep } from '../../path';
+import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
-
-type NewUserErrorResponse = import('@automattic/data-stores').User.NewUserErrorResponse;
-
-// TODO: deploy this change to @types/wordpress__element
-declare module '@wordpress/element' {
-	// eslint-disable-next-line no-shadow
-	export function __experimentalCreateInterpolateElement(
-		interpolatedString: string,
-		conversionMap: Record< string, ReactElement >
-	): ReactNode;
-}
+import SignupFormHeader from './header';
+import {
+	initGoogleRecaptcha,
+	recordGoogleRecaptchaAction,
+	recordOnboardingError,
+} from '../../lib/analytics';
+import { localizeUrl } from '../../../../lib/i18n-utils';
+import { useTrackModal } from '../../hooks/use-track-modal';
+import config from '../../../../config';
 
 interface Props {
 	onRequestClose: () => void;
 }
 
 const SignupForm = ( { onRequestClose }: Props ) => {
-	const { __: NO__, _x: NO_x } = useI18n();
+	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
-	const { createAccount } = useDispatch( USER_STORE );
-	const isFetchingNewUser = useSelect( select => select( USER_STORE ).isFetchingNewUser() );
-	const newUserError = useSelect( select => select( USER_STORE ).getNewUserError() );
-	const { siteTitle, siteVertical } = useSelect( select => select( ONBOARD_STORE ) ).getState();
+	const [ passwordVal, setPasswordVal ] = useState( '' );
+	const [ recaptchaClientId, setRecaptchaClientId ] = useState< number >();
+	const { createAccount, clearErrors } = useDispatch( USER_STORE );
+	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
+	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
+	const { siteTitle, siteVertical } = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 	const langParam = useLangRouteParam();
+	const makePath = usePath();
+	const currentStep = useCurrentStep();
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	const closeModal = () => {
+		clearErrors();
+		onRequestClose();
+	};
+
+	useTrackModal( 'Signup' );
+
+	const lang = useLangRouteParam();
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_gutenboarding_signup_start', {
-			flow: 'gutenboarding',
+		initGoogleRecaptcha(
+			'g-recaptcha',
+			'calypso/signup/pageLoad',
+			config( 'google_recaptcha_site_key' )
+		).then( ( result ) => {
+			if ( ! result ) {
+				return;
+			}
+			setRecaptchaClientId( result.clientId );
 		} );
-	}, [] );
+	}, [ setRecaptchaClientId ] );
 
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		const username_hint = siteTitle || siteVertical?.label;
+		const username_hint = siteTitle || siteVertical?.label || null;
 
-		const success = await createAccount( {
+		let recaptchaToken;
+		let recaptchaError;
+
+		if ( typeof recaptchaClientId === 'number' ) {
+			recaptchaToken = await recordGoogleRecaptchaAction(
+				recaptchaClientId,
+				'calypso/signup/formSubmit'
+			);
+
+			if ( ! recaptchaToken ) {
+				recaptchaError = 'recaptcha_failed';
+			}
+		} else {
+			recaptchaError = 'recaptcha_didnt_load';
+		}
+
+		const result = await createAccount( {
 			email: emailVal,
-			is_passwordless: true,
+			'g-recaptcha-error': recaptchaError,
+			'g-recaptcha-response': recaptchaToken || undefined,
+			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
-			...( username_hint && {
-				extra: { username_hint },
-			} ),
+			extra: { username_hint },
+			is_passwordless: false,
 		} );
 
-		if ( success ) {
-			onRequestClose();
+		if ( result.ok ) {
+			closeModal();
+		} else {
+			recordOnboardingError( {
+				step: 'account_creation',
+				error: result.newUserError.error || 'signup_form_new_user_error',
+			} );
 		}
 	};
 
-	const tos = __experimentalCreateInterpolateElement(
-		NO__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
+	const localizedTosLink = localizeUrl( 'https://wordpress.com/tos/' );
+
+	const tos = createInterpolateElement(
+		__( 'By creating an account you agree to our <link_to_tos>Terms of Service</link_to_tos>.' ),
 		{
-			link_to_tos: <ExternalLink href="https://wordpress.com/tos/" />,
+			link_to_tos: <ExternalLink href={ localizedTosLink } />,
 		}
 	);
+
+	// translators: English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed
+	const recaptcha_text = __(
+		'This site is protected by reCAPTCHA and the Google <link_to_policy>Privacy Policy</link_to_policy> and <link_to_tos>Terms of Service</link_to_tos> apply.'
+	);
+	const recaptcha_tos = createInterpolateElement( recaptcha_text, {
+		link_to_policy: <ExternalLink href="https://policies.google.com/privacy" />,
+		link_to_tos: <ExternalLink href="https://policies.google.com/terms" />,
+	} );
 
 	let errorMessage: string | undefined;
 	if ( newUserError ) {
@@ -79,58 +132,109 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			case 'already_taken':
 			case 'already_active':
 			case 'email_exists':
-				errorMessage = NO__( 'An account with this email address already exists.' );
+			case 'email_reserved':
+				errorMessage = __( 'An account with this email address already exists.' );
 				break;
-
+			case 'email_invalid':
+				errorMessage = __( 'Please enter a valid email address.' );
+				break;
+			case 'email_cant_be_used_to_signup':
+				errorMessage = __(
+					'You cannot use that email address to signup. We are having problems with them blocking some of our email. Please use another email provider.'
+				);
+				break;
+			case 'email_not_allowed':
+				errorMessage = __( 'Sorry, that email address is not allowed!' );
+				break;
+			case 'password_invalid':
+				errorMessage = newUserError.message;
+				break;
 			default:
-				errorMessage = NO__(
+				errorMessage = __(
 					'Sorry, something went wrong when trying to create your account. Please try again.'
 				);
 				break;
 		}
 	}
 
+	const langFragment = lang ? `/${ lang }` : '';
+	const loginRedirectUrl = encodeURIComponent(
+		`${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
+	);
+	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
+	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
+
 	return (
 		<Modal
-			className="signup-form"
-			title={ NO__( 'Sign up to save your changes' ) }
-			onRequestClose={ onRequestClose }
+			className={ 'signup-form' }
+			title={ __( 'Save your progress' ) }
+			onRequestClose={ closeModal }
 			focusOnMount={ false }
-			isDismissible={ ! isFetchingNewUser }
+			isDismissible={ false }
+			overlayClassName={ 'signup-form__overlay' }
+			// set to false so that 1password's autofill doesn't automatically close the modal
+			shouldCloseOnClickOutside={ false }
 		>
-			<form onSubmit={ handleSignUp }>
-				<TextControl
-					label={ NO__( 'Your Email Address' ) }
-					value={ emailVal }
-					disabled={ isFetchingNewUser }
-					type="email"
-					onChange={ setEmailVal }
-					placeholder={ NO_x(
-						'E.g., yourname@email.com',
-						"An example of a person's email, use something appropriate for the locale"
-					) }
-					required
-					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-				/>
-				{ errorMessage && (
-					<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
-						{ errorMessage }
-					</Notice>
-				) }
-				<div className="signup-form__footer">
-					<p className="signup-form__terms-of-service-link">{ tos }</p>
+			<SignupFormHeader onRequestClose={ closeModal } />
 
-					<Button
-						type="submit"
-						className="signup-form__submit"
-						disabled={ isFetchingNewUser }
-						isBusy={ isFetchingNewUser }
-						isPrimary
-					>
-						{ NO__( 'Create your account' ) }
-					</Button>
-				</div>
-			</form>
+			<div className="signup-form__body">
+				<h1 className="signup-form__title">{ __( 'Save your progress' ) }</h1>
+
+				<form onSubmit={ handleSignUp }>
+					<fieldset>
+						<legend className="signup-form__legend">
+							<p>{ __( 'Enter an email and password to save your progress and continue.' ) }</p>
+						</legend>
+
+						<TextControl
+							value={ emailVal }
+							disabled={ isFetchingNewUser }
+							type="email"
+							onChange={ setEmailVal }
+							placeholder={ __( 'Email address' ) }
+							required
+							autoFocus={ ! isMobile } // eslint-disable-line jsx-a11y/no-autofocus
+						/>
+
+						<TextControl
+							value={ passwordVal }
+							disabled={ isFetchingNewUser }
+							type="password"
+							autoComplete="new-password"
+							onChange={ setPasswordVal }
+							placeholder={ __( 'Password' ) }
+							required
+						/>
+
+						{ errorMessage && (
+							<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
+								{ errorMessage }
+							</Notice>
+						) }
+
+						<div className="signup-form__footer">
+							<p className="signup-form__login-link">
+								<span>{ __( 'Already have an account?' ) }</span>{ ' ' }
+								<Button className="signup-form__link" isLink href={ loginUrl }>
+									{ __( 'Log in' ) }
+								</Button>
+							</p>
+
+							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+
+							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
+								{ __( 'Create account' ) }
+							</ModalSubmitButton>
+
+							<p className="signup-form__link signup-form__terms-of-service-link signup-form__recaptcha_tos">
+								{ recaptcha_tos }
+							</p>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+
+			<div id="g-recaptcha"></div>
 		</Modal>
 	);
 };

@@ -9,7 +9,7 @@ import { camelCase } from 'lodash';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestRewindState } from 'state/rewind/state/actions';
 
-const transformCredential = data =>
+const transformCredential = ( data ) =>
 	Object.assign(
 		{
 			type: data.type,
@@ -21,7 +21,7 @@ const transformCredential = data =>
 		data.user && { user: data.user }
 	);
 
-const transformDownload = data =>
+const transformDownload = ( data ) =>
 	Object.assign(
 		{
 			downloadId: data.downloadId,
@@ -33,7 +33,7 @@ const transformDownload = data =>
 		data.validUntil && { validUntil: new Date( data.validUntil * 1000 ) }
 	);
 
-const makeRewindDismisser = data =>
+const makeRewindDismisser = ( data ) =>
 	http( {
 		apiVersion: data.apiVersion,
 		method: data.method,
@@ -42,7 +42,7 @@ const makeRewindDismisser = data =>
 		onFailure: requestRewindState( data.site_id ),
 	} );
 
-const transformRewind = data =>
+const transformRewind = ( data ) =>
 	Object.assign(
 		{
 			restoreId: data.restore_id,
@@ -64,6 +64,7 @@ export function transformApi( data ) {
 					? Date.parse( data.last_updated )
 					: data.last_updated * 1000
 			),
+			hasCloud: data.has_cloud,
 		},
 		data.can_autoconfigure && { canAutoconfigure: !! data.can_autoconfigure },
 		data.credentials && { credentials: data.credentials.map( transformCredential ) },

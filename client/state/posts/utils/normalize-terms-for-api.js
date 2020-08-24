@@ -16,7 +16,7 @@ export function normalizeTermsForApi( post ) {
 
 	return {
 		...post,
-		terms: pickBy( post.terms, terms => {
+		terms: pickBy( post.terms, ( terms ) => {
 			return terms.length && every( terms, isString );
 		} ),
 	};

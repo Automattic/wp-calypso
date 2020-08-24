@@ -44,6 +44,7 @@ const ALT_TEXT = {
 	discover: 'Discover',
 	eps: 'eps',
 	giropay: 'Giropay',
+	id_wallet: 'OVO',
 	ideal: 'iDEAL',
 	jcb: 'JCB',
 	mastercard: 'Mastercard',

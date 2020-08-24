@@ -22,6 +22,7 @@ import {
 } from './controller';
 import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
+import { addMiddleware } from 'redux-dynamic-middlewares';
 
 /**
  * Style dependencies
@@ -33,7 +34,19 @@ function forceTeamA8C( context, next ) {
 	next();
 }
 
-export default function() {
+export async function lazyLoadDependencies() {
+	const isBrowser = typeof window === 'object';
+	if ( isBrowser && config.isEnabled( 'lasagna' ) && config.isEnabled( 'reader' ) ) {
+		const lasagnaMiddleware = await import(
+			/* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js'
+		);
+		addMiddleware( lasagnaMiddleware.default );
+	}
+}
+
+export default async function () {
+	await lazyLoadDependencies();
+
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
 			'/read',
@@ -86,8 +99,11 @@ export default function() {
 		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
 		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 
-		// old recommendations page
+		// Old recommendations page
 		page( '/recommendations', '/read/search' );
+
+		// Old Freshly Pressed
+		page( '/read/fresh', '/discover' );
 	}
 
 	// Automattic Employee Posts

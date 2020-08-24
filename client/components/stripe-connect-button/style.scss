@@ -46,7 +46,7 @@ We dont want to lint this file, since it's copied verbatim.
 	background-image: -ms-linear-gradient(#7DC5EE, #008CDD 85%, #30A2E4);
 	background-image: linear-gradient(#7DC5EE, #008CDD 85%, #30A2E4);
 
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 30px;
 	color: white;
 	font-weight: bold;

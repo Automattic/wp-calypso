@@ -12,8 +12,9 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import persistOptions from './persist';
-import { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
+import type { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
 
+export type { State };
 export { STORE_KEY };
 
 use( plugins.persistence, persistOptions );
@@ -21,9 +22,25 @@ use( plugins.persistence, persistOptions );
 registerStore< State >( STORE_KEY, {
 	actions,
 	controls,
-	reducer: reducer as any,
+	reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 	selectors,
-	persist: [ 'domain', 'siteTitle', 'siteVertical', 'pageLayouts', 'selectedDesign' ],
+	persist: [
+		'domain',
+		'domainSearch',
+		'hasUsedDomainsStep',
+		'hasUsedPlansStep',
+		'isExperimental',
+		'pageLayouts',
+		'plan',
+		'randomizedDesigns',
+		'selectedDesign',
+		'selectedFeatures',
+		'selectedFonts',
+		'selectedSite',
+		'siteTitle',
+		'siteVertical',
+		'wasVerticalSkipped',
+	],
 } );
 
 declare module '@wordpress/data' {

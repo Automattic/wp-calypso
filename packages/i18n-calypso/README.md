@@ -375,7 +375,7 @@ export default withRtl( Header );
 
 ## Some Background
 
-I18n accepts a language-specific locale json file that contains the whitelisted translation strings for your JS project, uses that data to instantiate a [Tannin](https://github.com/aduth/tannin) instance, and exposes a single `translate` method with sugared syntax for interacting with Tannin.
+I18n accepts a language-specific locale json file that contains the list of allowed translation strings for your JS project, uses that data to instantiate a [Tannin](https://github.com/aduth/tannin) instance, and exposes a single `translate` method with sugared syntax for interacting with Tannin.
 
 ### Key Hashing
 

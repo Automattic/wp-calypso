@@ -19,12 +19,12 @@ import 'state/reader/init';
  * @returns {Array} Followed sites/feeds
  */
 const getReaderFollows = createSelector(
-	state => {
+	( state ) => {
 		// remove subs where the sub has an error
 		const items = reject( values( state.reader.follows.items ), 'error' );
 
 		// this is important. don't mutate the original items.
-		const withSiteAndFeed = items.map( item => ( {
+		const withSiteAndFeed = items.map( ( item ) => ( {
 			...item,
 			site: getSite( state, item.blog_ID ),
 			feed: getFeed( state, item.feed_ID ),
@@ -33,13 +33,13 @@ const getReaderFollows = createSelector(
 		// remove subs where the feed or site has an error
 		const withoutErrors = reject(
 			withSiteAndFeed,
-			item =>
+			( item ) =>
 				( item.site && item.site.is_error && item.site.error.statusCode === 410 ) ||
 				( item.feed && item.feed.is_error )
 		);
 		return withoutErrors;
 	},
-	state => [
+	( state ) => [
 		state.reader.follows.items,
 		state.reader.feeds.items,
 		state.reader.sites.items,

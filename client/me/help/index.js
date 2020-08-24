@@ -7,7 +7,7 @@ import page from 'page';
 import { makeLayout, render as clientRender } from 'controller';
 import { sidebar } from 'me/controller';
 
-export default function() {
+export default function () {
 	if ( config.isEnabled( 'help' ) ) {
 		page(
 			'/help',

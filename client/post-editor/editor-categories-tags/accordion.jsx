@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,7 +17,7 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import TermSelector from 'post-editor/editor-term-selector';
 import TermTokenField from 'post-editor/term-token-field';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getTerm } from 'state/terms/selectors';
@@ -102,7 +101,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 			case 1:
 			case 2:
 				return tags
-					.map( tag => {
+					.map( ( tag ) => {
 						return '#' + unescapeString( tag.name || tag );
 					} )
 					.join( ', ' );
@@ -166,7 +165,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const defaultCategoryId = getSiteOption( state, siteId, 'default_category' );

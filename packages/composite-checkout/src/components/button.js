@@ -10,97 +10,72 @@ import styled from '@emotion/styled';
  */
 import joinClasses from '../lib/join-classes';
 
-export default function Button( {
-	className,
-	buttonState,
-	buttonType,
-	isBusy,
-	children,
-	...props
-} ) {
+export default function Button( { className, buttonType, isBusy, children, ...props } ) {
 	const classNames = joinClasses( [
 		'checkout-button',
-		...( buttonState ? [ 'is-status-' + buttonState ] : [] ),
-		...( buttonType ? [ 'is-type-' + buttonType ] : [] ),
+		...( buttonType ? [ 'is-status-' + buttonType ] : [] ),
 		...( isBusy ? [ 'is-busy' ] : [] ),
 		...( className ? [ className ] : [] ),
 	] );
 
 	return (
-		<CallToAction
-			buttonState={ buttonState }
-			buttonType={ buttonType }
-			isBusy={ isBusy }
-			className={ classNames }
-			{ ...props }
-		>
+		<CallToAction buttonType={ buttonType } isBusy={ isBusy } className={ classNames } { ...props }>
 			{ children }
 		</CallToAction>
 	);
 }
 
 Button.propTypes = {
-	buttonState: PropTypes.string, // Either 'disabled', 'primary', 'secondary', 'text-button', 'borderless'.
-	buttonType: PropTypes.string, // Service type (i.e. 'paypal' or 'apple-pay').
+	buttonType: PropTypes.oneOf( [ 'primary', 'secondary', 'text-button', 'borderless', 'paypal' ] ),
 	fullWidth: PropTypes.bool,
-	onClick: PropTypes.func,
 	isBusy: PropTypes.bool,
 };
 
 const CallToAction = styled.button`
 	display: block;
-	width: ${props => ( props.fullWidth ? '100%' : 'auto' )};
+	width: ${ ( props ) => ( props.fullWidth ? '100%' : 'auto' ) };
 	font-size: 16px;
-	border-radius: ${props => ( props.buttonType === 'paypal' ? '50px' : '3px' )};
-	padding: ${props => ( props.buttonState === 'text-button' ? '0' : '10px 15px' )};
-	background: ${getBackgroundColor};
-	border-width: ${getBorderWeight};
-	border-style: solid;
-	border-color: ${getBorderColor};
-	color: ${getTextColor};
-	border-bottom-width: ${getBorderElevationWeight};
-	font-weight: ${getFontWeight};
-	text-decoration: ${getTextDecoration};
+	border-radius: ${ ( props ) => ( props.buttonType === 'paypal' ? '50px' : '2px' ) };
+	padding: ${ ( props ) => ( props.buttonType === 'text-button' ? '0' : '10px 15px' ) };
+	border: ${ ( props ) =>
+		! props.buttonType || props.disabled ? '1px solid ' + props.theme.colors.borderColor : '0' };
+	background: ${ getBackgroundColor };
+	color: ${ getTextColor };
+	font-weight: ${ getFontWeight };
+	text-decoration: ${ getTextDecoration };
 
 	:hover {
-		background: ${getRollOverColor};
-		border-width: ${getBorderWeight};
-		border-style: solid;
-		border-color: ${getRollOverBorderColor};
-		border-bottom-width: ${getBorderElevationWeight};
+		background: ${ getRollOverColor };
+		border-color: ${ ( props ) =>
+			! props.buttonType ? props.theme.colors.borderColorDark : 'inherit' };
 		text-decoration: none;
-		color: ${getTextColor};
-		cursor: ${props => ( props.buttonState === 'disabled' ? 'not-allowed' : 'pointer' )};
+		color: ${ getTextColor };
+		cursor: ${ ( props ) => ( props.disabled ? 'not-allowed' : 'pointer' ) };
 	}
 
 	:active {
-		background: ${getRollOverColor};
-		border-width: ${getBorderWeight};
-		border-style: solid;
-		border-color: ${getRollOverBorderColor};
-		border-top-width: ${getBorderElevationWeight};
-		text-decoration: ${getTextDecoration};
-		color: ${getTextColor};
+		background: ${ getRollOverColor };
+		text-decoration: ${ getTextDecoration };
+		color: ${ getTextColor };
 	}
 
 	svg {
 		margin-bottom: -1px;
 		transform: translateY( 2px );
-		filter: ${getImageFilter};
-		opacity: ${getImageOpacity};
+		filter: ${ getImageFilter };
+		opacity: ${ getImageOpacity };
 	}
 
 	&.is-busy {
 		animation: components-button__busy-animation 2500ms infinite linear;
 		background-image: linear-gradient(
 			-45deg,
-			${getBackgroundColor} 28%,
-			${getBackgroundAccentColor} 28%,
-			${getBackgroundAccentColor} 72%,
-			${getBackgroundColor} 72%
+			${ getBackgroundColor } 28%,
+			${ getBackgroundAccentColor } 28%,
+			${ getBackgroundAccentColor } 72%,
+			${ getBackgroundColor } 72%
 		);
 		background-size: 200px;
-		border-color: ${getRollOverBorderColor};
 		opacity: 1;
 	}
 
@@ -111,39 +86,28 @@ const CallToAction = styled.button`
 	}
 `;
 
-function getImageFilter( { buttonType, buttonState } ) {
-	return `grayscale( ${ buttonState === 'primary' ? '0' : '100' } ) invert( ${
-		buttonState === 'primary' && buttonType === 'apple-pay' ? '100%' : '0'
-	} );`;
+function getImageFilter( { buttonType } ) {
+	return `grayscale( ${
+		buttonType === 'primary' || buttonType === 'paypal' ? '0' : '100'
+	} ) invert( 0 );`;
 }
 
-function getImageOpacity( { buttonState } ) {
-	return buttonState === 'primary' ? '1' : '0.5';
+function getImageOpacity( { buttonType } ) {
+	return buttonType === 'primary' || buttonType === 'paypal' ? '1' : '0.5';
 }
 
-function getBorderWeight( { buttonState } ) {
-	return buttonState === 'text-button' || buttonState === 'borderless' ? '0' : '1px';
-}
-
-function getBorderElevationWeight( { buttonState } ) {
-	return buttonState === 'text-button' || buttonState === 'borderless' ? '0' : '2px';
-}
-
-function getRollOverColor( { buttonState, buttonType, theme } ) {
+function getRollOverColor( { disabled, buttonType, theme } ) {
 	const { colors } = theme;
-	switch ( buttonState ) {
+	if ( disabled ) {
+		return colors.disabledPaymentButtons;
+	}
+	switch ( buttonType ) {
+		case 'paypal':
+			return colors.paypalGoldHover;
 		case 'primary':
-			if ( buttonType === 'apple-pay' ) {
-				return colors.applePayButtonRollOverColor;
-			}
-			if ( buttonType === 'paypal' ) {
-				return colors.paypalGoldHover;
-			}
 			return colors.primaryOver;
 		case 'secondary':
 			return colors.highlightOver;
-		case 'disabled':
-			return colors.disabledPaymentButtons;
 		case 'text-button':
 		case 'borderless':
 			return 'none';
@@ -152,55 +116,33 @@ function getRollOverColor( { buttonState, buttonType, theme } ) {
 	}
 }
 
-function getRollOverBorderColor( { buttonState, buttonType, theme } ) {
+function getTextColor( { disabled, buttonType, theme } ) {
 	const { colors } = theme;
-	switch ( buttonState ) {
-		case 'primary':
-			if ( buttonType === 'apple-pay' ) {
-				return colors.applePayButtonRollOverColor;
-			}
-			if ( buttonType === 'paypal' ) {
-				return colors.paypalGoldHover;
-			}
-			return colors.primaryBorder;
-		case 'secondary':
-			return colors.highlightBorder;
-		case 'disabled':
-			return colors.disabledButtons;
-		default:
-			return colors.borderColorDark;
+	if ( disabled ) {
+		return colors.disabledButtons;
 	}
-}
-
-function getTextColor( { buttonState, theme } ) {
-	const { colors } = theme;
-	switch ( buttonState ) {
+	switch ( buttonType ) {
 		case 'primary':
 			return colors.surface;
 		case 'secondary':
 			return colors.surface;
 		case 'text-button':
 			return colors.highlight;
-		case 'disabled':
-			return colors.disabledButtons;
 		default:
 			return colors.textColor;
 	}
 }
 
-function getBackgroundColor( { buttonType, buttonState, theme } ) {
+function getBackgroundColor( { disabled, buttonType, theme } ) {
 	const { colors } = theme;
-	switch ( buttonState ) {
+	if ( disabled ) {
+		return colors.disabledPaymentButtons;
+	}
+	switch ( buttonType ) {
+		case 'paypal':
+			return colors.paypalGold;
 		case 'primary':
-			if ( buttonType === 'apple-pay' ) {
-				return colors.applePayButtonColor;
-			}
-			if ( buttonType === 'paypal' ) {
-				return colors.paypalGold;
-			}
 			return colors.primary;
-		case 'disabled':
-			return colors.disabledPaymentButtons;
 		case 'secondary':
 			return colors.highlight;
 		default:
@@ -208,21 +150,18 @@ function getBackgroundColor( { buttonType, buttonState, theme } ) {
 	}
 }
 
-function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
+function getBackgroundAccentColor( { disabled, buttonType, theme } ) {
 	const { colors } = theme;
-	switch ( buttonState ) {
+	if ( disabled ) {
+		return colors.disabledPaymentButtonsAccent;
+	}
+	switch ( buttonType ) {
+		case 'paypal':
+			return colors.paypalGoldHover;
 		case 'primary':
-			if ( buttonType === 'apple-pay' ) {
-				return colors.applePayButtonRollOverColor;
-			}
-			if ( buttonType === 'paypal' ) {
-				return colors.paypalGoldHover;
-			}
 			return colors.primaryOver;
 		case 'secondary':
 			return colors.highlightOver;
-		case 'disabled':
-			return colors.disabledPaymentButtonsAccent;
 		case 'text-button':
 		case 'borderless':
 			return 'none';
@@ -231,33 +170,13 @@ function getBackgroundAccentColor( { buttonState, buttonType, theme } ) {
 	}
 }
 
-function getBorderColor( { buttonType, buttonState, theme } ) {
-	const { colors } = theme;
-	switch ( buttonState ) {
-		case 'primary':
-			if ( buttonType === 'apple-pay' ) {
-				return colors.applePayButtonColor;
-			}
-			if ( buttonType === 'paypal' ) {
-				return colors.paypalGold;
-			}
-			return colors.primaryBorder;
-		case 'secondary':
-			return colors.highlightBorder;
-		case 'disabled':
-			return colors.disabledButtons;
-		default:
-			return colors.borderColor;
-	}
-}
-
-function getFontWeight( { buttonState, theme } ) {
-	if ( buttonState === 'disabled' || buttonState === 'text-button' ) {
+function getFontWeight( { disabled, buttonType, theme } ) {
+	if ( disabled || buttonType === 'text-button' ) {
 		return theme.weights.normal;
 	}
 	return theme.weights.bold;
 }
 
-function getTextDecoration( { buttonState } ) {
-	return buttonState === 'text-button' ? 'underline' : 'none';
+function getTextDecoration( { buttonType } ) {
+	return buttonType === 'text-button' ? 'underline' : 'none';
 }

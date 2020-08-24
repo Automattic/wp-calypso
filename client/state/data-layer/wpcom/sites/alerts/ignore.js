@@ -13,7 +13,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transformer';
 
-export const request = action => {
+export const request = ( action ) => {
 	const notice = successNotice( i18n.translate( 'Ignoring threat…' ), { duration: 30000 } );
 	const {
 		notice: { noticeId },
@@ -53,7 +53,7 @@ export const success = ( action, rewind_state ) => [
 	} )(),
 ];
 
-export const failure = action =>
+export const failure = ( action ) =>
 	errorNotice( i18n.translate( 'Error ignoring threat. Please contact support.' ), {
 		duration: 10000,
 		id: action.noticeId,

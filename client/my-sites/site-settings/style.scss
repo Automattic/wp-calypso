@@ -1,5 +1,5 @@
 .site-settings {
-	font-size: 14px;
+	font-size: $font-body-small;
 
 	fieldset {
 		clear: both;
@@ -40,8 +40,8 @@
 	legend,
 	label {
 		margin-bottom: 5px;
-		font-size: 14px;
-		font-weight: 600;
+		font-size: $font-body-small;
+		font-weight: 700;
 	}
 
 	legend + label,
@@ -51,7 +51,7 @@
 	input[type='radio'] + label,
 	label input[type='checkbox'],
 	label input[type='radio'] {
-		font-weight: normal;
+		font-weight: 400;
 	}
 
 	label a,
@@ -80,7 +80,7 @@
 	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: italic;
 		font-weight: 400;
 		color: var( --color-text-subtle );
@@ -126,7 +126,7 @@
 	}
 
 	.site-settings__blogaddress-settings {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: flex;
 		}
 
@@ -134,8 +134,9 @@
 			width: 100%;
 			margin-left: 0;
 			margin-top: 5px;
+			text-align: center;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				width: 45%;
 				margin-left: 16px;
 				margin-top: 0;
@@ -155,7 +156,7 @@
 
 	.verification-code-error {
 		color: var( --color-error );
-		font-weight: bold;
+		font-weight: 700;
 	}
 
 	.seo-settings__seo-form .counted-textarea {
@@ -183,7 +184,7 @@
 	fieldset.site-icon-setting {
 		padding-bottom: 16px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			flex: 0 0 122px;
 			order: 1;
 			margin-bottom: 0;
@@ -193,21 +194,21 @@
 	}
 
 	.site-icon-setting__heading {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			justify-content: space-between;
 			white-space: nowrap;
 		}
 	}
 
 	.site-icon-setting__icon {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			float: left;
 			margin-right: 8px;
 		}
 	}
 
 	.site-icon-setting__button {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: block;
 			margin-bottom: 8px;
 		}
@@ -224,7 +225,16 @@
 	}
 
 	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 600;
+		font-weight: 700;
+	}
+
+	.eligibility-warnings {
+		margin-top: 0;
+		margin-bottom: 16px;
+
+		.is-primary {
+			float: none;
+		}
 	}
 }
 
@@ -293,13 +303,13 @@
 
 	.site-settings__moderation-settings {
 		.form-label {
-			font-weight: normal;
+			font-weight: 400;
 		}
 	}
 }
 
 .site-settings__site-options {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 	}
 
@@ -311,7 +321,7 @@
 }
 
 .site-settings__site-title-tagline {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex: 0 1 100%;
 		order: 2;
 	}
@@ -351,7 +361,7 @@
 
 .writing-settings,
 .general-settings {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		select {
 			width: 100%;
 		}
@@ -451,7 +461,7 @@
 	margin-top: -21px;
 }
 
-.site-settings__add-to-whitelist {
+.site-settings__add-to-explicitly-allowed-list {
 	margin-top: 3px;
 }
 
@@ -488,6 +498,11 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		box-shadow: none;
 	}
 }
+
+.site-settings .site-settings__wordpress-version {
+	display: inline;
+}
+
 .site-settings__jetpack-dev-mode-notice .notice {
 	animation: none;
 }
@@ -505,6 +520,17 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .site-settings__search-block {
 	margin-bottom: 16px;
+
+	.site-settings__jetpack-instant-search-toggle {
+		margin-left: 36px;
+	}
+
+	.search__module-settings {
+		margin-top: 0;
+		&:not( :last-child ) {
+			margin-bottom: 1em;
+		}
+	}
 }
 
 .site-settings__speed-up-site-settings {
@@ -538,7 +564,9 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	.theme-enhancements__card {
 		.form-fieldset.minileven {
 			&.inactive {
-				p, .form-toggle__label, .support-info {
+				p,
+				.form-toggle__label,
+				.support-info {
 					opacity: 0.3;
 					transition: all 0.75s;
 				}

@@ -74,11 +74,11 @@ QuerySettingsGeneral.propTypes = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		loaded: areSettingsGeneralLoaded( state ),
 		error: areSettingsGeneralLoadError( state ),
 	} ),
-	dispatch => ( {
+	( dispatch ) => ( {
 		actions: bindActionCreators(
 			{
 				fetchSettingsGeneral,

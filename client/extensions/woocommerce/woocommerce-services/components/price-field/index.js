@@ -13,7 +13,7 @@ import FormCurrencyInput from 'components/forms/form-currency-input';
 import FieldError from '../field-error';
 
 const PriceField = ( { id, title, value, placeholder, updateValue, error, className } ) => {
-	const handleChangeEvent = event => updateValue( event.target.value );
+	const handleChangeEvent = ( event ) => updateValue( event.target.value );
 
 	return (
 		<FormFieldset className={ className }>

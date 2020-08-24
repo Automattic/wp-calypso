@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -33,9 +34,10 @@ class CurrentSite extends Component {
 		selectedSite: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
+		forceAllSitesView: PropTypes.bool,
 	};
 
-	switchSites = event => {
+	switchSites = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
@@ -82,21 +84,27 @@ class CurrentSite extends Component {
 				) : (
 					<AllSites />
 				) }
-				<AsyncLoad
-					require="my-sites/current-site/notice"
-					placeholder={ null }
-					site={ selectedSite }
-				/>
-				<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
-				<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
+				{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
+					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+				) }
+				{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
+					<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
+				) }
+				{ selectedSite && isEnabled( 'current-site/notice' ) && (
+					<AsyncLoad
+						require="my-sites/current-site/notice"
+						placeholder={ null }
+						site={ selectedSite }
+					/>
+				) }
 			</Card>
 		);
 	}
 }
 
 export default connect(
-	state => ( {
-		selectedSite: getSelectedSite( state ),
+	( state, ownProps ) => ( {
+		selectedSite: ownProps.forceAllSitesView ? null : getSelectedSite( state ),
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),

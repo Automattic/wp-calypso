@@ -32,7 +32,7 @@ function embed( editor ) {
 			embedUrl: selectedEmbedNode.innerText || selectedEmbedNode.textContent,
 			isVisible: visible,
 			onCancel: () => render( false ),
-			onUpdate: newUrl => {
+			onUpdate: ( newUrl ) => {
 				editor.execCommand( 'mceInsertContent', false, newUrl );
 				render( false );
 			},

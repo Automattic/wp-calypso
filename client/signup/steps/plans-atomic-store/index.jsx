@@ -48,7 +48,7 @@ export class PlansAtomicStoreStep extends Component {
 		translate: PropTypes.func.isRequired,
 	};
 
-	onSelectPlan = cartItem => {
+	onSelectPlan = ( cartItem ) => {
 		const { additionalStepData, stepSectionName, stepName, goToNextStep, designType } = this.props;
 
 		if ( cartItem ) {
@@ -108,7 +108,7 @@ export class PlansAtomicStoreStep extends Component {
 				PLAN_BUSINESS,
 				PLAN_ECOMMERCE,
 			],
-			value => !! value
+			( value ) => !! value
 		);
 
 		if ( designType === DESIGN_TYPE_STORE ) {

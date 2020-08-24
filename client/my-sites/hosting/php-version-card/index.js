@@ -38,7 +38,7 @@ const PhpVersionCard = ( {
 
 	const recommendedValue = '7.3';
 
-	const changePhpVersion = event => {
+	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
 
 		setSelectedPhpVersion( newVersion );
@@ -89,7 +89,7 @@ const PhpVersionCard = ( {
 						onChange={ changePhpVersion }
 						value={ selectedValue }
 					>
-						{ getPhpVersions().map( option => {
+						{ getPhpVersions().map( ( option ) => {
 							return (
 								<option
 									disabled={ option.value === version }

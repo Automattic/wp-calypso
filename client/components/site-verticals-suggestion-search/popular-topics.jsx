@@ -54,7 +54,7 @@ class PopularTopics extends PureComponent {
 		onSelect: PropTypes.func.isRequired,
 	};
 
-	onClick = index => event => {
+	onClick = ( index ) => ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.onSelect( event.currentTarget.value );
@@ -94,7 +94,7 @@ class PopularTopics extends PureComponent {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		popularTopics: POPULAR_TOPICS[ getSiteType( state ) || 'blog' ] || [],
 	} ),
 	{

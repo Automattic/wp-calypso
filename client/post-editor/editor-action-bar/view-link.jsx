@@ -16,7 +16,7 @@ import Tooltip from 'components/tooltip';
 import { Button } from '@automattic/components';
 import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 
@@ -87,7 +87,7 @@ class EditorViewLink extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const currentPost = getSitePost( state, siteId, postId );

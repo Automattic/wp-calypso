@@ -17,7 +17,7 @@ import {
 } from 'state/reader/action-types';
 
 jest.mock( 'state/reader/posts/actions', () => ( {
-	receivePosts: posts => Promise.resolve( posts ),
+	receivePosts: ( posts ) => Promise.resolve( posts ),
 } ) );
 
 describe( 'actions', () => {

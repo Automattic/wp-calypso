@@ -9,10 +9,12 @@ import { connect } from 'react-redux';
  */
 import { Button } from '@automattic/components';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const postId = 143180;
-const postUrl =
-	'https://en.support.wordpress.com/do-i-need-a-website-a-blog-or-a-website-with-a-blog/';
+const postUrl = localizeUrl(
+	'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/'
+);
 
 class SupportArticleDialogExample extends Component {
 	handleClick = () => {

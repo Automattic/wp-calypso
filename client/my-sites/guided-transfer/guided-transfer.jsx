@@ -58,7 +58,7 @@ class GuidedTransfer extends React.Component {
 		page( `/export/guided/${ this.props.siteSlug }` );
 	};
 
-	showHost = hostSlug => {
+	showHost = ( hostSlug ) => {
 		page( `/export/guided/${ hostSlug }/${ this.props.siteSlug }` );
 	};
 
@@ -73,7 +73,7 @@ class GuidedTransfer extends React.Component {
 	render() {
 		const { siteId, siteSlug } = this.props;
 		const hostInfo = get( guidedTransferHosts, this.props.hostSlug );
-		const hosts = Object.keys( guidedTransferHosts ).map( hostSlug => {
+		const hosts = Object.keys( guidedTransferHosts ).map( ( hostSlug ) => {
 			return {
 				...guidedTransferHosts[ hostSlug ],
 				showHost: () => this.showHost( hostSlug ),

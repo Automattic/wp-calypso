@@ -21,7 +21,7 @@ import { submitSignupStep } from 'state/signup/progress/actions';
 import './style.scss';
 
 class RebrandCitiesWelcomeStep extends Component {
-	handleSubmit = siteTitle => {
+	handleSubmit = ( siteTitle ) => {
 		const { goToNextStep, stepName, stepSectionName } = this.props;
 
 		this.props.setSiteTitle( siteTitle );

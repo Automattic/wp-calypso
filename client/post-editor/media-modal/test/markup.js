@@ -11,12 +11,12 @@ import ReactDomServer from 'react-dom/server';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'markup', () => {
 	let sandbox, markup, site;
 
-	useSandbox( newSandbox => ( sandbox = newSandbox ) );
+	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
 	beforeAll( () => {
 		markup = require( '../markup' );

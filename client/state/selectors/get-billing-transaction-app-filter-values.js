@@ -9,6 +9,8 @@ import { groupBy, map } from 'lodash';
 import createSelector from 'lib/create-selector';
 import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
 
+import 'state/billing-transactions/init';
+
 /**
  * Based on the transactions list, returns metadata for rendering the app filters with counts
  *

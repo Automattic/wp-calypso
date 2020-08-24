@@ -65,7 +65,7 @@ const AmpJetpack = ( {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const customizerUrl = getCustomizerUrl( state, siteId );
 	const customizerAmpPanelUrl = !! customizerUrl

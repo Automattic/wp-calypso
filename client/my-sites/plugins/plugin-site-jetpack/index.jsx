@@ -16,8 +16,8 @@ import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import PluginUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginSiteDisabledManage from 'my-sites/plugins/plugin-site-disabled-manage';
 import Site from 'blocks/site';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -83,6 +83,8 @@ class PluginSiteJetpack extends React.Component {
 
 		const showAutoManagedMessage = this.props.isAutoManaged;
 
+		const settingsLink = this.props?.site?.plugin?.action_links?.Settings ?? null;
+
 		return (
 			<FoldableCard
 				compact
@@ -120,6 +122,11 @@ class PluginSiteJetpack extends React.Component {
 					{ canToggleRemove && (
 						<PluginRemoveButton plugin={ this.props.site.plugin } site={ this.props.site } />
 					) }
+					{ settingsLink && (
+						<Button compact href={ settingsLink }>
+							{ this.props.translate( `Settings` ) }
+						</Button>
+					) }
 					{ showAutoManagedMessage && (
 						<div className="plugin-site-jetpack__automanage-notice">
 							{ this.props.translate( 'Auto-managed on this site' ) }
@@ -130,26 +137,9 @@ class PluginSiteJetpack extends React.Component {
 		);
 	};
 
-	renderManageWarning = () => {
-		return (
-			<FoldableCard
-				compact
-				className="plugin-site-jetpack has-manage-error"
-				header={ <Site site={ this.props.site } indicator={ false } /> }
-				actionButton={
-					<PluginSiteDisabledManage site={ this.props.site } plugin={ this.props.plugin } />
-				}
-			/>
-		);
-	};
-
 	render() {
 		if ( ! this.props.site || ! this.props.plugin ) {
 			return null;
-		}
-
-		if ( ! this.props.site.canManage ) {
-			return this.renderManageWarning();
 		}
 
 		if ( ! this.props.site.plugin ) {

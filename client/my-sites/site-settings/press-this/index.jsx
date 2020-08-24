@@ -77,7 +77,7 @@ class PressThis extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		site: getSelectedSite( state ),
 	} ),
 	{

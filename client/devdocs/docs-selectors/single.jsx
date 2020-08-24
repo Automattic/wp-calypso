@@ -32,7 +32,7 @@ export default class DocsSelectorsSingle extends Component {
 		}
 	}
 
-	request = async selector => {
+	request = async ( selector ) => {
 		const query = stringify( { search: selector } );
 
 		try {

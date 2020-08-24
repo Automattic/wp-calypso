@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,7 +14,7 @@ import AddTerm from './add-term';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { editPost, addTermForPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorTermSelector extends Component {
@@ -33,7 +32,7 @@ class EditorTermSelector extends Component {
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
 	}
 
-	onAddTerm = term => {
+	onAddTerm = ( term ) => {
 		const { postId, taxonomyName, siteId } = this.props;
 		this.props.addTermForPost( siteId, taxonomyName, term, postId );
 	};
@@ -84,7 +83,7 @@ class EditorTermSelector extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 

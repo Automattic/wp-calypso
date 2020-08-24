@@ -65,7 +65,7 @@ const OwnershipInformation = ( { isChatActive, isChatAvailable, translate } ) =>
 	</FormFieldset>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isChatAvailable: isHappychatAvailable( state ),
 	isChatActive: hasActiveHappychatSession( state ),
 } ) )( localize( OwnershipInformation ) );

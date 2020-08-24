@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { Field } from 'redux-form';
@@ -10,6 +9,8 @@ import { Field } from 'redux-form';
  * Internal dependencies
  */
 import FormToggle from 'components/forms/form-toggle/compact';
+
+import 'state/form/init';
 
 const ToggleRenderer = ( { input, meta, text, type, ...otherProps } ) => (
 	<FormToggle { ...input } { ...otherProps }>

@@ -301,9 +301,11 @@ export class EditorMediaModalDetailItem extends Component {
 					</div>
 
 					<div className="editor-media-modal-detail__sidebar">
-						{ isJetpack && (
-							<QueryJetpackModules siteId={ siteId } />
-						) /* Is the VideoPress module active? */ }
+						{
+							isJetpack && (
+								<QueryJetpackModules siteId={ siteId } />
+							) /* Is the VideoPress module active? */
+						}
 						{ this.renderMediaEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo item={ item } />
@@ -314,7 +316,7 @@ export class EditorMediaModalDetailItem extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const canUserUploadFiles = canCurrentUser( state, siteId, 'upload_files' );
 

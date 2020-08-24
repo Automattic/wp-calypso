@@ -24,7 +24,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			title: hasLocalizedText( 'Upgrade to a Business plan' )
 				? translate( 'Upgrade to a Business plan' )
 				: translate( 'Upgrade to Business' ),
-			description: ( function() {
+			description: ( function () {
 				if ( context === 'themes' ) {
 					return hasLocalizedText(
 						"You'll also get to install custom plugins, have more storage, and access live support."
@@ -54,7 +54,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			description: translate(
 				'Change your site\'s Privacy settings to "Public" or "Hidden" (not "Private.")'
 			),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/settings/privacy-settings/' ),
+			supportUrl: localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ),
 		},
 		SITE_UNLAUNCHED: {
 			title: translate( 'Launch your site' ),
@@ -63,10 +63,15 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 			),
 			supportUrl: null,
 		},
+		SITE_NOT_PUBLIC: {
+			title: translate( 'Make your site public' ),
+			description: translate( 'Only you and those you invite can view your site.' ),
+			supportUrl: null,
+		},
 		NON_ADMIN_USER: {
 			title: translate( 'Site administrator only' ),
 			description: translate( 'Only the site administrators can use this feature.' ),
-			supportUrl: localizeUrl( 'https://en.support.wordpress.com/user-roles/' ),
+			supportUrl: localizeUrl( 'https://wordpress.com/support/user-roles/' ),
 		},
 		NOT_RESOLVING_TO_WPCOM: {
 			title: translate( 'Domain pointing to a different site' ),
@@ -74,7 +79,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
 				"Your domain is not properly set up to point to your site. Reset your domain's A records in the Domains section to fix this."
 			),
 			supportUrl: localizeUrl(
-				'https://en.support.wordpress.com/move-domain/setting-custom-a-records/'
+				'https://wordpress.com/support/move-domain/setting-custom-a-records/'
 			),
 		},
 		EMAIL_UNVERIFIED: {
@@ -102,7 +107,7 @@ function getHoldMessages( context: string | null, translate: LocalizeProps[ 'tra
  * @param {Function} translate Translate fn
  * @returns {object} Dictionary of blocking holds and their corresponding messages
  */
-function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
+export function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
 			message: hasLocalizedText(
@@ -143,7 +148,7 @@ function getBlockingMessages( translate: LocalizeProps[ 'translate' ] ) {
 				  )
 				: translate( "Contact us to review your site's standing and resolve the dispute." ),
 			status: 'is-error',
-			contactUrl: localizeUrl( 'https://en.support.wordpress.com/suspended-blogs/' ),
+			contactUrl: localizeUrl( 'https://wordpress.com/support/suspended-blogs/' ),
 		},
 		NO_SSL_CERTIFICATE: {
 			message: hasLocalizedText(
@@ -169,29 +174,52 @@ interface ExternalProps {
 
 type Props = ExternalProps & LocalizeProps;
 
+export const HardBlockingNotice = ( {
+	holds,
+	translate,
+	blockingMessages,
+}: {
+	holds: string[];
+	translate: LocalizeProps[ 'translate' ];
+	blockingMessages: ReturnType< typeof getBlockingMessages >;
+} ) => {
+	const blockingHold = holds.find( ( h ): h is keyof ReturnType< typeof getBlockingMessages > =>
+		isHardBlockingHoldType( h, blockingMessages )
+	);
+	if ( ! blockingHold ) {
+		return null;
+	}
+
+	return (
+		<Notice
+			status={ blockingMessages[ blockingHold ].status }
+			text={ blockingMessages[ blockingHold ].message }
+			showDismiss={ false }
+		>
+			{ blockingMessages[ blockingHold ].contactUrl && (
+				<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
+					{ translate( 'Contact us' ) }
+				</NoticeAction>
+			) }
+		</Notice>
+	);
+};
+
 export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const holdMessages = getHoldMessages( context, translate );
 	const blockingMessages = getBlockingMessages( translate );
 
-	const blockingHold = holds.find( h => isHardBlockingHoldType( h, blockingMessages ) );
+	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
 
 	return (
 		<>
-			{ ! isPlaceholder &&
-				blockingHold &&
-				isHardBlockingHoldType( blockingHold, blockingMessages ) && (
-					<Notice
-						status={ blockingMessages[ blockingHold ].status }
-						text={ blockingMessages[ blockingHold ].message }
-						showDismiss={ false }
-					>
-						{ blockingMessages[ blockingHold ].contactUrl && (
-							<NoticeAction href={ blockingMessages[ blockingHold ].contactUrl } external>
-								{ translate( 'Contact us' ) }
-							</NoticeAction>
-						) }
-					</Notice>
-				) }
+			{ ! isPlaceholder && (
+				<HardBlockingNotice
+					holds={ holds }
+					translate={ translate }
+					blockingMessages={ blockingMessages }
+				/>
+			) }
 			<div
 				className={ classNames( {
 					'eligibility-warnings__hold-list-dim': blockingHold,
@@ -216,7 +244,7 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 					</div>
 				) }
 				{ ! isPlaceholder &&
-					map( holds, hold =>
+					map( holds, ( hold ) =>
 						! isKnownHoldType( hold, holdMessages ) ? null : (
 							<div className="eligibility-warnings__hold" key={ hold }>
 								<div className="eligibility-warnings__message">
@@ -262,6 +290,10 @@ function getCardHeading( context: string | null, translate: LocalizeProps[ 'tran
 			return hasLocalizedText( "To activate hosting access you'll need to:" )
 				? translate( "To activate hosting access you'll need to:" )
 				: defaultCopy;
+		case 'performance':
+			return hasLocalizedText( "To activate Performance Features you'll need to:" )
+				? translate( "To activate Performance Features you'll need to:" )
+				: defaultCopy;
 		default:
 			return hasLocalizedText( "To continue you'll need to:" )
 				? translate( "To continue you'll need to:" )
@@ -293,6 +325,6 @@ function isHardBlockingHoldType(
 }
 
 export const hasBlockingHold = ( holds: string[] ) =>
-	holds.some( hold => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
+	holds.some( ( hold ) => isHardBlockingHoldType( hold, getBlockingMessages( identity ) ) );
 
 export default localize( HoldList );

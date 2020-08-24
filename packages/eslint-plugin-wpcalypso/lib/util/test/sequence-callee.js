@@ -8,8 +8,8 @@
 const assert = require( 'assert' );
 const getCallee = require( '../get-callee' );
 
-describe( '#getCallee', function() {
-	it( 'should return non-sequence callee', function() {
+describe( '#getCallee', function () {
+	it( 'should return non-sequence callee', function () {
 		const node = {
 			type: 'CallExpression',
 			callee: {
@@ -22,7 +22,7 @@ describe( '#getCallee', function() {
 		assert.equal( callee, node.callee );
 	} );
 
-	it( 'should return first non-sequence callee expression', function() {
+	it( 'should return first non-sequence callee expression', function () {
 		const node = {
 			type: 'CallExpression',
 			callee: {
@@ -44,7 +44,7 @@ describe( '#getCallee', function() {
 		assert.equal( callee, node.callee.expressions[ 1 ] );
 	} );
 
-	it( 'should return first non-sequence member property', function() {
+	it( 'should return first non-sequence member property', function () {
 		const node = {
 			type: 'CallExpression',
 			callee: {

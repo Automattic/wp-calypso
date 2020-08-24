@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -21,13 +20,14 @@ import NoticeAction from 'components/notice/notice-action';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import {
 	getKeyringConnectionById,
 	isKeyringConnectionsFetching,
 } from 'state/sharing/keyring/selectors';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { localizeUrl } from 'lib/i18n-utils';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {
@@ -71,7 +71,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		);
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const { connection } = this.props;
 		if ( ! connection ) {
 			return;
@@ -130,7 +130,7 @@ export class EditorSharingPublicizeConnection extends React.Component {
 						components: {
 							a: (
 								<a
-									href="https://en.support.wordpress.com/publicize/#facebook-pages"
+									href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

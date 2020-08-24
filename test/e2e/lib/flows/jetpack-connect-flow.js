@@ -15,11 +15,13 @@ import JetpackAuthorizePage from '../pages/jetpack-authorize-page';
 import WPAdminJetpackPage from '../pages/wp-admin/wp-admin-jetpack-page.js';
 import WPAdminSidebar from '../pages/wp-admin/wp-admin-sidebar.js';
 import WPAdminLogonPage from '../pages/wp-admin/wp-admin-logon-page';
+import WPAdminInPlaceApprovePage from '../pages/wp-admin/wp-admin-in-place-approve-page';
+import WPAdminInPlacePlansPage from '../pages/wp-admin/wp-admin-in-place-plans-page';
 import * as driverManager from '../driver-manager';
 import * as driverHelper from '../driver-helper';
 import * as dataHelper from '../data-helper';
 import JetpackConnectPage from '../pages/jetpack/jetpack-connect-page';
-import NoticesComponent from '../components/notices-component';
+// import NoticesComponent from '../components/notices-component';
 
 export default class JetpackConnectFlow {
 	constructor( driver, account, template ) {
@@ -35,7 +37,8 @@ export default class JetpackConnectFlow {
 			this.driver,
 			WporgCreatorPage._getCreatorURL( this.template )
 		);
-		await wporgCreator.waitForWpadmin();
+
+		await wporgCreator.waitForWpadmin( this.template );
 		this.url = await wporgCreator.getUrl();
 		this.password = await wporgCreator.getPassword();
 		this.username = await wporgCreator.getUsername();
@@ -79,6 +82,20 @@ export default class JetpackConnectFlow {
 		return await pickAPlanPage.selectFreePlanJetpack();
 	}
 
+	async inPlaceConnectFromWPAdmin() {
+		await driverManager.ensureNotLoggedIn( this.driver );
+		const loginFlow = new LoginFlow( this.driver, 'jetpackConnectUser' );
+		await loginFlow.login();
+		await this.createJNSite();
+		await WPAdminSidebar.refreshIfJNError( this.driver );
+		await ( await WPAdminSidebar.Expect( this.driver ) ).selectJetpack();
+		await driverHelper.refreshIfJNError( this.driver );
+		await ( await WPAdminJetpackPage.Expect( this.driver ) ).inPlaceConnect();
+		await ( await WPAdminInPlaceApprovePage.Expect( this.driver ) ).approve();
+		await ( await WPAdminInPlacePlansPage.Expect( this.driver ) ).selectFreePlan();
+		return await WPAdminJetpackPage.Expect( this.driver );
+	}
+
 	async removeSites( timeout = config.get( 'mochaTimeoutMS' ) ) {
 		const timeStarted = Date.now();
 		await new LoginFlow( this.driver, this.account ).loginAndSelectMySite();
@@ -92,8 +109,8 @@ export default class JetpackConnectFlow {
 				return;
 			}
 			// seems like it is not waiting for this
-			const noticesComponent = await NoticesComponent.Expect( this.driver );
-			await noticesComponent.dismissNotice();
+			// const noticesComponent = await NoticesComponent.Expect( this.driver );
+			// await noticesComponent.dismissNotice();
 			return await removeSites();
 		};
 

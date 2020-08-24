@@ -15,7 +15,7 @@ import fromApi from './from-api';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetchConciergeInitial = action =>
+export const fetchConciergeInitial = ( action ) =>
 	http(
 		{
 			method: 'GET',

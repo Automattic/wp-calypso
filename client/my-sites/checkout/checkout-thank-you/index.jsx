@@ -12,7 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { themeActivated } from 'state/themes/actions';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import WordPressLogo from 'components/wordpress-logo';
 import { Card } from '@automattic/components';
 import ChargebackDetails from './chargeback-details';
@@ -84,7 +84,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getActiveTheme } from 'state/themes/selectors';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
-
+import { isProductsListFetching } from 'state/products-list/selectors';
 /**
  * Style dependencies
  */
@@ -163,7 +163,7 @@ export class CheckoutThankYou extends React.Component {
 			this.props.fetchReceipt( gsuiteReceiptId );
 		}
 
-		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
+		recordTracksEvent( 'calypso_checkout_thank_you_view' );
 
 		window.scrollTo( 0, 0 );
 	}
@@ -195,7 +195,7 @@ export class CheckoutThankYou extends React.Component {
 
 	hasPlanOrDomainProduct = ( props = this.props ) => {
 		return getPurchases( props ).some(
-			purchase => isPlan( purchase ) || isDomainProduct( purchase )
+			( purchase ) => isPlan( purchase ) || isDomainProduct( purchase )
 		);
 	};
 
@@ -253,7 +253,8 @@ export class CheckoutThankYou extends React.Component {
 		return (
 			( ! this.props.selectedSite || this.props.sitePlans.hasLoadedFromServer ) &&
 			this.props.receipt.hasLoadedFromServer &&
-			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer )
+			( ! this.props.gsuiteReceipt || this.props.gsuiteReceipt.hasLoadedFromServer ) &&
+			! this.props.isProductsListFetching
 		);
 	};
 
@@ -276,7 +277,7 @@ export class CheckoutThankYou extends React.Component {
 		}
 	};
 
-	redirectIfDomainOnly = props => {
+	redirectIfDomainOnly = ( props ) => {
 		if ( props.domainOnlySiteFlow && get( props, 'receipt.hasLoadedFromServer', false ) ) {
 			const purchases = getPurchases( props );
 			const failedPurchases = getFailedPurchases( props );
@@ -478,7 +479,7 @@ export class CheckoutThankYou extends React.Component {
 		);
 	}
 
-	startTransfer = event => {
+	startTransfer = ( event ) => {
 		event.preventDefault();
 
 		const { selectedSite } = this.props;
@@ -602,32 +603,33 @@ export class CheckoutThankYou extends React.Component {
 					upgradeIntent={ upgradeIntent }
 					primaryCta={ this.primaryCta }
 					displayMode={ displayMode }
-				/>
-
-				{ ! isSimplified && primaryPurchase && (
-					<CheckoutThankYouFeaturesHeader
-						isDataLoaded={ this.isDataLoaded() }
-						isGenericReceipt={ this.isGenericReceipt() }
-						purchases={ purchases }
-						hasFailedPurchases={ hasFailedPurchases }
-					/>
-				) }
-
-				{ ! isSimplified && ComponentClass && (
-					<div className="checkout-thank-you__purchase-details-list">
-						<ComponentClass
-							customizeUrl={ customizeUrl }
-							domain={ domain }
+					purchases={ purchases }
+				>
+					{ ! isSimplified && primaryPurchase && (
+						<CheckoutThankYouFeaturesHeader
+							isDataLoaded={ this.isDataLoaded() }
+							isGenericReceipt={ this.isGenericReceipt() }
 							purchases={ purchases }
-							failedPurchases={ failedPurchases }
-							isRootDomainWithUs={ isRootDomainWithUs }
-							registrarSupportUrl={ registrarSupportUrl }
-							selectedSite={ selectedSite }
-							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
-							sitePlans={ sitePlans }
+							hasFailedPurchases={ hasFailedPurchases }
 						/>
-					</div>
-				) }
+					) }
+
+					{ ! isSimplified && ComponentClass && (
+						<div className="checkout-thank-you__purchase-details-list">
+							<ComponentClass
+								customizeUrl={ customizeUrl }
+								domain={ domain }
+								purchases={ purchases }
+								failedPurchases={ failedPurchases }
+								isRootDomainWithUs={ isRootDomainWithUs }
+								registrarSupportUrl={ registrarSupportUrl }
+								selectedSite={ selectedSite }
+								selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
+								sitePlans={ sitePlans }
+							/>
+						</div>
+					) }
+				</CheckoutThankYouHeader>
 			</div>
 		);
 	};
@@ -641,6 +643,7 @@ export default connect(
 
 		return {
 			isFetchingTransfer: isFetchingTransfer( state, siteId ),
+			isProductsListFetching: isProductsListFetching( state ),
 			planSlug,
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
@@ -660,7 +663,7 @@ export default connect(
 			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return {
 			activatedTheme( meta, site ) {
 				dispatch( themeActivated( meta, site, 'calypstore', true ) );

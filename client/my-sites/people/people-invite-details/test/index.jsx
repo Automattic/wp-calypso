@@ -15,7 +15,7 @@ jest.mock( 'page', () => ( { back: mockGoBack } ) );
 describe( 'PeopleInviteDetails', () => {
 	let PeopleInviteDetails;
 
-	const mockTranslate = msg => msg;
+	const mockTranslate = ( msg ) => msg;
 	const siteObject = { ID: 1337, slug: 'foo.wordpress.com' };
 
 	const pendingInviteObject = {
@@ -91,7 +91,7 @@ describe( 'PeopleInviteDetails', () => {
 		const revokeInviteButton = inviteDetails.find( 'Button' );
 		expect( revokeInviteButton ).toHaveLength( 1 );
 		expect( revokeInviteButton.children() ).toHaveLength( 1 );
-		expect( revokeInviteButton.children().text() ).toEqual( 'Revoke Invite' );
+		expect( revokeInviteButton.children().text() ).toEqual( 'Revoke invite' );
 
 		expect( mockDeleteInvite ).not.toHaveBeenCalled();
 		revokeInviteButton.simulate( 'click' );
@@ -120,7 +120,7 @@ describe( 'PeopleInviteDetails', () => {
 		const clearInviteButton = inviteDetails.find( 'Button' );
 		expect( clearInviteButton ).toHaveLength( 1 );
 		expect( clearInviteButton.children() ).toHaveLength( 1 );
-		expect( clearInviteButton.children().text() ).toEqual( 'Clear Invite' );
+		expect( clearInviteButton.children().text() ).toEqual( 'Clear invite' );
 
 		expect( mockDeleteInvite ).not.toHaveBeenCalled();
 		clearInviteButton.simulate( 'click' );

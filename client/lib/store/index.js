@@ -31,7 +31,7 @@ export const createReducerStore = ( reducer, initialState = {}, waitFor = [] ) =
 
 	ReducerStore.get = () => state;
 
-	ReducerStore.dispatchToken = Dispatcher.register( payload => {
+	ReducerStore.dispatchToken = Dispatcher.register( ( payload ) => {
 		Dispatcher.waitFor( waitFor );
 
 		const newState = reducer( state, payload );

@@ -20,6 +20,7 @@ import {
 	CART_GOOGLE_APPS_REGISTRATION_DATA_ADD,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
+	CART_RELOAD,
 } from './action-types';
 import Dispatcher from 'dispatcher';
 import { MARKETING_COUPONS_KEY } from 'lib/analytics/utils';
@@ -54,7 +55,7 @@ export function addItem( item ) {
 }
 
 export function addItems( items ) {
-	const extendedItems = items.map( item => {
+	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
 		} );
@@ -68,7 +69,7 @@ export function addItems( items ) {
 }
 
 export function replaceCartWithItems( items ) {
-	const extendedItems = items.map( item => {
+	const extendedItems = items.map( ( item ) => {
 		const extra = assign( {}, item.extra, {
 			context: 'calypstore',
 		} );
@@ -119,13 +120,13 @@ export function removeCoupon() {
 
 export function getRememberedCoupon() {
 	// read coupon list from localStorage, return early if it's not there
-	const couponsJson = localStorage.getItem( MARKETING_COUPONS_KEY );
+	const couponsJson = window.localStorage.getItem( MARKETING_COUPONS_KEY );
 	const coupons = JSON.parse( couponsJson );
 	if ( ! coupons ) {
 		debug( 'No coupons found in localStorage: ', coupons );
 		return null;
 	}
-	const COUPON_CODE_WHITELIST = [
+	const ALLOWED_COUPON_CODE_LIST = [
 		'ALT',
 		'FBSAVE15',
 		'FIVERR',
@@ -146,7 +147,7 @@ export function getRememberedCoupon() {
 	// delete coupons if they're older than thirty days; find the most recent one
 	let mostRecentTimestamp = 0;
 	let mostRecentCouponCode = null;
-	Object.keys( coupons ).forEach( key => {
+	Object.keys( coupons ).forEach( ( key ) => {
 		if ( now > coupons[ key ] + THIRTY_DAYS_MILLISECONDS ) {
 			delete coupons[ key ];
 		} else if ( coupons[ key ] > mostRecentTimestamp ) {
@@ -157,9 +158,9 @@ export function getRememberedCoupon() {
 
 	// write remembered coupons back to localStorage
 	debug( 'Storing coupons in localStorage: ', coupons );
-	localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 	if (
-		COUPON_CODE_WHITELIST.includes(
+		ALLOWED_COUPON_CODE_LIST.includes(
 			-1 !== mostRecentCouponCode.indexOf( '_' )
 				? mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
 				: mostRecentCouponCode
@@ -184,4 +185,8 @@ export function setTaxPostalCode( postalCode ) {
 		type: CART_TAX_POSTAL_CODE_SET,
 		postalCode,
 	} );
+}
+
+export function reloadCart() {
+	Dispatcher.handleViewAction( { type: CART_RELOAD } );
 }

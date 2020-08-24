@@ -131,7 +131,7 @@ function getWarningDescription(
 				: defaultCopy;
 
 		default:
-			return null;
+			return defaultCopy;
 	}
 }
 

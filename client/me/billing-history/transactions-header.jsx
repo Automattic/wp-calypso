@@ -14,7 +14,7 @@ import { find, isEqual } from 'lodash';
 import SelectDropdown from 'components/select-dropdown';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import { setApp, setDate } from 'state/ui/billing-transactions/actions';
+import { setApp, setDate } from 'state/billing-transactions/ui/actions';
 import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
 import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
 import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
@@ -25,7 +25,7 @@ class TransactionsHeader extends React.Component {
 		searchValue: '',
 	};
 
-	preventEnterKeySubmission = event => {
+	preventEnterKeySubmission = ( event ) => {
 		event.preventDefault();
 	};
 
@@ -37,7 +37,7 @@ class TransactionsHeader extends React.Component {
 		document.body.removeEventListener( 'click', this.closePopoverIfClickedOutside );
 	}
 
-	recordClickEvent = action => {
+	recordClickEvent = ( action ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
@@ -68,7 +68,7 @@ class TransactionsHeader extends React.Component {
 		this.togglePopover( 'apps' );
 	};
 
-	closePopoverIfClickedOutside = event => {
+	closePopoverIfClickedOutside = ( event ) => {
 		if ( closest( event.target, 'thead' ) ) {
 			return;
 		}
@@ -179,7 +179,7 @@ class TransactionsHeader extends React.Component {
 	renderAppsPopover() {
 		const { appFilters, filter, translate } = this.props;
 		const selectedFilter = find( appFilters, { value: filter.app } );
-		const selectedText = selectedFilter ? selectedFilter.title : translate( 'All Apps' );
+		const selectedText = selectedFilter ? selectedFilter.title : translate( 'All apps' );
 
 		return (
 			<SelectDropdown
@@ -187,9 +187,9 @@ class TransactionsHeader extends React.Component {
 				onClick={ this.handleAppsPopoverLinkClick }
 				className="billing-history__transactions-header-select-dropdown"
 			>
-				<SelectDropdown.Label>{ translate( 'App Name' ) }</SelectDropdown.Label>
-				{ this.renderAppPicker( translate( 'All Apps' ), 'all' ) }
-				{ appFilters.map( function( { title, value, count } ) {
+				<SelectDropdown.Label>{ translate( 'App name' ) }</SelectDropdown.Label>
+				{ this.renderAppPicker( translate( 'All apps' ), 'all' ) }
+				{ appFilters.map( function ( { title, value, count } ) {
 					return this.renderAppPicker( title, value, count, 'Specific App' );
 				}, this ) }
 			</SelectDropdown>

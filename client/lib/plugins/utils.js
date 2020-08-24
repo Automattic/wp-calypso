@@ -13,7 +13,7 @@ import { sanitizeSectionContent } from './sanitize-section-content';
 /**
  * @param  {object} site       Site Object
  * @param  {object} log        Notice log Object
- * @returns {Bool} True if notice matches criteria
+ * @returns {boolean} True if notice matches criteria
  */
 function isSameSiteNotice( site, log ) {
 	return site && log.site && log.site.ID === site.ID;
@@ -22,7 +22,7 @@ function isSameSiteNotice( site, log ) {
 /**
  * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
- * @returns {Bool} True if notice matches criteria
+ * @returns {boolean} True if notice matches criteria
  */
 function isSamePluginNotice( pluginSlug, log ) {
 	return pluginSlug && log.plugin && log.plugin.slug === pluginSlug;
@@ -34,7 +34,7 @@ function isSamePluginNotice( pluginSlug, log ) {
  * @param  {object} site       Site Object
  * @param  {string} pluginSlug Plugin Slug
  * @param  {object} log        Notice log Object
- * @returns {Bool} True if notice matches criteria
+ * @returns {boolean} True if notice matches criteria
  */
 function filterNoticesBy( site, pluginSlug, log ) {
 	if ( ! site && ! pluginSlug ) {
@@ -50,7 +50,7 @@ function filterNoticesBy( site, pluginSlug, log ) {
 	return false;
 }
 
-export function whiteListPluginData( plugin ) {
+export function getAllowedPluginData( plugin ) {
 	return pick(
 		plugin,
 		'action_links',
@@ -103,7 +103,7 @@ export function extractScreenshots( screenshotsHtml ) {
 	if ( ! list ) {
 		return null;
 	}
-	let screenshots = map( list, function( li ) {
+	let screenshots = map( list, function ( li ) {
 		const img = li.querySelectorAll( 'img' );
 		const captionP = li.querySelectorAll( 'p' );
 
@@ -115,14 +115,14 @@ export function extractScreenshots( screenshotsHtml ) {
 		}
 	} );
 
-	screenshots = screenshots.filter( screenshot => screenshot );
+	screenshots = screenshots.filter( ( screenshot ) => screenshot );
 
 	return screenshots.length ? screenshots : null;
 }
 
 export function normalizeCompatibilityList( compatibilityList ) {
 	function splitInNumbers( version ) {
-		const splittedVersion = version.split( '.' ).map( function( versionComponent ) {
+		const splittedVersion = version.split( '.' ).map( function ( versionComponent ) {
 			return Number.parseInt( versionComponent, 10 );
 		} );
 		while ( splittedVersion.length < 3 ) {
@@ -135,7 +135,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 		1,
 		2,
 	] );
-	return sortedCompatibility.map( function( version ) {
+	return sortedCompatibility.map( function ( version ) {
 		if ( version.length && version[ version.length - 1 ] === 0 ) {
 			version.pop();
 		}
@@ -144,9 +144,9 @@ export function normalizeCompatibilityList( compatibilityList ) {
 }
 
 export function normalizePluginData( plugin, pluginData ) {
-	plugin = whiteListPluginData( assign( plugin, pluginData ) );
+	plugin = getAllowedPluginData( assign( plugin, pluginData ) );
 
-	return transform( plugin, function( returnData, item, key ) {
+	return transform( plugin, function ( returnData, item, key ) {
 		switch ( key ) {
 			case 'short_description':
 			case 'description':
@@ -205,7 +205,7 @@ export function normalizePluginsList( pluginsList ) {
 	if ( ! pluginsList ) {
 		return [];
 	}
-	return map( pluginsList, pluginData => normalizePluginData( pluginData ) );
+	return map( pluginsList, ( pluginData ) => normalizePluginData( pluginData ) );
 }
 
 /**

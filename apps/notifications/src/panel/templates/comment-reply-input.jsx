@@ -28,14 +28,14 @@ const CommentReplyInput = createReactClass( {
 	mixins: [ repliesCache.LocalStorageMixin, Suggestions ],
 
 	statics: {
-		stopEvent: function( event ) {
+		stopEvent: function ( event ) {
 			event.stopPropagation();
 			event.preventDefault();
 		},
 	},
 
-	getInitialState: function() {
-		var getSavedReply = function() {
+	getInitialState: function () {
+		var getSavedReply = function () {
 			var savedReply = this.localStorage.getItem( this.savedReplyKey );
 
 			return savedReply ? savedReply[ 0 ] : '';
@@ -52,19 +52,19 @@ const CommentReplyInput = createReactClass( {
 		};
 	},
 
-	componentDidMount: function() {
+	componentDidMount: function () {
 		window.addEventListener( 'keydown', this.handleKeyDown, false );
 		window.addEventListener( 'keydown', this.handleCtrlEnter, false );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount: function () {
 		window.removeEventListener( 'keydown', this.handleKeyDown, false );
 		window.removeEventListener( 'keydown', this.handleCtrlEnter, false );
 
 		enableKeyboardShortcuts();
 	},
 
-	handleKeyDown: function( event ) {
+	handleKeyDown: function ( event ) {
 		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
 			return;
 		}
@@ -80,7 +80,7 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleCtrlEnter: function( event ) {
+	handleCtrlEnter: function ( event ) {
 		if ( this.state.isSubmitting ) {
 			return;
 		}
@@ -91,7 +91,7 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleSendEnter: function( event ) {
+	handleSendEnter: function ( event ) {
 		if ( this.state.isSubmitting ) {
 			return;
 		}
@@ -102,7 +102,7 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleChange: function( event ) {
+	handleChange: function ( event ) {
 		var textarea = this.replyInput;
 
 		disableKeyboardShortcuts();
@@ -121,7 +121,7 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleClick: function( event ) {
+	handleClick: function ( event ) {
 		disableKeyboardShortcuts();
 
 		if ( ! this.state.hasClicked ) {
@@ -131,11 +131,11 @@ const CommentReplyInput = createReactClass( {
 		}
 	},
 
-	handleFocus: function() {
+	handleFocus: function () {
 		disableKeyboardShortcuts();
 	},
 
-	handleBlur: function() {
+	handleBlur: function () {
 		enableKeyboardShortcuts();
 
 		// Reset the field if there's no valid user input
@@ -212,7 +212,7 @@ const CommentReplyInput = createReactClass( {
 						retryCount: component.state.retryCount + 1,
 					} );
 
-					window.setTimeout( function() {
+					window.setTimeout( function () {
 						component.handleSubmit();
 					}, 2000 * component.state.retryCount );
 				} else {
@@ -279,7 +279,7 @@ const CommentReplyInput = createReactClass( {
 		this.replyInput = ref;
 	},
 
-	render: function() {
+	render: function () {
 		var value = this.state.value;
 		var submitLink = '';
 		var sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );

@@ -11,7 +11,7 @@ import classNames from 'classnames';
  */
 import SocialLogo from 'components/social-logo';
 
-const renderIcon = icon =>
+const renderIcon = ( icon ) =>
 	icon && (
 		<span className={ `date-picker__icon-wrapper date-picker__icon-wrapper-${ icon }` }>
 			<Gridicon icon={ icon } size={ 18 } />

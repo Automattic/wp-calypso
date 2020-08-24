@@ -34,7 +34,7 @@ function WPCOMUndocumented( token, reqHandler ) {
 		this.loadToken( token );
 	}
 
-	wpcomFactory.call( this, token, function( params, fn ) {
+	wpcomFactory.call( this, token, function ( params, fn ) {
 		if ( this.isTokenLoaded() ) {
 			// authToken is used in wpcom-xhr-request,
 			// which is used for the signup flow in the REST Proxy
@@ -54,7 +54,7 @@ inherits( WPCOMUndocumented, wpcomFactory );
  *
  * @returns {Undocumented} Undocumented instance
  */
-WPCOMUndocumented.prototype.undocumented = function() {
+WPCOMUndocumented.prototype.undocumented = function () {
 	return new Undocumented( this );
 };
 
@@ -64,7 +64,7 @@ WPCOMUndocumented.prototype.undocumented = function() {
  *
  * @param {string} [token] - oauth token
  */
-wpcomFactory.prototype.loadToken = function( token ) {
+wpcomFactory.prototype.loadToken = function ( token ) {
 	this._token = token;
 };
 
@@ -73,7 +73,7 @@ wpcomFactory.prototype.loadToken = function( token ) {
  *
  * @returns {string} oauth token
  */
-WPCOMUndocumented.prototype.isTokenLoaded = function() {
+WPCOMUndocumented.prototype.isTokenLoaded = function () {
 	return this._token !== undefined;
 };
 

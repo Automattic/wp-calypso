@@ -17,14 +17,14 @@ class Data_Set {
 	 *
 	 * @var array
 	 */
-	private $data_meta = [];
+	private $data_meta = array();
 
 	/**
 	 * Set of objects that implement the Data_Point interface.
 	 *
 	 * @var array
 	 */
-	private $data_set = [];
+	private $data_set = array();
 
 	/**
 	 * Constructor
@@ -47,7 +47,7 @@ class Data_Set {
 		require_once __DIR__ . '/class-data-point-option.php';
 		require_once __DIR__ . '/class-data-point-theme.php';
 
-		$result = [];
+		$result = array();
 		foreach ( $data_meta as $key => $meta ) {
 			if ( $this->is_data_point_literal( $meta ) ) {
 				$result[ $key ] = new Data_Point_Literal( $meta );
@@ -116,7 +116,7 @@ class Data_Set {
 	 * @return array Values.
 	 */
 	public function get_data() {
-		$result = [];
+		$result = array();
 		foreach ( $this->data_set as $key => $data_point ) {
 			$result[ $key ] = $data_point->get_value();
 		}
@@ -132,13 +132,13 @@ class Data_Set {
 	 * @param array $incoming_data Incoming data.
 	 */
 	public function save_data( $incoming_data ) {
-		$to_update = [];
+		$to_update = array();
 
 		$incoming_data = apply_filters( 'jetpack_global_styles_data_set_save_data', $incoming_data );
 
 		$options_updatable = array_filter(
 			$this->data_meta,
-			[ $this, 'is_data_point_updatable' ]
+			array( $this, 'is_data_point_updatable' )
 		);
 		foreach ( $options_updatable as $key => $meta ) {
 			$option_name = $this->data_set[ $key ]->get_option_name();

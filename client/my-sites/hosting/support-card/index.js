@@ -42,7 +42,7 @@ const SupportCard = ( { translate, navigateToContactSupport } ) => {
 	);
 };
 
-const navigateToContactSupport = event => {
+const navigateToContactSupport = ( event ) => {
 	event.preventDefault();
 	return withAnalytics(
 		composeAnalytics(

@@ -25,7 +25,7 @@ export const items = withoutPersistence( ( state = null, action ) => {
 				return merge( {}, state, keyBy( tags, 'id' ) );
 			}
 
-			const allTagsUnfollowed = mapValues( state, tag => ( { ...tag, isFollowing: false } ) );
+			const allTagsUnfollowed = mapValues( state, ( tag ) => ( { ...tag, isFollowing: false } ) );
 
 			return merge( {}, allTagsUnfollowed, keyBy( tags, 'id' ) );
 		}

@@ -16,10 +16,10 @@ function initialize( editor ) {
 	// Conditional menu item support:
 	// Filters out menu item if has optional "condition" function field that returns false.
 	const filteredMenuItems = menuItems.filter(
-		item => ! item.condition || item.condition( editor )
+		( item ) => ! item.condition || item.condition( editor )
 	);
 
-	filteredMenuItems.forEach( item =>
+	filteredMenuItems.forEach( ( item ) =>
 		editor.addMenuItem( item.name, {
 			classes: 'wpcom-insert-menu__menu-item',
 			cmd: item.cmd,

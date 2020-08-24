@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import Gravatar from 'components/gravatar';
 import QueryPostLikes from 'components/data/query-post-likes';
-import countPostLikes from 'state/selectors/count-post-likes';
-import getPostLikes from 'state/selectors/get-post-likes';
+import { countPostLikes } from 'state/posts/selectors/count-post-likes';
+import { getPostLikes } from 'state/posts/selectors/get-post-likes';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 /**
@@ -30,7 +30,7 @@ class PostLikes extends React.PureComponent {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	};
 
-	renderLike = like => {
+	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
 		const likeUrl = like.site_ID && like.site_visible ? '/read/blogs/' + like.site_ID : null;

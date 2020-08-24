@@ -166,14 +166,14 @@ export class UpsellNudge extends React.Component {
 		}
 	}
 
-	handleClickDecline = () => {
+	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
 		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		handleCheckoutCompleteRedirect();
+		handleCheckoutCompleteRedirect( shouldHideUpsellNudges );
 	};
 
-	handleClickAccept = buttonAction => {
+	handleClickAccept = ( buttonAction ) => {
 		const { trackUpsellButtonClick, upsellType, siteSlug, upgradeItem } = this.props;
 
 		trackUpsellButtonClick(
@@ -186,7 +186,7 @@ export class UpsellNudge extends React.Component {
 	};
 }
 
-const trackUpsellButtonClick = eventName => {
+const trackUpsellButtonClick = ( eventName ) => {
 	// Track upsell get started / accept / decline events
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };

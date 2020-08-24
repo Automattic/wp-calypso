@@ -12,10 +12,8 @@ describe( 'getPaymentCountryCode()', () => {
 
 	test( 'should return the correct payment country code from the payment state', () => {
 		const state = {
-			ui: {
-				payment: {
-					countryCode: 'US',
-				},
+			payment: {
+				countryCode: 'US',
 			},
 		};
 		const result = getPaymentCountryCode( state );

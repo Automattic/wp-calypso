@@ -46,7 +46,7 @@ function jsonp( url, query, fn ) {
 	id = prefix + count++;
 
 	if ( timeout ) {
-		timer = setTimeout( function() {
+		timer = setTimeout( function () {
 			cleanup();
 			if ( fn ) {
 				fn( new Error( 'Timeout' ) );
@@ -71,7 +71,7 @@ function jsonp( url, query, fn ) {
 		}
 	}
 
-	window[ id ] = function( data ) {
+	window[ id ] = function ( data ) {
 		debug( 'jsonp got', data );
 		cleanup();
 		if ( fn ) {

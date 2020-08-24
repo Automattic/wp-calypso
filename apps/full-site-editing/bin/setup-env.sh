@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 # Make sure we run the script from the wp-calypso root so the paths work correctly.
 dir_path=`pwd`
-cur_dir=`basename $dir_path`
+cur_dir=`basename "$dir_path"`
 if [[ $cur_dir != "wp-calypso" ]] ; then
 	echo "Please run this script from the wp-calypso root."
 	exit 1
@@ -32,7 +32,7 @@ fi
 if [ ! -d "./gutenberg" ] ; then
 	echo -e "\nThe Gutenberg repo is not a sibling of wp-calypso in your file system."
 	echo "If you clone it, we can automatically link it to the WordPress environment."
-	read -p "Would you like to clone and builg WordPress/gutenberg as a sibling of wp-calypso? (y for yes)"
+	read -p "Would you like to clone and build WordPress/gutenberg as a sibling of wp-calypso? (y for yes)"
 	if [[ $REPLY = 'y' ]] ; then
 		gutenberg_url="git@github.com:WordPress/gutenberg.git"
 		git clone $gutenberg_url
@@ -47,13 +47,11 @@ fi
 
 cd wp-calypso
 nvm use
-npm ci
-
-# Run an initial FSE build so that the plugin can load correctly.
-npx lerna run build --scope='@automattic/full-site-editing' --stream --no-prefix
+yarn
 
 # Where the wp-env.json file lives:
 cd apps/full-site-editing
+yarn build
 
 echo -e "\nWould you like to use the development version of wp-env? You can checkout the correct Gutenberg branch and build it before continuing."
 read -p "Type y to use the development version of wp-env. Otherwise, it will use the published version. "

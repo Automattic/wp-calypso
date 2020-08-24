@@ -24,12 +24,12 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const ReprintDialog = props => {
+const ReprintDialog = ( props ) => {
 	const { orderId, siteId, reprintDialog, paperSize, storeOptions, labelId, translate } = props;
 
 	const onClose = () => props.closeReprintDialog( orderId, siteId );
 	const onConfirm = () => props.confirmReprint( orderId, siteId );
-	const onPaperSizeChange = value => props.updatePaperSize( orderId, siteId, value );
+	const onPaperSizeChange = ( value ) => props.updatePaperSize( orderId, siteId, value );
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'Cancel' ), onClick: onClose },
@@ -95,7 +95,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeReprintDialog, confirmReprint, updatePaperSize }, dispatch );
 };
 

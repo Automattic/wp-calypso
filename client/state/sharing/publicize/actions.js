@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
@@ -24,6 +23,8 @@ import {
 	PUBLICIZE_SHARE_DISMISS,
 } from 'state/action-types';
 
+import 'state/sharing/init';
+
 export function dismissShareConfirmation( siteId, postId ) {
 	return {
 		type: PUBLICIZE_SHARE_DISMISS,
@@ -33,7 +34,7 @@ export function dismissShareConfirmation( siteId, postId ) {
 }
 
 export function sharePost( siteId, postId, skippedConnections, message ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_SHARE,
 			siteId,
@@ -42,7 +43,7 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			message,
 		} );
 
-		return new Promise( resolve => {
+		return new Promise( ( resolve ) => {
 			wpcom
 				.undocumented()
 				.publicizePost( siteId, postId, message, skippedConnections, ( error, data ) => {
@@ -68,7 +69,7 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
  * @returns {Function}        Action thunk
  */
 export function fetchConnections( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_CONNECTIONS_REQUEST,
 			siteId,
@@ -77,14 +78,14 @@ export function fetchConnections( siteId ) {
 		return wpcom
 			.undocumented()
 			.siteConnections( siteId )
-			.then( connections => {
+			.then( ( connections ) => {
 				dispatch( receiveConnections( siteId, connections ) );
 				dispatch( {
 					type: PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
 					siteId,
 				} );
 			} )
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 					siteId,
@@ -103,7 +104,7 @@ export function fetchConnections( siteId ) {
  * @returns {Function}            Action thunk
  */
 export function fetchConnection( siteId, connectionId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: PUBLICIZE_CONNECTION_REQUEST,
 			connectionId,
@@ -114,7 +115,7 @@ export function fetchConnection( siteId, connectionId ) {
 			.undocumented()
 			.site( siteId )
 			.getConnection( connectionId )
-			.then( connection => {
+			.then( ( connection ) => {
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_RECEIVE,
 					connection,
@@ -126,7 +127,7 @@ export function fetchConnection( siteId, connectionId ) {
 					siteId,
 				} );
 			} )
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_REQUEST_FAILURE,
 					connectionId,
@@ -147,17 +148,17 @@ export function fetchConnection( siteId, connectionId ) {
  * @returns {Function}                  Action thunk
  */
 export function createSiteConnection( siteId, keyringConnectionId, externalUserId ) {
-	return dispatch =>
+	return ( dispatch ) =>
 		wpcom
 			.undocumented()
 			.createConnection( keyringConnectionId, siteId, externalUserId, { shared: false } )
-			.then( connection =>
+			.then( ( connection ) =>
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_CREATE,
 					connection,
 				} )
 			)
-			.catch( error => dispatch( failCreateConnection( error ) ) );
+			.catch( ( error ) => dispatch( failCreateConnection( error ) ) );
 }
 
 /**
@@ -171,17 +172,17 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
  * @returns {Function}                  Action thunk
  */
 export function updateSiteConnection( connection, attributes ) {
-	return dispatch =>
+	return ( dispatch ) =>
 		wpcom
 			.undocumented()
 			.updateConnection( connection.site_ID, connection.ID, attributes )
-			.then( response =>
+			.then( ( response ) =>
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE,
 					connection: response,
 				} )
 			)
-			.catch( error =>
+			.catch( ( error ) =>
 				dispatch( {
 					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 					error: { ...error, label: connection.label },
@@ -199,12 +200,12 @@ export function updateSiteConnection( connection, attributes ) {
  * @returns {Function}                  Action thunk
  */
 export function deleteSiteConnection( connection ) {
-	return dispatch =>
+	return ( dispatch ) =>
 		wpcom
 			.undocumented()
 			.deleteSiteConnection( connection.site_ID, connection.ID )
 			.then( () => dispatch( deleteConnection( connection ) ) )
-			.catch( error => {
+			.catch( ( error ) => {
 				if ( error && 404 === error.statusCode ) {
 					// If the connection cannot be found, we infer that it must have been deleted since the original
 					// connections were retrieved, so pass along the cached connection.

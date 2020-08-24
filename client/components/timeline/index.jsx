@@ -18,7 +18,7 @@ export default class Timeline extends PureComponent {
 		children: ( props, propName, componentName ) => {
 			const prop = props[ propName ];
 			return (
-				React.Children.toArray( prop ).find( child => child.type !== TimelineEvent ) &&
+				React.Children.toArray( prop ).find( ( child ) => child.type !== TimelineEvent ) &&
 				new Error( `${ componentName } only accepts "<TimelineItem />" elements` )
 			);
 		},

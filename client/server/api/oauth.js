@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const req = require( 'superagent' );
-const bodyParser = require( 'body-parser' );
+import req from 'superagent';
+import bodyParser from 'body-parser';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' );
+import config from 'config';
 
 function oauth() {
 	return {
@@ -43,7 +43,7 @@ function proxyOAuth( request, response ) {
 		.type( 'form' )
 		.send( data )
 		.end(
-			validateOauthResponse( response, function( error, res ) {
+			validateOauthResponse( response, function ( error, res ) {
 				// Return the token as a response
 				response.json( res.body );
 			} )
@@ -51,7 +51,7 @@ function proxyOAuth( request, response ) {
 }
 
 function checkConnection( serverResponse, fn ) {
-	return function( error, clientResponse ) {
+	return function ( error, clientResponse ) {
 		if ( typeof clientResponse === 'undefined' ) {
 			return serverResponse.status( 408 ).json( {
 				error: 'invalid_request',
@@ -68,7 +68,7 @@ function checkConnection( serverResponse, fn ) {
 }
 
 function proxyError( serverResponse, fn ) {
-	return function( error, clientResponse ) {
+	return function ( error, clientResponse ) {
 		// Error from the API, just pass back
 		if ( error ) {
 			return serverResponse.status( error.status ).json( clientResponse.body );
@@ -102,16 +102,16 @@ function sms( request, response ) {
 		.type( 'form' )
 		.send( data )
 		.end(
-			validateOauthResponse( response, function( error, res ) {
+			validateOauthResponse( response, function ( error, res ) {
 				response.json( res.body );
 			} )
 		);
 }
 
-module.exports = function( app ) {
+export default function ( app ) {
 	return app
 		.use( bodyParser.json() )
 		.post( '/oauth', proxyOAuth )
 		.get( '/logout', logout )
 		.post( '/sms', sms );
-};
+}

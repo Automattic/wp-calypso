@@ -10,7 +10,7 @@
 	padding: 18px 0 20px;
 	position: relative;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0;
 	}
 
@@ -24,10 +24,14 @@
 			width: 2px;
 			background: var( --color-primary );
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				left: -16px;
 			}
 		}
+	}
+
+	&.is-seen {
+		opacity: 0.5;
 	}
 
 	&.has-thumbnail {
@@ -38,11 +42,11 @@
 			max-width: 190px;
 			box-sizing: border-box;
 
-			@include breakpoint( '>960px' ) {
+			@include breakpoint-deprecated( '>960px' ) {
 				max-width: 250px;
 			}
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				height: 100px;
 				margin: 0 0 15px;
 				max-width: 100%;
@@ -84,7 +88,7 @@
 			.reader-post-card__title .reader-post-card__title-link {
 				color: var( --color-text-inverted );
 				display: inline;
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				letter-spacing: 0.01em;
 			}
 
@@ -147,7 +151,7 @@
 			margin-top: 0;
 			margin-left: 0;
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				margin-left: 5px;
 			}
 		}
@@ -180,7 +184,7 @@
 		.reader-post-card__post {
 			margin-top: 0;
 
-			@include breakpoint( '<960px' ) {
+			@include breakpoint-deprecated( '<960px' ) {
 				flex-direction: row;
 			}
 		}
@@ -190,8 +194,8 @@
 		}
 
 		.reader-post-card__post-details .reader-excerpt {
-			font-size: 15px;
-			font-weight: 100;
+			font-size: $font-body;
+			font-weight: 400;
 			margin-top: 4px;
 			max-height: 16px * 1.4;
 			overflow: hidden;
@@ -250,7 +254,7 @@
 
 .reader-post-card__byline {
 	display: flex;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .reader-post-card__author::after {
@@ -281,7 +285,7 @@
 
 .reader-post-card__byline-author-site {
 	font-family: $sans;
-	font-weight: 500;
+	font-weight: 600;
 	overflow: hidden;
 	position: relative;
 	height: 20px;
@@ -291,7 +295,7 @@
 		@include long-content-fade( $size: 10% );
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: calc( 100% - 90px );
 	}
 }
@@ -318,7 +322,7 @@
 	position: relative;
 	width: calc( 100% - 140px );
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		max-width: 500px;
 	}
 
@@ -345,6 +349,7 @@
 	fill: var( --color-neutral-light );
 	flex: 0 0 15px;
 	margin-right: 5px;
+	margin-top: 3px;
 }
 
 .reader-post-card__byline .reader-avatar {
@@ -357,7 +362,7 @@
 	.gravatar {
 		float: left;
 		height: 32px;
-		margin: 2px 6px 0 0;
+		margin: 4px 6px 0 0;
 		vertical-align: text-top;
 		width: 32px;
 	}
@@ -397,7 +402,7 @@
 	flex-direction: row;
 	margin-top: 14px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		flex-direction: column;
 	}
 
@@ -428,23 +433,19 @@
 .reader-post-card__title-link:visited {
 	color: var( --color-neutral-70 );
 	cursor: pointer;
-	font-size: 19px;
-	font-weight: 700;
+	font-size: $font-title-small;
+	font-weight: 600;
 	display: block;
 
 	&:hover {
 		color: var( --color-neutral-70 );
 	}
-
-	@include breakpoint( '>480px' ) {
-		font-size: 19px;
-	}
 }
 
 .reader-post-card .reader-excerpt {
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.55;
-	font-weight: 100;
+	font-weight: 400;
 	margin-top: 9px;
 	word-break: break-word;
 	position: relative;
@@ -461,7 +462,7 @@
 		max-height: 15px * 1.6 * 3.2;
 
 		// Clamp to 2 lines on wider viewports
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			max-height: 15px * 1.6 * 2;
 		}
 
@@ -499,7 +500,7 @@
 
 // Action buttons in post card
 .reader-post-card.card .reader-post-actions__item {
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: 22px;
 
 	&.reader-post-actions__visit .gridicon {
@@ -514,7 +515,9 @@
 
 	.reader-share__button .gridicon {
 		position: relative;
-		top: 1px;
+		top: 0;
+		margin-right: 0;
+		margin-top: 0;
 	}
 
 	.like-button .gridicon {
@@ -537,11 +540,11 @@
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			display: none;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 	}
@@ -583,7 +586,7 @@
 		margin-bottom: 3px;
 
 		.follow-button__label {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: inline;
 			}
 		}
@@ -623,7 +626,7 @@
 	}
 
 	&:nth-last-of-type( -n + 2 ) {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			display: none;
 		}
 	}
@@ -636,7 +639,7 @@
 .reader-post-card__gallery-image {
 	height: 100px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		height: 130px;
 	}
 }

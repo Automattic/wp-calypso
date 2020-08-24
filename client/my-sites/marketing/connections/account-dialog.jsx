@@ -56,7 +56,7 @@ class AccountDialog extends Component {
 		return null;
 	}
 
-	onClose = action => {
+	onClose = ( action ) => {
 		const accountToConnect = this.getAccountToConnect();
 		const externalUserId =
 			this.props.service.multiple_external_user_ID_support &&
@@ -76,7 +76,7 @@ class AccountDialog extends Component {
 		}
 	};
 
-	onSelectedAccountChanged = account => this.setState( { selectedAccount: account } );
+	onSelectedAccountChanged = ( account ) => this.setState( { selectedAccount: account } );
 
 	getSelectedAccount() {
 		if ( this.state.selectedAccount ) {
@@ -113,7 +113,7 @@ class AccountDialog extends Component {
 		return (
 			selectedAccount &&
 			this.props.accounts.some(
-				maybeConnectedAccount =>
+				( maybeConnectedAccount ) =>
 					maybeConnectedAccount.isConnected &&
 					this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
 			)
@@ -125,7 +125,7 @@ class AccountDialog extends Component {
 		const defaultAccountIcon =
 			this.props.service.ID === 'google_my_business' ? 'institution' : null;
 
-		return accounts.map( account => (
+		return accounts.map( ( account ) => (
 			<AccountDialogAccount
 				key={ [ account.keyringConnectionId, account.ID ].join() }
 				account={ account }

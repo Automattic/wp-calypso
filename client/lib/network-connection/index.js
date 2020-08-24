@@ -36,7 +36,7 @@ const NetworkConnectionApp = {
 	 *
 	 * @returns {boolean} whether the network connection is enabled in config
 	 */
-	isEnabled: function() {
+	isEnabled: function () {
 		return config.isEnabled( 'network-connection' );
 	},
 
@@ -45,7 +45,7 @@ const NetworkConnectionApp = {
 	 *
 	 * @param {Store} reduxStore The Redux store.
 	 */
-	init: function( reduxStore ) {
+	init: function ( reduxStore ) {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -77,7 +77,7 @@ const NetworkConnectionApp = {
 
 		window.addEventListener(
 			'beforeunload',
-			function() {
+			function () {
 				debug( 'Removing listener.' );
 				this.off( 'change', changeCallback );
 			}.bind( this )
@@ -88,7 +88,7 @@ const NetworkConnectionApp = {
 	 * Checks network status by sending request to /version Calypso endpoint.
 	 * When an error occurs it emits disconnected event, otherwise connected event.
 	 */
-	checkNetworkStatus: function() {
+	checkNetworkStatus: function () {
 		debug( 'Checking network status.' );
 
 		fetchWithTimeout(
@@ -106,7 +106,7 @@ const NetworkConnectionApp = {
 	/**
 	 * Emits event when user's network connection is active.
 	 */
-	emitConnected: function() {
+	emitConnected: function () {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -120,7 +120,7 @@ const NetworkConnectionApp = {
 	/**
 	 * Emits event when user's network connection is broken.
 	 */
-	emitDisconnected: function() {
+	emitDisconnected: function () {
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
 		}
@@ -136,7 +136,7 @@ const NetworkConnectionApp = {
 	 *
 	 * @returns {boolean} whether the connections is currently active.
 	 */
-	isConnected: function() {
+	isConnected: function () {
 		return connected;
 	},
 };

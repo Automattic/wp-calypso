@@ -21,6 +21,8 @@ import { activateModule } from 'state/jetpack/modules/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
+import { localizeUrl } from 'lib/i18n-utils';
+import InlineSupportLink from 'components/inline-support-link';
 
 /**
  * Style dependencies
@@ -125,7 +127,7 @@ class CustomContentTypes extends Component {
 
 	renderBlogPostSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Blog Posts' );
+		const fieldLabel = translate( 'Blog posts' );
 		const fieldDescription = translate( 'On blog pages, the number of posts to show per page.' );
 
 		return (
@@ -143,7 +145,12 @@ class CustomContentTypes extends Component {
 				'you can display them using the shortcode [testimonials].',
 			{
 				components: {
-					link: <a href="https://support.wordpress.com/testimonials/" />,
+					link: (
+						<InlineSupportLink
+							supportLink={ localizeUrl( 'https://wordpress.com/support/testimonials/' ) }
+							supportPostId={ 97757 }
+						/>
+					),
 				},
 			}
 		);
@@ -153,13 +160,18 @@ class CustomContentTypes extends Component {
 
 	renderPortfolioSettings() {
 		const { translate } = this.props;
-		const fieldLabel = translate( 'Portfolio Projects' );
+		const fieldLabel = translate( 'Portfolio projects' );
 		const fieldDescription = translate(
 			'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
 				'you can display them using the shortcode [portfolio].',
 			{
 				components: {
-					link: <a href="https://support.wordpress.com/portfolios/" />,
+					link: (
+						<InlineSupportLink
+							supportLink={ localizeUrl( 'https://wordpress.com/support/portfolios/' ) }
+							supportPostId={ 84808 }
+						/>
+					),
 				},
 			}
 		);
@@ -214,7 +226,7 @@ CustomContentTypes.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

@@ -15,7 +15,7 @@ import ListItemField from 'woocommerce/components/list/list-item-field';
 
 const CustomerNotification = ( { item, checked, onChange, loaded } ) => {
 	//Add field name to returned value
-	const toggle = value => {
+	const toggle = ( value ) => {
 		onChange( {
 			setting: item.field,
 			option: 'enabled',

@@ -37,13 +37,13 @@ const PackagesListItem = ( {
 		);
 	}
 
-	const renderIcon = isLetter => {
+	const renderIcon = ( isLetter ) => {
 		const icon = isLetter ? 'mail' : 'product';
 
 		return <Gridicon icon={ icon } size={ 18 } />;
 	};
 
-	const renderName = name => {
+	const renderName = ( name ) => {
 		return name && '' !== trim( name ) ? name : translate( 'Untitled' );
 	};
 

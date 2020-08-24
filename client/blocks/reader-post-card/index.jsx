@@ -8,6 +8,7 @@ import { noop, truncate, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
+import config from 'config';
 
 /**
  * Internal Dependencies
@@ -29,7 +30,7 @@ import {
 	getSourceFollowUrl as getDiscoverFollowUrl,
 } from 'reader/discover/helper';
 import DiscoverFollowButton from 'reader/discover/follow-button';
-import { expandCard as expandCardAction } from 'state/ui/reader/card-expansions/actions';
+import { expandCard as expandCardAction } from 'state/reader-ui/card-expansions/actions';
 import isReaderCardExpanded from 'state/selectors/is-reader-card-expanded';
 
 /**
@@ -68,7 +69,7 @@ class ReaderPostCard extends React.Component {
 		this.props.onClick( postToOpen );
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this ),
 			selection = window.getSelection && window.getSelection();
 
@@ -81,7 +82,7 @@ class ReaderPostCard extends React.Component {
 		}
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
@@ -131,6 +132,7 @@ class ReaderPostCard extends React.Component {
 			compact,
 		} = this.props;
 
+		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
@@ -142,6 +144,7 @@ class ReaderPostCard extends React.Component {
 			'is-gallery': isGalleryPost,
 			'is-selected': isSelected,
 			'is-discover': isDiscover,
+			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
 		} );

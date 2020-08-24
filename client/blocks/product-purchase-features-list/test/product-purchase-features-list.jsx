@@ -339,7 +339,7 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( plan => {
+	].forEach( ( plan ) => {
 		const props = {
 			plan: plan,
 			isPlaceholder: false,

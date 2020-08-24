@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,8 +17,8 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryPreferences from 'components/data/query-preferences';
 import { isFetchingPreferences } from 'state/preferences/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isConfirmationSidebarEnabled } from 'state/ui/editor/selectors';
-import { saveConfirmationSidebarPreference } from 'state/ui/editor/actions';
+import { isConfirmationSidebarEnabled } from 'state/editor/selectors';
+import { saveConfirmationSidebarPreference } from 'state/editor/actions';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 
 class PublishConfirmation extends Component {
@@ -48,7 +47,7 @@ class PublishConfirmation extends Component {
 		if ( showPublishFlow ) {
 			return (
 				<FormFieldset>
-					<FormLabel>{ translate( 'Show Publish Confirmation' ) }</FormLabel>
+					<FormLabel>{ translate( 'Show publish confirmation' ) }</FormLabel>
 					<FormSettingExplanation isIndented>
 						{ translate(
 							'The Block Editor handles the Publish confirmation setting. ' +
@@ -95,7 +94,7 @@ PublishConfirmation.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -105,7 +104,7 @@ export default connect(
 			showPublishFlow: shouldLoadGutenberg( state, siteId ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				savePublishConfirmationPreference: saveConfirmationSidebarPreference,

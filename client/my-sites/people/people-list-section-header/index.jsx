@@ -91,7 +91,7 @@ class PeopleListSectionHeader extends Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),

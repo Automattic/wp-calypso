@@ -10,10 +10,6 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-
-/**
- * Internal dependencies
- */
 import StepWrapper from 'signup/step-wrapper';
 import ValidationFieldset from 'signup/validation-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -21,7 +17,10 @@ import FormTextInput from 'components/forms/form-text-input';
 import LoggedOutForm from 'components/logged-out-form';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import { Button } from '@automattic/components';
-import { createPasswordlessUser, verifyPasswordlessUser } from 'lib/signup/step-actions';
+import {
+	createPasswordlessUser,
+	verifyPasswordlessUser,
+} from 'lib/signup/step-actions/passwordless';
 import Notice from 'components/notice';
 import FormStateStore from 'lib/form-state';
 import createFormStore from 'lib/form-state/store';
@@ -55,7 +54,7 @@ export class PasswordlessStep extends Component {
 		} );
 	}
 
-	handleFieldChange = event => {
+	handleFieldChange = ( event ) => {
 		event.preventDefault();
 
 		this.setState( {
@@ -68,7 +67,7 @@ export class PasswordlessStep extends Component {
 		} );
 	};
 
-	createUser = event => {
+	createUser = ( event ) => {
 		event.preventDefault();
 		const data = { email: getFieldValue( this.formStore.get(), 'email' ) };
 
@@ -98,7 +97,7 @@ export class PasswordlessStep extends Component {
 		} );
 	};
 
-	verifyUser = event => {
+	verifyUser = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			errorMessages: null,
@@ -124,7 +123,7 @@ export class PasswordlessStep extends Component {
 		this.submitStep( providedDependencies );
 	};
 
-	submitStep = providedDependencies => {
+	submitStep = ( providedDependencies ) => {
 		const { flowName, stepName } = this.props;
 
 		this.props.submitSignupStep(

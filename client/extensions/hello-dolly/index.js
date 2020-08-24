@@ -18,7 +18,7 @@ const render = ( context, next ) => {
 	next();
 };
 
-export default async function( _, addReducer ) {
+export default async function ( _, addReducer ) {
 	await addReducer( [ 'extensions', 'helloDolly' ], reducer );
 
 	page( '/hello-dolly/:site?', siteSelection, navigation, render, makeLayout, clientRender );

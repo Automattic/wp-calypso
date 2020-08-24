@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 class TagEmptyContent extends React.Component {
 	static propTypes = {
@@ -51,7 +52,7 @@ class TagEmptyContent extends React.Component {
 				onClick={ this.recordSecondaryAction }
 				href="/discover"
 			>
-				{ this.props.translate( 'Explore Discover' ) }
+				{ this.props.translate( 'Explore' ) }
 			</a>
 		) : null;
 
@@ -79,4 +80,4 @@ class TagEmptyContent extends React.Component {
 	}
 }
 
-export default localize( TagEmptyContent );
+export default withPerformanceTrackerStop( localize( TagEmptyContent ) );

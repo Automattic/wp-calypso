@@ -50,9 +50,7 @@ class Security2faBackupCodes extends React.Component {
 	onRequestComplete = ( error, data ) => {
 		if ( error ) {
 			this.setState( {
-				lastError: this.props.translate(
-					'Unable to obtain backup codes.  Please try again later.'
-				),
+				lastError: this.props.translate( 'Unable to obtain backup codes. Please try again later.' ),
 			} );
 			return;
 		}
@@ -141,13 +139,13 @@ class Security2faBackupCodes extends React.Component {
 	render() {
 		return (
 			<div className="security-2fa-backup-codes">
-				<SectionHeader label={ this.props.translate( 'Backup Codes' ) }>
+				<SectionHeader label={ this.props.translate( 'Backup codes' ) }>
 					<Button
 						compact
 						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
 						onClick={ this.handleGenerateButtonClick }
 					>
-						{ this.props.translate( 'Generate New Backup Codes' ) }
+						{ this.props.translate( 'Generate new backup codes' ) }
 					</Button>
 				</SectionHeader>
 				<Card>

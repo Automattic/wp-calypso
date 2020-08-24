@@ -105,8 +105,8 @@ export const keyedReducer = ( keyPath, reducer ) => {
 
 		if ( action.type === DESERIALIZE ) {
 			return omitBy(
-				mapValues( state, item => reducer( item, action ) ),
-				a => a === undefined || isEqual( a, initialState )
+				mapValues( state, ( item ) => reducer( item, action ) ),
+				( a ) => a === undefined || isEqual( a, initialState )
 			);
 		}
 

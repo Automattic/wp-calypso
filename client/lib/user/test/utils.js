@@ -14,7 +14,7 @@ jest.mock( 'config', () => {
 	return mock;
 } );
 
-const configMock = values => key => values[ key ];
+const configMock = ( values ) => ( key ) => values[ key ];
 
 describe( 'UserUtils', () => {
 	describe( 'without logout url', () => {

@@ -86,7 +86,6 @@ export class FeaturedDomainSuggestions extends Component {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
 			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
-			'featured-domain-suggestions__domain-step-design-updates': this.props.showDesignUpdate,
 		} );
 	}
 
@@ -116,29 +115,29 @@ export class FeaturedDomainSuggestions extends Component {
 					<DomainRegistrationSuggestion
 						suggestion={ primarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-0' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
-						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				) }
 				{ secondarySuggestion && (
 					<DomainRegistrationSuggestion
 						suggestion={ secondarySuggestion }
 						isFeatured
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-1' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 1 }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
-						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				) }
 			</div>

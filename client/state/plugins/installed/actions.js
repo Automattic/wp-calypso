@@ -57,7 +57,7 @@ const getPluginHandler = ( siteId, pluginId ) => {
 };
 
 export function activatePlugin( siteId, plugin ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: ACTIVATE_PLUGIN,
@@ -66,11 +66,11 @@ export function activatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST } );
 
-		const successCallback = data => {
+		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } );
 		};
 
-		const errorCallback = error => {
+		const errorCallback = ( error ) => {
 			// This error means it's already active.
 			if ( error && error.error === 'activation_error' ) {
 				successCallback( plugin );
@@ -86,7 +86,7 @@ export function activatePlugin( siteId, plugin ) {
 }
 
 export function deactivatePlugin( siteId, plugin ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: DEACTIVATE_PLUGIN,
@@ -95,11 +95,11 @@ export function deactivatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST } );
 
-		const successCallback = data => {
+		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } );
 		};
 
-		const errorCallback = error => {
+		const errorCallback = ( error ) => {
 			// This error means it's already inactive.
 			if ( error && error.error === 'deactivation_error' ) {
 				successCallback( plugin );
@@ -115,7 +115,7 @@ export function deactivatePlugin( siteId, plugin ) {
 }
 
 export function updatePlugin( siteId, plugin ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		if ( ! plugin.update ) {
 			return Promise.reject( 'Error: Plugin already up-to-date.' );
 		}
@@ -128,11 +128,11 @@ export function updatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
 
-		const successCallback = data => {
+		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
 		};
 
-		const errorCallback = error => {
+		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_FAILURE, error } );
 		};
 
@@ -144,7 +144,7 @@ export function updatePlugin( siteId, plugin ) {
 }
 
 export function enableAutoupdatePlugin( siteId, plugin ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: ENABLE_AUTOUPDATE_PLUGIN,
@@ -153,14 +153,14 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } );
 
-		const successCallback = data => {
+		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
 			if ( data.update ) {
 				updatePlugin( siteId, data )( dispatch );
 			}
 		};
 
-		const errorCallback = error => {
+		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE, error } );
 		};
 
@@ -172,7 +172,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 }
 
 export function disableAutoupdatePlugin( siteId, plugin ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: DISABLE_AUTOUPDATE_PLUGIN,
@@ -181,11 +181,11 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } );
 
-		const successCallback = data => {
+		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, data } );
 		};
 
-		const errorCallback = error => {
+		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE, error } );
 		};
 
@@ -197,7 +197,7 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 }
 
 function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: INSTALL_PLUGIN,
@@ -206,27 +206,27 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST } );
 
-		const doInstall = function( pluginData ) {
+		const doInstall = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.slug ).install();
 		};
 
-		const doActivate = function( pluginData ) {
+		const doActivate = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).activate();
 		};
 
-		const doUpdate = function( pluginData ) {
+		const doUpdate = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).updateVersion();
 		};
 
-		const doAutoupdates = function( pluginData ) {
+		const doAutoupdates = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).enableAutoupdate();
 		};
 
-		const successCallback = data => {
+		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
 		};
 
-		const errorCallback = error => {
+		const errorCallback = ( error ) => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
 				if ( isMainNetworkSite ) {
 					return doUpdate( plugin )
@@ -274,7 +274,7 @@ export function installPluginOnMultisite( siteId, plugin ) {
 }
 
 export function removePlugin( siteId, plugin ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: REMOVE_PLUGIN,
@@ -283,21 +283,21 @@ export function removePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST } );
 
-		const doDeactivate = function( pluginData ) {
+		const doDeactivate = function ( pluginData ) {
 			if ( pluginData.active ) {
 				return getPluginHandler( siteId, pluginData.id ).deactivate();
 			}
 			return Promise.resolve( pluginData );
 		};
 
-		const doDisableAutoupdate = function( pluginData ) {
+		const doDisableAutoupdate = function ( pluginData ) {
 			if ( pluginData.autoupdate ) {
 				return getPluginHandler( siteId, pluginData.id ).disableAutoupdate();
 			}
 			return Promise.resolve( pluginData );
 		};
 
-		const doRemove = function( pluginData ) {
+		const doRemove = function ( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).delete();
 		};
 
@@ -305,7 +305,7 @@ export function removePlugin( siteId, plugin ) {
 			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_SUCCESS } );
 		};
 
-		const errorCallback = error => {
+		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_FAILURE, error } );
 			return Promise.reject( error );
 		};
@@ -319,25 +319,25 @@ export function removePlugin( siteId, plugin ) {
 }
 
 export function fetchPlugins( siteIds ) {
-	return dispatch => {
-		return siteIds.map( siteId => {
+	return ( dispatch ) => {
+		return siteIds.map( ( siteId ) => {
 			const defaultAction = {
 				siteId,
 			};
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
-			const receivePluginsDispatchSuccess = data => {
+			const receivePluginsDispatchSuccess = ( data ) => {
 				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE, data: data.plugins } );
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
 
-				data.plugins.map( plugin => {
+				data.plugins.map( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
 						updatePlugin( siteId, plugin )( dispatch );
 					}
 				} );
 			};
 
-			const receivePluginsDispatchFail = error => {
+			const receivePluginsDispatchFail = ( error ) => {
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
 			};
 

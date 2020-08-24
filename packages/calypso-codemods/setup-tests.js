@@ -1,13 +1,13 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const api = require.requireActual( './api' );
+const api = jest.requireActual( './api' );
 
 function test_folder( dir ) {
 	const testFiles = fs
 		.readdirSync( dir )
-		.filter( f => ! f.endsWith( '.spec.js' ) && f.endsWith( '.js' ) );
+		.filter( ( f ) => ! f.endsWith( '.spec.js' ) && f.endsWith( '.js' ) );
 
-	testFiles.forEach( filename => {
+	testFiles.forEach( ( filename ) => {
 		const filepath = path.join( dir, filename );
 
 		test( filename, () => {

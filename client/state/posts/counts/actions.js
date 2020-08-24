@@ -38,7 +38,7 @@ export function receivePostCounts( siteId, postType, counts ) {
  * @returns {Function}          Action thunk
  */
 export function requestPostCounts( siteId, postType ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_COUNTS_REQUEST,
 			postType,
@@ -51,7 +51,7 @@ export function requestPostCounts( siteId, postType ) {
 			.postCounts( {
 				type: postType,
 			} )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( receivePostCounts( siteId, postType, data.counts ) );
 				dispatch( {
 					type: POST_COUNTS_REQUEST_SUCCESS,
@@ -59,7 +59,7 @@ export function requestPostCounts( siteId, postType ) {
 					postType,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_COUNTS_REQUEST_FAILURE,
 					siteId,

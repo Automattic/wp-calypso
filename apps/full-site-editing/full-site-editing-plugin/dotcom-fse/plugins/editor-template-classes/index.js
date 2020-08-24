@@ -12,10 +12,10 @@ import { endsWith, get, map } from 'lodash';
 import { withSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 
-const EditorTemplateClasses = withSelect( select => {
+const EditorTemplateClasses = withSelect( ( select ) => {
 	const { getEntityRecord } = select( 'core' );
 	const { getEditedPostAttribute } = select( 'core/editor' );
-	const templateClasses = map( getEditedPostAttribute( 'template_part_types' ), typeId => {
+	const templateClasses = map( getEditedPostAttribute( 'template_part_types' ), ( typeId ) => {
 		const typeName = get(
 			getEntityRecord( 'taxonomy', 'wp_template_part_type', typeId ),
 			'name',

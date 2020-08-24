@@ -18,6 +18,6 @@ const SiteSettingsGeneral = ( { site } ) => (
 	</div>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( SiteSettingsGeneral );

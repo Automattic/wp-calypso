@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
@@ -9,6 +8,8 @@ import {
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 } from 'state/action-types';
+
+import 'state/happiness-engineers/init';
 
 /**
  * Returns an action object used in signalling that a list of HEs
@@ -30,7 +31,7 @@ export function receiveHappinessEngineers( happinessEngineers ) {
  * @returns {Function} Action thunk
  */
 export function fetchHappinessEngineers() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: HAPPINESS_ENGINEERS_FETCH,
 		} );
@@ -38,13 +39,13 @@ export function fetchHappinessEngineers() {
 		return wpcom
 			.undocumented()
 			.getHappinessEngineers()
-			.then( happinessEngineers => {
+			.then( ( happinessEngineers ) => {
 				dispatch( receiveHappinessEngineers( happinessEngineers ) );
 				dispatch( {
 					type: HAPPINESS_ENGINEERS_FETCH_SUCCESS,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
 					error,

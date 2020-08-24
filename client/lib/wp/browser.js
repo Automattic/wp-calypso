@@ -14,12 +14,14 @@ import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket
 import * as oauthToken from 'lib/oauth-token';
 import wpcomXhrWrapper from 'lib/wpcom-xhr-wrapper';
 import wpcomProxyRequest from 'wpcom-proxy-request';
+import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 const debug = debugFactory( 'calypso:wp' );
 
 let wpcom;
 
-if ( config.isEnabled( 'oauth' ) ) {
+if ( config.isEnabled( 'oauth' ) && ! ( isJetpackCloud() && inJetpackCloudOAuthOverride() ) ) {
 	wpcom = wpcomUndocumented( oauthToken.getToken(), wpcomXhrWrapper );
 } else {
 	wpcom = wpcomUndocumented( wpcomProxyRequest );
@@ -29,7 +31,7 @@ if ( config.isEnabled( 'oauth' ) ) {
 		{
 			metaAPI: { accessAllUsersBlogs: true },
 		},
-		function( error ) {
+		function ( error ) {
 			if ( error ) {
 				throw error;
 			}

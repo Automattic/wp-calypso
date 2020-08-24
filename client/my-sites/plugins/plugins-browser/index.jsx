@@ -26,26 +26,20 @@ import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
 import PluginsListStore from 'lib/plugins/wporg-data/list-store';
 import PluginsActions from 'lib/plugins/wporg-data/actions';
 import urlSearch from 'lib/url-search';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
 import hasJetpackSites from 'state/selectors/has-jetpack-sites';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getSitePlan,
-	isJetpackSite,
-	isRequestingSites,
-	canJetpackSiteManage,
-} from 'state/sites/selectors';
+import { getSitePlan, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
 import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
 import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
-import { TYPE_BUSINESS } from 'lib/plans/constants';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { isEnabled } from 'config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
 import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins';
@@ -79,7 +73,7 @@ export class PluginsBrowser extends Component {
 	state = this.getPluginsLists( this.props.search );
 
 	reinitializeSearch() {
-		this.WrappedSearch = props => <Search { ...props } />;
+		this.WrappedSearch = ( props ) => <Search { ...props } />;
 	}
 
 	UNSAFE_componentWillMount() {
@@ -119,7 +113,7 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
-	refreshLists = search => {
+	refreshLists = ( search ) => {
 		this.setState( this.getPluginsLists( search || this.props.search ) );
 	};
 
@@ -150,7 +144,7 @@ export class PluginsBrowser extends Component {
 		const shortLists = {};
 		const fullLists = {};
 
-		this.getVisibleCategories().forEach( category => {
+		this.getVisibleCategories().forEach( ( category ) => {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
 			fullLists[ category ] = PluginsListStore.getFullList( category );
 		} );
@@ -315,20 +309,20 @@ export class PluginsBrowser extends Component {
 		// Is the search term exactly equal to one of group category names (Engagement, Writing, ...)?
 		// Then return the whole group as search results.
 		// Otherwise, search plugin names and descriptions for the search term.
-		const matchingGroup = find( plugins, group => group.category === searchTerm );
+		const matchingGroup = find( plugins, ( group ) => group.category === searchTerm );
 		if ( matchingGroup ) {
 			matchingPlugins = matchingGroup.plugins;
 		} else {
 			// Flatten plugins from all groups into one long list and the filter it
-			const allPlugins = flatMap( plugins, group => group.plugins );
-			const includesSearchTerm = s => includes( s.toLocaleLowerCase(), searchTerm );
+			const allPlugins = flatMap( plugins, ( group ) => group.plugins );
+			const includesSearchTerm = ( s ) => includes( s.toLocaleLowerCase(), searchTerm );
 			matchingPlugins = allPlugins.filter(
-				plugin => includesSearchTerm( plugin.name ) || includesSearchTerm( plugin.description )
+				( plugin ) => includesSearchTerm( plugin.name ) || includesSearchTerm( plugin.description )
 			);
 		}
 
 		// Convert the list members into shapes expected by PluginsBrowserItem
-		return matchingPlugins.map( plugin => ( {
+		return matchingPlugins.map( ( plugin ) => ( {
 			name: translate( '%(feature)s by Jetpack', {
 				args: { feature: plugin.name },
 				context: 'Presenting WordPress.com feature as a Jetpack pseudo-plugin',
@@ -407,7 +401,7 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
-	handleSuggestedSearch = term => () => {
+	handleSuggestedSearch = ( term ) => () => {
 		this.reinitializeSearch();
 		this.props.doSearch( term );
 	};
@@ -427,7 +421,7 @@ export class PluginsBrowser extends Component {
 				} ) }
 			>
 				<NavTabs label="Suggested Searches">
-					{ suggestedSearches.map( term => (
+					{ suggestedSearches.map( ( term ) => (
 						<NavItem key={ term } onClick={ this.handleSuggestedSearch( term ) }>
 							{ term }
 						</NavItem>
@@ -456,7 +450,7 @@ export class PluginsBrowser extends Component {
 		return (
 			<Button className="plugins-browser__button" compact href={ '/plugins/manage' + site }>
 				<Gridicon icon="cog" />
-				<span className="plugins-browser__button-text">{ translate( 'Manage Plugins' ) }</span>
+				<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
 			</Button>
 		);
 	}
@@ -482,7 +476,7 @@ export class PluginsBrowser extends Component {
 				href={ uploadUrl }
 			>
 				<Gridicon icon="cloud-upload" />
-				<span className="plugins-browser__button-text">{ translate( 'Install Plugin' ) }</span>
+				<span className="plugins-browser__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
 	}
@@ -509,40 +503,6 @@ export class PluginsBrowser extends Component {
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
-	getMockPluginItems() {
-		return (
-			<PluginsBrowserList
-				plugins={ this.getPluginsShortList( 'popular' ) }
-				listName={ 'Plugins' }
-				title={ this.props.translate( 'Popular Plugins' ) }
-				size={ 12 }
-			/>
-		);
-	}
-
-	renderDocumentHead() {
-		return <DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />;
-	}
-
-	renderJetpackManageError() {
-		const { selectedSiteId } = this.props;
-
-		return (
-			<MainComponent>
-				{ this.renderDocumentHead() }
-				<SidebarNavigation />
-				<JetpackManageErrorPage
-					template="optInManage"
-					title={ this.props.translate( "Looking to manage this site's plugins?" ) }
-					siteId={ selectedSiteId }
-					section="plugins"
-					illustration="/calypso/images/jetpack/jetpack-manage.svg"
-					featureExample={ this.getMockPluginItems() }
-				/>
-			</MainComponent>
-		);
-	}
-
 	renderUpgradeNudge() {
 		if (
 			! this.props.selectedSiteId ||
@@ -562,9 +522,11 @@ export class PluginsBrowser extends Component {
 		const title = translate( 'Upgrade to the Business plan to install plugins.' );
 
 		return (
-			<Banner
+			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
+				showIcon={ true }
 				href={ bannerURL }
+				feature={ FEATURE_UPLOAD_PLUGINS }
 				plan={ plan }
 				title={ title }
 			/>
@@ -597,19 +559,16 @@ export class PluginsBrowser extends Component {
 			);
 		}
 
-		if ( this.props.jetpackManageError ) {
-			return this.renderJetpackManageError();
-		}
-
 		return (
 			<MainComponent wideLayout>
 				{ this.isRecommendedPluginsEnabled() && (
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				{ this.renderDocumentHead() }
+				<DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="plugins-browser__page-heading"
 					headerText={ this.props.translate( 'Plugin Browser' ) }
 					align="left"
@@ -627,7 +586,7 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		state => {
+		( state ) => {
 			const selectedSiteId = getSelectedSiteId( state );
 			const sitePlan = getSitePlan( state, selectedSiteId );
 
@@ -645,9 +604,6 @@ export default flow(
 				isJetpackSite: isJetpackSite( state, selectedSiteId ),
 				isVipSite: isVipSite( state, selectedSiteId ),
 				hasJetpackSites: hasJetpackSites( state ),
-				jetpackManageError:
-					!! isJetpackSite( state, selectedSiteId ) &&
-					! canJetpackSiteManage( state, selectedSiteId ),
 				isRequestingSites: isRequestingSites( state ),
 				noPermissionsError:
 					!! selectedSiteId && ! canCurrentUser( state, selectedSiteId, 'manage_options' ),

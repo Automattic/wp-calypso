@@ -67,7 +67,7 @@ class MurielTextControl extends Component {
 			}
 		);
 
-		const onChangeValue = event => onChange( event.target.value );
+		const onChangeValue = ( event ) => onChange( event.target.value );
 		return (
 			<div className={ classes }>
 				<div className="text-control__field">
@@ -78,9 +78,9 @@ class MurielTextControl extends Component {
 						value={ value }
 						onChange={ onChangeValue }
 						placeholder={ label }
-						onClick={ e => this.handleOnClick( onClick, e ) }
-						onFocus={ e => this.handleOnFocus( onFocus, e ) }
-						onBlur={ e => this.handleOnBlur( onBlur, e ) }
+						onClick={ ( e ) => this.handleOnClick( onClick, e ) }
+						onFocus={ ( e ) => this.handleOnFocus( onFocus, e ) }
+						onBlur={ ( e ) => this.handleOnBlur( onBlur, e ) }
 						{ ...otherProps }
 					/>
 				</div>

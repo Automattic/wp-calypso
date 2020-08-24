@@ -15,13 +15,16 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/viewport#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport#readme",
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile"
 	},
 	"publishConfig": {
 		"access": "public"
+	},
+	"devDependencies": {
+		"regenerator-runtime": "^0.13.4"
 	}
 }

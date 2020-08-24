@@ -3,4 +3,9 @@
  */
 import { get } from 'lodash';
 
-export default state => get( state, 'concierge.nextAppointment', null );
+/**
+ * Internal dependencies
+ */
+import 'state/concierge/init';
+
+export default ( state ) => get( state, 'concierge.nextAppointment', null );

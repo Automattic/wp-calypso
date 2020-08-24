@@ -1,0 +1,337 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/variables';
+@import '../variables.scss';
+
+.plans-table {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.plan-item {
+	display: inline-flex;
+	min-width: 250px;
+	flex-grow: 1;
+	flex-basis: 0;
+	flex-direction: column;
+
+	@media ( min-width: $break-mobile ) {
+		// to collapse double borders into one
+		+ .plan-item {
+			margin-left: -1px;
+		}
+	}
+
+	// we need to push all items down so the popular badge
+	// doesn't get truncated from top
+	margin-top: 30px;
+
+	@media ( max-width: $break-mobile ) {
+		// on mobile, we have the plans stacked on top of each other
+		// the -1 is to collapse shared borders
+		&:not( .is-popular ) {
+			margin-top: -1px;
+		}
+
+		&.is-open:not( .is-popular ) {
+			margin-bottom: 30px;
+		}
+	}
+}
+
+.plan-item__viewport {
+	width: 100%;
+	height: 100%;
+	flex: 1;
+
+	border: 1px solid #999;
+	padding: 20px;
+}
+
+.plan-item:not( .is-popular ) .plan-item__heading {
+	display: flex;
+	align-items: center;
+
+	@media ( max-width: $break-mobile ) {
+		font-size: 1em;
+	}
+}
+
+.plan-item__name {
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 24px;
+	display: inline-block;
+
+	@media ( max-width: $break-mobile ) {
+		font-size: 14px;
+	}
+}
+
+.plan-item:not( .is-popular ) .plan-item__name {
+	@media ( max-width: $break-mobile ) {
+		font-weight: normal;
+	}
+}
+
+.plan-item__domain-name {
+	font-size: $font-body-small;
+}
+
+ul.plan-item__feature-item-group {
+	margin: 0;
+}
+
+.plan-item__mobile-expand-all-plans {
+	// increase specificity
+	&.components-button.is-link {
+		margin: 20px auto;
+		color: $dark-gray-500;
+	}
+}
+
+.plan-item__badge {
+	position: relative;
+	margin: 0;
+	display: block;
+	background: black;
+	text-align: center;
+	text-transform: uppercase;
+	color: white;
+	padding: 0 5px;
+	font-size: $font-body-extra-small;
+	margin-top: -24px;
+	height: 24px;
+	line-height: 24px;
+}
+
+.plan-item__price-amount {
+	font-weight: 600;
+	font-size: 32px;
+	line-height: 24px;
+
+	&.is-loading {
+		max-width: 60px;
+		@include onboarding-placeholder();
+	}
+}
+
+.plan-item:not( .is-open ) .plan-item__price-amount {
+	@media ( max-width: $break-mobile ) {
+		font-weight: normal;
+		font-size: 1em;
+	}
+}
+
+.plan-item__summary {
+	width: 100%;
+	&::-webkit-details-marker {
+		display: none;
+	}
+}
+
+// FIX ME
+.plan-item.is-popular .plan-item__summary,
+.plan-item__summary {
+	// disable toggling on desktop and for popular plan
+	@media ( min-width: $break-mobile ) {
+		pointer-events: none;
+	}
+}
+
+.plan-item:not( .is-open ) .plan-item__summary {
+	@media ( max-width: $break-mobile ) {
+		display: flex;
+	}
+}
+
+.plan-item__price-note {
+	font-size: 12px;
+	line-height: 19px;
+	letter-spacing: -0.4px;
+	color: var( --studio-gray-40 );
+	margin-top: 8px;
+	margin-bottom: 10px;
+}
+
+.plan-item__details .plan-item__summary .plan-item__price {
+	margin-top: 16px;
+	margin-bottom: 8px;
+}
+
+.plan-item:not( .is-open ) .plan-item__summary .plan-item__price {
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: 10px;
+	color: $dark-gray-500;
+}
+
+.plan-item__actions {
+	margin-bottom: 16px;
+}
+
+.plan-item__dropdown-chevron {
+	flex: 1;
+	text-align: right;
+}
+
+.plan-item.is-open .plan-item__dropdown-chevron {
+	display: none;
+}
+
+.plan-item__domain-summary {
+	font-size: $font-body-small;
+	line-height: 22px;
+	margin-top: 10px;
+
+	// overwrite button styles
+	&.components-button.is-link {
+		text-decoration: none;
+		font-size: 14px;
+		color: var( --studio-blue-40 );
+		display: flex;
+		align-items: flex-start;
+		padding: 0;
+	}
+
+	.plan-item__url {
+		word-break: break-all;
+	}
+
+	// the tick
+	svg:first-child {
+		// we use a margin because there is a space,
+		// the strike-through will look dirty over it
+		margin-right: 5px;
+		vertical-align: middle;
+		margin-top: 4px;
+		flex: none;
+	}
+
+	svg:first-child path {
+		fill: var( --studio-green-40 );
+
+		// to make the tick thicker
+		stroke: var( --studio-green-40 );
+	}
+}
+
+.plan-item.is-popular {
+	@media ( max-width: $break-mobile ) {
+		order: -3;
+	}
+}
+
+.plan-item__domain-summary.is-picked {
+	font-weight: bold;
+}
+
+.plan-item__domain-summary.is-cta {
+	font-weight: bold;
+	padding: 0;
+
+	// overwrite button styles
+	&.components-button.is-link {
+		color: var( --studio-blue-40 );
+	}
+
+	// the tick
+	svg:first-child path {
+		fill: var( --studio-green-40 );
+		stroke: var( --studio-green-40 );
+		margin-top: 5px;
+	}
+
+	// the chevron
+	svg:last-child {
+		fill: var( --studio-blue-40 );
+		stroke: var( --studio-blue-40 );
+		margin-left: 8px;
+		margin-top: 8px;
+	}
+}
+
+.plan-item__domain-summary.components-button.is-link.is-free {
+	font-weight: bold;
+	color: var( --studio-orange-40 );
+	text-decoration: line-through; // the tick
+	svg path {
+		fill: var( --studio-orange-40 );
+		stroke: var( --studio-orange-40 );
+	}
+}
+
+.plan-item__select-button.components-button.is-primary {
+	padding: 0 24px;
+	height: 40px;
+
+	&:disabled {
+		opacity: 0.5;
+	}
+
+	svg {
+		margin-left: -8px;
+		margin-right: 10px;
+	}
+}
+
+.plan-item__domain-picker-button.components-button {
+	font-size: $font-body-small;
+	line-height: 19px;
+	letter-spacing: 0.2px;
+	word-break: break-word;
+
+	&.has-domain {
+		color: var( --studio-gray-50 );
+		text-decoration: none;
+	}
+
+	svg {
+		margin-left: 2px;
+	}
+}
+
+.plan-item__feature-item {
+	font-size: $font-body-small;
+	line-height: 20px;
+	letter-spacing: 0.2px;
+	margin: 4px 0;
+	vertical-align: middle;
+	color: $dark-gray-500;
+	display: flex;
+	align-items: flex-start;
+
+	svg {
+		display: block;
+		margin-right: 6px;
+		margin-top: 2px;
+	}
+
+	// the tick
+	svg path {
+		fill: var( --studio-green-40 );
+		stroke: var( --studio-green-40 );
+	}
+
+	.plan-item__disabled-message {
+		svg {
+			align-self: flex-start;
+			width: 18px;
+			height: 18px;
+
+			path {
+				fill: var( --studio-orange-40 );
+				stroke: var( --studio-orange-40 );
+			}
+		}
+
+		p {
+			font-size: $font-body-small;
+			line-height: 20px;
+			letter-spacing: 0.2px;
+			font-weight: bold;
+			color: var( --studio-orange-40 );
+		}
+	}
+}

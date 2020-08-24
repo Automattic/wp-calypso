@@ -24,11 +24,13 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"i18n-calypso": "file:../i18n-calypso"
+		"@babel/runtime": "^7.11.1",
+		"i18n-calypso": "^5.0.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile"
-	}
+	},
+	"types": "types"
 }

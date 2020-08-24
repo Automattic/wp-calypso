@@ -9,50 +9,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set up Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '>=12.15.0'
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Fetch git history
-      run: git fetch --prune --unshallow
-    - name: Install dependencies
-      env:
-        PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
-      run: npm ci
-    - name: Capture npm logs
-      uses: actions/upload-artifact@v1
-      if: failure()
-      with:
-        name: npm-logs
-        path: /home/runner/.npm/_logs/
-    - name: Build ICFY stats
-      env:
-        NODE_ENV: production
-        BROWSERSLIST_ENV: defaults
-        WORKERS: 2
-      run: npm run analyze-icfy
-    - run: mkdir icfy-stats && mv client/{chart,stats}.json icfy-stats
-    - uses: actions/upload-artifact@v1
-      with:
-        name: icfy
-        path: icfy-stats
-    - name: Upload build artifact
-      env:
-        ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
-      run: |
-        ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
-        CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-        curl -X POST --globoff                                                                 \
-          "http://api.iscalypsofastyet.com:5000/submit-stats?from=github&secret=$ICFY_SECRET"  \
-          -H 'Cache-Control: no-cache'                                                         \
-          -H 'Content-Type: application/json'                                                  \
-          -d '{
-                "payload": {
-                  "branch": "'"$CURRENT_BRANCH"'",
-                  "build_num": '"$GITHUB_RUN_ID"',
-                  "sha": "'"$GITHUB_SHA"'",
-                  "ancestor": "'"$ANCESTOR_SHA1"'"
-                }
-              }'
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '^12.13.1'
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Fetch git history
+        run: git fetch --prune --unshallow
+      - name: Install dependencies
+        env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
+        run: yarn install
+      - name: Capture yarn logs
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: yarn-logs
+          path: yarn-error.log
+      - name: Build ICFY stats
+        env:
+          NODE_ENV: production
+          BROWSERSLIST_ENV: defaults
+          WORKERS: 2
+        run: yarn run analyze-icfy
+      - run: mkdir icfy-stats && mv client/{chart,stats}.json icfy-stats
+      - uses: actions/upload-artifact@v1
+        with:
+          name: icfy
+          path: icfy-stats
+      - name: Upload build artifact
+        env:
+          ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
+        run: |
+          ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          curl -X POST --globoff                                                                 \
+            "http://api.iscalypsofastyet.com:5000/submit-stats?from=github&secret=$ICFY_SECRET"  \
+            -H 'Cache-Control: no-cache'                                                         \
+            -H 'Content-Type: application/json'                                                  \
+            -d '{
+                  "payload": {
+                    "branch": "'"$CURRENT_BRANCH"'",
+                    "build_num": '"$GITHUB_RUN_ID"',
+                    "sha": "'"$GITHUB_SHA"'",
+                    "ancestor": "'"$ANCESTOR_SHA1"'"
+                  }
+                }'

@@ -23,7 +23,7 @@ import {
 } from '../action-types';
 import { getPackagesForm } from './selectors';
 
-export const addPackage = siteId => ( {
+export const addPackage = ( siteId ) => ( {
 	type: WOOCOMMERCE_SERVICES_PACKAGES_ADD_PACKAGE,
 	siteId,
 } );
@@ -40,7 +40,7 @@ export const editPackage = ( siteId, packageToEdit ) => ( {
 	siteId,
 } );
 
-export const dismissModal = siteId => ( {
+export const dismissModal = ( siteId ) => ( {
 	type: WOOCOMMERCE_SERVICES_PACKAGES_DISMISS_MODAL,
 	siteId,
 } );
@@ -57,7 +57,7 @@ export const updatePackagesField = ( siteId, newValues ) => ( {
 	siteId,
 } );
 
-export const toggleOuterDimensions = siteId => ( {
+export const toggleOuterDimensions = ( siteId ) => ( {
 	type: WOOCOMMERCE_SERVICES_PACKAGES_TOGGLE_OUTER_DIMENSIONS,
 	siteId,
 } );
@@ -77,7 +77,7 @@ export const togglePackage = ( siteId, serviceId, packageId ) => ( {
 	siteId,
 } );
 
-export const savePredefinedPackages = siteId => ( {
+export const savePredefinedPackages = ( siteId ) => ( {
 	type: WOOCOMMERCE_SERVICES_PACKAGES_SAVE_PREDEFINED,
 	siteId,
 } );
@@ -119,7 +119,7 @@ export const setAddMode = ( siteId, mode ) => ( {
 	mode,
 } );
 
-export const fetchSettings = siteId => ( dispatch, getState ) => {
+export const fetchSettings = ( siteId ) => ( dispatch, getState ) => {
 	const form = getPackagesForm( getState(), siteId );
 
 	if ( form && ( form.packages || form.isFetching ) ) {
@@ -140,7 +140,7 @@ export const fetchSettings = siteId => ( dispatch, getState ) => {
 				siteId,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			//TODO: add better error handling
 			console.error( error ); // eslint-disable-line no-console
 			dispatch( setIsFetchError( siteId, true ) );

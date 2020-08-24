@@ -38,9 +38,11 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 			PLAN_BUSINESS_MONTHLY,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_JETPACK_BUSINESS,
+			PLAN_JETPACK_BUSINESS_MONTHLY,
 		];
 
-		plans.forEach( plan => {
+		plans.forEach( ( plan ) => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );
 
 			expect( siteHasEligibleWpcomPlan() ).toBe( true );
@@ -59,13 +61,11 @@ describe( 'siteHasEligibleWpcomPlan()', () => {
 			PLAN_JETPACK_FREE,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		];
 
-		plans.forEach( plan => {
+		plans.forEach( ( plan ) => {
 			selectors.getSitePlanSlug.mockImplementation( () => plan );
 
 			expect( siteHasEligibleWpcomPlan() ).toBe( false );

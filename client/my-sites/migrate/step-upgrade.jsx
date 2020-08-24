@@ -21,6 +21,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getPlan } from 'lib/plans';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -34,6 +35,10 @@ class StepUpgrade extends Component {
 		startMigration: PropTypes.func.isRequired,
 		targetSite: PropTypes.object.isRequired,
 	};
+
+	componentDidMount() {
+		this.props.recordTracksEvent( 'calypso_site_migration_business_viewed' );
+	}
 
 	render() {
 		const {
@@ -134,13 +139,16 @@ class StepUpgrade extends Component {
 	}
 }
 
-export default connect( state => {
-	const plan = getPlan( PLAN_BUSINESS );
-	const planId = plan.getProductId();
+export default connect(
+	( state ) => {
+		const plan = getPlan( PLAN_BUSINESS );
+		const planId = plan.getProductId();
 
-	return {
-		billingTimeFrame: plan.getBillingTimeFrame(),
-		currency: getCurrentUserCurrencyCode( state ),
-		planPrice: getPlanRawPrice( state, planId, true ),
-	};
-} )( localize( StepUpgrade ) );
+		return {
+			billingTimeFrame: plan.getBillingTimeFrame(),
+			currency: getCurrentUserCurrencyCode( state ),
+			planPrice: getPlanRawPrice( state, planId, true ),
+		};
+	},
+	{ recordTracksEvent }
+)( localize( StepUpgrade ) );

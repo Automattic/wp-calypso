@@ -124,7 +124,7 @@ export class AppPromo extends React.Component {
 		this.setState( { showDialog: false } );
 	};
 
-	desktopPromo = promoItem => {
+	desktopPromo = ( promoItem ) => {
 		const { location, translate } = this.props;
 
 		return (
@@ -220,7 +220,7 @@ AppPromo.defaultProps = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		userSettings: getUserSettings( state ),
 	} ),
 	{ fetchUserSettings, recordTracksEvent, sendEmailLogin }

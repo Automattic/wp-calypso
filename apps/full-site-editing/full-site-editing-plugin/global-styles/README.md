@@ -19,7 +19,7 @@ This plugin creates a new sidebar for the block editor through which the users c
 
 ## How to develop and build the plugin
 
-Refer to instructions in the top-level [Full Site Editing](https://github.com/automattic/wp-calypso/tree/master/apps/full-site-editing) directory.
+Refer to instructions in the top-level [Full Site Editing](https://github.com/automattic/wp-calypso/tree/HEAD/apps/full-site-editing) directory.
 
 ## How it works and how themes can use it
 

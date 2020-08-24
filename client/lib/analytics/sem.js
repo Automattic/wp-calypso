@@ -20,7 +20,7 @@ const MAX_URL_PARAM_VALUE_LENGTH = 50;
 const MAX_KEYWORD_PARAM_VALUE_LENGTH = 80;
 const MAX_GCLID_PARAM_VALUE_LENGTH = 100;
 // These are the URL params that end up in the `ad_details` cookie
-const URL_PARAM_WHITELIST = [
+const ALLOWED_URL_PARAMS = [
 	'adgroupid',
 	'campaignid',
 	'device',
@@ -58,8 +58,8 @@ function isValidOtherUrlParamValue( key, value ) {
 	return value.length <= MAX_URL_PARAM_VALUE_LENGTH;
 }
 
-function isValidWhitelistedUrlParamValue( key, value ) {
-	if ( -1 === URL_PARAM_WHITELIST.indexOf( key ) ) {
+function isValidAndAllowedUrlParamValue( key, value ) {
+	if ( -1 === ALLOWED_URL_PARAMS.indexOf( key ) ) {
 		return false;
 	} else if ( 'utm_source' === key || 'utm_campaign' === value ) {
 		return isValidUtmSourceOrCampaign( value );
@@ -74,12 +74,7 @@ function setUtmCookie( name, value ) {
 		maxAge: UTM_COOKIE_MAX_AGE,
 		// NOTE: Domains having more than a single extension (e.g., example.us.com)
 		// would require additional custom logic to work out the root domain name.
-		domain:
-			'.' +
-			document.location.hostname
-				.split( '.' )
-				.slice( -2 )
-				.join( '.' ),
+		domain: '.' + document.location.hostname.split( '.' ).slice( -2 ).join( '.' ),
 	} );
 }
 
@@ -99,7 +94,7 @@ export function updateQueryParamsTracking() {
 
 	if ( searchParams ) {
 		const validEntries = Array.from( searchParams.entries() ).filter( ( [ key, value ] ) =>
-			isValidWhitelistedUrlParamValue( key, value )
+			isValidAndAllowedUrlParamValue( key, value )
 		);
 		sanitizedQuery = new URLSearchParams( validEntries );
 

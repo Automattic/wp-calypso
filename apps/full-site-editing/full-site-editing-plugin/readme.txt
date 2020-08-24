@@ -1,21 +1,19 @@
-=== Full Site Editing ===
-Contributors: alexislloyd, allancole, automattic, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, Joen, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, nrqsnchz, obenland, okenobi, vindl, noahtallen, owolski, nosolosw
+=== WordPress.com Editing Toolkit ===
+Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.3
-Stable tag: 0.21
+Tested up to: 5.4
+Stable tag: 1.22
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enhances your page creation workflow within the Block Editor.
-
+Enhances the editing experience in the Block Editor.
 
 == Description ==
 
 This plugin comes with a custom block to display a list of your most recent blog posts, as well as a template selector
-to give you a head start on creating new pages for your site.
-
+to give you a head start on creating new pages for your site. It also provides a way to change your font settings globally from the page editor.
 
 == Installation ==
 
@@ -41,6 +39,171 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 1.22 =
+* Premium Content: load assets using proper hook (https://github.com/Automattic/wp-calypso/pull/44825)
+* EditingToolkit > GlobalStyles: Add new Google fonts (https://github.com/Automattic/wp-calypso/pull/44750)
+
+= 1.21 =
+* Site setup: Redirect to user's home after checkout. For both composite and old checkouts. And for simple and atomic (e-commerce) sites. See (https://github.com/Automattic/wp-calypso/pull/44881).
+* Block patterns: Only call unregister on the columns category if currently registered. See (https://github.com/Automattic/wp-calypso/pull/44903)
+* Block editor: Always enable line-height in Gutenberg settings. See (https://github.com/Automattic/wp-calypso/pull/44772)
+
+= 1.20 =
+* Site setup: Fix delay when starting the flow because of the editor save action.
+* Site setup: Fix possible race condition causing the site to be immediately launched when pressing Complete Setup button.
+* Site setup: Clear Free plan selection when a custom domain is selected.
+* Site setup: Start the flow at the first incomplete step.
+* Site setup: Use site title and existing subdomain as fallbacks for domain search.
+* Site setup: Update step completion to be derived from state instead on saved in Launch store.
+
+= 1.19 =
+* Fix error in editor when accessing page as a non-user super admin.
+
+= 1.18 =
+* Fix broken link on mobile when selecting launch flow.
+
+= 1.17 =
+* Site setup list: fix bug opening customer home inside iframe.
+* Site setup list: show clickable links in launch summary step.
+
+= 1.16 =
+* Enable site launch flow for dev & horizon environment.
+* Premium Content: Remove Paid wording from title.
+* Premium Content: Fix duplicate Connect To Stripe message.
+
+= 1.15 =
+* Plugin display name changed to WordPress.com Editing Toolkit.
+* The donation block has been removed from the plugin.
+* Add a launch sidebar to the editor to walk the user through the launch flows.
+* Improved contrast of links in the navigation sidebar.
+* Fix formatting of the site title in the navigation sidebar.
+* Fix broken site editor close button when navigation sidebar is active.
+
+= 1.14 =
+* Add missing dependencies to package declaration.
+* Remove "Latest posts" page from navigation sidebar.
+
+= 1.13 =
+* Change the category of FSE blocks from legacy to the updated ones (https://github.com/Automattic/wp-calypso/issues/43198).
+* Add a helper function that can be used to assign categories with older fallbacks.
+* Add support for TypeScript tests.
+* Update visual style of navigation sidebar.
+* Fix navigation sidebar dismiss button in IE.
+* Fix missing block inserter on dotcom FSE sites.
+
+= 1.12 =
+* Experimental navigation sidebar in block editor, can be enabled in config or with a hook.
+* Default content included in the donation block can be edited.
+* Track when the launch button is clicked.
+
+= 1.11 =
+* Fix broken blocks in page layout picker preview in Firefox.
+* Add settings to the donation block.
+* Fix premium content block to ensure it is auto-selected when mounted.
+* Add fallback to donations block to set default products if none are already defined.
+* Fix block pattern preview viewport scaling.
+* Fix broken site editor page.
+* Add one time payment option to payment plans.
+* Add a general transform to premium content.
+* Fix custom font size in block patterns previews.
+
+= 1.10 =
+* Improvements to the premium blocks.
+* Add 10 new block patterns.
+* Post List Block: Fix deprecation note update button layout.
+
+= 1.9 =
+* Add Mailerlite subscriber widget.
+* When launching a site created via `/new`, save the post content.
+  Prevent lost content alert.
+* Update block pattern categories.
+* Fix text-domain of translated strings.
+
+= 1.8 =
+* Fix issue with Newspack blocks not loading assets.
+* Fix block-editor NUX issues.
+
+= 1.7 =
+* Save the post before navigation when launching a WordPress.com site.
+* Add handling for site launch on WordPress.com.
+* Performance improvements in the block editor.
+
+= 1.6 =
+* Remove the "Edit as HTML" options for the inner blocks of the Premium Content Block.
+* Remove plugin that notified users of the new location of Block Patterns.
+* Support for any UTF-8 character in the Premium Content block.
+* Fixed availability of Premium Content subscription email service.
+* Premium Content block styles adjusted to only load when block is used.
+* Hide Gutenberg's inserter (in favor of ours).
+* Use `require` (rather than `require_once`) for asset files.
+* Flag Premium Content blocks as paid to make clear they require a paid plan.
+* Onboarding: Fix the dimensions of the preview image.
+
+= 1.5 =
+* Global Styles: Fix a "Bad array access" error.
+* Remove default link colors from the editor (fixed in Gutenberg v8.1.0).
+* Add contextual tips to the Block Inserter Menu.
+* Add Premium Content Block success message on plan creation.
+* Rename Posts Carousel Block to Post Carousel Block.
+
+= 1.4 =
+* Update Premium Block Style and Behaviour
+* Support for Premium Content in email subscription and reader.
+* Add plugin to notify users of Block Patterns new location.
+* Add default link colors to the editor.
+
+= 1.3 =
+* Update Premium Content Block icon.
+* Add Showcase New Blocks module.
+* Add new patterns, and update pattern order.
+* Bump newspack-blocks version to 1.5.0.
+* Remove page layout preview from document settings.
+* Fixed Call To Action block pattern when CoBlocks, FSE and Layout Grid are active.
+
+= 1.2 =
+* New Post Carousel block.
+* New Premium Content block.
+* Update header button styling and full width block margins for Gutenberg v8.0.0.
+* Only load common module assets if they are required.
+* Remove loading of blank.css for Global Styles.
+
+= 1.1 =
+* New block patterns.
+* Performance and style improvements.
+
+= 1.0 =
+* Fix for site editor option override.
+* Hide post title in Gutenberg depending on theme mod.
+* Fix post list block sync script compatibility.
+* Remove hook for enqueueing site editor assets.
+* Move site editor item to top level menu in wp-admin.
+
+= 0.26 =
+* SPT IE bug fix.
+
+= 0.25 =
+* G2 and Gutenberg 7.7.1 compatibility fixes.
+* Update to blog posts block v1.2.
+* Add custom WordPress.com block patterns.
+* SPT and NUX compatibility improvements.
+
+= 0.24 =
+
+* Starter Page Templates: fix overflow issue with feature image in blog posts.
+* Global Styles: add new font (Raleway).
+
+= 0.23 =
+* Dotcom Block Editor NUX: disable by default
+
+= 0.22 =
+* Starter Page Templates: Improved previews with many visual glitches fixed
+* Starter Page Templates: Make page title visibility depend on theme setting
+* Starter Page Templates: Hide templates using unavailable blocks
+* Starter Page Templates: Track template insertion on Dotcom sites
+* Site Editor: initialize core FSE on Dotcom sites
+* Enable Gutenberg NUX with Gutenberg copy
+* Improved unit testing commands
 
 = 0.21 =
 * Linting fixes and page layout selector improvements.

@@ -16,7 +16,7 @@ import FormButton from 'components/forms/form-button';
 import Notice from 'components/notice';
 import AddressSummary from './summary';
 
-const RadioButton = props => {
+const RadioButton = ( props ) => {
 	return (
 		<FormLabel
 			className={ classNames( 'address-step__suggestion', { 'is-selected': props.checked } ) }
@@ -37,7 +37,7 @@ const AddressSuggestion = ( {
 	countryNames,
 	translate,
 } ) => {
-	const onToggleSelectNormalizedAddress = value => () => selectNormalizedAddress( value );
+	const onToggleSelectNormalizedAddress = ( value ) => () => selectNormalizedAddress( value );
 	const errorClass = 'error-notice';
 	return (
 		<div>

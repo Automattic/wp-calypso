@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import SelectOptGroups from 'components/forms/select-opt-groups';
 
-const USStateSelector = props => {
+const USStateSelector = ( props ) => {
 	const { translate } = props;
 	const states = [
 		{ value: 'AL', label: translate( 'Alabama' ) },

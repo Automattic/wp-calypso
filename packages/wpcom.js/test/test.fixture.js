@@ -12,9 +12,9 @@ var fixture = require( './fixture' );
  * Sync tests
  */
 
-describe( 'fixture', function() {
-	describe( 'general', function() {
-		it( '`post` should be ok', function() {
+describe( 'fixture', function () {
+	describe( 'general', function () {
+		it( '`post` should be ok', function () {
 			assert.ok( fixture.post );
 			assert.equal( 'object', typeof fixture.post );
 

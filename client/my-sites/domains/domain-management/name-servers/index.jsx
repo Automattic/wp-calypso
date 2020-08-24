@@ -30,6 +30,7 @@ import FetchError from './fetch-error';
 import Notice from 'components/notice';
 import { CHANGE_NAME_SERVERS } from 'lib/url/support';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -133,7 +134,7 @@ class NameServers extends React.Component {
 					domain={ domain }
 					position="domain-name-servers"
 					selectedSite={ this.props.selectedSite }
-					ruleWhiteList={ [ 'pendingTransfer' ] }
+					allowedRules={ [ 'pendingTransfer' ] }
 				/>
 				{ this.warning() }
 				{ this.planUpsellForNonPrimaryDomain( domain ) }
@@ -203,7 +204,7 @@ class NameServers extends React.Component {
 
 		this.setState( { formSubmitting: true } );
 
-		updateNameservers( selectedDomainName, nameservers, error => {
+		updateNameservers( selectedDomainName, nameservers, ( error ) => {
 			if ( error ) {
 				this.props.errorNotice( error.message );
 			} else {
@@ -228,7 +229,13 @@ class NameServers extends React.Component {
 	}
 
 	back = () => {
-		page( domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementEdit(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	customNameservers() {
@@ -277,7 +284,7 @@ class NameServers extends React.Component {
 		return getSelectedDomain( this.props ).isPendingIcannVerification;
 	}
 
-	handleChange = nameservers => {
+	handleChange = ( nameservers ) => {
 		this.setState( { nameservers } );
 	};
 
@@ -297,15 +304,19 @@ class NameServers extends React.Component {
 		return (
 			<VerticalNavItem
 				isPlaceholder={ this.isLoading() }
-				path={ domainManagementDns( this.props.selectedSite.slug, this.props.selectedDomainName ) }
+				path={ domainManagementDns(
+					this.props.selectedSite.slug,
+					this.props.selectedDomainName,
+					this.props.currentRoute
+				) }
 			>
-				{ this.props.translate( 'DNS Records' ) }
+				{ this.props.translate( 'DNS records' ) }
 			</VerticalNavItem>
 		);
 	}
 }
 
-const customNameServersLearnMoreClick = domainName =>
+const customNameServersLearnMoreClick = ( domainName ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Management',
@@ -319,8 +330,13 @@ const customNameServersLearnMoreClick = domainName =>
 		)
 	);
 
-export default connect( null, {
-	customNameServersLearnMoreClick,
-	errorNotice,
-	successNotice,
-} )( localize( NameServers ) );
+export default connect(
+	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
+	{
+		customNameServersLearnMoreClick,
+		errorNotice,
+		successNotice,
+	}
+)( localize( NameServers ) );

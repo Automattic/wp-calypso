@@ -29,7 +29,7 @@ const FollowersActions = {
 		wpcom
 			.undocumented()
 			.site( fetchOptions.siteId )
-			.fetchFollowers( fetchOptions, function( error, data ) {
+			.fetchFollowers( fetchOptions, function ( error, data ) {
 				Dispatcher.handleServerAction( {
 					type: 'RECEIVE_FOLLOWERS',
 					fetchOptions: fetchOptions,
@@ -48,7 +48,7 @@ const FollowersActions = {
 		wpcom
 			.undocumented()
 			.site( siteId )
-			.removeFollower( follower.ID, function( error, data ) {
+			.removeFollower( follower.ID, function ( error, data ) {
 				if ( error ) {
 					Dispatcher.handleServerAction( {
 						type: 'RECEIVE_REMOVE_FOLLOWER_ERROR',

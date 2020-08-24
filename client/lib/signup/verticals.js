@@ -70,10 +70,7 @@ function isVerticalInList( vertical ) {
 }
 
 function dasherize( string ) {
-	return string
-		.toLowerCase()
-		.replace( / /g, '-' )
-		.replace( /-+/, '-' );
+	return string.toLowerCase().replace( / /g, '-' ).replace( /-+/, '-' );
 }
 
 export function isValidLandingPageVertical( vertical ) {

@@ -20,7 +20,7 @@ import { urlToDomainAndPath } from 'lib/url';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteComment } from 'state/comments/selectors';
 import getSiteSetting from 'state/selectors/get-site-setting';
-import isEmailBlacklisted from 'state/selectors/is-email-blacklisted';
+import isAuthorsEmailBlocked from 'state/selectors/is-authors-email-blocked';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -41,7 +41,7 @@ export class CommentAuthorMoreInfo extends Component {
 		showPopover: false,
 	};
 
-	storePopoverButtonRef = button => ( this.popoverButton = button );
+	storePopoverButtonRef = ( button ) => ( this.popoverButton = button );
 
 	closePopover = () => this.setState( { showPopover: false } );
 
@@ -52,12 +52,12 @@ export class CommentAuthorMoreInfo extends Component {
 			authorEmail,
 			authorId,
 			commentId,
-			isAuthorBlacklisted,
+			isAuthorBlocked,
 			showNotice,
-			siteBlacklist,
+			blockedCommentAuthorKeys,
 			siteId,
 			translate,
-			updateBlacklist,
+			updateBlockedCommentAuthors,
 		} = this.props;
 
 		const noticeOptions = {
@@ -67,17 +67,17 @@ export class CommentAuthorMoreInfo extends Component {
 		};
 
 		const analytics = {
-			action: isAuthorBlacklisted ? 'unblock_user' : 'block_user',
+			action: isAuthorBlocked ? 'unblock_user' : 'block_user',
 			user_type: authorId ? 'wpcom' : 'email_only',
 		};
 
-		if ( isAuthorBlacklisted ) {
-			const newBlacklist = siteBlacklist
+		if ( isAuthorBlocked ) {
+			const nextBlockedCommentAuthorKeys = blockedCommentAuthorKeys
 				.split( '\n' )
-				.filter( item => item !== authorEmail )
+				.filter( ( item ) => item !== authorEmail )
 				.join( '\n' );
 
-			updateBlacklist( siteId, newBlacklist, analytics );
+			updateBlockedCommentAuthors( siteId, nextBlockedCommentAuthorKeys, analytics );
 
 			return showNotice(
 				translate( 'User %(email)s unblocked.', { args: { email: authorEmail } } ),
@@ -85,9 +85,11 @@ export class CommentAuthorMoreInfo extends Component {
 			);
 		}
 
-		const newBlacklist = siteBlacklist ? siteBlacklist + '\n' + authorEmail : authorEmail;
+		const nextBlockedCommentAuthorKeys = blockedCommentAuthorKeys
+			? blockedCommentAuthorKeys + '\n' + authorEmail
+			: authorEmail;
 
-		updateBlacklist( siteId, newBlacklist, analytics );
+		updateBlockedCommentAuthors( siteId, nextBlockedCommentAuthorKeys, analytics );
 
 		showNotice(
 			translate( 'User %(email)s is blocked and can no longer comment on your site.', {
@@ -104,7 +106,7 @@ export class CommentAuthorMoreInfo extends Component {
 			authorIp,
 			authorUrl,
 			authorUsername,
-			isAuthorBlacklisted,
+			isAuthorBlocked,
 			showBlockUser,
 			siteSlug,
 			trackAnonymousModeration,
@@ -166,8 +168,8 @@ export class CommentAuthorMoreInfo extends Component {
 
 					{ showBlockUser && (
 						<div className="comment__author-more-info-element">
-							<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlacklisted }>
-								{ isAuthorBlacklisted ? translate( 'Unblock user' ) : translate( 'Block user' ) }
+							<Button onClick={ this.toggleBlockUser } scary={ ! isAuthorBlocked }>
+								{ isAuthorBlocked ? translate( 'Unblock user' ) : translate( 'Block user' ) }
 							</Button>
 						</div>
 					) }
@@ -216,17 +218,17 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorIp: get( comment, 'author.ip_address' ),
 		authorUsername: get( comment, 'author.nice_name' ),
 		authorUrl: get( comment, 'author.URL', '' ),
-		isAuthorBlacklisted: isEmailBlacklisted( state, siteId, authorEmail ),
+		isAuthorBlocked: isAuthorsEmailBlocked( state, siteId, authorEmail ),
 		showBlockUser,
-		siteBlacklist: getSiteSetting( state, siteId, 'blacklist_keys' ),
+		blockedCommentAuthorKeys: getSiteSetting( state, siteId, 'blacklist_keys' ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
 };
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	showNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
-	updateBlacklist: ( siteId, blacklist_keys, analytics ) =>
+	updateBlockedCommentAuthors: ( siteId, blockedCommentAuthorKeys, analytics ) =>
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -238,7 +240,7 @@ const mapDispatchToProps = dispatch => ( {
 							: 'comment_author_unblocked'
 					)
 				),
-				saveSiteSettings( siteId, { blacklist_keys } )
+				saveSiteSettings( siteId, { blacklist_keys: blockedCommentAuthorKeys } )
 			)
 		),
 	trackAnonymousModeration: () =>

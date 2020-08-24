@@ -2,30 +2,33 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
-import userFactory from 'lib/user';
 import { getSiteFileModDisableReason } from 'lib/site/utils';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
-const user = userFactory();
+import { localizeUrl } from 'lib/i18n-utils';
+import { getCurrentUserEmail } from 'state/current-user/selectors';
 
-const BasicDetails = ( { translate } ) => (
-	<PurchaseDetail
-		icon="cog"
-		title={ translate( 'Set up your VaultPress and Akismet accounts' ) }
-		description={ translate(
-			'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
-				'Follow the instructions in the email to get started.',
-			{ args: { email: user.get().email } }
-		) }
-	/>
-);
+const BasicDetails = ( { translate } ) => {
+	const email = useSelector( getCurrentUserEmail );
+	return (
+		<PurchaseDetail
+			icon="cog"
+			title={ translate( 'Set up your VaultPress and Akismet accounts' ) }
+			description={ translate(
+				'We emailed you at %(email)s with information for setting up Akismet and VaultPress on your site. ' +
+					'Follow the instructions in the email to get started.',
+				{ args: { email } }
+			) }
+		/>
+	);
+};
 
 class EnhancedDetails extends Component {
 	componentDidMount() {
@@ -45,7 +48,7 @@ class EnhancedDetails extends Component {
 							'protect your site from spam and data loss. ' +
 							"If you have any questions along the way, we're here to help!"
 					) }
-					href="https://en.support.wordpress.com/setting-up-premium-services/"
+					href={ localizeUrl( 'https://wordpress.com/support/setting-up-premium-services/' ) }
 					onClick={ trackManualInstall }
 				/>
 			);
@@ -67,7 +70,7 @@ class EnhancedDetails extends Component {
 								<a
 									target="_blank"
 									rel="noopener noreferrer"
-									href="https://en.support.wordpress.com/setting-up-premium-services/"
+									href="https://wordpress.com/support/setting-up-premium-services/"
 									onClick={ trackManualInstall }
 								/>
 							),
@@ -80,7 +83,7 @@ class EnhancedDetails extends Component {
 	}
 }
 
-const getTracksDataForAutoconfigHalt = selectedSite => {
+const getTracksDataForAutoconfigHalt = ( selectedSite ) => {
 	const reasons = getSiteFileModDisableReason( selectedSite, 'modifyFiles' );
 
 	if ( reasons && reasons.length > 0 ) {

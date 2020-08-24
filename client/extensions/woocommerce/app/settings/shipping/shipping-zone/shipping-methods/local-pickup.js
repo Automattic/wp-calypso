@@ -17,7 +17,7 @@ import { bindActionCreatorsWithSiteId } from 'woocommerce/lib/redux-utils';
 import { setShippingCost } from 'woocommerce/state/ui/shipping/zones/methods/local-pickup/actions';
 
 const LocalPickupMethod = ( { id, cost, currency, translate, actions } ) => {
-	const onCostChange = event => actions.setShippingCost( id, event.target.value );
+	const onCostChange = ( event ) => actions.setShippingCost( id, event.target.value );
 
 	return (
 		<FormFieldSet>

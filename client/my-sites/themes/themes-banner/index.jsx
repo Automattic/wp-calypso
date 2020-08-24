@@ -54,7 +54,7 @@ class ThemesBanner extends PureComponent {
 	};
 
 	// eslint-disable-next-line no-undef
-	handleBannerClose = e => {
+	handleBannerClose = ( e ) => {
 		this.props.hideThemesBanner();
 		e.preventDefault();
 	};

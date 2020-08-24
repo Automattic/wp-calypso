@@ -50,14 +50,23 @@ class InventoryWidget extends Component {
 
 	getLowStockProducts = () => {
 		const { lowStockThreshold, products } = this.props;
-		const lowProducts = filter( products, p => parseInt( p.stock_quantity ) <= lowStockThreshold );
+		const lowProducts = filter(
+			products,
+			( p ) => parseInt( p.stock_quantity ) <= lowStockThreshold
+		);
 		return sortBy( lowProducts, 'stock_quantity' );
 	};
 
 	getClasses = () => {
 		const { lowStockThreshold, noStockThreshold, products } = this.props;
-		const lowProducts = filter( products, p => parseInt( p.stock_quantity ) <= lowStockThreshold );
-		const noProducts = filter( products, p => parseInt( p.stock_quantity ) <= noStockThreshold );
+		const lowProducts = filter(
+			products,
+			( p ) => parseInt( p.stock_quantity ) <= lowStockThreshold
+		);
+		const noProducts = filter(
+			products,
+			( p ) => parseInt( p.stock_quantity ) <= noStockThreshold
+		);
 		return classNames( {
 			'dashboard-widgets__inventory': true,
 			'has-low-stock': lowProducts.length > 0,
@@ -87,7 +96,7 @@ class InventoryWidget extends Component {
 		);
 	};
 
-	renderLowStock = lowProducts => {
+	renderLowStock = ( lowProducts ) => {
 		const { translate } = this.props;
 		const titles = (
 			<TableRow isHeader>
@@ -151,7 +160,7 @@ class InventoryWidget extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const isLoaded = areSettingsProductsLoaded( state );
 		const lowStockThreshold = parseInt(

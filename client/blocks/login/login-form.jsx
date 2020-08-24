@@ -3,14 +3,12 @@
  */
 import classNames from 'classnames';
 import { capitalize, defer, includes, get, startsWith } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -26,7 +24,7 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import {
 	formUpdate,
 	getAuthAccountType,
@@ -34,7 +32,6 @@ import {
 	resetAuthAccountType,
 } from 'state/login/actions';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { login } from 'lib/paths';
 import { preventWidows } from 'lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import {
@@ -46,12 +43,13 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'state/login/selectors';
-import { isPasswordlessAccount, isRegularAccount } from 'state/login/utils';
+import { isRegularAccount } from 'state/login/utils';
 import Notice from 'components/notice';
 import SocialLoginForm from './social';
 import { localizeUrl } from 'lib/i18n-utils';
 import TextControl from 'extensions/woocommerce/components/text-control';
 import { sendEmailLogin } from 'state/auth/actions';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 export class LoginForm extends Component {
 	static propTypes = {
@@ -77,6 +75,8 @@ export class LoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
+		isGutenboarding: PropTypes.bool,
+		locale: PropTypes.string,
 	};
 
 	state = {
@@ -129,18 +129,9 @@ export class LoginForm extends Component {
 		if ( ! this.props.hasAccountTypeLoaded && isRegularAccount( nextProps.accountType ) ) {
 			! disableAutoFocus && defer( () => this.password && this.password.focus() );
 		}
-
-		if ( ! this.props.hasAccountTypeLoaded && isPasswordlessAccount( nextProps.accountType ) ) {
-			this.props.sendEmailLogin( this.state.usernameOrEmail, {
-				redirectTo: nextProps.redirectTo,
-				loginFormFlow: true,
-			} );
-
-			page( login( { isNative: true, twoFactorAuthType: 'link' } ) );
-		}
 	}
 
-	onChangeField = event => {
+	onChangeField = ( event ) => {
 		this.props.formUpdate();
 
 		this.setState( {
@@ -166,7 +157,7 @@ export class LoginForm extends Component {
 		return ! socialAccountIsLinking && ! hasAccountTypeLoaded;
 	}
 
-	resetView = event => {
+	resetView = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_block_login_form_change_username_or_email' );
@@ -186,7 +177,7 @@ export class LoginForm extends Component {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_success' );
 				onSuccess( redirectTo );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.props.recordTracksEvent( 'calypso_login_block_login_form_failure', {
 					error_code: error.code,
 					error_message: error.message,
@@ -194,7 +185,7 @@ export class LoginForm extends Component {
 			} );
 	}
 
-	onSubmitForm = event => {
+	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.props.hasAccountTypeLoaded ) {
@@ -231,11 +222,11 @@ export class LoginForm extends Component {
 		return ! oauth2Client && isPopup;
 	}
 
-	savePasswordRef = input => {
+	savePasswordRef = ( input ) => {
 		this.password = input;
 	};
 
-	saveUsernameOrEmailRef = input => {
+	saveUsernameOrEmailRef = ( input ) => {
 		this.usernameOrEmail = input;
 	};
 
@@ -275,7 +266,7 @@ export class LoginForm extends Component {
 		}
 	}
 
-	handleWooCommerceSubmit = event => {
+	handleWooCommerceSubmit = ( event ) => {
 		event.preventDefault();
 		document.activeElement.blur();
 		if ( ! this.props.hasAccountTypeLoaded ) {
@@ -286,7 +277,7 @@ export class LoginForm extends Component {
 		this.loginUser();
 	};
 
-	renderWooCommerce() {
+	renderWooCommerce( showSocialLogin = true ) {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
 
@@ -336,7 +327,7 @@ export class LoginForm extends Component {
 							id="usernameOrEmail"
 							name="usernameOrEmail"
 							value={ this.state.usernameOrEmail }
-							onChange={ value => {
+							onChange={ ( value ) => {
 								this.props.formUpdate();
 								this.setState( {
 									usernameOrEmail: value,
@@ -360,7 +351,7 @@ export class LoginForm extends Component {
 								name="password"
 								type="password"
 								value={ this.state.password }
-								onChange={ value => {
+								onChange={ ( value ) => {
 									this.props.formUpdate();
 									this.setState( {
 										password: value,
@@ -388,18 +379,18 @@ export class LoginForm extends Component {
 							</Button>
 						</div>
 
-						{ config.isEnabled( 'signup/social' ) && (
+						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
 							<div className="login__form-social">
 								<div className="login__form-social-divider">
 									<span>{ this.props.translate( 'or' ) }</span>
 								</div>
 								<SocialLoginForm
-									onSuccess={ this.onWooCommerceSocialSuccess }
-									socialService={ this.props.socialService }
-									socialServiceResponse={ this.props.socialServiceResponse }
 									linkingSocialService={
 										this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 									}
+									onSuccess={ this.onWooCommerceSocialSuccess }
+									socialService={ this.props.socialService }
+									socialServiceResponse={ this.props.socialServiceResponse }
 									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 								/>
 							</div>
@@ -414,18 +405,24 @@ export class LoginForm extends Component {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
 		const {
+			accountType,
 			oauth2Client,
 			redirectTo,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
+			isGutenboarding,
+			isJetpackWooDnaFlow,
 			wccomFrom,
 			currentRoute,
 			currentQuery,
 			pathname,
+			locale,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
+
+		const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -457,16 +454,24 @@ export class LoginForm extends Component {
 
 		if ( isOauthLogin && config.isEnabled( 'signup/wpcc' ) ) {
 			const oauth2Flow = isCrowdsignalOAuth2Client( oauth2Client ) ? 'crowdsignal' : 'wpcc';
-			const oauth2Params = {
+			const oauth2Params = new globalThis.URLSearchParams( {
 				oauth2_client_id: oauth2Client.id,
-				oauth2_redirect: redirectTo,
-			};
+				oauth2_redirect: redirectTo || '',
+			} );
 
-			signupUrl = `/start/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+			signupUrl = `/start/${ oauth2Flow }?${ oauth2Params.toString() }`;
+		}
+
+		if ( isGutenboarding ) {
+			signupUrl = '/new' + langFragment;
 		}
 
 		if ( config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce();
+		}
+
+		if ( isJetpackWooDnaFlow ) {
+			return this.renderWooCommerce( !! accountType ); // Only show the social buttons after the user entered an email.
 		}
 
 		if (
@@ -628,12 +633,12 @@ export class LoginForm extends Component {
 					<Fragment>
 						<Divider>{ this.props.translate( 'or' ) }</Divider>
 						<SocialLoginForm
-							onSuccess={ this.props.onSuccess }
-							socialService={ this.props.socialService }
-							socialServiceResponse={ this.props.socialServiceResponse }
 							linkingSocialService={
 								this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
 							}
+							onSuccess={ this.props.onSuccess }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
 						/>
 					</Fragment>
@@ -644,7 +649,7 @@ export class LoginForm extends Component {
 }
 
 export default connect(
-	state => {
+	( state, props ) => {
 		const accountType = getAuthAccountTypeSelector( state );
 
 		return {
@@ -656,12 +661,14 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
 			socialAccountLinkEmail: getSocialAccountLinkEmail( state ),
 			socialAccountLinkService: getSocialAccountLinkService( state ),
 			userEmail:
+				props.userEmail ||
 				getInitialQueryArguments( state ).email_address ||
 				getCurrentQueryArguments( state ).email_address,
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),

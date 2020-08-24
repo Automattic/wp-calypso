@@ -90,7 +90,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 *
 	 * @param {Array} results Incoming vertical results
 	 */
-	setSearchResults = results => {
+	setSearchResults = ( results ) => {
 		if ( results && results.length ) {
 			const candidateVerticals = this.getSuggestionsWithCategories( results );
 			this.setState( { candidateVerticals }, () =>
@@ -118,7 +118,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	searchForVerticalMatches = ( value = '' ) =>
 		find(
 			this.props.verticals,
-			item => item.verticalName.toLowerCase() === value.toLowerCase().trim()
+			( item ) => item.verticalName.toLowerCase() === value.toLowerCase().trim()
 		);
 
 	/**
@@ -147,7 +147,7 @@ export class SiteVerticalsSuggestionSearch extends Component {
 	 *
 	 * @param {string}  value                The new search value
 	 */
-	onSiteTopicChange = value => {
+	onSiteTopicChange = ( value ) => {
 		const newState = {
 			inputValue: value,
 		};
@@ -176,13 +176,13 @@ export class SiteVerticalsSuggestionSearch extends Component {
 		const includeRelated = normalizedInput.length > 2;
 
 		return verticals
-			.map( vertical => ( {
+			.map( ( vertical ) => ( {
 				label: vertical.verticalName,
 				category: isRelatedVertical( vertical, normalizedInput )
 					? this.props.translate( 'Related' )
 					: undefined,
 			} ) )
-			.filter( suggestion => includeRelated || ! suggestion.category );
+			.filter( ( suggestion ) => includeRelated || ! suggestion.category );
 	}
 
 	render() {

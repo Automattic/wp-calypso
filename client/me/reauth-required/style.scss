@@ -4,8 +4,12 @@
 
 .reauth-required__dialog {
 	max-width: 400px;
+	padding: 0;
 }
 
 .reauth-required__sign-out {
 	cursor: pointer;
+}
+.reauth-required__button {
+	width: 100%;
 }

@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { CurrentUser, NewUser, NewUserErrorResponse } from './types';
-import { Action } from './actions';
+import type { CurrentUser, NewUser, NewUserErrorResponse } from './types';
+import type { Action } from './actions';
 
-const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( state, action ) => {
+export const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'RECEIVE_CURRENT_USER':
 			return action.currentUser;
@@ -20,7 +20,7 @@ const currentUser: Reducer< CurrentUser | null | undefined, Action > = ( state, 
 	return state;
 };
 
-const newUserData: Reducer< NewUser | undefined, Action > = ( state, action ) => {
+export const newUserData: Reducer< NewUser | undefined, Action > = ( state, action ) => {
 	if ( action.type === 'RECEIVE_NEW_USER' ) {
 		const { response } = action;
 		return {
@@ -34,11 +34,16 @@ const newUserData: Reducer< NewUser | undefined, Action > = ( state, action ) =>
 	return state;
 };
 
-const newUserError: Reducer< NewUserErrorResponse | undefined, Action > = ( state, action ) => {
+export const newUserError: Reducer< NewUserErrorResponse | undefined, Action > = (
+	state,
+	action
+) => {
 	switch ( action.type ) {
 		case 'FETCH_NEW_USER':
 			return undefined;
 		case 'RECEIVE_NEW_USER':
+			return undefined;
+		case 'CLEAR_ERRORS':
 			return undefined;
 		case 'RECEIVE_NEW_USER_FAILED':
 			return {
@@ -52,7 +57,10 @@ const newUserError: Reducer< NewUserErrorResponse | undefined, Action > = ( stat
 	return state;
 };
 
-const isFetchingNewUser: Reducer< boolean | undefined, Action > = ( state = false, action ) => {
+export const isFetchingNewUser: Reducer< boolean | undefined, Action > = (
+	state = false,
+	action
+) => {
 	switch ( action.type ) {
 		case 'FETCH_NEW_USER':
 			return true;

@@ -43,8 +43,8 @@ export default function transformer( file, api ) {
 	} );
 
 	// Look for imported `get` method.
-	lodashImports.forEach( nodePath => {
-		const specifier = nodePath.value.specifiers.find( s => s.imported.name === 'get' );
+	lodashImports.forEach( ( nodePath ) => {
+		const specifier = nodePath.value.specifiers.find( ( s ) => s.imported.name === 'get' );
 		if ( specifier ) {
 			getMethodName = specifier.local.name;
 		}
@@ -54,9 +54,9 @@ export default function transformer( file, api ) {
 		root
 			.find(
 				j.CallExpression,
-				node => node.callee.type === 'Identifier' && node.callee.name === getMethodName
+				( node ) => node.callee.type === 'Identifier' && node.callee.name === getMethodName
 			)
-			.forEach( getPath => {
+			.forEach( ( getPath ) => {
 				try {
 					visitedGetCalls += 1;
 
@@ -76,8 +76,8 @@ export default function transformer( file, api ) {
 						// String-based path
 						pathElements = path.value
 							.split( /[.[]/ )
-							.filter( el => el !== '' )
-							.map( el => {
+							.filter( ( el ) => el !== '' )
+							.map( ( el ) => {
 								const part = el.replace( ']', '' );
 								return handleIdentifier( part );
 							} );
@@ -88,7 +88,7 @@ export default function transformer( file, api ) {
 						}
 					} else if ( path.type === 'ArrayExpression' ) {
 						// Array-based path
-						pathElements = path.elements.map( el => {
+						pathElements = path.elements.map( ( el ) => {
 							if ( el.type === 'Literal' ) {
 								if ( typeof el.value === 'string' ) {
 									return handleIdentifier( el.value );
@@ -138,9 +138,9 @@ export default function transformer( file, api ) {
 
 	// Remove unused imports.
 	if ( modifiedGetCalls === visitedGetCalls && modifiedGetCalls >= 1 ) {
-		lodashImports.forEach( nodePath => {
+		lodashImports.forEach( ( nodePath ) => {
 			const specifiers = nodePath.value.specifiers;
-			const specifier = specifiers.findIndex( s => s.imported.name === 'get' );
+			const specifier = specifiers.findIndex( ( s ) => s.imported.name === 'get' );
 
 			if ( specifiers.length > 1 ) {
 				// Only remove unused named import, if there are others.

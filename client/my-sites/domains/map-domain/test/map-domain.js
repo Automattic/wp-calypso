@@ -37,7 +37,7 @@ describe( 'MapDomain component', () => {
 		cart: {},
 		productsList: {},
 		domainsWithPlansOnly: false,
-		translate: string => string,
+		translate: ( string ) => string,
 		isSiteUpgradeable: true,
 		selectedSite: {
 			ID: 500,

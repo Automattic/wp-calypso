@@ -28,24 +28,24 @@ const suggestionMatcher = /(?:^|\s)@([^\s]*)$/i;
  *
  * @type {RegExp} matches @query
  */
-const queryMatcher = query => new RegExp( `^${ query }| ${ query }`, 'i' ); // start of string, or preceded by a space
+const queryMatcher = ( query ) => new RegExp( `^${ query }| ${ query }`, 'i' ); // start of string, or preceded by a space
 
 // Danger! Recursive
 // (relatively safe since the DOM tree is only so deep)
-const getOffsetTop = element => {
+const getOffsetTop = ( element ) => {
 	const offset = element.offsetTop;
 
 	return element.offsetParent ? offset + getOffsetTop( element.offsetParent ) : offset;
 };
 
-const stopEvent = function( event ) {
+const stopEvent = function ( event ) {
 	if ( this.state.suggestionsVisible ) {
 		event.stopPropagation();
 		event.preventDefault();
 	}
 };
 
-const getSuggestionIndexBySelectedId = function( suggestions ) {
+const getSuggestionIndexBySelectedId = function ( suggestions ) {
 	if ( ! this.state.selectedSuggestionId ) {
 		return 0;
 	}
@@ -55,7 +55,7 @@ const getSuggestionIndexBySelectedId = function( suggestions ) {
 	return index > -1 ? index : null;
 };
 
-const getSuggestionById = function() {
+const getSuggestionById = function () {
 	if ( ! this.state.selectedSuggestionId && this.props.suggestions.length > 0 ) {
 		return this.props.suggestions[ 0 ];
 	}
@@ -109,7 +109,7 @@ export const SuggestionsMixin = {
 		}
 	},
 
-	getCaretPosition: element => element.selectionStart,
+	getCaretPosition: ( element ) => element.selectionStart,
 
 	setCaretPosition( element, position ) {
 		element.focus();
@@ -266,22 +266,22 @@ export const SuggestionsMixin = {
 		return (
 			<div
 				className="wpnc__suggestions"
-				ref={ div => ( this.suggestionsMixin_suggestionList = div ) }
+				ref={ ( div ) => ( this.suggestionsMixin_suggestionList = div ) }
 				onMouseEnter={ () => ( this.suggestionsCancelBlur = true ) }
 				onMouseLeave={ () => ( this.suggestionsCancelBlur = false ) }
 			>
 				<ul>
-					{ suggestions.map( suggestion => (
+					{ suggestions.map( ( suggestion ) => (
 						<Suggestion
 							key={ 'user-suggestion-' + suggestion.ID }
-							getElement={ suggestionElement =>
+							getElement={ ( suggestionElement ) =>
 								( this.suggestionsMixin_suggestionNodes = {
 									...this.suggestionsMixin_suggestionNodes,
 									[ suggestion.ID ]: suggestionElement,
 								} )
 							}
 							onClick={ this.handleSuggestionClick.bind( this, suggestion ) }
-							onMouseEnter={ function( suggestion ) {
+							onMouseEnter={ function ( suggestion ) {
 								this.setState( {
 									selectedSuggestionId: suggestion.ID,
 								} );

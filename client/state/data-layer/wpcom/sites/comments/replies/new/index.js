@@ -12,7 +12,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const writeReplyComment = action =>
+export const writeReplyComment = ( action ) =>
 	dispatchNewCommentRequest(
 		action,
 		`/sites/${ action.siteId }/comments/${ action.parentCommentId }/replies/new`

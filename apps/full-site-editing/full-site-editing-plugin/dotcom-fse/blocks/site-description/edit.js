@@ -55,28 +55,31 @@ function SiteDescriptionEdit( {
 			<BlockControls>
 				<AlignmentToolbar
 					value={ textAlign }
-					onChange={ nextAlign => {
+					onChange={ ( nextAlign ) => {
 						setAttributes( { textAlign: nextAlign } );
 					} }
 				/>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
+				<PanelBody
+					className="blocks-font-size"
+					title={ __( 'Text Settings', 'full-site-editing' ) }
+				>
 					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Color Settings' ) }
+					title={ __( 'Color Settings', 'full-site-editing' ) }
 					initialOpen={ false }
 					colorSettings={ [
 						{
 							value: backgroundColor.color,
 							onChange: setBackgroundColor,
-							label: __( 'Background Color' ),
+							label: __( 'Background Color', 'full-site-editing' ),
 						},
 						{
 							value: textColor.color,
 							onChange: setTextColor,
-							label: __( 'Text Color' ),
+							label: __( 'Text Color', 'full-site-editing' ),
 						},
 					] }
 				>
@@ -91,7 +94,7 @@ function SiteDescriptionEdit( {
 			</InspectorControls>
 			<RichText
 				allowedFormats={ [] }
-				aria-label={ __( 'Site Description' ) }
+				aria-label={ __( 'Site Description', 'full-site-editing' ) }
 				className={ classNames( 'site-description', className, {
 					'has-text-color': textColor.color,
 					'has-background': backgroundColor.color,
@@ -104,7 +107,7 @@ function SiteDescriptionEdit( {
 				onChange={ updateValue }
 				onReplace={ insertDefaultBlock }
 				onSplit={ noop }
-				placeholder={ __( 'Add a Site Description' ) }
+				placeholder={ __( 'Add a Site Description', 'full-site-editing' ) }
 				style={ {
 					backgroundColor: backgroundColor.color,
 					color: textColor.color,
@@ -135,6 +138,9 @@ export default compose( [
 			dispatch( 'core/block-editor' ).insertDefaultBlock( {}, rootClientId, blockIndex + 1 ),
 	} ) ),
 	withSiteOptions( {
-		siteDescription: { optionName: 'description', defaultValue: __( 'Site description loading…' ) },
+		siteDescription: {
+			optionName: 'description',
+			defaultValue: __( 'Site description loading…', 'full-site-editing' ),
+		},
 	} ),
 ] )( SiteDescriptionEdit );

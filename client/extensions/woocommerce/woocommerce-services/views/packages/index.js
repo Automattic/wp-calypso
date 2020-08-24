@@ -25,7 +25,7 @@ import {
 } from '../../state/packages/selectors';
 
 class Packages extends Component {
-	renderListHeader = packages => {
+	renderListHeader = ( packages ) => {
 		const { translate } = this.props;
 
 		if ( ! packages || ! packages.length ) {
@@ -139,7 +139,7 @@ Packages.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const form = getPackagesForm( state, siteId ) || {};
 		return {
@@ -150,7 +150,7 @@ export default connect(
 			allSelectedPackages: getAllSelectedPackages( state, siteId ) || [],
 		};
 	},
-	dispatch => ( {
+	( dispatch ) => ( {
 		...bindActionCreators( PackagesActions, dispatch ),
 	} )
 )( localize( Packages ) );

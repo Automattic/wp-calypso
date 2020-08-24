@@ -67,15 +67,15 @@ class EditorPreview extends React.Component {
 		return nextProps.isSaving && ! props.isSaving;
 	};
 
-	didFinishSaving = prevProps => {
+	didFinishSaving = ( prevProps ) => {
 		return prevProps.isSaving && ! this.props.isSaving;
 	};
 
-	didLoad = prevProps => {
+	didLoad = ( prevProps ) => {
 		return prevProps && prevProps.isLoading && ! this.props.isLoading;
 	};
 
-	didShowSavedPreviewViaTouch = prevProps => {
+	didShowSavedPreviewViaTouch = ( prevProps ) => {
 		// Find state change where preview is shown and we're not saving or loading
 		return (
 			this._hasTouch &&
@@ -86,7 +86,7 @@ class EditorPreview extends React.Component {
 		);
 	};
 
-	didShowOrHideFullPreview = prevProps => {
+	didShowOrHideFullPreview = ( prevProps ) => {
 		// Force a URL update (hash change) when the preview is shown or
 		// hidden, but only if we are currently showing the actual preview URL
 		// and not 'about:blank'.
@@ -119,7 +119,7 @@ class EditorPreview extends React.Component {
 		return url.format( parsed );
 	};
 
-	cleanExternalUrl = externalUrl => {
+	cleanExternalUrl = ( externalUrl ) => {
 		return omitUrlParams( externalUrl, [ 'iframe', 'frame-nonce' ] );
 	};
 

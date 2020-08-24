@@ -1,4 +1,4 @@
-export default box => {
+export default ( box ) => {
 	let dimensions;
 	if ( box.outer_dimensions ) {
 		dimensions = box.outer_dimensions.match( /([-.0-9]+).+?([-.0-9]+).+?([-.0-9]+)/ );

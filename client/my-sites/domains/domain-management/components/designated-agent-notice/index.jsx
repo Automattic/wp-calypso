@@ -16,7 +16,7 @@ import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'lib/url/suppor
  */
 import './style.scss';
 
-const DesignatedAgentNotice = props => (
+const DesignatedAgentNotice = ( props ) => (
 	<div className="designated-agent-notice">
 		<Gridicon icon="info-outline" size={ 18 } />
 		<p className="designated-agent-notice__copy">

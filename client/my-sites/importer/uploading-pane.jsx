@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { defer, flow, get, includes, noop, truncate } from 'lodash';
+import { defer, flow, includes, noop, truncate } from 'lodash';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -15,6 +14,7 @@ import Gridicon from 'components/gridicon';
  */
 import { startMappingAuthors, startUpload } from 'lib/importer/actions';
 import { appStates } from 'state/imports/constants';
+import { getUploadFilename, getUploadPercentComplete } from 'state/imports/uploads/selectors';
 import DropZone from 'components/drop-zone';
 import { ProgressBar } from '@automattic/components';
 import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
@@ -96,11 +96,11 @@ class UploadingPane extends React.PureComponent {
 		}
 	};
 
-	initiateFromDrop = event => {
+	initiateFromDrop = ( event ) => {
 		this.startUpload( event[ 0 ] );
 	};
 
-	initiateFromForm = event => {
+	initiateFromForm = ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -118,14 +118,14 @@ class UploadingPane extends React.PureComponent {
 		this.fileSelectorRef.current.click();
 	};
 
-	handleKeyPress = event => {
+	handleKeyPress = ( event ) => {
 		// Open file selector on Enter or Space
 		if ( event.key === 'Enter' || event.key === ' ' ) {
 			this.openFileSelector();
 		}
 	};
 
-	startUpload = file => {
+	startUpload = ( file ) => {
 		startUpload( this.props.importerStatus, file );
 	};
 
@@ -174,9 +174,9 @@ class UploadingPane extends React.PureComponent {
 }
 
 export default flow(
-	connect( state => ( {
-		filename: get( state, 'imports.uploads.filename' ),
-		percentComplete: get( state, 'imports.uploads.percentComplete' ),
+	connect( ( state ) => ( {
+		filename: getUploadFilename( state ),
+		percentComplete: getUploadPercentComplete( state ),
 	} ) ),
 	localize
 )( UploadingPane );

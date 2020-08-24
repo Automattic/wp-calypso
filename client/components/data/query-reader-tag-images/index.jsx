@@ -50,7 +50,7 @@ export default connect(
 			shouldRequestTagImages: shouldRequestTagImages( state, ownProps.tag ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				requestTagImages,

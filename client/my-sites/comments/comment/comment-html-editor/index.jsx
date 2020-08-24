@@ -29,9 +29,9 @@ export class CommentHtmlEditor extends Component {
 		showLinkDialog: false,
 	};
 
-	storeTextareaRef = textarea => ( this.textarea = textarea );
+	storeTextareaRef = ( textarea ) => ( this.textarea = textarea );
 
-	isTagOpen = tag => -1 !== this.state.openTags.indexOf( tag );
+	isTagOpen = ( tag ) => -1 !== this.state.openTags.indexOf( tag );
 
 	setCursorPosition = ( selectionEnd, insertedContentLength ) => {
 		this.textarea.selectionEnd = this.textarea.selectionStart =
@@ -81,7 +81,7 @@ export class CommentHtmlEditor extends Component {
 
 		if ( !! fragments[ 1 ] && this.isTagOpen( tag ) ) {
 			this.setState( ( { openTags } ) => ( {
-				openTags: reject( openTags, openTag => openTag === tag ),
+				openTags: reject( openTags, ( openTag ) => openTag === tag ),
 			} ) );
 			return this.insertContent( closer, options.adjustCursorPosition );
 		}
@@ -141,7 +141,7 @@ export class CommentHtmlEditor extends Component {
 
 	insertInsTag = () => this.insertHtmlTag( 'ins', { datetime: this.props.moment().format() } );
 
-	insertImgTag = attributes => this.insertHtmlTag( 'img', attributes );
+	insertImgTag = ( attributes ) => this.insertHtmlTag( 'img', attributes );
 
 	insertUlTag = () => this.insertHtmlTag( 'ul', {}, { paragraph: true } );
 

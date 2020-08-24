@@ -16,7 +16,7 @@ import { receiveLikes } from 'state/posts/likes/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetch = action =>
+export const fetch = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -26,7 +26,7 @@ export const fetch = action =>
 		action
 	);
 
-export const fromApi = data => ( {
+export const fromApi = ( data ) => ( {
 	found: +data.found,
 	iLike: !! data.i_like,
 	likes: data.likes,

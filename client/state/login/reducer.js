@@ -1,13 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get, isEmpty, pick, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
@@ -44,6 +43,7 @@ import {
 	CURRENT_USER_RECEIVE,
 } from 'state/action-types';
 import { login } from 'lib/paths';
+import { addQueryArgs } from 'lib/route';
 
 export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -83,6 +83,8 @@ export const redirectTo = combineReducers( {
 				const { path, query } = action;
 				if ( startsWith( path, '/log-in' ) ) {
 					return query.redirect_to || state;
+				} else if ( '/jetpack/connect/authorize' === path ) {
+					return addQueryArgs( query, path );
 				}
 
 				return state;
@@ -157,6 +159,8 @@ export const requestError = withoutPersistence( ( state = null, action ) => {
 			return error;
 		}
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
+			return null;
+		case LOGIN_AUTH_ACCOUNT_TYPE_RESET:
 			return null;
 		case LOGIN_REQUEST:
 			return null;
@@ -490,11 +494,21 @@ export const authAccountType = withoutPersistence( ( state = null, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+export const lastCheckedUsernameOrEmail = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
+			return action.usernameOrEmail;
+	}
+
+	return state;
+} );
+
+const combinedReducer = combineReducers( {
 	authAccountType,
 	isFormDisabled,
 	isRequesting,
 	isRequestingTwoFactorAuth,
+	lastCheckedUsernameOrEmail,
 	magicLogin,
 	redirectTo,
 	requestError,
@@ -506,3 +520,6 @@ export default combineReducers( {
 	twoFactorAuthPushPoll,
 	twoFactorAuthRequestError,
 } );
+
+const loginReducer = withStorageKey( 'login', combinedReducer );
+export default loginReducer;

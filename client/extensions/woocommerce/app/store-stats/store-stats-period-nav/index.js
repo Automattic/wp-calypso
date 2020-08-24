@@ -55,9 +55,7 @@ const StoreStatsPeriodNav = ( {
 					period={ unit }
 					date={
 						unit === 'week'
-							? moment( selectedDate, 'YYYY-MM-DD' )
-									.subtract( 1, 'days' )
-									.format( 'YYYY-MM-DD' )
+							? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
 							: selectedDate
 					}
 					query={ query }

@@ -74,7 +74,7 @@ export default connect(
 	( state, props ) => ( {
 		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
 	} ),
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				likeComment,

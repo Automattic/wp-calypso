@@ -70,7 +70,7 @@ class TaxonomyManagerListItem extends Component {
 		page( `/posts/${ siteSlug }?${ taxonomy }=${ term.slug }` );
 	};
 
-	closeDeleteDialog = action => {
+	closeDeleteDialog = ( action ) => {
 		if ( action === 'delete' ) {
 			const { siteId, taxonomy, term } = this.props;
 			this.props.recordGoogleEvent( 'Taxonomy Manager', `Deleted ${ taxonomy }` );

@@ -13,7 +13,7 @@ import classnames from 'classnames';
  */
 import AsyncLoad from 'components/async-load';
 import MasterbarLoggedIn from 'layout/masterbar/logged-in';
-import GlobalNotices from 'components/global-notices';
+import JetpackCloudMasterbar from 'components/jetpack/masterbar';
 import HtmlIsIframeClassname from 'layout/html-is-iframe-classname';
 import notices from 'notices';
 import config from 'config';
@@ -28,6 +28,7 @@ import {
 	masterbarIsVisible,
 	getSectionGroup,
 	getSectionName,
+	getSelectedSite,
 } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
@@ -47,8 +48,9 @@ import { getMessagePathForJITM } from 'lib/route';
 import BodySectionCssClass from './body-section-css-class';
 import { retrieveMobileRedirect } from 'jetpack-connect/persistence-utils';
 import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import LayoutLoader from './loader';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
  * Style dependencies
@@ -56,6 +58,7 @@ import LayoutLoader from './loader';
 // goofy import for environment badge, which is SSR'd
 import 'components/environment-badge/style.scss';
 import './style.scss';
+import { getShouldShowAppBanner } from './utils';
 
 class Layout extends Component {
 	static propTypes = {
@@ -69,6 +72,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
+		shouldShowAppBanner: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -100,6 +104,33 @@ class Layout extends Component {
 		// intentionally don't remove these in unmount
 	}
 
+	shouldLoadInlineHelp() {
+		if ( ! config.isEnabled( 'inline-help' ) ) {
+			return false;
+		}
+
+		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
+		const exemptedRoutes = [ '/jetpack/new', '/log-in/jetpack', '/me/account/closed' ];
+
+		return (
+			! exemptedSections.includes( this.props.sectionName ) &&
+			! exemptedRoutes.includes( this.props.currentRoute )
+		);
+	}
+
+	renderMasterbar() {
+		const MasterbarComponent = config.isEnabled( 'jetpack-cloud' )
+			? JetpackCloudMasterbar
+			: MasterbarLoggedIn;
+
+		return (
+			<MasterbarComponent
+				section={ this.props.sectionGroup }
+				isCheckout={ this.props.sectionName === 'checkout' }
+			/>
+		);
+	}
+
 	render() {
 		const sectionClass = classnames(
 			'layout',
@@ -117,6 +148,7 @@ class Layout extends Component {
 				'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 				'is-jetpack-woocommerce-flow':
 					config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+				'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 				'is-wccom-oauth-flow':
 					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 					isWooOAuth2Client( this.props.oauth2Client ) &&
@@ -127,12 +159,14 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			if ( this.props.isFrankenflow || this.props.isCheckoutFromGutenboarding ) {
-				optionalProps.bodyClass = 'is-frankenflow';
+			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
+				optionalProps.bodyClass = 'is-new-launch-flow';
 			}
 
 			return optionalProps;
 		};
+
+		const { shouldShowAppBanner } = this.props;
 
 		return (
 			<div className={ sectionClass }>
@@ -143,17 +177,20 @@ class Layout extends Component {
 				/>
 				<HtmlIsIframeClassname />
 				<DocumentHead />
-				<QuerySites primaryAndRecent />
+				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
-				<QuerySiteSelectedEditor siteId={ this.props.siteId } />
-				<AsyncLoad require="layout/guided-tours" placeholder={ null } />
-				{ ! isE2ETest() && <AsyncLoad require="layout/nps-survey-notice" placeholder={ null } /> }
+				{ config.isEnabled( 'layout/query-selected-editor' ) && (
+					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
+				) }
+				{ config.isEnabled( 'layout/guided-tours' ) && (
+					<AsyncLoad require="layout/guided-tours" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'layout/nps-survey-notice' ) && ! isE2ETest() && (
+					<AsyncLoad require="layout/nps-survey-notice" placeholder={ null } />
+				) }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<MasterbarLoggedIn
-					section={ this.props.sectionGroup }
-					isCheckout={ this.props.sectionName === 'checkout' }
-				/>
+				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
 				<LayoutLoader />
 				{ this.props.isOffline && <OfflineStatus /> }
@@ -161,11 +198,17 @@ class Layout extends Component {
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="blocks/jitm"
+							placeholder={ null }
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 							sectionName={ this.props.sectionName }
 						/>
 					) }
-					<GlobalNotices id="notices" notices={ notices.list } />
+					<AsyncLoad
+						require="components/global-notices"
+						placeholder={ null }
+						id="notices"
+						notices={ notices.list }
+					/>
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
@@ -173,11 +216,13 @@ class Layout extends Component {
 						{ this.props.primary }
 					</div>
 				</div>
-				{ config.isEnabled( 'i18n/community-translator' ) ? (
-					isCommunityTranslatorEnabled() && <AsyncLoad require="components/community-translator" />
-				) : (
-					<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
-				) }
+				{ config.isEnabled( 'i18n/community-translator' )
+					? isCommunityTranslatorEnabled() && (
+							<AsyncLoad require="components/community-translator" />
+					  )
+					: config( 'restricted_me_access' ) && (
+							<AsyncLoad require="layout/community-translator/launcher" placeholder={ null } />
+					  ) }
 				{ this.props.sectionGroup === 'sites' && <SitePreview /> }
 				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && (
 					<AsyncLoad require="components/happychat" />
@@ -185,15 +230,15 @@ class Layout extends Component {
 				{ 'development' === process.env.NODE_ENV && (
 					<AsyncLoad require="components/webpack-build-monitor" placeholder={ null } />
 				) }
-				{ ( 'jetpack-connect' !== this.props.sectionName ||
-					this.props.currentRoute === '/jetpack/new' ) &&
-					this.props.currentRoute !== '/log-in/jetpack' &&
-					this.props.currentRoute !== '/me/account/closed' &&
-					'happychat' !== this.props.sectionName && (
-						<AsyncLoad require="blocks/inline-help" placeholder={ null } />
-					) }
-				<AsyncLoad require="blocks/support-article-dialog" placeholder={ null } />
-				<AsyncLoad require="blocks/app-banner" placeholder={ null } />
+				{ this.shouldLoadInlineHelp() && (
+					<AsyncLoad require="blocks/inline-help" placeholder={ null } />
+				) }
+				{ config.isEnabled( 'layout/support-article-dialog' ) && (
+					<AsyncLoad require="blocks/support-article-dialog" placeholder={ null } />
+				) }
+				{ shouldShowAppBanner && config.isEnabled( 'layout/app-banner' ) && (
+					<AsyncLoad require="blocks/app-banner" placeholder={ null } />
+				) }
 				{ config.isEnabled( 'gdpr-banner' ) && (
 					<AsyncLoad require="blocks/gdpr-banner" placeholder={ null } />
 				) }
@@ -205,11 +250,12 @@ class Layout extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const sectionGroup = getSectionGroup( state );
 	const sectionName = getSectionName( state );
 	const currentRoute = getCurrentRoute( state );
 	const siteId = getSelectedSiteId( state );
+	const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 	const sectionJitmPath = getMessagePathForJITM( currentRoute );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
@@ -222,10 +268,14 @@ export default connect( state => {
 	const isJetpackWooCommerceFlow =
 		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
+	const isJetpackWooDnaFlow =
+		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
+		wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow();
 	const oauth2Client = getCurrentOAuth2Client( state );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
-	const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins' ].indexOf( sectionName ) >= 0;
-	const isFrankenflow = startsWith( currentRoute, '/start/frankenflow' );
+	const isEligibleForJITM =
+		[ 'stats', 'plans', 'themes', 'plugins', 'comments' ].indexOf( sectionName ) >= 0;
+	const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
 
 	return {
 		masterbarIsHidden:
@@ -233,6 +283,7 @@ export default connect( state => {
 		isJetpack,
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,
+		isJetpackWooDnaFlow,
 		isJetpackMobileFlow,
 		isEligibleForJITM,
 		oauth2Client,
@@ -241,6 +292,7 @@ export default connect( state => {
 		sectionGroup,
 		sectionName,
 		sectionJitmPath,
+		shouldShowAppBanner,
 		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
@@ -254,7 +306,7 @@ export default connect( state => {
 		authorization, it would remove the newly connected site that has been fetched separately.
 		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-		isFrankenflow,
+		isNewLaunchFlow,
 		isCheckoutFromGutenboarding,
 	};
 } )( Layout );

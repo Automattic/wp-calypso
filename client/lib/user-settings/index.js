@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:user:settings' );
@@ -11,8 +10,7 @@ import { decodeEntities } from 'lib/formatting';
  * Internal dependencies
  */
 import emitterClass from 'lib/mixins/emitter';
-import userFactory from 'lib/user';
-const user = userFactory();
+import user from 'lib/user';
 import userUtils from 'lib/user/utils';
 import wp from 'lib/wp';
 
@@ -94,7 +92,7 @@ emitterClass( UserSettings.prototype );
  *
  * @returns {boolean} true is the user has settings object
  */
-UserSettings.prototype.hasSettings = function() {
+UserSettings.prototype.hasSettings = function () {
 	return !! this.settings;
 };
 
@@ -103,7 +101,7 @@ UserSettings.prototype.hasSettings = function() {
  *
  * @returns {object} user setting object
  */
-UserSettings.prototype.getSettings = function() {
+UserSettings.prototype.getSettings = function () {
 	if ( ! this.settings ) {
 		this.fetchSettings();
 	}
@@ -113,7 +111,7 @@ UserSettings.prototype.getSettings = function() {
 /**
  * Fetch user settings from WordPress.com API and store them in UserSettings instance
  */
-UserSettings.prototype.fetchSettings = function() {
+UserSettings.prototype.fetchSettings = function () {
 	if ( ! userUtils.isLoggedIn() || this.fetchingSettings ) {
 		return;
 	}
@@ -126,7 +124,7 @@ UserSettings.prototype.fetchSettings = function() {
 		.me()
 		.settings()
 		.get(
-			function( error, data ) {
+			function ( error, data ) {
 				if ( ! error ) {
 					this.settings = decodeUserSettingsEntities( data );
 					this.initialized = true;
@@ -147,7 +145,7 @@ UserSettings.prototype.fetchSettings = function() {
  * @param {object} settingsOverride - default settings object
  * @returns {null} null
  */
-UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
+UserSettings.prototype.saveSettings = function ( callback, settingsOverride ) {
 	const settings = settingsOverride ? settingsOverride : this.unsavedSettings;
 
 	if ( isEmpty( settings ) ) {
@@ -163,7 +161,7 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 		.settings()
 		.update(
 			settings,
-			function( error, data ) {
+			function ( error, data ) {
 				if ( ! error ) {
 					this.settings = decodeUserSettingsEntities( merge( this.settings, data ) );
 
@@ -172,13 +170,13 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 						this.unsavedSettings = {};
 					} else {
 						// Removed freshly saved data from unsavedSettings
-						keys( data ).forEach( x => delete this.unsavedSettings[ x ] );
+						keys( data ).forEach( ( x ) => delete this.unsavedSettings[ x ] );
 					}
 
 					this.emit( 'change' );
 
 					// Refetch the user data after saving user settings
-					user.fetch();
+					user().fetch();
 				}
 
 				// Let the form know whether the save was successful or not
@@ -187,13 +185,13 @@ UserSettings.prototype.saveSettings = function( callback, settingsOverride ) {
 		);
 };
 
-UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
+UserSettings.prototype.cancelPendingEmailChange = function ( callback ) {
 	wpcom
 		.me()
 		.settings()
 		.update(
 			{ user_email_change_pending: false },
-			function( error, data ) {
+			function ( error, data ) {
 				if ( ! error ) {
 					this.settings = merge( this.settings, data );
 					this.emit( 'change' );
@@ -211,7 +209,7 @@ UserSettings.prototype.cancelPendingEmailChange = function( callback ) {
  * @param {string} settingName - setting name
  * @returns {*} setting key value
  */
-UserSettings.prototype.getOriginalSetting = function( settingName ) {
+UserSettings.prototype.getOriginalSetting = function ( settingName ) {
 	return get( this.settings, settingName, null );
 };
 
@@ -220,7 +218,7 @@ UserSettings.prototype.getOriginalSetting = function( settingName ) {
  *
  * @returns {boolean} return true if two-step is enabled
  */
-UserSettings.prototype.isTwoStepEnabled = function() {
+UserSettings.prototype.isTwoStepEnabled = function () {
 	return this.settings ? this.settings.two_step_enabled : false;
 };
 
@@ -229,7 +227,7 @@ UserSettings.prototype.isTwoStepEnabled = function() {
  *
  * @returns {boolean} return true if two-step sms is enabled
  */
-UserSettings.prototype.isTwoStepSMSEnabled = function() {
+UserSettings.prototype.isTwoStepSMSEnabled = function () {
 	return this.settings ? this.settings.two_step_sms_enabled : false;
 };
 
@@ -238,7 +236,7 @@ UserSettings.prototype.isTwoStepSMSEnabled = function() {
  *
  * @returns {boolean} pending email state
  */
-UserSettings.prototype.isPendingEmailChange = function() {
+UserSettings.prototype.isPendingEmailChange = function () {
 	if ( this.settings ) {
 		return !! this.settings.new_user_email;
 	}
@@ -252,7 +250,7 @@ UserSettings.prototype.isPendingEmailChange = function() {
  * @param {string}  settingName - setting name
  * @returns {*} setting name value
  */
-UserSettings.prototype.getSetting = function( settingName ) {
+UserSettings.prototype.getSetting = function ( settingName ) {
 	let setting = null;
 
 	// If we haven't fetched settings, or if the setting doesn't exist return null
@@ -273,7 +271,7 @@ UserSettings.prototype.getSetting = function( settingName ) {
  * @param {*} value - setting value
  * @returns {boolean} updating successful response
  */
-UserSettings.prototype.updateSetting = function( settingName, value ) {
+UserSettings.prototype.updateSetting = function ( settingName, value ) {
 	if ( has( this.settings, settingName ) ) {
 		set( this.unsavedSettings, settingName, value );
 
@@ -308,11 +306,11 @@ UserSettings.prototype.updateSetting = function( settingName, value ) {
 	return false;
 };
 
-UserSettings.prototype.isSettingUnsaved = function( settingName ) {
+UserSettings.prototype.isSettingUnsaved = function ( settingName ) {
 	return has( this.unsavedSettings, settingName );
 };
 
-UserSettings.prototype.removeUnsavedSetting = function( settingName ) {
+UserSettings.prototype.removeUnsavedSetting = function ( settingName ) {
 	if ( this.isSettingUnsaved( settingName ) ) {
 		deleteUnsavedSetting( this.unsavedSettings, settingName );
 
@@ -320,7 +318,7 @@ UserSettings.prototype.removeUnsavedSetting = function( settingName ) {
 	}
 };
 
-UserSettings.prototype.hasUnsavedSettings = function() {
+UserSettings.prototype.hasUnsavedSettings = function () {
 	return ! isEmpty( this.unsavedSettings );
 };
 

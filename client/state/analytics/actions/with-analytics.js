@@ -10,12 +10,10 @@ const mergedMetaData = ( a, b ) => [
 
 const joinAnalytics = ( analytics, action ) =>
 	isFunction( action )
-		? dispatch => {
+		? ( dispatch ) => {
 				dispatch( analytics );
 				dispatch( action );
 		  }
 		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
 
-const withAnalytics = curry( joinAnalytics );
-
-export default withAnalytics;
+export const withAnalytics = curry( joinAnalytics );

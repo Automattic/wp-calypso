@@ -16,12 +16,12 @@ function urlSafeBase64DecodeString( str ) {
 		'.': '=',
 	};
 
-	return window.atob( str.replace( /[-_.]/g, ch => decodeMap[ ch ] ) );
+	return window.atob( str.replace( /[-_.]/g, ( ch ) => decodeMap[ ch ] ) );
 }
 
 /**
  * Decodes a URL param encoded by AMP's linker.js
- * See also https://github.com/ampproject/amphtml/blob/master/extensions/amp-analytics/linker-id-receiving.md
+ * See also https://github.com/ampproject/amphtml/blob/HEAD/extensions/amp-analytics/linker-id-receiving.md
  *
  * @param {string} value Value to be decoded
  * @returns {null|object} null or and object containing key/value pairs
@@ -29,7 +29,7 @@ function urlSafeBase64DecodeString( str ) {
 function parseAmpEncodedParams( value ) {
 	value = value
 		.split( '*' )
-		.filter( val => val.length )
+		.filter( ( val ) => val.length )
 		.slice( 2 );
 	// return null if empty or we have an odd number of elements
 	if ( 0 === value.length || 0 !== value.length % 2 ) {
@@ -58,7 +58,7 @@ export default function urlParseAmpCompatible( url ) {
 		debug( 'urlParseAmpCompatible: original query:', parsedUrl.search );
 
 		if ( parsedUrl.searchParams.has( 'tk_amp' ) ) {
-			const tk_amp = parseAmpEncodedParams( parsedUrl.searchParams.tk_amp );
+			const tk_amp = parseAmpEncodedParams( parsedUrl.searchParams.get( 'tk_amp' ) );
 			debug( 'urlParseAmpCompatible: tk_amp:', tk_amp );
 			for ( const key of Object.keys( tk_amp ) ) {
 				if ( ! parsedUrl.searchParams.has( key ) ) {

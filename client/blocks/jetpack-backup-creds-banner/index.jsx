@@ -9,11 +9,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { settingsPath } from 'lib/jetpack/paths';
 import Banner from 'components/banner';
 import getRewindState from 'state/selectors/get-rewind-state';
 import QueryRewindState from 'components/data/query-rewind-state';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import jetpackDisconnected from 'assets/images/jetpack/disconnected.svg';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class JetpackBackupCredsBanner extends Component {
 	static propTypes = {
@@ -40,11 +47,12 @@ class JetpackBackupCredsBanner extends Component {
 				{ 'awaitingCredentials' === rewindState.state && (
 					<Banner
 						event={ event }
-						icon="history"
+						className="jetpack-backup-creds-banner"
+						iconPath={ jetpackDisconnected }
 						href={
 							rewindState.canAutoconfigure
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `/settings/security/${ siteSlug }`
+								: `${ settingsPath( siteSlug ) }#credentials`
 						}
 						title={ translate( 'Add your server credentials' ) }
 						description={ translate(
@@ -57,7 +65,7 @@ class JetpackBackupCredsBanner extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

@@ -30,7 +30,7 @@ function IncrementalProgressPlugin() {
 			const timeString = ( ( nowTime - startTime ) / 1000 ).toFixed( 1 ) + 's';
 			const percentageString = `${ Math.floor( percentage * 100 ) }%`;
 			const detailsString = details
-				.map( detail => {
+				.map( ( detail ) => {
 					if ( ! detail ) {
 						return '';
 					}
@@ -72,6 +72,7 @@ const nodeModulesToTranspile = [
 	// The trailing slash makes sure we're not matching these as prefixes
 	// In some cases we do want prefix style matching (lodash. for lodash.assign)
 	'@automattic/calypso-polyfills/',
+	'@automattic/lasagna/',
 	'@automattic/react-virtualized/',
 	'@github/webauthn-json/',
 	'acorn-jsx/',
@@ -81,6 +82,7 @@ const nodeModulesToTranspile = [
 	'debug/',
 	'escape-string-regexp/',
 	'filesize/',
+	'gridicons/',
 	'prismjs/',
 	'punycode/',
 	'react-spring/',
@@ -89,6 +91,7 @@ const nodeModulesToTranspile = [
 	'striptags/',
 	'unicode-match-property-ecmascript/',
 	'unicode-match-property-value-ecmascript/',
+	'wp-calypso-client/',
 ];
 
 /**
@@ -114,7 +117,9 @@ function shouldTranspileDependency( filepath ) {
 
 	const checkFrom = lastIndex + marker.length;
 
-	return nodeModulesToTranspile.some( modulePart => filepath.startsWith( modulePart, checkFrom ) );
+	return nodeModulesToTranspile.some( ( modulePart ) =>
+		filepath.startsWith( modulePart, checkFrom )
+	);
 }
 
 module.exports = { cssNameFromFilename, IncrementalProgressPlugin, shouldTranspileDependency };

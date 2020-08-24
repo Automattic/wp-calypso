@@ -23,7 +23,7 @@ import { getInitialState } from './get-initial-state';
  * @param {Function} reducer original reducer
  * @returns {Function} wrapped reducer
  */
-export const withoutPersistence = reducer => {
+export const withoutPersistence = ( reducer ) => {
 	const wrappedReducer = ( state, action ) => {
 		switch ( action.type ) {
 			case SERIALIZE:

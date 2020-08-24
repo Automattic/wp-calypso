@@ -29,19 +29,19 @@ class Security2faKeyAdd extends React.Component {
 		securityKeyName: '',
 	};
 
-	registerKey = securityKeyName => {
+	registerKey = ( securityKeyName ) => {
 		this.setState( { securityKeyName } );
 		registerSecurityKey( securityKeyName )
-			.then( data => {
+			.then( ( data ) => {
 				debug( 'registered key with data', data );
 				this.keyRegistered();
 			} )
-			.catch( e => {
+			.catch( ( e ) => {
 				this.handleError( e );
 			} );
 	};
 
-	handleError = e => {
+	handleError = ( e ) => {
 		if ( 'Canceled' === e.error ) {
 			this.props.warningNotice( e.message, {
 				showDismiss: true,

@@ -72,7 +72,7 @@ export const getOrderNotes = ( state, orderId, siteId = getSelectedSiteId( state
 		[ 'extensions', 'woocommerce', 'sites', siteId, 'orders', 'notes', 'orders', orderId ],
 		[]
 	);
-	return notesForOrder.map( id => notes[ id ] );
+	return notesForOrder.map( ( id ) => notes[ id ] );
 };
 
 /**

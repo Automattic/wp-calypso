@@ -21,7 +21,7 @@ import {
  * @param {object} action Redux action
  * @returns {object} original action
  */
-export const requestPlans = action =>
+export const requestPlans = ( action ) =>
 	http(
 		{
 			apiVersion: '1.5',

@@ -1,0 +1,47 @@
+{
+	"name": "@automattic/onboarding",
+	"version": "1.0.0",
+	"description": "Onboarding components for WordPress.com",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/onboarding"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"types": "dist/types",
+	"scripts": {
+		"clean": "npx rimraf dist ../../.tsc-cache/packages__onboarding*",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
+		"prepublish": "yarn run clean",
+		"watch": "tsc --project ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@wordpress/components": "^10.0.3",
+		"classnames": "^2.2.6"
+	},
+	"devDependencies": {
+		"@automattic/typography": "^1.0.0",
+		"@wordpress/base-styles": "^2.0.1",
+		"copyfiles": "^2.3.0"
+	},
+	"peerDependencies": {
+		"@wordpress/i18n": "^3.14.0",
+		"react": "^16.8"
+	},
+	"private": true
+}

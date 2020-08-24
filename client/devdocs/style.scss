@@ -3,15 +3,15 @@ $devdocs-max-width: 720px;
 // Sidebar Title
 .devdocs__title {
 	color: var( --color-sidebar-text-alternative );
-	font-size: 24px;
+	font-size: $font-title-medium;
 	padding: 24px;
 }
 
 // Search
 .devdocs__result {
 	.devdocs__result-title {
-		font-weight: bold;
-		font-size: 18px;
+		font-weight: 600;
+		font-size: $font-title-small;
 
 		.devdocs__result-link {
 			text-decoration: underline;
@@ -23,13 +23,13 @@ $devdocs-max-width: 720px;
 	}
 
 	.devdocs__result-path {
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-family: $code;
 		color: var( --color-text-subtle );
 	}
 
 	.devdocs__result-snippet {
-		font-size: 15px;
+		font-size: $font-body;
 		color: var( --color-text );
 		margin-top: 4px;
 
@@ -58,7 +58,7 @@ $devdocs-max-width: 720px;
 		column-gap: 24px;
 
 		// Show 2 columns for big screens
-		@include breakpoint( '>1280px' ) {
+		@include breakpoint-deprecated( '>1280px' ) {
 			column-count: 2;
 		}
 
@@ -76,7 +76,7 @@ $devdocs-max-width: 720px;
 
 .design__instance-links-label {
 	display: block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	margin: 8px;
 	color: var( --color-text-subtle );
@@ -104,7 +104,7 @@ $devdocs-max-width: 720px;
 
 	.docs-example__wrapper-header-title {
 		font-family: $code;
-		font-size: 18px;
+		font-size: $font-title-small;
 		letter-spacing: 1px;
 		border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.65 );
 
@@ -174,7 +174,7 @@ $devdocs-max-width: 720px;
 
 		// When we only have room for one column we
 		// set the max-width to line up with search
-		@include breakpoint( '<1280px' ) {
+		@include breakpoint-deprecated( '<1280px' ) {
 			max-width: $devdocs-max-width;
 		}
 
@@ -252,8 +252,8 @@ $devdocs-max-width: 720px;
 	.docs-selectors__result-name {
 		font-family: $code;
 		text-decoration: underline;
-		font-weight: bold;
-		font-size: 16px;
+		font-weight: 600;
+		font-size: $font-body;
 	}
 
 	.docs-selectors__result-description {
@@ -262,7 +262,7 @@ $devdocs-max-width: 720px;
 
 	.docs-selectors__result-io {
 		display: none;
-		font-size: 16px;
+		font-size: $font-body;
 
 		.docs-selectors__result-arguments {
 			flex: 3;
@@ -319,13 +319,13 @@ $devdocs-max-width: 720px;
 		}
 
 		.docs-selectors__param-type {
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 
 		p {
 			margin: 0;
 			padding-top: 4px;
-			font-size: 15px;
+			font-size: $font-body;
 		}
 	}
 
@@ -341,10 +341,10 @@ $devdocs-max-width: 720px;
 .devdocs__doc-content {
 	max-width: $devdocs-max-width;
 	margin: 32px 20px;
-	font-size: 16px;
+	font-size: $font-body;
 	font-family: $serif;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 32px auto;
 	}
 
@@ -361,24 +361,24 @@ $devdocs-max-width: 720px;
 		font-weight: 600;
 		line-height: 1.2;
 		margin: 32px 0 16px;
-		font-size: 21px;
+		font-size: $font-title-small;
 		color: var( --color-neutral-60 );
 	}
 
 	h1 {
 		color: var( --color-neutral-70 );
-		font-size: 54px;
+		font-size: $font-headline-large;
 		line-height: 1.4;
 		margin-top: 0;
 	}
 
 	h2 {
-		font-size: 32px;
+		font-size: $font-title-large;
 		color: var( --color-neutral-70 );
 	}
 
 	h3 {
-		font-size: 24px;
+		font-size: $font-title-medium;
 	}
 
 	p,
@@ -406,7 +406,7 @@ $devdocs-max-width: 720px;
 		background-color: var( --color-surface );
 		border-radius: 3px;
 		color: var( --color-primary-dark );
-		font-size: 15px;
+		font-size: $font-body;
 		padding: 2px 6px;
 		max-width: 100px;
 	}
@@ -421,8 +421,8 @@ $devdocs-max-width: 720px;
 	}
 
 	.label {
-		font-weight: bold;
-		font-size: 15px;
+		font-weight: 600;
+		font-size: $font-body;
 		padding: 1px 5px 2px;
 		border-radius: 3px;
 
@@ -466,13 +466,32 @@ $devdocs-max-width: 720px;
 	}
 }
 
-.design__typography-code-example {
-	font-family: $code;
-	font-size: 15px;
+.design__typography-brand-example {
+	@extend .wp-brand-font;
+
+	h2 {
+		margin-top: 16px;
+	}
 }
 
+.design__typography-code-example {
+	font-family: $code;
+	font-size: $font-body;
+}
+
+
+
 .design__typography-modular-scale {
-	max-width: 150px;
+	max-width: 400px;
+
+	th {
+		padding: 5px 0;
+	}
+
+	td {
+		border-top: 1px solid var( --color-neutral-10 );
+		padding: 5px 0;
+	}
 }
 
 // At the top of documentation and readme's
@@ -481,7 +500,7 @@ a.devdocs__doc-edit-link {
 	text-decoration: underline;
 	float: right;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-right: 12px;
 	}
 }

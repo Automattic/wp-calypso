@@ -76,7 +76,7 @@ export default class DesignAssets extends React.Component {
 		page( '/devdocs/design/' );
 	};
 
-	addComponent = exampleCode => () => {
+	addComponent = ( exampleCode ) => () => {
 		this.setState( {
 			code:
 				'<Main>' +
@@ -87,7 +87,7 @@ export default class DesignAssets extends React.Component {
 		} );
 	};
 
-	handleChange = code => {
+	handleChange = ( code ) => {
 		this.setState( {
 			code: code,
 		} );
@@ -96,7 +96,7 @@ export default class DesignAssets extends React.Component {
 	listOfExamples() {
 		return (
 			<SelectDropdown selectedText="Add a component" className="design__playground-examples">
-				{ keys( componentExamples ).map( name => {
+				{ keys( componentExamples ).map( ( name ) => {
 					const ExampleComponentName = componentExamples[ name ];
 					const exampleComponent = <ExampleComponentName />;
 					const exampleCode = getExampleCodeFromComponent( exampleComponent );

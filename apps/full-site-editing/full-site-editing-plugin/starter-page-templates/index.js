@@ -13,6 +13,7 @@ import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { PageTemplatesPlugin } from './page-template-modal';
 import SidebarTemplatesPlugin from './page-template-modal/components/sidebar-modal-opener';
 import { initializeWithIdentity } from './page-template-modal/utils/tracking';
+import './store';
 /* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
@@ -21,7 +22,6 @@ const {
 	vertical,
 	segment,
 	tracksUserData,
-	siteInformation = {},
 	screenAction,
 	theme,
 	isFrontPage,
@@ -43,6 +43,7 @@ const templatesPluginSharedProps = {
 
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
+	dispatch( 'automattic/starter-page-layouts' ).setIsOpen( true );
 	registerPlugin( 'page-templates', {
 		render: () => (
 			<PageTemplatesPlugin { ...templatesPluginSharedProps } shouldPrefetchAssets={ false } />
@@ -56,14 +57,11 @@ registerPlugin( 'page-templates-sidebar', {
 		return (
 			<PluginDocumentSettingPanel
 				name="Template Modal Opener"
-				title={ __( 'Page Layout' ) }
+				title={ __( 'Page Layout', 'full-site-editing' ) }
 				className="page-template-modal__sidebar" // eslint-disable-line wpcalypso/jsx-classname-namespace
 				icon="none"
 			>
-				<SidebarTemplatesPlugin
-					{ ...templatesPluginSharedProps }
-					siteInformation={ siteInformation }
-				/>
+				<SidebarTemplatesPlugin { ...templatesPluginSharedProps } />
 			</PluginDocumentSettingPanel>
 		);
 	},

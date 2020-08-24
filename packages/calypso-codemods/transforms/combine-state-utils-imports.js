@@ -9,7 +9,7 @@
  import { baz, combineReducersWithPersistence as bar, createReducer } from 'state/utils';
  */
 
-module.exports = function( file, api ) {
+module.exports = function ( file, api ) {
 	// alias the jscodeshift API
 	const j = api.jscodeshift;
 	// parse JS code into an AST
@@ -28,7 +28,7 @@ module.exports = function( file, api ) {
 
 	//grab each identifier
 	const importNames = [];
-	stateUtilsImports.find( j.ImportSpecifier ).forEach( item => {
+	stateUtilsImports.find( j.ImportSpecifier ).forEach( ( item ) => {
 		importNames.push( {
 			local: item.value.local.name,
 			imported: item.value.imported.name,
@@ -49,8 +49,8 @@ module.exports = function( file, api ) {
 	//Save Comment if possible
 	const comments = stateUtilsImports.at( 0 ).get().node.comments;
 
-	const addImport = imports => {
-		const names = imports.map( name => {
+	const addImport = ( imports ) => {
+		const names = imports.map( ( name ) => {
 			if ( name.local === name.imported ) {
 				return j.importSpecifier( j.identifier( name.local ) );
 			}

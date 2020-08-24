@@ -17,7 +17,7 @@ import HeaderCake from 'components/header-cake';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
-	const handleAddEmailClick = cartItems => {
+	const handleAddEmailClick = ( cartItems ) => {
 		addItems( cartItems );
 
 		page( `/checkout/${ selectedSiteSlug }` );
@@ -56,6 +56,6 @@ const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	selectedSiteSlug: getSelectedSiteSlug( state ),
 } ) )( GSuiteUpgrade );

@@ -7,7 +7,7 @@ function preventScrollBounceOSX( body, event ) {
 	}
 }
 
-export default function( body ) {
+export default function ( body ) {
 	if (
 		window &&
 		window.navigator &&

@@ -12,6 +12,7 @@ export const SITE_REQUEST_FIELDS = [
 	'name',
 	'options',
 	'plan',
+	'products',
 	'single_user_site',
 	'visible',
 	'lang',
@@ -19,6 +20,8 @@ export const SITE_REQUEST_FIELDS = [
 	'site_migration',
 	'is_fse_active',
 	'is_fse_eligible',
+	'is_core_site_editor_enabled',
+	'description',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -37,11 +40,13 @@ export const SITE_REQUEST_OPTIONS = [
 	'gmt_offset',
 	'has_pending_automated_transfer',
 	'is_automated_transfer',
+	'is_cloud_eligible',
 	'is_domain_only',
 	'is_mapped_domain',
 	'is_redirect',
 	'is_wpcom_atomic',
 	'is_wpcom_store',
+	'is_wpforteams_site',
 	'woocommerce_is_active',
 	'jetpack_frame_nonce',
 	'jetpack_version',
@@ -64,4 +69,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'videopress_enabled',
 	'woocommerce_is_active',
 	'wordads',
+	'site_creation_flow',
 ].join();

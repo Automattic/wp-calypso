@@ -104,7 +104,7 @@ describe( 'index', () => {
 
 	test( 'should be call onToggle when clicked', () => {
 		let hasBeenCalled = false;
-		const callback = function() {
+		const callback = function () {
 			hasBeenCalled = true;
 		};
 		const bulkSelect = shallow(
@@ -119,8 +119,8 @@ describe( 'index', () => {
 		assert.equal( hasBeenCalled, true );
 	} );
 
-	test( 'should be call onToggle with the new state when there are no selected elements', done => {
-		const callback = function( newState ) {
+	test( 'should be call onToggle with the new state when there are no selected elements', ( done ) => {
+		const callback = function ( newState ) {
 			assert.equal( newState, true );
 			done();
 		};
@@ -135,8 +135,8 @@ describe( 'index', () => {
 		bulkSelect.find( 'input' ).simulate( 'change' );
 	} );
 
-	test( 'should be call onToggle with the new state when there are some selected elements', done => {
-		const callback = function( newState ) {
+	test( 'should be call onToggle with the new state when there are some selected elements', ( done ) => {
+		const callback = function ( newState ) {
 			assert.equal( newState, false );
 			done();
 		};
@@ -151,8 +151,8 @@ describe( 'index', () => {
 		bulkSelect.find( 'input' ).simulate( 'change' );
 	} );
 
-	test( 'should be call onToggle with the new state when there all elements are selected', done => {
-		const callback = function( newState ) {
+	test( 'should be call onToggle with the new state when there all elements are selected', ( done ) => {
+		const callback = function ( newState ) {
 			assert.equal( newState, false );
 			done();
 		};

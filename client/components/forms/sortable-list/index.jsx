@@ -107,7 +107,7 @@ class SortableList extends React.Component {
 		}
 	};
 
-	getAdjustedElementIndex = index => {
+	getAdjustedElementIndex = ( index ) => {
 		// The active order array is used as an array where each index matches
 		// the original prop children indices, but the values correspond to
 		// their visible position index
@@ -117,7 +117,7 @@ class SortableList extends React.Component {
 		return index;
 	};
 
-	getCursorElementIndex = event => {
+	getCursorElementIndex = ( event ) => {
 		const cursorCompare = this.compareCursorVerticalToElement( this.listRef.current, event );
 		const adjustedActiveIndex = this.getAdjustedElementIndex( this.state.activeIndex );
 		const shadowRect = this.itemShadowRefs
@@ -183,7 +183,7 @@ class SortableList extends React.Component {
 		return this.getAdjustedElementIndex( index );
 	};
 
-	moveItem = direction => {
+	moveItem = ( direction ) => {
 		const increment = 'previous' === direction ? -1 : 1,
 			activeOrder = Object.keys( this.props.children ).map( Number );
 
@@ -204,7 +204,7 @@ class SortableList extends React.Component {
 		} );
 	};
 
-	onMouseMove = event => {
+	onMouseMove = ( event ) => {
 		let activeOrder;
 		if ( null === this.state.activeIndex || ! this.props.allowDrag || hasTouch() ) {
 			return;
@@ -263,7 +263,7 @@ class SortableList extends React.Component {
 		} );
 	};
 
-	onClick = index => {
+	onClick = ( index ) => {
 		this.setState( {
 			activeIndex: index,
 		} );
@@ -274,7 +274,7 @@ class SortableList extends React.Component {
 		this.itemShadowRefs.clear();
 		return React.Children.map(
 			this.props.children,
-			function( child, index ) {
+			function ( child, index ) {
 				const isActive = this.state.activeIndex === index;
 				const isDraggable = this.props.allowDrag && ! hasTouch();
 				let events = isDraggable ? [ 'onMouseDown', 'onMouseUp' ] : [ 'onClick' ];
@@ -286,7 +286,7 @@ class SortableList extends React.Component {
 				} );
 
 				events = fromPairs(
-					events.map( function( event ) {
+					events.map( function ( event ) {
 						return [ event, this[ event ].bind( null, index ) ];
 					}, this )
 				);

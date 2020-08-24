@@ -4,7 +4,9 @@
 import wpcom from 'lib/wp';
 import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'state/action-types';
 
-export const setUsernameSuggestion = data => ( {
+import 'state/signup/init';
+
+export const setUsernameSuggestion = ( data ) => ( {
 	type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 	data,
 } );
@@ -18,9 +20,9 @@ export const setUsernameSuggestion = data => ( {
  * If there is no error from the API, then the username is free.
  *
  * @param {string} username The username to get suggestions for.
- * @returns {ActionThunk} Redux action thunk
+ * @returns {Function} Redux action thunk
  */
-export const fetchUsernameSuggestion = username => async dispatch => {
+export const fetchUsernameSuggestion = ( username ) => async ( dispatch ) => {
 	// Clear out the state variable before sending the call.
 	dispatch( setUsernameSuggestion( '' ) );
 

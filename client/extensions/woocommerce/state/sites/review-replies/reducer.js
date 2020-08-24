@@ -71,7 +71,7 @@ export function replyUpdated( state, action ) {
 
 	const repliesForReview = existingReplies[ reviewId ];
 
-	const updatedReplies = repliesForReview.map( reviewReply => {
+	const updatedReplies = repliesForReview.map( ( reviewReply ) => {
 		if ( isEqual( replyId, reviewReply.id ) ) {
 			return reply;
 		}

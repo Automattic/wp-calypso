@@ -41,7 +41,7 @@ class EmailedLoginLinkExpired extends React.Component {
 		this.props.recordPageView( '/log-in/link/use', 'Login > Link > Expired' );
 	}
 
-	onClickTryAgainLink = event => {
+	onClickTryAgainLink = ( event ) => {
 		event.preventDefault();
 
 		this.props.hideMagicLoginRequestForm();

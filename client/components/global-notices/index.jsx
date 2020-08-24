@@ -46,14 +46,14 @@ export class GlobalNotices extends Component {
 		}
 	}
 
-	removeNoticeStoreNotice = notice => () => {
+	removeNoticeStoreNotice = ( notice ) => () => {
 		if ( notice ) {
 			notices.removeNotice( notice );
 		}
 	};
 
 	removeReduxNotice = ( noticeId, onDismissClick ) => {
-		return e => {
+		return ( e ) => {
 			if ( onDismissClick ) {
 				onDismissClick( e );
 			}
@@ -63,7 +63,7 @@ export class GlobalNotices extends Component {
 
 	render() {
 		const noticesRaw = this.props.notices[ this.props.id ] || [];
-		let noticesList = noticesRaw.map( function( notice, index ) {
+		let noticesList = noticesRaw.map( function ( notice, index ) {
 			return (
 				<Notice
 					key={ 'notice-old-' + index }
@@ -89,7 +89,7 @@ export class GlobalNotices extends Component {
 			this.props.storeNotices.map(
 				// We'll rest/spread props to notice so arbitrary props can be passed to `Notice`.
 				// Be sure to destructure any props that aren't for at `Notice`, e.g. `button`.
-				function( { button, href, noticeId, onClick, onDismissClick, ...notice } ) {
+				function ( { button, href, noticeId, onClick, onDismissClick, ...notice } ) {
 					return (
 						<Notice
 							{ ...notice }
@@ -131,7 +131,7 @@ export class GlobalNotices extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		storeNotices: getNotices( state ),
 	} ),
 	{ removeNotice }

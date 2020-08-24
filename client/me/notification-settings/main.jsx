@@ -51,10 +51,10 @@ class NotificationSettings extends Component {
 
 	render() {
 		// TODO: We should avoid creating functions in the render method
-		const findSettingsForBlog = blogId =>
+		const findSettingsForBlog = ( blogId ) =>
 			find( this.props.settings, { blog_id: parseInt( blogId, 10 ) } );
-		const onSave = blogId => this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ) );
-		const onSaveToAll = blogId =>
+		const onSave = ( blogId ) => this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ) );
+		const onSaveToAll = ( blogId ) =>
 			this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
 
 		return (
@@ -78,7 +78,7 @@ class NotificationSettings extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		settings: getNotificationSettings( state, 'blogs' ),
 		hasUnsavedChanges: hasUnsavedNotificationSettingsChanges( state, 'blogs' ),
 	} ),

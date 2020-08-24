@@ -5,8 +5,19 @@ import { getPopularPlanSpec } from '..';
 import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM } from '../constants';
 
 describe( 'getPopularPlanSpec()', () => {
+	const availablePlans = [
+		'personal-bundle',
+		'value_bundle',
+		'business-bundle',
+		'ecommerce-bundle',
+	];
+
 	test( 'Should return biz for empty customer type', () => {
-		expect( getPopularPlanSpec( {} ) ).toEqual( {
+		expect(
+			getPopularPlanSpec( {
+				availablePlans,
+			} )
+		).toEqual( {
 			type: TYPE_BUSINESS,
 			group: GROUP_WPCOM,
 		} );
@@ -16,6 +27,7 @@ describe( 'getPopularPlanSpec()', () => {
 		expect(
 			getPopularPlanSpec( {
 				customerType: 'personal',
+				availablePlans,
 			} )
 		).toEqual( {
 			type: TYPE_PREMIUM,
@@ -23,10 +35,32 @@ describe( 'getPopularPlanSpec()', () => {
 		} );
 	} );
 
+	test( 'Should return the first available plan for personal customer type if the premium plan is not available', () => {
+		expect(
+			getPopularPlanSpec( {
+				customerType: 'personal',
+				availablePlans: [ 'business-bundle', 'ecommerce-bundle' ],
+			} )
+		).toEqual( {
+			type: TYPE_BUSINESS,
+			group: GROUP_WPCOM,
+		} );
+	} );
+
+	test( 'should return false when there is no available plans.', () => {
+		expect(
+			getPopularPlanSpec( {
+				customerType: 'business',
+				availablePlans: [],
+			} )
+		).toEqual( false );
+	} );
+
 	test( 'Should return biz for biz customer type', () => {
 		expect(
 			getPopularPlanSpec( {
 				customerType: 'business',
+				availablePlans,
 			} )
 		).toEqual( { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
 	} );

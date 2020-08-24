@@ -27,11 +27,8 @@ const Sparkline = ( {
 		const { xScale, yScale } = params;
 		const sparkline = d3Line()
 			.x( ( d, i ) => xScale( i ) )
-			.y( d => yScale( d ) );
-		return svg
-			.append( 'path' )
-			.attr( 'class', 'sparkline__line' )
-			.attr( 'd', sparkline( data ) );
+			.y( ( d ) => yScale( d ) );
+		return svg.append( 'path' ).attr( 'class', 'sparkline__line' ).attr( 'd', sparkline( data ) );
 	}
 
 	function drawHighlight( svg, params ) {
@@ -61,7 +58,7 @@ const Sparkline = ( {
 				.domain( d3Extent( data, ( d, i ) => i ) )
 				.range( [ margin.left, newWidth - margin.right ] ),
 			yScale: d3ScaleLinear()
-				.domain( d3Extent( data, d => d ) )
+				.domain( d3Extent( data, ( d ) => d ) )
 				.range( [ newHeight - margin.bottom, margin.top ] ),
 		};
 	}

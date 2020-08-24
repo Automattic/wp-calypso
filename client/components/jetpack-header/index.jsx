@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,11 +25,12 @@ export class JetpackHeader extends PureComponent {
 		darkColorScheme: PropTypes.bool,
 		partnerSlug: PropTypes.string,
 		isWoo: PropTypes.bool,
+		isWooDna: PropTypes.bool,
 		width: PropTypes.number,
 	};
 
 	renderLogo() {
-		const { darkColorScheme, partnerSlug, width, isWoo } = this.props;
+		const { darkColorScheme, partnerSlug, width, isWoo, isWooDna, translate } = this.props;
 
 		if ( isWoo ) {
 			// @todo Implement WooCommerce + partner co-branding in the future.
@@ -44,6 +46,23 @@ export class JetpackHeader extends PureComponent {
 						placeholder={ null }
 					/>
 				</JetpackPartnerLogoGroup>
+			);
+		}
+
+		if ( isWooDna ) {
+			return (
+				<svg width={ width } viewBox="0 0 1270 170">
+					<title>{ translate( 'WooCommerce logo' ) }</title>
+					<g fill="none" fillRule="evenodd">
+						<g transform="translate(-120)">
+							<AsyncLoad
+								require="components/jetpack-header/woocommerce"
+								darkColorScheme={ darkColorScheme }
+								placeholder={ null }
+							/>
+						</g>
+					</g>
+				</svg>
 			);
 		}
 
@@ -156,4 +175,4 @@ export class JetpackHeader extends PureComponent {
 	}
 }
 
-export default JetpackHeader;
+export default localize( JetpackHeader );

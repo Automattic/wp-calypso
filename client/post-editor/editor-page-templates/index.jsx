@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +15,7 @@ import AccordionSection from 'components/accordion/section';
 import SelectDropdown from 'components/select-dropdown';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
 import { getSiteOption } from 'state/sites/selectors';
@@ -113,7 +112,7 @@ class EditorPageTemplates extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );

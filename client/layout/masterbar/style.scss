@@ -6,7 +6,7 @@ $autobar-height: 20px;
 	background: var( --color-masterbar-background );
 	border-bottom: 1px solid var( --color-masterbar-border );
 	color: var( --color-masterbar-text );
-	font-size: 16px;
+	font-size: $font-body;
 	display: flex;
 	height: $masterbar-height;
 	margin: 0;
@@ -22,6 +22,12 @@ $autobar-height: 20px;
 		// Use generic colors so that they override whatever theme colors the user has picked.
 		background: var( --studio-orange );
 		border-bottom: 1px solid var( --studio-orange-60 );
+	}
+
+	.is-section-checkout.is-jetpack-site & {
+		background-color: var( --color-jetpack-masterbar-background );
+		border-bottom: 1px solid var( --color-jetpack-masterbar-border );
+		color: var( --color-jetpack-masterbar-text );
 	}
 }
 
@@ -63,13 +69,34 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__item-bubble {
+	border: solid 2px var( --color-masterbar-background );
+	border-radius: 50%;
+	display: none;
+	font-size: 8px;
+	height: 8px;
+	letter-spacing: 0;
+	line-height: 12px;
+	margin: 0 0 0 12px;
+	padding: 0;
+	position: absolute;
+	top: 9px;
+	left: 0;
+	width: 8px;
+	z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
+
+	// Animation
+	animation: bubble-unread-indication 0.5s linear both;
+	transition: all 150ms ease-in;
+}
+
 .masterbar__item {
 	flex: 0 1 auto;
 	display: flex;
 	align-items: center;
 	position: relative;
 	color: var( --color-masterbar-text );
-	font-size: 14px;
+	font-size: $font-body-small;
 	height: $masterbar-height;
 	line-height: $masterbar-height;
 	padding: 0 15px;
@@ -91,6 +118,10 @@ $autobar-height: 20px;
 
 	.gridicon {
 		fill: var( --color-masterbar-text ); // only because safari gets currentColor wrong
+
+		.is-section-checkout.is-jetpack-site & {
+			fill: var( --color-jetpack-masterbar-text );
+		}
 	}
 
 	.gridicon + .masterbar__item-content {
@@ -100,6 +131,11 @@ $autobar-height: 20px;
 	&:hover {
 		background: var( --color-masterbar-item-hover-background );
 		color: var( --color-masterbar-text );
+
+		.is-section-checkout.is-jetpack-site & {
+			background: var( --color-jetpack-masterbar-item-hover-background );
+			color: var( --color-jetpack-masterbar-text );
+		}
 	}
 
 	&:focus {
@@ -109,17 +145,52 @@ $autobar-height: 20px;
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 			color: var( --color-masterbar-text );
 		}
+
+		.is-section-checkout.is-jetpack-site & {
+			box-shadow: inset 0 0 0 2px var( --color-jetpack-masterbar-item-hover-background );
+			color: var( --color-jetpack-masterbar-text );
+		}
 	}
 
 	&.is-active {
 		background: var( --color-masterbar-item-active-background );
 	}
 
+	&:hover .masterbar__item-bubble {
+		border-color: var( --color-masterbar-item-hover-background );
+	}
+
+	&.has-unseen .masterbar__item-bubble {
+		display: block;
+		background: var( --color-masterbar-unread-dot-background );
+	}
+
+	&.is-active .masterbar__item-bubble {
+		display: none;
+	}
+
+	&.is-initial-load .masterbar__item-bubble {
+		animation: none;
+	}
+
+	&.masterbar__close-button {
+		border-right: 1px solid var( --color-masterbar-border );
+		margin-right: 15px;
+
+		.is-section-checkout.is-jetpack-site & {
+			border-right: 1px solid var( --color-jetpack-masterbar-border );
+		}
+
+		.masterbar__item-content {
+			display: none;
+		}
+	}
+
 	.is-support-session &.is-active {
 		background: var( --studio-orange-70 );
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		flex: 1 1 auto;
 
 		.gridicon {
@@ -147,7 +218,7 @@ $autobar-height: 20px;
 		margin: 0 5px;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		& {
 			padding-right: 14px;
 		}
@@ -186,7 +257,7 @@ $autobar-height: 20px;
 	.masterbar__item-content {
 		display: block;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin-top: 3px; /*Align with logo*/
 		}
 	}
@@ -199,7 +270,7 @@ $autobar-height: 20px;
 
 .masterbar__item-new {
 	background: var( --color-surface );
-	border-radius: 3px;
+	border-radius: 2px;
 	color: var( --color-primary );
 	height: 36px;
 	margin: 5px 8px;
@@ -237,7 +308,7 @@ $autobar-height: 20px;
 		color: var( --color-primary );
 		display: none;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			display: block;
 			margin-right: 4px;
 		}
@@ -293,7 +364,7 @@ $autobar-height: 20px;
 .masterbar__item-notifications {
 	margin-right: 12px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-right: 0;
 	}
 
@@ -304,7 +375,7 @@ $autobar-height: 20px;
 	.gridicon + .masterbar__item-content {
 		padding: 0;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			display: block;
 		}
 	}
@@ -379,7 +450,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__reader {
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-right: auto;
 	}
 }
@@ -403,7 +474,7 @@ $autobar-height: 20px;
 
 	&:hover {
 		background-color: var( --color-neutral-0 );
-		
+
 		.count {
 			border-color: var( --color-primary );
 			color: var( --color-primary );
@@ -431,7 +502,7 @@ $autobar-height: 20px;
 }
 
 .masterbar__recent-drafts-heading {
-	font-size: 13px;
+	font-size: $font-body-small;
 	box-sizing: border-box;
 	z-index: 1;
 	padding: 0 16px;
@@ -489,7 +560,7 @@ $autobar-height: 20px;
 .masterbar__notifications {
 	flex: 1 1 auto;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-grow: 0;
 	}
 }
@@ -523,15 +594,23 @@ a.masterbar__quick-language-switcher {
 .masterbar__secure-checkout {
 	display: flex;
 	align-items: center;
-	padding-left: 10px;
 
 	.masterbar__wpcom-wordmark {
 		margin-right: 5px;
 	}
 
+	.masterbar__jetpack-wordmark {
+		height: 25px;
+		margin-right: 5px;
+	}
+
 	.masterbar__secure-checkout-text {
-		font-weight: 300;
 		color: var( --color-primary-5 );
 		transform: translateY( 1px );
+
+		.is-jetpack-site & {
+			color: var( --color-jetpack-masterbar-text );
+			transform: translateY( -1px );
+		}
 	}
 }

@@ -63,7 +63,7 @@ Here's how your module's `package.json` should look, if you really want to do th
 
 ### Stubbing a module on the server side
 
-If you know that your code will never be called on the server, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/master/webpack.shared.js).
+If you know that your code will never be called on the server, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/HEAD/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/HEAD/webpack.shared.js).
 
 ### Debugging
 

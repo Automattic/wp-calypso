@@ -73,7 +73,7 @@ class MasterbarDraftsPopover extends Component {
 			return null;
 		}
 
-		return drafts.map( draft => (
+		return drafts.map( ( draft ) => (
 			<Draft
 				key={ draft.global_ID }
 				post={ draft }

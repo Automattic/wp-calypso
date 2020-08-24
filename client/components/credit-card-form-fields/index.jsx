@@ -284,7 +284,7 @@ export class CreditCardFormFields extends React.Component {
 		);
 	};
 
-	getFieldValue = fieldName => this.props.card[ fieldName ] || '';
+	getFieldValue = ( fieldName ) => this.props.card[ fieldName ] || '';
 
 	updateFieldValues = ( fieldName, nextValue ) => {
 		const previousValue = this.getFieldValue( fieldName );
@@ -310,7 +310,7 @@ export class CreditCardFormFields extends React.Component {
 		onFieldChange( rawDetails, maskedDetails );
 	};
 
-	handleFieldChange = event => {
+	handleFieldChange = ( event ) => {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 

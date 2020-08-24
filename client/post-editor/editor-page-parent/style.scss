@@ -14,7 +14,7 @@
 .editor-page-parent__label-text {
 	color: var( --color-neutral-light );
 	display: block;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	margin-bottom: 4px;
 	text-transform: uppercase;
 }
@@ -23,7 +23,7 @@
 .editor-page-parent__top-level-description,
 .editor-page-parent__parent-tree-selector .form-legend {
 	color: var( --color-neutral-40 );
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .editor-page-parent__top-level-description {

@@ -78,6 +78,7 @@ class People extends React.Component {
 				/>
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="people__page-heading"
 					headerText={ translate( 'People' ) }
 					align="left"
@@ -101,7 +102,7 @@ class People extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,

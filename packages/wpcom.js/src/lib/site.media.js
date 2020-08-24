@@ -82,7 +82,7 @@ export default function Media( id, sid, wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Media.prototype.get = function( query = {}, fn ) {
+Media.prototype.get = function ( query = {}, fn ) {
 	query.apiVersion = query.apiVersion || '1.2';
 	const path = '/sites/' + this._sid + '/media/' + this._id;
 	return this.wpcom.req.get( path, query, fn );
@@ -96,7 +96,7 @@ Media.prototype.get = function( query = {}, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Media.prototype.update = function( query, body, fn ) {
+Media.prototype.update = function ( query, body, fn ) {
 	const params = { path: '/sites/' + this._sid + '/media/' + this._id };
 	return this.wpcom.req.put( params, query, body, fn );
 };
@@ -109,7 +109,7 @@ Media.prototype.update = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Media.prototype.edit = function( query, body, fn ) {
+Media.prototype.edit = function ( query, body, fn ) {
 	if ( typeof body == 'function' || ! body ) {
 		fn = body;
 		body = query;
@@ -140,7 +140,7 @@ Media.prototype.edit = function( query, body, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Media.prototype.addFiles = function( query, files, fn ) {
+Media.prototype.addFiles = function ( query, files, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === files ) {
 			files = query;
@@ -154,7 +154,7 @@ Media.prototype.addFiles = function( query, files, fn ) {
 
 	const params = {
 		path: '/sites/' + this._sid + '/media/new',
-		formData: buildFormData( files )
+		formData: buildFormData( files ),
 	};
 
 	return this.wpcom.req.post( params, query, null, fn );
@@ -168,7 +168,7 @@ Media.prototype.addFiles = function( query, files, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Media.prototype.addUrls = function( query, media, fn ) {
+Media.prototype.addUrls = function ( query, media, fn ) {
 	if ( undefined === fn ) {
 		if ( undefined === media ) {
 			media = query;
@@ -221,7 +221,7 @@ Media.prototype.addUrls = function( query, media, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-Media.prototype.delete = Media.prototype.del = function( query, fn ) {
+Media.prototype.delete = Media.prototype.del = function ( query, fn ) {
 	const path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };

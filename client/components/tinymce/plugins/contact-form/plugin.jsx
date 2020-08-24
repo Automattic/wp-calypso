@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import tinymce from 'tinymce/tinymce';
 import i18n from 'i18n-calypso';
 import React, { createElement } from 'react';
@@ -19,10 +18,12 @@ import {
 	fieldRemove,
 	fieldUpdate,
 	settingsUpdate,
-} from 'state/ui/editor/contact-form/actions';
+} from 'state/editor/contact-form/actions';
 import { serialize, deserialize } from './shortcode-utils';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
+
+import 'state/editor/init';
 
 function wpcomContactForm( editor ) {
 	let node;
@@ -38,7 +39,7 @@ function wpcomContactForm( editor ) {
 		node = null;
 	} );
 
-	editor.addCommand( 'wpcomContactForm', content => {
+	editor.addCommand( 'wpcomContactForm', ( content ) => {
 		let isEdit = false;
 		if ( content ) {
 			store.dispatch( formLoad( deserialize( content ) ) );
@@ -55,11 +56,7 @@ function wpcomContactForm( editor ) {
 					isEdit,
 					onInsert() {
 						const state = store.getState();
-						editor.execCommand(
-							'mceInsertContent',
-							false,
-							serialize( state.ui.editor.contactForm )
-						);
+						editor.execCommand( 'mceInsertContent', false, serialize( state.editor.contactForm ) );
 						renderModal( 'hide' );
 					},
 					onChangeTabs( tab ) {

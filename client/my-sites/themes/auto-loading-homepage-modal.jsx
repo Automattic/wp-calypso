@@ -102,7 +102,7 @@ class AutoLoadingHomepageModal extends Component {
 					},
 					{
 						action: 'activeTheme',
-						label: translate( 'Yes, Activate %(themeName)s', {
+						label: translate( 'Yes, activate %(themeName)s', {
 							args: { themeName },
 						} ),
 						isPrimary: true,
@@ -129,7 +129,7 @@ class AutoLoadingHomepageModal extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const installingThemeId = getPreActivateThemeId( state );
 

@@ -19,6 +19,7 @@ const ExpandableSidebarHeading = ( {
 	count,
 	onClick,
 	icon,
+	customIcon,
 	materialIcon,
 	materialIconStyle,
 	expanded,
@@ -38,6 +39,7 @@ const ExpandableSidebarHeading = ( {
 					style={ materialIconStyle }
 				/>
 			) }
+			{ undefined !== customIcon && customIcon }
 			<span className="sidebar__expandable-title">{ title }</span>
 			{ undefined !== count && <Count count={ count } /> }
 			<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
@@ -46,9 +48,10 @@ const ExpandableSidebarHeading = ( {
 };
 
 ExpandableSidebarHeading.propTypes = {
-	title: TranslatableString.isRequired,
+	title: PropTypes.oneOfType( [ TranslatableString, PropTypes.element ] ).isRequired,
 	count: PropTypes.number,
 	onClick: PropTypes.func,
+	customIcon: PropTypes.node,
 	icon: PropTypes.string,
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,

@@ -4,14 +4,14 @@
 
 import { trim } from 'lodash';
 
-const string = value => {
+const string = ( value ) => {
 	return trim( value );
 };
 
 const leftPoint = /^\.\d+$/;
 const rightPoint = /^\d+\.$/;
 
-const number = value => {
+const number = ( value ) => {
 	value = trim( value );
 	if ( leftPoint.test( value ) ) {
 		value = '0' + value;
@@ -24,7 +24,7 @@ const number = value => {
 
 const dimensionRegex = /^\s*(\S+)\s*x\s*(\S+)\s*x\s*(\S+)\s*$/;
 const optionalDimensionRegex = /^\s*(\S+)?\s*x\s*(\S+)?\s*x\s*(\S+)?\s*$/;
-const dimensions = value => {
+const dimensions = ( value ) => {
 	const result = dimensionRegex.exec( value );
 	if ( result ) {
 		const dims = [ result[ 1 ], result[ 2 ], result[ 3 ] ];
@@ -34,7 +34,7 @@ const dimensions = value => {
 	return value;
 };
 
-const checkDimension = dimension => {
+const checkDimension = ( dimension ) => {
 	if ( isNaN( dimension ) ) {
 		return '';
 	}
@@ -46,7 +46,7 @@ const checkDimension = dimension => {
 	return dimension;
 };
 
-const parseDimensions = value => {
+const parseDimensions = ( value ) => {
 	let length = '';
 	let width = '';
 	let height = '';

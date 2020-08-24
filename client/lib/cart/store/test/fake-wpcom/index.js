@@ -12,7 +12,7 @@ function FakeWPCOM() {
 	this._requests = [];
 }
 
-FakeWPCOM.prototype.getCart = function() {
+FakeWPCOM.prototype.getCart = function () {
 	const arrayArguments = toArray( arguments );
 
 	this._requests.push( {
@@ -22,7 +22,7 @@ FakeWPCOM.prototype.getCart = function() {
 	} );
 };
 
-FakeWPCOM.prototype.setCart = function() {
+FakeWPCOM.prototype.setCart = function () {
 	const arrayArguments = toArray( arguments );
 
 	this._requests.push( {
@@ -33,7 +33,7 @@ FakeWPCOM.prototype.setCart = function() {
 	} );
 };
 
-FakeWPCOM.prototype.resolveRequest = function( index, responseData ) {
+FakeWPCOM.prototype.resolveRequest = function ( index, responseData ) {
 	const request = this._requests[ index ];
 
 	if ( request.isResolved ) {
@@ -44,7 +44,7 @@ FakeWPCOM.prototype.resolveRequest = function( index, responseData ) {
 	request.isResolved = false;
 };
 
-FakeWPCOM.prototype.getRequest = function( index ) {
+FakeWPCOM.prototype.getRequest = function ( index ) {
 	if ( ! this._requests[ index ] ) {
 		throw new Error( 'Request at index ' + index + ' was never started' );
 	}

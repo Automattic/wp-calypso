@@ -25,8 +25,8 @@
 	"types": "dist/types",
 	"dependencies": {},
 	"scripts": {
-		"clean": "npx rimraf dist types",
-		"prepublish": "npm run clean",
+		"clean": "npx rimraf dist types \"../../.tsc-cache/packages__media-library*\"",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile && tsc && copy-assets"
 	}
 }

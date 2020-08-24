@@ -13,7 +13,7 @@
 	}
 
 	&.is-compact .term-tree-selector__search input[type='search'] {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 }
 
@@ -44,7 +44,7 @@ input[type='checkbox'].term-tree-selector__input {
 .term-tree-selector__list-item {
 	position: relative;
 	padding: 4px 8px;
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	.term-tree-selector.is-compact.is-small & {
 		padding-left: 0;
@@ -67,7 +67,7 @@ input[type='checkbox'].term-tree-selector__input {
 	margin-top: 2px;
 
 	.term-tree-selector.is-compact & {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 0;
 	}
 

@@ -33,10 +33,10 @@ export const isWcsEnabled = ( state, siteId = getSelectedSiteId( state ) ) =>
 	Boolean( getWcsPluginData( state, siteId ) );
 
 const isVersionAtLeast = ( minimumVersion, pluginVersion ) => {
-	const [ major, minor, patch ] = minimumVersion.split( '.' ).map( x => parseInt( x, 10 ) );
+	const [ major, minor, patch ] = minimumVersion.split( '.' ).map( ( x ) => parseInt( x, 10 ) );
 	const [ pluginMajor, pluginMinor, pluginPatch ] = pluginVersion
 		.split( '.' )
-		.map( x => parseInt( x, 10 ) );
+		.map( ( x ) => parseInt( x, 10 ) );
 	return (
 		pluginMajor > major ||
 		( pluginMajor === major && pluginMinor > minor ) ||
@@ -69,5 +69,5 @@ export const areAllRequiredPluginsActive = ( state, siteId = getSelectedSiteId( 
 	const requiredPlugins = getRequiredPluginsForCalypso();
 	const plugins = getPlugins( state, siteIds, 'active' );
 
-	return every( requiredPlugins, slug => !! find( plugins, { slug } ) );
+	return every( requiredPlugins, ( slug ) => !! find( plugins, { slug } ) );
 };

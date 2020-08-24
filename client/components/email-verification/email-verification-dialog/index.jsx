@@ -125,7 +125,7 @@ VerifyEmailDialog.defaultProps = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		email: getCurrentUserEmail( state ),
 		emailVerificationStatus: get( state, 'currentUser.emailVerification.status' ),
 	} ),

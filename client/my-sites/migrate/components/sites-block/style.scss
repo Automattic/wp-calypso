@@ -36,7 +36,7 @@
 		width: auto;
 
 		.badge {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 		}
 	}
 
@@ -50,7 +50,7 @@
 		}
 	}
 
-	@include breakpoint('<660px') {
+	@include breakpoint-deprecated('<660px') {
 		&.is-step-source-select {
 			.sites-block__sites-arrow-wrapper,
 			.sites-block__target-site {
@@ -101,12 +101,12 @@
 	.sites-block__faux-site-selector-label {
 		color: var( --color-text );
 		display: block;
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 400;
 		line-height: 1.3;
 	}
 
 	.site__title {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }

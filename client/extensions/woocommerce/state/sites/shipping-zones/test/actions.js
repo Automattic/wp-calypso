@@ -8,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchShippingZones } from '../actions';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import {
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,
@@ -19,7 +19,7 @@ describe( 'actions', () => {
 	describe( '#fetchShippingZones()', () => {
 		const siteId = '123';
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/jetpack-blogs/123/rest-api/' )

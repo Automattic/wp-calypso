@@ -19,7 +19,7 @@ import {
 	THEME_TRANSFER_INITIATE_REQUEST,
 	THEME_TRANSFER_STATUS_FAILURE,
 	THEME_TRANSFER_STATUS_RECEIVE,
-} from 'state/action-types';
+} from 'state/themes/action-types';
 
 export const uploadedThemeId = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

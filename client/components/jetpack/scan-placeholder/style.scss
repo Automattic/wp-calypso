@@ -1,0 +1,15 @@
+.scan-placeholder__header.is-placeholder {
+	display: block;
+	max-width: 60%;
+	@include placeholder( --color-neutral-10 );
+}
+
+.scan-placeholder__content.is-placeholder {
+	display: block;
+	max-width: 80%;
+	@include placeholder( --color-neutral-10 );
+}
+
+.scan__content .scan-placeholder.scan__content {
+	padding-top: 0;
+}

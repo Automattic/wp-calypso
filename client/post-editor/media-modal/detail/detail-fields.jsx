@@ -1,24 +1,25 @@
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { debounce, get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
+import { bumpStat } from 'lib/analytics/mc';
 import { getMimePrefix, url } from 'lib/media/utils';
-import MediaActions from 'lib/media/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import TrackInputChanges from 'components/track-input-changes';
 import EditorMediaModalFieldset from '../fieldset';
+import { updateMedia } from 'state/media/thunks';
 
 class EditorMediaModalDetailFields extends Component {
 	static propTypes = {
@@ -39,23 +40,23 @@ class EditorMediaModalDetailFields extends Component {
 	}
 
 	bumpTitleStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Item Title' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'title' );
+		gaRecordEvent( 'Media', 'Changed Item Title' );
+		bumpStat( 'calypso_media_edit_details', 'title' );
 	};
 
 	bumpAltStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Image Alt' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'alt' );
+		gaRecordEvent( 'Media', 'Changed Image Alt' );
+		bumpStat( 'calypso_media_edit_details', 'alt' );
 	};
 
 	bumpCaptionStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Item Caption' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'caption' );
+		gaRecordEvent( 'Media', 'Changed Item Caption' );
+		bumpStat( 'calypso_media_edit_details', 'caption' );
 	};
 
 	bumpDescriptionStat = () => {
-		analytics.ga.recordEvent( 'Media', 'Changed Item Description' );
-		analytics.mc.bumpStat( 'calypso_media_edit_details', 'description' );
+		gaRecordEvent( 'Media', 'Changed Item Description' );
+		bumpStat( 'calypso_media_edit_details', 'description' );
 	};
 
 	isMimePrefix( prefix ) {
@@ -67,7 +68,7 @@ class EditorMediaModalDetailFields extends Component {
 			return;
 		}
 
-		MediaActions.update( this.props.site.ID, this.state.modifiedItem );
+		this.props.updateMedia( this.props.site.ID, this.state.modifiedItem );
 	}
 
 	setFieldValue = ( { target } ) => {
@@ -92,7 +93,7 @@ class EditorMediaModalDetailFields extends Component {
 		}
 	}
 
-	scrollToShowVisibleDropdown = event => {
+	scrollToShowVisibleDropdown = ( event ) => {
 		if ( ! event.open || ! ( 'scrollIntoView' in window.Element.prototype ) ) {
 			return;
 		}
@@ -121,6 +122,7 @@ class EditorMediaModalDetailFields extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
+			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<div className="editor-media-modal-detail__fields">
 				<EditorMediaModalFieldset legend={ translate( 'Title' ) }>
 					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
@@ -162,4 +164,4 @@ class EditorMediaModalDetailFields extends Component {
 	}
 }
 
-export default localize( EditorMediaModalDetailFields );
+export default localize( connect( null, { updateMedia } )( EditorMediaModalDetailFields ) );

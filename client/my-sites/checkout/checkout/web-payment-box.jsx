@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { useState, useEffect, useMemo } from 'react';
 import { localize } from 'i18n-calypso';
@@ -15,7 +14,7 @@ import Gridicon from 'components/gridicon';
 import PaymentCountrySelect from 'components/payment-country-select';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import Input from 'my-sites/domains/components/form/input';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
 import { hasRenewalItem } from 'lib/cart-values/cart-items';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
@@ -64,7 +63,7 @@ export function WebPaymentBox( {
 	useEffect( () => {
 		setTaxPostalCode( debouncedPostalCode );
 	}, [ debouncedPostalCode ] );
-	const updatePostalCode = event => {
+	const updatePostalCode = ( event ) => {
 		const value = event.target.value;
 		if ( disablePostalCodeDebounce ) {
 			setTaxPostalCode( value );
@@ -131,7 +130,7 @@ export function WebPaymentBox( {
 					<div className="checkout__secure-payment">
 						<div className="checkout__secure-payment-content">
 							<Gridicon icon="lock" />
-							{ translate( 'Secure Payment' ) }
+							{ translate( 'Secure payment' ) }
 						</div>
 					</div>
 
@@ -287,8 +286,8 @@ function useStripePaymentRequest( {
 
 	// We have to memoize this to prevent re-creating the paymentRequest
 	const callback = useMemo(
-		() => paymentMethodResponse => {
-			analytics.tracks.recordEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
+		() => ( paymentMethodResponse ) => {
+			recordTracksEvent( 'calypso_checkout_apple_pay_submit_payment_sheet', {
 				is_renewal: isRenewal,
 			} );
 			completePaymentMethodTransaction( {
@@ -309,7 +308,7 @@ function useStripePaymentRequest( {
 		debug( 'creating paymentRequest', paymentRequestOptions );
 		setCanMakePayment( false );
 		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => {
+		request.canMakePayment().then( ( result ) => {
 			isSubscribed && setCanMakePayment( !! result );
 		} );
 		request.on( 'paymentmethod', callback );

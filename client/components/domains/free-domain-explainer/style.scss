@@ -1,23 +1,20 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .free-domain-explainer__title {
 
     color: var( --color-text );
     font-weight: 400;
-    font-size: 20px;
+    font-size: $font-title-small;
     line-height: 1.3;
     margin: 0;
     margin-bottom: 0.7em;
-
-    &.free-domain-explainer__title-domain-design-updates {
-        font-size: 18px;
-        line-height: 18px;
-        font-weight: 600;
-    }
 }
 
 .free-domain-explainer__subtitle {
     color: var( --color-text );
     font-weight: 400;
-    font-size: 15px;
+    font-size: $font-body;
     margin: 0;
     margin-bottom: 0.3em;
 
@@ -26,9 +23,39 @@
     & .button:focus {
         color: var( --color-link );
         display: inline;
-        font-size: 15px;
+        font-size: $font-body;
         margin-left: 0.3em;
         text-decoration: underline;
         vertical-align: baseline;
+    }
+}
+
+body.is-section-signup.is-white-signup {
+    .free-domain-explainer {
+        @include break-mobile {
+            margin-bottom: 1em;
+        }
+
+        .free-domain-explainer__subtitle {
+            color: var( --color-neutral-60 );
+            font-size: 1rem;
+            margin-bottom: 0;
+
+            &::after {
+                content: ' ';
+                
+                @include break-mobile {
+                    content: '\a';
+                    white-space: pre;
+                }
+            }
+
+            .free-domain-explainer__subtitle-link {
+                display: block;
+                color: var( --color-neutral-60 );
+                font-weight: 400;
+                margin: 0;
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 
 /**
@@ -18,6 +19,7 @@ import Main from 'components/main';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { getSelectedDomain, requestGdprConsentManagementLink } from 'lib/domains';
 import SectionHeader from 'components/section-header';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 class ManageConsent extends React.Component {
 	static propTypes = {
@@ -101,7 +103,7 @@ class ManageConsent extends React.Component {
 
 	requestConsentManagementLink = () => {
 		this.setState( { submitting: true } );
-		requestGdprConsentManagementLink( this.props.selectedDomainName, error => {
+		requestGdprConsentManagementLink( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
 				this.setState( { error: error.message, success: false, submitting: false } );
 			} else {
@@ -112,9 +114,15 @@ class ManageConsent extends React.Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName )
+			domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
 		);
 	};
 }
 
-export default localize( ManageConsent );
+export default connect( ( state ) => ( {
+	currentRoute: getCurrentRoute( state ),
+} ) )( localize( ManageConsent ) );

@@ -128,7 +128,7 @@ const appliesToProductSale = {
  * @param { string } props.value Current value for end date.
  * @returns {object} React component instance.
  */
-const StartDateField = props => {
+const StartDateField = ( props ) => {
 	return (
 		<DateField
 			labelText={ translate( 'Start Date' ) }
@@ -147,7 +147,7 @@ const StartDateField = props => {
  * @param { string } props.value Current value for end date.
  * @returns {object} React component instance.
  */
-const EndDateField = props => {
+const EndDateField = ( props ) => {
 	const { promotion } = props;
 	const startDate = promotion.startDate ? new Date( promotion.startDate ) : new Date();
 

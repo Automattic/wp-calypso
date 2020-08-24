@@ -6,7 +6,12 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	MEDIA_DELETE,
@@ -135,8 +140,10 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	requesting,
 	saveRequests,
 } );
+
+export default withStorageKey( 'siteSettings', combinedReducer );

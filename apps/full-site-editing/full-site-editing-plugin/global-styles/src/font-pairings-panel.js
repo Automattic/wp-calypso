@@ -14,7 +14,7 @@ import loadFontPairingPreview from './font-pairings-panel-previews';
 export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 	return (
 		<>
-			<h3>{ __( 'Font Pairings' ) }</h3>
+			<h3>{ __( 'Font Pairings', 'full-site-editing' ) }</h3>
 			{ fontPairings && fontHeadings && fontBase ? (
 				<div role="listbox">
 					{ fontPairings.map( ( { label, headings, base, preview } ) => {
@@ -30,7 +30,7 @@ export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 								aria-selected={ isSelected }
 								className={ classes }
 								onClick={ () => update( { headings, base } ) }
-								onKeyDown={ event =>
+								onKeyDown={ ( event ) =>
 									event.keyCode === ENTER ? update( { headings, base } ) : null
 								}
 							>
@@ -43,7 +43,7 @@ export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 					} ) }
 				</div>
 			) : (
-				<NoSupport unsupportedFeature={ __( 'font pairings' ) } />
+				<NoSupport unsupportedFeature={ __( 'font pairings', 'full-site-editing' ) } />
 			) }
 		</>
 	);

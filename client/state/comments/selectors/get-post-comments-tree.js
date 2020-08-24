@@ -24,7 +24,7 @@ import 'state/comments/init';
 export const getPostCommentsTree = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
 	( [ allItems ], siteId, postId, status = 'approved', authorId ) => {
-		const items = filter( allItems, item => {
+		const items = filter( allItems, ( item ) => {
 			//only return pending comments that match the comment author
 			const commentAuthorId = item?.author?.ID;
 			if (
@@ -42,19 +42,19 @@ export const getPostCommentsTree = treeSelect(
 		} );
 
 		// separate out root comments from comments that have parents
-		const [ roots, children ] = partition( items, item => item.parent === false );
+		const [ roots, children ] = partition( items, ( item ) => item.parent === false );
 
 		// group children by their parent ID
 		const childrenGroupedByParent = groupBy( children, 'parent.ID' );
 
 		// Generate a new map of parent ID to an array of chilren IDs
 		// Reverse the order to keep it in chrono order
-		const parentToChildIdMap = mapValues( childrenGroupedByParent, _children =>
+		const parentToChildIdMap = mapValues( childrenGroupedByParent, ( _children ) =>
 			map( _children, 'ID' ).reverse()
 		);
 
 		// convert all of the comments to comment nodes for our tree structure
-		const transformItemToNode = item => ( {
+		const transformItemToNode = ( item ) => ( {
 			data: item,
 			children: parentToChildIdMap[ item.ID ] || [],
 		} );
@@ -63,7 +63,7 @@ export const getPostCommentsTree = treeSelect(
 
 		return {
 			...commentsByIdMap,
-			children: map( roots, root => root.ID ).reverse(),
+			children: map( roots, ( root ) => root.ID ).reverse(),
 		};
 	}
 );

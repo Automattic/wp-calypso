@@ -18,7 +18,7 @@ import { getPostsForQueryIgnoringPage } from 'state/posts/selectors';
 
 const PostScheduleWithOtherPostsIndicated = connect( ( state, { site, query } ) => ( {
 	posts: getPostsForQueryIgnoringPage( state, get( site, 'ID' ), query ) || [],
-} ) )( function( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
+} ) )( function ( { onDateChange, onMonthChange, posts, selectedDay, site } ) {
 	return (
 		<PostSchedule
 			displayInputChrono={ false }
@@ -52,18 +52,12 @@ export default class PostScheduler extends PureComponent {
 		const tzDate = tz ? moment.tz( date, tz ) : moment( date );
 
 		return {
-			firstDayOfTheMonth: tzDate
-				.clone()
-				.startOf( 'month' )
-				.startOf( 'week' ),
-			lastDayOfTheMonth: tzDate
-				.clone()
-				.endOf( 'month' )
-				.endOf( 'week' ),
+			firstDayOfTheMonth: tzDate.clone().startOf( 'month' ).startOf( 'week' ),
+			lastDayOfTheMonth: tzDate.clone().endOf( 'month' ).endOf( 'week' ),
 		};
 	}
 
-	setCurrentMonth = date => {
+	setCurrentMonth = ( date ) => {
 		this.setState( this.getFirstAndLastDayOfTheMonth( date ) );
 	};
 

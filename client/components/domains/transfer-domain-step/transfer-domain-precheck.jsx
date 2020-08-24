@@ -95,7 +95,7 @@ class TransferDomainPrecheck extends React.Component {
 	};
 
 	refreshStatus = () => {
-		this.props.refreshStatus( this.statusRefreshed ).then( result => {
+		this.props.refreshStatus( this.statusRefreshed ).then( ( result ) => {
 			const isUnlocked = get( result, 'inboundTransferStatus.unlocked' );
 			this.props.recordUnlockedCheckButtonClick( this.props.domain, isUnlocked );
 		} );
@@ -113,7 +113,7 @@ class TransferDomainPrecheck extends React.Component {
 	};
 
 	checkAuthCode = () => {
-		this.props.checkAuthCode( this.props.domain, this.state.authCode ).then( result => {
+		this.props.checkAuthCode( this.props.domain, this.state.authCode ).then( ( result ) => {
 			const authCodeValid = get( result, 'authCodeValid' );
 			this.props.recordAuthCodeCheckButtonClick( this.props.domain, authCodeValid );
 		} );
@@ -330,7 +330,7 @@ class TransferDomainPrecheck extends React.Component {
 		return this.getSection( heading, message, buttonText, 2, stepStatus, this.checkAuthCode );
 	}
 
-	setAuthCode = event => {
+	setAuthCode = ( event ) => {
 		this.setState( { authCode: event.target.value.trim() } );
 	};
 
@@ -431,7 +431,7 @@ const recordContinueButtonClick = ( domain_name, losing_registrar, losing_regist
 	} );
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isSupportSession: hasEnteredSupportSession( state ),
 	} ),
 	{

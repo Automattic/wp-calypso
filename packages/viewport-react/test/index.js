@@ -24,7 +24,7 @@ const addListenerMock = jest.fn( ( query, listener ) => {
 } );
 const removeListenerMock = jest.fn( ( query, listener ) => {
 	if ( listeners[ query ] ) {
-		listeners[ query ] = listeners[ query ].filter( item => item !== listener );
+		listeners[ query ] = listeners[ query ].filter( ( item ) => item !== listener );
 	}
 } );
 
@@ -34,10 +34,10 @@ function callQueryListeners( query, value ) {
 	}
 }
 
-const matchMediaMock = jest.fn( query => {
+const matchMediaMock = jest.fn( ( query ) => {
 	const mediaListObjectMock = {
-		addListener: listener => addListenerMock( query, listener ),
-		removeListener: listener => removeListenerMock( query, listener ),
+		addListener: ( listener ) => addListenerMock( query, listener ),
+		removeListener: ( listener ) => removeListenerMock( query, listener ),
 	};
 	// Add matches read-only property.
 	Object.defineProperty( mediaListObjectMock, 'matches', {

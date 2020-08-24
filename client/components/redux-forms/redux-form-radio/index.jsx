@@ -10,11 +10,13 @@ import { Field } from 'redux-form';
  */
 import FormRadio from 'components/forms/form-radio';
 
+import 'state/form/init';
+
 const RadioRenderer = ( { input, meta, type, ...props } ) => (
 	<FormRadio { ...input } { ...props } />
 );
 
-const ReduxFormRadio = props => <Field component={ RadioRenderer } type="radio" { ...props } />;
+const ReduxFormRadio = ( props ) => <Field component={ RadioRenderer } type="radio" { ...props } />;
 
 ReduxFormRadio.propTypes = {
 	name: PropTypes.string.isRequired,

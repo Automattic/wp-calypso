@@ -32,7 +32,7 @@ export default class FormVerificationCodeInput extends React.Component {
 		this.input.focus();
 	};
 
-	saveRef = input => {
+	saveRef = ( input ) => {
 		this.input = input;
 	};
 

@@ -6,29 +6,84 @@ import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
 	INLINE_HELP_SEARCH_REQUEST_SUCCESS,
+	INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+	INLINE_HELP_SET_SEARCH_QUERY,
 	INLINE_HELP_SELECT_RESULT,
-	INLINE_HELP_SELECT_NEXT_RESULT,
-	INLINE_HELP_SELECT_PREVIOUS_RESULT,
 	INLINE_HELP_CONTACT_FORM_RESET,
 	INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 	INLINE_HELP_POPOVER_SHOW,
 	INLINE_HELP_POPOVER_HIDE,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
-	INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
-	INLINE_HELP_CHECKLIST_PROMPT_SHOW,
-	INLINE_HELP_CHECKLIST_PROMPT_HIDE,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
-	INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
+	INLINE_HELP_SHOW,
+	INLINE_HELP_HIDE,
+	INLINE_HELP_SEARCH_RESET,
 } from 'state/action-types';
 
+import getContextualHelpResults from 'state/inline-help/selectors/get-contextual-help-results';
+import getAdminHelpResults from 'state/inline-help/selectors/get-admin-help-results';
+import 'state/inline-help/init';
+import {
+	SUPPORT_TYPE_API_HELP,
+	SUPPORT_TYPE_CONTEXTUAL_HELP,
+} from '../../blocks/inline-help/constants';
+
 /**
- * Triggers a network request to fetch search results for a query string.
+ * Set the search query in the state tree for the inline help.
  *
- * @param  {?string}  searchQuery Search query
+ * @param {string} searchQuery - query string to persist.
+ * @returns {Function}            Action thunk.
+ */
+export function setInlineHelpSearchQuery( searchQuery = '' ) {
+	return {
+		type: INLINE_HELP_SET_SEARCH_QUERY,
+		searchQuery,
+	};
+}
+
+/**
+ * Map the collection, populating each result object
+ * with the given support type value.
+ *
+ * @param {Array}   collection   - collection to populate.
+ * @param {string}  support_type - Support type to add to each result item.
+ * @returns {Array}                Populated collection.
+ */
+function mapWithSupportTypeProp( collection, support_type ) {
+	return collection.map( ( item ) => ( { ...item, support_type } ) );
+}
+
+/**
+ * Fetches search results for a given query string.
+ * Triggers an API request. If this returns no results
+ * then hard coded results are returned based on the context of the
+ * current route (see `client/blocks/inline-help/contextual-help.js`).
+ *
+ * @param {string} searchQuery Search query
  * @returns {Function}        Action thunk
  */
-export function requestInlineHelpSearchResults( searchQuery ) {
-	return dispatch => {
+export function requestInlineHelpSearchResults( searchQuery = '' ) {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const contextualResults = mapWithSupportTypeProp(
+			getContextualHelpResults( state ),
+			SUPPORT_TYPE_CONTEXTUAL_HELP
+		);
+		const helpAdminResults = getAdminHelpResults( state, searchQuery, 3 );
+
+		// Ensure empty strings are removed as valid searches.
+		searchQuery = searchQuery.trim();
+
+		// If the search is empty return contextual results and exist
+		// early to avoid unwanted network requests.
+		if ( ! searchQuery ) {
+			dispatch( {
+				type: INLINE_HELP_SEARCH_RESET,
+				searchResults: contextualResults,
+			} );
+
+			// Exit early
+			return;
+		}
+
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST,
 			searchQuery,
@@ -38,17 +93,46 @@ export function requestInlineHelpSearchResults( searchQuery ) {
 			.undocumented()
 			.getHelpLinks( searchQuery )
 			.then( ( { wordpress_support_links: searchResults } ) => {
+				// Searches will either:
+				//
+				// 1. return results from the search API endpoint
+				// ...or...
+				// 2. return hard-coded results based on the current route.
+				//
+				// A INLINE_HELP_SEARCH_REQUEST_API_RESULTS action indicates
+				// whether the search results came from the API or not. This
+				// enables UI to indicate a "no results" status and indicate
+				// that the results are contextual (if required).
+
+				const hasAPIResults = !! ( searchResults && searchResults.length );
+
+				dispatch( {
+					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+					hasAPIResults,
+				} );
+
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 					searchQuery,
-					searchResults,
+					searchResults: hasAPIResults
+						? [
+								...mapWithSupportTypeProp( searchResults, SUPPORT_TYPE_API_HELP ),
+								...helpAdminResults,
+						  ]
+						: [ ...contextualResults, ...helpAdminResults ],
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: INLINE_HELP_SEARCH_REQUEST_FAILURE,
 					searchQuery,
 					error,
+				} );
+
+				// Force reset flag for no API results
+				dispatch( {
+					type: INLINE_HELP_SEARCH_REQUEST_API_RESULTS,
+					hasAPIResults: false,
 				} );
 			} );
 	};
@@ -60,7 +144,7 @@ export function requestInlineHelpSearchResults( searchQuery ) {
  * @returns {Function}        Action thunk
  */
 export function selectResult( resultIndex ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SELECT_RESULT,
 			resultIndex,
@@ -74,7 +158,7 @@ export function selectResult( resultIndex ) {
  * @returns {Function}  Action thunk
  */
 export function resetInlineHelpContactForm() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_CONTACT_FORM_RESET,
 		} );
@@ -87,41 +171,15 @@ export function resetInlineHelpContactForm() {
  * @returns {Function}  Action thunk
  */
 export function showQandAOnInlineHelpContactForm() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_CONTACT_FORM_SHOW_QANDA,
 		} );
 	};
 }
 
-/**
- * Selects the next result in the inline help results list.
- *
- * @returns {Function}        Action thunk
- */
-export function selectNextResult() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_SELECT_NEXT_RESULT,
-		} );
-	};
-}
-
-/**
- * Selects the previous result in the inline help results list.
- *
- * @returns {Function}        Action thunk
- */
-export function selectPreviousResult() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_SELECT_PREVIOUS_RESULT,
-		} );
-	};
-}
-
 export function setSearchResults( searchQuery, searchResults ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_SEARCH_REQUEST_SUCCESS,
 			searchQuery,
@@ -131,7 +189,7 @@ export function setSearchResults( searchQuery, searchResults ) {
 }
 
 export function showInlineHelpPopover() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_POPOVER_SHOW,
 		} );
@@ -139,59 +197,25 @@ export function showInlineHelpPopover() {
 }
 
 export function hideInlineHelpPopover() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: INLINE_HELP_POPOVER_HIDE,
 		} );
 	};
 }
 
-export function showChecklistPrompt() {
-	return dispatch => {
+export function showInlineHelp() {
+	return ( dispatch ) => {
 		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_SHOW,
+			type: INLINE_HELP_SHOW,
 		} );
 	};
 }
 
-export function hideChecklistPrompt() {
-	return dispatch => {
+export function hideInlineHelp() {
+	return ( dispatch ) => {
 		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_HIDE,
-		} );
-	};
-}
-
-export function showOnboardingWelcomePrompt() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_ONBOARDING_WELCOME_PROMPT_SHOW,
-		} );
-	};
-}
-
-export function hideOnboardingWelcomePrompt() {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_ONBOARDING_WELCOME_PROMPT_HIDE,
-		} );
-	};
-}
-
-export function setChecklistPromptTaskId( taskId ) {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_SET_TASK_ID,
-			taskId,
-		} );
-	};
-}
-
-export function setChecklistPromptStep( step ) {
-	return dispatch => {
-		dispatch( {
-			type: INLINE_HELP_CHECKLIST_PROMPT_SET_STEP,
-			step,
+			type: INLINE_HELP_HIDE,
 		} );
 	};
 }

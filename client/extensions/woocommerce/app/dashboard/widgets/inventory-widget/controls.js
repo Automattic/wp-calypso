@@ -49,12 +49,12 @@ class InventoryControls extends Component {
 		};
 	}
 
-	setValue = name => event => {
+	setValue = ( name ) => ( event ) => {
 		const value = parseInt( event.target.value );
 		this.setState( { [ name ]: isNaN( value ) ? 0 : value } );
 	};
 
-	increaseValue = name => () => {
+	increaseValue = ( name ) => () => {
 		const value = this.state[ name ];
 		if ( value >= 99 ) {
 			return;
@@ -62,7 +62,7 @@ class InventoryControls extends Component {
 		this.setState( { [ name ]: value + 1 } );
 	};
 
-	decreaseValue = name => () => {
+	decreaseValue = ( name ) => () => {
 		const value = this.state[ name ];
 		if ( value < 1 ) {
 			return;
@@ -70,15 +70,15 @@ class InventoryControls extends Component {
 		this.setState( { [ name ]: value - 1 } );
 	};
 
-	setChecked = name => () => {
-		this.setState( state => ( { [ name ]: ! state[ name ] } ) );
+	setChecked = ( name ) => () => {
+		this.setState( ( state ) => ( { [ name ]: ! state[ name ] } ) );
 	};
 
 	close = () => {
 		this.props.close();
 	};
 
-	saveSettings = event => {
+	saveSettings = ( event ) => {
 		event.preventDefault();
 		const { site, translate } = this.props;
 		this.props.save(
@@ -111,7 +111,7 @@ class InventoryControls extends Component {
 		}, 150 );
 	};
 
-	renderPlus = name => {
+	renderPlus = ( name ) => {
 		return (
 			<span onClick={ this.increaseValue( name ) } tabIndex="-1" aria-hidden>
 				<Gridicon icon="plus-small" />
@@ -119,7 +119,7 @@ class InventoryControls extends Component {
 		);
 	};
 
-	renderMinus = name => {
+	renderMinus = ( name ) => {
 		return (
 			<span onClick={ this.decreaseValue( name ) } tabIndex="-1" aria-hidden>
 				<Gridicon icon="minus-small" />
@@ -216,7 +216,7 @@ class InventoryControls extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const isLoaded = areSettingsProductsLoaded( state );
 		const lowStockThreshold = parseInt(

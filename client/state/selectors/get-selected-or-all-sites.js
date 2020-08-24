@@ -7,7 +7,7 @@ import getSites from 'state/selectors/get-sites';
 import { getSelectedSite } from 'state/ui/selectors';
 
 export default createSelector(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		return selectedSite ? [ selectedSite ] : getSites( state );
 	},

@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import i18n from 'i18n-calypso';
-import { taxonomiesWelcomeWhitelist, taxonomyToGridicon } from './taxonomies-config.js';
+import { allowedSearchWelcomeTaxonomies, taxonomyToGridicon } from './taxonomies-config.js';
 
 class MagicSearchWelcome extends React.Component {
 	constructor( props ) {
@@ -22,13 +22,13 @@ class MagicSearchWelcome extends React.Component {
 
 	state = { suggestionPosition: -1 };
 
-	onMouseDown = event => {
+	onMouseDown = ( event ) => {
 		this.props.suggestionsCallback( event.target.getAttribute( 'data-key' ) + ':' );
 		event.stopPropagation();
 		event.preventDefault();
 	};
 
-	movePositionBy = moveDirection => {
+	movePositionBy = ( moveDirection ) => {
 		let newPosition = this.state.suggestionPosition + moveDirection;
 
 		// Loop around
@@ -50,7 +50,7 @@ class MagicSearchWelcome extends React.Component {
 	 * @param  {object} event  Keybord event
 	 * @returns {boolean}      true indicates suggestion was chosen and send to parent using suggestionsCallback prop callback
 	 */
-	handleKeyEvent = event => {
+	handleKeyEvent = ( event ) => {
 		const position = this.state.suggestionPosition;
 		switch ( event.key ) {
 			case 'ArrowDown':
@@ -73,7 +73,7 @@ class MagicSearchWelcome extends React.Component {
 		return false;
 	};
 
-	renderToken = taxonomy => {
+	renderToken = ( taxonomy ) => {
 		const themesTokenTypeClass = classNames(
 			'themes-magic-search-card__welcome-taxonomy',
 			'themes-magic-search-card__welcome-taxonomy-type-' + taxonomy,
@@ -123,8 +123,8 @@ class MagicSearchWelcome extends React.Component {
 
 	renderTaxonomies = () => {
 		const { taxonomies } = this.props;
-		this.visibleTaxonomies = intersection( taxonomies, taxonomiesWelcomeWhitelist );
-		return this.visibleTaxonomies.map( taxonomy => this.renderToken( taxonomy ) );
+		this.visibleTaxonomies = intersection( taxonomies, allowedSearchWelcomeTaxonomies );
+		return this.visibleTaxonomies.map( ( taxonomy ) => this.renderToken( taxonomy ) );
 	};
 
 	render() {

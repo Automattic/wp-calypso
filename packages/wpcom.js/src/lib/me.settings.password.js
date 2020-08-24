@@ -1,7 +1,6 @@
 const root = '/me/settings/password/';
 
 export default class MeSettingsPassword {
-
 	/**
 	 * `MeSettingsPassword` constructor.
 	 *

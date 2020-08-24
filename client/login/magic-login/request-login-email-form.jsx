@@ -56,7 +56,7 @@ class RequestLoginEmailForm extends React.Component {
 		}
 	}
 
-	onUsernameOrEmailFieldChange = event => {
+	onUsernameOrEmailFieldChange = ( event ) => {
 		this.setState( {
 			usernameOrEmail: event.target.value,
 		} );
@@ -66,7 +66,7 @@ class RequestLoginEmailForm extends React.Component {
 		}
 	};
 
-	saveUsernameOrEmailRef = input => {
+	saveUsernameOrEmailRef = ( input ) => {
 		this.usernameOrEmail = input;
 	};
 
@@ -74,7 +74,7 @@ class RequestLoginEmailForm extends React.Component {
 		this.props.hideMagicLoginRequestNotice();
 	};
 
-	onSubmit = event => {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
@@ -174,7 +174,7 @@ class RequestLoginEmailForm extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	return {
 		currentUser: getCurrentUser( state ),
 		isFetching: isFetchingMagicLoginEmail( state ),

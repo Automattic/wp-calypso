@@ -26,7 +26,7 @@ export const isDiscountActive = ( discount, state ) => {
 	if ( discount.targetPlans ) {
 		const targetPlans = Array.isArray( discount.targetPlans ) ? discount.targetPlans : [];
 		const selectedSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
-		return targetPlans.some( plan => planMatches( selectedSitePlanSlug, plan ) );
+		return targetPlans.some( ( plan ) => planMatches( selectedSitePlanSlug, plan ) );
 	}
 
 	if ( ! discount.abTestName ) {
@@ -53,8 +53,8 @@ const composeActiveDiscount = memoizeLast( ( discount, activeVariation ) => ( {
  * @param  {object}  state Global state tree.
  * @returns {object|null}  Promo description
  */
-export default state => {
-	const discount = activeDiscounts.find( p => isDiscountActive( p, state ) );
+export default ( state ) => {
+	const discount = activeDiscounts.find( ( p ) => isDiscountActive( p, state ) );
 	if ( ! discount ) {
 		return null;
 	}

@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/email-forwarding/init';
+
+/**
  * Retrieve the type of the email forwards
  *
  * @param  {object} state    Global state tree

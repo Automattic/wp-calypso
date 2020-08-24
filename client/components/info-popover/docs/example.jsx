@@ -42,7 +42,7 @@ class InfoPopoverExample extends React.PureComponent {
 		);
 	}
 
-	_changePopoverPosition = event => {
+	_changePopoverPosition = ( event ) => {
 		this.setState( { popoverPosition: event.target.value } );
 	};
 }

@@ -1,6 +1,6 @@
 .guided-transfer-card__options {
 	display: flex;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .guided-transfer-card__options-header-title-container {
@@ -12,8 +12,7 @@
 }
 
 .guided-transfer-card__title {
-	font-size: 21px;
-	font-weight: 300;
+	font-size: $font-title-small;
 	color: var( --color-neutral-70 );
 	clear: left;
 }
@@ -21,17 +20,17 @@
 .guided-transfer-card__subtitle {
 	color: var( --color-text-subtle );
 	font-style: italic;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .guided-transfer-card__price {
 	font-style: normal;
-	font-size: 18px;
+	font-size: $font-title-small;
 }
 
 .guided-transfer-card__details {
 	background-color: var( --color-neutral-0 );
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .guided-transfer-card__details-container {
@@ -73,10 +72,10 @@
 .guided-transfer-card__in-progress {
 	padding-top: 32px;
 	padding-bottom: 32px;
-	font-size: 16px;
+	font-size: $font-body;
 	text-align: center;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-left: 128px;
 		text-align: left;
 	}
@@ -91,7 +90,7 @@
 	background-color: var( --color-neutral-50 );
 	color: var( --color-neutral-0 );
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		position: absolute;
 		margin-left: -96px;
 		margin-top: 16px;
@@ -99,8 +98,7 @@
 }
 
 .guided-transfer-card__in-progress-title {
-	font-size: 24px;
-	font-weight: 300;
+	font-size: $font-title-medium;
 	color: var( --color-neutral-70 );
 }
 

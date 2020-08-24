@@ -9,11 +9,13 @@ import { isEqual } from 'lodash';
  * Internal Dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import ActivityLog from 'my-sites/activity/activity-log';
-import { setFilter } from 'state/activity-log/actions';
 import { queryToFilterState } from 'state/activity-log/utils';
 import { recordTrack } from 'reader/stats';
+import { setFilter } from 'state/activity-log/actions';
+import ActivityLog from 'my-sites/activity/activity-log';
+import ActivityLogV2 from 'my-sites/activity/activity-log-v2';
+import config from 'config';
+import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
 
 function queryFilterToStats( filter ) {
 	// These values are hardcoded so that the attributes that we collect via stats are not unbound
@@ -39,7 +41,7 @@ function queryFilterToStats( filter ) {
 	];
 
 	const groupStats = {};
-	possibleGroups.forEach( groupSlug => {
+	possibleGroups.forEach( ( groupSlug ) => {
 		groupStats[ 'filter_group_' + groupSlug ] = !! (
 			filter.group && filter.group.indexOf( groupSlug ) >= 0
 		);
@@ -67,7 +69,11 @@ export function activity( context, next ) {
 	}
 
 	recordTrack( 'calypso_activitylog_view', queryFilterToStats( queryFilter ) );
-	context.primary = <ActivityLog siteId={ siteId } context={ context } />;
+	context.primary = config.isEnabled( 'activity-log/v2' ) ? (
+		<ActivityLogV2 />
+	) : (
+		<ActivityLog siteId={ siteId } context={ context } />
+	);
 
 	next();
 }

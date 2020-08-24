@@ -13,8 +13,8 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import getPostRevision from 'state/selectors/get-post-revision';
-import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
+import { getPostRevision } from 'state/posts/selectors/get-post-revision';
+import { getPostRevisionsDiffView } from 'state/posts/selectors/get-post-revisions-diff-view';
 import TextDiff from 'components/text-diff';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -24,7 +24,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
  */
 import './style.scss';
 
-const getCenterOffset = node => get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
+const getCenterOffset = ( node ) =>
+	get( node, 'offsetTop', 0 ) + get( node, 'offsetHeight', 0 ) / 2;
 
 class EditorDiffViewer extends PureComponent {
 	static propTypes = {
@@ -98,7 +99,7 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	recomputeChanges = callback => {
+	recomputeChanges = ( callback ) => {
 		let selectors = '.text-diff__additions, .text-diff__deletions';
 		if ( this.isBigViewport && this.props.diffView === 'split' ) {
 			selectors =
@@ -136,7 +137,7 @@ class EditorDiffViewer extends PureComponent {
 		} );
 	};
 
-	handleScroll = e => {
+	handleScroll = ( e ) => {
 		this.setState( {
 			scrollTop: get( e.target, 'scrollTop', 0 ),
 		} );
@@ -144,7 +145,7 @@ class EditorDiffViewer extends PureComponent {
 
 	throttledScrollHandler = throttle( this.handleScroll, 100 );
 
-	handleScrollableRef = node => {
+	handleScrollableRef = ( node ) => {
 		if ( node ) {
 			this.node = node;
 			this.node.addEventListener( 'scroll', this.throttledScrollHandler );
@@ -180,11 +181,11 @@ class EditorDiffViewer extends PureComponent {
 		// saving to `this` so we can access if from `scrollAbove` and `scrollBelow`
 		this.changesAboveViewport = filter(
 			this.state.changeOffsets,
-			offset => offset < this.state.scrollTop
+			( offset ) => offset < this.state.scrollTop
 		);
 		this.changesBelowViewport = filter(
 			this.state.changeOffsets,
-			offset => offset > bottomBoundary
+			( offset ) => offset > bottomBoundary
 		);
 
 		const showHints = this.state.viewportHeight > 470;
@@ -214,6 +215,7 @@ class EditorDiffViewer extends PureComponent {
 					) }
 				</div>
 				{ showHints && countAbove > 0 && (
+					// eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events
 					<div className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
 						<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-up" />
 						{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
@@ -223,6 +225,7 @@ class EditorDiffViewer extends PureComponent {
 					</div>
 				) }
 				{ showHints && countBelow > 0 && (
+					// eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events
 					<div className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
 						<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-down" />
 						{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {

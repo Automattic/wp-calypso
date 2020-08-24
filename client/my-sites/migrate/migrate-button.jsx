@@ -2,20 +2,23 @@
  * External dependencies
  */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
 import accept from 'lib/accept';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class MigrateButton extends Component {
 	state = {
 		busy: false,
 	};
 
-	confirmCallback = accepted => {
+	confirmCallback = ( accepted ) => {
 		if ( accepted ) {
+			this.props.recordTracksEvent( 'calypso_site_migration_start_confirm_clicked' );
 			this.setState( { busy: true }, this.props.onClick );
 		} else {
 			return;
@@ -42,6 +45,8 @@ class MigrateButton extends Component {
 			</>
 		);
 
+		this.props.recordTracksEvent( 'calypso_site_migration_start_clicked' );
+
 		accept( message, this.confirmCallback, translate( 'Import and overwrite' ) );
 	};
 
@@ -54,4 +59,4 @@ class MigrateButton extends Component {
 	}
 }
 
-export default localize( MigrateButton );
+export default connect( null, { recordTracksEvent } )( localize( MigrateButton ) );

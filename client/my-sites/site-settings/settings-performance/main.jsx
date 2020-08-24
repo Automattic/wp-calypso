@@ -13,6 +13,7 @@ import { flowRight, partialRight, pick } from 'lodash';
 import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
 import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
 import DocumentHead from 'components/data/document-head';
+import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
 import Main from 'components/main';
 import MediaSettingsPerformance from 'my-sites/site-settings/media-settings-performance';
@@ -24,8 +25,11 @@ import FormattedHeader from 'components/formatted-header';
 import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
 import SpeedUpYourSite from 'my-sites/site-settings/speed-up-site-settings';
 import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
+import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 
 class SiteSettingsPerformance extends Component {
 	render() {
@@ -38,6 +42,9 @@ class SiteSettingsPerformance extends Component {
 			site,
 			siteId,
 			siteIsJetpack,
+			siteIsAtomicPrivate,
+			siteIsUnlaunched,
+			siteSlug,
 			submitForm,
 			translate,
 			trackEvent,
@@ -50,37 +57,12 @@ class SiteSettingsPerformance extends Component {
 				<JetpackDevModeNotice />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="settings-performance__page-heading"
 					headerText={ translate( 'Settings' ) }
 					align="left"
 				/>
 				<SiteSettingsNavigation site={ site } section="performance" />
-
-				{ siteIsJetpack && (
-					<Fragment>
-						<QueryJetpackModules siteId={ siteId } />
-
-						<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
-
-						<SpeedUpYourSite
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							submitForm={ submitForm }
-							updateFields={ updateFields }
-						/>
-
-						<SettingsSectionHeader title={ translate( 'Media' ) } />
-
-						<MediaSettingsPerformance
-							siteId={ siteId }
-							handleAutosavingToggle={ handleAutosavingToggle }
-							onChangeField={ onChangeField }
-							isSavingSettings={ isSavingSettings }
-							isRequestingSettings={ isRequestingSettings }
-							fields={ fields }
-						/>
-					</Fragment>
-				) }
 
 				<Search
 					handleAutosavingToggle={ handleAutosavingToggle }
@@ -88,6 +70,44 @@ class SiteSettingsPerformance extends Component {
 					isRequestingSettings={ isRequestingSettings }
 					fields={ fields }
 				/>
+
+				{ siteIsJetpack && (
+					<Fragment>
+						<QueryJetpackModules siteId={ siteId } />
+
+						<SettingsSectionHeader title={ translate( 'Performance & speed' ) } />
+
+						{ siteIsAtomicPrivate ? (
+							<EligibilityWarnings
+								isEligible={ true }
+								backUrl={ `/settings/performance/${ siteSlug }` }
+								eligibilityData={ {
+									eligibilityHolds: [ siteIsUnlaunched ? 'SITE_UNLAUNCHED' : 'SITE_NOT_PUBLIC' ],
+								} }
+							/>
+						) : (
+							<>
+								<SpeedUpYourSite
+									isSavingSettings={ isSavingSettings }
+									isRequestingSettings={ isRequestingSettings }
+									submitForm={ submitForm }
+									updateFields={ updateFields }
+								/>
+
+								<SettingsSectionHeader title={ translate( 'Media' ) } />
+
+								<MediaSettingsPerformance
+									siteId={ siteId }
+									handleAutosavingToggle={ handleAutosavingToggle }
+									onChangeField={ onChangeField }
+									isSavingSettings={ isSavingSettings }
+									isRequestingSettings={ isRequestingSettings }
+									fields={ fields }
+								/>
+							</>
+						) }
+					</Fragment>
+				) }
 
 				{ siteIsJetpack ? (
 					<AmpJetpack />
@@ -106,20 +126,26 @@ class SiteSettingsPerformance extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
+	const siteIsAtomicPrivate =
+		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
 
 	return {
 		site,
 		siteIsJetpack,
+		siteIsAtomicPrivate,
+		siteIsUnlaunched: isUnlaunchedSite( state, siteId ),
+		siteSlug: getSiteSlug( state, siteId ),
 	};
 } );
 
 const getFormSettings = partialRight( pick, [
 	'amp_is_enabled',
 	'amp_is_supported',
+	'instant_search_enabled',
 	'jetpack_search_enabled',
 	'jetpack_search_supported',
 	'lazy-images',

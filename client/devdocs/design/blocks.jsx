@@ -42,13 +42,10 @@ import Theme from 'components/theme/docs/example';
 import HappinessSupport from 'components/happiness-support/docs/example';
 import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'blocks/plan-storage/docs/example';
-import UpgradeNudge from 'blocks/upgrade-nudge/docs/example';
-import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import DomainTip from 'blocks/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
-import PostTime from 'blocks/post-time/docs/example';
 import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
@@ -86,13 +83,14 @@ import ConversationFollowButton from 'blocks/conversation-follow-button/docs/exa
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 import UserMentions from 'blocks/user-mentions/docs/example';
 import SupportArticleDialog from 'blocks/support-article-dialog/docs/example';
+import TimeMismatchWarning from 'blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'blocks/upsell-nudge/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
 	state = { filter: '' };
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
 	};
 
@@ -164,14 +162,11 @@ export default class AppComponents extends React.Component {
 					<SiteIcon readmeFilePath="site-icon" />
 					<Theme />
 					<ThemesListExample />
-					<UpgradeNudge readmeFilePath="upgrade-nudge" />
-					<UpgradeNudgeExpanded readmeFilePath="upgrade-nudge-expanded" />
 					<PlanCompareCard />
 					<DomainTip />
 					<RelatedPostCard />
 					<PostItem readmeFilePath="post-item" />
 					<PostStatus readmeFilePath="post-status" />
-					<PostTime readmeFilePath="post-time" />
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
@@ -204,6 +199,7 @@ export default class AppComponents extends React.Component {
 					) }
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
+					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />
 					<UpsellNudge />
 				</Collection>
 			</Main>

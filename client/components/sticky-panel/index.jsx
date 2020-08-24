@@ -90,7 +90,7 @@ class StickyPanelWithIntersectionObserver extends React.Component {
 		blockWidth: 0,
 	};
 
-	onIntersection = afterLayoutFlush( entries => {
+	onIntersection = afterLayoutFlush( ( entries ) => {
 		if ( ! entries || ! entries[ 0 ] ) {
 			return;
 		}
@@ -100,7 +100,7 @@ class StickyPanelWithIntersectionObserver extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensions( this, prevState.isSticky ) ),
+		() => this.setState( ( prevState ) => getDimensions( this, prevState.isSticky ) ),
 		RESIZE_RATE_IN_MS
 	);
 
@@ -163,7 +163,7 @@ class StickyPanelWithScrollEvent extends React.Component {
 	} );
 
 	throttleOnResize = throttle(
-		() => this.setState( prevState => getDimensionUpdates( this, prevState ) ),
+		() => this.setState( ( prevState ) => getDimensionUpdates( this, prevState ) ),
 		RESIZE_RATE_IN_MS
 	);
 

@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 // Content group
 .plans-features-main__group {
 	& + & {
@@ -8,11 +11,24 @@
 		margin-top: 20px;
 	}
 
-	&.is-narrow {
-		@include breakpoint( '>960px' ) {
-			max-width: 520px;
-			margin-left: auto;
-			margin-right: auto;
+	&.is-jetpack-products {
+		> .product-selector {
+			display: flex;
+			flex-flow: row wrap;
+
+			.product-card {
+
+				@include breakpoint-deprecated( '>480px' ) {
+					flex-basis: calc( 50% - 1em );
+				}
+				&:first-child:last-child {
+					@include breakpoint-deprecated( '>960px' ) {
+						margin-left: auto;
+						margin-right: auto;
+						flex-basis: 520px;
+					}
+				}
+			}
 		}
 	}
 }
@@ -20,7 +36,7 @@
 // Required additional specificity
 .plans-features-main .plans-features-main__happychat-button {
 	color: var( --color-primary );
-	font-weight: normal;
+	font-weight: 400;
 	padding: 0;
 	text-decoration: underline;
 
@@ -40,7 +56,7 @@
 	background: var( --color-surface );
 	border-radius: 3px;
 	padding: 2px 12px;
-	@include elevation ( 2dp );
+	@include elevation( 2dp );
 
 	button.is-borderless {
 		color: var( --color-accent );
@@ -55,12 +71,12 @@
 	margin: 0 0 16px;
 	padding: 0 16px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-bottom: 28px;
 		padding: 0 24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-left: auto;
 		margin-right: auto;
 		padding: 0;
@@ -72,19 +88,152 @@
 	margin: 0 0 12px;
 	font-size: 17px;
 	line-height: 1;
-	font-weight: 700;
+	font-weight: 600;
 	color: var( --color-text );
 
-	@include breakpoint( '>480px' ) {
-		font-size: 24px;
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-title-medium;
 		font-weight: 400;
 	}
-
 }
 
 .plans-features-main__subhead {
 	margin: 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.35;
 	color: var( --color-text-subtle );
+}
+
+/**
+ * Styles for design reskin
+ * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
+ */
+body.is-section-signup.is-white-signup {
+	.signup__step.is-plans .formatted-header {
+		margin-bottom: 30px;
+	}
+
+	.plans-features-main {
+		.plans-features-main__group.is-wpcom {
+			padding-top: 0;
+		}
+	
+		.plans-features-main__banner-content {
+			box-shadow: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+	
+			.is-free-plan {
+				padding: 12px 32px;
+				margin-left: 12px;
+				border-radius: 4px;
+				font-weight: 400;
+			}
+		}
+	
+		.plan-features__header {
+			border-top: 1px solid #e2e4e7;
+			border-bottom: none;
+			border-radius: 0;
+			padding: 20px;
+	
+			.plan-features__header-title {
+				font-size: 18px;
+			}
+	
+			.plan-features__audience {
+				color: #646970;
+				font-weight: normal;
+			}
+	
+			.plan-pill {
+				text-transform: none;
+				background: var( --color-text );
+				color: var( --color-text-inverted );
+				font-size: 13px;
+				left: 20px;
+				padding: 2px 8px 3px;
+			}
+		}
+	
+		.plan-features__scroller-container {
+			.plan-features__scroll-button {
+				background: var( --color-text );
+				color: var( --color-text-inverted );
+				&[disabled] {
+					display: none;
+				}
+			}
+			.plan-features__scroll-indicator-dot {
+				background: var( --color-neutral-5 );
+				&.is-highlighted {
+					background: var( --color-neutral-100 );
+				}
+			}
+	
+			.plan-features__table {
+				@include break-mobile {
+					border-spacing: 0;
+					border-collapse: collapse;
+				}
+		
+				tbody:first-child tr {
+					border-top-left-radius: 5px;
+					border-top-right-radius: 5px;
+				}
+		
+				.plan-features__table-item {
+					border-left: 1px solid #e2e4e7;
+					border-right: 1px solid #e2e4e7;
+					background-clip: padding-box;
+					
+					.plan-features__description {
+						color: var( --color-neutral-60-rgb );
+						padding-bottom: 42px;
+					}
+				}
+			
+				.plan-features__pricing {
+					border-color: #e2e4e7;
+		
+					.plan-price {
+						text-align: left;
+						font-size: 32px;
+						color: var( --color-neutral-100 );
+						margin-top: 15px;
+						
+						.plan-price__currency-symbol {
+							vertical-align: initial;
+							font-size: 32px;
+							color: var( --color-neutral-100 );
+						}
+					}
+		
+					.plan-features__header-billing-info {
+						text-align: left;
+						font-size: 10px;
+						color: var( --color-neutral-50 );
+						font-weight: 400;
+					}
+				}
+			
+				.plan-features__row {
+					border-top: none;
+					border-bottom: none;
+				}
+			
+				.plan-features__item-checkmark {
+					fill: #00a32a;
+				}
+		
+				.plan-features__item-tip-info {
+					.gridicon {
+						fill: #ccced0;
+					}
+				}
+			}
+		}
+	}
+
 }

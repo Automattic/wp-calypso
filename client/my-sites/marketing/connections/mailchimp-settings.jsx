@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, isArray } from 'lodash';
+import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,8 +16,11 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { isJetpackSite } from 'state/sites/selectors';
+import { getAllLists } from 'state/mailchimp/lists/selectors';
+import { getListId } from 'state/mailchimp/settings/selectors';
 import QueryJetpackConnection from 'components/data/query-jetpack-connection';
 import getJetpackConnectionStatus from 'state/selectors/get-jetpack-connection-status';
+import { localizeUrl } from 'lib/i18n-utils';
 
 const MailchimpSettings = ( {
 	siteId,
@@ -29,7 +32,7 @@ const MailchimpSettings = ( {
 	isJetpackConnectionBroken,
 	translate,
 } ) => {
-	const chooseMailchimpList = event => {
+	const chooseMailchimpList = ( event ) => {
 		if ( event.target.value === '0' ) {
 			// This means we want to turn off sharing for this site.
 			requestSettingsUpdateAction(
@@ -42,7 +45,7 @@ const MailchimpSettings = ( {
 			);
 			return;
 		}
-		const list = mailchimpLists.filter( mcList => mcList.id === event.target.value )[ 0 ];
+		const list = mailchimpLists.filter( ( mcList ) => mcList.id === event.target.value )[ 0 ];
 		requestSettingsUpdateAction(
 			siteId,
 			{
@@ -62,7 +65,7 @@ const MailchimpSettings = ( {
 						'Start building your mailing list by adding the Mailchimp block to your posts and pages. '
 					) }
 					<a
-						href={ 'https://support.wordpress.com/mailchimp-block/' }
+						href={ localizeUrl( 'https://wordpress.com/support/mailchimp-block/' ) }
 						target="_blank"
 						rel="noopener noreferrer"
 					>
@@ -119,7 +122,7 @@ const MailchimpSettings = ( {
 					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
 				</option>
 				{ mailchimpLists &&
-					mailchimpLists.map( list => (
+					mailchimpLists.map( ( list ) => (
 						<option key={ list.id } value={ list.id }>
 							{ list.name }
 						</option>
@@ -148,7 +151,7 @@ export const renderMailchimpLogo = () => (
 );
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isJetpack = isJetpackSite( state, siteId );
 
@@ -156,12 +159,8 @@ export default connect(
 			siteId,
 			isJetpack,
 			isJetpackConnectionBroken: isJetpack && getJetpackConnectionStatus( state, siteId ) === false,
-			mailchimpLists: get( state, [ 'mailchimp', 'lists', 'items', siteId ], null ),
-			mailchimpListId: get(
-				state,
-				[ 'mailchimp', 'settings', 'items', siteId, 'follower_list_id' ],
-				0
-			),
+			mailchimpLists: getAllLists( state, siteId ),
+			mailchimpListId: getListId( state, siteId ),
 		};
 	},
 	{

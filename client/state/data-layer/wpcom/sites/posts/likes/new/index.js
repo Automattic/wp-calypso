@@ -13,7 +13,7 @@ import { bypassDataLayer } from 'state/data-layer/utils';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const query = {};
 	if ( action.source ) {
 		query.source = action.source;

@@ -7,7 +7,7 @@
 
 	// At small screen sizes make the step
 	// full width. -shaun
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 	}
 }
@@ -21,7 +21,7 @@
 	@include elevation ( 0 );
 	border-bottom: 1px solid var( --color-neutral-5 );
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding-right: 24px;
 	}
 
@@ -41,24 +41,24 @@
 	}
 
 	.site-type__option-label {
-		font-size: 18px;
+		font-size: $font-title-small;
 		color: var( --color-text );
 	}
 
 	.site-type__option-description {
-		font-size: 14px;
+		font-size: $font-body-small;
 		color: var( --color-text-subtle );
 	}
 
 	.site-type__option-badge {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 6px;
 		// Offset .badge padding-left to vertically align badge text with site type description.
 		margin-left: -( $badge-padding-x );
 	}
 
 	.card__link-indicator {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			opacity: 0.5;
 			transform: translateX( -4px );
 			transition: all 200ms cubic-bezier( 0.08, 0.74, 0.44, 1.07 );
@@ -92,8 +92,8 @@
 	.button.is-borderless {
 		padding: 0;
 		color: var( --color-text-inverted );
-		font-size: 14px;
-		font-weight: 500;
+		font-size: $font-body-small;
+		font-weight: 600;
 		text-decoration: underline;
 	}
 }

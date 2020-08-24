@@ -5,7 +5,7 @@
 import phone from 'phone';
 import i18n from 'i18n-calypso';
 
-export default function( phoneNumber ) {
+export default function ( phoneNumber ) {
 	const phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );
 
 	if ( phoneNumberWithoutPlus.length === 0 ) {

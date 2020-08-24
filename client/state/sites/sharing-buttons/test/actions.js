@@ -23,12 +23,12 @@ import {
 	SHARING_BUTTONS_SAVE_SUCCESS,
 	SHARING_BUTTONS_UPDATE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( 'receiveSharingButtons()', () => {
 		test( 'should return an action object', () => {
@@ -57,7 +57,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSharingButtons()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/sharing-buttons' )
@@ -109,7 +109,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveSharingButtons()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/sharing-buttons' )

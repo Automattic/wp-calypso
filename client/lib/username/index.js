@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import i18n from 'i18n-calypso';
 
 /**
@@ -9,8 +8,7 @@ import i18n from 'i18n-calypso';
  */
 import Emitter from 'lib/mixins/emitter';
 import wpcom from 'lib/wp';
-import userFactory from 'lib/user';
-const user = userFactory();
+import user from 'lib/user';
 
 /**
  * Initialize Username with defaults
@@ -26,8 +24,8 @@ function Username() {
 
 Emitter( Username.prototype );
 
-Username.prototype.validate = function( username ) {
-	if ( username !== user.get().username ) {
+Username.prototype.validate = function ( username ) {
+	if ( username !== user().get().username ) {
 		if ( username.length < 4 ) {
 			this.validation = {
 				error: 'invalid_input',
@@ -50,7 +48,7 @@ Username.prototype.validate = function( username ) {
 				.me()
 				.validateUsername(
 					username,
-					function( error, data ) {
+					function ( error, data ) {
 						if ( error ) {
 							this.validation = error;
 						} else {
@@ -68,19 +66,19 @@ Username.prototype.validate = function( username ) {
 	}
 };
 
-Username.prototype.change = function( username, action, callback ) {
+Username.prototype.change = function ( username, action, callback ) {
 	wpcom
 		.undocumented()
 		.me()
 		.changeUsername(
 			username,
 			action,
-			function( error, data ) {
+			function ( error, data ) {
 				if ( error ) {
 					this.validation = error;
 					this.emit( 'change' );
 				} else {
-					user.fetch();
+					user().fetch();
 				}
 
 				if ( callback ) {
@@ -90,25 +88,25 @@ Username.prototype.change = function( username, action, callback ) {
 		);
 };
 
-Username.prototype.isUsernameValid = function() {
+Username.prototype.isUsernameValid = function () {
 	return this.validation && true === this.validation.success;
 };
 
-Username.prototype.getValidationFailureMessage = function() {
+Username.prototype.getValidationFailureMessage = function () {
 	return this.validation && this.validation.message ? this.validation.message : null;
 };
 
-Username.prototype.getAllowedActions = function() {
+Username.prototype.getAllowedActions = function () {
 	return this.validation && this.validation.allowed_actions ? this.validation.allowed_actions : {};
 };
 
-Username.prototype.getValidatedUsername = function() {
+Username.prototype.getValidatedUsername = function () {
 	return this.validation && this.validation.validatedUsername
 		? this.validation.validatedUsername
 		: null;
 };
 
-Username.prototype.clearValidation = function() {
+Username.prototype.clearValidation = function () {
 	this.validation = false;
 	this.emit( 'change' );
 };

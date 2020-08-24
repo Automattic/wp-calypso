@@ -23,17 +23,17 @@ class DisconnectSurvey extends PureComponent {
 		hasOtherReasonFocus: false,
 	};
 
-	interceptOtherReasonClick = event => {
+	interceptOtherReasonClick = ( event ) => {
 		if ( ! this.state.otherReason || this.state.hasOtherReasonFocus ) {
 			event.preventDefault();
 		}
 	};
 
-	setOtherReason = event => {
+	setOtherReason = ( event ) => {
 		this.setState( { otherReason: event.target.value } );
 	};
 
-	setOtherReasonFocus = focus => () => {
+	setOtherReasonFocus = ( focus ) => () => {
 		this.setState( { hasOtherReasonFocus: focus } );
 	};
 
@@ -92,7 +92,7 @@ DisconnectSurvey.propTypes = {
 	translate: PropTypes.func,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		isPaidPlan: isSiteOnPaidPlan( state, siteId ),

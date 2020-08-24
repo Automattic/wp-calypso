@@ -19,7 +19,7 @@ const reducer = combineReducers( {
 
 /** @see https://github.com/zalmoxisus/redux-devtools-extension */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const withMiddleware = customMiddleware =>
+const withMiddleware = ( customMiddleware ) =>
 	composeEnhancers( applyMiddleware( actionMiddleware( customMiddleware ) ) )( createStore );
 
 let store = null;

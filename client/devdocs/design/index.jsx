@@ -44,6 +44,7 @@ import CreditCard from 'components/credit-card/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import DateRange from 'components/date-range/docs/example';
 import DiffViewerExample from 'components/diff-viewer/docs/example';
+import DotPager from 'components/dot-pager/docs/example';
 import DropZones from 'components/drop-zone/docs/example';
 import EllipsisMenu from 'components/ellipsis-menu/docs/example';
 import EmbedDialog from 'components/tinymce/plugins/embed/docs/example';
@@ -72,8 +73,11 @@ import InfoPopover from 'components/info-popover/docs/example';
 import InlineSupportLink from 'components/inline-support-link/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
 import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card/docs/example';
 import JetpackHeaderExample from 'components/jetpack-header/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
+import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card/docs/example';
+import JetpackProductCard from 'components/jetpack/card/jetpack-product-card/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
 import LineChart from 'components/line-chart/docs/example';
 import ListEnd from 'components/list-end/docs/example';
@@ -131,7 +135,7 @@ export default class DesignAssets extends React.Component {
 	static displayName = 'DesignAssets';
 	state = { filter: '' };
 
-	onSearch = term => {
+	onSearch = ( term ) => {
 		this.setState( { filter: trim( term || '' ).toLowerCase() } );
 	};
 
@@ -200,6 +204,7 @@ export default class DesignAssets extends React.Component {
 					<DatePicker readmeFilePath="date-picker" />
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
+					<DotPager readmeFilePath="dot-pager" />
 					<DropZones searchKeywords="drag" readmeFilePath="drop-zone" />
 					<EllipsisMenu readmeFilePath="ellipsis-menu" />
 					<EmbedDialog readmeFilePath="tinymce/plugins/embed" />
@@ -227,9 +232,12 @@ export default class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InlineSupportLink readmeFilePath="inline-support-link" />
 					<InputChrono readmeFilePath="input-chrono" />
+					<JetpackBundleCard readmeFilePath="jetpack-bundle-card" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
+					<JetpackPlanCard readmeFilePath="jetpack-plan-card" />
+					<JetpackProductCard readmeFilePath="jetpack-product-card" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LineChart readmeFilePath="line-chart" />
 					<ListEnd readmeFilePath="list-end" />

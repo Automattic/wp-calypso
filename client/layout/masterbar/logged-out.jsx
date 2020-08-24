@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
@@ -21,8 +20,10 @@ import getCurrentQueryArguments from 'state/selectors/get-current-query-argument
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { login } from 'lib/paths';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
+import { isDefaultLocale, addLocaleToPath } from 'lib/i18n-utils';
+import AsyncLoad from 'components/async-load';
 
-class MasterbarLoggedOut extends PureComponent {
+class MasterbarLoggedOut extends React.Component {
 	static propTypes = {
 		redirectUri: PropTypes.string,
 		sectionName: PropTypes.string,
@@ -78,7 +79,7 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 
 	renderSignupItem() {
-		const { currentQuery, currentRoute, sectionName, translate } = this.props;
+		const { currentQuery, currentRoute, locale, sectionName, translate } = this.props;
 
 		// Hide for some sections
 		if ( includes( [ 'signup' ], sectionName ) ) {
@@ -136,6 +137,10 @@ class MasterbarLoggedOut extends PureComponent {
 			signupUrl += '/' + signupFlow;
 		}
 
+		if ( ! isDefaultLocale( locale ) ) {
+			signupUrl = addLocaleToPath( signupUrl, locale );
+		}
+
 		return (
 			<Item url={ signupUrl }>
 				{ translate( 'Sign Up', {
@@ -147,7 +152,12 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 
 	render() {
-		const { title } = this.props;
+		const { title, isCheckout } = this.props;
+
+		if ( isCheckout ) {
+			return <AsyncLoad require="layout/masterbar/checkout" placeholder={ null } title={ title } />;
+		}
+
 		return (
 			<Masterbar>
 				<Item className="masterbar__item-logo">
@@ -164,7 +174,7 @@ class MasterbarLoggedOut extends PureComponent {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentQuery: getCurrentQueryArguments( state ),
 	currentRoute: getCurrentRoute( state ),
 } ) )( localize( MasterbarLoggedOut ) );

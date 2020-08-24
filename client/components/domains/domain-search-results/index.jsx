@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, includes, times, first } from 'lodash';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -58,6 +59,7 @@ class DomainSearchResults extends React.Component {
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
+		isReskinned: PropTypes.bool,
 	};
 
 	componentDidUpdate() {
@@ -197,6 +199,12 @@ class DomainSearchResults extends React.Component {
 						</Notice>
 					);
 				}
+			} else {
+				availabilityElement = (
+					<Notice status="is-warning" showDismiss={ false }>
+						{ domainUnavailableMessage }
+					</Notice>
+				);
 			}
 		}
 
@@ -212,13 +220,14 @@ class DomainSearchResults extends React.Component {
 	};
 
 	renderPlaceholders() {
-		return times( this.props.placeholderQuantity, function( n ) {
+		return times( this.props.placeholderQuantity, function ( n ) {
 			return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 		} );
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions } = this.props;
+		const { isDomainOnly, suggestions, isReskinned } = this.props;
+		const isReskinnedAndNotOnMobile = isReskinned && ! isMobile();
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
@@ -234,11 +243,11 @@ class DomainSearchResults extends React.Component {
 			);
 
 			const regularSuggestions = suggestions.filter(
-				suggestion => ! suggestion.isRecommended && ! suggestion.isBestAlternative
+				( suggestion ) => ! suggestion.isRecommended && ! suggestion.isBestAlternative
 			);
-			const bestMatchSuggestions = suggestions.filter( suggestion => suggestion.isRecommended );
+			const bestMatchSuggestions = suggestions.filter( ( suggestion ) => suggestion.isRecommended );
 			const bestAlternativeSuggestions = suggestions.filter(
-				suggestion => suggestion.isBestAlternative
+				( suggestion ) => suggestion.isBestAlternative
 			);
 			featuredSuggestionElement = (
 				<FeaturedDomainSuggestions
@@ -256,9 +265,9 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
-					showTestCopy={ this.props.showTestCopy }
-					showDesignUpdate={ this.props.showDesignUpdate }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 				/>
 			);
 
@@ -276,16 +285,17 @@ class DomainSearchResults extends React.Component {
 						isSignupStep={ this.props.isSignupStep }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						railcarId={ this.props.railcarId }
+						railcarId={ this.props.railcarId + '-' + ( i + 2 ) }
 						uiPosition={ i + 2 }
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
-						showTestCopy={ this.props.showTestCopy }
-						showDesignUpdate={ this.props.showDesignUpdate }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
+						buttonStyles={ { primary: isReskinnedAndNotOnMobile } }
 					/>
 				);
 			} );
@@ -295,7 +305,6 @@ class DomainSearchResults extends React.Component {
 					<DomainTransferSuggestion
 						onButtonClick={ this.props.onClickUseYourDomain }
 						tracksButtonClickSource="search-suggestions-bottom"
-						showDesignUpdate={ this.props.showDesignUpdate }
 					/>
 				);
 			}

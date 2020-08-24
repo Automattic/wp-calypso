@@ -77,6 +77,7 @@
  */
 .themes-magic-search-card__token {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	position: relative;
@@ -123,6 +124,7 @@
 
 .themes-magic-search-card__search-text {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	color: transparent;
@@ -130,6 +132,7 @@
 
 .themes-magic-search-card__search-white-space {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	white-space: pre;
@@ -152,7 +155,7 @@
 	border-bottom: 1px solid var( --color-neutral-5 );
 	border-top: 0;
 	padding: 4px 8px;
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	text-transform: uppercase;
 	color: var( --color-neutral-70 );
@@ -162,7 +165,7 @@
 	display: flex;
 	flex-wrap: wrap;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-wrap: nowrap;
 	}
 }
@@ -175,13 +178,13 @@
 	overflow: hidden;
 	padding: 10px 6px;
 	margin: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	line-height: 16px;
 	cursor: pointer;
 	color: var( --color-neutral-70 );
 	transition: all 200ms ease-in;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: auto;
 	}
 
@@ -199,7 +202,7 @@
 			fill: var( --color-accent );
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			background: var( --color-neutral-0 );
 			box-shadow: inset 0 -3px 0 0 var( --color-accent );
 		}

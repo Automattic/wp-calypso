@@ -73,7 +73,7 @@ class DeleteSite extends Component {
 		);
 	}
 
-	handleDeleteSiteClick = event => {
+	handleDeleteSiteClick = ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
@@ -117,14 +117,14 @@ class DeleteSite extends Component {
 		this.props.deleteSite( siteId );
 	};
 
-	_checkSiteLoaded = event => {
+	_checkSiteLoaded = ( event ) => {
 		const { siteId } = this.props;
 		if ( ! siteId ) {
 			event.preventDefault();
 		}
 	};
 
-	onConfirmDomainChange = event => {
+	onConfirmDomainChange = ( event ) => {
 		this.setState( {
 			confirmDomain: event.target.value,
 		} );
@@ -140,16 +140,16 @@ class DeleteSite extends Component {
 		const deleteButtons = [
 			<Button onClick={ this.closeConfirmDialog }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary scary disabled={ deleteDisabled } onClick={ this._deleteSite }>
-				{ translate( 'Delete this Site' ) }
+				{ translate( 'Delete this site' ) }
 			</Button>,
 		];
 
 		const strings = {
-			confirmDeleteSite: translate( 'Confirm Delete Site' ),
-			contactSupport: translate( 'Contact Support' ),
-			deleteSite: translate( 'Delete Site' ),
-			exportContent: translate( 'Export Content' ),
-			exportContentFirst: translate( 'Export Content First' ),
+			confirmDeleteSite: translate( 'Confirm delete site' ),
+			contactSupport: translate( 'Contact support' ),
+			deleteSite: translate( 'Delete site' ),
+			exportContent: translate( 'Export content' ),
+			exportContentFirst: translate( 'Export content first' ),
 		};
 
 		return (
@@ -372,7 +372,7 @@ class DeleteSite extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );

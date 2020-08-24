@@ -80,7 +80,7 @@
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
 	color: var( --color-text-inverted );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 1.4;
 	padding: 5px 16px;
 	position: absolute;

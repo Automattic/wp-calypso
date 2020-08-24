@@ -11,7 +11,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId, limit = 6 } = action;
 
 	return http(

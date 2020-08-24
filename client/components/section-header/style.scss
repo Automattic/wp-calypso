@@ -23,7 +23,7 @@
 	position: relative;
 	overflow: hidden;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		line-height: 1.4;
 		margin: 4px 0;
 	}
@@ -32,7 +32,7 @@
 	.support-info {
 		margin-left: 8px;
 	}
-	
+
 	.support-info {
 		position: relative;
 		top: 3px;
@@ -48,7 +48,7 @@
 
 .section-header__label {
 	color: var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .section-header__actions {

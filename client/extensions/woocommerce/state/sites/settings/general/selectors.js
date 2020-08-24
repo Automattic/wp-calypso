@@ -50,7 +50,7 @@ export const areSettingsGeneralLoadError = ( state, siteId = getSelectedSiteId( 
  */
 export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( state ) ) {
 	const generalSettings = getRawGeneralSettings( state, siteId );
-	const currency = find( generalSettings, item => item.id === 'woocommerce_currency' );
+	const currency = find( generalSettings, ( item ) => item.id === 'woocommerce_currency' );
 	return currency || {};
 }
 
@@ -63,7 +63,7 @@ export function getPaymentCurrencySettings( state, siteId = getSelectedSiteId( s
  */
 export function getShipToCountrySetting( state, siteId = getSelectedSiteId( state ) ) {
 	const generalSettings = getRawGeneralSettings( state, siteId );
-	const setting = find( generalSettings, item => item.id === 'woocommerce_ship_to_countries' );
+	const setting = find( generalSettings, ( item ) => item.id === 'woocommerce_ship_to_countries' );
 	return setting || {};
 }
 

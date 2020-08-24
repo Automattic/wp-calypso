@@ -3,11 +3,12 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
+import { noop, size, map } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
+import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
@@ -48,6 +50,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
+		posts: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -59,6 +62,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		showConversationFollow: true,
 		showReportPost: true,
 		showReportSite: false,
+		posts: [],
 	};
 
 	blockSite = () => {
@@ -105,7 +109,7 @@ class ReaderPostOptionsMenu extends React.Component {
 			: this.props.post.feed_URL || this.props.post.site_URL;
 	};
 
-	onMenuToggle = isMenuVisible => {
+	onMenuToggle = ( isMenuVisible ) => {
 		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
 		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
 		stats.recordTrackForPost(
@@ -126,7 +130,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		stats.recordGaEvent( 'Clicked Edit Post', 'post_options' );
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', this.props.post );
 
-		setTimeout( function() {
+		setTimeout( function () {
 			// give the analytics a chance to escape
 			if ( editUrl.indexOf( '//' ) === 0 ) {
 				window.location.href = editUrl;
@@ -150,8 +154,60 @@ class ReaderPostOptionsMenu extends React.Component {
 		window.open( post.URL, '_blank' );
 	};
 
+	markAsSeen = () => {
+		const { post, posts } = this.props;
+
+		if ( ! post ) {
+			return;
+		}
+
+		const feedId = post.feed_ID;
+		let feedItemIds = [ post.feed_item_ID ];
+		let globalIds = [ post.global_ID ];
+
+		if ( size( posts ) ) {
+			feedItemIds = map( posts, 'feed_item_ID' );
+			globalIds = map( posts, 'global_ID' );
+		}
+
+		this.props.requestMarkAsSeen( {
+			feedId,
+			feedUrl: post.feed_URL,
+			feedItemIds,
+			globalIds,
+		} );
+
+		this.onMenuToggle();
+	};
+
+	markAsUnSeen = () => {
+		const { post, posts } = this.props;
+
+		if ( ! post ) {
+			return;
+		}
+
+		const feedId = post.feed_ID;
+		let feedItemIds = [ post.feed_item_ID ];
+		let globalIds = [ post.global_ID ];
+
+		if ( size( posts ) ) {
+			feedItemIds = map( posts, 'feed_item_ID' );
+			globalIds = map( posts, 'global_ID' );
+		}
+
+		this.props.requestMarkAsUnseen( {
+			feedId,
+			feedUrl: post.feed_URL,
+			feedItemIds,
+			globalIds,
+		} );
+
+		this.onMenuToggle();
+	};
+
 	render() {
-		const { post, site, feed, teams, translate, position } = this.props;
+		const { post, site, feed, teams, translate, position, posts } = this.props;
 
 		if ( ! post ) {
 			return null;
@@ -188,7 +244,7 @@ class ReaderPostOptionsMenu extends React.Component {
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
-					popoverClassName="reader-post-options-menu__popover"
+					popoverClassName="reader-post-options-menu__popover ignore-click"
 					onToggle={ this.onMenuToggle }
 					position={ position }
 				>
@@ -198,8 +254,8 @@ class ReaderPostOptionsMenu extends React.Component {
 						<FollowButton
 							tagName={ PopoverMenuItem }
 							siteUrl={ followUrl }
-							followLabel={ showConversationFollowButton ? translate( 'Follow Site' ) : null }
-							followingLabel={ showConversationFollowButton ? translate( 'Following Site' ) : null }
+							followLabel={ showConversationFollowButton ? translate( 'Follow site' ) : null }
+							followingLabel={ showConversationFollowButton ? translate( 'Following site' ) : null }
 						/>
 					) }
 
@@ -213,15 +269,29 @@ class ReaderPostOptionsMenu extends React.Component {
 						/>
 					) }
 
+					{ config.isEnabled( 'reader/seen-posts' ) && post.is_seen && (
+						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
+							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
+							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
+						</PopoverMenuItem>
+					) }
+
+					{ config.isEnabled( 'reader/seen-posts' ) && ! post.is_seen && (
+						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
+							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
+							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
+						</PopoverMenuItem>
+					) }
+
 					{ this.props.showVisitPost && post.URL && (
 						<PopoverMenuItem onClick={ this.visitPost } icon="external">
-							{ translate( 'Visit Post' ) }
+							{ translate( 'Visit post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showEditPost && isEditPossible && (
 						<PopoverMenuItem onClick={ this.editPost } icon="pencil">
-							{ translate( 'Edit Post' ) }
+							{ translate( 'Edit post' ) }
 						</PopoverMenuItem>
 					) }
 
@@ -232,19 +302,19 @@ class ReaderPostOptionsMenu extends React.Component {
 
 					{ isBlockPossible && (
 						<PopoverMenuItem onClick={ this.blockSite }>
-							{ translate( 'Block Site' ) }
+							{ translate( 'Block site' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
 						<PopoverMenuItem onClick={ this.reportPost }>
-							{ translate( 'Report this Post' ) }
+							{ translate( 'Report this post' ) }
 						</PopoverMenuItem>
 					) }
 
 					{ this.props.showReportSite && site && isBlockPossible && (
 						<PopoverMenuItem onClick={ this.reportSite }>
-							{ translate( 'Report this Site' ) }
+							{ translate( 'Report this site' ) }
 						</PopoverMenuItem>
 					) }
 				</EllipsisMenu>
@@ -265,5 +335,7 @@ export default connect(
 	},
 	{
 		blockSite,
+		requestMarkAsSeen,
+		requestMarkAsUnseen,
 	}
 )( localize( ReaderPostOptionsMenu ) );

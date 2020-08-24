@@ -14,7 +14,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { arePaymentMethodsLoaded, arePaymentMethodsLoading } from './selectors';
 
-const addPaymentMethodDetails = method => {
+const addPaymentMethodDetails = ( method ) => {
 	return {
 		...method,
 		...getPaymentMethodDetails( method.id ),
@@ -30,7 +30,7 @@ const fetchPaymentMethodsSuccess = ( siteId, data ) => {
 	};
 };
 
-export const fetchPaymentMethods = siteId => ( dispatch, getState ) => {
+export const fetchPaymentMethods = ( siteId ) => ( dispatch, getState ) => {
 	const state = getState();
 	if ( ! siteId ) {
 		siteId = getSelectedSiteId( state );
@@ -48,10 +48,10 @@ export const fetchPaymentMethods = siteId => ( dispatch, getState ) => {
 
 	return request( siteId )
 		.get( 'payment_gateways' )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( fetchPaymentMethodsSuccess( siteId, data ) );
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, getAction, err ) );
 		} );
 };

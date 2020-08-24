@@ -23,7 +23,7 @@ import Dispatcher from 'dispatcher';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const uploadPlugin = action => {
+export const uploadPlugin = ( action ) => {
 	const { siteId, file } = action;
 
 	return [
@@ -40,7 +40,7 @@ export const uploadPlugin = action => {
 	];
 };
 
-const showErrorNotice = error => {
+const showErrorNotice = ( error ) => {
 	const knownErrors = {
 		exists: translate( 'This plugin is already installed on your site.' ),
 		'too large': translate( 'The plugin zip file must be smaller than 10MB.' ),

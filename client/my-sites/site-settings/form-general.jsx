@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -26,11 +26,12 @@ import FormRadio from 'components/forms/form-radio';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import SiteIconSetting from './site-icon-setting';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
+import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
 import { preventWidows } from 'lib/formatting';
@@ -42,6 +43,8 @@ import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import { hasLocalizedText } from 'blocks/eligibility-warnings/has-localized-text';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -62,7 +65,20 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	}
 
-	onTimezoneSelect = timezone => {
+	getIncompleteLocaleNoticeMessage = ( language ) => {
+		const { translate } = this.props;
+
+		return translate(
+			'Your site language is now %(language)s. Once you choose your theme, make sure it’s translated so the theme strings on your site show up in your language!',
+			{
+				args: {
+					language: language.name,
+				},
+			}
+		);
+	};
+
+	onTimezoneSelect = ( timezone ) => {
 		this.props.updateFields( {
 			timezone_string: timezone,
 		} );
@@ -82,7 +98,7 @@ export class SiteSettingsFormGeneral extends Component {
 			<div className="site-settings__site-options">
 				<div className="site-settings__site-title-tagline">
 					<FormFieldset>
-						<FormLabel htmlFor="blogname">{ translate( 'Site Title' ) }</FormLabel>
+						<FormLabel htmlFor="blogname">{ translate( 'Site title' ) }</FormLabel>
 						<FormInput
 							name="blogname"
 							id="blogname"
@@ -96,7 +112,7 @@ export class SiteSettingsFormGeneral extends Component {
 						/>
 					</FormFieldset>
 					<FormFieldset>
-						<FormLabel htmlFor="blogdescription">{ translate( 'Site Tagline' ) }</FormLabel>
+						<FormLabel htmlFor="blogdescription">{ translate( 'Site tagline' ) }</FormLabel>
 						<FormInput
 							name="blogdescription"
 							type="text"
@@ -122,26 +138,21 @@ export class SiteSettingsFormGeneral extends Component {
 		const { translate, selectedSite } = this.props;
 
 		return (
-			<FormFieldset>
-				<FormLabel htmlFor="wpversion">{ translate( 'WordPress Version' ) }</FormLabel>
-				<FormInput
-					name="wpversion"
-					id="wpversion"
-					data-tip-target="site-title-input"
-					type="text"
-					value={ get( selectedSite, 'options.software_version' ) }
-					disabled
-				/>
-			</FormFieldset>
+			<Fragment>
+				<strong> { translate( 'WordPress Version' ) + ': ' } </strong>
+				<p className="site-settings__wordpress-version">
+					{ get( selectedSite, 'options.software_version' ) }
+				</p>
+			</Fragment>
 		);
 	}
 
 	blogAddress() {
-		const { site, siteIsJetpack, siteSlug, translate } = this.props;
+		const { site, siteIsJetpack, siteSlug, translate, isWPForTeamsSite } = this.props;
 		let customAddress = '',
 			addressDescription = '';
 
-		if ( ! site || siteIsJetpack ) {
+		if ( ! site || siteIsJetpack || isWPForTeamsSite ) {
 			return null;
 		}
 
@@ -149,7 +160,7 @@ export class SiteSettingsFormGeneral extends Component {
 			customAddress = (
 				<Button href={ '/domains/add/' + siteSlug } onClick={ this.trackUpgradeClick }>
 					<Gridicon icon="plus" />{ ' ' }
-					{ translate( 'Add a Custom Address', { context: 'Site address, domain' } ) }
+					{ translate( 'Add custom address', { context: 'Site address, domain' } ) }
 				</Button>
 			);
 
@@ -185,7 +196,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset className="site-settings__has-divider">
-				<FormLabel htmlFor="blogaddress">{ translate( 'Site Address' ) }</FormLabel>
+				<FormLabel htmlFor="blogaddress">{ translate( 'Site address' ) }</FormLabel>
 				<div className="site-settings__blogaddress-settings">
 					<FormInput
 						name="blogaddress"
@@ -213,7 +224,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const errors = {
 			error_cap: {
 				text: translate( 'The Site Language setting is disabled due to insufficient permissions.' ),
-				link: 'https://support.wordpress.com/user-roles/',
+				link: 'https://wordpress.com/support/user-roles/',
 				linkText: translate( 'More info' ),
 			},
 			error_const: {
@@ -267,6 +278,8 @@ export class SiteSettingsFormGeneral extends Component {
 					onChange={ onChangeField( 'lang_id' ) }
 					disabled={ isRequestingSettings || ( siteIsJetpack && errorNotice ) }
 					onClick={ eventTracker( 'Clicked Language Field' ) }
+					showEmpathyModeControl={ false }
+					getIncompleteLocaleNoticeMessage={ this.getIncompleteLocaleNoticeMessage }
 				/>
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
@@ -279,83 +292,11 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	visibilityOptions() {
-		const {
-			fields,
-			handleRadio,
-			updateFields,
-			isRequestingSettings,
-			eventTracker,
-			siteIsJetpack,
-			trackEvent,
-			translate,
-		} = this.props;
-
-		const currentValue = parseInt( fields.blog_public, 10 );
-
-		return (
-			<FormFieldset>
-				{ ! siteIsJetpack && (
-					<FormLabel className="site-settings__visibility-label">
-						<FormRadio
-							name="blog_public"
-							value="1"
-							checked={ [ 0, 1 ].indexOf( currentValue ) !== -1 }
-							onChange={ handleRadio }
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-						/>
-						<span>{ translate( 'Public' ) }</span>
-					</FormLabel>
-				) }
-
-				
-				<FormSettingExplanation isIndented>
-					{ translate( 'Your site is visible to everyone.' ) }
-				</FormSettingExplanation>
-
-				<FormLabel className="site-settings__visibility-label is-checkbox">
-					<FormInputCheckbox
-						name="blog_public"
-						value="0"
-						checked={ 0 === currentValue }
-						onChange={ () => {
-							const newValue = currentValue === 0 ? 1 : 0;
-							trackEvent( `Set blog_public to ${ newValue }` );
-							updateFields( { blog_public: newValue } );
-						} }
-						disabled={ isRequestingSettings }
-						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-					/>
-					<span>{ translate( 'Do not allow search engines to index my site' ) }</span>
-				</FormLabel>
-
-				{ ! siteIsJetpack && (
-					<>
-						<FormLabel className="site-settings__visibility-label">
-							<FormRadio
-								name="blog_public"
-								value="-1"
-								checked={ -1 === currentValue }
-								onChange={ handleRadio }
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-							/>
-							<span>{ translate( 'Private' ) }</span>
-						</FormLabel>
-						<FormSettingExplanation isIndented>
-							{ translate( 'Your site is only visible to you and users you approve.' ) }
-						</FormSettingExplanation>
-					</>
-				) }
-			</FormFieldset>
-		);
-	}
-
 	visibilityOptionsComingSoon() {
 		const {
 			fields,
 			isRequestingSettings,
+			isWPForTeamsSite,
 			eventTracker,
 			siteIsJetpack,
 			siteIsAtomic,
@@ -368,7 +309,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				{ ! isNonAtomicJetpackSite && (
+				{ ! isNonAtomicJetpackSite && ! isWPForTeamsSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-coming-soon">
 							<FormRadio
@@ -387,7 +328,13 @@ export class SiteSettingsFormGeneral extends Component {
 							<span>{ translate( 'Coming Soon' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ translate( "Your site is hidden from visitors until it's ready for viewing." ) }
+							{ hasLocalizedText(
+								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+							)
+								? translate(
+										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+								  )
+								: translate( "Your site is hidden from visitors until it's ready for viewing." ) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -426,7 +373,12 @@ export class SiteSettingsFormGeneral extends Component {
 						disabled={ isRequestingSettings }
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 					/>
-					<span>{ translate( 'Do not allow search engines to index my site' ) }</span>
+					<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
+					<FormSettingExplanation isIndented>
+						{ translate(
+							'This option does not block access to your site — it is up to search engines to honor your request.'
+						) }
+					</FormSettingExplanation>
 				</FormLabel>
 				{ ! isNonAtomicJetpackSite && (
 					<>
@@ -447,7 +399,15 @@ export class SiteSettingsFormGeneral extends Component {
 							<span>{ translate( 'Private' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ translate( 'Your site is only visible to you and logged-in members you approve.' ) }
+							{ hasLocalizedText(
+								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+							)
+								? translate(
+										'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
+								  )
+								: translate(
+										'Your site is only visible to you and logged-in members you approve.'
+								  ) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -469,7 +429,9 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="blogtimezone">{ translate( 'Site Timezone' ) }</FormLabel>
+				<FormLabel htmlFor="blogtimezone" id="site-settings__blogtimezone">
+					{ translate( 'Site timezone' ) }
+				</FormLabel>
 
 				<Timezone
 					selectedZone={ fields.timezone_string }
@@ -479,31 +441,32 @@ export class SiteSettingsFormGeneral extends Component {
 
 				<FormSettingExplanation>
 					{ translate( 'Choose a city in your timezone.' ) }{ ' ' }
-					{ translate(
-						'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
-						{
-							args: {
-								timezoneName: guessedTimezone,
-							},
-							components: {
-								button: (
-									<Button
-										onClick={ setGuessedTimezone }
-										borderless
-										compact
-										className="site-settings__general-settings-set-guessed-timezone"
-									/>
-								),
-							},
-						}
-					) }
+					{ guessedTimezone &&
+						translate(
+							'You might want to follow our guess: {{button}}Select %(timezoneName)s{{/button}}',
+							{
+								args: {
+									timezoneName: guessedTimezone,
+								},
+								components: {
+									button: (
+										<Button
+											onClick={ setGuessedTimezone }
+											borderless
+											compact
+											className="site-settings__general-settings-set-guessed-timezone"
+										/>
+									),
+								},
+							}
+						) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
 	}
 
 	renderLaunchSite() {
-		const { translate, siteDomains, siteSlug, siteId, isPaidPlan } = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon } = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
@@ -530,9 +493,16 @@ export class SiteSettingsFormGeneral extends Component {
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ translate(
-								"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-							) }
+							{ isComingSoon &&
+							hasLocalizedText(
+								'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+							)
+								? translate(
+										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+								  )
+								: translate(
+										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
+								  ) }
 						</p>
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
@@ -544,13 +514,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const {
-			isRequestingSettings,
-			translate,
-			handleSubmitForm,
-			isSavingSettings,
-			withComingSoonOption,
-		} = this.props;
+		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
 
 		return (
 			<>
@@ -560,18 +524,16 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Privacy' ) }
+					title={ translate( 'Privacy', { context: 'Privacy Settings header' } ) }
 				/>
 				<Card>
-					<form>
-						{ withComingSoonOption ? this.visibilityOptionsComingSoon() : this.visibilityOptions() }
-					</form>
+					<form>{ this.visibilityOptionsComingSoon() }</form>
 				</Card>
 			</>
 		);
 	}
 
-	disablePrivacySettings = e => {
+	disablePrivacySettings = ( e ) => {
 		e.target.blur();
 	};
 
@@ -612,6 +574,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsVip,
 			siteSlug,
 			translate,
+			isWPForTeamsSite,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -628,7 +591,7 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Site Profile' ) }
+					title={ translate( 'Site profile' ) }
 				/>
 				<Card>
 					<form>
@@ -642,9 +605,12 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ this.privacySettingsWrapper() }
 
-				{ ! siteIsJetpack && (
+				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
-						<SettingsSectionHeader title={ translate( 'Footer Credit' ) } />
+						<SettingsSectionHeader
+							title={ translate( 'Footer credit' ) }
+							id="site-settings__footer-credit-header"
+						/>
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
 								{ preventWidows(
@@ -664,7 +630,7 @@ export class SiteSettingsFormGeneral extends Component {
 							</div>
 						</CompactCard>
 						{ site && ! isBusiness( site.plan ) && ! siteIsVip && (
-							<Banner
+							<UpsellNudge
 								feature={ FEATURE_NO_BRANDING }
 								plan={ PLAN_BUSINESS }
 								title={ translate(
@@ -673,6 +639,7 @@ export class SiteSettingsFormGeneral extends Component {
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
+								showIcon={ true }
 							/>
 						) }
 					</div>
@@ -691,16 +658,14 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 };
 
 const connectComponent = connect(
-	( state, ownProps ) => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
 
 		return {
-			withComingSoonOption: ownProps.hasOwnProperty( 'withComingSoonOption' )
-				? ownProps.withComingSoonOption
-				: config.isEnabled( 'coming-soon' ),
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			isComingSoon: isSiteComingSoon( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
@@ -708,6 +673,7 @@ const connectComponent = connect(
 			selectedSite,
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			siteDomains: getDomainsBySiteId( state, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},
 	mapDispatchToProps,
@@ -715,7 +681,7 @@ const connectComponent = connect(
 	{ pure: false }
 );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	const defaultSettings = {
 		blogname: '',
 		blogdescription: '',
@@ -736,9 +702,10 @@ const getFormSettings = settings => {
 
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
-		wpcom_coming_soon: settings.wpcom_coming_soon,
 		timezone_string: settings.timezone_string,
 	};
+
+	formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;

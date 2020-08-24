@@ -43,12 +43,12 @@ export const vouchersReceiveAction = ( siteId, vouchers ) => ( {
  * @param {number} siteId - side identifier
  * @returns {object} siteId - action object
  */
-export const vouchersRequestAction = siteId => ( {
+export const vouchersRequestAction = ( siteId ) => ( {
 	type: SITE_VOUCHERS_REQUEST,
 	siteId,
 } );
 
-export const vouchersRequestSuccessAction = siteId => ( {
+export const vouchersRequestSuccessAction = ( siteId ) => ( {
 	type: SITE_VOUCHERS_REQUEST_SUCCESS,
 	siteId,
 } );
@@ -94,19 +94,19 @@ export const vouchersAssignRequestFailureAction = ( siteId, serviceType, error )
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function requestSiteVouchers( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( vouchersRequestAction( siteId ) );
 
 		return wpcom
 			.site( siteId )
 			.creditVouchers()
 			.list()
-			.then( data => {
+			.then( ( data ) => {
 				const { vouchers = [] } = data;
 				dispatch( vouchersRequestSuccessAction( siteId ) );
 				dispatch( vouchersReceiveAction( siteId, vouchers ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const message = error instanceof Error ? error.message : error;
 
 				dispatch( vouchersRequestFailureAction( siteId, message ) );
@@ -122,19 +122,19 @@ export function requestSiteVouchers( siteId ) {
  * @returns {Function} a promise that will resolve once fetching is completed
  */
 export function assignSiteVoucher( siteId, serviceType ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( vouchersAssignRequestAction( siteId, serviceType ) );
 
 		return wpcom
 			.site( siteId )
 			.creditVouchers()
 			.assign( serviceType )
-			.then( data => {
+			.then( ( data ) => {
 				const { voucher = {} } = data;
 				dispatch( vouchersAssignRequestSuccessAction( siteId, serviceType ) );
 				dispatch( vouchersAssignReceiveAction( siteId, serviceType, voucher ) );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				const message = error instanceof Error ? error.message : error;
 
 				dispatch( vouchersAssignRequestFailureAction( siteId, serviceType, message ) );

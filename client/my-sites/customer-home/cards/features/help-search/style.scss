@@ -1,0 +1,190 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+$search_results_top_spacing: 24px;
+$card_padding_small: 16px;
+$card_padding_large: 24px;
+$min_results_height: 180px;
+
+.customer-home__layout .help-search {
+
+	&.card {
+		padding: 0;
+	}
+
+	.help-search__inner {
+		padding: 16px;
+
+		@include break-mobile {
+			padding: $card_padding_large;
+		}
+	}
+
+	.card-heading {
+		margin-bottom: 16px;
+	}
+
+	.help-search__content {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.help-search__footer {
+		margin-top: -#{$card_padding_large/2};
+		border-top: 1px solid var( --color-border-subtle );
+	}
+
+	.help-search__cta {
+		display: flex;
+		align-items: center;
+		padding: 10px $card_padding_large;
+		color: var( --color-text );
+		line-height: 1;
+
+		&:hover,
+		&:focus {
+			background: var( --color-neutral-0 );
+		}
+	}
+
+	.help-search__help-icon {
+		display: block;
+		width: 26px;
+		height: 26px;
+		margin-right: 12px;
+
+		background: var( --color-primary );
+		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
+		border: 1px solid var( --color-primary );
+		border-radius: 100%;
+
+		.gridicon {
+			fill: var( --color-text-inverted );
+			height: 24px;
+			width: 24px;
+			transform: translate( 1px, 1px );
+		}
+	}
+
+	.help-search__go-icon {
+		fill: var( --color-neutral-20 );
+		margin-left: auto; // push away from other cta content
+		margin-right: -6px; // visually pull arrow RHS to edge of card
+	}
+
+	.inline-help__search {
+		// Don't allow ellipsis items to flow outside box
+		width: 100%;
+	}
+
+	.inline-help__results-item {
+		display: flex; // required for ellipsis overflow
+		font-size: inherit;
+
+		a {
+			text-decoration: none;
+			line-height: 1;
+			padding: 10px $card_padding_small;
+
+			// Ellipsis overflow handling
+			display: block;
+			flex: 1;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			margin-right: 8px;
+
+			.gridicon {
+				margin: 0 5px -3px 0;
+					position: relative;
+					top: 0;
+			}
+
+			&:hover,
+			&:focus {
+				cursor: pointer;
+			}
+
+			@include break-mobile {
+				padding-left: $card_padding_large;
+				padding-right: $card_padding_large;
+			}
+		}
+	}
+
+	.inline-help__results {
+		margin: #{$search_results_top_spacing + 1px } #{-$card_padding_small} 0;
+		min-height: $min_results_height;
+		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
+		border-top: 1px solid var( --color-border-subtle );
+
+		@include break-mobile {
+			margin-left: -$card_padding_large;
+			margin-right: -$card_padding_large;
+		}
+	}
+
+	.search-card {
+		margin: 0;
+		border-radius: 3px;
+		border-color: var( --color-border );
+
+		.search {
+			height: auto;
+			border-radius: 3px;
+
+			.search__input {
+				padding: 11px 0;
+				font-size: $font-body-small;
+				color: var( --color-text );
+			}
+
+			.search__input::placeholder {
+				color: var( --color-text-subtle );
+			}
+
+			.search__input-fade {
+				// compensate for border radius to avoid clipping
+				margin-right: 1px;
+			}
+
+			.spinner {
+				padding: 0 6px;
+				width: 24px;
+				height: 24px;
+			}
+
+			.search__icon-navigation .gridicon {
+				padding: 0 6px;
+				width: 24px;
+				height: 24px;
+			}
+		}
+	}
+
+	// PlaceholderLines component
+	.inline-help__results-placeholder {
+		min-height: $min_results_height;
+		margin: #{$search_results_top_spacing + 1} 0 0 #{-$search_results_top_spacing};
+		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
+		border-top: 1px solid var( --color-border-subtle );
+	}
+
+	.inline-help__results-placeholder-item {
+		height: 15px;
+		margin: 20px $card_padding_large 0;
+		border-radius: 16px;
+		background-color: var( --color-neutral-5 );
+
+		&:first-child {
+			margin-top: 12px;
+		}
+
+		&:last-child {
+			margin-bottom: 12px;
+		}
+
+		&:nth-child( 4 ) {
+			animation-delay: -5.1s;
+		}
+	}
+}

@@ -24,6 +24,7 @@ import {
 } from 'my-sites/domains/paths';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 function Transfer( props ) {
 	const {
@@ -32,6 +33,7 @@ function Transfer( props ) {
 		isPrimaryDomain,
 		selectedSite,
 		selectedDomainName,
+		currentRoute,
 		translate,
 	} = props;
 
@@ -41,24 +43,28 @@ function Transfer( props ) {
 		<Main>
 			<Header
 				selectedDomainName={ selectedDomainName }
-				backHref={ domainManagementEdit( slug, selectedDomainName ) }
+				backHref={ domainManagementEdit( slug, selectedDomainName, currentRoute ) }
 			>
 				{ translate( 'Transfer Domain' ) }
 			</Header>
 			<VerticalNav>
-				<VerticalNavItem path={ domainManagementTransferOut( slug, selectedDomainName ) }>
+				<VerticalNavItem
+					path={ domainManagementTransferOut( slug, selectedDomainName, currentRoute ) }
+				>
 					{ translate( 'Transfer to another registrar' ) }
 				</VerticalNavItem>
 				{ ! isDomainOnly && (
 					<VerticalNavItem
-						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName ) }
+						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName, currentRoute ) }
 					>
 						{ translate( 'Transfer to another user' ) }
 					</VerticalNavItem>
 				) }
 
 				{ ( ( isAtomic && ! isPrimaryDomain ) || ! isAtomic ) && ( // Simple and Atomic (not primary domain )
-					<VerticalNavItem path={ domainManagementTransferToOtherSite( slug, selectedDomainName ) }>
+					<VerticalNavItem
+						path={ domainManagementTransferToOtherSite( slug, selectedDomainName, currentRoute ) }
+					>
 						{ translate( 'Transfer to another WordPress.com site' ) }
 					</VerticalNavItem>
 				) }
@@ -74,5 +80,6 @@ export default connect( ( state, ownProps ) => {
 		isDomainOnly: isDomainOnlySite( state, siteId ),
 		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
+		currentRoute: getCurrentRoute( state ),
 	};
 } )( localize( Transfer ) );

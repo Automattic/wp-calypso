@@ -1,9 +1,8 @@
 /**
  * Internal dependencies
  */
-
 import { CONNECTION_LOST, CONNECTION_RESTORED } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 
 export const connectionState = withoutPersistence( ( state = 'CHECKING', action ) => {
 	switch ( action.type ) {
@@ -16,6 +15,5 @@ export const connectionState = withoutPersistence( ( state = 'CHECKING', action 
 	return state;
 } );
 
-export default combineReducers( {
-	connectionState,
-} );
+const combinedReducer = combineReducers( { connectionState } );
+export default withStorageKey( 'application', combinedReducer );

@@ -22,7 +22,7 @@ import PredefinedPackages from './predefined-packages';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 import { getPredefinedPackagesChangesSummary } from '../../state/packages/selectors';
 
-const AddPackageDialog = props => {
+const AddPackageDialog = ( props ) => {
 	const {
 		siteId,
 		form,
@@ -58,10 +58,12 @@ const AddPackageDialog = props => {
 		//get reserved box names:
 		const boxNames = concat(
 			difference(
-				customPackages.map( boxPackage => boxPackage.name ),
+				customPackages.map( ( boxPackage ) => boxPackage.name ),
 				[ editName ]
 			), //existing custom boxes
-			flatten( map( predefinedSchema, predef => map( predef, group => group.definitions ) ) ), //predefined boxes
+			flatten(
+				map( predefinedSchema, ( predef ) => map( predef, ( group ) => group.definitions ) )
+			), //predefined boxes
 			[ 'individual' ] //reserved for items shipping in original packaging
 		);
 
@@ -86,7 +88,7 @@ const AddPackageDialog = props => {
 	const onClose = () => dismissModal( siteId );
 	const onRemove = () => removePackage( siteId, index );
 
-	const switchMode = option => {
+	const switchMode = ( option ) => {
 		setAddMode( siteId, option.value );
 	};
 
@@ -167,6 +169,6 @@ AddPackageDialog.propTypes = {
 	setAddMode: PropTypes.func.isRequired,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	predefinedPackagesSummary: getPredefinedPackagesChangesSummary( state ),
 } ) )( localize( AddPackageDialog ) );

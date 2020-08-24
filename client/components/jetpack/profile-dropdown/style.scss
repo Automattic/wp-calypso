@@ -1,0 +1,56 @@
+.profile-dropdown {
+	&__me-label {
+		display: none;
+	}
+
+	&__items {
+		position: absolute;
+		top: 100%;
+		right: -1px;
+		width: 240px;
+		padding: 8px;
+		background: #fff;
+		border: 1px solid var( --studio-gray-20 );
+	}
+
+	&__logout-item {
+		display: flex;
+		align-items: center;
+		height: 80px;
+	}
+
+	&__logout-gravatar.gravatar {
+		position: initial;
+		width: 64px;
+		height: 64px;
+		padding: 0 8px;
+	}
+
+	&__logout-username {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+
+		span {
+			max-width: 150px;
+			height: 40px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	&__logout-button {
+		color: var( --color-text-subtle );
+	}
+
+	&__empty-space {
+		position: absolute;
+		top: -1px;
+		right: 0;
+		height: 1px;
+		width: 54px;
+		background: #fff;
+	}
+}

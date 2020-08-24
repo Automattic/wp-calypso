@@ -22,7 +22,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	test( 'should return an empty array if the sites existing do not verify jetpack canManage conditions', () => {
+	test( 'should return an empty array if the sites existing do not verify jetpack management conditions', () => {
 		const state = {
 			...userState,
 			sites: {
@@ -39,7 +39,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites ).to.eql( [] );
 	} );
 
-	test( 'should return an array with one site if just one site exists and verifies jetpack canManage conditions', () => {
+	test( 'should return an array with one site if just one site exists and verifies jetpack management conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -56,9 +56,6 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 					2916288: {
 						ID: 2916288,
 						jetpack: true,
-						options: {
-							jetpack_version: '3.3',
-						},
 					},
 				},
 			},
@@ -69,7 +66,7 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites[ 0 ].ID ).to.eql( 2916288 );
 	} );
 
-	test( 'should return an array with all the sites that verify jetpack canManage conditions', () => {
+	test( 'should return an array with all the sites that verify jetpack management conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
@@ -90,10 +87,6 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 					2916286: {
 						ID: 2916286,
 						jetpack: true,
-						options: {
-							active_modules: [ 'manage' ],
-							jetpack_version: '5.0',
-						},
 					},
 					2916287: {
 						ID: 2916287,
@@ -101,9 +94,6 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 					2916289: {
 						ID: 2916289,
 						jetpack: true,
-						options: {
-							jetpack_version: '3.4',
-						},
 					},
 				},
 			},
@@ -115,16 +105,12 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 		expect( sites[ 1 ].ID ).to.eql( 2916289 );
 	} );
 
-	test( 'should return an array with the selected site if it verifies jetpack canManage conditions', () => {
+	test( 'should return an array with the selected site if it verifies jetpack management conditions', () => {
 		const state = {
 			users: userState.users,
 			currentUser: {
 				id: 12345678,
 				capabilities: {
-					2916286: {
-						edit_pages: true,
-						manage_options: true,
-					},
 					2916289: {
 						edit_pages: true,
 						manage_options: true,
@@ -133,21 +119,9 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			sites: {
 				items: {
-					2916286: {
-						ID: 2916286,
-						jetpack: true,
-						options: {
-							active_modules: null,
-							jetpack_version: '3.5',
-						},
-					},
 					2916289: {
 						ID: 2916289,
 						jetpack: true,
-						options: {
-							active_modules: [ 'manage' ],
-							jetpack_version: '3.4',
-						},
 					},
 				},
 			},
@@ -164,9 +138,6 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			currentUser: {
 				id: 12345678,
 				capabilities: {
-					2916286: {
-						manage_options: true,
-					},
 					2916287: {
 						manage_options: false,
 					},
@@ -174,19 +145,9 @@ describe( 'getSelectedOrAllSitesJetpackCanManage()', () => {
 			},
 			sites: {
 				items: {
-					2916286: {
-						ID: 2916286,
-						jetpack: true,
-						options: {
-							jetpack_version: '3.5',
-						},
-					},
 					2916287: {
 						ID: 2916287,
 						jetpack: true,
-						options: {
-							jetpack_version: '3.5',
-						},
 					},
 				},
 			},

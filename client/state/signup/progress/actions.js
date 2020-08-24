@@ -12,10 +12,14 @@ import {
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_INVALIDATE_STEP,
+	SIGNUP_PROGRESS_REMOVE_STEP,
+	SIGNUP_PROGRESS_ADD_STEP,
 } from 'state/action-types';
 import { assertValidDependencies } from 'lib/signup/asserts';
 import { getCurrentFlowName } from 'state/signup/flow/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+
+import 'state/signup/init';
 
 function addProvidedDependencies( step, providedDependencies ) {
 	if ( isEmpty( providedDependencies ) ) {
@@ -55,7 +59,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 				typeof propValue !== 'string'
 			) {
 				propValue = toPairs( propValue )
-					.map( pair => pair.join( ':' ) )
+					.map( ( pair ) => pair.join( ':' ) )
 					.join( ',' );
 			}
 
@@ -126,5 +130,19 @@ export function invalidateStep( step, errors ) {
 		type: SIGNUP_PROGRESS_INVALIDATE_STEP,
 		step: { ...step, lastUpdated },
 		errors,
+	};
+}
+
+export function removeStep( step ) {
+	return {
+		type: SIGNUP_PROGRESS_REMOVE_STEP,
+		step,
+	};
+}
+
+export function addStep( step ) {
+	return {
+		type: SIGNUP_PROGRESS_ADD_STEP,
+		step: { ...step },
 	};
 }

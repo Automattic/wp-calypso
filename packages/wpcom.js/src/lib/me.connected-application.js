@@ -1,7 +1,6 @@
 const root = '/me/connected-applications/';
 
 export default class MeConnectedApp {
-
 	/**
 	 * `MeConnectedApp` constructor.
 	 *

@@ -35,7 +35,7 @@ import {
 	SITE_DOMAINS_REQUEST_FAILURE,
 } from 'state/action-types';
 
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
@@ -43,7 +43,7 @@ jest.mock( 'lib/user', () => () => {} );
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );

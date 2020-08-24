@@ -133,7 +133,7 @@ class HelpModal extends React.Component {
 	renderRow = ( row, rowIndex ) => {
 		const columns = [];
 
-		forEach( row, cellPair => {
+		forEach( row, ( cellPair ) => {
 			columns.push(
 				<th className="wpcom-help__key" key={ cellPair.shortcut }>
 					<kbd>{ cellPair.shortcut }</kbd>

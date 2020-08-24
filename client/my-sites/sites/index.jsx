@@ -13,7 +13,6 @@ import { Card } from '@automattic/components';
 import Main from 'components/main';
 import SiteSelector from 'components/site-selector';
 import VisitSite from 'blocks/visit-site';
-
 /**
  * Style dependencies
  */
@@ -24,7 +23,7 @@ class Sites extends Component {
 		siteBasePath: PropTypes.string.isRequired,
 	};
 
-	filterSites = site => {
+	filterSites = ( site ) => {
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.

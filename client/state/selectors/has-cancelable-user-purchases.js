@@ -3,6 +3,8 @@
  */
 import { getUserPurchases } from 'state/purchases/selectors';
 
+import 'state/purchases/init';
+
 /**
  * Does the user have any current purchases that can be canceled (i.e. purchases other than premium themes)?
  *
@@ -17,7 +19,7 @@ export const hasCancelableUserPurchases = ( state, userId ) => {
 		return false;
 	}
 
-	const purchases = getUserPurchases( state, userId ).filter( purchase => {
+	const purchases = getUserPurchases( state, userId ).filter( ( purchase ) => {
 		if ( purchase.isRefundable ) {
 			return true;
 		}

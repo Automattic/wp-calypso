@@ -26,7 +26,6 @@ export class GoogleMyBusiness extends SharingService {
 		// This foreign propTypes access should be safe because we expect all of them to be removed
 		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
-		saveRequests: PropTypes.object,
 		siteSettings: PropTypes.object,
 		connectGoogleMyBusinessAccount: PropTypes.func,
 		disconnectGoogleMyBusinessAccount: PropTypes.func,
@@ -38,7 +37,7 @@ export class GoogleMyBusiness extends SharingService {
 		deleteStoredKeyringConnection: () => {},
 	};
 
-	externalAccessProvided = keyringConnectionId => {
+	externalAccessProvided = ( keyringConnectionId ) => {
 		if ( ! keyringConnectionId ) {
 			this.setState( {
 				isAwaitingConnections: false,
@@ -123,6 +122,7 @@ export class GoogleMyBusiness extends SharingService {
 		// Render a custom logo here because Google My Business is not part of SocialLogos
 		return (
 			<GoogleMyBusinessLogo
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				className="sharing-service__logo"
 				height="36"
 				style={ { padding: 6 + 'px' } }
@@ -138,7 +138,6 @@ export default connectFor(
 		...props,
 		availableExternalAccounts: getGoogleMyBusinessLocations( state, props.siteId ),
 		requestingSiteKeyrings: isRequestingSiteKeyrings( state, props.siteId ),
-		saveRequests: state.siteSettings.saveRequests,
 		removableConnections: props.keyringConnections,
 		fetchConnection: props.requestKeyringConnections,
 		siteUserConnections: getSiteUserConnectionsForGoogleMyBusiness( state, props.siteId ),

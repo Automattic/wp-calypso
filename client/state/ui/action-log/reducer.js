@@ -11,11 +11,11 @@ import {
 	EDITOR_PASTE_EVENT,
 	FIRST_VIEW_HIDE,
 	GUIDED_TOUR_UPDATE,
-	THEMES_REQUEST_SUCCESS,
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
 	SITE_SETTINGS_RECEIVE,
 } from 'state/action-types';
+import { THEMES_REQUEST_SUCCESS } from 'state/themes/action-types';
 
 const relevantAnalyticsEvents = [ 'calypso_themeshowcase_theme_click' ];
 
@@ -33,18 +33,18 @@ const relevantTypes = {
 	SITE_SETTINGS_RECEIVE,
 };
 
-const hasRelevantAnalytics = action =>
-	get( action, 'meta.analytics', [] ).some( record =>
+const hasRelevantAnalytics = ( action ) =>
+	get( action, 'meta.analytics', [] ).some( ( record ) =>
 		includes( relevantAnalyticsEvents, record.payload.name )
 	);
 
-const isRelevantActionType = action =>
+const isRelevantActionType = ( action ) =>
 	has( relevantTypes, action.type ) &&
 	( ! isFunction( relevantTypes[ action.type ] ) || relevantTypes[ action.type ]( action ) );
 
 const isRelevantAction = overSome( [ isRelevantActionType, hasRelevantAnalytics ] );
 
-const newAction = action => ( {
+const newAction = ( action ) => ( {
 	...action,
 	timestamp: Date.now(),
 } );

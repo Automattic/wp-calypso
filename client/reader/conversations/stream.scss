@@ -19,7 +19,7 @@
 	}
 
 	.reader-post-card__byline-author-site {
-		font-weight: 500;
+		font-weight: 600;
 		margin-right: 5px;
 	}
 
@@ -86,7 +86,7 @@
 	margin-top: 30px;
 	max-width: 650px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 70px;
 	}
 }

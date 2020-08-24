@@ -7,7 +7,7 @@ import { set } from 'lodash';
  * Internal dependencies
  */
 import { ANALYTICS_EVENT_RECORD } from 'state/action-types';
-import { getCurrentOAuth2ClientId } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2ClientId } from 'state/oauth2-clients/ui/selectors';
 import { withEnhancers } from 'state/utils';
 import { recordTracksEvent, recordPageView } from './record';
 

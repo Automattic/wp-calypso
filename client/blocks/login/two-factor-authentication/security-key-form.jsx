@@ -27,6 +27,7 @@ class SecurityKeyForm extends Component {
 		loginUserWithSecurityKey: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
+		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 	};
 
@@ -34,7 +35,7 @@ class SecurityKeyForm extends Component {
 		isAuthenticating: false,
 	};
 
-	initiateSecurityKeyAuthentication = event => {
+	initiateSecurityKeyAuthentication = ( event ) => {
 		event.preventDefault();
 
 		const { onSuccess } = this.props;
@@ -46,7 +47,7 @@ class SecurityKeyForm extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, switchTwoFactorAuthType } = this.props;
 
 		return (
 			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
@@ -85,7 +86,10 @@ class SecurityKeyForm extends Component {
 					</FormButton>
 				</Card>
 
-				<TwoFactorActions twoFactorAuthType={ 'webauthn' } />
+				<TwoFactorActions
+					twoFactorAuthType="webauthn"
+					switchTwoFactorAuthType={ switchTwoFactorAuthType }
+				/>
 			</form>
 		);
 	}

@@ -22,11 +22,7 @@ import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import Gridicon from 'components/gridicon';
 import Main from 'components/main';
-import {
-	showInlineHelpPopover,
-	showChecklistPrompt,
-	showOnboardingWelcomePrompt,
-} from 'state/inline-help/actions';
+import { showInlineHelpPopover } from 'state/inline-help/actions';
 import WebPreview from 'components/web-preview';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -71,16 +67,8 @@ class PreviewMain extends React.Component {
 			window.addEventListener( 'resize', this.debouncedUpdateLayout );
 		}
 
-		if ( this.props.welcome ) {
-			this.props.showOnboardingWelcomePrompt();
-		}
-
-		if ( this.props.help || this.props.welcome ) {
+		if ( this.props.help ) {
 			this.props.showInlineHelpPopover();
-		}
-
-		if ( this.props.checklist ) {
-			this.props.showChecklistPrompt();
 		}
 	}
 
@@ -155,7 +143,7 @@ class PreviewMain extends React.Component {
 		}
 	}
 
-	updateSiteLocation = pathname => {
+	updateSiteLocation = ( pathname ) => {
 		const externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
 		this.setState( { externalUrl } );
 		this.props.recordTracksEvent( 'calypso_view_site_page_view', {
@@ -219,7 +207,7 @@ class PreviewMain extends React.Component {
 	}
 }
 
-const mapState = state => {
+const mapState = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const homePagePostId = get( site, [ 'options', 'page_on_front' ] );
@@ -238,6 +226,4 @@ export default connect( mapState, {
 	recordTracksEvent,
 	setLayoutFocus,
 	showInlineHelpPopover,
-	showChecklistPrompt,
-	showOnboardingWelcomePrompt,
 } )( localize( PreviewMain ) );

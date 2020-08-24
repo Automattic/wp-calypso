@@ -1,20 +1,21 @@
 /**
  * External dependencies
  */
-import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { LocalizeProvider } from '../lib/localize';
 import { LineItemsProvider } from '../lib/line-items';
-import { RegistryProvider, createRegistry } from '../lib/registry';
+import { RegistryProvider, defaultRegistry } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
+import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../theme';
 import {
 	validateArg,
@@ -22,23 +23,26 @@ import {
 	validateLineItems,
 	validatePaymentMethods,
 } from '../lib/validation';
+import TransactionStatusHandler from './transaction-status-handler';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
-export const CheckoutProvider = props => {
+export const CheckoutProvider = ( props ) => {
 	const {
-		locale,
 		total,
 		items,
 		onPaymentComplete,
 		showErrorMessage,
 		showInfoMessage,
 		showSuccessMessage,
+		redirectToUrl,
 		theme,
 		paymentMethods,
+		paymentProcessors,
 		registry,
 		onEvent,
 		isLoading,
+		isValidating,
 		children,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState(
@@ -53,7 +57,8 @@ export const CheckoutProvider = props => {
 		}
 	}, [ paymentMethods, prevPaymentMethods ] );
 
-	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading );
+	const [ formStatus, setFormStatus ] = useFormStatusManager( isLoading, isValidating );
+	const transactionStatusManager = useTransactionStatusManager();
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
 		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
@@ -65,7 +70,7 @@ export const CheckoutProvider = props => {
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef( registry );
-	registryRef.current = registryRef.current || createRegistry();
+	registryRef.current = registryRef.current || defaultRegistry;
 
 	const value = useMemo(
 		() => ( {
@@ -78,6 +83,8 @@ export const CheckoutProvider = props => {
 			onEvent: onEvent || ( () => {} ),
 			formStatus,
 			setFormStatus,
+			transactionStatusManager,
+			paymentProcessors,
 		} ),
 		[
 			formStatus,
@@ -88,21 +95,28 @@ export const CheckoutProvider = props => {
 			showErrorMessage,
 			showInfoMessage,
 			showSuccessMessage,
+			transactionStatusManager,
+			paymentProcessors,
 		]
 	);
 
-	// This error message cannot be translated because translation hasn't loaded yet.
-	const errorMessage = 'Sorry, there was an error loading this page';
+	const { __ } = useI18n();
+	const errorMessage = __( 'Sorry, there was an error loading this page.' );
+	const onError = useCallback(
+		( error ) => onEvent?.( { type: 'PAGE_LOAD_ERROR', payload: error } ),
+		[ onEvent ]
+	);
 	return (
-		<CheckoutErrorBoundary errorMessage={ errorMessage }>
+		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
 			<CheckoutProviderPropValidator propsToValidate={ props } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
-					<LocalizeProvider locale={ locale }>
-						<LineItemsProvider items={ items } total={ total }>
-							<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
-						</LineItemsProvider>
-					</LocalizeProvider>
+					<LineItemsProvider items={ items } total={ total }>
+						<CheckoutContext.Provider value={ value }>
+							<TransactionStatusHandler redirectToUrl={ redirectToUrl } />
+							{ children }
+						</CheckoutContext.Provider>
+					</LineItemsProvider>
 				</RegistryProvider>
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
@@ -112,7 +126,6 @@ export const CheckoutProvider = props => {
 CheckoutProvider.propTypes = {
 	theme: PropTypes.object,
 	registry: PropTypes.object,
-	locale: PropTypes.string.isRequired,
 	total: PropTypes.object.isRequired,
 	items: PropTypes.arrayOf( PropTypes.object ).isRequired,
 	paymentMethods: PropTypes.arrayOf( PropTypes.object ).isRequired,
@@ -127,7 +140,6 @@ CheckoutProvider.propTypes = {
 
 function CheckoutProviderPropValidator( { propsToValidate } ) {
 	const {
-		locale,
 		total,
 		items,
 		onPaymentComplete,
@@ -135,15 +147,16 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		showInfoMessage,
 		showSuccessMessage,
 		paymentMethods,
+		paymentProcessors,
 	} = propsToValidate;
 	useEffect( () => {
 		debug( 'propsToValidate', propsToValidate );
 
-		validateArg( locale, 'CheckoutProvider missing required prop: locale' );
 		validateArg( total, 'CheckoutProvider missing required prop: total' );
 		validateTotal( total );
 		validateArg( items, 'CheckoutProvider missing required prop: items' );
 		validateLineItems( items );
+		validateArg( paymentProcessors, 'CheckoutProvider missing required prop: paymentProcessors' );
 		validateArg( paymentMethods, 'CheckoutProvider missing required prop: paymentMethods' );
 		validatePaymentMethods( paymentMethods );
 		validateArg( onPaymentComplete, 'CheckoutProvider missing required prop: onPaymentComplete' );
@@ -152,9 +165,9 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		validateArg( showSuccessMessage, 'CheckoutProvider missing required prop: showSuccessMessage' );
 	}, [
 		items,
-		locale,
 		onPaymentComplete,
 		paymentMethods,
+		paymentProcessors,
 		propsToValidate,
 		showErrorMessage,
 		showInfoMessage,
@@ -162,20 +175,4 @@ function CheckoutProviderPropValidator( { propsToValidate } ) {
 		total,
 	] );
 	return null;
-}
-
-export function useEvents() {
-	const { onEvent } = useContext( CheckoutContext );
-	if ( ! onEvent ) {
-		throw new Error( 'useEvents can only be used inside a CheckoutProvider' );
-	}
-	return onEvent;
-}
-
-export function useMessages() {
-	const { showErrorMessage, showInfoMessage, showSuccessMessage } = useContext( CheckoutContext );
-	if ( ! showErrorMessage || ! showInfoMessage || ! showSuccessMessage ) {
-		throw new Error( 'useMessages can only be used inside a CheckoutProvider' );
-	}
-	return { showErrorMessage, showInfoMessage, showSuccessMessage };
 }

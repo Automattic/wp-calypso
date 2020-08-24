@@ -7,9 +7,9 @@
 }
 
 .reader-site-notification-settings__button-label {
-	font-size: 14px;
+	font-size: $font-body-small;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -21,7 +21,7 @@
 		top: 4px;
 		left: -4px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		left: -1px;
 	}
 }
@@ -36,11 +36,21 @@
 		background: var( --color-surface );
 	}
 
+	.form-toggle__wrapper {
+		margin-right: 7px;
+	}
+
+	.form-label {
+		display: inline-block;
+		font-weight: 400;
+		position: relative;
+		top: 1px;
+	}
+
 	.reader-site-notification-settings__popout-toggle:nth-child( 2 ),
 	.reader-site-notification-settings__popout-toggle:nth-child( 3 ),
 	.reader-site-notification-settings__popout-toggle:nth-child( 4 ) {
 		display: flex;
-		justify-content: space-between;
 	}
 }
 
@@ -48,30 +58,19 @@
 .reader-site-notification-settings__popout-instructions {
 	border-top: 1px solid var( --color-neutral-10 );
 	color:var( --color-neutral-70 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	padding: 10px 15px;
 	text-align: left;
 
 	&:first-child {
 		border-top: 0;
 	}
-
-	.gridicon {
-		fill: var( --color-neutral-light );
-		position: relative;
-			left: 3px;
-			top: 2px;
-	}
-}
-
-.reader-site-notification-settings__popout-form-toggle {
-	margin-left: 45px;
 }
 
 .reader-site-notification-settings__popout-hint,
 .reader-site-notification-settings__popout-instructions-hint {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin-bottom: 0;
 }
 

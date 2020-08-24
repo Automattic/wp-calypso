@@ -14,7 +14,7 @@ export const message = withoutPersistence( ( state = '', action ) => {
 	return state;
 } );
 
-export const timezone = withoutPersistence( ( state = guessTimezone(), action ) => {
+export const timezone = withoutPersistence( ( state = guessTimezone() || 'UTC', action ) => {
 	switch ( action.type ) {
 		case CONCIERGE_SIGNUP_FORM_UPDATE:
 			return action.signupForm.timezone;

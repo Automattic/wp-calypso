@@ -16,6 +16,11 @@ export interface DomainSuggestionQuery {
 	include_wordpressdotcom: boolean;
 
 	/**
+	 * Localizes domain results, e.g., price format
+	 */
+	locale?: string;
+
+	/**
 	 * True to only provide a wordpress.com subdomain
 	 *
 	 * @example
@@ -44,6 +49,16 @@ export interface DomainSuggestionQuery {
 	 * The vertical id or slug
 	 */
 	vertical?: string;
+
+	/**
+	 * An array of tlds
+	 */
+	tlds?: readonly string[];
+
+	/**
+	 * Domain category slug
+	 */
+	category_slug?: string;
 }
 
 export type DomainName = string;
@@ -78,7 +93,7 @@ export interface DomainSuggestion {
 	 *
 	 * @example [ "exact-match" ]
 	 */
-	match_reasons: string[];
+	match_reasons?: readonly string[];
 
 	/**
 	 * Rendered cost with currency
@@ -101,4 +116,21 @@ export interface DomainSuggestion {
 	 * Whether the domain is free
 	 */
 	is_free?: true;
+}
+
+export interface DomainCategory {
+	/**
+	 * The domain category title
+	 */
+	title: string;
+
+	/**
+	 * The domain category slug
+	 */
+	slug: string;
+
+	/**
+	 * The domain category tier
+	 */
+	tier: number | null;
 }

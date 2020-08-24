@@ -23,7 +23,7 @@ import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
 import ThemeDownloadCard from './theme-download-card';
 import ThemePreview from 'my-sites/themes/theme-preview';
-import Banner from 'components/banner';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { Button, Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -56,7 +56,7 @@ import {
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities, preventWidows } from 'lib/formatting';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -158,14 +158,14 @@ class ThemeSheet extends React.Component {
 		return validSections;
 	};
 
-	validateSection = section => {
+	validateSection = ( section ) => {
 		if ( this.getValidSections().indexOf( section ) === -1 ) {
 			return this.getValidSections()[ 0 ];
 		}
 		return section;
 	};
 
-	trackButtonClick = context => {
+	trackButtonClick = ( context ) => {
 		this.props.recordTracksEvent( 'calypso_theme_sheet_button_click', {
 			theme_name: this.props.id,
 			button_context: context,
@@ -208,7 +208,7 @@ class ThemeSheet extends React.Component {
 		return null;
 	}
 
-	previewAction = event => {
+	previewAction = ( event ) => {
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
@@ -255,9 +255,12 @@ class ThemeSheet extends React.Component {
 		const photonSrc = screenshotFull && photon( screenshotFull, { width } );
 		const img = screenshotFull && (
 			<img
-				alt={ i18n.translate( 'Screenshot of the %(themeName)s theme', {
-					args: { themeName },
-				} ) }
+				alt={
+					// translators: %s is the theme name. Eg Twenty Twenty.
+					i18n.translate( 'Screenshot of the %(themeName)s theme', {
+						args: { themeName },
+					} )
+				}
 				className="theme__sheet-img"
 				src={ photonSrc || screenshotFull }
 				srcSet={ photonSrc && `${ photon( screenshotFull, { width, zoom: 2 } ) } 2x` }
@@ -281,7 +284,7 @@ class ThemeSheet extends React.Component {
 		return <div className="theme__sheet-screenshot">{ img }</div>;
 	}
 
-	renderSectionNav = currentSection => {
+	renderSectionNav = ( currentSection ) => {
 		const filterStrings = {
 			'': i18n.translate( 'Overview', { context: 'Filter label for theme content' } ),
 			setup: i18n.translate( 'Setup', { context: 'Filter label for theme content' } ),
@@ -293,7 +296,7 @@ class ThemeSheet extends React.Component {
 
 		const nav = (
 			<NavTabs label="Details">
-				{ this.getValidSections().map( section => (
+				{ this.getValidSections().map( ( section ) => (
 					<NavItem
 						key={ section }
 						path={ `/theme/${ id }${ section ? '/' + section : '' }${ sitePart }` }
@@ -326,7 +329,7 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	renderSectionContent = section => {
+	renderSectionContent = ( section ) => {
 		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
@@ -393,7 +396,7 @@ class ThemeSheet extends React.Component {
 		/* eslint-enable react/no-danger */
 	};
 
-	renderSupportContactUsCard = buttonCount => {
+	renderSupportContactUsCard = ( buttonCount ) => {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="help-outline" size={ 48 } />
@@ -412,7 +415,7 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	renderSupportThemeForumCard = buttonCount => {
+	renderSupportThemeForumCard = ( buttonCount ) => {
 		if ( ! this.props.forumUrl ) {
 			return null;
 		}
@@ -439,7 +442,7 @@ class ThemeSheet extends React.Component {
 		);
 	};
 
-	renderSupportCssCard = buttonCount => {
+	renderSupportCssCard = ( buttonCount ) => {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="briefcase" size={ 48 } />
@@ -654,20 +657,23 @@ class ThemeSheet extends React.Component {
 		}
 
 		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner = ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip;
+		const hasUpsellBanner =
+			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		if ( hasUpsellBanner ) {
 			pageUpsellBanner = (
-				<Banner
+				<UpsellNudge
 					plan={ PLAN_PREMIUM }
 					className="theme__page-upsell-banner"
 					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
-					description={ translate(
-						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+					description={ preventWidows(
+						translate(
+							'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+						)
 					) }
 					event="themes_plan_particular_free_with_plan"
-					callToAction={ translate( 'View Plans' ) }
 					forceHref={ true }
 					href={ plansUrl }
+					showIcon={ true }
 				/>
 			);
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
@@ -682,9 +688,11 @@ class ThemeSheet extends React.Component {
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.id } siteId={ siteId } />
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
-				{ siteId && (
-					<QuerySitePurchases siteId={ siteId } />
-				) /* TODO: Make QuerySitePurchases handle falsey siteId */ }
+				{
+					siteId && (
+						<QuerySitePurchases siteId={ siteId } />
+					) /* TODO: Make QuerySitePurchases handle falsey siteId */
+				}
 				<QuerySitePlans siteId={ siteId } />
 				<DocumentHead title={ title } meta={ metas } link={ links } />
 				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
@@ -720,7 +728,7 @@ class ThemeSheet extends React.Component {
 	}
 }
 
-const ConnectedThemeSheet = connectOptions( props => {
+const ConnectedThemeSheet = connectOptions( ( props ) => {
 	if ( ! props.isLoggedIn || props.siteId ) {
 		return <ThemeSheet { ...props } />;
 	}
@@ -732,7 +740,7 @@ const ConnectedThemeSheet = connectOptions( props => {
 	);
 } );
 
-const ThemeSheetWithOptions = props => {
+const ThemeSheetWithOptions = ( props ) => {
 	const { siteId, isActive, isLoggedIn, isPremium, isPurchased, isJetpack } = props;
 
 	let defaultOption;

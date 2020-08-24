@@ -17,12 +17,12 @@ import {
 } from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
-export const create = action => {
+export const create = ( action ) => {
 	const { siteId, orderId, refund } = action;
 	return request( siteId, action ).post( `orders/${ orderId }/refunds`, refund );
 };
 
-const onCreateError = ( action, error ) => dispatch => {
+const onCreateError = ( action, error ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( createRefundFailure( siteId, orderId, error ) );
 	if ( action.onFailure ) {
@@ -30,7 +30,7 @@ const onCreateError = ( action, error ) => dispatch => {
 	}
 };
 
-const onCreateSuccess = ( action, { data } ) => dispatch => {
+const onCreateSuccess = ( action, { data } ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( createRefundSuccess( siteId, orderId, data ) );
 	// Success! Re-fetch order & notes
@@ -41,17 +41,17 @@ const onCreateSuccess = ( action, { data } ) => dispatch => {
 	}
 };
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId, orderId } = action;
 	return request( siteId, action ).get( `orders/${ orderId }/refunds` );
 };
 
-const onError = ( action, error ) => dispatch => {
+const onError = ( action, error ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( fetchRefundsFailure( siteId, orderId, error ) );
 };
 
-const onSuccess = ( action, { data } ) => dispatch => {
+const onSuccess = ( action, { data } ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( fetchRefundsSuccess( siteId, orderId, data ) );
 };

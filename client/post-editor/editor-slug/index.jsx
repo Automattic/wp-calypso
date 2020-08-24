@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -16,7 +15,7 @@ import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostSlug } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 
@@ -65,7 +64,7 @@ class PostEditorSlug extends Component {
 	onSlugKeyDown( event ) {
 		if ( event.key === 'Enter' || event.key === 'Escape' ) {
 			const { onEscEnter, isEditable } = this.props;
-			this.setState( { isSlugFocused: false }, function() {
+			this.setState( { isSlugFocused: false }, function () {
 				onEscEnter();
 
 				if ( isEditable ) {
@@ -146,7 +145,7 @@ class PostEditorSlug extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const slug = getEditedPostSlug( state, siteId, postId );

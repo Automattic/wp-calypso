@@ -48,8 +48,9 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 		sectionContent = (
 			<Fragment>
 				<FormattedHeader
+					brandFont
 					className="exporter__section-header"
-					headerText={ translate( 'Export Your Content' ) }
+					headerText={ translate( 'Export Content' ) }
 					subHeaderText={ translate( 'Your content on WordPress.com is always yours.' ) }
 					align="left"
 				/>
@@ -67,7 +68,7 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 

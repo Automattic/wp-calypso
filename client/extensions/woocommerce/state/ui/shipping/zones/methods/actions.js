@@ -53,7 +53,7 @@ export const openShippingZoneMethod = ( siteId, methodId ) => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const cancelShippingZoneMethod = siteId => {
+export const cancelShippingZoneMethod = ( siteId ) => {
 	return { type: WOOCOMMERCE_SHIPPING_ZONE_METHOD_CANCEL, siteId };
 };
 
@@ -63,7 +63,7 @@ export const cancelShippingZoneMethod = siteId => {
  * @param {number} siteId Site ID.
  * @returns {object} Action object.
  */
-export const closeShippingZoneMethod = siteId => ( dispatch, getState ) => {
+export const closeShippingZoneMethod = ( siteId ) => ( dispatch, getState ) => {
 	const method = getCurrentlyOpenShippingZoneMethod( getState(), siteId );
 	// Perform validation if the method is from WooCommerce Services
 	if ( startsWith( method.methodType, 'wc_services' ) ) {

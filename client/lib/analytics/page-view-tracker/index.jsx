@@ -91,7 +91,7 @@ export class PageViewTracker extends React.Component {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
 	const currentSlug =

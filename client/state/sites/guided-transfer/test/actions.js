@@ -21,7 +21,7 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -59,7 +59,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestGuidedTransferStatus()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )
@@ -111,7 +111,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#saveHostDetails()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )

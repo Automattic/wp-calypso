@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
@@ -16,7 +15,8 @@ import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { paymentMethodName, isPaymentMethodEnabled } from 'lib/cart-values';
 import {
 	detectWebPaymentMethod,
@@ -24,6 +24,7 @@ import {
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
 } from 'lib/web-payment';
+import IncompatibleProductNotice from './incompatible-product-notice';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -41,11 +42,11 @@ export class PaymentBox extends PureComponent {
 		}
 	}
 
-	handlePaymentMethodChange = paymentMethod => {
+	handlePaymentMethodChange = ( paymentMethod ) => {
 		const onSelectPaymentMethod = this.props.onSelectPaymentMethod;
-		return function() {
-			analytics.ga.recordEvent( 'Upgrades', 'Switch Payment Method' );
-			analytics.tracks.recordEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
+		return function () {
+			gaRecordEvent( 'Upgrades', 'Switch Payment Method' );
+			recordTracksEvent( 'calypso_checkout_switch_to_' + snakeCase( paymentMethod ) );
 			onSelectPaymentMethod( paymentMethod );
 		};
 	};
@@ -72,7 +73,15 @@ export class PaymentBox extends PureComponent {
 			case 'wechat':
 				labelAdditionalText = paymentMethodName( method );
 				break;
-
+			case 'id_wallet':
+				labelLogo = (
+					<img
+						src="/calypso/images/upgrades/ovo.svg"
+						alt={ paymentMethodName( method ) }
+						className="checkout__ovo"
+					/>
+				);
+				break;
 			case 'netbanking':
 				labelLogo = <Gridicon icon="institution" className="checkout__institution" />;
 				labelAdditionalText = paymentMethodName( method );
@@ -90,7 +99,7 @@ export class PaymentBox extends PureComponent {
 					case WEB_PAYMENT_APPLE_PAY_METHOD:
 						labelLogo = (
 							<img
-								src={ `/calypso/images/upgrades/apple-pay.svg` }
+								src="/calypso/images/upgrades/apple-pay.svg"
 								alt={ getWebPaymentMethodName( webPaymentMethod, this.props.translate ) }
 								className="checkout__apple-pay"
 							/>
@@ -120,7 +129,7 @@ export class PaymentBox extends PureComponent {
 				href=""
 				onClick={ this.handlePaymentMethodChange( method ) }
 				selected={ this.props.currentPaymentMethod === method }
-				onKeyPress={ event => this.choosePaymentMethodWithKeyboard( event, method ) }
+				onKeyPress={ ( event ) => this.choosePaymentMethodWithKeyboard( event, method ) }
 			>
 				{ this.getPaymentProviderLabel( method ) }
 			</NavItem>
@@ -131,7 +140,7 @@ export class PaymentBox extends PureComponent {
 		if ( ! this.props.paymentMethods ) {
 			return null;
 		}
-		return this.props.paymentMethods.map( method => {
+		return this.props.paymentMethods.map( ( method ) => {
 			return this.paymentMethod( method );
 		} );
 	}
@@ -168,6 +177,7 @@ export class PaymentBox extends PureComponent {
 					},
 			  } )
 			: this.props.translate( 'Loading…' );
+		const infoMessage = this.props.infoMessage;
 
 		return (
 			<div className="checkout__payment-box-container" key={ this.props.currentPage }>
@@ -177,7 +187,11 @@ export class PaymentBox extends PureComponent {
 
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
-						<div className={ contentClass }>{ this.props.children }</div>
+						<div className={ contentClass }>
+							{ infoMessage && this.props.infoMessage }
+							<IncompatibleProductNotice incompatibleProducts={ this.props.incompatibleProducts } />
+							{ this.props.children }
+						</div>
 					</div>
 				</Card>
 			</div>

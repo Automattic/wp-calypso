@@ -23,10 +23,10 @@ export default class ImportTypeChoice extends Component {
 
 		let firstSelectedItem = findKey(
 			props.radioOptions,
-			el => el.selected !== true && el.enabled !== false
+			( el ) => el.selected !== true && el.enabled !== false
 		);
 		if ( firstSelectedItem === -1 ) {
-			firstSelectedItem = findKey( props.radioOptions, el => el.enabled !== false );
+			firstSelectedItem = findKey( props.radioOptions, ( el ) => el.enabled !== false );
 		}
 
 		this.state.activeItem = firstSelectedItem !== -1 ? firstSelectedItem : null;
@@ -37,7 +37,7 @@ export default class ImportTypeChoice extends Component {
 		this.props.onChange( this.state.activeItem );
 	};
 
-	onClickHandler = event => {
+	onClickHandler = ( event ) => {
 		event.preventDefault();
 
 		const chosenItem = event.currentTarget.dataset.key;
@@ -56,7 +56,7 @@ export default class ImportTypeChoice extends Component {
 		}
 	};
 
-	onKeyPressHandler = event => {
+	onKeyPressHandler = ( event ) => {
 		// TODO implement this to act on enter key
 		event.preventDefault();
 	};

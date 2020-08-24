@@ -1,14 +1,14 @@
 let j;
 
-const getImports = source => {
+const getImports = ( source ) => {
 	const imports = [];
 
-	source.find( j.ImportDeclaration ).forEach( dec => imports.push( dec ) );
+	source.find( j.ImportDeclaration ).forEach( ( dec ) => imports.push( dec ) );
 
 	return imports;
 };
 
-const getRequires = source => {
+const getRequires = ( source ) => {
 	const requires = [];
 
 	source
@@ -21,12 +21,12 @@ const getRequires = source => {
 				},
 			},
 		} )
-		.forEach( req => requires.push( req ) );
+		.forEach( ( req ) => requires.push( req ) );
 
 	return requires;
 };
 
-const getModularLodashDecs = requires =>
+const getModularLodashDecs = ( requires ) =>
 	requires.filter(
 		( { value: { init } } ) =>
 			init.type === 'CallExpression' &&
@@ -36,10 +36,10 @@ const getModularLodashDecs = requires =>
 			init.arguments[ 0 ].value.startsWith( 'lodash/' )
 	);
 
-const makeNewImports = decs => {
+const makeNewImports = ( decs ) => {
 	const imports = [];
 
-	decs.forEach( dec => {
+	decs.forEach( ( dec ) => {
 		const local = dec.value.init.arguments[ 0 ].value.replace( 'lodash/', '' );
 		const name = dec.value.id.name;
 
@@ -67,12 +67,13 @@ const findInsertionPoint = ( imports, requires ) => {
 
 	// see if we have an external import
 	const externalAt = imports.findIndex(
-		dec => dec.value.comments && dec.value.comments[ 0 ].value === '*\n * External dependencies\n '
+		( dec ) =>
+			dec.value.comments && dec.value.comments[ 0 ].value === '*\n * External dependencies\n '
 	);
 
 	if ( externalAt >= 0 ) {
 		const internalAt = imports.findIndex(
-			dec =>
+			( dec ) =>
 				dec.value.comments && dec.value.comments[ 0 ].value === '*\n * Internal dependencies\n '
 		);
 

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -40,7 +41,7 @@ async function validateUrl( redirectUrl ) {
 	}
 }
 
-function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
+function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } ) {
 	const translate = useTranslate();
 	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
 
@@ -54,24 +55,43 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery } ) {
 	// This helps avoid jarring layout shifts. It's not ideal that the link URL changes transparently
 	// like that, but it is better than the alternative, and in practice it should happen quicker than
 	// the user can notice.
-	const redirectLink = (
-		<a href={ validatedRedirectUrl || '/' }>
-			<Gravatar user={ currentUser } size={ 16 } />
-			{ userName }
-		</a>
-	);
 
 	return (
 		<div className="continue-as-user">
-			{ translate( 'or continue as {{userName/}}', {
-				components: { userName: redirectLink },
-				comment: 'Alternative link under login header, skips login to continue as current user.',
-			} ) }
+			<a href={ validatedRedirectUrl || '/' } className="continue-as-user__gravatar-link">
+				<Gravatar
+					user={ currentUser }
+					className="continue-as-user__gravatar"
+					imgSize={ 400 }
+					size={ 110 }
+				/>
+				<div>{ userName }</div>
+			</a>
+			<Button primary href={ validatedRedirectUrl || '/' }>
+				{ translate( 'Continue' ) }
+			</Button>
+			<p>
+				{ translate( 'Not you?{{br/}}Log in with {{link}}another account{{/link}}', {
+					components: {
+						br: <br />,
+						link: (
+							<button
+								type="button"
+								id="loginAsAnotherUser"
+								className="continue-as-user__change-user-link"
+								onClick={ onChangeAccount }
+							/>
+						),
+					},
+					args: { userName },
+					comment: 'Link to continue login as different user',
+				} ) }
+			</p>
 		</div>
 	);
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	currentUser: getCurrentUser( state ),
 	redirectUrlFromQuery: get( getCurrentQueryArguments( state ), 'redirect_to', null ),
 } ) )( ContinueAsUser );

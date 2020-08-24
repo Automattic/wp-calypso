@@ -110,7 +110,7 @@ class OrderPaymentCard extends Component {
 	};
 
 	toggleDialog = () => {
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			showDialog: ! prevState.showDialog,
 		} ) );
 	};
@@ -140,6 +140,6 @@ class OrderPaymentCard extends Component {
 	}
 }
 
-export default connect( null, dispatch => bindActionCreators( { saveOrder }, dispatch ) )(
+export default connect( null, ( dispatch ) => bindActionCreators( { saveOrder }, dispatch ) )(
 	localize( OrderPaymentCard )
 );

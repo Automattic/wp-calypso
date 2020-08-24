@@ -4,7 +4,7 @@
 
 .site-tools__section-title {
 	margin-bottom: 4px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 18px;
 	color: var( --color-neutral-70 );
 
@@ -15,7 +15,7 @@
 
 .site-tools__section-desc {
 	margin-bottom: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	font-style: italic;
 }
@@ -30,7 +30,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		&.is-compact {
 			padding: 24px;
 		}

@@ -235,7 +235,7 @@ if ( typeof window !== 'undefined' ) {
 }
 ```
 
-Note that because parts of our application are [rendered on the server](https://github.com/Automattic/wp-calypso/blob/master/docs/server-side-rendering.md), we cannot always assume that a `window` global is present. Therefore, if you must reference a `window` global, always perform a `typeof` check to verify that it exists.
+Note that because parts of our application are [rendered on the server](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/server-side-rendering.md), we cannot always assume that a `window` global is present. Therefore, if you must reference a `window` global, always perform a `typeof` check to verify that it exists.
 
 ## Naming Conventions
 
@@ -721,7 +721,7 @@ If ESLint encounters any issues inside any .jsx or .js files you have updated, a
 To lint the entire project, from the root of your working directory run:
 
 ```bash
-npm run lint:js
+yarn run lint:js
 ```
 
 
@@ -734,7 +734,7 @@ If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to 
 Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
 
 ```bash
-npm install -g eslint babel-eslint eslint-plugin-react eslint-plugin-wpcalypso eslint-config-wpcalypso
+yarn global add eslint babel-eslint eslint-plugin-react eslint-plugin-wpcalypso eslint-config-wpcalypso
 ```
 
 #### Identifying Spaces with Sublime Text

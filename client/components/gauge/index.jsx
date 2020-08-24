@@ -31,7 +31,7 @@ export default class extends React.PureComponent {
 
 	// See https://stackoverflow.com/a/18473154/1432801
 	// Renders 2d-canvas like circle segment arcs as svg path
-	getPathDefinition = percent => {
+	getPathDefinition = ( percent ) => {
 		const { lineWidth, size } = this.props;
 		const start = 0.8 * Math.PI;
 		const end = ( 0.8 + 1.4 * ( percent / 100 ) ) * Math.PI;

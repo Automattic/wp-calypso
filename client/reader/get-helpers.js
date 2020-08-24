@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import url from 'url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
 
@@ -10,6 +9,7 @@ import { trim } from 'lodash';
  */
 import { decodeEntities } from 'lib/formatting';
 import { isSiteDescriptionBlocked } from 'reader/lib/site-description-blocklist';
+import { getUrlParts } from 'lib/url';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
@@ -69,7 +69,7 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = site.domain;
 	} else {
 		const siteUrl = getSiteUrl( { feed, site, post } );
-		siteName = siteUrl ? url.parse( siteUrl ).hostname : null;
+		siteName = siteUrl ? getUrlParts( siteUrl ).hostname : null;
 	}
 
 	return decodeEntities( siteName );
@@ -83,7 +83,7 @@ export const getSiteDescription = ( { site, feed } ) => {
 	return description;
 };
 
-export const getSiteAuthorName = site => {
+export const getSiteAuthorName = ( site ) => {
 	const siteAuthor = site && site.owner;
 	const authorFullName =
 		siteAuthor &&

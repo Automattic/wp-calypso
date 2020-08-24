@@ -33,7 +33,7 @@ describe( 'middleware', () => {
 
 		test( 'should trigger analytics and run passed thunks', () => {
 			const dispatch = spy();
-			const testAction = dispatcher => dispatcher( { type: 'test' } );
+			const testAction = ( dispatcher ) => dispatcher( { type: 'test' } );
 			const statBump = bumpStat( 'splines', 'reticulated_count' );
 
 			withAnalytics( statBump, testAction )( dispatch );
@@ -97,11 +97,11 @@ describe( 'middleware', () => {
 			const thunk = recordTracksEventWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = createdAction => ( dispatchedEvent = createdAction );
+			const dispatch = ( createdAction ) => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {
-				ui: { oauth2Clients: { currentClientId: clientId } },
+				oauth2Clients: { ui: { currentClientId: clientId } },
 			} );
 
 			thunk( dispatch, getState );
@@ -123,11 +123,11 @@ describe( 'middleware', () => {
 			const thunk = recordPageViewWithClientId( ...props );
 
 			let dispatchedEvent;
-			const dispatch = createdAction => ( dispatchedEvent = createdAction );
+			const dispatch = ( createdAction ) => ( dispatchedEvent = createdAction );
 
 			const clientId = 123;
 			const getState = () => ( {
-				ui: { oauth2Clients: { currentClientId: clientId } },
+				oauth2Clients: { ui: { currentClientId: clientId } },
 			} );
 
 			thunk( dispatch, getState );

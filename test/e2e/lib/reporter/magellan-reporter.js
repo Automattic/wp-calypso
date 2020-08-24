@@ -8,11 +8,11 @@ const fs = require( 'fs-extra' );
 const XunitViewerParser = require( 'xunit-viewer/parser' );
 const pngitxt = require( 'png-itxt' );
 
-const Reporter = function() {};
+const Reporter = function () {};
 
 util.inherits( Reporter, BaseReporter );
 
-Reporter.prototype.listenTo = function( testRun, test, source ) {
+Reporter.prototype.listenTo = function ( testRun, test, source ) {
 	// Print STDOUT/ERR to the screen for extra debugging
 	if ( process.env.MAGELLANDEBUG ) {
 		source.stdout.pipe( process.stdout );
@@ -37,7 +37,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 	// Only enable Slack messages on the master branch
 	const slackClient = getSlackClient();
 
-	source.on( 'message', msg => {
+	source.on( 'message', ( msg ) => {
 		if ( msg.type === 'worker-status' ) {
 			const passCondition = msg.passed;
 			const failCondition =
@@ -59,8 +59,8 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 					if ( dirErr ) return 1;
 
 					files
-						.filter( file => file.match( /png$/i ) )
-						.forEach( screenshotPath => {
+						.filter( ( file ) => file.match( /png$/i ) )
+						.forEach( ( screenshotPath ) => {
 							// Send screenshot to Slack on master branch only
 							if (
 								config.has( 'slackTokenForScreenshots' ) &&
@@ -73,7 +73,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 
 								try {
 									fs.createReadStream( `${ screenshotDir }/${ screenshotPath }` ).pipe(
-										pngitxt.get( 'url', url => {
+										pngitxt.get( 'url', ( url ) => {
 											slackUpload.uploadFile(
 												{
 													file: fs.createReadStream( `${ screenshotDir }/${ screenshotPath }` ),
@@ -81,7 +81,7 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 													initialComment: url,
 													channels: slackChannel,
 												},
-												err => {
+												( err ) => {
 													if ( ! err ) return;
 
 													slackClient.send( {
@@ -120,8 +120,8 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 					if ( dirErr ) return 1;
 
 					reportFiles
-						.filter( file => file.match( /xml$/i ) )
-						.forEach( reportPath =>
+						.filter( ( file ) => file.match( /xml$/i ) )
+						.forEach( ( reportPath ) =>
 							copyReports( slackClient, reportDir, reportPath, testRun.guid )
 						);
 				} );
@@ -131,8 +131,8 @@ Reporter.prototype.listenTo = function( testRun, test, source ) {
 					if ( dirErr ) return 1;
 
 					screenshotFiles
-						.filter( file => file.match( /png$/i ) )
-						.forEach( screenshotFile =>
+						.filter( ( file ) => file.match( /png$/i ) )
+						.forEach( ( screenshotFile ) =>
 							copyScreenshots( slackClient, screenshotDir, screenshotFile, finalScreenshotDir )
 						);
 				} );
@@ -163,7 +163,7 @@ function copyReports( slackClient, reportDir, reportPath, guid ) {
 		fs.copyFile(
 			`${ reportDir }/${ reportPath }`,
 			`./reports/${ guid }_${ reportPath }`,
-			moveErr => {
+			( moveErr ) => {
 				if ( ! moveErr ) {
 					return;
 				}
@@ -182,7 +182,7 @@ function copyReports( slackClient, reportDir, reportPath, guid ) {
 // Move to /screenshots for CircleCI artifacts
 function copyScreenshots( slackClient, dir, path, finalScreenshotDir ) {
 	try {
-		fs.copyFile( `${ dir }/${ path }`, `${ finalScreenshotDir }/${ path }`, moveErr => {
+		fs.copyFile( `${ dir }/${ path }`, `${ finalScreenshotDir }/${ path }`, ( moveErr ) => {
 			if ( ! moveErr ) {
 				return;
 			}
@@ -215,14 +215,14 @@ function sendFailureNotif( slackClient, reportDir, testRun ) {
 		console.log( `Failed to read directory, maybe it doesn't exist: ${ e.message }` );
 		return;
 	}
-	files.forEach( reportPath => {
+	files.forEach( ( reportPath ) => {
 		if ( ! reportPath.match( /xml$/i ) ) {
 			return;
 		}
 		try {
 			const xmlString = fs.readFileSync( `${ reportDir }/${ reportPath }`, 'utf-8' );
 			const xmlData = XunitViewerParser.parse( xmlString );
-			failuresCount += xmlData[ 0 ].tests.filter( t => t.status === 'fail' ).length;
+			failuresCount += xmlData[ 0 ].tests.filter( ( t ) => t.status === 'fail' ).length;
 		} catch ( e ) {
 			console.log( `Error reading report file, likely just timing race: ${ e.message }` );
 		}

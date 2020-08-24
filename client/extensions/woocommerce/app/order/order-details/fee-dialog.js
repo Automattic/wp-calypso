@@ -50,7 +50,7 @@ class OrderFeeDialog extends Component {
 		}
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const value = event.target.value;
 		switch ( event.target.name ) {
 			case 'new_fee_name':
@@ -69,7 +69,7 @@ class OrderFeeDialog extends Component {
 
 	formatCurrencyInput = () => {
 		const { currency } = this.props.order;
-		this.setState( prevState => ( {
+		this.setState( ( prevState ) => ( {
 			total: getCurrencyFormatDecimal( prevState.total, currency ),
 		} ) );
 	};
@@ -140,7 +140,7 @@ class OrderFeeDialog extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSiteWithFallback( state );
 		const siteId = site ? site.ID : false;
 		const order = getOrderWithEdits( state );
@@ -150,5 +150,5 @@ export default connect(
 			order,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder }, dispatch )
 )( localize( OrderFeeDialog ) );

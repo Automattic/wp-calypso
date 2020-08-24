@@ -1,3 +1,14 @@
+/**
+ * Note: this file is imported by `client` and `test/e2e` tests. `test/e2e` do not have the config
+ * required to make aliased imports work (e.g. `import * from 'lib/'). As such, we must use relative
+ * paths here (e.g. `import * from '../../lib/`)
+ */
+
+/**
+ * Internal dependencies
+ */
+import * as RUM_DATA_COLLECTION from '../../lib/performance-tracking/const';
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -24,15 +35,6 @@ export default {
 			show: 80,
 		},
 		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
-	showCompositeCheckout: {
-		datestamp: '20200221',
-		variations: {
-			composite: 50,
-			regular: 50,
-		},
-		defaultVariation: 'regular',
 		allowExistingUsers: true,
 	},
 	skipThemesSelectionModal: {
@@ -72,10 +74,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20190429',
+		datestamp: '20200421',
 		variations: {
-			offer: 100,
-			noOffer: 0,
+			offer: 50,
+			noOffer: 50,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
@@ -100,46 +102,148 @@ export default {
 	domainStepCopyUpdates: {
 		datestamp: '20191121',
 		variations: {
-			variantShowUpdates: 90,
-			control: 10,
+			variantShowUpdates: 100,
+			control: 0,
 		},
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	sidebarUpsellNudgeUnification: {
-		datestamp: '20200221',
+	domainStepPlanStepSwap: {
+		datestamp: '20210513',
 		variations: {
-			variantShowUnifiedUpsells: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	domainStepDesignUpdates: {
-		datestamp: '20201220',
-		variations: {
-			variantDesignUpdates: 0,
+			variantShowSwapped: 0,
 			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	planStepCopyUpdates: {
-		datestamp: '20200221',
+	newSiteGutenbergOnboarding: {
+		datestamp: '20200818',
 		variations: {
-			variantCopyUpdates: 50,
+			gutenberg: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
+		countryCodeTargets: [
+			'AE',
+			'AL',
+			'AR',
+			'AU',
+			'BD',
+			'BR',
+			'CN',
+			'CO',
+			'DE',
+			'EG',
+			'ES',
+			'ET',
+			'FI',
+			'FR',
+			'GB',
+			'GE',
+			'GH',
+			'GR',
+			'HK',
+			'HR',
+			'ID',
+			'IE',
+			'IL',
+			'IN',
+			'IT',
+			'JM',
+			'JP',
+			'KE',
+			'KH',
+			'KR',
+			'LK',
+			'MM',
+			'MX',
+			'MV',
+			'MY',
+			'NG',
+			'NL',
+			'NP',
+			'NP',
+			'NZ',
+			'PH',
+			'PK',
+			'PL',
+			'QA',
+			'RO',
+			'RS',
+			'RU',
+			'SA',
+			'SE',
+			'SG',
+			'TH',
+			'TR',
+			'TZ',
+			'UA',
+			'UG',
+			'VN',
+			'ZA',
+		],
 	},
-	peerReferralEarnCard: {
-		datestamp: '20200305',
+	[ RUM_DATA_COLLECTION.AB_NAME ]: {
+		datestamp: '20200602',
 		variations: {
-			show: 50,
-			holdout: 50,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 50,
+			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 50,
 		},
-		defaultVariation: 'holdout',
+		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
+		localeTargets: 'any',
 		allowExistingUsers: true,
+	},
+	showBusinessPlanBump: {
+		datestamp: '20300619',
+		variations: {
+			variantShowPlanBump: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	offerResetFlow: {
+		datestamp: '20200804',
+		variations: {
+			showOfferResetFlow: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	userlessCheckout: {
+		datestamp: '20210806',
+		variations: {
+			variantUserless: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		countryCodeTargets: [ 'US', 'CA' ],
+	},
+	reskinSignupFlow: {
+		datestamp: '20210812',
+		variations: {
+			reskinned: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		localeTargets: 'any',
+		localeExceptions: [ 'en', 'es' ],
+	},
+	existingUsersGutenbergOnboard: {
+		datestamp: '20200819',
+		variations: {
+			gutenberg: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
+		countryCodeTargets: [ 'US', 'CA' ],
 	},
 };

@@ -89,7 +89,7 @@ function ProductCardExample() {
 						},
 					] }
 					selectedSlug={ selectedProductOption }
-					handleSelect={ slug => selectProductOption( slug ) }
+					handleSelect={ ( slug ) => selectProductOption( slug ) }
 				/>
 				<ProductCardAction label="Upgrade" />
 			</ProductCard>

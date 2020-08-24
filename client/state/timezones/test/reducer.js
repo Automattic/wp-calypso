@@ -9,12 +9,12 @@ import deepFreeze from 'deep-freeze';
  */
 import { timezonesReceive } from '../actions';
 import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		sandbox.stub( console, 'warn' );
 	} );

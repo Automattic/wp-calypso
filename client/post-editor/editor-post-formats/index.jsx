@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -19,7 +18,7 @@ import AccordionSection from 'components/accordion/section';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
 import { editPost } from 'state/posts/actions';
@@ -74,7 +73,7 @@ class EditorPostFormats extends React.Component {
 		return formats;
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const format = event.target.value;
 
 		this.props.editPost( this.props.siteId, this.props.postId, { format } );
@@ -119,7 +118,7 @@ class EditorPostFormats extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postFormats = getPostFormats( state, siteId );

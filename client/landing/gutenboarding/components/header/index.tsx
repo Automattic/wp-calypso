@@ -1,192 +1,91 @@
 /**
  * External dependencies
  */
+import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import { Button, Icon } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import React, { FunctionComponent, useEffect, useCallback, useState } from 'react';
-import { useDebounce } from 'use-debounce';
-import classnames from 'classnames';
-import { DomainSuggestions } from '@automattic/data-stores';
-import { useHistory } from 'react-router-dom';
+import { Icon, wordpress } from '@wordpress/icons';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { USER_STORE } from '../../stores/user';
-import { SITE_STORE } from '../../stores/site';
-import './style.scss';
 import DomainPickerButton from '../domain-picker-button';
-import { selectorDebounce } from '../../constants';
+import PlansButton from '../plans-button';
+import { useCurrentStep, Step } from '../../path';
+import { isEnabled } from '../../../../config';
 import Link from '../link';
-import SignupForm from '../../components/signup-form';
 
-const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
-interface Props {
-	prev?: string;
-}
+const Header: React.FunctionComponent = () => {
+	const { __, i18nLocale } = useI18n();
+	const currentStep = useCurrentStep();
 
-const Header: FunctionComponent< Props > = ( { prev } ) => {
-	const { __: NO__ } = useI18n();
+	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
-	const currentUser = useSelect( select => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( select => select( USER_STORE ).getNewUser() );
+	// steps (including modals) where we show Domains button
+	const showDomainsButton = [
+		'DesignSelection',
+		'Style',
+		'Features',
+		'Plans',
+		'PlansModal',
+	].includes( currentStep );
 
-	const { createSite } = useDispatch( SITE_STORE );
+	// steps (including modals) where we show Plans button
+	const showPlansButton = [ 'DesignSelection', 'Style', 'Features' ].includes( currentStep );
 
-	const newSite = useSelect( select => select( SITE_STORE ).getNewSite() );
-
-	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( select =>
-		select( ONBOARD_STORE ).getState()
-	);
-	const hasSelectedDesign = !! selectedDesign;
-	const { setDomain, resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
-	const [ domainSearch ] = useDebounce( siteTitle, selectorDebounce );
-	const freeDomainSuggestion = useSelect(
-		select => {
-			if ( ! domainSearch ) {
-				return;
-			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainSearch, {
-				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-				include_wordpressdotcom: true,
-				quantity: 1,
-				...{ vertical: siteVertical?.id },
-			} )?.[ 0 ];
-		},
-		[ domainSearch, siteVertical ]
-	);
-
-	useEffect( () => {
-		if ( ! siteTitle ) {
-			setDomain( undefined );
-		}
-	}, [ siteTitle, setDomain ] );
-
-	const [ showSignupDialog, setShowSignupDialog ] = useState( false );
-
-	const {
-		location: { pathname },
-	} = useHistory();
-	useEffect( () => {
-		// Dialogs usually close naturally when the user clicks the browser's
-		// back/forward buttons because their parent is unmounted. However
-		// this header isn't unmounted on route changes so we need to
-		// explicitly hide the dialog.
-		setShowSignupDialog( false );
-	}, [ pathname, setShowSignupDialog ] );
-
-	const currentDomain = domain ?? freeDomainSuggestion;
+	// CreateSite step clears state before redirecting, don't show the default text in this case
+	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	const siteTitleElement = (
-		<span className="gutenboarding__site-title">
-			{ siteTitle ? siteTitle : NO__( 'Create your site' ) }
-		</span>
-	);
 
-	const domainElement = (
-		<span
-			className={ classnames( 'gutenboarding__header-domain-picker-button-domain', {
-				placeholder: ! currentDomain,
-			} ) }
-		>
-			{ currentDomain ? currentDomain.domain_name : 'example.wordpress.com' }
-		</span>
-	);
-
-	const handleCreateSite = useCallback(
-		( username: string, bearerToken?: string ) => {
-			const siteUrl = currentDomain?.domain_name || siteTitle || username;
-			createSite( {
-				blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-				blog_title: siteTitle,
-				options: {
-					site_vertical: siteVertical?.id,
-					site_vertical_name: siteVertical?.label,
-					site_information: {
-						title: siteTitle,
-					},
-					site_creation_flow: 'gutenboarding',
-					theme: `pub/${ selectedDesign?.slug }`,
-				},
-				...( bearerToken && { authToken: bearerToken } ),
-			} );
-		},
-		[ createSite, currentDomain, selectedDesign, siteTitle, siteVertical ]
-	);
-
-	const handleSignup = () => {
-		setShowSignupDialog( true );
+	const changeLocaleButton = () => {
+		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
+			return (
+				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
+					<Link to={ Step.LanguageModal }>
+						<span>{ __( 'Site Language' ) } </span>
+						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
+					</Link>
+				</div>
+			);
+		}
+		return null;
 	};
-
-	useEffect( () => {
-		if ( newUser && newUser.bearerToken && newUser.username ) {
-			handleCreateSite( newUser.username, newUser.bearerToken );
-		}
-	}, [ newUser, handleCreateSite ] );
-
-	useEffect( () => {
-		if ( newSite ) {
-			resetOnboardStore();
-			window.location.href = `/block-editor/page/${ newSite.blogid }/home?is-gutenboarding`;
-		}
-	}, [ newSite, resetOnboardStore ] );
 
 	return (
 		<div
 			className="gutenboarding__header"
 			role="region"
-			aria-label={ NO__( 'Top bar' ) }
+			aria-label={ __( 'Top bar' ) }
 			tabIndex={ -1 }
 		>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
-					<Link className="gutenboarding__header-back-button" to={ prev }>
-						<Icon icon="arrow-left-alt" />
-						{ NO__( 'Back' ) }
-					</Link>
+			<section className="gutenboarding__header-section">
+				<div className="gutenboarding__header-section-item">
+					<div className="gutenboarding__header-wp-logo">
+						<Icon icon={ wordpress } size={ 28 } />
+					</div>
 				</div>
-				<div className="gutenboarding__header-group">
-					{ siteTitle ? (
-						<DomainPickerButton
-							className="gutenboarding__header-domain-picker-button"
-							defaultQuery={ siteTitle }
-							disabled={ ! currentDomain }
-							onDomainSelect={ setDomain }
-							queryParameters={ { vertical: siteVertical?.id } }
-						>
-							{ siteTitleElement }
-							{ domainElement }
-						</DomainPickerButton>
-					) : (
-						siteTitleElement
-					) }
+				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
+					<div className="gutenboarding__header-site-title">
+						{ siteTitle ? siteTitle : siteTitleDefault }
+					</div>
 				</div>
-			</div>
-			<div className="gutenboarding__header-section">
-				<div className="gutenboarding__header-group">
-					{ hasSelectedDesign && (
-						<Button
-							className="gutenboarding__header-next-button"
-							isPrimary
-							isLarge
-							onClick={ () =>
-								currentUser ? handleCreateSite( currentUser.username ) : handleSignup()
-							}
-						>
-							{ NO__( 'Create my site' ) }
-						</Button>
-					) }
+				<div className="gutenboarding__header-section-item gutenboarding__header-domain-section">
+					{ showDomainsButton && <DomainPickerButton /> }
 				</div>
-			</div>
-			{ showSignupDialog && <SignupForm onRequestClose={ () => setShowSignupDialog( false ) } /> }
+				{ changeLocaleButton() }
+				<div className="gutenboarding__header-section-item gutenboarding__header-plan-section gutenboarding__header-section-item--right">
+					{ showPlansButton && <PlansButton /> }
+				</div>
+			</section>
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default Header;

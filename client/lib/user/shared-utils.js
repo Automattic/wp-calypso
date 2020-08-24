@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'lib/formatting/decode-entities';
 import { getLanguage } from 'lib/i18n-utils/utils';
 import { withoutHttp } from 'lib/url';
 
@@ -33,6 +33,9 @@ const allowedKeys = [
 	'is_new_reader',
 	'social_login_connections',
 	'abtests',
+	'lasagna_jwt',
+	'i18n_empathy_mode',
+	'use_fallback_for_incomplete_languages',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];

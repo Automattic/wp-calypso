@@ -22,7 +22,7 @@ function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	);
 }
 
-const ConnectedAuthorSelectorExample = connect( state => {
+const ConnectedAuthorSelectorExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	if ( ! user ) {
 		return {};

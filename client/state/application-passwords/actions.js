@@ -14,6 +14,7 @@ import {
 import 'state/data-layer/wpcom/me/two-step/application-passwords';
 import 'state/data-layer/wpcom/me/two-step/application-passwords/delete';
 import 'state/data-layer/wpcom/me/two-step/application-passwords/new';
+import 'state/application-passwords/init';
 
 /**
  * Returns an action object to signal the request of the user's application passwords.
@@ -28,7 +29,7 @@ export const requestApplicationPasswords = () => ( { type: APPLICATION_PASSWORDS
  * @param  {Array}  appPasswords Array containing the application passwords of the current user.
  * @returns {object}              Action object.
  */
-export const receiveApplicationPasswords = appPasswords => ( {
+export const receiveApplicationPasswords = ( appPasswords ) => ( {
 	type: APPLICATION_PASSWORDS_RECEIVE,
 	appPasswords,
 } );
@@ -39,7 +40,7 @@ export const receiveApplicationPasswords = appPasswords => ( {
  * @param  {string} applicationName Name of the application password.
  * @returns {object}                 Action object.
  */
-export const createApplicationPassword = applicationName => ( {
+export const createApplicationPassword = ( applicationName ) => ( {
 	type: APPLICATION_PASSWORD_CREATE,
 	applicationName,
 } );
@@ -50,7 +51,7 @@ export const createApplicationPassword = applicationName => ( {
  * @param  {object} appPassword Application password.
  * @returns {object}             Action object.
  */
-export const createApplicationPasswordSuccess = appPassword => ( {
+export const createApplicationPasswordSuccess = ( appPassword ) => ( {
 	type: APPLICATION_PASSWORD_CREATE_SUCCESS,
 	appPassword,
 } );
@@ -70,7 +71,7 @@ export const clearNewApplicationPassword = () => ( {
  * @param  {number} appPasswordId ID of the application password.
  * @returns {object}               Action object.
  */
-export const deleteApplicationPassword = appPasswordId => ( {
+export const deleteApplicationPassword = ( appPasswordId ) => ( {
 	type: APPLICATION_PASSWORD_DELETE,
 	appPasswordId,
 } );
@@ -81,7 +82,7 @@ export const deleteApplicationPassword = appPasswordId => ( {
  * @param  {number} appPasswordId ID of the application password.
  * @returns {object}               Action object.
  */
-export const deleteApplicationPasswordSuccess = appPasswordId => ( {
+export const deleteApplicationPasswordSuccess = ( appPasswordId ) => ( {
 	type: APPLICATION_PASSWORD_DELETE_SUCCESS,
 	appPasswordId,
 } );

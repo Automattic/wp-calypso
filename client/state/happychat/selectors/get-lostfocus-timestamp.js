@@ -3,4 +3,4 @@
  */
 import { get } from 'lodash';
 
-export default state => get( state, 'happychat.ui.lostFocusAt' );
+export default ( state ) => get( state, 'happychat.ui.lostFocusAt' );

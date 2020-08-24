@@ -102,7 +102,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 };
 
 const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, newStatus } ) => ( {
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 	updateCommentStatus: () =>
 		dispatch(

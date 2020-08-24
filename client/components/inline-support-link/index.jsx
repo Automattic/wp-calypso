@@ -12,6 +12,13 @@ import Gridicon from 'components/gridicon';
  */
 import ExternalLink from 'components/external-link';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import {
+	bumpStat,
+	composeAnalytics,
+	recordTracksEvent,
+	withAnalytics,
+} from 'state/analytics/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -23,40 +30,32 @@ class InlineSupportLink extends Component {
 		supportPostId: PropTypes.number,
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
-		text: PropTypes.string,
 		showIcon: PropTypes.bool,
 		iconSize: PropTypes.number,
+		tracksEvent: PropTypes.string,
+		tracksOptions: PropTypes.object,
+		statsGroup: PropTypes.string,
+		statsName: PropTypes.string,
 	};
 
 	static defaultProps = {
 		supportPostId: null,
 		supportLink: null,
 		showText: true,
-		text: null,
 		showIcon: true,
 		iconSize: 14,
-	};
-
-	handleClick = event => {
-		const { supportPostId, supportLink } = this.props;
-
-		if ( ! supportPostId ) {
-			return null;
-		}
-
-		event.preventDefault();
-		this.props.openSupportArticleDialog( { postId: supportPostId, postUrl: supportLink } );
 	};
 
 	render() {
 		const {
 			showText,
-			text,
 			supportPostId,
 			supportLink,
 			showIcon,
 			iconSize,
 			translate,
+			openDialog,
+			children,
 		} = this.props;
 
 		if ( ! supportPostId && ! supportLink ) {
@@ -64,25 +63,65 @@ class InlineSupportLink extends Component {
 		}
 
 		const LinkComponent = supportPostId ? 'a' : ExternalLink;
+		const url = supportPostId ? localizeUrl( supportLink ) : supportLink;
 		const externalLinkProps = ! supportPostId && {
 			icon: showIcon,
 			iconSize,
 		};
 
+		const text = children ? children : translate( 'Learn more' );
+
 		return (
 			<LinkComponent
 				className="inline-support-link"
-				href={ supportLink }
-				onClick={ this.handleClick }
+				href={ url }
+				onClick={ openDialog }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ showText && ( text || translate( 'Learn more' ) ) }
+				{ showText && text }
 				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
 			</LinkComponent>
 		);
 	}
 }
 
-export default connect( null, { openSupportArticleDialog } )( localize( InlineSupportLink ) );
+const mapDispatchToProps = ( dispatch, ownProps ) => {
+	const {
+		tracksEvent,
+		tracksOptions,
+		statsGroup,
+		statsName,
+		supportPostId,
+		supportLink,
+	} = ownProps;
+	return {
+		openDialog: ( event ) => {
+			if ( ! supportPostId ) {
+				return;
+			}
+			event.preventDefault();
+			const analyticsEvents = [
+				...( tracksEvent ? [ recordTracksEvent( tracksEvent, tracksOptions ) ] : [] ),
+				...( statsGroup && statsName ? [ bumpStat( statsGroup, statsName ) ] : [] ),
+			];
+			if ( analyticsEvents.length > 0 ) {
+				return dispatch(
+					withAnalytics(
+						composeAnalytics( ...analyticsEvents ),
+						openSupportArticleDialog( { postId: supportPostId, postUrl: supportLink } )
+					)
+				);
+			}
+			return dispatch(
+				openSupportArticleDialog( {
+					postId: supportPostId,
+					postUrl: supportLink,
+				} )
+			);
+		},
+	};
+};
+
+export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );

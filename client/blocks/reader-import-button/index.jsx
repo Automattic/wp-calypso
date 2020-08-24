@@ -31,14 +31,14 @@ class ReaderImportButton extends React.Component {
 
 	state = { disabled: false };
 
-	onClick = event => {
+	onClick = ( event ) => {
 		// Don't allow picking of a new file if there's an import in progress
 		if ( this.state.disabled ) {
 			event.preventDefault();
 		}
 	};
 
-	onPick = files => {
+	onPick = ( files ) => {
 		// We only care about the first file in the list
 		const file = files[ 0 ];
 		if ( ! file ) {
@@ -68,11 +68,11 @@ class ReaderImportButton extends React.Component {
 		}
 	};
 
-	onImportProgress = event => {
+	onImportProgress = ( event ) => {
 		this.props.onProgress( event );
 	};
 
-	onImportSuccess = feedImport => {
+	onImportSuccess = ( feedImport ) => {
 		const message = this.props.translate(
 			"{{em}}%(name)s{{/em}} has been received. You'll get an email when your import is complete.",
 			{
@@ -83,7 +83,7 @@ class ReaderImportButton extends React.Component {
 		this.props.successNotice( message );
 	};
 
-	onImportFailure = error => {
+	onImportFailure = ( error ) => {
 		if ( ! error ) {
 			return null;
 		}

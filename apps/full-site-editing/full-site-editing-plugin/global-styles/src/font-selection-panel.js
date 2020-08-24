@@ -24,23 +24,23 @@ export default ( {
 	updateHeadingsFont,
 } ) => {
 	if ( ! fontBaseOptions || ! fontHeadingsOptions ) {
-		return <NoSupport unsupportedFeature={ __( 'custom font selection' ) } />;
+		return <NoSupport unsupportedFeature={ __( 'custom font selection', 'full-site-editing' ) } />;
 	}
 
 	return (
 		<>
 			<SelectControl
-				label={ __( 'Heading Font' ) }
+				label={ __( 'Heading Font', 'full-site-editing' ) }
 				value={ fontHeadings }
 				options={ fontHeadingsOptions }
-				onChange={ newValue => updateHeadingsFont( newValue ) }
+				onChange={ ( newValue ) => updateHeadingsFont( newValue ) }
 				style={ { fontFamily: fontHeadings !== 'unset' ? fontHeadings : fontHeadingsDefault } }
 			/>
 			<SelectControl
-				label={ __( 'Base Font' ) }
+				label={ __( 'Base Font', 'full-site-editing' ) }
 				value={ fontBase }
 				options={ fontBaseOptions }
-				onChange={ newValue => updateBaseFont( newValue ) }
+				onChange={ ( newValue ) => updateBaseFont( newValue ) }
 				style={ { fontFamily: fontBase !== 'unset' ? fontBase : fontBaseDefault } }
 			/>
 			<hr />

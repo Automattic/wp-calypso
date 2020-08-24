@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import ReactDom from 'react-dom';
 import classnames from 'classnames';
-import url from 'url';
 import { localize } from 'i18n-calypso';
 import closest from 'component-closest';
 import { get, forEach, uniqBy } from 'lodash';
@@ -21,6 +20,8 @@ import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import Emojify from 'components/emojify';
+import { getUrlParts } from 'lib/url';
+import config from 'config';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 class CrossPost extends PureComponent {
@@ -36,7 +37,7 @@ class CrossPost extends PureComponent {
 		feed: PropTypes.object,
 	};
 
-	handleTitleClick = event => {
+	handleTitleClick = ( event ) => {
 		// modified clicks should let the default action open a new tab/window
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			return;
@@ -45,11 +46,11 @@ class CrossPost extends PureComponent {
 		this.props.handleClick( this.props.xMetadata );
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 
 		if ( closest( event.target, '.should-scroll', rootNode ) ) {
-			setTimeout( function() {
+			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
@@ -79,11 +80,11 @@ class CrossPost extends PureComponent {
 		}
 	};
 
-	getSiteNameFromURL = siteURL => {
-		return siteURL && `+${ url.parse( siteURL ).hostname.split( '.' )[ 0 ] }`;
+	getSiteNameFromURL = ( siteURL ) => {
+		return siteURL && `+${ getUrlParts( siteURL ).hostname.split( '.' )[ 0 ] }`;
 	};
 
-	getDescription = authorFirstName => {
+	getDescription = ( authorFirstName ) => {
 		let label;
 		const siteName = this.getSiteNameFromURL( this.props.xMetadata.siteURL );
 		const isCrossComment = !! this.props.xMetadata.commentURL;
@@ -133,7 +134,7 @@ class CrossPost extends PureComponent {
 
 		// Add any other x-post URLs we know about
 		if ( postKey.xPostUrls ) {
-			forEach( postKey.xPostUrls, xPostUrl => {
+			forEach( postKey.xPostUrls, ( xPostUrl ) => {
 				xPostedToList.push( {
 					siteURL: xPostUrl,
 					siteName: this.getSiteNameFromURL( xPostUrl ),
@@ -166,10 +167,12 @@ class CrossPost extends PureComponent {
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
 
+		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
 		const articleClasses = classnames( {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
+			'is-seen': isSeen,
 		} );
 
 		// Remove the x-post text from the title.

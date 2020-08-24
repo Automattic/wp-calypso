@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { compact, map, uniq } from 'lodash';
 
 /**
@@ -11,6 +10,8 @@ import createSelector from 'lib/create-selector';
 import { getSiteSlug } from 'state/sites/selectors';
 import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing-transactions';
 
+import 'state/billing-transactions/init';
+
 /**
  * Returns the slugs of all sites that are included in upcoming transactions, indexed by the site IDs.
  * Sites that are not loaded yet are intentionally skipped.
@@ -19,7 +20,7 @@ import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing
  * @returns {object}           Site slugs, indexed by site ID
  */
 const getSiteSlugsForUpcomingTransactions = createSelector(
-	state => {
+	( state ) => {
 		const siteIds = compact(
 			uniq( map( getUpcomingBillingTransactions( state ), 'blog_id' ) )
 		).map( Number );
@@ -32,7 +33,7 @@ const getSiteSlugsForUpcomingTransactions = createSelector(
 			return result;
 		}, {} );
 	},
-	state => [ getUpcomingBillingTransactions( state ), state.sites.items ]
+	( state ) => [ getUpcomingBillingTransactions( state ), state.sites.items ]
 );
 
 export default getSiteSlugsForUpcomingTransactions;

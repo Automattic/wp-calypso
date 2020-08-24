@@ -20,19 +20,19 @@ import {
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( 'requestKeyringConnections()', () => {
 		describe( 'successful requests', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/keyring-connections' )
+					.get( '/wpcom/v2/me/connections' )
 					.reply( 200, {
 						connections: [ { ID: 4306907 }, { ID: 7589550 } ],
 					} );
@@ -65,10 +65,10 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failing requests', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
-					.get( '/rest/v1.1/me/keyring-connections' )
+					.get( '/wpcom/v2/me/connections' )
 					.reply( 500, {
 						error: 'server_error',
 						message: 'A server error occurred',
@@ -108,14 +108,14 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deleteStoredKeyringConnection()', () => {
-		useNock( nock => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/me/keyring-connections/2/delete' )
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.intercept( '/wpcom/v2/me/connections/2', 'DELETE' )
 				.reply( 200, {
 					ID: 2,
 					deleted: true,
 				} )
-				.post( '/rest/v1.1/me/keyring-connections/34/delete' )
+				.intercept( '/wpcom/v2/me/connections/34', 'DELETE' )
 				.reply( 403, {
 					error: 'authorization_required',
 					message: 'You do not have permission to access this Keyring connection.',
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch delete action when request completes', () => {
-			deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
+			return deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_CONNECTION_DELETE,
 					connection: {
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
+			return deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: KEYRING_CONNECTION_DELETE_FAILURE,
 					error: sinon.match( {

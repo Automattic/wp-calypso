@@ -41,7 +41,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?60' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?61' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -164,7 +164,7 @@ export function identifyUser( userData: any ): any {
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
-export function recordTracksEvent( eventName: string, eventProperties: any ) {
+export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {

@@ -7,7 +7,7 @@
 		flex-direction: row;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 
@@ -56,7 +56,7 @@
 	padding: 8px 14px;
 	white-space: nowrap;
 	flex: 1 0 auto;
-	font-size: 16px;
+	font-size: $font-body;
 	line-height: 1.5;
 }
 
@@ -64,7 +64,7 @@
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		:not( .no-wrap ) > & {
 			border-bottom: none;
 		}
@@ -74,7 +74,7 @@
 		@include no-prefix-wrap();
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		@include no-prefix-wrap();
 	}
 
@@ -94,7 +94,7 @@
 	border-bottom-left-radius: 2px;
 	border-bottom-right-radius: 2px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		:not( .no-wrap ) > & {
 			border-top: none;
 		}
@@ -104,7 +104,7 @@
 		@include no-suffix-wrap();
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		@include no-suffix-wrap();
 	}
 }

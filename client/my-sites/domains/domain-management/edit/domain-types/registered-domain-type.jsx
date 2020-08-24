@@ -11,17 +11,9 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import VerticalNav from 'components/vertical-nav';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { emailManagement } from 'my-sites/email/paths';
-import {
-	domainManagementContactsPrivacy,
-	domainManagementNameServers,
-	domainManagementTransfer,
-} from 'my-sites/domains/paths';
+import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
 import { isRecentlyRegistered, isExpiringSoon } from 'lib/domains/utils';
 import {
@@ -32,159 +24,35 @@ import {
 import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import {
+	getByPurchaseId,
+	isFetchingSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'state/purchases/selectors';
 import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
 import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
+import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import { shouldRenderExpiringCreditCard } from 'lib/purchases';
+import ExpiringCreditCard from '../card/notices/expiring-credit-card';
+import ExpiringSoon from '../card/notices/expiring-soon';
+import DomainManagementNavigation from '../navigation';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
+import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
+import { hasPendingGSuiteUsers } from 'lib/gsuite';
+import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import { resolveDomainStatus } from 'lib/domains';
+import getSiteIsDomainOnly from 'state/selectors/is-domain-only-site';
+import DomainOnlyNotice from '../domain-only-notice';
 
 class RegisteredDomainType extends React.Component {
-	getVerticalNavigation() {
-		const { expiry, expired, pendingTransfer } = this.props.domain;
-		const { moment } = this.props;
-		const inNormalState = ! pendingTransfer && ! expired;
-		const inGracePeriod = moment().subtract( 18, 'days' ) <= moment( expiry );
-
-		return (
-			<VerticalNav>
-				{ inNormalState && this.emailNavItem() }
-				{ ( inNormalState || inGracePeriod ) && this.nameServersNavItem() }
-				{ ( inNormalState || inGracePeriod ) && this.contactsPrivacyNavItem() }
-				{ ( ! expired || inGracePeriod ) && this.transferNavItem() }
-			</VerticalNav>
-		);
-	}
-
-	emailNavItem() {
-		const path = emailManagement( this.props.selectedSite.slug, this.props.domain.name );
-
-		return <VerticalNavItem path={ path }>{ this.props.translate( 'Email' ) }</VerticalNavItem>;
-	}
-
-	nameServersNavItem() {
-		const path = domainManagementNameServers(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
-
-		return (
-			<VerticalNavItem path={ path }>
-				{ this.props.translate( 'Name Servers and DNS' ) }
-			</VerticalNavItem>
-		);
-	}
-
-	contactsPrivacyNavItem() {
-		const { translate } = this.props;
-		const path = domainManagementContactsPrivacy(
-			this.props.selectedSite.slug,
-			this.props.domain.name
-		);
-
-		return <VerticalNavItem path={ path }>{ translate( 'Contacts and Privacy' ) }</VerticalNavItem>;
-	}
-
-	transferNavItem() {
-		const path = domainManagementTransfer( this.props.selectedSite.slug, this.props.domain.name );
-
-		return (
-			<VerticalNavItem path={ path }>{ this.props.translate( 'Transfer Domain' ) }</VerticalNavItem>
-		);
-	}
-
-	resolveStatus() {
-		const { domain, translate, moment } = this.props;
-		const { registrationDate, expiry } = domain;
-
-		if ( domain.isPendingIcannVerification && domain.currentUserCanManage ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		if ( isExpiringSoon( domain, 30 ) ) {
-			const expiresMessage = translate( 'Expires in %(days)s', {
-				args: { days: moment.utc( expiry ).fromNow( true ) },
-			} );
-
-			if ( isExpiringSoon( domain, 5 ) ) {
-				return {
-					statusText: expiresMessage,
-					statusClass: 'status-error',
-					icon: 'info',
-				};
-			}
-
-			return {
-				statusText: expiresMessage,
-				statusClass: 'status-warning',
-				icon: 'info',
-			};
-		}
-
-		if ( domain.expired ) {
-			return {
-				statusText: translate( 'Action required' ),
-				statusClass: 'status-error',
-				icon: 'info',
-			};
-		}
-
-		const recentlyRegistered = isRecentlyRegistered( registrationDate );
-
-		if ( recentlyRegistered ) {
-			return {
-				statusText: translate( 'Activating' ),
-				statusClass: 'status-pending',
-				icon: 'cloud_upload',
-			};
-		}
-
-		return {
-			statusText: translate( 'Active' ),
-			statusClass: 'status-success',
-			icon: 'check_circle',
-		};
-	}
-
-	renderExpiringSoon() {
-		const { domain, translate, moment } = this.props;
-		const { expiry } = domain;
-
-		if ( isExpiringSoon( domain, 30 ) ) {
-			return (
-				<div>
-					<p>
-						{ translate(
-							'{{strong}}Your domain will expire{{/strong}} in {{strong}}%(days)s{{/strong}}. Please renew it before it expires or it will stop working.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									days: moment.utc( expiry ).fromNow( true ),
-								},
-							}
-						) }
-					</p>
-					<RenewButton
-						primary={ true }
-						selectedSite={ this.props.selectedSite }
-						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-						tracksProps={ { source: 'registered-domain-status', domain_status: 'expiring-soon' } }
-					/>
-				</div>
-			);
-		}
-
-		return null;
-	}
-
 	renderExpired() {
-		const { domain, translate, moment } = this.props;
-		const domainsLink = link => <a href={ link } target="_blank" rel="noopener noreferrer" />;
+		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
+		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
 
-		if ( ! domain.expired ) {
+		if ( ! domain.expired || domain.pendingTransfer ) {
 			return null;
 		}
 
@@ -198,7 +66,20 @@ class RegisteredDomainType extends React.Component {
 			  )
 			: null;
 
-		if ( domain.isRenewable ) {
+		if ( ! domain.currentUserCanManage ) {
+			message = translate(
+				'{{strong}}The domain has expired{{/strong}} and is no longer active. Please contact the domain owner %(owner)s to restore it. {{domainsLink}}Learn more{{/domainsLink}}',
+				{
+					components: {
+						strong: <strong />,
+						domainsLink: domainsLink( DOMAIN_EXPIRATION ),
+					},
+					args: {
+						owner: domain.owner,
+					},
+				}
+			);
+		} else if ( domain.isRenewable ) {
 			message = translate(
 				'{{strong}}Your domain has expired{{/strong}} and is no longer active. You have {{strong}}%(days)s{{/strong}} to renew it at the standard rate before an additional %(redemptionCost)s redemption fee is applied. {{domainsLink}}Learn more{{/domainsLink}}',
 				{
@@ -240,16 +121,19 @@ class RegisteredDomainType extends React.Component {
 		return (
 			<div>
 				<p>{ message }</p>
-				{ ( domain.isRenewable || domain.isRedeemable ) && (
-					<RenewButton
-						primary={ true }
-						selectedSite={ this.props.selectedSite }
-						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-						redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
-						reactivate={ ! domain.isRenewable && domain.isRedeemable }
-						tracksProps={ { source: 'registered-domain-status', domain_status: 'expired' } }
-					/>
-				) }
+				{ domain.currentUserCanManage &&
+					( isLoadingPurchase || purchase ) &&
+					( domain.isRenewable || domain.isRedeemable ) && (
+						<RenewButton
+							primary={ true }
+							purchase={ purchase }
+							selectedSite={ this.props.selectedSite }
+							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+							redemptionProduct={ domain.isRedeemable ? this.props.redemptionProduct : null }
+							reactivate={ ! domain.isRenewable && domain.isRedeemable }
+							tracksProps={ { source: 'registered-domain-status', domain_status: 'expired' } }
+						/>
+					) }
 			</div>
 		);
 	}
@@ -263,7 +147,7 @@ class RegisteredDomainType extends React.Component {
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
 
-		if ( ! recentlyRegistered ) {
+		if ( ! recentlyRegistered || domain.pendingTransfer || domain.isPendingIcannVerification ) {
 			return null;
 		}
 
@@ -285,8 +169,51 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	renderDomainOnlyNotice() {
+		const { domain, selectedSite, isDomainOnlySite } = this.props;
+		if ( isDomainOnlySite ) {
+			return <DomainOnlyNotice domain={ domain } selectedSiteSlug={ selectedSite.slug } />;
+		}
+
+		return null;
+	}
+
+	renderPendingGSuiteTosNotice() {
+		const { domain, purchase, selectedSite } = this.props;
+
+		if (
+			! hasPendingGSuiteUsers( domain ) ||
+			domain.pendingTransfer ||
+			domain.expired ||
+			domain.isPendingIcannVerification ||
+			isExpiringSoon( domain, 30 ) ||
+			isRecentlyRegistered( domain ) ||
+			( purchase && shouldRenderExpiringCreditCard( purchase ) )
+		) {
+			return null;
+		}
+
+		return (
+			<PendingGSuiteTosNotice
+				siteSlug={ selectedSite.slug }
+				domains={ [ domain ] }
+				section="domain-management"
+				showDomainStatusNotice
+			/>
+		);
+	}
+
+	renderOutboundTransferInProgress() {
+		const { domain, selectedSite } = this.props;
+		return <OutboundTransferConfirmation domain={ domain } siteId={ selectedSite.ID } />;
+	}
+
 	renderDefaultRenewButton() {
-		const { domain } = this.props;
+		const { domain, purchase, isLoadingPurchase } = this.props;
+
+		if ( ! domain.currentUserCanManage ) {
+			return null;
+		}
 
 		if ( domain.expired || isExpiringSoon( domain, 30 ) ) {
 			return null;
@@ -294,22 +221,52 @@ class RegisteredDomainType extends React.Component {
 
 		return (
 			<div>
-				<RenewButton
-					compact={ true }
-					selectedSite={ this.props.selectedSite }
-					subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
-					tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
-				/>
+				{ ( isLoadingPurchase || purchase ) && (
+					<RenewButton
+						compact={ true }
+						purchase={ purchase }
+						selectedSite={ this.props.selectedSite }
+						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
+						tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
+					/>
+				) }
 			</div>
 		);
 	}
 
-	renderAutoRenew() {
-		return (
-			<Card compact={ true }>
-				Auto Renew (on) <CompactFormToggle checked={ true } />
-			</Card>
+	renderAutoRenewToggle() {
+		const { selectedSite, purchase } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		const content = (
+			<AutoRenewToggle
+				planName={ selectedSite.plan.product_name_short }
+				siteDomain={ selectedSite.domain }
+				purchase={ purchase }
+				compact={ true }
+				withTextStatus={ true }
+				toggleSource="registered-domain-status"
+			/>
 		);
+
+		return content && <WrapDomainStatusButtons>{ content }</WrapDomainStatusButtons>;
+	}
+
+	renderAutoRenew() {
+		const { isLoadingPurchase } = this.props;
+
+		if ( isLoadingPurchase ) {
+			return (
+				<WrapDomainStatusButtons className="domain-types__auto-renew-placeholder">
+					<p />
+				</WrapDomainStatusButtons>
+			);
+		}
+
+		return this.renderAutoRenewToggle();
 	}
 
 	planUpsellForNonPrimaryDomain() {
@@ -324,21 +281,39 @@ class RegisteredDomainType extends React.Component {
 		);
 	}
 
+	domainWarnings() {
+		return (
+			<DomainWarnings
+				domain={ this.props.domain }
+				position="registered-domain"
+				selectedSite={ this.props.selectedSite }
+				allowedRules={ [ 'newTransfersWrongNS', 'pendingConsent' ] }
+			/>
+		);
+	}
+
 	handlePaymentSettingsClick = () => {
 		this.props.recordPaymentSettingsClick( this.props.domain );
 	};
 
 	render() {
-		const { domain, moment } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = this.resolveStatus();
+		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
+			isDomainOnlySite,
+		} );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
+		const newDomainManagementNavigation = config.isEnabled(
+			'domains/new-status-design/new-options'
+		);
 
 		return (
 			<div className="domain-types__container">
+				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				{ this.planUpsellForNonPrimaryDomain() }
+				{ this.domainWarnings() }
 				<DomainStatus
 					header={ domain_name }
 					statusText={ statusText }
@@ -353,27 +328,28 @@ class RegisteredDomainType extends React.Component {
 							compact={ true }
 						/>
 					) }
-					{ this.renderExpiringSoon() }
+					<ExpiringCreditCard
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						domain={ domain }
+					/>
+					<ExpiringSoon
+						selectedSite={ selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+						domain={ domain }
+					/>
 					{ this.renderExpired() }
 					{ this.renderRecentlyRegistered() }
+					{ this.renderOutboundTransferInProgress() }
+					{ this.renderDomainOnlyNotice() }
+					{ this.renderPendingGSuiteTosNotice() }
 				</DomainStatus>
 				<Card compact={ true } className="domain-types__expiration-row">
-					<div>
-						{ domain.expired
-							? this.props.translate( 'Expired: %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } )
-							: this.props.translate( 'Expires: %(expiry_date)s', {
-									args: {
-										expiry_date: moment( domain.expiry ).format( 'LL' ),
-									},
-							  } ) }
-					</div>
+					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
-					{ ! newStatusDesignAutoRenew && (
-						<div>
+					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
+						<WrapDomainStatusButtons>
 							<SubscriptionSettings
 								type={ domain.type }
 								compact={ true }
@@ -381,25 +357,47 @@ class RegisteredDomainType extends React.Component {
 								siteSlug={ this.props.selectedSite.slug }
 								onClick={ this.handlePaymentSettingsClick }
 							/>
-						</div>
+						</WrapDomainStatusButtons>
 					) }
+					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newStatusDesignAutoRenew && this.renderAutoRenew() }
-				{ this.getVerticalNavigation() }
+				{ newDomainManagementNavigation ? (
+					<DomainManagementNavigationEnhanced
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) : (
+					<DomainManagementNavigation
+						domain={ domain }
+						selectedSite={ this.props.selectedSite }
+						purchase={ purchase }
+						isLoadingPurchase={ isLoadingPurchase }
+					/>
+				) }
 			</div>
 		);
 	}
 }
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
+		const { subscriptionId } = ownProps.domain;
+		const currentUserId = getCurrentUserId( state );
+		const purchase = subscriptionId
+			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+			: null;
+
 		return {
+			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
+			isLoadingPurchase:
+				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
 			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
 		};
 	},
 	{
-		recordTracksEvent,
-		recordGoogleEvent,
 		recordPaymentSettingsClick,
 	}
 )( withLocalizedMoment( localize( RegisteredDomainType ) ) );

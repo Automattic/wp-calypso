@@ -18,7 +18,7 @@ export default class JetpackComPricingPage extends AsyncBaseContainer {
 	}
 
 	async buyPremium() {
-		const buyPremiumSelector = By.css( '#page-pricing-premium-col-cta-top' );
+		const buyPremiumSelector = By.css( 'a[href*="premium"]' );
 		return await driverHelper.clickWhenClickable( this.driver, buyPremiumSelector );
 	}
 }

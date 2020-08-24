@@ -14,7 +14,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { recordTrack } from 'reader/stats';
-import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/ui/guided-tours/contexts';
+import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'state/guided-tours/contexts';
 import cssSafeUrl from 'lib/css-safe-url';
 
 /**
@@ -95,13 +95,13 @@ class FollowingIntro extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		return {
 			isNewReader: getPreference( state, 'is_new_reader' ),
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS * 2 )( state ),
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{
 				dismiss: () => {

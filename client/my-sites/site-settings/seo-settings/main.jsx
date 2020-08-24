@@ -49,7 +49,7 @@ SeoSettings.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId,

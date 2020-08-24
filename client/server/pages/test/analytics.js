@@ -11,7 +11,7 @@ import sinon from 'sinon';
  */
 import analytics from '../../lib/analytics';
 import { logSectionResponse } from 'pages/analytics';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test-helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
 
@@ -31,7 +31,7 @@ describe( 'index', () => {
 		describe( 'when rendering a section', () => {
 			let clock;
 
-			useFakeTimers( newClock => ( clock = newClock ) );
+			useFakeTimers( ( newClock ) => ( clock = newClock ) );
 
 			beforeEach( () => {
 				sinon.stub( analytics.statsd, 'recordTiming' );

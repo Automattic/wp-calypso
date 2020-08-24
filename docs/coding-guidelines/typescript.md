@@ -108,7 +108,7 @@ tell it to go further. See the following example:
 const LEFT = 'left';
 const RIGHT = 'right';
 
-const directions = [ left, right ]; // type here is `string[]`
+const directions = [ LEFT, RIGHT ]; // type here is `string[]`
 ```
 
 #### Prefer
@@ -116,7 +116,7 @@ const directions = [ left, right ]; // type here is `string[]`
 const LEFT = 'left' as const;
 const RIGHT = 'right' as const;
 
-const directions = [ left, right ]; // type here is `( 'left' | 'right' )[]`
+const directions = [ LEFT, RIGHT ]; // type here is `( 'left' | 'right' )[]`
 ```
 
 By using `as const` we tell the compiler to be fully specific in its inference. The difference in the way

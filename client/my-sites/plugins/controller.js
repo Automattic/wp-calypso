@@ -10,7 +10,7 @@ import { includes, some } from 'lodash';
  */
 import { getSiteFragment, sectionify } from 'lib/route';
 import notices from 'notices';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
@@ -74,7 +74,7 @@ function renderPluginList( context, basePath ) {
 	} );
 
 	if ( search ) {
-		analytics.ga.recordEvent( 'Plugins', 'Search', 'Search term', search );
+		gaRecordEvent( 'Plugins', 'Search', 'Search term', search );
 	}
 }
 
@@ -118,7 +118,7 @@ function renderProvisionPlugins( context ) {
 	context.store.dispatch( hideSidebar() );
 
 	context.primary = React.createElement( PlanSetup, {
-		whitelist: context.query.only || false,
+		forSpecificPlugin: context.query.only || false,
 	} );
 }
 
@@ -173,7 +173,7 @@ export function jetpackCanUpdate( context, next ) {
 	let redirectToPlugins = false;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-		redirectToPlugins = ! some( selectedSites, function( site ) {
+		redirectToPlugins = ! some( selectedSites, function ( site ) {
 			return site && site.jetpack && site.canUpdateFiles;
 		} );
 

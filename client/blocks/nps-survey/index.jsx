@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent, Fragment } from 'react';
 import Gridicon from 'components/gridicon';
@@ -21,10 +20,11 @@ import {
 	sendNpsSurveyFeedback,
 } from 'state/nps-survey/actions';
 import { successNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { hasAnsweredNpsSurvey, isAvailableForConciergeSession } from 'state/nps-survey/selectors';
 import { CALYPSO_CONTACT } from 'lib/url/support';
-import analytics from 'lib/analytics';
+import { bumpStat } from 'lib/analytics/mc';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import RecommendationSelect from './recommendation-select';
 
 /**
@@ -59,14 +59,14 @@ export class NpsSurvey extends PureComponent {
 
 		if ( prevState.currentForm !== this.state.currentForm ) {
 			onChangeForm && onChangeForm( this.state.currentForm );
-			this.props.recordTracksEvent( 'calypso_nps_survey_page_displayed', {
+			this.props.recordTracksEventAction( 'calypso_nps_survey_page_displayed', {
 				name: this.state.currentForm,
 				has_available_concierge_sessions: hasAvailableConciergeSession,
 			} );
 		}
 	}
 
-	handleRecommendationSelectChange = score => {
+	handleRecommendationSelectChange = ( score ) => {
 		this.setState( { score } );
 	};
 
@@ -82,7 +82,7 @@ export class NpsSurvey extends PureComponent {
 		this.onClose( noop );
 	};
 
-	handleTextBoxChange = event => {
+	handleTextBoxChange = ( event ) => {
 		this.setState( { feedback: trim( event.target.value ) } );
 	};
 
@@ -107,8 +107,8 @@ export class NpsSurvey extends PureComponent {
 		this.onClose( noop );
 	};
 
-	handleLinkClick = event => {
-		this.props.recordTracksEvent( 'calypso_nps_survey_link_clicked', {
+	handleLinkClick = ( event ) => {
+		this.props.recordTracksEventAction( 'calypso_nps_survey_link_clicked', {
 			url: event.target.href,
 			type: event.target.dataset.type,
 		} );
@@ -121,7 +121,7 @@ export class NpsSurvey extends PureComponent {
 		} );
 	};
 
-	onClose = afterClose => {
+	onClose = ( afterClose ) => {
 		// ensure that state is updated before onClose handler is called
 		setTimeout( () => {
 			this.props.onClose( afterClose );
@@ -129,8 +129,8 @@ export class NpsSurvey extends PureComponent {
 	};
 
 	UNSAFE_componentWillMount() {
-		analytics.mc.bumpStat( 'calypso_nps_survey', 'survey_displayed' );
-		analytics.tracks.recordEvent( 'calypso_nps_survey_displayed' );
+		bumpStat( 'calypso_nps_survey', 'survey_displayed' );
+		recordTracksEvent( 'calypso_nps_survey_displayed' );
 	}
 
 	shouldShowPromotion() {
@@ -318,7 +318,7 @@ export class NpsSurvey extends PureComponent {
 	}
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		hasAnswered: hasAnsweredNpsSurvey( state ),
 		hasAvailableConciergeSession: isAvailableForConciergeSession( state ),
@@ -330,5 +330,5 @@ export default connect( mapStateToProps, {
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
 	successNotice,
-	recordTracksEvent,
+	recordTracksEventAction,
 } )( localize( NpsSurvey ) );

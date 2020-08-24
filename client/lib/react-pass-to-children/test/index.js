@@ -60,7 +60,7 @@ describe( 'index', () => {
 		expect( React.Children.count( result.props.children ) ).to.equal( 2 );
 	} );
 
-	test( 'should accept multiple children and pass along props to each', done => {
+	test( 'should accept multiple children and pass along props to each', ( done ) => {
 		let result;
 
 		renderer.render(
@@ -71,7 +71,7 @@ describe( 'index', () => {
 		);
 		result = renderer.getRenderOutput();
 
-		React.Children.forEach( result.props.children, function( child, i ) {
+		React.Children.forEach( result.props.children, function ( child, i ) {
 			expect( child.type ).to.equal( 'div' );
 			expect( child.props ).to.eql( DUMMY_PROPS );
 

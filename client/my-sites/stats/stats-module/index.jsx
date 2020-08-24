@@ -22,7 +22,7 @@ import { Card } from '@automattic/components';
 import StatsModulePlaceholder from './placeholder';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import AllTimeNav from './all-time-nav';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -194,12 +194,17 @@ class StatsModule extends Component {
 						<StatsModuleExpand href={ summaryLink } />
 					) }
 					{ summary && 'countryviews' === path && (
-						<UpgradeNudge
+						<UpsellNudge
 							title={ translate( 'Add Google Analytics' ) }
-							message={ translate( 'Upgrade to a Premium Plan for Google Analytics integration.' ) }
+							description={ translate(
+								'Upgrade to a Premium Plan for Google Analytics integration.'
+							) }
 							event="googleAnalytics-stats-countries"
 							feature={ FEATURE_GOOGLE_ANALYTICS }
 							plan={ PLAN_PREMIUM }
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					) }
 				</Card>

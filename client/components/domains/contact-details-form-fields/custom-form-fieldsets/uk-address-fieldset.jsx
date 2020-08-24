@@ -11,12 +11,20 @@ import { localize } from 'i18n-calypso';
  */
 import { Input } from 'my-sites/domains/components/form';
 
-const UkAddressFieldset = props => {
-	const { getFieldProps, translate } = props;
+const UkAddressFieldset = ( props ) => {
+	const { getFieldProps, translate, contactDetailsErrors } = props;
 	return (
 		<div className="custom-form-fieldsets__address-fields uk-address-fieldset">
-			<Input label={ translate( 'City' ) } { ...getFieldProps( 'city' ) } />
-			<Input label={ translate( 'Postal Code' ) } { ...getFieldProps( 'postal-code' ) } />
+			<Input
+				label={ translate( 'City' ) }
+				{ ...getFieldProps( 'city', { customErrorMessage: contactDetailsErrors?.city } ) }
+			/>
+			<Input
+				label={ translate( 'Postal Code' ) }
+				{ ...getFieldProps( 'postal-code', {
+					customErrorMessage: contactDetailsErrors?.postalCode,
+				} ) }
+			/>
 		</div>
 	);
 };
@@ -24,6 +32,7 @@ const UkAddressFieldset = props => {
 UkAddressFieldset.propTypes = {
 	getFieldProps: PropTypes.func,
 	translate: PropTypes.func,
+	contactDetailsErrors: PropTypes.object,
 };
 
 UkAddressFieldset.defaultProps = {

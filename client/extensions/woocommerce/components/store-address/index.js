@@ -35,7 +35,7 @@ class StoreAddress extends Component {
 		showLabel: true,
 	};
 
-	UNSAFE_componentWillReceiveProps = newProps => {
+	UNSAFE_componentWillReceiveProps = ( newProps ) => {
 		this.setState( { address: newProps.address } );
 	};
 
@@ -47,7 +47,7 @@ class StoreAddress extends Component {
 		};
 	}
 
-	onChange = event => {
+	onChange = ( event ) => {
 		const addressEdits = { ...this.state.addressEdits };
 		const addressKey = event.target.name;
 		const newValue = event.target.value;
@@ -74,7 +74,7 @@ class StoreAddress extends Component {
 		} );
 	};
 
-	onCloseDialog = action => {
+	onCloseDialog = ( action ) => {
 		const { translate, siteId, onSetAddress } = this.props;
 		if ( 'save' === action ) {
 			const onFailure = () => {

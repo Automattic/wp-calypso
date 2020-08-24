@@ -25,5 +25,5 @@ export const getTheme = createSelector(
 
 		return manager.getItem( themeId );
 	},
-	state => state.themes.queries
+	( state ) => state.themes.queries
 );

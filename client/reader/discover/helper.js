@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { find, get } from 'lodash';
-import url from 'url';
 import config from 'config';
 import Debug from 'debug';
 
@@ -12,6 +11,7 @@ const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
  */
 import userUtils from 'lib/user/utils';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
+import { getUrlParts } from 'lib/url';
 
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
@@ -72,9 +72,8 @@ export function getSourceData( post ) {
 }
 
 export function getLinkProps( linkUrl ) {
-	const parsedUrl = url.parse( linkUrl ),
-		hostname = get( parsedUrl, 'hostname' ),
-		isExternal = hostname && hostname !== window.location.hostname;
+	const { hostname } = getUrlParts( linkUrl );
+	const isExternal = hostname && hostname !== window.location.hostname;
 
 	return {
 		rel: isExternal ? 'external' : '',

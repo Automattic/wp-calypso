@@ -22,10 +22,10 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 		const driver = this.driver;
 		const resultsLoadingSelector = By.css( '.domain-suggestion.is-placeholder' );
 		await driver.wait(
-			function() {
+			function () {
 				return driverHelper
 					.isElementPresent( driver, resultsLoadingSelector )
-					.then( function( present ) {
+					.then( function ( present ) {
 						return ! present;
 					} );
 			},
@@ -99,6 +99,16 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 	async selectUseOwnDomain() {
 		const useOwnDomain = By.css( '.domain-suggestion.card.domain-transfer-suggestion' );
 		return await driverHelper.clickWhenClickable( this.driver, useOwnDomain, this.explicitWaitMS );
+	}
+
+	async skipSuggestion() {
+		// currently used in 'launch-site' and 'new-launch' signup flows
+		const skipSuggestion = By.css( '.domain-skip-suggestion > .button.domain-suggestion__action' );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			skipSuggestion,
+			this.explicitWaitMS
+		);
 	}
 
 	async declineGoogleApps() {

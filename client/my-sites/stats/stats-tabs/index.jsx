@@ -46,7 +46,7 @@ export default class extends React.Component {
 		if ( data && ! children ) {
 			const activeData = find( data, { [ activeKey ]: activeIndex } );
 
-			statsTabs = tabs.map( tab => {
+			statsTabs = tabs.map( ( tab ) => {
 				const hasData =
 					activeData && activeData[ tab.attr ] >= 0 && activeData[ tab.attr ] !== null;
 

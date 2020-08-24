@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { some } from 'lodash';
 
 /**
@@ -12,6 +11,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getKeyringConnectionsByName } from './keyring/selectors';
 import { getSiteUserConnectionsForService } from './publicize/selectors';
 import { getKeyringServiceByName } from './services/selectors';
+
+import 'state/sharing/init';
 
 /**
  * Given a service, returns a flattened array of all possible accounts for the
@@ -56,7 +57,7 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 		}
 
 		return memo.concat(
-			keyringConnection.additional_external_users.map( externalUser => ( {
+			keyringConnection.additional_external_users.map( ( externalUser ) => ( {
 				ID: externalUser.external_ID,
 				name: externalUser.external_name,
 				description: externalUser.external_description,
@@ -68,4 +69,23 @@ export function getAvailableExternalAccounts( state, serviceName ) {
 			} ) )
 		);
 	}, [] );
+}
+
+/**
+ * Given a service determine if this service should be displayed expanded on /marketing/connections
+ *
+ * @param {object} state Global state tree
+ * @param {object} service The service object to check
+ */
+export function isServiceExpanded( state, service ) {
+	return service.ID === state.sharing.expandedService;
+}
+
+/**
+ * Returns the ID for the currently expanded service on /marketing/connections
+ *
+ * @param {object} state Global state tree
+ */
+export function getExpandedService( state ) {
+	return state.sharing.expandedService;
 }

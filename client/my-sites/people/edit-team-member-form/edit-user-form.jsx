@@ -26,6 +26,7 @@ import {
 	requestExternalContributorsAddition,
 	requestExternalContributorsRemoval,
 } from 'state/data-getters';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * Style dependencies
@@ -59,7 +60,7 @@ class EditUserForm extends Component {
 	getChangedSettings() {
 		const originalUser = this.getStateObject( this.props );
 
-		const changedKeys = filter( this.getAllowedSettingsToChange(), setting => {
+		const changedKeys = filter( this.getAllowedSettingsToChange(), ( setting ) => {
 			return (
 				'undefined' !== typeof originalUser[ setting ] &&
 				'undefined' !== typeof this.state[ setting ] &&
@@ -95,7 +96,7 @@ class EditUserForm extends Component {
 		return Object.keys( this.getChangedSettings() ).length;
 	}
 
-	updateUser = event => {
+	updateUser = ( event ) => {
 		event.preventDefault();
 
 		const changedSettings = this.getChangedSettings();
@@ -129,17 +130,18 @@ class EditUserForm extends Component {
 		this.props.recordGoogleEvent( 'People', 'Clicked Save Changes Button on User Edit' );
 	};
 
-	recordFieldFocus = fieldId => () =>
+	recordFieldFocus = ( fieldId ) => () =>
 		this.props.recordGoogleEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const stateChange = { [ event.target.name ]: event.target.value };
 		this.setState( stateChange );
 	};
 
-	handleExternalChange = event => this.setState( { isExternalContributor: event.target.checked } );
+	handleExternalChange = ( event ) =>
+		this.setState( { isExternalContributor: event.target.checked } );
 
-	isExternalRole = role => {
+	isExternalRole = ( role ) => {
 		const roles = [ 'administrator', 'editor', 'author', 'contributor' ];
 		return includes( roles, role );
 	};
@@ -158,12 +160,14 @@ class EditUserForm extends Component {
 							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'roles' ) }
 						/>
-						{ ! this.props.isVip && this.isExternalRole( this.state.roles ) && (
-							<ContractorSelect
-								onChange={ this.handleExternalChange }
-								checked={ this.state.isExternalContributor }
-							/>
-						) }
+						{ ! this.props.isVip &&
+							! this.props.isWPForTeamsSite &&
+							this.isExternalRole( this.state.roles ) && (
+								<ContractorSelect
+									onChange={ this.handleExternalChange }
+									checked={ this.state.isExternalContributor }
+								/>
+							) }
 					</Fragment>
 				);
 				break;
@@ -238,7 +242,7 @@ class EditUserForm extends Component {
 			return null;
 		}
 
-		editableFields = editableFields.map( fieldId => {
+		editableFields = editableFields.map( ( fieldId ) => {
 			return this.renderField( fieldId );
 		} );
 
@@ -272,6 +276,7 @@ export default localize(
 					undefined !== linkedUserId ? linkedUserId : userId
 				),
 				isVip: isVipSite( state, siteId ),
+				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			};
 		},
 		{

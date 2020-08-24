@@ -60,7 +60,7 @@ class PlansLanding extends Component {
 		}
 	}
 
-	storeSelectedPlan = cartItem => {
+	storeSelectedPlan = ( cartItem ) => {
 		const { url } = this.props;
 		let redirectUrl = CALYPSO_JETPACK_CONNECT;
 
@@ -79,7 +79,7 @@ class PlansLanding extends Component {
 		}, 25 );
 	};
 
-	handleInfoButtonClick = info => () => {
+	handleInfoButtonClick = ( info ) => () => {
 		this.props.recordTracksEvent( 'calypso_jpc_external_help_click', {
 			help_type: info,
 		} );

@@ -31,13 +31,14 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"crc32": "0.2.2",
+		"@babel/runtime": "^7.11.1",
+		"crc32": "^0.2.2",
 		"debug": "^4.0.0",
-		"seed-random": "2.2.0"
+		"seed-random": "^2.2.0"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile"
 	}
 }

@@ -29,7 +29,7 @@
 
 .title-format-editor__title {
 	font-weight: 600;
-	font-size: 14px;
+	font-size: $font-body-small;
 	flex: 1;
 	margin-right: auto;
 }
@@ -42,7 +42,7 @@
 	padding: 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	cursor: pointer;
 
@@ -79,12 +79,12 @@
 .title-format-editor__token-close {
 	margin-left: 10px;
 	color: var( --color-neutral-20 );
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 }
 
 .title-format-editor__preview {
 	color: var( --color-neutral-light );
 	font-style: italic;
 	margin-top: 5px;
-	font-size: 13px;
+	font-size: $font-body-small;
 }

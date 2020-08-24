@@ -67,13 +67,15 @@ class FileImporter extends React.PureComponent {
 		} ),
 	};
 
-	handleClick = () => {
+	handleClick = ( shouldStartImport ) => {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },
 		} = this.props;
 
-		startImport( siteId, type );
+		if ( shouldStartImport ) {
+			startImport( siteId, type );
+		}
 
 		this.props.recordTracksEvent( 'calypso_importer_main_start_clicked', {
 			blog_id: siteId,
@@ -99,7 +101,7 @@ class FileImporter extends React.PureComponent {
 		} );
 		const cardProps = {
 			displayAsLink: true,
-			onClick: this.handleClick,
+			onClick: this.handleClick.bind( this, true ),
 			tagName: 'button',
 		};
 
@@ -110,7 +112,7 @@ class FileImporter extends React.PureComponent {
 			 * This is used for the new Migration logic for the moment.
 			 */
 			cardProps.href = overrideDestination.replace( '%SITE_SLUG%', site.slug );
-			cardProps.onClick = null;
+			cardProps.onClick = this.handleClick.bind( this, false );
 		}
 
 		return (

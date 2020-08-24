@@ -73,7 +73,7 @@ class OrderActionHeader extends Component {
 		const areYouSure = translate( 'Are you sure you want to delete this order?' );
 		accept(
 			areYouSure,
-			accepted => {
+			( accepted ) => {
 				if ( ! accepted ) {
 					return;
 				}
@@ -93,7 +93,7 @@ class OrderActionHeader extends Component {
 			successOpts.button = translate( 'Send new invoice to customer' );
 			successOpts.onClick = this.triggerInvoice;
 		}
-		const onSuccess = dispatch => {
+		const onSuccess = ( dispatch ) => {
 			dispatch(
 				successNotice(
 					translate( 'Order successfully updated. {{ordersLink}}View all orders{{/ordersLink}}.', {
@@ -105,7 +105,7 @@ class OrderActionHeader extends Component {
 				)
 			);
 		};
-		const onFailure = dispatch => {
+		const onFailure = ( dispatch ) => {
 			dispatch( errorNotice( translate( 'Unable to save order.' ), { duration: 8000 } ) );
 		};
 
@@ -218,7 +218,7 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch =>
+	( dispatch ) =>
 		bindActionCreators(
 			{ clearOrderEdits, deleteOrder, editOrder, saveOrder, sendOrderInvoice },
 			dispatch

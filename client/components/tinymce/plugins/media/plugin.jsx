@@ -14,7 +14,6 @@ import closest from 'component-closest';
  * Internal dependencies
  */
 import * as MediaConstants from 'lib/media/constants';
-import MediaActions from 'lib/media/actions';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 import MediaMarkup from 'post-editor/media-modal/markup';
@@ -25,12 +24,15 @@ import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { unblockSave } from 'state/ui/editor/save-blockers/actions';
-import { getEditorRawContent, isEditorSaveBlocked } from 'state/ui/editor/selectors';
+import { setEditorMediaModalView } from 'state/editor/actions';
+import { unblockSave } from 'state/editor/save-blockers/actions';
+import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
+import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
+import { fetchMediaItem } from 'state/media/thunks';
+import getMediaItem from 'state/selectors/get-media-item';
 
 /**
  * Module variables
@@ -91,7 +93,7 @@ function mediaButton( editor ) {
 				/* eslint-disable react/jsx-no-bind */
 				onClose={ renderModal.bind( null, { visible: false } ) }
 				/* eslint-disable react/jsx-no-bind */
-				onInsertMedia={ markup => {
+				onInsertMedia={ ( markup ) => {
 					insertMedia( markup );
 					renderModal( { visible: false } );
 				} }
@@ -141,7 +143,7 @@ function mediaButton( editor ) {
 		return { isLoaded, onLoad };
 	} )();
 
-	updateMedia = debounce( function() {
+	updateMedia = debounce( function () {
 		const originalSelectedNode = editor.selection.getNode();
 		let isTransientDetected = false,
 			transients = 0,
@@ -168,7 +170,7 @@ function mediaButton( editor ) {
 		}
 
 		// Let's loop through all the images in a post/page editor.
-		images.forEach( function( img ) {
+		images.forEach( function ( img ) {
 			const current = deserialize( img );
 
 			// Ignore images which weren't inserted via media modal
@@ -178,7 +180,7 @@ function mediaButton( editor ) {
 
 			// Let's get the media object counterpart of an image in post/page editor.
 			// This media object contains the latest changes to the media file.
-			const media = MediaStore.get( selectedSite.ID, current.media.ID );
+			const media = getMediaItem( getState(), selectedSite.ID, current.media.ID );
 
 			let mediaHasCaption = false;
 			let captionNode = null;
@@ -307,7 +309,7 @@ function mediaButton( editor ) {
 			// hasn't yet been loaded, we preload the image before rendering.
 			const imageUrl = event.resizedImageUrl || media.URL;
 			if ( ! loadedImages.isLoaded( imageUrl ) ) {
-				const preloadImage = new Image();
+				const preloadImage = new window.Image();
 				preloadImage.src = imageUrl;
 				preloadImage.onload = loadedImages.onLoad.bind( null, imageUrl );
 				preloadImage.onerror = preloadImage.onload;
@@ -346,7 +348,7 @@ function mediaButton( editor ) {
 			// instance in the undo stack.
 			//
 			// See: https://github.com/tinymce/tinymce/blob/4.2.4/js/tinymce/classes/EditorUpload.js#L49-L53
-			editor.undoManager.data = editor.undoManager.data.map( function( level ) {
+			editor.undoManager.data = editor.undoManager.data.map( function ( level ) {
 				level.content = level.content.replace( mediaString, event.content );
 				return level;
 			} );
@@ -385,8 +387,6 @@ function mediaButton( editor ) {
 		// After editing an image, we need to update them in a post/page. If we updated all instances
 		// of the edited image, we dispatch an action which marks the image media object not dirty.
 		if ( lastDirtyImage && lastDirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
-			MediaActions.edit( selectedSite.ID, { ...lastDirtyImage, isDirty: false } );
-
 			// We also need to reset the counter of post/page images to update so if another image is
 			// edited and marked dirty, we can set the counter to correct number.
 			numOfImagesToUpdate = null;
@@ -413,7 +413,7 @@ function mediaButton( editor ) {
 	function initMediaModal() {
 		const selectedSite = getSelectedSiteFromState();
 		if ( selectedSite ) {
-			MediaActions.clearValidationErrors( selectedSite.ID );
+			dispatch( clearMediaItemErrors( selectedSite.ID ) );
 		}
 	}
 
@@ -447,7 +447,7 @@ function mediaButton( editor ) {
 		classes: 'btn wpcom-icon-button media',
 		cmd: 'wpcomAddMedia',
 		title: i18n.translate( 'Add Media' ),
-		onPostRender: function() {
+		onPostRender: function () {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
 					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
@@ -465,7 +465,7 @@ function mediaButton( editor ) {
 		tooltip: i18n.translate( 'Edit', { context: 'verb' } ),
 		classes: 'toolbar-segment-start',
 		icon: 'dashicon dashicons-edit',
-		onclick: function() {
+		onclick: function () {
 			const selectedSite = getSelectedSiteFromState();
 			if ( ! selectedSite ) {
 				return;
@@ -478,9 +478,9 @@ function mediaButton( editor ) {
 			if ( ! imageId ) {
 				return;
 			}
-			const image = MediaStore.get( siteId, imageId );
+			const image = getMediaItem( getState(), siteId, imageId );
 
-			MediaActions.clearValidationErrors( siteId );
+			dispatch( clearMediaItemErrors( siteId ) );
 			renderModal(
 				{
 					visible: true,
@@ -492,7 +492,7 @@ function mediaButton( editor ) {
 					view: ModalViews.DETAIL,
 				}
 			);
-			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+			dispatch( setMediaLibrarySelectedItems( siteId, [ image ] ) );
 		},
 	} );
 
@@ -501,7 +501,7 @@ function mediaButton( editor ) {
 		icon: 'dashicon dashicons-admin-comments',
 		classes: 'toolbar-segment-start toolbar-segment-end',
 		stateSelector: '.wp-caption',
-		onclick: function() {
+		onclick: function () {
 			const node = editor.selection.getStart(),
 				parsed = deserialize( node ),
 				selectedSite = getSelectedSiteFromState();
@@ -527,8 +527,9 @@ function mediaButton( editor ) {
 				return;
 			}
 
-			// Attempt to find media in Flux store
-			const media = MediaStore.get( selectedSite.ID, parsed.media.ID );
+			// Attempt to find media in Redux store
+			const media = getMediaItem( getState(), selectedSite.ID, parsed.media.ID );
+
 			if ( media && media.caption ) {
 				content = media.caption;
 			} else {
@@ -537,7 +538,7 @@ function mediaButton( editor ) {
 
 			// Assign missing DOM dimensions to image node. The `wpeditimage`
 			// plugin strips any caption where dimension attributes are missing
-			[ 'width', 'height' ].forEach( function( dimension ) {
+			[ 'width', 'height' ].forEach( function ( dimension ) {
 				if ( null === node.getAttribute( dimension ) && parsed.media[ dimension ] ) {
 					node.setAttribute( dimension, parsed.media[ dimension ] );
 				}
@@ -595,8 +596,9 @@ function mediaButton( editor ) {
 			parsed.media.caption = editor.dom.$( '.wp-caption-dd', caption ).text();
 		}
 
-		// Attempt to find media in Flux store
-		let media = assign( {}, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
+		// Attempt to find media in Redux store
+		let media = assign( {}, getMediaItem( getState(), selectedSite.ID, parsed.media.ID ) );
+
 		delete media.caption;
 		media = assign( {}, parsed.media, media );
 
@@ -604,7 +606,7 @@ function mediaButton( editor ) {
 		// In order to get the next usable size, we compute the ratio of all the default sizes and compare them to the current ratio
 		// If we are increasing the size, we select the default size that has the closest greater ratio
 		// While decreasing we take the closest lower ratio
-		const sizeRatios = SIZE_ORDER.map( size =>
+		const sizeRatios = SIZE_ORDER.map( ( size ) =>
 			computeRatio( getThumbnailSizeDimensions( size, selectedSite ), media )
 		);
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
@@ -647,7 +649,7 @@ function mediaButton( editor ) {
 		const parsed = deserialize( event.element );
 		const media = assign(
 			{ width: Infinity, height: Infinity },
-			MediaStore.get( selectedSite.ID, parsed.media.ID )
+			getMediaItem( getState(), selectedSite.ID, parsed.media.ID )
 		);
 		const currentRatio = computeRatio( parsed.media, media );
 
@@ -675,10 +677,10 @@ function mediaButton( editor ) {
 		tooltip: i18n.translate( 'Decrease size' ),
 		classes: 'toolbar-segment-start img-size-decrease',
 		icon: 'dashicon dashicons-minus',
-		onPostRender: function() {
+		onPostRender: function () {
 			editor.on( 'wptoolbar', toggleSizingControls.bind( this, false ) );
 		},
-		onclick: function() {
+		onclick: function () {
 			resize( -1 );
 		},
 	} );
@@ -687,10 +689,10 @@ function mediaButton( editor ) {
 		tooltip: i18n.translate( 'Increase size' ),
 		classes: 'toolbar-segment-end img-size-increase',
 		icon: 'dashicon dashicons-plus',
-		onPostRender: function() {
+		onPostRender: function () {
 			editor.on( 'wptoolbar', toggleSizingControls.bind( this, true ) );
 		},
-		onclick: function() {
+		onclick: function () {
 			resize( 1 );
 		},
 	} );
@@ -699,7 +701,7 @@ function mediaButton( editor ) {
 		renderModal( { visible: true } );
 	} );
 
-	editor.addCommand( 'wpcomEditGallery', function( content ) {
+	editor.addCommand( 'wpcomEditGallery', function ( content ) {
 		const selectedSite = getSelectedSiteFromState();
 		if ( ! selectedSite ) {
 			return;
@@ -712,12 +714,12 @@ function mediaButton( editor ) {
 
 		gallery = assign( {}, MediaConstants.GalleryDefaultAttrs, gallery.attrs.named );
 
-		gallery.items = gallery.ids.split( ',' ).map( id => {
+		gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
 			id = parseInt( id, 10 );
 
-			const media = MediaStore.get( selectedSite.ID, id );
+			const media = getMediaItem( getState(), selectedSite.ID, id );
 			if ( ! media ) {
-				MediaActions.fetch( selectedSite.ID, id );
+				store.dispatch( fetchMediaItem( selectedSite.ID, id ) );
 			}
 
 			return assign( { ID: id }, media );
@@ -734,7 +736,7 @@ function mediaButton( editor ) {
 			delete gallery.orderby;
 		}
 
-		MediaActions.setLibrarySelectedItems( selectedSite.ID, gallery.items );
+		dispatch( setMediaLibrarySelectedItems( selectedSite.ID, gallery.items ) );
 
 		renderModal(
 			{
@@ -752,7 +754,7 @@ function mediaButton( editor ) {
 	} );
 
 	const resizeEditor = debounce(
-		function() {
+		function () {
 			// eslint-disable-line
 			editor.execCommand( 'wpcomAutoResize', null, null, { skip_focus: true } );
 		},
@@ -772,15 +774,15 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		( event.content.match( REGEXP_IMG ) || [] ).forEach( function( img ) {
+		( event.content.match( REGEXP_IMG ) || [] ).forEach( function ( img ) {
 			const parsed = deserialize( img );
 
-			if ( ! parsed.media.ID || MediaStore.get( selectedSite.ID, parsed.media.ID ) ) {
+			if ( ! parsed.media.ID || getMediaItem( getState(), selectedSite.ID, parsed.media.ID ) ) {
 				return;
 			}
 
-			setTimeout( function() {
-				MediaActions.fetch( selectedSite.ID, parsed.media.ID );
+			setTimeout( function () {
+				store.dispatch( fetchMediaItem( selectedSite.ID, parsed.media.ID ) );
 			}, 0 );
 		} );
 	}
@@ -827,7 +829,7 @@ function mediaButton( editor ) {
 			return;
 		}
 
-		editor.dom.select( '.wp-caption-dd' ).forEach( function( caption ) {
+		editor.dom.select( '.wp-caption-dd' ).forEach( function ( caption ) {
 			if ( caption.textContent.trim().length ) {
 				return;
 			}
@@ -841,7 +843,7 @@ function mediaButton( editor ) {
 	function selectImageOnTap() {
 		let isTouchDragging = false;
 
-		return function( event ) {
+		return function ( event ) {
 			switch ( event.type ) {
 				case 'touchstart':
 					isTouchDragging = false;
@@ -868,28 +870,28 @@ function mediaButton( editor ) {
 	// send contextmenu event up to desktop app
 	if ( config.isEnabled( 'desktop' ) ) {
 		const ipc = require( 'electron' ).ipcRenderer; // From Electron
-		editor.on( 'contextmenu', function() {
+		editor.on( 'contextmenu', function () {
 			ipc.send( 'mce-contextmenu', { sender: true } );
 		} );
 	}
 
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		MediaStore.on( 'change', updateMedia );
 		editor.getDoc().addEventListener( 'load', resizeOnImageLoad, true );
 		editor.dom.bind( editor.getDoc(), 'dragstart dragend', hideDropZoneOnDrag );
 		editor.selection.selectorChanged( '.wp-caption', removeEmptyCaptions );
 	} );
 
-	editor.on( 'init show hide', function() {
+	editor.on( 'init show hide', function () {
 		renderDropZone( { visible: ! editor.isHidden() } );
 	} );
 
 	editor.on( 'SetContent', fetchUnknownImages );
 
-	editor.on( 'remove', function() {
-		values( nodes ).forEach( function( node ) {
+	editor.on( 'remove', function () {
+		values( nodes ).forEach( function ( node ) {
 			ReactDom.unmountComponentAtNode( node );
 			node.parentNode.removeChild( node );
 		} );
@@ -902,6 +904,6 @@ function mediaButton( editor ) {
 	restrictSize( editor );
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wpcom/media', mediaButton );
 }

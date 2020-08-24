@@ -37,7 +37,7 @@ export function getTermIdsFromEdits( post ) {
 
 	return {
 		...post,
-		terms_by_id: mapValues( taxonomies, taxonomy => {
+		terms_by_id: mapValues( taxonomies, ( taxonomy ) => {
 			const termIds = map( taxonomy, 'ID' );
 
 			// Hack: qs omits empty arrays in wpcom.js request, which prevents

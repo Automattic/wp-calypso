@@ -16,7 +16,7 @@ export default class extends React.PureComponent {
 		value: 'Hello World!',
 	};
 
-	onChange = event => {
+	onChange = ( event ) => {
 		this.setState( {
 			value: event.target.value,
 		} );

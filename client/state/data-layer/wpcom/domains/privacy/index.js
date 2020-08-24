@@ -26,7 +26,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT,
 } from 'state/action-types';
 
-const saveDomainPrivacySettings = verb => action =>
+const saveDomainPrivacySettings = ( verb ) => ( action ) =>
 	http(
 		{
 			apiVersion: '1',
@@ -36,7 +36,7 @@ const saveDomainPrivacySettings = verb => action =>
 		action
 	);
 
-const getSuccessMessage = type => {
+const getSuccessMessage = ( type ) => {
 	switch ( type ) {
 		case DOMAIN_PRIVACY_DISABLE_SUCCESS:
 			return translate( 'Privacy has been successfully disabled!' );
@@ -51,7 +51,7 @@ const getSuccessMessage = type => {
 	}
 };
 
-const handleDomainPrivacySettingsSuccess = type => ( { siteId, domain } ) => {
+const handleDomainPrivacySettingsSuccess = ( type ) => ( { siteId, domain } ) => {
 	const notice = getSuccessMessage( type );
 
 	return [
@@ -64,7 +64,7 @@ const handleDomainPrivacySettingsSuccess = type => ( { siteId, domain } ) => {
 	];
 };
 
-const handleDomainPrivacySettingsFailure = type => ( { siteId, domain }, data ) => {
+const handleDomainPrivacySettingsFailure = ( type ) => ( { siteId, domain }, data ) => {
 	const notice = get(
 		data,
 		'message',

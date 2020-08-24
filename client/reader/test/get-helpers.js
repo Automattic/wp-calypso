@@ -64,7 +64,7 @@ describe( '#getSiteName', () => {
 	const postWithSiteName = { site_name: 'postSiteName' };
 
 	test( 'should favor site title over everything', () => {
-		allFeeds.forEach( feed => {
+		allFeeds.forEach( ( feed ) => {
 			const siteName = getSiteName( { site: siteWithTitleAndDomain, feed } );
 			expect( siteName ).eql( siteWithTitleAndDomain.title );
 		} );

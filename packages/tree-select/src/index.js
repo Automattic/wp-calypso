@@ -1,10 +1,10 @@
 const defaultGetCacheKey = ( ...args ) => args.join();
 
-const isFunction = fn => {
+const isFunction = ( fn ) => {
 	return fn && typeof fn === 'function';
 };
 
-const isObject = o => {
+const isObject = ( o ) => {
 	return o && typeof o === 'object';
 };
 
@@ -32,7 +32,7 @@ export default function treeSelect( getDependents, selector, options = {} ) {
 
 	const { getCacheKey = defaultGetCacheKey } = options;
 
-	const cachedSelector = function( state, ...args ) {
+	const cachedSelector = function ( state, ...args ) {
 		const dependents = getDependents( state, ...args );
 
 		if ( process.env.NODE_ENV !== 'production' ) {

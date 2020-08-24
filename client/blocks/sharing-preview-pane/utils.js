@@ -14,7 +14,7 @@ import { parseHtml } from 'lib/formatting';
 
 const PREVIEW_IMAGE_WIDTH = 512;
 
-export const getPostImage = post => {
+export const getPostImage = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}
@@ -41,7 +41,7 @@ export const getPostImage = post => {
 	return imageUrl ? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
 
-export const getExcerptForPost = post => {
+export const getExcerptForPost = ( post ) => {
 	if ( ! post ) {
 		return null;
 	}

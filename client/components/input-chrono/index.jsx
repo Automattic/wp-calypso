@@ -50,11 +50,11 @@ class InputChrono extends React.Component {
 		}
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		this.setState( { value: event.target.value } );
 	};
 
-	handleBlur = event => {
+	handleBlur = ( event ) => {
 		this.setDateText( event );
 		this.focused = false;
 	};
@@ -63,7 +63,7 @@ class InputChrono extends React.Component {
 		this.focused = true;
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		if ( 13 !== event.keyCode ) {
 			return;
 		}
@@ -71,7 +71,7 @@ class InputChrono extends React.Component {
 		this.setDateText( event );
 	};
 
-	setDateText = event => {
+	setDateText = ( event ) => {
 		const date = chrono.parseDate( event.target.value );
 
 		if ( date ) {
@@ -80,7 +80,7 @@ class InputChrono extends React.Component {
 		}
 	};
 
-	isLangSupported = lang => {
+	isLangSupported = ( lang ) => {
 		return supportedLanguages.indexOf( lang ) >= 0;
 	};
 

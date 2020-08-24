@@ -29,6 +29,7 @@ Name | Type | Default | Description
 ---- | ---- | ---- | ----
 `callToAction` | `string` | null | Message to show on the upsell call to action.
 `compact` | `bool` | false | Show a small version of the nudge. Best for places like the sidebar.
+`disableHref` | `bool` | false | Ensure the nudge doesn't link to anywhere. Ideal for nudges shown to non-admins.
 `dismissPreferenceName` | `string` | empty | Enables dismiss functionality, using this value as the dismiss event name.
 `href` | `string` | null | The URL/path that the user is taken to when clicked.
 `icon` | `string` | null | Optional reference to a Gridicon.

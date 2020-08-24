@@ -1,0 +1,89 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+@include break-medium {
+	.plans-v2__columns {
+		display: flex;
+
+		& > .plans-column,
+		& > .details__column {
+			flex-basis: 50%;
+			flex-grow: 0;
+			align-self: flex-start;
+		}
+
+		& > .products-column,
+		& > .details__column:not( :first-of-type ) {
+			margin-left: 24px;
+		}
+		.formatted-header {
+			margin-top: 40px;
+		}
+		.plan-price {
+			font-size: $font-title-medium;
+		}
+	}
+}
+
+.plans-v2__columns .formatted-header__title {
+	font-size: 1.25rem;
+	color: var( --studio-color-gray-70 );
+}
+
+.selector__main {
+	position: relative;
+}
+
+/**
+ * Upsell
+ */
+
+.upsell__header {
+	text-align: center;
+
+	background-color: var( --color-surface );
+
+	padding: 16px;
+	margin: 24px 0;
+}
+
+.upsell__subheader {
+	font-style: italic;
+
+	margin-bottom: 8px;
+}
+
+.upsell__saved-amount {
+	color: var( --studio-jetpack-green-40 );
+}
+
+.upsell__icons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	margin: 24px 0;
+}
+
+.upsell__plus-icon {
+	margin: 0 8px;
+}
+
+.upsell__product-icon {
+	width: 40px;
+	height: 40px;
+
+	filter: grayscale( 1 );
+}
+
+/**
+ * Details
+ */
+
+.details__main .formatted-header {
+	margin-top: 32px;
+
+	@include break-medium {
+		margin-top: 40px;
+	}
+}

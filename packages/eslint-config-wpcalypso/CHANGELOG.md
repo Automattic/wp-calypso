@@ -1,3 +1,11 @@
+### v6.1.0 (2020-07-02)
+
+- Upgrade [`inclusive-language`](https://github.com/muenzpraeger/eslint-plugin-inclusive-language) rule (040a92595e)
+
+### v6.0.0 (2020-07-01)
+
+- Add [`inclusive-language`](https://github.com/muenzpraeger/eslint-plugin-inclusive-language) rule (01f9b02524)
+
 ### v5.0.0 (2019-11-19)
 
 - Require eslint v6
@@ -41,8 +49,8 @@
 
 #### v0.9.0 (2017-06-14)
 
-- Added: [`wpcalypso/redux-no-bound-selectors`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/redux-no-bound-selectors.md) as error
-- Added: [`react/no-string-refs`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/no-string-refs.md) as error
+- Added: [`wpcalypso/redux-no-bound-selectors`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/HEAD/docs/rules/redux-no-bound-selectors.md) as error
+- Added: [`react/no-string-refs`](https://github.com/yannickcr/eslint-plugin-react/blob/HEAD/docs/rules/no-string-refs.md) as error
 
 #### v0.8.0 (2017-05-18)
 
@@ -58,20 +66,20 @@
 
 #### v0.6.0 (2016-10-21)
 
-- General: Update to `eslint-plugin-wpcalypso@3.0.1` ([see changelog](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/CHANGELOG.md#v301-2016-10-21))
-- Added: [`wpcalypso/i18n-no-collapsible-whitespace`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/i18n-no-collapsible-whitespace.md) as error
-- Added: [`wpcalypso/i18n-no-this-translate`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/i18n-no-this-translate.md) as error
-- Added: [`wpcalypso/import-docblock`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/import-docblock.md) as error
-- Added: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) as error
+- General: Update to `eslint-plugin-wpcalypso@3.0.1` ([see changelog](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/HEAD/CHANGELOG.md#v301-2016-10-21))
+- Added: [`wpcalypso/i18n-no-collapsible-whitespace`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/HEAD/docs/rules/i18n-no-collapsible-whitespace.md) as error
+- Added: [`wpcalypso/i18n-no-this-translate`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/HEAD/docs/rules/i18n-no-this-translate.md) as error
+- Added: [`wpcalypso/import-docblock`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/HEAD/docs/rules/import-docblock.md) as error
+- Added: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/HEAD/docs/rules/prefer-es6-class.md) as error
 - Added: [`func-call-spacing`](http://eslint.org/docs/rules/func-call-spacing) as error ("never")
 
 #### v0.5.0 (2016-08-29)
 
-- Added: [`react/jsx-space-before-closing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-space-before-closing.md) enforces a space before closing brackets in self-closing JSX elements (this only applies to the React superset of rules)
+- Added: [`react/jsx-space-before-closing`](https://github.com/yannickcr/eslint-plugin-react/blob/HEAD/docs/rules/jsx-space-before-closing.md) enforces a space before closing brackets in self-closing JSX elements (this only applies to the React superset of rules)
 
 #### v0.4.0 (2016-08-25)
 
-- Added: [`react/jsx-no-target-blank`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-target-blank.md) prevents unsafe `target="_blank"` usage
+- Added: [`react/jsx-no-target-blank`](https://github.com/yannickcr/eslint-plugin-react/blob/HEAD/docs/rules/jsx-no-target-blank.md) prevents unsafe `target="_blank"` usage
 - General: Define `files` in `package.json` to omit development files
 
 #### v0.3.0 (2016-08-24)

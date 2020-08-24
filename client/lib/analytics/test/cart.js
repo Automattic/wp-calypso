@@ -1,18 +1,18 @@
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordAddToCart } from 'lib/analytics/record-add-to-cart';
 import { getAllCartItems } from 'lib/cart-values/cart-items';
 import { recordEvents } from 'lib/analytics/cart';
 
-jest.mock( 'lib/analytics', () => ( {
+jest.mock( 'lib/analytics/tracks', () => ( {
 	__esModule: true,
-	default: {
-		tracks: {
-			recordEvent: jest.fn(),
-		},
-		recordAddToCart: jest.fn(),
-	},
+	recordTracksEvent: jest.fn(),
+} ) );
+jest.mock( 'lib/analytics/record-add-to-cart', () => ( {
+	__esModule: true,
+	recordAddToCart: jest.fn(),
 } ) );
 jest.mock( 'lib/cart-values/cart-items', () => ( { getAllCartItems: jest.fn() } ) );
 
@@ -57,8 +57,8 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).not.toHaveBeenCalled();
-		expect( analytics.recordAddToCart ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordAddToCart ).not.toHaveBeenCalled();
 	} );
 
 	it( 'records an add event when an item is added', () => {
@@ -66,13 +66,13 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_add',
 			domainRegNoExtra
 		);
-		expect( analytics.recordAddToCart ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.recordAddToCart ).toHaveBeenCalledWith( { cartItem: domainReg } );
+		expect( recordAddToCart ).toHaveBeenCalledTimes( 1 );
+		expect( recordAddToCart ).toHaveBeenCalledWith( { cartItem: domainReg } );
 	} );
 
 	it( 'records a remove event when an item is removed', () => {
@@ -80,12 +80,12 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_remove',
 			domainRegNoExtra
 		);
-		expect( analytics.recordAddToCart ).not.toHaveBeenCalled();
+		expect( recordAddToCart ).not.toHaveBeenCalled();
 	} );
 
 	it( 'records an add and a remove event when items are added and removed', () => {
@@ -93,22 +93,22 @@ describe( 'recordEvents', () => {
 
 		recordEvents( previousCart, nextCart );
 
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledTimes( 2 );
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_remove',
 			domainRegNoExtra
 		);
-		expect( analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cart_product_add',
 			privateRegNoExtra
 		);
-		expect( analytics.recordAddToCart ).toHaveBeenCalledTimes( 1 );
-		expect( analytics.recordAddToCart ).toHaveBeenCalledWith( { cartItem: privateReg } );
+		expect( recordAddToCart ).toHaveBeenCalledTimes( 1 );
+		expect( recordAddToCart ).toHaveBeenCalledWith( { cartItem: privateReg } );
 	} );
 } );
 
 function getMockCartItems( previousCartItems, nextCartItems ) {
-	return cart => {
+	return ( cart ) => {
 		if ( cart === previousCart ) {
 			return previousCartItems;
 		}

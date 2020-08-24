@@ -136,7 +136,7 @@ describe( 'scroll-helper', () => {
 						bottom: -900,
 					},
 				},
-				helper = new ScrollHelper( function( ref ) {
+				helper = new ScrollHelper( function ( ref ) {
 					return preparedBounds[ ref ];
 				} );
 			helper.props = {
@@ -187,7 +187,7 @@ describe( 'scroll-helper', () => {
 						bottom: -1500,
 					},
 				},
-				helper = new ScrollHelper( function( ref ) {
+				helper = new ScrollHelper( function ( ref ) {
 					return preparedBounds[ ref ];
 				} );
 
@@ -353,7 +353,7 @@ describe( 'scroll-helper', () => {
 						top: 3700,
 					},
 				},
-				helper = new ScrollHelper( function( ref ) {
+				helper = new ScrollHelper( function ( ref ) {
 					return preparedBounds[ ref ];
 				} );
 			helper.props = {
@@ -399,7 +399,7 @@ describe( 'scroll-helper', () => {
 
 		describe( 'Completely below context', () => {
 			const helper = new ScrollHelper(
-				function() {
+				function () {
 					return null;
 				} // let it use guessed height
 			);

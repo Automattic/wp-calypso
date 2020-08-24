@@ -19,7 +19,7 @@ import { checkEmails } from './helpers';
 
 const InternalNotification = ( { item, recipient, checked, onChange, loaded, translate } ) => {
 	//Add field name to returned value
-	const toggle = value => {
+	const toggle = ( value ) => {
 		onChange( {
 			setting: item.field,
 			option: 'enabled',

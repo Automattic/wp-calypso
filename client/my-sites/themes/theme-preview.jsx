@@ -136,7 +136,7 @@ class ThemePreview extends React.Component {
 const ConnectedThemePreview = connectOptions( ThemePreview );
 
 export default connect(
-	state => {
+	( state ) => {
 		const themeId = themePreviewVisibility( state );
 		if ( ! themeId ) {
 			return { themeId };

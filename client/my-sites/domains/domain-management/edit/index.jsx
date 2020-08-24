@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { connect } from 'react-redux';
 import React from 'react';
 import page from 'page';
 import { includes } from 'lodash';
@@ -9,22 +10,20 @@ import { includes } from 'lodash';
  * Internal dependencies
  */
 import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { getSelectedDomain } from 'lib/domains';
+import { getSelectedDomain, getDomainTypeText } from 'lib/domains';
 import Header from 'my-sites/domains/domain-management/components/header';
 import { localize } from 'i18n-calypso';
 import Main from 'components/main';
 import MaintenanceCard from 'my-sites/domains/domain-management/components/domain/maintenance-card';
-import MappedDomain from './mapped-domain';
 import { domainManagementList } from 'my-sites/domains/paths';
-import RegisteredDomain from './registered-domain';
 import { registrar as registrarNames, type as domainTypes } from 'lib/domains/constants';
-import SiteRedirect from './site-redirect';
-import Transfer from './transfer';
-import WpcomDomain from './wpcom-domain';
+import SiteRedirectType from './domain-types/site-redirect-type';
 import WpcomDomainType from './domain-types/wpcom-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
 import MappedDomainType from './domain-types/mapped-domain-type';
-import config from 'config';
+import TransferInDomainType from './domain-types/transfer-in-domain-type';
+import { getCurrentRoute } from 'state/selectors/get-current-route';
+import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 
 /**
  * Style dependencies
@@ -47,31 +46,40 @@ class Edit extends React.Component {
 					onClick={ this.goToDomainManagement }
 					selectedDomainName={ this.props.selectedDomainName }
 				>
-					{ this.props.translate( 'Domain Settings' ) }
+					{ this.props.translate( '%(domainType)s Settings', {
+						args: {
+							domainType: this.getDomainTypeText( domain ),
+						},
+					} ) }
 				</Header>
 				{ this.renderDetails( domain, Details ) }
 			</Main>
 		);
 	}
 
-	getDetailsForType = type => {
-		const newStatusDesign = config.isEnabled( 'domains/new-status-design' );
+	getDomainTypeText( domain ) {
+		if ( this.props.hasDomainOnlySite ) {
+			return 'Parked Domain';
+		}
+		return getDomainTypeText( domain );
+	}
 
+	getDetailsForType = ( type ) => {
 		switch ( type ) {
 			case domainTypes.MAPPED:
-				return newStatusDesign ? MappedDomainType : MappedDomain;
+				return MappedDomainType;
 
 			case domainTypes.REGISTERED:
-				return newStatusDesign ? RegisteredDomainType : RegisteredDomain;
+				return RegisteredDomainType;
 
 			case domainTypes.SITE_REDIRECT:
-				return SiteRedirect;
+				return SiteRedirectType;
 
 			case domainTypes.TRANSFER:
-				return Transfer;
+				return TransferInDomainType;
 
 			case domainTypes.WPCOM:
-				return newStatusDesign ? WpcomDomainType : WpcomDomain;
+				return WpcomDomainType;
 
 			default:
 				return null;
@@ -95,8 +103,13 @@ class Edit extends React.Component {
 	};
 
 	goToDomainManagement = () => {
-		page( domainManagementList( this.props.selectedSite.slug ) );
+		page( domainManagementList( this.props.selectedSite.slug, this.props.currentRoute ) );
 	};
 }
 
-export default localize( Edit );
+export default connect( ( state, ownProps ) => {
+	return {
+		currentRoute: getCurrentRoute( state ),
+		hasDomainOnlySite: isDomainOnlySite( state, ownProps.selectedSite.ID ),
+	};
+} )( localize( Edit ) );

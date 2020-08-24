@@ -2,7 +2,7 @@
 	display: inline-block;
 	border-radius: 1000px; // A number large enough to exceed height of any badge to make it look like a pill
 	padding: $badge-padding-y $badge-padding-x;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 17px;
 	height: 18px;
 }
@@ -23,6 +23,11 @@
 }
 
 .badge--info-blue {
-	background-color: var( --color-primary );
+	background-color: var( --studio-blue-50 );
+	color: var( --color-text-inverted );
+}
+
+.badge--error {
+	background-color: var( --color-error );
 	color: var( --color-text-inverted );
 }

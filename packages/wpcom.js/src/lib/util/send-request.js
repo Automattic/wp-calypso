@@ -78,7 +78,7 @@ export default function sendRequest( params, query, body, fn ) {
 	// if callback is provided, behave traditionally
 	if ( 'function' === typeof fn ) {
 		// request method
-		return this.request( params, function( err, res, headers ) {
+		return this.request( params, function ( err, res, headers ) {
 			debug_res( res );
 			fn( err, res, headers );
 		} );

@@ -26,7 +26,7 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import userUtilities from 'lib/user/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { logoutUser } from 'state/logout/actions';
@@ -37,11 +37,6 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Module variables
- */
-const user = userFactory();
 
 class MeSidebar extends React.Component {
 	onNavigate = () => {
@@ -64,7 +59,7 @@ class MeSidebar extends React.Component {
 		if ( config.isEnabled( 'login/wp-login' ) ) {
 			try {
 				const { redirect_to } = await this.props.logoutUser( redirectTo );
-				await user.clear();
+				await user().clear();
 				window.location.href = redirect_to || '/';
 			} catch {
 				// The logout endpoint might fail if the nonce has expired.
@@ -84,6 +79,7 @@ class MeSidebar extends React.Component {
 			'/me': 'profile',
 			'/me/security/account-recovery': 'security',
 			'/me/security/connected-applications': 'security',
+			'/me/security/password': 'security',
 			'/me/security/social-login': 'security',
 			'/me/security/two-step': 'security',
 			'me/privacy': 'privacy',
@@ -127,7 +123,7 @@ class MeSidebar extends React.Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Log Out' ) }
+							{ translate( 'Log out' ) }
 						</Button>
 					</div>
 
@@ -228,7 +224,7 @@ class MeSidebar extends React.Component {
 const enhance = flow(
 	localize,
 	connect(
-		state => ( {
+		( state ) => ( {
 			currentUser: getCurrentUser( state ),
 		} ),
 		{

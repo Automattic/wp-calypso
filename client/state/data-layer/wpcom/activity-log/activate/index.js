@@ -16,7 +16,7 @@ import { transformApi } from 'state/data-layer/wpcom/sites/rewind/api-transforme
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const activateRewind = action =>
+const activateRewind = ( action ) =>
 	http(
 		{
 			method: 'POST',

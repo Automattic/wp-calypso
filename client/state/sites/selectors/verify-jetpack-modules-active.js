@@ -27,5 +27,5 @@ export default function verifyJetpackModulesActive( state, siteId, moduleIds ) {
 		moduleIds = [ moduleIds ];
 	}
 
-	return every( moduleIds, moduleId => isJetpackModuleActive( state, siteId, moduleId ) );
+	return every( moduleIds, ( moduleId ) => isJetpackModuleActive( state, siteId, moduleId ) );
 }

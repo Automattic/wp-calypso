@@ -23,7 +23,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * or theme zip, see state/themes/actions#initiateThemeTransfer.
  */
 
-export const initiateTransferWithPluginZip = action => {
+export const initiateTransferWithPluginZip = ( action ) => {
 	const { siteId, pluginZip } = action;
 
 	return [
@@ -42,7 +42,7 @@ export const initiateTransferWithPluginZip = action => {
 	];
 };
 
-const showErrorNotice = error => {
+const showErrorNotice = ( error ) => {
 	if ( error.error === 'invalid_input' ) {
 		return errorNotice( translate( 'The uploaded file is not a valid zip.' ) );
 	}

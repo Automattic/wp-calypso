@@ -10,7 +10,7 @@ import { navigation, siteSelection, sites } from 'my-sites/controller';
 import home, { maybeRedirect } from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
-export default function() {
+export default function () {
 	page( '/home', siteSelection, sites, makeLayout, clientRender );
 
 	page( '/home/:siteId', siteSelection, maybeRedirect, navigation, home, makeLayout, clientRender );

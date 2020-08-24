@@ -45,7 +45,7 @@ jest.mock( 'lib/cart-values', () => ( {
 
 const defaultProps = {
 	cart: { total_cost: 100, products: [] },
-	translate: x => x,
+	translate: ( x ) => x,
 	countriesList: [
 		{
 			code: 'US',
@@ -58,14 +58,14 @@ const defaultProps = {
 	],
 	paymentType: 'default',
 	transaction: {},
-	redirectTo: x => x,
+	redirectTo: ( x ) => x,
 	selectedSite: { slug: 'example.com' },
-	showErrorNotice: x => x,
-	showInfoNotice: x => x,
-	createRedirect: x => x,
+	showErrorNotice: ( x ) => x,
+	showInfoNotice: ( x ) => x,
+	createRedirect: ( x ) => x,
 	pending: false,
 	failure: false,
-	reset: x => x,
+	reset: ( x ) => x,
 	redirectUrl: null,
 	orderId: null,
 	isMobile: false,
@@ -87,7 +87,7 @@ describe( 'WechatPaymentBox', () => {
 			'Connect(Localized(CartCoupon))',
 		];
 
-		rules.forEach( rule => {
+		rules.forEach( ( rule ) => {
 			test( rule, () => {
 				expect( wrapper.find( rule ) ).toHaveLength( 1 );
 			} );
@@ -112,7 +112,7 @@ describe( 'WechatPaymentBox', () => {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 		];
 
-		otherPlans.forEach( product_slug => {
+		otherPlans.forEach( ( product_slug ) => {
 			test( 'renders if only non-business plan products are in the cart', () => {
 				const props = {
 					...defaultProps,
@@ -133,7 +133,7 @@ describe( 'WechatPaymentBox', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 		];
 
-		eligiblePlans.forEach( product_slug => {
+		eligiblePlans.forEach( ( product_slug ) => {
 			test( 'renders if any eligible WP.com plan is in the cart', () => {
 				const props = {
 					...defaultProps,
@@ -148,7 +148,7 @@ describe( 'WechatPaymentBox', () => {
 			} );
 		} );
 
-		eligiblePlans.forEach( product_slug => {
+		eligiblePlans.forEach( ( product_slug ) => {
 			test( 'does not render if presaleChatAvailable is false', () => {
 				const props = {
 					...defaultProps,
@@ -164,10 +164,25 @@ describe( 'WechatPaymentBox', () => {
 	} );
 
 	describe( '#componentDidUpdate', () => {
-		test( 'redirects on mobile', () => {
-			// https://github.com/facebook/jest/issues/890#issuecomment-295939071
-			window.location.assign = jest.fn();
+		let originalLocationProperties;
 
+		beforeEach( () => {
+			// window.location has an empty setter so the only way to mock window.location.asign
+			// is to do a full replacement of window.location using a property descriptor
+			originalLocationProperties = Object.getOwnPropertyDescriptors( window ).location;
+			Object.defineProperty( window, 'location', {
+				writable: true,
+				value: {
+					assign: jest.fn(),
+				},
+			} );
+		} );
+
+		afterEach( () => {
+			Object.defineProperty( global, 'document', originalLocationProperties );
+		} );
+
+		test( 'redirects on mobile', () => {
 			const redirectUrl = 'https://redirect';
 
 			const instance = shallow(
@@ -180,8 +195,6 @@ describe( 'WechatPaymentBox', () => {
 		} );
 
 		test( 'does not redirect on desktop', () => {
-			window.location.assign = jest.fn();
-
 			const redirectUrl = 'https://redirect';
 
 			const instance = shallow(
@@ -194,8 +207,6 @@ describe( 'WechatPaymentBox', () => {
 		} );
 
 		test( 'displays a qr code on desktop', () => {
-			window.location.assign = jest.fn();
-
 			const redirectUrl = 'https://redirect';
 
 			const wrapper = shallow(

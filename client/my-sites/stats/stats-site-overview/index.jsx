@@ -35,7 +35,7 @@ class StatsSiteOverview extends Component {
 		title: PropTypes.string,
 	};
 
-	isValueLow = value => {
+	isValueLow = ( value ) => {
 		return ! value || 0 === value;
 	};
 

@@ -35,7 +35,7 @@ class SiteTypeForm extends Component {
 		showPurchaseRequired: true,
 	};
 
-	handleSubmit = type => {
+	handleSubmit = ( type ) => {
 		this.props.recordTracksEvent( 'calypso_signup_actions_submit_site_type', {
 			value: type,
 		} );
@@ -48,7 +48,7 @@ class SiteTypeForm extends Component {
 		return (
 			<>
 				<Card className="site-type__wrapper">
-					{ getAllSiteTypes().map( siteTypeProperties => (
+					{ getAllSiteTypes().map( ( siteTypeProperties ) => (
 						<Card
 							className="site-type__option"
 							key={ siteTypeProperties.id }

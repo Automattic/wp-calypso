@@ -12,7 +12,7 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 
 const siteId = 123;
 
-const dispatchFn = action => action;
+const dispatchFn = ( action ) => action;
 
 const getState = () => ( {
 	extensions: {

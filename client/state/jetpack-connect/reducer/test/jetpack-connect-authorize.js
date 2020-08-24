@@ -8,20 +8,18 @@ import deepFreeze from 'deep-freeze';
  */
 import jetpackConnectAuthorize from '../jetpack-connect-authorize.js';
 import {
-	DESERIALIZE,
 	JETPACK_CONNECT_AUTHORIZE,
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_QUERY_SET,
-	SERIALIZE,
-	SITE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'state/jetpack-connect/action-types';
+import { DESERIALIZE, SERIALIZE, SITE_REQUEST_FAILURE } from 'state/action-types';
 
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( '#jetpackConnectAuthorize()', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

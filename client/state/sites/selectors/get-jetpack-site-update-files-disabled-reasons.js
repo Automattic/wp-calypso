@@ -32,7 +32,7 @@ export default function getJetpackSiteUpdateFilesDisabledReasons(
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
 	return compact(
-		fileModDisabled.map( clue => {
+		fileModDisabled.map( ( clue ) => {
 			if (
 				action === 'modifyFiles' ||
 				action === 'autoupdateFiles' ||

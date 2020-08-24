@@ -29,7 +29,6 @@ import {
 } from 'state/purchases/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
-import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions.js';
 import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id.js';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import {
@@ -52,17 +51,19 @@ class PurchasesList extends Component {
 	}
 
 	renderConciergeBanner() {
-		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
+		const { nextAppointment, scheduleId } = this.props;
 
-		if ( null === hasAvailableConciergeSessions ) {
-			return <ConciergeBanner bannerType="placeholder" />;
+		if ( null === scheduleId ) {
+			return (
+				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
+			);
 		}
 
 		let bannerType;
 
 		if ( nextAppointment ) {
 			bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
-		} else if ( hasAvailableConciergeSessions ) {
+		} else if ( scheduleId ) {
 			switch ( scheduleId ) {
 				case CONCIERGE_WPCOM_BUSINESS_ID:
 					bannerType = CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION;
@@ -99,7 +100,7 @@ class PurchasesList extends Component {
 				<div>
 					{ this.renderConciergeBanner() }
 
-					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( site => (
+					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( ( site ) => (
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
@@ -134,7 +135,7 @@ class PurchasesList extends Component {
 								'Our plans give your site the power to thrive. ' +
 									'Find the plan that works for you.'
 							) }
-							action={ this.props.translate( 'Upgrade Now' ) }
+							action={ this.props.translate( 'Upgrade now' ) }
 							actionURL={ '/plans' }
 							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 						/>
@@ -165,7 +166,7 @@ PurchasesList.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const userId = getCurrentUserId( state );
 		return {
 			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
@@ -174,7 +175,6 @@ export default connect(
 			purchases: getUserPurchases( state, userId ),
 			sites: getSites( state ),
 			nextAppointment: getConciergeNextAppointment( state ),
-			hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
 			scheduleId: getConciergeScheduleId( state ),
 			userId,
 		};

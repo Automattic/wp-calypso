@@ -7,7 +7,7 @@ import { siteSelection, navigation, sites } from 'my-sites/controller';
 import { list, redirect } from './controller';
 import config from 'config';
 
-export default function( router ) {
+export default function ( router ) {
 	if ( ! config.isEnabled( 'manage/custom-post-types' ) ) {
 		return;
 	}

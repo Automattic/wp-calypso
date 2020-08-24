@@ -44,28 +44,31 @@ const NavigationMenuEdit = ( {
 			<BlockControls>
 				<AlignmentToolbar
 					value={ textAlign }
-					onChange={ nextAlign => {
+					onChange={ ( nextAlign ) => {
 						setAttributes( { textAlign: nextAlign } );
 					} }
 				/>
 			</BlockControls>
 			<InspectorControls>
-				<PanelBody className="blocks-font-size" title={ __( 'Text Settings' ) }>
+				<PanelBody
+					className="blocks-font-size"
+					title={ __( 'Text Settings', 'full-site-editing' ) }
+				>
 					<FontSizePicker onChange={ setFontSize } value={ actualFontSize } />
 				</PanelBody>
 				<PanelColorSettings
-					title={ __( 'Color Settings' ) }
+					title={ __( 'Color Settings', 'full-site-editing' ) }
 					initialOpen={ false }
 					colorSettings={ [
 						{
 							value: backgroundColor.color,
 							onChange: setBackgroundColor,
-							label: __( 'Background Color' ),
+							label: __( 'Background Color', 'full-site-editing' ),
 						},
 						{
 							value: textColor.color,
 							onChange: setTextColor,
-							label: __( 'Text Color' ),
+							label: __( 'Text Color', 'full-site-editing' ),
 						},
 					] }
 				>
@@ -90,7 +93,7 @@ const NavigationMenuEdit = ( {
 export default compose( [
 	withColors( 'backgroundColor', { textColor: 'color' } ),
 	withFontSizes( 'fontSize' ),
-	withSelect( select => {
+	withSelect( ( select ) => {
 		return {
 			isPublished: select( 'core/editor' ).isCurrentPostPublished(),
 		};

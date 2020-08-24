@@ -4,7 +4,7 @@
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
-import { getEditorPath } from 'state/ui/editor/selectors';
+import { getEditorPath } from 'state/editor/selectors';
 import { addQueryArgs } from 'lib/route';
 
 export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {

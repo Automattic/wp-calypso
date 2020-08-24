@@ -34,7 +34,7 @@ const DomainRegistrationDetails = ( {
 	onPickPlanUpsellClick,
 } ) => {
 	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
-		domainContactEmailVerified = purchases.some( purchase => purchase.isEmailVerified ),
+		domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified ),
 		hasOtherPrimaryDomain =
 			selectedSite.options &&
 			selectedSite.options.is_mapped_domain &&
@@ -63,14 +63,14 @@ const DomainRegistrationDetails = ( {
 					/>
 				) }
 
-				{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+				{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
 			</div>
 
 			<PurchaseDetail
 				icon={ <img alt="" src="/calypso/images/upgrades/wait-time.svg" /> }
 				title={ i18n.translate( 'When will it be ready?', { comment: '"it" refers to a domain' } ) }
 				description={ i18n.translate(
-					'Your domain should start working immediately, but may be unreliable during the first 72 hours.'
+					'Your domain should start working immediately, but may be unreliable during the first 30 minutes.'
 				) }
 				buttonText={ i18n.translate( 'Learn more about your domain' ) }
 				href={ DOMAIN_WAITING }
@@ -156,7 +156,7 @@ DomainRegistrationDetails.propTypes = {
 	hasNonPrimaryDomainsFlag: PropTypes.bool,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	return {
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
@@ -164,7 +164,7 @@ const mapStateToProps = state => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return {
 		onPickPlanUpsellClick: () =>
 			dispatch( recordTracksEvent( 'calypso_non_primary_domain_thank_you_plan_upsell_click', {} ) ),

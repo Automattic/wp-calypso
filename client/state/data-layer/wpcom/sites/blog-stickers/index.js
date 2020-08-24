@@ -16,7 +16,7 @@ import { receiveBlogStickers } from 'state/sites/blog-stickers/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestBlogStickerList = action =>
+export const requestBlogStickerList = ( action ) =>
 	http(
 		{
 			method: 'GET',

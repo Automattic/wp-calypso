@@ -58,6 +58,11 @@ function getDialogPosition( position: DialogPosition, rect: ClientRect ): Coordi
 				x: wouldBeOffscreen( rect.right ) ? fitOnScreen( rect.left ) : rect.right + DIALOG_PADDING,
 				y: rect.top + DIALOG_PADDING,
 			};
+		case 'left':
+			return {
+				x: fitOnScreen( rect.left ),
+				y: rect.top + DIALOG_PADDING,
+			};
 		case 'center':
 			return {
 				x: Math.max( 0, middle( rect.left, rect.right ) - DIALOG_WIDTH / 2 ),
@@ -154,7 +159,10 @@ export function getStepPosition( {
 	scrollContainer: Element | null;
 	shouldScrollTo: boolean;
 	targetSlug?: string;
-} ): Coordinate {
+} ): {
+	stepPos: Coordinate;
+	scrollDiff: number;
+} {
 	const target = targetForSlug( targetSlug );
 	const scrollDiff = target && shouldScrollTo ? scrollIntoView( target, scrollContainer ) : 0;
 	const rect =
@@ -163,9 +171,14 @@ export function getStepPosition( {
 			: window.document.body.getBoundingClientRect();
 	const validatedPlacement = validatePlacement( placement, target );
 	const position = getDialogPosition( validatedPlacement, rect );
-	return {
+	const stepPos = {
 		x: position.x,
 		y: position.y - scrollDiff + ( scrollDiff !== 0 ? DIALOG_PADDING : 0 ),
+	};
+
+	return {
+		stepPos,
+		scrollDiff,
 	};
 }
 
@@ -188,16 +201,34 @@ function validatePlacement( placement: DialogPosition, target: Element | null ):
 }
 
 function scrollIntoView( target: Element, scrollContainer: Element | null ) {
-	// TODO(lsinger): consider replacing with lib/scroll-into-viewport
 	const container = scrollContainer || getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
-	const clientHeight = isMobile() ? document.documentElement.clientHeight : container.clientHeight;
+	let { clientHeight, scrollHeight, scrollTop } = container;
 
-	if ( bottom + DIALOG_PADDING + DIALOG_HEIGHT <= clientHeight ) {
+	if ( isMobile() ) {
+		clientHeight = document.documentElement.clientHeight;
+	} else if ( window === scrollContainer ) {
+		// An improvement here could be to limit DOM access, via some sort of memoization
+		const body = document.querySelector( 'body' );
+
+		if ( body ) {
+			// The following properties are not available on the window object.
+			clientHeight = body.clientHeight;
+			scrollHeight = body.scrollHeight;
+			scrollTop = body.scrollTop;
+		}
+	}
+
+	if (
+		// Dialog isn't hidden at the bottom of the container
+		bottom + DIALOG_PADDING + DIALOG_HEIGHT <= clientHeight &&
+		// Dialog isn't hidden at the top of the container
+		bottom > MASTERBAR_HEIGHT + DIALOG_PADDING
+	) {
 		return 0;
 	}
 
-	const scrollMax = container.scrollHeight - clientHeight - container.scrollTop;
+	const scrollMax = scrollHeight - clientHeight - scrollTop;
 	const y = Math.min( 0.75 * top, scrollMax );
 
 	scrollTo( { y, container } );

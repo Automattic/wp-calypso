@@ -22,7 +22,7 @@ export default class TimeSince extends PureComponent {
 		this.update( nextProps.date );
 	}
 
-	update = date => {
+	update = ( date ) => {
 		const { dateFormat } = this.props;
 		date = date || this.props.date;
 

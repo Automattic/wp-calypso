@@ -16,7 +16,7 @@ class Focusable extends Component {
 		onKeyDown: PropTypes.func,
 	};
 
-	onKeyDown = event => {
+	onKeyDown = ( event ) => {
 		const { onClick, onKeyDown } = this.props;
 		if ( onClick && ( event.key === 'Enter' || event.key === ' ' ) ) {
 			event.preventDefault();

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,13 +14,13 @@ import classNames from 'classnames';
  */
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import { AspectRatios, MinimumImageDimensions } from 'state/ui/editor/image-editor/constants';
-import { getImageEditorAspectRatio } from 'state/ui/editor/image-editor/selectors';
+import { AspectRatios, MinimumImageDimensions } from 'state/editor/image-editor/constants';
+import { getImageEditorAspectRatio } from 'state/editor/image-editor/selectors';
 import {
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio,
-} from 'state/ui/editor/image-editor/actions';
+} from 'state/editor/image-editor/actions';
 import getImageEditorIsGreaterThanMinimumDimensions from 'state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 export class ImageEditorToolbar extends Component {
@@ -149,7 +148,7 @@ export class ImageEditorToolbar extends Component {
 				context={ popoverContext }
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
-				{ items.map( item =>
+				{ items.map( ( item ) =>
 					allowedAspectRatios.indexOf( item.action ) !== -1 ? (
 						<PopoverMenuItem
 							key={ 'image-editor-toolbar-aspect-' + item.action }
@@ -192,7 +191,7 @@ export class ImageEditorToolbar extends Component {
 			},
 		];
 
-		return buttons.map( button => {
+		return buttons.map( ( button ) => {
 			const buttonClasses = classNames( 'image-editor__toolbar-button', {
 				'is-disabled': button && button.disabled,
 			} );
@@ -221,7 +220,7 @@ export class ImageEditorToolbar extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const aspectRatio = getImageEditorAspectRatio( state );
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( state );
 

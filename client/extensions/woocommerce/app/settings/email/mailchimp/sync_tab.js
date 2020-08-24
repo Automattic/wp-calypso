@@ -20,7 +20,7 @@ class Tooltip extends React.Component {
 		this.tooltipRef = React.createRef();
 	}
 
-	open = e => {
+	open = ( e ) => {
 		const isTruncated = e.target.offsetWidth < e.target.scrollWidth;
 		this.setState( { show: isTruncated } );
 	};

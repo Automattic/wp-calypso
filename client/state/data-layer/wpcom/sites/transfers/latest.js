@@ -21,7 +21,7 @@ import { transferStates } from 'state/atomic-transfer/constants';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestTransfer = action =>
+export const requestTransfer = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -31,7 +31,7 @@ export const requestTransfer = action =>
 		action
 	);
 
-export const receiveTransfer = ( { siteId }, transfer ) => dispatch => {
+export const receiveTransfer = ( { siteId }, transfer ) => ( dispatch ) => {
 	dispatch( setAtomicTransfer( siteId, transfer ) );
 
 	const status = transfer.status;
@@ -52,7 +52,8 @@ export const receiveTransfer = ( { siteId }, transfer ) => dispatch => {
 	}
 };
 
-export const requestingTransferFailure = action => atomicTransferFetchingFailure( action.siteId );
+export const requestingTransferFailure = ( action ) =>
+	atomicTransferFetchingFailure( action.siteId );
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
 	[ ATOMIC_TRANSFER_REQUEST ]: [

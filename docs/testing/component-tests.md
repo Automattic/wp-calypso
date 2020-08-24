@@ -4,7 +4,7 @@ Calypso has a lot of React UI components. (Try for example running `find . -name
 
 ## [Getting started](#getting-started)
 
-To run all current client side tests, run `npm run test-client` from within the Calypso source. You can also run individual tests, see [Testing overview](testing-overview.md#how-to-run-a-smaller-subset-of-test-files) for more details.
+To run all current client side tests, run `yarn run test-client` from within the Calypso source. You can also run individual tests, see [Testing overview](testing-overview.md#how-to-run-a-smaller-subset-of-test-files) for more details.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 

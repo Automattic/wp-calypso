@@ -36,7 +36,7 @@ class SiteType extends Component {
 		this.submitStep( 'import' );
 	};
 
-	submitStep = siteTypeValue => {
+	submitStep = ( siteTypeValue ) => {
 		const { stepName } = this.props;
 
 		this.props.submitSiteType( siteTypeValue, stepName );
@@ -120,7 +120,7 @@ class SiteType extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		siteType: getSiteType( state ) || 'blog',
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),

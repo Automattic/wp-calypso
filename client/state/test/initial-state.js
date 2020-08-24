@@ -17,9 +17,10 @@ import userFactory from 'lib/user';
 import { isSupportSession } from 'lib/user/support-user-interop';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { createReduxStore } from 'state';
-import initialReducer from 'state/reducer';
+import signupReducer from 'state/signup/reducer';
 import {
 	getInitialState,
+	getStateFromCache,
 	persistOnChange,
 	loadAllState,
 	MAX_AGE,
@@ -28,12 +29,22 @@ import {
 import { combineReducers, withStorageKey } from 'state/utils';
 import { addReducerToStore } from 'state/add-reducer';
 
+import currentUser from 'state/current-user/reducer';
+import postTypes from 'state/post-types/reducer';
+import reader from 'state/reader/reducer';
+
+// Create a legacy initial reducer, with no modularization.
+const initialReducer = combineReducers( {
+	currentUser,
+	postTypes,
+} );
+
 jest.mock( 'config', () => {
 	let persistReduxEnabled = false;
 
 	const config = () => 'development';
 
-	config.isEnabled = jest.fn( key => key === 'persist-redux' && persistReduxEnabled );
+	config.isEnabled = jest.fn( ( key ) => key === 'persist-redux' && persistReduxEnabled );
 	config.isEnabled.enablePersistRedux = () => ( persistReduxEnabled = true );
 	config.isEnabled.disablePersistRedux = () => ( persistReduxEnabled = false );
 
@@ -398,134 +409,309 @@ describe( 'initial-state', () => {
 					expect( state._timestamp ).toBeUndefined();
 				} );
 			} );
+		} );
+	} );
 
-			describe( 'with empty persisted signup state for logged in user, and persisted state for logged out user', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
+	describe( 'getStateFromCache', () => {
+		describe( 'with persisted data and no initial server data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
 
-				const _timestamp = Date.now();
-				const storedState = {
-					'redux-state-logged-out:signup': {
-						dependencyStore: {
-							siteType: 'blog',
-							siteTitle: 'Logged out test title',
-						},
-						progress: {
-							'logged-out-step': {
-								stepName: 'logged-out-step',
-								status: 'completed',
-							},
-						},
-						_timestamp,
-					},
-				};
-				const serverState = {};
+			const savedState = {
+				'redux-state-123456789:reader': {
+					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					_timestamp: Date.now(),
+				},
+			};
 
-				beforeAll( async () => {
-					isEnabled.enablePersistRedux();
-					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getAllStoredItems' )
-						.mockResolvedValue( storedState );
+			const serverState = null;
 
-					await loadAllState();
-					state = getInitialState( initialReducer );
-				} );
-
-				afterAll( () => {
-					window.initialReduxState = null;
-					isEnabled.disablePersistRedux();
-					consoleErrorSpy.mockRestore();
-					getStoredItemSpy.mockRestore();
-				} );
-
-				test( 'builds initial state without errors', () => {
-					expect( consoleErrorSpy ).not.toHaveBeenCalled();
-				} );
-
-				test( 'builds initial signup state from logged out state', () => {
-					expect( state.signup.dependencyStore ).toEqual(
-						storedState[ 'redux-state-logged-out:signup' ].dependencyStore
-					);
-					expect( state.signup.progress ).toEqual(
-						storedState[ 'redux-state-logged-out:signup' ].progress
-					);
-				} );
-
-				test( 'does not add timestamp to initial state', () => {
-					expect( state._timestamp ).toBeUndefined();
-				} );
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
 			} );
 
-			describe( 'with existing persisted signup state for logged in user, and persisted state for logged out user', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
 
-				const _timestamp = Date.now();
-				const storedState = {
-					'redux-state-123456789:signup': {
-						dependencyStore: {
-							siteType: 'blog',
-							siteTitle: 'Logged in test title',
-						},
-						progress: {
-							'logged-in-step': {
-								stepName: 'logged-in-step',
-								status: 'completed',
-							},
-						},
-						_timestamp,
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using saved state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+			} );
+		} );
+
+		describe( 'with initial server data and no persisted data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const savedState = null;
+
+			const serverState = {
+				reader: {
+					organizations: { items: [ { id: 2, slug: 'server' } ] },
+				},
+			};
+
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using server state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+			} );
+		} );
+
+		describe( 'with fresher server data than persisted data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const oldDate = new Date();
+			oldDate.setDate( oldDate.getDate() - 1 );
+
+			const savedState = {
+				'redux-state-123456789:reader': {
+					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					_timestamp: oldDate.getTime(),
+				},
+			};
+
+			const serverState = {
+				reader: {
+					organizations: { items: [ { id: 2, slug: 'server' } ] },
+				},
+			};
+
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using server state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 2, slug: 'server' } ] );
+			} );
+		} );
+
+		describe( 'with fresher persisted data than server data', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const newerDate = new Date();
+			newerDate.setDate( newerDate.getDate() + 1 );
+
+			const savedState = {
+				'redux-state-123456789:reader': {
+					organizations: { items: [ { id: 1, slug: 'saved' } ] },
+					_timestamp: newerDate.getTime(),
+				},
+			};
+
+			const serverState = {
+				reader: {
+					organizations: { items: [ { id: 2, slug: 'server' } ] },
+				},
+			};
+
+			beforeAll( async () => {
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( savedState );
+				await loadAllState();
+				state = getStateFromCache( reader, 'reader' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+
+			test( 'builds initial state using saved state', () => {
+				expect( state.organizations.items ).toEqual( [ { id: 1, slug: 'saved' } ] );
+			} );
+		} );
+
+		describe( 'with empty persisted signup state for logged in user, and persisted state for logged out user', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const _timestamp = Date.now();
+			const storedState = {
+				'redux-state-logged-out:signup': {
+					dependencyStore: {
+						siteType: 'blog',
+						siteTitle: 'Logged out test title',
 					},
-					'redux-state-logged-out:signup': {
-						dependencyStore: {
-							siteType: 'blog',
-							siteTitle: 'Logged out test title',
+					progress: {
+						'logged-out-step': {
+							stepName: 'logged-out-step',
+							status: 'completed',
 						},
-						progress: {
-							'logged-out-step': {
-								stepName: 'logged-out-step',
-								status: 'completed',
-							},
-						},
-						_timestamp,
 					},
-				};
-				const serverState = {};
+					_timestamp,
+				},
+			};
+			const serverState = {};
 
-				beforeAll( async () => {
-					isEnabled.enablePersistRedux();
-					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getAllStoredItems' )
-						.mockResolvedValue( storedState );
+			beforeAll( async () => {
+				isEnabled.enablePersistRedux();
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( storedState );
 
-					await loadAllState();
-					state = getInitialState( initialReducer );
-				} );
+				await loadAllState();
+				state = getStateFromCache( signupReducer, 'signup' );
+			} );
 
-				afterAll( () => {
-					window.initialReduxState = null;
-					isEnabled.disablePersistRedux();
-					consoleErrorSpy.mockRestore();
-					getStoredItemSpy.mockRestore();
-				} );
+			afterAll( () => {
+				window.initialReduxState = null;
+				isEnabled.disablePersistRedux();
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
 
-				test( 'builds initial state without errors', () => {
-					expect( consoleErrorSpy ).not.toHaveBeenCalled();
-				} );
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
 
-				test( 'builds initial signup state from logged in state', () => {
-					expect( state.signup.dependencyStore ).toEqual(
-						storedState[ 'redux-state-123456789:signup' ].dependencyStore
-					);
-					expect( state.signup.progress ).toEqual(
-						storedState[ 'redux-state-123456789:signup' ].progress
-					);
-				} );
+			test( 'builds initial signup state from logged out state', () => {
+				expect( state.dependencyStore ).toEqual(
+					storedState[ 'redux-state-logged-out:signup' ].dependencyStore
+				);
+				expect( state.progress ).toEqual( storedState[ 'redux-state-logged-out:signup' ].progress );
+			} );
 
-				test( 'does not add timestamp to initial state', () => {
-					expect( state._timestamp ).toBeUndefined();
-				} );
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
+			} );
+		} );
+
+		describe( 'with existing persisted signup state for logged in user, and persisted state for logged out user', () => {
+			let state, consoleErrorSpy, getStoredItemSpy;
+
+			const _timestamp = Date.now();
+			const storedState = {
+				'redux-state-123456789:signup': {
+					dependencyStore: {
+						siteType: 'blog',
+						siteTitle: 'Logged in test title',
+					},
+					progress: {
+						'logged-in-step': {
+							stepName: 'logged-in-step',
+							status: 'completed',
+						},
+					},
+					_timestamp,
+				},
+				'redux-state-logged-out:signup': {
+					dependencyStore: {
+						siteType: 'blog',
+						siteTitle: 'Logged out test title',
+					},
+					progress: {
+						'logged-out-step': {
+							stepName: 'logged-out-step',
+							status: 'completed',
+						},
+					},
+					_timestamp,
+				},
+			};
+			const serverState = {};
+
+			beforeAll( async () => {
+				isEnabled.enablePersistRedux();
+				window.initialReduxState = serverState;
+				consoleErrorSpy = jest.spyOn( global.console, 'error' );
+				getStoredItemSpy = jest
+					.spyOn( browserStorage, 'getAllStoredItems' )
+					.mockResolvedValue( storedState );
+
+				await loadAllState();
+				state = getStateFromCache( signupReducer, 'signup' );
+			} );
+
+			afterAll( () => {
+				window.initialReduxState = null;
+				isEnabled.disablePersistRedux();
+				consoleErrorSpy.mockRestore();
+				getStoredItemSpy.mockRestore();
+			} );
+
+			test( 'builds initial state without errors', () => {
+				expect( consoleErrorSpy ).not.toHaveBeenCalled();
+			} );
+
+			test( 'builds initial signup state from logged in state', () => {
+				expect( state.dependencyStore ).toEqual(
+					storedState[ 'redux-state-123456789:signup' ].dependencyStore
+				);
+				expect( state.progress ).toEqual( storedState[ 'redux-state-123456789:signup' ].progress );
+			} );
+
+			test( 'does not add timestamp to initial state', () => {
+				expect( state._timestamp ).toBeUndefined();
 			} );
 		} );
 	} );
@@ -562,7 +748,7 @@ describe( 'initial-state', () => {
 			clock = useFakeTimers();
 			setStoredItemSpy = jest
 				.spyOn( browserStorage, 'setStoredItem' )
-				.mockImplementation( value => Promise.resolve( value ) );
+				.mockImplementation( ( value ) => Promise.resolve( value ) );
 
 			store = createReduxStore( initialState, reducer );
 			persistOnChange( store, false );
@@ -681,7 +867,7 @@ describe( 'initial-state', () => {
 describe( 'loading stored state with dynamic reducers', () => {
 	// Creates a reducer that serializes objects by prefixing all keys with a given prefix.
 	// For example, `withKeyPrefix( 'A' )` serializes `{ x: 1, y: 2 }` into `{ 'A:x': 1, 'A:y': 2 }`
-	const withKeyPrefix = keyPrefix => {
+	const withKeyPrefix = ( keyPrefix ) => {
 		const keyPrefixRe = new RegExp( `^${ keyPrefix }:` );
 		const reducer = ( state = {}, action ) => {
 			switch ( action.type ) {

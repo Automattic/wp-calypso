@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:stats:action-spam' );
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
+
+const debug = debugFactory( 'calypso:stats:action-spam' );
 
 class StatsActionSpam extends React.Component {
 	static displayName = 'StatsActionSpam';
@@ -23,7 +23,7 @@ class StatsActionSpam extends React.Component {
 		spammed: false,
 	};
 
-	clickHandler = event => {
+	clickHandler = ( event ) => {
 		const spamType = this.state.spammed ? 'statsReferrersSpamDelete' : 'statsReferrersSpamNew';
 		const gaEvent = this.state.spammed ? 'Undid Referrer Spam' : 'Marked Referrer as Spam';
 		event.stopPropagation();
@@ -38,8 +38,8 @@ class StatsActionSpam extends React.Component {
 		}
 
 		const wpcomSite = wpcom.site( this.props.data.siteID );
-		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function() {} );
-		analytics.ga.recordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
+		wpcomSite[ spamType ].call( wpcomSite, this.props.data.domain, function () {} );
+		gaRecordEvent( 'Stats', gaEvent + ' in ' + this.props.moduleName + ' List' );
 	};
 
 	render() {

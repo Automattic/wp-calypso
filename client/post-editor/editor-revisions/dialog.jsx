@@ -6,26 +6,26 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { get, flow } from 'lodash';
+import { Dialog } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import getPostRevisionsSelectedRevision from 'state/selectors/get-post-revisions-selected-revision';
-
-import isPostRevisionsDialogVisible from 'state/selectors/is-post-revisions-dialog-visible';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getPostRevisionsSelectedRevision } from 'state/posts/selectors/get-post-revisions-selected-revision';
+import { isPostRevisionsDialogVisible } from 'state/posts/selectors/is-post-revisions-dialog-visible';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { closePostRevisionsDialog, selectPostRevision } from 'state/posts/revisions/actions';
 import EditorRevisions from 'post-editor/editor-revisions';
-import { Dialog } from '@automattic/components';
 import CloseOnEscape from 'components/close-on-escape';
 
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {
 		/**
 		 * loadRevision is passed through from `post-editor/post-editor.jsx`
-		 * @TODO untangle & reduxify
+		 *
+		 * TODO untangle & reduxify
 		 */
 		loadRevision: PropTypes.func.isRequired,
 
@@ -105,7 +105,7 @@ class PostRevisionsDialog extends PureComponent {
 export default flow(
 	localize,
 	connect(
-		state => ( {
+		( state ) => ( {
 			isVisible: isPostRevisionsDialogVisible( state ),
 			postId: getEditorPostId( state ),
 			revision: getPostRevisionsSelectedRevision( state ),

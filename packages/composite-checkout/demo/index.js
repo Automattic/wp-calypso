@@ -9,14 +9,18 @@ import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
 import {
 	Checkout,
-	CheckoutSteps,
+	CheckoutStepArea,
 	CheckoutStep,
 	CheckoutStepBody,
+	CheckoutSteps,
+	CheckoutSummaryArea,
 	CheckoutProvider,
 	createApplePayMethod,
 	createPayPalMethod,
-	createRegistry,
 	createStripeMethod,
+	createStripePaymentMethodStore,
+	defaultRegistry,
+	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
@@ -25,7 +29,6 @@ import {
 	useDispatch,
 	useMessages,
 	useFormStatus,
-	usePaymentMethod,
 } from '../src/public-api';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe';
 
@@ -43,7 +46,7 @@ const initialItems = [
 		subLabel: 'example.com',
 		id: 'wpcom-domain',
 		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
+		amount: { currency: 'USD', value: 0, displayValue: '$0' },
 	},
 ];
 
@@ -51,16 +54,16 @@ const onPaymentComplete = () => {
 	const successRedirectUrl = '/complete.html';
 	window.location.href = successRedirectUrl;
 };
-const onEvent = event => window.console.log( 'Event', event );
-const showErrorMessage = error => {
+const onEvent = ( event ) => window.console.log( 'Event', event );
+const showErrorMessage = ( error ) => {
 	console.log( 'Error:', error ); /* eslint-disable-line no-console */
 	window.alert( 'There was a problem with your payment: ' + error );
 };
-const showInfoMessage = message => {
+const showInfoMessage = ( message ) => {
 	console.log( 'Info:', message ); /* eslint-disable-line no-console */
 	window.alert( message );
 };
-const showSuccessMessage = message => {
+const showSuccessMessage = ( message ) => {
 	console.log( 'Success:', message ); /* eslint-disable-line no-console */
 	window.alert( message );
 };
@@ -74,8 +77,17 @@ async function fetchStripeConfiguration() {
 	};
 }
 
-async function sendStripeTransaction( data ) {
+async function stripeCardProcessor( data ) {
 	window.console.log( 'Processing stripe transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
+	return {
+		success: true,
+	};
+}
+
+async function applePayProcessor( data ) {
+	window.console.log( 'Processing apple-pay transaction with data', data );
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
 	return {
@@ -90,8 +102,7 @@ async function makePayPalExpressRequest( data ) {
 	return window.location.href;
 }
 
-const registry = createRegistry();
-const { registerStore, select } = registry;
+const { registerStore } = defaultRegistry;
 
 registerStore( 'demo', {
 	actions: {
@@ -170,7 +181,7 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 			},
 		};
 		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( result => {
+		request.canMakePayment().then( ( result ) => {
 			isSubscribed && setCanMakePayment( !! result?.applePay );
 		} );
 
@@ -180,7 +191,7 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, items ) {
 	return { canMakePayment: canMakePayment === true, isLoading: canMakePayment === 'loading' };
 }
 
-const getTotal = items => {
+const getTotal = ( items ) => {
 	const lineItemTotal = items.reduce( ( sum, item ) => sum + item.amount.value, 0 );
 	const currency = items.reduce( ( lastCurrency, item ) => item.amount.currency, 'USD' );
 	return {
@@ -200,13 +211,13 @@ const ContactFormTitle = () => {
 
 const Label = styled.label`
 	display: block;
-	color: ${props => props.theme.colors.textColor};
-	font-weight: ${props => props.theme.weights.bold};
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${props => ( props.disabled ? 'default' : 'pointer' )};
+		cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	}
 `;
 
@@ -216,11 +227,12 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 	border: 1px solid
-		${props => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor )};
+		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	padding: 13px 10px 12px 10px;
 
 	:focus {
-		outline: ${props => ( props.isError ? props.theme.colors.error : props.theme.colors.outline )}
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
 			solid 2px !important;
 	}
 `;
@@ -230,9 +242,9 @@ const Form = styled.div`
 `;
 
 function ContactForm( { summary } ) {
-	const country = useSelect( storeSelect => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
 	const { setCountry } = useDispatch( 'demo' );
-	const onChangeCountry = event => setCountry( event.target.value );
+	const onChangeCountry = ( event ) => setCountry( event.target.value );
 	const { formStatus } = useFormStatus();
 
 	if ( summary ) {
@@ -258,6 +270,7 @@ function ContactForm( { summary } ) {
 	);
 }
 
+const orderSummary = getDefaultOrderSummary();
 const orderSummaryStep = getDefaultOrderSummaryStep();
 const paymentMethodStep = getDefaultPaymentMethodStep();
 const reviewOrderStep = getDefaultOrderReviewStep();
@@ -306,20 +319,18 @@ function MyCheckout() {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration, isApplePayLoading ] );
 
+	const stripeStore = useMemo( () => createStripePaymentMethodStore(), [] );
+
 	const stripeMethod = useMemo( () => {
 		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
 			return null;
 		}
 		return createStripeMethod( {
-			getCountry: () => select( 'demo' ).getCountry(),
-			getPostalCode: () => 90210,
-			getSubdivisionCode: () => 'CA',
-			registerStore,
+			store: stripeStore,
 			stripe,
 			stripeConfiguration,
-			submitTransaction: sendStripeTransaction,
 		} );
-	}, [ stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
+	}, [ stripeStore, stripe, stripeConfiguration, isStripeLoading, stripeLoadingError ] );
 
 	const applePayMethod = useMemo( () => {
 		if (
@@ -332,14 +343,7 @@ function MyCheckout() {
 		) {
 			return null;
 		}
-		return createApplePayMethod( {
-			getCountry: () => select( 'demo' ).getCountry(),
-			getPostalCode: () => 90210,
-			registerStore,
-			submitTransaction: sendStripeTransaction,
-			stripe,
-			stripeConfiguration,
-		} );
+		return createApplePayMethod( stripe, stripeConfiguration );
 	}, [
 		isApplePayLoading,
 		stripe,
@@ -362,7 +366,6 @@ function MyCheckout() {
 
 	return (
 		<CheckoutProvider
-			locale={ 'en' }
 			items={ items }
 			total={ total }
 			onEvent={ onEvent }
@@ -370,9 +373,10 @@ function MyCheckout() {
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
-			registry={ registry }
+			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+			paymentProcessors={ { 'apple-pay': applePayProcessor, card: stripeCardProcessor } }
 		>
 			<MyCheckoutBody />
 		</CheckoutProvider>
@@ -380,59 +384,58 @@ function MyCheckout() {
 }
 
 function MyCheckoutBody() {
-	const country = useSelect( storeSelect => storeSelect( 'demo' )?.getCountry() ?? '' );
+	const country = useSelect( ( storeSelect ) => storeSelect( 'demo' )?.getCountry() ?? '' );
 	const { showErrorMessage: showError } = useMessages();
-	const activePaymentMethod = usePaymentMethod();
 
 	return (
 		<Checkout>
-			<CheckoutStepBody
-				activeStepContent={ orderSummaryStep.activeStepContent }
-				completeStepContent={ orderSummaryStep.completeStepContent }
-				titleContent={ orderSummaryStep.titleContent }
-				errorMessage={ 'There was an error with this step.' }
-				isStepActive={ false }
-				isStepComplete={ true }
-				stepNumber={ 1 }
-				totalSteps={ 1 }
-				stepId={ 'order-summary' }
-			/>
-			<CheckoutSteps>
-				<CheckoutStep
-					stepId="payment-method-step"
-					isCompleteCallback={ () =>
-						paymentMethodStep.isCompleteCallback( { activePaymentMethod } )
-					}
-					activeStepContent={ paymentMethodStep.activeStepContent }
-					completeStepContent={ paymentMethodStep.completeStepContent }
-					titleContent={ paymentMethodStep.titleContent }
+			<CheckoutSummaryArea className={ orderSummary.className }>
+				{ orderSummary.summaryContent }
+			</CheckoutSummaryArea>
+			<CheckoutStepArea>
+				<CheckoutStepBody
+					activeStepContent={ orderSummaryStep.activeStepContent }
+					completeStepContent={ orderSummaryStep.completeStepContent }
+					titleContent={ orderSummaryStep.titleContent }
+					isStepActive={ false }
+					isStepComplete={ true }
+					stepNumber={ 1 }
+					stepId={ 'order-summary' }
 				/>
-				<CheckoutStep
-					stepId={ contactFormStep.id }
-					isCompleteCallback={ () =>
-						new Promise( resolve =>
-							setTimeout( () => {
-								if ( country.length === 0 ) {
-									showError( 'The country field is required' );
-									resolve( false );
-									return;
-								}
-								resolve( true );
-							}, 1500 )
-						)
-					}
-					activeStepContent={ contactFormStep.activeStepContent }
-					completeStepContent={ contactFormStep.completeStepContent }
-					titleContent={ contactFormStep.titleContent }
-				/>
-				<CheckoutStep
-					stepId="review-order-step"
-					isCompleteCallback={ () => true }
-					activeStepContent={ reviewOrderStep.activeStepContent }
-					completeStepContent={ reviewOrderStep.completeStepContent }
-					titleContent={ reviewOrderStep.titleContent }
-				/>
-			</CheckoutSteps>
+				<CheckoutSteps>
+					<CheckoutStep
+						stepId="review-order-step"
+						isCompleteCallback={ () => true }
+						activeStepContent={ reviewOrderStep.activeStepContent }
+						completeStepContent={ reviewOrderStep.completeStepContent }
+						titleContent={ reviewOrderStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId={ contactFormStep.id }
+						isCompleteCallback={ () =>
+							new Promise( ( resolve ) =>
+								setTimeout( () => {
+									if ( country.length === 0 ) {
+										showError( 'The country field is required' );
+										resolve( false );
+										return;
+									}
+									resolve( true );
+								}, 1500 )
+							)
+						}
+						activeStepContent={ contactFormStep.activeStepContent }
+						completeStepContent={ contactFormStep.completeStepContent }
+						titleContent={ contactFormStep.titleContent }
+					/>
+					<CheckoutStep
+						stepId="payment-method-step"
+						activeStepContent={ paymentMethodStep.activeStepContent }
+						completeStepContent={ paymentMethodStep.completeStepContent }
+						titleContent={ paymentMethodStep.titleContent }
+					/>
+				</CheckoutSteps>
+			</CheckoutStepArea>
 		</Checkout>
 	);
 }
@@ -447,7 +450,7 @@ function formatValueForCurrency( currency, value ) {
 
 // Simulate network request time
 async function asyncTimeout( timeout ) {
-	return new Promise( resolve => setTimeout( resolve, timeout ) );
+	return new Promise( ( resolve ) => setTimeout( resolve, timeout ) );
 }
 
 ReactDOM.render( <HostPage />, document.getElementById( 'root' ) );

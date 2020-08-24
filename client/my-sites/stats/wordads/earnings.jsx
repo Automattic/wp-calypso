@@ -39,14 +39,14 @@ class WordAdsEarnings extends Component {
 		}
 	}
 
-	handleEarningsNoticeToggle = event => {
+	handleEarningsNoticeToggle = ( event ) => {
 		event.preventDefault();
 		this.setState( {
 			showEarningsNotice: ! this.state.showEarningsNotice,
 		} );
 	};
 
-	handleInfoToggle = type => event => {
+	handleInfoToggle = ( type ) => ( event ) => {
 		event.preventDefault();
 		switch ( type ) {
 			case 'wordads':
@@ -334,7 +334,7 @@ class WordAdsEarnings extends Component {
 					</div>
 				</Card>
 				{ earnings && this.checkSize( earnings.wordads )
-					? this.earningsTable( earnings.wordads, translate( 'Earnings History' ), 'wordads' )
+					? this.earningsTable( earnings.wordads, translate( 'Earnings history' ), 'wordads' )
 					: null }
 				{ earnings && this.checkSize( earnings.sponsored )
 					? this.earningsTable(
@@ -356,7 +356,7 @@ class WordAdsEarnings extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

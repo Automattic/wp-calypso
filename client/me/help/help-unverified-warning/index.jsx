@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 
 /**
  * Internal dependencies
@@ -17,8 +16,6 @@ import notices from 'notices';
  * Style dependencies
  */
 import './style.scss';
-
-const user = userFactory();
 
 const RESEND_IDLE = 0,
 	RESEND_IN_PROGRESS = 1,
@@ -37,7 +34,7 @@ class HelpUnverifiedWarning extends Component {
 	render() {
 		const { resendState } = this.state;
 
-		const resendStateToMessage = val => {
+		const resendStateToMessage = ( val ) => {
 			switch ( val ) {
 				case RESEND_IDLE:
 					return this.props.translate(
@@ -60,7 +57,7 @@ class HelpUnverifiedWarning extends Component {
 				resendState: RESEND_IN_PROGRESS,
 			} );
 
-			user
+			user()
 				.sendVerificationEmail()
 				.then( () => {
 					const nextResendState = RESEND_SUCCESS;

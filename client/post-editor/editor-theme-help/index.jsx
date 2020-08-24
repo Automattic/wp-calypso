@@ -38,7 +38,7 @@ class EditorThemeHelp extends PureComponent {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

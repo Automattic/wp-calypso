@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-
 import { filter, find } from 'lodash';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import titleCase from 'to-title-case';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import { Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -34,8 +33,8 @@ class PluginSections extends React.Component {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT = 140;
 
-	recordEvent = eventAction => {
-		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
+	recordEvent = ( eventAction ) => {
+		gaRecordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
 	};
 
 	componentDidMount() {
@@ -117,20 +116,20 @@ class PluginSections extends React.Component {
 
 	getDefaultSection = () => {
 		const sections = this.props.plugin.sections;
-		return find( this.getFilteredSections(), function( section ) {
+		return find( this.getFilteredSections(), function ( section ) {
 			return sections[ section.key ];
 		} ).key;
 	};
 
 	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
-		return filter( this.getFilteredSections(), function( section ) {
+		return filter( this.getFilteredSections(), function ( section ) {
 			return sections[ section.key ];
 		} );
 	};
 
-	getNavTitle = sectionKey => {
-		const titleSection = find( this.getFilteredSections(), function( section ) {
+	getNavTitle = ( sectionKey ) => {
+		const titleSection = find( this.getFilteredSections(), function ( section ) {
 			return section.key === sectionKey;
 		} );
 
@@ -165,9 +164,11 @@ class PluginSections extends React.Component {
 		);
 		return (
 			<div className="plugin-sections__read-more">
-				{ // We remove the link but leave the plugin-sections__read-more container
-				// in order to minimize jump on small sections.
-				this.state.readMore ? null : button }
+				{
+					// We remove the link but leave the plugin-sections__read-more container
+					// in order to minimize jump on small sections.
+					this.state.readMore ? null : button
+				}
 			</div>
 		);
 	};
@@ -188,7 +189,7 @@ class PluginSections extends React.Component {
 				<div className="plugin-sections__header">
 					<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
 						<NavTabs>
-							{ this.getAvailableSections().map( function( section ) {
+							{ this.getAvailableSections().map( function ( section ) {
 								return (
 									<NavItem
 										key={ section.key }

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import ReactDomServer from 'react-dom/server';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -18,16 +17,17 @@ import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/acti
 import { addQueryArgs, addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { startEditingNewPost, stopEditingPost } from 'state/ui/editor/actions';
+import { startEditingNewPost, stopEditingPost } from 'state/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
-import { getEditorNewPostPath } from 'state/ui/editor/selectors';
+import { getEditorNewPostPath } from 'state/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
 import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
 import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
 import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -139,7 +139,7 @@ const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
 };
 
 function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
@@ -160,6 +160,21 @@ function waitForSiteIdAndSelectedEditor( context ) {
 	} );
 }
 
+function waitForEditorSelection( context, siteId, newEditor ) {
+	return new Promise( ( resolve ) => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+			const editor = getSelectedEditor( state, siteId );
+			if ( editor.indexOf( newEditor ) === -1 ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
+		} );
+		context.store.dispatch( setSelectedEditor( siteId, newEditor ) );
+	} );
+}
+
 async function redirectIfBlockEditor( context, next ) {
 	const tmpState = context.store.getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
@@ -167,7 +182,7 @@ async function redirectIfBlockEditor( context, next ) {
 		await waitForSiteIdAndSelectedEditor( context );
 	}
 
-	const state = context.store.getState();
+	let state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
 	// URLs with a set-editor=<editorName> param are used for indicating that the user wants to use always the given
@@ -176,11 +191,12 @@ async function redirectIfBlockEditor( context, next ) {
 	const allowedEditors = [ 'classic', 'gutenberg' ];
 
 	if ( allowedEditors.indexOf( newEditorChoice ) > -1 ) {
-		context.store.dispatch( setSelectedEditor( siteId, newEditorChoice ) );
+		await waitForEditorSelection( context, siteId, newEditorChoice );
+		state = context.store.getState();
 	}
 
 	// If the new editor is classic, we bypass the selected editor check.
-	if ( 'classic' === newEditorChoice ) {
+	if ( ! inEditorDeprecationGroup( state ) && 'classic' === newEditorChoice ) {
 		return next();
 	}
 
@@ -200,7 +216,7 @@ async function redirectIfBlockEditor( context, next ) {
 }
 
 export default {
-	post: function( context, next ) {
+	post: function ( context, next ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 		const postToCopyId = context.query[ 'jetpack-copy' ];
@@ -219,17 +235,21 @@ export default {
 				context.store.dispatch( startEditingPostCopy( siteId, postToCopyId ) );
 			} else if ( postId ) {
 				const contextPath = context.path;
-				context.store.dispatch( startEditingExistingPost( siteId, postId ) ).then( editedPost => {
-					if ( contextPath !== page.current ) {
-						// browser navigated elsewhere while the load was in progress
-						return;
-					}
+				context.store
+					.dispatch( startEditingExistingPost( siteId, postId ) )
+					.then( ( editedPost ) => {
+						if ( contextPath !== page.current ) {
+							// browser navigated elsewhere while the load was in progress
+							return;
+						}
 
-					if ( editedPost && editedPost.type && editedPost.type !== postType ) {
-						// incorrect post type in URL
-						page.redirect( getEditURL( editedPost, getSite( context.store.getState(), siteId ) ) );
-					}
-				} );
+						if ( editedPost && editedPost.type && editedPost.type !== postType ) {
+							// incorrect post type in URL
+							page.redirect(
+								getEditURL( editedPost, getSite( context.store.getState(), siteId ) )
+							);
+						}
+					} );
 			} else {
 				const post = { type: postType };
 
@@ -285,7 +305,7 @@ export default {
 		next();
 	},
 
-	exitPost: function( context, next ) {
+	exitPost: function ( context, next ) {
 		const postId = getPostID( context );
 		const siteId = getSelectedSiteId( context.store.getState() );
 		if ( siteId ) {
@@ -294,7 +314,7 @@ export default {
 		next();
 	},
 
-	pressThis: function( context, next ) {
+	pressThis: function ( context, next ) {
 		if ( ! context.query.url ) {
 			// not pressThis, early return
 			return next();

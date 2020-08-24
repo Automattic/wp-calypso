@@ -19,7 +19,9 @@ import {
 	NOTIFICATION_SETTINGS_TOGGLE_SETTING,
 } from 'state/action-types';
 import { successNotice, errorNotice } from 'state/notices/actions';
+
 import 'state/data-layer/wpcom/me/notification/settings';
+import 'state/notification-settings/init';
 
 /**
  * Returns an action object to signal the request of the current user notification settings.
@@ -34,12 +36,12 @@ export const requestNotificationSettings = () => ( { type: NOTIFICATION_SETTINGS
  * @param  {object} settings User Notification Settings
  * @returns {object}          action object
  */
-export const updateNotificationSettings = settings => ( {
+export const updateNotificationSettings = ( settings ) => ( {
 	type: NOTIFICATION_SETTINGS_UPDATE,
 	settings,
 } );
 
-export const toggle = ( source, stream, setting ) => dispatch => {
+export const toggle = ( source, stream, setting ) => ( dispatch ) => {
 	dispatch( {
 		type: NOTIFICATION_SETTINGS_TOGGLE_SETTING,
 		source,
@@ -48,22 +50,22 @@ export const toggle = ( source, stream, setting ) => dispatch => {
 	} );
 };
 
-export const toggleWPcomEmailSetting = setting => toggle( 'wpcom', 'email', setting );
+export const toggleWPcomEmailSetting = ( setting ) => toggle( 'wpcom', 'email', setting );
 
-export const fetchSettings = () => dispatch => {
+export const fetchSettings = () => ( dispatch ) => {
 	dispatch( { type: NOTIFICATION_SETTINGS_FETCH } );
 
 	wpcom
 		.undocumented()
 		.me()
 		.getNotificationSettings()
-		.then( data =>
+		.then( ( data ) =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_COMPLETE,
 				data,
 			} )
 		)
-		.catch( error =>
+		.catch( ( error ) =>
 			dispatch( {
 				type: NOTIFICATION_SETTINGS_FETCH_FAILED,
 				error,
@@ -99,7 +101,7 @@ export const showSaveErrorNotice = () =>
 		id: 'notif-settings-save',
 	} );
 
-export const saveSettings = ( source, settings, applyToAll = false ) => dispatch => {
+export const saveSettings = ( source, settings, applyToAll = false ) => ( dispatch ) => {
 	dispatch( { type: NOTIFICATION_SETTINGS_SAVE } );
 
 	wpcom

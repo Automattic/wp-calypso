@@ -4,6 +4,7 @@
 import { isHttps } from 'lib/url';
 import getRawSite from 'state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
+import { isSectionNameEnabled } from 'sections-filter';
 
 /**
  * Returns true if the site can be previewed, false if the site cannot be
@@ -21,6 +22,15 @@ export default function isSitePreviewable( state, siteId ) {
 	}
 
 	if ( site.is_vip ) {
+		return false;
+	}
+
+	if ( ! isSectionNameEnabled( 'preview' ) ) {
+		return false;
+	}
+
+	const isWPForTeamsSite = getSiteOption( state, siteId, 'is_wpforteams_site' );
+	if ( isWPForTeamsSite ) {
 		return false;
 	}
 

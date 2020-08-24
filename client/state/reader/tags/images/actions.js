@@ -44,7 +44,7 @@ export function receiveTagImages( tag, images ) {
  * @returns {Function} Action thunk
  */
 export function requestTagImages( tag, limit = 5 ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: READER_TAG_IMAGES_REQUEST,
 			tag,
@@ -61,7 +61,7 @@ export function requestTagImages( tag, limit = 5 ) {
 			.undocumented()
 			.readTagImages( query )
 			.then(
-				data => {
+				( data ) => {
 					dispatch( receiveTagImages( tag, ( data && data.images ) || [] ) );
 
 					dispatch( {
@@ -70,7 +70,7 @@ export function requestTagImages( tag, limit = 5 ) {
 						data,
 					} );
 				},
-				error => {
+				( error ) => {
 					// dispatch an empty array so we stop requesting it
 					dispatch( receiveTagImages( tag, [] ) );
 

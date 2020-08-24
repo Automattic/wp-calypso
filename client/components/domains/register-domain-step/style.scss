@@ -3,9 +3,9 @@
 	padding-bottom: 12px;
 
 	&.register-domain-step__search-domain-step-test:not( .is-sticky ) {
-		padding-bottom: 28px;
+		padding-bottom: 24px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding-top: 18px;
 		}
 	}
@@ -28,12 +28,6 @@
 		body.is-section-signup & {
 			padding-right: 72px;
 		}
-	}
-
-	&.register-domain-step__search-domain-step-design-updates .search .search__input:not( :placeholder-shown ) {
-		font-size: 16px;
-		font-weight: 600;
-		line-height: 18px;
 	}
 
 	&.disabled {
@@ -69,7 +63,7 @@
 
 .register-domain-step__filter-reset-notice {
 	color: var( --color-primary );
-	font-weight: 500;
+	font-weight: 600;
 	width: 100%;
 	position: relative;
 	margin-bottom: 0;
@@ -100,27 +94,5 @@
 .register-domain-step {
 	.button.is-active {
 		background: var( --color-neutral-0 );
-	}
-}
-
-.register-domain-step__use-your-domain {
-	padding: 16px 24px;
-	text-align: center;
-	color: var( --color-text-inverted );
-
-	.register-domain-step__use-your-domain-action {
-		color: var( --color-text-inverted );
-
-		&.is-clickable {
-			cursor: pointer;
-			text-decoration: underline;
-	
-			// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-			transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
-	
-			&:hover {
-				color: var( --color-text-inverted );
-			}
-		}
 	}
 }

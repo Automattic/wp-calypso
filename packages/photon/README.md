@@ -13,7 +13,7 @@ as Internet Explorer 11, and old versions of Node.js (5 or older).
 Install via `npm`:
 
 ```bash
-npm install photon
+yarn add photon
 ```
 
 Import the `photon` method into your module.

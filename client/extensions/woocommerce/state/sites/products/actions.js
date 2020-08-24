@@ -114,13 +114,13 @@ export const deleteProduct = ( siteId, productId, successAction = null, failureA
 	// In v1, we don't have trash management. Later we can trash instead.
 	return request( siteId )
 		.del( `products/${ productId }?force=true` )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( deleteProductSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( err => {
+		.catch( ( err ) => {
 			dispatch( setError( siteId, deleteAction, err ) );
 			if ( failureAction ) {
 				dispatch( failureAction( err ) );

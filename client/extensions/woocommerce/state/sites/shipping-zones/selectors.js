@@ -37,8 +37,8 @@ export const areShippingZonesLoaded = ( state, siteId = getSelectedSiteId( state
 	const zones = getAPIShippingZones( state, siteId );
 	return (
 		isArray( zones ) &&
-		every( zones, zone => areShippingZoneMethodsLoaded( state, zone.id, siteId ) ) &&
-		every( zones, zone => areShippingZoneLocationsLoaded( state, zone.id, siteId ) )
+		every( zones, ( zone ) => areShippingZoneMethodsLoaded( state, zone.id, siteId ) ) &&
+		every( zones, ( zone ) => areShippingZoneLocationsLoaded( state, zone.id, siteId ) )
 	);
 };
 
@@ -56,7 +56,7 @@ export const areShippingZonesLoading = ( state, siteId = getSelectedSiteId( stat
 		return false;
 	}
 	return (
-		some( zones, zone => areShippingZoneMethodsLoading( state, zone.id, siteId ) ) ||
-		some( zones, zone => areShippingZoneLocationsLoading( state, zone.id, siteId ) )
+		some( zones, ( zone ) => areShippingZoneMethodsLoading( state, zone.id, siteId ) ) ||
+		some( zones, ( zone ) => areShippingZoneLocationsLoading( state, zone.id, siteId ) )
 	);
 };

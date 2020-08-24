@@ -25,17 +25,17 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "npx rimraf dist ../../.tsc-cache/packages__react-i18n*",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"tslib": "^1.10.0",
-		"@wordpress/compose": "1.x.x - 3.x.x"
+		"@wordpress/compose": "1.x.x - 3.x.x",
+		"@wordpress/i18n": "^3.14.0",
+		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "<=3",
 		"react": "^16.8"
 	},
 	"private": true

@@ -15,22 +15,32 @@ import { getSiteBySlug } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
-import CheckoutSystemDecider from './checkout/checkout-system-decider';
+import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
-import { isGSuiteRestricted } from 'lib/gsuite';
+import { canUserPurchaseGSuite } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
+import userFactory from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const currentUser = getCurrentUser( state );
+	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const isDisallowedForSitePicker =
+		context.pathname.includes( '/checkout/no-site' ) &&
+		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 
-	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );
 		return;
 	}
@@ -54,6 +64,12 @@ export function checkout( context, next ) {
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
+	const isLoggedOutCart = isLoggedOut && context.pathname.includes( '/checkout/no-site' );
+	const isNoSiteCart =
+		! isLoggedOut &&
+		context.pathname.includes( '/checkout/no-site' ) &&
+		'no-user' === context.query.cart;
+
 	context.primary = (
 		<CartData>
 			<CheckoutSystemDecider
@@ -63,12 +79,16 @@ export function checkout( context, next ) {
 				couponCode={ couponCode }
 				isComingFromSignup={ !! context.query.signup }
 				isComingFromGutenboarding={ !! context.query.preLaunch }
+				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
+				isComingFromUpsell={ !! context.query.upgrade }
 				plan={ plan }
 				selectedSite={ selectedSite }
 				reduxStore={ context.store }
 				redirectTo={ context.query.redirect_to }
 				upgradeIntent={ context.query.intent }
 				clearTransaction={ false }
+				isLoggedOutCart={ isLoggedOutCart }
+				isNoSiteCart={ isNoSiteCart }
 			/>
 		</CartData>
 	);
@@ -135,7 +155,7 @@ export function gsuiteNudge( context, next ) {
 		return null;
 	}
 
-	if ( isGSuiteRestricted() ) {
+	if ( ! canUserPurchaseGSuite() ) {
 		next();
 	}
 

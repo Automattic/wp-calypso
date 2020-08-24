@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/no-undefined-types */
+
 /**
  * External dependencies
  */
@@ -8,7 +10,7 @@ import getEmbedMetadata from 'get-video-id';
 /**
  * Internal Dependencies
  */
-import { iframeIsWhitelisted, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
+import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 import { READER_CONTENT_WIDTH } from 'state/reader/posts/sizes';
 
 /** Checks whether or not an image is a tracking pixel
@@ -39,7 +41,7 @@ function isCandidateForContentImage( image ) {
 
 	const imageUrl = image.getAttribute( 'src' );
 
-	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts, urlPart =>
+	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts, ( urlPart ) =>
 		includes( imageUrl.toLowerCase(), urlPart )
 	);
 
@@ -51,7 +53,7 @@ function isCandidateForContentImage( image ) {
  * @param {image} image - the image
  * @returns {object} metadata - regarding the image or null
  */
-const detectImage = image => {
+const detectImage = ( image ) => {
 	if ( isCandidateForContentImage( image ) ) {
 		const { width, height } = deduceImageWidthAndHeight( image ) || { width: 0, height: 0 };
 		return {
@@ -69,7 +71,7 @@ const detectImage = image => {
  * @param {Node} iframe - DOM node for an iframe
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
  */
-const getAutoplayIframe = iframe => {
+const getAutoplayIframe = ( iframe ) => {
 	const KNOWN_SERVICES = [ 'youtube', 'vimeo', 'videopress' ];
 	const metadata = getEmbedMetadata( iframe.src );
 	if ( metadata && includes( KNOWN_SERVICES, metadata.service ) ) {
@@ -84,7 +86,7 @@ const getAutoplayIframe = iframe => {
 	return null;
 };
 
-const getEmbedType = iframe => {
+const getEmbedType = ( iframe ) => {
 	let node = iframe;
 	let matches;
 
@@ -106,8 +108,8 @@ const getEmbedType = iframe => {
  * @param {Node} iframe - a DOM node for an iframe
  * @returns {metadata} metadata - metadata for an embed
  */
-const detectEmbed = iframe => {
-	if ( ! iframeIsWhitelisted( iframe ) ) {
+const detectEmbed = ( iframe ) => {
+	if ( ! iframeIsAllowed( iframe ) ) {
 		return false;
 	}
 
@@ -138,7 +140,7 @@ export default function detectMedia( post, dom ) {
 	const embedSelector = 'iframe';
 	const media = dom.querySelectorAll( `${ imageSelector }, ${ embedSelector }` );
 
-	const contentMedia = map( media, element => {
+	const contentMedia = map( media, ( element ) => {
 		const nodeName = element.nodeName.toLowerCase();
 
 		if ( nodeName === 'iframe' ) {
@@ -150,8 +152,8 @@ export default function detectMedia( post, dom ) {
 	} );
 
 	post.content_media = compact( contentMedia );
-	post.content_embeds = filter( post.content_media, m => m.mediaType === 'video' );
-	post.content_images = filter( post.content_media, m => m.mediaType === 'image' );
+	post.content_embeds = filter( post.content_media, ( m ) => m.mediaType === 'video' );
+	post.content_images = filter( post.content_media, ( m ) => m.mediaType === 'image' );
 
 	// TODO: figure out a more sane way of combining featured_image + content media
 	// so that changes to logic don't need to exist in multiple places

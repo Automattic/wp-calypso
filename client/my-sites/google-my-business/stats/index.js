@@ -269,7 +269,7 @@ class GoogleMyBusinessStats extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const locationData = getGoogleMyBusinessConnectedLocation( state, siteId );
 		const isLocationVerified = get( locationData, 'meta.state.isVerified', false );

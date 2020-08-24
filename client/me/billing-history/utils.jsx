@@ -6,7 +6,7 @@ import React, { Fragment } from 'react';
 import formatCurrency from '@automattic/format-currency';
 
 export const groupDomainProducts = ( originalItems, translate ) => {
-	const transactionItems = Object.keys( originalItems ).map( key => {
+	const transactionItems = Object.keys( originalItems ).map( ( key ) => {
 		return Object.assign( {}, originalItems[ key ] );
 	} );
 	const [ domainProducts, otherProducts ] = partition( transactionItems, {
@@ -32,7 +32,7 @@ export const groupDomainProducts = ( originalItems, translate ) => {
 
 	return [
 		...otherProducts,
-		...map( groupedDomainProducts, product => {
+		...map( groupedDomainProducts, ( product ) => {
 			if ( 1 === product.groupCount ) {
 				return find( domainProducts, { domain: product.domain } );
 			}

@@ -14,7 +14,7 @@
 		margin: 0 -24px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 700px;
 	}
 }
@@ -24,7 +24,7 @@
 }
 
 .wpcom-charmap__heading {
-	font-size: 24px;
+	font-size: $font-title-medium;
 }
 
 .wpcom-charmap__character {
@@ -36,7 +36,7 @@
 	height: 24px;
 	line-height: 24px;
 	text-align: center;
-	font-weight: 700;
+	font-weight: 600;
 	cursor: pointer;
 }
 

@@ -4,5 +4,5 @@
  */
 
 export default {
-	undocumented: function() {},
+	undocumented: function () {},
 };

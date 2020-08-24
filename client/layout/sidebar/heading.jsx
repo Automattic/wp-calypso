@@ -10,7 +10,7 @@ const SidebarHeading = ( { children, onClick, ...extraProps } ) => {
 	let onKeyDown = null;
 
 	if ( onClick ) {
-		onKeyDown = event => {
+		onKeyDown = ( event ) => {
 			// Trigger click for enter, similarly to default brower behavior for <a> or <button>
 			if ( 13 === event.keyCode ) {
 				event.preventDefault();

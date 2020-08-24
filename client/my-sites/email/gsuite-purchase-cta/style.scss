@@ -2,11 +2,11 @@
 	color: #757575;
 	font-size: 150%;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 236px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		float: left;
 	}
 
@@ -32,9 +32,9 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	font-size: 14px;
+	font-size: $font-body-small;
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		flex-basis: 100%;
 		max-width: 410px;
 	}
@@ -42,19 +42,19 @@
 
 .gsuite-purchase-cta__header-description-title {
 	color: var( --color-text );
-	font-size: 24px;
+	font-size: $font-title-medium;
 	line-height: 120%;
 	margin: 0 0 10px;
 }
 
 .gsuite-purchase-cta__header-description-sub-title {
-	font-size: 18px;
+	font-size: $font-title-small;
 }
 
 .gsuite-purchase-cta__header-image {
 	display: none;
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		align-items: center;
 		display: flex;
 		flex-grow: 1;
@@ -68,11 +68,11 @@
 	flex-direction: column;
 	justify-content: space-evenly;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
 	}
 
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		justify-content: space-between;
 	}
 }
@@ -105,7 +105,7 @@
 
 	h5 {
 		color: var( --color-text-subtle );
-		font-size: 13px;
+		font-size: $font-body-small;
 		font-style: normal;
 	}
 
@@ -120,13 +120,13 @@
 	padding-left: 2em;
 	padding-right: 2em;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 100%;
 	}
 }
 
 .gsuite-purchase-cta__info .gsuite-learn-more {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		text-align: center;
 	}
 }

@@ -13,6 +13,6 @@ import { isJetpackSite } from 'state/sites/selectors';
  * @returns {Array}        Array of Jetpack Sites objects
  */
 export default createSelector(
-	state => getSites( state ).filter( site => isJetpackSite( state, site.ID ) ),
-	state => [ state.sites.items, state.currentUser.capabilities ]
+	( state ) => getSites( state ).filter( ( site ) => isJetpackSite( state, site.ID ) ),
+	( state ) => [ state.sites.items, state.currentUser.capabilities ]
 );

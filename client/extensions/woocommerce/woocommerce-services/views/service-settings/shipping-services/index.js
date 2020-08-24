@@ -29,13 +29,15 @@ const ShippingServiceGroups = ( {
 	// Some shippers have so many services that it is helpful to organize them
 	// into groups.  This code iterates over the services and extracts the group(s)
 	// it finds.  When rendering, we can then iterate over the group(s).
-	const servicesWithSettings = services.map( svc => Object.assign( {}, svc, settings[ svc.id ] ) );
-	const serviceGroups = groupBy( servicesWithSettings, svc => svc.group );
+	const servicesWithSettings = services.map( ( svc ) =>
+		Object.assign( {}, svc, settings[ svc.id ] )
+	);
+	const serviceGroups = groupBy( servicesWithSettings, ( svc ) => svc.group );
 
-	const renderServiceGroup = serviceGroup => {
+	const renderServiceGroup = ( serviceGroup ) => {
 		const groupFields = map( serviceGroups[ serviceGroup ], 'id' );
 		const groupErrors = {};
-		groupFields.forEach( fieldName => {
+		groupFields.forEach( ( fieldName ) => {
 			if ( errors[ fieldName ] ) {
 				groupErrors[ fieldName ] = errors[ fieldName ];
 			}
@@ -60,9 +62,7 @@ const ShippingServiceGroups = ( {
 			<FormLegend dangerouslySetInnerHTML={ sanitizeHTML( title ) } />
 			<FieldDescription text={ description } />
 			<div className={ classNames( 'shipping-services__inner', { 'is-error': generalError } ) }>
-				{ Object.keys( serviceGroups )
-					.sort()
-					.map( renderServiceGroup ) }
+				{ Object.keys( serviceGroups ).sort().map( renderServiceGroup ) }
 			</div>
 			{ generalError ? <FieldError text={ generalError } /> : null }
 		</div>

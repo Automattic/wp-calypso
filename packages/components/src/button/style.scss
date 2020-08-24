@@ -7,21 +7,21 @@
 	font-family: $a8c-font-family-sans;
 	background: transparent;
 	border-style: solid;
-	border-width: 1px 1px 2px;
+	border-width: 1px;
 	cursor: pointer;
 	display: inline-block;
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
-	font-weight: 500;
 	text-overflow: ellipsis;
 	text-decoration: none;
 	vertical-align: top;
 	box-sizing: border-box;
 	font-size: 14px;
-	line-height: 21px;
-	border-radius: 4px;
-	padding: 7px 14px 9px;
+	font-weight: 600;
+	line-height: 22px;
+	border-radius: 2px;
+	padding: 8px 14px;
 	appearance: none;
 
 	.rtl & {
@@ -46,7 +46,7 @@
 
 	&:active,
 	&.is-active {
-		border-width: 2px 1px 1px;
+		border-width: 1px;
 	}
 
 	background-color: var( --color-surface );
@@ -72,7 +72,7 @@
 
 		&:active,
 		&.is-active {
-			border-width: 1px 1px 2px;
+			border-width: 1px;
 		}
 	}
 
@@ -124,13 +124,13 @@
 // Primary buttons
 .button.is-primary {
 	background-color: var( --color-accent );
-	border-color: var( --color-accent-dark );
+	border-color: var( --color-accent );
 	color: var( --color-text-inverted );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-accent-60 );
-		border-color: var( --color-accent-dark );
+		border-color: var( --color-accent-60 );
 		color: var( --color-text-inverted );
 	}
 
@@ -167,7 +167,7 @@
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-error-40 );
+		border-color: var( --color-error );
 	}
 
 	.accessible-focus &:focus {
@@ -178,25 +178,26 @@
 	&:disabled {
 		color: var( --color-neutral-20 );
 		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		border-color: var( --color-surface );
 	}
 }
 
 .button.is-primary.is-scary {
 	background-color: var( --color-error );
-	border-color: var( --color-error-dark );
+	border-color: var( --color-error );
 	color: var( --color-text-inverted );
 
 	&:hover,
 	&:focus {
 		background-color: var( --color-error-60 );
+		border-color: var( --color-error-60 );
 	}
 
 	&[disabled],
 	&:disabled {
 		color: var( --color-neutral-20 );
 		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		border-color: var( --color-surface );
 	}
 
 	&.is-busy {

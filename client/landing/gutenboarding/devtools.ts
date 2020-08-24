@@ -22,27 +22,8 @@ export const setupWpDataDebug = () => {
 					client_secret: config( 'wpcom_signup_key' ),
 				};
 
-				const { Auth, Site } = require( '@automattic/data-stores' );
-				const AUTH_STORE = Auth.register( clientCreds );
+				const { Site } = require( '@automattic/data-stores' );
 				Site.register( clientCreds );
-
-				window.wp.auth = {};
-				for ( const [ actionName, actionFn ] of Object.entries(
-					window.wp.data.dispatch( AUTH_STORE )
-				) ) {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					window.wp.auth[ actionName ] = async ( ...args: any[] ) => {
-						await ( actionFn as any )( ...args ); // eslint-disable-line @typescript-eslint/no-explicit-any
-						const loginFlowState = window.wp?.data.select( AUTH_STORE ).getLoginFlowState();
-						const errors = window.wp?.data.select( AUTH_STORE ).getErrors();
-						console.log( 'New loginFlowState =', loginFlowState );
-						if ( errors.length ) {
-							console.log( 'Errors =', JSON.stringify( errors, null, 2 ) );
-						} else {
-							console.log( 'No Errors!' );
-						}
-					};
-				}
 			}
 		}
 	}

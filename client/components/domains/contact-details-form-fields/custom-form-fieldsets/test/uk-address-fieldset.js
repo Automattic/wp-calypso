@@ -15,8 +15,8 @@ import React from 'react';
 import UkAddressFieldset from '../uk-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: x => x,
-	translate: x => x,
+	localize: ( x ) => x,
+	translate: ( x ) => x,
 } ) );
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
@@ -24,7 +24,7 @@ jest.mock( 'lib/user', () => () => {} );
 
 describe( 'UK Address Fieldset', () => {
 	const defaultProps = {
-		getFieldProps: name => ( { name, value: '' } ),
+		getFieldProps: ( name ) => ( { name, value: '' } ),
 	};
 
 	test( 'should render correctly with default props', () => {

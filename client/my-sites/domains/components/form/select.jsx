@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import FormLabel from 'components/forms/form-label';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormSelect from 'components/forms/form-select';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
 export default class Select extends PureComponent {
 	static propTypes = {
@@ -33,11 +33,7 @@ export default class Select extends PureComponent {
 
 	recordFieldClick = () => {
 		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent(
-				'Upgrades',
-				`Clicked ${ this.props.eventFormName } Field`,
-				this.props.name
-			);
+			gaRecordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
 		}
 	};
 
@@ -61,7 +57,7 @@ export default class Select extends PureComponent {
 					onClick={ this.recordFieldClick }
 					isError={ this.props.isError }
 				>
-					{ this.props.options.map( option => (
+					{ this.props.options.map( ( option ) => (
 						<option key={ option.value } value={ option.value } disabled={ option.disabled }>
 							{ option.label }
 						</option>

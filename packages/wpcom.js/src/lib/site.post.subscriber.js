@@ -23,7 +23,7 @@ class SitePostSubscriber {
 		this.wpcom = wpcom;
 		this._id = id;
 		this._sid = sid;
-		this.path = `/sites/${this._sid}/posts/${this._id}/subscribers`;
+		this.path = `/sites/${ this._sid }/posts/${ this._id }/subscribers`;
 	}
 
 	/**
@@ -45,7 +45,7 @@ class SitePostSubscriber {
 	 * @returns {Promise} Promise
 	 */
 	mine( query, fn ) {
-		return this.wpcom.req.get( `${this.path}/mine`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/mine`, query, fn );
 	}
 
 	/**
@@ -66,7 +66,7 @@ class SitePostSubscriber {
 	 * @returns {Promise} Promise
 	 */
 	add( query, fn ) {
-		return this.wpcom.req.put( `${this.path}/new`, query, null, fn );
+		return this.wpcom.req.put( `${ this.path }/new`, query, null, fn );
 	}
 
 	/**
@@ -87,7 +87,7 @@ class SitePostSubscriber {
 	 * @returns {Promise} Promise
 	 */
 	del( query, fn ) {
-		return this.wpcom.req.del( `${this.path}/mine/delete`, query, fn );
+		return this.wpcom.req.del( `${ this.path }/mine/delete`, query, fn );
 	}
 }
 

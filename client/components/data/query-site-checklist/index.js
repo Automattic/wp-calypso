@@ -13,7 +13,7 @@ import isSiteEligibleForFullSiteEditing from 'state/selectors/is-site-eligible-f
 
 export default function QuerySiteChecklist( { siteId } ) {
 	const dispatch = useDispatch();
-	const isSiteEligibleForFSE = useSelector( state =>
+	const isSiteEligibleForFSE = useSelector( ( state ) =>
 		isSiteEligibleForFullSiteEditing( state, siteId )
 	);
 

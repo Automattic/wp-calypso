@@ -29,13 +29,14 @@ import './style.scss';
 const SiteSettingsComponent = ( { siteId, translate } ) => {
 	return (
 		<Main className="site-settings">
-			<JetpackBackupCredsBanner event={ 'settings-backup-credentials' } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
 			<SidebarNavigation />
+			<JetpackBackupCredsBanner event={ 'settings-backup-credentials' } />
 			<FormattedHeader
+				brandFont
 				className="site-settings__page-heading"
 				headerText={ translate( 'Settings' ) }
 				align="left"
@@ -51,6 +52,6 @@ SiteSettingsComponent.propTypes = {
 	siteId: PropTypes.number,
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( SiteSettingsComponent ) );

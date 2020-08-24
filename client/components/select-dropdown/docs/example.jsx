@@ -220,7 +220,7 @@ class SelectDropdownExample extends React.PureComponent {
 	}
 
 	getSelectItemHandler = ( name, count, icon ) => {
-		return event => {
+		return ( event ) => {
 			event.preventDefault();
 			this.selectItem( name, count, icon );
 		};

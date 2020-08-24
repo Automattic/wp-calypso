@@ -16,7 +16,7 @@
 	background: var( --color-neutral-0 );
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
 	color: var( --color-neutral-light );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	padding: 6px 11px;
 	text-transform: uppercase;
 
@@ -35,7 +35,7 @@
 	.site-icon {
 		display: none;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: block;
 			margin-right: 10px;
 			min-width: 34px;
@@ -125,7 +125,7 @@
 	@extend %content-font;
 	color: var( --color-neutral-70 );
 	font-weight: 700;
-	font-size: 18px;
+	font-size: $font-title-small;
 	line-height: 1.2;
 
 	display: inline;
@@ -154,7 +154,7 @@
 .page__popover-more-info {
 	color: var( --color-neutral-light );
 	padding: 4px 16px 8px;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	max-width: 150px;
 	text-align: left;
 }

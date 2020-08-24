@@ -55,7 +55,7 @@ const RejectedUserAgents = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_rejected_user_agent' ] );
 };
 

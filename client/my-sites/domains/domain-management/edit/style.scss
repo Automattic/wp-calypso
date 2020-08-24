@@ -1,6 +1,6 @@
 .domain-details-card {
 	.flag {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		padding: 3px 10px 3px 5px;
 		white-space: nowrap;
 
@@ -10,8 +10,8 @@
 	}
 
 	.edit__transfer-text-fail {
-		font-size: 18px;
-		font-weight: 500;
+		font-size: $font-title-small;
+		font-weight: 600;
 		margin-bottom: 1em;
 	}
 
@@ -26,13 +26,13 @@
 			color: var( --color-neutral-50 );
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			display: inline-block;
 			width: auto;
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		.edit__transfer-button-fail-margin {
 			margin-left: 15px;
 		}
@@ -49,59 +49,87 @@
 	}
 }
 
+.domain-only-notice__button-row {
+	margin: 17px 0;
+
+	button {
+		padding: 8px 34px;
+
+		&.is-borderless {
+			color: var( --color-link );
+			margin-left: 29px;
+		}
+	}
+}
+
 .domain-types__container {
 	.status-success {
-		@include domain_status_color( #008a20 );
+		@include domain_status_color( var( --color-success ) );
 	}
-	.status-pending {
-		@include domain_status_color( #3582C4 );
+	.status-neutral {
+		@include domain_status_color( var( --color-neutral ) );
 	}
 	.status-warning {
-		@include domain_status_color( #B69000 );
+		@include domain_status_color( var( --color-warning ) );
 	}
 	.status-error {
-		@include domain_status_color( #C9356E );
+		@include domain_status_color( var( --color-error ) );
 	}
 
 	.domain-status__card {
 		h2 {
-			font-size: 32px;
-			overflow: hidden;
-			text-overflow: ellipsis;
+			font-size: $font-title-large;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				&.mobile-m {
-					font-size: 28px;
+					font-size: $font-title-large;
 				}
 				&.mobile-l {
-					font-size: 24px;
+					font-size: $font-title-medium;
 				}
 				&.mobile-xl {
-					font-size: 20px;
+					font-size: $font-title-small;
 				}
 				&.mobile-xxl {
-					font-size: 16px;
+					font-size: $font-body;
 				}
 			}
 
-			@include breakpoint( '>480px' ) {
+			@include breakpoint-deprecated( '>480px' ) {
 				&.desktop-m {
-					font-size: 28px;
+					font-size: $font-title-large;
 				}
 				&.desktop-l {
-					font-size: 24px;
+					font-size: $font-title-medium;
 				}
 				&.desktop-xl {
-					font-size: 20px;
+					font-size: $font-title-small;
 				}
 				&.desktop-xxl {
-					font-size: 16px;
+					font-size: $font-body;
+				}
+			}
+
+			a {
+				color: currentColor;
+				display: flex;
+				align-items: baseline;
+
+				span {
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+
+				.gridicons-external {
+					margin-left: 4px;
+					transform: translateY( 1px );
+					flex-shrink: 0;
 				}
 			}
 		}
 
 		> .domain-status__icon {
-			font-size: 16px;
+			font-size: $font-body;
 			display: flex;
 			align-items: center;
 			border-bottom: 0;
@@ -111,8 +139,12 @@
 			}
 		}
 
+		.mapped-domain-type__name-server-list {
+			margin-bottom: 0.5em;
+		}
+
 		.mapped-domain-type__small-message {
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 
 
@@ -120,6 +152,9 @@
 			margin-bottom: 1.5em;
 			border-bottom: 1px solid var( --color-border-subtle );
 			padding-bottom: 1.5em;
+			> p:last-child {
+				margin-bottom: 0;
+			}
 		}
 
 		> div:last-child {
@@ -131,16 +166,43 @@
 
 	.domain-types__expiration-row {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
-		.renew-button {
-			margin-left: 10px;
+		padding: 0;
+		> div {
+			margin: 16px 0 16px 24px;
 		}
 		> div:nth-last-child( 2 ) {
 			margin-right: auto;
+		}
+		> div:last-child {
+			margin-right: 24px;
+		}
+
+		@include breakpoint-deprecated( '<800px' ) {
+			.domain-types__break {
+				flex-basis: 100%;
+				height: 0;
+				margin: 0;
+			}
+			> div.domain-types__wrap-me {
+				border-top: 1px solid var( --color-neutral-5 );
+				flex-basis: 100%;
+				margin: 0;
+				padding: 16px 24px;
+			}
 		}
 	}
 
 	.subscription-settings {
 		margin-top: 0;
+	}
+
+	.domain-types__auto-renew-placeholder, .domain-types__expires-placeholder {
+		width: 20%;
+		p {
+			@include placeholder( --color-neutral-5 );
+			margin: 0 auto;
+		}
 	}
 }

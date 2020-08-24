@@ -46,7 +46,7 @@ class AccountSettingsClose extends Component {
 		showSiteDropdown: true,
 	};
 
-	UNSAFE_componentWillReceiveProps = nextProps => {
+	UNSAFE_componentWillReceiveProps = ( nextProps ) => {
 		// If the account is closed, logout
 		if ( nextProps.isAccountClosed === true ) {
 			userUtils.logout();
@@ -57,7 +57,7 @@ class AccountSettingsClose extends Component {
 		page( '/me/account' );
 	};
 
-	handleDeleteClick = event => {
+	handleDeleteClick = ( event ) => {
 		event.preventDefault();
 
 		// Check if purchases and sites have loaded
@@ -73,7 +73,7 @@ class AccountSettingsClose extends Component {
 	};
 
 	handleSiteDropdown = () => {
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			showSiteDropdown: ! state.showSiteDropdown,
 		} ) );
 	};
@@ -124,7 +124,7 @@ class AccountSettingsClose extends Component {
 												/>
 												{ this.state.showSiteDropdown && (
 													<ul className="account-close__sites-list">
-														{ this.props.sitesToBeDeleted.map( sitesToBeDeleted => (
+														{ this.props.sitesToBeDeleted.map( ( sitesToBeDeleted ) => (
 															<li key={ sitesToBeDeleted.slug }>
 																{ [ sitesToBeDeleted.name ] }
 																<span>{ [ sitesToBeDeleted.slug ] }</span>
@@ -206,7 +206,7 @@ class AccountSettingsClose extends Component {
 											'You will also lose access to the following premium themes you have purchased:'
 										) }
 										<ul className="account-close__theme-list">
-											{ map( purchasedPremiumThemes, purchasedPremiumTheme => {
+											{ map( purchasedPremiumThemes, ( purchasedPremiumTheme ) => {
 												return (
 													<li key={ purchasedPremiumTheme.id }>
 														{ purchasedPremiumTheme.productName }
@@ -272,7 +272,7 @@ class AccountSettingsClose extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const user = getCurrentUser( state );
 	const currentUserId = user && user.ID;
 	const purchasedPremiumThemes = getUserPurchasedPremiumThemes( state, currentUserId );

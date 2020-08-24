@@ -20,7 +20,7 @@ import {
 	getShippingLabel,
 } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 
-const DetailsDialog = props => {
+const DetailsDialog = ( props ) => {
 	const {
 		orderId,
 		siteId,
@@ -106,7 +106,7 @@ const mapStateToProps = ( state, { orderId, siteId, labelId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeDetailsDialog }, dispatch );
 };
 

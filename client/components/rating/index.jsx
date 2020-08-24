@@ -32,7 +32,7 @@ export default class Rating extends React.PureComponent {
 			height: size + 'px',
 		};
 
-		return times( 5, i => <Gridicon key={ i } icon="star" style={ starStyles } /> );
+		return times( 5, ( i ) => <Gridicon key={ i } icon="star" style={ starStyles } /> );
 	}
 
 	outlineStars() {
@@ -46,7 +46,7 @@ export default class Rating extends React.PureComponent {
 			height: size + 'px',
 		};
 
-		return times( 5, i => {
+		return times( 5, ( i ) => {
 			const isEmpty = i >= 5 - noFillOutlineCount;
 			const className = classNames( { 'is-empty': isEmpty } );
 			return (

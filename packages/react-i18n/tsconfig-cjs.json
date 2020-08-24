@@ -3,7 +3,11 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"declaration": false,
+		"declarationMap": false,
 		"declarationDir": null,
-		"outDir": "dist/cjs"
+		"outDir": "dist/cjs",
+		"composite": false,
+		"incremental": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__react-i18n--cjs"
 	}
 }

@@ -84,7 +84,7 @@ const getSavePaymentMethodsSteps = ( state, siteId ) => {
 		return [];
 	}
 
-	edits.updates.forEach( update => {
+	edits.updates.forEach( ( update ) => {
 		const { id, ...settings } = update;
 
 		const method = {
@@ -116,7 +116,7 @@ const getSavePaymentMethodsSteps = ( state, siteId ) => {
  * @param {object} state - Redux state
  * @returns {Array} - action list steps
  */
-const getSaveSettingsActionListSteps = state => {
+const getSaveSettingsActionListSteps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return [
@@ -141,7 +141,7 @@ export default {
 			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onSuccess = dispatch => {
+			const onSuccess = ( dispatch ) => {
 				dispatch( successAction( dispatch ) );
 				dispatch( actionListClear() );
 			};
@@ -150,7 +150,7 @@ export default {
 			 *
 			 * @param {Function} dispatch - dispatch function
 			 */
-			const onFailure = dispatch => {
+			const onFailure = ( dispatch ) => {
 				dispatch( failureAction );
 				dispatch( actionListClear() );
 			};

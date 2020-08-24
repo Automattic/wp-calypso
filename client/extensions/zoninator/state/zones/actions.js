@@ -18,7 +18,7 @@ import {
  * @param  {number} siteId Site ID
  * @returns {Action}        Action object
  */
-export const requestZones = siteId => ( { type: ZONINATOR_REQUEST_ZONES, siteId } );
+export const requestZones = ( siteId ) => ( { type: ZONINATOR_REQUEST_ZONES, siteId } );
 
 /**
  * Returns an action object to indicate that an error was received when fetching the zones.
@@ -26,7 +26,7 @@ export const requestZones = siteId => ( { type: ZONINATOR_REQUEST_ZONES, siteId 
  * @param  {number} siteId Site ID
  * @returns {Action}        Action object
  */
-export const requestError = siteId => ( { type: ZONINATOR_REQUEST_ERROR, siteId } );
+export const requestError = ( siteId ) => ( { type: ZONINATOR_REQUEST_ERROR, siteId } );
 
 /**
  * Returns an action object to indicate that all the zones should be updated.

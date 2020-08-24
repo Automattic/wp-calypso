@@ -53,7 +53,7 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	isRequesting: isRequestingGuidedTransferStatus( state, ownProps.siteId ),
 } );
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = ( dispatch ) =>
 	bindActionCreators( { requestGuidedTransferStatus }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( QuerySiteGuidedTransfer );

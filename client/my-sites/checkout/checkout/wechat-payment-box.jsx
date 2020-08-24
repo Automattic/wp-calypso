@@ -28,9 +28,10 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { Button } from '@automattic/components';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import CheckoutTerms from './checkout-terms';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -47,6 +48,7 @@ export class WechatPaymentBox extends Component {
 		redirectUrl: PropTypes.string,
 		orderId: PropTypes.number,
 		isMobile: PropTypes.bool,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	state = { name: '', errorMessage: '' };
@@ -55,7 +57,7 @@ export class WechatPaymentBox extends Component {
 		this.props.reset();
 	}
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { showInfoNotice, translate, createRedirect } = this.props;
@@ -71,7 +73,7 @@ export class WechatPaymentBox extends Component {
 		createRedirect( this.state.name );
 	};
 
-	handleChange = event => this.setState( { name: event.target.value, errorMessage: '' } );
+	handleChange = ( event ) => this.setState( { name: event.target.value, errorMessage: '' } );
 
 	componentDidUpdate( prevProps ) {
 		const {
@@ -175,7 +177,7 @@ export class WechatPaymentBox extends Component {
 
 					<CheckoutTerms cart={ cart } />
 
-					<DomainRegistrationRefundPolicy cart={ cart } />
+					<DomainRefundPolicy cart={ cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
@@ -185,7 +187,11 @@ export class WechatPaymentBox extends Component {
 									type="submit"
 									className="checkout__payment-button-button button is-primary button-pay pay-button__button"
 									busy={ this.props.pending }
-									disabled={ this.props.pending || this.props.failure }
+									disabled={
+										this.props.pending ||
+										this.props.failure ||
+										this.props.incompatibleProducts?.blockCheckout
+									}
 								>
 									{ translate( 'Pay %(price)s with WeChat Pay', {
 										args: { price: cart.total_cost_display },
@@ -196,13 +202,15 @@ export class WechatPaymentBox extends Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ translate( 'Secure payment' ) }
 								</div>
 							</div>
 							{ showPaymentChatButton && (
 								<PaymentChatButton paymentType={ paymentType } cart={ cart } />
 							) }
 						</div>
+
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 
@@ -214,7 +222,7 @@ export class WechatPaymentBox extends Component {
 	}
 }
 
-export const requestId = cart => `wechat-payment-box/${ get( cart, 'cart_key', '0' ) }`;
+export const requestId = ( cart ) => `wechat-payment-box/${ get( cart, 'cart_key', '0' ) }`;
 
 export const requestRedirect = ( cart, domain_details, payment ) => {
 	return requestHttpData(
@@ -251,7 +259,7 @@ export default connect(
 		};
 	},
 	( dispatch, { cart, transaction, selectedSite, redirectTo } ) => ( {
-		createRedirect: name => {
+		createRedirect: ( name ) => {
 			const origin = getLocationOrigin( window.location );
 
 			const slug = get( selectedSite, 'slug', 'no-site' );

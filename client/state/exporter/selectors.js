@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { States } from './constants.js';
 import { get } from 'lodash';
+
+import 'state/exporter/init';
 
 export const getExportingState = ( state, siteId ) => {
 	const exportingState = state.exporter.exportingState;
@@ -58,7 +59,7 @@ export function isDateRangeValid( state, siteId, postType ) {
 }
 
 export const getAdvancedSettings = ( state, siteId ) => state.exporter.advancedSettings[ siteId ];
-export const getSelectedPostType = state => state.exporter.selectedPostType;
+export const getSelectedPostType = ( state ) => state.exporter.selectedPostType;
 export const getPostTypeFieldOptions = ( state, siteId, postType, fieldName ) => {
 	// Choose which set of options to return for the given field name
 	const optionSet = get(
@@ -116,4 +117,8 @@ export function prepareExportRequest( state, siteId, { exportAll = true } = {} )
 	const postType = getSelectedPostType( state );
 	const selectedFieldValues = getPostTypeFieldValues( state, siteId, postType );
 	return Object.assign( { post_type: postType }, selectedFieldValues );
+}
+
+export function getDownloadUrl( state ) {
+	return state.exporter.downloadURL;
 }

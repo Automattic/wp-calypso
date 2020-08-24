@@ -8,8 +8,9 @@ import { forEach, includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts } from 'lib/url/url-parts';
+import { getUrlFromParts, getUrlParts } from 'lib/url/url-parts';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -42,6 +43,16 @@ export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
 
 	return `${ protocol }widgets.wp.com/languages/calypso/`;
+}
+
+/**
+ * Get the base path for language related files that are served from within Calypso.
+ *
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @returns {string} The internal base file path for language files.
+ */
+export function getLanguagesInternalBasePath( targetBuild = 'evergreen' ) {
+	return `/calypso/${ targetBuild }/languages`;
 }
 
 /**
@@ -89,9 +100,7 @@ function setLocaleInDOM() {
 	switchWebpackCSS( isRTL );
 }
 
-export async function getLanguageFile( targetLocaleSlug ) {
-	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
-
+export async function getFile( url ) {
 	const response = await dedupedGet( url );
 	if ( response.ok ) {
 		if ( response.bodyUsed ) {
@@ -105,6 +114,134 @@ export async function getLanguageFile( targetLocaleSlug ) {
 
 	// Invalid response.
 	throw new Error();
+}
+
+export function getLanguageFile( targetLocaleSlug ) {
+	const url = getLanguageFileUrl( targetLocaleSlug, 'json', window.languageRevisions || {} );
+
+	return getFile( url );
+}
+
+/**
+ * Get the language manifest file URL for the given locale.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {string} options Funciton options object
+ * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} options.fileType The desired file type, js or json. Default to json.
+ * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @param {string} options.hash Build hash string that will be used as cache buster.
+ *
+ * @returns {string} A language manifest file URL.
+ */
+
+export function getLanguageManifestFileUrl( {
+	localeSlug,
+	fileType = 'json',
+	targetBuild = 'evergreen',
+	hash = null,
+} = {} ) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+		fileType = 'json';
+	}
+
+	if ( typeof hash === 'number' ) {
+		hash = hash.toString();
+	}
+
+	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileUrl = `${ fileBasePath }/${ localeSlug }-language-manifest.${ fileType }`;
+
+	return typeof hash === 'string' ? fileUrl + `?v=${ hash }` : fileUrl;
+}
+
+/**
+ * Get the language manifest file for the given locale.
+ *
+ * @param  {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param  {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ *
+ * @returns {Promise} Language manifest json content
+ */
+export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' ) {
+	if (
+		window?.i18nLanguageManifest &&
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug
+	) {
+		return Promise.resolve( window.i18nLanguageManifest );
+	}
+
+	const url = getLanguageManifestFileUrl( {
+		localeSlug,
+		fileType: 'json',
+		targetBuild,
+		hash: window?.languageRevisions?.hashes?.[ localeSlug ] || null,
+	} );
+
+	return getFile( url );
+}
+
+/**
+ * Get the translation chunk file URL for the given chunk id and locale.
+ * A revision cache buster will be appended automatically if `setLangRevisions` has been called beforehand.
+ *
+ * @param {string} options Funciton options object
+ * @param {string} options.chunkId A chunk id. e.g. chunk-abc.min
+ * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} options.fileType The desired file type, js or json. Default to json.
+ * @param {string} options.buildTarget The build target. e.g. fallback, evergreen, etc.
+ * @param {string} options.hash Build hash string that will be used as cache buster.
+ *
+ * @returns {string} A translation chunk file URL.
+ */
+export function getTranslationChunkFileUrl( {
+	chunkId,
+	localeSlug,
+	fileType = 'json',
+	targetBuild = 'evergreen',
+	hash = null,
+} = {} ) {
+	if ( ! includes( [ 'js', 'json' ], fileType ) ) {
+		fileType = 'json';
+	}
+
+	if ( typeof hash === 'number' ) {
+		hash = hash.toString();
+	}
+
+	const fileBasePath = getLanguagesInternalBasePath( targetBuild );
+	const fileName = `${ localeSlug }-${ chunkId }.${ fileType }`;
+	const fileUrl = `${ fileBasePath }/${ fileName }`;
+
+	return typeof hash === 'string' ? fileUrl + `?v=${ hash }` : fileUrl;
+}
+
+/**
+ * Get the translation chunk file for the given chunk id and locale.
+ *
+ * @param {string} chunkId A chunk id. e.g. chunk-abc.min
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ *
+ * @returns {Promise} Translation chunk json content
+ */
+export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'evergreen' ) {
+	if (
+		window?.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
+		window?.i18nTranslationChunks?.[ chunkId ]
+	) {
+		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
+	}
+
+	const url = getTranslationChunkFileUrl( {
+		chunkId,
+		localeSlug,
+		fileType: 'json',
+		targetBuild,
+		hash: window?.languageRevisions?.[ localeSlug ] || null,
+	} );
+
+	return getFile( url );
 }
 
 let lastRequestedLocale = null;
@@ -124,13 +261,61 @@ export default function switchLocale( localeSlug ) {
 
 	lastRequestedLocale = localeSlug;
 
+	const useTranslationChunks =
+		config.isEnabled( 'use-translation-chunks' ) ||
+		getUrlParts( document.location.href ).searchParams.has( 'useTranslationChunks' );
+
 	if ( isDefaultLocale( localeSlug ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		setLocaleInDOM();
+	} else if ( useTranslationChunks ) {
+		// If requested locale is same as current locale, we don't need to
+		// re-fetch the manifest and translation chunks.
+		if ( localeSlug === i18n.getLocaleSlug() ) {
+			setLocaleInDOM();
+			return;
+		}
+
+		// Switching locale with translation chunks will require to fetch
+		// the manifest and all installed translation chunks for
+		// the requested locale
+		getLanguageManifestFile( localeSlug, window.BUILD_TARGET )
+			.then( ( { translatedChunks, locale } = {} ) => {
+				if ( ! locale ) {
+					return;
+				}
+
+				const installedChunks = new Set(
+					( window.installedChunks || [] )
+						.concat( window.__requireChunkCallback__.getInstalledChunks() )
+						.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
+				);
+				const chunksPromises = [ ...installedChunks ].map( ( chunkId ) =>
+					getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET )
+				);
+
+				return Promise.all( [ Promise.resolve( locale ), ...chunksPromises ] );
+			} )
+			.then( ( localeArray ) => {
+				if ( ! localeArray ) {
+					return;
+				}
+
+				const body = localeArray.reduce( ( acc, item ) => ( { ...acc, ...item } ), {} );
+
+				i18n.setLocale( body );
+				setLocaleInDOM();
+				loadUserUndeployedTranslations( localeSlug );
+			} )
+			.catch( () => {
+				debug(
+					`Encountered an error loading language manifest and/or translation chunks for ${ localeSlug }. Falling back to English.`
+				);
+			} );
 	} else {
 		getLanguageFile( localeSlug ).then(
 			// Success.
-			body => {
+			( body ) => {
 				if ( body ) {
 					// Handle race condition when we're requested to switch to a different
 					// locale while we're in the middle of request, we should abandon result
@@ -191,17 +376,17 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 		'export-translations',
 	].join( '/' );
 
-	const query = {
+	const searchParams = new URLSearchParams( {
 		'filters[user_login]': username,
 		'filters[status]': translationStatus,
 		format: 'json',
-	};
+	} );
 
 	const requestUrl = getUrlFromParts( {
 		protocol: 'https:',
 		host: 'translate.wordpress.com',
 		pathname,
-		query,
+		searchParams,
 	} );
 
 	return window
@@ -209,8 +394,12 @@ export function loadUserUndeployedTranslations( currentLocaleSlug ) {
 			headers: { Accept: 'application/json' },
 			credentials: 'include',
 		} )
-		.then( res => res.json() )
-		.then( translations => i18n.addTranslations( translations ) );
+		.then( ( res ) => res.json() )
+		.then( ( translations ) => {
+			i18n.addTranslations( translations );
+
+			return translations;
+		} );
 }
 
 /*
@@ -234,7 +423,7 @@ function setRTLFlagOnCSSLink( url, isRTL ) {
 export function switchWebpackCSS( isRTL ) {
 	const currentLinks = document.querySelectorAll( 'link[rel="stylesheet"][data-webpack]' );
 
-	forEach( currentLinks, async currentLink => {
+	forEach( currentLinks, async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
 		if ( currentHref === newHref ) {
@@ -258,7 +447,7 @@ export function switchWebpackCSS( isRTL ) {
  * @returns {Promise<string>} the new <link> DOM element after the CSS has been loaded
  */
 function loadCSS( cssUrl, currentLink ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const link = document.createElement( 'link' );
 		link.rel = 'stylesheet';
 		link.type = 'text/css';

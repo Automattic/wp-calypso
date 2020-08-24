@@ -29,7 +29,7 @@ const SettingsItem = ( {
 	shippingClasses,
 } ) => {
 	const id = layout.key ? layout.key : layout;
-	const updateValue = value => formValueActions.updateField( id, value );
+	const updateValue = ( value ) => formValueActions.updateField( id, value );
 	const updateSubValue = ( key, val ) => formValueActions.updateField( [ id ].concat( key ), val );
 	const fieldValue = formData[ id ];
 	const fieldSchema = schema.properties[ id ];

@@ -6,14 +6,14 @@
 	}
 
 	.extended-header__header {
-		font-size: 18px;
+		font-size: $font-title-small;
 		margin-bottom: 0;
 		padding-top: 8px;
 	}
 
 	.extended-header__header-description {
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 18px;
 		padding-bottom: 8px;
 	}

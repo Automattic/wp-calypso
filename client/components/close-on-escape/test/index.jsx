@@ -32,7 +32,7 @@ describe( 'CloseOnEscape', () => {
 
 			const wrapper1 = mount(
 				<CloseOnEscape
-					onEscape={ function() {
+					onEscape={ function () {
 						onEscapeSpy( 1 );
 						wrapper1.unmount();
 					} }
@@ -41,7 +41,7 @@ describe( 'CloseOnEscape', () => {
 
 			const wrapper2 = mount(
 				<CloseOnEscape
-					onEscape={ function() {
+					onEscape={ function () {
 						onEscapeSpy( 2 );
 						wrapper2.unmount();
 					} }

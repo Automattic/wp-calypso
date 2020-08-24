@@ -23,14 +23,16 @@ import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QueryWordadsSettings from 'components/data/query-wordads-settings';
 import SectionHeader from 'components/section-header';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getWordadsSettings } from 'state/selectors/get-wordads-settings';
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
 import { protectForm } from 'lib/protect-form';
 import { saveWordadsSettings } from 'state/wordads/settings/actions';
+import SupportInfo from 'components/support-info';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
@@ -50,7 +52,7 @@ class AdsFormSettings extends Component {
 		}
 	}
 
-	handleChange = event => {
+	handleChange = ( event ) => {
 		const name = event.currentTarget.name;
 		const value = event.currentTarget.value;
 
@@ -59,7 +61,7 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleToggle = event => {
+	handleToggle = ( event ) => {
 		const name = event.currentTarget.name;
 
 		this.setState( {
@@ -67,13 +69,19 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleDisplayToggle = name => () => {
-		this.setState( prevState => ( {
+	handleDisplayToggle = ( name ) => () => {
+		this.setState( ( prevState ) => ( {
 			display_options: {
 				...prevState.display_options,
 				[ name ]: ! this.state.display_options[ name ],
 			},
 		} ) );
+	};
+
+	handleCompactToggle = ( name ) => () => {
+		this.setState( {
+			[ name ]: ! this.state[ name ],
+		} );
 	};
 
 	handleResidentCheckbox = () => {
@@ -85,7 +93,7 @@ class AdsFormSettings extends Component {
 		} );
 	};
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		const { site } = this.props;
 		event.preventDefault();
 
@@ -111,6 +119,8 @@ class AdsFormSettings extends Component {
 			who_owns: 'person',
 			zip: '',
 			display_options: {},
+			ccpa_enabled: false,
+			ccpa_privacy_policy_url: '',
 		};
 	}
 
@@ -130,6 +140,8 @@ class AdsFormSettings extends Component {
 			who_owns: this.state.who_owns,
 			zip: this.state.zip,
 			display_options: this.state.display_options,
+			ccpa_enabled: this.state.ccpa_enabled,
+			ccpa_privacy_policy_url: this.state.ccpa_privacy_policy_url,
 		};
 	}
 
@@ -455,6 +467,97 @@ class AdsFormSettings extends Component {
 		);
 	}
 
+	privacy() {
+		const { translate } = this.props;
+
+		return (
+			<div>
+				<FormSectionHeading>{ translate( 'Privacy and Consent' ) }</FormSectionHeading>
+				<FormFieldset>
+					<SupportInfo
+						text={ translate(
+							'Enables a targeted advertising opt-out link for California consumers, as required by the California Consumer Privacy Act (CCPA).'
+						) }
+						link="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
+					/>
+					<CompactFormToggle
+						checked={ !! this.state.ccpa_enabled }
+						disabled={ this.props.isLoading }
+						onChange={ this.handleCompactToggle( 'ccpa_enabled' ) }
+					>
+						{ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
+					</CompactFormToggle>
+
+					<div className="ads__child-settings">
+						<FormSettingExplanation>
+							{ translate(
+								'For more information about the California Consumer Privacy Act (CCPA) and how it pertains to your site, please consult our {{a}}CCPA guide for site owners{{/a}}.',
+								{
+									components: {
+										a: (
+											<a
+												href="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</FormSettingExplanation>
+					</div>
+				</FormFieldset>
+
+				{ this.state.ccpa_enabled && (
+					<div className="ads__child-settings">
+						<FormFieldset>
+							<FormLabel>{ translate( 'Do Not Sell Link' ) }</FormLabel>
+							<span>
+								{ translate(
+									'CCPA requires that you place a "Do Not Sell My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link (CCPA) Widget{{/a}}, or the {{code}}[ccpa-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
+									{
+										components: {
+											a: (
+												<a
+													href={ this.props.widgetsUrl }
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+											code: <code />,
+										},
+									}
+								) }
+							</span>
+							<FormSettingExplanation>
+								{ translate( 'Failure to add this link will result in non-compliance with CCPA.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
+							<FormLabel htmlFor="ccpa-privacy-policy-url">
+								{ translate( 'Privacy Policy URL' ) }
+							</FormLabel>
+							<FormTextInput
+								name="ccpa_privacy_policy_url"
+								id="ccpa-privacy-policy-url"
+								value={ this.state.ccpa_privacy_policy_url || '' }
+								onChange={ this.handleChange }
+								disabled={ this.props.isLoading }
+								placeholder="https://"
+							/>
+							<FormSettingExplanation>
+								{ translate(
+									'Adds a link to your privacy policy to the bottom of the CCPA notice popup (optional).'
+								) }
+							</FormSettingExplanation>
+						</FormFieldset>
+					</div>
+				) }
+			</div>
+		);
+	}
+
 	render() {
 		const { isLoading, site, translate } = this.props;
 
@@ -487,6 +590,8 @@ class AdsFormSettings extends Component {
 
 						{ ! this.props.siteIsJetpack ? this.displayOptions() : null }
 
+						{ ! this.props.siteIsJetpack ? this.privacy() : null }
+
 						<FormSectionHeading>{ translate( 'Site Owner Information' ) }</FormSectionHeading>
 						{ this.siteOwnerOptions() }
 						{ this.state.us_checked ? this.taxOptions() : null }
@@ -502,7 +607,7 @@ class AdsFormSettings extends Component {
 
 export default compose(
 	connect(
-		state => {
+		( state ) => {
 			const siteId = getSelectedSiteId( state );
 			const isSavingSettings = isSavingWordadsSettings( state, siteId );
 			const wordadsSettings = getWordadsSettings( state, siteId );
@@ -512,6 +617,7 @@ export default compose(
 				site: getSelectedSite( state ),
 				siteIsJetpack: isJetpackSite( state, siteId ),
 				wordadsSettings,
+				widgetsUrl: getCustomizerUrl( state, siteId, 'widgets' ),
 			};
 		},
 		{ dismissWordAdsSuccess, saveWordadsSettings }

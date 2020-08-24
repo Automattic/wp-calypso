@@ -20,12 +20,12 @@ import plansReducer, {
 } from '../reducer';
 
 import { WPCOM_RESPONSE } from './fixture';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		// mute off console warn
 		sandbox.stub( console, 'warn' );

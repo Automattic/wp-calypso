@@ -13,7 +13,7 @@ function MyPost() {
 }
 ```
 
-`<PostStatus />` does not render a [query component](https://github.com/Automattic/wp-calypso/blob/master/docs/our-approach-to-data.md#query-components), so you should ensure that the post is already loaded into global state. If the post cannot be found, nothing will be rendered.
+`<PostStatus />` does not render a [query component](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/our-approach-to-data.md#query-components), so you should ensure that the post is already loaded into global state. If the post cannot be found, nothing will be rendered.
 
 ## Props
 

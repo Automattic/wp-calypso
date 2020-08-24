@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MAILCHIMP_SETTINGS_LIST,
 	MAILCHIMP_SETTINGS_RECEIVE,
@@ -13,8 +12,9 @@ import {
 import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/mailchimp';
+import 'state/mailchimp/init';
 
-export const requestSettings = siteId => ( {
+export const requestSettings = ( siteId ) => ( {
 	siteId,
 	type: MAILCHIMP_SETTINGS_LIST,
 } );
@@ -28,7 +28,7 @@ export function receiveSettings( siteId, lists ) {
 }
 
 export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: MAILCHIMP_SETTINGS_UPDATE,
 			siteId,
@@ -37,7 +37,7 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/mailchimp/settings`, settings )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: MAILCHIMP_SETTINGS_UPDATE_SUCCESS,
 					siteId,
@@ -52,7 +52,7 @@ export const requestSettingsUpdate = ( siteId, settings, noticeText ) => {
 					},
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: MAILCHIMP_SETTINGS_UPDATE_FAILURE,
 					siteId,

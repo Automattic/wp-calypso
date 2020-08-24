@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .search-filters__dropdown-filters {
 	align-items: center;
 	border-left: 1px solid var( --color-neutral-10 );
@@ -36,15 +39,16 @@
 			top: 0;
 			margin-right: 0;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				top: 2px;
 			}
 		}
 
 		.search-filters__dropdown-filters-button-text {
 			line-height: 1.2;
+			white-space: nowrap;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: none;
 			}
 		}
@@ -89,14 +93,11 @@
 	}
 }
 
-
-
-.search-filters__buttons,
-.search-filters__checkboxes {
+.search-filters__buttons {
 	display: flex;
 	flex-flow: row;
 	overflow: hidden;
-	align-items: center;
+	justify-content: space-between;
 
 	.button {
 		flex: 1 0 auto;
@@ -115,60 +116,20 @@
 
 	// Increase specificity to override button styles in signup
 	body.is-section-signup .layout & {
+		.search-filters__tld-button {
+			/*!rtl:ignore*/
+			direction: ltr;
+		}
+
 		button.search-filters__tld-button,
 		button.search-filters__popover-button {
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-top: 0.5em;
 			padding-bottom: 0.5em;
 		}
-
-		button.search-filters__popover-button-domain-step-test {
-			flex: 1 0 auto;
-			margin-left: 2em;
-			
-			&.is-active {
-				color: var( --color-accent );
-				background-color: unset;
-				border-width: 1px 1px 2px;
-			}
-		}
-
-		legend.search-filters__filter-by {
-			font-size: 14px;
-			color: var( --color-neutral-30 );
-		}
 	}
 
-	.search-filters__tld-checkbox-filter-bar {
-		display: flex;
-		flex: 1 0 auto;
-		justify-content: space-around;
-		font-size: 14px;
-
-		@include breakpoint( '<480px' ) {
-			flex-grow: 0;
-		}
-
-		.search-filters__tld-checkbox {
-			display: flex;
-			align-items: center;
-			margin-left: 2em;
-
-			&:last-child {
-				margin-right: 0;
-			}
-
-			& .form-checkbox {
-				font-size: 14px;
-			}
-
-			& span {
-				margin-left: 1em;
-			}
-		}
-	}
-
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		&.is-compact {
 			padding-bottom: 0.5em;
 		}
@@ -177,29 +138,25 @@
 			margin-bottom: 0.5em;
 		}
 
-		.search-filters__tld-button:nth-child( n + 7 ),
-		.search-filters__tld-checkbox:nth-child( n + 7 ) {
+		.search-filters__tld-button:nth-child( n + 7 ) {
 			display: none;
 		}
 	}
 
-	@include breakpoint( '<800px' ) {
-		.search-filters__tld-button:nth-child( n + 5 ),
-		.search-filters__tld-checkbox:nth-child( n + 5 ) {
+	@include breakpoint-deprecated( '<800px' ) {
+		.search-filters__tld-button:nth-child( n + 5 ) {
 			display: none;
 		}
 	}
 
-	@include breakpoint( '<660px' ) {
-		.search-filters__tld-button:nth-child( n + 4 ),
-		.search-filters__tld-checkbox:nth-child( n + 3 ) {
+	@include breakpoint-deprecated( '<660px' ) {
+		.search-filters__tld-button:nth-child( n + 4 ) {
 			display: none;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
-		.search-filters__tld-button:nth-child( n + 2 ),
-		.search-filters__tld-checkbox:nth-child( n + 2 ) {
+	@include breakpoint-deprecated( '<480px' ) {
+		.search-filters__tld-button:nth-child( n + 2 ) {
 			display: none;
 		}
 	}
@@ -211,14 +168,6 @@
 
 .search-filters__text-input-fieldset .search-filters__label {
 	margin-bottom: 0.25em;
-}
-
-.search-filters__checkboxes-fieldset .search-filters__label {
-	margin-bottom: 1em;
-
-	&:last-of-type {
-		margin-bottom: 0;
-	}
 }
 
 .search-filters__token-field-fieldset {
@@ -267,6 +216,28 @@
 		color: var( --color-neutral-70 );
 		&.is-selected span {
 			color: var( --color-text-inverted );
+		}
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	$accent-blue: #117ac9;
+	.search-filters-extensions__popover {
+		@include break-medium {
+			transform: translateX( 65px );
+		}
+
+		.token-field__suggestion {
+			&.is-selected {
+				background: $accent-blue;
+			}
+		}
+	}
+	.search-filters__popover-button {
+		&.is-active {
+			background: initial;
+			color: $accent-blue;
+			border-color: $accent-blue;
 		}
 	}
 }

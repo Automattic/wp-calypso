@@ -11,13 +11,13 @@
 	small {
 		color: var( --color-neutral-light );
 		display: block;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-style: italic;
 	}
 }
 
 .memberships__list-sub {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 4px 0 0;
 	color: var( --color-neutral-light );
 }

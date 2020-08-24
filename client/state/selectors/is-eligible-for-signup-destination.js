@@ -6,7 +6,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getGoogleApps, hasGoogleApps } from 'lib/cart-values/cart-items';
-import isEligibleForDotcomChecklist from './is-eligible-for-dotcom-checklist';
 import { retrieveSignupDestination } from 'signup/utils';
 
 /**
@@ -24,15 +23,5 @@ export default function isEligibleForSignupDestination( state, siteId, cart ) {
 		}
 	}
 
-	const destination = retrieveSignupDestination();
-
-	if ( ! destination ) {
-		return false;
-	}
-
-	if ( destination.includes( '/checklist/' ) ) {
-		return isEligibleForDotcomChecklist( state, siteId );
-	}
-
-	return true;
+	return Boolean( retrieveSignupDestination() );
 }

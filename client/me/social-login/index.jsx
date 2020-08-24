@@ -15,6 +15,7 @@ import config from 'config';
 import DocumentHead from 'components/data/document-head';
 import { getRequestError } from 'state/login/selectors';
 import GoogleIcon from 'components/social-icons/google';
+import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Notice from 'components/notice';
@@ -77,15 +78,22 @@ class SocialLogin extends Component {
 	}
 
 	render() {
-		const title = this.props.translate( 'Social Login' );
+		const { path, translate } = this.props;
+		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
+		const title = useCheckupMenu ? translate( 'Social Logins' ) : translate( 'Social Login' );
 
 		return (
-			<Main className="social-login">
+			<Main className="security social-login">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 				<MeSidebarNavigation />
 
-				<SecuritySectionNav path={ this.props.path } />
+				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
+				{ useCheckupMenu && (
+					<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
+						{ title }
+					</HeaderCake>
+				) }
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
@@ -95,6 +103,6 @@ class SocialLogin extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	errorUpdatingSocialConnection: getRequestError( state ),
 } ) )( localize( SocialLogin ) );

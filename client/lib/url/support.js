@@ -3,7 +3,7 @@
  */
 import { localizeUrl } from 'lib/i18n-utils';
 
-const root = localizeUrl( 'https://en.support.wordpress.com/' ).replace( /\/$/, '' );
+const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
 
 export const ACCOUNT_RECOVERY = `${ root }/account-recovery`;
 export const ADDING_GOOGLE_APPS_TO_YOUR_SITE = `${ root }/adding-g-suite-to-your-site`;
@@ -24,15 +24,17 @@ export const CALYPSO_COURSES = '/help/courses';
 export const CREATE = `${ root }/create`;
 export const CUSTOM_DNS = `${ root }/domains/custom-dns`;
 export const DESIGNATED_AGENT = `${ root }/designated-agent/`;
-export const DOMAIN_HELPER_PREFIX = `${ root }/domain-helper/?host=`;
 export const DOMAIN_REGISTRATION_AGREEMENTS = `${ root }/domain-registration-agreements/`;
 export const DOMAIN_WAITING = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAINS = `${ root }/domains`;
+export const DOMAIN_CANCEL = `${ root }/domains/#cancel-a-domain-name`;
 export const DOMAIN_CONNECT = `${ root }/domain-connect`;
 export const DOMAIN_EXPIRATION = `${ root }/domains/domain-expiration/`;
 export const DOMAIN_EXPIRATION_REDEMPTION = `${ root }/domains/domain-expiration/#renewing-a-domain-in-the-redemption-period`;
 export const DOMAIN_RECENTLY_REGISTERED = `${ root }/domains/register-domain/#waiting-for-domain-changes`;
 export const DOMAIN_PRICING_AND_AVAILABLE_TLDS = `${ root }/domains/domain-pricing-and-available-tlds`;
+export const ECOMMERCE = `${ root }/ecommerce`;
+export const INCOMING_DOMAIN_TRANSFER_STATUSES = `${ root }/move-domain/incoming-domain-transfer/#checking-your-transfer-status-and-failed-transfers`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_PENDING_CONFIRMATION = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#confirmation`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#pending`;
 export const INCOMING_DOMAIN_TRANSFER_STATUSES_FAILED = `${ root }/incoming-domain-transfer/status-and-failed-transfers/#failed`;
@@ -51,6 +53,7 @@ export const EXPORT = `${ root }/export`;
 export const FACEBOOK_EMBEDS = `${ root }/facebook-integration/facebook-embeds`;
 export const FACEBOOK_LIKE_BOX = `${ root }/facebook-integration/#facebook-like-box`;
 export const FOLLOWERS = `${ root }/followers`;
+export const FORMS = `${ root }/forms`;
 export const GETTING_MORE_VIEWS_AND_TRAFFIC = `${ root }/getting-more-views-and-traffic`;
 export const GOOGLE_ANALYTICS = `${ root }/google-analytics`;
 export const GOOGLE_APPS_LEARNING_CENTER = 'https://gsuite.google.com/learning-center/';
@@ -68,7 +71,7 @@ export const JETPACK_SERVICE_CROWDSIGNAL = 'https://crowdsignal.com/support/';
 export const LIVE_CHAT = `${ root }/live-chat`;
 export const MANAGE_PURCHASES = `${ root }/manage-purchases`;
 export const MANAGE_PURCHASES_AUTOMATIC_RENEWAL = `${ root }/manage-purchases/#automatic-renewal`;
-export const MANAGE_PURCHASES_FAQ_CANCELLING = `${ root }/manage-purchases/#FAQ-Cancelling`;
+export const MANAGE_PURCHASES_FAQ_CANCELLING = `${ root }/manage-purchases/#faq-cancelling-your-plans-and-domains`;
 export const MAP_EXISTING_DOMAIN = `${ root }/domains/map-existing-domain`;
 export const MAP_EXISTING_DOMAIN_UPDATE_DNS = `${ root }/domains/map-existing-domain#2-ask-your-domain-provider-to-update-your-dns-settings`;
 export const MAP_SUBDOMAIN = `${ root }/domains/map-subdomain`;
@@ -84,6 +87,7 @@ export const SETTING_PRIMARY_DOMAIN = `${ root }/domains/#set-a-primary-address`
 export const SETTING_UP_PREMIUM_SERVICES = `${ root }/setting-up-premium-services`;
 export const STRONG_PASSWORD = `${ root }/selecting-a-strong-password/`;
 export const SHARING = `${ root }/sharing`;
+export const SITE_REDIRECT = `${ root }/site-redirect`;
 export const START = `${ root }/start`;
 export const STATS_CLICKS = `${ root }/stats/#clicks`;
 export const STATS_REFERRERS = `${ root }/stats/#referrers`;

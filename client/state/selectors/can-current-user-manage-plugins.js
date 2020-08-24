@@ -17,9 +17,9 @@ import canCurrentUser from 'state/selectors/can-current-user';
  * @returns {boolean} Whether the user can manage plugins or not
  */
 export default createSelector(
-	state => {
+	( state ) => {
 		const siteIds = Object.keys( get( state, 'currentUser.capabilities', {} ) );
-		return siteIds.some( siteId => canCurrentUser( state, siteId, 'manage_options' ) );
+		return siteIds.some( ( siteId ) => canCurrentUser( state, siteId, 'manage_options' ) );
 	},
-	state => state.currentUser.capabilities
+	( state ) => state.currentUser.capabilities
 );

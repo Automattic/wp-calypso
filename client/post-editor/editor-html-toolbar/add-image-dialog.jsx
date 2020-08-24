@@ -28,15 +28,15 @@ export class AddImageDialog extends Component {
 		imageUrl: '',
 	};
 
-	setImageAlt = event => {
+	setImageAlt = ( event ) => {
 		this.setState( { imageAlt: event.target.value } );
 	};
 
-	setImageTitle = event => {
+	setImageTitle = ( event ) => {
 		this.setState( { imageTitle: event.target.value } );
 	};
 
-	setImageUrl = event => {
+	setImageUrl = ( event ) => {
 		this.setState( { imageUrl: event.target.value } );
 	};
 

@@ -85,6 +85,7 @@ class PostsMain extends React.Component {
 				<DocumentHead title={ translate( 'Posts' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="posts__page-heading"
 					headerText={ translate( 'Posts' ) }
 					align="left"
@@ -101,6 +102,6 @@ class PostsMain extends React.Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	siteId: getSelectedSiteId( state ),
 } ) )( localize( PostsMain ) );

@@ -15,7 +15,7 @@ import { withoutPersistence } from 'state/utils';
 
 function handleRequestSuccess( state, { data } ) {
 	const newState = { ...state };
-	data.forEach( method => {
+	data.forEach( ( method ) => {
 		newState[ method.id ] = {
 			id: method.id,
 			order: method.order,

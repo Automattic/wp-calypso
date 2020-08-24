@@ -14,7 +14,7 @@ import { find, forEach as iterate, get, map as collect } from 'lodash';
  * nameExists( {} ) // null
  * nameExists() // null
  */
-export const propExists = propKey => props => get( props, propKey );
+export const propExists = ( propKey ) => ( props ) => get( props, propKey );
 export const prop = propExists;
 
 /*
@@ -25,7 +25,8 @@ export const prop = propExists;
  * const userNameIsSam( { user: { name: 'Frodo' } } ) // => false
  * const userNameIsSam() // => false
  */
-export const propEquals = ( propKey, propValue ) => props => get( props, propKey ) === propValue;
+export const propEquals = ( propKey, propValue ) => ( props ) =>
+	get( props, propKey ) === propValue;
 
 /*
  * Returns a function that calls condition and checks for truthiness and calls `ifTrue`, other wise calls
@@ -69,7 +70,7 @@ export const first = ( ...fns ) => ( ...args ) => {
  * oddOrLessThan10( 8 ) // => true
  * oddOrLessThan10( 12 ) // => false
  */
-export const any = ( ...fns ) => ( ...args ) => find( fns, fn => fn( ...args ) );
+export const any = ( ...fns ) => ( ...args ) => find( fns, ( fn ) => fn( ...args ) );
 
 /*
  * Returns a function that returns true when all provided functions return a truthy value. Example:
@@ -83,10 +84,10 @@ export const any = ( ...fns ) => ( ...args ) => find( fns, fn => fn( ...args ) )
  * lessThan10AndGreaterThan2AndEven( 8 ) // => true
  * lessThan10AndGreaterThan2AndEven( 2 ) // => false
  */
-export const all = ( ...fns ) => ( ...args ) => ! find( fns, fn => ! fn( ...args ) );
+export const all = ( ...fns ) => ( ...args ) => ! find( fns, ( fn ) => ! fn( ...args ) );
 
 // Returns a function that calls each of fns
-export const forEach = ( ...fns ) => ( ...args ) => iterate( fns, fn => fn( ...args ) );
+export const forEach = ( ...fns ) => ( ...args ) => iterate( fns, ( fn ) => fn( ...args ) );
 
 /*
  * Returns a function that iterates through each function and calls it and returns each value. Example:
@@ -100,7 +101,7 @@ export const forEach = ( ...fns ) => ( ...args ) => iterate( fns, fn => fn( ...a
  *  maths( 3 )
  *  // => [ 6, 5 ]
  */
-export const map = ( ...fns ) => ( ...args ) => collect( fns, fn => fn( ...args ) );
+export const map = ( ...fns ) => ( ...args ) => collect( fns, ( fn ) => fn( ...args ) );
 
 export const compose = ( ...fns ) => ( ...args ) => {
 	const [ head, ...rest ] = fns;
@@ -119,4 +120,4 @@ export const compose = ( ...fns ) => ( ...args ) => {
  *
  *	document.querySelector( 'a' ).addEventListener( 'click', ( e ) => e.preventDefault( true ) );
  */
-export const call = ( method, ...args ) => obj => obj[ method ].apply( obj, args );
+export const call = ( method, ...args ) => ( obj ) => obj[ method ].apply( obj, args );

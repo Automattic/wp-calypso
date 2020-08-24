@@ -18,7 +18,7 @@ import PurchaseDetail from 'components/purchase-detail';
 /**
  * Image dependencies
  */
-import adsRemovedImage from 'assets/images/illustrations/ads-removed.svg';
+import adsRemovedImage from 'assets/images/illustrations/removed-ads.svg';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
 	const plan = find( sitePlans.data, isPersonal );
@@ -26,7 +26,7 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } 
 
 	return (
 		<div>
-			{ googleAppsWasPurchased && <GoogleAppsDetails isRequired /> }
+			{ googleAppsWasPurchased && <GoogleAppsDetails purchases={ purchases } /> }
 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }

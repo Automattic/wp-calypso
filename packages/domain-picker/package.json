@@ -1,0 +1,53 @@
+{
+	"name": "@automattic/domain-picker",
+	"version": "1.0.0-alpha.0",
+	"description": "Domain picker.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/domain-picker"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"types": "dist/types",
+	"scripts": {
+		"clean": "npx rimraf dist ../../.tsc-cache/packages__domain-picker*",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
+		"prepublish": "yarn run clean",
+		"watch": "tsc --project ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
+		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/onboarding": "^1.0.0",
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@wordpress/base-styles": "^2.0.1",
+		"@wordpress/components": "^10.0.3",
+		"@wordpress/icons": "^2.4.0",
+		"classnames": "^2.2.6",
+		"lodash": "^4.17.15",
+		"tslib": "^1.10.0",
+		"use-debounce": "^3.1.0",
+		"uuid": "^7.0.2"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^4.22.3",
+		"@wordpress/element": "^2.16.0",
+		"@wordpress/i18n": "^3.14.0",
+		"react": "^16.8"
+	},
+	"private": true
+}

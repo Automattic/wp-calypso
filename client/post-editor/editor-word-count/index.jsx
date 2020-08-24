@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { countWords } from 'lib/text-utils';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getEditorRawContent } from 'state/ui/editor/selectors';
+import { getEditorRawContent } from 'state/editor/selectors';
 
 /**
  * Style dependencies
@@ -81,7 +80,7 @@ export class EditorWordCount extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	localeSlug: getCurrentUserLocale( state ) || 'en',
 	rawContent: getEditorRawContent( state ),
 } ) )( localize( EditorWordCount ) );

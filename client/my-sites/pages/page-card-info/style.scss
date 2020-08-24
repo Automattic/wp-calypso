@@ -1,29 +1,7 @@
 .page-card-info {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	vertical-align: middle;
-}
-
-.page-card-info__item {
-	display: inline-block;
-	margin-right: 12px;
-}
-
-.page-card-info__item-icon {
-	margin-right: 4px;
-}
-
-.page-card-info__item-icon,
-.page-card-info__item-text {
-	vertical-align: middle;
-}
-
-.page-card-info__item-text {
-	line-height: 1;
-
-	&::first-letter {
-		text-transform: capitalize;
-	}
 }
 
 .page-card-info__site-url {

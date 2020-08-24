@@ -29,7 +29,7 @@ function fetchNonce( siteId ) {
 	return wpcom.undocumented().getRequestSiteAddressChangeNonce( siteId );
 }
 
-export const getErrorNotice = message =>
+export const getErrorNotice = ( message ) =>
 	errorNotice( message, {
 		id: 'siteAddressChangeUnsuccessful',
 		duration: 5000,
@@ -51,7 +51,7 @@ export const requestSiteAddressAvailability = (
 	domain,
 	siteType,
 	testBool
-) => dispatch => {
+) => ( dispatch ) => {
 	dispatch( {
 		type: SITE_ADDRESS_AVAILABILITY_REQUEST,
 		siteId,
@@ -61,7 +61,7 @@ export const requestSiteAddressAvailability = (
 	return wpcom
 		.undocumented()
 		.checkSiteAddressValidation( siteId, siteAddress, domain, siteType, testBool )
-		.then( data => {
+		.then( ( data ) => {
 			const errorType = get( data, 'error' );
 			const message = get( data, 'message' );
 
@@ -82,7 +82,7 @@ export const requestSiteAddressAvailability = (
 				siteAddress,
 			} );
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			const errorType = get( error, 'error' );
 			const message = get( error, 'message' );
 
@@ -95,7 +95,7 @@ export const requestSiteAddressAvailability = (
 		} );
 };
 
-export const clearValidationError = siteId => dispatch => {
+export const clearValidationError = ( siteId ) => ( dispatch ) => {
 	dispatch( {
 		type: SITE_ADDRESS_AVAILABILITY_ERROR_CLEAR,
 		siteId,
@@ -109,7 +109,7 @@ export const requestSiteAddressChange = (
 	oldDomain,
 	siteType,
 	discard = true
-) => dispatch => {
+) => ( dispatch ) => {
 	dispatch( {
 		type: SITE_ADDRESS_CHANGE_REQUEST,
 		siteId,
@@ -124,7 +124,7 @@ export const requestSiteAddressChange = (
 		discard,
 	};
 
-	const errorHandler = error => {
+	const errorHandler = ( error ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_siteaddresschange_error', {
 				...eventProperties,
@@ -142,11 +142,11 @@ export const requestSiteAddressChange = (
 	dispatch( recordTracksEvent( 'calypso_siteaddresschange_request', eventProperties ) );
 
 	return fetchNonce( siteId )
-		.then( nonce => {
+		.then( ( nonce ) => {
 			wpcom
 				.undocumented()
 				.updateSiteAddress( siteId, newBlogName, domain, oldDomain, siteType, discard, nonce )
-				.then( data => {
+				.then( ( data ) => {
 					const newSlug = get( data, 'new_slug' );
 
 					if ( newSlug ) {

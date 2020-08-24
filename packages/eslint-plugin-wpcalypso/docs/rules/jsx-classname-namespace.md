@@ -2,7 +2,7 @@
 
 If JSX element includes `className`, it must include the containing directory name as the component name for the root element, or as a component prefix for child elements (with `__` separating component and element names).
 
-[See Calypso CSS guidelines for more information](https://github.com/Automattic/wp-calypso/blob/master/docs/coding-guidelines/css.md)
+[See Calypso CSS guidelines for more information](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/coding-guidelines/css.md)
 
 ## Rule Details
 

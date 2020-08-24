@@ -14,7 +14,7 @@ import {
 	splitPostRevisionsDiffView,
 	unifyPostRevisionsDiffView,
 } from 'state/posts/revisions/actions';
-import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
+import { getPostRevisionsDiffView } from 'state/posts/selectors/get-post-revisions-diff-view';
 
 const EditorRevisionsListViewButtons = ( { diffView, viewSplit, viewUnified } ) => {
 	const translate = useTranslate();
@@ -45,7 +45,7 @@ EditorRevisionsListViewButtons.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state ) => ( {
 	diffView: getPostRevisionsDiffView( state ),
 } );
 

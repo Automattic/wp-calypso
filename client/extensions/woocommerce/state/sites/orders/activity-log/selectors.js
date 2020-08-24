@@ -117,14 +117,14 @@ export const isActivityLogLoading = ( state, orderId, siteId = getSelectedSiteId
  */
 export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId( state ) ) => {
 	const order = getOrder( state, orderId, siteId );
-	const events = getOrderNotes( state, orderId, siteId ).map( note => ( {
+	const events = getOrderNotes( state, orderId, siteId ).map( ( note ) => ( {
 		key: note.id,
 		type: note.customer_note ? EVENT_TYPES.CUSTOMER_NOTE : EVENT_TYPES.INTERNAL_NOTE,
 		timestamp: new Date( note.date_created_gmt + 'Z' ).getTime(),
 		content: note.note,
 	} ) );
 
-	getOrderRefunds( state, orderId, siteId ).forEach( refund => {
+	getOrderRefunds( state, orderId, siteId ).forEach( ( refund ) => {
 		events.push( {
 			key: refund.id,
 			type: EVENT_TYPES.REFUND_NOTE,
@@ -139,7 +139,8 @@ export const getActivityLogEvents = ( state, orderId, siteId = getSelectedSiteId
 		const labels = getLabels( state, orderId, siteId );
 		const renderableLabels = filter(
 			labels,
-			label => -1 !== [ 'PURCHASED', 'ANONYMIZED', 'PURCHASE_IN_PROGRESS' ].indexOf( label.status )
+			( label ) =>
+				-1 !== [ 'PURCHASED', 'ANONYMIZED', 'PURCHASE_IN_PROGRESS' ].indexOf( label.status )
 		);
 
 		renderableLabels.forEach( ( label, index, allLabels ) => {

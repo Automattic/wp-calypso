@@ -17,12 +17,12 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	const siteId = 12345678;
 
@@ -37,7 +37,7 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId )
@@ -71,7 +71,7 @@ describe( 'actions', () => {
 
 		describe( 'failure', () => {
 			const errorMessage = 'This user is not authorized to request monitor settings for this blog.';
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + siteId )
@@ -104,7 +104,7 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId, requestSettings )
@@ -139,7 +139,7 @@ describe( 'actions', () => {
 
 		describe( 'failure', () => {
 			const errorMessage = 'This user is not authorized to update monitor settings for this blog.';
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId, requestSettings )

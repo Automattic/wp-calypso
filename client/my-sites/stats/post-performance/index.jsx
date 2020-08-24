@@ -71,7 +71,7 @@ class StatsPostPerformance extends Component {
 			},
 		];
 
-		return tabs.map( function( tabOptions ) {
+		return tabs.map( function ( tabOptions ) {
 			return <StatsTab { ...tabOptions } key={ tabOptions.gridicon } />;
 		} );
 	}
@@ -105,7 +105,7 @@ class StatsPostPerformance extends Component {
 				{ siteId && post && (
 					<QueryPostStats siteId={ siteId } postId={ post.ID } fields={ [ 'views' ] } />
 				) }
-				<SectionHeader label={ translate( 'Latest Post Summary' ) } href={ summaryUrl } />
+				<SectionHeader label={ translate( 'Latest post summary' ) } href={ summaryUrl } />
 				<Card className={ cardClass }>
 					<StatsModulePlaceholder isLoading={ loading && ! post } />
 					{ post ? (
@@ -149,7 +149,7 @@ class StatsPostPerformance extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const query = { status: 'publish', number: 1 };
 		const posts = siteId ? getPostsForQuery( state, siteId, query ) : null;

@@ -37,7 +37,7 @@ class StatsCommentFollows extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	paginationHandler = pageNum => {
+	paginationHandler = ( pageNum ) => {
 		let path = '/stats/follows/comment/';
 		if ( pageNum > 1 ) {
 			path += pageNum + '/';
@@ -73,7 +73,7 @@ class StatsCommentFollows extends Component {
 }
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 
 		return {

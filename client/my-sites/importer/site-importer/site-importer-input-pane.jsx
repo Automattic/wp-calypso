@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, noop, flowRight, has, get, trim, sortBy, reverse } from 'lodash';
+import { includes, isEmpty, noop, flowRight, has, trim, sortBy, reverse } from 'lodash';
 import url from 'url';
 import moment from 'moment';
 
@@ -34,6 +34,13 @@ import ErrorPane from '../error-pane';
 import SiteImporterSitePreview from './site-importer-site-preview';
 import { appStates } from 'state/imports/constants';
 import { cancelImport, setUploadStartState } from 'lib/importer/actions';
+import {
+	getError,
+	getImportData,
+	getImportStage,
+	getValidatedSiteUrl,
+	isLoading as isLoadingSelector,
+} from 'state/imports/site-importer/selectors';
 
 /**
  * Style dependencies
@@ -94,7 +101,7 @@ class SiteImporterInputPane extends React.Component {
 				path: `/sites/${ this.props.site.ID }/site-importer/list-endpoints`,
 				apiNamespace: 'wpcom/v2',
 			} )
-			.then( resp => {
+			.then( ( resp ) => {
 				const twoWeeksAgo = moment().subtract( 2, 'weeks' );
 				const endpoints = resp.reduce( ( validEndpoints, endpoint ) => {
 					const lastModified = moment( new Date( endpoint.lastModified ) );
@@ -119,20 +126,20 @@ class SiteImporterInputPane extends React.Component {
 					),
 				} );
 			} )
-			.catch( err => {
+			.catch( ( err ) => {
 				return err;
 			} );
 	};
 
-	setEndpoint = e => {
+	setEndpoint = ( e ) => {
 		this.setState( { selectedEndpoint: e.target.value } );
 	};
 
-	setUrl = event => {
+	setUrl = ( event ) => {
 		this.setState( { siteURLInput: event.target.value } );
 	};
 
-	validateOnEnter = event => {
+	validateOnEnter = ( event ) => {
 		event.key === 'Enter' && this.validateSite();
 	};
 
@@ -233,7 +240,7 @@ class SiteImporterInputPane extends React.Component {
 								value={ this.state.selectedEndpoint }
 							>
 								<option value="">Production Endpoint</option>
-								{ this.state.availableEndpoints.map( endpoint => (
+								{ this.state.availableEndpoints.map( ( endpoint ) => (
 									<option key={ endpoint.name } value={ endpoint.name }>
 										{ endpoint.title } ({ endpoint.lastModifiedTitle })
 									</option>
@@ -285,21 +292,13 @@ class SiteImporterInputPane extends React.Component {
 
 export default flowRight(
 	connect(
-		state => {
-			const { isLoading, error, importData, importStage, validatedSiteUrl } = get(
-				state,
-				'imports.siteImporter',
-				{}
-			);
-
-			return {
-				isLoading,
-				error,
-				importData,
-				importStage,
-				validatedSiteUrl,
-			};
-		},
+		( state ) => ( {
+			error: getError( state ),
+			importData: getImportData( state ),
+			importStage: getImportStage( state ),
+			isLoading: isLoadingSelector( state ),
+			validatedSiteUrl: getValidatedSiteUrl( state ),
+		} ),
 		{
 			recordTracksEvent,
 			setSelectedEditor,

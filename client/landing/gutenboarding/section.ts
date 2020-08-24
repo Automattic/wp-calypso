@@ -1,6 +1,6 @@
 export const GUTENBOARDING_SECTION_DEFINITION = {
 	name: 'gutenboarding',
-	paths: [ '/gutenboarding' ],
+	paths: [ 'new' ],
 	module: 'gutenboarding',
 	secondary: false,
 	group: 'gutenboarding',

@@ -30,7 +30,7 @@ const VALID_ARG_TYPES = [ 'number', 'boolean', 'string' ];
  * @param   {object}    state Current state object
  * @returns {(Array|*)}       Value(s) to be shallow compared
  */
-const DEFAULT_GET_DEPENDANTS = state => state;
+const DEFAULT_GET_DEPENDANTS = ( state ) => state;
 
 /**
  * At runtime, assigns a function which returns a cache key for the memoized
@@ -46,7 +46,7 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
 	}
 
 	return ( state, ...args ) => {
-		const hasInvalidArg = args.some( arg => {
+		const hasInvalidArg = args.some( ( arg ) => {
 			return arg && ! includes( VALID_ARG_TYPES, typeof arg );
 		} );
 
@@ -65,8 +65,8 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
  * @param   {Function[]} dependants Array of getDependants
  * @returns {Function}              Function mapping getDependants results
  */
-const makeSelectorFromArray = dependants => ( state, ...args ) =>
-	dependants.map( dependant => dependant( state, ...args ) );
+const makeSelectorFromArray = ( dependants ) => ( state, ...args ) =>
+	dependants.map( ( dependant ) => dependant( state, ...args ) );
 
 /**
  * Returns a memoized state selector for use with the global application state.
@@ -91,7 +91,7 @@ export default function createSelector(
 	}
 
 	return Object.assign(
-		function( state, ...args ) {
+		function ( state, ...args ) {
 			let currentDependants = getDependants( state, ...args );
 			if ( ! Array.isArray( currentDependants ) ) {
 				currentDependants = [ currentDependants ];

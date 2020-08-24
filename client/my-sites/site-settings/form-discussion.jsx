@@ -265,7 +265,7 @@ class SiteSettingsFormDiscussion extends Component {
 				disabled={ isRequestingSettings || isSavingSettings }
 				onClick={ eventTracker( 'Selected Comment Nesting Level' ) }
 			>
-				{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( level => (
+				{ [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ].map( ( level ) => (
 					<option value={ level } key={ 'comment-depth-' + level }>
 						{ level }
 					</option>
@@ -475,7 +475,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset className="site-settings__moderation-settings">
-				<FormLegend>{ translate( 'Comment Moderation' ) }</FormLegend>
+				<FormLegend>{ translate( 'Comment moderation' ) }</FormLegend>
 				<p>
 					{ translate(
 						'Hold a comment in the queue if it contains {{numberOfLinks /}} or more links. ' +
@@ -513,7 +513,7 @@ class SiteSettingsFormDiscussion extends Component {
 		);
 	}
 
-	commentBlacklistSettings() {
+	disallowedCommentsSettings() {
 		const {
 			eventTracker,
 			fields,
@@ -525,22 +525,22 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Comment Blacklist' ) }</FormLegend>
-				<FormLabel htmlFor="blacklist_keys">
+				<FormLegend>{ translate( 'Disallowed comments' ) }</FormLegend>
+				<FormLabel htmlFor="disallowed_comment_keys">
 					{ translate(
 						'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be put in the trash. ' +
 							'One word or IP per line. It will match inside words, so "press" will match "WordPress".'
 					) }
 				</FormLabel>
 				<FormTextarea
-					name="blacklist_keys"
-					id="blacklist_keys"
+					name="disallowed_comment_keys"
+					id="disallowed_comment_keys"
 					value={ fields.blacklist_keys }
 					onChange={ onChangeField( 'blacklist_keys' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
 					autoCapitalize="none"
-					onClick={ eventTracker( 'Clicked Blacklist Field' ) }
-					onKeyPress={ uniqueEventTracker( 'Typed in Blacklist Field' ) }
+					onClick={ eventTracker( 'Clicked Disallowed Comments Field' ) }
+					onKeyPress={ uniqueEventTracker( 'Typed in Disallowed Comments Field' ) }
 				/>
 			</FormFieldset>
 		);
@@ -586,7 +586,7 @@ class SiteSettingsFormDiscussion extends Component {
 		} = this.props;
 		return (
 			<form id="site-settings" onSubmit={ handleSubmitForm }>
-				<SettingsSectionHeader title={ translate( 'Default Article Settings' ) } />
+				<SettingsSectionHeader title={ translate( 'Default article settings' ) } />
 				<Card className="site-settings__discussion-settings">
 					{ this.defaultArticleSettings() }
 				</Card>
@@ -608,7 +608,7 @@ class SiteSettingsFormDiscussion extends Component {
 					<hr />
 					{ this.commentModerationSettings() }
 					<hr />
-					{ this.commentBlacklistSettings() }
+					{ this.disallowedCommentsSettings() }
 				</Card>
 
 				{ isJetpack && (
@@ -631,7 +631,7 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 }
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
@@ -646,7 +646,7 @@ const connectComponent = connect( state => {
 	};
 } );
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'default_pingback_flag',
 		'default_ping_status',

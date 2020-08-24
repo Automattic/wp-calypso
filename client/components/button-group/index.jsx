@@ -14,7 +14,7 @@ class ButtonGroup extends PureComponent {
 	static propTypes = {
 		children( props ) {
 			let error = null;
-			React.Children.forEach( props.children, child => {
+			React.Children.forEach( props.children, ( child ) => {
 				if ( child && ( ! child.props || child.props.type !== 'button' ) ) {
 					error = new Error( 'All children elements should be a Button.' );
 				}

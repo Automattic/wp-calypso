@@ -9,7 +9,7 @@ import { get } from 'lodash';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 // path to MailChimp setting state branch
-const basePath = siteId => [
+const basePath = ( siteId ) => [
 	'extensions',
 	'woocommerce',
 	'sites',

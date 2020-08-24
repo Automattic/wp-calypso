@@ -14,7 +14,7 @@ import { requestJetpackUserConnectionData } from 'state/jetpack/connection/actio
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const changeConnectionOwner = action =>
+const changeConnectionOwner = ( action ) =>
 	http(
 		{
 			apiVersion: '1.1',

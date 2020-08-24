@@ -26,7 +26,7 @@ const wpcom = {
 	} ),
 };
 
-export const OfflineWrapper = Component => ( { clientId, redirectPath, ...props } ) => (
+export const OfflineWrapper = ( Component ) => ( { clientId, redirectPath, ...props } ) => (
 	<Component { ...props } { ...{ wpcom } } />
 );
 

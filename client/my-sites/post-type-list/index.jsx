@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { isEqual, range, throttle, difference, isEmpty, get } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,13 +18,14 @@ import QueryRecentPostViews from 'components/data/query-stats-recent-post-views'
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
 } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
+import { getPostType, getPostTypeLabel } from 'state/post-types/selectors';
 import { getEditorUrl } from 'state/selectors/get-editor-url';
 import ListEnd from 'components/list-end';
 import PostItem from 'blocks/post-item';
@@ -32,8 +33,13 @@ import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
 import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
-import UpgradeNudge from 'blocks/upgrade-nudge';
+import UpsellNudge from 'blocks/upsell-nudge';
 import { FEATURE_NO_ADS } from 'lib/plans/constants';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 /**
  * Constants
@@ -138,7 +144,7 @@ class PostTypeList extends Component {
 	}
 
 	postIdsFromPosts( posts ) {
-		return ! isEmpty( posts ) ? posts.map( post => post.ID ) : [];
+		return ! isEmpty( posts ) ? posts.map( ( post ) => post.ID ) : [];
 	}
 
 	getPostsPerPageCount() {
@@ -191,7 +197,7 @@ class PostTypeList extends Component {
 	}
 
 	renderSectionHeader() {
-		const { editorUrl, postLabels } = this.props;
+		const { editorUrl, postLabels, addNewItemLabel } = this.props;
 
 		if ( ! postLabels ) {
 			return null;
@@ -200,7 +206,7 @@ class PostTypeList extends Component {
 		return (
 			<SectionHeader label={ postLabels.name }>
 				<Button primary compact className="post-type-list__add-post" href={ editorUrl }>
-					{ postLabels.add_new_item }
+					{ addNewItemLabel }
 				</Button>
 			</SectionHeader>
 		);
@@ -246,7 +252,7 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, isRequestingPosts, translate, isVip } = this.props;
+		const { query, siteId, isRequestingPosts, translate, isVip, isJetpack } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
 		const postStatuses = query.status.split( ',' );
@@ -254,10 +260,14 @@ class PostTypeList extends Component {
 		const classes = classnames( 'post-type-list', {
 			'is-empty': isLoadedAndEmpty,
 		} );
+
+		const isSingleSite = !! siteId;
+
 		const showUpgradeNudge =
 			siteId &&
 			posts.length > 10 &&
 			! isVip &&
+			! isJetpack &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
 			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
@@ -266,19 +276,23 @@ class PostTypeList extends Component {
 			<div className={ classes }>
 				{ this.renderSectionHeader() }
 				{ query &&
-					range( 1, maxRequestedPage + 1 ).map( page => (
+					range( 1, maxRequestedPage + 1 ).map( ( page ) => (
 						<QueryPosts key={ `query-${ page }` } siteId={ siteId } query={ { ...query, page } } />
 					) ) }
-				{ recentViewIds.length > 0 && (
+				{ /* Disable Querying recent views in all-sites mode as it doesn't work without sideId. */ }
+				{ isSingleSite && recentViewIds.length > 0 && (
 					<QueryRecentPostViews siteId={ siteId } postIds={ recentViewIds } num={ 30 } />
 				) }
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
-					<UpgradeNudge
+					<UpsellNudge
 						title={ translate( 'No Ads with WordPress.com Premium' ) }
-						message={ translate( 'Prevent ads from showing on your site.' ) }
+						description={ translate( 'Prevent ads from showing on your site.' ) }
 						feature={ FEATURE_NO_ADS }
 						event="published_posts_no_ads"
+						tracksImpressionName="calypso_upgrade_nudge_impression"
+						tracksClickName="calypso_upgrade_nudge_cta_click"
+						showIcon={ true }
 					/>
 				) }
 				{ posts.slice( 10 ).map( this.renderPost ) }
@@ -299,16 +313,24 @@ export default connect( ( state, ownProps ) => {
 	const totalPageCount = getPostsLastPageForQuery( state, siteId, ownProps.query );
 	const lastPageToRequest =
 		siteId === null ? Math.min( MAX_ALL_SITES_PAGES, totalPageCount ) : totalPageCount;
-
+	const localeSlug = getLocaleSlug( state );
 	return {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		isVip: isVipSite( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,
 		lastPageToRequest,
 		editorUrl: getEditorUrl( state, siteId, null, ownProps.query.type ),
 		postLabels: get( getPostType( state, siteId, ownProps.query.type ), 'labels' ),
+		addNewItemLabel: getPostTypeLabel(
+			state,
+			siteId,
+			ownProps.query.type,
+			'add_new_item',
+			localeSlug
+		),
 	};
 } )( localize( PostTypeList ) );

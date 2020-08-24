@@ -8,10 +8,10 @@ import deepFreeze from 'deep-freeze';
  */
 import reducer from '../reducer';
 import { REWIND_BACKUPS_SET, SERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );
 	} );
 

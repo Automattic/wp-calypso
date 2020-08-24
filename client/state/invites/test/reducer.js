@@ -20,7 +20,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	describe( '#requesting()', () => {
@@ -463,7 +463,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'invalid state tests', () => {
-			useSandbox( sandbox => {
+			useSandbox( ( sandbox ) => {
 				sandbox.stub( console, 'warn' );
 			} );
 

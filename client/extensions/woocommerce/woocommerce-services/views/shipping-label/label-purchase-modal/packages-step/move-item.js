@@ -25,7 +25,7 @@ import {
 import { getShippingLabel } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';
 import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state/packages/selectors';
 
-const MoveItemDialog = props => {
+const MoveItemDialog = ( props ) => {
 	const {
 		site,
 		siteId,
@@ -68,7 +68,7 @@ const MoveItemDialog = props => {
 
 	const renderPackedOptions = () => {
 		const elements = [];
-		Object.keys( selected ).forEach( pckgId => {
+		Object.keys( selected ).forEach( ( pckgId ) => {
 			const pckg = selected[ pckgId ];
 			if ( pckgId === openedPackageId || 'individual' === pckg.box_id ) {
 				return;
@@ -174,7 +174,7 @@ const mapStateToProps = ( state, { orderId, siteId } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { closeItemMove, setTargetPackage, moveItem }, dispatch );
 };
 

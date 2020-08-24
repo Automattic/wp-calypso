@@ -32,7 +32,7 @@ class QueryBillingTransactions extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		requestingBillingTransactions: isRequestingBillingTransactions( state ),
 	} ),
 	{ requestBillingTransactions }

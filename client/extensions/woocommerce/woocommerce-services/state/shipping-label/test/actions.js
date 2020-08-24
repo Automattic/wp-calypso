@@ -44,7 +44,7 @@ function createGetStateFn( newProps = { origin: {}, destination: {} } ) {
 	const origin = Object.assign( {}, defaultProps, newProps.origin );
 	const destination = Object.assign( {}, defaultProps, newProps.destination );
 
-	return function() {
+	return function () {
 		return {
 			extensions: {
 				woocommerce: {
@@ -358,7 +358,7 @@ describe( 'Shipping label Actions', () => {
 			// Mock an unsuccessful response
 			mockNormalizationRequest( false );
 
-			return new Promise( resolve => {
+			return new Promise( ( resolve ) => {
 				submitAddressForNormalization(
 					orderId,
 					siteId,

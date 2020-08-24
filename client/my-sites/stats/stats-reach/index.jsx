@@ -22,7 +22,7 @@ import {
 	getSiteStatsNormalizedData,
 } from 'state/stats/lists/selectors';
 
-export const StatsReach = props => {
+export const StatsReach = ( props ) => {
 	const { translate, siteId, followData, publicizeData, isLoadingPublicize, siteSlug } = props;
 
 	const isLoadingFollowData = ! followData;
@@ -40,7 +40,7 @@ export const StatsReach = props => {
 		<div>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
-			<SectionHeader label={ translate( 'Follower Totals' ) } />
+			<SectionHeader label={ translate( 'Follower totals' ) } />
 			<Card className="stats-module stats-reach__card">
 				<StatsTabs borderless>
 					<StatsTab
@@ -72,7 +72,7 @@ export const StatsReach = props => {
 	);
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const followData = getSiteStatsNormalizedData( state, siteId, 'statsFollowers' );
 	const publicizeData = getSiteStatsNormalizedData( state, siteId, 'statsPublicize' );

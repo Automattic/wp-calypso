@@ -1,20 +1,23 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 15px 20px;
 	}
 
 	.is-section-signup & {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			flex-direction: row;
 			align-items: center;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			flex-direction: row;
 			align-items: center;
 		}
@@ -59,7 +62,7 @@
 	width: 100%;
 	min-height: 32px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: flex;
 		justify-content: space-between;
 
@@ -100,7 +103,7 @@
 		min-height: 44px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		.is-placeholder & {
 			margin-right: 50%;
 			min-height: 22px;
@@ -118,7 +121,7 @@
 	> h3 {
 		word-break: break-all;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			flex-grow: 2;
 		}
 	}
@@ -135,37 +138,24 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	&.domain-registration-suggestion__title-domain-copy-test,
-	&.domain-registration-suggestion__title-domain-design-updates {
-		@include breakpoint( '>480px' ) {
+	&.domain-registration-suggestion__title-domain-copy-test {
+		@include breakpoint-deprecated( '>480px' ) {
 			max-width: 50%;
 			min-width: 50%;
 			margin-right: 1em;
 		}
 
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			max-width: 55%;
 			min-width: 55%;
 			margin-right: 1em;
 		}
 	}
 
-	&.domain-registration-suggestion__title-domain-design-updates {
-		font-size: 18px;
-		font-weight: 600;
-		line-height: 18px;
-	}
-
 	.domain-registration-suggestion__title {
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
-	}
-
-	&.domain-registration-suggestion__title-domain-design-updates .domain-registration-suggestion__title {
-		font-size: 18px;
-		font-weight: 600;
-		line-height: 18px;
 	}
 
 	.badge {
@@ -186,10 +176,10 @@
 }
 
 .domain-registration-suggestion__title {
-	font-size: 16px;
+	font-size: $font-body;
 	word-break: break-all;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-self: center;
 		padding-right: 2em;
 	}
@@ -203,7 +193,7 @@
 	transition: all 0.1s linear;
 
 	&.is-primary {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			margin-left: 1em;
 			margin-top: 0;
 		}
@@ -226,7 +216,7 @@
 	}
 
 	.is-section-signup & {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			flex: 1 0 auto;
 			margin-left: 1em;
 			margin-top: 0;
@@ -234,7 +224,7 @@
 	}
 
 	.is-section-domains & {
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			flex: 1 0 auto;
 			margin-left: 1em;
 			margin-top: 0;
@@ -254,14 +244,126 @@
 	}
 
 	.is-section-signup & {
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			display: block;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint( '>800px' ) {
+		@include breakpoint-deprecated( '>800px' ) {
 			display: block;
+		}
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	.featured-domain-suggestions {
+		.domain-registration-suggestion__title {
+			font-size: 1.625rem;
+		}
+	}
+
+	.domain-registration-suggestion__progress-bar {
+		.badge {
+			background-color: var( --color-neutral-100 );
+			border-radius: 2px;
+		}
+	}
+
+	.domain-suggestion {
+
+		.domain-product-price__free-text {
+			color: var( --color-neutral-60 );
+			font-size: $font-body;
+		}
+
+		.domain-product-price__price {
+			font-size: $font-body-small;
+
+			&:not( .domain-product-price__free-price ) {
+				color: var( --color-neutral-40 );
+			}
+		}
+
+		&:not( .featured-domain-suggestion ) {
+
+			.domain-suggestion__content {
+				@include breakpoint-deprecated( '>660px' ) {
+					&.domain-suggestion__content-domain-copy-test {
+						justify-content: space-between;
+					}
+				}
+			}
+
+			.domain-registration-suggestion__domain-title {
+				line-height: 3rem;
+				.domain-registration-suggestion__domain-title-tld {
+					color: var( --color-accent );
+				}
+			}
+
+			.domain-product-price__free-price {
+				font-size: $font-body;
+				
+				@include break-mobile {
+					font-size: $font-body-small;
+				}
+			}
+
+			.domain-product-price__free-text {
+				font-size: $font-body;
+				
+				@include break-mobile {
+					font-size: $font-body-small;
+				}
+			}
+
+			.domain-product-price__price:not( .domain-product-price__free-price ) {
+				font-size: $font-body-small;
+
+				@include break-mobile {
+					font-size: $font-body-extra-small;
+				}
+			}
+
+			&.is-clickable:hover {
+				@include break-mobile {
+					background: var( --color-primary-0 );
+					box-shadow: 0 0 0 1px var( --color-primary-40 );
+
+					.domain-suggestion__action:not( .is-borderless ) {
+						border-radius: 4px;
+						display: block;
+						line-height: 17px;
+						padding: 11px 24px 10px;
+					}
+
+					.domain-product-price {
+						display: none;
+					}
+				}
+			}
+
+			&:not( .domain-transfer-suggestion ) {
+				.domain-suggestion__action {
+					@include break-mobile {
+						display: none;
+					}
+				}
+			}
+	
+			&.domain-transfer-suggestion {
+				$cod-grey: #2b2d2f;
+
+				.domain-suggestion__action {
+					color: $cod-grey;
+					text-decoration-line: underline;
+				}
+				.domain-suggestion__chevron {
+					fill: $cod-grey;
+					margin-left: 0;
+				}
+			}
 		}
 	}
 }

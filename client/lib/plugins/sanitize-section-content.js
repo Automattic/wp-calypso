@@ -13,7 +13,7 @@ import validUrl from 'valid-url';
  * @param {string} tagName name of tag under inspection
  * @returns {boolean} whether the tag is allowed
  */
-const isAllowedTag = tagName => {
+const isAllowedTag = ( tagName ) => {
 	switch ( tagName ) {
 		case '#text':
 		case 'a':
@@ -86,7 +86,7 @@ const isAllowedAttr = ( tagName, attrName ) => {
 	}
 };
 
-const isValidYoutubeEmbed = node => {
+const isValidYoutubeEmbed = ( node ) => {
 	if ( node.nodeName.toLowerCase() !== 'iframe' ) {
 		return false;
 	}
@@ -108,7 +108,7 @@ const isValidYoutubeEmbed = node => {
 	);
 };
 
-const replacementFor = node => {
+const replacementFor = ( node ) => {
 	const tagName = node.nodeName.toLocaleLowerCase();
 
 	switch ( tagName ) {
@@ -127,7 +127,7 @@ const replacementFor = node => {
  * @param {string} content unverified HTML
  * @returns {string} sanitized HTML
  */
-export const sanitizeSectionContent = content => {
+export const sanitizeSectionContent = ( content ) => {
 	const parser = new DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 
@@ -217,7 +217,7 @@ export const sanitizeSectionContent = content => {
 
 	// remove the unwanted tags and transfer
 	// their children up a level in their place
-	removeList.forEach( node => {
+	removeList.forEach( ( node ) => {
 		const parent = node.parentNode;
 		let child;
 

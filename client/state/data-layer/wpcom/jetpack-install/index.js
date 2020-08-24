@@ -19,7 +19,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const JETPACK_REMOTE_INSTALL_RETRIES = 3;
 
-export const installJetpackPlugin = action =>
+export const installJetpackPlugin = ( action ) =>
 	http(
 		{
 			method: 'POST',

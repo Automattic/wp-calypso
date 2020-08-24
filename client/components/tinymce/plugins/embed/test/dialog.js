@@ -77,7 +77,7 @@ describe( 'EmbedDialog', () => {
 			target: { value: newUrl },
 		};
 		let currentUrl = originalUrl;
-		const onUpdate = url => {
+		const onUpdate = ( url ) => {
 			currentUrl = url;
 		};
 		const wrapper = shallow(
@@ -104,7 +104,7 @@ describe( 'EmbedDialog', () => {
 		};
 		const noopSpy = spy( noop );
 		let currentUrl = originalUrl;
-		const onUpdate = url => {
+		const onUpdate = ( url ) => {
 			currentUrl = url;
 		};
 		const wrapper = shallow(

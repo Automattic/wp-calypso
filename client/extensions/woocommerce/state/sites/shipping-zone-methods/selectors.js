@@ -57,7 +57,7 @@ export const areShippingZoneMethodsLoaded = (
 		return true;
 	}
 	const wcsMethods = zone.methodIds
-		.map( id => {
+		.map( ( id ) => {
 			const method = getShippingZoneMethod( state, id, siteId );
 			if ( ! method || ! startsWith( method.methodType, 'wc_services' ) ) {
 				return null;
@@ -94,7 +94,7 @@ export const areShippingZoneMethodsLoading = (
 		return false;
 	}
 	const wcsMethods = zone.methodIds
-		.map( id => {
+		.map( ( id ) => {
 			const method = getShippingZoneMethod( state, id, siteId );
 			if ( ! method || ! startsWith( method.methodType, 'wc_services' ) ) {
 				return null;

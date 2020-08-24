@@ -26,7 +26,7 @@ const placeholderContent = (
 					<table className="plan-features__table">
 						<tbody>
 							<tr className="plan-features__row">
-								{ times( 3, cellKey => (
+								{ times( 3, ( cellKey ) => (
 									<td className="plan-features__table-item has-border-top" key={ cellKey }>
 										<div className="plan-features__header-wrapper">
 											<header className="plan-features__header">
@@ -51,7 +51,7 @@ const placeholderContent = (
 												</div>
 											</div>
 										</div>
-										{ times( 5, featureKey => (
+										{ times( 5, ( featureKey ) => (
 											<div className="plan-features__item" key={ featureKey }>
 												<span className="placeholder-text">
 													Test feature { random( 1, Number.MAX_SAFE_INTEGER ) }

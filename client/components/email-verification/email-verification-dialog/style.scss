@@ -2,14 +2,14 @@
 	max-width: 100%;
 	border-radius: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		max-width: 550px;
 		border-radius: 3px;
 	}
 }
 
 .email-verification-dialog__confirmation-dialog-heading {
-	font-size: 22px;
+	font-size: $font-title-small;
 	line-height: 1.2;
 	margin: 0 0 4px;
 }
@@ -41,7 +41,7 @@
 
 .email-verification-dialog__confirmation-dialog-reasoning {
 	color: var( --color-neutral-40 );
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-bottom: 24px;
 }
 

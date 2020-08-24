@@ -34,7 +34,7 @@ export function isCalypsoLive() {
 
 function applyFlags( flagsString, modificationMethod ) {
 	const flags = flagsString.split( ',' );
-	flags.forEach( flagRaw => {
+	flags.forEach( ( flagRaw ) => {
 		const flag = flagRaw.replace( /^[-+]/, '' );
 		const enabled = ! /^-/.test( flagRaw );
 		configData.features[ flag ] = enabled;
@@ -49,7 +49,13 @@ function applyFlags( flagsString, modificationMethod ) {
 	} );
 }
 
-if ( process.env.NODE_ENV === 'development' || configData.env_id === 'stage' || isCalypsoLive() ) {
+const flagEnvironments = [ 'wpcalypso', 'horizon', 'stage', 'jetpack-cloud-stage' ];
+
+if (
+	process.env.NODE_ENV === 'development' ||
+	flagEnvironments.includes( configData.env_id ) ||
+	isCalypsoLive()
+) {
 	const cookies = cookie.parse( document.cookie );
 
 	if ( cookies.flags ) {

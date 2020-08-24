@@ -8,7 +8,7 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
-const getSiteTypePropertyDefaults = propertyKey =>
+const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
 			theme: 'pub/hever',

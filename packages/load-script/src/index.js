@@ -44,7 +44,7 @@ export function loadScript( url, callback ) {
 
 	// but if not, return a Promise
 	return new Promise( ( resolve, reject ) => {
-		addScriptCallback( url, error => {
+		addScriptCallback( url, ( error ) => {
 			if ( error === null ) {
 				resolve();
 			} else {
@@ -68,7 +68,7 @@ export function loadjQueryDependentScript( url, callback ) {
 	if ( typeof callback === 'function' ) {
 		loadPromise.then(
 			() => callback( null ),
-			error => callback( error )
+			( error ) => callback( error )
 		);
 		return;
 	}

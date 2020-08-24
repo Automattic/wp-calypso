@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -9,27 +8,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import EmptyContent from 'components/empty-content';
 import FeatureExample from 'components/feature-example';
-import { getSiteSlug, getJetpackSiteRemoteManagementUrl } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 class JetpackManageErrorPage extends PureComponent {
 	static actionCallbacks = {
 		updateJetpack: 'actionCallbackUpdate',
-		optInManage: 'actionCallbackActivate',
-	};
-
-	actionCallbackActivate = () => {
-		analytics.ga.recordEvent( 'Jetpack', 'Activate manage', 'Site', this.props.siteId );
 	};
 
 	actionCallbackUpdate = () => {
-		analytics.ga.recordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
+		gaRecordEvent( 'Jetpack', 'Update jetpack', 'Site', this.props.siteId );
 	};
 
 	getSettings() {
-		const { remoteManagementUrl, section, siteSlug, template, translate } = this.props;
+		const { siteSlug, template, translate } = this.props;
 		const version = this.props.version || '3.4';
 		const defaults = {
 			updateJetpack: {
@@ -41,16 +35,6 @@ class JetpackManageErrorPage extends PureComponent {
 				illustration: null,
 				actionURL: '../../plugins/jetpack/' + siteSlug,
 				version,
-			},
-			optInManage: {
-				title: translate( 'Looking to manage this site from WordPress.com?' ),
-				line: translate(
-					'We need you to enable the Manage feature in the Jetpack plugin on your remote site'
-				),
-				illustration: '/calypso/images/jetpack/jetpack-manage.svg',
-				action: translate( 'Enable Jetpack Manage' ),
-				actionURL: remoteManagementUrl + ( section ? '&section=' + section : '' ),
-				actionTarget: '_blank',
 			},
 			noDomainsOnJetpack: {
 				title: translate( 'Domains are not available for this site.' ),
@@ -87,5 +71,4 @@ class JetpackManageErrorPage extends PureComponent {
 
 export default connect( ( state, { siteId } ) => ( {
 	siteSlug: getSiteSlug( state, siteId ),
-	remoteManagementUrl: getJetpackSiteRemoteManagementUrl( state, siteId ),
 } ) )( localize( JetpackManageErrorPage ) );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
@@ -13,8 +12,8 @@ import {
 	startPollAppPushAuth,
 	stopPollAppPushAuth,
 	receivedTwoFactorPushNotificationApproved,
-	updateNonce,
-} from 'state/login/actions';
+} from 'state/login/actions/push/impl'; // Import implementations directly, to avoid cyclical refs.
+import { updateNonce } from 'state/login/actions/update-nonce';
 import {
 	getTwoFactorAuthNonce,
 	getTwoFactorPushPollInProgress,
@@ -32,7 +31,7 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  */
 const POLL_APP_PUSH_INTERVAL_SECONDS = 5;
 
-const requestTwoFactorPushNotificationStatus = action => ( dispatch, getState ) => {
+const requestTwoFactorPushNotificationStatus = ( action ) => ( dispatch, getState ) => {
 	const state = getState();
 	const auth_type = 'push';
 	const user_id = getTwoFactorUserId( state );

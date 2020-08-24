@@ -39,7 +39,7 @@ export function receivePostStats( siteId, postId, stats ) {
  * @returns {Function}      Action thunk
  */
 export function requestPostStats( siteId, postId, fields = [] ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_STATS_REQUEST,
 			postId,
@@ -50,7 +50,7 @@ export function requestPostStats( siteId, postId, fields = [] ) {
 		return wpcom
 			.site( siteId )
 			.statsPostViews( postId, { fields: fields.join() } )
-			.then( stats => {
+			.then( ( stats ) => {
 				dispatch( receivePostStats( siteId, postId, stats ) );
 				dispatch( {
 					type: POST_STATS_REQUEST_SUCCESS,
@@ -59,7 +59,7 @@ export function requestPostStats( siteId, postId, fields = [] ) {
 					fields,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_STATS_REQUEST_FAILURE,
 					siteId,

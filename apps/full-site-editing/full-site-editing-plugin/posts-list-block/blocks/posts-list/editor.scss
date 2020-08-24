@@ -6,4 +6,8 @@ div.posts-list__notice {
 		align-items: center;
 		justify-content: space-between;
 	}
+
+	.components-notice__action {
+		flex-shrink: 0;
+	}
 }

@@ -28,7 +28,7 @@ class ContactFormDialogNavigation extends React.Component {
 		return (
 			<SectionNav selectedText="Form Fields">
 				<SectionNavTabs>
-					{ tabs.map( tab => (
+					{ tabs.map( ( tab ) => (
 						<SectionNavTabItem
 							key={ 'contact-form-' + tab }
 							selected={ this.props.activeTab === tab }

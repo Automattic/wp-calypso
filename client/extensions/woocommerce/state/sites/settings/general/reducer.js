@@ -21,7 +21,7 @@ export default withoutPersistence( ( state = null, action ) => {
 		case WOOCOMMERCE_CURRENCY_UPDATE_SUCCESS: {
 			const { data } = action;
 			const settings = state || [];
-			const newSettings = settings.map( setting => {
+			const newSettings = settings.map( ( setting ) => {
 				if ( setting.id === data.id ) {
 					return data;
 				}
@@ -32,7 +32,7 @@ export default withoutPersistence( ( state = null, action ) => {
 		case WOOCOMMERCE_TAXES_ENABLED_UPDATE_SUCCESS: {
 			const { data } = action;
 			const settings = state || [];
-			const newSettings = settings.map( setting => {
+			const newSettings = settings.map( ( setting ) => {
 				if ( setting.id === data.id ) {
 					return data;
 				}

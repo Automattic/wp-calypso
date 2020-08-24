@@ -91,7 +91,7 @@ export function items( state = {}, action ) {
  */
 export function queries( state = {}, action ) {
 	if ( WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS === action.type && action.data ) {
-		const idList = action.data.map( cat => cat.id );
+		const idList = action.data.map( ( cat ) => cat.id );
 		const query = getSerializedProductCategoriesQuery( action.query );
 		return Object.assign( {}, state, { [ query ]: idList } );
 	}

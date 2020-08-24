@@ -33,7 +33,7 @@ const ShippingZoneName = ( {
 	actions,
 	translate,
 } ) => {
-	const onNameChange = event => {
+	const onNameChange = ( event ) => {
 		actions.changeShippingZoneName( event.target.value );
 	};
 

@@ -34,12 +34,14 @@ interface ExternalProps {
 	planSlug: T.PlanSlug;
 }
 
-const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps &
-	ConnectedProps > = ( {
+const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent<
+	ExternalProps & ConnectedProps
+> = ( {
 	buttonText,
 	hasPlanFeature,
 	onDefaultButtonClick,
 	onUpgradeButtonClick,
+	feature,
 	planSlug,
 	planTitle,
 	selectedSiteSlug,
@@ -51,20 +53,16 @@ const MarketingToolsFeatureButtonWithPlanGate: FunctionComponent< ExternalProps 
 			onUpgradeButtonClick();
 		}
 
-		page( addQueryArgs( { plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
+		page( addQueryArgs( { feature, plan: planSlug }, `/plans/${ selectedSiteSlug }` ) );
 	};
 
 	if ( hasPlanFeature ) {
-		return (
-			<Button compact onClick={ onDefaultButtonClick }>
-				{ buttonText }
-			</Button>
-		);
+		return <Button onClick={ onDefaultButtonClick }>{ buttonText }</Button>;
 	}
 
 	return (
-		<Button compact onClick={ handleUpgradeClick }>
-			{ translate( 'Upgrade To %(plan)s', {
+		<Button onClick={ handleUpgradeClick }>
+			{ translate( 'Upgrade to %(plan)s', {
 				args: {
 					plan: planTitle,
 				},

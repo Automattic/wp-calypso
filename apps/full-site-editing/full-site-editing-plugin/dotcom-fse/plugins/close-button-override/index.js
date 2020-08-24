@@ -19,7 +19,7 @@ import './style.scss';
 function BackButtonOverride( { defaultLabel, defaultUrl } ) {
 	const [ label, updateLabel ] = useState( defaultLabel );
 	const [ url, updateUrl ] = useState( defaultUrl );
-	window.wp.hooks.addAction( 'updateCloseButtonOverrides', 'a8c-fse', data => {
+	window.wp.hooks.addAction( 'updateCloseButtonOverrides', 'a8c-fse', ( data ) => {
 		updateLabel( data.label );
 		updateUrl( data.closeUrl );
 	} );
@@ -85,11 +85,11 @@ domReady( () => {
 
 		let defaultLabel = closeButtonLabel || 'Back';
 		if ( 'page' === editorPostType && ! closeButtonLabel ) {
-			defaultLabel = __( 'Pages' );
+			defaultLabel = __( 'Pages', 'full-site-editing' );
 		} else if ( 'post' === editorPostType && ! closeButtonLabel ) {
-			defaultLabel = __( 'Posts' );
+			defaultLabel = __( 'Posts', 'full-site-editing' );
 		} else if ( 'wp_template_part' === editorPostType && ! closeButtonLabel ) {
-			defaultLabel = __( 'Template Parts' );
+			defaultLabel = __( 'Template Parts', 'full-site-editing' );
 		}
 
 		ReactDOM.render(

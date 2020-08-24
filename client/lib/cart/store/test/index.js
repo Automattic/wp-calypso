@@ -28,7 +28,7 @@ jest.mock( 'lib/cart-values', () => {
 	return {
 		setTaxLocation: jest.fn( () => () => ( {} ) ),
 		fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
-		removeCoupon: jest.fn( () => i => i ),
+		removeCoupon: jest.fn( () => ( i ) => i ),
 	};
 } );
 jest.mock( 'lib/data-poller', () => ( {

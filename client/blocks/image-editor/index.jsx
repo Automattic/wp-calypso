@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -25,15 +24,15 @@ import {
 	resetAllImageEditorState,
 	setImageEditorFileInfo,
 	setImageEditorDefaultAspectRatio,
-} from 'state/ui/editor/image-editor/actions';
+} from 'state/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
 	isImageEditorImageLoaded,
-} from 'state/ui/editor/image-editor/selectors';
+} from 'state/editor/image-editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
-import { AspectRatios, AspectRatiosValues } from 'state/ui/editor/image-editor/constants';
+import { AspectRatios, AspectRatiosValues } from 'state/editor/image-editor/constants';
 import { getDefaultAspectRatio } from './utils';
 
 /**
@@ -106,7 +105,7 @@ class ImageEditor extends React.Component {
 		);
 	};
 
-	updateFileInfo = media => {
+	updateFileInfo = ( media ) => {
 		const { site } = this.props;
 
 		let src,
@@ -132,7 +131,7 @@ class ImageEditor extends React.Component {
 		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	};
 
-	convertBlobToImage = blob => {
+	convertBlobToImage = ( blob ) => {
 		const { onDone } = this.props;
 
 		// Create a new image from the canvas blob

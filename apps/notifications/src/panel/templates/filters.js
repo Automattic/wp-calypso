@@ -5,7 +5,7 @@ import { store } from '../state';
 import getNoteIsRead from '../state/selectors/get-is-note-read';
 
 export const Filters = {
-	all: function() {
+	all: function () {
 		return {
 			name: 'all',
 			index: 0,
@@ -23,7 +23,7 @@ export const Filters = {
 			filter: () => true,
 		};
 	},
-	unread: function() {
+	unread: function () {
 		return {
 			name: 'unread',
 			index: 1,
@@ -38,10 +38,10 @@ export const Filters = {
 			} ),
 			emptyLink: 'https://wordpress.com/post/',
 
-			filter: note => ! getNoteIsRead( store.getState(), note ),
+			filter: ( note ) => ! getNoteIsRead( store.getState(), note ),
 		};
 	},
-	comments: function() {
+	comments: function () {
 		return {
 			name: 'comments',
 			index: 2,
@@ -62,7 +62,7 @@ export const Filters = {
 			filter: ( { type } ) => 'comment' === type,
 		};
 	},
-	follows: function() {
+	follows: function () {
 		return {
 			name: 'follows',
 			index: 3,
@@ -80,7 +80,7 @@ export const Filters = {
 			filter: ( { type } ) => 'follow' === type,
 		};
 	},
-	likes: function() {
+	likes: function () {
 		return {
 			name: 'likes',
 			index: 4,

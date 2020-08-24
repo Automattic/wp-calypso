@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
+import { find, forEach, get, isEqual, merge, omitBy, pickBy, reduce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,6 +23,9 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_COMMENT_EMAIL,
 	READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
+	READER_SEEN_MARK_AS_SEEN_RECEIVE,
+	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 } from 'state/reader/action-types';
 import { SERIALIZE } from 'state/action-types';
 import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
@@ -253,10 +256,48 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			// Only check items with an ID (the subscription ID) because those are what
 			// we show on the manage listing. Items without an ID are either inflight follows
 			// or follows that we picked up from a feed, site, or post object.
-			return omitBy( state, follow => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
+			return omitBy( state, ( follow ) => follow.ID && ! seenSubscriptions.has( follow.feed_URL ) );
 		}
+
+		case READER_SEEN_MARK_AS_SEEN_RECEIVE: {
+			const urlKey = prepareComparableUrl( action.feedUrl );
+			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+			return {
+				...state,
+				[ urlKey ]: merge( {}, existingEntry, {
+					unseen_count: existingEntry.unseen_count - action.globalIds.length,
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE: {
+			const urlKey = prepareComparableUrl( action.feedUrl );
+			const existingEntry = state[ urlKey ];
+			if ( ! existingEntry ) {
+				return state;
+			}
+
+			return {
+				...state,
+				[ urlKey ]: merge( {}, existingEntry, {
+					unseen_count: existingEntry.unseen_count + action.globalIds.length,
+				} ),
+			};
+		}
+
+		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE: {
+			forEach( action.feedUrls, ( feedUrl ) => {
+				const urlKey = prepareComparableUrl( feedUrl );
+				state[ urlKey ] = { ...state[ urlKey ], unseen_count: 0 };
+			} );
+			return { ...state };
+		}
+
 		case SERIALIZE:
-			return pickBy( state, item => item.ID && item.is_following );
+			return pickBy( state, ( item ) => item.ID && item.is_following );
 	}
 
 	return state;

@@ -37,21 +37,40 @@ export function sendMessage( message ) {
  *
  * @returns {Promise} Promise that resolves when the editor has been initialized.
  */
-export const isEditorReadyWithBlocks = async () => new Promise( resolve => {
-	const unsubscribe = subscribe( () => {
-		const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
+export const isEditorReadyWithBlocks = async () =>
+	new Promise( ( resolve ) => {
+		const unsubscribe = subscribe( () => {
+			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
 
-		if ( isCleanNewPost ) {
-			unsubscribe();
-			resolve( false );
-		}
+			if ( isCleanNewPost ) {
+				unsubscribe();
+				resolve( false );
+			}
 
-		const blocks = select( 'core/editor' ).getBlocks();
+			const blocks = select( 'core/editor' ).getBlocks();
 
-		if ( blocks.length > 0 ) {
-			unsubscribe();
-			resolve( true );
-		}
+			if ( blocks.length > 0 ) {
+				unsubscribe();
+				resolve( true );
+			}
+		} );
 	} );
-} );
 
+export const getPages = async () =>
+	new Promise( ( resolve ) => {
+		const unsubscribe = subscribe( () => {
+			const pages = select( 'core' ).getEntityRecords( 'postType', 'page', { per_page: -1 } );
+
+			if ( pages !== null ) {
+				unsubscribe();
+				resolve( pages );
+			}
+		} );
+	} );
+
+// All end-to-end tests use a custom user agent containing this string.
+const E2E_USER_AGENT = 'wp-e2e-tests';
+
+export const isE2ETest = () => {
+	return typeof navigator !== 'undefined' && navigator.userAgent.includes( E2E_USER_AGENT ); //eslint-disable-line no-undef
+};

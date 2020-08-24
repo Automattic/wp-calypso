@@ -11,11 +11,9 @@
 // Y-axis
 
 // Y-axis markers (lines)
-// 1: Corresponds to padding of chart
 
 .chart .chart__y-axis-markers {
 	position: absolute;
-	top: 8px; // 1
 	left: 0;
 	right: 0;
 	height: 200px;
@@ -60,7 +58,7 @@ $y-axis-padding: 0 20px 0 10px;
 	float: right;
 	height: 200px;
 	padding: $y-axis-padding;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-40 );
 	margin-bottom: 30px;
 }
@@ -92,7 +90,7 @@ $y-axis-padding: 0 20px 0 10px;
 	position: absolute;
 	display: inline-block;
 	vertical-align: top;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-align: center;
 }
 
@@ -136,6 +134,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 // Individual bar
 // 1: Needs to be relative so that the contained graphic bar has boundaries
+// 2: Animate the bar on mounting to make it consistent with the transitions later when values change
 
 .chart__bar {
 	text-align: center;
@@ -146,6 +145,15 @@ $y-axis-padding: 0 20px 0 10px;
 	flex-grow: 1;
 	-ms-flex-shrink: 1;
 	flex-shrink: 1;
+	transform: scaleY( 0 );
+	transform-origin: 0% 100%;
+	animation: growUpOnMounting 0.2s ease-in forwards; // 2
+
+	@keyframes growUpOnMounting {
+		100% {
+			transform: scaleY( 1 );
+		}
+	}
 
 	&.is-weekend {
 		background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
@@ -164,18 +172,21 @@ $y-axis-padding: 0 20px 0 10px;
 
 // Individual bar wrapper & misc
 // 1: Positions the bar in the space as defined by .bar
-// 2: Default value for top so bars grow when they get a new value
-//    (doesn't function correctly for period switching right now, not sure why)
-//    (also doesn't work because updating the DOM is so heavy it stalls all animations)
+// 2: use `transform` (as opposed to top or height) for better transition performance
+// 3: add a transition to make switching between periods nicer
+// 4: set `transform-origin` to the bottom so scalling takes the bar up ↑
 
 .chart__bar-section {
 	display: inline-block;
 	background-color: var( --color-primary-40 );
 	position: absolute;
-	top: 0; // 2
 	right: 16%; // 1
 	bottom: 0; // 1
 	left: 16%; // 1
+	height: 100%;
+	transform: scaleY( 0 ); // 2
+	transition: transform 0.3s ease-in-out; // 3
+	transform-origin: 0% 100%; // 4
 	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
@@ -184,32 +195,6 @@ $y-axis-padding: 0 20px 0 10px;
 
 	.chart__bar.is-selected &.is-bar {
 		background-color: var( --color-accent-40 );
-	}
-
-	&.is-spacer {
-		z-index: z-index( 'root', '.chart__bar-section.is-spacer' );
-		background-color: rgba( var( --color-surface-rgb ), 0 );
-	}
-
-	&.is-ghost::after {
-		content: '';
-		display: block;
-		position: absolute;
-		top: 160px;
-		bottom: 0;
-		left: 0;
-		z-index: z-index( 'root', '.chart__bar-section.is-ghost::after' );
-		width: 100%;
-		height: 40px;
-		background-image: linear-gradient(
-			to bottom,
-			rgba( var( --color-surface-rgb ), 0 ),
-			rgba( var( --color-neutral-0-rgb ), 0.5 )
-		); // TODO: needs to use default color for gradient
-
-		.chart__bar:hover & {
-			display: none;
-		}
 	}
 }
 
@@ -240,11 +225,11 @@ $y-axis-padding: 0 20px 0 10px;
 	color: var( --color-neutral );
 	list-style-type: none;
 	margin: 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 100%;
 	}
 }
@@ -256,7 +241,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 50%;
 		display: inline-block;
 	}
@@ -278,7 +263,7 @@ $y-axis-padding: 0 20px 0 10px;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: block;
 	}
 }
@@ -297,7 +282,7 @@ $y-axis-padding: 0 20px 0 10px;
 	margin: 3px 5px 3px 8px; // 1
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.chart__legend-option:first-child .chart__legend-color {
 		margin-left: 2px; // 2
 	}
@@ -328,6 +313,7 @@ $y-axis-padding: 0 20px 0 10px;
 	bottom: 0;
 	left: 0;
 	z-index: z-index( 'root', '.chart__empty' );
+	padding: 0 50px;
 }
 
 // Chart tooltip
@@ -344,9 +330,9 @@ $y-axis-padding: 0 20px 0 10px;
 			padding: 0;
 
 			li {
-				font-size: 11px;
+				font-size: $font-body-extra-small;
 				text-transform: uppercase;
-				font-weight: 100;
+				font-weight: 400;
 				height: 24px;
 				letter-spacing: 0.1em;
 				border: 0;
@@ -393,11 +379,11 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: center;
 
 					.rtl & {
-						font-size: 11px;
+						font-size: $font-body-extra-small;
 					}
 
 					.post-count {
-						font-weight: bold;
+						font-weight: 600;
 					}
 				}
 				.value {
@@ -410,10 +396,10 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__tooltip .module-content-list-item {
 	&.is-date-label {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 2px;
 		text-transform: uppercase;
-		font-weight: bold;
+		font-weight: 600;
 		border-bottom: 1px solid var( --color-neutral-60 );
 		padding-bottom: 2px;
 	}
@@ -440,6 +426,20 @@ $y-axis-padding: 0 20px 0 10px;
 				width: 30px;
 				height: 24px;
 			}
+		}
+	}
+}
+
+.chart.is-placeholder {
+	padding: 8px 20px;
+
+	.chart__bar,
+	.chart__bar:hover {
+		cursor: default;
+		background-color: transparent;
+
+		.chart__bar-section {
+			background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
 		}
 	}
 }

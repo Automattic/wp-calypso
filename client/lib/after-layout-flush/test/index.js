@@ -23,7 +23,7 @@ function requestAnimationFrameFake( func ) {
 }
 
 function cancelAnimationFrameFake( func ) {
-	pendingRafCallbacks = pendingRafCallbacks.filter( item => item !== func );
+	pendingRafCallbacks = pendingRafCallbacks.filter( ( item ) => item !== func );
 }
 
 function clearAnimationFrameCallbacks() {
@@ -31,7 +31,7 @@ function clearAnimationFrameCallbacks() {
 }
 
 function runAnimationFrame() {
-	pendingRafCallbacks.forEach( callback => callback() );
+	pendingRafCallbacks.forEach( ( callback ) => callback() );
 	clearAnimationFrameCallbacks();
 }
 
@@ -46,7 +46,7 @@ class PreserveThisTest {
 // Wrap this in a method so we can call it at the right time and pick up
 // the current state of `requestAnimationFrame` existence.
 function setupPreserveThisTest() {
-	PreserveThisTest.prototype.wrappedFunction = afterLayoutFlush( function() {
+	PreserveThisTest.prototype.wrappedFunction = afterLayoutFlush( function () {
 		return this.callback( this.foo );
 	} );
 }

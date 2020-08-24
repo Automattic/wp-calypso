@@ -48,14 +48,11 @@ import EligibilityWarnings from 'blocks/eligibility-warnings';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, FEATURE_UPLOAD_THEMES } from 'lib/plans/constants';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'components/wpadmin-auto-login';
-import redirectIf from 'my-sites/feature-upsell/redirect-if';
-import config from 'config';
-import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -287,12 +284,12 @@ class Upload extends React.Component {
 
 const ConnectedUpload = connectOptions( Upload );
 
-const UploadWithOptions = props => {
+const UploadWithOptions = ( props ) => {
 	const { siteId, uploadedTheme } = props;
 	return <ConnectedUpload { ...props } siteId={ siteId } theme={ uploadedTheme } />;
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const themeId = getUploadedThemeId( state, siteId );
@@ -333,17 +330,5 @@ const flowRightArgs = [
 	connect( mapStateToProps, { uploadTheme, clearThemeUpload, initiateThemeTransfer } ),
 	localize,
 ];
-
-if ( config.isEnabled( 'upsell/nudge-a-palooza' ) ) {
-	flowRightArgs.push(
-		redirectIf(
-			( state, siteId ) =>
-				! isJetpackSite( state, siteId ) &&
-				! hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) &&
-				abtest( 'themesUpsellLandingPage' ) === 'test',
-			'/feature/themes'
-		)
-	);
-}
 
 export default flowRight( ...flowRightArgs )( UploadWithOptions );

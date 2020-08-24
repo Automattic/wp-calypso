@@ -42,12 +42,12 @@ class ActionButtons extends Component {
 		this.setDropdownAfterLayoutFlush.cancel();
 	}
 
-	setGroupRef = group => {
+	setGroupRef = ( group ) => {
 		this.navGroup = group;
 	};
 
 	render() {
-		const buttons = React.Children.map( this.props.children, function( child, index ) {
+		const buttons = React.Children.map( this.props.children, function ( child, index ) {
 			return child && React.cloneElement( child, { ref: 'button-' + index } );
 		} );
 
@@ -71,7 +71,7 @@ class ActionButtons extends Component {
 
 		React.Children.forEach(
 			this.props.children,
-			function( child, index ) {
+			function ( child, index ) {
 				if ( ! child ) {
 					return;
 				}
@@ -101,7 +101,7 @@ class ActionButtons extends Component {
 
 		const buttons = React.Children.toArray( this.props.children );
 		const primary = buttons.pop();
-		const dropdownOptions = buttons.map( function( child, index ) {
+		const dropdownOptions = buttons.map( function ( child, index ) {
 			if ( ! child ) {
 				return null;
 			}

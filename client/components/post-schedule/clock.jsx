@@ -29,11 +29,11 @@ import {
 } from './utils';
 
 class PostScheduleClock extends Component {
-	adjustHour = event => this.handleKeyDown( event, 'hour' );
-	adjustMinute = event => this.handleKeyDown( event, 'minute' );
+	adjustHour = ( event ) => this.handleKeyDown( event, 'hour' );
+	adjustMinute = ( event ) => this.handleKeyDown( event, 'minute' );
 
-	setAm = event => this.setAmPm( event, 'AM' );
-	setPm = event => this.setAmPm( event, 'PM' );
+	setAm = ( event ) => this.setAmPm( event, 'AM' );
+	setPm = ( event ) => this.setAmPm( event, 'PM' );
 
 	amPmRef = React.createRef();
 	hourRef = React.createRef();

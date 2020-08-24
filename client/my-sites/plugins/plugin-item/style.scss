@@ -15,7 +15,7 @@
 		margin-right: 8px;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
 	}
 
@@ -84,7 +84,7 @@
 .plugin-item__title {
 	color: var( --color-neutral-70 );
 	display: block;
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	margin-top: 3px;
 	overflow: hidden;
@@ -112,7 +112,7 @@
 }
 
 .plugin-item__count {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 18px;
 	color: var( --color-text-subtle );
 }
@@ -126,7 +126,7 @@
 .plugin-item .plugin-item__actions {
 	display: none;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-self: center;
 		display: flex;
 		flex-direction: column;
@@ -140,7 +140,7 @@
 
 .plugin-item__last-updated {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -154,19 +154,19 @@
 }
 
 .plugin-item .plugin-action {
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		margin-top: 6px;
 	}
 
 	&:first-child {
-		@include breakpoint( '<1040px' ) {
+		@include breakpoint-deprecated( '<1040px' ) {
 			margin-top: 0;
 		}
 	}
 }
 
 .plugin-item .plugin-action__label {
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		flex-direction: row;
 		margin-right: 0;
 		margin-left: 8px;
@@ -174,13 +174,13 @@
 }
 
 .plugin-item .plugin-action .form-toggle__label {
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		flex-direction: row;
 	}
 }
 
 .plugin-item .form-toggle__label .form-toggle__label-content {
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		margin-right: 12px;
 		margin-left: 0;
 	}
@@ -188,14 +188,14 @@
 
 .plugin-item .plugin-activate-toggle__link,
 .plugin-item .plugin-activate-toggle__disabled {
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		flex-direction: row;
 		margin-right: 12px;
 	}
 }
 
 .plugin-item .plugin-activate-toggle__label {
-	@include breakpoint( '>1040px' ) {
+	@include breakpoint-deprecated( '>1040px' ) {
 		margin-left: 8px;
 		margin-right: 0;
 	}

@@ -19,7 +19,7 @@ export function loadjQueryDependentScriptDesktopWrapper( url, callback ) {
 	// It needs to be loaded using require and npm package.
 	if ( config.isEnabled( 'desktop' ) ) {
 		debug( `Attaching jQuery from node_modules to window for "${ url }"` );
-		asyncRequire( 'jquery', $ => {
+		asyncRequire( 'jquery', ( $ ) => {
 			window.$ = window.jQuery = $;
 			loadScript( url, callback );
 		} );

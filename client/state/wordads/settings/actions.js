@@ -11,6 +11,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/wordads/settings';
+import 'state/wordads/init';
 
 /**
  * Returns an action object, signalling that WordAds settings for a site have been requested.

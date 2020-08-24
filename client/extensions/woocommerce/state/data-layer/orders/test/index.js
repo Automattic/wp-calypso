@@ -308,7 +308,7 @@ describe( 'handlers', () => {
 			const dispatch = jest.fn();
 			const order = { id: 42, total: '50.00' };
 			const action = saveOrderSuccess( 123, 42, order );
-			action.onSuccess = localDispatch => {
+			action.onSuccess = ( localDispatch ) => {
 				localDispatch( { type: NOTICE_CREATE, notice: {} } );
 			};
 			onOrderSaveSuccess( action, { data: order } )( dispatch );
@@ -350,7 +350,7 @@ describe( 'handlers', () => {
 				message: 'No route was found matching the URL and request method',
 			};
 			const action = saveOrderError( 123, 1, response );
-			action.onFailure = localDispatch => {
+			action.onFailure = ( localDispatch ) => {
 				localDispatch( { type: NOTICE_CREATE, notice: {} } );
 			};
 			onOrderSaveFailure( action, response )( dispatch );

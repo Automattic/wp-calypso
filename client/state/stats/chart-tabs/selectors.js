@@ -33,7 +33,7 @@ export function getCountRecords( state, siteId, period ) {
  * @returns {Array}          	 Array of stat types as strings
  */
 export function getLoadingTabs( state, siteId, period ) {
-	return QUERY_FIELDS.filter( type =>
+	return QUERY_FIELDS.filter( ( type ) =>
 		get( state, [ 'stats', 'chartTabs', 'isLoading', siteId, period, type ] )
 	);
 }

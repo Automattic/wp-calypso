@@ -7,8 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-
-import analytics from 'lib/analytics';
+import { recordTiming } from 'lib/analytics/timing';
 import { isEnabled } from 'config';
 import debugFactory from 'debug';
 
@@ -27,7 +26,7 @@ const EXCLUDE_PLACEHOLDER_CLASSES = [
 	'stats-page-placeholder__content',
 ];
 
-const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map( clazz => `[class*='${ clazz }']` ).join(
+const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map( ( clazz ) => `[class*='${ clazz }']` ).join(
 	', '
 );
 
@@ -57,7 +56,10 @@ function processMutations( mutations ) {
 	// check each node for:
 	// a. whether it's still in the DOM at all, and if so:
 	// b. whether it still has a placeholder class
-	remove( activePlaceholders, node => ! OBSERVE_ROOT.contains( node ) || ! isPlaceholder( node ) );
+	remove(
+		activePlaceholders,
+		( node ) => ! OBSERVE_ROOT.contains( node ) || ! isPlaceholder( node )
+	);
 
 	checkActivePlaceholders();
 }
@@ -121,9 +123,9 @@ function checkActivePlaceholders() {
 	if ( activePlaceholderEverDetected && placeholdersCount === 0 ) {
 		// tell tracks to record duration
 		const { startTime, trigger } = determineTimingType();
-		const duration = Math.round( performance.now() - startTime );
+		const duration = Math.round( window.performance.now() - startTime );
 		debug( `Recording placeholder wait. Duration: ${ duration }, Trigger: ${ trigger }` );
-		analytics.timing.record( `placeholder-wait.${ trigger }`, duration );
+		recordTiming( `placeholder-wait.${ trigger }`, duration );
 		stopMutationObserver();
 	}
 }
@@ -133,8 +135,8 @@ function isPlaceholder( node ) {
 	return (
 		className &&
 		className.indexOf &&
-		PLACEHOLDER_CLASSES.some( clazz => className.indexOf( clazz ) >= 0 ) &&
-		! EXCLUDE_PLACEHOLDER_CLASSES.some( clazz => className.indexOf( clazz ) >= 0 )
+		PLACEHOLDER_CLASSES.some( ( clazz ) => className.indexOf( clazz ) >= 0 ) &&
+		! EXCLUDE_PLACEHOLDER_CLASSES.some( ( clazz ) => className.indexOf( clazz ) >= 0 )
 	);
 }
 
@@ -150,7 +152,7 @@ function recordPlaceholders( mutation ) {
 		return;
 	}
 
-	each( nodes, function( node ) {
+	each( nodes, function ( node ) {
 		if ( isPlaceholder( node ) ) {
 			recordPlaceholderNode( node );
 		}
@@ -189,14 +191,14 @@ export function installPerfmonPageHandlers() {
 		return;
 	}
 
-	page( function( context, next ) {
+	page( function ( context, next ) {
 		navigationCount++;
-		navigationStartTime = performance.now();
+		navigationStartTime = window.performance.now();
 		debug( 'entering page navigation', context.path );
 		next();
 	} );
 
-	page.exit( function( context, next ) {
+	page.exit( function ( context, next ) {
 		debug( 'exiting page navigation', context.path );
 		stopMutationObserver();
 		next();

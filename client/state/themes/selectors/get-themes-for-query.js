@@ -45,6 +45,6 @@ export const getThemesForQuery = createSelector(
 		// over different pages) which we need to remove manually here for now.
 		return uniq( themes );
 	},
-	state => state.themes.queries,
+	( state ) => state.themes.queries,
 	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
 );

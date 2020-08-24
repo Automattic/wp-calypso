@@ -10,8 +10,28 @@ import { get } from 'lodash';
  */
 import Plans from './plans';
 import { isValidFeatureKey } from 'lib/plans/features-list';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import isSiteWpcom from 'state/selectors/is-site-wpcom';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
+import { productSelect } from 'my-sites/plans-v2/controller';
+import setJetpackPlansHeader from 'my-sites/plans-v2/plans-header';
+
+function showJetpackPlans( context ) {
+	const getState = context.store.getState();
+	const siteId = getSelectedSiteId( getState );
+	const isWpcom = isSiteWpcom( getState, siteId );
+	return shouldShowOfferResetFlow() && ! isWpcom;
+}
 
 export function plans( context, next ) {
+	if ( showJetpackPlans( context ) ) {
+		if ( context.params.intervalType ) {
+			return page.redirect( `/plans/${ context.params.site }` );
+		}
+		setJetpackPlansHeader( context );
+		return productSelect( '/plans/:site' )( context, next );
+	}
+
 	context.primary = (
 		<Plans
 			context={ context }
@@ -53,4 +73,11 @@ export function redirectToPlans( context ) {
 	}
 
 	return page.redirect( '/plans' );
+}
+
+export function redirectToPlansIfNotJetpack( context, next ) {
+	if ( ! showJetpackPlans( context ) ) {
+		page.redirect( `/plans/${ context.params.site }` );
+	}
+	next();
 }

@@ -25,7 +25,7 @@ import {
 
 const debug = debugFactory( 'calypso:happychat:connection' );
 
-const buildConnection = socket =>
+const buildConnection = ( socket ) =>
 	isString( socket )
 		? new IO( socket ) // If socket is an URL, connect to server.
 		: socket; // If socket is not an url, use it directly. Useful for testing.
@@ -53,7 +53,7 @@ class Connection {
 
 					socket
 						.once( 'connect', () => dispatch( receiveConnect() ) )
-						.on( 'token', handler => {
+						.on( 'token', ( handler ) => {
 							dispatch( receiveToken() );
 							handler( { signer_user_id, jwt, locale, groups, skills } );
 						} )
@@ -67,14 +67,14 @@ class Connection {
 							dispatch( receiveUnauthorized( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on( 'disconnect', reason => dispatch( receiveDisconnect( reason ) ) )
+						.on( 'disconnect', ( reason ) => dispatch( receiveDisconnect( reason ) ) )
 						.on( 'reconnecting', () => dispatch( receiveReconnecting() ) )
-						.on( 'status', status => dispatch( receiveStatus( status ) ) )
-						.on( 'accept', accept => dispatch( receiveAccept( accept ) ) )
-						.on( 'localized-support', accept => dispatch( receiveLocalizedSupport( accept ) ) )
-						.on( 'message', message => dispatch( receiveMessage( message ) ) );
+						.on( 'status', ( status ) => dispatch( receiveStatus( status ) ) )
+						.on( 'accept', ( accept ) => dispatch( receiveAccept( accept ) ) )
+						.on( 'localized-support', ( accept ) => dispatch( receiveLocalizedSupport( accept ) ) )
+						.on( 'message', ( message ) => dispatch( receiveMessage( message ) ) );
 				} )
-				.catch( e => reject( e ) );
+				.catch( ( e ) => reject( e ) );
 		} );
 
 		return this.openSocket;
@@ -97,8 +97,8 @@ class Connection {
 			return;
 		}
 		return this.openSocket.then(
-			socket => socket.emit( action.event, action.payload ),
-			e => {
+			( socket ) => socket.emit( action.event, action.payload ),
+			( e ) => {
 				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
@@ -134,7 +134,7 @@ class Connection {
 		}
 
 		return this.openSocket.then(
-			socket => {
+			( socket ) => {
 				const promiseRace = Promise.race( [
 					new Promise( ( resolve, reject ) => {
 						socket.emit( action.event, action.payload, ( e, result ) => {
@@ -153,8 +153,8 @@ class Connection {
 
 				// dispatch the request state upon promise race resolution
 				promiseRace.then(
-					result => this.dispatch( action.callback( result ) ),
-					e =>
+					( result ) => this.dispatch( action.callback( result ) ),
+					( e ) =>
 						e.message === 'timeout'
 							? this.dispatch( action.callbackTimeout() )
 							: this.dispatch( receiveError( action.event + ' request failed: ' + e.message ) )
@@ -162,7 +162,7 @@ class Connection {
 
 				return promiseRace;
 			},
-			e => {
+			( e ) => {
 				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );

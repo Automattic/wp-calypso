@@ -1,16 +1,16 @@
 import * as types from '../action-types';
 
-export const addNotes = notes => ( {
+export const addNotes = ( notes ) => ( {
 	type: types.NOTES_ADD,
 	notes,
 } );
 
-export const removeNotes = noteIds => ( {
+export const removeNotes = ( noteIds ) => ( {
 	type: types.NOTES_REMOVE,
 	noteIds,
 } );
 
-export const noteAction = action => noteId => ( {
+export const noteAction = ( action ) => ( noteId ) => ( {
 	type: action,
 	noteId,
 } );
@@ -44,7 +44,7 @@ export const likeNote = ( noteId, isLiked ) => ( {
  * @param {number} noteId
  * @returns {object} action object
  */
-export const resetLocalApproval = noteId => ( {
+export const resetLocalApproval = ( noteId ) => ( {
 	type: types.RESET_LOCAL_APPROVAL,
 	noteId,
 } );
@@ -62,7 +62,7 @@ export const resetLocalApproval = noteId => ( {
  * @param {number} noteId
  * @returns {object} action object
  */
-export const resetLocalLike = noteId => ( {
+export const resetLocalLike = ( noteId ) => ( {
 	type: types.RESET_LOCAL_LIKE,
 	noteId,
 } );

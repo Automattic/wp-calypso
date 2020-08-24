@@ -24,13 +24,13 @@ export default function generateVariations(
 	const variationAttributes =
 		( productAttributes &&
 			productAttributes.filter(
-				attribute => attribute.variation && attribute.name && attribute.options.length > 0
+				( attribute ) => attribute.variation && attribute.name && attribute.options.length > 0
 			) ) ||
 		[];
 
-	variationAttributes.forEach( function( attribute ) {
+	variationAttributes.forEach( function ( attribute ) {
 		variationTypes.push(
-			attribute.options.map( function( option ) {
+			attribute.options.map( function ( option ) {
 				return {
 					name: attribute.name,
 					option,
@@ -39,7 +39,7 @@ export default function generateVariations(
 		);
 	} );
 
-	return cartesian( ...variationTypes ).map( function( combination ) {
+	return cartesian( ...variationTypes ).map( function ( combination ) {
 		const existingVariation = findExistingVariation( existingVariations, combination );
 
 		const id = existingVariation ? existingVariation.id : undefined;
@@ -54,7 +54,7 @@ export default function generateVariations(
 }
 
 function findExistingVariation( existingVariations, combination ) {
-	return find( existingVariations, existingVariation => {
+	return find( existingVariations, ( existingVariation ) => {
 		return areAttributesMatching( existingVariation.attributes, combination )
 			? existingVariation
 			: undefined;
@@ -82,12 +82,7 @@ function areAttributesMatching( attributes1, attributes2 ) {
 function generateDefaultSku( productName, attributes ) {
 	const sku =
 		( ( productName && productName + '-' ) || '' ) + formattedVariationName( { attributes } );
-	return trim(
-		sku
-			.toLowerCase()
-			.replace( /\s+/g, '-' )
-			.replace( /-{2,}/g, '-' )
-	);
+	return trim( sku.toLowerCase().replace( /\s+/g, '-' ).replace( /-{2,}/g, '-' ) );
 }
 
 // http://stackoverflow.com/a/29585704

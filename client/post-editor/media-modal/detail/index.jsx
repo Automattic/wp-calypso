@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -16,7 +15,7 @@ import { getMimePrefix, filterItemsByMimePrefix, url } from 'lib/media/utils';
 import HeaderCake from 'components/header-cake';
 import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { setEditorMediaModalView } from 'state/editor/actions';
 
 /**
  * Style dependencies
@@ -48,7 +47,7 @@ class EditorMediaModalDetailBase extends React.Component {
 	}
 
 	preloadImages = () => {
-		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function( image ) {
+		filterItemsByMimePrefix( this.props.items, 'image' ).forEach( function ( image ) {
 			const src = url( image, {
 				photon: this.props.site && ! this.props.site.is_private,
 			} );
@@ -57,7 +56,7 @@ class EditorMediaModalDetailBase extends React.Component {
 		}, this );
 	};
 
-	incrementIndex = increment => {
+	incrementIndex = ( increment ) => {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
 	};
 

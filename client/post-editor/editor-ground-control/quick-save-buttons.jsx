@@ -14,7 +14,7 @@ import { isPage, isPublished } from 'state/posts/utils';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
 export const isSaveAvailableFn = ( {
@@ -113,7 +113,7 @@ QuickSaveButtons.defaultProps = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

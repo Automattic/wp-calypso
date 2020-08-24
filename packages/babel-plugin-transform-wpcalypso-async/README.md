@@ -3,7 +3,7 @@ Calypso Async Babel Transform Plugin
 
 `babel-plugin-transform-wpcalypso-async` is a Babel plugin to facilitate optional
 code-splitting by applying transformations to a `asyncRequire` global function or the
-[`<AsyncLoad />` React component](https://github.com/Automattic/wp-calypso/tree/master/client/components/async-load).
+[`<AsyncLoad />` React component](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/async-load).
 
 ## Usage
 

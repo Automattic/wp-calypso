@@ -12,7 +12,7 @@ domReady( () => {
 	}
 	dispatch( 'core/notices' ).createNotice(
 		'info',
-		__( 'Updates to this template will affect all pages on your site.' ),
+		__( 'Updates to this template will affect all pages on your site.', 'full-site-editing' ),
 		{
 			isDismissible: false,
 		}

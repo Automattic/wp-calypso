@@ -73,7 +73,7 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_SET_FORM_META_PROPERTY ] = ( state, { key,
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE ] = ( state ) => {
 	if ( state.meta.pristine ) {
 		return state;
 	}
@@ -89,14 +89,14 @@ reducers[ WOOCOMMERCE_SERVICES_LABELS_RESTORE_PRISTINE ] = state => {
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_LABELS_OPEN_ADD_CARD_DIALOG ] = ( state ) => {
 	return {
 		...state,
 		addCardDialog: true,
 	};
 };
 
-reducers[ WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG ] = state => {
+reducers[ WOOCOMMERCE_SERVICES_LABELS_CLOSE_ADD_CARD_DIALOG ] = ( state ) => {
 	return {
 		...state,
 		addCardDialog: null,

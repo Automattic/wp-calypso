@@ -1,43 +1,77 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import { isEmpty } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
+import InfoPopover from 'components/info-popover';
 import ProductCardPriceGroup from './price-group';
 
-const ProductCardOptions = ( { handleSelect, options, optionsLabel, selectedSlug } ) => {
+const ProductCardOptions = ( {
+	handleSelect,
+	options,
+	optionsLabel,
+	selectedSlug,
+	forceRadiosEvenIfOnlyOneOption,
+} ) => {
+	const translate = useTranslate();
+
 	if ( isEmpty( options ) ) {
 		return null;
 	}
 
+	const hideRadios = options.length === 1 && ! forceRadiosEvenIfOnlyOneOption;
+
 	return (
-		<div className="product-card__options">
-			{ optionsLabel && <h4 className="product-card__options-label">{ optionsLabel }</h4> }
-			{ options.map( option => (
-				<FormLabel key={ `product-option-${ option.slug }` } className="product-card__option">
-					<FormRadio
-						checked={ option.slug === selectedSlug }
-						onChange={ () => handleSelect( option.slug ) }
-					/>
-					<div className="product-card__option-description">
-						<div className="product-card__option-name">{ option.title }</div>
-						<ProductCardPriceGroup
-							billingTimeFrame={ option.billingTimeFrame }
-							currencyCode={ option.currencyCode }
-							discountedPrice={ option.discountedPrice }
-							fullPrice={ option.fullPrice }
-						/>
-					</div>
-				</FormLabel>
-			) ) }
-		</div>
+		<Fragment>
+			{ ! hideRadios && optionsLabel && (
+				<h4 className="product-card__options-label">
+					{ optionsLabel }
+					{ selectedSlug === 'jetpack_search' && (
+						<InfoPopover position="right">
+							{ translate(
+								'Records are all posts, pages, custom post types, and other types of content indexed by Jetpack Search.'
+							) }
+						</InfoPopover>
+					) }
+				</h4>
+			) }
+			<div className="product-card__options">
+				{ options.map( ( option ) => (
+					<FormLabel
+						key={ `product-option-${ option.slug }` }
+						className={ classnames( 'product-card__option', {
+							'is-selected': option.slug === selectedSlug,
+						} ) }
+					>
+						{ ! hideRadios && (
+							<FormRadio
+								className="product-card__radio"
+								checked={ option.slug === selectedSlug }
+								onChange={ () => handleSelect( option.slug ) }
+							/>
+						) }
+						<div className="product-card__option-description">
+							{ ! hideRadios && <div className="product-card__option-name">{ option.title }</div> }
+							<ProductCardPriceGroup
+								billingTimeFrame={ option.billingTimeFrame }
+								currencyCode={ option.currencyCode }
+								discountedPrice={ option.discountedPrice }
+								fullPrice={ option.fullPrice }
+							/>
+						</div>
+					</FormLabel>
+				) ) }
+			</div>
+		</Fragment>
 	);
 };
 
@@ -58,6 +92,7 @@ ProductCardOptions.propTypes = {
 	),
 	optionsLabel: PropTypes.string,
 	selectedSlug: PropTypes.string,
+	forceRadiosEvenIfOnlyOneOption: PropTypes.bool,
 };
 
 export default ProductCardOptions;

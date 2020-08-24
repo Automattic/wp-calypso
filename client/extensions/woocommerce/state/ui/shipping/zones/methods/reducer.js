@@ -50,7 +50,7 @@ export const initialState = {
  * @param {object} state Current edit state
  * @returns {object} Object with an "index" property, guaranteed to be unique
  */
-const nextCreateId = state => {
+const nextCreateId = ( state ) => {
 	return {
 		index: isEmpty( state.creates ) ? 0 : state.creates[ state.creates.length - 1 ].id.index + 1,
 	};
@@ -159,7 +159,7 @@ function handleZoneMethodClose( state ) {
 	}
 
 	let found = false;
-	const newBucket = state[ bucket ].map( method => {
+	const newBucket = state[ bucket ].map( ( method ) => {
 		if ( isEqual( currentlyEditingId, method.id ) ) {
 			found = true;
 			// If edits for the method were already in the expected bucket, just update them

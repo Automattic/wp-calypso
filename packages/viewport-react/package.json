@@ -15,17 +15,22 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/viewport-react#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/viewport-react#readme",
 	"dependencies": {
-		"@automattic/viewport": "file:../viewport",
-		"@wordpress/compose": "^3.7.0"
+		"@babel/runtime": "^7.11.1",
+		"@automattic/viewport": "^1.0.0",
+		"@wordpress/compose": "^3.19.3"
 	},
 	"peerDependencies": {
-		"react": "^16.0.0"
+		"react": "^16.13.1",
+		"react-dom": "^16.12.0"
+	},
+	"devDependencies": {
+		"regenerator-runtime": "^0.13.4"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"prepare": "transpile"
 	},
 	"publishConfig": {

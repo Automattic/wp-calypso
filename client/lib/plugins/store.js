@@ -30,28 +30,28 @@ const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 let _fetching = {},
 	_pluginsBySite = {},
 	_filters = {
-		none: function() {
+		none: function () {
 			return false;
 		},
-		all: function() {
+		all: function () {
 			return true;
 		},
-		active: function( plugin ) {
-			return plugin.sites.some( function( site ) {
+		active: function ( plugin ) {
+			return plugin.sites.some( function ( site ) {
 				return site.plugin && site.plugin.active;
 			} );
 		},
-		inactive: function( plugin ) {
-			return plugin.sites.some( function( site ) {
+		inactive: function ( plugin ) {
+			return plugin.sites.some( function ( site ) {
 				return site.plugin && ! site.plugin.active;
 			} );
 		},
-		updates: function( plugin ) {
-			return plugin.sites.some( function( site ) {
+		updates: function ( plugin ) {
+			return plugin.sites.some( function ( site ) {
 				return site.plugin && site.plugin.update && site.canUpdateFiles;
 			} );
 		},
-		isEqual: function( pluginSlug, plugin ) {
+		isEqual: function ( pluginSlug, plugin ) {
 			return plugin.slug === pluginSlug;
 		},
 	};
@@ -107,20 +107,20 @@ function updatePlugins( site, plugins ) {
 	// By clearing the existing object we make sure we don't keep anything that shouldn't be there any more.
 	_pluginsBySite[ site.ID ] = {};
 	// Until we support network activated plugins, let's not show them at all
-	plugins.forEach( function( plugin ) {
+	plugins.forEach( function ( plugin ) {
 		update( site, plugin.slug || plugin.id, plugin );
 	} );
 }
 
 const PluginsStore = {
-	getPlugin: function( sites, pluginSlug ) {
+	getPlugin: function ( sites, pluginSlug ) {
 		let pluginData = {},
 			fetched = false;
 		pluginData.sites = [];
 
 		sites = ! isArray( sites ) ? [ sites ] : sites;
 
-		sites.forEach( function( site ) {
+		sites.forEach( function ( site ) {
 			const sitePlugins = PluginsStore.getSitePlugins( site );
 			if ( typeof sitePlugins !== 'undefined' ) {
 				fetched = true;
@@ -128,7 +128,7 @@ const PluginsStore = {
 			if ( ! sitePlugins ) {
 				return;
 			}
-			sitePlugins.forEach( function( plugin ) {
+			sitePlugins.forEach( function ( plugin ) {
 				if ( plugin.slug === pluginSlug ) {
 					pluginData = assign( pluginData, plugin );
 					pluginData.sites.push( assign( {}, site, { plugin: plugin } ) );
@@ -142,7 +142,7 @@ const PluginsStore = {
 		return pluginData;
 	},
 
-	getPlugins: function( sites, pluginFilter ) {
+	getPlugins: function ( sites, pluginFilter ) {
 		let fetched = false,
 			plugins = {};
 
@@ -151,7 +151,7 @@ const PluginsStore = {
 		if ( sites.length === 0 ) {
 			return [];
 		}
-		sites.forEach( function( site ) {
+		sites.forEach( function ( site ) {
 			const sitePlugins = PluginsStore.getSitePlugins( site );
 			if ( sitePlugins !== undefined ) {
 				fetched = true;
@@ -159,7 +159,7 @@ const PluginsStore = {
 			if ( ! sitePlugins ) {
 				return;
 			}
-			sitePlugins.forEach( function( plugin ) {
+			sitePlugins.forEach( function ( plugin ) {
 				if ( ! plugins[ plugin.slug ] ) {
 					plugins[ plugin.slug ] = assign( {}, plugin, { sites: [] } );
 				}
@@ -169,7 +169,7 @@ const PluginsStore = {
 		if ( ! fetched ) {
 			return;
 		}
-		plugins = sortBy( plugins, function( plugin ) {
+		plugins = sortBy( plugins, function ( plugin ) {
 			return plugin.name;
 		} );
 		if ( ! plugins ) {
@@ -183,7 +183,7 @@ const PluginsStore = {
 	},
 
 	// Get Plugins for a single site
-	getSitePlugins: function( site ) {
+	getSitePlugins: function ( site ) {
 		if ( ! site ) {
 			return [];
 		}
@@ -197,7 +197,7 @@ const PluginsStore = {
 		return values( _pluginsBySite[ site.ID ] );
 	},
 
-	getSitePlugin: function( site, pluginSlug ) {
+	getSitePlugin: function ( site, pluginSlug ) {
 		const plugins = this.getSitePlugins( site );
 		if ( ! plugins ) {
 			return plugins;
@@ -207,7 +207,7 @@ const PluginsStore = {
 	},
 
 	// Array of sites with a particular plugin.
-	getSites: function( sites, pluginSlug ) {
+	getSites: function ( sites, pluginSlug ) {
 		let plugin,
 			plugins = this.getPlugins( sites ),
 			pluginSites;
@@ -221,27 +221,27 @@ const PluginsStore = {
 		}
 
 		pluginSites = plugin.sites
-			.filter( site => site.visible )
-			.map( site => {
+			.filter( ( site ) => site.visible )
+			.map( ( site ) => {
 				// clone the site object before adding a new property. Don't modify the return value of getSite
 				const pluginSite = clone( getSite( reduxGetState(), site.ID ) );
 				pluginSite.plugin = site.plugin;
 				return pluginSite;
 			} );
 
-		return pluginSites.sort( function( first, second ) {
+		return pluginSites.sort( function ( first, second ) {
 			return first.title.toLowerCase() > second.title.toLowerCase() ? 1 : -1;
 		} );
 	},
 
-	isFetchingSite: function( site ) {
+	isFetchingSite: function ( site ) {
 		return _fetching[ site.ID ];
 	},
 
 	// Array of sites without a particular plugin.
-	getNotInstalledSites: function( sites, pluginSlug ) {
+	getNotInstalledSites: function ( sites, pluginSlug ) {
 		const installedOnSites = this.getSites( sites, pluginSlug ) || [];
-		return sites.filter( function( site ) {
+		return sites.filter( function ( site ) {
 			if ( ! site.visible ) {
 				return false;
 			}
@@ -249,18 +249,18 @@ const PluginsStore = {
 				return false;
 			}
 
-			return installedOnSites.every( function( installedOnSite ) {
+			return installedOnSites.every( function ( installedOnSite ) {
 				return installedOnSite.slug !== site.slug;
 			} );
 		} );
 	},
 
-	emitChange: function() {
+	emitChange: function () {
 		this.emit( 'change' );
 	},
 };
 
-PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
+PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 	debug( 'register event Type', action.type, action );
 
 	switch ( action.type ) {

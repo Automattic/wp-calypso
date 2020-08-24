@@ -17,6 +17,7 @@
 	"hostname",
 	"i18n_default_locale_slug",
 	"languages",
+	"lasagna_url",
 	"login_url",
 	"logout_url",
 	"hotjar_enabled",

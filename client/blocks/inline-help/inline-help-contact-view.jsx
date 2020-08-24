@@ -45,7 +45,7 @@ const InlineHelpContactView = ( {
 	);
 };
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	supportVariation: getInlineHelpSupportVariation( state ),
 	isSupportVariationDetermined: isSupportVariationDetermined( state ),
 	selectedSite: getHelpSelectedSite( state ),

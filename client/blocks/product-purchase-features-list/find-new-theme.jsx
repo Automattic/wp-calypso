@@ -22,7 +22,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon={ <img alt="" src={ premiumThemesImage } /> }
 				title={ translate( 'Try a premium theme' ) }
 				description={ translate(
-					'Access hundreds of beautifully designed premium themes at no extra cost.'
+					'Access a diverse selection of beautifully designed premium themes included with your plan.'
 				) }
 				buttonText={ translate( 'Browse premium themes' ) }
 				href={ '/themes/' + selectedSite.slug }

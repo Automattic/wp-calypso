@@ -30,7 +30,7 @@ describe( 'getPastBillingTransactions()', () => {
 				},
 			},
 		};
-		const expected = state.billingTransactions.items.past.map( transaction => {
+		const expected = state.billingTransactions.items.past.map( ( transaction ) => {
 			transaction.date = new Date( transaction.date );
 			return transaction;
 		} );

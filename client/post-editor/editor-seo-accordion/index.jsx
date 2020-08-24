@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,7 +19,7 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { updatePostMetadata } from 'state/posts/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import PostMetadata from 'lib/post-metadata';
 
@@ -45,7 +44,7 @@ class EditorSeoAccordion extends Component {
 	showPreview = () => this.setState( { showPreview: true } );
 	hidePreview = () => this.setState( { showPreview: false } );
 
-	onMetaChange = event => {
+	onMetaChange = ( event ) => {
 		this.props.updatePostMetadata( this.props.siteId, this.props.postId, {
 			advanced_seo_description: event.target.value,
 		} );
@@ -99,7 +98,7 @@ class EditorSeoAccordion extends Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const post = getEditedPost( state, siteId, postId );

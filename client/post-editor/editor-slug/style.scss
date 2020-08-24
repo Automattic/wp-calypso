@@ -2,7 +2,7 @@
 	margin-left: 10px;
 	margin-top: -4px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-left: 0;
 	}
 }
@@ -18,7 +18,7 @@
 .editor-slug .form-text-input {
 	border: none;
 	color: var( --color-neutral-40 );
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 4px 0;
 	width: 200px;
 	&:focus {
@@ -29,11 +29,11 @@
 
 .editor-slug__url-path {
 	color: var( --color-neutral-20 );
-	font-size: 13px;
+	font-size: $font-body-small;
 	margin-right: 0;
 	cursor: pointer;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		word-wrap: break-word;
 	}
 }

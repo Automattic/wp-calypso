@@ -15,7 +15,7 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 
 const debug = debugFactory( 'calypso:localized-moment' );
 
-const MomentContext = React.createContext( moment );
+const MomentContext = React.createContext( { moment, momentLocale: moment.locale() } );
 
 class MomentProvider extends React.Component {
 	state = { moment, momentLocale: moment.locale() };
@@ -71,7 +71,7 @@ class MomentProvider extends React.Component {
 	}
 }
 
-const ConnectedMomentProvider = connect( state => ( {
+const ConnectedMomentProvider = connect( ( state ) => ( {
 	currentLocale: getCurrentLocaleSlug( state ),
 } ) )( MomentProvider );
 

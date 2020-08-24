@@ -34,7 +34,11 @@ import { isATEnabled } from 'lib/automated-transfer';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { isGSuiteRestricted } from 'lib/gsuite';
+import { canUserPurchaseGSuite } from 'lib/gsuite';
+import { addItem } from 'lib/cart/actions';
+import { planItem } from 'lib/cart-values/cart-items';
+import { PLAN_PERSONAL } from 'lib/plans/constants';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -52,7 +56,7 @@ const domainsAddRedirectHeader = ( context, next ) => {
 	next();
 };
 
-const redirectToDomainSearchSuggestion = context => {
+const redirectToDomainSearchSuggestion = ( context ) => {
 	return page.redirect(
 		`/domains/add/${ context.params.domain }?suggestion=${ context.params.suggestion }`
 	);
@@ -62,6 +66,11 @@ const domainSearch = ( context, next ) => {
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
+	}
+
+	if ( 'upgrade' === context.query.ref ) {
+		addItem( planItem( PLAN_PERSONAL, {} ) );
+		return page.replace( context.pathname );
 	}
 
 	context.primary = (
@@ -185,7 +194,7 @@ const transferDomainPrecheck = ( context, next ) => {
 };
 
 const googleAppsWithRegistration = ( context, next ) => {
-	if ( ! isGSuiteRestricted() ) {
+	if ( canUserPurchaseGSuite() ) {
 		context.primary = (
 			<Main>
 				<PageViewTracker
@@ -207,7 +216,7 @@ const googleAppsWithRegistration = ( context, next ) => {
 	next();
 };
 
-const redirectIfNoSite = redirectTo => {
+const redirectIfNoSite = ( redirectTo ) => {
 	return ( context, next ) => {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
@@ -262,11 +271,23 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	}
 };
 
+const wpForTeamsNoDomainsRedirect = ( context, next ) => {
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	if ( selectedSite && isSiteWPForTeams( state, selectedSite.ID ) ) {
+		return page.redirect( '/' );
+	}
+
+	next();
+};
+
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
 	jetpackNoDomainsWarning,
+	wpForTeamsNoDomainsRedirect,
 	siteRedirect,
 	mapDomain,
 	googleAppsWithRegistration,

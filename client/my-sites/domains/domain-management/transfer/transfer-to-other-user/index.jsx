@@ -27,6 +27,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -63,7 +64,7 @@ class TransferOtherUser extends React.Component {
 		this.handleConfirmTransferDomain = this.handleConfirmTransferDomain.bind( this );
 	}
 
-	getWpcomUserId = user => {
+	getWpcomUserId = ( user ) => {
 		if ( this.props.isAtomic ) {
 			return get( user, 'linked_user_ID', '' );
 		}
@@ -117,10 +118,14 @@ class TransferOtherUser extends React.Component {
 					this.props.successNotice( successMessage, { duration: 4000, isPersistent: true } );
 					closeDialog();
 					page(
-						domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
+						domainManagementEdit(
+							this.props.selectedSite.slug,
+							this.props.selectedDomainName,
+							this.props.currentRoute
+						)
 					);
 				},
-				err => {
+				( err ) => {
 					this.setState( { disableDialogButtons: false } );
 					this.props.errorNotice( err.message || defaultErrorMessage );
 					closeDialog();
@@ -137,7 +142,7 @@ class TransferOtherUser extends React.Component {
 	getSelectedUserDisplayName() {
 		const selectedUser = find(
 			this.props.users,
-			user => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
+			( user ) => this.getWpcomUserId( user ) === Number( this.state.selectedUserId )
 		);
 
 		if ( ! selectedUser ) {
@@ -156,14 +161,14 @@ class TransferOtherUser extends React.Component {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { selectedSite, selectedDomainName } = this.props,
+		const { selectedSite, selectedDomainName, currentRoute } = this.props,
 			{ slug } = selectedSite;
 
 		return (
 			<Main>
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
+					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				>
 					{ this.props.translate( 'Transfer Domain To Another User' ) }
 				</Header>
@@ -181,7 +186,7 @@ class TransferOtherUser extends React.Component {
 				},
 				{
 					action: 'confirm',
-					label: this.props.translate( 'Confirm Transfer' ),
+					label: this.props.translate( 'Confirm transfer' ),
 					onClick: this.handleConfirmTransferDomain,
 					disabled: this.state.disableDialogButtons,
 					isPrimary: true,
@@ -215,7 +220,7 @@ class TransferOtherUser extends React.Component {
 		const { selectedDomainName: domainName, translate, users, selectedSite } = this.props,
 			availableUsers = this.filterAvailableUsers( users ),
 			{ currentUserCanManage, domainRegistrationAgreementUrl } = getSelectedDomain( this.props ),
-			saveButtonLabel = translate( 'Transfer Domain' );
+			saveButtonLabel = translate( 'Transfer domain' );
 
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
@@ -246,7 +251,7 @@ class TransferOtherUser extends React.Component {
 							value={ this.state.selectedUserId }
 						>
 							{ availableUsers.length ? (
-								availableUsers.map( user => {
+								availableUsers.map( ( user ) => {
 									const userId = this.getWpcomUserId( user );
 
 									return (
@@ -278,7 +283,7 @@ class TransferOtherUser extends React.Component {
 
 	filterAvailableUsers( users ) {
 		return users.filter(
-			user =>
+			( user ) =>
 				includes( user.roles, 'administrator' ) &&
 				this.getWpcomUserId( user ) !== this.props.currentUser.ID
 		);
@@ -298,6 +303,7 @@ export default connect(
 		currentUser: getCurrentUser( state ),
 		isAtomic: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	{
 		successNotice,

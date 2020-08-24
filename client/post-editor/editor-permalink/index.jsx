@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { pick } from 'lodash';
@@ -17,7 +16,7 @@ import Popover from 'components/popover';
 import Tooltip from 'components/tooltip';
 import ClipboardButton from 'components/forms/clipboard-button';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostSlug } from 'state/posts/selectors';
 
 /**
@@ -155,7 +154,7 @@ class EditorPermalink extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 

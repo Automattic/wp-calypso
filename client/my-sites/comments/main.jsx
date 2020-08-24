@@ -50,7 +50,7 @@ export class CommentsManagement extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	setOrder = order => () => this.setState( { order } );
+	setOrder = ( order ) => () => this.setState( { order } );
 
 	render() {
 		const {
@@ -75,6 +75,7 @@ export class CommentsManagement extends Component {
 				<SidebarNavigation />
 				{ ! showPermissionError && (
 					<FormattedHeader
+						brandFont
 						className="comments__page-heading"
 						headerText={ translate( 'Comments' ) }
 						align="left"

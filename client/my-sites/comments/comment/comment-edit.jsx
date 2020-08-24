@@ -70,14 +70,15 @@ export class CommentEdit extends Component {
 		gmtOffset: parseInt( this.props.siteGmtOffset, 10 ),
 	} );
 
-	setAuthorDisplayNameValue = event => this.setState( { authorDisplayName: event.target.value } );
+	setAuthorDisplayNameValue = ( event ) =>
+		this.setState( { authorDisplayName: event.target.value } );
 
-	setAuthorUrlValue = event => this.setState( { authorUrl: event.target.value } );
+	setAuthorUrlValue = ( event ) => this.setState( { authorUrl: event.target.value } );
 
 	setCommentContentValue = ( event, callback = noop ) =>
 		this.setState( { commentContent: event.target.value }, callback );
 
-	setCommentDateValue = commentDate =>
+	setCommentDateValue = ( commentDate ) =>
 		this.setState( { commentDate: this.props.moment( commentDate ).format() } );
 
 	showNotice = () => {
@@ -116,7 +117,7 @@ export class CommentEdit extends Component {
 		toggleEditMode();
 	};
 
-	undo = previousCommentData => () => {
+	undo = ( previousCommentData ) => () => {
 		const { postId, siteId } = this.props;
 		this.props.editComment( siteId, postId, previousCommentData );
 		this.props.removeNotice( 'comment-notice' );
@@ -258,7 +259,7 @@ const mapDispatchToProps = ( dispatch, { commentId } ) => ( {
 				editComment( siteId, postId, commentId, comment )
 			)
 		),
-	removeNotice: noticeId => dispatch( removeNotice( noticeId ) ),
+	removeNotice: ( noticeId ) => dispatch( removeNotice( noticeId ) ),
 	successNotice: ( text, options ) => dispatch( successNotice( text, options ) ),
 } );
 

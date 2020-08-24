@@ -22,8 +22,8 @@
 .facebook-share-preview__title {
 	color: #1d2129;
 	font-family: Georgia, serif;
-	font-size: 18px;
-	font-weight: 500;
+	font-size: 18px; /* stylelint-disable-line */
+	font-weight: 600;
 	line-height: 22px;
 	max-height: 100px;
 	transition: color 0.1s ease-in-out;
@@ -33,7 +33,7 @@
 	color: #4b4f56;
 	flex-grow: 1;
 	font-family: helvetica, arial, sans-serif;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	line-height: 16px;
 	overflow-y: hidden;
 }
@@ -41,7 +41,7 @@
 .facebook-share-preview__url {
 	color: #90949c;
 	font-family: helvetica, arial, sans-serif;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 11px;
 	text-transform: uppercase;
 	text-overflow: ellipsis;
@@ -92,7 +92,7 @@
 
 		& img {
 			display: block;
-			font-size: 14px;
+			font-size: $font-body-small;
 			height: auto;
 			width: 100%;
 		}
@@ -162,7 +162,7 @@
 	padding: 0.75em;
 	text-decoration: none;
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: black;
 	text-align: left;
 	line-height: 1.3em;

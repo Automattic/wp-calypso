@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	SHORTCODE_RECEIVE,
@@ -10,8 +9,10 @@ import {
 	SHORTCODE_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/shortcodes/init';
+
 export function fetchShortcode( siteId, shortcode ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SHORTCODE_REQUEST,
 			siteId,
@@ -22,7 +23,7 @@ export function fetchShortcode( siteId, shortcode ) {
 			.undocumented()
 			.site( siteId )
 			.shortcodes( { shortcode } )
-			.then( data => {
+			.then( ( data ) => {
 				dispatch( {
 					type: SHORTCODE_REQUEST_SUCCESS,
 					siteId,
@@ -36,7 +37,7 @@ export function fetchShortcode( siteId, shortcode ) {
 					data,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SHORTCODE_REQUEST_FAILURE,
 					siteId,

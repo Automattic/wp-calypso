@@ -41,7 +41,7 @@ export function useSiteOptions(
 
 	function loadSiteOption() {
 		apiFetch( { path: '/wp/v2/settings' } )
-			.then( result =>
+			.then( ( result ) =>
 				setSiteOptions( {
 					...siteOptions,
 					option: decodeEntities( result[ siteOption ] ),
@@ -51,10 +51,12 @@ export function useSiteOptions(
 				} )
 			)
 			.catch( () => {
-				createErrorNotice( sprintf( __( 'Unable to load site %s' ), siteOption ) );
+				createErrorNotice(
+					sprintf( __( 'Unable to load site %s', 'full-site-editing' ), siteOption )
+				);
 				setSiteOptions( {
 					...siteOptions,
-					option: sprintf( __( 'Error loading site %s' ), siteOption ),
+					option: sprintf( __( 'Error loading site %s', 'full-site-editing' ), siteOption ),
 					error: true,
 				} );
 			} );
@@ -93,7 +95,9 @@ export function useSiteOptions(
 		apiFetch( { path: '/wp/v2/settings', method: 'POST', data: { [ siteOption ]: option } } )
 			.then( () => updatePreviousOption( option ) )
 			.catch( () => {
-				createErrorNotice( sprintf( __( 'Unable to save site %s' ), siteOption ) );
+				createErrorNotice(
+					sprintf( __( 'Unable to save site %s', 'full-site-editing' ), siteOption )
+				);
 				revertOption();
 			} );
 	}

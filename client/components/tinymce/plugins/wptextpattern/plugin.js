@@ -45,21 +45,21 @@ function wptextpattern( editor ) {
 	let canUndo;
 	const chars = [];
 
-	tinymce.each( inlinePatterns, function( pattern ) {
-		tinymce.each( ( pattern.start + pattern.end ).split( '' ), function( c ) {
+	tinymce.each( inlinePatterns, function ( pattern ) {
+		tinymce.each( ( pattern.start + pattern.end ).split( '' ), function ( c ) {
 			if ( tinymce.inArray( chars, c ) === -1 ) {
 				chars.push( c );
 			}
 		} );
 	} );
 
-	editor.on( 'selectionchange', function() {
+	editor.on( 'selectionchange', function () {
 		canUndo = null;
 	} );
 
 	editor.on(
 		'keydown',
-		function( event ) {
+		function ( event ) {
 			if (
 				( canUndo && event.keyCode === 27 ) /* ESCAPE */ ||
 				( canUndo === 'space' && event.keyCode === VK.BACKSPACE )
@@ -139,7 +139,7 @@ function wptextpattern( editor ) {
 		if ( format && format[ 0 ].inline ) {
 			editor.undoManager.add();
 
-			editor.undoManager.transact( function() {
+			editor.undoManager.transact( function () {
 				node.insertData( offset, '\u200b' );
 
 				node = node.splitText( startOffset );
@@ -154,10 +154,10 @@ function wptextpattern( editor ) {
 			} );
 
 			// We need to wait for native events to be triggered.
-			setTimeout( function() {
+			setTimeout( function () {
 				canUndo = 'space';
 
-				editor.once( 'selectionchange', function() {
+				editor.once( 'selectionchange', function () {
 					let offset;
 
 					if ( zero ) {
@@ -217,7 +217,7 @@ function wptextpattern( editor ) {
 		parent = node.parentNode;
 		text = node.data;
 
-		tinymce.each( spacePatterns, function( pattern ) {
+		tinymce.each( spacePatterns, function ( pattern ) {
 			const match = text.match( pattern.regExp );
 
 			if ( ! match || rng.startOffset !== match[ 0 ].length ) {
@@ -226,7 +226,7 @@ function wptextpattern( editor ) {
 
 			editor.undoManager.add();
 
-			editor.undoManager.transact( function() {
+			editor.undoManager.transact( function () {
 				node.deleteData( 0, match[ 0 ].length );
 
 				if ( ! parent.innerHTML ) {
@@ -238,7 +238,7 @@ function wptextpattern( editor ) {
 			} );
 
 			// We need to wait for native events to be triggered.
-			setTimeout( function() {
+			setTimeout( function () {
 				canUndo = 'space';
 			} );
 
@@ -283,10 +283,10 @@ function wptextpattern( editor ) {
 			return;
 		}
 
-		editor.once( 'keyup', function() {
+		editor.once( 'keyup', function () {
 			editor.undoManager.add();
 
-			editor.undoManager.transact( function() {
+			editor.undoManager.transact( function () {
 				if ( pattern.format ) {
 					editor.formatter.apply( pattern.format, {}, node );
 					node.replaceData( 0, node.data.length, ltrim( node.data.slice( pattern.start.length ) ) );
@@ -300,7 +300,7 @@ function wptextpattern( editor ) {
 			} );
 
 			// We need to wait for native events to be triggered.
-			setTimeout( function() {
+			setTimeout( function () {
 				canUndo = 'enter';
 			} );
 		} );
@@ -311,6 +311,6 @@ function wptextpattern( editor ) {
 	}
 }
 
-export default function() {
+export default function () {
 	tinymce.PluginManager.add( 'wptextpattern', wptextpattern );
 }

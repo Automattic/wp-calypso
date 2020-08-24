@@ -14,7 +14,7 @@ import {
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import sampleSuccessResponse from './sample-response.json';
 const siteId = 123;
 
@@ -39,7 +39,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestUserSuggestions', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/users/suggest?site_id=' + siteId )
 				.reply( 200, deepFreeze( sampleSuccessResponse ) );
@@ -69,7 +69,7 @@ describe( 'actions', () => {
 						siteId,
 					} );
 				} )
-				.catch( err => {
+				.catch( ( err ) => {
 					assert.fail( err, undefined, 'errback should not have been called' );
 				} );
 		} );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -17,7 +16,7 @@ import FeaturedImage from 'post-editor/editor-featured-image';
 import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 
 class EditorDrawerFeaturedImage extends Component {
@@ -64,7 +63,7 @@ class EditorDrawerFeaturedImage extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const post = getEditedPost( state, siteId, postId );

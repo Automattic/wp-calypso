@@ -25,9 +25,9 @@ function isUnappliedMetadataEdit( edit, savedMetadata ) {
  * - when deleting, the property is still present in `savedMetadata`
  */
 export function getUnappliedMetadataEdits( edits, savedMetadata ) {
-	return filter( edits, edit => isUnappliedMetadataEdit( edit, savedMetadata ) );
+	return filter( edits, ( edit ) => isUnappliedMetadataEdit( edit, savedMetadata ) );
 }
 
 export function areAllMetadataEditsApplied( edits, savedMetadata ) {
-	return every( edits, edit => ! isUnappliedMetadataEdit( edit, savedMetadata ) );
+	return every( edits, ( edit ) => ! isUnappliedMetadataEdit( edit, savedMetadata ) );
 }

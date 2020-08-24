@@ -21,7 +21,7 @@ class IcannVerification extends React.Component {
 	handleClick = () => {
 		this.setState( { submitting: true } );
 
-		resendIcannVerification( this.props.selectedDomainName, error => {
+		resendIcannVerification( this.props.selectedDomainName, ( error ) => {
 			if ( error ) {
 				notices.error( error.message );
 			} else {

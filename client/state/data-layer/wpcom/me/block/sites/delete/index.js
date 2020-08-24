@@ -45,7 +45,7 @@ export function receiveSiteUnblock() {
 }
 
 // need to dispatch multiple times so use a redux-thunk
-export const receiveSiteUnblockError = ( { payload: { siteId } } ) => dispatch => {
+export const receiveSiteUnblockError = ( { payload: { siteId } } ) => ( dispatch ) => {
 	dispatch( errorNotice( translate( 'Sorry, there was a problem unblocking that site.' ) ) );
 	dispatch( bypassDataLayer( blockSite( siteId ) ) );
 };

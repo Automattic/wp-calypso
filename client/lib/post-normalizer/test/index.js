@@ -384,7 +384,7 @@ describe( 'index', () => {
 			'telnet://localhost',
 			'feed://example.com',
 		];
-		badLinks.forEach( badLink => {
+		badLinks.forEach( ( badLink ) => {
 			test( 'can remove javascript: links', () => {
 				const post = { content: '<a href="' + badLink + '">hi there</a>' };
 				const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
@@ -428,6 +428,15 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'handles scheme-relative images', () => {
+			const post = {
+				URL: 'http://example.wordpress.com/2015/01/my-post/',
+				content: '<img src="//example.wordpress/example.jpg">',
+			};
+			const normalized = withContentDOM( [ makeImagesSafe() ] )( post );
+			expect( normalized.content ).toBe( '<img src="//example.wordpress/example.jpg-SAFE">' );
+		} );
+
 		test( 'can route all images through photon if a size is specified', () => {
 			const post = {
 				content:
@@ -437,6 +446,17 @@ describe( 'index', () => {
 			expect( normalized.content ).toBe(
 				'<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
 					'<img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
+			);
+		} );
+
+		test( 'can route scheme-relative images through photon if a size is specified', () => {
+			const post = {
+				content: '<img src="//example.com/example.jpg"><img src="//example.com/example2.jpg">',
+			};
+			const normalized = withContentDOM( [ makeImagesSafe( 400 ) ] )( post );
+			expect( normalized.content ).toBe(
+				'<img src="//example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
+					'<img src="//example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
 			);
 		} );
 
@@ -499,14 +519,14 @@ describe( 'index', () => {
 				loadingImage = {
 					complete: false,
 					src: 'http://example.com/two',
-					load: function() {
+					load: function () {
 						this.onload();
 					},
 				},
 				erroringImage = {
 					complete: false,
 					src: 'http://example.com/three',
-					error: function() {
+					error: function () {
 						this.onerror();
 					},
 				};
@@ -653,7 +673,7 @@ describe( 'index', () => {
 			expect( normalized.content ).toBe( '<iframe src="https://spotify.com/"></iframe>' );
 		} );
 
-		test( 'applies the right level of sandboxing to whitelisted sources', () => {
+		test( 'applies the right level of sandboxing to specified sources', () => {
 			const post = {
 				content: '<iframe src="http://youtube.com"></iframe>',
 			};
@@ -692,7 +712,7 @@ describe( 'index', () => {
 	} );
 
 	describe( 'content.detectMedia', () => {
-		test( 'detects whitelisted iframes', () => {
+		test( 'detects "allowed" iframes', () => {
 			const post = {
 				content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>',
 			};
@@ -784,7 +804,7 @@ describe( 'index', () => {
 			expect( normalized.content_embeds ).toEqual( [] );
 		} );
 
-		test( 'ignores embeds from non-whitelisted providers', () => {
+		test( 'ignores embeds from disallowed providers', () => {
 			const badSrcs = [
 				'http://example.com',
 				'http://example.com?src=http://youtube.com',
@@ -793,7 +813,9 @@ describe( 'index', () => {
 				'http://foobaryoutube.com/',
 				'https://notspotify.com/',
 			];
-			const badContent = badSrcs.map( src => '<iframe src="' + src + '"></iframe>' ).join( '\n' );
+			const badContent = badSrcs
+				.map( ( src ) => '<iframe src="' + src + '"></iframe>' )
+				.join( '\n' );
 			const post = {
 				content: badContent,
 			};
@@ -825,7 +847,7 @@ describe( 'index', () => {
 
 		test.each( [ [ 'pd-embed' ], [ 'cs-embed' ] ] )(
 			'links to embedded Crowdsignal surveys',
-			className => {
+			( className ) => {
 				const post = {
 					content:
 						'<div class="embed-polldaddy">' +

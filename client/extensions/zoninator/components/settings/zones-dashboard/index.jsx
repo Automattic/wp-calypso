@@ -36,8 +36,8 @@ const ZonesDashboard = ( { isRequesting, siteSlug, translate, zones } ) => (
 		</SectionHeader>
 		{ isRequesting &&
 			zones.length === 0 &&
-			times( placeholderCount, i => <ZonePlaceholder key={ i } /> ) }
-		{ zones.map( zone => (
+			times( placeholderCount, ( i ) => <ZonePlaceholder key={ i } /> ) }
+		{ zones.map( ( zone ) => (
 			<ZoneItem key={ zone.slug } zone={ zone } />
 		) ) }
 	</div>
@@ -48,7 +48,7 @@ ZonesDashboard.propTypes = {
 	zones: PropTypes.array,
 };
 
-const connectComponent = connect( state => {
+const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

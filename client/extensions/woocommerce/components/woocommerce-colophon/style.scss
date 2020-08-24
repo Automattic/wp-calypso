@@ -16,8 +16,7 @@
 		margin-left: 4px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-bottom: 24px;
 	}
 }
-

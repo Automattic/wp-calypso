@@ -22,19 +22,19 @@ function wpcomPlugin( editor ) {
 		each = tinymce.each,
 		style;
 
-	editor.on( 'focus', function() {
+	editor.on( 'focus', function () {
 		window.wpActiveEditor = editor.id;
 	} );
 
 	// Replace Read More/Next Page tags with images and apply wpautop
-	editor.on( 'BeforeSetContent', function( event ) {
+	editor.on( 'BeforeSetContent', function ( event ) {
 		var title;
 
 		if ( event.content ) {
 			if ( event.content.indexOf( '<!--more' ) !== -1 ) {
 				title = translate( 'Read more…' );
 
-				event.content = event.content.replace( /<!--more(.*?)-->/g, function( match, moretext ) {
+				event.content = event.content.replace( /<!--more(.*?)-->/g, function ( match, moretext ) {
 					return (
 						'<img src="' +
 						tinymce.Env.transparentSrc +
@@ -69,9 +69,9 @@ function wpcomPlugin( editor ) {
 	} );
 
 	// Replace images with tags
-	editor.on( 'PostProcess', function( e ) {
+	editor.on( 'PostProcess', function ( e ) {
 		if ( e.get ) {
-			e.content = e.content.replace( /<img[^>]+>/g, function( image ) {
+			e.content = e.content.replace( /<img[^>]+>/g, function ( image ) {
 				var match,
 					moretext = '';
 
@@ -92,7 +92,7 @@ function wpcomPlugin( editor ) {
 	} );
 
 	// Display the tag name instead of img in element path
-	editor.on( 'ResolveName', function( event ) {
+	editor.on( 'ResolveName', function ( event ) {
 		var attr;
 
 		if (
@@ -104,7 +104,7 @@ function wpcomPlugin( editor ) {
 	} );
 
 	// Register commands
-	editor.addCommand( 'WP_More', function( tag ) {
+	editor.addCommand( 'WP_More', function ( tag ) {
 		var parent,
 			html,
 			title,
@@ -139,7 +139,7 @@ function wpcomPlugin( editor ) {
 		// Get the top level parent node
 		parent = dom.getParent(
 			node,
-			function( found ) {
+			function ( found ) {
 				if ( found.parentNode && found.parentNode.nodeName === 'BODY' ) {
 					return true;
 				}
@@ -160,25 +160,25 @@ function wpcomPlugin( editor ) {
 		}
 	} );
 
-	editor.addCommand( 'WP_Code', function() {
+	editor.addCommand( 'WP_Code', function () {
 		editor.formatter.toggle( 'code' );
 	} );
 
-	editor.addCommand( 'WP_Page', function() {
+	editor.addCommand( 'WP_Page', function () {
 		editor.execCommand( 'WP_More', 'nextpage' );
 	} );
 
 	// Register buttons
 	editor.addButton( 'wp_more', {
 		tooltip: translate( 'Insert Read More tag' ),
-		onclick: function() {
+		onclick: function () {
 			editor.execCommand( 'WP_More', 'more' );
 		},
 	} );
 
 	editor.addButton( 'wp_page', {
 		tooltip: translate( 'Page break' ),
-		onclick: function() {
+		onclick: function () {
 			editor.execCommand( 'WP_More', 'nextpage' );
 		},
 	} );
@@ -205,7 +205,7 @@ function wpcomPlugin( editor ) {
 		text: translate( 'Insert Read More tag' ),
 		icon: 'wp_more',
 		context: 'insert',
-		onclick: function() {
+		onclick: function () {
 			editor.execCommand( 'WP_More', 'more' );
 		},
 	} );
@@ -215,12 +215,12 @@ function wpcomPlugin( editor ) {
 		text: translate( 'Page break' ),
 		icon: 'wp_page',
 		context: 'insert',
-		onclick: function() {
+		onclick: function () {
 			editor.execCommand( 'WP_More', 'nextpage' );
 		},
 	} );
 
-	editor.on( 'BeforeExecCommand', function( e ) {
+	editor.on( 'BeforeExecCommand', function ( e ) {
 		if (
 			tinymce.Env.webkit &&
 			( e.command === 'InsertUnorderedList' || e.command === 'InsertOrderedList' )
@@ -237,7 +237,7 @@ function wpcomPlugin( editor ) {
 		}
 	} );
 
-	editor.on( 'ExecCommand', function( e ) {
+	editor.on( 'ExecCommand', function ( e ) {
 		if (
 			tinymce.Env.webkit &&
 			style &&
@@ -247,7 +247,7 @@ function wpcomPlugin( editor ) {
 		}
 	} );
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		var env = tinymce.Env,
 			bodyClass = [ 'mceContentBody' ], // back-compat for themes that use this in editor-style.css...
 			doc = editor.getDoc(),
@@ -281,14 +281,14 @@ function wpcomPlugin( editor ) {
 			bodyClass.push( 'is-' + editor.getParam( 'color_scheme' ) );
 		}
 
-		each( bodyClass, function( cls ) {
+		each( bodyClass, function ( cls ) {
 			if ( cls ) {
 				dom.addClass( doc.body, cls );
 			}
 		} );
 
 		// Remove invalid parent paragraphs when inserting HTML
-		editor.on( 'BeforeSetContent', function( event ) {
+		editor.on( 'BeforeSetContent', function ( event ) {
 			if ( event.content ) {
 				event.content = event.content
 					.replace(
@@ -303,7 +303,7 @@ function wpcomPlugin( editor ) {
 		} );
 
 		if ( editor.getParam( 'wp_paste_filters', true ) ) {
-			editor.on( 'PastePreProcess', function( event ) {
+			editor.on( 'PastePreProcess', function ( event ) {
 				// Remove trailing <br> added by WebKit browsers to the clipboard
 				event.content = event.content.replace( /<br class="?Apple-interchange-newline"?>/gi, '' );
 
@@ -320,9 +320,9 @@ function wpcomPlugin( editor ) {
 				}
 			} );
 
-			editor.on( 'PastePostProcess', function( event ) {
+			editor.on( 'PastePostProcess', function ( event ) {
 				// Remove empty paragraphs
-				each( dom.select( 'p', event.node ), function( node ) {
+				each( dom.select( 'p', event.node ), function ( node ) {
 					if ( dom.isEmpty( node ) ) {
 						dom.remove( node );
 					}
@@ -331,7 +331,7 @@ function wpcomPlugin( editor ) {
 		}
 	} );
 
-	editor.on( 'SaveContent', function( e ) {
+	editor.on( 'SaveContent', function ( e ) {
 		// If editor is hidden, we just want the textarea's value to be saved
 		if ( ! editor.inline && editor.isHidden() ) {
 			e.content = e.element.value;
@@ -345,13 +345,13 @@ function wpcomPlugin( editor ) {
 	} );
 
 	// Remove spaces from empty paragraphs.
-	editor.on( 'BeforeSetContent', function( event ) {
+	editor.on( 'BeforeSetContent', function ( event ) {
 		if ( event.content ) {
 			event.content = removeEmptySpacesInParagraphs( event.content );
 		}
 	} );
 
-	editor.on( 'preInit', function() {
+	editor.on( 'preInit', function () {
 		// Don't replace <i> with <em> and <b> with <strong> and don't remove them when empty
 		editor.schema.addValidElements(
 			'@[id|accesskey|class|dir|lang|style|tabindex|title|contenteditable|draggable|dropzone|hidden|spellcheck|translate],i,b'
@@ -378,7 +378,7 @@ function wpcomPlugin( editor ) {
 				p: 'WP_Page',
 				x: 'WP_Code',
 			},
-			function( command, key ) {
+			function ( command, key ) {
 				editor.shortcuts.add( 'access+' + key, '', command );
 			}
 		);
@@ -390,7 +390,7 @@ function wpcomPlugin( editor ) {
 	 */
 	editor.on(
 		'preinit',
-		function() {
+		function () {
 			var Factory = tinymce.ui.Factory,
 				settings = editor.settings,
 				activeToolbar,
@@ -419,14 +419,14 @@ function wpcomPlugin( editor ) {
 					toolbarItems = [],
 					buttonGroup;
 
-				each( buttons, function( item ) {
+				each( buttons, function ( item ) {
 					var itemName;
 
 					function bindSelectorChanged() {
 						var selection = editor.selection;
 
 						if ( itemName === 'bullist' ) {
-							selection.selectorChanged( 'ul > li', function( state, args ) {
+							selection.selectorChanged( 'ul > li', function ( state, args ) {
 								var i = args.parents.length,
 									nodeName;
 
@@ -443,7 +443,7 @@ function wpcomPlugin( editor ) {
 						}
 
 						if ( itemName === 'numlist' ) {
-							selection.selectorChanged( 'ol > li', function( state, args ) {
+							selection.selectorChanged( 'ol > li', function ( state, args ) {
 								var i = args.parents.length,
 									nodeName;
 
@@ -462,7 +462,7 @@ function wpcomPlugin( editor ) {
 						if ( item.settings.stateSelector ) {
 							selection.selectorChanged(
 								item.settings.stateSelector,
-								function( state ) {
+								function ( state ) {
 									item.active( state );
 								},
 								true
@@ -470,7 +470,7 @@ function wpcomPlugin( editor ) {
 						}
 
 						if ( item.settings.disabledStateSelector ) {
-							selection.selectorChanged( item.settings.disabledStateSelector, function( state ) {
+							selection.selectorChanged( item.settings.disabledStateSelector, function ( state ) {
 								item.disabled( state );
 							} );
 						}
@@ -654,21 +654,21 @@ function wpcomPlugin( editor ) {
 					return this;
 				}
 
-				toolbar.on( 'show', function() {
+				toolbar.on( 'show', function () {
 					this.reposition();
 					if ( isChromeRtl ) {
 						editor.$( '.mce-widget.mce-tooltip', document.body ).addClass( 'wp-hide-mce-tooltip' );
 					}
 				} );
 
-				toolbar.on( 'keydown', function( event ) {
+				toolbar.on( 'keydown', function ( event ) {
 					if ( event.keyCode === 27 ) {
 						this.hide();
 						editor.focus();
 					}
 				} );
 
-				editor.on( 'remove', function() {
+				editor.on( 'remove', function () {
 					toolbar.remove();
 				} );
 
@@ -678,7 +678,7 @@ function wpcomPlugin( editor ) {
 				return toolbar;
 			}
 
-			editor.shortcuts.add( 'alt+119', '', function() {
+			editor.shortcuts.add( 'alt+119', '', function () {
 				var node;
 
 				if ( activeToolbar ) {
@@ -687,7 +687,7 @@ function wpcomPlugin( editor ) {
 				}
 			} );
 
-			editor.on( 'nodechange', function( event ) {
+			editor.on( 'nodechange', function ( event ) {
 				var collapsed = editor.selection.isCollapsed();
 
 				var args = {
@@ -712,7 +712,7 @@ function wpcomPlugin( editor ) {
 				}
 			} );
 
-			editor.on( 'focus', function() {
+			editor.on( 'focus', function () {
 				if ( activeToolbar ) {
 					activeToolbar.show();
 				}
@@ -727,7 +727,7 @@ function wpcomPlugin( editor ) {
 					} else if ( event.type === 'resizewindow' || event.type === 'scrollwindow' ) {
 						clearTimeout( timeout );
 
-						timeout = setTimeout( function() {
+						timeout = setTimeout( function () {
 							if ( activeToolbar && typeof activeToolbar.show === 'function' ) {
 								activeToolbar.show();
 							}
@@ -738,7 +738,7 @@ function wpcomPlugin( editor ) {
 
 			DOM.bind( window, 'resize scroll', hide );
 
-			editor.on( 'remove', function() {
+			editor.on( 'remove', function () {
 				DOM.unbind( window, 'resize scroll', hide );
 			} );
 
@@ -751,7 +751,7 @@ function wpcomPlugin( editor ) {
 	);
 }
 
-export default function() {
+export default function () {
 	// Set the minimum value for the modals z-index higher than #wpadminbar (100000)
 	tinymce.PluginManager.add( 'wpcom', wpcomPlugin );
 }

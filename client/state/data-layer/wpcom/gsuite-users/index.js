@@ -17,7 +17,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const getGSuiteUsers = action => {
+export const getGSuiteUsers = ( action ) => {
 	return http(
 		{
 			method: 'GET',

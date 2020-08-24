@@ -24,7 +24,7 @@ export const getShippingZonesEdits = ( state, siteId ) => {
 	return get( state, [ 'extensions', 'woocommerce', 'ui', 'shipping', siteId, 'zones' ] );
 };
 
-const orderShippingZones = zones => {
+const orderShippingZones = ( zones ) => {
 	return [ ...zones ].sort( ( z1, z2 ) => {
 		//newly added zones should be on top and sorted by creation order
 		if ( ! isNumber( z1.id ) && ! isNumber( z2.id ) ) {
@@ -78,7 +78,7 @@ export const getShippingZones = createSelector(
 		// Overlay the current edits on top of (a copy of) the wc-api zones
 		const { creates, updates, deletes } = edits;
 		deletes.forEach( ( { id } ) => remove( zones, { id } ) );
-		updates.forEach( update => {
+		updates.forEach( ( update ) => {
 			const index = findIndex( zones, { id: update.id } );
 			if ( -1 === index ) {
 				return;
@@ -133,7 +133,7 @@ export const getCurrentlyEditingShippingZone = createSelector(
  * @param {Array} locations List of locations for the zone.
  * @returns {string} The auto-generated name for the zone.
  */
-const generateZoneNameFromLocations = locations => {
+const generateZoneNameFromLocations = ( locations ) => {
 	if ( ! locations || ! locations.length ) {
 		return translate( 'New shipping zone' );
 	}
@@ -202,7 +202,7 @@ export const areAnyShippingMethodsEnabled = ( state, siteId = getSelectedSiteId(
  * @returns {boolean} Whether this zone is considered "editable". As a rule, every zone is editable,
  * except the "Locations not covered by your other zones" zone, which always has id = 0.
  */
-const isEditableShippingZone = zoneId => ! isNumber( zoneId ) || 0 !== zoneId;
+const isEditableShippingZone = ( zoneId ) => ! isNumber( zoneId ) || 0 !== zoneId;
 
 /**
  * @param {number|object} zoneId Zone ID (can be a temporal ID)

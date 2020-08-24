@@ -27,7 +27,7 @@ describe( 'Audio Middleware', () => {
 		play = spy();
 		_window = global.window;
 		global.window = {
-			Audio: spy( function() {
+			Audio: spy( function () {
 				return { play };
 			} ),
 		};

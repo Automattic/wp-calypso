@@ -67,7 +67,7 @@ class SharingConnection extends Component {
 		}
 	};
 
-	toggleSitewideConnection = event => {
+	toggleSitewideConnection = ( event ) => {
 		const { path } = this.props;
 
 		if ( ! this.state.isSavingSitewide ) {

@@ -29,13 +29,13 @@ class CreateOrderNote extends Component {
 		type: 'internal',
 	};
 
-	setNote = event => {
+	setNote = ( event ) => {
 		this.setState( {
 			note: event.target.value,
 		} );
 	};
 
-	setType = event => {
+	setType = ( event ) => {
 		this.setState( {
 			type: event.target.value,
 		} );
@@ -88,5 +88,5 @@ export default connect(
 	( state, props ) => ( {
 		isNoteSaving: isOrderNoteSaving( state, props.orderId ),
 	} ),
-	dispatch => bindActionCreators( { createNote }, dispatch )
+	( dispatch ) => bindActionCreators( { createNote }, dispatch )
 )( localize( CreateOrderNote ) );

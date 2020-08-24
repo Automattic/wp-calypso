@@ -59,7 +59,7 @@ const CacheLocation = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [ 'cache_path', 'default_cache_path' ] );
 };
 

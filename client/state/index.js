@@ -3,11 +3,13 @@
  */
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, compose } from 'redux';
+import dynamicMiddlewares from 'redux-dynamic-middlewares';
 
 /**
  * Internal dependencies
  */
 import initialReducer from './reducer';
+import { isEnabled } from 'config';
 
 /**
  * Store enhancers
@@ -15,6 +17,7 @@ import initialReducer from './reducer';
 import actionLogger from './action-log';
 import consoleDispatcher from './console-dispatch';
 import { enhancer as httpDataEnhancer } from 'state/data-layer/http-data';
+import { addReducerEnhancer } from 'state/utils/add-reducer-enhancer';
 
 /**
  * Redux middleware
@@ -22,22 +25,6 @@ import { enhancer as httpDataEnhancer } from 'state/data-layer/http-data';
 import navigationMiddleware from './navigation/middleware';
 import noticesMiddleware from './notices/middleware';
 import wpcomApiMiddleware from 'state/data-layer/wpcom-api-middleware';
-
-const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
-	const nextStore = nextCreator( reducer, initialState );
-
-	let currentReducer = reducer;
-	function addReducer( keys, subReducer ) {
-		currentReducer = currentReducer.addReducer( keys, subReducer );
-		this.replaceReducer( currentReducer );
-	}
-
-	function getCurrentReducer() {
-		return currentReducer;
-	}
-
-	return Object.assign( {}, nextStore, { addReducer, getCurrentReducer } );
-};
 
 /**
  * @typedef {object} ReduxStore
@@ -49,6 +36,7 @@ const addReducerEnhancer = nextCreator => ( reducer, initialState ) => {
 
 export function createReduxStore( initialState, reducer = initialReducer ) {
 	const isBrowser = typeof window === 'object';
+	const isDesktop = isEnabled( 'desktop' );
 	const isAudioSupported = typeof window === 'object' && typeof window.Audio === 'function';
 
 	const middlewares = [
@@ -67,9 +55,11 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		noticesMiddleware,
 		isBrowser && require( './happychat/middleware.js' ).default,
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,
+		dynamicMiddlewares,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
+		isDesktop && require( './desktop/middleware.js' ).default,
 		navigationMiddleware,
 	].filter( Boolean );
 

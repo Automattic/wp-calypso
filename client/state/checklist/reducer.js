@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
@@ -9,22 +9,23 @@ import {
 	SITE_CHECKLIST_TASK_UPDATE,
 } from 'state/action-types';
 import { items as itemSchemas } from './schema';
+import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,
-	tasks: state.tasks.map( task =>
+	tasks: state.tasks?.map( ( task ) =>
 		task.id === taskId ? { ...task, isCompleted: completed } : task
 	),
 } );
 
 const moduleTaskMap = {
-	'lazy-images': 'jetpack_lazy_images',
-	monitor: 'jetpack_monitor',
+	'lazy-images': CHECKLIST_KNOWN_TASKS.JETPACK_LAZY_IMAGES,
+	monitor: CHECKLIST_KNOWN_TASKS.JETPACK_MONITOR,
 	// Both photon and photon-cdn mark the Site Accelerator Task as completed
-	photon: 'jetpack_site_accelerator',
-	'photon-cdn': 'jetpack_site_accelerator',
-	search: 'jetpack_search',
-	videopress: 'jetpack_video_hosting',
+	photon: CHECKLIST_KNOWN_TASKS.JETPACK_SITE_ACCELERATOR,
+	'photon-cdn': CHECKLIST_KNOWN_TASKS.JETPACK_SITE_ACCELERATOR,
+	search: CHECKLIST_KNOWN_TASKS.JETPACK_SEARCH,
+	videopress: CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING,
 };
 
 const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
@@ -42,7 +43,7 @@ const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
 			if ( action.moduleSlug === 'photon' || action.moduleSlug === 'photon-cdn' ) {
 				// We can't know if the other module is still active, so we don't change
 				// Site Accelerator task completion state.
-				return;
+				return state;
 			}
 
 			if ( moduleTaskMap.hasOwnProperty( action.moduleSlug ) ) {
@@ -57,4 +58,6 @@ const reducer = combineReducers( {
 	items,
 } );
 
-export default keyedReducer( 'siteId', reducer );
+const checklistReducer = keyedReducer( 'siteId', reducer );
+
+export default withStorageKey( 'checklist', checklistReducer );

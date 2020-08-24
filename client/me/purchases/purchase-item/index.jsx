@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
+import { CompactCard, ProductIcon } from '@automattic/components';
 import {
 	getDisplayName,
 	isExpired,
@@ -17,10 +17,10 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
+	isRecentMonthlyPurchase,
 	isRenewing,
 	purchaseType,
 	showCreditCardExpiringWarning,
-	subscribedWithinPastWeek,
 	getPartnerName,
 } from 'lib/purchases';
 import {
@@ -29,23 +29,22 @@ import {
 	isGoogleApps,
 	isPlan,
 	isTheme,
-	isJetpackBackup,
+	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import Notice from 'components/notice';
-import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { getPlanTermLabel } from 'lib/plans';
+import { getPlanClass, getPlanTermLabel } from 'lib/plans';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const eventProperties = warning => ( { warning, position: 'purchase-list' } );
+const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
 
 class PurchaseItem extends Component {
 	trackImpression( warning ) {
@@ -80,7 +79,7 @@ class PurchaseItem extends Component {
 
 		if ( isExpiring( purchase ) ) {
 			if ( expiry < moment().add( 30, 'days' ) ) {
-				const status = subscribedWithinPastWeek( purchase ) ? 'is-info' : 'is-error';
+				const status = isRecentMonthlyPurchase( purchase ) ? 'is-info' : 'is-error';
 				return (
 					<Notice isCompact status={ status } icon="notice">
 						{ translate( 'Expires %(timeUntilExpiry)s', {
@@ -159,10 +158,13 @@ class PurchaseItem extends Component {
 			return null;
 		}
 
-		if ( isPlan( purchase ) ) {
+		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
 			return (
 				<div className="purchase-item__plan-icon">
-					<PlanIcon plan={ purchase.productSlug } />
+					<ProductIcon
+						slug={ purchase.productSlug }
+						className={ getPlanClass( purchase.productSlug ) }
+					/>
 				</div>
 			);
 		}
@@ -174,8 +176,6 @@ class PurchaseItem extends Component {
 			icon = 'themes';
 		} else if ( isGoogleApps( purchase ) ) {
 			icon = 'mail';
-		} else if ( isJetpackBackup( purchase ) ) {
-			icon = 'cloud-upload';
 		}
 
 		if ( ! icon ) {

@@ -7,7 +7,7 @@
 	position: fixed;
 	bottom: 0;
 	right: 12px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	display: none;		/* disabled */
 	box-sizing: border-box;
 
@@ -114,7 +114,7 @@
 	}
 }
 
-@include breakpoint( '>960px' ) {
+@include breakpoint-deprecated( '>960px' ) {
 	@keyframes happychat-minimize {
 		0% {
 			max-height: 100%;
@@ -139,7 +139,7 @@
  * Panel mode
  */
 
-@include breakpoint( '>480px' ) {
+@include breakpoint-deprecated( '>480px' ) {
 
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
@@ -164,7 +164,7 @@
 
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 
 	.layout:not( .is-section-happychat ) {
 		.happychat__container.is-open {
@@ -185,7 +185,7 @@
  * Sidebar mode
  */
 
-@include breakpoint( '>1040px' ) {
+@include breakpoint-deprecated( '>1040px' ) {
 
 	// be more specific in scope to override the panel mode
 	.layout.has-chat:not( .is-group-editor ):not( .is-section-theme ):not( .is-group-reader ):not( .has-no-sidebar ) .happychat__container.is-open {

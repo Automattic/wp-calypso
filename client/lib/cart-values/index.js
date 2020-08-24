@@ -17,11 +17,11 @@ import {
 	hasDomainRegistration,
 	hasPlan,
 } from './cart-items';
-import { isCredits, isDomainRedemption, whitelistAttributes } from 'lib/products-values';
+import { isCredits, isDomainRedemption, allowedProductAttributes } from 'lib/products-values';
 import { detectWebPaymentMethod } from 'lib/web-payment';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
-extendImmutabilityHelper( '$auto', function( value, object ) {
+extendImmutabilityHelper( '$auto', function ( value, object ) {
 	return object ? update( object, value ) : update( {}, value );
 } );
 
@@ -32,6 +32,7 @@ const PAYMENT_METHODS = {
 	ebanx: 'WPCOM_Billing_Ebanx',
 	eps: 'WPCOM_Billing_Stripe_Source_Eps',
 	giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
+	id_wallet: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet',
 	ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
 	netbanking: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking',
 	paypal: 'WPCOM_Billing_PayPal_Express',
@@ -102,16 +103,16 @@ export function preprocessCartForServer( {
  * For instance you may want to create a temporary this way:
  * `emptyCart( 123456, { temporary: true } )`
  *
- * @param {int} [siteId] The Site Id the cart will be associated with
+ * @param {number} [siteId] The Site Id the cart will be associated with
  * @param {object} [attributes] Additional attributes for the cart (optional)
- * @returns {cart} [emptyCart] The new empty cart created
+ * @returns {object} [emptyCart] The new empty cart created
  */
 export function emptyCart( siteId, attributes ) {
 	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
 export function applyCoupon( coupon ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			coupon: { $set: coupon },
 			is_coupon_applied: { $set: false },
@@ -121,7 +122,7 @@ export function applyCoupon( coupon ) {
 }
 
 export function removeCoupon() {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			coupon: { $set: '' },
 			is_coupon_applied: { $set: false },
@@ -130,14 +131,14 @@ export function removeCoupon() {
 	};
 }
 
-export const getTaxCountryCode = cart => get( cart, [ 'tax', 'location', 'country_code' ] );
+export const getTaxCountryCode = ( cart ) => get( cart, [ 'tax', 'location', 'country_code' ] );
 
-export const getTaxPostalCode = cart => get( cart, [ 'tax', 'location', 'postal_code' ] );
+export const getTaxPostalCode = ( cart ) => get( cart, [ 'tax', 'location', 'postal_code' ] );
 
-export const getTaxLocation = cart => get( cart, [ 'tax', 'location' ], {} );
+export const getTaxLocation = ( cart ) => get( cart, [ 'tax', 'location' ], {} );
 
 export function setTaxCountryCode( countryCode ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			$auto: {
 				tax: {
@@ -157,7 +158,7 @@ export function setTaxCountryCode( countryCode ) {
 }
 
 export function setTaxPostalCode( postalCode ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			$auto: {
 				tax: {
@@ -177,7 +178,7 @@ export function setTaxPostalCode( postalCode ) {
 }
 
 export function setTaxLocation( { postalCode, countryCode } ) {
-	return function( cart ) {
+	return function ( cart ) {
 		return update( cart, {
 			$auto: {
 				tax: {
@@ -212,8 +213,8 @@ export function canRemoveFromCart( cart, cartItem ) {
  * It's possible that we're comparing two carts that have the same server header date.
  * This means the changes only happened locally and the messages returned will be [].
  *
- * @param {cartValue} [previousCartValue] - the previously loaded cart
- * @param {cartValue} [nextCartValue] - the new cart value
+ * @param {object} [previousCartValue] - the previously loaded cart
+ * @param {object} [nextCartValue] - the new cart value
  * @returns {Array} [nextCartMessages] - an array of messages about the state of the cart
  */
 export function getNewMessages( previousCartValue, nextCartValue ) {
@@ -253,10 +254,10 @@ export function isFree( cart ) {
 export function fillInAllCartItemAttributes( cart, products ) {
 	return update( cart, {
 		products: {
-			$apply: function( items ) {
+			$apply: function ( items ) {
 				return (
 					items &&
-					items.map( function( cartItem ) {
+					items.map( function ( cartItem ) {
 						return fillInSingleCartItemAttributes( cartItem, products );
 					} )
 				);
@@ -267,7 +268,7 @@ export function fillInAllCartItemAttributes( cart, products ) {
 
 export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
-	const attributes = whitelistAttributes( product );
+	const attributes = allowedProductAttributes( product );
 
 	return extend( {}, cartItem, attributes );
 }
@@ -277,7 +278,7 @@ export function fillInSingleCartItemAttributes( cartItem, products ) {
  * in the shopping cart. See the support documentation for more details on
  * these policies:
  *
- * https://en.support.wordpress.com/refunds/
+ * https://wordpress.com/support/refunds/
  *
  * @param {object} cart - cart as `CartValue` object
  * @returns {string} the refund policy type
@@ -299,25 +300,25 @@ export function getEnabledPaymentMethods( cart ) {
 	let allowedPaymentMethods = cart.allowed_payment_methods.slice( 0 );
 
 	// Ebanx is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
 		return 'WPCOM_Billing_Ebanx' !== method;
 	} );
 
 	// Stripe Elements is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
 		return 'WPCOM_Billing_Stripe_Payment_Method' !== method;
 	} );
 
 	// Web payment methods such as Apple Pay are enabled based on client-side
 	// capabilities.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function( method ) {
+	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
 		return 'WPCOM_Billing_Web_Payment' !== method || null !== detectWebPaymentMethod();
 	} );
 
 	// Invert so we can search by class name.
 	const paymentMethodsKeys = invert( PAYMENT_METHODS );
 
-	return allowedPaymentMethods.map( function( methodClassName ) {
+	return allowedPaymentMethods.map( function ( methodClassName ) {
 		return paymentMethodsKeys[ methodClassName ];
 	} );
 }
@@ -345,6 +346,7 @@ export function paymentMethodName( method ) {
 		'credit-card': translate( 'Credit or debit card' ),
 		eps: 'EPS',
 		giropay: 'Giropay',
+		id_wallet: 'OVO',
 		ideal: 'iDEAL',
 		netbanking: 'Net Banking',
 		paypal: 'PayPal',

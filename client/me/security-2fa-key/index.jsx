@@ -34,7 +34,7 @@ class Security2faKey extends React.Component {
 	};
 
 	getClickHandler = ( action, callback ) => {
-		return event => {
+		return ( event ) => {
 			this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 
 			if ( callback ) {
@@ -43,7 +43,7 @@ class Security2faKey extends React.Component {
 		};
 	};
 
-	addKeyStart = event => {
+	addKeyStart = ( event ) => {
 		event.preventDefault();
 		this.setState( { addingKey: true } );
 	};
@@ -52,7 +52,7 @@ class Security2faKey extends React.Component {
 		this.getKeysFromServer();
 	};
 
-	deleteKeyRegister = keyData => {
+	deleteKeyRegister = ( keyData ) => {
 		wpcom.req.get(
 			'/me/two-step/security-key/delete',
 			{ credential_id: keyData.id },
@@ -105,7 +105,7 @@ class Security2faKey extends React.Component {
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon="plus-small" size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-							{ translate( 'Register Key' ) }
+							{ translate( 'Register key' ) }
 						</Button>
 					) }
 				</SectionHeader>

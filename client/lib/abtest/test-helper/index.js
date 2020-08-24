@@ -26,7 +26,7 @@ const debug = Debug( 'calypso:abtests:helper' );
 class Test extends React.Component {
 	static displayName = 'Test';
 
-	changeVariant = variation => {
+	changeVariant = ( variation ) => {
 		this.props.onChangeVariant( this.props.test, variation );
 	};
 
@@ -36,7 +36,7 @@ class Test extends React.Component {
 			<div>
 				<h5 className="test-helper__test-header">{ this.props.test.name }</h5>
 				<ul className="test-helper__list">
-					{ this.props.test.variationNames.map( variation => (
+					{ this.props.test.variationNames.map( ( variation ) => (
 						<li onClick={ this.changeVariant.bind( this, variation ) } key={ variation }>
 							<a
 								className={ classNames( {
@@ -66,7 +66,7 @@ const TestList = ( { tests, onChangeVariant } ) => (
 			ABTests
 		</a>
 		<Card className="test-helper__active-tests">
-			{ tests.map( test => (
+			{ tests.map( ( test ) => (
 				<Test key={ test.name } test={ test } onChangeVariant={ onChangeVariant } />
 			) ) }
 		</Card>
@@ -77,7 +77,7 @@ export default function injectTestHelper( element ) {
 	ReactDom.render(
 		React.createElement( TestList, {
 			tests: getAllTests(),
-			onChangeVariant: function( test, variation ) {
+			onChangeVariant: function ( test, variation ) {
 				debug( 'Switching test variant', test.experimentId, variation );
 				saveABTestVariation( test.name, variation );
 				window.location.reload();

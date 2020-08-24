@@ -8,7 +8,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
 
-export default withoutPersistence( function( state = {}, action ) {
+export default withoutPersistence( function ( state = {}, action ) {
 	switch ( action.type ) {
 		case WOOCOMMERCE_SHIPPING_CLASSES_REQUEST:
 			return LOADING;

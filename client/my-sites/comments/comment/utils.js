@@ -9,7 +9,7 @@ import { get } from 'lodash';
  * @param {object} comment A comment object.
  * @returns {object} A stripped down comment object.
  */
-export const getMinimumComment = comment => ( {
+export const getMinimumComment = ( comment ) => ( {
 	commentId: get( comment, 'ID' ),
 	isLiked: get( comment, 'i_like' ),
 	postId: get( comment, 'post.ID' ),

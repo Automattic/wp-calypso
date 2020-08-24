@@ -24,7 +24,7 @@ function FollowList() {
 /**
  * Adds a new follower object to the data store
  */
-FollowList.prototype.add = function( object ) {
+FollowList.prototype.add = function ( object ) {
 	let site = this.siteExists( object.site_id );
 	if ( ! site ) {
 		site = new FollowListSite( object );
@@ -33,7 +33,7 @@ FollowList.prototype.add = function( object ) {
 	return site;
 };
 
-FollowList.prototype.siteExists = function( site_id ) {
+FollowList.prototype.siteExists = function ( site_id ) {
 	return find( this.data, { site_id } ) || false;
 };
 

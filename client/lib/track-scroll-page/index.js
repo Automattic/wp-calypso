@@ -1,11 +1,12 @@
 /**
  * Internal dependencies
  */
+import { recordPageView } from 'lib/analytics/page-view';
+import { bumpStat } from 'lib/analytics/mc';
+import { gaRecordEvent } from 'lib/analytics/ga';
 
-import analytics from 'lib/analytics';
-
-export default function( path, title, category, page ) {
-	analytics.ga.recordEvent( category, 'Loaded Next Page', 'page', page );
-	analytics.pageView.record( path, title );
-	analytics.mc.bumpStat( 'newdash_pageviews', 'scroll' );
+export default function ( path, title, category, page ) {
+	gaRecordEvent( category, 'Loaded Next Page', 'page', page );
+	recordPageView( path, title );
+	bumpStat( 'newdash_pageviews', 'scroll' );
 }

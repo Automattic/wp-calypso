@@ -23,7 +23,7 @@ import {
  * @param {string} method name of HTTP method for request
  * @returns {Function} the fetcher
  */
-const fetcherMap = method =>
+const fetcherMap = ( method ) =>
 	get(
 		{
 			GET: wpcom.req.get.bind( wpcom.req ),
@@ -46,13 +46,14 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		return;
 	}
 
-	const { body, formData, method: rawMethod, onProgress, path, query = {} } = action;
+	const { body, formData, method: rawMethod, onProgress, options, path, query = {} } = action;
+	const { responseType } = options || {};
 
 	const method = rawMethod.toUpperCase();
 
 	const request = fetcherMap( method )(
 		...compact( [
-			{ path, formData },
+			{ path, formData, responseType },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
 			( error, data, headers ) => {
@@ -69,11 +70,11 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 					return null;
 				}
 
-				return !! nextError
-					? failures.forEach( handler =>
+				return nextError
+					? failures.forEach( ( handler ) =>
 							dispatch( extendAction( handler, failureMeta( nextError, nextHeaders ) ) )
 					  )
-					: successes.forEach( handler =>
+					: successes.forEach( ( handler ) =>
 							dispatch( extendAction( handler, successMeta( nextData, nextHeaders ) ) )
 					  );
 			},
@@ -81,8 +82,11 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	);
 
 	if ( 'POST' === method && onProgress ) {
-		request.upload.onprogress = event =>
-			dispatch( extendAction( onProgress, progressMeta( event ) ) );
+		// wpcomProxyRequest request - wpcomXhrRequests come through here with .upload
+		if ( request.upload ) {
+			request.upload.onprogress = ( event ) =>
+				dispatch( extendAction( onProgress, progressMeta( event ) ) );
+		}
 	}
 };
 

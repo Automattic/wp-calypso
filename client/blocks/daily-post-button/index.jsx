@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
+import AsyncLoad from 'components/async-load';
 import { translate } from 'i18n-calypso';
 import { preload } from 'sections-helper';
-import SitesPopover from 'components/sites-popover';
 import { Button } from '@automattic/components';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
@@ -96,7 +96,7 @@ export class DailyPostButton extends React.Component {
 		} );
 	}
 
-	openEditorWithSite = siteSlug => {
+	openEditorWithSite = ( siteSlug ) => {
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 
 		recordAction( 'daily_post_challenge' );
@@ -109,7 +109,7 @@ export class DailyPostButton extends React.Component {
 		return true;
 	};
 
-	toggle = event => {
+	toggle = ( event ) => {
 		event.preventDefault();
 		if ( ! this.state.showingMenu ) {
 			recordAction( 'open_daily_post_challenge' );
@@ -135,7 +135,9 @@ export class DailyPostButton extends React.Component {
 	renderSitesPopover = () => {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<SitesPopover
+			<AsyncLoad
+				require="components/sites-popover"
+				placeholder={ null }
 				key="menu"
 				header={ <div> { translate( 'Post on' ) } </div> }
 				context={ this.dailyPostButtonRef.current }
@@ -188,7 +190,7 @@ export class DailyPostButton extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const primarySiteId = getPrimarySiteId( state );
 		const user = getCurrentUser( state );
 		const visibleSiteCount = get( user, 'visible_site_count', 0 );

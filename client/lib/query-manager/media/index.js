@@ -50,7 +50,7 @@ export default class MediaQueryManager extends PaginatedQueryManager {
 							// Split subgroup and group to filter
 							.split( '/' )
 							// Remove invalid characters
-							.map( group => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
+							.map( ( group ) => group.replace( /[^-*.+a-zA-Z0-9]/g, '' ) )
 							// If no group, append wildcard match
 							.concat( '.+' )
 							// Take only subgroup and group

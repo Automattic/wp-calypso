@@ -147,7 +147,7 @@ class CancelPurchaseForm extends React.Component {
 			value,
 		} );
 
-	onRadioOneChange = event => {
+	onRadioOneChange = ( event ) => {
 		this.recordClickRadioEvent( 'radio_1', event.currentTarget.value );
 
 		const newState = {
@@ -159,7 +159,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextOneChange = event => {
+	onTextOneChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionOneText: event.currentTarget.value,
@@ -168,7 +168,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onRadioTwoChange = event => {
+	onRadioTwoChange = ( event ) => {
 		this.recordClickRadioEvent( 'radio_2', event.currentTarget.value );
 
 		const newState = {
@@ -180,7 +180,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextTwoChange = event => {
+	onTextTwoChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionTwoText: event.currentTarget.value,
@@ -189,7 +189,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onTextThreeChange = event => {
+	onTextThreeChange = ( event ) => {
 		const newState = {
 			...this.state,
 			questionThreeText: event.currentTarget.value,
@@ -198,7 +198,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onImportRadioChange = event => {
+	onImportRadioChange = ( event ) => {
 		this.recordClickRadioEvent( 'import_radio', event.currentTarget.value );
 
 		const newState = {
@@ -210,7 +210,7 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
-	onImportTextChange = event => {
+	onImportTextChange = ( event ) => {
 		const newState = {
 			...this.state,
 			importQuestionText: event.currentTarget.value,
@@ -349,7 +349,7 @@ class CancelPurchaseForm extends React.Component {
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ questionOneOrder.map( question => reasons[ question ] ) }
+				{ questionOneOrder.map( ( question ) => reasons[ question ] ) }
 			</div>
 		);
 	};
@@ -411,7 +411,7 @@ class CancelPurchaseForm extends React.Component {
 		return (
 			<div className="cancel-purchase-form__question">
 				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
-				{ questionTwoOrder.map( question => reasons[ question ] ) }
+				{ questionTwoOrder.map( ( question ) => reasons[ question ] ) }
 			</div>
 		);
 	};
@@ -630,7 +630,7 @@ class CancelPurchaseForm extends React.Component {
 		this.recordEvent( 'calypso_purchases_cancel_form_close' );
 	};
 
-	changeSurveyStep = stepFunction => {
+	changeSurveyStep = ( stepFunction ) => {
 		const allSteps = this.getAllSurveySteps();
 		const newStep = stepFunction( this.state.surveyStep, allSteps );
 

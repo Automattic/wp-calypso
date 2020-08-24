@@ -35,7 +35,7 @@ export default function getReaderAliasedFollowFeedUrl( state, feedUrl ) {
 		state.reader.follows.items,
 		( follow, key ) =>
 			includes( follow.alias_feed_URLs, urlKey ) ||
-			some( commonExtensions, ext => `${ urlKey }/${ ext }` === key )
+			some( commonExtensions, ( ext ) => `${ urlKey }/${ ext }` === key )
 	);
 	if ( foundAlias ) {
 		return foundAlias.feed_URL;

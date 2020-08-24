@@ -9,6 +9,7 @@
 		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
+		"rootDir": "src",
 
 		"strict": true,
 		"noUnusedLocals": true,
@@ -27,9 +28,9 @@
 		"noEmitHelpers": true,
 		"importHelpers": true,
 
-		"incremental": true,
-		"tsBuildInfoFile": "../../.tsc-cache/calypso-analytics"
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__calypso-analytics"
 	},
-	"files": [ "./src/index.ts" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

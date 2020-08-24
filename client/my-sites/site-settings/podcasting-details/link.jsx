@@ -29,7 +29,10 @@ class PodcastingLink extends Component {
 
 		return (
 			<div className={ classes }>
-				<SettingsSectionHeader title={ translate( 'Podcasting' ) } />
+				<SettingsSectionHeader
+					id="podcasting-details__link-header"
+					title={ translate( 'Podcasting' ) }
+				/>
 				<Card className="podcasting-details__link-card">{ this.renderCardBody() }</Card>
 			</div>
 		);
@@ -59,7 +62,7 @@ class PodcastingLink extends Component {
 						<PodcastingSupportLink />
 					</div>
 					<Button className="podcasting-details__link-button" href={ detailsLink }>
-						{ translate( 'Set Up' ) }
+						{ translate( 'Set up' ) }
 					</Button>
 				</div>
 			);

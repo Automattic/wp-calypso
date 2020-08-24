@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { translate } from 'i18n-calypso';
 import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
@@ -22,12 +21,14 @@ import {
 	ZONINATOR_SAVE_ZONE,
 } from 'zoninator/state/action-types';
 
+import 'state/form/init';
+
 const settingsPath = '/extensions/zoninator';
 
 const saveZoneNotice = 'zoninator-zone-create';
 const deleteZoneNotice = 'zoninator-zone-delete';
 
-export const requestZonesList = action =>
+export const requestZonesList = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -37,11 +38,11 @@ export const requestZonesList = action =>
 		action
 	);
 
-export const requestZonesError = action => requestError( action.siteId );
+export const requestZonesError = ( action ) => requestError( action.siteId );
 
 export const updateZonesList = ( action, zonesList ) => updateZones( action.siteId, zonesList );
 
-export const createZone = action => [
+export const createZone = ( action ) => [
 	startSubmit( action.form ),
 	removeNotice( saveZoneNotice ),
 	http(
@@ -58,7 +59,7 @@ export const createZone = action => [
 	),
 ];
 
-export const saveZone = action => [
+export const saveZone = ( action ) => [
 	startSubmit( action.form ),
 	removeNotice( saveZoneNotice ),
 	resetLock( action.siteId, action.zoneId ),
@@ -87,19 +88,19 @@ export const handleZoneCreated = ( action, zone ) => [
 	...announceZoneSaved( action, zone ),
 ];
 
-export const handleZoneSaved = action => [
+export const handleZoneSaved = ( action ) => [
 	initialize( action.form, action.data ),
 	...announceZoneSaved( action, action.data ),
 ];
 
-export const announceSaveFailure = action => [
+export const announceSaveFailure = ( action ) => [
 	stopSubmit( action.form ),
 	errorNotice( translate( 'There was a problem saving the zone. Please try again.' ), {
 		id: saveZoneNotice,
 	} ),
 ];
 
-export const deleteZone = action => [
+export const deleteZone = ( action ) => [
 	removeNotice( deleteZoneNotice ),
 	http(
 		{
@@ -111,7 +112,7 @@ export const deleteZone = action => [
 	),
 ];
 
-export const announceZoneDeleted = action => [
+export const announceZoneDeleted = ( action ) => [
 	navigate( `${ settingsPath }/${ action.siteSlug }` ),
 	requestZones( action.siteId ),
 	successNotice( translate( 'The zone has been deleted.' ), { id: deleteZoneNotice } ),

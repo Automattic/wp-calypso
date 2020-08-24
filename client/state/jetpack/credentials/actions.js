@@ -10,6 +10,7 @@ import {
 import 'state/data-layer/wpcom/activity-log/delete-credentials';
 import 'state/data-layer/wpcom/activity-log/rewind/activate';
 import 'state/data-layer/wpcom/activity-log/update-credentials';
+import 'state/jetpack/init';
 
 export const updateCredentials = ( siteId, credentials ) => ( {
 	type: JETPACK_CREDENTIALS_UPDATE,
@@ -17,7 +18,7 @@ export const updateCredentials = ( siteId, credentials ) => ( {
 	credentials,
 } );
 
-export const autoConfigCredentials = siteId => ( {
+export const autoConfigCredentials = ( siteId ) => ( {
 	type: JETPACK_CREDENTIALS_AUTOCONFIGURE,
 	siteId,
 } );

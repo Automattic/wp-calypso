@@ -18,7 +18,7 @@ import {
  * @returns {Function}        Action thunk
  */
 export function requestPostFormats( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: POST_FORMATS_REQUEST,
 			siteId,
@@ -40,7 +40,7 @@ export function requestPostFormats( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: POST_FORMATS_REQUEST_FAILURE,
 					siteId,

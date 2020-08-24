@@ -2,7 +2,7 @@
 	display: flex;
 	justify-content: space-between;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		flex-direction: column;
 	}
 
@@ -43,8 +43,8 @@
 }
 
 .gmb-location__name {
-	font-size: 16px;
-	font-weight: bold;
+	font-size: $font-body;
+	font-weight: 600;
 }
 
 .gmb-location__address p {

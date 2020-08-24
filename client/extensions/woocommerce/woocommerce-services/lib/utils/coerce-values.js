@@ -62,14 +62,14 @@ export const coerceValue = ( schema, value, definitions ) => {
 
 		case 'object':
 			const coerced = {};
-			Object.keys( value ).forEach( key => {
+			Object.keys( value ).forEach( ( key ) => {
 				const fieldSchema = ( schema.properties || {} )[ key ];
 				coerced[ key ] = coerceValue( fieldSchema, value[ key ], definitions );
 			} );
 			return coerced;
 
 		case 'array':
-			return value.map( arrayItem => coerceValue( schema.items, arrayItem, definitions ) );
+			return value.map( ( arrayItem ) => coerceValue( schema.items, arrayItem, definitions ) );
 
 		default:
 			return value;

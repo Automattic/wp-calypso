@@ -10,8 +10,8 @@ import getBillingTransactionFilters from 'state/selectors/get-billing-transactio
 
 describe( 'getBillingTransactionFilters()', () => {
 	const state = {
-		ui: {
-			billingTransactions: {
+		billingTransactions: {
+			ui: {
 				past: {
 					app: 'test app',
 					date: { month: '2018-03', operator: 'equal' },
@@ -44,7 +44,7 @@ describe( 'getBillingTransactionFilters()', () => {
 
 	test( 'fills missing values', () => {
 		const testState = cloneDeep( state );
-		testState.ui.billingTransactions.past = {
+		testState.billingTransactions.ui.past = {
 			app: 'test app',
 		};
 		const output = getBillingTransactionFilters( testState, 'past' );

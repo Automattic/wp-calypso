@@ -10,7 +10,9 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
+import fromActivityLogApi, {
+	fromActivityApi,
+} from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 
 /**
@@ -26,9 +28,9 @@ import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/fro
  * @param {string} url location from which to GET data
  * @returns {object} HTTP data wrapped value
  */
-export const requestFromUrl = url =>
+export const requestFromUrl = ( url ) =>
 	requestHttpData( `get-at-url-${ url }`, rawHttp( { method: 'GET', url } ), {
-		fromApi: () => data => [ [ `get-at-url-${ url }`, data ] ],
+		fromApi: () => ( data ) => [ [ `get-at-url-${ url }`, data ] ],
 	} );
 
 export const requestActivityActionTypeCounts = (
@@ -54,14 +56,14 @@ export const requestActivityActionTypeCounts = (
 		),
 		{
 			freshness,
-			fromApi: () => data => {
+			fromApi: () => ( data ) => {
 				return [ [ id, fromActivityTypeApi( data ) ] ];
 			},
 		}
 	);
 };
 
-export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
+export const getRequestActivityLogsId = ( siteId, filter ) => {
 	const group =
 		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
 	const before = filter && filter.before ? filter.before : '';
@@ -69,7 +71,11 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 	const on = filter && filter.on ? filter.on : '';
 	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
 
-	const id = `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
+	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
+};
+
+export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
+	const id = getRequestActivityLogsId( siteId, filter );
 	return requestHttpData(
 		id,
 		http(
@@ -83,16 +89,40 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 		),
 		{
 			freshness,
-			fromApi: () => data => {
+			fromApi: () => ( data ) => {
 				return [ [ id, fromActivityLogApi( data ) ] ];
 			},
 		}
 	);
 };
 
-const requestExternalContributorsId = siteId => `site-external-contributors-${ siteId }`;
+export const getRequestActivityId = ( siteId, rewindId ) =>
+	`activity-single-${ siteId }-${ rewindId }`;
 
-export const requestExternalContributors = siteId =>
+export const requestActivity = ( siteId, rewindId, { freshness = 5 * 60 * 1000 } = {} ) => {
+	const id = getRequestActivityId( siteId, rewindId );
+	return requestHttpData(
+		id,
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+				path: `/sites/${ siteId }/activity/${ rewindId }`,
+			},
+			{}
+		),
+		{
+			freshness,
+			fromApi: () => ( data ) => {
+				return [ [ id, fromActivityApi( data ) ] ];
+			},
+		}
+	);
+};
+
+const requestExternalContributorsId = ( siteId ) => `site-external-contributors-${ siteId }`;
+
+export const requestExternalContributors = ( siteId ) =>
 	requestHttpData(
 		requestExternalContributorsId( siteId ),
 		http( {
@@ -101,7 +131,7 @@ export const requestExternalContributors = siteId =>
 			apiNamespace: 'wpcom/v2',
 		} ),
 		{
-			fromApi: () => data => [ [ requestExternalContributorsId( siteId ), data ] ],
+			fromApi: () => ( data ) => [ [ requestExternalContributorsId( siteId ), data ] ],
 		}
 	);
 
@@ -117,7 +147,7 @@ export const requestExternalContributorsAddition = ( siteId, userId ) => {
 			body: { user_id: userId },
 		} ),
 		{
-			fromApi: () => data => [ [ requestId, data ] ],
+			fromApi: () => ( data ) => [ [ requestId, data ] ],
 		}
 	);
 };
@@ -134,7 +164,7 @@ export const requestExternalContributorsRemoval = ( siteId, userId ) => {
 			body: { user_id: userId },
 		} ),
 		{
-			fromApi: () => data => [ [ requestId, data ] ],
+			fromApi: () => ( data ) => [ [ requestId, data ] ],
 		}
 	);
 };
@@ -149,7 +179,7 @@ export const requestGeoLocation = () =>
 		{ fromApi: () => ( { body: { country_short } } ) => [ [ 'geo', country_short ] ] }
 	);
 
-export const requestFeedDiscovery = feedId => {
+export const requestFeedDiscovery = ( feedId ) => {
 	const requestId = `feed-discovery-${ feedId }`;
 
 	return requestHttpData(
@@ -171,7 +201,7 @@ export const requestFeedDiscovery = feedId => {
 	);
 };
 
-export const requestSiteAlerts = siteId => {
+export const requestSiteAlerts = ( siteId ) => {
 	const id = `site-alerts-${ siteId }`;
 
 	return requestHttpData(
@@ -191,7 +221,7 @@ export const requestSiteAlerts = siteId => {
 					id,
 					{
 						suggestions,
-						threats: threats.map( threat => ( {
+						threats: threats.map( ( threat ) => ( {
 							id: threat.id,
 							signature: threat.signature,
 							description: threat.description,
@@ -211,13 +241,13 @@ export const requestSiteAlerts = siteId => {
 						} ) ),
 						warnings,
 						updates: {
-							themes: updates.themes.map( theme => ( {
+							themes: updates.themes.map( ( theme ) => ( {
 								name: theme.name,
 								slug: theme.slug,
 								type: theme.type,
 								version: theme.version,
 							} ) ),
-							core: updates.core.map( theme => ( {
+							core: updates.core.map( ( theme ) => ( {
 								name: theme.name,
 								slug: theme.slug,
 								type: theme.type,

@@ -11,8 +11,8 @@ import classnames from 'classnames';
  */
 import Popover from 'components/popover';
 import PostLikes from './index';
-import getPostLikes from 'state/selectors/get-post-likes';
-import countPostLikes from 'state/selectors/count-post-likes';
+import { getPostLikes } from 'state/posts/selectors/get-post-likes';
+import { countPostLikes } from 'state/posts/selectors/count-post-likes';
 
 /**
  * Style dependencies

@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import DocumentHead from 'components/data/document-head';
-import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
+import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors/get-document-head-capped-unread-count';
 import { getCommentById } from 'state/comments/selectors';
 import { getStream } from 'state/reader/streams/selectors';
 
@@ -52,15 +52,15 @@ class UpdateNotice extends React.PureComponent {
 		);
 	}
 
-	handleClick = event => {
+	handleClick = ( event ) => {
 		event.preventDefault();
 		this.props.onClick();
 	};
 }
 
 const countNewComments = ( state, postKeys ) => {
-	const newComments = flatMap( postKeys, postKey => {
-		return filter( postKey.comments, commentId => {
+	const newComments = flatMap( postKeys, ( postKey ) => {
+		return filter( postKey.comments, ( commentId ) => {
 			return ! getCommentById( {
 				state,
 				siteId: postKey.blogId,

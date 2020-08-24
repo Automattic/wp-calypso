@@ -17,7 +17,7 @@ class SiteSettings {
 
 		this.wpcom = wpcom;
 		this._sid = sid;
-		this.path = `/sites/${this._sid}/settings`;
+		this.path = `/sites/${ this._sid }/settings`;
 	}
 
 	/**

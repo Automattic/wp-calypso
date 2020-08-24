@@ -21,5 +21,5 @@ export function getCommentById( { state, commentId, siteId } ) {
 			return deconstructStateKey( key ).siteId === siteId;
 		} )
 	);
-	return find( commentsForSite, comment => commentId === comment.ID );
+	return find( commentsForSite, ( comment ) => commentId === comment.ID );
 }

@@ -43,7 +43,7 @@ sections and a section that renders its entire component tree at once (a _single
 rendered_ section). For this reason, we have to unmount and re-render component
 trees when switching between these two types of sections. We do this in a `page()`
 handler in [`client/boot`](../client/boot/index.js). You'll have to locate that
-handler and add your isomorphic section to the `singleTreeSections` whitelist array.
+handler and add your isomorphic section to the `singleTreeSections` array of allowed sections.
 * Behind the scenes, we're using a [util](../server/isomorphic-routing/README.md) that adapts `page.js` style middleware to [Express](https://expressjs.com/en/guide/routing.html)',
 our server router's middleware signatures. We might want to switch to an isomorphic
 router in the future.

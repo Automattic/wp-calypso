@@ -34,7 +34,7 @@ class ConversationFollowButtonContainer extends Component {
 		onFollowToggle: noop,
 	};
 
-	handleFollowToggle = isRequestingFollow => {
+	handleFollowToggle = ( isRequestingFollow ) => {
 		const { siteId, postId, post, followSource } = this.props;
 
 		const tracksProperties = assign( getTracksPropertiesForPost( post ), {

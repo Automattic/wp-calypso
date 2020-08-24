@@ -40,7 +40,7 @@ class HostCredentialsPage extends Component {
 		} );
 	};
 
-	onFieldChange = fieldName => e => {
+	onFieldChange = ( fieldName ) => ( e ) => {
 		this.setFieldValue( fieldName, e.target.value );
 	};
 
@@ -105,7 +105,7 @@ const mapStateToProps = ( state, { siteId } ) => ( {
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
-	submit: data => dispatch( saveHostDetails( siteId, data ) ),
+	submit: ( data ) => dispatch( saveHostDetails( siteId, data ) ),
 } );
 
 export default localize( connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage ) );

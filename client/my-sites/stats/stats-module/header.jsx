@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import titlecase from 'to-title-case';
 
 class StatsModuleHeader extends React.Component {
@@ -36,14 +35,14 @@ class StatsModuleHeader extends React.Component {
 		onActionClick: () => {},
 	};
 
-	toggleInfo = event => {
+	toggleInfo = ( event ) => {
 		event.stopPropagation();
 		event.preventDefault();
 		const { path, onActionClick, showInfo } = this.props;
 		const gaEvent = showInfo ? 'Closed' : 'Opened';
 
 		if ( path ) {
-			analytics.ga.recordEvent( 'Stats', gaEvent + ' More Information Panel', titlecase( path ) );
+			gaRecordEvent( 'Stats', gaEvent + ' More Information Panel', titlecase( path ) );
 		}
 
 		onActionClick( {
@@ -51,13 +50,13 @@ class StatsModuleHeader extends React.Component {
 		} );
 	};
 
-	toggleModule = event => {
+	toggleModule = ( event ) => {
 		event.preventDefault();
 		const { path, onActionClick, showModule } = this.props;
 		const gaEvent = showModule ? 'Collapsed' : 'Expanded';
 
 		if ( path ) {
-			analytics.ga.recordEvent( 'Stats', gaEvent + ' Module', titlecase( path ) );
+			gaRecordEvent( 'Stats', gaEvent + ' Module', titlecase( path ) );
 		}
 
 		onActionClick( {

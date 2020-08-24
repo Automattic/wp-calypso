@@ -46,7 +46,7 @@ input[type='text'].token-field__input {
 	border: 0;
 	outline: none;
 	font-family: inherit;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
 
 	&:focus {
@@ -56,7 +56,7 @@ input[type='text'].token-field__input {
 
 // Tokens
 .token-field__token {
-	font-size: 14px;
+	font-size: $font-body-small;
 	display: flex;
 	margin: 2px 0 2px 8px;
 	color: var( --color-text-inverted );
@@ -175,7 +175,7 @@ input[type='text'].token-field__input {
 .token-field__suggestion {
 	color: var( --color-neutral-light );
 	display: block;
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 4px 8px;
 	cursor: pointer;
 

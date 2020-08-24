@@ -70,7 +70,7 @@ class FacebookLoginButton extends Component {
 		}
 
 		this.initialized = this.loadDependency()
-			.then( FB => {
+			.then( ( FB ) => {
 				FB.init( {
 					appId: this.props.appId,
 					version: this.props.version,
@@ -80,7 +80,7 @@ class FacebookLoginButton extends Component {
 
 				return FB;
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				this.initialized = null;
 
 				return Promise.reject( error );
@@ -98,9 +98,9 @@ class FacebookLoginButton extends Component {
 
 		// Handle click async if the library is not loaded yet
 		// the popup might be blocked by the browser in that case
-		this.initialize().then( FB => {
+		this.initialize().then( ( FB ) => {
 			FB.login(
-				response => {
+				( response ) => {
 					responseHandler( response );
 				},
 				{ scope }
@@ -132,6 +132,6 @@ class FacebookLoginButton extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	isFormDisabled: isFormDisabled( state ),
 } ) )( localize( FacebookLoginButton ) );

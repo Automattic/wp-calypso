@@ -3,14 +3,14 @@
  */
 import {
 	canDomainAddGSuite,
+	canUserPurchaseGSuite,
 	getAnnualPrice,
 	getEligibleGSuiteDomain,
-	getMonthlyPrice,
 	getGSuiteSupportedDomains,
+	getMonthlyPrice,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithUs,
 	hasPendingGSuiteUsers,
-	isGSuiteRestricted,
 } from 'lib/gsuite';
 
 jest.mock( 'lib/user/', () => {
@@ -29,12 +29,8 @@ describe( 'index', () => {
 			expect( canDomainAddGSuite( 'foobar.blog' ) ).toEqual( true );
 		} );
 
-		test( 'returns false when domain has invalid TLD', () => {
-			expect( canDomainAddGSuite( 'foobar.in' ) ).toEqual( false );
-		} );
-
-		test( 'returns false when domain has banned phrase', () => {
-			expect( canDomainAddGSuite( 'foobargoogle.blog' ) ).toEqual( false );
+		test( 'returns false when domain is invalid', () => {
+			expect( canDomainAddGSuite( 'foobar.wpcomstaging.com' ) ).toEqual( false );
 		} );
 	} );
 
@@ -80,7 +76,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'Returns empty string if selected domain is invalid and domains are empty', () => {
-			expect( getEligibleGSuiteDomain( 'domain-with-google-banned-term.blog', [] ) ).toEqual( '' );
+			expect( getEligibleGSuiteDomain( 'invalid-domain.wpcomstaging.com', [] ) ).toEqual( '' );
 		} );
 
 		test( 'Returns selected domain if selected domain is valid and domains are empty', () => {
@@ -89,7 +85,7 @@ describe( 'index', () => {
 
 		const domains = [
 			{
-				name: 'domain-with-google-banned-term.blog',
+				name: 'invalid-domain.wpcomstaging.com',
 				type: 'REGISTERED',
 			},
 			{
@@ -125,8 +121,19 @@ describe( 'index', () => {
 			);
 		} );
 
-		test( 'Returns primary domain if no selected domain', () => {
-			expect( getEligibleGSuiteDomain( '', domains ) ).toEqual( 'primary-domain.blog' );
+		test( 'Returns primary domain if no selected domain and the primary domain is eligible', () => {
+			const domainsWithEligiblePrimaryDomain = domains.map( ( domain ) =>
+				domain.isPrimary ? { ...domain, hasWpcomNameservers: true } : domain
+			);
+			expect( getEligibleGSuiteDomain( '', domainsWithEligiblePrimaryDomain ) ).toEqual(
+				'primary-domain.blog'
+			);
+		} );
+
+		test( 'Returns the first eligible domain if no selected domain and the primary domain is not eligible', () => {
+			expect( getEligibleGSuiteDomain( '', domains ) ).toEqual(
+				'mapped-domain-with-wpcom-nameservers.blog'
+			);
 		} );
 
 		test( 'Returns first non-primary domain if no selected domain and no primary domain in domains', () => {
@@ -152,7 +159,7 @@ describe( 'index', () => {
 		test( 'returns empty array if domain is invalid', () => {
 			expect(
 				getGSuiteSupportedDomains( [
-					{ name: 'foogoogle.blog', type: 'REGISTERED', googleAppsSubscription: {} },
+					{ name: 'foo.wpcomstaging.com', type: 'REGISTERED', googleAppsSubscription: {} },
 				] )
 			).toEqual( [] );
 		} );
@@ -212,7 +219,7 @@ describe( 'index', () => {
 		test( 'returns false if passed an array with invalid domains', () => {
 			expect(
 				hasGSuiteSupportedDomain( [
-					{ name: 'foogoogle.blog', type: 'REGISTERED', googleAppsSubscription: {} },
+					{ name: 'foo.wpcomstaging.com', type: 'REGISTERED', googleAppsSubscription: {} },
 				] )
 			).toEqual( false );
 		} );
@@ -253,9 +260,9 @@ describe( 'index', () => {
 		} );
 	} );
 
-	describe( '#isGSuiteRestricted', () => {
-		test( 'returns false if user is not G Suite restricted', () => {
-			expect( isGSuiteRestricted() ).toEqual( false );
+	describe( '#canUserPurchaseGSuite', () => {
+		test( 'returns true if the user is allowed to purchase G Suite', () => {
+			expect( canUserPurchaseGSuite() ).toEqual( true );
 		} );
 	} );
 } );

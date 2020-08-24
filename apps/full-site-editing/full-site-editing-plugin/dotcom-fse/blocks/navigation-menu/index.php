@@ -63,14 +63,14 @@ function render_navigation_menu_block( $attributes ) {
 	$toggle_class    .= $class;
 
 	$menu = wp_nav_menu(
-		[
+		array(
 			'echo'           => false,
 			'fallback_cb'    => 'get_fallback_navigation_menu',
 			'items_wrap'     => '<ul id="%1$s" class="%2$s" aria-label="submenu">%3$s</ul>',
 			'menu_class'     => 'main-menu footer-menu',
 			'theme_location' => 'menu-1',
 			'container'      => '',
-		]
+		)
 	);
 
 	ob_start();
@@ -103,14 +103,14 @@ function render_navigation_menu_block( $attributes ) {
  */
 function get_fallback_navigation_menu() {
 	$menu = wp_page_menu(
-		[
+		array(
 			'after'       => false,
 			'before'      => false,
 			'container'   => 'ul',
 			'echo'        => false,
 			'menu_class'  => 'main-menu footer-menu',
 			'sort_column' => 'menu_order, post_date',
-		]
+		)
 	);
 
 	/**
@@ -118,8 +118,8 @@ function get_fallback_navigation_menu() {
 	 * CSS class structure as a regularly built menu
 	 * so we don't have to duplicate CSS selectors everywhere.
 	 */
-	$original_classes    = [ 'children', 'page_item_has_sub-menu' ];
-	$replacement_classes = [ 'sub-menu', 'menu-item-has-children' ];
+	$original_classes    = array( 'children', 'page_item_has_sub-menu' );
+	$replacement_classes = array( 'sub-menu', 'menu-item-has-children' );
 
 	return str_replace( $original_classes, $replacement_classes, $menu );
 }

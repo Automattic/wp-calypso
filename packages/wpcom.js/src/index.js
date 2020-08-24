@@ -74,7 +74,7 @@ export default function WPCOM( token, reqHandler ) {
  *
  * @returns {Marketing} Marketing instance
  */
-WPCOM.prototype.marketing = function() {
+WPCOM.prototype.marketing = function () {
 	return new Marketing( this );
 };
 
@@ -83,7 +83,7 @@ WPCOM.prototype.marketing = function() {
  *
  * @returns {Me} Me instance
  */
-WPCOM.prototype.me = function() {
+WPCOM.prototype.me = function () {
 	return new Me( this );
 };
 
@@ -92,7 +92,7 @@ WPCOM.prototype.me = function() {
  *
  * @returns {Domains} Domains instance
  */
-WPCOM.prototype.domains = function() {
+WPCOM.prototype.domains = function () {
 	return new Domains( this );
 };
 
@@ -102,7 +102,7 @@ WPCOM.prototype.domains = function() {
  * @param {string} domainId - domain identifier
  * @returns {Domain} Domain instance
  */
-WPCOM.prototype.domain = function( domainId ) {
+WPCOM.prototype.domain = function ( domainId ) {
 	return new Domain( domainId, this );
 };
 
@@ -112,7 +112,7 @@ WPCOM.prototype.domain = function( domainId ) {
  * @param {string} id - site identifier
  * @returns {Site} Site instance
  */
-WPCOM.prototype.site = function( id ) {
+WPCOM.prototype.site = function ( id ) {
 	return new Site( id, this );
 };
 
@@ -121,7 +121,7 @@ WPCOM.prototype.site = function( id ) {
  *
  * @returns {Users} Users instance
  */
-WPCOM.prototype.users = function() {
+WPCOM.prototype.users = function () {
 	return new Users( this );
 };
 
@@ -130,7 +130,7 @@ WPCOM.prototype.users = function() {
  *
  * @returns {Plans} Plans instance
  */
-WPCOM.prototype.plans = function() {
+WPCOM.prototype.plans = function () {
 	return new Plans( this );
 };
 
@@ -139,7 +139,7 @@ WPCOM.prototype.plans = function() {
  *
  * @returns {Batch} Batch instance
  */
-WPCOM.prototype.batch = function() {
+WPCOM.prototype.batch = function () {
 	return new Batch( this );
 };
 
@@ -150,13 +150,13 @@ WPCOM.prototype.batch = function() {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-WPCOM.prototype.freshlyPressed = function( query, fn ) {
+WPCOM.prototype.freshlyPressed = function ( query, fn ) {
 	return this.req.get( '/freshly-pressed', query, fn );
 };
 
 // Expose send-request
 // TODO: use `this.req` instead of this method
-WPCOM.prototype.sendRequest = function( params, query, body, fn ) {
+WPCOM.prototype.sendRequest = function ( params, query, body, fn ) {
 	const msg = 'WARN! Don use `sendRequest() anymore. Use `this.req` method.';
 
 	/* eslint-disable no-console */
@@ -195,7 +195,7 @@ if ( ! Promise.prototype.timeout ) {
 	 * @param {number} delay how many ms to wait
 	 * @returns {Promise} promise
 	 */
-	Promise.prototype.timeout = function( delay = DEFAULT_ASYNC_TIMEOUT ) {
+	Promise.prototype.timeout = function ( delay = DEFAULT_ASYNC_TIMEOUT ) {
 		let timer;
 
 		const timeout = new Promise( ( resolve, reject ) => {

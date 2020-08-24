@@ -15,7 +15,7 @@ import { BusinessATStep } from '../business-at-step';
 describe( 'BusinessATStep', () => {
 	describe( 'rendering translated content', () => {
 		let wrapper;
-		const translate = content => `Translated: ${ content }`;
+		const translate = ( content ) => `Translated: ${ content }`;
 
 		beforeEach( () => {
 			wrapper = shallow( <BusinessATStep recordTracksEvent={ noop } translate={ translate } /> );
@@ -28,12 +28,7 @@ describe( 'BusinessATStep', () => {
 		} );
 
 		test( 'should render translated link content', () => {
-			expect(
-				wrapper
-					.find( 'FormFieldset > p' )
-					.at( 0 )
-					.props().children
-			).to.equal(
+			expect( wrapper.find( 'FormFieldset > p' ).at( 0 ).props().children ).to.equal(
 				'Translated: Have a theme or plugin you need to install to build the site you want? ' +
 					'Now you can! ' +
 					'Learn more about {{pluginLink}}installing plugins{{/pluginLink}} and ' +
@@ -42,12 +37,7 @@ describe( 'BusinessATStep', () => {
 		} );
 
 		test( 'should render translated confirmation content', () => {
-			expect(
-				wrapper
-					.find( 'FormFieldset > p' )
-					.at( 1 )
-					.props().children
-			).to.equal(
+			expect( wrapper.find( 'FormFieldset > p' ).at( 1 ).props().children ).to.equal(
 				'Translated: Are you sure you want to cancel your subscription and lose access to these new features?'
 			);
 		} );
@@ -75,10 +65,7 @@ describe( 'BusinessATStep', () => {
 		} );
 
 		test( 'should fire tracks event for plugin support link when clicked', () => {
-			wrapper
-				.find( 'a' )
-				.at( 0 )
-				.simulate( 'click' );
+			wrapper.find( 'a' ).at( 0 ).simulate( 'click' );
 
 			expect( recordTracksEvent ).to.have.been.calledWith(
 				'calypso_cancellation_business_at_plugin_support_click'
@@ -86,10 +73,7 @@ describe( 'BusinessATStep', () => {
 		} );
 
 		test( 'should fire tracks event for theme support link when clicked', () => {
-			wrapper
-				.find( 'a' )
-				.at( 1 )
-				.simulate( 'click' );
+			wrapper.find( 'a' ).at( 1 ).simulate( 'click' );
 
 			expect( recordTracksEvent ).to.have.been.calledWith(
 				'calypso_cancellation_business_at_theme_support_click'

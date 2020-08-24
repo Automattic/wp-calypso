@@ -21,7 +21,8 @@ export default class JetpackConnectPage extends AsyncBaseContainer {
 		);
 
 		await driverHelper.setWhenSettable( this.driver, urlInputSelector, url );
-		return await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
+		await driverHelper.clickWhenClickable( this.driver, confirmButtonSelector );
+		return await this.waitToDisappear();
 	}
 
 	async waitToDisappear() {

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray, reduxForm } from 'redux-form';
@@ -16,6 +15,8 @@ import FormButton from 'components/forms/form-button';
 import SectionHeader from 'components/section-header';
 import PostsList from './posts-list';
 
+import 'state/form/init';
+
 const form = 'extensions.zoninator.zoneContent';
 
 class ZoneContentForm extends PureComponent {
@@ -29,7 +30,7 @@ class ZoneContentForm extends PureComponent {
 		translate: PropTypes.func.isRequired,
 	};
 
-	save = data => this.props.onSubmit( form, data );
+	save = ( data ) => this.props.onSubmit( form, data );
 
 	render() {
 		const { disabled, handleSubmit, label, requesting, submitting, translate } = this.props;

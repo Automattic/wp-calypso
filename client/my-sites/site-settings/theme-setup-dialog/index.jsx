@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -13,7 +12,12 @@ import page from 'page';
 import { Dialog } from '@automattic/components';
 import PulsingDot from 'components/pulsing-dot';
 import { getSelectedSite } from 'state/ui/selectors';
-import { toggleDialog, runThemeSetup } from 'state/ui/theme-setup/actions';
+import { toggleDialog, runThemeSetup as runThemeSetupAction } from 'state/theme-setup/actions';
+import {
+	isThemeSetupDialogVisible,
+	isThemeSetupActive,
+	getThemeSetupResult,
+} from 'state/theme-setup/selectors';
 
 /**
  * Style dependencies
@@ -112,12 +116,10 @@ class ThemeSetupDialog extends React.Component {
 	}
 }
 
-ThemeSetupDialog = localize( ThemeSetupDialog );
-
-const mapStateToProps = state => {
-	const isDialogVisible = state.ui.themeSetup.isDialogVisible;
-	const isActive = state.ui.themeSetup.active;
-	const result = state.ui.themeSetup.result;
+const mapStateToProps = ( state ) => {
+	const isDialogVisible = isThemeSetupDialogVisible( state );
+	const isActive = isThemeSetupActive( state );
+	const result = getThemeSetupResult( state );
 	const site = getSelectedSite( state );
 	return {
 		isDialogVisible,
@@ -127,4 +129,6 @@ const mapStateToProps = state => {
 	};
 };
 
-export default connect( mapStateToProps, { toggleDialog, runThemeSetup } )( ThemeSetupDialog );
+export default connect( mapStateToProps, { toggleDialog, runThemeSetup: runThemeSetupAction } )(
+	localize( ThemeSetupDialog )
+);

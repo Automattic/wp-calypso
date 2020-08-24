@@ -17,7 +17,7 @@ localizedMoment.useLocalizedMoment.mockReturnValue( moment );
 
 describe( 'PendingListItem', () => {
 	const defaultProps = {
-		translate: x => x,
+		translate: ( x ) => x,
 		products: [ { productName: 'WordPress.com Business Plan', productSlug: PLAN_BUSINESS } ],
 		paymentType: 'Sofort',
 		totalCostDisplay: '€204',
@@ -35,7 +35,7 @@ describe( 'PendingListItem', () => {
 		'.pending-payments__list-item-actions Button[href="/help/contact"]',
 	];
 
-	assertions.forEach( rule => {
+	assertions.forEach( ( rule ) => {
 		test( rule, () => {
 			expect( wrapper.find( rule ) ).toHaveLength( 1 );
 		} );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import { decodeEntities } from 'lib/formatting';
 import QueryTaxonomies from 'components/data/query-taxonomies';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
 import Accordion from 'components/accordion';
@@ -57,7 +56,7 @@ function EditorDrawerTaxonomies( { translate, siteId, postType, taxonomies, term
 						} );
 					} else {
 						// Terms can be an array of strings or objects with `name`
-						subtitle = map( taxonomyTerms, term => {
+						subtitle = map( taxonomyTerms, ( term ) => {
 							return decodeEntities( term.name || term );
 						} ).join( ', ' );
 					}
@@ -86,7 +85,7 @@ EditorDrawerTaxonomies.propTypes = {
 	taxonomies: PropTypes.array,
 };
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );

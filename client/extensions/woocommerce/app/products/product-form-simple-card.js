@@ -29,21 +29,21 @@ const ProductFormSimpleCard = ( {
 	translate,
 	storeIsManagingStock,
 } ) => {
-	const setDimension = e => {
+	const setDimension = ( e ) => {
 		const dimensions = { ...product.dimensions, [ e.target.name ]: e.target.value };
 		editProduct( siteId, product, { dimensions } );
 	};
 
-	const setWeight = e => {
+	const setWeight = ( e ) => {
 		const weight = e.target.value;
 		Number( weight ) >= 0 && editProduct( siteId, product, { weight } );
 	};
 
-	const setPrice = e => {
+	const setPrice = ( e ) => {
 		editProduct( siteId, product, { regular_price: e.target.value } );
 	};
 
-	const setStockQuantity = e => {
+	const setStockQuantity = ( e ) => {
 		let stock_quantity;
 		let manage_stock;
 		if ( e.target.value !== '' ) {
@@ -56,7 +56,7 @@ const ProductFormSimpleCard = ( {
 		editProduct( siteId, product, { manage_stock, stock_quantity } );
 	};
 
-	const setBackorders = e => {
+	const setBackorders = ( e ) => {
 		editProduct( siteId, product, { backorders: e.target.value } );
 	};
 

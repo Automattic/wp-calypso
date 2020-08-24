@@ -1,4 +1,4 @@
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.account-password__buttons-group {
 		display: flex;
 		flex-wrap: wrap-reverse;

@@ -7,7 +7,6 @@ import { filter, find, has, includes, sortBy } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-
 import 'state/reader/init';
 
 /**
@@ -33,21 +32,41 @@ export function isRequestingSubscribedLists( state ) {
 }
 
 /**
+ * Returns true if currently creating a Reader list.
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {boolean}        Whether lists are being requested
+ */
+export function isCreatingList( state ) {
+	return !! state.reader.lists.isCreatingList;
+}
+
+/**
+ * Returns true if currently updating a Reader list.
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {boolean}        Whether lists are being requested
+ */
+export function isUpdatingList( state ) {
+	return !! state.reader.lists.isUpdatingList;
+}
+
+/**
  * Returns the user's subscribed Reader lists.
  *
  * @param  {object}  state  Global state tree
  * @returns {?object}        Reader lists
  */
 export const getSubscribedLists = createSelector(
-	state =>
+	( state ) =>
 		sortBy(
-			filter( state.reader.lists.items, item => {
+			filter( state.reader.lists.items, ( item ) => {
 				// Is the user subscribed to this list?
 				return includes( state.reader.lists.subscribedLists, item.ID );
 			} ),
 			'slug'
 		),
-	state => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
+	( state ) => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
 );
 
 /**
@@ -95,9 +114,13 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
 	const preparedOwner = owner.toLowerCase();
 	const preparedSlug = slug.toLowerCase();
 
-	return find( state.reader.lists.items, list => {
+	return find( state.reader.lists.items, ( list ) => {
 		return list.owner === preparedOwner && list.slug === preparedSlug;
 	} );
+}
+
+export function getListItems( state, listId ) {
+	return state.reader?.lists?.listItems?.[ listId ];
 }
 
 /**
@@ -128,7 +151,7 @@ export function isMissingByOwnerAndSlug( state, owner, slug ) {
 	const preparedOwner = owner.toLowerCase();
 	const preparedSlug = slug.toLowerCase();
 
-	return !! find( state.reader.lists.missingLists, list => {
+	return !! find( state.reader.lists.missingLists, ( list ) => {
 		return list.owner === preparedOwner && list.slug === preparedSlug;
 	} );
 }

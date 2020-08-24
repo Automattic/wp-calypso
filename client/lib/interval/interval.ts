@@ -6,7 +6,7 @@ import { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import { TimeoutMS } from 'client/types';
+import { TimeoutMS } from 'wp-calypso-client/types';
 import { useInterval } from './use-interval';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 	period: TimeoutMS;
 }
 
-export const Interval: FunctionComponent< Props > = props => {
+export const Interval: FunctionComponent< Props > = ( props ) => {
 	useInterval( props.onTick, props.period );
 	return null;
 };

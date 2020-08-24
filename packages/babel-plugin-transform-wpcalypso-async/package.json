@@ -9,5 +9,11 @@
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
 		"directory": "packages/babel-plugin-transform-wpcalypso-async"
+	},
+	"dependencies": {
+		"lodash": "^4.17.15"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.11.1"
 	}
 }

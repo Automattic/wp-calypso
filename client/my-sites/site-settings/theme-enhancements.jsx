@@ -87,10 +87,10 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+				<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
 				<SupportInfo
 					text={ translate( 'Control how additional posts are loaded.' ) }
-					link="https://support.wordpress.com/infinite-scroll/"
+					link="https://wordpress.com/support/infinite-scroll/"
 					privacyLink={ false }
 				/>
 				{ this.renderToggle(
@@ -286,7 +286,7 @@ class ThemeEnhancements extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<SettingsSectionHeader title={ translate( 'Theme Enhancements' ) } />
+				<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
 					{ siteIsJetpack ? (
@@ -311,7 +311,7 @@ class ThemeEnhancements extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const selectedSiteId = get( site, 'ID' );
 

@@ -86,7 +86,7 @@ class Dialog extends Component {
 		this.close( button.action );
 	}
 
-	close = action => {
+	close = ( action ) => {
 		if ( this.props.onClose ) {
 			this.props.onClose( action );
 		}

@@ -26,13 +26,13 @@ export const emotions = [
 ];
 
 export function RandomAgentW( { exclude = [] } ) {
-	const filteredEmotions = emotions.filter( emotion => exclude.indexOf( emotion ) === -1 );
+	const filteredEmotions = emotions.filter( ( emotion ) => exclude.indexOf( emotion ) === -1 );
 	const index = rand( 0, filteredEmotions.length - 1 );
 
 	return <AgentW classes={ filteredEmotions[ index ] } />;
 }
 
-const AgentW = props => {
+const AgentW = ( props ) => {
 	return (
 		<div className="chat__gravatar chat__agent-w">
 			<div className={ props.classes }>

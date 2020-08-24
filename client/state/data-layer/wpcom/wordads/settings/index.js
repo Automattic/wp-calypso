@@ -20,7 +20,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-const fromApi = data => {
+const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'settings' ) ) {
 		throw new Error( 'Missing settings field in response' );
 	}
@@ -37,7 +37,7 @@ const receiveWordadsSettings = ( { siteId }, settings ) =>
  * @param   {object}   action         Redux action
  * @returns {object}   Dispatched http action
  */
-export const requestWordadsSettings = action => {
+export const requestWordadsSettings = ( action ) => {
 	const { siteId } = action;
 
 	return http(
@@ -56,7 +56,7 @@ export const requestWordadsSettings = action => {
  * @param   {object} action Redux action
  * @returns {object} Dispatched http action
  */
-export const saveWordadsSettings = action => ( dispatch, getState ) => {
+export const saveWordadsSettings = ( action ) => ( dispatch, getState ) => {
 	const { settings, siteId } = action;
 	const previousSettings = getWordadsSettings( getState(), siteId );
 
@@ -90,13 +90,23 @@ export const handleSaveSuccess = ( { siteId } ) => [
 	} ),
 ];
 
-export const handleSaveFailure = ( { siteId, meta: { settings: previousSettings } } ) => [
+export const handleSaveFailure = ( {
+	siteId,
+	meta: {
+		settings: previousSettings,
+		dataLayer: {
+			error: { error },
+		},
+	},
+} ) => [
 	saveWordadsSettingsFailure( siteId ),
 	updateWordadsSettings( siteId, previousSettings ),
-	errorNotice( translate( 'An unexpected error occurred. Please try again later.' ), {
-		id: `wordads-notice-error-${ siteId }`,
-		duration: 5000,
-	} ),
+	errorNotice(
+		error === 'invalid_paypal'
+			? translate( 'Please enter a valid PayPal email address.' )
+			: translate( 'An unexpected error occurred. Please try again later.' ),
+		{ id: `wordads-notice-error-${ siteId }`, duration: 5000 }
+	),
 ];
 
 registerHandlers( 'state/data-layer/wpcom/wordads/settings/index.js', {

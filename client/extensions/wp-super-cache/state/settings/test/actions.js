@@ -20,13 +20,13 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
 import { receiveSettings, requestSettings, restoreSettings, saveSettings } from '../actions';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
 
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	const siteId = 123456;
 	const failedSiteId = 456789;
@@ -50,7 +50,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSettings()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.get( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/` )
@@ -110,7 +110,7 @@ describe( 'actions', () => {
 			},
 		};
 
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {
@@ -181,7 +181,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#restoreSettings()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( `/rest/v1.1/jetpack-blogs/${ siteId }/rest-api/`, {

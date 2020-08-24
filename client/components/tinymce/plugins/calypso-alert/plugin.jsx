@@ -14,7 +14,7 @@ import Alert from './alert';
 function calypsoAlert( editor ) {
 	let node;
 
-	editor.on( 'init', function() {
+	editor.on( 'init', function () {
 		node = document.createElement( 'div' );
 		node.setAttribute( 'class', 'alert-container' );
 		editor.getContainer().appendChild( node );
@@ -47,12 +47,12 @@ function calypsoAlert( editor ) {
 		// clicking the "Paste as text" button for the first time in a session.
 		// Previous versions of TinyMCE used an alert to show a message;
 		// current versions use a notification instead.
-		editor.notificationManager.open = data => {
+		editor.notificationManager.open = ( data ) => {
 			editor.windowManager.alert( data.text );
 		};
 	} );
 
-	editor.on( 'remove', function() {
+	editor.on( 'remove', function () {
 		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;

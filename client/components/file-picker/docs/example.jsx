@@ -24,7 +24,7 @@ export default class FilePickers extends React.Component {
 			'Selected files:\n' +
 				[].slice
 					.call( files )
-					.map( file => {
+					.map( ( file ) => {
 						return '  ' + JSON.stringify( file.name );
 					} )
 					.join( '\n' )

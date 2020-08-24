@@ -33,7 +33,7 @@ class QueryLocaleSuggestions extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		localeSuggestions: getLocaleSuggestions( state ),
 	} ),
 	{ requestLocaleSuggestions }

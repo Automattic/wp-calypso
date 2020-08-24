@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -10,7 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
@@ -24,19 +24,19 @@ class SharingButtonsStyle extends React.Component {
 	};
 
 	static defaultProps = {
-		onChange: function() {},
+		onChange: function () {},
 		disabled: false,
 	};
 
-	onChange = value => {
+	onChange = ( value ) => {
 		const { path } = this.props;
 
 		this.props.onChange( value );
-		analytics.tracks.recordEvent( 'calypso_sharing_buttons_style_radio_button_click', {
+		recordTracksEvent( 'calypso_sharing_buttons_style_radio_button_click', {
 			value,
 			path,
 		} );
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
+		gaRecordEvent( 'Sharing', 'Clicked Button Style Radio Button', value );
 	};
 
 	getOptions = () => {
@@ -65,7 +65,7 @@ class SharingButtonsStyle extends React.Component {
 					context: 'Sharing: Sharing button option label',
 				} ),
 			},
-		].map( function( option ) {
+		].map( function ( option ) {
 			return (
 				<label key={ option.value }>
 					<input
@@ -95,6 +95,6 @@ class SharingButtonsStyle extends React.Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
 } )( localize( SharingButtonsStyle ) );

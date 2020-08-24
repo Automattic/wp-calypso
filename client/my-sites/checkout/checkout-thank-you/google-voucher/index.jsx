@@ -16,7 +16,7 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import PurchaseButton from 'components/purchase-detail/purchase-button';
 import TipInfo from 'components/purchase-detail/tip-info';
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import TermsAndConditions from './terms-and-conditions';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
 import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions';
@@ -24,6 +24,7 @@ import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
 import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import { localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -76,10 +77,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onGenerateCode() {
-		analytics.ga.recordEvent(
-			'calypso_plans_google_voucher_generate_click',
-			'Clicked Generate Code Button'
-		);
+		gaRecordEvent( 'calypso_plans_google_voucher_generate_click', 'Clicked Generate Code Button' );
 		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_generate_click' );
 
 		this.changeStep();
@@ -91,10 +89,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onAcceptTermsAndConditions() {
-		analytics.ga.recordEvent(
-			'calypso_plans_google_voucher_toc_accept_click',
-			'Clicked Agree Button'
-		);
+		gaRecordEvent( 'calypso_plans_google_voucher_toc_accept_click', 'Clicked Agree Button' );
 		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_tos_accept_click' );
 
 		this.props.assignVoucher( this.props.selectedSite.ID, GOOGLE_CREDITS );
@@ -102,10 +97,7 @@ class GoogleVoucherDetails extends Component {
 	}
 
 	onSetupGoogleAdWordsLink() {
-		analytics.ga.recordEvent(
-			'calypso_plans_google_voucher_setup_click',
-			'Clicked Setup Google Ads Button'
-		);
+		gaRecordEvent( 'calypso_plans_google_voucher_setup_click', 'Clicked Setup Google Ads Button' );
 		this.props.recordTracksEvent( 'calypso_google_adwords_voucher_setup_click' );
 	}
 
@@ -198,7 +190,7 @@ class GoogleVoucherDetails extends Component {
 									a: (
 										<a
 											className="google-voucher__help-link"
-											href="https://en.support.wordpress.com/google-ads-credit/"
+											href={ localizeUrl( 'https://wordpress.com/support/google-ads-credit/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

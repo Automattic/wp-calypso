@@ -13,7 +13,7 @@ import { Card } from '@automattic/components';
 import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
 import CourseVideo from './course-video';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { getSiteSlug } from 'state/sites/selectors';
 
@@ -21,7 +21,7 @@ class Course extends Component {
 	componentDidMount() {
 		const { isBusinessPlanUser } = this.props;
 
-		analytics.tracks.recordEvent( 'calypso_help_course_pageview', {
+		recordTracksEvent( 'calypso_help_course_pageview', {
 			is_business_plan_user: isBusinessPlanUser,
 		} );
 	}
@@ -59,7 +59,7 @@ class Course extends Component {
 		);
 	}
 }
-export default connect( state => {
+export default connect( ( state ) => {
 	return {
 		primarySiteSlug: getSiteSlug( state, getPrimarySiteId( state ) ),
 	};

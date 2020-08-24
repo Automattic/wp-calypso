@@ -9,6 +9,7 @@
 		"declarationDir": "dist/types",
 		"emitDeclarationOnly": true,
 		"isolatedModules": true,
+		"rootDir": "src",
 
 		"strict": true,
 		"noUnusedLocals": true,
@@ -22,11 +23,10 @@
 		"forceConsistentCasingInFileNames": true,
 
 		"typeRoots": [ "../../node_modules/@types" ],
-		// "types": [],
 		"lib": [ "ESNext", "DOM" ],
 
-		"incremental": true,
-		"tsBuildInfoFile": "../../.tsc-cache/media-library"
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__media-library"
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

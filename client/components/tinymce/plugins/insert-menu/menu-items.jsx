@@ -13,7 +13,7 @@ import Gridicon from 'components/gridicon';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 
-const canUserUploadFiles = editor => {
+const canUserUploadFiles = ( editor ) => {
 	const store = editor.getParam( 'redux_store' );
 	const state = store ? store.getState() : null;
 	const siteId = state ? getSelectedSiteId( state ) : null;
@@ -37,7 +37,7 @@ export const menuItems = [
 		item: (
 			<GridiconButton
 				icon={ <Gridicon icon="image" /> }
-				label={ i18n.translate( 'Media' ) }
+				label={ i18n.translate( 'Media library' ) }
 				e2e="media"
 			/>
 		),
@@ -52,7 +52,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			item: (
 				<GridiconButton
 					icon={ <Gridicon icon="shutter" /> }
-					label={ i18n.translate( 'Google Photos library' ) }
+					label={ i18n.translate( 'Google Photos' ) }
 					e2e="google-media"
 				/>
 			),
@@ -66,7 +66,7 @@ if ( config.isEnabled( 'external-media' ) ) {
 			item: (
 				<GridiconButton
 					icon={ <Gridicon icon="image-multiple" /> }
-					label={ i18n.translate( 'Free photo library' ) }
+					label={ i18n.translate( 'Pexels free photos' ) }
 					e2e="stock-media-pexels"
 				/>
 			),
@@ -93,7 +93,7 @@ menuItems.push( {
 	item: (
 		<GridiconButton
 			icon={ <Gridicon icon="money" /> }
-			label={ i18n.translate( 'Payment button' ) }
+			label={ i18n.translate( 'Pay with PayPal' ) }
 			e2e="payment-button"
 		/>
 	),

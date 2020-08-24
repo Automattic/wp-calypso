@@ -115,7 +115,7 @@ async function updateCreditCard( {
 			);
 			noticeOptions = {
 				button: translate( 'Renew Now' ),
-				onClick: function( event, closeFunction ) {
+				onClick: function ( event, closeFunction ) {
 					handleRenewNowClick( purchase, siteSlug );
 					closeFunction();
 				},
@@ -152,13 +152,13 @@ export function getParamsForApi( cardDetails, cardToken, stripeConfiguration, ex
 
 export function useDebounce( value, delay ) {
 	const [ debouncedValue, setDebouncedValue ] = useState( value );
-	const debounced = useRef( debounce( newValue => setDebouncedValue( newValue ), delay ) );
+	const debounced = useRef( debounce( ( newValue ) => setDebouncedValue( newValue ), delay ) );
 	useEffect( () => debounced.current( value ), [ value ] );
 	return [ debouncedValue, setDebouncedValue ];
 }
 
 export function makeAsyncCreateCardToken( createCardToken ) {
-	return cardDetails => {
+	return ( cardDetails ) => {
 		return new Promise( ( resolve, reject ) => {
 			createCardToken( cardDetails, ( gatewayError, gatewayData ) => {
 				if ( gatewayError || ! gatewayData.token ) {

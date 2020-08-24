@@ -8,6 +8,7 @@ import { Moment } from 'moment';
 interface Props extends LocalizeProps {
 	dateFormat?: string;
 	expiryDateMoment: Moment;
+	renewDateMoment: Moment;
 	isRefundable?: boolean;
 	purchaseDateMoment?: Moment;
 }
@@ -22,13 +23,14 @@ export class ProductExpiration extends React.PureComponent< Props > {
 		const {
 			dateFormat,
 			expiryDateMoment,
+			renewDateMoment,
 			isRefundable,
 			purchaseDateMoment,
 			translate,
 		} = this.props;
 
 		// Return null if we don't have any dates.
-		if ( ! expiryDateMoment && ! purchaseDateMoment ) {
+		if ( ! expiryDateMoment && ! renewDateMoment && ! purchaseDateMoment ) {
 			return null;
 		}
 
@@ -40,7 +42,7 @@ export class ProductExpiration extends React.PureComponent< Props > {
 			return null;
 		}
 
-		// Return null if date is not parsable.
+		// Return null if expiration date isn't parsable.
 		if ( ! expiryDateMoment.isValid() ) {
 			return null;
 		}
@@ -50,8 +52,12 @@ export class ProductExpiration extends React.PureComponent< Props > {
 			return translate( 'Expired on %s', { args: expiryDateMoment.format( dateFormat ) } );
 		}
 
+		if ( ! renewDateMoment || ! renewDateMoment.isValid() ) {
+			return translate( 'Expires on %s', { args: expiryDateMoment.format( dateFormat ) } );
+		}
+
 		// Lastly, return the renewal date.
-		return translate( 'Renews on %s', { args: expiryDateMoment.format( dateFormat ) } );
+		return translate( 'Renews on %s', { args: renewDateMoment.format( dateFormat ) } );
 	}
 }
 

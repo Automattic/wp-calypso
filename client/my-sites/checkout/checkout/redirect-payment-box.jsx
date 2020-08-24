@@ -4,11 +4,11 @@
 import React, { PureComponent, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'lodash';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
@@ -18,15 +18,17 @@ import { Input, Select } from 'my-sites/domains/components/form';
 import { paymentMethodName, paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
 import { hasRenewalItem, hasRenewableSubscription } from 'lib/cart-values/cart-items';
 import SubscriptionText from './subscription-text';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import wpcom from 'lib/wp';
 import notices from 'notices';
 import CountrySpecificPaymentFields from './country-specific-payment-fields';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -37,6 +39,7 @@ export class RedirectPaymentBox extends PureComponent {
 		countriesList: PropTypes.array.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	eventFormName = 'Checkout Form';
@@ -67,11 +70,11 @@ export class RedirectPaymentBox extends PureComponent {
 		};
 	}
 
-	handleChange = event => this.updateFieldValues( event.target.name, event.target.value );
+	handleChange = ( event ) => this.updateFieldValues( event.target.name, event.target.value );
 
-	getErrorMessage = fieldName => this.state.errorMessages[ fieldName ];
+	getErrorMessage = ( fieldName ) => this.state.errorMessages[ fieldName ];
 
-	getFieldValue = fieldName => this.state.paymentDetails[ fieldName ];
+	getFieldValue = ( fieldName ) => this.state.paymentDetails[ fieldName ];
 
 	updateFieldValues = ( name, value ) => {
 		this.setState( {
@@ -122,8 +125,8 @@ export class RedirectPaymentBox extends PureComponent {
 		return paymentMethodClassName( paymentType ) || 'WPCOM_Billing_Stripe_Source';
 	}
 
-	redirectToPayment = event => {
-		const origin = getLocationOrigin( location );
+	redirectToPayment = ( event ) => {
+		const origin = getLocationOrigin( window.location );
 		event.preventDefault();
 
 		const validation = validatePaymentDetails( this.state.paymentDetails, this.props.paymentType );
@@ -177,7 +180,7 @@ export class RedirectPaymentBox extends PureComponent {
 		wpcom
 			.undocumented()
 			.transactions( dataForApi )
-			.then( result => {
+			.then( ( result ) => {
 				if ( result.redirect_url ) {
 					this.setSubmitState( {
 						info: this.props.translate(
@@ -185,14 +188,14 @@ export class RedirectPaymentBox extends PureComponent {
 						),
 						disabled: true,
 					} );
-					analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
-					analytics.tracks.recordEvent(
+					gaRecordEvent( 'Upgrades', 'Clicked Checkout With Redirect Payment Button' );
+					recordTracksEvent(
 						'calypso_checkout_with_redirect_' + snakeCase( this.props.paymentType )
 					);
-					location.href = result.redirect_url;
+					window.location.href = result.redirect_url;
 				}
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				let errorMessage;
 				if ( error.message ) {
 					errorMessage = error.message;
@@ -266,6 +269,18 @@ export class RedirectPaymentBox extends PureComponent {
 				return this.createField( 'email', Input, {
 					label: this.props.translate( 'Email Address' ),
 				} );
+			case 'id_wallet':
+				return (
+					<CountrySpecificPaymentFields
+						countryCode="ID"
+						countriesList={ this.props.countriesList }
+						getErrorMessage={ this.getErrorMessage }
+						getFieldValue={ this.getFieldValue }
+						handleFieldChange={ this.updateFieldValues }
+						eventFormName={ this.eventFormName }
+						disableFields={ this.state.formDisabled }
+					/>
+				);
 			case 'netbanking':
 				return (
 					<CountrySpecificPaymentFields
@@ -320,7 +335,7 @@ export class RedirectPaymentBox extends PureComponent {
 					<TermsOfService
 						hasRenewableSubscription={ hasRenewableSubscription( this.props.cart ) }
 					/>
-					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
+					<DomainRefundPolicy cart={ this.props.cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
@@ -329,7 +344,9 @@ export class RedirectPaymentBox extends PureComponent {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary "
-									disabled={ this.state.formDisabled }
+									disabled={
+										this.state.formDisabled || this.props.incompatibleProducts?.blockCheckout
+									}
 								>
 									{ this.renderButtonText() }
 								</button>
@@ -339,7 +356,7 @@ export class RedirectPaymentBox extends PureComponent {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ this.props.translate( 'Secure Payment' ) }
+									{ this.props.translate( 'Secure payment' ) }
 								</div>
 							</div>
 
@@ -350,6 +367,7 @@ export class RedirectPaymentBox extends PureComponent {
 								/>
 							) }
 						</div>
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />

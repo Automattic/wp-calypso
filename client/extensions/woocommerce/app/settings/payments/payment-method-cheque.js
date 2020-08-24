@@ -33,7 +33,7 @@ class PaymentMethodCheque extends Component {
 		onDone: PropTypes.func.isRequired,
 	};
 
-	onEditFieldHandler = e => {
+	onEditFieldHandler = ( e ) => {
 		this.props.onEditField( e.target.name, e.target.value );
 	};
 

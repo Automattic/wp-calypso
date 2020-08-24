@@ -18,13 +18,13 @@ export default withoutPersistence( ( state = null, action ) => {
 		}
 		case WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS: {
 			const { data } = action;
-			return data.map( continent => ( {
+			return data.map( ( continent ) => ( {
 				code: continent.code,
 				name: decodeEntities( continent.name ),
-				countries: continent.countries.map( country => ( {
+				countries: continent.countries.map( ( country ) => ( {
 					code: country.code,
 					name: decodeEntities( country.name ),
-					states: country.states.map( countryState => ( {
+					states: country.states.map( ( countryState ) => ( {
 						code: countryState.code,
 						name: decodeEntities( countryState.name ),
 					} ) ),

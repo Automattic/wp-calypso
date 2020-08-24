@@ -76,7 +76,7 @@ const getNormalizationStatus = ( {
 	return {};
 };
 
-const AddressStep = props => {
+const AddressStep = ( props ) => {
 	const toggleStepHandler = () => props.toggleStep( props.orderId, props.siteId, props.type );
 
 	return (
@@ -122,7 +122,7 @@ const mapStateToProps = ( state, { orderId, siteId, type, translate } ) => {
 	};
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = ( dispatch ) => {
 	return bindActionCreators( { toggleStep }, dispatch );
 };
 

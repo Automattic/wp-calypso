@@ -35,7 +35,7 @@ export function getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 	}
 
 	return site.options.file_mod_disabled
-		.map( clue => {
+		.map( ( clue ) => {
 			if (
 				action === 'modifyFiles' ||
 				action === 'autoupdateFiles' ||
@@ -65,7 +65,7 @@ export function getSiteFileModDisableReason( site, action = 'modifyFiles' ) {
 			}
 			return null;
 		} )
-		.filter( reason => reason );
+		.filter( ( reason ) => reason );
 }
 
 export function canUpdateFiles( site ) {
@@ -143,4 +143,18 @@ export function hasCustomDomain( site ) {
 
 export function isModuleActive( site, moduleId ) {
 	return site.options.active_modules && site.options.active_modules.indexOf( moduleId ) > -1;
+}
+
+/**
+ * Returns the WordPress.com URL of a site (simple or Atomic)
+ *
+ * @param {object} site Site object
+ * @returns {?string} WordPress.com URL
+ */
+export function getUnmappedUrl( site ) {
+	if ( ! site || ! site.options ) {
+		return null;
+	}
+
+	return site.options.main_network_site || site.options.unmapped_url;
 }

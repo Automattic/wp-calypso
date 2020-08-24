@@ -69,7 +69,11 @@ function customPostMetadataToProductAttributes( metadata ) {
  */
 export function customPostToProduct( customPost ) {
 	if ( ! isValidSimplePaymentsProduct( customPost ) ) {
-		throw new TransformerError( 'Custom post is not a valid simple payment product', customPost );
+		const simplePaymentsName = 'Pay with PayPal';
+		throw new TransformerError(
+			'Custom post is not a valid ' + simplePaymentsName + ' product',
+			customPost
+		);
 	}
 
 	const metadataAttributes = customPostMetadataToProductAttributes( customPost.metadata );
@@ -93,7 +97,7 @@ export function customPostToProduct( customPost ) {
 export function customPostsToProducts( responseData ) {
 	const posts = get( responseData, 'posts', [] );
 	const validProducts = posts
-		.map( post => {
+		.map( ( post ) => {
 			try {
 				return customPostToProduct( post );
 			} catch ( error ) {
@@ -152,7 +156,7 @@ const addOrUpdateProduct = ( { siteId }, newProduct ) => receiveUpdateProduct( s
 const deleteProduct = ( { siteId }, deletedPost ) => receiveDeleteProduct( siteId, deletedPost.ID );
 
 export const handleProductGet = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',
@@ -166,7 +170,7 @@ export const handleProductGet = dispatchRequest( {
 } );
 
 export const handleProductList = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',
@@ -185,7 +189,7 @@ export const handleProductList = dispatchRequest( {
 } );
 
 export const handleProductListAdd = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'POST',
@@ -200,7 +204,7 @@ export const handleProductListAdd = dispatchRequest( {
 } );
 
 export const handleProductListEdit = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'POST',
@@ -215,7 +219,7 @@ export const handleProductListEdit = dispatchRequest( {
 } );
 
 export const handleProductListDelete = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'POST',

@@ -18,15 +18,17 @@ import '@testing-library/jest-dom/extend-expect';
 import {
 	Checkout,
 	CheckoutProvider,
-	CheckoutSteps,
 	CheckoutStep,
+	CheckoutStepArea,
 	CheckoutStepBody,
+	CheckoutSteps,
 	useSelect,
 	useDispatch,
-	useFormStatus,
 	createRegistry,
 	useRegisterStore,
 	useIsStepComplete,
+	useTransactionStatus,
+	usePaymentProcessor,
 } from '../src/public-api';
 
 const noop = () => {};
@@ -34,8 +36,8 @@ const myContext = React.createContext();
 const usePaymentData = () => useContext( myContext );
 
 describe( 'Checkout', () => {
-	describe( 'using the default steps', function() {
-		describe( 'using the default registry', function() {
+	describe( 'using the default steps', function () {
+		describe( 'using the default registry', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
 			const { items, total } = createMockItems();
@@ -43,7 +45,6 @@ describe( 'Checkout', () => {
 			beforeEach( () => {
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -51,6 +52,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -61,15 +63,15 @@ describe( 'Checkout', () => {
 				const { container } = render( <MyCheckout /> );
 
 				// Product line items show the correct price
-				getAllByLabelTextInNode( container, items[ 0 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 0 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 0 ].amount.displayValue )
 				);
-				getAllByLabelTextInNode( container, items[ 1 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 1 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 1 ].amount.displayValue )
 				);
 
 				// All elements labeled 'Total' show the expected price
-				getAllByLabelTextInNode( container, total.label ).map( element =>
+				getAllByLabelTextInNode( container, total.label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( total.amount.displayValue )
 				);
 			} );
@@ -99,7 +101,7 @@ describe( 'Checkout', () => {
 			} );
 		} );
 
-		describe( 'using a custom registry', function() {
+		describe( 'using a custom registry', function () {
 			let MyCheckout;
 			const mockMethod = createMockMethod();
 			const { items, total } = createMockItems();
@@ -108,7 +110,6 @@ describe( 'Checkout', () => {
 				const registry = createRegistry();
 				MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -116,6 +117,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 						registry={ registry }
 					>
 						<Checkout />
@@ -127,15 +129,15 @@ describe( 'Checkout', () => {
 				const { container } = render( <MyCheckout /> );
 
 				// Product line items show the correct price
-				getAllByLabelTextInNode( container, items[ 0 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 0 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 0 ].amount.displayValue )
 				);
-				getAllByLabelTextInNode( container, items[ 1 ].label ).map( element =>
+				getAllByLabelTextInNode( container, items[ 1 ].label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( items[ 1 ].amount.displayValue )
 				);
 
 				// All elements labeled 'Total' show the expected price
-				getAllByLabelTextInNode( container, total.label ).map( element =>
+				getAllByLabelTextInNode( container, total.label ).map( ( element ) =>
 					expect( element ).toHaveTextContent( total.amount.displayValue )
 				);
 			} );
@@ -165,7 +167,7 @@ describe( 'Checkout', () => {
 			} );
 		} );
 
-		describe( 'before clicking a button', function() {
+		describe( 'before clicking a button', function () {
 			let container;
 
 			beforeEach( () => {
@@ -173,7 +175,6 @@ describe( 'Checkout', () => {
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -181,6 +182,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -189,27 +191,27 @@ describe( 'Checkout', () => {
 				container = renderResult.container;
 			} );
 
-			it( 'makes the payment method step active', () => {
-				const activeSteps = container.querySelectorAll( '.checkout-step--is-active' );
+			it( 'makes the review step active', () => {
+				const activeSteps = container.querySelectorAll( '.checkout-step.is-active' );
 				expect( activeSteps ).toHaveLength( 1 );
-				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Pick a payment method' );
+				expect( activeSteps[ 0 ] ).toHaveTextContent( 'Review your order' );
 			} );
 
-			it( 'makes the payment method step visible', () => {
+			it( 'makes the payment method step invisible', () => {
 				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
-				expect( firstStepContent ).toHaveStyle( 'display: block' );
+				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
 
-			it( 'makes the review step invisible', () => {
+			it( 'makes the review step visible', () => {
 				const reviewStep = container.querySelector( '.checkout__review-order-step' );
 				expect( reviewStep ).toHaveTextContent( 'Review your order' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
-				expect( reviewStepContent ).toHaveStyle( 'display: none' );
+				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
 		} );
 
-		describe( 'when clicking continue from the payment method step', function() {
+		describe( 'when clicking continue from the first step', function () {
 			let container;
 
 			beforeEach( () => {
@@ -217,7 +219,6 @@ describe( 'Checkout', () => {
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
 					<CheckoutProvider
-						locale="en-us"
 						items={ items }
 						total={ total }
 						onPaymentComplete={ noop }
@@ -225,6 +226,7 @@ describe( 'Checkout', () => {
 						showInfoMessage={ noop }
 						showSuccessMessage={ noop }
 						paymentMethods={ [ mockMethod ] }
+						paymentProcessors={ getMockPaymentProcessors() }
 					>
 						<Checkout />
 					</CheckoutProvider>
@@ -236,32 +238,31 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the first step invisible', () => {
-				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStep = container.querySelector( '.checkout__review-order-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
 
-			it( 'makes the review step visible', () => {
-				const reviewStep = container.querySelector( '.checkout__review-order-step' );
+			it( 'makes the next step visible', () => {
+				const reviewStep = container.querySelector( '.checkout__payment-methods-step' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
 		} );
 	} );
 
-	describe( 'with custom steps', function() {
+	describe( 'with custom steps', function () {
 		let MyCheckout;
 		const mockMethod = createMockMethod();
 		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
 
 		beforeEach( () => {
-			MyCheckout = props => {
+			MyCheckout = ( props ) => {
 				const [ paymentData, setPaymentData ] = useState( {} );
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
-							locale="en-us"
 							items={ items }
 							total={ total }
 							onPaymentComplete={ noop }
@@ -269,6 +270,7 @@ describe( 'Checkout', () => {
 							showInfoMessage={ noop }
 							showSuccessMessage={ noop }
 							paymentMethods={ [ mockMethod ] }
+							paymentProcessors={ getMockPaymentProcessors() }
 						>
 							<Checkout>
 								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
@@ -415,7 +417,7 @@ describe( 'Checkout', () => {
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
 			expect( firstStepContinue ).not.toBeDisabled();
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContinue ).toBeDisabled();
 		} );
@@ -433,7 +435,7 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
@@ -451,7 +453,7 @@ describe( 'Checkout', () => {
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			await act( async () => {
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
@@ -492,7 +494,7 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not render the edit button if the form status is submitting', () => {
+		it( 'does not render the edit button if the form status is submitting', async () => {
 			const { queryByText, getAllByText } = render(
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
@@ -500,7 +502,9 @@ describe( 'Checkout', () => {
 			fireEvent.click( firstStepContinue );
 			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
 			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
-			fireEvent.click( submitButton );
+			await act( async () => {
+				return fireEvent.click( submitButton );
+			} );
 			expect( queryByText( 'Edit' ) ).not.toBeInTheDocument();
 		} );
 
@@ -543,7 +547,7 @@ describe( 'Checkout', () => {
 			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
 			await act( async () => {
 				// isComplete does not update until we press continue
-				await fireEvent.click( firstStepContinue );
+				return fireEvent.click( firstStepContinue );
 			} );
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );
@@ -562,9 +566,11 @@ function createMockMethod() {
 }
 
 function MockSubmitButton( { disabled } ) {
-	const { setFormSubmitting } = useFormStatus();
+	const { setTransactionComplete, setTransactionPending } = useTransactionStatus();
+	const process = usePaymentProcessor( 'mock' );
 	const onClick = () => {
-		setFormSubmitting();
+		setTransactionPending();
+		process().then( ( result ) => setTransactionComplete( result ) );
 	};
 	return (
 		<button disabled={ disabled } onClick={ onClick }>
@@ -593,7 +599,7 @@ function MockPaymentForm( { summary } ) {
 			},
 		},
 	} );
-	const cardholderName = useSelect( select => select( 'mock' ).getCardholderName() );
+	const cardholderName = useSelect( ( select ) => select( 'mock' ).getCardholderName() );
 	const { changeCardholderName } = useDispatch( 'mock' );
 	return (
 		<div data-testid="mock-payment-form">
@@ -632,13 +638,17 @@ function createMockItems() {
 function createStepsFromStepObjects( stepObjects, paymentData ) {
 	const createStepFromStepObject = createStepObjectConverter( paymentData );
 	const stepObjectsWithoutStepNumber = stepObjects.filter(
-		stepObject => ! stepObject.hasStepNumber
+		( stepObject ) => ! stepObject.hasStepNumber
 	);
-	const stepObjectsWithStepNumber = stepObjects.filter( stepObject => stepObject.hasStepNumber );
+	const stepObjectsWithStepNumber = stepObjects.filter(
+		( stepObject ) => stepObject.hasStepNumber
+	);
 	return (
 		<React.Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
-			<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
+			<CheckoutStepArea>
+				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
+			</CheckoutStepArea>
 		</React.Fragment>
 	);
 }
@@ -668,7 +678,6 @@ function createStepObjectConverter( paymentData ) {
 				isStepActive={ false }
 				isStepComplete={ true }
 				stepNumber={ 1 }
-				totalSteps={ 1 }
 				stepId={ stepObject.id }
 				key={ stepObject.id }
 				activeStepContent={ stepObject.activeStepContent }
@@ -766,7 +775,7 @@ function PossiblyCompleteTitle() {
 
 function StepWithEditableField() {
 	const [ paymentData, setPaymentData ] = usePaymentData();
-	const onChange = event => {
+	const onChange = ( event ) => {
 		setPaymentData( { userName: event.target.value } );
 	};
 	const value = paymentData.userName || '';
@@ -776,4 +785,10 @@ function StepWithEditableField() {
 			<input id="username-field" type="text" value={ value } onChange={ onChange } />
 		</div>
 	);
+}
+
+function getMockPaymentProcessors() {
+	return {
+		mock: async () => ( { success: true } ),
+	};
 }

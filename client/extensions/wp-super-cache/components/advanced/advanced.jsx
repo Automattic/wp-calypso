@@ -198,7 +198,7 @@ const Advanced = ( {
 	);
 };
 
-const getFormSettings = settings => {
+const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'cache_disable_locking',
 		'cache_late_init',

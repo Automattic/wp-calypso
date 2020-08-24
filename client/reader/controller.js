@@ -1,12 +1,12 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { abtest } from 'lib/abtest';
 import { sectionify } from 'lib/route';
@@ -25,6 +25,12 @@ import { preload } from 'sections-helper';
 import { requestFeedDiscovery } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
+import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
+import { getLastPath } from 'state/reader-ui/selectors';
+import { getSection } from 'state/ui/selectors';
+import { isAutomatticTeamMember } from 'reader/lib/teams';
+import { getReaderTeams } from 'state/reader/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -45,12 +51,12 @@ function renderFeedError( context, next ) {
 const exported = {
 	initAbTests( context, next ) {
 		// spin up the ab tests that are currently active for the reader
-		activeAbTests.forEach( test => abtest( test ) );
+		activeAbTests.forEach( ( test ) => abtest( test ) );
 		next();
 	},
 
 	prettyRedirects( context, next ) {
-		// Do we have a 'pretty' site or feed URL?
+		// Do we have a 'pretty' site or feed URL? We only use this for /discover.
 		let redirect;
 		if ( context.params.blog_id ) {
 			redirect = getPrettySiteUrl( context.params.blog_id );
@@ -133,6 +139,24 @@ const exported = {
 		const mcKey = 'following';
 		const startDate = getStartDate( context );
 
+		const state = context.store.getState();
+		// only for a8c for now
+		if ( isAutomatticTeamMember( getReaderTeams( state ) ) ) {
+			// select last reader path if available, otherwise just open following
+			const currentSection = getSection( state );
+			const lastPath = getLastPath( state );
+
+			if ( lastPath && lastPath !== '/read' && currentSection.name !== 'reader' ) {
+				return page.redirect( lastPath );
+			}
+
+			// if we have no last path, default to Following/All and expand following
+			const isOpen = isFollowingOpen( state );
+			if ( ! isOpen ) {
+				context.store.dispatch( toggleReaderSidebarFollowing() );
+			}
+		}
+
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );
 
@@ -169,7 +193,7 @@ const exported = {
 						return page.redirect( `/read/feeds/${ feed.feed_ID }` );
 					}
 				} )
-				.catch( function() {
+				.catch( function () {
 					renderFeedError( context, next );
 				} );
 		} else {
@@ -263,7 +287,7 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="reader/team/main"
+				require="reader/a8c/main"
 				key="read-a8c"
 				className="is-a8c"
 				listName="Automattic"

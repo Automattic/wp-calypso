@@ -13,7 +13,7 @@ const readCache = () => {
 	}
 };
 
-const saveRequests = requests => {
+const saveRequests = ( requests ) => {
 	const requestData = {};
 
 	requests.forEach( ( value, key ) => {
@@ -34,7 +34,7 @@ const saveRequests = requests => {
 	window.open( url );
 };
 
-export const makeOffline = wpcom => {
+export const makeOffline = ( wpcom ) => {
 	// search part includes the leading `?`
 	const queryParams = parse( window.location.search.substring( 1 ) );
 	const offlineRequested = queryParams.wpcom_offline;
@@ -60,8 +60,8 @@ export const makeOffline = wpcom => {
 	const requests = new Map();
 
 	const storedRequests = readCache();
-	Object.keys( storedRequests ).forEach( path => {
-		Object.keys( storedRequests[ path ] ).forEach( key => {
+	Object.keys( storedRequests ).forEach( ( path ) => {
+		Object.keys( storedRequests[ path ] ).forEach( ( key ) => {
 			requests.set( key, storedRequests[ path ][ key ] );
 		} );
 	} );

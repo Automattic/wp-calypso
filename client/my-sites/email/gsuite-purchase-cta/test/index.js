@@ -50,11 +50,11 @@ describe( 'GSuitePurchaseCta', () => {
 				SGD: 108,
 				TWD: 2304,
 				THB: 2520,
-				TRY: 396
+				TRY: 396,
 			},
 			is_domain_registration: false,
 			cost_display: '€76.00',
-			currency_code: 'EUR'
+			currency_code: 'EUR',
 		};
 
 		const tree = renderer

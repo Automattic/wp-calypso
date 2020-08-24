@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import DocumentHead from 'components/data/document-head';
@@ -33,7 +34,7 @@ class ListStream extends React.Component {
 		super( props );
 		this.title = props.translate( 'Loading list' );
 	}
-	toggleFollowing = isFollowRequested => {
+	toggleFollowing = ( isFollowRequested ) => {
 		const list = this.props.list;
 
 		if ( isFollowRequested ) {
@@ -61,16 +62,11 @@ class ListStream extends React.Component {
 	render() {
 		const list = this.props.list,
 			shouldShowFollow = list && ! list.is_owner,
-			shouldShowEdit = ! shouldShowFollow,
 			emptyContent = <EmptyContent />,
 			listStreamIconClasses = 'gridicon gridicon__list';
 
-		let editUrl = null;
-
 		if ( list ) {
 			this.title = list.title;
-
-			editUrl = `https://wordpress.com/read/list/${ list.owner }/${ list.slug }/edit`;
 		}
 
 		if ( this.props.isMissing ) {
@@ -117,8 +113,8 @@ class ListStream extends React.Component {
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
-					showEdit={ shouldShowEdit }
-					editUrl={ editUrl }
+					showEdit={ config.isEnabled( 'reader/list-management' ) && list && list.is_owner }
+					editUrl={ window.location.href + '/edit' }
 				/>
 			</Stream>
 		);
@@ -133,7 +129,7 @@ export default connect(
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},
-	dispatch => {
+	( dispatch ) => {
 		return bindActionCreators(
 			{
 				followList,

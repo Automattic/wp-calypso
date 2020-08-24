@@ -1,62 +1,106 @@
 /**
+ * External dependencies
+ */
+import { stringify } from 'qs';
+
+/**
  * Internal dependencies
  */
-import {
+import type {
 	CurrentUser,
 	CreateAccountParams,
 	NewUserErrorResponse,
 	NewUserSuccessResponse,
 } from './types';
+import { wpcomRequest, requestAllBlogsAccess, reloadProxy } from '../wpcom-request-controls';
+import type { WpcomClientCredentials } from '../shared-types';
 
-export const fetchCurrentUser = () => ( {
-	type: 'FETCH_CURRENT_USER' as const,
-} );
+export function createActions( clientCreds: WpcomClientCredentials ) {
+	const receiveCurrentUser = ( currentUser: CurrentUser ) => ( {
+		type: 'RECEIVE_CURRENT_USER' as const,
+		currentUser,
+	} );
 
-export const receiveCurrentUser = ( currentUser: CurrentUser ) => ( {
-	type: 'RECEIVE_CURRENT_USER' as const,
-	currentUser,
-} );
+	const receiveCurrentUserFailed = () => ( {
+		type: 'RECEIVE_CURRENT_USER_FAILED' as const,
+	} );
 
-export const receiveCurrentUserFailed = () => ( {
-	type: 'RECEIVE_CURRENT_USER_FAILED' as const,
-} );
+	const fetchNewUser = () => ( {
+		type: 'FETCH_NEW_USER' as const,
+	} );
 
-export const fetchNewUser = () => ( {
-	type: 'FETCH_NEW_USER' as const,
-} );
+	const receiveNewUser = ( response: NewUserSuccessResponse ) => ( {
+		type: 'RECEIVE_NEW_USER' as const,
+		response,
+	} );
 
-export const receiveNewUser = ( response: NewUserSuccessResponse ) => ( {
-	type: 'RECEIVE_NEW_USER' as const,
-	response,
-} );
+	const receiveNewUserFailed = ( error: NewUserErrorResponse ) => ( {
+		type: 'RECEIVE_NEW_USER_FAILED' as const,
+		error,
+	} );
 
-export const receiveNewUserFailed = ( error: NewUserErrorResponse ) => ( {
-	type: 'RECEIVE_NEW_USER_FAILED' as const,
-	error,
-} );
+	const clearErrors = () => ( {
+		type: 'CLEAR_ERRORS' as const,
+	} );
 
-export function* createAccount( params: CreateAccountParams ) {
-	yield fetchNewUser();
-	try {
-		const newUser = yield {
-			type: 'CREATE_ACCOUNT' as const,
-			params,
-		};
-		yield receiveNewUser( newUser );
+	function* createAccount( params: CreateAccountParams ) {
+		yield fetchNewUser();
+		try {
+			const newUser = yield wpcomRequest( {
+				body: {
+					// defaults
+					is_passwordless: true,
+					signup_flow_name: 'gutenboarding',
+					locale: 'en',
 
-		return true;
-	} catch ( err ) {
-		yield receiveNewUserFailed( err );
+					...clientCreds,
+					...params,
 
-		return false;
+					// Set to false because account validation should be a separate action
+					validate: false,
+				},
+				path: '/users/new',
+				apiVersion: '1.1',
+				method: 'post',
+				query: stringify( { locale: params.locale } ),
+			} );
+
+			yield reloadProxy();
+
+			// Need to rerequest access after the proxy is reloaded
+			yield requestAllBlogsAccess();
+
+			yield receiveNewUser( newUser );
+
+			return { ok: true } as const;
+		} catch ( newUserError ) {
+			yield receiveNewUserFailed( newUserError );
+
+			return { ok: false, newUserError } as const;
+		}
 	}
+
+	return {
+		receiveCurrentUser,
+		receiveCurrentUserFailed,
+		fetchNewUser,
+		receiveNewUser,
+		receiveNewUserFailed,
+		clearErrors,
+		createAccount,
+	};
 }
 
-export type Action = ReturnType<
-	| typeof fetchCurrentUser
-	| typeof receiveCurrentUser
-	| typeof receiveCurrentUserFailed
-	| typeof fetchNewUser
-	| typeof receiveNewUser
-	| typeof receiveNewUserFailed
->;
+type ActionCreators = ReturnType< typeof createActions >;
+
+export type Action =
+	| ReturnType<
+			| ActionCreators[ 'receiveCurrentUser' ]
+			| ActionCreators[ 'receiveCurrentUserFailed' ]
+			| ActionCreators[ 'fetchNewUser' ]
+			| ActionCreators[ 'receiveNewUser' ]
+			| ActionCreators[ 'receiveNewUserFailed' ]
+			| ActionCreators[ 'clearErrors' ]
+	  >
+	// Type added so we can dispatch actions in tests, but has no runtime cost
+	| { type: 'TEST_ACTION' };

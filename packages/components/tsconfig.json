@@ -23,9 +23,10 @@
 
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
+		"rootDir": "src",
 
-		"incremental": true,
-		"tsBuildInfoFile": "../../.tsc-cache/components"
+		"composite": true,
+		"tsBuildInfoFile": "../../.tsc-cache/packages__components"
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

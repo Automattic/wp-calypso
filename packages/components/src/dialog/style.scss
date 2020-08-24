@@ -1,5 +1,5 @@
-@import '../styles/breakpoints';
-
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
 
 .dialog__backdrop,
 .dialog__backdrop.card {
@@ -44,7 +44,7 @@
 	padding: 16px;
 	overflow-y: auto;
 
-	@include a8c-breakpoint( '>480px' ) {
+	@include break-mobile {
 		padding: 24px;
 	}
 
@@ -72,12 +72,12 @@
 	text-align: right;
 	flex-shrink: 0;
 	background-color: rgba( 255, 255, 255, 1 );
-	@include a8c-breakpoint( '>480px' ) {
+	@include break-mobile {
 		padding-left: 24px;
 		padding-right: 24px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@media ( max-width: $break-mobile ) {
 		display: flex;
 		flex-direction: column-reverse;
 	}
@@ -109,7 +109,7 @@
 		margin-right: 10px;
 	}
 
-	@include a8c-breakpoint( '<480px' ) {
+	@media ( max-width: $break-mobile ) {
 		margin: 2px 0;
 	}
 }

@@ -21,8 +21,10 @@ import {
 	UPGRADE_INTENT_INSTALL_THEME,
 } from 'lib/checkout/constants';
 import { decodeURIComponentIfValid, isExternal } from 'lib/url';
+import { domainManagementEdit } from '../../my-sites/domains/paths';
+import { isDomainRegistration } from '../products-values';
 
-const isValidValue = url => typeof url === 'string' && url;
+const isValidValue = ( url ) => typeof url === 'string' && url;
 
 export function isValidUpgradeIntent( upgradeIntent ) {
 	switch ( upgradeIntent ) {
@@ -43,7 +45,7 @@ export function parseRedirectToChain( rawUrl, includeOriginalUrl = true ) {
 		redirectChain.push( url );
 	}
 
-	const parseUrlAndPushToChain = currentUrl => {
+	const parseUrlAndPushToChain = ( currentUrl ) => {
 		const {
 			query: { redirect_to },
 		} = parse( currentUrl, true );
@@ -68,12 +70,37 @@ export function getValidDeepRedirectTo( redirectTo ) {
 	}
 }
 
-export function getExitCheckoutUrl( cart, siteSlug, upgradeIntent, redirectTo ) {
+export function getExitCheckoutUrl(
+	cart,
+	siteSlug,
+	upgradeIntent,
+	redirectTo,
+	returnToBlockEditor,
+	returnToHome,
+	previousPath
+) {
 	let url = '/plans/';
 
+	if ( returnToBlockEditor ) {
+		return `/block-editor/page/${ siteSlug }/home`;
+	}
+
+	if ( returnToHome ) {
+		return `/home/${ siteSlug }`;
+	}
+
 	if ( hasRenewalItem( cart ) ) {
-		const { purchaseId, purchaseDomain } = getRenewalItems( cart )[ 0 ].extra,
+		const firstRenewalItem = getRenewalItems( cart )[ 0 ];
+		const { purchaseId, purchaseDomain } = firstRenewalItem.extra,
 			siteName = siteSlug || purchaseDomain;
+
+		if ( isDomainRegistration( firstRenewalItem ) ) {
+			const domainManagementPage = domainManagementEdit( siteName, firstRenewalItem.meta );
+
+			if ( previousPath && previousPath.startsWith( domainManagementPage ) ) {
+				return domainManagementPage;
+			}
+		}
 
 		return managePurchase( siteName, purchaseId );
 	}

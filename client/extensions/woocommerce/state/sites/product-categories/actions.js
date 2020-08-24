@@ -12,7 +12,7 @@ import {
 
 export function fetchProductCategories( siteId, query = {} ) {
 	const normalizedQuery = getNormalizedProductCategoriesQuery( query );
-	return dispatch => {
+	return ( dispatch ) => {
 		const getAction = {
 			type: WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST,
 			siteId,

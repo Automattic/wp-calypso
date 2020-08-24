@@ -60,7 +60,7 @@ class FormFields extends React.PureComponent {
 		currencyInput: { currency: 'USD', value: '' },
 	};
 
-	handleRadioChange = event => {
+	handleRadioChange = ( event ) => {
 		this.setState( { checkedRadio: event.currentTarget.value } );
 	};
 
@@ -76,22 +76,22 @@ class FormFields extends React.PureComponent {
 		alert( 'Thank you.' );
 	};
 
-	handlePhoneInputChange = data => {
+	handlePhoneInputChange = ( data ) => {
 		this.setState( { phoneInput: data } );
 	};
 
-	handleCurrencyChange = event => {
+	handleCurrencyChange = ( event ) => {
 		const { value: currency } = event.currentTarget;
 
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			currencyInput: { ...state.currencyInput, currency },
 		} ) );
 	};
 
-	handlePriceChange = event => {
+	handlePriceChange = ( event ) => {
 		const { value } = event.currentTarget;
 
-		this.setState( state => ( {
+		this.setState( ( state ) => ( {
 			currencyInput: { ...state.currencyInput, value },
 		} ) );
 	};
@@ -446,7 +446,7 @@ class FormFields extends React.PureComponent {
 	}
 }
 
-const ConnectedFormFields = connect( state => ( {
+const ConnectedFormFields = connect( ( state ) => ( {
 	countriesList: getCountries( state, 'sms' ),
 } ) )( FormFields );
 

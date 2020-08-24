@@ -4,6 +4,8 @@
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing-transactions';
 
+import 'state/billing-transactions/init';
+
 /**
  * Returns billing transactions of the provided type.
  * Returns null if the billing transactions have not been fetched yet.

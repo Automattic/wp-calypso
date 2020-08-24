@@ -102,12 +102,12 @@ class Sitemaps extends Component {
 
 		return (
 			<div>
-				{ this.renderInfoLink( 'https://support.wordpress.com/sitemaps/', false ) }
+				{ this.renderInfoLink( 'https://wordpress.com/support/sitemaps/', false ) }
 
 				{ this.isSitePublic() ? (
 					<div>
 						{ this.renderSitemapExplanation() }
-						{ sitemapTypes.map( sitemapType => {
+						{ sitemapTypes.map( ( sitemapType ) => {
 							const sitemapUrl = site.URL + '/' + sitemapType + '.xml';
 							return this.renderSitemapLink( sitemapUrl );
 						} ) }
@@ -153,7 +153,7 @@ class Sitemaps extends Component {
 
 						{ sitemapsModule &&
 							sitemapTypes.map(
-								sitemapType =>
+								( sitemapType ) =>
 									sitemapsModule.extra[ sitemapType ] &&
 									this.renderSitemapLink( sitemapsModule.extra[ sitemapType ] )
 							) }
@@ -199,7 +199,7 @@ class Sitemaps extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {

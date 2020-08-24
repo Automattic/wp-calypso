@@ -16,7 +16,7 @@
 	overflow: auto;
 
 	// Not sure this is needed.
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		-webkit-overflow-scrolling: touch;
 	}
 
@@ -56,7 +56,7 @@
 // like in Reader, and for the expandable menus.
 .sidebar__heading {
 	color: var( --color-sidebar-text-alternative );
-	font-size: 15px;
+	font-size: $font-body;
 	font-weight: 600;
 	padding: 16px 8px 6px 16px;
 }
@@ -65,17 +65,53 @@
 .sidebar__menu-icon {
 	fill: var( --color-sidebar-gridicon-fill );
 	margin-right: 11px;
+	flex-shrink: 0;
+}
+
+// Checklist progress
+.sidebar__menu .myhome .sidebar__menu-link-text {
+	max-width: calc( 100% - 80px );
+	white-space: normal;
+	padding-right: 8px;
+}
+
+.sidebar__checklist-progress {
+	width: 80px;
+
+	.sidebar__checklist-progress-text {
+		font-size: $font-body-extra-small;
+		margin: 0;
+		white-space: normal;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	.progress-bar {
+		background-color: rgba( var( --color-sidebar-text-rgb ), 0.4 );
+		height: 6px;
+
+		.selected & {
+			background-color: rgba( var( --color-sidebar-menu-selected-text-rgb ), 0.4 );
+		}
+
+		.progress-bar__progress {
+			background-color: var( --color-sidebar-text );
+
+			.selected & {
+				background-color: var( --color-sidebar-menu-selected-text );
+			}
+		}
+	}
 }
 
 // Menu links: The actual anchor tags that contain links to
 // various sections of Calypso.
 .sidebar__menu-link {
-	font-size: 15px;
-	line-height: 1;
+	font-size: $font-body;
+	line-height: 1.2;
 	position: relative;
 	padding: 10px 16px 10px 20px;
 	box-sizing: border-box;
-	white-space: nowrap;
 	overflow: hidden;
 	display: flex;
 	align-items: center;
@@ -96,6 +132,21 @@
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-hover-text );
 		}
+
+		.count {
+			border-color: var( --color-sidebar-menu-hover-text );
+		}
+	}
+
+	.count {
+		margin-left: 8px;
+		color: var( --color-sidebar-menu-hover-text );
+		background-color: var( --color-sidebar-menu-hover-background );
+		border-color: var( --color-sidebar-menu-hover-background );
+		line-height: 0;
+		padding: 8px 6px;
+		position: absolute;
+		top: 9px;
 	}
 
 	.badge {
@@ -109,6 +160,12 @@
 
 		.sidebar__menu-icon {
 			fill: var( --color-sidebar-menu-selected-text );
+		}
+
+		.count {
+			background-color: transparent;
+			border-color: var( --color-sidebar-menu-selected-text );
+			color: var( --color-sidebar-menu-selected-text );
 		}
 	}
 
@@ -125,6 +182,11 @@
 	}
 }
 
+.sidebar__menu.is-togglable .sidebar__menu-link {
+	line-height: 1.5;
+	padding: 7px 16px 7px 20px;
+}
+
 .sidebar__menu-link-text {
 	flex: auto;
 }
@@ -133,7 +195,7 @@
 	margin-right: 8px;
 	align-self: center;
 	font-weight: 600;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	position: absolute;
 	right: 0;
 	z-index: 1;

@@ -9,7 +9,7 @@
 
 .editor-post-formats__format-label {
 	color: var( --color-text );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	position: relative;
 	padding-left: 26px;
 	cursor: pointer;
@@ -29,5 +29,5 @@
 }
 
 .editor-post-formats__help-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

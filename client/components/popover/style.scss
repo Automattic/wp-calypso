@@ -3,7 +3,7 @@
  */
 
 .popover {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	z-index: z-index( 'root', '.popover' );
 	position: absolute;
 	top: 0;
@@ -140,14 +140,15 @@
 	min-width: 200px;
 }
 
-.popover__menu-item {
+.popover__menu-item,
+.popover__menu-item.button {
 	position: relative;
 	background: inherit;
 	border: none;
 	border-radius: 0;
 	cursor: pointer;
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	margin: 0;
 	padding: 8px 16px;
@@ -204,6 +205,7 @@
 		color: var( --color-text-subtle );
 		vertical-align: bottom;
 		margin-right: 8px;
+		position: static;
 	}
 	.gridicons-cloud-download {
 		position: relative;

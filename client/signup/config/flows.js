@@ -8,19 +8,33 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
  */
 import config from 'config';
 import stepConfig from './steps';
-import userFactory from 'lib/user';
+import user from 'lib/user';
+import { isEcommercePlan } from 'lib/plans';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
 
-const user = userFactory();
+function getCheckoutUrl( dependencies, localeSlug, flowName ) {
+	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
-function getCheckoutUrl( dependencies ) {
+	// Append the locale slug for the userless checkout page.
+	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
+		checkoutURL += `/${ localeSlug }`;
+	}
+
 	return addQueryArgs(
 		{
 			signup: 1,
-			...( dependencies.isPreLaunch && { preLaunch: 1 } ),
+			...( dependencies.isPreLaunch && {
+				preLaunch: 1,
+			} ),
+			...( dependencies.isPreLaunch &&
+				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
+					redirect_to: `/home/${ dependencies.siteSlug }`,
+				} ),
+			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+			...( 'domain' === flowName && { isDomainOnly: 1 } ),
 		},
-		`/checkout/${ dependencies.siteSlug }`
+		checkoutURL
 	);
 }
 
@@ -55,11 +69,15 @@ function getRedirectDestination( dependencies ) {
 }
 
 function getSignupDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }`;
+	if ( 'no-site' === dependencies.siteSlug ) {
+		return '/home';
+	}
+
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getLaunchDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=launched`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getThankYouNoSiteDestination() {
@@ -67,7 +85,7 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( dependencies ) {
-	return `/checklist/${ dependencies.siteSlug }?d=theme`;
+	return `/home/${ dependencies.siteSlug }`;
 }
 
 function getEditorDestination( dependencies ) {
@@ -90,13 +108,23 @@ function removeUserStepFromFlow( flow ) {
 	}
 
 	return assign( {}, flow, {
-		steps: reject( flow.steps, stepName => stepConfig[ stepName ].providesToken ),
+		steps: reject( flow.steps, ( stepName ) => stepConfig[ stepName ].providesToken ),
 	} );
 }
 
-function filterDestination( destination, dependencies ) {
+function removeP2DetailsStepFromFlow( flow ) {
+	if ( ! flow ) {
+		return;
+	}
+
+	return assign( {}, flow, {
+		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
+	} );
+}
+
+function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies );
+		return getCheckoutUrl( dependencies, localeSlug, flowName );
 	}
 
 	return destination;
@@ -128,8 +156,12 @@ const Flows = {
 			return flow;
 		}
 
-		if ( user && user.get() ) {
+		if ( user() && user().get() ) {
 			flow = removeUserStepFromFlow( flow );
+		}
+
+		if ( flowName === 'p2' && user() && user().get() ) {
+			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
 		return Flows.filterExcludedSteps( flow );
@@ -157,7 +189,7 @@ const Flows = {
 	 * @param {string} step Name of the step to be excluded.
 	 */
 	excludeStep( step ) {
-		step && Flows.excludedSteps.push( step );
+		step && Flows.excludedSteps.indexOf( step ) === -1 && Flows.excludedSteps.push( step );
 	},
 
 	filterExcludedSteps( flow ) {
@@ -166,12 +198,20 @@ const Flows = {
 		}
 
 		return assign( {}, flow, {
-			steps: reject( flow.steps, stepName => includes( Flows.excludedSteps, stepName ) ),
+			steps: reject( flow.steps, ( stepName ) => includes( Flows.excludedSteps, stepName ) ),
 		} );
 	},
 
 	resetExcludedSteps() {
 		Flows.excludedSteps = [];
+	},
+
+	resetExcludedStep( stepName ) {
+		const index = Flows.excludedSteps.indexOf( stepName );
+
+		if ( index > -1 ) {
+			Flows.excludedSteps.splice( index, 1 );
+		}
 	},
 
 	getFlows() {

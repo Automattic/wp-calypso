@@ -13,7 +13,7 @@ import {
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 const SITE_ID = 2916284;
 const STAT_TYPE = 'statsStreak';
@@ -58,7 +58,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSiteStats()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/streak?startDate=2015-06-01&endDate=2016-06-01` )

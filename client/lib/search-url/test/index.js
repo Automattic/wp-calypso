@@ -8,14 +8,14 @@ import page from 'page';
  * Internal dependencies
  */
 import searchUrl from '..';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 const SEARCH_KEYWORD = 'giraffe';
 
 describe( 'SearchUrl', () => {
 	let onSearch, onReplace, onPage;
 
-	useSandbox( sandbox => {
+	useSandbox( ( sandbox ) => {
 		onSearch = sandbox.stub();
 		onReplace = sandbox.stub( page, 'replace' );
 		onPage = sandbox.stub( page, 'show' );

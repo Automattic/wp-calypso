@@ -23,6 +23,7 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
 		<FormattedHeader
+			brandFont
 			className="settings-writing__page-heading"
 			headerText={ translate( 'Settings' ) }
 			align="left"
@@ -32,6 +33,6 @@ const SiteSettingsWriting = ( { site, translate } ) => (
 	</Main>
 );
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
 } ) )( localize( SiteSettingsWriting ) );

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,6 +12,7 @@ import Gridicon from 'components/gridicon';
 import isGutenbergOptInDialogShowing from 'state/selectors/is-gutenberg-opt-in-dialog-showing';
 import { hideGutenbergOptInDialog } from 'state/ui/gutenberg-opt-in-dialog/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getWpAdminClassicEditorRedirectionUrl from 'state/selectors/get-wp-admin-classic-editor-redirection-url';
 import { setSelectedEditor } from 'state/selected-editor/actions';
 import { localize } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
@@ -23,9 +23,12 @@ import {
 	withAnalytics,
 	bumpStat,
 } from 'state/analytics/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
+import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 
 /**
  * Style dependencies
@@ -40,12 +43,19 @@ class EditorGutenbergOptInDialog extends Component {
 		isDialogVisible: PropTypes.bool,
 		hideDialog: PropTypes.func,
 		optIn: PropTypes.func,
-		useClassic: PropTypes.func,
+		optInEnabled: PropTypes.bool,
+		logClassicEditorUsed: PropTypes.func,
 		siteId: PropTypes.number,
+		wpAdminRedirectionUrl: PropTypes.string,
 	};
 
-	onCloseDialog = () => {
-		this.props.hideDialog();
+	useClassicEditor = () => {
+		const { logClassicEditorUsed, hideDialog, isPrivateAtomic, wpAdminRedirectionUrl } = this.props;
+		logClassicEditorUsed();
+		hideDialog();
+		if ( isPrivateAtomic ) {
+			window.location.href = wpAdminRedirectionUrl;
+		}
 	};
 
 	optInToGutenberg = () => {
@@ -55,7 +65,11 @@ class EditorGutenbergOptInDialog extends Component {
 	};
 
 	render() {
-		const { translate, isDialogVisible, useClassic } = this.props;
+		const { translate, isDialogVisible, optInEnabled } = this.props;
+		if ( ! optInEnabled ) {
+			return null;
+		}
+
 		const buttons = [
 			<Button key="gutenberg" onClick={ this.optInToGutenberg } primary>
 				{ translate( 'Try the block editor' ) }
@@ -63,7 +77,7 @@ class EditorGutenbergOptInDialog extends Component {
 			{
 				action: 'cancel',
 				label: translate( 'Use the current editor' ),
-				onClick: useClassic,
+				onClick: this.useClassicEditor,
 			},
 		];
 		return (
@@ -71,12 +85,15 @@ class EditorGutenbergOptInDialog extends Component {
 				additionalClassNames="editor-gutenberg-opt-in-dialog"
 				isVisible={ isDialogVisible }
 				buttons={ buttons }
-				onClose={ this.onCloseDialog }
+				onClose={ this.useClassicEditor }
 			>
 				<div className="editor-gutenberg-opt-in-dialog__illustration" />
 
 				<header>
-					<button onClick={ this.onCloseDialog } className="editor-gutenberg-opt-in-dialog__close">
+					<button
+						onClick={ this.useClassicEditor }
+						className="editor-gutenberg-opt-in-dialog__close"
+					>
 						<Gridicon icon="cross" />
 					</button>
 				</header>
@@ -93,7 +110,7 @@ class EditorGutenbergOptInDialog extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ( {
+const mapDispatchToProps = ( dispatch ) => ( {
 	optIn: ( siteId, gutenbergUrl ) => {
 		dispatch(
 			withAnalytics(
@@ -113,7 +130,7 @@ const mapDispatchToProps = dispatch => ( {
 			)
 		);
 	},
-	useClassic: () => {
+	logClassicEditorUsed: () => {
 		dispatch(
 			withAnalytics(
 				composeAnalytics(
@@ -125,25 +142,30 @@ const mapDispatchToProps = dispatch => ( {
 					),
 					recordTracksEvent( 'calypso_gutenberg_use_classic_editor' ),
 					bumpStat( 'selected-editor', 'calypso-gutenberg-use-classic-editor' )
-				),
-				hideGutenbergOptInDialog()
+				)
 			)
 		);
 	},
 	hideDialog: () => dispatch( hideGutenbergOptInDialog() ),
 } );
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const isDialogVisible = isGutenbergOptInDialogShowing( state );
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
-
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
+	const optInEnabled = isGutenbergOptInEnabled( state, siteId );
+	const isPrivateAtomic =
+		isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId );
+	const wpAdminRedirectionUrl = getWpAdminClassicEditorRedirectionUrl( state, siteId );
 
 	return {
-		gutenbergUrl,
-		isDialogVisible,
 		siteId,
+		gutenbergUrl,
+		optInEnabled,
+		isDialogVisible,
+		isPrivateAtomic,
+		wpAdminRedirectionUrl,
 	};
 }, mapDispatchToProps )( localize( EditorGutenbergOptInDialog ) );

@@ -19,7 +19,7 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const removeEmailForward = action => {
+export const removeEmailForward = ( action ) => {
 	return http(
 		{
 			method: 'POST',

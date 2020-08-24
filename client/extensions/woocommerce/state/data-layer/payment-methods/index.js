@@ -19,7 +19,7 @@ export default {
 
 			const payload = {};
 			const settings = {};
-			Object.keys( method.settings ).map( settingKey => {
+			Object.keys( method.settings ).map( ( settingKey ) => {
 				if ( 'enabled' === settingKey ) {
 					payload.enabled = method.settings.enabled;
 					return;

@@ -22,5 +22,5 @@ import isMainSiteOf from 'state/selectors/is-main-site-of';
  */
 export default createSelector( ( state, siteId ) => {
 	const siteIds = Object.keys( getSitesItems( state ) );
-	return some( siteIds, mainSiteId => isMainSiteOf( state, mainSiteId, siteId ) );
+	return some( siteIds, ( mainSiteId ) => isMainSiteOf( state, mainSiteId, siteId ) );
 }, getSitesItems );

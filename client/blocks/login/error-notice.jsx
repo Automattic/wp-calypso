@@ -28,7 +28,7 @@ class ErrorNotice extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const receiveNewError = key => this.props[ key ] !== prevProps[ key ];
+		const receiveNewError = ( key ) => this.props[ key ] !== prevProps[ key ];
 
 		if (
 			receiveNewError( 'createAccountError' ) ||
@@ -105,7 +105,7 @@ class ErrorNotice extends Component {
 	}
 }
 
-export default connect( state => ( {
+export default connect( ( state ) => ( {
 	createAccountError: getCreateSocialAccountError( state ),
 	requestAccountError: getRequestSocialAccountError( state ),
 	requestError: getRequestError( state ),

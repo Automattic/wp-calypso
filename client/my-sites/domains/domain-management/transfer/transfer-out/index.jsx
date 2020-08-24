@@ -4,6 +4,7 @@
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -23,7 +24,7 @@ import Unlocked from './unlocked.jsx';
 import SelectIpsTag from './select-ips-tag.jsx';
 import TransferProhibited from './transfer-prohibited.jsx';
 import TransferLock from './transfer-lock.jsx';
-
+import getCurrentRoute from 'state/selectors/get-current-route';
 /**
  * Style dependencies
  */
@@ -82,7 +83,13 @@ class Transfer extends React.Component {
 	}
 
 	goToEdit = () => {
-		page( domainManagementTransfer( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			domainManagementTransfer(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	isDataLoading() {
@@ -90,4 +97,6 @@ class Transfer extends React.Component {
 	}
 }
 
-export default localize( Transfer );
+export default connect( ( state ) => ( {
+	currentRoute: getCurrentRoute( state ),
+} ) )( localize( Transfer ) );

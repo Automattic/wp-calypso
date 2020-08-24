@@ -13,7 +13,7 @@ import {
 	WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 } from 'woocommerce/state/action-types';
 
-export const fetchSettingsGeneral = siteId => {
+export const fetchSettingsGeneral = ( siteId ) => {
 	return {
 		type: WOOCOMMERCE_SETTINGS_GENERAL_REQUEST,
 		siteId,
@@ -68,13 +68,13 @@ export const updateTaxesEnabledSetting = (
 	const value = taxesEnabled ? 'yes' : 'no';
 	return request( siteId )
 		.post( 'settings/general/woocommerce_calc_taxes', { value } )
-		.then( data => {
+		.then( ( data ) => {
 			dispatch( updateTaxesEnabledSettingSuccess( siteId, data ) );
 			if ( successAction ) {
 				dispatch( successAction( data ) );
 			}
 		} )
-		.catch( error => {
+		.catch( ( error ) => {
 			dispatch( setError( siteId, updateAction, error ) );
 			if ( failureAction ) {
 				dispatch( failureAction( error ) );

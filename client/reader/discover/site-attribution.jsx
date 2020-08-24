@@ -31,7 +31,7 @@ class DiscoverSiteAttribution extends React.Component {
 
 	onSiteClick = () => recordSiteClick( this.props.siteUrl );
 
-	onFollowToggle = isFollowing => recordFollowToggle( isFollowing, this.props.siteUrl );
+	onFollowToggle = ( isFollowing ) => recordFollowToggle( isFollowing, this.props.siteUrl );
 
 	render() {
 		const { post, site } = this.props;

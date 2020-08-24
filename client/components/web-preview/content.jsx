@@ -21,7 +21,12 @@ import { localize } from 'i18n-calypso';
 import SpinnerLine from 'components/spinner-line';
 import SeoPreviewPane from 'components/seo-preview-pane';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { isInlineHelpPopoverVisible } from 'state/inline-help/selectors';
+import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
+import { parse as parseUrl } from 'url';
+import { getSelectedSite } from 'state/ui/selectors';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'state/selectors/is-private-site';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 
 const debug = debugModule( 'calypso:web-preview' );
 
@@ -36,7 +41,7 @@ export class WebPreviewContent extends Component {
 		isLoadingSubpage: false,
 	};
 
-	setIframeInstance = ref => {
+	setIframeInstance = ( ref ) => {
 		this.iframe = ref;
 	};
 
@@ -81,7 +86,7 @@ export class WebPreviewContent extends Component {
 		}
 	}
 
-	handleMessage = e => {
+	handleMessage = ( e ) => {
 		let data;
 		try {
 			data = JSON.parse( e.data );
@@ -95,6 +100,9 @@ export class WebPreviewContent extends Component {
 		debug( 'message from iframe', data );
 
 		switch ( data.type ) {
+			case 'needs-auth':
+				this.redirectToAuth();
+				return;
 			case 'link':
 				page( data.payload.replace( /^https:\/\/wordpress\.com\//i, '/' ) );
 				this.props.onClose();
@@ -119,12 +127,20 @@ export class WebPreviewContent extends Component {
 		}
 	};
 
-	handleLocationChange = payload => {
+	redirectToAuth() {
+		const { isPrivateAtomic, url } = this.props;
+		if ( isPrivateAtomic ) {
+			window.location.href =
+				`${ url }/wp-login.php?redirect_to=` + encodeURIComponent( window.location.href );
+		}
+	}
+
+	handleLocationChange = ( payload ) => {
 		this.props.onLocationUpdate( payload.pathname );
 		this.setState( { isLoadingSubpage: false } );
 	};
 
-	setWrapperElement = el => {
+	setWrapperElement = ( el ) => {
 		this.wrapperElementRef = el;
 	};
 
@@ -164,8 +180,11 @@ export class WebPreviewContent extends Component {
 		this.iframe.contentDocument.close();
 	}
 
-	setIframeUrl = iframeUrl => {
+	setIframeUrl = ( iframeUrl ) => {
 		if ( ! this.iframe || ( ! this.props.showPreview && this.props.isModalWindow ) ) {
+			if ( this.state.iframeUrl !== 'about:blank' ) {
+				this.setState( { iframeUrl: 'about:blank' } );
+			}
 			return;
 		}
 
@@ -206,7 +225,7 @@ export class WebPreviewContent extends Component {
 		this.setDeviceViewport( 'seo' );
 	};
 
-	setLoaded = caller => {
+	setLoaded = ( caller ) => {
 		if ( this.state.loaded && ! this.state.isLoadingSubpage ) {
 			debug( 'already loaded' );
 			return;
@@ -234,6 +253,17 @@ export class WebPreviewContent extends Component {
 		// Sometimes we force inline help open in the preview. In this case we don't want to hide it when the iframe loads
 		if ( ! this.props.isInlineHelpPopoverVisible ) {
 			this.focusIfNeeded();
+			// If the preview is loaded and the site is private atomic, there's a chance we ended up on
+			// "you need to login first" screen. These messages are handled by wpcomsh on the other end,
+			// and they make it possible to redirect to wp-login.php since it cannot be displayed in this
+			// iframe OR redirected to using <a href="" target="_top">.
+			if ( this.props.isPrivateAtomic ) {
+				const { protocol, host } = parseUrl( this.props.externalUrl );
+				this.iframe.contentWindow.postMessage(
+					{ connected: 'calypso' },
+					`${ protocol }//${ host }`
+				);
+			}
 		}
 	};
 
@@ -275,6 +305,7 @@ export class WebPreviewContent extends Component {
 					device={ this.state.device }
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
+					showEditHeaderLink={ this.props.showEditHeaderLink }
 					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
 					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
@@ -288,20 +319,21 @@ export class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
 						</div>
 					) }
-					<div
-						className={ classNames( 'web-preview__frame-wrapper', {
-							'is-resizable': ! this.props.isModalWindow,
-						} ) }
-						style={ { display: 'seo' === this.state.device ? 'none' : 'inherit' } }
-					>
-						<iframe
-							ref={ this.setIframeInstance }
-							className="web-preview__frame"
-							src="about:blank"
-							onLoad={ () => this.setLoaded( 'iframe-onload' ) }
-							title={ this.props.iframeTitle || translate( 'Preview' ) }
-						/>
-					</div>
+					{ 'seo' !== this.state.device && (
+						<div
+							className={ classNames( 'web-preview__frame-wrapper', {
+								'is-resizable': ! this.props.isModalWindow,
+							} ) }
+						>
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								src="about:blank"
+								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
+						</div>
+					) }
 					{ 'seo' === this.state.device && (
 						<SeoPreviewPane
 							overridePost={ this.props.overridePost }
@@ -331,6 +363,8 @@ WebPreviewContent.propTypes = {
 	showDeviceSwitcher: PropTypes.bool,
 	// Show edit button
 	showEdit: PropTypes.bool,
+	// Show edit the header link button
+	showEditHeaderLink: PropTypes.bool,
 	// The URL for the edit button
 	editUrl: PropTypes.string,
 	// The URL that should be displayed in the iframe
@@ -377,6 +411,7 @@ WebPreviewContent.defaultProps = {
 	showSEO: true,
 	showDeviceSwitcher: true,
 	showEdit: false,
+	showEditHeaderLink: false,
 	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,
@@ -390,8 +425,13 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 };
 
-const mapState = state => ( {
-	isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
-} );
+const mapState = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		isInlineHelpPopoverVisible: isInlineHelpPopoverVisible( state ),
+		isPrivateAtomic: isSiteAutomatedTransfer( state, siteId ) && isPrivateSite( state, siteId ),
+		url: getSelectedSite( state )?.URL,
+	};
+};
 
 export default connect( mapState, { recordTracksEvent } )( localize( WebPreviewContent ) );

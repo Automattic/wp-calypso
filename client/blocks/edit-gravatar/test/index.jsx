@@ -13,8 +13,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { AspectRatios } from 'state/editor/image-editor/constants';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'lib/oauth-token', () => ( {
@@ -28,7 +28,7 @@ describe( 'EditGravatar', () => {
 		email_verified: false,
 	};
 
-	useSandbox( newSandbox => {
+	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
 		global.URL = {
 			revokeObjectURL: sandbox.stub(),
@@ -36,7 +36,7 @@ describe( 'EditGravatar', () => {
 		};
 	} );
 
-	beforeAll( function() {
+	beforeAll( function () {
 		EditGravatar = require( 'blocks/edit-gravatar' ).EditGravatar;
 		FilePicker = require( 'components/file-picker' );
 		Gravatar = require( 'components/gravatar' ).default;

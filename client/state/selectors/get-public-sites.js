@@ -12,9 +12,9 @@ import createSelector from 'lib/create-selector';
  * @returns {Array}        Site objects
  */
 export default createSelector(
-	state =>
+	( state ) =>
 		Object.values( getSitesItems( state ) )
-			.filter( site => ! site.is_private )
-			.map( site => getSite( state, site.ID ) ),
-	state => [ getSitesItems( state ), state.currentUser.capabilities ]
+			.filter( ( site ) => ! site.is_private )
+			.map( ( site ) => getSite( state, site.ID ) ),
+	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

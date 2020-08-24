@@ -6,10 +6,10 @@ export default function transformer( file, api ) {
 
 	return j( file.source )
 		.find( j.ImportDeclaration )
-		.filter( p => p.node.source.value === 'state/selectors' )
-		.forEach( path => {
+		.filter( ( p ) => p.node.source.value === 'state/selectors' )
+		.forEach( ( path ) => {
 			path.node.specifiers
-				.map( s => [ s.imported.name, s.local.name ] )
+				.map( ( s ) => [ s.imported.name, s.local.name ] )
 				.sort( ( a, b ) => a[ 0 ].localeCompare( b[ 0 ] ) )
 				.map( ( [ name, alias ], i ) => ( {
 					...j.importDeclaration(
@@ -18,7 +18,7 @@ export default function transformer( file, api ) {
 					),
 					...( i === 0 ? { comments: path.node.comments } : {} ),
 				} ) )
-				.forEach( i => j( path ).insertBefore( i ) );
+				.forEach( ( i ) => j( path ).insertBefore( i ) );
 
 			j( path ).remove();
 		} )

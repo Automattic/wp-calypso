@@ -3,7 +3,7 @@
 	flex-direction: column;
 	padding: 10px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -12,7 +12,7 @@
 	flex: 0 0 30%;
 	margin-bottom: 24px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-bottom: 0;
 	}
 }
@@ -48,14 +48,14 @@
 }
 
 .wpview-type-simple-payments__image-part + .wpview-type-simple-payments__text-part {
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-basis: 70%;
 		padding-left: 24px;
 	}
 }
 
 .wpview-type-simple-payments__title {
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 24px;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .wpview-type-simple-payments__price-part {
-	font-weight: bold;
+	font-weight: 600;
 	margin-bottom: 24px;
 }
 
@@ -121,9 +121,9 @@
 	top: 50%;
 	width: 43px;
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	font-style: normal;
-	font-weight: 500;
+	font-weight: 600;
 	line-height: normal;
 	transform: translateY( -50% );
 	vertical-align: top;

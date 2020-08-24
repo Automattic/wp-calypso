@@ -4,11 +4,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import styled from '@emotion/styled';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-import { useLocalize } from '../lib/localize';
 import Button from './button';
 import { useFormStatus } from '../lib/form-status';
 
@@ -21,9 +21,9 @@ export default function PaymentRequestButton( {
 	disabled,
 	disabledReason,
 } ) {
-	const localize = useLocalize();
+	const { __ } = useI18n();
 	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.persist();
 		event.preventDefault();
 		setFormSubmitting();
@@ -37,7 +37,7 @@ export default function PaymentRequestButton( {
 	if ( formStatus === 'submitting' ) {
 		return (
 			<Button disabled fullWidth>
-				{ localize( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }
+				{ __( 'Completing your purchase' ) }
 			</Button>
 		);
 	}
@@ -54,7 +54,7 @@ export default function PaymentRequestButton( {
 	}
 	return (
 		<Button disabled={ disabled } onClick={ onClick } fullWidth>
-			{ localize( 'Select a payment card' ) }
+			{ __( 'Select a payment card' ) }
 		</Button>
 	);
 }
@@ -70,17 +70,23 @@ const ApplePayButton = styled.button`
 	-webkit-appearance: -apple-pay-button;
 	-apple-pay-button-style: black;
 	-apple-pay-button-type: plain;
+	height: 38px;
 	width: 100%;
 	position: relative;
 
 	&::after {
 		content: '';
-		position: ${props => ( props.disabled ? 'absolute' : 'relative' )};
+		position: ${ ( props ) => ( props.disabled ? 'absolute' : 'relative' ) };
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
 		background-color: #ccc;
 		opacity: 0.7;
+
+		.rtl & {
+			right: 0;
+			left: auto;
+		}
 	}
 `;

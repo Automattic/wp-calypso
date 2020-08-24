@@ -1,4 +1,4 @@
 Push Notification Testing
 ===
 
-`npm run test-client -- --grep "state push-notifications"`
+`yarn run test-client -- --grep "state push-notifications"`

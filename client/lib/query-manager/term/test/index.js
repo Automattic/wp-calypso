@@ -14,7 +14,7 @@ const DEFAULT_TERM = {
 	post_count: 5,
 };
 
-const makeComparator = query => ( a, b ) => TermQueryManager.compare( query, a, b );
+const makeComparator = ( query ) => ( a, b ) => TermQueryManager.compare( query, a, b );
 
 describe( 'TermQueryManager', () => {
 	describe( '#matches()', () => {

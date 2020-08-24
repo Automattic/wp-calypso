@@ -21,8 +21,9 @@ import {
 import { AddContentButton } from 'layout/guided-tours/button-labels';
 import { getSectionName, hasSidebar } from 'state/ui/selectors';
 import { targetForSlug } from 'layout/guided-tours/positioning';
+import { localizeUrl } from 'lib/i18n-utils';
 
-const sectionHasSidebar = state =>
+const sectionHasSidebar = ( state ) =>
 	hasSidebar( state ) && ! includes( [ 'customize' ], getSectionName( state ) );
 
 // When moving from stats to the editor, the menu disappears, the first step
@@ -35,8 +36,8 @@ const handleTargetDisappear = () => {
 };
 
 // IE9+ polyfill for `Element.matches()` used in `DelegatingQuit`
-if ( ! Element.prototype.matches ) {
-	Element.prototype.matches = Element.prototype.msMatchesSelector;
+if ( ! window.Element.prototype.matches ) {
+	window.Element.prototype.matches = window.Element.prototype.msMatchesSelector;
 }
 
 class DelegatingQuit extends Quit {
@@ -60,7 +61,7 @@ class DelegatingQuit extends Quit {
 		}
 	};
 
-	onParentClick = event => {
+	onParentClick = ( event ) => {
 		let eventTarget = event.target;
 		// Event delegation
 		while ( !! eventTarget && eventTarget !== event.currentTarget ) {
@@ -141,8 +142,8 @@ export const SimplePaymentsEmailTour = makeTour(
 							{ translate( 'Got it, thanks!' ) }
 						</DelegatingQuit>
 					</ButtonRow>
-					<Link href="https://en.support.wordpress.com/simple-payments">
-						{ translate( 'Learn more about Simple Payments.' ) }
+					<Link href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' ) }>
+						{ translate( 'Learn more about Pay with PayPal.' ) }
 					</Link>
 				</Fragment>
 			) }

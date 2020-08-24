@@ -36,7 +36,7 @@ export default function MeSettings( wpcom ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-MeSettings.prototype.get = function( query, fn ) {
+MeSettings.prototype.get = function ( query, fn ) {
 	return this.wpcom.req.get( '/me/settings', query, fn );
 };
 
@@ -48,7 +48,7 @@ MeSettings.prototype.get = function( query, fn ) {
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
-MeSettings.prototype.update = function( query, body, fn ) {
+MeSettings.prototype.update = function ( query, body, fn ) {
 	return this.wpcom.req.put( '/me/settings/', query, body, fn );
 };
 
@@ -61,7 +61,7 @@ MeSettings.prototype.update = function( query, body, fn ) {
  *
  * @returns {MeProfileLinks} MeProfileLinks instance
  */
-MeSettings.prototype.profileLinks = function() {
+MeSettings.prototype.profileLinks = function () {
 	return new MeProfileLinks( this.wpcom );
 };
 
@@ -70,6 +70,6 @@ MeSettings.prototype.profileLinks = function() {
  *
  * @returns {MeSettingsPassword} MeSettingsPassword instance
  */
-MeSettings.prototype.password = function() {
+MeSettings.prototype.password = function () {
 	return new MeSettingsPassword( this.wpcom );
 };

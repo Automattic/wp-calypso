@@ -15,14 +15,24 @@ import * as paths from './paths';
 import { makeLayout, render as clientRender } from 'controller';
 
 function registerMultiPage( { paths: givenPaths, handlers } ) {
-	givenPaths.forEach( path => page( path, ...handlers ) );
+	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
+}
+
+function registerStandardDomainManagementPages( pathFunction, controller ) {
+	registerMultiPage( {
+		paths: [
+			pathFunction( ':site', ':domain' ),
+			pathFunction( ':site', ':domain', paths.domainManagementRoot() ),
+		],
+		handlers: [ ...getCommonHandlers(), controller, makeLayout, clientRender ],
+	} );
 }
 
 function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
 	warnIfJetpack = true,
 } = {} ) {
-	const handlers = [ siteSelection, navigation ];
+	const handlers = [ siteSelection, navigation, domainsController.wpForTeamsNoDomainsRedirect ];
 
 	if ( noSitePath ) {
 		handlers.push( domainsController.redirectIfNoSite( noSitePath ) );
@@ -35,7 +45,7 @@ function getCommonHandlers( {
 	return handlers;
 }
 
-export default function() {
+export default function () {
 	SiftScience.recordUser();
 
 	// These redirects are work-around in response to an issue where navigating back after a
@@ -65,100 +75,69 @@ export default function() {
 		domainManagementController.domainManagementEmailForwardingRedirect
 	);
 
-	page(
-		paths.domainManagementChangeSiteAddress( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementChangeSiteAddress,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementChangeSiteAddress,
+		domainManagementController.domainManagementChangeSiteAddress
 	);
 
-	page(
-		paths.domainManagementRedirectSettings( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementRedirectSettings,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementSecurity,
+		domainManagementController.domainManagementSecurity
 	);
 
-	page(
-		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementContactsPrivacy,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementRedirectSettings,
+		domainManagementController.domainManagementRedirectSettings
 	);
 
-	page(
-		paths.domainManagementEditContactInfo( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementEditContactInfo,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementContactsPrivacy,
+		domainManagementController.domainManagementContactsPrivacy
 	);
 
-	page(
-		paths.domainManagementManageConsent( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementManageConsent,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementEditContactInfo,
+		domainManagementController.domainManagementEditContactInfo
 	);
 
-	page(
-		paths.domainManagementDomainConnectMapping( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementDomainConnectMapping,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementManageConsent,
+		domainManagementController.domainManagementManageConsent
 	);
 
-	page(
-		paths.domainManagementDns( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementDns,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementDomainConnectMapping,
+		domainManagementController.domainManagementDomainConnectMapping
 	);
 
-	page(
-		paths.domainManagementNameServers( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementNameServers,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementDns,
+		domainManagementController.domainManagementDns
 	);
 
-	page(
-		paths.domainManagementTransfer( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransfer,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementNameServers,
+		domainManagementController.domainManagementNameServers
 	);
 
-	page(
-		paths.domainManagementTransferOut( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferOut,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransfer,
+		domainManagementController.domainManagementTransfer
 	);
 
-	page(
-		paths.domainManagementTransferToAnotherUser( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferToOtherUser,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferOut,
+		domainManagementController.domainManagementTransferOut
 	);
 
-	page(
-		paths.domainManagementTransferToOtherSite( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementTransferToOtherSite,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferToAnotherUser,
+		domainManagementController.domainManagementTransferToOtherUser
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferToOtherSite,
+		domainManagementController.domainManagementTransferToOtherSite
 	);
 
 	if ( config.isEnabled( 'manage/all-domains' ) ) {
@@ -181,25 +160,19 @@ export default function() {
 		clientRender
 	);
 
-	registerMultiPage( {
-		paths: [
-			paths.domainManagementEdit( ':site', ':domain' ),
-			paths.domainManagementTransferIn( ':site', ':domain' ),
-		],
-		handlers: [
-			...getCommonHandlers(),
-			domainManagementController.domainManagementEdit,
-			makeLayout,
-			clientRender,
-		],
-	} );
+	registerStandardDomainManagementPages(
+		paths.domainManagementEdit,
+		domainManagementController.domainManagementEdit
+	);
 
-	page(
-		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
-		...getCommonHandlers(),
-		domainManagementController.domainManagementPrimaryDomain,
-		makeLayout,
-		clientRender
+	registerStandardDomainManagementPages(
+		paths.domainManagementSiteRedirect,
+		domainManagementController.domainManagementSiteRedirect
+	);
+
+	registerStandardDomainManagementPages(
+		paths.domainManagementTransferIn,
+		domainManagementController.domainManagementTransferIn
 	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {

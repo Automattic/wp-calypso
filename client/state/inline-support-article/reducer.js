@@ -15,12 +15,14 @@ export default withoutPersistence(
 	) => {
 		switch ( action.type ) {
 			case SUPPORT_ARTICLE_DIALOG_OPEN: {
-				const { postId, postUrl = null } = action;
+				const { postId, postUrl = null, actionLabel = null, actionUrl = null } = action;
 
 				return {
 					postUrl,
 					postId,
 					isVisible: true,
+					actionLabel,
+					actionUrl,
 				};
 			}
 			case SUPPORT_ARTICLE_DIALOG_CLOSE:

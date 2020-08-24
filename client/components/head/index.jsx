@@ -2,22 +2,16 @@
  * External dependencies
  *
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
+import Favicons from './favicons';
 
-const Head = ( {
-	title = 'WordPress.com',
-	faviconURL,
-	children,
-	cdn,
-	branchName,
-	inlineScriptNonce,
-} ) => {
+const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonce } ) => {
 	return (
 		<head>
 			<title>{ title }</title>
@@ -28,7 +22,10 @@ const Head = ( {
 			<meta name="format-detection" content="telephone=no" />
 			<meta name="mobile-web-app-capable" content="yes" />
 			<meta name="apple-mobile-web-app-capable" content="yes" />
-			<meta name="theme-color" content="#016087" />
+			<meta
+				name="theme-color"
+				content={ ! config( 'theme_color' ) ? '#016087' : config( 'theme_color' ) }
+			/>
 			<meta name="referrer" content="origin" />
 
 			<link
@@ -37,41 +34,7 @@ const Head = ( {
 				href="https://public-api.wordpress.com/wp-admin/rest-proxy/?v=2.0"
 			/>
 
-			<link
-				rel="shortcut icon"
-				type="image/vnd.microsoft.icon"
-				href={ faviconURL }
-				sizes="16x16 32x32"
-			/>
-			<link rel="shortcut icon" type="image/x-icon" href={ faviconURL } sizes="16x16 32x32" />
-			<link rel="icon" type="image/x-icon" href={ faviconURL } sizes="16x16 32x32" />
-
-			<link
-				rel="icon"
-				type="image/png"
-				href={ cdn + '/i/favicons/favicon-64x64.png' }
-				sizes="64x64"
-			/>
-			<link
-				rel="icon"
-				type="image/png"
-				href={ cdn + '/i/favicons/favicon-96x96.png' }
-				sizes="96x96"
-			/>
-			<link
-				rel="icon"
-				type="image/png"
-				href={ cdn + '/i/favicons/android-chrome-192x192.png' }
-				sizes="192x192"
-			/>
-			{ [ 57, 60, 72, 76, 114, 120, 144, 152, 180 ].map( size => (
-				<link
-					key={ size }
-					rel="apple-touch-icon"
-					sizes={ `${ size }x${ size }` }
-					href={ cdn + `/i/favicons/apple-touch-icon-${ size }x${ size }.png` }
-				/>
-			) ) }
+			<Favicons environmentFaviconURL={ config( 'favicon_url' ) } />
 
 			<link rel="profile" href="http://gmpg.org/xfn/11" />
 
@@ -118,9 +81,7 @@ const Head = ( {
 
 Head.propTypes = {
 	title: PropTypes.string,
-	faviconURL: PropTypes.string.isRequired,
 	children: PropTypes.node,
-	cdn: PropTypes.string.isRequired,
 	branchName: PropTypes.string,
 };
 

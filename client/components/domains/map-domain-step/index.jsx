@@ -17,7 +17,7 @@ import { domainAvailability } from 'lib/domains/constants';
 import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
 import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
 import DomainProductPrice from 'components/domains/domain-product-price';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
 import FormTextInput from 'components/forms/form-text-input';
@@ -28,6 +28,7 @@ import {
 	recordGoButtonClickInMapDomain,
 } from 'state/domains/actions';
 import Notice from 'components/notice';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 /**
  * Style dependencies
@@ -42,6 +43,7 @@ class MapDomainStep extends React.Component {
 		initialQuery: PropTypes.string,
 		analyticsSection: PropTypes.string.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		primaryWithPlansOnly: PropTypes.bool.isRequired,
 		onRegisterDomain: PropTypes.func.isRequired,
 		onMapDomain: PropTypes.func.isRequired,
 		onSave: PropTypes.func,
@@ -96,7 +98,7 @@ class MapDomainStep extends React.Component {
 
 					<DomainProductPrice
 						rule={ getDomainPriceRule(
-							this.props.domainsWithPlansOnly,
+							this.props.domainsWithPlansOnly || this.props.primaryWithPlansOnly,
 							this.props.selectedSite,
 							this.props.cart,
 							suggestion,
@@ -201,11 +203,11 @@ class MapDomainStep extends React.Component {
 		);
 	};
 
-	setSearchQuery = event => {
+	setSearchQuery = ( event ) => {
 		this.setState( { searchQuery: event.target.value } );
 	};
 
-	handleFormSubmit = event => {
+	handleFormSubmit = ( event ) => {
 		event.preventDefault();
 
 		const domain = getFixedDomainSearch( this.state.searchQuery );
@@ -258,9 +260,12 @@ class MapDomainStep extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 		selectedSite: getSelectedSite( state ),
+		primaryWithPlansOnly: getCurrentUser( state )
+			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			: false,
 	} ),
 	{
 		recordAddDomainButtonClickInMapDomain,

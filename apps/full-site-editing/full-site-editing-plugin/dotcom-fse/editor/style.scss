@@ -1,3 +1,7 @@
+.post-type-page .edit-post-header-toolbar > .edit-post-header-toolbar__inserter-toggle {
+	display: none;
+}
+
 .post-type-wp_template_part {
 	.editor-post-title,
 	.editor-post-trash {
@@ -23,10 +27,14 @@
 .post-type-page,
 .post-type-wp_template_part {
 	@media ( min-width: 768px ) {
+		// @TODO Remove the "regions content" class after G2 is available everywhere.
+		.block-editor-editor-skeleton__content,
 		.edit-post-editor-regions__content {
 			background: #eee;
 		}
 
+		// @TODO Remove the "regions content" class after G2 is available everywhere.
+		.edit-post-visual-editor.editor-styles-wrapper,
 		.edit-post-editor-regions__content .edit-post-visual-editor {
 			box-shadow: 0 2px 2px 0 rgba( 0, 0, 0, 0.14 ), 0 3px 1px -2px rgba( 0, 0, 0, 0.12 ),
 				0 1px 5px 0 rgba( 0, 0, 0, 0.2 );
@@ -39,7 +47,8 @@
 		padding-left: 0;
 		padding-right: 0;
 
-		.block-editor-block-list__block[data-align='full'] {
+		.block-editor-block-list__block[data-align='full'],
+		.wp-block[data-align='full'] { // Gutenberg >= 8.0.0
 			margin-left: 0;
 			margin-right: 0;
 		}
@@ -92,5 +101,12 @@
 		[data-type='core/social-links']
 		[data-block] {
 		margin: 0;
+	}
+}
+
+@media ( max-width: 600px ) {
+	// Table of contents button is not displayed in mobile view.
+	.components-dropdown.table-of-contents {
+		display: none;
 	}
 }

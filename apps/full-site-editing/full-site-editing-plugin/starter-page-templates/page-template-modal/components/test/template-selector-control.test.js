@@ -142,7 +142,7 @@ describe( 'TemplateSelectorControl', () => {
 		} );
 
 		it( 'renders in "blank" mode when static preview is not provided ', () => {
-			const templatesFixtureWithoutPreviews = templatesFixture.map( template =>
+			const templatesFixtureWithoutPreviews = templatesFixture.map( ( template ) =>
 				omit( template, 'preview' )
 			);
 

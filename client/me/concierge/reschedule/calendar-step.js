@@ -41,7 +41,7 @@ class CalendarStep extends Component {
 		scheduleId: PropTypes.number,
 	};
 
-	onSubmit = timestamp => {
+	onSubmit = ( timestamp ) => {
 		const { appointmentDetails, appointmentId, scheduleId } = this.props;
 
 		this.props.rescheduleConciergeAppointment(
@@ -52,7 +52,7 @@ class CalendarStep extends Component {
 		);
 	};
 
-	setTimezone = timezone => {
+	setTimezone = ( timezone ) => {
 		const { appointmentDetails, appointmentId } = this.props;
 		this.props.updateConciergeAppointmentDetails( appointmentId, {
 			...appointmentDetails,

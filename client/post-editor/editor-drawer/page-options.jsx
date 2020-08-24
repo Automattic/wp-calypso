@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,7 +11,7 @@ import { get } from 'lodash';
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import PageParent from 'post-editor/editor-page-parent';
 import PageTemplates from 'post-editor/editor-page-templates';
@@ -36,7 +35,7 @@ function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	);
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );

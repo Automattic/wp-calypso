@@ -211,7 +211,7 @@ class Task extends PureComponent {
 										</Button>
 									) }
 									{ ! completed && showSkip && (
-										<Button className="checklist__task-skip" onClick={ onDismiss }>
+										<Button className="checklist__task-skip" borderless onClick={ onDismiss }>
 											{ translate( 'Skip' ) }
 										</Button>
 									) }

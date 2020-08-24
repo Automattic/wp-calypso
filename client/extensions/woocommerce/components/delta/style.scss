@@ -64,8 +64,8 @@
 		.delta__value {
 			color: var( --color-neutral-light );
 			display: inline-block;
-			font-size: 13px;
-			font-weight: 300;
+			font-size: $font-body-small;
+			font-weight: 400;
 			line-height: 13px;
 			text-align: left;
 		}

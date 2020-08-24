@@ -1,0 +1,18 @@
+.manage-purchase__other-upgrades-button {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	padding: 0;
+	color: var( --color-text-inverted );
+	font-weight: 400;
+	font-size: inherit;
+	line-height: 1.65;
+	text-decoration: underline;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		color: var( --color-link-light );
+		box-shadow: none;
+	}
+}

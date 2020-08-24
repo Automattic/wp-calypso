@@ -7,12 +7,12 @@
 
 	.reading-widget__heading {
 		h2 {
-			font-size: 20px;
+			font-size: $font-title-small;
 			margin-bottom: 16px;
 		}
 
 		p {
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 	}
 
@@ -37,7 +37,7 @@
 
 			span {
 				color: var( --color-neutral-70 );
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 			}
 		}
 	}
@@ -52,11 +52,11 @@
 		margin-left: -16px;
 		margin-right: -16px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: row;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			padding: 24px 24px 0;
 			margin-left: -24px;
 			margin-right: -24px;
@@ -64,10 +64,10 @@
 
 		.reading-widget__subscription-form-explanation {
 			flex: 1 0 0;
-			font-size: 14px;
+			font-size: $font-body-small;
 			margin-bottom: 24px;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				padding-right: 16px;
 			}
 
@@ -83,7 +83,7 @@
 		.reading-widget__subscription-form-fields {
 			flex: 1 0 0;
 
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				padding-left: 16px;
 			}
 
@@ -93,7 +93,7 @@
 
 			.multi-checkbox {
 				margin-bottom: 8px;
-				font-size: 13px;
+				font-size: $font-body-small;
 				display: flex;
 				flex-wrap: wrap;
 

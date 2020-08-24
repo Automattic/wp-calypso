@@ -36,9 +36,9 @@ const edit = class extends Component {
 
 		// set the initial items in the state based on the markup that was saved
 		const list = this.props.attributes.list.filter(
-			item => typeof item !== 'string' || item.trim() !== ''
+			( item ) => typeof item !== 'string' || item.trim() !== ''
 		);
-		const items = list.map( item => {
+		const items = list.map( ( item ) => {
 			const itemEntry = {};
 			const children = item.props.children;
 			const levelSpan = children[ 0 ];
@@ -138,7 +138,7 @@ const edit = class extends Component {
 	}
 
 	renderElements( items ) {
-		const x = items.map( item => {
+		const x = items.map( ( item ) => {
 			const done = item.done ? 'x' : 'o';
 			return (
 				<li>
@@ -173,7 +173,7 @@ const edit = class extends Component {
 						const onDelete = () => {
 							this.deleteItem( itemIndex );
 						};
-						const onChange = updatedItem => {
+						const onChange = ( updatedItem ) => {
 							this.updateItem( updatedItem, itemIndex );
 						};
 						const onSplit = () => {
@@ -223,11 +223,11 @@ const deprecated = [
 			},
 		},
 
-		save: function() {
+		save: function () {
 			return [];
 		},
 
-		migrate: function( attributes ) {
+		migrate: function ( attributes ) {
 			const o2list = decodeURIComponent( atob( attributes.items ) );
 			const o2Items = o2list.split( '\n' );
 			const items = [];
@@ -244,7 +244,7 @@ const deprecated = [
 				items.push( { item, done, level } );
 			}
 
-			const list = items.map( item => {
+			const list = items.map( ( item ) => {
 				const done = item.done ? 'x' : 'o';
 				return (
 					<li>
@@ -262,7 +262,7 @@ const deprecated = [
 const save = class extends Component {
 	render() {
 		const list = this.props.attributes.list.filter(
-			item => typeof item !== 'string' || item.trim() !== ''
+			( item ) => typeof item !== 'string' || item.trim() !== ''
 		);
 		return <ul>{ list }</ul>;
 	}

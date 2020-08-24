@@ -2,7 +2,7 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-const translate = x => x;
+const translate = ( x ) => x;
 jest.mock( '../option', () => 'SubscriptionLengthOption' );
 
 /**
@@ -88,7 +88,7 @@ describe( 'myFormatCurrency', () => {
 	describe( 'USD - precision 2', () => {
 		const code = 'USD';
 		const symbol = '$';
-		const results = amount => myFormatCurrency( amount, code ).replace( symbol, '' );
+		const results = ( amount ) => myFormatCurrency( amount, code ).replace( symbol, '' );
 
 		test( 'Should return correctly formatted amount for no cents', () => {
 			expect( results( 1 ) ).toBe( '1' );
@@ -114,7 +114,7 @@ describe( 'myFormatCurrency', () => {
 	describe( 'BHD - precision 3', () => {
 		const code = 'BHD';
 		const symbol = 'د.ب.‏';
-		const results = amount => myFormatCurrency( amount, code ).replace( symbol, '' );
+		const results = ( amount ) => myFormatCurrency( amount, code ).replace( symbol, '' );
 
 		test( 'Should return correctly formatted amount for no cents', () => {
 			expect( results( 1 ) ).toBe( '1' );

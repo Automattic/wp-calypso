@@ -3,14 +3,14 @@
 	margin-bottom: 0;
 	padding-bottom: 0.5em;
 
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
 
 	@include clear-fix;
 }
 
 .importer__mapping-description {
-	font-size: 14px;
+	font-size: $font-body-small;
 	margin-bottom: 1.5em;
 
 	strong {

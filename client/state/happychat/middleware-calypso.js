@@ -16,7 +16,6 @@ import {
 	EXPORT_STARTED,
 	HAPPYCHAT_IO_RECEIVE_STATUS,
 	IMPORTS_IMPORT_START,
-	JETPACK_CONNECT_AUTHORIZE,
 	MEDIA_DELETE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_SETUP_ACTIVATE,
@@ -26,6 +25,7 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	SITE_SETTINGS_SAVE_SUCCESS,
 } from 'state/action-types';
+import { JETPACK_CONNECT_AUTHORIZE } from 'state/jetpack-connect/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
@@ -44,7 +44,7 @@ const getRouteSetMessage = ( state, path ) => {
 	return `Looking at https://wordpress.com${ path }`;
 };
 
-export const getEventMessageFromActionData = action => {
+export const getEventMessageFromActionData = ( action ) => {
 	// Below we've stubbed in the actions we think we'll care about, so that we can
 	// start incrementally adding messages for them.
 	switch ( action.type ) {
@@ -137,7 +137,7 @@ export const sendActionLogsAndEvents = ( { getState, dispatch }, action ) => {
 	}
 };
 
-export default store => next => action => {
+export default ( store ) => ( next ) => ( action ) => {
 	const state = store.getState();
 	const { dispatch } = store;
 

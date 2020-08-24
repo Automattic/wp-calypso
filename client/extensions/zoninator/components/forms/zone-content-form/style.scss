@@ -5,15 +5,15 @@
 	.section-header__label-text {
 		width: 90px;
 
-		@include breakpoint( '>480px') {
+		@include breakpoint-deprecated( '>480px') {
 			width: 235px;
 		}
 
-		@include breakpoint( '>660px') {
+		@include breakpoint-deprecated( '>660px') {
 			width: 120px;
 		}
 
-		@include breakpoint( '>1040px') {
+		@include breakpoint-deprecated( '>1040px') {
 			width: 440px;
 		}
 	}
@@ -35,7 +35,7 @@
 
 
 .zoninator__zone-text {
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 1.5;
 }

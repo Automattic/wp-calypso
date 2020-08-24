@@ -54,15 +54,20 @@ import ReaderFullPostUnavailable from './unavailable';
 import BackButton from 'components/back-button';
 import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import { keyForPost } from 'reader/post-key';
 import { showSelectedPost } from 'reader/utils';
 import Emojify from 'components/emojify';
 import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
 import { READER_FULL_POST } from 'reader/follow-sources';
 import { getPostByKey } from 'state/reader/posts/selectors';
-import isLikedPost from 'state/selectors/is-liked-post';
+import { isLikedPost } from 'state/posts/selectors/is-liked-post';
 import QueryPostLikes from 'components/data/query-post-likes';
 import getCurrentStream from 'state/selectors/get-reader-current-stream';
+import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
+import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/actions';
+import Gridicon from 'components/gridicon';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -124,13 +129,14 @@ export class FullPostView extends React.Component {
 	}
 
 	componentWillUnmount() {
+		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
 		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 		KeyboardShortcuts.off( 'move-selection-down', this.goToNextPost );
 		KeyboardShortcuts.off( 'move-selection-up', this.goToPreviousPost );
 	}
 
-	handleBack = event => {
+	handleBack = ( event ) => {
 		event.preventDefault();
 		recordAction( 'full_post_close' );
 		recordGaEvent( 'Closed Full Post Dialog' );
@@ -250,9 +256,14 @@ export class FullPostView extends React.Component {
 		) {
 			this.props.markPostSeen( post, site );
 			this.hasSentPageView = true;
+
+			// mark post as currently viewing
+			this.props.setViewingFullPostKey( keyForPost( post ) );
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
+			config.isEnabled( 'reader/seen-posts' ) && this.markAsSeen();
+
 			recordTrackForPost(
 				'calypso_reader_article_opened',
 				post,
@@ -275,6 +286,43 @@ export class FullPostView extends React.Component {
 		if ( this.props.previousPost ) {
 			showSelectedPost( { postKey: this.props.previousPost } );
 		}
+	};
+
+	markAsSeen = () => {
+		const { post } = this.props;
+		this.props.requestMarkAsSeen( {
+			feedId: post.feed_ID,
+			feedUrl: post.feed_URL,
+			feedItemIds: [ post.feed_item_ID ],
+			globalIds: [ post.global_ID ],
+		} );
+	};
+
+	markAsUnseen = () => {
+		const { post } = this.props;
+		this.props.requestMarkAsUnseen( {
+			feedId: post.feed_ID,
+			feedUrl: post.feed_URL,
+			feedItemIds: [ post.feed_item_ID ],
+			globalIds: [ post.global_ID ],
+		} );
+	};
+
+	renderMarkAsSenButton = () => {
+		const { post } = this.props;
+		return (
+			<div
+				className="reader-full-post__seen-button"
+				title={ post.is_seen ? 'Mark post as unseen' : 'Mark post as seen' }
+			>
+				<Gridicon
+					icon={ post.is_seen ? 'not-visible' : 'visible' }
+					size={ 18 }
+					onClick={ post.is_seen ? this.markAsUnseen : this.markAsSeen }
+					ref={ this.seenTooltipContextRef }
+				/>
+			</div>
+		);
 	};
 
 	render() {
@@ -366,6 +414,7 @@ export class FullPostView extends React.Component {
 									tagName="div"
 								/>
 							) }
+
 							{ shouldShowLikes( post ) && (
 								<LikeButton
 									siteId={ +post.site_ID }
@@ -375,6 +424,8 @@ export class FullPostView extends React.Component {
 									likeSource={ 'reader' }
 								/>
 							) }
+
+							{ config.isEnabled( 'reader/seen-posts' ) && this.renderMarkAsSenButton() }
 						</div>
 					</div>
 					<Emojify>
@@ -412,6 +463,8 @@ export class FullPostView extends React.Component {
 								onCommentClick={ this.handleCommentClick }
 								fullPost={ true }
 							/>
+
+							{ ! isLoading && <PerformanceTrackerStop /> }
 
 							{ showRelatedPosts && (
 								<RelatedPostsFromSameSite
@@ -507,5 +560,13 @@ export default connect(
 
 		return props;
 	},
-	{ markPostSeen, likePost, unlikePost }
+	{
+		markPostSeen,
+		setViewingFullPostKey,
+		unsetViewingFullPostKey,
+		likePost,
+		unlikePost,
+		requestMarkAsSeen,
+		requestMarkAsUnseen,
+	}
 )( FullPostView );

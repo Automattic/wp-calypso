@@ -43,6 +43,8 @@ export const fetchShippingZoneMethodSettings = ( siteId, methodId, instanceId ) 
 
 	return api
 		.get( siteId, api.url.serviceSettings( methodId, instanceId ) )
-		.then( data => dispatch( fetchShippingZoneMethodSettingsSuccess( siteId, instanceId, data ) ) )
-		.catch( err => dispatch( setError( siteId, getAction, err ) ) );
+		.then( ( data ) =>
+			dispatch( fetchShippingZoneMethodSettingsSuccess( siteId, instanceId, data ) )
+		)
+		.catch( ( err ) => dispatch( setError( siteId, getAction, err ) ) );
 };

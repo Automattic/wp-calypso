@@ -42,6 +42,7 @@ import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -77,7 +78,11 @@ class GSuiteAddUsers extends React.Component {
 
 		if ( canContinue ) {
 			addItems(
-				getItemsForCart( domains, 'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG, users )
+				getItemsForCart(
+					domains,
+					'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG,
+					users
+				)
 			);
 			page( '/checkout/' + selectedSite.slug );
 		}
@@ -88,14 +93,14 @@ class GSuiteAddUsers extends React.Component {
 		this.goToEmail();
 	};
 
-	handleReturnKeyPress = event => {
+	handleReturnKeyPress = ( event ) => {
 		// Simulate an implicit submission for the add user form :)
 		if ( event.key === 'Enter' ) {
 			this.handleContinue();
 		}
 	};
 
-	handleUsersChange = changedUsers => {
+	handleUsersChange = ( changedUsers ) => {
 		const { users: previousUsers } = this.state;
 
 		this.recordUsersChangedEvent( previousUsers, changedUsers );
@@ -105,7 +110,7 @@ class GSuiteAddUsers extends React.Component {
 		} );
 	};
 
-	recordClickEvent = eventName => {
+	recordClickEvent = ( eventName ) => {
 		const { recordTracksEvent, selectedDomainName } = this.props;
 		const { users } = this.state;
 		recordTracksEvent( eventName, {
@@ -148,7 +153,13 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	goToEmail = () => {
-		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			emailManagement(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	renderAddGSuite() {
@@ -176,7 +187,7 @@ class GSuiteAddUsers extends React.Component {
 							'Please note that email forwards are not compatible with G Suite, and will be disabled once G Suite is added to this domain. The following domains have forwards:'
 						) }
 						<ul>
-							{ domainsWithForwards.map( domainName => {
+							{ domainsWithForwards.map( ( domainName ) => {
 								return <li key={ domainName }>{ domainName }</li>;
 							} ) }
 						</ul>
@@ -184,14 +195,18 @@ class GSuiteAddUsers extends React.Component {
 				) : (
 					''
 				) }
-				{ selectedDomainInfo.map( domain => {
+
+				{ selectedDomainInfo.map( ( domain ) => {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
+
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
+
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
-							extraValidation={ user => validateAgainstExistingUsers( user, gsuiteUsers ) }
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
+							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
 							selectedDomainName={ getEligibleGSuiteDomain( selectedDomainName, domains ) }
@@ -222,8 +237,10 @@ class GSuiteAddUsers extends React.Component {
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
+
 				<Main>
 					<DomainManagementHeader
 						onClick={ this.goToEmail }
@@ -257,11 +274,12 @@ GSuiteAddUsers.propTypes = {
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteId = get( selectedSite, 'ID', null );
 		const domains = getDomainsBySiteId( state, siteId );
 		return {
+			currentRoute: getCurrentRoute( state ),
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gsuiteUsers: getGSuiteUsers( state, siteId ),

@@ -29,7 +29,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from 'lib/plans/constants';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'components/main', () => 'Main' );
 jest.mock( 'components/section-header', () => 'SectionHeader' );
@@ -50,16 +50,16 @@ jest.mock( 'state/help/courses/selectors', () => ( {
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: Comp => props => (
+	localize: ( Comp ) => ( props ) => (
 		<Comp
 			{ ...props }
-			translate={ function( x ) {
+			translate={ function ( x ) {
 				return x;
 			} }
 		/>
 	),
-	translate: x => x,
-	numberFormat: x => x,
+	translate: ( x ) => x,
+	numberFormat: ( x ) => x,
 } ) );
 
 import purchasesSelectors from 'state/purchases/selectors';
@@ -80,7 +80,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `False for plan ${ productSlug }`, () => {
 			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( false );
@@ -93,7 +93,7 @@ describe( 'mapStateToProps should return correct value for isBusinessPlanUser', 
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( productSlug => {
+	].forEach( ( productSlug ) => {
 		test( `True for plan ${ productSlug }`, () => {
 			purchasesSelectors.getUserPurchases.mockImplementation( () => [ { productSlug } ] );
 			expect( mapStateToProps( {}, {} ).isBusinessPlanUser ).toBe( true );

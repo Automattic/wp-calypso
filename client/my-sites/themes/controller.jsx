@@ -4,6 +4,7 @@
 import { compact, includes, isEmpty, startsWith } from 'lodash';
 import debugFactory from 'debug';
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal Dependencies
@@ -17,6 +18,8 @@ import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
 import { requestThemes, requestThemeFilters, setBackPath } from 'state/themes/actions';
 import { getThemeFilters, getThemesForQuery } from 'state/themes/selectors';
 import { getAnalyticsData } from './helpers';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 const debug = debugFactory( 'calypso:themes' );
 
@@ -25,7 +28,7 @@ function getProps( context ) {
 
 	const { analyticsPath, analyticsPageTitle } = getAnalyticsData( context.path, context.params );
 
-	const boundTrackScrollPage = function() {
+	const boundTrackScrollPage = function () {
 		trackScrollPage( analyticsPath, analyticsPageTitle, 'Themes' );
 	};
 
@@ -55,6 +58,13 @@ export function upload( context, next ) {
 }
 
 export function loggedIn( context, next ) {
+	// Block direct access for P2 sites
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( isSiteWPForTeams( state, siteId ) ) {
+		return page.redirect( `/home/${ context.params.site_id }` );
+	}
+
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
@@ -98,10 +108,7 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
-	context.store
-		.dispatch( requestThemes( siteId, query ) )
-		.then( next )
-		.catch( next );
+	context.store.dispatch( requestThemes( siteId, query ) ).then( next ).catch( next );
 }
 
 export function fetchThemeFilters( context, next ) {

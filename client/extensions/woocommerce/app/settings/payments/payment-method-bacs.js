@@ -58,7 +58,7 @@ class PaymentMethodBACS extends Component {
 		};
 	}
 
-	getAccountData = props => {
+	getAccountData = ( props ) => {
 		const {
 			method: { settings },
 		} = props || this.props;
@@ -76,11 +76,11 @@ class PaymentMethodBACS extends Component {
 			  };
 	};
 
-	onEditFieldHandler = e => {
+	onEditFieldHandler = ( e ) => {
 		this.props.onEditField( e.target.name, e.target.value );
 	};
 
-	onEditAccountHandler = e => {
+	onEditAccountHandler = ( e ) => {
 		const newValue = {};
 		newValue[ e.target.name ] = e.target.value;
 		const newAccount = Object.assign( {}, this.getAccountData(), newValue );

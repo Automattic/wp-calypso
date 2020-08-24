@@ -8,6 +8,7 @@ import ReactDom from 'react-dom';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -37,7 +38,7 @@ class ReaderCombinedCardPost extends React.Component {
 		showFeaturedAsset: true,
 	};
 
-	handleCardClick = event => {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this );
 		const selection = window.getSelection && window.getSelection();
 
@@ -112,9 +113,11 @@ class ReaderCombinedCardPost extends React.Component {
 			recordPermalinkClick( 'timestamp_combined_card', post );
 		};
 
+		const isSeen = config.isEnabled( 'reader/seen-posts' ) && !! post.is_seen;
 		const classes = classnames( {
 			'reader-combined-card__post': true,
 			'is-selected': isSelected,
+			'is-seen': isSeen,
 			'has-featured-asset': !! featuredAsset,
 		} );
 

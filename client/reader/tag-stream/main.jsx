@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { find } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import Stream from 'reader/stream';
 import DocumentHead from 'components/data/document-head';
@@ -20,6 +20,7 @@ import { getReaderTags, getReaderFollowedTags } from 'state/reader/tags/selector
 import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
 import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
 import QueryReaderTag from 'components/data/query-reader-tag';
+import ReaderMain from 'reader/components/reader-main';
 
 /**
  * Style dependencies
@@ -43,12 +44,12 @@ class TagStream extends React.Component {
 		const self = this;
 		this._isMounted = true;
 		// can't use arrows with asyncRequire
-		asyncRequire( 'emoji-text', function( emojiText ) {
+		asyncRequire( 'emoji-text', function ( emojiText ) {
 			if ( self._isMounted ) {
 				self.setState( { emojiText } );
 			}
 		} );
-		asyncRequire( 'twemoji', function( twemoji ) {
+		asyncRequire( 'twemoji', function ( twemoji ) {
 			if ( self._isMounted ) {
 				const title = self.props.decodedTagSlug;
 				self.setState( {
@@ -112,7 +113,7 @@ class TagStream extends React.Component {
 
 		if ( tag && tag.error ) {
 			return (
-				<React.Fragment>
+				<ReaderMain className="tag-stream__main">
 					<QueryReaderFollowedTags />
 					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					{ this.props.showBack && <HeaderBack /> }
@@ -122,8 +123,8 @@ class TagStream extends React.Component {
 						showFollow={ false }
 						showBack={ this.props.showBack }
 					/>
-					<EmptyContent />
-				</React.Fragment>
+					{ emptyContent }
+				</ReaderMain>
 			);
 		}
 
@@ -158,7 +159,7 @@ class TagStream extends React.Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		followedTags: getReaderFollowedTags( state ),
 		tags: getReaderTags( state ),
 	} ),

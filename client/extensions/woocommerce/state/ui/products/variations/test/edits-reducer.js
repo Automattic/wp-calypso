@@ -20,7 +20,7 @@ import { createProduct, productUpdated } from 'woocommerce/state/sites/products/
 
 const siteId = 123;
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 
 describe( 'edits-reducer', () => {
 	const newVariableProduct1 = {
@@ -219,7 +219,7 @@ describe( 'edits-reducer', () => {
 			undefined,
 			editProductVariation( siteId, product, null, { regular_price: '1.99' } )
 		);
-		const productEdits1 = edits1.find( function( p ) {
+		const productEdits1 = edits1.find( function ( p ) {
 			if ( isEqual( product.id, p.productId ) ) {
 				return p;
 			}
@@ -231,7 +231,7 @@ describe( 'edits-reducer', () => {
 			edits1,
 			editProductVariation( siteId, product, null, { regular_price: '2.99' } )
 		);
-		const productEdits2 = edits2.find( function( p ) {
+		const productEdits2 = edits2.find( function ( p ) {
 			if ( isEqual( product.id, p.productId ) ) {
 				return p;
 			}
@@ -252,7 +252,7 @@ describe( 'edits-reducer', () => {
 			undefined,
 			editProductVariation( siteId, product, variation1, { regular_price: '1.99' } )
 		);
-		const _edits1 = edits1.find( function( p ) {
+		const _edits1 = edits1.find( function ( p ) {
 			if ( isEqual( product.id, p.productId ) ) {
 				return p;
 			}

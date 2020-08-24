@@ -11,6 +11,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import AutoDirection from 'components/auto-direction';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Gravatar from 'components/gravatar';
@@ -37,9 +38,9 @@ class PostCommentForm extends React.Component {
 
 		// bind event handlers to this instance
 		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( prop => prop.indexOf( 'handle' ) === 0 )
-			.filter( prop => typeof this[ prop ] === 'function' )
-			.forEach( prop => ( this[ prop ] = this[ prop ].bind( this ) ) );
+			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
+			.filter( ( prop ) => typeof this[ prop ] === 'function' )
+			.forEach( ( prop ) => ( this[ prop ] = this[ prop ].bind( this ) ) );
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
@@ -211,13 +212,13 @@ class PostCommentForm extends React.Component {
 							/>
 						</AutoDirection>
 					</div>
-					<button
+					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
-					</button>
+					</Button>
 					{ this.renderError() }
 				</fieldset>
 			</form>
@@ -245,7 +246,7 @@ PostCommentForm.defaultProps = {
 };
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		currentUser: getCurrentUser( state ),
 	} ),
 	{ writeComment, deleteComment, replyComment }

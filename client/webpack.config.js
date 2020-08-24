@@ -9,6 +9,7 @@
  * External dependencies
  */
 const path = require( 'path' );
+const fs = require( 'fs' );
 const webpack = require( 'webpack' );
 const AssetsWriter = require( './server/bundler/assets-writer' );
 const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
@@ -20,6 +21,7 @@ const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' 
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
+const calypsoColorSchemes = require( '@automattic/calypso-color-schemes/js' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const {
 	cssNameFromFilename,
@@ -27,6 +29,8 @@ const {
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const autoprefixerPlugin = require( 'autoprefixer' );
+const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 
 /**
  * Internal dependencies
@@ -34,7 +38,9 @@ const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './webpack/extensions' );
+const getAliasesForExtensions = require( './webpack-utils/extensions' );
+const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
 
 /**
  * Internal variables
@@ -44,18 +50,25 @@ const bundleEnv = config( 'env' );
 const isDevelopment = bundleEnv !== 'production';
 const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
-	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' && calypsoEnv !== 'desktop' );
+	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
-const isCalypsoClient = process.env.BROWSERSLIST_ENV !== 'server';
+const shouldBuildChunksMap =
+	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
+	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
+const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 
-const defaultBrowserslistEnv = isCalypsoClient && ! isDesktop ? 'evergreen' : 'defaults';
+const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
+const cachePath = path.resolve( '.cache', extraPath );
+const hasLanguagesMeta = fs.existsSync(
+	path.join( __dirname, 'languages', 'languages-meta.json' )
+);
 
 function filterEntrypoints( entrypoints ) {
 	/* eslint-disable no-console */
@@ -67,12 +80,12 @@ function filterEntrypoints( entrypoints ) {
 
 	console.warn( '[entrylimit] Limiting build to %s', allowedEntrypoints.join( ', ' ) );
 
-	const validEntrypoints = allowedEntrypoints.filter( ep => {
+	const validEntrypoints = allowedEntrypoints.filter( ( ep ) => {
 		if ( entrypoints.hasOwnProperty( ep ) ) {
 			return true;
 		}
 		console.warn( '[entrylimit] Invalid entrypoint: %s. Valid entries are:', ep );
-		Object.keys( entrypoints ).forEach( e => console.warn( '\t' + e ) );
+		Object.keys( entrypoints ).forEach( ( e ) => console.warn( '\t' + e ) );
 		return false;
 	} );
 
@@ -111,13 +124,15 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
+const outputDir = path.resolve( isDesktopMonorepo ? './desktop' : '.' );
+
 const fileLoader = FileConfig.loader(
-	// The server bundler express middleware server assets from the hard-coded publicPath `/calypso/evergreen/`.
-	// This is required so that running calypso via `npm start` doesn't break.
+	// The server bundler express middleware serves assets from a hard-coded publicPath.
+	// This is required so that running calypso via `yarn start` doesn't break.
 	isDevelopment
 		? {
 				outputPath: 'images',
-				publicPath: '/calypso/evergreen/images/',
+				publicPath: `/calypso/${ extraPath }/images/`,
 				esModules: true,
 		  }
 		: {
@@ -136,14 +151,13 @@ const webpackConfig = {
 	entry: filterEntrypoints( {
 		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
-		'entry-jetpack-cloud': [ path.join( __dirname, 'landing', 'jetpack-cloud' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: process.env.SOURCEMAP || ( isDevelopment ? '#eval' : false ),
 	output: {
-		path: path.resolve( 'public', extraPath ),
+		path: path.join( outputDir, 'public', extraPath ),
 		pathinfo: false,
 		publicPath: `/calypso/${ extraPath }/`,
 		filename: outputFilename,
@@ -152,6 +166,9 @@ const webpackConfig = {
 	},
 	optimization: {
 		concatenateModules: ! isDevelopment && shouldConcatenateModules,
+		// Desktop: override removeAvailableModules and removeEmptyChunks to minimize resource/RAM usage.
+		removeAvailableModules: ! isDesktop,
+		removeEmptyChunks: ! isDesktop,
 		splitChunks: {
 			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
@@ -166,14 +183,29 @@ const webpackConfig = {
 			cache: process.env.CIRCLECI
 				? `${ process.env.HOME }/terser-cache/${ extraPath }`
 				: 'docker' !== process.env.CONTAINER,
-			parallel: workerCount,
-			sourceMap: Boolean( process.env.SOURCEMAP ),
+			// Desktop: number of workers should *not* exceed # of vCPUs available.
+			// For both medium Machine and Docker images, number of vCPUs == 2.
+			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
+			parallel: isDesktop ? 2 : workerCount,
+			// Desktop: disable sourceMaps for performance
+			sourceMap: isDesktop ? false : Boolean( process.env.SOURCEMAP ),
+			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
 			terserOptions: {
-				mangle: ! isDesktop,
+				...( isDesktop
+					? {
+							ecma: 2017,
+							mangle: true,
+							compress: false,
+							safari10: false,
+					  }
+					: {
+							mangle: true,
+					  } ),
 			},
 		} ),
 	},
 	module: {
+		strictExportPresence: true,
 		rules: [
 			TranspileConfig.loader( {
 				workerCount,
@@ -191,8 +223,15 @@ const webpackConfig = {
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
-				postCssConfig: { path: __dirname },
+				postCssOptions: {
+					plugins: [
+						autoprefixerPlugin(),
+						browserslistEnv === 'defaults' &&
+							postcssCustomPropertiesPlugin( { importFrom: [ calypsoColorSchemes ] } ),
+					].filter( Boolean ),
+				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
@@ -226,6 +265,9 @@ const webpackConfig = {
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 				'@wordpress/data': require.resolve( '@wordpress/data' ),
 				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
+				// Alias wp-calypso-client to ./client. This allows for smaller bundles, as it ensures that
+				// importing `./client/file.js` is the same thing than importing `wp-calypso-client/file.js`
+				'wp-calypso-client': __dirname,
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -243,21 +285,17 @@ const webpackConfig = {
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
-		isCalypsoClient && new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ),
 		...SassConfig.plugins( {
 			chunkFilename: cssChunkFilename,
 			filename: cssFilename,
 			minify: ! isDevelopment,
 		} ),
-		isCalypsoClient &&
-			new AssetsWriter( {
-				filename:
-					browserslistEnv === 'defaults'
-						? 'assets-fallback.json'
-						: `assets-${ browserslistEnv }.json`,
-				path: path.join( __dirname, 'server', 'bundler' ),
-				assetExtraPath: extraPath,
-			} ),
+		new AssetsWriter( {
+			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
+			path: path.join( outputDir, 'client', 'server', 'bundler' ),
+			assetExtraPath: extraPath,
+		} ),
 		new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
@@ -287,48 +325,68 @@ const webpackConfig = {
 		new ConfigFlagPlugin( {
 			flags: { desktop: config.isEnabled( 'desktop' ) },
 		} ),
-		isCalypsoClient && new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		shouldBuildChunksMap &&
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( '.', `chunks-map.${ extraPath }.json` ),
+			} ),
+		new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
+		...( ! config.isEnabled( 'desktop' )
+			? [
+					new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
+					new webpack.NormalModuleReplacementPlugin(
+						/^wp-calypso-client[/\\]lib[/\\]desktop$/,
+						'lodash/noop'
+					),
+			  ]
+			: [] ),
+		/*
+		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
+		 */
+		new webpack.NormalModuleReplacementPlugin( /dashicon/, ( res ) => {
+			if ( res.context.includes( '@wordpress/components/' ) ) {
+				res.request = 'components/empty-component';
+			}
+		} ),
+		/*
+		 * Use "evergreen" polyfill config, rather than fallback.
+		 */
+		browserslistEnv === 'evergreen' &&
+			new webpack.NormalModuleReplacementPlugin(
+				/^@automattic\/calypso-polyfills$/,
+				'@automattic/calypso-polyfills/browser-evergreen'
+			),
+		/*
+		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
+		 */
+		...( browserslistEnv === 'evergreen'
+			? [
+					new webpack.NormalModuleReplacementPlugin(
+						/^lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+					new webpack.NormalModuleReplacementPlugin(
+						/^wp-calypso-client[/\\]lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+			  ]
+			: [] ),
+
+		/*
+		 * When not available, replace languages-meta.json with fallback-languages-meta.json.
+		 */
+		hasLanguagesMeta &&
+			new webpack.NormalModuleReplacementPlugin(
+				/^languages[/\\]fallback-languages-meta.json$/,
+				'languages/languages-meta.json'
+			),
+		/*
+		 * Replace `lodash` with `lodash-es`
+		 */
+		new ExtensiveLodashReplacementPlugin(),
 	].filter( Boolean ),
 	externals: [ 'electron' ],
 };
-
-if ( ! config.isEnabled( 'desktop' ) ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' )
-	);
-}
-
-// Replace `lodash` with `lodash-es`.
-if ( isCalypsoClient ) {
-	webpackConfig.plugins.push( new ExtensiveLodashReplacementPlugin() );
-}
-
-// Don't bundle `wpcom-xhr-request` for the browser.
-// Even though it's requested, we don't need it on the browser, because we're using
-// `wpcom-proxy-request` instead. Keep it for desktop and server, though.
-if ( isCalypsoClient && ! isDesktop ) {
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^wpcom-xhr-request$/, 'lodash-es/noop' )
-	);
-}
-
-if ( isCalypsoClient && browserslistEnv === 'evergreen' ) {
-	// Use "evergreen" polyfill config, rather than fallback.
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin(
-			/^@automattic\/calypso-polyfills$/,
-			'@automattic/calypso-polyfills/browser-evergreen'
-		)
-	);
-
-	// Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
-	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin(
-			/^lib[/\\]local-storage-polyfill$/,
-			'lodash-es/noop'
-		)
-	);
-}
 
 module.exports = webpackConfig;

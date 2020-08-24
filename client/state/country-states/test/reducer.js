@@ -16,7 +16,7 @@ import {
 	DESERIALIZE,
 	SERIALIZE,
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 const originalCountryStates = [
 	{ code: 'AL', name: 'Alabama' },
@@ -32,7 +32,7 @@ const originalCountryStates = [
 ];
 
 describe( 'reducer', () => {
-	useSandbox( sandbox => sandbox.stub( console, 'warn' ) );
+	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );

@@ -97,7 +97,7 @@ const locations = [
 const createEditState = ( { zoneLocations, locationEdits } ) =>
 	createState( {
 		site: {
-			shippingZones: Object.keys( zoneLocations ).map( zoneId => ( {
+			shippingZones: Object.keys( zoneLocations ).map( ( zoneId ) => ( {
 				id: Number( zoneId ),
 				methodIds: [],
 			} ) ),

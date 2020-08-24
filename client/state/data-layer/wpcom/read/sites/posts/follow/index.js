@@ -16,7 +16,7 @@ import { errorNotice, successNotice } from 'state/notices/actions';
 import { updateConversationFollowStatus } from 'state/reader/conversations/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const requestConversationFollow = action => {
+export const requestConversationFollow = ( action ) => {
 	return http(
 		{
 			method: 'POST',

@@ -43,7 +43,14 @@ const GSuiteNewUserListExample = () => {
 		error: ! error && value.includes( 'a' ) ? "No a's permitted!" : error,
 	} );
 
-	const extraValidation = ( { domain, mailBox, firstName, lastName }: GSuiteNewUser ) => ( {
+	const extraValidation = ( {
+		uuid,
+		domain,
+		mailBox,
+		firstName,
+		lastName,
+	}: GSuiteNewUser ): GSuiteNewUser => ( {
+		uuid,
 		firstName: noAs( firstName ),
 		lastName: noAs( lastName ),
 		domain,
@@ -54,9 +61,9 @@ const GSuiteNewUserListExample = () => {
 		<Card>
 			<GSuiteNewUserList
 				domains={ domains }
-				extraValidation={ useExtraValidation ? extraValidation : user => user }
+				extraValidation={ useExtraValidation ? extraValidation : ( user ) => user }
 				selectedDomainName={ domainOne.name }
-				onUsersChange={ changedUsers => setUsers( changedUsers ) }
+				onUsersChange={ ( changedUsers ) => setUsers( changedUsers ) }
 				users={ users }
 				onReturnKeyPress={ () => void 0 }
 			>

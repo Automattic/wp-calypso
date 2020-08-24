@@ -40,14 +40,14 @@ class OrderDetails extends Component {
 		};
 	}
 
-	updateStatus = event => {
+	updateStatus = ( event ) => {
 		const { siteId, order } = this.props;
 		if ( siteId ) {
 			this.props.editOrder( siteId, { id: order.id, status: event.target.value } );
 		}
 	};
 
-	updateOrder = newOrder => {
+	updateOrder = ( newOrder ) => {
 		const { siteId, order } = this.props;
 		if ( siteId ) {
 			this.props.editOrder( siteId, { id: order.id, ...newOrder } );
@@ -120,5 +120,5 @@ export default connect(
 			siteId,
 		};
 	},
-	dispatch => bindActionCreators( { editOrder }, dispatch )
+	( dispatch ) => bindActionCreators( { editOrder }, dispatch )
 )( localize( OrderDetails ) );

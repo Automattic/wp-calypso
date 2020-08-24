@@ -1,22 +1,21 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { findIndex } from 'lodash';
-import url from 'url';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { isPhotonHost } from 'lib/post-normalizer/utils/is-photon-host';
 import { thumbIsLikelyImage } from 'lib/post-normalizer/utils/thumb-is-likely-image';
+import { getUrlParts } from 'lib/url';
 
 function getPathname( uri ) {
-	const parsedUrl = url.parse( uri );
-	const path = parsedUrl.pathname;
-	if ( isPhotonHost( parsedUrl.hostname ) ) {
-		return path.substring( path.indexOf( '/', 1 ) );
+	const { pathname, hostname } = getUrlParts( uri );
+	if ( isPhotonHost( hostname ) ) {
+		return pathname.substring( pathname.indexOf( '/', 1 ) );
 	}
-	return path;
+	return pathname;
 }
 
 /** returns whether or not a posts featuredImages is contained within the contents
@@ -31,7 +30,7 @@ export function isFeaturedImageInContent( post ) {
 
 		const indexOfContentImage = findIndex(
 			post.images,
-			img => getPathname( img.src ) === featuredImagePath,
+			( img ) => getPathname( img.src ) === featuredImagePath,
 			1
 		); // skip first element in post.images because it is always the featuredImage
 

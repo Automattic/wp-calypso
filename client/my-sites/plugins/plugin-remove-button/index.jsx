@@ -7,12 +7,13 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import Gridicon from 'components/gridicon';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import accept from 'lib/accept';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
@@ -51,30 +52,30 @@ class PluginRemoveButton extends React.Component {
 		);
 	};
 
-	processRemovalConfirmation = accepted => {
+	processRemovalConfirmation = ( accepted ) => {
 		if ( accepted ) {
 			PluginsActions.removePluginsNotices( 'completed', 'error' );
 			PluginsActions.removePlugin( this.props.site, this.props.plugin );
 
 			if ( this.props.isEmbed ) {
-				analytics.ga.recordEvent(
+				gaRecordEvent(
 					'Plugins',
 					'Remove plugin with no selected site',
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_sites_list', {
+				recordTracksEvent( 'calypso_plugin_remove_click_from_sites_list', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );
 			} else {
-				analytics.ga.recordEvent(
+				gaRecordEvent(
 					'Plugins',
 					'Remove plugin on selected Site',
 					'Plugin Name',
 					this.props.plugin.slug
 				);
-				analytics.tracks.recordEvent( 'calypso_plugin_remove_click_from_plugin_info', {
+				recordTracksEvent( 'calypso_plugin_remove_click_from_plugin_info', {
 					site: this.props.site.ID,
 					plugin: this.props.plugin.slug,
 				} );
@@ -155,7 +156,7 @@ class PluginRemoveButton extends React.Component {
 	};
 
 	handleHowDoIFixThisButtonClick = () => {
-		analytics.ga.recordEvent( 'Plugins', 'Clicked How do I fix disabled plugin removal.' );
+		gaRecordEvent( 'Plugins', 'Clicked How do I fix disabled plugin removal.' );
 	};
 
 	renderButton = () => {

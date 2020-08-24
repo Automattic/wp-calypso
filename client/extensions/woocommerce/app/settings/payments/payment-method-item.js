@@ -80,7 +80,7 @@ class PaymentMethodItem extends Component {
 		this.props.changePaymentMethodField( this.props.site.ID, field, value );
 	};
 
-	onChangeEnabled = e => {
+	onChangeEnabled = ( e ) => {
 		const { method, site } = this.props;
 
 		this.props.onChange();
@@ -171,7 +171,7 @@ class PaymentMethodItem extends Component {
 		);
 	};
 
-	renderEnabledField = method => {
+	renderEnabledField = ( method ) => {
 		const { translate } = this.props;
 		let showEnableField = true;
 		if ( method.id === 'stripe' ) {

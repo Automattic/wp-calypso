@@ -13,6 +13,7 @@ import { flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import scrollTo from 'lib/scroll-to';
+import { settingsPath } from 'lib/jetpack/paths';
 import { applySiteOffset } from 'lib/site/timezone';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
@@ -94,7 +95,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			restoreArgs: Object.assign( this.state.restoreArgs, { [ name ]: checked } ),
 			disableRestoreButton: Object.keys( this.state.restoreArgs ).every(
-				k => ! this.state.restoreArgs[ k ]
+				( k ) => ! this.state.restoreArgs[ k ]
 			),
 		} );
 	};
@@ -103,7 +104,7 @@ class ActivityLogItem extends Component {
 		this.setState( {
 			downloadArgs: Object.assign( this.state.downloadArgs, { [ name ]: checked } ),
 			disableDownloadButton: Object.keys( this.state.downloadArgs ).every(
-				k => ! this.state.downloadArgs[ k ]
+				( k ) => ! this.state.downloadArgs[ k ]
 			),
 		} );
 	};
@@ -236,11 +237,15 @@ class ActivityLogItem extends Component {
 
 	renderRewindAction() {
 		const {
+			activity,
+			canAutoconfigure,
 			createBackup,
 			createRewind,
 			disableRestore,
 			disableBackup,
-			activity,
+			siteId,
+			siteSlug,
+			trackAddCreds,
 			translate,
 		} = this.props;
 
@@ -254,6 +259,20 @@ class ActivityLogItem extends Component {
 					<PopoverMenuItem disabled={ disableRestore } icon="history" onClick={ createRewind }>
 						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
+
+					{ disableRestore && (
+						<PopoverMenuItem
+							icon="plus"
+							href={
+								canAutoconfigure
+									? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
+									: `${ settingsPath( siteSlug ) }#credentials`
+							}
+							onClick={ trackAddCreds }
+						>
+							{ translate( 'Add server credentials to enable restoring' ) }
+						</PopoverMenuItem>
+					) }
 
 					<PopoverMenuSeparator />
 
@@ -370,7 +389,7 @@ class ActivityLogItem extends Component {
 						disableButton={ this.state.disableDownloadButton }
 					>
 						{ translate(
-							'{{time/}} is the selected point to create a download backup of. You will get a notification when the backup is ready to download.',
+							'{{time/}} is the selected point to create a download backup. You will get a notification when the backup is ready to download.',
 							{
 								components: {
 									time: <b>{ adjustedTime.format( 'LLL' ) }</b>,
@@ -467,10 +486,11 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			)
 		)
 	),
-	trackHelp: activityName =>
+	trackHelp: ( activityName ) =>
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
 		),
+	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );
 

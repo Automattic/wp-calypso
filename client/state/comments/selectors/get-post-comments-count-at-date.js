@@ -34,7 +34,7 @@ export function getPostCommentsCountAtDate( state, siteId, postId, date ) {
 
 	// Count post comments with the specified date
 	const dateTimestamp = date.getTime() / 1000;
-	const postCommentsAtDate = filter( postComments, postComment => {
+	const postCommentsAtDate = filter( postComments, ( postComment ) => {
 		return Date.parse( postComment.date ) / 1000 === dateTimestamp;
 	} );
 

@@ -20,8 +20,8 @@ export const createPathWithoutImmediateLoginInformation = ( path, query ) => {
 		'login_locale',
 	];
 	const newQuery = Object.keys( query )
-		.filter( k => relatedParamNames.indexOf( k ) === -1 )
-		.map( k => `${ encodeURIComponent( k ) }=${ encodeURIComponent( query[ k ] ) }` );
+		.filter( ( k ) => relatedParamNames.indexOf( k ) === -1 )
+		.map( ( k ) => `${ encodeURIComponent( k ) }=${ encodeURIComponent( query[ k ] ) }` );
 	return path + ( newQuery.length ? '?' + newQuery.join( '&' ) : '' );
 };
 

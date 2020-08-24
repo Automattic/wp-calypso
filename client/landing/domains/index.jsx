@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import '@automattic/calypso-polyfills';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import RenderDom from 'react-dom';

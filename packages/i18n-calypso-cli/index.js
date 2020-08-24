@@ -22,7 +22,7 @@ module.exports = function i18nCalypso( config ) {
 	let parserKeywords = config.parserKeywords || {};
 
 	if ( keywords ) {
-		parserKeywords = keywords.reduce( function( output, currentKeyword ) {
+		parserKeywords = keywords.reduce( function ( output, currentKeyword ) {
 			output[ currentKeyword ] = preProcessXGettextJSMatch;
 			return output;
 		}, parserKeywords );
@@ -50,10 +50,10 @@ module.exports = function i18nCalypso( config ) {
 	} );
 
 	function getFileMatches( inputFiles ) {
-		return inputFiles.map( inputFile => {
+		return inputFiles.map( ( inputFile ) => {
 			debug( 'Parsing inputFile: ' + inputFile );
 			const relativeInputFilePath = path.relative( __dirname, inputFile ).replace( /^[/.]+/, '' );
-			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( match => {
+			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( ( match ) => {
 				match.line = relativeInputFilePath + ':' + match.line;
 				return match;
 			} );
@@ -64,7 +64,7 @@ module.exports = function i18nCalypso( config ) {
 	if ( config.data ) {
 		// If data is provided, feed it directly to the parser and call the file <unknown>
 		matches = [
-			parser.getMatches( config.data ).map( function( match ) {
+			parser.getMatches( config.data ).map( function ( match ) {
 				match.location = '<unknown>:' + match.line;
 				return match;
 			} ),
@@ -76,7 +76,7 @@ module.exports = function i18nCalypso( config ) {
 	if ( config.extras ) {
 		matches = matches.concat(
 			getFileMatches(
-				config.extras.map( function( extra ) {
+				config.extras.map( function ( extra ) {
 					return path.join( __dirname, 'extras', extra + '.js' );
 				} )
 			)
@@ -90,7 +90,7 @@ module.exports = function i18nCalypso( config ) {
 	matches = [].concat.apply( [], matches );
 
 	if ( config.lines ) {
-		matches = matches.filter( function( match ) {
+		matches = matches.filter( function ( match ) {
 			const line = match.line.split( ':' );
 			return (
 				'undefined' !== typeof config.lines[ line[ 0 ] ] &&

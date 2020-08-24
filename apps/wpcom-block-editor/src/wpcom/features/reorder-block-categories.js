@@ -7,7 +7,7 @@ import domReady from '@wordpress/dom-ready';
 
 const categorySlugs = [ 'jetpack', 'coblocks', 'coblocks-galleries' ];
 
-domReady( function() {
+domReady( function () {
 	//preserve order of other columns, and split matching
 	const { core: coreCategories, custom: unsorted } = getCategories().reduce(
 		( { core, custom }, category ) => {

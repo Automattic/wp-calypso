@@ -26,9 +26,10 @@ const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
+const devTarget = process.env.DEV_TARGET || 'evergreen';
 
 const fileLoader = FileConfig.loader( {
-	publicPath: isDevelopment ? '/calypso/evergreen/images/' : '/calypso/images/',
+	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
 	emitFile: false, // On the server side, don't actually copy files
 } );
 
@@ -44,9 +45,8 @@ function getExternals() {
 	return [
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 		// with modules that are incompatible with webpack bundling.
-		//
 		nodeExternals( {
-			whitelist: [
+			allowlist: [
 				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
 				// non-JS asset imports that couldn't be processed by Node.js at runtime.
 				'@automattic/components',
@@ -54,6 +54,8 @@ function getExternals() {
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
+
+				/[^/]?wp-calypso-client\//,
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
@@ -63,8 +65,14 @@ function getExternals() {
 			'webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
+			'wp-calypso-client/webpack.config': {
+				commonjs: '../client/webpack.config.js',
+			},
 			// Exclude the devdocs search-index, as it's huge.
 			'server/devdocs/search-index': {
+				commonjs: '../client/server/devdocs/search-index.js',
+			},
+			'wp-calypso-client/server/devdocs/search-index': {
 				commonjs: '../client/server/devdocs/search-index.js',
 			},
 		},
@@ -89,7 +97,7 @@ const webpackConfig = {
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
 					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
-					options: { forceRequire: true, onlyIsomorphic: true },
+					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},
 			TranspileConfig.loader( {
@@ -110,6 +118,7 @@ const webpackConfig = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
+			'wp-calypso-client/config': 'server/config',
 			config: 'server/config',
 		},
 	},
@@ -132,11 +141,12 @@ const webpackConfig = {
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 		} ),
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]abtest$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]user$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
+			'components/empty-component'
+		), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^wp-calypso-client[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
 	].filter( Boolean ),
@@ -144,7 +154,11 @@ const webpackConfig = {
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
-		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' )
+		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' ),
+		new webpack.NormalModuleReplacementPlugin(
+			/^wp-calypso-client[/\\]lib[/\\]desktop$/,
+			'lodash/noop'
+		)
 	);
 }
 

@@ -5,11 +5,13 @@ import debugFactory from 'debug';
 import React, { useEffect, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { getStripeConfiguration } from 'lib/store-transactions';
+import { getCurrentUserLocale } from 'state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:stripe' );
 
@@ -213,6 +215,8 @@ function useStripeJs( stripeConfiguration ) {
 	const [ stripeJs, setStripeJs ] = useState( null );
 	const [ isStripeLoading, setStripeLoading ] = useState( true );
 	const [ stripeLoadingError, setStripeLoadingError ] = useState();
+	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+	const stripeLocale = getStripeLocaleForLocale( locale );
 	useEffect( () => {
 		let isSubscribed = true;
 		async function loadAndInitStripe() {
@@ -224,7 +228,11 @@ function useStripeJs( stripeConfiguration ) {
 				setStripeLoading( false );
 				if ( ! stripeJs ) {
 					setStripeLoadingError();
-					setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+					setStripeJs(
+						window.Stripe( stripeConfiguration.public_key, {
+							locale: stripeLocale,
+						} )
+					);
 				}
 				return;
 			}
@@ -233,17 +241,18 @@ function useStripeJs( stripeConfiguration ) {
 			debug( 'stripe.js loaded!' );
 			isSubscribed && setStripeLoading( false );
 			isSubscribed && setStripeLoadingError();
-			isSubscribed && setStripeJs( window.Stripe( stripeConfiguration.public_key ) );
+			isSubscribed &&
+				setStripeJs( window.Stripe( stripeConfiguration.public_key, { locale: stripeLocale } ) );
 		}
 
-		loadAndInitStripe().catch( error => {
+		loadAndInitStripe().catch( ( error ) => {
 			debug( 'error while loading stripeJs', error );
 			isSubscribed && setStripeLoading( false );
 			isSubscribed && setStripeLoadingError( error );
 		} );
 
 		return () => ( isSubscribed = false );
-	}, [ stripeConfiguration, stripeJs ] );
+	}, [ stripeConfiguration, stripeJs, stripeLocale ] );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
@@ -276,7 +285,7 @@ function useStripeConfiguration( requestArgs, fetchStripeConfiguration ) {
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
 		getConfig( requestArgs || {} ).then(
-			configuration => isSubscribed && setStripeConfiguration( configuration )
+			( configuration ) => isSubscribed && setStripeConfiguration( configuration )
 		);
 		return () => ( isSubscribed = false );
 	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
@@ -354,9 +363,72 @@ export function useStripe() {
  * @returns {object} WrappedComponent
  */
 export function withStripeProps( WrappedComponent ) {
-	return props => {
+	return ( props ) => {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
 		return <WrappedComponent { ...newProps } />;
 	};
+}
+
+/**
+ * Transforms a locale like en-us to a Stripe supported locale
+ *
+ * See https://stripe.com/docs/js/appendix/supported_locales
+ *
+ * @param {string} locale A locale string like 'en-us'
+ * @returns {string} A stripe-supported locale string like 'en'
+ */
+function getStripeLocaleForLocale( locale ) {
+	const stripeSupportedLocales = [
+		'ar',
+		'bg',
+		'cs',
+		'da',
+		'de',
+		'el',
+		'et',
+		'en',
+		'es',
+		'fi',
+		'fr',
+		'he',
+		'id',
+		'it',
+		'ja',
+		'lt',
+		'lv',
+		'ms',
+		'nb',
+		'nl',
+		'pl',
+		'pt',
+		'ru',
+		'sk',
+		'sl',
+		'sv',
+		'zh',
+	];
+	if ( ! locale ) {
+		return 'auto';
+	}
+	if ( locale.toLowerCase() === 'pt-br' ) {
+		return 'pt-BR';
+	}
+	const stripeLocale = locale.toLowerCase().substring( 0, 2 );
+	if ( ! stripeSupportedLocales.includes( stripeLocale ) ) {
+		return 'auto';
+	}
+	return stripeLocale;
+}
+
+export async function showStripeModalAuth( { stripeConfiguration, response } ) {
+	const authenticationResponse = await confirmStripePaymentIntent(
+		stripeConfiguration,
+		response.message.payment_intent_client_secret
+	);
+
+	if ( authenticationResponse?.status ) {
+		return authenticationResponse;
+	}
+	return null;
 }

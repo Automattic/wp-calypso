@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { keyedReducer, combineReducers } from 'state/utils';
+import { combineReducers, keyedReducer, withStorageKey } from 'state/utils';
 import {
 	HOSTING_PHP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,
@@ -14,8 +14,8 @@ export const sftpUsers = ( state = {}, { type, users } ) => {
 	}
 
 	if ( type === HOSTING_SFTP_USER_UPDATE && Array.isArray( state ) ) {
-		return state.map( user => {
-			const updatedUser = users.find( u => u.username === user.username );
+		return state.map( ( user ) => {
+			const updatedUser = users.find( ( u ) => u.username === user.username );
 			return {
 				...user,
 				...updatedUser,
@@ -40,4 +40,5 @@ const atomicHostingReducer = combineReducers( {
 	sftpUsers,
 } );
 
-export default keyedReducer( 'siteId', atomicHostingReducer );
+const reducer = keyedReducer( 'siteId', atomicHostingReducer );
+export default withStorageKey( 'atomicHosting', reducer );

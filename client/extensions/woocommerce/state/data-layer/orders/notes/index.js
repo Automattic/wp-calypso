@@ -15,17 +15,17 @@ import {
 } from 'woocommerce/state/action-types';
 import { verifyResponseHasData } from 'woocommerce/state/data-layer/utils';
 
-export const create = action => {
+export const create = ( action ) => {
 	const { siteId, orderId, note } = action;
 	return request( siteId, action ).post( `orders/${ orderId }/notes`, note );
 };
 
-export const fetch = action => {
+export const fetch = ( action ) => {
 	const { siteId, orderId } = action;
 	return request( siteId, action ).get( `orders/${ orderId }/notes` );
 };
 
-const onCreateError = ( action, error ) => dispatch => {
+const onCreateError = ( action, error ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( createNoteFailure( siteId, orderId, error ) );
 	if ( action.onFailure ) {
@@ -33,7 +33,7 @@ const onCreateError = ( action, error ) => dispatch => {
 	}
 };
 
-const onCreateSuccess = ( action, { data } ) => dispatch => {
+const onCreateSuccess = ( action, { data } ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( createNoteSuccess( siteId, orderId, data ) );
 	if ( action.onSuccess ) {
@@ -41,7 +41,7 @@ const onCreateSuccess = ( action, { data } ) => dispatch => {
 	}
 };
 
-const onError = ( action, error ) => dispatch => {
+const onError = ( action, error ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( fetchNotesFailure( siteId, orderId, error ) );
 	if ( action.onFailure ) {
@@ -49,7 +49,7 @@ const onError = ( action, error ) => dispatch => {
 	}
 };
 
-const onSuccess = ( action, { data } ) => dispatch => {
+const onSuccess = ( action, { data } ) => ( dispatch ) => {
 	const { siteId, orderId } = action;
 	dispatch( fetchNotesSuccess( siteId, orderId, data ) );
 	if ( action.onSuccess ) {

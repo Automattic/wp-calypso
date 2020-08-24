@@ -20,6 +20,6 @@ class QueryConciergeAppointmentDetails extends Component {
 	}
 }
 
-export default connect( state => state, { requestConciergeAppointmentDetails } )(
+export default connect( ( state ) => state, { requestConciergeAppointmentDetails } )(
 	QueryConciergeAppointmentDetails
 );

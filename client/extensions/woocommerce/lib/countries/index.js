@@ -11,7 +11,7 @@ import { filter, includes, sortBy } from 'lodash';
  * @param {string} country Country (code) to check
  * @returns {bool} whether store management in calypso is supported
  */
-export const isStoreManagementSupportedInCalypsoForCountry = country => {
+export const isStoreManagementSupportedInCalypsoForCountry = ( country ) => {
 	return includes( [ 'US', 'CA' ], country );
 };
 
@@ -24,8 +24,8 @@ export const isStoreManagementSupportedInCalypsoForCountry = country => {
  */
 export function sortPopularCountriesToTop( list ) {
 	const popularCodes = [ 'AU', 'BR', 'CA', 'FR', 'DE', 'IT', 'ES', 'SE', 'GB', 'US' ];
-	const popularCountries = filter( list, item => -1 !== popularCodes.indexOf( item.code ) );
-	const otherCountries = filter( list, item => -1 === popularCodes.indexOf( item.code ) );
+	const popularCountries = filter( list, ( item ) => -1 !== popularCodes.indexOf( item.code ) );
+	const otherCountries = filter( list, ( item ) => -1 === popularCodes.indexOf( item.code ) );
 
 	return [
 		...sortBy( popularCountries, 'name' ),

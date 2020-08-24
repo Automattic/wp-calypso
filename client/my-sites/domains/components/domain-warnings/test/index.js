@@ -18,7 +18,7 @@ import { DomainWarnings } from '../';
 import { type as domainTypes } from 'lib/domains/constants';
 import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'lib/url/support';
 
-jest.mock( 'lib/analytics', () => ( {} ) );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 
 describe( 'index', () => {
 	describe( 'rules', () => {
@@ -130,10 +130,12 @@ describe( 'index', () => {
 				textContent = domNode.textContent,
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( textContent ).toContain( 'name server records need to be configured' );
+			expect( textContent ).toContain( 'contact your domain registrar' );
 			expect(
 				links.some(
-					link => link.href === 'https://en.support.wordpress.com/domain-helper/?host=1.com'
+					( link ) =>
+						link.href ===
+						'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
 				)
 			).toBeTruthy();
 		} );
@@ -164,7 +166,7 @@ describe( 'index', () => {
 			const domNode = ReactDom.findDOMNode( component ),
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
-			expect( links.some( link => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
 		} );
 
 		test( 'should show a subdomain mapping related message for one misconfigured subdomain', () => {
@@ -188,7 +190,7 @@ describe( 'index', () => {
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( 'DNS records need to be configured' );
-			expect( links.some( link => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
 		} );
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains', () => {
@@ -218,7 +220,7 @@ describe( 'index', () => {
 				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( "Some of your domains' DNS records need to be configured" );
-			expect( links.some( link => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
 		} );
 
 		test( 'should show a subdomain mapping related message for multiple misconfigured subdomains and domains mixed', () => {
@@ -250,7 +252,7 @@ describe( 'index', () => {
 			expect( textContent ).toContain(
 				"Some of your domains' name server records need to be configured"
 			);
-			expect( links.some( link => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
 		} );
 	} );
 
@@ -264,18 +266,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
@@ -286,17 +284,17 @@ describe( 'index', () => {
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
 			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+				textContent = domNode ? domNode.textContent : '',
+				links = domNode ? [].slice.call( domNode.querySelectorAll( 'a' ) ) : [];
 
 			expect( textContent ).not.toContain( 'Please verify ownership of domains' );
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
 			).toBeFalsy();
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
 			).toBeFalsy();
@@ -310,18 +308,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
@@ -335,12 +329,12 @@ describe( 'index', () => {
 
 			expect( textContent ).toContain( 'Please verify ownership of domains' );
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();
@@ -355,18 +349,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 3, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 3, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: true,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 3, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 3, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
@@ -382,12 +372,12 @@ describe( 'index', () => {
 				'Your domains may be suspended because your email address is not verified.'
 			);
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/blog.example.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();
 			expect(
-				links.some( link =>
+				links.some( ( link ) =>
 					link.href.endsWith( '/domains/manage/mygroovysite.com/edit/blog.example.com' )
 				)
 			).toBeTruthy();
@@ -402,18 +392,14 @@ describe( 'index', () => {
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: false,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 					{
 						name: 'mygroovysite.com',
 						type: domainTypes.REGISTERED,
 						currentUserCanManage: false,
 						isPendingIcannVerification: true,
-						registrationDate: moment()
-							.subtract( 1, 'days' )
-							.toISOString(),
+						registrationDate: moment().subtract( 1, 'days' ).toISOString(),
 					},
 				],
 				selectedSite: { domain: 'blog.example.com', slug: 'blog.example.com' },
@@ -431,11 +417,11 @@ describe( 'index', () => {
 	} );
 
 	describe( 'Ruleset filtering', () => {
-		test( 'should only process whitelisted renderers', () => {
+		test( 'should only process allowed renderers', () => {
 			const props = {
 				translate: identity,
 				domain: { name: 'example.com' },
-				ruleWhiteList: [],
+				allowedRules: [],
 				selectedSite: {},
 				moment,
 			};
@@ -449,7 +435,7 @@ describe( 'index', () => {
 			const props = {
 				translate: identity,
 				domain: { name: 'example.com' },
-				ruleWhiteList: [ 'getDomains' ],
+				allowedRules: [ 'getDomains' ],
 				selectedSite: {},
 				moment,
 			};

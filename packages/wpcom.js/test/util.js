@@ -20,10 +20,10 @@ const isClientSide = 'undefined' !== typeof window;
 let qryString;
 let reqHandler;
 
-const env = isClientSide && (
-		/^automattic\.github\.io/.test( document.location.host ) ||
-		/wpcomjs\.com/.test( document.location.host )
-	)
+const env =
+	isClientSide &&
+	( /^automattic\.github\.io/.test( document.location.host ) ||
+		/wpcomjs\.com/.test( document.location.host ) )
 		? 'production'
 		: 'development';
 
@@ -39,13 +39,10 @@ if ( isClientSide ) {
 	reqHandler = qryString.handler || 'wpcom-proxy-request';
 	console.log( `reqHandler: %o`, reqHandler );
 
-	if (
-		'wpcom-xhr-request' === reqHandler ||
-		/access_token/.test( document.location.hash )
-	) {
+	if ( 'wpcom-xhr-request' === reqHandler || /access_token/.test( document.location.hash ) ) {
 		let wpoauth = oauthCors( clientId, config.oauth.options );
 
-		wpoauth.get( function( auth ) {
+		wpoauth.get( function ( auth ) {
 			console.log( 'auth: ', auth );
 		} );
 	}
@@ -53,18 +50,18 @@ if ( isClientSide ) {
 
 module.exports = {
 	wpcom: wpcom,
-	wpcomPublic: function() {
+	wpcomPublic: function () {
 		return wpcomFactory();
 	},
-	site: function() {
+	site: function () {
 		// check for existence of config in this env, and site if available
 		var site = config && config.site ? config.site : null;
 
 		return site || fixture.site || process.env.SITE;
 	},
-	wordAds: function() {
+	wordAds: function () {
 		return config.wordads;
-	}
+	},
 };
 
 function wpcom() {
@@ -76,12 +73,15 @@ function wpcom() {
 			console.log( 'PROXY request handler' );
 			let proxy = require( 'wpcom-proxy-request' );
 			_wpcom = wpcomFactory( proxy );
-			_wpcom.request( {
-				metaAPI: { accessAllUsersBlogs: true }
-			}, function( err ) {
-				if ( err ) throw err;
-				console.log( 'proxy now running in "access all user\'s blogs" mode' );
-			} );
+			_wpcom.request(
+				{
+					metaAPI: { accessAllUsersBlogs: true },
+				},
+				function ( err ) {
+					if ( err ) throw err;
+					console.log( 'proxy now running in "access all user\'s blogs" mode' );
+				}
+			);
 		} else {
 			console.log( 'XHR request handler' );
 			let oauthToken = JSON.parse( localStorage.wp_oauth ).access_token;

@@ -8,7 +8,7 @@
 .jetpack-new-site__header {
 	margin-bottom: 3em;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 0 2em 2em;
 	}
 }
@@ -16,12 +16,11 @@
 .jetpack-new-site__header-title {
 	margin-bottom: 0.35em;
 	font-size: 34px;
-	font-weight: 300;
 	color: var( --color-neutral-70 );
 }
 
 .jetpack-new-site__header-text {
-	font-size: 16px;
+	font-size: $font-body;
 	color: var( --color-neutral-light );
 }
 
@@ -40,7 +39,7 @@
 	width: 360px;
 	margin: 0;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -64,7 +63,7 @@
 
 .jetpack-new-site__card-title {
 	margin-bottom: 0.75em;
-	font-size: 24px;
+	font-size: $font-title-medium;
 	line-height: 1.25em;
 }
 
@@ -155,7 +154,7 @@
 	width: 100%;
 	padding: 36px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: block;
 	}
 }
@@ -198,7 +197,7 @@
 		background: var( --color-surface );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: block;
 	}
 }

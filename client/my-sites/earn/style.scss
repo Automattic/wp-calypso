@@ -1,0 +1,20 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.earn .promo-section__promos img {
+	width: 48px;
+	@include break-mobile {
+		width: auto;
+	}
+}
+
+.earn__placeholder-promo-card {
+    .promo-card:not( .is-primary ) {
+        & > * {
+            @include placeholder( --color-neutral-10 );
+            * {
+                visibility: hidden;
+            }
+        }
+    }
+}

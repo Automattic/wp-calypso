@@ -19,7 +19,7 @@ import { getSyncStatus, scheduleJetpackFullysync } from 'state/jetpack-sync/acti
 import { Interval, EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import { withLocalizedMoment } from 'components/localized-moment';
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -51,17 +51,17 @@ class JetpackSyncPanel extends React.Component {
 		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
 	};
 
-	onSyncRequestButtonClick = event => {
+	onSyncRequestButtonClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Perform full sync button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
+		recordTracksEvent( 'calypso_jetpack_sync_panel_request_button_clicked' );
 		this.props.scheduleJetpackFullysync( this.props.siteId );
 	};
 
-	onTryAgainClick = event => {
+	onTryAgainClick = ( event ) => {
 		event.preventDefault();
 		debug( 'Try again button clicked' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
+		recordTracksEvent( 'calypso_jetpack_sync_panel_try_again_button_clicked', {
 			errorCode: get( this.props, 'fullSyncRequest.error.error', '' ),
 			errorMsg: get( this.props, 'fullSyncRequest.error.message', '' ),
 		} );
@@ -70,7 +70,7 @@ class JetpackSyncPanel extends React.Component {
 
 	onClickDebug = () => {
 		debug( 'Clicked check connection button' );
-		analytics.tracks.recordEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
+		recordTracksEvent( 'calypso_jetpack_sync_panel_check_connection_button_clicked', {
 			error_code: get( this.props, 'syncStatus.error.error', '' ),
 			error_msg: get( this.props, 'syncStatus.error.message', '' ),
 		} );
@@ -107,16 +107,18 @@ class JetpackSyncPanel extends React.Component {
 					{ syncRequestError.message
 						? syncRequestError.message
 						: translate( 'There was an error scheduling a full sync.' ) }
-					{ // We show a Try again action for a generic error on the assumption
-					// that the error was a network issue.
-					//
-					// If an error message was returned from the API, then there's likely
-					// a good reason the request failed, such as an unauthorized user.
-					! syncRequestError.message && (
-						<NoticeAction onClick={ this.onTryAgainClick }>
-							{ translate( 'Try again' ) }
-						</NoticeAction>
-					) }
+					{
+						// We show a Try again action for a generic error on the assumption
+						// that the error was a network issue.
+						//
+						// If an error message was returned from the API, then there's likely
+						// a good reason the request failed, such as an unauthorized user.
+						! syncRequestError.message && (
+							<NoticeAction onClick={ this.onTryAgainClick }>
+								{ translate( 'Try again' ) }
+							</NoticeAction>
+						)
+					}
 				</Notice>
 			);
 		}
@@ -194,7 +196,7 @@ class JetpackSyncPanel extends React.Component {
 }
 
 export default connect(
-	state => {
+	( state ) => {
 		const site = getSelectedSite( state ),
 			siteId = site.ID;
 		return {
@@ -207,5 +209,5 @@ export default connect(
 			syncProgress: syncSelectors.getSyncProgressPercentage( state, siteId ),
 		};
 	},
-	dispatch => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
+	( dispatch ) => bindActionCreators( { getSyncStatus, scheduleJetpackFullysync }, dispatch )
 )( localize( withLocalizedMoment( JetpackSyncPanel ) ) );

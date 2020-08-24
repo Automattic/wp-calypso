@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { has, noop } from 'lodash';
 
 /**
@@ -12,13 +11,17 @@ import {
 	EDITOR_TYPE_SET,
 	EDITOR_TYPE_UPDATE,
 	GUTENBERG_OPT_IN_OUT_SET,
+	EDITOR_DEPRECATION_GROUP_SET,
 } from 'state/action-types';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { replaceHistory } from 'state/ui/actions';
 
-const fetchGutenbergOptInData = action =>
+import 'state/editor-deprecation-group/init';
+import 'state/gutenberg-opt-in-out/init';
+
+const fetchGutenbergOptInData = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -30,10 +33,16 @@ const fetchGutenbergOptInData = action =>
 
 const setGutenbergOptInData = (
 	{ siteId },
-	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
-) => dispatch => {
+	{
+		editor_web: editor,
+		opt_in: optIn,
+		opt_out: optOut,
+		in_editor_deprecation_group: inEditorDeprecationGroup,
+	}
+) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
+	dispatch( { type: EDITOR_DEPRECATION_GROUP_SET, inEditorDeprecationGroup } );
 };
 
 const dispatchFetchGutenbergOptInData = dispatchRequest( {
@@ -42,7 +51,7 @@ const dispatchFetchGutenbergOptInData = dispatchRequest( {
 	onError: noop,
 } );
 
-const updateSelectedEditor = action =>
+const updateSelectedEditor = ( action ) =>
 	http(
 		{
 			path: `/sites/${ action.siteId }/gutenberg`,
@@ -59,9 +68,10 @@ const updateSelectedEditor = action =>
 
 const setSelectedEditorAndRedirect = (
 	{ siteId, redirectUrl },
-	{ editor_web: editor }
-) => dispatch => {
+	{ editor_web: editor, opt_in: optIn, opt_out: optOut }
+) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
+	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
 
 	if ( ! redirectUrl ) {
 		return;
@@ -69,6 +79,7 @@ const setSelectedEditorAndRedirect = (
 	if ( has( window, 'location.replace' ) && -1 !== redirectUrl.indexOf( 'calypsoify=1' ) ) {
 		return window.location.replace( redirectUrl );
 	}
+
 	dispatch( replaceHistory( redirectUrl ) );
 };
 

@@ -14,12 +14,12 @@ import {
 	PAGE_TEMPLATES_REQUEST_SUCCESS,
 	PAGE_TEMPLATES_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( 'receivePageTemplates()', () => {
 		test( 'should return an action object', () => {
@@ -36,7 +36,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestPageTemplates()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/page-templates' )

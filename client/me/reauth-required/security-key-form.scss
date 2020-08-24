@@ -1,0 +1,24 @@
+.security-key-form__verification-code-form {
+	.button {
+		width: 100%;
+
+		&:not( :first-child ) {
+			margin-top: 20px;
+		}
+	}
+}
+.security-key-form__add-wait-for-key {
+	text-align: center;
+
+	.spinner {
+		margin-bottom: 1em;
+	}
+
+	p {
+		margin-bottom: 0.5em;
+	}
+}
+
+.security-key-form__add-wait-for-key-heading {
+	font-weight: 600;
+}

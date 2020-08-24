@@ -26,20 +26,22 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__data-stores*\"",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "npm run clean",
+		"prepublish": "yarn run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/data-controls": "^1.4.0",
-		"@wordpress/url": "^2.8.2",
-		"debug": "^4.1.1",
+		"@wordpress/api-fetch": "^3.18.0",
+		"@wordpress/data-controls": "^1.16.3",
+		"@wordpress/url": "^2.17.0",
 		"fast-json-stable-stringify": "^2.1.0",
+		"i18n-calypso": "^5.0.0",
 		"qs": "^6.9.1",
-		"redux": "^4.0.4",
+		"redux": "^4.0.5",
 		"tslib": "^1.10.0",
-		"wpcom-proxy-request": "file:../wpcom-proxy-request"
+		"utility-types": "^3.10.0",
+		"wpcom-proxy-request": "^6.0.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4"

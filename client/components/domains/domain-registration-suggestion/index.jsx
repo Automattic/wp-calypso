@@ -30,7 +30,6 @@ import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
-import PlanPill from 'components/plans/plan-pill';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
 
@@ -61,6 +60,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -112,7 +112,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		this.props.onButtonClick( suggestion );
 	};
 
-	isUnavailableDomain = domain => {
+	isUnavailableDomain = ( domain ) => {
 		return includes( this.props.unavailableDomains, domain );
 	};
 
@@ -168,8 +168,50 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
+		const {
+			cart,
+			isDomainOnly,
+			domainsWithPlansOnly,
+			selectedSite,
+			suggestion,
+			selectedFreePlanInSwapFlow,
+		} = this.props;
+		const shouldShowFullDomainPrice = isDomainOnly || selectedFreePlanInSwapFlow;
+		return getDomainPriceRule(
+			domainsWithPlansOnly,
+			selectedSite,
+			cart,
+			suggestion,
+			shouldShowFullDomainPrice
+		);
+	}
+
+	/**
+	 * Splits a domain into name and tld. Everything after the "first dot"
+	 * becomes the tld. This is not very comprehensive since there can be
+	 * subdomains which would fail this test. However, for our purpose of
+	 * highlighting the TLD in domain suggestions, this is good enough.
+	 *
+	 * @param {string} domain The domain to be parsed
+	 */
+	getDomainParts( domain ) {
+		const parts = domain.split( '.' );
+		const name = parts[ 0 ];
+		const tld = `.${ parts.slice( 1 ).join( '.' ) }`;
+		return {
+			name,
+			tld,
+		};
+	}
+
+	renderDomainParts( domain ) {
+		const { name, tld } = this.getDomainParts( domain );
+		return (
+			<div className="domain-registration-suggestion__domain-title">
+				<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+				<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+			</div>
+		);
 	}
 
 	renderDomain() {
@@ -179,6 +221,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			productSaleCost,
 			suggestion: { domain_name: domain },
 			translate,
+			isReskinned,
 		} = this.props;
 
 		let isAvailable = false;
@@ -188,7 +231,11 @@ class DomainRegistrationSuggestion extends React.Component {
 			isAvailable = true;
 		}
 
-		const title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		if ( isReskinned ) {
+			title = this.renderDomainParts( domain );
+		}
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
 		const saleBadgeText = translate( 'Sale', {
 			comment: 'Shown next to a domain that has a special discounted sale price',
@@ -196,9 +243,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.showTestCopy && ! this.props.isFeatured,
-			'domain-registration-suggestion__title-domain-design-updates':
-				this.props.showDesignUpdate && ! this.props.isFeatured,
+				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -210,7 +255,6 @@ class DomainRegistrationSuggestion extends React.Component {
 						className="domain-registration-suggestion__hsts-tooltip"
 						iconSize={ infoPopoverSize }
 						position={ 'right' }
-						{ ...( this.props.showDesignUpdate ? { icon: 'help-outline' } : {} ) }
 					>
 						{ translate(
 							'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
@@ -226,7 +270,7 @@ class DomainRegistrationSuggestion extends React.Component {
 											href={ HTTPS_SSL }
 											target="_blank"
 											rel="noopener noreferrer"
-											onClick={ event => {
+											onClick={ ( event ) => {
 												event.stopPropagation();
 											} }
 										/>
@@ -273,7 +317,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
-			if ( this.props.showTestCopy ) {
+			if ( this.props.isEligibleVariantForDomainTest ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
@@ -282,23 +326,6 @@ class DomainRegistrationSuggestion extends React.Component {
 				return (
 					<div className="domain-registration-suggestion__progress-bar">
 						<Badge type={ badgeClassName }>{ title }</Badge>
-					</div>
-				);
-			}
-
-			if ( this.props.showDesignUpdate ) {
-				const pillClassNames = classNames(
-					'domain-registration-suggestion__progress-bar',
-					'domain-registration-suggestion__progress-bar-design-update-test',
-					{
-						'pill-success': isRecommended,
-						'pill-primary': isBestAlternative,
-					}
-				);
-
-				return (
-					<div className={ pillClassNames }>
-						<PlanPill>{ title }</PlanPill>
 					</div>
 				);
 			}
@@ -366,10 +393,9 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
-				showTestCopy={ this.props.showTestCopy }
-				showDesignUpdate={ this.props.showDesignUpdate }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
+				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }

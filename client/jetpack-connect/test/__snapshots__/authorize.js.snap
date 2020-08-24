@@ -3,6 +3,15 @@
 exports[`JetpackAuthorize renders as expected 1`] = `
 <Connect(Localized(JetpackConnectMainWrapper))
   isWoo={false}
+  pageTitle=""
+  wooDnaConfig={
+    Object {
+      "getFlowName": [Function],
+      "getServiceHelpUrl": [Function],
+      "getServiceName": [Function],
+      "isWooDnaFlow": [Function],
+    }
+  }
 >
   <div
     className="jetpack-connect__authorize-form"
@@ -37,6 +46,14 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           }
         }
         isWoo={false}
+        wooDnaConfig={
+          Object {
+            "getFlowName": [Function],
+            "getServiceHelpUrl": [Function],
+            "getServiceName": [Function],
+            "isWooDnaFlow": [Function],
+          }
+        }
       />
       <Card
         className="jetpack-connect__logged-in-card"
@@ -82,7 +99,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
           Return to %(sitename)s
         </LoggedOutFormLinkItem>
         <LoggedOutFormLinkItem
-          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F"
+          href="/log-in/jetpack?redirect_to=https%3A%2F%2Fexample.com%2F&from=banner-44-slide-1-dashboard"
           onClick={[Function]}
         >
           Sign in as a different user

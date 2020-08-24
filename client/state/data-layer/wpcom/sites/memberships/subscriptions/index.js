@@ -18,7 +18,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 export const handleSubscribedMembershipsList = dispatchRequest( {
-	fetch: action =>
+	fetch: ( action ) =>
 		http(
 			{
 				method: 'GET',

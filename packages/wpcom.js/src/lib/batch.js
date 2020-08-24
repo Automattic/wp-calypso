@@ -35,7 +35,7 @@ class Batch {
 	run( query = {}, fn ) {
 		if ( 'function' === typeof query ) {
 			fn = query;
-			query = {}
+			query = {};
 		}
 
 		// add urls to query object
@@ -43,7 +43,7 @@ class Batch {
 
 		return this.wpcom.req.get( '/batch', query, fn );
 	}
-};
+}
 
 /**
  * Expose `Batch` module

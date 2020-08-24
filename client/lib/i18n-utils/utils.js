@@ -159,49 +159,84 @@ export function addLocaleToPath( path, locale ) {
 const localesWithBlog = [ 'en', 'ja', 'es', 'pt', 'fr', 'pt-br' ];
 const localesWithPrivacyPolicy = [ 'en', 'fr', 'de' ];
 const localesWithCookiePolicy = [ 'en', 'fr', 'de' ];
+const localesToSubdomains = {
+	'pt-br': 'br',
+	br: 'bre',
+	zh: 'zh-cn',
+	'zh-hk': 'zh-tw',
+	'zh-sg': 'zh-cn',
+	kr: 'ko',
+};
 
 const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, localeSlug ) => {
-	const localesToSubdomains = {
-		'pt-br': 'br',
-		br: 'bre',
-		zh: 'zh-cn',
-		'zh-hk': 'zh-tw',
-		'zh-sg': 'zh-cn',
-		kr: 'ko',
-	};
-
 	if ( typeof validLocales === 'string' ) {
 		validLocales = config( validLocales );
 	}
 
-	if ( validLocales.includes( localeSlug ) ) {
-		urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
+	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
+		// Avoid changing the hostname when the locale is set via the path.
+		if ( urlParts.pathname.substr( 0, localeSlug.length + 2 ) !== '/' + localeSlug + '/' ) {
+			urlParts.host = `${ localesToSubdomains[ localeSlug ] || localeSlug }.${ hostname }`;
+		}
 	}
 	return urlParts;
 };
 
-const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug ) => {
+const setLocalizedWpComPath = ( prefix, validLocales = [], limitPathMatch = null ) => (
+	urlParts,
+	localeSlug
+) => {
+	urlParts.host = 'wordpress.com';
+	if (
+		typeof limitPathMatch === 'object' &&
+		limitPathMatch instanceof RegExp &&
+		! limitPathMatch.test( urlParts.pathname )
+	) {
+		validLocales = []; // only rewrite to English.
+	}
+	urlParts.pathname = prefix + urlParts.pathname;
+
 	if ( typeof validLocales === 'string' ) {
 		validLocales = config( validLocales );
 	}
-	if ( validLocales.includes( localeSlug ) ) {
-		urlParts.pathname = localeSlug + urlParts.pathname;
+
+	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
+		urlParts.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + urlParts.pathname;
+	}
+	return urlParts;
+};
+
+const prefixLocalizedUrlPath = ( validLocales = [], limitPathMatch = null ) => (
+	urlParts,
+	localeSlug
+) => {
+	if ( typeof validLocales === 'string' ) {
+		validLocales = config( validLocales );
+	}
+
+	if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
+		if ( ! limitPathMatch.test( urlParts.pathname ) ) {
+			return urlParts; // No rewriting if not matches the path.
+		}
+	}
+
+	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
+		urlParts.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + urlParts.pathname;
 	}
 	return urlParts;
 };
 
 const urlLocalizationMapping = {
-	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
+	'wordpress.com/support/': prefixLocalizedUrlPath( 'support_site_locales' ),
+	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
 	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', 'jetpack_com_locales' ),
-	'en.support.wordpress.com': setLocalizedUrlHost(
-		'support.wordpress.com',
-		'support_site_locales'
-	),
-	'en.blog.wordpress.com': setLocalizedUrlHost( 'blog.wordpress.com', localesWithBlog ),
+	'en.support.wordpress.com': setLocalizedWpComPath( '/support', 'support_site_locales' ),
+	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', 'forum_locales' ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
+	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
 };
 
 export function localizeUrl( fullUrl, locale ) {
@@ -226,14 +261,17 @@ export function localizeUrl( fullUrl, locale ) {
 			urlParts.host = 'wordpress.com';
 			return getUrlFromParts( urlParts ).href;
 		}
-		return fullUrl;
 	}
 
 	if ( 'en.wordpress.com' === urlParts.host ) {
 		urlParts.host = 'wordpress.com';
 	}
 
-	const lookup = [ urlParts.host, urlParts.host + urlParts.pathname ];
+	const lookup = [
+		urlParts.host,
+		urlParts.host + urlParts.pathname,
+		urlParts.host + urlParts.pathname.substr( 0, 1 + urlParts.pathname.indexOf( '/', 1 ) ),
+	];
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
@@ -288,4 +326,24 @@ export function filterLanguageRevisions( languageRevisions ) {
 
 		return true;
 	} );
+}
+
+/**
+ * Checks if provided locale is one of the magnificenet non-english locales.
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} true when provided magnificent non-english locale.
+ */
+export function isMagnificentLocale( locale ) {
+	return config( 'magnificent_non_en_locales' ).includes( locale );
+}
+
+/**
+ * Checks if provided locale is translated incompletely (is missing essential translations).
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} Whether provided locale is flagged as translated incompletely.
+ */
+export function isTranslatedIncompletely( locale ) {
+	return getLanguage( locale )?.isTranslatedIncompletely === true;
 }

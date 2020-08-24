@@ -12,17 +12,19 @@ export default function RadioButton( {
 	onChange,
 	children,
 	label,
+	disabled,
 	id,
 	ariaLabel,
 } ) {
 	const [ isFocused, changeFocus ] = useState( false );
 
 	return (
-		<RadioButtonWrapper isFocused={ isFocused } checked={ checked }>
+		<RadioButtonWrapper disabled={ disabled } isFocused={ isFocused } checked={ checked }>
 			<Radio
 				type="radio"
 				name={ name }
 				id={ id }
+				disabled={ disabled }
 				value={ value }
 				checked={ checked }
 				onChange={ onChange }
@@ -35,7 +37,7 @@ export default function RadioButton( {
 				readOnly={ ! onChange }
 				aria-label={ ariaLabel }
 			/>
-			<Label checked={ checked } htmlFor={ id }>
+			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
 				{ label }
 			</Label>
 			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
@@ -47,6 +49,7 @@ RadioButton.propTypes = {
 	name: PropTypes.string.isRequired,
 	id: PropTypes.string.isRequired,
 	label: PropTypes.node.isRequired,
+	disabled: PropTypes.bool,
 	checked: PropTypes.bool,
 	value: PropTypes.string.isRequired,
 	onChange: PropTypes.func,
@@ -59,13 +62,13 @@ const RadioButtonWrapper = styled.div`
 	border-radius: 3px;
 	box-sizing: border-box;
 	width: 100%;
-	outline: ${getOutline};
+	outline: ${ getOutline };
 
 	:first-of-type {
 		margin: 0;
 	}
 
-	:before {
+	::before {
 		display: block;
 		width: 100%;
 		height: 100%;
@@ -73,35 +76,68 @@ const RadioButtonWrapper = styled.div`
 		top: 0;
 		left: 0;
 		content: '';
-		border: ${getBorderWidth} solid ${getBorderColor};
+		border: ${ getBorderWidth } solid ${ getBorderColor };
 		border-radius: 3px;
 		box-sizing: border-box;
+
+		.rtl & {
+			right: 0;
+			left: auto;
+		}
 	}
 
-	:hover:before {
-		border: 3px solid ${props => props.theme.colors.highlight};
+	:hover::before {
+		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
 	}
 
 	.payment-logos {
 		display: none;
 
-		@media ( ${props => props.theme.breakpoints.smallPhoneUp} ) {
+		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			display: block;
+			filter: grayscale( ${ getGrayscaleValue } );
+		}
+	}
+
+	:hover .payment-logos {
+		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
+			filter: grayscale( 0 );
 		}
 	}
 
 	svg {
-		filter: grayscale( ${getGrayscaleValue} );
+		filter: grayscale( ${ getGrayscaleValue } );
 	}
 
 	:hover svg {
 		filter: grayscale( 0 );
 	}
+
+	${ handleWrapperDisabled };
 `;
+
+function handleWrapperDisabled( { disabled } ) {
+	if ( ! disabled ) {
+		return null;
+	}
+
+	return `
+		::before,
+		:hover::before {
+			border: 1px solid lightgray;
+		}
+
+		svg,
+		:hover svg {
+			filter: grayscale( 100% );
+			opacity: 50%;
+		}
+	`;
+}
 
 const Radio = styled.input`
 	position: absolute;
-	opacity: 0;
+	opacity: 0 !important;
 `;
 
 const Label = styled.label`
@@ -116,26 +152,35 @@ const Label = styled.label`
 	align-items: flex-start;
 	font-size: 14px;
 
+	.rtl & {
+		padding: 16px 40px 16px 14px;
+	}
+
 	:hover {
 		cursor: pointer;
 	}
 
-	:before {
+	::before {
 		display: block;
 		width: 16px;
 		height: 16px;
 		content: '';
-		border: 1px solid ${props => props.theme.colors.borderColor};
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
 		top: 19px;
 		left: 16px;
 		position: absolute;
-		background: ${props => props.theme.colors.surface};
+		background: ${ ( props ) => props.theme.colors.surface };
 		box-sizing: border-box;
 		z-index: 2;
+
+		.rtl & {
+			right: 16px;
+			left: auto;
+		}
 	}
 
-	:after {
+	::after {
 		display: block;
 		width: 8px;
 		height: 8px;
@@ -144,14 +189,49 @@ const Label = styled.label`
 		top: 23px;
 		left: 20px;
 		position: absolute;
-		background: ${getRadioColor};
+		background: ${ getRadioColor };
 		box-sizing: border-box;
 		z-index: 3;
+
+		.rtl & {
+			right: 20px;
+			left: auto;
+		}
 	}
+
+	${ handleLabelDisabled };
 `;
 
+function handleLabelDisabled( { disabled } ) {
+	if ( ! disabled ) {
+		return null;
+	}
+
+	return `
+		color: lightgray;
+		font-style: italic;
+
+		:hover {
+			cursor: default;
+		}
+
+		::before {
+			border: 1px solid lightgray;
+			background: lightgray;
+		}
+
+		::after {
+			background: white;
+		}
+
+		span {
+			color: lightgray;
+		}
+	`;
+}
+
 const RadioButtonChildren = styled.div`
-	display: ${props => ( props.checked ? 'block' : 'none' )};
+	display: ${ ( props ) => ( props.checked ? 'block' : 'none' ) };
 `;
 
 function getBorderColor( { checked, theme } ) {

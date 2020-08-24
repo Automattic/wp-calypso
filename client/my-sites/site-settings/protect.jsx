@@ -40,15 +40,15 @@ class Protect extends Component {
 		fields: {},
 	};
 
-	handleAddToWhitelist = () => {
+	handleAddToAllowedList = () => {
 		const { setFieldValue } = this.props;
-		let whitelist = trimEnd( this.getProtectWhitelist() );
+		let allowedIps = trimEnd( this.getProtectAllowedIps() );
 
-		if ( whitelist.length ) {
-			whitelist += '\n';
+		if ( allowedIps.length ) {
+			allowedIps += '\n';
 		}
 
-		setFieldValue( 'jetpack_protect_global_whitelist', whitelist + this.getIpAddress() );
+		setFieldValue( 'jetpack_protect_global_whitelist', allowedIps + this.getIpAddress() );
 	};
 
 	getIpAddress() {
@@ -59,22 +59,22 @@ class Protect extends Component {
 		return null;
 	}
 
-	getProtectWhitelist() {
+	getProtectAllowedIps() {
 		const { jetpack_protect_global_whitelist } = this.props.fields;
 		return jetpack_protect_global_whitelist || '';
 	}
 
-	isIpAddressWhitelisted() {
+	isIpAddressAllowed() {
 		const ipAddress = this.getIpAddress();
 		if ( ! ipAddress ) {
 			return false;
 		}
 
-		const whitelist = this.getProtectWhitelist().split( '\n' );
+		const allowedIps = this.getProtectAllowedIps().split( '\n' );
 
 		return (
-			includes( whitelist, ipAddress ) ||
-			some( whitelist, entry => {
+			includes( allowedIps, ipAddress ) ||
+			some( allowedIps, ( entry ) => {
 				if ( entry.indexOf( '-' ) < 0 ) {
 					return false;
 				}
@@ -97,7 +97,7 @@ class Protect extends Component {
 		} = this.props;
 
 		const ipAddress = this.getIpAddress();
-		const isIpWhitelisted = this.isIpAddressWhitelisted();
+		const isIpAllowed = this.isIpAddressAllowed();
 		const disabled =
 			isRequestingSettings || isSavingSettings || protectModuleUnavailable || ! protectModuleActive;
 		const protectToggle = (
@@ -137,31 +137,31 @@ class Protect extends Component {
 
 							{ ipAddress && (
 								<Button
-									className="protect__add-to-whitelist site-settings__add-to-whitelist"
-									onClick={ this.handleAddToWhitelist }
-									disabled={ disabled || isIpWhitelisted }
+									className="site-settings__add-to-explicitly-allowed-list"
+									onClick={ this.handleAddToAllowedList }
+									disabled={ disabled || isIpAllowed }
 									compact
 								>
-									{ isIpWhitelisted
-										? translate( 'Already in whitelist' )
-										: translate( 'Add to whitelist' ) }
+									{ isIpAllowed
+										? translate( 'Already in list of allowed IPs' )
+										: translate( 'Add to list of allowed IPs' ) }
 								</Button>
 							) }
 						</p>
 
 						<FormLabel htmlFor="jetpack_protect_global_whitelist">
-							{ translate( 'Whitelisted IP addresses' ) }
+							{ translate( 'Allowed IP addresses' ) }
 						</FormLabel>
 						<FormTextarea
 							id="jetpack_protect_global_whitelist"
-							value={ this.getProtectWhitelist() }
+							value={ this.getProtectAllowedIps() }
 							onChange={ onChangeField( 'jetpack_protect_global_whitelist' ) }
 							disabled={ disabled }
 							placeholder={ translate( 'Example: 12.12.12.1-12.12.12.100' ) }
 						/>
 						<FormSettingExplanation>
 							{ translate(
-								'You may whitelist an IP address or series of addresses preventing them from ' +
+								'You may explicitly allow an IP address or series of addresses preventing them from ' +
 									'ever being blocked by Jetpack. IPv4 and IPv6 are acceptable. ' +
 									'To specify a range, enter the low value and high value separated by a dash. ' +
 									'Example: 12.12.12.1-12.12.12.100'
@@ -174,7 +174,7 @@ class Protect extends Component {
 	}
 }
 
-export default connect( state => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const siteInDevMode = isJetpackSiteInDevelopmentMode( state, selectedSiteId );
 	const moduleUnavailableInDevMode = isJetpackModuleUnavailableInDevelopmentMode(

@@ -23,7 +23,7 @@ import './style.scss';
  * @param {object} product - G Suite product
  * @returns {boolean} - true if a discount can be applied, false otherwise
  */
-const hasDiscount = product => {
+const hasDiscount = ( product ) => {
 	if (
 		! product ||
 		! product.sale_cost ||

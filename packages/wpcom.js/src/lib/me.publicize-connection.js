@@ -2,12 +2,12 @@ const root = '/me/publicize-connections/';
 
 export default class PublicizeConnection {
 	/**
-	* `PublicizeConnection` constructor.
-	*
-	* @param {string} connectionId - application identifier
-	* @param {WPCOM} wpcom - wpcom instance
-	* @returns {null} null
-	*/
+	 * `PublicizeConnection` constructor.
+	 *
+	 * @param {string} connectionId - application identifier
+	 * @param {WPCOM} wpcom - wpcom instance
+	 * @returns {null} null
+	 */
 	constructor( connectionId, wpcom ) {
 		if ( ! ( this instanceof PublicizeConnection ) ) {
 			return new PublicizeConnection( connectionId, wpcom );
@@ -52,13 +52,13 @@ export default class PublicizeConnection {
 	}
 
 	/**
-	* Delete the app of the  current user
-	* through of the given connectionId
-	*
-	* @param {object} [query] - query object parameter
-	* @param {Function} fn - callback function
-	* @returns {Function} request handler
-	*/
+	 * Delete the app of the  current user
+	 * through of the given connectionId
+	 *
+	 * @param {object} [query] - query object parameter
+	 * @param {Function} fn - callback function
+	 * @returns {Function} request handler
+	 */
 	delete( query, fn ) {
 		return this.wpcom.req.del( root + this._id + '/delete', query, fn );
 	}

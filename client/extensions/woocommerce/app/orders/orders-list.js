@@ -78,7 +78,7 @@ class Orders extends Component {
 		this.props.fetchOrders( newProps.siteId, query );
 	}
 
-	clearSearch = event => {
+	clearSearch = ( event ) => {
 		const { site, siteId } = this.props;
 		this.search.closeSearch( event );
 		this.props.updateCurrentOrdersQuery( siteId, { page: 1, search: '' } );
@@ -86,7 +86,7 @@ class Orders extends Component {
 	};
 
 	renderPlaceholders = () => {
-		return range( 5 ).map( i => {
+		return range( 5 ).map( ( i ) => {
 			return (
 				<TableRow key={ i } className="orders__row-placeholder">
 					<TableItem className="orders__table-name" isRowHeader>
@@ -194,7 +194,7 @@ class Orders extends Component {
 		);
 	};
 
-	onPageClick = nextPage => {
+	onPageClick = ( nextPage ) => {
 		this.props.updateCurrentOrdersQuery( this.props.siteId, {
 			page: nextPage,
 			status: this.props.currentStatus,
@@ -221,7 +221,7 @@ class Orders extends Component {
 			);
 		}
 
-		const setSearchRef = ref => ( this.search = ref );
+		const setSearchRef = ( ref ) => ( this.search = ref );
 
 		return (
 			<div className="orders__container">
@@ -275,5 +275,5 @@ export default connect(
 			total,
 		};
 	},
-	dispatch => bindActionCreators( { fetchOrders, updateCurrentOrdersQuery }, dispatch )
+	( dispatch ) => bindActionCreators( { fetchOrders, updateCurrentOrdersQuery }, dispatch )
 )( localize( Orders ) );

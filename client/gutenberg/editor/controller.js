@@ -17,11 +17,21 @@ import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'state/selected-editor/actions';
-import { getSiteUrl, getSiteOption } from 'state/sites/selectors';
+import {
+	getSiteUrl,
+	getSiteOption,
+	getSite,
+	isJetpackSite,
+	isSSOEnabled,
+} from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
+import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
+import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/window-events';
+import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -52,7 +62,7 @@ function getPostID( context ) {
 }
 
 function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( resolve => {
+	return new Promise( ( resolve ) => {
 		const unsubscribe = context.store.subscribe( () => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
@@ -92,13 +102,19 @@ export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
 	const siteId = getSelectedSiteId( state );
+	const isDesktop = isEnabled( 'desktop' );
 	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
-	const isAuthenticated =
+	let isAuthenticated =
 		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
 		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
-		isEnabled( 'desktop' ) || // The desktop app can store third-party cookies.
+		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
+
+	if ( isDesktop && isJetpackSite( state, siteId ) && ! isSSOEnabled( state, siteId ) ) {
+		isAuthenticated = false;
+	}
+
 	if ( isAuthenticated ) {
 		globalThis.sessionStorage.setItem( storageKey, 'true' );
 		return next();
@@ -123,7 +139,19 @@ export const authenticate = ( context, next ) => {
 
 	const siteUrl = getSiteUrl( state, siteId );
 	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
-	window.location.replace( wpAdminLoginUrl );
+
+	if ( isDesktop ) {
+		context.store.dispatch(
+			notifyDesktopCannotOpenEditor(
+				getSite( state, siteId ),
+				REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO,
+				context.path,
+				wpAdminLoginUrl
+			)
+		);
+	} else {
+		window.location.replace( wpAdminLoginUrl );
+	}
 };
 
 export const redirect = async ( context, next ) => {
@@ -142,7 +170,11 @@ export const redirect = async ( context, next ) => {
 	if ( shouldRedirectGutenberg( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
-		const url = getGutenbergEditorUrl( state, siteId, postId, postType );
+
+		const url =
+			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
+				? getGutenbergEditorUrl( state, siteId, postId, postType )
+				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
@@ -173,8 +205,9 @@ export const post = ( context, next ) => {
 	const siteId = getSelectedSiteId( state );
 	const pressThis = getPressThisData( context.query );
 	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
+	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
-	// Set postId on state.ui.editor.postId, so components like editor revisions can read from it.
+	// Set postId on state.editor.postId, so components like editor revisions can read from it.
 	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
 
 	// Set post type on state.posts.[ id ].type, so components like document head can read from it.
@@ -188,7 +221,24 @@ export const post = ( context, next ) => {
 			duplicatePostId={ duplicatePostId }
 			pressThis={ pressThis }
 			fseParentPageId={ fseParentPageId }
+			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+		/>
+	);
+
+	return next();
+};
+
+export const siteEditor = ( context, next ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.primary = (
+		<CalypsoifyIframe
+			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
+			// It will force the component to remount completely when the Id changes.
+			key={ siteId }
+			editorType={ 'site' }
 		/>
 	);
 

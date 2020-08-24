@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { useLineItems, renderDisplayValueMarkdown } from '../public-api';
-import { useLocalize } from '../lib/localize';
+import { useLineItems } from '../public-api';
 import {
 	OrderReviewLineItems,
 	OrderReviewTotal,
@@ -32,8 +32,8 @@ export default function CheckoutReviewOrder( { className } ) {
 }
 
 export function CheckoutReviewOrderTitle() {
-	const localize = useLocalize();
-	return localize( 'Review your order' );
+	const { __ } = useI18n();
+	return __( 'Review your order' );
 }
 
 CheckoutReviewOrder.propTypes = {
@@ -45,7 +45,7 @@ function LineItem( { item, className } ) {
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
 			<span>•</span>
 			<span>{ item.label }</span>
-			<span>{ renderDisplayValueMarkdown( item.amount.displayValue ) }</span>
+			<span>{ item.amount.displayValue }</span>
 		</div>
 	);
 }

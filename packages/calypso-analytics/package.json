@@ -25,16 +25,18 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "npm run clean",
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__calypso-analytics*\"",
+		"prepublish": "yarn run clean",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/load-script": "file:../load-script",
+		"@automattic/load-script": "^1.0.0",
+		"cookie": "^0.4.0",
 		"debug": "^4.1.1",
 		"hash.js": "^1.1.7",
 		"lodash": "^4.17.15",
-		"tslib": "^1.10.0"
+		"tslib": "^1.10.0",
+		"uuid": "^7.0.3"
 	}
 }

@@ -50,7 +50,7 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.focusInput();
 	}
 
-	handleHaveFileClick = event => {
+	handleHaveFileClick = ( event ) => {
 		event.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_signup_import_have_file_click', {
@@ -61,7 +61,7 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.setState( { displayFallbackEngines: true } );
 	};
 
-	handleEngineSelect = siteEngine => event => {
+	handleEngineSelect = ( siteEngine ) => ( event ) => {
 		event.preventDefault();
 
 		const { stepName } = this.props;
@@ -92,23 +92,24 @@ class ImportURLOnboardingStepComponent extends Component {
 		this.props.goToNextStep();
 	};
 
-	handleInputChange = event => {
+	handleInputChange = ( event ) => {
 		this.props.setNuxUrlInputValue( event.target.value );
 	};
 
-	handleInputBlur = event => {
+	handleInputBlur = ( event ) => {
 		if ( event.target.value ) {
 			this.validateUrl();
 		}
 	};
 
-	handleInputRef = el => ( this.inputRef = el );
+	handleInputRef = ( el ) => ( this.inputRef = el );
 
 	focusInput = () => invoke( this.inputRef, 'focus' );
 
-	setUrlError = urlValidationMessage => this.setState( { urlValidationMessage }, this.focusInput );
+	setUrlError = ( urlValidationMessage ) =>
+		this.setState( { urlValidationMessage }, this.focusInput );
 
-	handleSubmit = event => {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		const { flowName, stepName, translate, urlInputValue } = this.props;
@@ -193,7 +194,7 @@ class ImportURLOnboardingStepComponent extends Component {
 					);
 					this.props.goToNextStep();
 				},
-				error => {
+				( error ) => {
 					switch ( error.code ) {
 						case 'rest_invalid_param':
 							return this.setUrlError(
@@ -371,7 +372,7 @@ class ImportURLOnboardingStepComponent extends Component {
 
 export default flow(
 	connect(
-		state => ( {
+		( state ) => ( {
 			urlInputValue: getNuxUrlInputValue( state ),
 		} ),
 		{

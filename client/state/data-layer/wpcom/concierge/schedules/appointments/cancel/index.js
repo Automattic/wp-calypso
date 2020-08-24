@@ -16,7 +16,7 @@ import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
-export const cancelConciergeAppointment = action => {
+export const cancelConciergeAppointment = ( action ) => {
 	return [
 		updateConciergeBookingStatus( CONCIERGE_STATUS_CANCELLING ),
 		http(

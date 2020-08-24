@@ -12,9 +12,9 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( dataImageUrl ) ).toEqual( dataImageUrl );
 		} );
 
-		test( 'should make a non-whitelisted protocol safe', () => {
+		test( 'should make a disallowed protocol safe', () => {
 			[ 'javascript:alert("foo")', 'data:application/json;base64,', 'about:config' ].forEach(
-				url => {
+				( url ) => {
 					expect( safeImageUrl( url ) ).toMatch( /^https:\/\/i[0-2]\.wp.com\// );
 				}
 			);

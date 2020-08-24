@@ -65,7 +65,7 @@ class Data_Point_Option implements Data_Point {
 			return get_option( $this->option_name, $this->default_value );
 		}
 
-		$value = get_option( $this->option_name, [] );
+		$value = get_option( $this->option_name, array() );
 		if ( is_array( $value ) && array_key_exists( $this->option_property, $value ) ) {
 			return $value[ $this->option_property ];
 		}

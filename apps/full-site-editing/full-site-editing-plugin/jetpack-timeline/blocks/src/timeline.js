@@ -6,10 +6,12 @@
  * External dependencies
  */
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
+import { ToggleControl, PanelBody } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -71,17 +73,40 @@ export function registerTimelineBlock() {
 				},
 			],
 		},
-		edit: props => {
-			const { clientId } = props;
+		attributes: {
+			isAlternating: {
+				type: 'attribute',
+				selector: 'ul',
+				attribute: 'data-is-alternating',
+			},
+		},
+		edit: ( props ) => {
+			const { clientId, attributes, setAttributes } = props;
+			const { isAlternating } = attributes;
 
 			const addItem = () => {
 				const block = createBlock( 'jetpack/timeline-item' );
 				dispatch( 'core/block-editor' ).insertBlock( block, undefined, clientId );
 			};
 
+			const toggleAlternate = () => setAttributes( { isAlternating: ! isAlternating } );
+
+			const classes = classnames( 'wp-block-jetpack-timeline', {
+				'is-alternating': isAlternating,
+			} );
+
 			return (
 				<>
-					<ul className="wp-block-jetpack-timeline">
+					<InspectorControls>
+						<PanelBody title={ __( 'Timeline settings', 'full-site-editing' ) }>
+							<ToggleControl
+								label={ __( 'Alternate items', 'full-site-editing' ) }
+								onChange={ toggleAlternate }
+								checked={ isAlternating }
+							/>
+						</PanelBody>
+					</InspectorControls>
+					<ul className={ classes }>
 						<InnerBlocks
 							allowedBlocks={ [ 'jetpack/timeline-item' ] }
 							template={ [ [ 'jetpack/timeline-item' ] ] }
@@ -92,9 +117,18 @@ export function registerTimelineBlock() {
 			);
 		},
 
-		save: () => {
+		save: ( props ) => {
+			const { attributes } = props;
+			const { isAlternating } = attributes;
+			const classes = classnames( 'wp-block-jetpack-timeline', {
+				'is-alternating': isAlternating,
+			} );
+
+			const dataAttr =
+				typeof isAlternating === 'boolean' ? { 'data-is-alternating': isAlternating } : null;
+
 			return (
-				<ul className="wp-block-jetpack-timeline">
+				<ul className={ classes } { ...dataAttr }>
 					<InnerBlocks.Content />
 				</ul>
 			);

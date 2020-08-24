@@ -11,9 +11,10 @@ import { MySitesSidebar } from '..';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
-jest.mock( 'lib/user', () => null );
+jest.mock( 'lib/user', () => () => null );
 jest.mock( 'lib/user/index', () => () => {} );
-jest.mock( 'lib/analytics/index', () => null );
+jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/abtest', () => ( {
 	abtest: jest.fn( () => {
 		return 'sidebarUpsells';
@@ -37,7 +38,7 @@ describe( 'MySitesSidebar', () => {
 		const defaultProps = {
 			site: {},
 			siteSuffix: '/mysite.com',
-			translate: x => x,
+			translate: ( x ) => x,
 		};
 
 		beforeEach( () => {
@@ -47,7 +48,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return null item if woocommerce/extension-dashboard is disabled', () => {
 			config.isEnabled.mockImplementation(
-				feature => feature !== 'woocommerce/extension-dashboard'
+				( feature ) => feature !== 'woocommerce/extension-dashboard'
 			);
 			const Sidebar = new MySitesSidebar( {
 				isSiteAutomatedTransfer: false,
@@ -93,20 +94,8 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.props().link ).toEqual(
-				'http://test.com/wp-admin/admin.php?page=wc-setup-checklist'
+				'http://test.com/wp-admin/admin.php?page=wc-admin&calypsoify=1'
 			);
-		} );
-
-		test( 'Should return null item if user can not use store on this site (nudge-a-palooza disabled)', () => {
-			config.isEnabled.mockImplementation( feature => feature !== 'upsell/nudge-a-palooza' );
-			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
-				...defaultProps,
-			} );
-			const Store = () => Sidebar.store();
-
-			const wrapper = shallow( <Store /> );
-			expect( wrapper.html() ).toEqual( null );
 		} );
 
 		test( 'Should return null item if user who can upgrade can not use store on this site (control a/b group)', () => {
@@ -133,6 +122,66 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.html() ).toEqual( null );
+		} );
+	} );
+
+	describe( 'MySitesSidebar.earn()', () => {
+		const defaultProps = {
+			site: {
+				plan: {
+					product_slug: 'business-bundle',
+				},
+			},
+			siteSuffix: '/mysite.com',
+			translate: ( x ) => x,
+		};
+
+		test( 'Should return null item if no site selected', () => {
+			const Sidebar = new MySitesSidebar( {
+				site: null,
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Earn = () => Sidebar.earn();
+			const wrapper = shallow( <Earn /> );
+
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if signup/wpforteams enabled and isSiteWPForTeams', () => {
+			const Sidebar = new MySitesSidebar( {
+				isSiteWPForTeams: true,
+				...defaultProps,
+			} );
+
+			const Earn = () => Sidebar.earn();
+			const wrapper = shallow( <Earn /> );
+
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if site present but user cannot earn', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseEarn: false,
+				...defaultProps,
+			} );
+
+			const Earn = () => Sidebar.earn();
+			const wrapper = shallow( <Earn /> );
+
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return earn menu item if site present and user can earn', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseEarn: true,
+				...defaultProps,
+			} );
+
+			const Earn = () => Sidebar.earn();
+			const wrapper = shallow( <Earn /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
 		} );
 	} );
 } );

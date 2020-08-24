@@ -13,12 +13,12 @@ import {
 	SITE_ROLES_REQUEST_FAILURE,
 	SITE_ROLES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( sandbox => ( spy = sandbox.spy() ) );
+	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
 
 	describe( '#requestSiteRoles()', () => {
 		describe( 'success', () => {
@@ -42,7 +42,7 @@ describe( 'actions', () => {
 			];
 			const siteId = 12345678;
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/sites/' + siteId + '/roles' )
@@ -87,7 +87,7 @@ describe( 'actions', () => {
 			const message = 'User cannot view roles for specified site';
 			const siteId = 87654321;
 
-			useNock( nock => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/sites/' + siteId + '/roles' )

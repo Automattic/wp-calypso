@@ -72,7 +72,7 @@ export function injectLocalization( wpcom ) {
 	return Object.assign( wpcom, {
 		localized: true,
 
-		request: function( params, callback ) {
+		request: function ( params, callback ) {
 			return originalRequest( addLocaleQueryParam( params ), callback );
 		},
 	} );

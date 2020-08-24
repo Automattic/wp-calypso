@@ -92,4 +92,3 @@ These environment variables are intended for use inside CircleCI, to control whi
 | SKIP_TEST_REGEX | The value of this variable will be used in the `-i -g *****` parameter, to skip any tests that match the given RegEx.  List multiple keywords separated by a `|` (i.e. `Invite|Domain|Theme`) | `Empty String` | No |
 | SKIP_DOMAIN_TESTS | If this value is set to `true`, the tests that attempt domain registration with be skipped.  | false | No |
 | SKIP_JETPACK | If this value is set to `true`, the Jetpack tests with be skipped. Useful to disable scheduled tests without modifying circleCI config  | false | No |
-| CHROMEDRIVER_VERSION | This specifies the actual version of the Chromedriver binary that is used. It needs to be set to a version compatible with the version of Chrome installed | null | No

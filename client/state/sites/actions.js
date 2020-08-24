@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import config from 'config';
 import {
 	SITE_DELETE,
 	SITE_DELETE_FAILURE,
@@ -76,10 +77,11 @@ export function receiveSites( sites ) {
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITES_REQUEST,
 		} );
+		const siteFilter = config( 'site_filter' );
 
 		return wpcom
 			.me()
@@ -90,14 +92,15 @@ export function requestSites() {
 				site_activity: 'active',
 				fields: SITE_REQUEST_FIELDS,
 				options: SITE_REQUEST_OPTIONS,
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
-			.then( response => {
+			.then( ( response ) => {
 				dispatch( receiveSites( response.sites ) );
 				dispatch( {
 					type: SITES_REQUEST_SUCCESS,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITES_REQUEST_FAILURE,
 					error,
@@ -110,22 +113,25 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  *
- * @param  {number}   siteFragment Site ID or slug
+ * @param {number} siteFragment Site ID or slug
+ * @param {boolean} forceWpcom explicitly get info from WPCOM vs Jetpack site
  * @returns {Function}              Action thunk
  */
-export function requestSite( siteFragment ) {
-	return dispatch => {
+export function requestSite( siteFragment, forceWpcom = false ) {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_REQUEST,
 			siteId: siteFragment,
 		} );
-
+		const siteFilter = config( 'site_filter' );
 		return wpcom
 			.site( siteFragment )
 			.get( {
 				apiVersion: '1.2',
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
+				force: forceWpcom ? 'wpcom' : undefined,
 			} )
-			.then( site => {
+			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
 				if ( ! ( site && site.capabilities ) ) {
 					return dispatch( {
@@ -142,7 +148,14 @@ export function requestSite( siteFragment ) {
 					siteId: siteFragment,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
+				if (
+					error?.status === 403 &&
+					error?.message === 'API calls to this blog have been disabled.' &&
+					! forceWpcom
+				) {
+					return dispatch( requestSite( siteFragment, true ) );
+				}
 				dispatch( {
 					type: SITE_REQUEST_FAILURE,
 					siteId: siteFragment,
@@ -160,7 +173,7 @@ export function requestSite( siteFragment ) {
  * @returns {Function}        Action thunk
  */
 export function deleteSite( siteId ) {
-	return dispatch => {
+	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_DELETE,
 			siteId,
@@ -175,7 +188,7 @@ export function deleteSite( siteId ) {
 					siteId,
 				} );
 			} )
-			.catch( error => {
+			.catch( ( error ) => {
 				dispatch( {
 					type: SITE_DELETE_FAILURE,
 					siteId,
@@ -185,7 +198,7 @@ export function deleteSite( siteId ) {
 	};
 }
 
-export const sitePluginUpdated = siteId => ( {
+export const sitePluginUpdated = ( siteId ) => ( {
 	type: SITE_PLUGIN_UPDATED,
 	siteId,
 } );

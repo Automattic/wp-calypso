@@ -75,7 +75,7 @@ class FollowingManage extends Component {
 	};
 
 	// TODO make this common between our different search pages?
-	updateQuery = newValue => {
+	updateQuery = ( newValue ) => {
 		this.scrollToTop();
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if (
@@ -105,9 +105,9 @@ class FollowingManage extends Component {
 		window.scrollTo( 0, 0 );
 	};
 
-	handleStreamMounted = ref => ( this.streamRef = ref );
-	handleSearchBoxMounted = ref => ( this.searchBoxRef = ref );
-	handleWindowScrollerMounted = ref => ( this.windowScrollerRef = ref );
+	handleStreamMounted = ( ref ) => ( this.streamRef = ref );
+	handleSearchBoxMounted = ( ref ) => ( this.searchBoxRef = ref );
+	handleWindowScrollerMounted = ( ref ) => ( this.windowScrollerRef = ref );
 
 	resizeSearchBox = () => {
 		if ( this.searchBoxRef && this.streamRef ) {
@@ -146,7 +146,7 @@ class FollowingManage extends Component {
 		return (
 			reject(
 				recommendedSites,
-				site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
+				( site ) => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
 			).length <= 4
 		);
 	};
@@ -203,7 +203,7 @@ class FollowingManage extends Component {
 
 		const filteredRecommendedSites = reject(
 			recommendedSites,
-			site => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
+			( site ) => includes( blockedSites, site.blogId ) || includes( dismissedSites, site.blogId )
 		);
 
 		/* eslint-disable jsx-a11y/no-autofocus */

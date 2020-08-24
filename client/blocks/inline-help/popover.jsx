@@ -8,38 +8,24 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal Dependencies
  */
-import {
-	VIEW_CONTACT,
-	VIEW_RICH_RESULT,
-	VIEW_CHECKLIST,
-	VIEW_ONBOARDING_WELCOME,
-} from './constants';
-import {
-	selectResult,
-	resetInlineHelpContactForm,
-	hideOnboardingWelcomePrompt,
-	hideChecklistPrompt,
-} from 'state/inline-help/actions';
+import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
 import { Button } from '@automattic/components';
 import Popover from 'components/popover';
-import ChecklistOnboardingWelcome from 'my-sites/checklist/wpcom-checklist/checklist-onboarding-welcome';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import {
-	getSearchQuery,
-	getInlineHelpCurrentlySelectedResult,
-	isInlineHelpChecklistPromptVisible,
-	isOnboardingWelcomePromptVisible,
-} from 'state/inline-help/selectors';
+import getSearchQuery from 'state/inline-help/selectors/get-search-query';
+import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
-import WpcomChecklist from 'my-sites/checklist/wpcom-checklist';
 import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
 import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import getCurrentRoute from 'state/selectors/get-current-route';
@@ -52,11 +38,12 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -69,13 +56,10 @@ class InlineHelpPopover extends Component {
 		optIn: PropTypes.func,
 		redirect: PropTypes.func,
 		isEligibleForChecklist: PropTypes.bool.isRequired,
-		isChecklistPromptVisible: PropTypes.bool,
-		isOnboardingWelcomeVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClose: noop,
-		isOnboardingWelcomeVisible: false,
 	};
 
 	state = {
@@ -83,56 +67,54 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
-	componentDidMount() {
-		if ( this.props.isOnboardingWelcomeVisible ) {
-			return this.openOnboardingWelcomeView();
-		}
+	secondaryViewRef = React.createRef();
 
-		if ( this.props.isChecklistPromptVisible && this.props.isEligibleForChecklist ) {
-			return this.openChecklistView();
-		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if (
-			prevProps.isOnboardingWelcomeVisible !== this.props.isOnboardingWelcomeVisible &&
-			! this.props.isOnboardingWelcomeVisible
-		) {
-			this.closeSecondaryView();
-		}
-	}
-
-	openResultView = event => {
+	openResultView = ( event ) => {
 		event.preventDefault();
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
-	moreHelpClicked = () => {
-		this.props.onClose();
-		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
+	setAdminSection = () => {
+		const { isBreakpointActive: isMobile, onClose } = this.props;
+		if ( ! isMobile ) {
+			return;
+		}
+		onClose();
 	};
 
-	setSecondaryViewKey = secondaryViewKey => {
+	moreHelpClicked = () => {
+		this.props.onClose();
+		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+			location: 'inline-help-popover',
+		} );
+	};
+
+	setSecondaryViewKey = ( secondaryViewKey ) => {
 		this.setState( { activeSecondaryView: secondaryViewKey } );
 	};
 
-	openSecondaryView = secondaryViewKey => {
+	openSecondaryView = ( secondaryViewKey ) => {
 		this.setSecondaryViewKey( secondaryViewKey );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
-		this.setState( { showSecondaryView: true } );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
+			location: 'inline-help-popover',
+		} );
+		// Focus the secondary popover contents after the state is set
+		this.setState( { showSecondaryView: true }, () => {
+			const contentTitle = this.secondaryViewRef.current.querySelector( 'h2' );
+
+			if ( contentTitle ) {
+				contentTitle.focus();
+			}
+		} );
 	};
 
 	closeSecondaryView = () => {
 		this.setSecondaryViewKey( '' );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide`, {
+			location: 'inline-help-popover',
+		} );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
-		// If the welcome message is still active, return to that view
-		// otherwise close the secondary view altogether.
-		if ( this.props.isOnboardingWelcomeVisible ) {
-			return this.openOnboardingWelcomeView();
-		}
-		this.props.hideChecklistPrompt();
 		this.setState( { showSecondaryView: false } );
 	};
 
@@ -140,27 +122,10 @@ class InlineHelpPopover extends Component {
 		this.openSecondaryView( VIEW_CONTACT );
 	};
 
-	openChecklistView = () => {
-		this.openSecondaryView( VIEW_CHECKLIST );
-	};
-
-	openOnboardingWelcomeView = () => {
-		this.openSecondaryView( VIEW_ONBOARDING_WELCOME );
-	};
-
 	renderPopoverFooter = () => {
 		const { translate } = this.props;
 		return (
 			<div className="inline-help__footer">
-				<Button
-					onClick={ this.props.hideOnboardingWelcomePrompt }
-					className="inline-help__back-to-help-button"
-					borderless
-				>
-					<Gridicon icon="chevron-left" className="inline-help__gridicon-left" />
-					{ translate( 'Help' ) }
-				</Button>
-
 				<Button
 					onClick={ this.moreHelpClicked }
 					className="inline-help__more-button"
@@ -195,11 +160,13 @@ class InlineHelpPopover extends Component {
 				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
-						openResult={ this.openResultView }
+						onSelect={ this.openResultView }
 						query={ this.props.searchQuery }
+						isVisible={ ! this.state.showSecondaryView }
 					/>
 					<InlineHelpSearchResults
-						openResult={ this.openResultView }
+						onSelect={ this.openResultView }
+						onAdminSectionSelect={ this.setAdminSection }
 						searchQuery={ this.props.searchQuery }
 					/>
 				</div>
@@ -216,10 +183,17 @@ class InlineHelpPopover extends Component {
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
 		return (
-			<div className={ classes }>
+			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
 					{
-						[ VIEW_CONTACT ]: <InlineHelpContactView />,
+						[ VIEW_CONTACT ]: (
+							<Fragment>
+								<h2 className="inline-help__title" tabIndex="-1">
+									{ __( 'Get Support' ) }
+								</h2>
+								<InlineHelpContactView />
+							</Fragment>
+						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
 								result={ selectedResult }
@@ -227,30 +201,24 @@ class InlineHelpPopover extends Component {
 								closePopover={ onClose }
 							/>
 						),
-						[ VIEW_CHECKLIST ]: <WpcomChecklist closePopover={ onClose } viewMode="prompt" />,
-						[ VIEW_ONBOARDING_WELCOME ]: <ChecklistOnboardingWelcome onClose={ onClose } />,
 					}[ this.state.activeSecondaryView ]
 				}
-			</div>
+			</section>
 		);
 	};
 
 	renderPrimaryView = () => {
-		const {
-			translate,
-			showNotification,
-			siteId,
-			setNotification,
-			setStoredTask,
-			showOptIn,
-			showOptOut,
-			onClose,
-		} = this.props;
+		const { translate, siteId, showOptIn, showOptOut, isCheckout, isEditorDeprecated } = this.props;
+
+		// Don't show additional items inside Checkout.
+		if ( isCheckout ) {
+			return null;
+		}
 
 		return (
 			<>
 				<QueryActiveTheme siteId={ siteId } />
-				{ showOptOut && (
+				{ showOptOut && ! isEditorDeprecated && (
 					<Button
 						onClick={ this.switchToClassicEditor }
 						className="inline-help__classic-editor-toggle"
@@ -259,7 +227,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 				) }
 
-				{ showOptIn && (
+				{ showOptIn && ! isEditorDeprecated && (
 					<Button
 						onClick={ this.switchToBlockEditor }
 						className="inline-help__gutenberg-editor-toggle"
@@ -267,23 +235,17 @@ class InlineHelpPopover extends Component {
 						{ translate( 'Switch to Block Editor' ) }
 					</Button>
 				) }
-
-				<WpcomChecklist
-					viewMode="navigation"
-					closePopover={ onClose }
-					showNotification={ showNotification }
-					setNotification={ setNotification }
-					setStoredTask={ setStoredTask }
-				/>
 			</>
 		);
 	};
 
 	switchToClassicEditor = () => {
 		const { siteId, onClose, optOut, classicUrl, translate } = this.props;
+
 		const proceed =
 			typeof window === 'undefined' ||
 			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
+
 		if ( proceed ) {
 			optOut( siteId, classicUrl );
 			onClose();
@@ -299,7 +261,6 @@ class InlineHelpPopover extends Component {
 	render() {
 		const popoverClasses = {
 			'is-secondary-view-active': this.state.showSecondaryView,
-			'is-onboarding-welcome-active': VIEW_ONBOARDING_WELCOME === this.state.activeSecondaryView,
 		};
 
 		return (
@@ -328,6 +289,7 @@ const optOut = ( siteId, classicUrl ) => {
 			),
 			recordTracksEvent( 'calypso_gutenberg_opt_in', {
 				opt_in: false,
+				location: 'inline-help-popover',
 			} ),
 			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt Out' )
 		),
@@ -346,6 +308,7 @@ const optIn = ( siteId, gutenbergUrl ) => {
 			),
 			recordTracksEvent( 'calypso_gutenberg_opt_in', {
 				opt_in: true,
+				location: 'inline-help-popover',
 			} ),
 			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt In' )
 		),
@@ -363,26 +326,24 @@ function mapStateToProps( state ) {
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-	const isEligibleForChecklist = isEligibleForDotcomChecklist( state, siteId );
+	const showSwitchEditorButton = currentRoute.match( /^\/(block-editor|post|page)\// );
 
 	return {
-		isOnboardingWelcomeVisible: isEligibleForChecklist && isOnboardingWelcomePromptVisible( state ),
-		isChecklistPromptVisible: isInlineHelpChecklistPromptVisible( state ),
 		searchQuery: getSearchQuery( state ),
 		isEligibleForChecklist: isEligibleForDotcomChecklist( state, siteId ),
 		selectedSite: getHelpSelectedSite( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
 		classicUrl: `/${ classicRoute }`,
 		siteId,
-		showOptOut: isGutenbergOptOutEnabled( state, siteId ),
-		showOptIn: optInEnabled && isCalypsoClassic,
+		showOptOut: showSwitchEditorButton && isGutenbergOptOutEnabled( state, siteId ),
+		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
+		isCheckout: section.name && section.name === 'checkout',
+		isEditorDeprecated: inEditorDeprecationGroup( state ),
 	};
 }
 
 const mapDispatchToProps = {
-	hideOnboardingWelcomePrompt,
-	hideChecklistPrompt,
 	optOut,
 	optIn,
 	recordTracksEvent,
@@ -393,4 +354,4 @@ const mapDispatchToProps = {
 export default compose(
 	localize,
 	connect( mapStateToProps, mapDispatchToProps )
-)( InlineHelpPopover );
+)( withMobileBreakpoint( InlineHelpPopover ) );

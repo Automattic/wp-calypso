@@ -9,7 +9,8 @@ import { get, some, dropRight } from 'lodash';
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import { recordPageView } from 'lib/analytics/page-view';
+import { recordTracksEvent } from 'lib/analytics/tracks';
 import config from 'config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
@@ -21,12 +22,14 @@ import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
 import Plans from './plans';
 import PlansLanding from './plans-landing';
+import SearchPurchase from './search';
+import StoreHeader from './store-header';
 import { addQueryArgs, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import { hideMasterbar, showMasterbar, hideSidebar } from 'state/ui/actions';
-import { JPC_PATH_PLANS, MOBILE_APP_REDIRECT_URL_WHITELIST } from './constants';
+import { JPC_PATH_PLANS, ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from './constants';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
@@ -40,6 +43,19 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 } from 'lib/plans/constants';
 
+import {
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+} from 'lib/products-values/constants';
+
 /**
  * Module variables
  */
@@ -49,9 +65,20 @@ const analyticsPageTitleByType = {
 	personal: 'Jetpack Connect Personal',
 	premium: 'Jetpack Connect Premium',
 	pro: 'Jetpack Install Pro',
+	realtimebackup: 'Jetpack Realtime Backup',
+	backup: 'Jetpack Daily Backup',
+	jetpack_search: 'Jetpack Search',
+	scan: 'Jetpack Scan Daily',
+	antispam: 'Jetpack Anti-spam',
 };
 
-const removeSidebar = context => context.store.dispatch( hideSidebar() );
+const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
+
+export function offerResetContext( context, next ) {
+	removeSidebar( context );
+	context.header = <StoreHeader />;
+	next();
+}
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
@@ -59,11 +86,21 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 			personal: PLAN_JETPACK_PERSONAL,
 			premium: PLAN_JETPACK_PREMIUM,
 			pro: PLAN_JETPACK_BUSINESS,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY,
+			jetpack_search: PRODUCT_JETPACK_SEARCH,
+			scan: PRODUCT_JETPACK_SCAN,
+			antispam: PRODUCT_JETPACK_ANTI_SPAM,
 		},
 		monthly: {
 			personal: PLAN_JETPACK_PERSONAL_MONTHLY,
 			premium: PLAN_JETPACK_PREMIUM_MONTHLY,
 			pro: PLAN_JETPACK_BUSINESS_MONTHLY,
+			realtimebackup: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+			backup: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+			jetpack_search: PRODUCT_JETPACK_SEARCH_MONTHLY,
+			scan: PRODUCT_JETPACK_SCAN_MONTHLY,
+			antispam: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 		},
 	};
 
@@ -82,7 +119,7 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 }
 
 export function newSite( context, next ) {
-	analytics.pageView.record( '/jetpack/new', 'Add a new site (Jetpack)' );
+	recordPageView( '/jetpack/new', 'Add a new site (Jetpack)' );
 	removeSidebar( context );
 	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
@@ -92,7 +129,9 @@ export function persistMobileAppFlow( context, next ) {
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
-			some( MOBILE_APP_REDIRECT_URL_WHITELIST, pattern => pattern.test( query.mobile_redirect ) )
+			some( ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, ( pattern ) =>
+				pattern.test( query.mobile_redirect )
+			)
 		) {
 			debug( `In mobile app flow with redirect url: ${ query.mobile_redirect }` );
 			persistMobileRedirect( query.mobile_redirect );
@@ -119,13 +158,38 @@ export function connect( context, next ) {
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
-
-	analytics.pageView.record( pathname, analyticsPageTitle );
+	recordPageView( pathname, analyticsPageTitle );
 
 	removeSidebar( context );
 
 	context.primary = (
 		<JetpackConnect
+			ctaFrom={ query.cta_from /* origin tracking params */ }
+			ctaId={ query.cta_id /* origin tracking params */ }
+			locale={ params.locale }
+			path={ path }
+			type={ type }
+			url={ query.url }
+			forceRemoteInstall={ query.forceInstall }
+		/>
+	);
+	next();
+}
+
+// Purchase Jetpack Search
+export function purchase( context, next ) {
+	const { path, pathname, params, query } = context;
+	const { type = false, interval } = params;
+	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
+	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	planSlug && storePlan( planSlug );
+	recordPageView( pathname, analyticsPageTitle );
+
+	removeSidebar( context );
+
+	context.primary = (
+		<SearchPurchase
 			ctaFrom={ query.cta_from /* origin tracking params */ }
 			ctaId={ query.cta_id /* origin tracking params */ }
 			locale={ params.locale }
@@ -138,10 +202,7 @@ export function connect( context, next ) {
 }
 
 export function instructions( context, next ) {
-	analytics.pageView.record(
-		'jetpack/connect/instructions',
-		'Jetpack Manual Install Instructions'
-	);
+	recordPageView( 'jetpack/connect/instructions', 'Jetpack Manual Install Instructions' );
 
 	const url = context.query.url;
 	if ( ! url ) {
@@ -152,7 +213,7 @@ export function instructions( context, next ) {
 }
 
 export function signupForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
 
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
@@ -164,6 +225,7 @@ export function signupForm( context, next ) {
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
+
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 
@@ -183,12 +245,13 @@ export function credsForm( context, next ) {
 }
 
 export function authorizeForm( context, next ) {
-	analytics.pageView.record( 'jetpack/connect/authorize', 'Jetpack Authorize' );
+	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
 
 	removeSidebar( context );
 
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
+
 	if ( transformedQuery ) {
 		context.store.dispatch( startAuthorizeStep( transformedQuery.clientId ) );
 		context.primary = <JetpackAuthorize authQuery={ transformedQuery } />;
@@ -204,7 +267,7 @@ export function sso( context, next ) {
 
 	removeSidebar( context );
 
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	recordPageView( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<JetpackSsoForm
@@ -224,8 +287,8 @@ export function plansLanding( context, next ) {
 
 	removeSidebar( context );
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	recordTracksEvent( 'calypso_plans_view' );
+	recordPageView( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<PlansLanding
@@ -244,8 +307,8 @@ export function plansSelection( context, next ) {
 
 	removeSidebar( context );
 
-	analytics.tracks.recordEvent( 'calypso_plans_view' );
-	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+	recordTracksEvent( 'calypso_plans_view' );
+	recordPageView( analyticsBasePath, analyticsPageTitle );
 
 	context.primary = (
 		<Plans

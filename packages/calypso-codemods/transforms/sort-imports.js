@@ -28,10 +28,10 @@ function findPkgJson( target ) {
 /**
  * Gather all of the external deps and throw them in a set
  */
-const getPackageJsonDeps = ( function() {
+const getPackageJsonDeps = ( function () {
 	let packageJsonDeps;
 
-	return root => {
+	return ( root ) => {
 		if ( packageJsonDeps ) {
 			return packageJsonDeps;
 		}
@@ -62,7 +62,7 @@ const internalBlock = {
  * @param  {string}  text text to scan for the format keyword within the first docblock
  * @returns {boolean}      True if @format is found, otherwise false
  */
-const shouldFormat = text => {
+const shouldFormat = ( text ) => {
 	const firstDocBlockStartIndex = text.indexOf( '/**' );
 
 	if ( -1 === firstDocBlockStartIndex ) {
@@ -85,7 +85,7 @@ const shouldFormat = text => {
  * @param  {string} str Input string
  * @returns {string}     Transformed string
  */
-const removeExtraNewlines = str => str.replace( /(import.*\n)\n+(import)/g, '$1$2' );
+const removeExtraNewlines = ( str ) => str.replace( /(import.*\n)\n+(import)/g, '$1$2' );
 
 /**
  * Adds a newline in between the last import of external deps + the internal deps docblock
@@ -93,16 +93,16 @@ const removeExtraNewlines = str => str.replace( /(import.*\n)\n+(import)/g, '$1$
  * @param  {string} str Input string
  * @returns {string}     Transformed string
  */
-const addNewlineBeforeDocBlock = str => str.replace( /(import.*\n)(\/\*\*)/, '$1\n$2' );
+const addNewlineBeforeDocBlock = ( str ) => str.replace( /(import.*\n)(\/\*\*)/, '$1\n$2' );
 
 /**
  *
  * @param {Array} importNodes the import nodes to sort
  * @returns {Array} the sorted set of import nodes
  */
-const sortImports = importNodes => _.sortBy( importNodes, node => node.source.value );
+const sortImports = ( importNodes ) => _.sortBy( importNodes, ( node ) => node.source.value );
 
-module.exports = function( file, api ) {
+module.exports = function ( file, api ) {
 	const j = api.jscodeshift;
 	const src = j( file.source );
 	const includeFormatBlock = shouldFormat( src.toSource().toString() );
@@ -111,7 +111,7 @@ module.exports = function( file, api ) {
 	// this is dependent on the projects package.json file which is why its initialized so late
 	// we recursively search up from the file.path to figure out the location of the package.json file
 	const externalDependenciesSet = getPackageJsonDeps( file.path );
-	const isExternal = importNode =>
+	const isExternal = ( importNode ) =>
 		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	// if there are no deps at all, then return early.
@@ -119,13 +119,13 @@ module.exports = function( file, api ) {
 		return file.source;
 	}
 
-	const withoutComments = declarations.nodes().map( node => {
+	const withoutComments = declarations.nodes().map( ( node ) => {
 		node.comments = '';
 		return node;
 	} );
 
-	const externalDeps = sortImports( withoutComments.filter( node => isExternal( node ) ) );
-	const internalDeps = sortImports( withoutComments.filter( node => ! isExternal( node ) ) );
+	const externalDeps = sortImports( withoutComments.filter( ( node ) => isExternal( node ) ) );
+	const internalDeps = sortImports( withoutComments.filter( ( node ) => ! isExternal( node ) ) );
 
 	if ( externalDeps[ 0 ] ) {
 		externalDeps[ 0 ].comments = [ externalBlock ];

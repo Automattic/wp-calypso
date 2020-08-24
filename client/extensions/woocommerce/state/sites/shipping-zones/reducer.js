@@ -23,7 +23,7 @@ import {
 
 // TODO: Handle error
 
-const processZoneData = zoneData => {
+const processZoneData = ( zoneData ) => {
 	if ( 0 !== zoneData.id ) {
 		return zoneData;
 	}
@@ -60,7 +60,7 @@ export default withoutPersistence( ( state = null, action ) => {
 
 			const zone = {
 				...state[ zoneIndex ],
-				methodIds: data.map( method => method.id ),
+				methodIds: data.map( ( method ) => method.id ),
 			};
 
 			return [ ...state.slice( 0, zoneIndex ), zone, ...state.slice( zoneIndex + 1 ) ];

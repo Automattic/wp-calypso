@@ -33,5 +33,5 @@ export const isPostPublished = createSelector(
 			( post.status === 'future' && new Date( post.date ) < new Date() )
 		);
 	},
-	state => state.posts.queries
+	( state ) => state.posts.queries
 );

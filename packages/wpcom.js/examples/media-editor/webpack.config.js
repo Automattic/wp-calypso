@@ -2,14 +2,14 @@ module.exports = {
 	entry: __dirname + '/source.js',
 
 	node: {
-		fs: 'empty'
+		fs: 'empty',
 	},
 
 	output: {
 		path: __dirname + '/built',
 		filename: 'app.js',
 		libraryTarget: 'var',
-		library: 'WPCOM'
+		library: 'WPCOM',
 	},
 
 	module: {
@@ -17,14 +17,14 @@ module.exports = {
 			{
 				test: /\.js$/,
 				exclude: /node_modules/,
-				loader: 'babel-loader'
-			}
-		]
+				loader: 'babel-loader',
+			},
+		],
 	},
 
 	resolve: {
-		extensions: [ '', '.js' ]
+		extensions: [ '', '.js' ],
 	},
 
-	devtool: 'sourcemap'
+	devtool: 'sourcemap',
 };

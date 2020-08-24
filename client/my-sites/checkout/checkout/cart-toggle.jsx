@@ -27,7 +27,7 @@ function CartToggle( props ) {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isShowingCartOnMobile: isShowingCartOnMobile( state ),
 	} ),
 	{ toggleCartOnMobile }

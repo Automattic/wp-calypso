@@ -42,10 +42,7 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) 
 	}, [ hasRetrievedLastBackup ] );
 
 	const lastGoodBackupTime = lastGoodBackup
-		? moment
-				.utc( lastGoodBackup.last_updated, 'YYYY-MM-DD hh:mma' )
-				.local()
-				.format( 'LLL' )
+		? moment.utc( lastGoodBackup.last_updated, 'YYYY-MM-DD hh:mma' ).local().format( 'LLL' )
 		: null;
 
 	return (
@@ -79,7 +76,7 @@ const SiteBackupCard = ( { disabled, lastGoodBackup, requestBackups, siteId } ) 
 };
 
 export default connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		return {
 			lastGoodBackup: getLastGoodRewindBackup( state, siteId ),

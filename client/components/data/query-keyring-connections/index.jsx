@@ -35,7 +35,7 @@ class QueryKeyringConnections extends Component {
 }
 
 export default connect(
-	state => ( {
+	( state ) => ( {
 		isRequesting: isKeyringConnectionsFetching( state ),
 	} ),
 	{ requestKeyringConnections }

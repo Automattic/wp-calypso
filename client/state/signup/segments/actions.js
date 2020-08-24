@@ -4,6 +4,7 @@
 import { SIGNUP_SEGMENTS_REQUEST, SIGNUP_SEGMENTS_SET } from 'state/action-types';
 
 import 'state/data-layer/wpcom/signup/segments';
+import 'state/signup/init';
 
 /**
  * Action creator: Request segments data.
@@ -21,7 +22,7 @@ export const requestSegments = () => ( {
  *
  * @returns {object} The action object.
  */
-export const setSegments = segments => ( {
+export const setSegments = ( segments ) => ( {
 	type: SIGNUP_SEGMENTS_SET,
 	segments,
 } );

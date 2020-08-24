@@ -18,10 +18,8 @@ import ShallowRenderer from 'react-test-renderer/shallow';
 import SectionNav from '../';
 
 jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
-jest.mock( 'lib/analytics', () => ( {
-	ga: {
-		recordEvent: () => {},
-	},
+jest.mock( 'lib/analytics/ga', () => ( {
+	recordEvent: () => {},
 } ) );
 
 function createComponent( component, props, children ) {
@@ -35,7 +33,7 @@ describe( 'section-nav', () => {
 	describe( 'rendering', () => {
 		let headerElem, headerTextElem, panelElem, sectionNav, text;
 
-		beforeAll( function() {
+		beforeAll( function () {
 			const selectedText = 'test';
 			const children = <p>mmyellow</p>;
 
@@ -63,9 +61,9 @@ describe( 'section-nav', () => {
 			assert.equal( text, 'test' );
 		} );
 
-		test( 'should render children', done => {
+		test( 'should render children', ( done ) => {
 			//React.Children.only should work here but gives an error about not being the only child
-			React.Children.map( panelElem.props.children, function( obj ) {
+			React.Children.map( panelElem.props.children, function ( obj ) {
 				if ( obj.type === 'p' ) {
 					assert.equal( obj.props.children, 'mmyellow' );
 					done();
@@ -84,19 +82,19 @@ describe( 'section-nav', () => {
 			);
 
 			const header = component.props.children.find(
-				child => child && child.className === 'section-nav__mobile-header'
+				( child ) => child && child.className === 'section-nav__mobile-header'
 			);
 			assert.equal( header, null );
 		} );
 	} );
 
 	describe( 'interaction', () => {
-		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', done => {
+		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', ( done ) => {
 			const elem = React.createElement(
 				SectionNav,
 				{
 					selectedText: 'placeholder',
-					onMobileNavPanelOpen: function() {
+					onMobileNavPanelOpen: function () {
 						done();
 					},
 				},
@@ -112,7 +110,7 @@ describe( 'section-nav', () => {
 			assert( tree.state.mobileOpen );
 		} );
 
-		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', done => {
+		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', ( done ) => {
 			const spy = sinon.spy();
 			const elem = React.createElement(
 				SectionNav,

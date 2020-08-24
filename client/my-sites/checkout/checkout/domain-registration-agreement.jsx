@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 import { localize } from 'i18n-calypso';
 import { get, map, reduce } from 'lodash';
@@ -9,7 +8,7 @@ import { get, map, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
 import {
 	getDomainRegistrations,
@@ -20,7 +19,7 @@ import {
 
 class DomainRegistrationAgreement extends React.Component {
 	recordRegistrationAgreementClick = () => {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
+		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );
 	};
 
 	renderAgreementLinkForList = ( url, domains ) => {
@@ -44,16 +43,15 @@ class DomainRegistrationAgreement extends React.Component {
 		);
 	};
 
-	renderMultipleAgreements = agreementsList => {
+	renderMultipleAgreements = ( agreementsList ) => {
 		const preamble = this.props.translate(
 			'You agree to the following domain name registration agreements:'
 		);
-		let key = 0;
 		return (
 			<Fragment>
 				<p>{ preamble }</p>
 				{ map( agreementsList, ( { url, domains } ) => (
-					<p key={ key++ }>{ this.renderAgreementLinkForList( url, domains ) }</p>
+					<p key={ url + domains.length }>{ this.renderAgreementLinkForList( url, domains ) }</p>
 				) ) }
 			</Fragment>
 		);
@@ -100,7 +98,7 @@ class DomainRegistrationAgreement extends React.Component {
 		domainItems.push( ...getDomainTransfers( cart ) );
 		const agreementUrls = [
 			...new Set(
-				map( domainItems, registration =>
+				map( domainItems, ( registration ) =>
 					get( registration, 'extra.domain_registration_agreement_url' )
 				)
 			),

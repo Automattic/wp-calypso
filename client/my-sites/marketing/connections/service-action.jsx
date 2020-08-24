@@ -14,8 +14,8 @@ import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { Button } from '@automattic/components';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { getRemovableConnections } from 'state/sharing/publicize/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'state/selectors/get-removable-connections';
 
 const SharingServiceAction = ( {
 	isConnecting,
@@ -33,7 +33,7 @@ const SharingServiceAction = ( {
 		label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
-	const onClick = event => {
+	const onClick = ( event ) => {
 		event.stopPropagation();
 		onAction();
 	};

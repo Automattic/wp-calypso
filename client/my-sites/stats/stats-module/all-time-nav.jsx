@@ -18,7 +18,7 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-export const StatsModuleSummaryLinks = props => {
+export const StatsModuleSummaryLinks = ( props ) => {
 	const { translate, path, siteSlug, query, period, children } = props;
 
 	const getSummaryPeriodLabel = () => {
@@ -34,7 +34,7 @@ export const StatsModuleSummaryLinks = props => {
 		}
 	};
 
-	const recordStats = item => {
+	const recordStats = ( item ) => {
 		props.recordGoogleEvent( 'Stats', `Clicked Summary Link: ${ path } ${ item.stat }` );
 	};
 
@@ -60,7 +60,7 @@ export const StatsModuleSummaryLinks = props => {
 		<div className="stats-module__all-time-nav">
 			<SectionNav selectedText={ selected.label }>
 				<NavTabs label={ translate( 'Summary' ) }>
-					{ options.map( item => {
+					{ options.map( ( item ) => {
 						const onClick = () => {
 							recordStats( item );
 						};
@@ -90,7 +90,7 @@ export const StatsModuleSummaryLinks = props => {
 };
 
 const connectComponent = connect(
-	state => {
+	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
 

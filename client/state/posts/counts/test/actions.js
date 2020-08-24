@@ -14,7 +14,7 @@ import {
 	POST_COUNTS_REQUEST_SUCCESS,
 	POST_COUNTS_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -41,7 +41,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostCounts()', () => {
-		useNock( nock => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/wpcom/v2/sites/2916284/post-counts/post' )

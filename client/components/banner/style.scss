@@ -11,7 +11,7 @@
 
 	&.is-compact {
 		border-left-width: 4px;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 8px;
 		padding: 8px 12px 8px 8px;
 	}
@@ -20,43 +20,7 @@
 		cursor: pointer;
 	}
 
-	@include banner-color( var( --color-primary-40 ) );
-
-	&.is-wpcom-plan {
-		&.is-upgrade-blogger {
-			@include banner-color( var( --color-plan-blogger ) );
-		}
-
-		&.is-upgrade-personal {
-			@include banner-color( var( --color-plan-personal ) );
-		}
-
-		&.is-upgrade-premium {
-			@include banner-color( var( --color-plan-premium ) );
-		}
-
-		&.is-upgrade-business {
-			@include banner-color( var( --color-plan-business ) );
-		}
-
-		&.is-upgrade-ecommerce {
-			@include banner-color( var( --color-plan-ecommerce ) );
-		}
-	}
-
-	&.is-jetpack-plan {
-		&.is-upgrade-personal {
-			@include banner-color( var( --color-jetpack-plan-personal ) );
-		}
-
-		&.is-upgrade-premium {
-			@include banner-color( var( --color-jetpack-plan-premium ) );
-		}
-
-		&.is-upgrade-business {
-			@include banner-color( var( --color-jetpack-plan-professional ) );
-		}
-	}
+	@include banner-color( var( --color-accent ) );
 
 	&.is-jetpack {
 		@include banner-color( var( --color-jetpack ) );
@@ -83,7 +47,7 @@
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 12px 16px;
 
 		&.is-dismissible {
@@ -126,7 +90,7 @@
 		padding: 3px 4px 4px 3px;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 
 		.banner__icon {
@@ -143,12 +107,12 @@
 	margin-right: 16px;
 	flex-shrink: 0;
 
-	.plan-icon {
+	.product-icon {
 		height: 32px;
 		width: 32px;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		align-items: center;
 	}
 }
@@ -159,12 +123,12 @@
 	flex-grow: 1;
 	flex-wrap: wrap;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-wrap: nowrap;
 	}
 }
 
-.is-compact .banner__content {
+.banner.is-compact .banner__content {
 	padding: 5px;
 }
 
@@ -180,17 +144,17 @@
 	}
 
 	.banner__title {
-		font-size: 14px;
-		font-weight: 500;
+		font-size: $font-body-small;
+		font-weight: 600;
 	}
 
 	.banner__description {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-top: 3px;
 	}
 
 	.banner__list {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		list-style: none;
 		margin: 0;
 		li {
@@ -202,7 +166,7 @@
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: auto;
 
 		.banner__list li .gridicon {
@@ -213,13 +177,13 @@
 	}
 }
 
-.is-compact .banner__title {
-	font-size: 12px;
+.banner.is-compact .banner__title {
+	font-size: $font-body-extra-small;
 }
 
 .banner__action {
 	align-self: center;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 8px 0 0;
 	text-align: left;
 	width: 100%;
@@ -242,7 +206,7 @@
 		}
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin: 0 -6px 0 8px;
 		text-align: center;
 		width: auto;
@@ -272,7 +236,7 @@
 	}
 }
 
-.is-compact .dismissible-card__close-icon {
+.banner.is-compact .dismissible-card__close-icon {
 	width: 16px;
 	height: 16px;
 	top: 50%;
