@@ -215,8 +215,8 @@ class Document extends React.Component {
 					 */ }
 					{ env === 'development' && (
 						<>
-							<script src="/calypso/${ target }/manifest.js" />
-							<script src="/calypso/${ target }/runtime.js" />
+							<script src={ `/calypso/${ target }/manifest.js` } />
+							<script src={ `/calypso/${ target }/runtime.js` } />
 						</>
 					) }
 					{ env !== 'development' &&
