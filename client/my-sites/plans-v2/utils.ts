@@ -226,7 +226,10 @@ export function itemToSelectorProduct(
 			term: item.term,
 			features: {
 				items: item.features
-					? buildCardFeaturesFromItem( item.features, { withoutDescription: true } )
+					? buildCardFeaturesFromItem( item.features, {
+							withoutDescription: true,
+							withoutIcon: true,
+					  } )
 					: [],
 			},
 		};
@@ -273,7 +276,7 @@ export function itemToSelectorProduct(
  */
 export function buildCardFeatureItemFromFeatureKey(
 	featureKey: JetpackPlanCardFeature,
-	options?: { withoutDescription?: boolean }
+	options?: { withoutDescription?: boolean; withoutIcon?: boolean }
 ): SelectorProductFeaturesItem | undefined {
 	let feature;
 	let subFeaturesKeys;
@@ -289,7 +292,7 @@ export function buildCardFeatureItemFromFeatureKey(
 
 	if ( feature ) {
 		return {
-			icon: feature.getIcon?.(),
+			icon: options?.withoutIcon ? undefined : feature.getIcon?.(),
 			text: feature.getTitle(),
 			description: options?.withoutDescription ? undefined : feature.getDescription?.(),
 			subitems: subFeaturesKeys
