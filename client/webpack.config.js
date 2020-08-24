@@ -29,6 +29,8 @@ const {
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const autoprefixerPlugin = require( 'autoprefixer' );
+const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 
 /**
  * Internal dependencies
@@ -221,12 +223,12 @@ const webpackConfig = {
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],
-				postCssConfig: {
-					path: __dirname,
-					ctx: {
-						transformCssProperties: browserslistEnv === 'defaults',
-						customProperties: calypsoColorSchemes,
-					},
+				postCssOptions: {
+					plugins: [
+						autoprefixerPlugin(),
+						browserslistEnv === 'defaults' &&
+							postcssCustomPropertiesPlugin( { importFrom: [ calypsoColorSchemes ] } ),
+					].filter( Boolean ),
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
 				cacheDirectory: path.resolve( cachePath, 'css-loader' ),

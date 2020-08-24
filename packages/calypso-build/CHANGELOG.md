@@ -1,3 +1,8 @@
+# 6.3.0 (next)
+
+- add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the
+  PostCSS loader, deprecating the less capable `postCssConfig` option
+
 # 6.2.0
 
 - Set `strictExportPresence` in webpack so missing exports error the build.
