@@ -125,7 +125,7 @@ const UpsellComponent = ( {
 						args: [ upsellProductName ],
 						comment: '%s refers to a name of a product such as Jetpack Backup or Jetpack Scan',
 					} ) }
-					features={ { items: [] } }
+					features={ upsellProduct.features }
 					discountedPrice={ discountedPrice }
 					originalPrice={ originalPrice }
 					onButtonClick={ onPurchaseBothProducts }
