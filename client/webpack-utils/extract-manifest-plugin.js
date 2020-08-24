@@ -93,7 +93,7 @@ class ExtractManifestPlugin {
 								name: this.options.manifestName,
 							},
 						},
-						identifier: `chunk${ chunk.id }`,
+						identifier: `chunk${ chunk.id }-manifest`,
 						hash: useChunkHash ? chunk.hash : fullHash,
 					} );
 				}
