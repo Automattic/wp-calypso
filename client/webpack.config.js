@@ -385,11 +385,7 @@ const webpackConfig = {
 		 */
 		new ExtensiveLodashReplacementPlugin(),
 
-		! isDesktop &&
-			new ExtractManifestPlugin( {
-				jsExtension: isDevelopment ? '.js' : '.min.js',
-				cssExtension: isDevelopment ? '.css' : '.min.css',
-			} ),
+		! isDesktop && new ExtractManifestPlugin(),
 	].filter( Boolean ),
 	externals: [ 'electron' ],
 };

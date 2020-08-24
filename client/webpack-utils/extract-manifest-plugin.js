@@ -4,8 +4,6 @@ const { ConcatSource } = require( 'webpack-sources' );
 class ExtractManifestPlugin {
 	constructor( options = {} ) {
 		this.options = {
-			jsExtension: '.min.js',
-			cssExtension: '.min.css',
 			manifestName: 'manifest',
 			runtimeChunk: 'runtime',
 			globalManifest: 'window.__WEBPACK_MANIFEST',
