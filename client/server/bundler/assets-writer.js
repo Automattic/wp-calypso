@@ -52,15 +52,12 @@ Object.assign( AssetsWriter.prototype, {
 			for ( const name in stats.assetsByChunkName ) {
 				// make the manifest inlineable
 				if ( String( name ).startsWith( this.options.runtimeChunk ) ) {
-					// Usually there's only one asset per chunk, but when we build with sourcemaps, we'll have two.
-					// Remove the sourcemap from the list and just take the js asset
-					// This may not hold true for all chunks, but it does for the manifest.
-					const jsAsset = _.head(
-						_.reject( _.castArray( stats.assetsByChunkName[ name ] ), ( asset ) =>
-							_.endsWith( asset, '.map' )
-						)
-					);
-					statsToOutput.manifests[ name ] = compilation.assets[ jsAsset ].source();
+					// Runtime chunk will have two files due ExtractManifestPlugin. Both need to be inlined.
+					// When we build with sourcemaps, we'll have another two extra files.
+					// Remove the sourcemap from the list and just take the js assets.
+					statsToOutput.manifests = stats.assetsByChunkName[ name ]
+						.filter( ( asset ) => ! asset.endsWith( '.map' ) )
+						.map( ( asset ) => compilation.assets[ asset ].source() );
 				}
 			}
 

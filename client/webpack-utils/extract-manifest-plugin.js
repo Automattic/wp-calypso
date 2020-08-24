@@ -1,11 +1,12 @@
 const PLUGIN_NAME = 'ExtractManifestPlugin';
+const { RawSource } = require( 'webpack-sources' );
 
 class ExtractManifestPlugin {
 	constructor( options = {} ) {
 		this.options = {
 			jsExtension: '.min.js',
 			cssExtension: '.min.css',
-			manifestFilename: 'manifest.js',
+			manifestName: 'manifest',
 			runtimeChunk: 'runtime',
 			globalName: '__WEBPACK_MANIFEST',
 			...options,
@@ -49,31 +50,39 @@ class ExtractManifestPlugin {
 
 				// This is the main manifest function. It transforms a chunkId into a chink filename without the extension. Instead of rendering it
 				// now, capture it and generate a new file with it.
-				manifestContent = `window.${ this.options.globalName }=function(chunkId){return${ filenameExpressionWithoutExtension };}`;
+				manifestContent = `window.${ this.options.globalName }=function(chunkId){return${ filenameExpressionWithoutExtension };};`;
 
 				// Instead, render a call to the manifest function
 				return `window.${ this.options.globalName }(chunkId)+"${ this.options.jsExtension }"`;
 			} );
 
-			// Find the `runtime` chunk and add an extra file `manifest.js`. This chunk will be composed of two files then: manifest.js contains
-			// the map chunkId->file and should be inlined in the page, runtime.js contains the webpack implementation and can be loaded as an
-			// external script
-			compilation.hooks.additionalAssets.tap(
-				{ name: PLUGIN_NAME, stage: compilation.PROCESS_ASSETS_STAGE_ADDITIONAL },
-				() => {
-					const manifestChunk = compilation.addChunk( this.options.runtimeChunk );
-					manifestChunk.files.unshift( this.options.manifestFilename );
+			// When generating the files for the `runtime` chunk, add a second file with the content of the manifest. This will reuse the filename
+			// tempalte and hash for both files (eg: it will generate `runtime.<hash>.js` and `manifest.<hash>.js` and both <hash> will be the same).
+			//
+			// The logic has been copied from ebpack/lib/JavascriptModulesPlugin.js
+			compilation.mainTemplate.hooks.renderManifest.tap( PLUGIN_NAME, ( result, options ) => {
+				const { chunk, outputOptions } = options;
+				const fullHash = options.fullHash;
+				const useChunkHash = compilation.mainTemplate.useChunkHash( chunk );
 
-					compilation.assets[ this.options.manifestFilename ] = {
-						source: function () {
-							return manifestContent;
+				if ( chunk.name === this.options.runtimeChunk ) {
+					// Using unshift so the manifest comes before the runtime. Only relevant for assets-writer
+					result.unshift( {
+						render: () => new RawSource( manifestContent ),
+						filenameTemplate: chunk.filenameTemplate || outputOptions.filename,
+						pathOptions: {
+							contentHashType: 'javascript',
+							chunk: {
+								...chunk,
+								name: this.options.manifestName,
+							},
 						},
-						size: function () {
-							return manifestContent.length;
-						},
-					};
+						identifier: `chunk${ chunk.id }`,
+						hash: useChunkHash ? chunk.hash : fullHash,
+					} );
 				}
-			);
+				return result;
+			} );
 		} );
 	}
 }
