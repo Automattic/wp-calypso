@@ -17,7 +17,7 @@ import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
-import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editing/full-site-editing-plugin/wpcom-block-editor-nav-sidebar/src/constants';
+import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
  * Internal dependencies
