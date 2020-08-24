@@ -13,7 +13,7 @@ import { isEcommercePlan } from 'lib/plans';
 import { generateFlows } from 'signup/config/flows-pure';
 import { addQueryArgs } from 'lib/url';
 
-function getCheckoutUrl( dependencies, localeSlug ) {
+function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
 	// Append the locale slug for the userless checkout page.
@@ -32,6 +32,7 @@ function getCheckoutUrl( dependencies, localeSlug ) {
 					redirect_to: `/home/${ dependencies.siteSlug }`,
 				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
+			...( 'domain' === flowName && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
@@ -123,7 +124,7 @@ function removeP2DetailsStepFromFlow( flow ) {
 
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	if ( dependenciesContainCartItem( dependencies ) ) {
-		return getCheckoutUrl( dependencies, localeSlug );
+		return getCheckoutUrl( dependencies, localeSlug, flowName );
 	}
 
 	return destination;

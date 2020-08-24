@@ -35,8 +35,10 @@ export function checkout( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const currentUser = getCurrentUser( state );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isDisallowedForSitePicker =
-		context.pathname.includes( '/checkout/no-site' ) && ( isLoggedOut || ! hasSite );
+		context.pathname.includes( '/checkout/no-site' ) &&
+		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 
 	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );

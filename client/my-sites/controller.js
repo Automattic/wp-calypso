@@ -324,8 +324,9 @@ export function noSite( context, next ) {
 	const { getState } = getStore( context );
 	const currentUser = getCurrentUser( getState() );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 
-	if ( hasSite ) {
+	if ( ! isDomainOnlyFlow && hasSite ) {
 		siteSelection( context, next );
 	} else {
 		context.store.dispatch( setSelectedSiteId( null ) );
