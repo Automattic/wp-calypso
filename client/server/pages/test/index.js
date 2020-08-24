@@ -217,7 +217,7 @@ const buildApp = ( environment ) => {
 			];
 			const assetsFallback = {
 				manifests: {
-					manifest: '/* webpack manifest for fallback */',
+					manifest: [ '/* webpack manifest for fallback */', '/* webpack runtime for fallback */' ],
 				},
 				entrypoints: {
 					'entry-main': {
@@ -458,13 +458,19 @@ const assertDefaultContext = ( { url, entry } ) => {
 	it( 'sets the manifest for evergreen browsers', async () => {
 		app.withEvergreenBrowser();
 		const { request } = await app.run();
-		expect( request.context.manifest ).toEqual( '/* webpack manifest for evergreen */' );
+		expect( request.context.manifests ).toEqual( [
+			'/* webpack manifest for evergreen */',
+			'/* webpack runtime for evergreen */',
+		] );
 	} );
 
 	it( 'sets the manifest for non-evergreen browsers', async () => {
 		app.withNonEvergreenBrowser();
 		const { request } = await app.run();
-		expect( request.context.manifest ).toEqual( '/* webpack manifest for fallback */' );
+		expect( request.context.manifests ).toEqual( [
+			'/* webpack manifest for fallback */',
+			'/* webpack runtime for fallback */',
+		] );
 	} );
 
 	it( 'sets the abTestHepler when config is enabled', async () => {
