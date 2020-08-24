@@ -29,6 +29,6 @@ export const hasPaidDomain = ( state: State ): boolean => {
 export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
 export const wasVerticalSkipped = ( state: State ): boolean => state.wasVerticalSkipped;
 
-// Reducers dependent on other reducers (cannot be put in alphabetical order)
+// Selectors dependent on other selectors (cannot be put in alphabetical order)
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state ) || getSelectedVertical( state )?.label;
