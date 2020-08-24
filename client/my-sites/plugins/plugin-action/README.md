@@ -29,11 +29,12 @@ This behavior can be overridden by passing a child to the PluginAction component
 
 ```js
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
+import { Button } from '@automattic/components';
 
 render() {
 	return (
 		<PluginAction label={ this.props.translate( 'Active and Connected', { context: 'plugin status' } ) }>
-			<DisconnectJetpackButton disabled={ ! this.props.plugin } site={ this.props.site } redirect="/plugins/jetpack" />
+			<Button href="/plugins/jetpack" />
 		</PluginAction>
 	);
 }
