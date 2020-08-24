@@ -79,7 +79,7 @@ window.AppBoot = async () => {
 	} catch {}
 
 	// Update list of randomized designs in the gutenboarding session store
-	checkIfRandomizedDesignsAreUpToDate();
+	ensureRandomizedDesignsAreUpToDate();
 
 	ReactDom.render(
 		<LocaleContext>
@@ -154,9 +154,9 @@ function waitForSelectedSite(): Promise< Site | undefined > {
  * If available-designs-config.json has been updated, replace the cached list
  * of designs with the updated designs
  */
-function checkIfRandomizedDesignsAreUpToDate() {
+function ensureRandomizedDesignsAreUpToDate() {
 	const designsInStore = select( ONBOARD_STORE ).getRandomizedDesigns();
-	if ( ! isUpToDate( designsInStore.featured, availableDesigns.featured ) ) {
+	if ( ! isDeepEqual( designsInStore.featured, availableDesigns.featured ) ) {
 		dispatch( ONBOARD_STORE ).setRandomizedDesigns( {
 			...availableDesigns,
 			featured: shuffle( availableDesigns.featured ),
@@ -172,6 +172,6 @@ function checkIfRandomizedDesignsAreUpToDate() {
  * @param stored randomizedDesigns cached in WP_ONBOARD
  * @param available designs sourced from available-designs-config.json
  */
-function isUpToDate( stored: Design[], available: Design[] ): boolean {
+function isDeepEqual( stored: Design[], available: Design[] ): boolean {
 	return isEmpty( xorWith( stored, available, isEqual ) );
 }
