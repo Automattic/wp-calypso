@@ -10,7 +10,6 @@ import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
 import debugFactory from 'debug';
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -30,6 +29,7 @@ import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'lib/url';
 
 /**
  * Style dependencies
@@ -481,19 +481,31 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			// There is currently no "all sites" version of the insights page
 			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 		} else if ( siteBasePath ) {
-			const { protocol, hostname, port, pathname: urlPathname, query } = parseUrl(
-				getSiteBasePath( site ),
-				true
-			);
+			const base = getSiteBasePath( site );
+
+			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+			const urlType = determineUrlType( base );
+
+			// Get URL parts and modify the path.
+			const { protocol, hostname, port, pathname: urlPathname, search } = getUrlParts( base );
 			const newPathname = `${ urlPathname }/${ site.slug }`;
 
-			return formatUrl( {
-				protocol,
-				hostname,
-				port,
-				pathname: newPathname,
-				query,
-			} );
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					protocol: protocol || window.location.protocol,
+					hostname: hostname || window.location.hostname,
+					port: port || window.location.port,
+					pathname: newPathname,
+					search,
+				} );
+
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+				return null;
+			}
 		}
 	}
 
