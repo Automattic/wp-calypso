@@ -22,6 +22,7 @@ import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
 import notices from 'notices';
+import ChatCovidLimitedAvailabilityNotice from 'me/help/contact-form-notice/chat-covid-limited-availability';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import getHappychatUserInfo from 'state/happychat/selectors/get-happychat-userinfo';
 import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
@@ -585,8 +586,8 @@ class HelpContact extends React.Component {
 		);
 
 		// Customers sent to Directly, Forums, and Upwork are not affected by live chat closures
-		// const isUserAffectedByLiveChatClosure =
-		// 	[ SUPPORT_DIRECTLY, SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
+		const isUserAffectedByLiveChatClosure =
+			[ SUPPORT_DIRECTLY, SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
 
 		const activeTicketCount = activeSupportTickets.length;
 
@@ -594,6 +595,10 @@ class HelpContact extends React.Component {
 			<div>
 				{ activeTicketCount > 0 && (
 					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
+				) }
+
+				{ isUserAffectedByLiveChatClosure && (
+					<ChatCovidLimitedAvailabilityNotice showAt="2020-08-24" compact={ compact } />
 				) }
 
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
