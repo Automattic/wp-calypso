@@ -216,9 +216,7 @@ const buildApp = ( environment ) => {
 				'/calypso/evergreen/entry-main.4.min.rtl.css',
 			];
 			const assetsFallback = {
-				manifests: {
-					manifest: [ '/* webpack manifest for fallback */', '/* webpack runtime for fallback */' ],
-				},
+				manifests: [ '/* webpack manifest for fallback */', '/* webpack runtime for fallback */' ],
 				entrypoints: {
 					'entry-main': {
 						assets: [ ...assets ],
