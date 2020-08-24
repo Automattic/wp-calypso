@@ -503,6 +503,7 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 				// Format the absolute URL down to the original URL type.
 				return format( absoluteUrl, urlType );
 			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
 				return null;
 			}
 		}
