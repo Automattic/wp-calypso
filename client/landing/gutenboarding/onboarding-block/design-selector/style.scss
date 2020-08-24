@@ -107,11 +107,12 @@
 	}
 
 	.design-selector__option-meta {
-		display: inline-grid;
+		align-items: center;
+		display: inline-flex;
+		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
+		justify-content: center;
 		margin-top: 8px;
 		width: 100%;
-		gap: 6px;
-		grid-template-columns: 1fr [name] auto [badge] 1fr;
 
 		> * {
 			// This is to create space between Tooltip component and other elements
@@ -123,14 +124,11 @@
 		@include onboarding-medium-text;
 		align-self: center;
 		color: var( --studio-gray-40 );
-		grid-area: name;
 		padding: 2px 0; // To match line-alignment with premium badge
-		text-align: center;
 	}
 
 	.design-selector__premium-container {
-		grid-area: badge;
-		text-align: left;
+		margin-left: 6px;
 	}
 
 	.design-selector__premium-badge {
