@@ -1312,3 +1312,7 @@ body.is-section-jetpack-connect .layout {
 		color: var( --color-neutral-10 );
 	}
 }
+
+.layout.is-section-jetpack-connect .upsell .upsell__header .formatted-header {
+	color: inherit;
+}
