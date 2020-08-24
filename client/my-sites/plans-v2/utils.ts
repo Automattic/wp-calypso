@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { get } from 'lodash';
 
@@ -224,3 +225,65 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 	}
 	return itemToSelectorProduct( item );
 }
+
+/**
+ * If plan offers 'realtime' and 'daily' options, AND plan is not already owned,
+ * append "Available Options: Real-time and Daily" to the plan description.
+ *
+ * @param product SelectorProduct
+ * @param currentPlan string
+ *
+ * @returns ReactNode
+ */
+export const getJetpackPlanDescriptionWithOptions = (
+	product: SelectorProduct,
+	currentPlan: string | null
+): React.ReactNode | TranslateResult => {
+	const em = React.createElement( 'em', null, null );
+
+	// check if 'subtypes' property contains daily and real-time options.
+	// and check that this product is not owned.
+	return product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
+		2 &&
+		currentPlan &&
+		! product.subtypes.includes( currentPlan )
+		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
+				args: {
+					productDescription: product.description,
+				},
+				components: {
+					em,
+				},
+		  } )
+		: product.description;
+};
+
+/**
+ * If product offers 'realtime' and 'daily' options, AND product is not already owned,
+ * append "Available Options: Real-time and Daily" to the product description.
+ *
+ * @param product SelectorProduct
+ * @param currentProducts array
+ *
+ * @returns ReactNode
+ */
+export const getJetpackProductDescriptionWithOptions = (
+	product: SelectorProduct,
+	currentProducts: string[]
+): React.ReactNode | TranslateResult => {
+	const em = React.createElement( 'em', null, null );
+
+	// check if 'subtypes' property contains daily and real-time options.
+	// and check that this product is not owned.
+	return product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
+		2 && ! currentProducts.includes( product.productSlug )
+		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
+				args: {
+					productDescription: product.description,
+				},
+				components: {
+					em,
+				},
+		  } )
+		: product.description;
+};

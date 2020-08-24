@@ -8,7 +8,13 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { durationToText, slugToItem, itemToSelectorProduct, productButtonLabel } from '../utils';
+import {
+	durationToText,
+	slugToItem,
+	itemToSelectorProduct,
+	productButtonLabel,
+	getJetpackPlanDescriptionWithOptions,
+} from '../utils';
 import {
 	PRODUCTS_TYPES,
 	SELECTOR_PLANS,
@@ -22,7 +28,6 @@ import getSitePlan from 'state/sites/selectors/get-site-plan';
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
 import FormattedHeader from 'components/formatted-header';
-import { getJetpackPlanDescriptionWithOptions } from 'lib/products-values/translations';
 
 /**
  * Type dependencies
@@ -104,7 +109,12 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 				owned: product.productSlug === currentPlan,
 				legacy: false,
 				description: getJetpackPlanDescriptionWithOptions( product, currentPlan ),
-			} ) );
+			} ) )
+			.map( ( product: SelectorProduct ) => {
+				return {
+					...product,
+				};
+			} );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.
 		if ( ! owned && currentPlan && currentPlan !== PLAN_JETPACK_FREE ) {

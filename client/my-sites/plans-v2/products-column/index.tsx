@@ -14,6 +14,7 @@ import {
 	itemToSelectorProduct,
 	productButtonLabel,
 	getProductPrices,
+	getJetpackProductDescriptionWithOptions,
 } from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import { isProductsListFetching, getAvailableProductsList } from 'state/products-list/selectors';
@@ -21,7 +22,6 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import FormattedHeader from 'components/formatted-header';
-import { getJetpackProductDescriptionWithOptions } from 'lib/products-values/translations';
 
 /**
  * Type dependencies
