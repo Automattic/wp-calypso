@@ -14,7 +14,12 @@ import { stringToDuration } from './utils';
 export const productSelect = ( rootUrl: string ) => ( context: PageJS.Context, next: Function ) => {
 	const duration = stringToDuration( context.params.duration );
 	context.primary = (
-		<SelectorPage defaultDuration={ duration } rootUrl={ rootUrl } header={ context.header } />
+		<SelectorPage
+			defaultDuration={ duration }
+			rootUrl={ rootUrl }
+			header={ context.header }
+			footer={ context.footer }
+		/>
 	);
 	next();
 };
@@ -31,6 +36,7 @@ export const productDetails = ( rootUrl: string ) => (
 			duration={ duration }
 			rootUrl={ rootUrl }
 			header={ context.header }
+			footer={ context.footer }
 		/>
 	);
 	next();
@@ -45,6 +51,7 @@ export const productUpsell = ( rootUrl: string ) => ( context: PageJS.Context, n
 			duration={ duration }
 			rootUrl={ rootUrl }
 			header={ context.header }
+			footer={ context.footer }
 		/>
 	);
 	next();

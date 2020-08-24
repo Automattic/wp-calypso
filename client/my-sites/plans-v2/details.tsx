@@ -30,7 +30,7 @@ import type { DetailsPageProps, PurchaseCallback, SelectorProduct } from './type
 
 import './style.scss';
 
-const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPageProps ) => {
+const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: DetailsPageProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
@@ -105,6 +105,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPagePro
 					);
 				} ) }
 			</div>
+			{ footer }
 		</Main>
 	);
 };

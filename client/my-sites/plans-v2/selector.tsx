@@ -3,13 +3,11 @@
  */
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
 import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
@@ -40,6 +38,7 @@ const SelectorPage = ( {
 	defaultDuration = TERM_ANNUALLY,
 	rootUrl,
 	header,
+	footer,
 }: SelectorPageProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
@@ -63,7 +62,6 @@ const SelectorPage = ( {
 
 	return (
 		<Main className="selector__main" wideLayout>
-			<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
 			{ header }
 			<PlansFilterBar
 				onProductTypeChange={ setProductType }
@@ -88,6 +86,7 @@ const SelectorPage = ( {
 			<QueryProductsList />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
+			{ footer }
 		</Main>
 	);
 };

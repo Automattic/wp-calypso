@@ -17,13 +17,13 @@ import getCurrentRoute from 'state/selectors/get-current-route';
 
 import './style.scss';
 
-function StoreHeader() {
+export default function StoreHeader() {
 	const translate = useTranslate();
 	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const isStoreLanding =
 		currentRoute === '/jetpack/connect/store' ||
-		currentRoute.startsWith( '/jetpack/connect/plans/' );
+		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+/?(monthly|annual)?$' ) );
 
 	const headerClass = classNames( 'jetpack-connect__main-logo', {
 		'add-bottom-margin': ! isStoreLanding,
@@ -49,5 +49,3 @@ function StoreHeader() {
 		</>
 	);
 }
-
-export default StoreHeader;
