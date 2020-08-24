@@ -31,14 +31,29 @@ define( 'PREMIUM_CONTENT__PLUGIN_DIR', __DIR__ );
 /**
  * Register blocks and load block translations. If not done on init, the render
  * callbacks of the dynamic blocks won't be executed in the front-end.
+ * Defines asset $dependencies and $version
  *
  * @see    https://developer.wordpress.org/block-editor/tutorials/block-tutorial/applying-styles-with-stylesheets/
  * @see    https://github.com/Automattic/wp-calypso/pull/44825
+ * @throws RuntimeException If block assets files are not found.
  * @return void
  */
 function premium_content_block_init() {
 	register_blocks();
 	load_translations();
+
+	$asset_path = PREMIUM_CONTENT__PLUGIN_DIR . '/dist/premium-content.asset.php';
+	if ( ! file_exists( $asset_path ) ) {
+		throw new RuntimeException(
+			'You need to run `npm start` or `npm run build` for the "create-block/premium-content" block first.'
+		);
+	}
+	$asset        = include $asset_path;
+	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
+	$version      = isset( $asset['version'] ) ? $asset['version'] : filemtime( $asset_path );
+
+	define( 'PREMIUM_CONTENT__ASSET_DEPENDENCIES', $dependencies );
+	define( 'PREMIUM_CONTENT__ASSET_VERSION', $version );
 }
 
 /**
@@ -48,14 +63,11 @@ function premium_content_block_init() {
  * @return void
  */
 function premium_content_block_enqueue_block_editor_assets() {
-	$script_asset = get_script_asset();
-
-	$index_js = 'dist/premium-content.js';
 	wp_register_script(
 		'premium-content-editor',
-		PREMIUM_CONTENT__URL_PATH . '/' . $index_js,
-		$script_asset['dependencies'],
-		$script_asset['version'],
+		PREMIUM_CONTENT__URL_PATH . '/dist/premium-content.js',
+		PREMIUM_CONTENT__ASSET_DEPENDENCIES,
+		PREMIUM_CONTENT__ASSET_VERSION,
 		false
 	);
 
@@ -76,7 +88,13 @@ function premium_content_block_enqueue_block_editor_assets() {
  * @return void
  */
 function premium_content_block_enqueue_block_assets() {
-	$script_asset = get_script_asset();
+	wp_register_script(
+		'premium-content-frontend',
+		PREMIUM_CONTENT__URL_PATH . '/view.js',
+		array(),
+		PREMIUM_CONTENT__ASSET_VERSION,
+		false
+	);
 
 	$style_css = 'style.css';
 	wp_register_style(
@@ -85,37 +103,7 @@ function premium_content_block_enqueue_block_assets() {
 		array(),
 		filemtime( PREMIUM_CONTENT__PLUGIN_DIR . '/' . $style_css )
 	);
-
-	wp_register_script(
-		'premium-content-frontend',
-		PREMIUM_CONTENT__URL_PATH . '/view.js',
-		array(),
-		$script_asset['version'],
-		false
-	);
-
 }
-
-
-/**
- * Helper; Get the 'script_asset'
- * Used by enqueue_block_assets and enqueue_block_editor_assets
- *
- * @throws RuntimeException If block assets files are not found.
- * @return mixed
- */
-function get_script_asset() {
-	$dir               = PREMIUM_CONTENT__PLUGIN_DIR;
-	$script_asset_path = "$dir/dist/premium-content.asset.php";
-	if ( ! file_exists( $script_asset_path ) ) {
-		throw new RuntimeException(
-			'You need to run `npm start` or `npm run build` for the "create-block/premium-content" block first.'
-		);
-	}
-	$script_asset = include $script_asset_path;
-	return $script_asset;
-}
-
 
 /**
  * Load block translation.
@@ -428,10 +416,9 @@ function premium_content_default_service( $service ) {
 	return new Unconfigured_Subscription_Service();
 }
 
-add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_paywall_initialize', 9 );
-
 add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_block_init' );
 add_action( 'enqueue_block_editor_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_enqueue_block_editor_assets' );
 add_action( 'enqueue_block_assets', 'A8C\FSE\Earn\PremiumContent\premium_content_block_enqueue_block_assets' );
 
+add_action( 'init', 'A8C\FSE\Earn\PremiumContent\premium_content_paywall_initialize', 9 );
 add_filter( PAYWALL_FILTER, 'A8C\FSE\Earn\PremiumContent\premium_content_default_service' );

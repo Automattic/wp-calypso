@@ -289,7 +289,11 @@ describe( `[${ host }] Editor: Posts (${ screenSize })`, function () {
 				step( 'Can see post message', async function () {
 					const tweetFound = await twitterHelper.latestTweetsContain( publicizeMessage );
 					try {
-						assert.strictEqual(tweetFound, true, 'Tweet for publicized post not found on Twitter.');
+						assert.strictEqual(
+							tweetFound,
+							true,
+							'Tweet for publicized post not found on Twitter.'
+						);
 					} catch {
 						slackNotifier.warn(
 							`The twitter feed does not contain the expected tweet text ('${ publicizeMessage }') after waiting for it to appear. Please manually check that this eventually appears.`,
