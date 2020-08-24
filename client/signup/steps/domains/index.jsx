@@ -665,7 +665,7 @@ class DomainsStep extends React.Component {
 
 		const { flowName, isAllDomains, translate, sites } = this.props;
 		const hasSite = Object.keys( sites ).length > 0;
-		let backUrl, backLabelText;
+		let backUrl, backLabelText, isExternalBackUrl;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
 			backUrl = getStepUrl(
@@ -686,6 +686,21 @@ class DomainsStep extends React.Component {
 			}
 		}
 
+		// Override Back link if source parameter is found below
+		const backUrlSourceOverrides = {
+			'business-name-generator': '/business-name-generator',
+			domains: '/domains',
+		};
+		const source = get( this.props, 'queryObject.source' );
+
+		if ( source && backUrlSourceOverrides[ source ] ) {
+			backUrl = backUrlSourceOverrides[ source ];
+			backLabelText = translate( 'Back' );
+
+			// Solves route conflicts between LP and calypso (ex. /domains).
+			isExternalBackUrl = true;
+		}
+
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 		const showSkip = isDomainStepSkippable( flowName );
@@ -698,6 +713,7 @@ class DomainsStep extends React.Component {
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
 				subHeaderText={ fallbackSubHeaderText }
+				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
