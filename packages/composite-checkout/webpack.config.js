@@ -1,4 +1,5 @@
 const path = require( 'path' );
+const cachePath = path.resolve( '.cache', 'composite-checkout' );
 
 module.exports = {
 	entry: './src/public-api.js',
@@ -17,7 +18,7 @@ module.exports = {
 					{
 						loader: 'cache-loader',
 						options: {
-							cacheDirectory: path.resolve( process.env.HOME, '.cache', 'webpack', 'css' ),
+							cacheDirectory: path.resolve( cachePath, 'css' ),
 						},
 					},
 					'style-loader',
