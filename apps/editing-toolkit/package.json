@@ -1,12 +1,12 @@
 {
-	"name": "@automattic/full-site-editing",
+	"name": "@automattic/wpcom-editing-toolkit",
 	"version": "1.22.0",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
-		"directory": "apps/full-site-editing"
+		"directory": "apps/editing-toolkit"
 	},
 	"private": true,
 	"author": "Automattic Inc.",
@@ -16,9 +16,9 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"full-site-editing": "calypso-build --source='dotcom-fse'",
-		"dev:full-site-editing": "yarn run full-site-editing",
-		"build:full-site-editing": "NODE_ENV=production yarn run full-site-editing",
+		"dotcom-fse": "calypso-build --source='dotcom-fse'",
+		"dev:dotcom-fse": "yarn run dotcom-fse",
+		"build:dotcom-fse": "NODE_ENV=production yarn run dotcom-fse",
 		"posts-list-block": "calypso-build --source='posts-list-block'",
 		"dev:posts-list-block": "yarn run posts-list-block",
 		"build:posts-list-block": "NODE_ENV=production yarn run posts-list-block",
@@ -74,8 +74,8 @@
 		"test:js:update-snapshots": "npx wp-scripts test-unit-js -u --config='bin/js-unit-config.js' --colors",
 		"test:e2e": "npx wp-scripts test-e2e --wordpress-base-url='http://localhost:4013' --colors",
 		"test:e2e:watch": "npm run test-e2e -- --watch",
-		"test:php": "npx wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/full-site-editing-plugin/phpunit.xml.dist'",
-		"clean": "npx rimraf dist full-site-editing-plugin/*/dist",
+		"test:php": "npx wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'",
+		"clean": "npx rimraf dist editing-toolkit-plugin/*/dist",
 		"prebuild": "yarn run clean",
 		"predev": "yarn run clean",
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
