@@ -91,8 +91,15 @@ export function durationToText( duration: Duration ): TranslateResult {
  * Product UI utils.
  */
 
-export function productButtonLabel( product: SelectorProduct, isOwned: boolean ): TranslateResult {
-	if ( isOwned ) {
+export function productButtonLabel(
+	product: SelectorProduct,
+	isOwned: boolean,
+	currentPlan?: SitePlan | null
+): TranslateResult {
+	if (
+		isOwned ||
+		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
+	) {
 		return product.type !== ITEM_TYPE_PRODUCT
 			? translate( 'Manage Plan' )
 			: translate( 'Manage Subscription' );

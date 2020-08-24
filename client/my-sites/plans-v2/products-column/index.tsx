@@ -11,8 +11,12 @@ import { useSelector } from 'react-redux';
 import { slugToSelectorProduct } from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import ProductCard from '../product-card';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import FormattedHeader from 'components/formatted-header';
+import { getPlan } from 'lib/plans';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import getSitePlan from 'state/sites/selectors/get-site-plan';
+import getSiteProducts from 'state/sites/selectors/get-site-products';
 
 /**
  * Type dependencies
@@ -34,19 +38,43 @@ const ProductsColumn = ( {
 }: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
-	// Gets all products in an array to be parsed.
+	// Plan
+	const currentPlan =
+		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
+
+	// Owned products (plans are filtered out)
+	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) ) || [];
+	const ownedProducts = siteProducts
+		.map( ( { productSlug } ) => productSlug )
+		.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) );
+
+	// Features included in plan
+	const includedInPlanProducts: string[] =
+		( currentPlan && getPlan( currentPlan )?.getHiddenFeatures() ) || [];
+
+	// The list of displayed products comes from a concatenation of:
+	// - Owned products from a direct purchase.
+	// - Included as a feature of an owned plan.
+	// - Generic/option product bundles with subtypes.
 	const productObjects: SelectorProduct[] = useMemo(
 		() =>
 			// Convert product slugs to ProductSelector types.
-			SELECTOR_PRODUCTS.map( slugToSelectorProduct )
+			[ ...new Set( [ ...ownedProducts, ...includedInPlanProducts, ...SELECTOR_PRODUCTS ] ) ]
+				.map( slugToSelectorProduct )
 				// Remove products that don't fit the filters or have invalid data.
 				.filter(
 					( product: SelectorProduct | null ): product is SelectorProduct =>
 						!! product &&
 						duration === product.term &&
-						PRODUCTS_TYPES[ productType ].includes( product.productSlug )
+						PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
+						// Don't include a generic/option card if the user already owns a subtype.
+						! ownedProducts.some( ( ownedProduct ) => product.subtypes.includes( ownedProduct ) ) &&
+						// Don't include a generic/option card if the product is included in the owned plan.
+						! includedInPlanProducts.some( ( includedProduct ) =>
+							product.subtypes.includes( includedProduct )
+						)
 				),
-		[ duration, productType ]
+		[ duration, includedInPlanProducts, ownedProducts, productType ]
 	);
 
 	if ( ! currencyCode ) {

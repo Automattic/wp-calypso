@@ -43,8 +43,10 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					!! product &&
 					duration === product.term &&
 					PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
-					// Don't include a generic/option card is the user already owns a subtype
-					! product.subtypes.includes( currentPlan || '' )
+					// Don't include a generic/option card if the user already owns a subtype
+					! product.subtypes.includes( currentPlan || '' ) &&
+					// Don't include a card of a plan the user already owns
+					product.productSlug !== currentPlan
 			);
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.
