@@ -41,7 +41,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 2.0 =
-* Replace all internal mentions of `full-site-editing` to `editing-toolkit`.
+* Rename directories from "full-site-editing*" to "editing-toolkit*" (https://github.com/Automattic/wp-calypso/pull/44501)
+* Update/premium content loading assets code cleanup (https://github.com/Automattic/wp-calypso/pull/45052)
+* FSE: Add Newspack assets unit tests (https://github.com/Automattic/wp-calypso/pull/43218)
 
 = 1.22 =
 * Premium Content: load assets using proper hook (https://github.com/Automattic/wp-calypso/pull/44825)
