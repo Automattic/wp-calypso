@@ -58,7 +58,9 @@ exports.createDir = function ( dir ) {
 
 exports.isVideoEnabled = function () {
 	const video = process.env.CI;
-	return video === 'true';
+	const enabled = video === 'true';
+	console.log( `env.CI: ${ process.env.CI }, enabled: ${ enabled }` ); // eslint-disable-line
+	return enabled;
 };
 
 exports.startVideo = function () {
