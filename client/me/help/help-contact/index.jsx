@@ -52,6 +52,7 @@ import {
 } from 'state/help/directly/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
+import getSupportLevel from 'state/selectors/get-support-level';
 import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
 import isDirectlyReady from 'state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
@@ -662,6 +663,7 @@ export default connect(
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
 			activeSupportTickets: getActiveSupportTickets( state ),
+			supportLevel: getSupportLevel( state ),
 		};
 	},
 	{
