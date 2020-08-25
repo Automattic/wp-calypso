@@ -4,8 +4,4 @@ declare module '@wordpress/compose' {
 	export function useViewportMatch( viewport: breakpoint, operator?: operator ): boolean;
 }
 
-declare module '@wordpress/components' {
-	const Tip: React.ComponentType< { children: React.ReactNode } >;
-}
-
 export {};
