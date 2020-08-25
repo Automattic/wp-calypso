@@ -1,0 +1,598 @@
+// Adds a top border to first card in the Site Stream
+.is-reader-page .is-site-stream .reader-post-card.card:nth-child( 2 ) {
+	border-top: 1px solid var( --color-neutral-10 );
+}
+
+.reader-post-card {
+	border-bottom: 1px solid var( --color-neutral-10 );
+	box-shadow: none;
+	margin: 0 15px;
+	padding: 18px 0 20px;
+	position: relative;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin: 0;
+	}
+
+	&.is-selected {
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: -8px;
+			width: 2px;
+			background: var( --color-primary );
+
+			@include breakpoint-deprecated( '>660px' ) {
+				left: -16px;
+			}
+		}
+	}
+
+	&.is-seen {
+		opacity: 0.5;
+	}
+
+	&.has-thumbnail {
+		.reader-featured-image {
+			flex-basis: auto;
+			flex-grow: 1;
+			margin-right: 20px;
+			max-width: 190px;
+			box-sizing: border-box;
+
+			@include breakpoint-deprecated( '>960px' ) {
+				max-width: 250px;
+			}
+
+			@include breakpoint-deprecated( '<480px' ) {
+				height: 100px;
+				margin: 0 0 15px;
+				max-width: 100%;
+			}
+		}
+
+		&.is-photo {
+			.reader-post-card__post {
+				flex-direction: column;
+			}
+
+			.reader-post-card__post-details,
+			.reader-post-card__social {
+				padding-left: 0;
+			}
+
+			.reader-post-card__post-details {
+				flex: 0 auto; // IE11 Photo card actions hidden
+				margin: 0;
+				padding-top: 8px;
+			}
+
+			.reader-post-card__title {
+				color: var( --color-text-inverted );
+				font-family: $sans;
+				position: relative;
+				bottom: 30px;
+				left: 20px;
+				text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
+				width: calc( 100% - 44px );
+				text-overflow: ellipsis;
+				overflow: hidden;
+				z-index: z-index( 'root', '.reader-post-card__title' );
+				margin-bottom: -15px; // relative elements need a negative margin so they don't create bottom padding
+				height: 19px;
+				white-space: nowrap;
+			}
+
+			.reader-post-card__title .reader-post-card__title-link {
+				color: var( --color-text-inverted );
+				display: inline;
+				font-size: $font-body-extra-small;
+				letter-spacing: 0.01em;
+			}
+
+			.reader-post-actions {
+				margin: 0;
+			}
+
+			.reader-post-actions .reader-post-actions__visit {
+				margin-left: -3px;
+			}
+		}
+	}
+
+	&.has-thumbnail,
+	&.is-gallery {
+		.reader-post-card__post {
+			margin-top: 18px;
+		}
+
+		.reader-post-card__post-details {
+			flex: 1;
+		}
+	}
+
+	&.is-gallery .reader-post-card__post {
+		flex-direction: column;
+	}
+
+	&.is-gallery,
+	&.is-photo {
+		.reader-post-card__post {
+			margin-top: 16px;
+		}
+	}
+
+	.reader-post-actions {
+		margin: 4px 0 0;
+	}
+
+	&.is-compact {
+		.reader-post-card__byline-details {
+			display: flex;
+			flex-direction: row;
+			max-height: 16px * 1.4;
+			max-width: calc( 100% - 40px );
+			overflow: hidden;
+			position: relative;
+
+			&::after {
+				@include long-content-fade( $size: 10% );
+			}
+		}
+
+		.reader-post-card__byline-author-site {
+			flex: 0 0 auto;
+			width: auto;
+		}
+
+		.reader-post-card__timestamp-and-tag {
+			margin-top: 0;
+			margin-left: 0;
+
+			@include breakpoint-deprecated( '>480px' ) {
+				margin-left: 5px;
+			}
+		}
+
+		.reader-post-card__byline-author-site,
+		.reader-post-card__timestamp-and-tag {
+			&::after {
+				display: none;
+			}
+		}
+
+		.reader-post-card__timestamp-link {
+			color: var( --color-text-subtle );
+		}
+
+		.reader-post-options-menu {
+			position: absolute;
+			right: 14px;
+			top: 0;
+		}
+
+		.reader-featured-image {
+			height: auto;
+			margin-bottom: 0;
+			margin-right: 15px;
+			max-width: 100px;
+			min-width: 100px;
+		}
+
+		.reader-post-card__post {
+			margin-top: 0;
+
+			@include breakpoint-deprecated( '<960px' ) {
+				flex-direction: row;
+			}
+		}
+
+		.reader-post-card__post-details {
+			margin-top: 0;
+		}
+
+		.reader-post-card__post-details .reader-excerpt {
+			font-size: $font-body;
+			font-weight: 400;
+			margin-top: 4px;
+			max-height: 16px * 1.4;
+			overflow: hidden;
+			position: relative;
+			word-wrap: break-word;
+		}
+	}
+}
+
+.reader-post-card__photo {
+	border: 1px solid var( --color-neutral-10 );
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-basis: auto;
+	flex-grow: 1;
+	cursor: pointer;
+	position: relative;
+	top: 0;
+	height: 225px;
+	margin-right: 0;
+	margin-bottom: 0;
+	max-width: 100%;
+
+	&:hover {
+		cursor: zoom-in;
+	}
+
+	&.is-expanded {
+		background-position: center !important;
+		min-width: 100%;
+		max-width: 100%;
+		background-size: cover;
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	&::before {
+		content: '';
+		background: linear-gradient(
+			to bottom,
+			rgba( 0, 0, 0, 0 ) 0%,
+			rgba( 0, 0, 0, 0.37 ) 65%,
+			rgba( 0, 0, 0, 1 ) 110%
+		);
+		height: 80px;
+		opacity: 0.4;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+	}
+}
+
+.reader-post-card__byline {
+	display: flex;
+	font-size: $font-body-small;
+}
+
+.reader-post-card__author::after {
+	content: ', ';
+}
+
+// Need .reader__content to override .reader__content a
+.reader__content .reader-post-card__timestamp-link,
+.reader__content .reader-post-card__tag-link {
+	color: var( --color-text-subtle );
+	margin-top: 2px;
+	cursor: pointer;
+	&:hover {
+		color: var( --color-primary );
+	}
+}
+
+.reader-post-card__byline-details {
+	color: var( --color-primary );
+	width: 100%;
+}
+
+// Fix for IE11 unable to handle nested flexbox min-height.
+// See issue: https://github.com/Automattic/wp-calypso/issues/9412
+.is-reader-page .reader-post-card.is-gallery .reader-post-card__post-details {
+	flex: inherit;
+}
+
+.reader-post-card__byline-author-site {
+	font-family: $sans;
+	font-weight: 600;
+	overflow: hidden;
+	position: relative;
+	height: 20px;
+	width: calc( 100% - 25px );
+
+	&::after {
+		@include long-content-fade( $size: 10% );
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		width: calc( 100% - 90px );
+	}
+}
+
+.reader-post-card__timestamp-and-tag {
+	align-items: flex-start;
+	display: flex;
+	flex-direction: row;
+	font-family: $sans;
+	margin-top: -2px;
+}
+
+.reader-post-card__timestamp {
+	display: inline-table;
+}
+
+.reader-post-card__tags {
+	color: var( --color-text-subtle );
+	display: flex;
+	flex-direction: row;
+	height: 20px;
+	margin-left: 10px;
+	overflow: hidden;
+	position: relative;
+	width: calc( 100% - 140px );
+
+	@include breakpoint-deprecated( '<480px' ) {
+		max-width: 500px;
+	}
+
+	&::after {
+		@include long-content-fade( $size: 35px );
+	}
+}
+
+.reader-post-card__tag {
+	white-space: nowrap;
+	margin-right: 3px;
+
+	&::after {
+		content: ', ';
+	}
+
+	&:last-child::after {
+		display: none;
+	}
+}
+
+.reader-post-card__tags .gridicons-tag {
+	height: 18px;
+	fill: var( --color-neutral-light );
+	flex: 0 0 15px;
+	margin-right: 5px;
+	margin-top: 3px;
+}
+
+.reader-post-card__byline .reader-avatar {
+	flex-shrink: 0;
+
+	&.has-gravatar {
+		margin-right: 6px;
+	}
+
+	.gravatar {
+		float: left;
+		height: 32px;
+		margin: 4px 6px 0 0;
+		vertical-align: text-top;
+		width: 32px;
+	}
+
+	&.has-site-icon {
+		margin: 0 12px 0 0;
+	}
+
+	.site-icon {
+		width: 32px !important;
+		height: 32px !important;
+		font-size: 2rem !important;
+		line-height: 32px !important;
+	}
+}
+
+.reader-post-card .has-site-and-author-icon .gravatar {
+	display: none;
+}
+
+.reader-post-card__link {
+	color: var( --color-primary );
+	cursor: pointer;
+
+	&:hover {
+		color: var( --color-primary-light );
+	}
+
+	&:visited {
+		color: var( --color-primary );
+	}
+}
+
+.reader-post-card__post {
+	clear: both;
+	display: flex;
+	flex-direction: row;
+	margin-top: 14px;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		flex-direction: column;
+	}
+
+	.reader-post-card__post-details {
+		flex: 1 auto;
+		width: 100%;
+	}
+}
+
+.reader-post-card.is-expanded-video .reader-post-card__post {
+	flex-wrap: wrap;
+}
+
+.reader-post-card__post-details {
+	font-family: $serif;
+}
+
+.reader-post-card__title {
+	line-height: 1.4;
+	margin-top: -4px;
+	overflow-wrap: break-word;
+}
+
+// Needs to overwrite .reader__content a
+.reader__content .reader-post-card__title-link,
+.reader__content .reader-post-card__title-link:visited,
+.reader-post-card__title-link,
+.reader-post-card__title-link:visited {
+	color: var( --color-neutral-70 );
+	cursor: pointer;
+	font-size: $font-title-small;
+	font-weight: 600;
+	display: block;
+
+	&:hover {
+		color: var( --color-neutral-70 );
+	}
+}
+
+.reader-post-card .reader-excerpt {
+	font-size: $font-body;
+	line-height: 1.55;
+	font-weight: 400;
+	margin-top: 9px;
+	word-break: break-word;
+	position: relative;
+
+	p {
+		margin: 0;
+	}
+}
+
+// If it's not a discover card, clamp lines
+.reader-post-card.card:not( .is-discover ) {
+	.reader-excerpt {
+		overflow: hidden;
+		max-height: 15px * 1.6 * 3.2;
+
+		// Clamp to 2 lines on wider viewports
+		@include breakpoint-deprecated( '>960px' ) {
+			max-height: 15px * 1.6 * 2;
+		}
+
+		&::before {
+			@include long-content-fade( $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
+	}
+
+	.reader-excerpt[direction='rtl'] {
+		&::before {
+			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
+	}
+
+	.reader-excerpt[direction='ltr'] {
+		&::before {
+			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
+			top: inherit;
+			height: 15px * 1.6;
+		}
+	}
+}
+
+// 3 line excerpt for thumbnail cards
+.reader-post-card.card.has-thumbnail:not( .is-gallery ):not( .is-compact ) {
+	.reader-excerpt {
+		max-height: 15px * 1.6 * 3.2;
+		overflow: hidden;
+	}
+}
+
+// Action buttons in post card
+.reader-post-card.card .reader-post-actions__item {
+	font-size: $font-body-small;
+	height: 22px;
+
+	&.reader-post-actions__visit .gridicon {
+		position: relative;
+		left: -2px;
+		top: -1px;
+	}
+
+	.gridicons-external {
+		margin-right: 2px;
+	}
+
+	.reader-share__button .gridicon {
+		position: relative;
+		top: 0;
+		margin-right: 0;
+		margin-top: 0;
+	}
+
+	.like-button .gridicon {
+		top: 5px;
+	}
+
+	.like-button__label {
+		margin: -3px 0 0 -5px;
+	}
+
+	.comment-button {
+		align-items: flex-start;
+	}
+
+	.comment-button .gridicon {
+		top: 4px;
+		margin-right: 2px;
+	}
+
+	.reader-share__button-label,
+	.comment-button__label-status,
+	.like-button__label-status {
+		@include breakpoint-deprecated( '>960px' ) {
+			display: none;
+		}
+
+		@include breakpoint-deprecated( '<660px' ) {
+			display: none;
+		}
+	}
+}
+
+.reader-post-card {
+	padding: 10px;
+	max-width: 800px;
+
+	a {
+		text-decoration: none;
+		pointer-events: none;
+		cursor: default;
+	}
+
+	.reader-post-card__timestamp-and-tag a {
+		color: var( --color-neutral-light );
+	}
+
+	.reader-post-actions__item {
+		white-space: nowrap;
+
+		span,
+		.comment-button,
+		.like-button,
+		.ellipsis-menu .button {
+			cursor: default;
+			pointer-events: none;
+
+			&:hover {
+				color: var( --color-neutral-light );
+			}
+		}
+	}
+
+	&.card {
+		border-bottom: none;
+	}
+
+	.comment-button__label-status,
+	.like-button__label-status,
+	.reader-share__button-label {
+		@include breakpoint-deprecated( '<960px' ) {
+			display: none;
+		}
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		min-width: 480px;
+	}
+}

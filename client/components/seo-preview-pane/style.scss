@@ -38,7 +38,6 @@
 			justify-content: flex-start;
 			border-bottom: 1px solid #c8d7e1;
 
-
 			.vertical-menu__social-item {
 				border-top: 1px solid #c8d7e1;
 				padding: 0;
@@ -95,49 +94,6 @@
 
 	background-color: var( --color-surface );
 	border: 1px solid var( --color-neutral-5 );
-
-	.reader-post-card {
-		padding: 10px;
-
-		a {
-			text-decoration: none;
-			pointer-events: none;
-			cursor: default;
-		}
-
-		.reader-post-card__timestamp-and-tag a {
-			color: var( --color-neutral-light );
-		}
-
-		.reader-post-actions__item {
-			white-space: nowrap;
-
-			span, .comment-button, .like-button, .ellipsis-menu .button {
-				cursor: default;
-				pointer-events: none;
-
-				&:hover {
-					color: var( --color-neutral-light );
-				}
-			}
-		}
-
-		&.card {
-			border-bottom: none;
-		}
-
-		.comment-button__label-status,
-		.like-button__label-status,
-		.reader-share__button-label {
-			@include breakpoint-deprecated( '<960px' ) {
-				display: none;
-			}
-		}
-
-		@include breakpoint-deprecated( '>960px' ) {
-			min-width: 480px;
-		}
-	}
 }
 
 .seo-preview-pane__message {
