@@ -14,15 +14,14 @@
 /* stylelint-disable scales/font-size */
 
 .twitter-preview {
-	width: inherit;
-	overflow-x: auto;
-	-webkit-overflow-scrolling: touch;
-	margin: 20px;
+	padding: 20px;
+	box-sizing: border-box;
 }
 
 .twitter-preview__summary,
 .twitter-preview__large_image_summary {
 	width: 506px;
+	max-width: 100%;
 	margin: 0 auto;
 	overflow: hidden;
 	border: 1px solid #e1e8ed;
@@ -42,16 +41,15 @@
 	background-position: center;
 }
 
-.twitter-preview__summary
-.twitter-preview__image {
+.twitter-preview__summary .twitter-preview__image {
 	float: left;
 	width: 125px;
 	height: 125px;
 }
 
-.twitter-preview__large_image_summary
-.twitter-preview__image {
+.twitter-preview__large_image_summary .twitter-preview__image {
 	width: 506px;
+	max-width: 100%;
 	height: 254px;
 	border-bottom: 1px solid #e1e8ed;
 }
@@ -67,15 +65,13 @@
 	overflow: hidden;
 }
 
-.twitter-preview__summary
-.twitter-preview__body {
+.twitter-preview__summary .twitter-preview__body {
 	margin-left: 125px;
 	border-left: 1px solid #e1e8ed;
 	height: 100%;
 }
 
-.twitter-preview__large_image_summary
-.twitter-preview__body {
+.twitter-preview__large_image_summary .twitter-preview__body {
 	padding-left: 1em;
 	padding-right: 1em;
 }
