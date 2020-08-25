@@ -16,7 +16,7 @@ const { dispatch } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-export default function useCachedDomainContactDetails() {
+export default function useCachedDomainContactDetails( updateCartLocation ) {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef( false );
 
@@ -31,5 +31,10 @@ export default function useCachedDomainContactDetails() {
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	if ( cachedContactDetails ) {
 		dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+		updateCartLocation( {
+			countryCode: cachedContactDetails.countryCode ?? '',
+			postalCode: cachedContactDetails.postalCode ?? '',
+			subdivisionCode: cachedContactDetails.state ?? '',
+		} );
 	}
 }

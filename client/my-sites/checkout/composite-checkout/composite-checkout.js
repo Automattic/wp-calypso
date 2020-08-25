@@ -343,7 +343,7 @@ export default function CompositeCheckout( {
 	);
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails();
+	useCachedDomainContactDetails( updateLocation );
 
 	useDisplayErrors( [ ...errors, loadingError ].filter( Boolean ), showErrorMessage );
 
