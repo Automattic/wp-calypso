@@ -26,7 +26,7 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"prepublish": "yarn run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"

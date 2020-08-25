@@ -17,7 +17,7 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
 		"prepublish": "yarn run clean",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
 		"watch": "tsc --project ./tsconfig.json --watch"
