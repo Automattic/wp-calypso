@@ -208,7 +208,10 @@ function Edit( props ) {
 	const { isSelected, className } = props;
 
 	useEffect( () => {
-		const path = '/wpcom/v2/memberships/status';
+		const origin = getQueryArg( window.location.href, 'origin' );
+		const path = addQueryArgs( '/wpcom/v2/memberships/status', {
+			source: origin === 'https://wordpress.com' ? 'gutenberg-wpcom' : 'gutenberg',
+		} );
 		const method = 'GET';
 		const fetch = { path, method };
 		apiFetch( fetch ).then(
