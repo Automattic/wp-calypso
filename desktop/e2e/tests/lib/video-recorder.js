@@ -24,16 +24,19 @@ function getFreeDisplay() {
 let file;
 let ffVideo;
 let ffDisplay;
+let ffFramework;
 let ffVideoSize;
 
 switch ( process.platform ) {
 	case 'darwin':
 		ffDisplay = '0:none';
 		ffVideoSize = '1440x1000';
+		ffFramework = 'avfoundation';
 		break;
 	case 'linux':
 		ffDisplay = `:${ getFreeDisplay() }`;
 		ffVideoSize = '1280x1024';
+		ffFramework = 'x11grab';
 		break;
 	default:
 		throw 'unsupported platform!';
@@ -68,14 +71,14 @@ exports.startVideo = function () {
 	this.createDir( path.dirname( file ) );
 	ffVideo = child_process.spawn( ffmpeg.path, [
 		'-f',
-		'avfoundation',
+		ffFramework,
 		'-video_size',
 		ffVideoSize,
 		'-r',
 		30,
 		'-i',
 		ffDisplay,
-		'-pixel_format',
+		'-pix_fmt',
 		'yuv420p',
 		'-loglevel',
 		'error',
