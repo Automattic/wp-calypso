@@ -14,7 +14,6 @@ import {
 	incompleteUrlRedirects,
 	initAbTests,
 	legacyRedirects,
-	preloadReaderBundle,
 	prettyRedirects,
 	readA8C,
 	sidebar,
@@ -48,16 +47,7 @@ export default async function () {
 	await lazyLoadDependencies();
 
 	if ( config.isEnabled( 'reader' ) ) {
-		page(
-			'/read',
-			preloadReaderBundle,
-			initAbTests,
-			updateLastRoute,
-			sidebar,
-			following,
-			makeLayout,
-			clientRender
-		);
+		page( '/read', initAbTests, updateLastRoute, sidebar, following, makeLayout, clientRender );
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/read' );
@@ -68,7 +58,7 @@ export default async function () {
 		page( '/read/feed', '/read' );
 
 		// Feed stream
-		page( '/read/*', preloadReaderBundle, initAbTests );
+		page( '/read/*', initAbTests );
 		page( '/read/blog/feed/:feed_id', legacyRedirects );
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
