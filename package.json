@@ -166,7 +166,7 @@
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/effective-module-tree": "^0.1.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
-		"@automattic/wpcom-editing-toolkit": "^1.5.0",
+		"@automattic/wpcom-editing-toolkit": "^2.0.0",
 		"@automattic/load-script": "^1.0.0",
 		"@automattic/material-design-icons": "^1.0.0",
 		"@automattic/media-library": "^1.0.0-alpha.0",
