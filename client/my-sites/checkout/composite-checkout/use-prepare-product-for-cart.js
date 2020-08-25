@@ -175,9 +175,13 @@ function useAddProductFromSlug( {
 	// about which type of site the user has.
 	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
 		if ( isJetpackNotAtomic ) {
-			productAlias = productAlias.includes( 'monthly' ) ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_JETPACK_SEARCH;
+			productAlias = productAlias.includes( 'monthly' )
+				? PRODUCT_JETPACK_SEARCH_MONTHLY
+				: PRODUCT_JETPACK_SEARCH;
 		} else {
-			productAlias = productAlias.includes( 'monthly' ) ? PRODUCT_WPCOM_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH;
+			productAlias = productAlias.includes( 'monthly' )
+				? PRODUCT_WPCOM_SEARCH_MONTHLY
+				: PRODUCT_WPCOM_SEARCH;
 		}
 	}
 
