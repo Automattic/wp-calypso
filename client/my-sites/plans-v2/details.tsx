@@ -15,7 +15,7 @@ import {
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 } from './constants';
 import ProductCard from './product-card';
-import { slugToSelectorProduct, durationToString } from './utils';
+import { slugToSelectorProduct, durationToString, getProductUpsell, checkout } from './utils';
 import ProductCardPlaceholder from 'components/jetpack/card/product-card-placeholder';
 import FormattedHeader from 'components/formatted-header';
 import HeaderCake from 'components/header-cake';
@@ -57,11 +57,13 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	}
 
 	// Go to a new page for upsells.
-	const selectProduct: PurchaseCallback = ( selectedProduct: SelectorProduct ) => {
-		page(
-			`${ root }/${ selectedProduct.productSlug }/` +
-				`${ durationToString( selectedProduct.term ) }/additions`
-		);
+	const selectProduct: PurchaseCallback = ( { productSlug: slug, term }: SelectorProduct ) => {
+		if ( getProductUpsell( slug ) ) {
+			page( `${ root }/${ slug }/` + `${ durationToString( term ) }/additions` );
+			return;
+		}
+
+		checkout( siteSlug, slug );
 	};
 
 	const isBundle = [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ].includes(

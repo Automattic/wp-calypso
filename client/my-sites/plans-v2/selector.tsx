@@ -12,7 +12,7 @@ import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
 import { SECURITY } from './constants';
-import { durationToString } from './utils';
+import { durationToString, getProductUpsell, checkout } from './utils';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { managePurchase } from 'me/purchases/paths';
@@ -48,17 +48,25 @@ const SelectorPage = ( {
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = ( product: SelectorProduct, purchase ) => {
-		const root = rootUrl.replace( ':site', siteSlug );
 		if ( purchase ) {
 			page( managePurchase( siteSlug, purchase.id ) );
 			return;
 		}
+
+		const root = rootUrl.replace( ':site', siteSlug );
 		const durationString = durationToString( currentDuration );
+
 		if ( product.subtypes.length ) {
 			page( `${ root }/${ product.productSlug }/${ durationString }/details` );
-		} else {
-			page( `${ root }/${ product.productSlug }/${ durationString }/additions` );
+			return;
 		}
+
+		if ( getProductUpsell( product.productSlug ) ) {
+			page( `${ root }/${ product.productSlug }/${ durationString }/additions` );
+			return;
+		}
+
+		checkout( siteSlug, product.productSlug );
 	};
 
 	return (

@@ -3,6 +3,7 @@
  */
 import { translate, TranslateResult } from 'i18n-calypso';
 import { compact, get, isArray, isObject } from 'lodash';
+import page from 'page';
 import { createElement, Fragment } from 'react';
 
 /**
@@ -20,6 +21,8 @@ import {
 	FEATURED_PRODUCTS,
 	SUBTYPE_TO_OPTION,
 } from './constants';
+import { addItems } from 'lib/cart/actions';
+import { jetpackProductItem } from 'lib/cart-values/cart-items';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -426,4 +429,15 @@ export function getProductUpsell( slug: string ): string | null {
  */
 export function getOptionFromSlug( slug: string ): string | null {
 	return SUBTYPE_TO_OPTION[ slug ];
+}
+
+/**
+ * Adds products to the cart and redirects to the checkout page.
+ *
+ * @param {string} siteSlug Selected site
+ * @param {string | string[]} products Slugs of the products to add to the cart
+ */
+export function checkout( siteSlug: string, products: string | string[] ): void {
+	addItems( ( isArray( products ) ? products : [ products ] ).map( jetpackProductItem ) );
+	page.redirect( `/checkout/${ siteSlug }` );
 }

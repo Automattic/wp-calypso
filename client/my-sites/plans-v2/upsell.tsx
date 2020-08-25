@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
+import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,8 +16,6 @@ import FormattedHeader from 'components/formatted-header';
 import HeaderCake from 'components/header-cake';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import Main from 'components/main';
-import { addItem, addItems } from 'lib/cart/actions';
-import { jetpackProductItem } from 'lib/cart-values/cart-items';
 import { preventWidows } from 'lib/formatting';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isProductsListFetching } from 'state/products-list/selectors';
@@ -29,6 +27,7 @@ import {
 	getOptionFromSlug,
 	getProductUpsell,
 	slugToSelectorProduct,
+	checkout,
 } from './utils';
 
 /**
@@ -160,22 +159,19 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	const upsellProductSlug = getProductUpsell( productSlug );
 	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
 
-	const goToCheckout = useCallback( () => {
-		page.redirect( `/checkout/${ selectedSiteSlug }` );
-	}, [ selectedSiteSlug ] );
+	const checkoutCb = useCallback( ( slugs ) => checkout( selectedSiteSlug, slugs ), [
+		selectedSiteSlug,
+	] );
 
-	const onPurchaseBothProducts = useCallback( () => {
-		addItems( [
-			jetpackProductItem( productSlug ),
-			jetpackProductItem( upsellProductSlug as string ),
-		] );
-		goToCheckout();
-	}, [ goToCheckout, productSlug, upsellProductSlug ] );
+	const onPurchaseBothProducts = useCallback(
+		() => checkoutCb( [ productSlug, upsellProductSlug ] ),
+		[ checkoutCb, productSlug, upsellProductSlug ]
+	);
 
-	const onPurchaseSingleProduct = useCallback( () => {
-		addItem( jetpackProductItem( productSlug ) );
-		goToCheckout();
-	}, [ goToCheckout, productSlug ] );
+	const onPurchaseSingleProduct = useCallback( () => checkoutCb( productSlug ), [
+		checkoutCb,
+		productSlug,
+	] );
 
 	const urlWithSiteSlug = rootUrl.replace( ':site', selectedSiteSlug );
 	const durationSuffix = duration ? durationToString( duration ) : '';
