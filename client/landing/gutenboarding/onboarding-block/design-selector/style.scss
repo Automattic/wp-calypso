@@ -133,7 +133,6 @@
 		margin-left: 6px;
 		/* stylelint-disable-next-line scales/font-size */
 		font-size: rem( 10px ); //typography-exception
-		text-transform: uppercase;
 	}
 
 	.design-selector__premium-badge {
@@ -162,5 +161,6 @@
 	.design-selector__premium-badge-text {
 		display: inline-block;
 		margin-top: -0.05em;
+		text-transform: uppercase;
 	}
 }
