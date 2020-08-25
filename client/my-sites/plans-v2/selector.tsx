@@ -20,6 +20,7 @@ import Main from 'components/main';
 import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySites from 'components/data/query-sites';
+import JetpackFreeCard from 'components/jetpack/card/jetpack-free-card';
 
 /**
  * Type dependencies
@@ -83,6 +84,9 @@ const SelectorPage = ( {
 					siteId={ siteId }
 				/>
 			</div>
+			<div className="selector__divider" />
+			<JetpackFreeCard />
+
 			<QueryProductsList />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
