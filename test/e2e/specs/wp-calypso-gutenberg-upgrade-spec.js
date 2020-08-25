@@ -241,18 +241,18 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 			} );
 
-			step( 'Will take screenshots of all the blocks in the editor', async function () {
+			step( 'Take screenshots of all the blocks in the editor', async function () {
 				await takeBlockScreenshots( siteName );
 			} );
 
 			step(
-				'Will switch to the code editor and copy the code markup for all the blocks',
+				'Switch to the code editor and copy the code markup for all the blocks',
 				async function () {
 					currentGutenbergBlocksCode = await gEditorComponent.copyBlocksCode();
 				}
 			);
 
-			step( 'Will take a screenhot of the whole previewed page', async function () {
+			step( 'Take screenshots of the whole previewed page', async function () {
 				await takePreviewScreenshots( siteName );
 			} );
 
@@ -272,11 +272,11 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 				} );
 
-				step( 'Will take screenshots of all the blocks in the editor', async function () {
+				step( 'Take screenshots of all the blocks in the editor', async function () {
 					await takeBlockScreenshots( edgeSiteName );
 				} );
 
-				step( 'Will take a screenhot of the whole previewed page', async function () {
+				step( 'Take screenshots of the whole previewed page', async function () {
 					await takePreviewScreenshots( edgeSiteName );
 				} );
 			} );
