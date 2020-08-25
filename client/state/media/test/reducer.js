@@ -607,8 +607,23 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should deselect any transient media item after its corresponding media was successfully uploaded', () => {
+			const transientMediaId = 'media-123';
 			const state = {
-				[ site.ID ]: [ 1, mediaId, 2 ],
+				[ site.ID ]: [ 1, transientMediaId, 2 ],
+			};
+			const result = selectedItems(
+				deepFreeze( state ),
+				successMediaItemRequest( siteId, transientMediaId )
+			);
+
+			expect( result ).to.deep.eql( {
+				[ site.ID ]: [ 1, 2 ],
+			} );
+		} );
+
+		test( 'should not deselect any non-transient media item after it got requested', () => {
+			const state = {
+				[ site.ID ]: [ 1, 2, mediaId ],
 			};
 			const result = selectedItems(
 				deepFreeze( state ),
@@ -616,7 +631,7 @@ describe( 'reducer', () => {
 			);
 
 			expect( result ).to.deep.eql( {
-				[ site.ID ]: [ 1, 2 ],
+				[ site.ID ]: [ 1, 2, mediaId ],
 			} );
 		} );
 

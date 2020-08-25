@@ -289,12 +289,16 @@ export const selectedItems = withoutPersistence( ( state = {}, action ) => {
 			};
 		}
 		case MEDIA_ITEM_REQUEST_SUCCESS: {
-			const { mediaId: transientMediaId, siteId } = action;
+			const { mediaId: requestedMediaId, siteId } = action;
 			const media = state[ siteId ] ?? [];
+
+			const isTransient = typeof requestedMediaId === 'string';
 
 			return {
 				...state,
-				[ siteId ]: media.filter( ( mediaId ) => transientMediaId !== mediaId ),
+				[ siteId ]: media.filter(
+					( mediaId ) => ! ( isTransient && requestedMediaId === mediaId )
+				),
 			};
 		}
 		case MEDIA_DELETE: {
