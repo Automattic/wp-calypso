@@ -81,6 +81,7 @@ export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
 export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'rejected' | 'error';
 
 export type ShoppingCartAction =
+	| { type: 'CLEAR_QUEUED_ACTIONS' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'ADD_CART_ITEM'; requestCartProductToAdd: RequestCartProduct }
 	| { type: 'SET_LOCATION'; location: CartLocation }
@@ -122,4 +123,5 @@ export type ShoppingCartState = {
 	loadingError?: string;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
+	queuedActions: ShoppingCartAction[];
 };
