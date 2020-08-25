@@ -55,6 +55,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		); // TODO: data-tip-target target is missing
 	}
 
+	async selectWPAdmin() {
+		return await this._scrollToAndClickMenuItem( 'wpadmin' );
+	}
+
 	async customizeTheme() {
 		return await this._scrollToAndClickMenuItem( 'themes' );
 	}

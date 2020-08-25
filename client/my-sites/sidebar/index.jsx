@@ -825,7 +825,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarMenu className="sidebar__wp-admin">
 				<ul>
-					<li>
+					<li data-tip-target="wpadmin">
 						<ExternalLink
 							className="sidebar__menu-link"
 							href={ adminUrl }

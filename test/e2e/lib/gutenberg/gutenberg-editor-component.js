@@ -455,9 +455,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css(
-				'.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button'
-			)
+			By.css( '.wpcom-block-editor-nav-sidebar-nav-sidebar__home-button' )
 		);
 	}
 
