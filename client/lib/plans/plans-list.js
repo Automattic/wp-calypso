@@ -371,7 +371,7 @@ const getPlanBusinessDetails = () => ( {
 
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
-	type: constants.TYPE_SECURITY,
+	type: constants.TYPE_SECURITY_DAILY,
 	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
@@ -412,7 +412,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
-	type: constants.TYPE_SECURITY,
+	type: constants.TYPE_SECURITY_REALTIME,
 	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
@@ -1259,7 +1259,7 @@ export const PLANS_LIST = {
 	},
 
 	[ constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: {
-		...getPlanJetpackSecurityDailyDetails(),
+		...getPlanJetpackSecurityRealtimeDetails(),
 		...getMonthlyTimeframe(),
 		getAnnualSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME,
 		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
