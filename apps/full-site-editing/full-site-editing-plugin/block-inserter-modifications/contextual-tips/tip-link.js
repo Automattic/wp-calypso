@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { select } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -12,9 +12,17 @@ const isEditorIFramed = inIframe();
 
 export default function ( { section, children, subsection } ) {
 	const { hostname } = window.location;
-	const editorSelector = select( 'core/editor' );
-	const postId = editorSelector.getCurrentPostId();
-	const postType = editorSelector.getCurrentPostType();
+
+	const { getCurrentPostId, getCurrentPostType } = useSelect( ( select ) => ( {
+		getCurrentPostId: select( 'core/editor' ).getCurrentPostId,
+		getCurrentPostType: select( 'core/editor' ).getCurrentPostType,
+	} ) );
+
+	// Search dispatchers.
+	const { clickOnContextualTip } = useDispatch( 'automattic/tracking' );
+
+	const postId = getCurrentPostId();
+	const postType = getCurrentPostType();
 	const returnLink =
 		isEditorIFramed && ! isSimpleSite
 			? '&' +
@@ -47,7 +55,12 @@ export default function ( { section, children, subsection } ) {
 	}
 
 	return (
-		<a href={ href } target="_blank" rel="noreferrer noopener">
+		<a
+			href={ href }
+			target="_blank"
+			rel="noreferrer noopener"
+			onClick={ () => clickOnContextualTip( { context: 'inserter_menu', section, subsection } ) }
+		>
 			{ children }
 		</a>
 	);

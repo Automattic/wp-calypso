@@ -192,6 +192,42 @@ const trackErrorNotices = ( content, options ) =>
 	} );
 
 /**
+ * Logs any block search from different context.
+ *
+ * @param {string} context Context where the blocks search happens.
+ */
+const trackSearchBlocks = ( { context } ) => {
+	tracksRecordEvent( 'wpcom_block_picker_search_term', {
+		search_term: select( 'automattic/tracking' ).getSearchTerm( context ),
+		context,
+	} );
+};
+
+const trackSearchBlocksNotFound = ( { context } ) => {
+	tracksRecordEvent( 'wpcom_block_picker_no_results', {
+		search_term: select( 'automattic/tracking' ).getSearchTerm( context ),
+		context,
+	} );
+};
+
+const trackTemplatesWithMissingBlocks = ( { slug, context, blocks } ) => {
+	tracksRecordEvent( 'wpcom_tamplates_with_missing_blocks', {
+		slug,
+		context,
+		blocks: blocks && blocks.length ? blocks.join( ', ' ) : null,
+	} );
+};
+
+const trackClickOnContextualTip = ( { context, section, subsection } ) => {
+	tracksRecordEvent( 'wpcom_block_picker_click_on_tip', {
+		search_term: select( 'automattic/tracking' ).getSearchTerm( context ),
+		context,
+		section,
+		subsection,
+	} );
+};
+
+/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -222,6 +258,12 @@ const REDUX_TRACKING = {
 	},
 	'core/notices': {
 		createErrorNotice: trackErrorNotices,
+	},
+	'automattic/tracking': {
+		setSearchBlocks: trackSearchBlocks,
+		setSearchBlocksNotFound: trackSearchBlocksNotFound,
+		emitTemplatesWithMissingBlocks: trackTemplatesWithMissingBlocks,
+		clickOnContextualTip: trackClickOnContextualTip,
 	},
 };
 

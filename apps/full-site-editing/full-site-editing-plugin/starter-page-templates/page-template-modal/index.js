@@ -8,11 +8,13 @@ import {
 	reduce,
 	get,
 	keyBy,
+	map,
 	mapValues,
 	memoize,
 	filter,
 	sortBy,
 	stubTrue,
+	uniq,
 } from 'lodash';
 import classnames from 'classnames';
 import '@wordpress/nux';
@@ -82,8 +84,14 @@ class PageTemplateModal extends Component {
 				// 2. There are no blocks at all (likely the "blank" template placeholder)
 				if ( ! templateHasMissingBlocks || ! templateBlocks.length ) {
 					acc[ slug ] = templateBlocks;
+				} else {
+					// Track templates with missing blocks.
+					this.props.registerBrokenTemplates( {
+						slug,
+						context: 'starter-page-templates',
+						blocks: uniq( map( templateBlocks || [], 'name' ) ),
+					} );
 				}
-
 				return acc;
 			},
 			{}
@@ -521,6 +529,7 @@ export const PageTemplatesPlugin = compose(
 	withDispatch( ( dispatch, ownProps ) => {
 		const editorDispatcher = dispatch( 'core/editor' );
 		const { setIsOpen } = dispatch( 'automattic/starter-page-layouts' );
+		const { emitTemplatesWithMissingBlocks } = dispatch( 'automattic/tracking' );
 		return {
 			setIsOpen,
 			saveTemplateChoice: ( slug ) => {
@@ -562,6 +571,7 @@ export const PageTemplatesPlugin = compose(
 					dispatch( 'core/nux' ).disableTips();
 				}
 			},
+			registerBrokenTemplates: emitTemplatesWithMissingBlocks,
 		};
 	} )
 )( PageTemplateModal );

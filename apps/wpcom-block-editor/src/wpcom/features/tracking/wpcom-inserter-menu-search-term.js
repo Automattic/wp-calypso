@@ -7,25 +7,25 @@ import { debounce } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useState } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { __experimentalInserterMenuExtension as InserterMenuExtension } from '@wordpress/block-editor';
-
 /* eslint-enable import/no-extraneous-dependencies */
 
-/**
- * Internal dependencies
- */
-import tracksRecordEvent from './track-record-event';
-
 const InserterMenuTrackingEvent = function () {
-	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const { selectedBlock } = useSelect( ( select ) => ( {
+	const context = 'inserter_menu';
+
+	const { selectedBlock, getSearchTerm } = useSelect( ( select ) => ( {
 		selectedBlock: select( 'core/block-editor' ).getSelectedBlock(),
+		getSearchTerm: select( 'automattic/tracking' ).getSearchTerm,
 	} ) );
 
+	// Search dispatchers.
+	const { setSearchBlocksTerm, setSearchBlocks, setSearchBlocksNotFound } = useDispatch(
+		'automattic/tracking'
+	);
+
 	const debouncedSetFilterValue = debounce( ( search_term, has_items ) => {
-		setSearchTerm( search_term );
+		setSearchBlocksTerm( { value: search_term, context } );
 
 		if ( search_term.length < 3 ) {
 			return;
@@ -33,23 +33,23 @@ const InserterMenuTrackingEvent = function () {
 
 		const eventProperties = {
 			search_term,
-			context: 'inserter_menu',
+			context,
 			selected_block: selectedBlock ? selectedBlock.name : null,
 		};
 
-		tracksRecordEvent( 'wpcom_block_picker_search_term', eventProperties );
+		setSearchBlocks( eventProperties );
 
 		if ( has_items ) {
 			return;
 		}
 
-		tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
+		setSearchBlocksNotFound( { context } );
 	}, 500 );
 
 	return (
 		<InserterMenuExtension>
 			{ ( { filterValue, hasItems } ) => {
-				if ( searchTerm !== filterValue ) {
+				if ( getSearchTerm( context ) !== filterValue ) {
 					debouncedSetFilterValue( filterValue, hasItems );
 				}
 
