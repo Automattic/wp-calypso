@@ -31,37 +31,6 @@ let gEditorComponent;
 let currentGutenbergBlocksCode;
 let galleryImages;
 
-async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
-	const now = Date.now() / 1000;
-
-	const siteSshotDir = join( mediaHelper.screenShotsDir(), siteName );
-	await fs.access( siteSshotDir ).catch( () => fs.mkdir( siteSshotDir ) );
-
-	for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
-		await scrollCb( i );
-
-		await driver.takeScreenshot().then( ( data ) => {
-			return driver
-				.getCurrentUrl()
-				.then( ( url ) =>
-					mediaHelper.writeScreenshot(
-						data,
-						() => join( siteName, `${ siteName }-${ i }-${ now }.png` ),
-						{ url }
-					)
-				);
-		} );
-	}
-}
-
-function testBlockIsDisplayed( blockName, isItDisplayed ) {
-	assert.strictEqual(
-		isItDisplayed,
-		true,
-		`The block "${ blockName }" was not found in the editor`
-	);
-}
-
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
@@ -73,6 +42,76 @@ before( async function () {
 // Should we keep the @parallel tag here for this e2e test?
 describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+
+	async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
+		const now = Date.now() / 1000;
+
+		const siteSshotDir = join( mediaHelper.screenShotsDir(), siteName );
+		await fs.access( siteSshotDir ).catch( () => fs.mkdir( siteSshotDir ) );
+
+		for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
+			await scrollCb( i );
+
+			await driver.takeScreenshot().then( ( data ) => {
+				return driver
+					.getCurrentUrl()
+					.then( ( url ) =>
+						mediaHelper.writeScreenshot(
+							data,
+							() => join( siteName, `${ siteName }-${ i }-${ now }.png` ),
+							{ url }
+						)
+					);
+			} );
+		}
+	}
+
+	function testBlockIsDisplayed( blockName, isItDisplayed ) {
+		assert.strictEqual(
+			isItDisplayed,
+			true,
+			`The block "${ blockName }" was not found in the editor`
+		);
+	}
+
+	async function takeBlockScreenshots( siteName ) {
+		const editorViewport = await driver.findElement(
+			By.css( 'div.interface-interface-skeleton__content' )
+		);
+
+		const editorViewportScrollHeight = await driver.executeScript(
+			'return arguments[0].scrollHeight',
+			editorViewport
+		);
+		const editorViewportClientHeight = await driver.executeScript(
+			'return arguments[0].clientHeight',
+			editorViewport
+		);
+
+		await takeScreenshot(
+			`${ siteName }-editor`,
+			editorViewportScrollHeight,
+			editorViewportClientHeight,
+			( i ) =>
+				driver.executeScript(
+					`arguments[0].scroll({top: arguments[0].clientHeight*${ i }})`,
+					editorViewport
+				)
+		);
+	}
+
+	async function takePreviewScreenshots( siteName ) {
+		await gEditorComponent.launchPreview();
+		await PostPreviewEditorComponent.switchToIFrame( driver );
+		await driver.sleep( 3000 );
+
+		const totalHeight = await driver.executeScript( 'return document.body.offsetHeight' );
+		const windowHeight = await driver.executeScript( 'return window.outerHeight' );
+
+		await takeScreenshot( `${ siteName }-preview`, totalHeight, windowHeight, ( i ) =>
+			driver.executeScript( `window.scrollTo(0, window.outerHeight*${ i })` )
+		);
+	}
 
 	[
 		'e2egbupgradehever',
@@ -203,29 +242,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			} );
 
 			step( 'Will take screenshots of all the blocks in the editor', async function () {
-				const editorViewport = await driver.findElement(
-					By.css( 'div.interface-interface-skeleton__content' )
-				);
-
-				const editorViewportScrollHeight = await driver.executeScript(
-					'return arguments[0].scrollHeight',
-					editorViewport
-				);
-				const editorViewportClientHeight = await driver.executeScript(
-					'return arguments[0].clientHeight',
-					editorViewport
-				);
-
-				await takeScreenshot(
-					`${ siteName }-editor`,
-					editorViewportScrollHeight,
-					editorViewportClientHeight,
-					( i ) =>
-						driver.executeScript(
-							`arguments[0].scroll({top: arguments[0].clientHeight*${ i }})`,
-							editorViewport
-						)
-				);
+				await takeBlockScreenshots( siteName );
 			} );
 
 			step(
@@ -235,38 +252,40 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				}
 			);
 
-			step( 'Will take a screenhot of all the blocks in the editor', async function () {
-				await gEditorComponent.launchPreview();
-				await PostPreviewEditorComponent.switchToIFrame( driver );
-				await driver.sleep( 3000 );
-
-				const totalHeight = await driver.executeScript( 'return document.body.offsetHeight' );
-				const windowHeight = await driver.executeScript( 'return window.outerHeight' );
-
-				await takeScreenshot( `${ siteName }-preview`, totalHeight, windowHeight, ( i ) =>
-					driver.executeScript( `window.scrollTo(0, window.outerHeight*${ i })` )
-				);
+			step( 'Will take a screenhot of the whole previewed page', async function () {
+				await takePreviewScreenshots( siteName );
 			} );
 
-			step( 'Switches to edge site with next GB', async function () {
-				// Re-use the same session created earlier but change the site
-				return await loginFlow.loginAndStartNewPost( `${ siteName }edge.wordpress.com`, true );
+			describe( 'Test the same blocks in the corresponding edge site', function () {
+				const edgeSiteName = siteName + 'edge';
+				step( 'Switches to edge site with next GB', async function () {
+					// Re-use the same session created earlier but change the site
+					return await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
+				} );
+
+				step( 'Test blocks are loaded fine from non-edge blocks markup', async function () {
+					await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
+					await gEditorComponent.switchToBlockEditor();
+
+					await gEditorComponent.ensureSaved();
+					const errorShown = await gEditorComponent.errorDisplayed();
+					assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+				} );
+
+				step( 'Will take screenshots of all the blocks in the editor', async function () {
+					await takeBlockScreenshots( edgeSiteName );
+				} );
+
+				step( 'Will take a screenhot of the whole previewed page', async function () {
+					await takePreviewScreenshots( edgeSiteName );
+				} );
 			} );
-
-			step( 'Test blocks are loaded fine from non-edge blocks markup', async function () {
-				await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
-				await gEditorComponent.switchToBlockEditor();
-
-				await gEditorComponent.ensureSaved();
-				const errorShown = await gEditorComponent.errorDisplayed();
-				assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
-			} );
-		} );
-
-		after( async function () {
-			await Promise.all(
-				galleryImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
-			);
 		} );
 	} );
+} );
+
+after( async function () {
+	await Promise.all(
+		galleryImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
+	);
 } );
