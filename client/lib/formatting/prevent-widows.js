@@ -11,7 +11,10 @@ import React from 'react';
  * @returns {string}             the widow-prevented string
  */
 export function preventWidows( text, wordsToKeep = 2 ) {
-	return preventWidowsInPart( text, Math.max( 1, wordsToKeep - 1 ) ).part;
+	return preventWidowsInPart(
+		'string' === typeof text ? text.trim() : text,
+		Math.max( 1, wordsToKeep - 1 )
+	).part;
 }
 
 const reverseSpaceRegex = /\s+(\S*)$/;
@@ -28,23 +31,28 @@ const reverseSpaceRegex = /\s+(\S*)$/;
 function preventWidowsInPart( part, spacesToSubstitute ) {
 	let substituted = 0;
 
-	if ( 'string' === typeof part ) {
+	if ( 'string' === typeof part && part.length > 0 ) {
 		let text = part;
+		let retVal = '';
+
 		// If the part is a string, work from the right looking for spaces
 		// TODO Work out if we can tell that this is a RTL language, and if it's appropriate to join words in this way
-		while ( substituted < spacesToSubstitute && text.match( reverseSpaceRegex ) ) {
-			text = text.replace( reverseSpaceRegex, '\xA0$1' ); //
+		while ( substituted < spacesToSubstitute && reverseSpaceRegex.test( text ) ) {
+			const match = reverseSpaceRegex.exec( text );
+			retVal = '\xA0' + match[ 1 ] + retVal;
+			text = text.replace( reverseSpaceRegex, '' );
 			substituted++;
 		}
+		retVal = text + retVal;
 		// Return the modified string and the number of spaces substituted
-		return { part: text, substituted };
+		return { part: retVal, substituted };
 	}
 
 	/* If we're called with an array construct a copy of the array by calling
 	 * ourself on each element until we have substituted enough spaces. Then
 	 * concatentate the rest of the array
 	 */
-	if ( Array.isArray( part ) ) {
+	if ( Array.isArray( part ) && part.length > 0 ) {
 		let elements = [];
 		let idx = part.length - 1;
 		while ( substituted < spacesToSubstitute && idx >= 0 ) {
