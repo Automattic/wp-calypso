@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
@@ -18,16 +18,15 @@ const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contac
 
 export default function useCachedDomainContactDetails() {
 	const reduxDispatch = useReduxDispatch();
-	const [ haveRequestedCachedDetails, setHaveRequestedCachedDetails ] = useState( false );
+	const haveRequestedCachedDetails = useRef( false );
 
 	useEffect( () => {
-		// Dispatch exactly once
-		if ( ! haveRequestedCachedDetails ) {
+		if ( ! haveRequestedCachedDetails.current ) {
 			debug( 'requesting cached domain contact details' );
 			reduxDispatch( requestContactDetailsCache() );
-			setHaveRequestedCachedDetails( true );
+			haveRequestedCachedDetails.current = true;
 		}
-	}, [ haveRequestedCachedDetails, reduxDispatch ] );
+	}, [ reduxDispatch ] );
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	if ( cachedContactDetails ) {
