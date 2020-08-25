@@ -43,8 +43,8 @@
 	}
 
 	a {
+		text-align: center;
 		height: 40px;
-
 		@include break-medium {
 			margin-left: 24px;
 		}
