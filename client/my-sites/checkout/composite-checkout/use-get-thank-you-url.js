@@ -200,7 +200,9 @@ function getFallbackDestination( {
 			productsWithCustomThankYou.includes( product_slug )
 		)?.product_slug;
 
-		const purchasedProduct = productFromCart || productsWithCustomThankYou.find( product );
+		const purchasedProduct =
+			productFromCart ||
+			productsWithCustomThankYou.find( ( productWithCustom ) => productWithCustom === product );
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
