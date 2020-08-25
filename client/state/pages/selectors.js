@@ -5,7 +5,11 @@
 /**
  * Internal dependencies
  */
-import { getSiteFrontPage, getSitePostsPage } from 'state/sites/selectors';
+import { getComingSoonPage, getSiteFrontPage, getSitePostsPage } from 'state/sites/selectors';
+
+export function isComingSoonPage( state, siteId, pageId ) {
+	return pageId === getComingSoonPage( state, siteId );
+}
 
 export function isFrontPage( state, siteId, pageId ) {
 	return pageId === getSiteFrontPage( state, siteId );
