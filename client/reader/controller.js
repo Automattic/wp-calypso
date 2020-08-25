@@ -129,10 +129,6 @@ const exported = {
 		next();
 	},
 
-	unmountSidebar( context, next ) {
-		next();
-	},
-
 	following( context, next ) {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Following';
@@ -318,7 +314,6 @@ export const {
 	incompleteUrlRedirects,
 	preloadReaderBundle,
 	sidebar,
-	unmountSidebar,
 	following,
 	feedDiscovery,
 	feedListing,

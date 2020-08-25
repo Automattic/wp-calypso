@@ -9,7 +9,7 @@ import { defer } from 'lodash';
  * Internal Dependencies
  */
 import { trackPageLoad } from 'reader/controller-helper';
-import AsyncLoad from 'components/async-load';
+import FullPostView from 'blocks/reader-full-post';
 
 const analyticsPageTitle = 'Reader';
 
@@ -21,38 +21,15 @@ const scrollTopIfNoHash = () =>
 	} );
 
 export function blogPost( context, next ) {
-	const blogId = context.params.blog,
-		postId = context.params.post,
-		basePath = '/read/blogs/:blog_id/posts/:post_id',
-		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
+	const blogId = context.params.blog;
+	const postId = context.params.post;
+	const basePath = '/read/blogs/:blog_id/posts/:post_id';
+	const fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
 	let referral;
 	if ( context.query.ref_blog && context.query.ref_post ) {
 		referral = { blogId: context.query.ref_blog, postId: context.query.ref_post };
 	}
-	trackPageLoad( basePath, fullPageTitle, 'full_post' );
-
-	context.primary = (
-		<AsyncLoad
-			require="blocks/reader-full-post"
-			blogId={ blogId }
-			postId={ postId }
-			referral={ referral }
-			referralStream={ context.lastRoute }
-			onClose={ function () {
-				page.back( context.lastRoute || '/' );
-			} }
-		/>
-	);
-	scrollTopIfNoHash();
-	next();
-}
-
-export function feedPost( context, next ) {
-	const feedId = context.params.feed,
-		postId = context.params.post,
-		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
-		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
@@ -61,8 +38,32 @@ export function feedPost( context, next ) {
 	}
 
 	context.primary = (
-		<AsyncLoad
-			require="blocks/reader-full-post"
+		<FullPostView
+			blogId={ blogId }
+			postId={ postId }
+			referral={ referral }
+			referralStream={ context.lastRoute }
+			onClose={ closer }
+		/>
+	);
+	scrollTopIfNoHash();
+	next();
+}
+
+export function feedPost( context, next ) {
+	const feedId = context.params.feed;
+	const postId = context.params.post;
+	const basePath = '/read/feeds/:feed_id/posts/:feed_item_id';
+	const fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
+
+	trackPageLoad( basePath, fullPageTitle, 'full_post' );
+
+	function closer() {
+		page.back( context.lastRoute || '/' );
+	}
+
+	context.primary = (
+		<FullPostView
 			feedId={ feedId }
 			postId={ postId }
 			onClose={ closer }
