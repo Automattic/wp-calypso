@@ -60,7 +60,7 @@ class DomainSuggestion extends React.Component {
 	}
 
 	render() {
-		const { children, extraClasses, isAdded, isFeatured } = this.props;
+		const { children, extraClasses, isAdded, isFeatured, isSignupStep } = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
