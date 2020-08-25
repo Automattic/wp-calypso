@@ -12,8 +12,32 @@ const ffmpeg = require( 'ffmpeg-static' );
 
 const E2E_DIR = path.resolve( __dirname, '../../' );
 
+// Helper to get device/display identifier (Linux)
+function getFreeDisplay() {
+	let i = 99 + Math.round( Math.random() * 100 );
+	while ( fs.existsSync( `/tmp/.X${ i }-lock` ) ) {
+		i++;
+	}
+	return i;
+}
+
 let file;
 let ffVideo;
+let ffDisplay;
+let ffVideoSize;
+
+switch ( process.platform ) {
+	case 'darwin':
+		ffDisplay = '0:none';
+		ffVideoSize = '1440x1000';
+		break;
+	case 'linux':
+		ffDisplay = `:${ getFreeDisplay() }`;
+		ffVideoSize = '1280x1024';
+		break;
+	default:
+		throw 'unsupported platform!';
+}
 
 exports.createDir = function ( dir ) {
 	dir = path.resolve( dir );
@@ -46,11 +70,11 @@ exports.startVideo = function () {
 		'-f',
 		'avfoundation',
 		'-video_size',
-		'1440x1000',
+		ffVideoSize,
 		'-r',
 		30,
 		'-i',
-		'0:none',
+		ffDisplay,
 		'-pixel_format',
 		'yuv420p',
 		'-loglevel',
