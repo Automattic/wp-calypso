@@ -98,6 +98,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 			className={ classNames( className, 'jetpack-product-card', {
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
+				'with-nudge': !! UpgradeNudge,
 			} ) }
 			data-icon={ iconSlug }
 		>

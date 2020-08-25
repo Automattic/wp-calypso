@@ -55,7 +55,7 @@ $jetpack-product-card-icon-size: 55px;
 		border-right: 1px solid var( --color-border-subtle );
 		border-radius: 5px;
 
-		.foldable-card {
+		&:not( .with-nudge ) .foldable-card {
 			border-bottom-left-radius: 5px;
 			border-bottom-right-radius: 5px;
 		}
