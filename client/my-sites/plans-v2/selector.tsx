@@ -61,6 +61,10 @@ const SelectorPage = ( {
 		}
 	};
 
+	const isInConnectFlow =
+		/jetpack\/connect\/plans/.test( window.location.href ) &&
+		/source=jetpack-connect-plans/.test( window.location.href );
+
 	return (
 		<Main className="selector__main" wideLayout>
 			{ header }
@@ -84,8 +88,13 @@ const SelectorPage = ( {
 					siteId={ siteId }
 				/>
 			</div>
-			<div className="selector__divider" />
-			<JetpackFreeCard />
+
+			{ isInConnectFlow && (
+				<>
+					<div className="selector__divider" />
+					<JetpackFreeCard />
+				</>
+			) }
 
 			<QueryProductsList />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
