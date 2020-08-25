@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -36,6 +36,12 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from 'lib/plans/constants';
+import {
+	JETPACK_ANTI_SPAM_PRODUCTS,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
+} from 'lib/products-values/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -102,19 +108,19 @@ class CurrentPlan extends Component {
 	renderThankYou() {
 		const { currentPlan, product, selectedSite } = this.props;
 
-		if ( startsWith( product, 'jetpack_backup' ) ) {
+		if ( JETPACK_BACKUP_PRODUCTS.includes( product ) ) {
 			return <BackupProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_scan' ) ) {
+		if ( JETPACK_SCAN_PRODUCTS.includes( product ) ) {
 			return <ScanProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_anti_spam' ) ) {
+		if ( JETPACK_ANTI_SPAM_PRODUCTS.includes( product ) ) {
 			return <AntiSpamProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_search' ) ) {
+		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
 			const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
 			return <SearchProductThankYou { ...{ jetpackVersion } } />;
 		}
