@@ -214,15 +214,15 @@ references:
     paths:
       - packages
       - packages-cache-restored
-  desktop-restore-webpack-css-loader-cache: &desktop-restore-webpack-css-loader-cache
-    name: Restore webpack cache-loader cache
+  desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
+    name: Restore Calypso build cache
     keys:
-      - v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
-  desktop-save-webpack-css-loader-cache: &desktop-save-webpack-css-loader-cache
-    name: Save webpack cache-loader cache
-    key: v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
+      - v6-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+  desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
+    name: Save Calypso build cache
+    key: v6-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
     paths:
-      - ~/.cache/webpack/css
+      - .cache
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
@@ -657,12 +657,9 @@ jobs:
           command: |
             # Get latest commit that modified packages directory
             echo "$(git log -n 1 --format='%h' -- packages .nvmrc yarn.lock)" > packages-hash
-
-            # Get latest commit that modified .css and related files
-            echo "$(git log -n 1 --format='%h' -- '*.css' '*.scss' '*.sass')" > webpack-css-loader-hash
       - restore_cache: *desktop-restore-yarn-cache
       - restore_cache: *desktop-restore-packages-cache
-      - restore_cache: *desktop-restore-webpack-css-loader-cache
+      - restore_cache: *desktop-restore-calypso-build-cache
       - run:
           name: Install Linux deps
           command: |
@@ -712,7 +709,7 @@ jobs:
 
             yarn run build-desktop:source
       - save_cache: *desktop-save-packages-cache
-      - save_cache: *desktop-save-webpack-css-loader-cache
+      - save_cache: *desktop-save-calypso-build-cache
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
