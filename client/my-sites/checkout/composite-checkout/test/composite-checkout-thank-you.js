@@ -174,6 +174,71 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_backup_daily' );
 	} );
 
+	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_backup_realtime' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_backup_realtime' );
+	} );
+
+	it( 'redirects to the plans page with thank-you query string if there is the non-atomic Jetpack Security plan', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			product: 'jetpack_security_daily_monthly',
+		} );
+		expect( url ).toBe(
+			'/plans/my-plan/foo.bar?thank-you=true&product=jetpack_security_daily_monthly'
+		);
+	} );
+
+	it( 'redirects to the plans page with thank-you query string if non-atomic Jetpack Security plan is in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_security_daily' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_security_daily' );
+	} );
+
+	it( 'redirects to the plans page with thank-you query string if non-atomic Jetpack Complete plan is in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_complete' );
+	} );
+
+	it( 'redirects to the plans page with thank-you query string and jetpack onboarding if there is a non-atomic legacy jetpack plan in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_premium' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
+	} );
+
 	it( 'redirects to the plans page with thank-you query string and jetpack onboarding if there is a non-atomic jetpack plan', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
