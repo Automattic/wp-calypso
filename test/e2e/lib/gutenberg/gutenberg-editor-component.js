@@ -210,6 +210,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
+	// TODO I don't quite like having those methods coupled with the block names here.
+	// we might explore moving the knowledge of block ID/name to the block class
+	// itself and passing it over to `blockDisplayInEditor`
+
 	contactFormDisplayedInEditor() {
 		return this.blockDisplayedInEditor( 'jetpack/contact-form' );
 	}

@@ -70,6 +70,7 @@ before( async function () {
 	galleryImages = times( 5, () => mediaHelper.createFile() );
 } );
 
+// Should we keep the @parallel tag here for this e2e test?
 describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
@@ -86,7 +87,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			} );
 
-			// There's the potential of simplifying the following steps further by generalizing the functions to
+			// There's the potential for simplifying the following steps further by generalizing the functions to
 			// insert and check the existance of blocks on the page. This way we could potentially loop through
 			// a list of blocks here and perhaps each block could be responsible for setting it up with dummy data.
 

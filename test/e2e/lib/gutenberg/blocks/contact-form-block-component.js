@@ -10,10 +10,6 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export class ContactFormBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
-
 	async _postInit() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
