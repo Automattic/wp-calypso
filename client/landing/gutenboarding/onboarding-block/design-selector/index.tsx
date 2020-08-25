@@ -90,7 +90,9 @@ const DesignSelector: React.FunctionComponent = () => {
 														className="design-selector__premium-badge-logo"
 														size={ 20 }
 													/>
-													<span>{ __( 'Premium' ) }</span>
+													<span className="design-selector__premium-badge-text">
+														{ __( 'Premium' ) }
+													</span>
 												</Badge>
 											</div>
 										</Tooltip>
