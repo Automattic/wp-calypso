@@ -73,6 +73,7 @@ interface Props {
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
+	stripeConnectSuccess: 'gutenberg' | null;
 }
 
 interface State {
@@ -723,6 +724,7 @@ const mapStateToProps = (
 		parentPostId,
 		creatingNewHomepage,
 		editorType = 'post',
+		stripeConnectSuccess,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -744,6 +746,7 @@ const mapStateToProps = (
 		origin: window.location.origin,
 		'environment-id': config( 'env_id' ),
 		'new-homepage': creatingNewHomepage,
+		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 	} );
 
 	// needed for loading the editor in SU sessions
