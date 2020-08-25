@@ -24,7 +24,7 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist ../../.tsc-cache/packages__onboarding*",
+		"clean": "npx rimraf dist",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
 		"prepublish": "yarn run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"

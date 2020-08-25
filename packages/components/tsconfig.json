@@ -25,8 +25,7 @@
 		"types": [],
 		"rootDir": "src",
 
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__components"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

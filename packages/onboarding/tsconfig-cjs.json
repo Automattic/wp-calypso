@@ -6,7 +6,6 @@
 		"declarationDir": null,
 		"outDir": "dist/cjs",
 		"composite": false,
-		"incremental": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__onboarding--cjs"
+		"incremental": true
 	}
 }

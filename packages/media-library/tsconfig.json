@@ -25,8 +25,7 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"lib": [ "ESNext", "DOM" ],
 
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__media-library"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

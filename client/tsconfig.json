@@ -8,7 +8,6 @@
 
 		"baseUrl": ".",
 		"rootDir": ".",
-		"tsBuildInfoFile": "../.tsc-cache/client",
 		"noEmit": false,
 		"emitDeclarationOnly": true,
 		"composite": true,
