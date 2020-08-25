@@ -29,12 +29,14 @@ export default function useCachedDomainContactDetails( updateCartLocation ) {
 	}, [ reduxDispatch ] );
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
-	if ( cachedContactDetails ) {
-		dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
-		updateCartLocation( {
-			countryCode: cachedContactDetails.countryCode ?? '',
-			postalCode: cachedContactDetails.postalCode ?? '',
-			subdivisionCode: cachedContactDetails.state ?? '',
-		} );
-	}
+	useEffect( () => {
+		if ( cachedContactDetails ) {
+			dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+			updateCartLocation( {
+				countryCode: cachedContactDetails.countryCode ?? '',
+				postalCode: cachedContactDetails.postalCode ?? '',
+				subdivisionCode: cachedContactDetails.state ?? '',
+			} );
+		}
+	}, [ cachedContactDetails, updateCartLocation ] );
 }
