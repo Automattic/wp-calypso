@@ -143,7 +143,7 @@ yarn test:js:watch
 - If there's an error connecting to the docker deamon, check that `docker-machine ls` shows a running machine named 'default', and try `docker-machine start`
 - If the default machine is already running (or the mysql connection is refused) you may need to re-run `eval $(docker-machine env)`
 - If there are missing includes or defines from Gutenberg and/or themes, check that they're installed and up-to-date. By default, `wp-env` expects to find Gutenberg next to (outside) the top level `wp-calypso` directory, as per `./apps/editing-toolkit/bin/setup-env.sh`
-- You can get a lot more information by calling `wp-env` with the `--debug=true` flag, e.g. `npx wp-env --debug=true run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'`. In particular, this flag will show you where to find the docker-machine configuration file and show you where files from your local environment are being mounted into the container images. It will also show that that first `phpunit` in this example is indicating the command should be run within the `phpunit` service defined in the Docker Compose config.
+- You can get a lot more information by calling `wp-env` with the `--debug=true` flag, e.g. `npx wp-env --debug=true run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'`. In particular, this flag will show you where to find the docker-machine configuration file and show you where files from your local environment are being mounted into the container images. It will also show that the first `phpunit` in this example is indicating the command should be run within the `phpunit` service defined in the Docker Compose config.
 
 ### Updating Snapshots
 

@@ -3,9 +3,19 @@
 This plugin creates a new sidebar for the block editor through which the users can update the styles site-wide, if the active theme has declared support. At the moment, users can set the base and headings fonts.
 
 - [How to develop and build the plugin](#how-to-develop-and-build-the-plugin)
-- [How it works and how themes can use it](#how-it-works-and-how-themes-can-use-it) - [Fallbacks for browsers without support for CSS custom properties](#fallbacks-for-browsers-without-support-for-css-custom-properties) - [How to add a "Theme Default" option to the font list](#how-to-add-a-theme-default-option-to-the-font-list) - [How to use a fallback stylesheet (experimental)](#how-to-use-a-fallback-stylesheet-experimental)
-- [Existing hooks](#existing-hooks) - [jetpack_global_styles_data_set_get_data filter](#jetpack_global_styles_data_set_get_data-filter) - [jetpack_global_styles_data_set_save_data filter](#jetpack_global_styles_data_set_save_data-filter) - [jetpack_global_styles_permission_check_additional filter](#jetpack_global_styles_permission_check_additional-filter) - [jetpack_global_styles_settings](#jetpack_global_styles_settings)
-- [FAQ](#faq) - [Which fonts are available?](#which-fonts-are-available) - [What will happen when the user changes to another theme that supports GlobalStyles?](#what-will-happen-when-the-user-changes-to-another-theme-that-supports-globalstyles) - [What will happen when the user changes to a theme that doesn't support Global Styles or the plugin is deactivated?](#what-will-happen-when-the-user-changes-to-a-theme-that-doesnt-support-global-styles-or-the-plugin-is-deactivated)
+- [How it works and how themes can use it](#how-it-works-and-how-themes-can-use-it)
+	* [Fallbacks for browsers without support for CSS custom properties](#fallbacks-for-browsers-without-support-for-css-custom-properties)
+	* [How to add a "Theme Default" option to the font list](#how-to-add-a-theme-default-option-to-the-font-list)
+	* [How to use a fallback stylesheet (experimental)](#how-to-use-a-fallback-stylesheet-experimental)
+- [Existing hooks](#existing-hooks)
+	* [jetpack_global_styles_data_set_get_data filter](#jetpack_global_styles_data_set_get_data-filter)
+	* [jetpack_global_styles_data_set_save_data filter](#jetpack_global_styles_data_set_save_data-filter)
+	* [jetpack_global_styles_permission_check_additional filter](#jetpack_global_styles_permission_check_additional-filter)
+	* [jetpack_global_styles_settings](#jetpack_global_styles_settings)
+- [FAQ](#faq)
+	* [Which fonts are available?](#which-fonts-are-available)
+	* [What will happen when the user changes to another theme that supports GlobalStyles?](#what-will-happen-when-the-user-changes-to-another-theme-that-supports-globalstyles)
+	* [What will happen when the user changes to a theme that doesn't support Global Styles or the plugin is deactivated?](#what-will-happen-when-the-user-changes-to-a-theme-that-doesnt-support-global-styles-or-the-plugin-is-deactivated)
 
 ## How to develop and build the plugin
 
