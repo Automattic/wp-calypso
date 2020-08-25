@@ -2,14 +2,7 @@
  * WordPress dependencies
  */
 import { useEffect, useState, useRef } from '@wordpress/element';
-import {
-	Placeholder,
-	Button,
-	ExternalLink,
-	withNotices,
-	Spinner,
-	Notice,
-} from '@wordpress/components';
+import { Placeholder, Button, ExternalLink, withNotices, Spinner } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -65,7 +58,7 @@ const defaultString = null;
 
 /**
  *
- * @typedef { import('react').MutableRefObject<?HTMLDivElement> } ContainerRef
+ * @typedef { import('react').MutableRefObject<?object> } ContainerRef
  */
 
 /**
@@ -79,8 +72,8 @@ const defaultString = null;
  * @property { string } clientId
  * @property { string } containerClientId
  * @property { Attributes } attributes
- * @property { (attributes: Partial<Attributes>) => void } setAttributes
- * @property { ?Element } noticeUI
+ * @property { (attributes: object<Attributes>) => void } setAttributes
+ * @property { ?object } noticeUI
  * @property { number } postId
  * @property { () => void } selectBlock
  *
@@ -104,8 +97,8 @@ function Edit( props ) {
 	 * Hook to save a new plan.
 	 *
 	 * @typedef {import('./inspector').PlanAttributes} PlanAttributes
-	 * @param {PlanAttributes} attributes
-	 * @param {(isSuccessful: boolean) => void} callback
+	 * @param {PlanAttributes} attributes - attributes for new plan
+	 * @param {(isSuccessful: boolean) => void} callback - callback function
 	 */
 	function savePlan( attributes, callback ) {
 		const path = '/wpcom/v2/memberships/product';
@@ -119,6 +112,7 @@ function Edit( props ) {
 		const newPrice = parseFloat( attributes.newPlanPrice );
 		const minPrice = minimumTransactionAmountForCurrency( attributes.newPlanCurrency );
 		const minimumPriceNote = sprintf(
+			// translators: %s: Price
 			__( 'Minimum allowed price is %s.', 'full-site-editing' ),
 			formatCurrency( minPrice, attributes.newPlanCurrency )
 		);
@@ -144,7 +138,7 @@ function Edit( props ) {
 		const fetch = { path, method, data };
 		apiFetch( fetch ).then(
 			/**
-			 * @param { any } result
+			 * @param { any } result - Result of fetch query
 			 * @returns { void }
 			 */
 			( result ) => {
@@ -167,7 +161,6 @@ function Edit( props ) {
 				}
 			},
 			/**
-			 * @param { Error } error
 			 * @returns { void }
 			 */
 			() => {
@@ -180,24 +173,27 @@ function Edit( props ) {
 	}
 
 	/**
-	 * @param {Plan} plan
+	 * @param {Plan} plan - plan whose description will be retrieved
 	 */
 	function getPlanDescription( plan ) {
 		const amount = formatCurrency( parseFloat( plan.price ), plan.currency );
 		if ( plan.interval === '1 month' ) {
+			// translators: %s: amount
 			return sprintf( __( '%s / month', 'full-site-editing' ), amount );
 		}
 		if ( plan.interval === '1 year' ) {
+			// translators: %s: amount
 			return sprintf( __( '%s / year', 'full-site-editing' ), amount );
 		}
 		if ( plan.interval === 'one-time' ) {
 			return amount;
 		}
-		return sprintf( __( '%s / %s', 'full-site-editing' ), amount, plan.interval );
+		// translators: %s: amount, plan interval
+		return sprintf( __( '%1$s / %2$s', 'full-site-editing' ), amount, plan.interval );
 	}
 
 	/**
-	 * @param {Plan} plan
+	 * @param {Plan} plan - selected plan
 	 */
 	function selectPlan( plan ) {
 		props.setAttributes( { selectedPlanId: plan.id } );
@@ -217,7 +213,7 @@ function Edit( props ) {
 		const fetch = { path, method };
 		apiFetch( fetch ).then(
 			/**
-			 * @param {any} result
+			 * @param {any} result - fetch query result
 			 */
 			( result ) => {
 				if ( ! result && typeof result !== 'object' ) {
@@ -268,7 +264,7 @@ function Edit( props ) {
 				setApiState( result.connected_account_id ? API_STATE_CONNECTED : API_STATE_NOTCONNECTED );
 			},
 			/**
-			 * @param { Error } result
+			 * @param { Error } result - fetch query error result
 			 */
 			( result ) => {
 				setConnectURL( null );
@@ -370,19 +366,20 @@ function Edit( props ) {
 /**
  * Hook that alerts clicks outside of the passed ref
  *
- * @param { ContainerRef } ref
- * @param { (clickedInside: boolean) => void } callback
+ * @param { ContainerRef } ref - container ref
+ * @param { (clickedInside: boolean) => void } callback - callback function
  */
 function useOutsideAlerter( ref, callback ) {
 	/**
 	 * Alert if clicked on outside of element
 	 *
-	 * @param {MouseEvent} event
+	 * @param {object} event - click event
 	 */
 	function handleClickOutside( event ) {
 		if (
 			ref.current &&
 			event.target &&
+			// eslint-disable-next-line no-undef
 			event.target instanceof Node &&
 			! ref.current.contains( event.target )
 		) {
@@ -402,8 +399,8 @@ function useOutsideAlerter( ref, callback ) {
 	} );
 }
 /**
- * @param { Props } props
- * @param { string } message
+ * @param { Props } props - error properties
+ * @param { string } message - error message
  * @returns { void }
  */
 function onError( props, message ) {
@@ -413,8 +410,8 @@ function onError( props, message ) {
 }
 
 /**
- * @param { Props } props
- * @param { string } message
+ * @param { Props } props - success properties
+ * @param { string } message - success message
  * @returns { void }
  */
 function onSuccess( props, message ) {
@@ -424,8 +421,8 @@ function onSuccess( props, message ) {
 }
 
 /**
- * @param { Props } props
- * @param { string } connectURL
+ * @param { Props } props - properties
+ * @param { string } connectURL - Stripe connect URL
  * @returns { null | string } URL
  */
 function getConnectUrl( props, connectURL ) {
@@ -443,7 +440,7 @@ function getConnectUrl( props, connectURL ) {
 	try {
 		const state = getQueryArg( connectURL, 'state' );
 		if ( typeof state === 'string' ) {
-			decodedState = JSON.parse( atob( state ) );
+			decodedState = JSON.parse( window.atob( state ) );
 		}
 	} catch ( err ) {
 		if ( process.env.NODE_ENV !== 'production' ) {
@@ -454,7 +451,7 @@ function getConnectUrl( props, connectURL ) {
 
 	decodedState.from_editor_post_id = postId;
 
-	return addQueryArgs( connectURL, { state: btoa( JSON.stringify( decodedState ) ) } );
+	return addQueryArgs( connectURL, { state: window.btoa( JSON.stringify( decodedState ) ) } );
 }
 
 export default compose( [
