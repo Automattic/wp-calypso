@@ -89,9 +89,6 @@ export default async function () {
 		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
 		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 
-		// Old recommendations page
-		page( '/recommendations', '/read/search' );
-
 		// Old Freshly Pressed
 		page( '/read/fresh', '/discover' );
 	}
