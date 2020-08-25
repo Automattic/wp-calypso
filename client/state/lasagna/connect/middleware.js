@@ -10,6 +10,10 @@ let socketConnected = false;
 let socketConnecting = false;
 
 export default ( store ) => ( next ) => async ( action ) => {
+	// immediately pass the action onward to finish the typically
+	// sync expectations of redux mw -> reducers execution
+	const mwResult = next( action );
+
 	switch ( action.type ) {
 		case SECTION_SET: {
 			const { section } = action;
@@ -31,5 +35,5 @@ export default ( store ) => ( next ) => async ( action ) => {
 		}
 	}
 
-	return next( action );
+	return mwResult;
 };
