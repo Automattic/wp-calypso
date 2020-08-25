@@ -8,9 +8,6 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 
-//TODO: TEST_PENDING
-//Can the attribute domainsStepHeader, domainsStepSubheader completely replaced with the new text? since
-//these headers cannot be seen outside the signup flow.
 const getSiteTypePropertyDefaults = ( propertyKey ) =>
 	get(
 		{
