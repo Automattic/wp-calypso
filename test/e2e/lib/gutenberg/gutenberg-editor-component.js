@@ -189,12 +189,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
-	async getBlocksCode() {
-		const codeEditor = await this.switchToCodeView();
-		const val = await codeEditor.getAttribute( 'value' );
-		return val;
-	}
-
 	async copyBlocksCode() {
 		const codeEditor = await this.switchToCodeView();
 		return this.driver.executeScript(
@@ -205,63 +199,43 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async pasteBlocksCode() {
 		const codeEditor = await this.switchToCodeView();
+		// Might not work in a Mac?
 		return codeEditor.sendKeys( Key.CONTROL + 'v' );
 	}
 
-	async setBlocksCode( code ) {
-		const codeEditor = await this.switchToCodeView();
-		//this.driver.executeScript( 'arguments[0].value = arguments[1];', codeEditor, code );
-		return codeEditor.sendKeys( code );
-	}
-
-	// TODO Generalize to blockDisplayedInEditor(selector)?
-	contactFormDisplayedInEditor() {
+	blockDisplayedInEditor( dataTypeSelectorVal ) {
 		return driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.css( '[data-type="jetpack/contact-form"]' )
+			By.css( `[data-type="${ dataTypeSelectorVal }"]` )
 		);
+	}
+
+	contactFormDisplayedInEditor() {
+		return this.blockDisplayedInEditor( 'jetpack/contact-form' );
 	}
 
 	layoutGridDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="jetpack/layout-grid"]' )
-		);
+		return this.blockDisplayedInEditor( 'jetpack/layout-grid' );
 	}
 
 	youTubeDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="core-embed/youtube"]' )
-		);
+		return this.blockDisplayedInEditor( 'core-embed/youtube' );
 	}
 
 	blogPostsDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="a8c/blog-posts"]' )
-		);
+		return this.blockDisplayedInEditor( 'a8c/blog-posts' );
 	}
 
 	subscriptionsDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="jetpack/subscriptions"]' )
-		);
+		return this.blockDisplayedInEditor( 'jetpack/subscriptions' );
 	}
 
 	tiledGalleryDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="jetpack/tiled-gallery"]' )
-		);
+		return this.blockDisplayedInEditor( 'jetpack/tiled-gallery' );
 	}
 
 	contactInfoDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="jetpack/contact-info"]' )
-		);
+		return this.blockDisplayedInEditor( 'jetpack/contact-info' );
 	}
 
 	slideshowDisplayedInEditor() {
@@ -292,8 +266,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
-	// Not taking sub-blocks into account right now
-	// jetpack/layout-grid -- TODO remember to test the addition of subblocks (regression test later)
+	// jetpack/layout-grid
 	async insertLayoutGrid() {
 		const blockID = await this.addBlock( 'Layout Grid' );
 		return LayoutGridBlockComponent.Expect( this.driver, blockID );

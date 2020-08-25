@@ -5,6 +5,8 @@ import assert from 'assert';
 import config from 'config';
 import { times } from 'lodash';
 import { By } from 'selenium-webdriver';
+import { promises as fs } from 'fs';
+import { join } from 'path';
 
 /**
  * Internal dependencies
@@ -32,6 +34,9 @@ let galleryImages;
 async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
 	const now = Date.now() / 1000;
 
+	const siteSshotDir = join( mediaHelper.screenShotsDir(), siteName );
+	await fs.access( siteSshotDir ).catch( () => fs.mkdir( siteSshotDir ) );
+
 	for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
 		await scrollCb( i );
 
@@ -39,7 +44,11 @@ async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb )
 			return driver
 				.getCurrentUrl()
 				.then( ( url ) =>
-					mediaHelper.writeScreenshot( data, () => `${ siteName }-${ i }-${ now }.png`, { url } )
+					mediaHelper.writeScreenshot(
+						data,
+						() => join( siteName, `${ siteName }-${ i }-${ now }.png` ),
+						{ url }
+					)
 				);
 		} );
 	}
@@ -199,7 +208,6 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					By.css( 'div.interface-interface-skeleton__content' )
 				);
 
-				// TODO Abstract this in the editor component
 				const editorViewportScrollHeight = await driver.executeScript(
 					'return arguments[0].scrollHeight',
 					editorViewport
@@ -246,7 +254,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				return await loginFlow.loginAndStartNewPost( `${ siteName }edge.wordpress.com`, true );
 			} );
 
-			step( 'Test blocks markup are loaded fine from edge', async function () {
+			step( 'Test blocks are loaded fine from non-edge blocks markup', async function () {
 				await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
 				await gEditorComponent.switchToBlockEditor();
 
