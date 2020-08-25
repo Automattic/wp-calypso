@@ -46,7 +46,6 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				//TODO: TEST_PENDING
 				if ( isSignupStep ) {
 					if ( selectedPaidPlanInSwapFlow ) {
 						message = translate(
@@ -92,9 +91,6 @@ class DomainProductPrice extends React.Component {
 			return;
 		}
 
-		//TODO: TEST_PENDING
-		// This function can only be reached inside a sign up flow based on current implementation of site rule
-		// Hence the else might not be possible to be tested
 		const priceText = this.props.isSignupStep
 			? this.props.translate( 'Renews at %(cost)s / year', {
 					args: { cost: this.props.price },
@@ -107,10 +103,9 @@ class DomainProductPrice extends React.Component {
 		return <div className="domain-product-price__price">{ priceText }</div>;
 	}
 
-	//TODO: TEST_PENDING , can this flow be reached outside of signup?
 	renderFreeWithPlan() {
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates': this.props.isSignupStep,
+			'domain-product-price__domain-step-signup-flow': this.props.isSignupStep,
 		} );
 
 		return (
@@ -121,12 +116,11 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
-	//TODO: TEST_PENDING , can this flow be reached outside of signup?
 	renderFree() {
 		const { isSignupStep, translate } = this.props;
 
 		const className = classnames( 'domain-product-price', {
-			'domain-product-price__domain-step-copy-updates': isSignupStep,
+			'domain-product-price__domain-step-signup-flow': isSignupStep,
 		} );
 
 		const productPriceClassName = classnames( 'domain-product-price__price', {
@@ -142,12 +136,11 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
-	//TODO: TEST_PENDING , can this flow be reached outside of signup?
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
 		const className = classnames( 'domain-product-price', 'is-free-domain', {
-			'domain-product-price__domain-step-copy-updates': this.props.isSignupStep,
+			'domain-product-price__domain-step-signup-flow': this.props.isSignupStep,
 		} );
 
 		return (
@@ -163,7 +156,6 @@ class DomainProductPrice extends React.Component {
 		);
 	}
 
-	//VERIFIED_WORKING
 	renderPrice() {
 		const { salePrice, isSignupStep, price, translate } = this.props;
 		if ( salePrice ) {
@@ -172,7 +164,7 @@ class DomainProductPrice extends React.Component {
 
 		const className = classnames( 'domain-product-price', {
 			'is-free-domain': isSignupStep,
-			'domain-product-price__domain-step-copy-updates': isSignupStep,
+			'domain-product-price__domain-step-signup-flow': isSignupStep,
 		} );
 
 		const productPriceClassName = isSignupStep ? '' : 'domain-product-price__price';

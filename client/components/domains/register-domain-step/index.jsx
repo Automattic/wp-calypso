@@ -398,7 +398,6 @@ class RegisterDomainStep extends React.Component {
 
 	getPlaceholderText() {
 		const { isSignupStep, translate } = this.props;
-		//VERIFIED_WORKING
 		return isSignupStep
 			? translate( 'Type the domain you want here' )
 			: translate( 'Enter a name or keyword' );
@@ -1345,13 +1344,10 @@ class RegisterDomainStep extends React.Component {
 					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 				>
-					{
-						//TODO: TEST_PENDING
-						this.props.isSignupStep &&
-							hasResults &&
-							! shouldHideFreeDomainExplainer &&
-							this.renderFreeDomainExplainer()
-					}
+					{ this.props.isSignupStep &&
+						hasResults &&
+						! shouldHideFreeDomainExplainer &&
+						this.renderFreeDomainExplainer() }
 					{ showTldFilterBar && (
 						<TldFilterBar
 							availableTlds={ this.state.availableTlds }
@@ -1496,6 +1492,7 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
 			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
+			showSkipButton: true,
 		};
 	},
 	{

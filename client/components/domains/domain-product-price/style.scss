@@ -15,12 +15,12 @@
 			align-items: flex-start;
 		}
 
-		&.domain-product-price__domain-step-copy-updates {
+		&.domain-product-price__domain-step-signup-flow {
 			align-items: flex-start;
 		}
 	}
 
-	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
+	.is-section-signup &:not( .domain-product-price__domain-step-signup-flow ) {
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-left: 1em;
 			padding-right: 2em;

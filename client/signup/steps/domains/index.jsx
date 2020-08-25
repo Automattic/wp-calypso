@@ -57,8 +57,6 @@ import getSitesItems from 'state/selectors/get-sites-items';
  */
 import './style.scss';
 
-//TODO: TEST_PENDING can the isSignUp flag be removed here completely since
-// this component cannot be reached outside the signup flow?
 class DomainsStep extends React.Component {
 	static propTypes = {
 		forceDesignType: PropTypes.string,
@@ -203,11 +201,8 @@ class DomainsStep extends React.Component {
 		return this.getThemeSlug() ? true : false;
 	}
 
-	//TODO: TEST_PENDING
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const hideFreePlanTracksProp = this.props.isSignupStep()
-			? { should_hide_free_plan: shouldHideFreePlan }
-			: {};
+		const hideFreePlanTracksProp = { should_hide_free_plan: shouldHideFreePlan };
 
 		const tracksProperties = Object.assign(
 			{
@@ -232,9 +227,8 @@ class DomainsStep extends React.Component {
 		} );
 	};
 
-	//TODO: TEST_PENDING
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = this.props.isSignupStep ? { shouldHideFreePlan } : {};
+		const shouldHideFreePlanItem = { shouldHideFreePlan };
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -551,18 +545,14 @@ class DomainsStep extends React.Component {
 		);
 	};
 
-	//TODO: TEST_PENDING
-	//is SubHeaderText is shown only in signup step?
 	getSubHeaderText() {
-		const { flowName, isAllDomains, siteType, translate, isSignupStep } = this.props;
+		const { flowName, isAllDomains, siteType, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		const subHeaderPropertyName = isSignupStep
-			? 'signUpFlowDomainsStepSubheader'
-			: 'domainsStepSubheader';
+		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
 			includes( [ 'onboarding', 'ecommerce-onboarding' ], flowName ) &&
@@ -577,16 +567,14 @@ class DomainsStep extends React.Component {
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
-	//TODO: TEST_PENDING
-	//is headerText shown only in the signup step?
 	getHeaderText() {
-		const { headerText, isAllDomains, siteType, translate, isSignupStep } = this.props;
+		const { headerText, isAllDomains, siteType, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
 		}
 
-		const headerPropertyName = isSignupStep ? 'signUpFlowDomainsStepHeader' : 'domainsStepHeader';
+		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
 		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
 	}
@@ -625,12 +613,11 @@ class DomainsStep extends React.Component {
 			);
 		}
 
-		const stepContentClassName = classNames( 'domains__step-content', {
-			'domains__step-content-domain-step-test': this.props.isSignupStep,
-		} );
-
 		return (
-			<div key={ this.props.step + this.props.stepSectionName } className={ stepContentClassName }>
+			<div
+				key={ this.props.step + this.props.stepSectionName }
+				className="domains__step-content domains__step-content-domain-step-test"
+			>
 				{ content }
 			</div>
 		);
