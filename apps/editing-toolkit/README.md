@@ -24,7 +24,7 @@ The following items will likely not change:
 - `package.json`: The package file for the editing toolkit monorepo app.
 - `.wp-env.json`: Local environment configuration for the editing toolkit plugin.
 - `bin/`: Scripts to assis with your local developmenet environment and testing.
-- `full-site-editing-plugin/`: The root of the editing toolkit plugin.
+- `editing-toolkit-plugin/`: The root of the editing toolkit plugin.
   - `full-site-editing-plugin.php`: All initialization code should go here.
   - `block-patterns/`: Additional block patterns for Gutenberg.
   - `common/`: General functionality which doesn't fit a specific feature and is always executed.
@@ -56,7 +56,7 @@ import 'a8c-fse-common-data-stores';
 
 ## Build System
 
-_Note: `cd` to `apps/full-site-editing` before running these commands_
+_Note: `cd` to `apps/editing-toolkit` before running these commands_
 
 - `yarn dev`<br>
   Compiles the plugins and watches for changes.
@@ -68,11 +68,11 @@ Both these scripts will also move all source and PHP files into `/dist` in their
 
 The entry point is:
 
-- **Plugin**: `/full-site-editing-plugin/{{plugin-directory}}/index.js`
+- **Plugin**: `/editing-toolkit-plugin/{{plugin-directory}}/index.js`
 
 The output is:
 
-- **Plugin**: `/full-site-editing-plugin/{{plugin-directory}}/dist`
+- **Plugin**: `/editing-toolkit-plugin/{{plugin-directory}}/dist`
 
 ### Building Individual _Plugins_
 
@@ -91,13 +91,13 @@ For a simple Docker experience, use wp-env.
 
 ```sh
 # From wp-calypso root:
-./apps/full-site-editing/bin/setup-env.sh
+./apps/editing-toolkit/bin/setup-env.sh
 ```
 
 That script will set up the correct dependencies and install wp-env. Note that this includes `gutenberg` and `themes` directories installed next to (i.e. outside) the root calypso directory. Once the dependencies are in the correct location, make sure that they are built, and you can use `wp-env` commands to control the environment:
 
 ```sh
-# All commands should be run from apps/full-site-editing,
+# All commands should be run from apps/editing-toolkit,
 # which is where the .wp-env.json config file is located.
 
 wp-env start # Starts the environment on localhost:4013
@@ -114,17 +114,17 @@ Build (or `dev`) and symlink the plugin into a local WordPress install.
 E.g.
 
 ```sh
-cd apps/full-site-editing
+cd apps/editing-toolkit
 yarn build
 
-ln -s ~/Dev/wp-calypso/apps/full-site-editing/full-site-editing-plugin/ ~/Dev/wordpress/wp-content/plugins/full-site-editing-plugin
+ln -s ~/Dev/wp-calypso/apps/editing-toolkit/editing-toolkit-plugin/ ~/Dev/wordpress/wp-content/plugins/editing-toolkit-plugin
 ```
 
 ## Testing
 
 The Plugin contains a suite of unit / integration tests powered by `@wordpress/scripts`.
 
-_Run these commands from the apps/full-site-editing directory_
+_Run these commands from the apps/editing-toolkit directory_
 
 ```shell
 yarn test:js
@@ -142,8 +142,8 @@ yarn test:js:watch
 - Make sure you're using `npx <command>` to favour the local tools over global installs. There's no harm in running `npx some-command-not-in-node_modules/.bin`
 - If there's an error connecting to the docker deamon, check that `docker-machine ls` shows a running machine named 'default', and try `docker-machine start`
 - If the default machine is already running (or the mysql connection is refused) you may need to re-run `eval $(docker-machine env)`
-- If there are missing includes or defines from Gutenberg and/or themes, check that they're installed and up-to-date. By default, `wp-env` expects to find Gutenberg next to (outside) the top level `wp-calypso` directory, as per `./apps/full-site-editing/bin/setup-env.sh`
-- You can get a lot more information by calling `wp-env` with the `--debug=true` flag, e.g. `npx wp-env --debug=true run phpunit 'phpunit -c /var/www/html/wp-content/plugins/full-site-editing-plugin/phpunit.xml.dist'`. In particular, this flag will show you where to find the docker-machine configuration file and show you where files from your local environment are being mounted into the container images. It will also show that that first `phpunit` in this example is indicating the command should be run within the `phpunit` service defined in the Docker Compose config.
+- If there are missing includes or defines from Gutenberg and/or themes, check that they're installed and up-to-date. By default, `wp-env` expects to find Gutenberg next to (outside) the top level `wp-calypso` directory, as per `./apps/editing-toolkit/bin/setup-env.sh`
+- You can get a lot more information by calling `wp-env` with the `--debug=true` flag, e.g. `npx wp-env --debug=true run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'`. In particular, this flag will show you where to find the docker-machine configuration file and show you where files from your local environment are being mounted into the container images. It will also show that the first `phpunit` in this example is indicating the command should be run within the `phpunit` service defined in the Docker Compose config.
 
 ### Updating Snapshots
 

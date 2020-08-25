@@ -55,11 +55,11 @@ function getWebpackConfig( env = {}, argv = {} ) {
 		}
 		packageName = sourcePackage;
 
-		accumulator[ scriptName ] = path.join( __dirname, 'full-site-editing-plugin', source );
+		accumulator[ scriptName ] = path.join( __dirname, 'editing-toolkit-plugin', source );
 		return accumulator;
 	}, {} );
 
-	const outputPath = path.join( __dirname, 'full-site-editing-plugin', packageName, 'dist' );
+	const outputPath = path.join( __dirname, 'editing-toolkit-plugin', packageName, 'dist' );
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 

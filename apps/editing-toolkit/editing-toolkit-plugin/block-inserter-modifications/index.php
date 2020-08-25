@@ -23,7 +23,7 @@ function enqueue_script( $filename, $in_footer = false ) {
 	if ( ! file_exists( $asset_path ) ) {
 		throw new RuntimeException(
 			'Asset file not found: ' . $asset_path . '. ' .
-			'Please see https://github.com/Automattic/wp-calypso/blob/HEAD/apps/full-site-editing/README.md#build-system ' .
+			'Please see https://github.com/Automattic/wp-calypso/blob/HEAD/apps/editing-toolkit/README.md#build-system ' .
 			'for more information about the Full Site Editing build system.'
 		);
 	}

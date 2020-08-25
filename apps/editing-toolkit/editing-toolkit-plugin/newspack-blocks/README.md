@@ -33,7 +33,7 @@ You can see that `synced-newspack-blocks` is being synced with the Newspack Bloc
 
 Once your changes land on the Newspack side, coordinate with the team (over issues/PRs) to [make a new release](https://github.com/Automattic/newspack-blocks/releases) and once you have the release ID, you can pull the code into here.
 
-While being in `apps/full-site-editing/` directory, you can run:
+While being in `apps/editing-toolkit/` directory, you can run:
 
 ```
 yarn run sync:newspack-blocks --release=1.0.0-alpha.17

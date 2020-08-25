@@ -10,5 +10,5 @@
 		</properties>
 	</rule>
 
-	<file>../full-site-editing-plugin/newspack-blocks/synced-newspack-blocks</file>
+	<file>../editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</file>
 </ruleset>

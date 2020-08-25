@@ -77,11 +77,11 @@
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # FSE (Full Site Editing)
-/apps/full-site-editing/full-site-editing-plugin/site-editor @Automattic/cylon
-/apps/full-site-editing/full-site-editing-plugin/dotcom-fse @Automattic/cylon
-/apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
+/apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
+/apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
+/apps/editing-toolkit/editing-toolkit-plugin/posts-list-block @Automattic/ajax
+/apps/editing-toolkit/editing-toolkit-plugin/global-styles @Automattic/cylon @nosolosw
 
 # FSE Workflow Files
-/.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
+/.github/workflows/editing-toolkit-plugin.yml @Automattic/cylon
 /.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon

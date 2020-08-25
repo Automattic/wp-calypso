@@ -50,7 +50,7 @@ nvm use
 yarn
 
 # Where the wp-env.json file lives:
-cd apps/full-site-editing
+cd apps/editing-toolkit
 yarn build
 
 echo -e "\nWould you like to use the development version of wp-env? You can checkout the correct Gutenberg branch and build it before continuing."

@@ -2,7 +2,7 @@
  * Test configuration for the FSE plugin.
  *
  * Will match files such that:
- *   1. Must be in the apps/full-site-editing/ directory
+ *   1. Must be in the apps/editing-toolkit/ directory
  *   2. Must have .test.EXT at the end of the filename
  *   3. EXT (above) must be one of js, ts, jsx, or tsx.
  *
@@ -18,8 +18,8 @@
 const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );
 const path = require( 'path' );
 
-// Basically, CWD, so 'apps/full-site-editing'.
-// Without this, it tries to use 'apps/full-site-editing/bin'
+// Basically, CWD, so 'apps/editing-toolkit'.
+// Without this, it tries to use 'apps/editing-toolkit/bin'
 const pluginRoot = path.resolve( './' );
 
 const config = {
@@ -29,7 +29,7 @@ const config = {
 	transform: { '^.+\\.[jt]sx?$': path.join( __dirname, 'babel-transform' ) },
 	setupFilesAfterEnv: [
 		...( defaults.setupFilesAfterEnv || [] ), // extend if present
-		'<rootDir>/apps/full-site-editing/bin/js-unit-setup',
+		'<rootDir>/apps/editing-toolkit/bin/js-unit-setup',
 	],
 };
 

@@ -16,7 +16,7 @@ module.exports = {
 	ignorePatterns: [ '**/dist/*' ],
 	overrides: [
 		{
-			files: [ './**/?(*.)spec.[jt]s?(x)', './full-site-editing-plugin/e2e-test-helpers/**' ],
+			files: [ './**/?(*.)spec.[jt]s?(x)', './editing-toolkit-plugin/e2e-test-helpers/**' ],
 			globals: {
 				page: 'readonly',
 			},
