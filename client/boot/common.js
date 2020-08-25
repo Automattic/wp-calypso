@@ -378,12 +378,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		require( 'lib/desktop' ).default.init();
 	}
 
-	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
-		asyncRequire( 'lib/rubberband-scroll-disable', ( disableRubberbandScroll ) => {
-			disableRubberbandScroll( document.body );
-		} );
-	}
-
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
