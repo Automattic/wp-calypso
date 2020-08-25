@@ -119,7 +119,6 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"republicize": true,
-		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/monitor/wp-note": true,

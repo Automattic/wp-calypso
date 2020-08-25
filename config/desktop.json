@@ -89,7 +89,6 @@
 		"reader/full-errors": false,
 		"reader/user-mention-suggestions": false,
 		"republicize": true,
-		"rubberband-scroll-disable": false,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,
 		"sign-in-with-apple": false,
