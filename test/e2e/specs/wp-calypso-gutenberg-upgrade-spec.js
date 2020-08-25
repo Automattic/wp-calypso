@@ -54,8 +54,15 @@ async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb )
 	}
 }
 
+function testBlockIsDisplayed( blockName, isItDisplayed ) {
+	assert.strictEqual(
+		isItDisplayed,
+		true,
+		`The block "${ blockName }" was not found in the editor`
+	);
+}
+
 before( async function () {
-	console.log( 'BEFORE CALLED!' );
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 
@@ -79,16 +86,18 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			} );
 
+			// There's the potential of simplifying the following steps further by generalizing the functions to
+			// insert and check the existance of blocks on the page. This way we could potentially loop through
+			// a list of blocks here and perhaps each block could be responsible for setting it up with dummy data.
+
 			step( 'jetpack/tiled-gallery', async function () {
 				// jetpack/tiled-gallery
 				const tiledGallery = await gEditorComponent.insertTiledGallery();
 				await tiledGallery.uploadImages( galleryImages );
 
-				const tiledGalleryDisplayedInEditor = await gEditorComponent.tiledGalleryDisplayedInEditor();
-				assert.strictEqual(
-					tiledGalleryDisplayedInEditor,
-					true,
-					'The tiled gallery block is not displayed in the editor'
+				testBlockIsDisplayed(
+					'jetpack/tiled-gallery',
+					await gEditorComponent.tiledGalleryDisplayedInEditor()
 				);
 			} );
 
@@ -98,101 +107,90 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 
 				await gEditorComponent.insertContactForm( contactEmail, subject );
 
-				const contactFormDisplayedInEditor = await gEditorComponent.contactFormDisplayedInEditor();
-				assert.strictEqual(
-					contactFormDisplayedInEditor,
-					true,
-					'The contact form is not displayed in the editor'
+				testBlockIsDisplayed(
+					'jetpack/contact-form',
+					await gEditorComponent.contactFormDisplayedInEditor()
 				);
 			} );
 
 			step( 'jetpack/layout-grid', async function () {
 				await gEditorComponent.insertLayoutGrid();
-				const layoutGridDisplayedInEditor = await gEditorComponent.layoutGridDisplayedInEditor();
-				assert.strictEqual(
-					layoutGridDisplayedInEditor,
-					true,
-					'The layout grid is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'jetpack/layout-grid',
+					await gEditorComponent.layoutGridDisplayedInEditor()
 				);
 			} );
 
 			step( 'core-embed/youtube', async function () {
 				await gEditorComponent.insertYouTube();
-				const youTubeDisplayedInEditor = await gEditorComponent.youTubeDisplayedInEditor();
-				assert.strictEqual(
-					youTubeDisplayedInEditor,
-					true,
-					'The youtube embed is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'core-embed/youtube',
+					await gEditorComponent.youTubeDisplayedInEditor()
 				);
 			} );
 
 			step( 'a8c/blog-posts', async function () {
 				await gEditorComponent.insertBlogPosts();
-				const blogPostsDisplayedInEditor = await gEditorComponent.blogPostsDisplayedInEditor();
-				assert.strictEqual(
-					blogPostsDisplayedInEditor,
-					true,
-					'The blog posts block is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'a8c/blog-posts',
+					await gEditorComponent.blogPostsDisplayedInEditor()
 				);
 			} );
 
 			step( 'jetpack/subscriptions', async function () {
 				await gEditorComponent.insertSubscriptions();
-				const subscriptionsDisplayedInEditor = await gEditorComponent.subscriptionsDisplayedInEditor();
-				assert.strictEqual(
-					subscriptionsDisplayedInEditor,
-					true,
-					'The subscriptions block is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'jetpack/subscriptions',
+					await gEditorComponent.subscriptionsDisplayedInEditor()
 				);
 			} );
 
 			step( 'jetpack/slideshow', async function () {
 				await gEditorComponent.insertSlideshow();
-				const slideshowDisplayedInEditor = await gEditorComponent.slideshowDisplayedInEditor();
-				assert.strictEqual(
-					slideshowDisplayedInEditor,
-					true,
-					'The slideshow block is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'jetpack/slideshow',
+					await gEditorComponent.slideshowDisplayedInEditor()
 				);
 			} );
 
 			step( 'jetpack/rating-star', async function () {
 				await gEditorComponent.insertRatingStar();
-				const ratingStarDisplayedInEditor = await gEditorComponent.ratingStarDisplayedInEditor();
-				assert.strictEqual(
-					ratingStarDisplayedInEditor,
-					true,
-					'The rating star block is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'jetpack/rating-star',
+					await gEditorComponent.ratingStarDisplayedInEditor()
 				);
 			} );
 
 			step( 'coblocks/dynamic-separator', async function () {
 				await gEditorComponent.insertDynamicSeparator();
-				const dynamicSeparatorDisplayedInEditor = await gEditorComponent.dynamicSeparatorDisplayedInEditor();
-				assert.strictEqual(
-					dynamicSeparatorDisplayedInEditor,
-					true,
-					'The dynamic separator block is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'jetpack/rating-star',
+					await gEditorComponent.dynamicSeparatorDisplayedInEditor()
 				);
 			} );
 
 			step( 'coblocks/gallery-masonry', async function () {
 				await gEditorComponent.insertGalleryMasonry();
-				const galleryMasonryDisplayedInEditor = await gEditorComponent.galleryMasonryDisplayedInEditor();
-				assert.strictEqual(
-					galleryMasonryDisplayedInEditor,
-					true,
-					'The gallery masonry block is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'coblocks/gallery-masonry',
+					await gEditorComponent.galleryMasonryDisplayedInEditor()
 				);
 			} );
 
 			step( 'jetpack/contact-info', async function () {
 				await gEditorComponent.insertContactInfo();
-				const contactInfoDisplayedInEditor = await gEditorComponent.contactInfoDisplayedInEditor();
-				assert.strictEqual(
-					contactInfoDisplayedInEditor,
-					true,
-					'The contact info block is not displayed in the editor'
+
+				testBlockIsDisplayed(
+					'coblocks/contact-info',
+					await gEditorComponent.contactInfoDisplayedInEditor()
 				);
 			} );
 
