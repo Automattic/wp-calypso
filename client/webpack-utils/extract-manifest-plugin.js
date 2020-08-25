@@ -41,36 +41,54 @@ class ExtractManifestPlugin {
 			//		window.__WEBPACK_MANIFEST.set('chunkhash', (chunkId) => {1:'abcd1234'}[chunkId]);
 			//
 			// So when webpack calls `jsonpScriptSrc(1)` it gets `my-name.abcd1234.js`
-			compilation.mainTemplate.hooks.assetPath.tap( PLUGIN_NAME, ( filenameExpression, data ) => {
-				// When there is no `hashWithLength`, this hook has been called to generate the file name of a chunk.
-				// Return whatever Webpack generates unmodified.
-				if ( ! data.hashWithLength || ! ( data.chunk && data.chunk.hashWithLength ) ) {
-					return filenameExpression;
-				}
-
-				// Capture the quote to make sure we are using the right one when concatenating code.
-				const [ , quote = '"' ] = filenameExpression.match( quoteRegex );
-
-				return filenameExpression.replace( variableRegex, function ( match, variable ) {
-					// If the variable has been prcoessed (i.e. is already in the manifest), dont' try to get the
-					// value again.
-					if ( ! variablesProcessed.has( variable ) ) {
-						// Call webpack again to generate the chunk map for that specific variable.
-						const nameExpression = compilation.mainTemplate.getAssetPath( `"[${ variable }]"`, {
-							chunk: data.chunk,
-						} );
-						// `nameExpression` is an expression that assumes `chunkId` (like `({1:'chunk1', 2:'chunk2'}[chunkId])`).
-						// Transform it to a function and store it in the manifest.
-						manifestContent.push(
-							`${ globalManifest }.set('${ variable }', function(chunkId){return ${ nameExpression };};`
-						);
-						variablesProcessed.add( variable );
+			compilation.mainTemplate.hooks.assetPath.tap(
+				PLUGIN_NAME,
+				( filenameExpression, options, assetInfo ) => {
+					// When there is no `chunk.hashWithLength`, this hook has been called to generate the file name of a chunk.
+					// Return whatever Webpack generates unmodified.
+					if (
+						options.skipExtractManifestPlugin ||
+						! ( options.chunk && options.chunk.hashWithLength )
+					) {
+						return filenameExpression;
 					}
 
-					// Create an expression that calls the generated manifest function with the chunkId
-					return `${ quote }+${ globalManifest }.get('${ variable }')(chunkId)+${ quote }`;
-				} );
-			} );
+					// Capture the quote to make sure we are using the right one when concatenating code.
+					const [ , quote = '"' ] = filenameExpression.match( quoteRegex );
+
+					return filenameExpression.replace( variableRegex, function ( match, variable ) {
+						// If the variable has been prcoessed (i.e. is already in the manifest), dont' try to get the
+						// value again.
+						if ( ! variablesProcessed.has( variable ) ) {
+							// Call webpack again to generate the chunk map for that specific variable.
+							let nameExpression;
+							try {
+								nameExpression = compilation.mainTemplate.getAssetPath(
+									`"[${ variable }]"`,
+									{
+										...options,
+										// Avoid infinite loops
+										skipExtractManifestPlugin: true,
+									},
+									assetInfo
+								);
+							} catch {
+								// Error trying to get Webpack to give us the replacement map. Return the original string
+								// without any replacement and let wepback continue doing its work.
+								return match;
+							}
+							// `nameExpression` is an expression that assumes `chunkId` (like `({1:'chunk1', 2:'chunk2'}[chunkId])`).
+							// Transform it to a function and store it in the manifest.
+							manifestContent.push(
+								`${ globalManifest }.set('${ variable }', function(chunkId){return ${ nameExpression };};`
+							);
+							variablesProcessed.add( variable );
+						}
+						// Create an expression that calls the generated manifest function with the chunkId
+						return `${ quote }+${ globalManifest }.get('${ variable }')(chunkId)+${ quote }`;
+					} );
+				}
+			);
 
 			// When generating the files for the `runtime` chunk, add a second file with the content of the manifest. This will reuse the filename
 			// template and hash for both files (eg: it will generate `runtime.<hash>.js` and `manifest.<hash>.js` and both <hash> will be the same).
