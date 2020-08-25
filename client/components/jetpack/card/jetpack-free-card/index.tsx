@@ -2,8 +2,14 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
+
+/**
+ * Internal dependencies
+ */
+import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 
 /**
  * Style dependencies
@@ -12,6 +18,7 @@ import './style.scss';
 
 const JetpackFreeCard: FunctionComponent = () => {
 	const translate = useTranslate();
+	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
 
 	return (
 		<div className="jetpack-free-card">
@@ -29,7 +36,7 @@ const JetpackFreeCard: FunctionComponent = () => {
 						}
 					) }
 				</p>
-				<Button>{ translate( 'Start for free' ) }</Button>
+				<Button href={ wpAdminUrl }>{ translate( 'Start for free' ) }</Button>
 			</div>
 		</div>
 	);

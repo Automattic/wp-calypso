@@ -20,13 +20,13 @@ import QueryJetpackProductInstallStatus from 'components/data/query-jetpack-prod
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 // eslint-disable-next-line no-restricted-imports
-import { format as formatUrl, parse as parseUrl } from 'url';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, getCustomizerUrl, getSiteProducts } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/guided-tours/actions';
 import { URL } from 'types';
 import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
 import { isJetpackAntiSpam } from 'lib/products-values';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
@@ -342,20 +342,12 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 }
 
 function mapStateToProps( state ) {
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
 	const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
 
 	// Link to "My Plan" page in Jetpack
-	let wpAdminUrl = get( site, 'options.admin_url' );
-	wpAdminUrl = wpAdminUrl
-		? formatUrl( {
-				...parseUrl( wpAdminUrl + 'admin.php' ),
-				query: { page: 'jetpack' },
-				hash: '/my-plan',
-		  } )
-		: undefined;
+	const wpAdminUrl = getJetpackWpAdminUrl( state );
 
 	const planSlug = getSitePlanSlug( state, siteId );
 	const isPremium = !! planSlug && isPremiumPlan( planSlug );
