@@ -18,6 +18,7 @@ import {
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
 	FEATURED_PRODUCTS,
+	SUBTYPE_TO_OPTION,
 } from './constants';
 import {
 	TERM_ANNUALLY,
@@ -415,4 +416,14 @@ export function isUpgradeable( slug: string ): boolean {
  */
 export function getProductUpsell( slug: string ): string | null {
 	return UPSELL_PRODUCT_MATRIX[ slug ];
+}
+
+/**
+ * Returns the slug of an option product given a real product/plan slug.
+ *
+ * @param slug string
+ * @returns string | null
+ */
+export function getOptionFromSlug( slug: string ): string | null {
+	return SUBTYPE_TO_OPTION[ slug ];
 }

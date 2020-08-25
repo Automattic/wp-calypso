@@ -338,7 +338,9 @@ $jetpack-product-card-icon-size: 55px;
 	}
 
 	.gridicon {
-		fill: var( --color-primary );
+		fill: var( --studio-pink-50 );
+
+		min-width: 24px;
 	}
 }
 

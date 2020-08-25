@@ -49,6 +49,8 @@
 
 	padding: 16px;
 	margin: 24px 0;
+
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
 }
 
 .upsell__subheader {
@@ -78,6 +80,21 @@
 	height: 40px;
 
 	filter: grayscale( 1 );
+}
+
+@include break-medium {
+	.upsell__product-card {
+		background-color: var( --color-surface );
+
+		padding: 16px;
+
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+		.jetpack-product-card {
+			margin: 40px auto 16px;
+			max-width: 508px;
+		}
+	}
 }
 
 /**
