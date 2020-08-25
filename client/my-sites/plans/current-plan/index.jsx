@@ -47,6 +47,7 @@ import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
+import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 import { getSitePurchases } from 'state/purchases/selectors';
 
@@ -107,6 +108,10 @@ class CurrentPlan extends Component {
 			const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
 
 			return <SearchProductThankYou { ...{ jetpackVersion } } />;
+		}
+
+		if ( startsWith( product, 'jetpack_complete' ) ) {
+			return <JetpackCompleteThankYou />;
 		}
 
 		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
