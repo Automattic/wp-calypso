@@ -62,7 +62,7 @@ class ExtractManifestPlugin {
 						// `nameExpression` is an expression that assumes `chunkId` (like `({1:'chunk1', 2:'chunk2'}[chunkId])`).
 						// Transform it to a function and store it in the manifest.
 						manifestContent.push(
-							`${ globalManifest }.set('${ variable }', (chunkId) => ${ nameExpression });`
+							`${ globalManifest }.set('${ variable }', function(chunkId){return ${ nameExpression };};`
 						);
 						variablesProcessed.add( variable );
 					}
