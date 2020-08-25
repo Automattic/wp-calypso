@@ -246,7 +246,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				prefix = 'coblocks-';
 				hasChildBlocks = true;
 				break;
-			case 'Logos & Badges':
+			case 'Logos':
 				prefix = 'coblocks-';
 				blockClass = 'logos';
 				break;

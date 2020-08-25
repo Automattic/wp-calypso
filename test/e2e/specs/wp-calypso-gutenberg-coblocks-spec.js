@@ -127,7 +127,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Insert a Logos & Badges block: @parallel', function () {
+	describe( 'Insert a Logos block: @parallel', function () {
 		let fileDetails;
 
 		// Create image file for upload
@@ -141,9 +141,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert the Logos & Badges block', async function () {
+		step( 'Can insert the Logos block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Logos & Badges' );
+			await gEditorComponent.addBlock( 'Logos' );
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )
@@ -174,7 +174,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			return await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can see the Logos & Badges block in our published post', async function () {
+		step( 'Can see the Logos block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.entry-content .wp-block-coblocks-logos' )
