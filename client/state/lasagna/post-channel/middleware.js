@@ -85,6 +85,8 @@ const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
  * @param store middleware store
  */
 export default ( store ) => ( next ) => ( action ) => {
+	const mwResult = next( action );
+
 	switch ( action.type ) {
 		case READER_VIEWING_FULL_POST_SET: {
 			const joinParams = getJoinParams( store, action.postKey );
@@ -112,5 +114,5 @@ export default ( store ) => ( next ) => ( action ) => {
 		}
 	}
 
-	return next( action );
+	return mwResult;
 };
