@@ -40,6 +40,7 @@ import { hasUnseen } from 'state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import JetpackLogo from 'components/jetpack-logo';
+import { clearSignupDestinationCookie } from 'signup/utils';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -104,6 +105,9 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickClose = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
+
+		const searchParams = new URLSearchParams( window.location.search );
+		searchParams.has( 'signup' ) && clearSignupDestinationCookie();
 	};
 
 	preloadMySites = () => {

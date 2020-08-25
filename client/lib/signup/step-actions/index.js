@@ -272,6 +272,13 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const state = reduxStore.getState();
 	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
+	const preventDuplicates = get( getSignupDependencyStore( state ), 'preventDuplicates', false );
+
+	if ( preventDuplicates ) {
+		addDomainToCart( callback, dependencies, stepData, reduxStore );
+		return;
+	}
+
 	const newSiteParams = getNewSiteParams( {
 		dependencies,
 		flowToCheck,
@@ -387,7 +394,7 @@ function processItemCart(
 			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
 			reduxStore
 		);
-	} else if ( user().get() ) {
+	} else if ( user().get() && siteSlug ) {
 		fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
 	} else {
 		addToCartAndProceed();

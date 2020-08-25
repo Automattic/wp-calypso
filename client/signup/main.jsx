@@ -74,6 +74,9 @@ import {
 	getFirstInvalidStep,
 	getStepUrl,
 	persistSignupDestination,
+	persistSignupSiteCreated,
+	retrieveSignupDestination,
+	retrieveSignupSiteCreated,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
@@ -164,6 +167,13 @@ class Signup extends React.Component {
 
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
+		}
+
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const siteSlugFromCookie = retrieveSignupSiteCreated();
+
+		if ( signupDestinationCookieExists ) {
+			providedDependencies = { siteSlug: siteSlugFromCookie, preventDuplicates: true };
 		}
 
 		// Caution: any signup Flux actions should happen after this initialization.
@@ -293,6 +303,7 @@ class Signup extends React.Component {
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
 			persistSignupDestination( destination );
+			persistSignupSiteCreated( dependencies.siteSlug );
 		}
 
 		return this.handleFlowComplete( dependencies, filteredDestination );
@@ -589,6 +600,16 @@ class Signup extends React.Component {
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
+		const signupDestinationCookieExists = retrieveSignupDestination();
+
+		let propsForCurrentStep = propsFromConfig;
+		if ( signupDestinationCookieExists ) {
+			propsForCurrentStep = assign( {}, propsFromConfig, {
+				showExampleSuggestions: false,
+				showSkipButton: true,
+				includeWordPressDotCom: false,
+			} );
+		}
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -614,7 +635,7 @@ class Signup extends React.Component {
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
-							{ ...propsFromConfig }
+							{ ...propsForCurrentStep }
 						/>
 					) }
 				</div>
