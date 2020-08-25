@@ -37,8 +37,8 @@ export const TimeFormatOption = ( {
 					name="time_format"
 					onChange={ setTimeFormat }
 					value={ format }
+					label={ phpToMomentDatetimeFormat( localizedDate, format ) }
 				/>
-				<span>{ phpToMomentDatetimeFormat( localizedDate, format ) }</span>
 			</FormLabel>
 		) ) }
 		<FormLabel className="date-time-format__custom-field">
@@ -48,25 +48,27 @@ export const TimeFormatOption = ( {
 				name="time_format"
 				onChange={ setCustomTimeFormat }
 				value={ timeFormat }
+				label={
+					<>
+						{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
+						<FormInput
+							disabled={ disabled }
+							name="time_format_custom"
+							onChange={ setCustomTimeFormat }
+							type="text"
+							value={ timeFormat || '' }
+						/>
+						<FormSettingExplanation>
+							{ isCustom &&
+								timeFormat &&
+								translate( 'Preview: %s', {
+									args: phpToMomentDatetimeFormat( localizedDate, timeFormat ),
+									comment: 'Date/time format preview',
+								} ) }
+						</FormSettingExplanation>
+					</>
+				}
 			/>
-			<span>
-				{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
-				<FormInput
-					disabled={ disabled }
-					name="time_format_custom"
-					onChange={ setCustomTimeFormat }
-					type="text"
-					value={ timeFormat || '' }
-				/>
-				<FormSettingExplanation>
-					{ isCustom &&
-						timeFormat &&
-						translate( 'Preview: %s', {
-							args: phpToMomentDatetimeFormat( localizedDate, timeFormat ),
-							comment: 'Date/time format preview',
-						} ) }
-				</FormSettingExplanation>
-			</span>
 			<FormSettingExplanation>
 				<ExternalLink
 					href={ localizeUrl( 'https://wordpress.com/support/settings/time-settings/' ) }

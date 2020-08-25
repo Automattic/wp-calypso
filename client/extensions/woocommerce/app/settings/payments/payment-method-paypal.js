@@ -88,10 +88,8 @@ class PaymentMethodPaypal extends Component {
 							value="sale"
 							checked={ 'sale' === settings.paymentaction.value }
 							onChange={ this.onEditFieldHandler }
+							label={ translate( 'Authorize and charge the customers credit card automatically' ) }
 						/>
-						<span>
-							{ translate( 'Authorize and charge the customers credit card automatically' ) }
-						</span>
 					</FormLabel>
 					<FormLabel>
 						<FormRadio
@@ -99,8 +97,8 @@ class PaymentMethodPaypal extends Component {
 							value="authorization"
 							checked={ 'authorization' === settings.paymentaction.value }
 							onChange={ this.onEditFieldHandler }
+							label={ translate( 'Authorize the customers credit card but charge manually' ) }
 						/>
-						<span>{ translate( 'Authorize the customers credit card but charge manually' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			</Dialog>

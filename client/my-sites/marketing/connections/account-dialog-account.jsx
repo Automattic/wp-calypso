@@ -10,6 +10,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Image from 'components/image';
+import FormRadio from 'wp-calypso-client/components/forms/form-radio';
 
 /**
  * Style dependencies
@@ -27,8 +28,7 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 			<label className="account-dialog-account__label">
 				{ conflicting && <Gridicon icon="notice" /> }
 				{ ! account.isConnected && (
-					<input
-						type="radio"
+					<FormRadio
 						onChange={ onChange }
 						checked={ selected }
 						className="account-dialog-account__input"

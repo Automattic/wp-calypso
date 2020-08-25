@@ -255,8 +255,8 @@ class FormFields extends React.PureComponent {
 								value="first"
 								checked={ 'first' === this.state.checkedRadio }
 								onChange={ this.handleRadioChange }
+								label="First radio"
 							/>
-							<span>First radio</span>
 						</FormLabel>
 
 						<FormLabel>
@@ -264,8 +264,8 @@ class FormFields extends React.PureComponent {
 								value="second"
 								checked={ 'second' === this.state.checkedRadio }
 								onChange={ this.handleRadioChange }
+								label="Second radio"
 							/>
-							<span>Second radio</span>
 						</FormLabel>
 					</FormFieldset>
 

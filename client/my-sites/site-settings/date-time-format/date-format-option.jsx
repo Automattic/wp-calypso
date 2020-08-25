@@ -35,8 +35,8 @@ export const DateFormatOption = ( {
 					name="date_format"
 					onChange={ setDateFormat }
 					value={ format }
+					label={ phpToMomentDatetimeFormat( localizedDate, format ) }
 				/>
-				<span>{ phpToMomentDatetimeFormat( localizedDate, format ) }</span>
 			</FormLabel>
 		) ) }
 		<FormLabel className="date-time-format__custom-field">
@@ -46,25 +46,27 @@ export const DateFormatOption = ( {
 				name="date_format"
 				onChange={ setCustomDateFormat }
 				value={ dateFormat }
+				label={
+					<>
+						{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
+						<FormInput
+							disabled={ disabled }
+							name="date_format_custom"
+							onChange={ setCustomDateFormat }
+							type="text"
+							value={ dateFormat || '' }
+						/>
+						<FormSettingExplanation>
+							{ isCustom &&
+								dateFormat &&
+								translate( 'Preview: %s', {
+									args: phpToMomentDatetimeFormat( localizedDate, dateFormat ),
+									comment: 'Date/time format preview',
+								} ) }
+						</FormSettingExplanation>
+					</>
+				}
 			/>
-			<span>
-				{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
-				<FormInput
-					disabled={ disabled }
-					name="date_format_custom"
-					onChange={ setCustomDateFormat }
-					type="text"
-					value={ dateFormat || '' }
-				/>
-				<FormSettingExplanation>
-					{ isCustom &&
-						dateFormat &&
-						translate( 'Preview: %s', {
-							args: phpToMomentDatetimeFormat( localizedDate, dateFormat ),
-							comment: 'Date/time format preview',
-						} ) }
-				</FormSettingExplanation>
-			</span>
 		</FormLabel>
 	</FormFieldset>
 );

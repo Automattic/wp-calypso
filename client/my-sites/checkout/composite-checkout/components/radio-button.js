@@ -118,6 +118,21 @@ const RadioButtonWrapper = styled.div`
 const Radio = styled.input`
 	position: absolute;
 	opacity: 0;
+
+	clear: none;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 0;
+	height: 16px;
+	margin: 2px 0 0;
+	float: left;
+	outline: 0;
+	padding: 0;
+	text-align: center;
+	vertical-align: middle;
+	width: 16px;
+	min-width: 16px;
+	appearance: none;
 `;
 
 const Label = styled.label`

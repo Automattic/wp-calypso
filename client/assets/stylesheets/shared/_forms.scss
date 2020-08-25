@@ -12,7 +12,6 @@ input[type='email'],
 input[type='number'],
 input[type='password'],
 input[type='checkbox'],
-input[type='radio'],
 input[type='tel'],
 input[type='url'],
 textarea {
@@ -45,8 +44,7 @@ input[type='url'] {
 
 /*Checkbooms*/
 
-input[type='checkbox'],
-input[type='radio'] {
+input[type='checkbox'] {
 	clear: none;
 	cursor: pointer;
 	display: inline-block;
@@ -63,8 +61,7 @@ input[type='radio'] {
 	appearance: none;
 }
 
-input[type='checkbox'] + span,
-input[type='radio'] + span {
+input[type='checkbox'] + span {
 	display: block;
 	margin-left: 24px;
 }
@@ -83,30 +80,6 @@ input[type='checkbox'] {
 
 	&:disabled:checked::before {
 		color: var( --color-neutral-20 );
-	}
-}
-
-input[type='radio'] {
-	border-radius: 50%;
-	margin-right: 4px;
-	line-height: 10px;
-
-	&:checked::before {
-		float: left;
-		display: inline-block;
-		content: '\2022';
-		margin: 3px;
-		width: 8px;
-		height: 8px;
-		text-indent: -9999px;
-		background: var( --color-primary );
-		vertical-align: middle;
-		border-radius: 50%;
-		animation: grow 0.2s ease-in-out;
-	}
-
-	&:disabled:checked::before {
-		background: var( --color-neutral-0 );
 	}
 }
 
