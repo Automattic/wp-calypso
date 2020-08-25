@@ -122,11 +122,11 @@
 	}
 
 	.design-selector__option-name {
-		@include onboarding-medium-text;
 		align-items: center;
 		color: var( --studio-gray-40 );
 		display: inline-flex;
 		font-size: $font-body-small;
+		margin-top: -0.1em;
 	}
 
 	.design-selector__premium-container {
@@ -157,5 +157,10 @@
 		.jetpack-logo__icon-triangle {
 			fill: var( --studio-white );
 		}
+	}
+
+	.design-selector__premium-badge-text {
+		display: inline-block;
+		margin-top: -0.05em;
 	}
 }
