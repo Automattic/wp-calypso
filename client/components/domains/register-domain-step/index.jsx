@@ -237,6 +237,7 @@ class RegisterDomainStep extends React.Component {
 			loadingSubdomainResults:
 				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
 			pageNumber: 1,
+			premiumDomains: {},
 			searchResults: null,
 			showAvailabilityNotice: false,
 			showSuggestionNotice: false,
@@ -603,6 +604,24 @@ class RegisterDomainStep extends React.Component {
 		this.props.onSave( this.state );
 	};
 
+	saveAndGetPremiumPrices = () => {
+		this.save();
+
+		Object.keys( this.state.premiumDomains ).map( ( premiumDomain ) => {
+			this.fetchDomainPricePromise( premiumDomain )
+				.catch( () => [] )
+				.then( ( domainPrice ) => {
+					this.setState( ( state ) => {
+						const newPremiumDomains = { ...state.premiumDomains };
+						newPremiumDomains[ premiumDomain ] = domainPrice;
+						return {
+							premiumDomains: newPremiumDomains,
+						};
+					} );
+				} );
+		} );
+	};
+
 	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
 		this.save();
 
@@ -736,6 +755,26 @@ class RegisterDomainStep extends React.Component {
 			.catch( noop );
 	};
 
+	fetchDomainPricePromise = ( domain ) => {
+		return new Promise( ( resolve ) => {
+			wpcom.undocumented().getDomainPrice( domain, ( serverError, result ) => {
+				if ( serverError ) {
+					resolve( {
+						pending: true,
+						error: serverError,
+					} );
+					return;
+				}
+
+				resolve( {
+					pending: false,
+					is_premium: result.is_premium,
+					cost: result.cost,
+				} );
+			} );
+		} );
+	};
+
 	preCheckDomainAvailability = ( domain ) => {
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
@@ -746,8 +785,11 @@ class RegisterDomainStep extends React.Component {
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
+					const allowedAvailableStatuses = config.isEnabled( 'domains/premium-domain-purchases' )
+						? [ domainAvailability.AVAILABLE, domainAvailability.AVAILABLE_PREMIUM ]
+						: [ domainAvailability.AVAILABLE ];
 					resolve( {
-						status: status !== domainAvailability.AVAILABLE ? status : null,
+						status: ! allowedAvailableStatuses.includes( status ) ? status : null,
 						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
 					} );
 				}
@@ -787,7 +829,10 @@ class RegisterDomainStep extends React.Component {
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 					} = domainAvailability;
-					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
+					const availableStatuses = config.isEnabled( 'domains/premium-domain-purchases' )
+						? [ AVAILABLE, AVAILABLE_PREMIUM, UNKNOWN ]
+						: [ AVAILABLE, UNKNOWN ];
+					const isDomainAvailable = includes( availableStatuses, status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
 
@@ -926,12 +971,22 @@ class RegisterDomainStep extends React.Component {
 			this.props.deemphasiseTlds
 		);
 
+		const premiumDomains = {};
+		markedSuggestions
+			.filter( ( suggestion ) => suggestion?.is_premium )
+			.map( ( suggestion ) => {
+				premiumDomains[ suggestion.domain_name ] = {
+					pending: true,
+				};
+			} );
+
 		this.setState(
 			{
+				premiumDomains,
 				searchResults: markedSuggestions,
 				loadingResults: false,
 			},
-			this.save
+			this.saveAndGetPremiumPrices
 		);
 	};
 
@@ -1195,6 +1250,7 @@ class RegisterDomainStep extends React.Component {
 			lastDomainIsTransferrable,
 			lastDomainSearched,
 			lastDomainStatus,
+			premiumDomains,
 		} = this.state;
 
 		const matchesSearchedDomain = ( suggestion ) => suggestion.domain_name === exactMatchDomain;
@@ -1260,6 +1316,7 @@ class RegisterDomainStep extends React.Component {
 					onClickUseYourDomain={ useYourDomainFunction }
 					tracksButtonClickSource="exact-match-top"
 					suggestions={ suggestions }
+					premiumDomains={ premiumDomains }
 					isLoadingSuggestions={ this.state.loadingResults }
 					products={ this.props.products }
 					selectedSite={ this.props.selectedSite }

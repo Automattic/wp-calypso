@@ -640,6 +640,20 @@ Undocumented.prototype.getDomainContactInformation = function ( fn ) {
 		}
 	);
 };
+/**
+ *
+ * @param domain {string}
+ * @param fn {function}
+ */
+Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
+	return this.wpcom.req.get(
+		`/domains/${ encodeURIComponent( domain ) }/price`,
+		{
+			apiVersion: '1.1',
+		},
+		fn
+	);
+};
 
 Undocumented.prototype.getDomainRegistrationSupportedStates = function ( countryCode, fn ) {
 	debug( '/domains/supported-states/ query' );
