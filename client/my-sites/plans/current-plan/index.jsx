@@ -27,7 +27,15 @@ import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { getPlan } from 'lib/plans';
-import { JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
+import {
+	JETPACK_LEGACY_PLANS,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+} from 'lib/plans/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -48,6 +56,8 @@ import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
+import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
+import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 import { getSitePurchases } from 'state/purchases/selectors';
 
@@ -106,11 +116,22 @@ class CurrentPlan extends Component {
 
 		if ( startsWith( product, 'jetpack_search' ) ) {
 			const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
-
 			return <SearchProductThankYou { ...{ jetpackVersion } } />;
 		}
 
-		if ( startsWith( product, 'jetpack_complete' ) ) {
+		if (
+			[ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ].includes( product )
+		) {
+			return <JetpackSecurityDailyThankYou />;
+		}
+
+		if (
+			[ PLAN_JETPACK_SECURITY_REALTIME, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ].includes( product )
+		) {
+			return <JetpackSecurityRealtimeThankYou />;
+		}
+
+		if ( [ PLAN_JETPACK_COMPLETE, PLAN_JETPACK_COMPLETE_MONTHLY ].includes( product ) ) {
 			return <JetpackCompleteThankYou />;
 		}
 
