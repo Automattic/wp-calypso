@@ -32,6 +32,8 @@ before( async function () {
 describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
 	describe( 'Visit Gutenboarding page as a new user @parallel @canary', function () {
+		throw 'Forcing Gutenboarding e2e tests to fail';
+
 		const siteTitle = dataHelper.randomPhrase();
 
 		before( async function () {
