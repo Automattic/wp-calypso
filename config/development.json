@@ -152,7 +152,6 @@
 		"post-editor-github-link": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
-		"posts/post-type-list/bulk-edit": false,
 		"press-this": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
