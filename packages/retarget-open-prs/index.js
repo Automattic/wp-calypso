@@ -10,12 +10,23 @@ async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken ) {
 	} );
 
 	for ( const pull of pulls ) {
-		await octokit.request( 'PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
+		const {
+			headers: { 'x-ratelimit-remaining': remainingRateLimit, 'x-ratelimit-reset': rateLimitReset },
+		} = await octokit.request( 'PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
 			owner: repoOwner,
 			repo: repoName,
 			pull_number: pull.number,
 			base: to,
 		} );
+
+		if ( remainingRateLimit === 0 ) {
+			const rateLimitResetDate = new Date( rateLimitReset * 1000 );
+			// eslint-disable-next-line no-console
+			console.error(
+				`Hit rate limit. Wait until ${ rateLimitResetDate } and then run the command again.`
+			);
+			return;
+		}
 	}
 }
 
