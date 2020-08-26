@@ -5,6 +5,7 @@ import {
 	HELP_CONTACT_FORM_SITE_SELECT,
 	HELP_LINKS_RECEIVE,
 	SUPPORT_HISTORY_SET,
+	SUPPORT_LEVEL_SET,
 } from 'state/action-types';
 import courses from './courses/reducer';
 import { combineReducers, withStorageKey } from 'state/utils';
@@ -59,6 +60,22 @@ export const supportHistory = ( state = [], { type, items } ) => {
 	}
 };
 
+/**
+ * The level of support we're offering to this user (represents their highest paid plan).
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export const supportLevel = ( state = null, { type, level } ) => {
+	switch ( type ) {
+		case SUPPORT_LEVEL_SET:
+			return level;
+		default:
+			return state;
+	}
+};
+
 const combinedReducer = combineReducers( {
 	courses,
 	directly,
@@ -66,6 +83,7 @@ const combinedReducer = combineReducers( {
 	ticket,
 	selectedSiteId,
 	supportHistory,
+	supportLevel,
 } );
 
 export default withStorageKey( 'help', combinedReducer );
