@@ -199,7 +199,9 @@ const webpackConfig = {
 							safari10: false,
 					  }
 					: {
-							compress: true,
+							compress: {
+								passes: 2,
+							},
 							mangle: true,
 					  } ),
 			},
