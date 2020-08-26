@@ -309,14 +309,6 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c', '/recommendations' ],
-		module: 'wp-calypso-client/reader',
-		secondary: true,
-		group: 'reader',
-		trackLoadPerformance: true,
-	},
-	{
-		name: 'reader',
 		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'wp-calypso-client/reader/full-post',
 		secondary: false,
@@ -356,7 +348,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/search' ],
+		paths: [ '/read/search', '/recommendations' ],
 		module: 'wp-calypso-client/reader/search',
 		secondary: true,
 		group: 'reader',
