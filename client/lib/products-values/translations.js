@@ -1,28 +1,57 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { createElement } from 'react';
 import { numberFormat, translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Real-Time Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate( 'Real-Time Backups' ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: shouldShowOfferResetFlow()
+			? translate( 'Backup {{em}}Daily{{/em}}', {
+					components: {
+						em: createElement( 'em' ),
+					},
+			  } )
+			: translate( 'Daily Backups' ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: shouldShowOfferResetFlow()
+			? translate( 'Backup {{em}}Daily{{/em}}', {
+					components: {
+						em: createElement( 'em' ),
+					},
+			  } )
+			: translate( 'Daily Backups' ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: shouldShowOfferResetFlow()
+			? translate( 'Backup {{em}}Real-time{{/em}}', {
+					components: {
+						em: createElement( 'em' ),
+					},
+			  } )
+			: translate( 'Real-Time Backups' ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: shouldShowOfferResetFlow()
+			? translate( 'Backup {{em}}Real-time{{/em}}', {
+					components: {
+						em: createElement( 'em' ),
+					},
+			  } )
+			: translate( 'Real-Time Backups' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Daily Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Daily Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: shouldShowOfferResetFlow()
+			? translate( 'Scan' )
+			: translate( 'Daily Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: shouldShowOfferResetFlow()
+			? translate( 'Scan' )
+			: translate( 'Daily Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 	};

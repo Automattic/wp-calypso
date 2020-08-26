@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useMemo, ReactElement } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -65,8 +65,8 @@ const UpsellComponent = ( {
 		upsellProduct.monthlyProductSlug || ''
 	);
 
-	const { displayName: mainProductName } = mainProduct;
-	const { displayName: upsellProductName, productSlug: upsellSlug } = upsellProduct;
+	const { shortName: mainProductName } = mainProduct;
+	const { shortName: upsellProductName, productSlug: upsellSlug } = upsellProduct;
 
 	const isScanProduct = useMemo(
 		() => JETPACK_SCAN_PRODUCTS.some( ( slug ) => slug === upsellSlug ),
@@ -81,7 +81,7 @@ const UpsellComponent = ( {
 					headerText={ preventWidows(
 						translate( 'Would you like to add {{name/}}?', {
 							components: {
-								name: upsellProductName as ReactElement,
+								name: <>{ upsellProductName }</>,
 							},
 							comment: '{{name/}} is the name of a product such as Jetpack Scan or Jetpack Backup',
 						} )
@@ -100,8 +100,8 @@ const UpsellComponent = ( {
 								'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
 								{
 									components: {
-										mainName: mainProductName as ReactElement,
-										upsellName: upsellProductName as ReactElement,
+										mainName: <>{ mainProductName }</>,
+										upsellName: <>{ upsellProductName }</>,
 									},
 									comment:
 										"{{mainName/}} refers to the product the customer is purchasing (most likely Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
@@ -122,7 +122,7 @@ const UpsellComponent = ( {
 					billingTimeFrame={ durationToText( upsellProduct.term ) }
 					buttonLabel={ translate( 'Yes, add {{name/}}', {
 						components: {
-							name: upsellProductName as ReactElement,
+							name: <>{ upsellProductName }</>,
 						},
 						comment:
 							'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
@@ -133,7 +133,7 @@ const UpsellComponent = ( {
 					onButtonClick={ onPurchaseBothProducts }
 					cancelLabel={ translate( 'No, I do not want {{name/}}', {
 						components: {
-							name: upsellProductName as ReactElement,
+							name: <>{ upsellProductName }</>,
 						},
 						comment:
 							'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',

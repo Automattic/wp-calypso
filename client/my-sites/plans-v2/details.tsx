@@ -73,6 +73,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 		checkout( siteSlug, slug );
 	};
 
+	const { shortName } = product;
 	const isBundle = [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ].includes(
 		productSlug
 	);
@@ -86,9 +87,11 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 			</HeaderCake>
 			<FormattedHeader
 				headerText={
-					product.shortName
-						? translate( 'Great choice! Now select a %s option:', {
-								args: product.shortName,
+					shortName
+						? translate( 'Great choice! Now select a {{name/}} option:', {
+								components: {
+									name: <> { shortName }</>,
+								},
 								comment: 'Short name of the selected generic plan or product',
 						  } )
 						: translate( 'Great choice! Now select an option:' )
