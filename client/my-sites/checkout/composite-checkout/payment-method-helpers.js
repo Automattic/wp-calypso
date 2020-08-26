@@ -471,6 +471,7 @@ export function filterAppropriatePaymentMethods( {
 	const isPurchaseFree = total.amount.value === 0;
 	const isFullCredits =
 		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
+	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
 	debug( 'filtering payment methods with this input', {
 		total,
 		credits,
@@ -479,6 +480,7 @@ export function filterAppropriatePaymentMethods( {
 		serverAllowedPaymentMethods,
 		isPurchaseFree,
 		isFullCredits,
+		countryCode,
 	} );
 
 	return paymentMethodObjects
@@ -495,6 +497,17 @@ export function filterAppropriatePaymentMethods( {
 				return isFullCredits ? true : false;
 			}
 			return isFullCredits ? false : true;
+		} )
+		.filter( ( methodObject ) => {
+			// Some country-specific payment methods should only be available if that
+			// country is selected in the contact information.
+			if ( methodObject.id === 'netbanking' && countryCode !== 'IN' ) {
+				return false;
+			}
+			if ( methodObject.id === 'ebanx-tef' && countryCode !== 'BR' ) {
+				return false;
+			}
+			return true;
 		} )
 		.filter( ( methodObject ) => {
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
