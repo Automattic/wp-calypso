@@ -40,8 +40,8 @@ const useItemPrice = ( item: SelectorProduct | null, monthlyItemSlug = '' ): Ite
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( monthlyItemCost && item.term !== TERM_MONTHLY ) {
-			originalPrice = monthlyItemCost * 12;
-			discountedPrice = itemCost;
+			originalPrice = monthlyItemCost;
+			discountedPrice = itemCost / 12;
 		}
 	}
 
