@@ -56,7 +56,8 @@
 .upsell__subheader {
 	font-style: italic;
 
-	margin-bottom: 8px;
+	max-width: 500px;
+	margin: 0 auto 8px;
 }
 
 .upsell__saved-amount {
