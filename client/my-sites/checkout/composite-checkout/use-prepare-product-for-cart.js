@@ -10,6 +10,13 @@ import debugFactory from 'debug';
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { getRenewalItemFromCartItem } from 'lib/cart-values/cart-items';
+import {
+	JETPACK_SEARCH_PRODUCTS,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
+} from 'lib/products-values/constants';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
 import {
@@ -160,6 +167,24 @@ function useAddProductFromSlug( {
 	const plans = useSelector( ( state ) => getPlans( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
+
+	// Special handling for search products: Always add Jetpack Search to
+	// Jetpack sites and WPCOM Search to WordPress.com sites, regardless of
+	// which slug was provided. This allows e.g. code on jetpack.com to
+	// redirect to a valid checkout URL for a search purchase without worrying
+	// about which type of site the user has.
+	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
+		if ( isJetpackNotAtomic ) {
+			productAlias = productAlias.includes( 'monthly' )
+				? PRODUCT_JETPACK_SEARCH_MONTHLY
+				: PRODUCT_JETPACK_SEARCH;
+		} else {
+			productAlias = productAlias.includes( 'monthly' )
+				? PRODUCT_WPCOM_SEARCH_MONTHLY
+				: PRODUCT_WPCOM_SEARCH;
+		}
+	}
+
 	const product = useSelector( ( state ) =>
 		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
 	);

@@ -13,14 +13,7 @@ import {
 	themeItem,
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
-import {
-	JETPACK_PRODUCTS_LIST,
-	JETPACK_SEARCH_PRODUCTS,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST, JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
 import type { RequestCartProduct } from './types/backend/shopping-cart-endpoint';
 import config from 'config';
 
@@ -78,12 +71,11 @@ export function createItemToAddToCart( {
 	// Search product
 	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) && product_id ) {
 		cartItem = null;
+		let isSearchProduct = false;
 		// is site JP
 		if ( isJetpackNotAtomic ) {
 			debug( 'creating jetpack search product' );
-			cartItem = productAlias.includes( 'monthly' )
-				? jetpackProductItem( PRODUCT_JETPACK_SEARCH_MONTHLY )
-				: jetpackProductItem( PRODUCT_JETPACK_SEARCH );
+			isSearchProduct = true;
 		}
 		// is site WPCOM
 		else if (
@@ -92,13 +84,13 @@ export function createItemToAddToCart( {
 			! isPrivate
 		) {
 			debug( 'creating wpcom search product' );
-			cartItem = productAlias.includes( 'monthly' )
-				? jetpackProductItem( PRODUCT_WPCOM_SEARCH_MONTHLY )
-				: jetpackProductItem( PRODUCT_WPCOM_SEARCH );
+			isSearchProduct = true;
 		}
-
-		if ( cartItem ) {
-			cartItem.product_id = product_id;
+		if ( isSearchProduct ) {
+			cartItem = jetpackProductItem( productAlias );
+			if ( cartItem ) {
+				cartItem.product_id = product_id;
+			}
 		}
 	}
 
