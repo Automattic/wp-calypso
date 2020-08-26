@@ -24,7 +24,7 @@ const captureWebsite = require( 'capture-website' );
 const sharp = require( 'sharp' );
 const wpUrl = require( '@wordpress/url' );
 const designs = require( '../client/landing/gutenboarding/available-designs-config.json' );
-const screenshotsPath = './static/page-templates/design-screenshots'; // Folder to store output images
+const screenshotsPath = './static/images/design-screenshots'; // Folder to store output images
 
 // image output variables
 const captureMaxHeight = 2200; // Cap long pages to  this pixel height when capturing
