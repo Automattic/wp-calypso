@@ -303,6 +303,8 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 		} = this.props;
 		const blogPublic = parseInt( fields.blog_public, 10 );
+		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
+
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 
 		return (
@@ -495,7 +497,7 @@ export class SiteSettingsFormGeneral extends Component {
 			handleSubmitForm,
 		} = this.props;
 		//const blogPublic = parseInt( fields.blog_public, 10 );
-		const isWpcomComingSoonMode = parseInt( fields.wpcom_coming_soon_mode, 10 );
+		const isWpcomComingSoonMode = parseInt( fields.wpcom_coming_soon, 10 );
 		//const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 
 		return (
@@ -517,7 +519,7 @@ export class SiteSettingsFormGeneral extends Component {
 									checked={ 1 === isWpcomComingSoonMode }
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
-											wpcom_coming_soon_mode: isWpcomComingSoonMode === 0 ? 1 : 0,
+											wpcom_coming_soon: isWpcomComingSoonMode === 0 ? 1 : 0,
 										} )
 									}
 									disabled={ isRequestingSettings }

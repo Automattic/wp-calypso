@@ -10,6 +10,6 @@ import { getSiteOption } from 'state/sites/selectors';
  * @param {object} siteId Site ID
  * @returns {number} ID of the static page set as the coming soon page, or 0 if not set
  */
-export default function getComingSoonPage( state, siteId ) {
+export default function getComingSoonPageId( state, siteId ) {
 	return getSiteOption( state, siteId, 'wpcom_coming_soon_page_id' );
 }
