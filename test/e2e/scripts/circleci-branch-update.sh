@@ -40,8 +40,8 @@ if head-changed-file ".nvmrc" && [ $expectedVersion != $currentVersion ]; then
 fi
 
 
-if head-changed-file ".nvmrc" && [ "$CIRCLE_BRANCH" = "master" ] && [ $expectedVersion != $currentVersion ]; then
+if head-changed-file ".nvmrc" && [ "$CIRCLE_BRANCH" = "trunk" ] && [ $expectedVersion != $currentVersion ]; then
     update-wrapper-node-version
 else
-    echo ".nvmrc file not updated or is not on master"
+    echo ".nvmrc file not updated or is not on trunk"
 fi
