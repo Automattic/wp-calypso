@@ -85,3 +85,6 @@ cached-requests.json
 /desktop/id_rsa
 /desktop/e2e/logs
 /desktop/e2e/screenshots
+
+# Typescript
+*.tsbuildinfo

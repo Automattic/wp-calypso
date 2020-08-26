@@ -7,6 +7,7 @@
 		"jsx": "react",
 		"declaration": true,
 		"declarationDir": "dist/types",
+		"outDir": "dist/types",
 		"emitDeclarationOnly": true,
 		"isolatedModules": true,
 
@@ -25,8 +26,7 @@
 		"types": [],
 		"rootDir": "src",
 
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__components"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

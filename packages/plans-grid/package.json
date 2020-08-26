@@ -24,7 +24,7 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist ../../.tsc-cache/packages__plans-grid*",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
 		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
 		"prepublish": "yarn run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"

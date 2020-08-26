@@ -28,8 +28,7 @@
 
 		"importsNotUsedAsValues": "error",
 		"importHelpers": true,
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__domain-picker"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],

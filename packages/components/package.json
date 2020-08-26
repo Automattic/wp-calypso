@@ -40,7 +40,7 @@
 		"react-dom": "^16.8"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__components*\"",
+		"clean": "npx rimraf dist && tsc --build --clean",
 		"prepublish": "yarn run clean",
 		"prepare": "transpile && tsc && copy-assets"
 	}
