@@ -13,8 +13,8 @@ export type ReactStandardAction = { type: string; payload?: any }; // eslint-dis
 export interface ShoppingCartManagerArguments {
 	cartKey: string | number | null;
 	canInitializeCart: boolean;
-	productsToAdd: RequestCartProduct[] | null;
-	couponToAdd: string | null;
+	productsToAddOnInitialize: RequestCartProduct[] | null;
+	couponToAddOnInitialize: string | null;
 	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 	onEvent?: ( action: ReactStandardAction ) => void;
@@ -27,7 +27,7 @@ export interface VariantSelectOverride {
 
 export interface ShoppingCartManager {
 	isLoading: boolean;
-	loadingError: string | null;
+	loadingError: string | null | undefined;
 	isPendingUpdate: boolean;
 	addItem: ( arg0: RequestCartProduct ) => void;
 	removeItem: ( arg0: string ) => void;
@@ -119,6 +119,7 @@ export type ShoppingCartState = {
 	responseCart: ResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
+	loadingError?: string;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 };

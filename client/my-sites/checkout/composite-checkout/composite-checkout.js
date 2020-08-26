@@ -201,8 +201,8 @@ export default function CompositeCheckout( {
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
-		productsToAdd: productsForCart,
-		couponToAdd: couponCodeFromUrl,
+		productsToAddOnInitialize: productsForCart,
+		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
 		onEvent: recordEvent,
@@ -395,6 +395,7 @@ export default function CompositeCheckout( {
 		storedCards,
 		siteSlug,
 	} );
+	debug( 'created payment method objects', paymentMethodObjects );
 
 	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
 	// changing them because it can cause awkward UX. Here we try to wait for
@@ -417,6 +418,7 @@ export default function CompositeCheckout( {
 				allowedPaymentMethods,
 				serverAllowedPaymentMethods,
 		  } );
+	debug( 'filtered payment method objects', paymentMethods );
 
 	const getItemVariants = useProductVariants( {
 		siteId,
@@ -527,6 +529,18 @@ export default function CompositeCheckout( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
+	const isLoading =
+		isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1;
+	if ( isLoading ) {
+		debug( 'still loading because one of these is true', {
+			isLoadingCart,
+			isLoadingStoredCards,
+			paymentMethods: paymentMethods.length < 1,
+			arePaymentMethodsLoading: arePaymentMethodsLoading,
+			items: items.length < 1,
+		} );
+	}
+
 	return (
 		<React.Fragment>
 			<QuerySitePlans siteId={ siteId } />
@@ -547,9 +561,7 @@ export default function CompositeCheckout( {
 					paymentMethods={ paymentMethods }
 					paymentProcessors={ paymentProcessors }
 					registry={ defaultRegistry }
-					isLoading={
-						isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1
-					}
+					isLoading={ isLoading }
 					isValidating={ isCartPendingUpdate }
 					theme={ theme }
 				>

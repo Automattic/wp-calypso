@@ -23,8 +23,8 @@ const debug = debugFactory( 'calypso:composite-checkout:use-initialize-cart-from
 export default function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,
 	canInitializeCart: boolean,
-	productsToAdd: RequestCartProduct[] | null,
-	couponToAdd: string | null,
+	productsToAddOnInitialize: RequestCartProduct[] | null,
+	couponToAddOnInitialize: string | null,
 	getCart: () => Promise< ResponseCart >,
 	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartAction ) => void,
@@ -50,18 +50,18 @@ export default function useInitializeCartFromServer(
 
 		getCart()
 			.then( ( response ) => {
-				if ( productsToAdd?.length || couponToAdd ) {
+				if ( productsToAddOnInitialize?.length || couponToAddOnInitialize ) {
 					debug(
 						'initialized cart is',
 						response,
 						'; proceeding to add initial products',
-						productsToAdd,
+						productsToAddOnInitialize,
 						' and coupons',
-						couponToAdd
+						couponToAddOnInitialize
 					);
 					let responseCart = convertRawResponseCartToResponseCart( response );
-					if ( productsToAdd?.length ) {
-						responseCart = productsToAdd.reduce( ( updatedCart, productToAdd ) => {
+					if ( productsToAddOnInitialize?.length ) {
+						responseCart = productsToAddOnInitialize.reduce( ( updatedCart, productToAdd ) => {
 							onEvent?.( {
 								type: 'CART_ADD_ITEM',
 								payload: productToAdd,
@@ -69,8 +69,8 @@ export default function useInitializeCartFromServer(
 							return addItemToResponseCart( updatedCart, productToAdd );
 						}, responseCart );
 					}
-					if ( couponToAdd ) {
-						responseCart = addCouponToResponseCart( responseCart, couponToAdd );
+					if ( couponToAddOnInitialize ) {
+						responseCart = addCouponToResponseCart( responseCart, couponToAddOnInitialize );
 					}
 					return setCart( convertResponseCartToRequestCart( responseCart ) );
 				}
@@ -89,7 +89,6 @@ export default function useInitializeCartFromServer(
 				} );
 			} )
 			.catch( ( error ) => {
-				// TODO: figure out what to do here
 				debug( 'error while initializing cart', error );
 				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR', message: error } );
 				onEvent?.( {
@@ -103,8 +102,8 @@ export default function useInitializeCartFromServer(
 		hookDispatch,
 		onEvent,
 		getCart,
-		productsToAdd,
-		couponToAdd,
+		productsToAddOnInitialize,
+		couponToAddOnInitialize,
 		setCart,
 	] );
 }
