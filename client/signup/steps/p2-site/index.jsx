@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, map, deburr, filter } from 'lodash';
+import { includes, isEmpty, map, deburr, get } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -201,46 +201,25 @@ class P2Site extends React.Component {
 						}
 
 						if ( error.error && SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
-							const requestsPromises = [];
-
 							WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.forEach( ( suffix ) => {
 								const suggestedSubdomain = `${ fields.site }${ suffix }.wordpress.com`;
 
-								requestsPromises.push(
-									new Promise( ( resolve ) => {
-										wpcom.undocumented().getDomainInfo( suggestedSubdomain, ( apiError ) => {
-											if ( apiError && apiError.error && apiError.error === 'unknown_blog' ) {
-												resolve( suggestedSubdomain );
-											} else {
-												resolve( null );
-											}
+								wpcom
+									.domains()
+									.suggestions( {
+										quantity: 1,
+										query: suggestedSubdomain,
+										only_wordpressdotcom: true,
+									} )
+									.then( ( suggestionObjects ) => {
+										this.setState( {
+											suggestedSubdomains: [
+												...this.state.suggestedSubdomains,
+												get( suggestionObjects, '0.domain_name', null ),
+											],
 										} );
 									} )
-								);
-							} );
-
-							Promise.all( requestsPromises ).then( ( suggestions ) => {
-								suggestions = filter( suggestions, ( suggestion ) => suggestion );
-
-								if ( ! isEmpty( suggestions ) ) {
-									this.setState( {
-										suggestedSubdomains: suggestions,
-									} );
-								} else {
-									wpcom
-										.domains()
-										.suggestions( {
-											quantity: 3,
-											query: fields.site,
-											only_wordpressdotcom: true,
-										} )
-										.then( ( suggestionObjects ) => {
-											this.setState( {
-												suggestedSubdomains: map( suggestionObjects, ( obj ) => obj.domain_name ),
-											} );
-										} )
-										.catch( () => {} );
-								}
+									.catch( () => {} );
 							} );
 						}
 					}
