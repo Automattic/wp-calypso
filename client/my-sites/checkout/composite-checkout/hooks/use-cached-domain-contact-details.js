@@ -31,7 +31,14 @@ export default function useCachedDomainContactDetails( updateCartLocation ) {
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	useEffect( () => {
 		if ( cachedContactDetails ) {
+			debug( 'using fetched cached domain contact details', cachedContactDetails );
 			dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
+		}
+		if (
+			cachedContactDetails?.countryCode ||
+			cachedContactDetails?.postalCode ||
+			cachedContactDetails?.state
+		) {
 			updateCartLocation( {
 				countryCode: cachedContactDetails.countryCode ?? '',
 				postalCode: cachedContactDetails.postalCode ?? '',
