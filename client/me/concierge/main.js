@@ -35,6 +35,12 @@ import AppointmentInfo from './shared/appointment-info';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
+import {
+	PLAN_BUSINESS_ONBOARDING_EXPIRE,
+	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
+} from 'lib/plans/constants';
+import { withLocalizedMoment } from 'components/localized-moment';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 
 export class ConciergeMain extends Component {
 	constructor( props ) {
@@ -80,6 +86,7 @@ export class ConciergeMain extends Component {
 			userSettings,
 			nextAppointment,
 			rescheduling,
+			currentPlan,
 		} = this.props;
 
 		const CurrentStep = steps[ this.state.currentStep ];
@@ -88,9 +95,24 @@ export class ConciergeMain extends Component {
 		if ( ! availableTimes || ! site || ! site.plan || null == scheduleId || ! userSettings ) {
 			return <Skeleton />;
 		}
+		let hasBusinessOnboardingExpired;
+		if ( currentPlan ) {
+			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
+			const is2YearPlan = site.plan.product_id === 1028;
+			const businessOnboardingExpiration = this.props.moment(
+				is2YearPlan ? PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE : PLAN_BUSINESS_ONBOARDING_EXPIRE
+			);
 
-		// if scheduleId is 0, it means the user is not eligible for the concierge service.
-		if ( scheduleId === 0 ) {
+			hasBusinessOnboardingExpired = businessOnboardingExpiration.diff( expiryDateMoment ) < 0;
+		}
+
+		const hasIncludedSessions = scheduleId === 1;
+		const hasPurchsedSessions = scheduleId > 1;
+
+		const isBusinessOnboardingAvailable =
+			hasPurchsedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
+
+		if ( ! isBusinessOnboardingAvailable ) {
 			return <Upsell site={ site } />;
 		}
 
@@ -136,10 +158,15 @@ export class ConciergeMain extends Component {
 	}
 }
 
-export default connect( ( state, props ) => ( {
-	availableTimes: getConciergeAvailableTimes( state ),
-	nextAppointment: getConciergeNextAppointment( state ),
-	site: getSite( state, props.siteSlug ),
-	scheduleId: getConciergeScheduleId( state ),
-	userSettings: getUserSettings( state ),
-} ) )( ConciergeMain );
+export default connect( ( state, props ) => {
+	const site = getSite( state, props.siteSlug );
+	const siteId = site && site.ID;
+	return {
+		availableTimes: getConciergeAvailableTimes( state ),
+		nextAppointment: getConciergeNextAppointment( state ),
+		site,
+		currentPlan: getCurrentPlan( state, siteId ),
+		scheduleId: getConciergeScheduleId( state ),
+		userSettings: getUserSettings( state ),
+	};
+} )( withLocalizedMoment( ConciergeMain ) );
