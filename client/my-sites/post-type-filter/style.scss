@@ -3,21 +3,6 @@
 	height: 50px;
 }
 
-.post-type-filter__multi-select-button {
-	background-color: var( --color-neutral-0 );
-
-	@include breakpoint-deprecated( '<480px' ) {
-		position: absolute;
-		top: 8px;
-		right: 50px;
-		padding: 12px 8px 10px;
-
-		& .post-type-filter__multi-select-button-text {
-			display: none;
-		}
-	}
-}
-
 @include breakpoint-deprecated( '660px-800px' ) {
 	$width-search: 40px;
 	$space-between-nav-and-search: 5px;
