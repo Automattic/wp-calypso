@@ -59,7 +59,7 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout' } ) );
 
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
@@ -100,7 +100,7 @@ export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
 
 	context.primary = (
 		<CheckoutPendingComponent
@@ -121,7 +121,7 @@ export function checkoutThankYou( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const displayMode = get( context, 'query.d' );
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
@@ -145,7 +145,7 @@ export function checkoutThankYou( context, next ) {
 
 export function gsuiteNudge( context, next ) {
 	const { domain, site, receiptId } = context.params;
-	context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'gsuite-nudge' } ) );
 
 	const state = context.store.getState();
 	const selectedSite =
@@ -192,7 +192,7 @@ export function upsellNudge( context, next ) {
 		upgradeItem = context.params.upgradeItem;
 	}
 
-	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: upsellType } ) );
 
 	context.primary = (
 		<CheckoutContainer

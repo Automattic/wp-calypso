@@ -98,12 +98,8 @@ function createNavigation( context ) {
 	);
 }
 
-function removeSidebar( context ) {
-	context.store.dispatch( setSection( { group: 'sites', secondary: false } ) );
-}
-
 function renderEmptySites( context ) {
-	removeSidebar( context );
+	context.store.dispatch( setSection( { group: 'sites' } ) );
 
 	context.primary = React.createElement( NoSitesMessage );
 
@@ -117,7 +113,7 @@ function renderNoVisibleSites( context ) {
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
-	removeSidebar( context );
+	context.store.dispatch( setSection( { group: 'sites' } ) );
 
 	context.primary = React.createElement( EmptyContentComponent, {
 		title: i18n.translate(
@@ -489,7 +485,7 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	removeSidebar( context );
+	context.store.dispatch( setSection( { group: 'sites' } ) );
 
 	context.primary = createSitesComponent( context );
 	next();

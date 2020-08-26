@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { includes, get, startsWith } from 'lodash';
+import { get, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,16 +29,6 @@ import wooDnaConfig from 'jetpack-connect/woo-dna-config';
  * Style dependencies
  */
 import './style.scss';
-
-// Returns true if given section should display sidebar for logged out users.
-const hasSidebar = ( section ) => {
-	if ( section.name === 'devdocs' ) {
-		// Devdocs should always display a sidebar, except for landing page.
-		return ! includes( section.paths, '/devdocs/start' );
-	}
-
-	return false;
-};
 
 const LayoutLoggedOut = ( {
 	currentRoute,
@@ -65,7 +55,7 @@ const LayoutLoggedOut = ( {
 		[ 'is-section-' + sectionName ]: sectionName,
 		'is-add-site-page': currentRoute === '/jetpack/new',
 		'focus-content': true,
-		'has-no-sidebar': ! hasSidebar( section ),
+		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
 		'is-gutenboarding-login': isGutenboardingLogin,

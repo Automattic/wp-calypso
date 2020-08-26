@@ -24,7 +24,6 @@ import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor'
 import { isOffline } from 'state/application/selectors';
 import {
 	getSelectedSiteId,
-	hasSidebar,
 	masterbarIsVisible,
 	getSectionGroup,
 	getSectionName,
@@ -140,7 +139,7 @@ class Layout extends Component {
 			{
 				'is-add-site-page': this.props.currentRoute === '/jetpack/new',
 				'is-support-session': this.props.isSupportSession,
-				'has-no-sidebar': ! this.props.hasSidebar,
+				'has-no-sidebar': ! this.props.secondary,
 				'has-chat': this.props.chatIsOpen,
 				'has-no-masterbar': this.props.masterbarIsHidden,
 				'is-jetpack-login': this.props.isJetpackLogin,
@@ -293,7 +292,6 @@ export default connect( ( state ) => {
 		sectionName,
 		sectionJitmPath,
 		shouldShowAppBanner,
-		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
