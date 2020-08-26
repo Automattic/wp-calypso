@@ -15,7 +15,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import PostTypeList from 'my-sites/post-type-list';
-import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
 import titlecase from 'to-title-case';
 import Main from 'components/main';
 import { POST_STATUSES } from 'state/posts/constants';
@@ -91,7 +90,6 @@ class PostsMain extends React.Component {
 					align="left"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
-				{ siteId && <PostTypeBulkEditBar /> }
 				<PostTypeList
 					query={ query }
 					showPublishedStatus={ showPublishedStatus }
