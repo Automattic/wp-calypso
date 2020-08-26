@@ -632,10 +632,11 @@ class ThemeSheet extends React.Component {
 			canonicalUrl,
 			currentUserId,
 			description,
-			seoDescription,
 			name: themeName,
 			seoTitle,
+			seoDescription,
 		} = this.props;
+
 		const title =
 			( seoTitle || themeName ) &&
 			i18n.translate( '%(themeName)s Theme', {
