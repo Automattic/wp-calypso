@@ -14,6 +14,7 @@ import ProductsColumn from './products-column';
 import { SECURITY } from './constants';
 import { durationToString, getProductUpsell, checkout } from './utils';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
+import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { managePurchase } from 'me/purchases/paths';
 import Main from 'components/main';
@@ -43,6 +44,7 @@ const SelectorPage = ( {
 }: SelectorPageProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
@@ -61,7 +63,13 @@ const SelectorPage = ( {
 			return;
 		}
 
-		if ( getProductUpsell( product.productSlug ) ) {
+		// Redirect to the Upsell page only if there is an upsell product and the site
+		// doesn't already own the product.
+		const upsellProduct = getProductUpsell( product.productSlug );
+		if (
+			upsellProduct &&
+			! siteProducts.find( ( { productSlug } ) => productSlug === upsellProduct )
+		) {
 			page( `${ root }/${ product.productSlug }/${ durationString }/additions` );
 			return;
 		}

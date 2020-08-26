@@ -23,6 +23,7 @@ import Main from 'components/main';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
 import { getProductsList } from 'state/products-list/selectors';
+import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 
 /**
@@ -37,6 +38,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
 	const translate = useTranslate();
 	const root = rootUrl.replace( ':site', siteSlug );
@@ -58,11 +60,16 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 
 	// Go to a new page for upsells.
 	const selectProduct: PurchaseCallback = ( { productSlug: slug, term }: SelectorProduct ) => {
-		if ( getProductUpsell( slug ) ) {
+		const upsellProduct = getProductUpsell( slug );
+		if (
+			upsellProduct &&
+			! siteProducts.find(
+				( { productSlug: siteProductSlug } ) => siteProductSlug === upsellProduct
+			)
+		) {
 			page( `${ root }/${ slug }/` + `${ durationToString( term ) }/additions` );
 			return;
 		}
-
 		checkout( siteSlug, slug );
 	};
 
