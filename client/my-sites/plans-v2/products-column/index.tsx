@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { slugToSelectorProduct, getJetpackProductDescriptionWithOptions } from '../utils';
+import { slugToSelectorProduct, getJetpackDescriptionWithOptions } from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import ProductCard from '../product-card';
 import FormattedHeader from 'components/formatted-header';
@@ -76,7 +76,7 @@ const ProductsColumn = ( {
 				)
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
-					description: getJetpackProductDescriptionWithOptions( product, ownedProducts ),
+					description: getJetpackDescriptionWithOptions( product, ownedProducts ),
 				} ) ),
 		[ duration, includedInPlanProducts, ownedProducts, productType ]
 	);

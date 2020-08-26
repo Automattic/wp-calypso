@@ -20,6 +20,8 @@ import {
 	ITEM_TYPE_PLAN,
 	FEATURED_PRODUCTS,
 	SUBTYPE_TO_OPTION,
+	DAILY_PRODUCTS,
+	REALTIME_PRODUCTS,
 } from './constants';
 import { addItems } from 'lib/cart/actions';
 import { jetpackProductItem } from 'lib/cart-values/cart-items';
@@ -501,24 +503,34 @@ export function getPathToUpsell(
 }
 
 /**
- * If product offers 'realtime' and 'daily' options, AND product is not already owned,
- * append "Available Options: Real-time and Daily" to the product description.
+ * Append "Available Options: Real-time and Daily" to the product description,
+ * if product/plan offers 'realtime' and 'daily' options, AND product/plan is not already owned,
  *
  * @param product SelectorProduct
- * @param currentProducts array
+ * @param ownedProducts array | string
  *
- * @returns ReactNode
+ * @returns ReactNode | TranslateResult
  */
-export const getJetpackProductDescriptionWithOptions = (
+export const getJetpackDescriptionWithOptions = (
 	product: SelectorProduct,
-	currentProducts: string[]
+	ownedProducts: string[] | string | null
 ): React.ReactNode | TranslateResult => {
+	if ( ! ownedProducts ) {
+		return product.description;
+	}
+
+	const productsOwned =
+		'item-type-plan' === product.type && 'string' === typeof ownedProducts
+			? [ ownedProducts ] // if it's a plan, make it an array
+			: ownedProducts; // otherwise, it's already an array
+
 	const em = React.createElement( 'em', null, null );
 
-	// check if 'subtypes' property contains daily and real-time options.
+	// check if 'subtypes' property contains daily and real-time product options.
 	// and check that this product is not owned.
-	return product.subtypes?.filter( ( subtype ) => /_(daily|realtime)/.test( subtype ) ).length >=
-		2 && ! currentProducts.includes( product.productSlug )
+	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
+		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) ) &&
+		! productsOwned.includes( product.productSlug )
 		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
 				args: {
 					productDescription: product.description,

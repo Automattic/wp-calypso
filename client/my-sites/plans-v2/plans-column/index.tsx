@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { PRODUCTS_TYPES, SELECTOR_PLANS } from '../constants';
-import { slugToSelectorProduct, getJetpackPlanDescriptionWithOptions } from '../utils';
+import { slugToSelectorProduct, getJetpackDescriptionWithOptions } from '../utils';
 import ProductCard from '../product-card';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -50,7 +50,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			)
 			.map( ( product: SelectorProduct ) => ( {
 				...product,
-				description: getJetpackPlanDescriptionWithOptions( product, currentPlan ),
+				description: getJetpackDescriptionWithOptions( product, currentPlan ),
 			} ) );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.
