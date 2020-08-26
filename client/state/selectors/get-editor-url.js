@@ -3,10 +3,13 @@
  */
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
+import isEligibleForGutenframe from 'state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( isClassicEditorForced( state, siteId ) ) {
+	// isEligibleForGutenframe deals with the server side checks for classic editor plugin etc.
+	// isClassicEditerForced has the client side checks. We should combine these!
+	if ( ! isEligibleForGutenframe( state, siteId ) || isClassicEditorForced( state, siteId ) ) {
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
 		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
 
