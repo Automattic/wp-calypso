@@ -29,7 +29,8 @@ import {
 } from 'lib/cart-values/cart-items';
 import { managePurchase } from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans/features-list';
-import { JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
@@ -188,13 +189,26 @@ function getFallbackDestination( {
 	// - has a receipt number
 	// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 	if ( siteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
-		const isJetpackProduct = product && JETPACK_BACKUP_PRODUCTS.includes( product );
-		// If we just purchased a Jetpack product, redirect to the my plans page.
-		if ( isJetpackNotAtomic && isJetpackProduct ) {
-			debug( 'the site is jetpack and bought a jetpack product', siteSlug, product );
-			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ product }`;
+		// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
+		// redirect to the my plans page. The product being purchased can come from the `product` prop or from the
+		// cart so we need to check both places.
+		const productsWithCustomThankYou = [ ...JETPACK_PRODUCTS_LIST, ...JETPACK_RESET_PLANS ];
+
+		// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
+		// one found).
+		const productFromCart = cart?.products?.find( ( { product_slug } ) =>
+			productsWithCustomThankYou.includes( product_slug )
+		)?.product_slug;
+
+		const purchasedProduct =
+			productFromCart ||
+			productsWithCustomThankYou.find( ( productWithCustom ) => productWithCustom === product );
+		if ( isJetpackNotAtomic && purchasedProduct ) {
+			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
+			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 		}
-		// If we just purchased a Jetpack plan (not a Jetpack product), redirect to the Jetpack onboarding plugin install flow.
+
+		// If we just purchased a legacy Jetpack plan, redirect to the Jetpack onboarding plugin install flow.
 		if ( isJetpackNotAtomic ) {
 			debug( 'the site is jetpack and has no jetpack product' );
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;

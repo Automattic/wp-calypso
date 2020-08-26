@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -27,7 +27,21 @@ import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { getPlan } from 'lib/plans';
-import { JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
+import {
+	JETPACK_LEGACY_PLANS,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+} from 'lib/plans/constants';
+import {
+	JETPACK_ANTI_SPAM_PRODUCTS,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
+} from 'lib/products-values/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -47,6 +61,9 @@ import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
+import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
+import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
+import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 import { getSitePurchases } from 'state/purchases/selectors';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
@@ -93,22 +110,37 @@ class CurrentPlan extends Component {
 	renderThankYou() {
 		const { currentPlan, product, selectedSite } = this.props;
 
-		if ( startsWith( product, 'jetpack_backup' ) ) {
+		if ( JETPACK_BACKUP_PRODUCTS.includes( product ) ) {
 			return <BackupProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_scan' ) ) {
+		if ( JETPACK_SCAN_PRODUCTS.includes( product ) ) {
 			return <ScanProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_anti_spam' ) ) {
+		if ( JETPACK_ANTI_SPAM_PRODUCTS.includes( product ) ) {
 			return <AntiSpamProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_search' ) ) {
+		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
 			const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
-
 			return <SearchProductThankYou { ...{ jetpackVersion } } />;
+		}
+
+		if (
+			[ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ].includes( product )
+		) {
+			return <JetpackSecurityDailyThankYou />;
+		}
+
+		if (
+			[ PLAN_JETPACK_SECURITY_REALTIME, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ].includes( product )
+		) {
+			return <JetpackSecurityRealtimeThankYou />;
+		}
+
+		if ( [ PLAN_JETPACK_COMPLETE, PLAN_JETPACK_COMPLETE_MONTHLY ].includes( product ) ) {
+			return <JetpackCompleteThankYou />;
 		}
 
 		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
