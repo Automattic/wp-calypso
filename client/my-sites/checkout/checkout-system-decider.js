@@ -2,12 +2,11 @@
  * External dependencies
  */
 import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import cookie from 'cookie';
 
 /**
  * Internal Dependencies
@@ -18,18 +17,11 @@ import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { logToLogstash } from 'state/logstash/actions';
 import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
-
-function getGeoLocationFromCookie() {
-	const cookies = cookie.parse( document.cookie );
-
-	return cookies.country_code;
-}
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -51,14 +43,12 @@ export default function CheckoutSystemDecider( {
 	isLoggedOutCart,
 	isNoSiteCart,
 } ) {
-	const countryCode =
-		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
 	const prepurchaseNotices = <PrePurchaseNotices cart={ cart } />;
 
-	const checkoutVariant = getCheckoutVariant( countryCode );
+	const checkoutVariant = getCheckoutVariant();
 
 	useEffect( () => {
 		if ( product ) {
@@ -160,24 +150,10 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function getCheckoutVariant( countryCode ) {
+function getCheckoutVariant() {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
 		return 'old-checkout';
-	}
-
-	if ( config.isEnabled( 'composite-checkout-force' ) ) {
-		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
-		return 'composite-checkout';
-	}
-
-	// Disable for India
-	if ( countryCode?.toLowerCase() === 'in' ) {
-		debug(
-			'shouldShowCompositeCheckout false because country is not allowed',
-			countryCode?.toLowerCase()
-		);
-		return 'disallowed-geo';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );

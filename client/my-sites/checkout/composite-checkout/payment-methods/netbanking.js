@@ -253,8 +253,8 @@ function NetBankingPayButton( { disabled, store } ) {
 						payload: { paymentMethodId: 'netbanking' },
 					} );
 					submitTransaction( {
-						name: customerName?.value,
 						...massagedFields,
+						name: customerName?.value,
 						address: massagedFields?.address1,
 						items,
 						total,
