@@ -61,9 +61,7 @@ exports.createDir = function ( dir ) {
 
 exports.isVideoEnabled = function () {
 	const video = process.env.CI;
-	const enabled = video === 'true';
-	console.log( `env.CI: ${ process.env.CI }, enabled: ${ enabled }` ); // eslint-disable-line
-	return enabled;
+	return video === 'true';
 };
 
 exports.startVideo = function () {
@@ -85,6 +83,8 @@ exports.startVideo = function () {
 		ffDisplay,
 		'-pix_fmt',
 		'yuv420p',
+		'-vcodec',
+		'libx264',
 		'-loglevel',
 		'error',
 		file,
