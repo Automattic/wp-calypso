@@ -326,9 +326,12 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 								?.name || '',
 					} )
 				);
+				const paymentMethodIdForTracks = action.payload.paymentMethodId
+					.replace( /-/, '_' )
+					.toLowerCase();
 				return reduxDispatch(
 					recordTracksEvent(
-						`calypso_checkout_composite_${ action.payload.paymentMethodId }_submit_clicked`,
+						`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
 						{}
 					)
 				);
