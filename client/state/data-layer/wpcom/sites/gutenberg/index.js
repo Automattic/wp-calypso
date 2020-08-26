@@ -40,7 +40,7 @@ const setGutenbergOptInData = (
 		opt_in: optIn,
 		opt_out: optOut,
 		in_editor_deprecation_group: inEditorDeprecationGroup,
-		eligible_gutenframe: isEligibleForGutenframe,
+		eligible_gutenframe: isEligibleForGutenframe = true,
 	}
 ) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
