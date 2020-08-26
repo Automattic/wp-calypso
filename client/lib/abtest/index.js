@@ -208,7 +208,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
 	const localeFromSession = getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
-	const userLocale = user().get().localeSlug || 'en';
+	const userLocale = user().get()?.localeSlug || 'en';
 
 	if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
 		debug( '%s: User has a %s locale', experimentId, userLocale );
