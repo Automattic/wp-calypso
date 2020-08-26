@@ -3,8 +3,6 @@
  */
 import { SELECTED_SITE_SET } from 'state/action-types';
 
-import 'state/data-layer/wpcom/sites/jitm';
-
 /**
  * Returns an action object to be used in signalling that a site has been set
  * as selected.
