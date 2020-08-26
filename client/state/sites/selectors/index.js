@@ -8,7 +8,7 @@ export { default as canCurrentUserUseStore } from './can-current-user-use-store'
 export { default as canJetpackSiteAutoUpdateCore } from './can-jetpack-site-auto-update-core';
 export { default as canJetpackSiteAutoUpdateFiles } from './can-jetpack-site-auto-update-files';
 export { default as canJetpackSiteUpdateFiles } from './can-jetpack-site-update-files';
-export { default as getComingSoonPage } from './get-coming-soon-page';
+export { default as getComingSoonPageId } from './get-coming-soon-page-id';
 export { default as getCustomizerUrl } from './get-customizer-url';
 export { default as getJetpackComputedAttributes } from './get-jetpack-computed-attributes';
 export { default as getJetpackSiteUpdateFilesDisabledReasons } from './get-jetpack-site-update-files-disabled-reasons';
@@ -42,6 +42,7 @@ export { default as hasJetpackSiteJetpackThemes } from './has-jetpack-site-jetpa
 export { default as hasSiteProduct } from './has-site-product';
 export { default as hasJetpackSiteJetpackThemesExtendedFeatures } from './has-jetpack-site-jetpack-themes-extended-features';
 export { default as hasStaticFrontPage } from './has-static-front-page';
+export { default as isComingSoonModeActive } from './is-coming-soon-mode-active';
 export { default as isCurrentPlanPaid } from './is-current-plan-paid';
 export { default as isCurrentSitePlan } from './is-current-site-plan';
 export { default as isJetpackMinimumVersion } from './is-jetpack-minimum-version';
