@@ -77,6 +77,7 @@ import {
 	persistSignupSiteCreated,
 	retrieveSignupDestination,
 	retrieveSignupSiteCreated,
+	clearSignupDestinationCookie,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
@@ -85,7 +86,6 @@ import ReskinnedProcessingScreen from 'signup/reskinned-processing-screen';
 import user from 'lib/user';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { abtest } from 'lib/abtest';
-import detectHistoryNavigation from 'lib/detect-history-navigation';
 
 /**
  * Style dependencies
@@ -161,18 +161,26 @@ class Signup extends React.Component {
 
 		let providedDependencies;
 
-		if ( detectHistoryNavigation.loadedViaHistory() ) {
-			// do something
-		}
-
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
+		const searchParams = new URLSearchParams( window.location.search );
+		const isAddNewSiteFlow = searchParams.has( 'ref' );
+
+		if ( isAddNewSiteFlow ) {
+			clearSignupDestinationCookie();
+		}
+
+		const wasSignupCheckoutUnnloaded = window.sessionStorage.getItem(
+			'signupCheckoutPageUnloaded'
+		);
 		const signupDestinationCookieExists = retrieveSignupDestination();
 		const siteSlugFromCookie = retrieveSignupSiteCreated();
+		this.enableManageSiteFlow =
+			wasSignupCheckoutUnnloaded && signupDestinationCookieExists && ! isAddNewSiteFlow;
 
-		if ( signupDestinationCookieExists ) {
+		if ( this.enableManageSiteFlow ) {
 			providedDependencies = { siteSlug: siteSlugFromCookie, preventDuplicates: true };
 		}
 
@@ -600,10 +608,9 @@ class Signup extends React.Component {
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
-		const signupDestinationCookieExists = retrieveSignupDestination();
 
 		let propsForCurrentStep = propsFromConfig;
-		if ( signupDestinationCookieExists ) {
+		if ( this.enableManageSiteFlow ) {
 			propsForCurrentStep = assign( {}, propsFromConfig, {
 				showExampleSuggestions: false,
 				showSkipButton: true,
