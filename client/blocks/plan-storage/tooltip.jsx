@@ -10,14 +10,14 @@ import {
 } from 'reakit/Tooltip';
 
 function Tooltip( { children, title, ...props } ) {
-	const tooltip = useTooltipState( { placement: 'top-end', gutter: 14 } );
+	const tooltipState = useTooltipState( { placement: 'top-end', gutter: 14 } );
 	return (
 		<>
-			<TooltipReference { ...tooltip } ref={ children.ref } { ...children.props }>
+			<TooltipReference { ...tooltipState } ref={ children.ref } { ...children.props }>
 				{ ( referenceProps ) => React.cloneElement( children, referenceProps ) }
 			</TooltipReference>
-			<ReakitTooltip { ...tooltip } { ...props }>
-				<TooltipArrow className="tooltip__arrow" { ...tooltip } size={ 22 } />
+			<ReakitTooltip { ...tooltipState } { ...props }>
+				<TooltipArrow className="tooltip__arrow" { ...tooltipState } size={ 22 } />
 				{ title }
 			</ReakitTooltip>
 		</>
