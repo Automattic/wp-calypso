@@ -26,6 +26,7 @@ import { resolveDomainStatus, isDomainInGracePeriod, isDomainUpdateable } from '
 import InfoPopover from 'components/info-popover';
 import { emailManagement } from 'my-sites/email/paths';
 import {
+	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementNameServers,
 	domainManagementTransfer,
@@ -223,6 +224,14 @@ class DomainItem extends PureComponent {
 							href={ domainManagementDns( site.slug, domain.domain, currentRoute ) }
 						>
 							{ translate( 'DNS Records' ) }
+						</PopoverMenuItem>
+					) }
+					{ domain.type === domainTypes.WPCOM && ! domainDetails?.isWpcomStagingDomain && (
+						<PopoverMenuItem
+							icon="list-unordered"
+							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
+						>
+							{ translate( 'Change site address' ) }
 						</PopoverMenuItem>
 					) }
 					{ domain.type === domainTypes.REGISTERED &&

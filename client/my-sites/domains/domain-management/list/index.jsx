@@ -543,7 +543,7 @@ export class List extends React.Component {
 			<DomainItem
 				key={ `${ domain.name }-${ index }` }
 				currentRoute={ currentRoute }
-				domain={ { domain: domain.name } }
+				domain={ domain }
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
