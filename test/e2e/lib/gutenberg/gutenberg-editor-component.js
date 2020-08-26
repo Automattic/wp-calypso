@@ -172,7 +172,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[2]" )
 		);
 
-		return this.driver.findElement( By.css( 'textarea.editor-post-text-editor' ) );
+		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
+
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
+
+		return this.driver.findElement( textAreaSelector );
 	}
 
 	async switchToBlockEditor() {
