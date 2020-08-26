@@ -17,15 +17,10 @@ import { getNormalizedPost } from 'state/posts/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
 import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
 import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
-import {
-	isSharePanelOpen,
-	isMultiSelectEnabled,
-	isPostSelected,
-} from 'state/ui/post-type-list/selectors';
-import { hideActiveSharePanel, togglePostSelection } from 'state/ui/post-type-list/actions';
+import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
+import { hideActiveSharePanel } from 'state/ui/post-type-list/actions';
 import { bumpStat } from 'state/analytics/actions';
 import ExternalLink from 'components/external-link';
-import FormInputCheckbox from 'components/forms/form-checkbox';
 import PostShare from 'blocks/post-share';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
@@ -49,11 +44,6 @@ function preloadEditor() {
 class PostItem extends React.Component {
 	clickHandler = ( clickTarget ) => () => {
 		this.props.bumpStat( 'calypso_post_item_click', clickTarget );
-	};
-
-	toggleCurrentPostSelection = ( event ) => {
-		this.props.togglePostSelection( this.props.globalId );
-		event.stopPropagation();
 	};
 
 	inAllSitesModeWithMultipleUsers() {
@@ -96,21 +86,6 @@ class PostItem extends React.Component {
 		}
 	}
 
-	renderSelectionCheckbox() {
-		const { multiSelectEnabled, isCurrentPostSelected } = this.props;
-		return (
-			multiSelectEnabled && (
-				//eslint-disable-next-line
-				<div className="post-item__select" onClick={ this.toggleCurrentPostSelection }>
-					<FormInputCheckbox
-						checked={ isCurrentPostSelected }
-						onClick={ this.toggleCurrentPostSelection }
-					/>
-				</div>
-			)
-		);
-	}
-
 	renderExpandedContent() {
 		const { post, hasExpandedContent } = this.props;
 
@@ -137,7 +112,6 @@ class PostItem extends React.Component {
 			globalId,
 			isAllSitesModeSelected,
 			translate,
-			multiSelectEnabled,
 			showPublishedStatus,
 			hasExpandedContent,
 			isTypeWpBlock,
@@ -148,7 +122,7 @@ class PostItem extends React.Component {
 		const title = post ? post.title : null;
 		const isPlaceholder = ! globalId;
 		const isTrashed = post && 'trash' === post.status;
-		const enabledPostLink = isPlaceholder || multiSelectEnabled || isTrashed ? null : postUrl;
+		const enabledPostLink = isPlaceholder || isTrashed ? null : postUrl;
 
 		const panelClasses = classnames( 'post-item__panel', className, {
 			'is-untitled': ! title,
@@ -164,7 +138,6 @@ class PostItem extends React.Component {
 		return (
 			<div className={ rootClasses } ref={ this.setDomNode }>
 				<div className={ panelClasses }>
-					{ this.renderSelectionCheckbox() }
 					<div className="post-item__detail">
 						<div className="post-item__info">
 							{ isAllSitesModeSelected && (
@@ -202,7 +175,7 @@ class PostItem extends React.Component {
 							{ ! isPlaceholder && externalPostLink && (
 								<ExternalLink
 									icon={ true }
-									href={ multiSelectEnabled ? null : postUrl }
+									href={ postUrl }
 									target="_blank"
 									className="post-item__title-link"
 								>
@@ -230,10 +203,8 @@ class PostItem extends React.Component {
 						globalId={ globalId }
 						onClick={ this.clickHandler( 'image' ) }
 					/>
-					{ ! multiSelectEnabled && ! isTypeWpBlock && (
-						<PostActionsEllipsisMenu globalId={ globalId } />
-					) }
-					{ ! multiSelectEnabled && isTypeWpBlock && (
+					{ ! isTypeWpBlock && <PostActionsEllipsisMenu globalId={ globalId } /> }
+					{ isTypeWpBlock && (
 						<PostActionsEllipsisMenu globalId={ globalId } includeDefaultActions={ false }>
 							<PostActionsEllipsisMenuEdit key="edit" />
 							<PostActionsEllipsisMenuTrash key="trash" />
@@ -287,14 +258,11 @@ export default connect(
 			allSitesSingleUser: areAllSitesSingleUser( state ),
 			singleUserSite: isSingleUserSite( state, siteId ),
 			hasExpandedContent,
-			isCurrentPostSelected: isPostSelected( state, globalId ),
-			multiSelectEnabled: isMultiSelectEnabled( state ),
 			isTypeWpBlock: 'wp_block' === post.type,
 		};
 	},
 	{
 		bumpStat,
 		hideActiveSharePanel,
-		togglePostSelection,
 	}
 )( localize( PostItem ) );
