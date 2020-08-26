@@ -2,17 +2,17 @@
 
 This plugin includes many sub-features which add blocks and new functionality to the Gutenberg editor. The plugin provides a single codebase which can be installed on any platform which requires these features, such as the WordPress.com multisite or other standalone WordPress instances.
 
-**Note: This plugin is currently being renamed from Full Site Editing Plugin to WordPress.com Editing Toolkit Plugin.**
-In the near future, the following will be changed:
+## Rename Info
+
+This plugin has been renamed from Full Site Editing Plugin to WordPress.com Editing Toolkit Plugin.
+The following changed to use "editing-toolkit" in place of "full-site-editing".
 
 - Directories and filenames referencing "full site editing"
 - Code referencing those filenames
 - Documentation
 - CI job names
 
-Those will be updated to use "editing-toolkit" in place of "full-site-editing."
-
-The following items will likely not change:
+The following items did not change:
 
 - The plugin slug, which will remain `full-site-editing` due to rename limitations in WordPress.
 - The root full-site-editing-plugin.php file (to preserve the plugin slug).
