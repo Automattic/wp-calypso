@@ -50,7 +50,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			)
 			.map( ( product: SelectorProduct ) => ( {
 				...product,
-				description: getJetpackDescriptionWithOptions( product, currentPlan ),
+				description: getJetpackDescriptionWithOptions( product ),
 			} ) );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.

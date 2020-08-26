@@ -503,34 +503,21 @@ export function getPathToUpsell(
 }
 
 /**
- * Append "Available Options: Real-time and Daily" to the product description,
- * if product/plan offers 'realtime' and 'daily' options, AND product/plan is not already owned,
+ * Append "Available Options: Real-time and Daily" to the product description.
  *
  * @param product SelectorProduct
- * @param ownedProducts array | string
  *
  * @returns ReactNode | TranslateResult
  */
 export const getJetpackDescriptionWithOptions = (
-	product: SelectorProduct,
-	ownedProducts: string[] | string | null
+	product: SelectorProduct
 ): React.ReactNode | TranslateResult => {
-	if ( ! ownedProducts ) {
-		return product.description;
-	}
-
-	const productsOwned =
-		'item-type-plan' === product.type && 'string' === typeof ownedProducts
-			? [ ownedProducts ] // if it's a plan, make it an array
-			: ownedProducts; // otherwise, it's already an array
-
 	const em = React.createElement( 'em', null, null );
 
-	// check if 'subtypes' property contains daily and real-time product options.
-	// and check that this product is not owned.
+	// If the product has 'subtypes' (containing daily and real-time product slugs).
+	// then append "Available options: Real-time or Daily" to the product description.
 	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
-		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) ) &&
-		! productsOwned.includes( product.productSlug )
+		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
 		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
 				args: {
 					productDescription: product.description,

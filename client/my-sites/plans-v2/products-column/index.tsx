@@ -76,7 +76,7 @@ const ProductsColumn = ( {
 				)
 				.map( ( product: SelectorProduct ) => ( {
 					...product,
-					description: getJetpackDescriptionWithOptions( product, ownedProducts ),
+					description: getJetpackDescriptionWithOptions( product ),
 				} ) ),
 		[ duration, includedInPlanProducts, ownedProducts, productType ]
 	);
