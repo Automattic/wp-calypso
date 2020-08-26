@@ -21,7 +21,6 @@ import FeedError from 'reader/feed-error';
 import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
-import { preload } from 'sections-helper';
 import { requestFeedDiscovery } from 'state/data-getters';
 import { waitForData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
@@ -113,11 +112,6 @@ const exported = {
 			return page.redirect( redirect );
 		}
 
-		next();
-	},
-
-	preloadReaderBundle( context, next ) {
-		preload( 'reader' );
 		next();
 	},
 
@@ -316,7 +310,6 @@ export const {
 	legacyRedirects,
 	updateLastRoute,
 	incompleteUrlRedirects,
-	preloadReaderBundle,
 	sidebar,
 	unmountSidebar,
 	following,
