@@ -18,6 +18,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
 	TYPE_FREE,
+	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
 	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
 } from 'lib/plans/constants';
@@ -107,7 +108,8 @@ export class ProductPurchaseFeaturesList extends Component {
 		let hasBusinessOnboardingExpired;
 		if ( currentPlan ) {
 			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
-			const is2YearPlan = selectedSite.plan.product_id === 1028;
+
+			const is2YearPlan = plan === PLAN_BUSINESS_2_YEARS;
 			const businessOnboardingExpiration = this.props.moment(
 				is2YearPlan ? PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE : PLAN_BUSINESS_ONBOARDING_EXPIRE
 			);
@@ -116,10 +118,10 @@ export class ProductPurchaseFeaturesList extends Component {
 		}
 
 		const hasIncludedSessions = scheduleId === 1;
-		const hasPurchsedSessions = scheduleId > 1;
+		const hasPurchasedSessions = scheduleId > 1;
 
 		const isBusinessOnboardingAvailable =
-			hasPurchsedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
+			hasPurchasedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
 
 		return (
 			<Fragment>
