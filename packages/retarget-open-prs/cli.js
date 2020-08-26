@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+const yargs = require( 'yargs' );
+const retargetOpenPrs = require( './index' );
+
+const args = yargs
+	.usage( 'Usage: $0' )
+	.options( {
+		owner: {
+			alias: 'o',
+			describe: 'The owner of the repository (either a user or organization).',
+			demandOption: true,
+			requiresArg: true,
+		},
+		repo: {
+			alias: 'r',
+			describe: 'The full name of the repository in which to retarget PRs.',
+			demandOption: true,
+			requiresArg: true,
+		},
+		from: {
+			alias: 'f',
+			describe:
+				'The original branch name against which to select open PRs that need to be retargted.',
+			demandOption: true,
+			requiresArg: true,
+		},
+		to: {
+			alias: 't',
+			describe: 'The new branch towards which to retarget PRs open against "from"',
+			demandOption: true,
+			requiresArg: true,
+		},
+		'access-token': {
+			describe:
+				'A GitHub access token authorized to retarget open PRs in the repository named in "repo"',
+			demandOption: true,
+			requiresArg: true,
+		},
+	} )
+	.example(
+		'$0 --owner=Automattic --repo=wp-calypso --from="main" --to="trunk" --access-token="ABCDEFG1234567"'
+	)
+	.help( 'h' )
+	.alias( 'h', 'help' ).argv;
+
+retargetOpenPrs( args.owner, args.repo, args.from, args.to, args[ 'access-token' ] );
