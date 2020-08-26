@@ -77,7 +77,7 @@ export function checkout( context, next ) {
 			const signupDestinationCookieExists = retrieveSignupDestination();
 
 			if ( signupDestinationCookieExists ) {
-				window.sessionStorage.setItem( 'signupCheckoutPageUnloaded', true );
+				sessionStorage.setItem( 'signupCheckoutPageUnloaded', true ); // eslint-disable-line no-undef
 			}
 		} );
 	}

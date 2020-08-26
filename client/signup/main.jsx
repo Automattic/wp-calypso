@@ -172,9 +172,7 @@ class Signup extends React.Component {
 			clearSignupDestinationCookie();
 		}
 
-		const wasSignupCheckoutUnnloaded = window.sessionStorage.getItem(
-			'signupCheckoutPageUnloaded'
-		);
+		const wasSignupCheckoutUnnloaded = sessionStorage.getItem( 'signupCheckoutPageUnloaded' ); // eslint-disable-line no-undef
 		const signupDestinationCookieExists = retrieveSignupDestination();
 		const siteSlugFromCookie = retrieveSignupSiteCreated();
 		this.enableManageSiteFlow =
