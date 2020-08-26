@@ -36,6 +36,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import {
+	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
 	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
 } from 'lib/plans/constants';
@@ -98,7 +99,7 @@ export class ConciergeMain extends Component {
 		let hasBusinessOnboardingExpired;
 		if ( currentPlan ) {
 			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
-			const is2YearPlan = site.plan.product_id === 1028;
+			const is2YearPlan = currentPlan.productSlug === PLAN_BUSINESS_2_YEARS;
 			const businessOnboardingExpiration = this.props.moment(
 				is2YearPlan ? PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE : PLAN_BUSINESS_ONBOARDING_EXPIRE
 			);
@@ -107,10 +108,10 @@ export class ConciergeMain extends Component {
 		}
 
 		const hasIncludedSessions = scheduleId === 1;
-		const hasPurchsedSessions = scheduleId > 1;
+		const hasPurchasedSessions = scheduleId > 1;
 
 		const isBusinessOnboardingAvailable =
-			hasPurchsedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
+			hasPurchasedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
 
 		if ( ! isBusinessOnboardingAvailable ) {
 			return <Upsell site={ site } />;
