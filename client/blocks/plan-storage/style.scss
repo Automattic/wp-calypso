@@ -57,7 +57,8 @@
 	z-index: z-index( 'root', '.plan-storage__tooltip' );
 
 	.tooltip__arrow {
-		margin-top: (-$border-width);
+		margin-top: ( -$border-width );
+		margin-left: calc( 50% - 2em );
 
 		.stroke {
 			fill: var( --color-border-subtle );
