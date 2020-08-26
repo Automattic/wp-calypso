@@ -30,6 +30,7 @@ function WpcomNux() {
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 	} ) );
 
+	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
@@ -43,6 +44,11 @@ function WpcomNux() {
 		};
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
+
+	// Hide editor sidebar first time users sees the editor
+	useEffect( () => {
+		isWpcomNuxEnabled && closeGeneralSidebar();
+	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
 
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
