@@ -217,10 +217,10 @@ references:
   desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
     name: Restore Calypso build cache
     keys:
-      - v6-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+      - v7-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
   desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
     name: Save Calypso build cache
-    key: v6-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+    key: v7-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
     paths:
       - .cache
   desktop-notify-github-success: &desktop-notify-github-success
