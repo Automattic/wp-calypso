@@ -94,7 +94,6 @@
 		"reader/seen-posts": true,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
-		"rubberband-scroll-disable": false,
 		"rum-tracking/logstash": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

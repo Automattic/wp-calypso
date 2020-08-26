@@ -128,7 +128,6 @@
 		"reader/seen-posts": true,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
-		"rubberband-scroll-disable": false,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
 		"security/security-checkup": true,
