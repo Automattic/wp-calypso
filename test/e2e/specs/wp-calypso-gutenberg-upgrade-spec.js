@@ -14,7 +14,6 @@ import { join } from 'path';
 import LoginFlow from '../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-import PostPreviewEditorComponent from '../lib/components/post-preview-component';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -100,15 +99,13 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		);
 	}
 
-	async function takePreviewScreenshots( siteName ) {
-		await gEditorComponent.launchPreview();
-		await PostPreviewEditorComponent.switchToIFrame( driver );
-		await driver.sleep( 3000 );
+	async function takePublishedScreenshots( siteName ) {
+		await gEditorComponent.publish( { visit: true } );
 
 		const totalHeight = await driver.executeScript( 'return document.body.offsetHeight' );
 		const windowHeight = await driver.executeScript( 'return window.outerHeight' );
 
-		await takeScreenshot( `${ siteName }-preview`, totalHeight, windowHeight, ( i ) =>
+		await takeScreenshot( `${ siteName }-published`, totalHeight, windowHeight, ( i ) =>
 			driver.executeScript( `window.scrollTo(0, window.outerHeight*${ i })` )
 		);
 	}
@@ -252,8 +249,8 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				}
 			);
 
-			step( 'Take screenshots of the whole previewed page', async function () {
-				await takePreviewScreenshots( siteName );
+			step( 'Take screenshots of the whole published page', async function () {
+				await takePublishedScreenshots( siteName );
 			} );
 
 			describe( 'Test the same blocks in the corresponding edge site', function () {
@@ -276,8 +273,8 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					await takeBlockScreenshots( edgeSiteName );
 				} );
 
-				step( 'Take screenshots of the whole previewed page', async function () {
-					await takePreviewScreenshots( edgeSiteName );
+				step( 'Take screenshots of the whole published page', async function () {
+					await takePublishedScreenshots( edgeSiteName );
 				} );
 			} );
 		} );
