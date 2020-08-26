@@ -81,7 +81,7 @@ export const getTask = (
 				description: translate(
 					"Next, we'll guide you through setting up and launching your site."
 				),
-				actionText: 'Get started',
+				actionText: translate( 'Get started' ),
 				...( ! task.isCompleted && {
 					actionDispatch: requestSiteChecklistTaskUpdate,
 					actionDispatchArgs: [ siteId, task.id ],
