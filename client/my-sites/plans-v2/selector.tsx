@@ -12,7 +12,7 @@ import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
 import { SECURITY } from './constants';
-import { durationToString, getProductUpsell, checkout } from './utils';
+import { getProductUpsell, getPathToDetails, getPathToUpsell, checkout } from './utils';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -55,11 +55,8 @@ const SelectorPage = ( {
 			return;
 		}
 
-		const root = rootUrl.replace( ':site', siteSlug );
-		const durationString = durationToString( currentDuration );
-
 		if ( product.subtypes.length ) {
-			page( `${ root }/${ product.productSlug }/${ durationString }/details` );
+			page( getPathToDetails( rootUrl, product.productSlug, currentDuration, siteSlug ) );
 			return;
 		}
 
@@ -68,9 +65,9 @@ const SelectorPage = ( {
 		const upsellProduct = getProductUpsell( product.productSlug );
 		if (
 			upsellProduct &&
-			! siteProducts.find( ( { productSlug } ) => productSlug === upsellProduct )
+			! siteProducts?.find( ( { productSlug } ) => productSlug === upsellProduct )
 		) {
-			page( `${ root }/${ product.productSlug }/${ durationString }/additions` );
+			page( getPathToUpsell( rootUrl, product.productSlug, currentDuration, siteSlug ) );
 			return;
 		}
 

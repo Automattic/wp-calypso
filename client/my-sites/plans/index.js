@@ -37,6 +37,6 @@ export default function () {
 	// This route renders the plans page for both WPcom and Jetpack sites.
 	trackedPage( '/plans/:intervalType?/:site', siteSelection, navigation, plans );
 	if ( shouldShowOfferResetFlow() ) {
-		plansV2( '/plans/:site', siteSelection, redirectToPlansIfNotJetpack, navigation );
+		plansV2( '/plans', siteSelection, redirectToPlansIfNotJetpack, navigation );
 	}
 }

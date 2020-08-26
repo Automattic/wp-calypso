@@ -441,3 +441,61 @@ export function checkout( siteSlug: string, products: string | string[] ): void 
 	addItems( ( isArray( products ) ? products : [ products ] ).map( jetpackProductItem ) );
 	page.redirect( `/checkout/${ siteSlug }` );
 }
+
+/**
+ * Returns a URL of the format `rootUrl/?duration/?siteSlug`. In most cases, `rootUrl` will
+ * be either '/jetpack/connect/plans' or '/plans'. The result will most likely look like
+ * '/plans/monthly/site-slug', '/plans/site-slug', or just '/plans'.
+ *
+ * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
+ * @param {Duration} duration Monthly or annual
+ * @param {string} siteSlug (optional) The slug of the selected site
+ *
+ * @returns {string} The path to the Selector page
+ */
+export function getPathToSelector( rootUrl: string, duration?: Duration, siteSlug?: string ) {
+	const strDuration = duration ? durationToString( duration ) : null;
+	return [ rootUrl, strDuration, siteSlug ].filter( Boolean ).join( '/' );
+}
+
+/**
+ * Returns a URL of the format `rootUrl/productSlug/duration/details/?siteSlug` that
+ * points to the Details page.
+ *
+ * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
+ * @param {string} productSlug Slug of the product
+ * @param {Duration} duration Monthly or annual
+ * @param {string} siteSlug (optional) The slug of the selected site
+ *
+ * @returns {string} The path to the Details page
+ */
+export function getPathToDetails(
+	rootUrl: string,
+	productSlug: string,
+	duration: Duration,
+	siteSlug?: string
+) {
+	const strDuration = durationToString( duration );
+	return [ rootUrl, productSlug, strDuration, 'details', siteSlug ].filter( Boolean ).join( '/' );
+}
+
+/**
+ * Returns a URL of the format `rootUrl/productSlug/duration/additions/?siteSlug` that
+ * points to the Upsell page.
+ *
+ * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
+ * @param {string} productSlug Slug of the product
+ * @param {Duration} duration Monthly or annual
+ * @param {string} siteSlug (optional) The slug of the selected site
+ *
+ * @returns {string} The path to the Upsell page
+ */
+export function getPathToUpsell(
+	rootUrl: string,
+	productSlug: string,
+	duration: Duration,
+	siteSlug?: string
+) {
+	const strDuration = durationToString( duration );
+	return [ rootUrl, productSlug, strDuration, 'additions', siteSlug ].filter( Boolean ).join( '/' );
+}
