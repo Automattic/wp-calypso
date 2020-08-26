@@ -83,8 +83,6 @@ exports.startVideo = function () {
 		ffDisplay,
 		'-pix_fmt',
 		'yuv420p',
-		'-vcodec',
-		'libx264',
 		'-loglevel',
 		'error',
 		file,
