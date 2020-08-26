@@ -45,7 +45,10 @@ class DocumentHead extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.title !== undefined && this.props.title !== nextProps.title ) {
+		if (
+			nextProps.title !== undefined &&
+			this.props.title?.toString?.() !== nextProps.title?.toString?.()
+		) {
 			this.props.setTitle( nextProps.title );
 		}
 
