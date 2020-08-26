@@ -51,4 +51,4 @@ class CheckoutMasterbar extends React.Component {
 	}
 }
 
-export default connect( () => (null, { recordTracksEvent }) )( localize( CheckoutMasterbar ) );
+export default connect( null, { recordTracksEvent } )( localize( CheckoutMasterbar ) );
