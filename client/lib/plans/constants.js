@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
-import { noop } from 'lodash';
 import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -89,7 +88,7 @@ export const JETPACK_PLANS = [
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	...( ! noop() ? JETPACK_RESET_PLANS : [] ),
+	...( shouldShowOfferResetFlow() ? JETPACK_RESET_PLANS : [] ),
 ];
 
 export const PLAN_MONTHLY_PERIOD = 31;
