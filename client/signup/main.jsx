@@ -179,7 +179,7 @@ class Signup extends React.Component {
 			wasSignupCheckoutUnnloaded && signupDestinationCookieExists && ! isAddNewSiteFlow;
 
 		if ( this.enableManageSiteFlow ) {
-			providedDependencies = { siteSlug: siteSlugFromCookie, preventDuplicates: true };
+			providedDependencies = { siteSlug: siteSlugFromCookie, isManageSiteFlow: true };
 		}
 
 		// Caution: any signup Flux actions should happen after this initialization.

@@ -272,10 +272,11 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const state = reduxStore.getState();
 	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
-	const preventDuplicates = get( getSignupDependencyStore( state ), 'preventDuplicates', false );
+	const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
 
-	if ( preventDuplicates ) {
-		addDomainToCart( callback, dependencies, stepData, reduxStore );
+	if ( isManageSiteFlow ) {
+		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
+		addDomainToCart( callback, dependencies, stepData, reduxStore, siteSlug );
 		return;
 	}
 
@@ -353,14 +354,14 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
 
-export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteSlug } = dependencies;
+export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore, siteSlug ) {
+	const slug = siteSlug || dependencies.siteSlug;
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
 	const providedDependencies = { domainItem };
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
 function processItemCart(
