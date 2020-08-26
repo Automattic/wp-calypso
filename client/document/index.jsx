@@ -2,7 +2,7 @@
  * External dependencies
  *
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import path from 'path';
 
@@ -39,7 +39,6 @@ class Document extends React.Component {
 			languageRevisions,
 			renderedLayout,
 			user,
-			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
@@ -147,17 +146,6 @@ class Document extends React.Component {
 								<div className="masterbar" />
 								<div className="layout__content">
 									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
-									{ hasSecondary && (
-										<Fragment>
-											<div className="layout__secondary" />
-											<ul className="sidebar" />
-										</Fragment>
-									) }
-									{ sectionGroup === 'editor' && (
-										<div className="card editor-ground-control">
-											<div className="editor-ground-control__action-buttons" />
-										</div>
-									) }
 								</div>
 							</div>
 						</div>

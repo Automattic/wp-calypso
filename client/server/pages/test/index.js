@@ -42,7 +42,6 @@ jest.mock( 'login', () => {
 		paths: [ '/log-in' ],
 		module: 'login',
 		enableLoggedOut: true,
-		secondary: false,
 		isomorphic: true,
 	};
 	return impl;
@@ -112,7 +111,6 @@ jest.mock( 'landing/gutenboarding/section', () => ( {
 		name: 'gutenboarding',
 		paths: [ '/new' ],
 		module: 'gutenboarding',
-		secondary: false,
 		group: 'gutenboarding',
 		enableLoggedOut: true,
 	},
@@ -867,7 +865,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 };
 
-const assertSection = ( { url, entry, sectionName, secondaryContent, sectionGroup } ) => {
+const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	let app;
 
 	beforeAll( () => {
@@ -889,11 +887,6 @@ const assertSection = ( { url, entry, sectionName, secondaryContent, sectionGrou
 	it( `handles path ${ url } with section "${ sectionName }"`, async () => {
 		const { request } = await app.run();
 		expect( request.context.sectionName ).toBe( sectionName );
-	} );
-
-	it( 'allows sections to declare secondary content', async () => {
-		const { request } = await app.run();
-		expect( request.context.hasSecondary ).toBe( secondaryContent );
 	} );
 
 	it( 'captures the group of the section', async () => {
@@ -1325,7 +1318,6 @@ describe( 'main app', () => {
 		assertSection( {
 			url: '/sites',
 			sectionName: 'sites',
-			secondaryContent: true,
 			sectionGroup: 'sites',
 		} );
 	} );
@@ -1334,7 +1326,6 @@ describe( 'main app', () => {
 		assertSection( {
 			url: '/',
 			sectionName: 'root',
-			secondaryContent: true,
 			sectionGroup: 'root',
 		} );
 
@@ -1437,7 +1428,6 @@ describe( 'main app', () => {
 		assertSection( {
 			url: '/new',
 			sectionName: 'gutenboarding',
-			secondaryContent: undefined,
 			sectionGroup: 'gutenboarding',
 			entry: 'entry-gutenboarding',
 		} );
