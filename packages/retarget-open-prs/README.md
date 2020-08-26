@@ -4,6 +4,23 @@ A script utilizing the GitHub API to retarget open PRs in a given repository fro
 
 ## Usage
 
-```bash
-npx retarget-open-prs --repo=<repository name> --from=<original branch name> --to=<new branch name> --github-api-key=<github API key>
+```
+Usage: cli.js
+
+Options:
+  --owner, -o     The owner of the repository (either a user or organization).
+                                                                 [required]
+  --repo, -r      The full name of the repository in which to retarget PRs.
+                                                                 [required]
+  --from, -f      The original branch name against which to select open PRs
+                  that need to be retargted.                     [required]
+  --to, -t        The new branch towards which to retarget PRs open against
+                  "from"                                         [required]
+  --access-token  A GitHub access token authorized to retarget open PRs in the
+                  repository named in "repo"                     [required]
+  -h, --help      Show help                                       [boolean]
+
+Examples:
+  cli.js --owner=Automattic --repo=wp-calypso --from="main" --to="trunk"
+  --access-token="ABCDEFG1234567"
 ```
