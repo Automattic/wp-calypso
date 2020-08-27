@@ -1,13 +1,36 @@
+/* eslint-disable no-console */
+
 const { Octokit } = require( '@octokit/core' );
+
+async function getPulls( octokit, repoOwner, repoName, base ) {
+	try {
+	const { data: pulls } = await octokit.request( 'GET /repos/{owner}/{repo}/pulls', {
+		owner: repoOwner,
+		repo: repoName,
+			base,
+	} );
+		return pulls;
+	} catch ( e ) {
+		if ( e.status === 404 ) {
+			console.error( 'Unable to find the repository. Please check `owner` and `repo` arguments.' );
+		} else {
+			console.error( 'An unknown error occurred.' );
+			console.error( e );
+		}
+
+		return null;
+	}
+}
 
 async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken ) {
 	const octokit = new Octokit( { auth: accessToken } );
 
-	const { data: pulls } = await octokit.request( 'GET /repos/{owner}/{repo}/pulls', {
-		owner: repoOwner,
-		repo: repoName,
-		base: from,
-	} );
+	const pulls = await getPulls( octokit, repoOwner, repoName, from );
+
+	if ( pulls === null ) {
+		return;
+	}
+
 
 	for ( const pull of pulls ) {
 		const {
