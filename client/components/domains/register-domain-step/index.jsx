@@ -1212,6 +1212,13 @@ class RegisterDomainStep extends React.Component {
 
 	onAddDomain = ( suggestion ) => {
 		const domain = get( suggestion, 'domain_name' );
+		const { premiumDomains } = this.state;
+
+		// disable adding a domain to the cart while the premium price is still fetching
+		if ( premiumDomains?.[ domain ]?.pending ) {
+			return;
+		}
+
 		const isSubDomainSuggestion = get( suggestion, 'isSubDomainSuggestion' );
 		if ( ! hasDomainInCart( this.props.cart, domain ) && ! isSubDomainSuggestion ) {
 			this.setState( { pendingCheckSuggestion: suggestion } );
