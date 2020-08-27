@@ -7,6 +7,11 @@ import React from 'react';
 import Gridicon from 'components/gridicon';
 
 /**
+ * Internal dependencies
+ */
+import { Button } from '@automattic/components';
+
+/**
  * Globals
  */
 const noop = () => {};
@@ -25,23 +30,23 @@ export default class extends React.Component {
 	render() {
 		return (
 			<div className="post-schedule__year-controls">
-				<button
+				<Button
 					className="post-schedule__year-control-up"
 					onClick={ () => {
 						this.props.onYearChange( 1 );
 					} }
 				>
 					<Gridicon icon="chevron-up" size={ 14 } />
-				</button>
+				</Button>
 
-				<button
+				<Button
 					className="post-schedule__year-control-down"
 					onClick={ () => {
 						this.props.onYearChange( -1 );
 					} }
 				>
 					<Gridicon icon="chevron-down" size={ 14 } />
-				</button>
+				</Button>
 			</div>
 		);
 	}

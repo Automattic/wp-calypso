@@ -8,6 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import Gridicon from 'components/gridicon';
@@ -76,14 +77,9 @@ class PluginSiteUpdateIndicator extends React.Component {
 		}
 		return (
 			<div className="plugin-site-update-indicator__button">
-				<button
-					className="button"
-					ref="updatePlugin"
-					onClick={ this.updatePlugin }
-					disabled={ isUpdating }
-				>
+				<Button ref="updatePlugin" onClick={ this.updatePlugin } disabled={ isUpdating }>
 					{ message }
-				</button>
+				</Button>
 			</div>
 		);
 	};

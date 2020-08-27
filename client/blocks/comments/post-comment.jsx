@@ -12,6 +12,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { isEnabled } from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
 import TimeSince from 'components/time-since';
@@ -219,9 +220,9 @@ class PostComment extends React.PureComponent {
 		return (
 			<div>
 				{ !! replyVisibilityText && (
-					<button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
+					<Button className="comments__view-replies-btn" onClick={ this.handleToggleRepliesClick }>
 						<Gridicon icon="reply" size={ 18 } /> { replyVisibilityText }
-					</button>
+					</Button>
 				) }
 				{ showReplies && (
 					<ol className="comments__list">

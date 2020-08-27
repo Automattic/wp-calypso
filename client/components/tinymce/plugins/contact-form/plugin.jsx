@@ -10,6 +10,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 /**
  * Internal Dependencies
  */
+import { Button } from '@automattic/components';
 import ContactFormDialog from './dialog';
 import {
 	formClear,
@@ -96,9 +97,9 @@ function wpcomContactForm( editor ) {
 			this.innerHtml(
 				renderToStaticMarkup(
 					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
-					<button type="button" role="presentation">
+					<Button type="button" role="presentation">
 						<Gridicon icon="mention" />
-					</button>
+					</Button>
 				)
 			);
 		},

@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import wpcom from 'lib/wp';
 import { errorNotice } from 'state/notices/actions';
 import Gridicon from 'components/gridicon';
@@ -72,10 +73,10 @@ class ReaderExportButton extends React.Component {
 
 	render() {
 		return (
-			<button className="reader-export-button" onClick={ this.onClick }>
+			<Button className="reader-export-button" onClick={ this.onClick }>
 				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
 				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
-			</button>
+			</Button>
 		);
 	}
 }

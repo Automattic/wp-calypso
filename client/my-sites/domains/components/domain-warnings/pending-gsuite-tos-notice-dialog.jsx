@@ -136,9 +136,9 @@ function PendingGSuiteTosNoticeDialog( props ) {
 		<Dialog className="domain-warnings__dialog" isVisible={ props.visible }>
 			<header>
 				<h1>{ translate( 'Log in to G Suite to finish setup' ) }</h1>
-				<button onClick={ onCloseClick }>
+				<Button onClick={ onCloseClick }>
 					<Gridicon icon="cross" />
-				</button>
+				</Button>
 			</header>
 
 			<p>{ password ? renderPasswordResetCopy() : renderEntryCopy() }</p>

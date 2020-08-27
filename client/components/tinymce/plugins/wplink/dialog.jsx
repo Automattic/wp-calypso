@@ -13,7 +13,7 @@ import { find } from 'lodash';
  */
 import { deserialize } from 'lib/media-serialization';
 import { url as mediaUrl } from 'lib/media/utils';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormButton from 'components/forms/form-button';
@@ -257,10 +257,10 @@ class LinkDialog extends React.Component {
 
 		if ( this.state.url && ! this.state.isNew ) {
 			buttons.push(
-				<button className={ 'wplink__remove-link' } onClick={ this.removeLink }>
+				<Button className={ 'wplink__remove-link' } onClick={ this.removeLink }>
 					<Gridicon icon="link-break" />
 					{ this.props.translate( 'Remove' ) }
-				</button>
+				</Button>
 			);
 		}
 

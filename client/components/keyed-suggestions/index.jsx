@@ -22,6 +22,11 @@ import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 
 /**
+ * Internal dependencies
+ */
+import { Button } from '@automattic/components';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -32,9 +37,9 @@ function SuggestionsButtonAll( props ) {
 	}
 
 	return (
-		<button className="keyed-suggestions__category-show-all" onClick={ click }>
+		<Button className="keyed-suggestions__category-show-all" onClick={ click }>
 			{ props.label }
-		</button>
+		</Button>
 	);
 }
 

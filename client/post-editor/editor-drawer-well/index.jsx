@@ -9,6 +9,11 @@ import { noop } from 'lodash';
 import Gridicon from 'components/gridicon';
 
 /**
+ * Internal dependencies
+ */
+import { Button } from '@automattic/components';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -41,7 +46,7 @@ export default class EditorDrawerWell extends Component {
 			<div className={ classes }>
 				<div className="editor-drawer-well__content">{ children }</div>
 				{ empty && (
-					<button
+					<Button
 						type="button"
 						onClick={ onClick }
 						disabled={ disabled }
@@ -49,7 +54,7 @@ export default class EditorDrawerWell extends Component {
 					>
 						{ icon && <Gridicon icon={ icon } className="editor-drawer-well__icon" /> }
 						<span className="editor-drawer-well__button button is-compact">{ label }</span>
-					</button>
+					</Button>
 				) }
 				{ this.props.customDropZone }
 			</div>

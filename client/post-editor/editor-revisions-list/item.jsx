@@ -11,6 +11,7 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { selectPostRevision } from 'state/posts/revisions/actions';
 import { getPostRevisionAuthor } from 'state/posts/revisions/authors/selectors';
 import { isSingleUserSite } from 'state/sites/selectors';
@@ -41,7 +42,7 @@ class EditorRevisionsListItem extends PureComponent {
 		};
 
 		return (
-			<button
+			<Button
 				className="editor-revisions-list__button"
 				onClick={ this.selectRevision }
 				type="button"
@@ -83,7 +84,7 @@ class EditorRevisionsListItem extends PureComponent {
 						</span>
 					) }
 				</div>
-			</button>
+			</Button>
 		);
 	}
 }

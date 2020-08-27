@@ -195,7 +195,7 @@ export default class extends React.Component {
 
 	render() {
 		return (
-			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
+			<Button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</Button>
 		)
 	} 
 } );

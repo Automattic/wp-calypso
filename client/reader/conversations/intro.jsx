@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -102,7 +103,7 @@ class ConversationsIntro extends React.Component {
 					</div>
 					<img className="conversations__intro-character" src={ charactersImage } alt="" />
 
-					<button
+					<Button
 						className="conversations__intro-close"
 						onClick={ this.dismiss }
 						title={ translate( 'Close' ) }
@@ -113,7 +114,7 @@ class ConversationsIntro extends React.Component {
 							className="conversations__intro-close-icon"
 							title={ translate( 'Close' ) }
 						/>
-					</button>
+					</Button>
 				</div>
 			</header>
 		);

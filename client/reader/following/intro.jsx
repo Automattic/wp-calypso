@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
@@ -75,7 +76,7 @@ class FollowingIntro extends React.Component {
 					</div>
 					<img className="following__intro-character" src={ readerImage } alt="" />
 
-					<button
+					<Button
 						className="following__intro-close"
 						onClick={ dismiss }
 						title={ translate( 'Close' ) }
@@ -87,7 +88,7 @@ class FollowingIntro extends React.Component {
 							title={ translate( 'Close' ) }
 						/>
 						<span className="following__intro-close-icon-bg" />
-					</button>
+					</Button>
 				</div>
 			</header>
 		);

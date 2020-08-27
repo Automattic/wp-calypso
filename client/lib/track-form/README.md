@@ -32,7 +32,7 @@ Usage
     return (
       <Form onSubmit={ submit }>
         <FormInput value={ fields.name } onChange={ updateName } />
-        <button onClick={ reset }>Reset</button>
+        <Button onClick={ reset }>Reset</Button>
       </Form>
     );
   }

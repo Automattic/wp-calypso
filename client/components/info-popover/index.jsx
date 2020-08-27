@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import Popover from 'components/popover';
 import { gaRecordEvent } from 'lib/analytics/ga';
@@ -73,7 +74,7 @@ export default class InfoPopover extends Component {
 	render() {
 		return (
 			<Fragment>
-				<button
+				<Button
 					type="button"
 					aria-haspopup
 					aria-expanded={ this.state.showPopover }
@@ -85,7 +86,7 @@ export default class InfoPopover extends Component {
 					} ) }
 				>
 					<Gridicon icon={ this.props.icon } size={ this.props.iconSize } />
-				</button>
+				</Button>
 				{ this.state.showPopover && (
 					<Popover
 						autoRtl={ this.props.autoRtl }

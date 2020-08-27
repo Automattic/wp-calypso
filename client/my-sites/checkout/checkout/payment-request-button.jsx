@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
@@ -38,37 +39,40 @@ export default function PaymentRequestButton( {
 
 	if ( isSubmitting ) {
 		return (
-			<button
-				className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
+			<Button
+				primary
+				className="web-payment-box__web-pay-button button checkout__pay-button-button button-pay pay-button__button"
 				disabled
 			>
 				{ translate( 'Completing your purchase', { context: 'Loading state on /checkout' } ) }
-			</button>
+			</Button>
 		);
 	}
 	if ( disabled ) {
 		return (
 			<React.Fragment>
-				<button
-					className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
+				<Button
+					primary
+					className="web-payment-box__web-pay-button checkout__pay-button-button button-pay pay-button__button"
 					disabled
 				>
 					{ disabledReason }
-				</button>
+				</Button>
 			</React.Fragment>
 		);
 	}
 
 	if ( paymentType === 'apple-pay' ) {
-		return <button className="payment-request-button" onClick={ onClick } />;
+		return <Button className="payment-request-button" onClick={ onClick } />;
 	}
 	return (
-		<button
-			className="web-payment-box__web-pay-button button checkout__pay-button-button button is-primary button-pay pay-button__button"
+		<Button
+			primary
+			className="web-payment-box__web-pay-button checkout__pay-button-button button-pay pay-button__button"
 			onClick={ onClick }
 		>
 			{ translate( 'Select a payment card', { context: 'Loading state on /checkout' } ) }
-		</button>
+		</Button>
 	);
 }
 

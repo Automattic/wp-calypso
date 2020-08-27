@@ -8,6 +8,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import SelectDropdown from 'components/select-dropdown';
 
 class SelectDropdownExample extends React.PureComponent {
@@ -40,9 +41,9 @@ class SelectDropdownExample extends React.PureComponent {
 
 		return (
 			<div className="docs__select-dropdown-container">
-				<button className="docs__design-toggle button" onClick={ this.toggleButtons }>
+				<Button className="docs__design-toggle" onClick={ this.toggleButtons }>
 					{ toggleButtonsText }
-				</button>
+				</Button>
 
 				<h3>Items passed as options prop</h3>
 				<SelectDropdown

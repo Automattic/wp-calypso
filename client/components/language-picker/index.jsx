@@ -12,6 +12,7 @@ import { find, isString, noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import config from 'config';
 import LanguagePickerModal from './modal';
 import { requestGeoLocation } from 'state/data-getters';
@@ -182,7 +183,7 @@ export class LanguagePicker extends PureComponent {
 
 		return (
 			<Fragment>
-				<button
+				<Button
 					type="button"
 					className="language-picker"
 					onClick={ this.handleClick }
@@ -198,7 +199,7 @@ export class LanguagePicker extends PureComponent {
 							<div className="language-picker__name-label">{ langName }</div>
 						</div>
 					</div>
-				</button>
+				</Button>
 				{ this.renderModal( language.langSlug ) }
 			</Fragment>
 		);

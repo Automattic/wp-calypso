@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import Emojify from 'components/emojify';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -337,7 +338,7 @@ class StatsListItem extends React.Component {
 
 		if ( actions ) {
 			mobileActionToggle = (
-				<button
+				<Button
 					onClick={ this.actionMenuClick }
 					className={ classNames( toggleOptions ) }
 					title={ this.props.translate( 'Show Actions', {
@@ -345,7 +346,7 @@ class StatsListItem extends React.Component {
 					} ) }
 				>
 					<Gridicon icon="ellipsis" />
-				</button>
+				</Button>
 			);
 			rightClassOptions[ 'is-expanded' ] = this.state.actionMenuOpen;
 		}

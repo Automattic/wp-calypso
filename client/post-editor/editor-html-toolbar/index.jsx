@@ -513,49 +513,49 @@ export class EditorHtmlToolbar extends Component {
 
 		return (
 			<div className={ insertContentClasses }>
-				<button
+				<Button
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openMediaModal }
 				>
 					<Gridicon icon="image" />
 					<span data-e2e-insert-type="media">{ translate( 'Media library' ) }</span>
-				</button>
+				</Button>
 
 				{ config.isEnabled( 'external-media/google-photos' ) && canUserUploadFiles && (
-					<button
+					<Button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openGoogleModal }
 					>
 						<Gridicon icon="shutter" />
 						<span data-e2e-insert-type="google-media">{ translate( 'Google Photos' ) }</span>
-					</button>
+					</Button>
 				) }
 
 				{ config.isEnabled( 'external-media/free-photo-library' ) && canUserUploadFiles && (
-					<button
+					<Button
 						className="editor-html-toolbar__insert-content-dropdown-item"
 						onClick={ this.openPexelsModal }
 					>
 						<Gridicon icon="image-multiple" />
 						<span data-e2e-insert-type="pexels">{ translate( 'Pexels free photos' ) }</span>
-					</button>
+					</Button>
 				) }
 
-				<button
+				<Button
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openContactFormDialog }
 				>
 					<Gridicon icon="mention" />
 					<span data-e2e-insert-type="contact-form">{ translate( 'Contact form' ) }</span>
-				</button>
+				</Button>
 
-				<button
+				<Button
 					className="editor-html-toolbar__insert-content-dropdown-item"
 					onClick={ this.openSimplePaymentsDialog }
 				>
 					<Gridicon icon="money" />
 					<span data-e2e-insert-type="payment-button">{ translate( 'Payment button' ) }</span>
-				</button>
+				</Button>
 			</div>
 		);
 	};

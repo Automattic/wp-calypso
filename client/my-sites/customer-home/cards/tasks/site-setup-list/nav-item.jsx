@@ -8,6 +8,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -23,7 +24,7 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionL
 		);
 
 	return (
-		<button
+		<Button
 			className={ classnames( 'nav-item', {
 				'is-current': isCurrent,
 			} ) }
@@ -50,7 +51,7 @@ const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionL
 					size={ 18 }
 				/>
 			) }
-		</button>
+		</Button>
 	);
 };
 

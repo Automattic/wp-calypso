@@ -228,10 +228,10 @@ export class EditorMediaModalDetailItem extends Component {
 		}
 
 		return (
-			<button onClick={ onShowPreviousItem } className="editor-media-modal-detail__previous">
+			<Button onClick={ onShowPreviousItem } className="editor-media-modal-detail__previous">
 				<Gridicon icon="chevron-left" size={ 36 } />
 				<ScreenReaderText>{ translate( 'Previous' ) }</ScreenReaderText>
-			</button>
+			</Button>
 		);
 	}
 
@@ -243,10 +243,10 @@ export class EditorMediaModalDetailItem extends Component {
 		}
 
 		return (
-			<button onClick={ onShowNextItem } className="editor-media-modal-detail__next">
+			<Button onClick={ onShowNextItem } className="editor-media-modal-detail__next">
 				<Gridicon icon="chevron-right" size={ 36 } />
 				<ScreenReaderText>{ translate( 'Next' ) }</ScreenReaderText>
-			</button>
+			</Button>
 		);
 	}
 

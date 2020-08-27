@@ -8,6 +8,7 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { RegistrantExtraInfoUkForm } from '../uk-form';
 import FormInputValidation from 'components/forms/form-input-validation';
 
@@ -75,7 +76,7 @@ describe( 'uk-form', () => {
 
 			const wrapper = shallow(
 				<RegistrantExtraInfoUkForm { ...testProps }>
-					<button className="test__hush-eslint .submit-button" />
+					<Button className="test__hush-eslint .submit-button" />
 				</RegistrantExtraInfoUkForm>
 			);
 
@@ -97,7 +98,7 @@ describe( 'uk-form', () => {
 
 			const wrapper = shallow(
 				<RegistrantExtraInfoUkForm { ...testProps }>
-					<button className="test__hush-eslint .submit-button" />
+					<Button className="test__hush-eslint .submit-button" />
 				</RegistrantExtraInfoUkForm>
 			);
 			expect( wrapper.find( 'button' ).prop( 'disabled' ) ).toBe( undefined );

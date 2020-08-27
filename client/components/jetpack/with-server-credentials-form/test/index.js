@@ -14,6 +14,7 @@ import * as actions from 'state/jetpack/credentials/actions';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import withServerCredentialsForm from 'components/jetpack/with-server-credentials-form';
 
 /**
@@ -104,17 +105,17 @@ function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
 
 				<div data-testid="advanced-section">{ showAdvancedSettings && 'Hidden content!' }</div>
 
-				<button type="button" onClick={ toggleAdvancedSettings }>
+				<Button type="button" onClick={ toggleAdvancedSettings }>
 					Advanced Section
-				</button>
+				</Button>
 
-				<button type="button" onClick={ handleDelete }>
+				<Button type="button" onClick={ handleDelete }>
 					Delete
-				</button>
+				</Button>
 
-				<button type="button" onClick={ handleSubmit }>
+				<Button type="button" onClick={ handleSubmit }>
 					Submit
-				</button>
+				</Button>
 			</form>
 		);
 	};

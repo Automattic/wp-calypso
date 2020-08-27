@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
@@ -185,15 +186,16 @@ class SharingButtonsAppearance extends Component {
 					{ this.getReblogLikeOptionsElement() }
 				</div>
 
-				<button
+				<Button
+					primary
 					type="submit"
-					className="button is-primary sharing-buttons__submit"
+					className="sharing-buttons__submit"
 					disabled={ this.props.saving || ! this.props.initialized }
 				>
 					{ this.props.saving
 						? this.props.translate( 'Saving…' )
 						: this.props.translate( 'Save changes' ) }
-				</button>
+				</Button>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

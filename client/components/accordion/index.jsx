@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import AccordionStatus from './status';
 
 /**
@@ -84,14 +85,14 @@ export default class Accordion extends Component {
 				data-tip-target={ `accordion-${ e2eTitle }` }
 			>
 				<header className="accordion__header">
-					<button type="button" onClick={ this.toggleExpanded } className="accordion__toggle">
+					<Button type="button" onClick={ this.toggleExpanded } className="accordion__toggle">
 						{ icon && <span className="accordion__icon">{ icon }</span> }
 						<span className="accordion__title">{ title }</span>
 						{ subtitle && <span className="accordion__subtitle">{ subtitle }</span> }
 						<span className="accordion__arrow">
 							<Gridicon icon="dropdown" />
 						</span>
-					</button>
+					</Button>
 					{ status && <AccordionStatus { ...status } /> }
 				</header>
 				{ hasExpanded && (

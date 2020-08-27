@@ -7,6 +7,11 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import { Button } from '@automattic/components';
+
 const handleMonthClick = ( onClick = noop ) => ( event ) => {
 	event.preventDefault();
 	onClick();
@@ -28,8 +33,8 @@ export const DatePickerNavBar = ( {
 	return (
 		<div className={ classes }>
 			{ showPreviousButton && (
-				<button
-					className="date-picker__previous-month button"
+				<Button
+					className="date-picker__previous-month"
 					type="button"
 					aria-label={ translate( 'Previous month (%s)', {
 						comment: 'Aria label for date picker controls',
@@ -38,12 +43,12 @@ export const DatePickerNavBar = ( {
 					onClick={ handleMonthClick( onPreviousClick ) }
 				>
 					{ localeUtils.formatMonthShort( previousMonth ) }
-				</button>
+				</Button>
 			) }
 
 			{ showNextButton && (
-				<button
-					className="date-picker__next-month button"
+				<Button
+					className="date-picker__next-month"
 					type="button"
 					aria-label={ translate( 'Next month (%s)', {
 						comment: 'Aria label for date picker controls',
@@ -52,7 +57,7 @@ export const DatePickerNavBar = ( {
 					onClick={ handleMonthClick( onNextClick ) }
 				>
 					{ localeUtils.formatMonthShort( nextMonth ) }
-				</button>
+				</Button>
 			) }
 		</div>
 	);

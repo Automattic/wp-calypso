@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Card, ScreenReaderText } from '@automattic/components';
+import { Button, Card, ScreenReaderText } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -74,10 +74,10 @@ class ActivityLogBanner extends Component {
 					{ children && <div className="activity-log-banner__body">{ children }</div> }
 				</div>
 				{ isDismissable && (
-					<button className="activity-log-banner__dismiss" onClick={ onDismissClick } type="button">
+					<Button className="activity-log-banner__dismiss" onClick={ onDismissClick } type="button">
 						<ScreenReaderText>{ translate( 'Dismiss' ) }</ScreenReaderText>
 						<Gridicon icon="cross" size={ 24 } />
-					</button>
+					</Button>
 				) }
 			</Card>
 		);

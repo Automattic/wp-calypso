@@ -587,9 +587,9 @@ class InvitePeople extends React.Component {
 					</span>
 					<span>
 						(
-						<button className="invite-people__link-disable" onClick={ this.disableInviteLinks }>
+						<Button className="invite-people__link-disable" onClick={ this.disableInviteLinks }>
 							{ translate( 'Disable invite link' ) }
-						</button>
+						</Button>
 						)
 					</span>
 				</div>

@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import PopoverMenuSeparator from 'components/popover/menu-separator';
@@ -62,9 +63,9 @@ class ThemeMoreButton extends Component {
 
 		return (
 			<span className={ classes }>
-				<button ref={ this.moreButtonRef } onClick={ this.togglePopover }>
+				<Button ref={ this.moreButtonRef } onClick={ this.togglePopover }>
 					<Gridicon icon="ellipsis" size={ 24 } />
-				</button>
+				</Button>
 
 				{ this.state.showPopover && (
 					<PopoverMenu

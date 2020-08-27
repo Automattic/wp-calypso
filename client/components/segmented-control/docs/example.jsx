@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import SegmentedControl from 'components/segmented-control';
 import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
 
@@ -36,9 +37,9 @@ class SegmentedControlDemo extends React.PureComponent {
 
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleCompact }>
+				<Button className="docs__design-toggle" onClick={ this.toggleCompact }>
 					{ this.state.compact ? 'Normal' : 'Compact' }
-				</button>
+				</Button>
 
 				<h3>Items passed as options prop</h3>
 				<SimplifiedSegmentedControl

@@ -10,6 +10,7 @@ import { isEmpty, merge, minBy } from 'lodash';
 /**
  * Internal Dependencies
  */
+import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
 import {
@@ -387,7 +388,7 @@ class PurchaseNotice extends Component {
 			},
 			components: {
 				link: (
-					<button
+					<Button
 						className="manage-purchase__other-upgrades-button"
 						onClick={ this.openUpcomingRenewalsDialog }
 					/>

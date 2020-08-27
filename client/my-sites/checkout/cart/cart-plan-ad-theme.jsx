@@ -11,6 +11,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import CartAd from './cart-ad';
 import { abtest } from 'lib/abtest';
 import { premiumPlan, getAllCartItems } from 'lib/cart-values/cart-items';
@@ -70,9 +71,9 @@ class CartPlanAdTheme extends Component {
 					} }
 				/>
 				Get this theme for FREE when you upgrade to a Premium plan!{ ' ' }
-				<button className={ className } onClick={ this.addToCartAndRedirect }>
+				<Button className={ className } onClick={ this.addToCartAndRedirect }>
 					{ 'Upgrade Now' }
-				</button>
+				</Button>
 			</CartAd>
 		);
 	}

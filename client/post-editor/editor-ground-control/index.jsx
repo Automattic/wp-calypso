@@ -183,7 +183,7 @@ export class EditorGroundControl extends React.Component {
 				/>
 				<Drafts />
 				{ userNeedsVerification && (
-					<button
+					<Button
 						className="editor-ground-control__email-verification-notice"
 						onClick={ this.props.onMoreInfoAboutEmailVerify }
 					>
@@ -195,7 +195,7 @@ export class EditorGroundControl extends React.Component {
 						<span className="editor-ground-control__email-verification-notice-more">
 							{ translate( 'Learn More' ) }
 						</span>
-					</button>
+					</Button>
 				) }
 				<QuickSaveButtons
 					isSaving={ isSaving }

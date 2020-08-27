@@ -8,7 +8,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import LineChart from 'components/line-chart';
 
 const NUM_DATA_SERIES = 3;
@@ -93,9 +93,9 @@ export default class LineChartExample extends Component {
 	render() {
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleDataControls }>
+				<Button className="docs__design-toggle" onClick={ this.toggleDataControls }>
 					{ this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls' }
-				</button>
+				</Button>
 
 				<Card>
 					<LineChart

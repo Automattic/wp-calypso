@@ -8,6 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Spinner from 'components/spinner';
 import Gridicon from 'components/gridicon';
 import ListItemImage from './list-item-image';
@@ -132,7 +133,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		}
 
 		return (
-			<button
+			<Button
 				className={ classes }
 				style={ styleWithDefaults }
 				onClick={ this.clickItem }
@@ -151,7 +152,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 					) }
 					{ showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 				</figure>
-			</button>
+			</Button>
 		);
 	}
 }

@@ -25,5 +25,5 @@ The following props can be passed to the ClipboardButtonInput component. With th
 | property   | type    | required | default | comment |
 | ---------- | ------- | -------- | ------- | ------- |
 | `value`    | String  | no       | `""`    | The value of the `<input />` element, and the text to be copied when clicking the copy button. |
-| `disabled` | Boolean | no       | `false` | Whether the children `<input />` and `<button />` should be rendered as `disabled`. |
+| `disabled` | Boolean | no       | `false` | Whether the children `<input />` and `<Button />` should be rendered as `disabled`. |
 | `hideHttp` | Boolean | no       | `false` | Allows URLs to be shown without `http://` or `https://` while keeping the scheme in the copyable value. |

@@ -75,7 +75,7 @@ function ContinueAsUser( { currentUser, redirectUrlFromQuery, onChangeAccount } 
 					components: {
 						br: <br />,
 						link: (
-							<button
+							<Button
 								type="button"
 								id="loginAsAnotherUser"
 								className="continue-as-user__change-user-link"

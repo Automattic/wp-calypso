@@ -17,8 +17,8 @@ Below is example usage for rendering an SortableList:
 
 ```jsx
 <SortableList>
-	<button className="button">First</button>
-	<button className="button">Second</button>
+	<Button>First</Button>
+	<Button>Second</Button>
 </SortableList>
 ```
 
@@ -47,7 +47,7 @@ class MyComponent extends Component {
 
 	render() {
 		const items = this.state.items.map( function( item ) {
-			return <button className="button">{ item }</button>;
+			return <Button>{ item }</Button>;
 		} );
 
 		return <SortableList onChange={ onChange }>{ items }</SortableList>;

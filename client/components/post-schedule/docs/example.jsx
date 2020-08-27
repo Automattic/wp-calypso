@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
  */
 import PostSchedule from 'components/post-schedule';
 import Timezone from 'components/timezone';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import EventsTooltip from 'components/date-picker/events-tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -172,7 +172,7 @@ const PostScheduleExample = localize(
 
 									<Timezone selectedZone={ this.state.timezone } onSelect={ this.setTimezone } />
 
-									<button
+									<Button
 										className="card__property-action"
 										style={ {
 											top: '-8px',
@@ -182,7 +182,7 @@ const PostScheduleExample = localize(
 										href="#"
 									>
 										clean timezone
-									</button>
+									</Button>
 								</div>
 
 								<div className="card__block">
@@ -196,13 +196,13 @@ const PostScheduleExample = localize(
 										/>
 									</label>
 
-									<button
+									<Button
 										className="card__property-action"
 										onClick={ this.clearState.bind( this, 'gmtOffset' ) }
 										href="#"
 									>
 										clean gmtOffset
-									</button>
+									</Button>
 								</div>
 
 								<div className="card__block">
@@ -213,13 +213,13 @@ const PostScheduleExample = localize(
 										</div>
 									</label>
 
-									<button
+									<Button
 										className="card__property-action"
 										onClick={ this.clearState.bind( this, 'date' ) }
 										href="#"
 									>
 										clean selectedDay
-									</button>
+									</Button>
 								</div>
 							</Card>
 

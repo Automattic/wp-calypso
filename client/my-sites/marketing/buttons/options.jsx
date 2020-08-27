@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
@@ -259,13 +260,13 @@ class SharingButtonsOptions extends Component {
 						{ this.getTwitterViaOptionElement() }
 					</div>
 
-					<button
+					<Button
 						type="submit"
-						className="button sharing-buttons__submit"
+						className="sharing-buttons__submit"
 						disabled={ saving || ! initialized }
 					>
 						{ saving ? translate( 'Saving…' ) : translate( 'Save changes' ) }
-					</button>
+					</Button>
 				</div>
 			</Fragment>
 		);

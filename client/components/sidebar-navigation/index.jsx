@@ -10,6 +10,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
+import { Button } from '@automattic/components';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import TranslatableString from 'components/translatable/proptype';
 
@@ -22,11 +23,11 @@ function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<header className="current-section">
-			<button onClick={ toggleSidebar }>
+			<Button onClick={ toggleSidebar }>
 				<Gridicon icon="menu" />
 				{ children }
 				<h1 className="current-section__site-title">{ sectionTitle }</h1>
-			</button>
+			</Button>
 		</header>
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	);

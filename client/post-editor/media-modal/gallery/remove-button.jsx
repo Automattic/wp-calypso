@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { ScreenReaderText } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
 import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
@@ -38,14 +38,14 @@ class RemoveButton extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<button
+			<Button
 				onClick={ this.remove }
 				onMouseDown={ ( event ) => event.stopPropagation() }
 				className="editor-media-modal-gallery__remove"
 			>
 				<ScreenReaderText>{ translate( 'Remove' ) }</ScreenReaderText>
 				<Gridicon icon="cross" />
-			</button>
+			</Button>
 		);
 	}
 }

@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { getPostCommentsTree, getDateSortedPostComments } from 'state/comments/selectors';
 import { expandComments } from 'state/comments/actions';
@@ -97,7 +98,7 @@ class ConversationCaterpillarComponent extends React.Component {
 					onClick={ this.handleTickle }
 					maxGravatarsToDisplay={ MAX_GRAVATARS_TO_DISPLAY }
 				/>
-				<button
+				<Button
 					className="conversation-caterpillar__count"
 					onClick={ this.handleTickle }
 					title={
@@ -136,7 +137,7 @@ class ConversationCaterpillarComponent extends React.Component {
 								commenterName: lastAuthorName,
 							},
 						} ) }
-				</button>
+				</Button>
 			</div>
 		);
 	}

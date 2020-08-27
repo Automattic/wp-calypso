@@ -27,6 +27,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
@@ -586,7 +587,7 @@ function SubmitButtonHeader() {
 		<SubmitButtonHeaderUI>
 			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
 				components: {
-					button: <button onClick={ scrollToTOS } />,
+					button: <Button onClick={ scrollToTOS } />,
 				},
 			} ) }
 		</SubmitButtonHeaderUI>

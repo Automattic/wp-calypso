@@ -90,12 +90,12 @@ class EditorGutenbergOptInDialog extends Component {
 				<div className="editor-gutenberg-opt-in-dialog__illustration" />
 
 				<header>
-					<button
+					<Button
 						onClick={ this.useClassicEditor }
 						className="editor-gutenberg-opt-in-dialog__close"
 					>
 						<Gridicon icon="cross" />
-					</button>
+					</Button>
 				</header>
 
 				<h1>{ translate( 'Check out the new building blocks of the web' ) }</h1>

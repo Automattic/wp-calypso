@@ -199,7 +199,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		} );
 
 		return (
-			<button
+			<Button
 				className={ classNames }
 				onClick={ this.showModal }
 				onMouseEnter={ this.preloadModal }
@@ -214,7 +214,7 @@ class PodcastCoverImageSetting extends PureComponent {
 					</span>
 				) }
 				{ isTransient && <Spinner /> }
-			</button>
+			</Button>
 		);
 	}
 

@@ -120,9 +120,9 @@ export class YourComponent extends Component {
 
 	render() {
 		return (
-			<button onClick={ this.updatePlugin }>
+			<Button onClick={ this.updatePlugin }>
 				Update { this.props.plugin.name }
-			</button>
+			</Button>
 		);
 	}
 }

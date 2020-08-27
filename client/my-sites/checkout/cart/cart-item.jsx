@@ -9,6 +9,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { gaRecordEvent } from 'lib/analytics/ga';
@@ -342,14 +343,14 @@ export class CartItem extends React.Component {
 
 		if ( canRemoveFromCart( cart, cartItem ) ) {
 			return (
-				<button
+				<Button
 					className="cart__remove-item"
 					onClick={ this.removeFromCart }
 					aria-label={ labelText }
 					title={ labelText }
 				>
 					<Gridicon icon="trash" size={ 24 } />
-				</button>
+				</Button>
 			);
 		}
 	}

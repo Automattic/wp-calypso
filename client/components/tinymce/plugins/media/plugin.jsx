@@ -13,6 +13,7 @@ import closest from 'component-closest';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import * as MediaConstants from 'lib/media/constants';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
@@ -474,11 +475,11 @@ function mediaButton( editor ) {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
 					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
-					<button type="button" role="presentation" tabIndex="-1">
+					<Button type="button" role="presentation" tabIndex="-1">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						<Gridicon icon="image-multiple" size={ 20 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-					</button>
+					</Button>
 				)
 			);
 		},

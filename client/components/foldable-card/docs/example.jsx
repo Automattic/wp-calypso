@@ -71,10 +71,8 @@ export default class FoldableCardExample extends PureComponent {
 								</div>
 							</div>
 						}
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						summary={ <button className="button">Update</button> }
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						expandedSummary={ <button className="button">Update</button> }
+						summary={ <Button>Update</Button> }
+						expandedSummary={ <Button>Update</Button> }
 						screenReaderText="More"
 					>
 						Nothing to see here. Keep walking!

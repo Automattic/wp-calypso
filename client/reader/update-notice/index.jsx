@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors/get-document-head-capped-unread-count';
 import { getCommentById } from 'state/comments/selectors';
@@ -40,7 +41,7 @@ class UpdateNotice extends React.PureComponent {
 		} );
 
 		return (
-			<button className={ counterClasses } onClick={ this.handleClick }>
+			<Button className={ counterClasses } onClick={ this.handleClick }>
 				<DocumentHead unreadCount={ count } />
 				<Gridicon icon="arrow-up" size={ 18 } />
 				{ translate( '%s new post', '%s new posts', {
@@ -48,7 +49,7 @@ class UpdateNotice extends React.PureComponent {
 					count,
 					comment: '%s is the number of new posts. For example: "1" or "40+"',
 				} ) }
-			</button>
+			</Button>
 		);
 	}
 

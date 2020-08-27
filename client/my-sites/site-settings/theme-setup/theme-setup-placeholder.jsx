@@ -7,6 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 
 const ThemeSetupPlaceholder = () => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -30,9 +31,7 @@ const ThemeSetupPlaceholder = () => {
 				</p>
 			</div>
 			<div className="action-panel__footer">
-				<button className="button theme-setup__button is-placeholder">
-					Set Up And Keep Content
-				</button>
+				<Button className="theme-setup__button is-placeholder">Set Up And Keep Content</Button>
 			</div>
 		</div>
 	);

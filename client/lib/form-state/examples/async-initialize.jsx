@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import FormStateStore from '../';
 import createFormStore from '../store';
 
@@ -63,9 +64,9 @@ class AsyncInitialize extends React.Component {
 						disabled={ isFieldDisabled( this.state.form, 'lastName' ) }
 					/>
 
-					<button type="submit" className="button is-primary">
+					<Button type="submit" primary>
 						Submit
-					</button>
+					</Button>
 				</form>
 
 				<pre>{ JSON.stringify( this.state, null, 2 ) }</pre>

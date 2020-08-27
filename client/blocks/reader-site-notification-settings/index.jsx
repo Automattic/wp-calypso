@@ -9,6 +9,7 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import ReaderPopover from 'reader/components/reader-popover';
@@ -131,7 +132,7 @@ class ReaderSiteNotificationSettings extends Component {
 		return (
 			<div className="reader-site-notification-settings">
 				<QueryUserSettings />
-				<button
+				<Button
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
 					ref={ this.spanRef }
@@ -143,7 +144,7 @@ class ReaderSiteNotificationSettings extends Component {
 					>
 						{ translate( 'Settings' ) }
 					</span>
-				</button>
+				</Button>
 
 				<ReaderPopover
 					onClose={ this.closePopover }

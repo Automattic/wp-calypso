@@ -9,6 +9,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
@@ -190,9 +191,10 @@ export class PaypalPaymentBox extends React.Component {
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-box-buttons">
 							<span className="checkout__pay-button">
-								<button
+								<Button
+									primary
 									type="submit"
-									className="checkout__pay-button-button button is-primary"
+									className="checkout__pay-button-button"
 									disabled={
 										this.state.formDisabled ||
 										cart.hasPendingServerUpdates ||
@@ -200,7 +202,7 @@ export class PaypalPaymentBox extends React.Component {
 									}
 								>
 									{ this.renderButtonText() }
-								</button>
+								</Button>
 								<SubscriptionText cart={ this.props.cart } />
 							</span>
 

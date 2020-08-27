@@ -9,6 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormButton from 'components/forms/form-button';
 import Gridicon from 'components/gridicon';
@@ -37,13 +38,13 @@ class SecurityAccountRecoveryManageContactButtons extends React.Component {
 				</FormButton>
 
 				{ this.props.isDeletable ? (
-					<button
-						className={ 'security-account-recovery-contact__remove' }
+					<Button
+						className="security-account-recovery-contact__remove"
 						onClick={ this.props.onDelete }
 					>
 						<Gridicon icon="trash" size={ 24 } />
 						<span>{ this.props.translate( 'Remove' ) }</span>
-					</button>
+					</Button>
 				) : null }
 			</FormButtonsBar>
 		);

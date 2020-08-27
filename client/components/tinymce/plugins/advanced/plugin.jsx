@@ -10,6 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { savePreference, fetchPreferences } from 'state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 import Gridicon from 'components/gridicon';
@@ -70,11 +71,11 @@ function advanced( editor ) {
 			this.innerHtml(
 				ReactDomServer.renderToStaticMarkup(
 					// eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
-					<button type="button" role="presentation" tabIndex="-1">
+					<Button type="button" role="presentation" tabIndex="-1">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						<Gridicon icon="ellipsis" size={ 28 } />
 						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-					</button>
+					</Button>
 				)
 			);
 		},

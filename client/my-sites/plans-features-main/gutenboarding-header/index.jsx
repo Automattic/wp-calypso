@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import FormattedHeader from 'components/formatted-header';
 
 /**
@@ -24,9 +25,9 @@ const GutenboardingHeader = ( { headerText, subHeaderText, onFreePlanSelect, tra
 				isSecondary
 				align="left"
 			/>
-			<button className="gutenboarding-header__select-free-plan" onClick={ onFreePlanSelect }>
+			<Button className="gutenboarding-header__select-free-plan" onClick={ onFreePlanSelect }>
 				{ translate( 'Start with a free plan' ) }
-			</button>
+			</Button>
 		</div>
 	);
 };

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Children, useState } from 'react';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 import classnames from 'classnames';
@@ -27,18 +27,18 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 	return (
 		<ul className="dot-pager__controls" aria-label={ translate( 'Pager controls' ) }>
 			<li key="dot-pager-prev">
-				<button
+				<Button
 					className="dot-pager__control-prev"
 					disabled={ ! canGoBack }
 					aria-label={ translate( 'Previous' ) }
 					onClick={ () => setCurrentPage( currentPage - 1 ) }
 				>
 					<Gridicon icon="chevron-left" size={ 18 } />
-				</button>
+				</Button>
 			</li>
 			{ times( numberOfPages, ( page ) => (
 				<li key={ `page-${ page }` } aria-current={ page === currentPage ? 'page' : undefined }>
-					<button
+					<Button
 						key={ page.toString() }
 						className={ classnames( { 'dot-pager__control-current': page === currentPage } ) }
 						disabled={ page === currentPage }
@@ -50,14 +50,14 @@ const Controls = ( { currentPage, numberOfPages, setCurrentPage } ) => {
 				</li>
 			) ) }
 			<li key="dot-pager-next">
-				<button
+				<Button
 					className="dot-pager__control-next"
 					disabled={ ! canGoForward }
 					aria-label={ translate( 'Next' ) }
 					onClick={ () => setCurrentPage( currentPage + 1 ) }
 				>
 					<Gridicon icon="chevron-right" size={ 18 } />
-				</button>
+				</Button>
 			</li>
 		</ul>
 	);

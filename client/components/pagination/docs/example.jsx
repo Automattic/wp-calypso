@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Pagination from 'components/pagination';
 
 class PaginationExample extends Component {
@@ -26,9 +27,9 @@ class PaginationExample extends Component {
 	render() {
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleCompact }>
+				<Button className="docs__design-toggle" onClick={ this.toggleCompact }>
 					{ this.state.compact ? 'Normal' : 'Compact' }
-				</button>
+				</Button>
 				<Pagination
 					compact={ this.state.compact }
 					page={ this.state.page }

@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
+import { Button, Card, CompactCard, ScreenReaderText } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 /**
@@ -101,7 +101,7 @@ class FoldableCard extends Component {
 			const iconSize = 24;
 			const screenReaderText = this.props.screenReaderText || this.props.translate( 'More' );
 			return (
-				<button
+				<Button
 					disabled={ this.props.disabled }
 					type="button"
 					className="foldable-card__action foldable-card__expand"
@@ -109,7 +109,7 @@ class FoldableCard extends Component {
 				>
 					<ScreenReaderText>{ screenReaderText }</ScreenReaderText>
 					<Gridicon icon={ this.props.icon } size={ iconSize } />
-				</button>
+				</Button>
 			);
 		}
 	}

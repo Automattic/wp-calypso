@@ -386,7 +386,7 @@ class TranslatorLauncher extends React.Component {
 				{ shouldRenderLauncherButton && (
 					<Fragment>
 						<div className={ launcherClasses }>
-							<button
+							<Button
 								onClick={ this.toggle }
 								className="community-translator__button"
 								title={ translate( 'Community Translator' ) }
@@ -396,7 +396,7 @@ class TranslatorLauncher extends React.Component {
 									<span className="community-translator__badge">{ selectedLanguageSlug }</span>
 								) }
 								<div className="community-translator__text">{ buttonString }</div>
-							</button>
+							</Button>
 						</div>
 						{ infoDialogVisible && this.renderConfirmationModal() }
 					</Fragment>

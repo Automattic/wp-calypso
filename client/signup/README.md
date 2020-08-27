@@ -164,7 +164,7 @@ render() {
 	return (
 		<form onSubmit={ this.handleSubmit }>
 			<p>This is the step named { this.props.stepName }</p>
-			<button className="button" type="submit">Get started</button>
+			<Button type="submit">Get started</Button>
 		</form>
 	);
 }

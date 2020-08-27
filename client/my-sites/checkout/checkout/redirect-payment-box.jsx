@@ -8,6 +8,7 @@ import { snakeCase, map, zipObject, isEmpty, mapValues, overSome, some } from 'l
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
@@ -341,15 +342,15 @@ export class RedirectPaymentBox extends PureComponent {
 					<div className="checkout__payment-box-actions">
 						<div className="checkout__payment-box-buttons">
 							<span className="checkout__pay-button">
-								<button
+								<Button
 									type="submit"
-									className="checkout__pay-button-button button is-primary "
+									className="checkout__pay-button-button"
 									disabled={
 										this.state.formDisabled || this.props.incompatibleProducts?.blockCheckout
 									}
 								>
 									{ this.renderButtonText() }
-								</button>
+								</Button>
 								<SubscriptionText cart={ this.props.cart } />
 							</span>
 

@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import { setNewCreditCardDetails } from 'lib/transaction/actions';
 import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
@@ -46,9 +47,9 @@ class NewCardForm extends Component {
 
 		return (
 			<div className="checkout__new-card">
-				<button type="button" className="checkout__new-card-toggle">
+				<Button type="button" className="checkout__new-card-toggle">
 					{ translate( '+ Use a New Credit/Debit Card' ) }
-				</button>
+				</Button>
 
 				<div className="checkout__new-card-fields">
 					{ hasStoredCards ? (

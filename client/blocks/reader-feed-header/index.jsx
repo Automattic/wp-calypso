@@ -11,7 +11,7 @@ import config from 'config';
 /**
  * Internal Dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import ReaderFollowButton from 'reader/follow-button';
 import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
 import HeaderBack from 'reader/header-back';
@@ -103,7 +103,7 @@ class FeedHeader extends Component {
 							) }
 
 							{ config.isEnabled( 'reader/seen-posts' ) && feed && (
-								<button
+								<Button
 									onClick={ this.markAllAsSeen }
 									className="reader-feed-header__seen-button"
 									disabled={ feed.unseen_count === 0 }
@@ -112,7 +112,7 @@ class FeedHeader extends Component {
 									<span title={ translate( 'Mark all as seen' ) }>
 										{ translate( 'Mark all as seen' ) }
 									</span>
-								</button>
+								</Button>
 							) }
 						</div>
 					</div>

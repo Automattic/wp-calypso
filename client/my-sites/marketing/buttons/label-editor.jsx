@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { decodeEntities } from 'lib/formatting';
 
 const closeKeyCodes = [
@@ -92,9 +93,9 @@ class SharingButtonsLabelEditor extends React.Component {
 					{ this.getNoButtonsNoticeElement() }
 				</div>
 				<footer className="sharing-buttons-preview__panel-actions">
-					<button type="button" className="button" onClick={ this.props.onClose }>
+					<Button type="button" onClick={ this.props.onClose }>
 						{ this.props.translate( 'Close' ) }
-					</button>
+					</Button>
 				</footer>
 			</div>
 		);

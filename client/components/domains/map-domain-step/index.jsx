@@ -34,6 +34,7 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants'
  * Style dependencies
  */
 import './style.scss';
+import { Button } from '@wordpress/components';
 
 class MapDomainStep extends React.Component {
 	static propTypes = {
@@ -119,15 +120,16 @@ class MapDomainStep extends React.Component {
 							onClick={ this.recordInputFocus }
 							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						/>
-						<button
+						<Button
 							disabled={ ! getTld( searchQuery ) }
-							className="map-domain-step__go button is-primary"
+							primary
+							className="map-domain-step__go"
 							onClick={ this.recordGoButtonClick }
 						>
 							{ translate( 'Add', {
 								context: 'Upgrades: Label for mapping an existing domain',
 							} ) }
-						</button>
+						</Button>
 					</div>
 
 					{ this.domainRegistrationUpsell() }

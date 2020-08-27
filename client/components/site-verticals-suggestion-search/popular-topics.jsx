@@ -10,6 +10,7 @@ import { shuffle } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -77,7 +78,7 @@ class PopularTopics extends PureComponent {
 			<div className="site-verticals-suggestion-search__common-topics">
 				<div className="site-verticals-suggestion-search__heading">{ translate( 'Popular' ) }</div>
 				{ shuffledTopics.map( ( topic, index ) => (
-					<button
+					<Button
 						type="button"
 						key={ index }
 						value={ topic }
@@ -86,7 +87,7 @@ class PopularTopics extends PureComponent {
 						tabIndex="0"
 					>
 						{ topic }
-					</button>
+					</Button>
 				) ) }
 			</div>
 		);

@@ -9,17 +9,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
 import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 
 const HistoryButton = ( { translate, selectHistory } ) => (
 	<div className="editor-ground-control__history">
-		<button
-			className="editor-ground-control__history-button button is-link"
-			onClick={ selectHistory }
-		>
+		<Button className="editor-ground-control__history-button is-link" onClick={ selectHistory }>
 			{ translate( 'History' ) }
-		</button>
+		</Button>
 	</div>
 );
 

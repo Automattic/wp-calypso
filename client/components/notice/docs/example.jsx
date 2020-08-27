@@ -7,6 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 
@@ -22,9 +23,9 @@ class Notices extends React.PureComponent {
 
 		return (
 			<div>
-				<button className="docs__design-toggle button" onClick={ this.toggleNotices }>
+				<Button className="docs__design-toggle" onClick={ this.toggleNotices }>
 					{ toggleNoticesText }
-				</button>
+				</Button>
 
 				<div>
 					<Notice showDismiss={ false } isCompact={ this.state.compactNotices ? true : null }>

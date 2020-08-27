@@ -13,6 +13,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import AutoDirection from 'components/auto-direction';
 import Notice from 'components/notice';
 import { editComment } from 'state/comments/actions';
@@ -168,13 +169,13 @@ class PostCommentForm extends Component {
 							/>
 						</AutoDirection>
 					</div>
-					<button
+					<Button
 						className={ buttonClasses }
 						disabled={ this.state.commentText.length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ translate( 'Send' ) }
-					</button>
+					</Button>
 					{ this.renderError() }
 				</fieldset>
 			</form>

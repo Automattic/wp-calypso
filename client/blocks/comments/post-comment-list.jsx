@@ -427,14 +427,14 @@ class PostCommentList extends React.Component {
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
 						{ showViewMoreComments && (
-							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
+							<Button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 									args: {
 										shown: displayedCommentsCount,
 										total: actualCommentsCount,
 									},
 								} ) }
-							</button>
+							</Button>
 						) }
 					</div>
 				) }
@@ -486,14 +486,14 @@ class PostCommentList extends React.Component {
 				) }
 				{ this.renderCommentsList( displayedComments ) }
 				{ showViewMoreComments && this.props.startingCommentId && (
-					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+					<Button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
 								total: actualCommentsCount,
 							},
 						} ) }
-					</button>
+					</Button>
 				) }
 				<PostCommentFormRoot
 					post={ this.props.post }

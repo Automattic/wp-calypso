@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Popover from 'components/popover';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
@@ -56,9 +57,9 @@ class PopoverExample extends PureComponent {
 	renderPopover() {
 		return (
 			<div>
-				<button className="button" ref="popoverButton" onClick={ this.swapPopoverVisibility }>
+				<Button ref="popoverButton" onClick={ this.swapPopoverVisibility }>
 					Show Popover
-				</button>
+				</Button>
 
 				<Popover
 					id="popover__basic-example"
@@ -77,9 +78,9 @@ class PopoverExample extends PureComponent {
 	renderMenuPopover() {
 		return (
 			<div>
-				<button className="button" ref="popoverMenuButton" onClick={ this.showPopoverMenu }>
+				<Button ref="popoverMenuButton" onClick={ this.showPopoverMenu }>
 					Show Popover Menu
-				</button>
+				</Button>
 
 				<br />
 

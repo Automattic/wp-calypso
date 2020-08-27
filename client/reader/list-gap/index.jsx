@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import { Button } from '@automattic/components';
 import { fillGap } from 'state/reader/streams/actions';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
@@ -48,13 +49,9 @@ class Gap extends React.Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className={ classes }>
-				<button
-					type="button"
-					className="button reader-list-gap__button"
-					onClick={ this.handleClick }
-				>
+				<Button type="button" className="reader-list-gap__button" onClick={ this.handleClick }>
 					{ translate( 'Load More Posts' ) }
-				</button>
+				</Button>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

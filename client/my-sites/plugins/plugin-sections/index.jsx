@@ -12,7 +12,7 @@ import classNames from 'classnames';
  */
 import Gridicon from 'components/gridicon';
 import { gaRecordEvent } from 'lib/analytics/ga';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -155,12 +155,12 @@ class PluginSections extends React.Component {
 			return null;
 		}
 		const button = (
-			<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
+			<Button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
 				<span className="plugin-sections__read-more-text">
 					{ this.props.translate( 'Read More' ) }
 				</span>
 				<Gridicon icon="chevron-down" size={ 18 } />
-			</button>
+			</Button>
 		);
 		return (
 			<div className="plugin-sections__read-more">

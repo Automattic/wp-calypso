@@ -9,6 +9,7 @@ import { partial, isArray, isPlainObject } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { savePreference } from 'state/preferences/actions';
 import ArrayPreference from './array-preference';
 import ObjectPreference from './object-preference';
@@ -41,13 +42,13 @@ class Preference extends Component {
 		return (
 			<div>
 				<div className="preferences-helper__preference-header">
-					<button
+					<Button
 						className="preferences-helper__unset"
 						onClick={ partial( unsetPreference, name, null ) }
 						title={ translate( 'Unset Preference' ) }
 					>
 						{ 'X' }
-					</button>
+					</Button>
 					<span>{ name }</span>
 				</div>
 				{ preferenceHandler }

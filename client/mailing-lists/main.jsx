@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import notices from 'notices';
 import utils from './utils';
 import { preventWidows } from 'lib/formatting';
@@ -245,29 +245,30 @@ class MainComponent extends React.Component {
 					<h4>{ this.getCategoryName() }</h4>
 					<p>{ this.getCategoryDescription() }</p>
 					{ this.state.isSubscribed ? (
-						<button
-							className="mailing-lists__unsubscribe-button button is-primary"
+						<Button
+							primary
+							className="mailing-lists__unsubscribe-button"
 							onClick={ this.onUnsubscribeClick }
 						>
 							{ translate( 'Unsubscribe' ) }
-						</button>
+						</Button>
 					) : (
-						<button
-							className="mailing-lists__resubscribe-button button"
+						<Button
+							className="mailing-lists__resubscribe-button"
 							onClick={ this.onResubscribeClick }
 						>
 							{ translate( 'Resubscribe' ) }
-						</button>
+						</Button>
 					) }
 				</Card>
 
 				<p className="mailing-lists__manage-link">
-					<button
-						className="mailing-lists__manage-button button is-link"
+					<Button
+						className="mailing-lists__manage-button is-link"
 						onClick={ this.onManageUpdatesClick }
 					>
 						{ translate( 'Manage all your email subscriptions' ) }
-					</button>
+					</Button>
 				</p>
 			</div>
 		);

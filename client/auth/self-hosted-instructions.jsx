@@ -5,15 +5,16 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
+import { Button } from '@automattic/components';
 
 export default function SelfHostedInstructions( { onClickClose } ) {
 	const translate = useTranslate();
 
 	return (
 		<div className="auth__self-hosted-instructions">
-			<button onClick={ onClickClose } className="auth__self-hosted-instructions-close">
+			<Button onClick={ onClickClose } className="auth__self-hosted-instructions-close">
 				<Gridicon icon="cross" size={ 24 } />
-			</button>
+			</Button>
 
 			<h2>{ translate( 'Add self-hosted site' ) }</h2>
 			<p>

@@ -148,12 +148,12 @@ The children to render inside of the `PopoverMenuItem`.
 ### `Popover` Usage
 
 ```jsx
-<button
-	ref="popoverButton" className="button"
+<Button
+	ref="popoverButton"
 	onClick={ this.TogglePopover }
 >
 	Show Popover
-</button>
+</Button>
 
 <Popover
 	context={ this.refs && this.refs.popoverButton }
@@ -169,12 +169,12 @@ The children to render inside of the `PopoverMenuItem`.
 ### `PopoverMenu` Usage
 
 ```jsx
-<button
-	ref="popoverMenuButton" className="button"
+<Button
+	ref="popoverMenuButton"
 	onClick={ this._onTogglePopoverMenu }
 >
 	Show Popover Menu
-</button>
+</Button>
 
 <PopoverMenu
 	context={ this.refs && this.refs.popoverMenuButton }

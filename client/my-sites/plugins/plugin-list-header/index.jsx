@@ -241,14 +241,14 @@ export class PluginsListHeader extends PureComponent {
 			);
 
 			rightSideButtons.push(
-				<button
+				<Button
 					key="plugin-list-header__buttons-close-button"
 					className="plugin-list-header__section-actions-close"
 					onClick={ this.props.toggleBulkManagement }
 					aria-label={ translate( 'Close' ) }
 				>
 					<Gridicon icon="cross" />
-				</button>
+				</Button>
 			);
 		}
 

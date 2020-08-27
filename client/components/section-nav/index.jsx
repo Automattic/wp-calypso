@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
+import { Button } from '@automattic/components';
 import CommentNavigationTab from 'my-sites/comments/comment-navigation/comment-navigation-tab';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -58,10 +59,10 @@ class SectionNav extends Component {
 		}
 
 		return (
-			<button className="section-nav__mobile-header" onClick={ this.toggleMobileOpenState }>
+			<Button className="section-nav__mobile-header" onClick={ this.toggleMobileOpenState }>
 				<span className="section-nav__mobile-header-text">{ this.props.selectedText }</span>
 				<Gridicon icon="chevron-down" size={ 18 } />
-			</button>
+			</Button>
 		);
 	}
 

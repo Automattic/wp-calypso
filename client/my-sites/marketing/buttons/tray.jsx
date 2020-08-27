@@ -11,6 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import SortableList from 'components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
@@ -214,23 +215,23 @@ class SharingButtonsTray extends React.Component {
 					{ this.getLimitedButtonsNoticeElement() }
 				</div>
 				<footer className="sharing-buttons-preview__panel-actions">
-					<button
+					<Button
 						type="button"
-						className="button sharing-buttons-preview__panel-action is-left"
+						className="sharing-buttons-preview__panel-action is-left"
 						onClick={ this.toggleReorder }
 						disabled={ this.getButtonsOfCurrentVisibility().length <= 1 }
 					>
 						{ this.state.isReordering
 							? this.props.translate( 'Add / Remove' )
 							: this.props.translate( 'Reorder' ) }
-					</button>
-					<button
+					</Button>
+					<Button
 						type="button"
-						className="button sharing-buttons-preview__panel-action"
+						className="sharing-buttons-preview__panel-action"
 						onClick={ this.props.onClose }
 					>
 						{ this.props.translate( 'Close' ) }
-					</button>
+					</Button>
 				</footer>
 			</div>
 		);

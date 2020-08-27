@@ -512,7 +512,7 @@ export class LoginForm extends Component {
 
 						<label htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<button
+								<Button
 									type="button"
 									className="login__form-change-username"
 									onClick={ this.resetView }
@@ -521,7 +521,7 @@ export class LoginForm extends Component {
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</button>
+								</Button>
 							) : (
 								this.props.translate( 'Email Address or Username' )
 							) }

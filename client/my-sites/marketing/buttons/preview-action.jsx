@@ -10,6 +10,7 @@ import { omit, startsWith, endsWith } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
 
 const SharingButtonsPreviewAction = ( props ) => {
@@ -23,14 +24,14 @@ const SharingButtonsPreviewAction = ( props ) => {
 	} );
 
 	return (
-		<button
+		<Button
 			type="button"
 			className={ classes }
 			{ ...omit( props, [ 'active', 'position', 'icon' ] ) }
 		>
 			{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 			{ children }
-		</button>
+		</Button>
 	);
 };
 

@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { unblockSite } from 'state/reader/site-blocks/actions';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { recordTrack as recordReaderTrack } from 'reader/stats';
 import { bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
@@ -38,9 +38,9 @@ class PostBlocked extends React.Component {
 					{ translate( 'You have blocked %(site_name)s.', {
 						args: { site_name: post.site_name },
 					} ) }
-					<button onClick={ this.unblock } className="reader-post-card__blocked-undo">
+					<Button onClick={ this.unblock } className="reader-post-card__blocked-undo">
 						{ translate( 'Undo?' ) }
-					</button>
+					</Button>
 				</p>
 			</Card>
 		);

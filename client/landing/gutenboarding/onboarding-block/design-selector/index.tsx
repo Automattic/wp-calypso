@@ -10,6 +10,7 @@ import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboardi
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 import { useTrackStep } from '../../hooks/use-track-step';
@@ -56,7 +57,7 @@ const DesignSelector: React.FunctionComponent = () => {
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
 					{ getRandomizedDesigns().featured.map( ( design ) => (
-						<button
+						<Button
 							key={ design.slug }
 							className="design-selector__design-option"
 							data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
@@ -99,7 +100,7 @@ const DesignSelector: React.FunctionComponent = () => {
 									) }
 								</span>
 							</span>
-						</button>
+						</Button>
 					) ) }
 				</div>
 			</div>

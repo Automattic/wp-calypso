@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import AuthCodeButton from './auth-code-button';
 import AuthStore from 'lib/oauth-store';
+import { Button } from '@automattic/components';
 import config from 'config';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
@@ -25,7 +26,6 @@ import WordPressLogo from 'components/wordpress-logo';
 import { login } from 'lib/oauth-store/actions';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { localizeUrl } from 'lib/i18n-utils';
-
 export class Auth extends Component {
 	state = {
 		login: '',
@@ -157,9 +157,9 @@ export class Auth extends Component {
 						<Gridicon icon="help" />
 					</a>
 					<div className="auth__links">
-						<button onClick={ this.toggleSelfHostedInstructions }>
+						<Button onClick={ this.toggleSelfHostedInstructions }>
 							{ translate( 'Add self-hosted site' ) }
-						</button>
+						</Button>
 						<a href={ config( 'signup_url' ) }>{ translate( 'Create account' ) }</a>
 					</div>
 					{ showInstructions && (

@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { createReviewReply } from 'woocommerce/state/sites/review-replies/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import Gravatar from 'components/gravatar';
@@ -143,9 +144,9 @@ class ReviewReplyCreate extends Component {
 
 				<Gravatar className={ gravatarClasses } size={ 24 } user={ currentUser } />
 
-				<button className={ buttonClasses } disabled={ ! hasCommentText } onClick={ this.onSubmit }>
+				<Button className={ buttonClasses } disabled={ ! hasCommentText } onClick={ this.onSubmit }>
 					{ translate( 'Send' ) }
-				</button>
+				</Button>
 			</form>
 		);
 	}

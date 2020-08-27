@@ -7,6 +7,11 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import page from 'page';
 
+/**
+ * Internal dependencies
+ */
+import { Button } from '@automattic/components';
+
 class CartEmpty extends React.Component {
 	render() {
 		return (
@@ -15,14 +20,15 @@ class CartEmpty extends React.Component {
 					{ this.props.translate( 'There are no items in your cart.' ) }
 				</div>
 				<div className="cart-empty__buttons cart-buttons">
-					<button
-						className="cart-empty__checkout-button cart-checkout-button button is-primary"
+					<Button
+						primary
+						className="cart-empty__checkout-button cart-checkout-button"
 						onClick={ this.handleClick }
 					>
 						{ this.shouldShowPlanButton()
 							? this.props.translate( 'Add a plan' )
 							: this.props.translate( 'Add a domain' ) }
-					</button>
+					</Button>
 				</div>
 			</div>
 		);

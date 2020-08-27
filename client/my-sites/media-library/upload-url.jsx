@@ -15,7 +15,7 @@ import { localize } from 'i18n-calypso';
  */
 import { bumpStat } from 'lib/analytics/mc';
 import FormTextInput from 'components/forms/form-text-input';
-import { ScreenReaderText } from '@automattic/components';
+import { Button, ScreenReaderText } from '@automattic/components';
 import { clearMediaItemErrors } from 'state/media/actions';
 import { addMedia } from 'state/media/thunks';
 
@@ -101,14 +101,14 @@ class MediaLibraryUploadUrl extends Component {
 
 				<div className="media-library__upload-url-button-group">
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-					<button type="submit" className="button is-primary">
+					<Button type="submit" primary>
 						{ translate( 'Upload', { context: 'verb' } ) }
-					</button>
+					</Button>
 
-					<button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
+					<Button type="button" className="media-library__upload-url-cancel" onClick={ onClose }>
 						<ScreenReaderText>{ translate( 'Cancel' ) }</ScreenReaderText>
 						<Gridicon icon="cross" />
-					</button>
+					</Button>
 				</div>
 			</form>
 		);

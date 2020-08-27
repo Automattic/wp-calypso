@@ -17,7 +17,7 @@ import { successNotices } from 'state/notices/actions';
 
 function MyComponent() {
   return (
-    <button onClick={ this.props.successNotice( 'Objective achieved!' ) } />Click me!</button>
+    <Button onClick={ this.props.successNotice( 'Objective achieved!' ) } />Click me!</Button>
   );
 }
 

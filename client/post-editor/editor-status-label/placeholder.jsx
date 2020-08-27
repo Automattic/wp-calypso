@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { getEditedPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { getEditorPostId } from 'state/editor/selectors';
@@ -36,12 +37,12 @@ function EditorStatusLabelPlaceholder( { translate, siteId, typeSlug, type, clas
 	}
 
 	return (
-		<button className={ classes }>
+		<Button className={ classes }>
 			{ 'post' !== typeSlug && 'page' !== typeSlug && siteId && (
 				<QueryPostTypes siteId={ siteId } />
 			) }
 			<strong>{ label }</strong>
-		</button>
+		</Button>
 	);
 }
 

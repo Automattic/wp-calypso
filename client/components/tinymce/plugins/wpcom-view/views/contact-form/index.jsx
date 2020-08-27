@@ -8,6 +8,7 @@ import { deserialize } from 'components/tinymce/plugins/contact-form/shortcode-u
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { next } from 'lib/shortcode';
 import renderField from './preview-fields';
 
@@ -17,7 +18,7 @@ const ContactForm = localize( ( { content, translate } ) => {
 	return (
 		<div className="wpview-content wpview-type-contact-form">
 			{ [].concat( fields ).map( renderField ) }
-			<button disabled>{ translate( 'Submit' ) }</button>
+			<Button disabled>{ translate( 'Submit' ) }</Button>
 		</div>
 	);
 } );

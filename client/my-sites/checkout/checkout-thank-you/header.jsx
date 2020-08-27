@@ -440,9 +440,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( isSearch ) {
 			return (
 				<div className="checkout-thank-you__header-button">
-					<button className={ headerButtonClassName } onClick={ this.goToCustomizer }>
+					<Button className={ headerButtonClassName } onClick={ this.goToCustomizer }>
 						{ translate( 'Try Search and customize it now' ) }
-					</button>
+					</Button>
 				</div>
 			);
 		}
@@ -460,9 +460,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 		if ( primaryPurchase && isDelayedDomainTransfer( primaryPurchase ) ) {
 			return (
 				<div className="checkout-thank-you__header-button">
-					<button className={ headerButtonClassName } onClick={ this.startTransfer }>
+					<Button className={ headerButtonClassName } onClick={ this.startTransfer }>
 						{ translate( 'Start domain transfer' ) }
-					</button>
+					</Button>
 				</div>
 			);
 		}
@@ -478,9 +478,9 @@ export class CheckoutThankYouHeader extends PureComponent {
 		return (
 			<div className="checkout-thank-you__header-button">
 				{ this.maybeGetSecondaryButton() }
-				<button className={ headerButtonClassName } onClick={ clickHandler }>
+				<Button className={ headerButtonClassName } onClick={ clickHandler }>
 					{ this.getButtonText() }
-				</button>
+				</Button>
 			</div>
 		);
 	}

@@ -10,6 +10,11 @@ import Gridicon from 'components/gridicon';
 import classnames from 'classnames';
 
 /**
+ * Internal dependencies
+ */
+import { Button } from '@automattic/components';
+
+/**
  * Style dependencies
  */
 import './comment-approve-action.scss';
@@ -21,12 +26,12 @@ const CommentApproveAction = ( { translate, status, approveComment, unapproveCom
 	} );
 
 	return (
-		<button className={ buttonStyle } onClick={ ! isApproved ? approveComment : unapproveComment }>
+		<Button className={ buttonStyle } onClick={ ! isApproved ? approveComment : unapproveComment }>
 			<Gridicon icon="checkmark" size={ 18 } />
 			<span className="comments__comment-actions-like-label">
 				{ isApproved ? translate( 'Approved' ) : translate( 'Approve' ) }
 			</span>
-		</button>
+		</Button>
 	);
 };
 

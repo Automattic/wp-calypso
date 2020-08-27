@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import ReaderMain from 'reader/components/reader-main';
 import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
 import EmptyContent from 'components/empty-content';
@@ -35,9 +36,9 @@ class SiteBlocked extends React.Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-			<button className="empty-content__action button is-primary" onClick={ this.unblockSite }>
+			<Button primary className="empty-content__action" onClick={ this.unblockSite }>
 				{ this.props.translate( 'Unblock' ) }
-			</button>
+			</Button>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 

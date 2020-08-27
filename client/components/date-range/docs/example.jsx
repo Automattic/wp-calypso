@@ -7,7 +7,7 @@ import React, { Fragment, Component } from 'react';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import DateRange from '../index.js';
 
 /*
@@ -18,9 +18,9 @@ class DateRangeExample extends Component {
 		// Note: you must ensure you pass the `ref` prop down to the element
 		const customTrigger = ( props ) => {
 			return (
-				<button ref={ props.buttonRef } onClick={ props.onTriggerClick }>
+				<Button ref={ props.buttonRef } onClick={ props.onTriggerClick }>
 					I am a custom Trigger element
-				</button>
+				</Button>
 			);
 		};
 

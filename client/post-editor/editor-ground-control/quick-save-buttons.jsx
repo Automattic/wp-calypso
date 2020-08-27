@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { isPage, isPublished } from 'state/posts/utils';
 import HistoryButton from 'post-editor/editor-ground-control/history-button';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
@@ -64,13 +65,13 @@ const QuickSaveButtons = ( {
 			{ showingSaveStatus && (
 				<div className="editor-ground-control__status">
 					{ isSaveAvailable && (
-						<button
-							className="editor-ground-control__save button is-link"
+						<Button
+							className="editor-ground-control__save is-link"
 							onClick={ onSaveButtonClick }
 							tabIndex={ 3 }
 						>
 							{ translate( 'Save' ) }
-						</button>
+						</Button>
 					) }
 					{ ! isSaveAvailable && showingStatusLabel && (
 						<span

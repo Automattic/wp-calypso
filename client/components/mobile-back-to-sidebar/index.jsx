@@ -9,6 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal Dependencies
  */
+import { Button } from '@automattic/components';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 /**
@@ -18,10 +19,10 @@ import './style.scss';
 
 function MobileBackToSidebar( { children, toggleSidebar } ) {
 	return (
-		<button className="mobile-back-to-sidebar" onClick={ toggleSidebar }>
+		<Button className="mobile-back-to-sidebar" onClick={ toggleSidebar }>
 			<Gridicon icon="chevron-left" className="mobile-back-to-sidebar__icon" />
 			<span className="mobile-back-to-sidebar__content">{ children }</span>
-		</button>
+		</Button>
 	);
 }
 

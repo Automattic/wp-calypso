@@ -258,21 +258,21 @@ class SiteIndicator extends Component {
 			<div className={ indicatorClass }>
 				{ ! this.state.expand && (
 					<Animate type="appear">
-						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+						<Button className="site-indicator__button" onClick={ this.toggleExpand }>
 							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 							<Gridicon icon={ this.getIcon() } size={ 16 } />
 							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-						</button>
+						</Button>
 					</Animate>
 				) }
 				{ this.state.expand && (
 					<div className="site-indicator__message">
 						<div className="site-indicator__action">{ this.getText() }</div>
-						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+						<Button className="site-indicator__button" onClick={ this.toggleExpand }>
 							<Animate type="appear">
 								<Gridicon icon="cross" size={ 18 } />
 							</Animate>
-						</button>
+						</Button>
 					</div>
 				) }
 			</div>

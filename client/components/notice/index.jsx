@@ -8,6 +8,10 @@ import classnames from 'classnames';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
+import { Button } from '@automattic/components';
 // @todo: Convert to import from `components/gridicon`
 // which makes Calypso mysteriously crash at the moment.
 //
@@ -141,13 +145,13 @@ export class Notice extends Component {
 				</span>
 				{ text ? children : null }
 				{ showDismiss && (
-					<button
+					<Button
 						className="notice__dismiss"
 						onClick={ onDismissClick }
 						aria-label={ translate( 'Dismiss' ) }
 					>
 						<Gridicon icon="cross" size={ 24 } />
-					</button>
+					</Button>
 				) }
 			</div>
 		);
