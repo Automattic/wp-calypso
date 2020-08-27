@@ -42,6 +42,10 @@ export interface UpsellPageProps extends BasePageProps {
 	productSlug: string;
 }
 
+export interface WithRedirectToSelectorProps extends BasePageProps {
+	duration: Duration;
+}
+
 export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];
 
 export type SelectorProductCost = {

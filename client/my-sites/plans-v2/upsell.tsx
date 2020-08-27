@@ -30,6 +30,7 @@ import {
 	slugToSelectorProduct,
 	checkout,
 } from './utils';
+import withRedirectToSelector from './with-redirect-to-selector';
 
 /**
  * Style dependencies
@@ -39,7 +40,7 @@ import './style.scss';
 /**
  * Type dependencies
  */
-import type { SelectorProduct, UpsellPageProps } from './types';
+import type { Duration, SelectorProduct, UpsellPageProps } from './types';
 
 interface Props {
 	currencyCode: string;
@@ -195,7 +196,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	// page.
 	const productOption = getOptionFromSlug( productSlug );
 	const backUrl = productOption
-		? getPathToDetails( rootUrl, productOption, duration, siteSlug )
+		? getPathToDetails( rootUrl, productOption, duration as Duration, siteSlug )
 		: selectorPageUrl;
 
 	const onBackButtonClick = () => page( backUrl );
@@ -216,4 +217,4 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	);
 };
 
-export default UpsellPage;
+export default withRedirectToSelector( UpsellPage );

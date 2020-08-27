@@ -27,11 +27,12 @@ import { isProductsListFetching } from 'state/products-list/selectors/is-product
 import { getProductsList } from 'state/products-list/selectors';
 import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import withRedirectToSelector from './with-redirect-to-selector';
 
 /**
  * Type dependencies
  */
-import type { DetailsPageProps, PurchaseCallback, SelectorProduct } from './types';
+import type { Duration, DetailsPageProps, PurchaseCallback, SelectorProduct } from './types';
 
 import './style.scss';
 
@@ -63,7 +64,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 				( { productSlug: siteProductSlug } ) => siteProductSlug === upsellProduct
 			)
 		) {
-			page( getPathToUpsell( rootUrl, slug, duration, siteSlug ) );
+			page( getPathToUpsell( rootUrl, slug, duration as Duration, siteSlug ) );
 			return;
 		}
 		checkout( siteSlug, slug );
@@ -122,4 +123,4 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	);
 };
 
-export default DetailsPage;
+export default withRedirectToSelector( DetailsPage );
