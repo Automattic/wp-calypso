@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 const { Octokit } = require( '@octokit/core' );
+const { isHittingRateLimit, warnOfRateLimit } = require( './rate-limit' );
 
 async function getPulls( octokit, repoOwner, repoName, base ) {
 	try {
@@ -8,6 +9,7 @@ async function getPulls( octokit, repoOwner, repoName, base ) {
 			owner: repoOwner,
 			repo: repoName,
 			base,
+			per_page: 100,
 		} );
 		return pulls;
 	} catch ( e ) {
@@ -22,30 +24,8 @@ async function getPulls( octokit, repoOwner, repoName, base ) {
 	}
 }
 
-async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken, { dry } ) {
-	const octokit = new Octokit( { auth: accessToken } );
-
-	const pulls = await getPulls( octokit, repoOwner, repoName, from );
-
-	if ( pulls === null ) {
-		return;
-	}
-
-	if ( pulls.length === 0 ) {
-		console.log(
-			'No pull requests found for the specified base branch. Exiting without making any changes.'
-		);
-		return;
-	}
-
-	console.log( `Found ${ pulls.length } pull requests to retarget.` );
-
-	if ( dry ) {
-		console.log( 'Exiting dry run without changes.' );
-		return;
-	}
-
-	for ( const pull of pulls ) {
+async function updatePullRequestBaseBranch( octokit, repoOwner, repoName, pull, to ) {
+	try {
 		const {
 			headers: { 'x-ratelimit-remaining': remainingRateLimit, 'x-ratelimit-reset': rateLimitReset },
 		} = await octokit.request( 'PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
@@ -55,15 +35,50 @@ async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken, { dr
 			base: to,
 		} );
 
-		if ( remainingRateLimit === 0 ) {
-			const rateLimitResetDate = new Date( rateLimitReset * 1000 );
-			// eslint-disable-next-line no-console
-			console.error(
-				`Hit rate limit. Wait until ${ rateLimitResetDate } and then run the command again.`
-			);
+		return { remainingRateLimit, rateLimitReset };
+	} catch ( e ) {}
+}
+
+async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken, { dry } ) {
+	const octokit = new Octokit( { auth: accessToken } );
+
+	let pulls = await getPulls( octokit, repoOwner, repoName, from );
+
+	// eslint-disable-next-line no-constant-condition
+	while ( ( ( pulls && pulls.length ) || 0 ) > 0 ) {
+		// We loop until there are no more pull requests to work on or we hit the rate limit
+		console.log( `Found ${ pulls.length } pull requests to retarget.` );
+
+		if ( dry ) {
+			console.log( 'Exiting dry run without changes.' );
 			return;
 		}
+
+		for ( const pull of pulls ) {
+			const rateLimitInfo = await updatePullRequestBaseBranch(
+				octokit,
+				repoOwner,
+				repoName,
+				pull,
+				to
+			);
+
+			if ( isHittingRateLimit( rateLimitInfo ) ) {
+				warnOfRateLimit( rateLimitInfo );
+				pulls = null;
+				return;
+			}
+		}
+
+		pulls = await getPulls( octokit, repoOwner, repoName, from );
 	}
+
+	if ( pulls === null ) {
+		// We ran into an error and should exit silently. Our error handling will advise the user.
+		return;
+	}
+
+	console.log( 'No more pull requests found for the specified base branch.' );
 }
 
 module.exports = retargetOpenPrs;
