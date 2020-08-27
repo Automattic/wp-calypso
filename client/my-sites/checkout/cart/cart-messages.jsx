@@ -15,7 +15,9 @@ import { getNewMessages } from 'lib/cart-values';
 class CartMessages extends PureComponent {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object,
+		selectedSite: PropTypes.shape( {
+			slug: PropTypes.string,
+		} ).isRequired,
 
 		// connected
 		translate: PropTypes.func.isRequired,
