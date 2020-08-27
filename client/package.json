@@ -176,7 +176,7 @@
 		"react-spring": "^8.0.27",
 		"react-stripe-elements": "^4.0.2",
 		"react-transition-group": "^4.3.0",
-		"reakit": "^1.0.0-beta.14",
+		"reakit": "^1.2.3",
 		"redux": "^4.0.5",
 		"redux-dynamic-middlewares": "^2.0.0",
 		"redux-form": "^8.2.6",

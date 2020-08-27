@@ -98,6 +98,12 @@
 		box-sizing: border-box;
 		flex: 1 0 auto;
 
+		&:focus {
+			box-shadow: 0 0 0 1px var( --color-border-subtle ), inset 0 0 0 2px var( --color-primary-light );
+			outline: none;
+			z-index: 1;
+		}
+
 		@include breakpoint-deprecated( '>480px' ) {
 			display: flex;
 		}

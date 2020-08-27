@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { planHasFeature, isBusinessPlan, isEcommercePlan } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 import PlanStorageBar from './bar';
+import Tooltip from './tooltip';
 
 /**
  * Style dependencies
@@ -42,6 +44,7 @@ export class PlanStorage extends Component {
 			siteId,
 			sitePlanSlug,
 			siteSlug,
+			translate,
 		} = this.props;
 
 		if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
@@ -72,9 +75,14 @@ export class PlanStorage extends Component {
 
 		if ( displayUpgradeLink ) {
 			return (
-				<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
-					{ planStorageComponents }
-				</a>
+				<Tooltip
+					title={ translate( 'Upgrade your plan to increase your storage space.' ) }
+					className="plan-storage__tooltip"
+				>
+					<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
+						{ planStorageComponents }
+					</a>
+				</Tooltip>
 			);
 		}
 		return (
@@ -94,4 +102,4 @@ export default connect( ( state, ownProps ) => {
 		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
 		canViewBar: canCurrentUser( state, siteId, 'publish_posts' ),
 	};
-} )( PlanStorage );
+} )( localize( PlanStorage ) );
