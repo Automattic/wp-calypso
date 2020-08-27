@@ -64,6 +64,7 @@ import ThemeFeaturesCard from './theme-features-card';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -716,6 +717,7 @@ class ThemeSheet extends React.Component {
 					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
+				<PerformanceTrackerStop />
 			</Main>
 		);
 	};
