@@ -228,18 +228,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Manage donations' ),
+					text: translate( 'Learn more about donations' ),
 					action: () => {
 						trackCtaButton( 'donations' );
-						page( `/earn/payments/${ selectedSiteSlug }` );
+						if ( window && window.location ) {
+							window.location.href = localizeUrl( 'https://en.support.wordpress.com/donations/' );
+						}
 					},
 			  };
 		const title = translate( 'Accept donations and tips' );
 
-		const hasConnectionBody = translate(
-			'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
-		);
-		const noConnectionBody = translate(
+		const freePlanBody = translate(
 			'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about. {{em}}Available with any paid plan{{/em}}.',
 			{
 				components: {
@@ -247,8 +246,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				},
 			}
 		);
+		const paidPlanBody = translate(
+			'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
+		);
 
-		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
+		const body = isFreePlan ? freePlanBody : paidPlanBody;
 
 		const learnMoreLink = isFreePlan
 			? {
