@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import page from 'page';
 
@@ -45,6 +45,10 @@ const SelectorPage = ( {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+
+	useMemo( () => {
+		setDuration( defaultDuration );
+	}, [ defaultDuration ] );
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = ( product: SelectorProduct, purchase ) => {
