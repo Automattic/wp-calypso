@@ -82,6 +82,7 @@ import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useDisplayErrors from './hooks/use-display-errors';
+import CartMessages from 'my-sites/checkout/cart/cart-messages';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -547,6 +548,7 @@ export default function CompositeCheckout( {
 			<QueryProducts />
 			<QueryContactDetailsCache />
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+			<CartMessages cart={ responseCart } selectedSite={ { slug: siteSlug } } />
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
 					items={ itemsForCheckout }
