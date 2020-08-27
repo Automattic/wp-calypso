@@ -65,7 +65,6 @@ $nav-header-background-color: #32373d; // WP-admin gray to match the close butto
 	min-height: $header-height;
 	box-sizing: content-box;
 	display: flex;
-	flex: $header-height 0 0;
 	background-color: $nav-header-background-color;
 }
 
@@ -131,7 +130,7 @@ $nav-header-background-color: #32373d; // WP-admin gray to match the close butto
 	padding: $grid-unit-05 $grid-unit-20;
 	font-size: $big-font-size;
 	color: $white;
-	margin: 0 0 8px 0;
+	margin: 0 0 8px;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
@@ -141,7 +140,7 @@ $nav-header-background-color: #32373d; // WP-admin gray to match the close butto
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__page-list {
 	padding: 0;
-	margin: 0;
+	margin: 0 0 20px;
 
 	li {
 		margin-bottom: 2px;
@@ -160,7 +159,12 @@ $nav-header-background-color: #32373d; // WP-admin gray to match the close butto
 	*/
 }
 
+.wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area {
+	overflow-y: auto;
+}
+
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
+	border-top: 1px solid $light-gray-900;
 	&.is-scrollbar-present {
 		border-top: 1px solid $dark-gray-600;
 	}

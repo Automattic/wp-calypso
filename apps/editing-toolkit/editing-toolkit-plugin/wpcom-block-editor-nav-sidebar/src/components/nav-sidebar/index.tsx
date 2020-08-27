@@ -232,41 +232,43 @@ function WpcomBlockEditorNavSidebar() {
 						/>
 					</ul>
 				) }
-				{ posts.recent && posts.recent.length && (
-					<>
-						<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
-							{ __( 'Recently edited', 'full-site-editing' ) }
-						</h3>
-						<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-							{ posts.recent.map( ( item) => (
+				<section className="wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area">
+					{ posts.recent && posts.recent.length && (
+						<>
+							<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
+								{ __( 'Recently edited', 'full-site-editing' ) }
+							</h3>
+							<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
+								{ posts.recent.map( ( item) => (
+									<NavItem
+										key={ item.id }
+										item={ item }
+										postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
+										selected={ item.id === selectedItemId }
+										statusLabel={ statusLabels[ item.status ] }
+									/>
+								) ) }
+							</ul>
+						</>
+					) }
+					{ posts.drafts && posts.drafts.length && (
+						<>
+							<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
+								{ __( 'Drafts', 'full-site-editing' ) }
+							</h3>
+							<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
+							{ posts.drafts.map( ( item ) => (
 								<NavItem
 									key={ item.id }
 									item={ item }
 									postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
 									selected={ item.id === selectedItemId }
-									statusLabel={ statusLabels[ item.status ] }
 								/>
 							) ) }
-						</ul>
-					</>
-				) }
-				{ posts.drafts && posts.drafts.length && (
-					<>
-						<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
-							{ __( 'Drafts', 'full-site-editing' ) }
-						</h3>
-						<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-						{ posts.drafts.map( ( item ) => (
-							<NavItem
-								key={ item.id }
-								item={ item }
-								postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
-								selected={ item.id === selectedItemId }
-							/>
-						) ) }
-						</ul>
-					</>
-				) }
+							</ul>
+						</>
+					) }
+				</section>
 				<div
 					className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons', {
 						'is-scrollbar-present': isScrollbarPresent,

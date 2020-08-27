@@ -4,6 +4,8 @@
 	width: 100%;
 	background: inherit !important;
 	padding: 8px 11px !important;
+	color: $light-gray-900 !important;
+	margin: 5px;
 
 	&:focus {
 		color: $white;
@@ -12,5 +14,11 @@
 		outline: none !important;
 		border-radius: 0;
 		padding: 7px 10px !important;
+	}
+
+	svg {
+		background: white;
+		color: black;
+		border-radius: 2px;
 	}
 }
