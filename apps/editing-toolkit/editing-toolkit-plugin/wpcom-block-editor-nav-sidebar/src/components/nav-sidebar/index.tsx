@@ -203,9 +203,9 @@ function WpcomBlockEditorNavSidebar() {
 						iconSize={ 36 }
 						onClick={ dismissSidebar }
 					/>
-				</div>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
-					<h2>{ decodeEntities( siteTitle ) } YOU'RE SANDBOXING!!!</h2>
+					<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
+						<h2>{ decodeEntities( siteTitle ) } YOU'RE SANDBOXING!!!</h2>
+					</div>
 				</div>
 				<Button
 					href={ closeUrl }
@@ -262,7 +262,6 @@ function WpcomBlockEditorNavSidebar() {
 								item={ item }
 								postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
 								selected={ item.id === selectedItemId }
-								statusLabel={ statusLabels[ item.status ] }
 							/>
 						) ) }
 						</ul>

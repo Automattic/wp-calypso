@@ -5,6 +5,7 @@
 
 $sidebar-width: 272px;
 $transition-period: 100ms;
+$nav-header-background-color: #32373d; // WP-admin gray to match the close button background hover color
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
 	position: fixed;
@@ -61,22 +62,24 @@ $transition-period: 100ms;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
-	height: $header-height;
+	min-height: $header-height;
 	box-sizing: content-box;
 	display: flex;
 	flex: $header-height 0 0;
+	background-color: $nav-header-background-color;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
-	padding: 8px 16px;
-	margin-top: 14px;
+	margin: 12px 0 12px 74px;
+	overflow: hidden;
 
 	h2 {
 		color: $white;
 		margin: 0;
-		font-size: $big-font-size;
+		font-size: $text-editor-font-size;
 		line-height: $default-line-height;
 		word-wrap: break-word;
+		font-weight: normal;
 	}
 
 	a {
@@ -95,6 +98,7 @@ $transition-period: 100ms;
 	top: 0;
 	left: 0;
 	height: $header-height !important;
+	background-color: $nav-header-background-color !important;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
@@ -127,15 +131,29 @@ $transition-period: 100ms;
 	padding: $grid-unit-05 $grid-unit-20;
 	font-size: $big-font-size;
 	color: $white;
+	margin: 0 0 8px 0;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
 	font-size: $default-font-size;
+	font-weight: normal;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__page-list {
 	padding: 0;
 	margin: 0;
+
+	li {
+		margin-bottom: 2px;
+	}
+
+	a {
+		color: $light-gray-900;
+	}
+
+	.is-selected {
+		font-size: $text-editor-font-size;
+	}
 	/*
 	@TODO Work out how we're going to handle overflow
 	overflow-y: auto;
