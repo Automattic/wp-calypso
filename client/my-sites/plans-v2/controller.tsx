@@ -12,14 +12,15 @@ import UpsellPage from './upsell';
 import { stringToDuration } from './utils';
 import getCurrentPlanTerm from 'state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import { Duration } from 'my-sites/plans-v2/types';
+import { TERM_ANNUALLY } from 'lib/plans/constants';
 
 export const productSelect = ( rootUrl: string ) => ( context: PageJS.Context, next: Function ) => {
 	// Get the selected site's current plan term, and set it as default duration
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const duration =
-		siteId && getCurrentPlanTerm( state, siteId ) === 'TERM_MONTHLY' ? TERM_MONTHLY : TERM_ANNUALLY;
+		( siteId && ( getCurrentPlanTerm( state, siteId ) as Duration ) ) || TERM_ANNUALLY;
 
 	context.primary = (
 		<SelectorPage
