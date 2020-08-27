@@ -11,6 +11,9 @@ function AssetsWriter( options ) {
 		{
 			path: './build',
 			filename: 'assets.json',
+			runtimeChunk: 'runtime',
+			manifestFile: 'manifest',
+			runtimeFile: 'runtime',
 		},
 		options
 	);
@@ -49,16 +52,13 @@ Object.assign( AssetsWriter.prototype, {
 
 			for ( const name in stats.assetsByChunkName ) {
 				// make the manifest inlineable
-				if ( String( name ).startsWith( 'manifest' ) ) {
-					// Usually there's only one asset per chunk, but when we build with sourcemaps, we'll have two.
-					// Remove the sourcemap from the list and just take the js asset
-					// This may not hold true for all chunks, but it does for the manifest.
-					const jsAsset = _.head(
-						_.reject( _.castArray( stats.assetsByChunkName[ name ] ), ( asset ) =>
-							_.endsWith( asset, '.map' )
-						)
-					);
-					statsToOutput.manifests[ name ] = compilation.assets[ jsAsset ].source();
+				if ( String( name ).startsWith( this.options.runtimeChunk ) ) {
+					// Runtime chunk will have two files due ExtractManifestPlugin. Both need to be inlined.
+					// When we build with sourcemaps, we'll have another two extra files.
+					// Remove the sourcemap from the list and just take the js assets.
+					statsToOutput.manifests = stats.assetsByChunkName[ name ]
+						.filter( ( asset ) => ! asset.endsWith( '.map' ) )
+						.map( ( asset ) => compilation.assets[ asset ].source() );
 				}
 			}
 
@@ -68,11 +68,14 @@ Object.assign( AssetsWriter.prototype, {
 
 			statsToOutput.entrypoints = _.mapValues( stats.entrypoints, ( entry ) => ( {
 				chunks: _.reject( entry.chunks, ( chunk ) => {
-					String( chunk ).startsWith( 'manifest' );
+					String( chunk ).startsWith( this.options.runtimeChunk );
 				} ),
-				assets: _.reject( entry.assets, ( asset ) => asset.startsWith( 'manifest' ) ).map(
-					fixupPath
-				),
+				assets: _.reject(
+					entry.assets,
+					( asset ) =>
+						asset.startsWith( this.options.manifestFile ) ||
+						asset.startsWith( this.options.runtimeFile )
+				).map( fixupPath ),
 			} ) );
 
 			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, ( asset ) =>
@@ -83,7 +86,7 @@ Object.assign( AssetsWriter.prototype, {
 				Object.assign( {}, chunk, {
 					files: chunk.files.map( fixupPath ),
 					siblings: _.reject( chunk.siblings, ( sibling ) =>
-						String( sibling ).startsWith( 'manifest' )
+						String( sibling ).startsWith( this.options.runtimeChunk )
 					),
 				} )
 			);

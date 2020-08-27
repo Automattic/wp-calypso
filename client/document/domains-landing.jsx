@@ -24,7 +24,7 @@ function DomainsLanding( {
 	i18nLocaleScript,
 	isRTL,
 	lang,
-	manifest,
+	manifests,
 	addEvergreenCheck,
 } ) {
 	return (
@@ -98,15 +98,21 @@ function DomainsLanding( {
 				 * this lets us have the performance benefit in prod, without breaking HMR in dev
 				 * since the manifest needs to be updated on each save
 				 */ }
-				{ env === 'development' && <script src="/calypso/evergreen/manifest.js" /> }
-				{ env !== 'development' && (
-					<script
-						nonce={ inlineScriptNonce }
-						dangerouslySetInnerHTML={ {
-							__html: manifest,
-						} }
-					/>
+				{ env === 'development' && (
+					<>
+						<script src="/calypso/evergreen/manifest.js" />
+						<script src="/calypso/evergreen/runtime.js" />
+					</>
 				) }
+				{ env !== 'development' &&
+					manifests.map( ( manifest ) => (
+						<script
+							nonce={ inlineScriptNonce }
+							dangerouslySetInnerHTML={ {
+								__html: manifest,
+							} }
+						/>
+					) ) }
 				{ entrypoint.js.map( ( asset ) => (
 					<script key={ asset } src={ asset } />
 				) ) }

@@ -34,7 +34,7 @@ class Document extends React.Component {
 			initialReduxState,
 			isRTL,
 			entrypoint,
-			manifest,
+			manifests,
 			lang,
 			languageRevisions,
 			renderedLayout,
@@ -213,15 +213,21 @@ class Document extends React.Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src={ `/calypso/${ target }/manifest.js` } /> }
-					{ env !== 'development' && (
-						<script
-							nonce={ inlineScriptNonce }
-							dangerouslySetInnerHTML={ {
-								__html: manifest,
-							} }
-						/>
+					{ env === 'development' && (
+						<>
+							<script src={ `/calypso/${ target }/manifest.js` } />
+							<script src={ `/calypso/${ target }/runtime.js` } />
+						</>
 					) }
+					{ env !== 'development' &&
+						manifests.map( ( manifest ) => (
+							<script
+								nonce={ inlineScriptNonce }
+								dangerouslySetInnerHTML={ {
+									__html: manifest,
+								} }
+							/>
+						) ) }
 
 					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
 
