@@ -316,7 +316,7 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 				'isManageSiteFlow',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow', 'themeItem', 'siteId' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},

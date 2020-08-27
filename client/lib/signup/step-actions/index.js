@@ -48,6 +48,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 import getNewSiteComingSoonSetting from 'state/selectors/get-new-site-coming-soon-setting';
+import getSiteId from 'state/selectors/get-site-id';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
@@ -276,7 +277,9 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	if ( isManageSiteFlow ) {
 		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
-		addDomainToCart( callback, dependencies, stepData, reduxStore, siteSlug );
+		const siteId = getSiteId( state, siteSlug );
+		const providedDependencies = { domainItem, siteId, siteSlug, themeItem };
+		addDomainToCart( callback, dependencies, stepData, reduxStore, siteSlug, providedDependencies );
 		return;
 	}
 
@@ -354,10 +357,17 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
 
-export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore, siteSlug ) {
+export function addDomainToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
 	const slug = siteSlug || dependencies.siteSlug;
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
-	const providedDependencies = { domainItem };
+	const providedDependencies = stepProvidedDependencies || { domainItem };
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
