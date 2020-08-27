@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class RatingStarBlockComponent extends GutenbergBlockComponent {}
+class RatingStarBlockComponent extends GutenbergBlockComponent {}
+
+RatingStarBlockComponent.blockTitle = 'Star Rating';
+RatingStarBlockComponent.blockName = 'jetpack/rating-star';
+
+export { RatingStarBlockComponent };

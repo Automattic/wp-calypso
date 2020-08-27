@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class YoutubeBlockComponent extends GutenbergBlockComponent {}
+class YoutubeBlockComponent extends GutenbergBlockComponent {}
+
+YoutubeBlockComponent.blockTitle = 'YouTube';
+YoutubeBlockComponent.blockName = 'core-embed/youtube';
+
+export { YoutubeBlockComponent };

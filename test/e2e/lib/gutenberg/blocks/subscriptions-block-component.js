@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class SubscriptionsBlockComponent extends GutenbergBlockComponent {}
+class SubscriptionsBlockComponent extends GutenbergBlockComponent {}
+
+SubscriptionsBlockComponent.blockTitle = 'Subscription Form';
+SubscriptionsBlockComponent.blockName = 'jetpack/subscriptions';
+
+export { SubscriptionsBlockComponent };

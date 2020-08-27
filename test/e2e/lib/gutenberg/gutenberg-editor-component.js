@@ -10,18 +10,7 @@ import { kebabCase } from 'lodash';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
-import {
-	LayoutGridBlockComponent,
-	YoutubeBlockComponent,
-	BlogPostsBlockComponent,
-	TiledGalleryBlockComponent,
-	ContactFormBlockComponent,
-	ContactInfoBlockComponent,
-	SlideshowBlockComponent,
-	RatingStarBlockComponent,
-	DynamicSeparatorBlockComponent,
-	GalleryMasonryBlockComponent,
-} from './blocks';
+import { ContactFormBlockComponent, GutenbergBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 
@@ -214,120 +203,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		);
 	}
 
-	// TODO I don't quite like having those methods coupled with the block names here.
-	// we might explore moving the knowledge of block ID/name to the block class
-	// itself and passing it over to `blockDisplayInEditor`
-
 	contactFormDisplayedInEditor() {
 		return this.blockDisplayedInEditor( 'jetpack/contact-form' );
-	}
-
-	layoutGridDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'jetpack/layout-grid' );
-	}
-
-	youTubeDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'core-embed/youtube' );
-	}
-
-	blogPostsDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'a8c/blog-posts' );
-	}
-
-	subscriptionsDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'jetpack/subscriptions' );
-	}
-
-	tiledGalleryDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'jetpack/tiled-gallery' );
-	}
-
-	contactInfoDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'jetpack/contact-info' );
-	}
-
-	slideshowDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="jetpack/slideshow"]' )
-		);
-	}
-
-	ratingStarDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="jetpack/rating-star"]' )
-		);
-	}
-
-	dynamicSeparatorDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="coblocks/dynamic-separator"]' )
-		);
-	}
-
-	galleryMasonryDisplayedInEditor() {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( '[data-type="coblocks/gallery-masonry"]' )
-		);
-	}
-
-	// jetpack/layout-grid
-	async insertLayoutGrid() {
-		const blockID = await this.addBlock( 'Layout Grid' );
-		return LayoutGridBlockComponent.Expect( this.driver, blockID );
-	}
-
-	// core-embed/youtube
-	async insertYouTube() {
-		const blockID = await this.addBlock( 'YouTube' );
-		return YoutubeBlockComponent.Expect( this.driver, blockID );
-	}
-
-	// a8c/blog-posts
-	async insertBlogPosts() {
-		const blockID = await this.addBlock( 'Blog Posts' );
-		return BlogPostsBlockComponent.Expect( this.driver, blockID );
-	}
-
-	// jetpack/subscriptions
-	async insertSubscriptions() {
-		const blockID = await this.addBlock( 'Subscription Form' );
-		return LayoutGridBlockComponent.Expect( this.driver, blockID );
-	}
-
-	// jetpack/tiled-gallery
-	async insertTiledGallery() {
-		const blockID = await this.addBlock( 'Tiled Gallery' );
-		return TiledGalleryBlockComponent.Expect( this.driver, blockID );
-	}
-
-	// jetpack/contact-info
-	async insertContactInfo() {
-		const blockID = await this.addBlock( 'Contact Info' );
-		return ContactInfoBlockComponent.Expect( this.driver, blockID );
-	}
-	// jetpack/slideshow
-	async insertSlideshow() {
-		const blockID = await this.addBlock( 'Slideshow' );
-		return SlideshowBlockComponent.Expect( this.driver, blockID );
-	}
-	// jetpack/rating-star
-	async insertRatingStar() {
-		const blockID = await this.addBlock( 'Star Rating' );
-		return RatingStarBlockComponent.Expect( this.driver, blockID );
-	}
-	// coblocks/dynamic-separator
-	async insertDynamicSeparator() {
-		const blockID = await this.addBlock( 'Dynamic HR' );
-		return DynamicSeparatorBlockComponent.Expect( this.driver, blockID );
-	}
-	// coblocks/gallery-masonry
-	async insertGalleryMasonry() {
-		const blockID = await this.addBlock( 'Masonry' );
-		return GalleryMasonryBlockComponent.Expect( this.driver, blockID );
 	}
 
 	async errorDisplayed() {
@@ -388,13 +265,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
-	async addBlock( name ) {
-		name = name.charAt( 0 ).toUpperCase() + name.slice( 1 ); // Capitalize block name
-		let blockClass = kebabCase( name.toLowerCase() );
+	async addBlock( title ) {
+		title = title.charAt( 0 ).toUpperCase() + title.slice( 1 ); // Capitalize block name
+		let blockClass = kebabCase( title.toLowerCase() );
 		let hasChildBlocks = false;
 		let ariaLabel;
 		let prefix = '';
-		switch ( name ) {
+		switch ( title ) {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
@@ -462,7 +339,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 		}
 
-		const selectorAriaLabel = ariaLabel || `Block: ${ name }`;
+		const selectorAriaLabel = ariaLabel || `Block: ${ title }`;
 
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
@@ -473,7 +350,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			}[aria-label*='${ selectorAriaLabel }']`
 		);
 
-		await this.openBlockInserterAndSearch( name );
+		await this.openBlockInserterAndSearch( title );
 
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterBlockItemSelector ) ) {
 			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterBlockItemSelector );
@@ -485,6 +362,21 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+	}
+
+	/**
+	 * An alternative way of adding blocks to the editor by accepting the actual constructor
+	 * class for the block, adding it to the editor, and returning an instance of this class.
+	 *
+	 * This allows for adding new blocks without the need to create new factory method in this class.
+	 * You can just import the class of the block(s) you want to add and pass it to this function, which
+	 * also means we don't need to couple the block class with this one.
+	 *
+	 * @param { GutenbergBlockComponent } blockClass A block class that responds to title and name
+	 */
+	async insertBlock( blockClass ) {
+		const blockID = await this.addBlock( blockClass.blockTitle );
+		return blockClass.Expect( this.driver, blockID );
 	}
 
 	async titleShown() {

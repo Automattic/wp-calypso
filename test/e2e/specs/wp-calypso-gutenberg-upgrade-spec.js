@@ -24,6 +24,20 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
+import {
+	BlogPostsBlockComponent,
+	ContactFormBlockComponent,
+	ContactInfoBlockComponent,
+	DynamicSeparatorBlockComponent,
+	GalleryMasonryBlockComponent,
+	LayoutGridBlockComponent,
+	RatingStarBlockComponent,
+	SlideshowBlockComponent,
+	SubscriptionsBlockComponent,
+	TiledGalleryBlockComponent,
+	YoutubeBlockComponent,
+} from '../lib/gutenberg/blocks';
+
 let driver;
 let loginFlow;
 let gEditorComponent;
@@ -65,12 +79,33 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		}
 	}
 
-	function testBlockIsDisplayed( blockName, isItDisplayed ) {
+	async function assertBlockIsDisplayed( blockClass ) {
 		assert.strictEqual(
-			isItDisplayed,
+			await gEditorComponent.blockDisplayedInEditor( blockClass.blockName ),
 			true,
-			`The block "${ blockName }" was not found in the editor`
+			`The block "${ blockClass.name }" was not found in the editor`
 		);
+	}
+
+	async function assertNoErrorInEditor() {
+		const errorShown = await gEditorComponent.errorDisplayed();
+		assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+	}
+
+	function assertBlocksAreDisplayed() {
+		[
+			BlogPostsBlockComponent,
+			ContactFormBlockComponent,
+			ContactInfoBlockComponent,
+			DynamicSeparatorBlockComponent,
+			GalleryMasonryBlockComponent,
+			LayoutGridBlockComponent,
+			RatingStarBlockComponent,
+			SlideshowBlockComponent,
+			SubscriptionsBlockComponent,
+			TiledGalleryBlockComponent,
+			YoutubeBlockComponent,
+		].forEach( assertBlockIsDisplayed );
 	}
 
 	async function takeBlockScreenshots( siteName ) {
@@ -123,119 +158,66 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			} );
 
-			// There's the potential for simplifying the following steps further by generalizing the functions to
-			// insert and check the existance of blocks on the page. This way we could potentially loop through
-			// a list of blocks here and perhaps each block could be responsible for setting it up with dummy data.
+			// There's the potential for simplifying (reducing) the following steps further by encapsulating the configuration
+			// of the block into each block's class. This way, we could just loop through a list of block classes
+			// since the API would be the same.
 
-			step( 'jetpack/tiled-gallery', async function () {
+			step( 'Insert and configure jetpack/tiled-gallery', async function () {
 				// jetpack/tiled-gallery
-				const tiledGallery = await gEditorComponent.insertTiledGallery();
+				const tiledGallery = await gEditorComponent.insertBlock( TiledGalleryBlockComponent );
 				await tiledGallery.uploadImages( galleryImages );
-
-				testBlockIsDisplayed(
-					'jetpack/tiled-gallery',
-					await gEditorComponent.tiledGalleryDisplayedInEditor()
-				);
 			} );
 
-			step( 'jetpack/contact-form', async function () {
+			step( 'Insert and configure jetpack/contact-form', async function () {
 				const contactEmail = 'testing@automattic.com';
 				const subject = "Let's work together";
 
+				// I re-used this method since it was already available
 				await gEditorComponent.insertContactForm( contactEmail, subject );
-
-				testBlockIsDisplayed(
-					'jetpack/contact-form',
-					await gEditorComponent.contactFormDisplayedInEditor()
-				);
 			} );
 
-			step( 'jetpack/layout-grid', async function () {
-				await gEditorComponent.insertLayoutGrid();
-
-				testBlockIsDisplayed(
-					'jetpack/layout-grid',
-					await gEditorComponent.layoutGridDisplayedInEditor()
-				);
+			step( 'Insert and configure jetpack/layout-grid', async function () {
+				await gEditorComponent.insertBlock( LayoutGridBlockComponent );
 			} );
 
-			step( 'core-embed/youtube', async function () {
-				await gEditorComponent.insertYouTube();
-
-				testBlockIsDisplayed(
-					'core-embed/youtube',
-					await gEditorComponent.youTubeDisplayedInEditor()
-				);
+			step( 'Insert and configure core-embed/youtube', async function () {
+				await gEditorComponent.insertBlock( YoutubeBlockComponent );
 			} );
 
-			step( 'a8c/blog-posts', async function () {
-				await gEditorComponent.insertBlogPosts();
-
-				testBlockIsDisplayed(
-					'a8c/blog-posts',
-					await gEditorComponent.blogPostsDisplayedInEditor()
-				);
+			step( 'Insert and configure a8c/blog-posts', async function () {
+				await gEditorComponent.insertBlock( BlogPostsBlockComponent );
 			} );
 
-			step( 'jetpack/subscriptions', async function () {
-				await gEditorComponent.insertSubscriptions();
-
-				testBlockIsDisplayed(
-					'jetpack/subscriptions',
-					await gEditorComponent.subscriptionsDisplayedInEditor()
-				);
+			step( 'Insert and configure jetpack/subscriptions', async function () {
+				await gEditorComponent.insertBlock( SubscriptionsBlockComponent );
 			} );
 
-			step( 'jetpack/slideshow', async function () {
-				await gEditorComponent.insertSlideshow();
-
-				testBlockIsDisplayed(
-					'jetpack/slideshow',
-					await gEditorComponent.slideshowDisplayedInEditor()
-				);
+			step( 'Insert and configure jetpack/slideshow', async function () {
+				await gEditorComponent.insertBlock( SlideshowBlockComponent );
 			} );
 
-			step( 'jetpack/rating-star', async function () {
-				await gEditorComponent.insertRatingStar();
-
-				testBlockIsDisplayed(
-					'jetpack/rating-star',
-					await gEditorComponent.ratingStarDisplayedInEditor()
-				);
+			step( 'Insert and configure jetpack/rating-star', async function () {
+				await gEditorComponent.insertBlock( RatingStarBlockComponent );
 			} );
 
-			step( 'coblocks/dynamic-separator', async function () {
-				await gEditorComponent.insertDynamicSeparator();
-
-				testBlockIsDisplayed(
-					'jetpack/rating-star',
-					await gEditorComponent.dynamicSeparatorDisplayedInEditor()
-				);
+			step( 'Insert and configure coblocks/dynamic-separator', async function () {
+				await gEditorComponent.insertBlock( DynamicSeparatorBlockComponent );
 			} );
 
-			step( 'coblocks/gallery-masonry', async function () {
-				await gEditorComponent.insertGalleryMasonry();
-
-				testBlockIsDisplayed(
-					'coblocks/gallery-masonry',
-					await gEditorComponent.galleryMasonryDisplayedInEditor()
-				);
+			step( 'Insert and configure coblocks/gallery-masonry', async function () {
+				await gEditorComponent.insertBlock( GalleryMasonryBlockComponent );
 			} );
 
-			step( 'jetpack/contact-info', async function () {
-				await gEditorComponent.insertContactInfo();
-
-				testBlockIsDisplayed(
-					'coblocks/contact-info',
-					await gEditorComponent.contactInfoDisplayedInEditor()
-				);
+			step( 'Insert and configure jetpack/contact-info', async function () {
+				await gEditorComponent.insertBlock( ContactInfoBlockComponent );
 			} );
 
-			step( 'Blocks will not error in the editor', async function () {
-				await gEditorComponent.ensureSaved();
+			step( 'Blocks are displayed in the editor', async function () {
+				await assertBlocksAreDisplayed();
+			} );
 
-				const errorShown = await gEditorComponent.errorDisplayed();
-				assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+			step( 'Blocks do not error in the editor', async function () {
+				await assertNoErrorInEditor();
 			} );
 
 			step( 'Take screenshots of all the blocks in the editor', async function () {
@@ -257,16 +239,20 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				const edgeSiteName = siteName + 'edge';
 				step( 'Switches to edge site with next GB', async function () {
 					// Re-use the same session created earlier but change the site
-					return await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
-				} );
+					await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
 
-				step( 'Test blocks are loaded fine from non-edge blocks markup', async function () {
+					// Loads the same blocks from the non-edge site by pasting the code markup code in the code editor
+					// and then switching to the block editor
 					await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
 					await gEditorComponent.switchToBlockEditor();
+				} );
 
-					await gEditorComponent.ensureSaved();
-					const errorShown = await gEditorComponent.errorDisplayed();
-					assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+				step( 'Blocks are displayed in the editor', async function () {
+					await assertBlocksAreDisplayed();
+				} );
+
+				step( 'Blocks do not error in the editor', async function () {
+					await assertNoErrorInEditor();
 				} );
 
 				step( 'Take screenshots of all the blocks in the editor', async function () {

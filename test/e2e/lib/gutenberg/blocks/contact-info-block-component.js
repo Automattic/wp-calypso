@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class ContactInfoBlockComponent extends GutenbergBlockComponent {}
+class ContactInfoBlockComponent extends GutenbergBlockComponent {}
+
+ContactInfoBlockComponent.blockTitle = 'Contact Info';
+ContactInfoBlockComponent.blockName = 'jetpack/contact-info';
+
+export { ContactInfoBlockComponent };

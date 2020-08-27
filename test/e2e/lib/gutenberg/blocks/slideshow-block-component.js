@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class SlideshowBlockComponent extends GutenbergBlockComponent {}
+class SlideshowBlockComponent extends GutenbergBlockComponent {}
+
+SlideshowBlockComponent.blockTitle = 'Slideshow';
+SlideshowBlockComponent.blockName = 'jetpack/slideshow';
+
+export { SlideshowBlockComponent };

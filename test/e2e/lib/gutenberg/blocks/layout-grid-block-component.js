@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class LayoutGridBlockComponent extends GutenbergBlockComponent {}
+class LayoutGridBlockComponent extends GutenbergBlockComponent {}
+
+LayoutGridBlockComponent.blockTitle = 'Layout Grid';
+LayoutGridBlockComponent.blockName = 'jetpack/layout-grid';
+
+export { LayoutGridBlockComponent };

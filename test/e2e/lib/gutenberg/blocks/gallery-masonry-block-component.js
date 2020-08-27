@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class GalleryMasonryBlockComponent extends GutenbergBlockComponent {}
+class GalleryMasonryBlockComponent extends GutenbergBlockComponent {}
+
+GalleryMasonryBlockComponent.blockTitle = 'Masonry';
+GalleryMasonryBlockComponent.blockName = 'coblocks/gallery-masonry';
+
+export { GalleryMasonryBlockComponent };

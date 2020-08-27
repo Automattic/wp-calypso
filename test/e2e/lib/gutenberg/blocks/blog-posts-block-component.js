@@ -3,4 +3,9 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class BlogPostsBlockComponent extends GutenbergBlockComponent {}
+class BlogPostsBlockComponent extends GutenbergBlockComponent {}
+
+BlogPostsBlockComponent.blockTitle = 'Blog Posts';
+BlogPostsBlockComponent.blockName = 'a8c/blog-posts';
+
+export { BlogPostsBlockComponent };
