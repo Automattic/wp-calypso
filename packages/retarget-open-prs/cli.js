@@ -26,15 +26,19 @@ const args = yargs
 		},
 		to: {
 			alias: 't',
-			describe: 'The new branch towards which to retarget PRs open against "from"',
-			demandOption: true,
-			requiresArg: true,
+			describe:
+				'The new branch towards which to retarget PRs open against "from". Defaults to the default branch of the repository.',
 		},
 		'access-token': {
 			describe:
 				'A GitHub access token authorized to retarget open PRs in the repository named in "repo"',
 			demandOption: true,
 			requiresArg: true,
+		},
+		dry: {
+			alias: 'd',
+			describe:
+				'Run the command without making any changes, outputting the number of PRs that would be affected.',
 		},
 	} )
 	.example(
@@ -43,4 +47,6 @@ const args = yargs
 	.help( 'h' )
 	.alias( 'h', 'help' ).argv;
 
-retargetOpenPrs( args.owner, args.repo, args.from, args.to, args[ 'access-token' ] );
+retargetOpenPrs( args.owner, args.repo, args.from, args.to, args[ 'access-token' ], {
+	dry: args.dry,
+} );
