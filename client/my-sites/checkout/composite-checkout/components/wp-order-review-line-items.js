@@ -472,8 +472,10 @@ function LineItemSublabelAndPrice( { item } ) {
 		( isDomainRegistration || isDomainMap || isGSuite ) &&
 		item.wpcom_meta?.months_per_bill_period === 12
 	) {
-		return translate( '%(sublabel)s: %(interval)s', {
+		const premiumLabel = item.wpcom_meta?.extra?.premium ? translate( 'Premium' ) : null;
+		return translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
 			args: {
+				premiumLabel,
 				sublabel: item.sublabel,
 				interval: translate( 'billed annually' ),
 			},
