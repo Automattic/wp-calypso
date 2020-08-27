@@ -3,9 +3,13 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {}
-
-DynamicSeparatorBlockComponent.blockTitle = 'Dynamic HR';
-DynamicSeparatorBlockComponent.blockName = 'coblocks/dynamic-separator';
+class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {
+	static get blockTitle() {
+		return 'Dynamic HR';
+	}
+	static get blockName() {
+		return 'coblocks/dynamic-separator';
+	}
+}
 
 export { DynamicSeparatorBlockComponent };

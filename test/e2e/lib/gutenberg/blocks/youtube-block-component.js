@@ -3,9 +3,13 @@
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-class YoutubeBlockComponent extends GutenbergBlockComponent {}
-
-YoutubeBlockComponent.blockTitle = 'YouTube';
-YoutubeBlockComponent.blockName = 'core-embed/youtube';
+class YoutubeBlockComponent extends GutenbergBlockComponent {
+	static get blockTitle() {
+		return 'YouTube';
+	}
+	static get blockName() {
+		return 'core-embed/youtube';
+	}
+}
 
 export { YoutubeBlockComponent };
