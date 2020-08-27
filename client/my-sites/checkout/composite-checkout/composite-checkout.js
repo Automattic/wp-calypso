@@ -548,7 +548,11 @@ export default function CompositeCheckout( {
 			<QueryProducts />
 			<QueryContactDetailsCache />
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-			<CartMessages cart={ responseCart } selectedSite={ { slug: siteSlug } } />
+			<CartMessages
+				cart={ responseCart }
+				selectedSite={ { slug: siteSlug } }
+				isLoadingCart={ isLoadingCart }
+			/>
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
 					items={ itemsForCheckout }
