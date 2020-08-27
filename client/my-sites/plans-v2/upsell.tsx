@@ -16,7 +16,7 @@ import HeaderCake from 'components/header-cake';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import Main from 'components/main';
 import { preventWidows } from 'lib/formatting';
-import { JETPACK_SCAN_PRODUCTS } from 'lib/products-values/constants';
+import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { isProductsListFetching } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
@@ -72,6 +72,10 @@ const UpsellComponent = ( {
 		() => JETPACK_SCAN_PRODUCTS.some( ( slug ) => slug === upsellSlug ),
 		[ upsellSlug ]
 	);
+	const isBackupProduct = useMemo(
+		() => JETPACK_BACKUP_PRODUCTS.some( ( slug ) => slug === upsellSlug ),
+		[ upsellSlug ]
+	);
 
 	return (
 		<Main className="upsell">
@@ -93,20 +97,32 @@ const UpsellComponent = ( {
 					<Gridicon className="upsell__plus-icon" icon="plus-small" />
 					<ProductIcon className="upsell__product-icon" slug={ upsellProduct.iconSlug } />
 				</div>
-				{ isScanProduct && (
+				{ ( isScanProduct || isBackupProduct ) && (
 					<p className="upsell__subheader">
 						{ preventWidows(
-							translate(
-								'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
-								{
-									components: {
-										mainName: <>{ mainProductName }</>,
-										upsellName: <>{ upsellProductName }</>,
-									},
-									comment:
-										"{{mainName/}} refers to the product the customer is purchasing (most likely Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
-								}
-							)
+							isScanProduct
+								? translate(
+										'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
+										{
+											components: {
+												mainName: <>{ mainProductName }</>,
+												upsellName: <>{ upsellProductName }</>,
+											},
+											comment:
+												"{{mainName/}} refers to the product the customer is purchasing (Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
+										}
+								  )
+								: translate(
+										'Combine {{mainName/}} and {{upsellName/}} to be able to save every change and restore your site in one click.',
+										{
+											components: {
+												mainName: <>{ mainProductName }</>,
+												upsellName: <>{ upsellProductName }</>,
+											},
+											comment:
+												"{{mainName/}} refers to the product the customer is purchasing (Scan in that case), {{upsellName/}} to the product we're upselling (Backup in that case)",
+										}
+								  )
 						) }
 					</p>
 				) }
