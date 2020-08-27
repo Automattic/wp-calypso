@@ -197,33 +197,33 @@ references:
   desktop-restore-yarn-cache: &desktop-restore-yarn-cache
     name: Restore yarn cache
     keys:
-      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
-      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
   desktop-save-yarn-cache: &desktop-save-yarn-cache
     name: Save yarn cache
-    key: v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
     paths:
       - ~/.cache/yarn
   desktop-restore-packages-cache: &desktop-restore-packages-cache
     name: Restore packages cache
     keys:
-      - v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
   desktop-save-packages-cache: &desktop-save-packages-cache
     name: Save packages cache
-    key: v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
     paths:
       - packages
       - packages-cache-restored
   desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
     name: Restore Calypso build cache
     keys:
-      - v7-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - v7-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
-      - v7-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
-      - v7-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
   desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
     name: Save Calypso build cache
-    key: v7-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - .cache
   desktop-notify-github-success: &desktop-notify-github-success
