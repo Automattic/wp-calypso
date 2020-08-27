@@ -61,6 +61,7 @@ import {
 	isDomainRegistration,
 	isDomainMapping,
 	isDomainTransfer,
+	isGoogleApps,
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
@@ -319,7 +320,7 @@ class ManagePurchase extends Component {
 		let text,
 			link = cancelPurchase( this.props.siteSlug, id );
 
-		if ( isAtomicSite && isSubscription( purchase ) ) {
+		if ( isAtomicSite && isSubscription( purchase ) && ! isGoogleApps( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
 		} else if ( hasAmountAvailableToRefund( purchase ) ) {
