@@ -1,6 +1,6 @@
 # retarget-open-prs
 
-A script utilizing the GitHub API to retarget open PRs in a given repository from one branch to another. This is useful, for example, when changing the default branch of a repository from one thing to another.
+A script utilizing the GitHub API to retarget open PRs in a given repository from one branch to another. This is useful, for example, when changing the default branch of a repository.
 
 ## Usage
 
