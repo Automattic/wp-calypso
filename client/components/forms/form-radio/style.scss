@@ -3,15 +3,12 @@
 
 	clear: none;
 	cursor: pointer;
-	display: inline-block;
-	line-height: 0;
 	height: 16px;
 	margin: 2px 0 0;
 	float: left;
 	outline: 0;
 	padding: 0;
 	text-align: center;
-	vertical-align: middle;
 	width: 16px;
 	min-width: 16px;
 	appearance: none;
@@ -22,14 +19,12 @@
 
 	&:checked::before {
 		float: left;
-		display: inline-block;
 		content: '\2022';
 		margin: 3px;
 		width: 8px;
 		height: 8px;
 		text-indent: -9999px;
 		background: var( --color-primary );
-		vertical-align: middle;
 		border-radius: 50%;
 		animation: grow 0.2s ease-in-out;
 	}
