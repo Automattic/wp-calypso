@@ -137,6 +137,9 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 	async function takePublishedScreenshots( siteName ) {
 		await gEditorComponent.publish( { visit: true } );
 
+		// Give blocks a chance to render and load assets before taking the screenshots
+		await driver.sleep( 2000 );
+
 		const totalHeight = await driver.executeScript( 'return document.body.offsetHeight' );
 		const windowHeight = await driver.executeScript( 'return window.outerHeight' );
 
@@ -237,6 +240,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 
 			describe( 'Test the same blocks in the corresponding edge site', function () {
 				const edgeSiteName = siteName + 'edge';
+
 				step( 'Switches to edge site with next GB', async function () {
 					// Re-use the same session created earlier but change the site
 					await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );

@@ -148,12 +148,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return contactFormBlock.insertSubject( subject );
 	}
 
-	async switchToCodeView() {
-		// First click the "More tools and options" ellipsis menu in order to bring the floating menu
-		await driverHelper.clickWhenClickable(
+	toggleMoreToolsAndOptions() {
+		return driverHelper.clickWhenClickable(
 			this.driver,
 			By.xpath( "//button[@aria-label='More tools & options']" )
 		);
+	}
+
+	async switchToCodeView() {
+		await this.toggleMoreToolsAndOptions();
 
 		// Now click to switch to the code editor
 		await driverHelper.clickWhenClickable(
@@ -165,21 +168,22 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
 
+		// close the menu
+		await this.toggleMoreToolsAndOptions();
+
 		return this.driver.findElement( textAreaSelector );
 	}
 
 	async switchToBlockEditor() {
-		// First click the "More tools and options" ellipsis menu in order to bring the floating menu
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.xpath( "//button[@aria-label='More tools & options']" )
-		);
+		await this.toggleMoreToolsAndOptions();
 
-		// Now click to switch to the block editor
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[1]" )
 		);
+
+		// close the menu
+		await this.toggleMoreToolsAndOptions();
 	}
 
 	async copyBlocksCode() {
