@@ -20,6 +20,8 @@ import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import { planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY } from 'lib/plans/constants';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -76,10 +78,15 @@ function WPLineItem( {
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice item={ item } />
-					<DomainDiscountCallout item={ item } />
-				</LineItemMeta>
+				<>
+					<LineItemMeta>
+						<LineItemSublabelAndPrice item={ item } />
+						<DomainDiscountCallout item={ item } />
+					</LineItemMeta>
+					<LineItemMeta>
+						<DiscountForFirstYearOnly item={ item } />
+					</LineItemMeta>
+				</>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
@@ -519,5 +526,40 @@ function GSuiteDiscountCallout( { item } ) {
 	) {
 		return <DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>;
 	}
+	return null;
+}
+function DiscountForFirstYearOnly( { item } ) {
+	const translate = useTranslate();
+	const hasDiscount = !! item.wpcom_meta.item_original_cost_integer;
+	if ( ! hasDiscount ) {
+		return null;
+	}
+	const isWpcomOneYearPlan = planMatches( item.wpcom_meta.product_slug, {
+		term: TERM_ANNUALLY,
+		group: GROUP_WPCOM,
+	} );
+	if ( isWpcomOneYearPlan ) {
+		return (
+			<div>
+				{ translate(
+					'Promotional pricing is for the first year only. Your plan will renew at the regular price.'
+				) }
+			</div>
+		);
+	}
+	const isWpcomTwoYearPlan = planMatches( item.wpcom_meta.product_slug, {
+		term: TERM_BIENNIALLY,
+		group: GROUP_WPCOM,
+	} );
+	if ( isWpcomTwoYearPlan ) {
+		return (
+			<div>
+				{ translate(
+					'Promotional pricing is for the first 2 years only. Your plan will renew at the regular price.'
+				) }
+			</div>
+		);
+	}
+
 	return null;
 }
