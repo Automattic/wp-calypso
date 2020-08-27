@@ -14,10 +14,10 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 		parent::__construct(
 			'wpcom-mailerlite',
 			/** This filter is documented in modules/widgets/facebook-likebox.php */
-			apply_filters( 'jetpack_widget_name', __( 'Mailerlite subscriber popup', 'jetpack' ) ),
+			apply_filters( 'jetpack_widget_name', __( 'Mailerlite subscriber popup', 'full-site-editing' ) ),
 			array(
 				'classname'                   => 'widget_mailerlite',
-				'description'                 => __( 'Display Mailerlite subscriber popup', 'jetpack' ),
+				'description'                 => __( 'Display Mailerlite subscriber popup', 'full-site-editing' ),
 				'customize_selective_refresh' => true,
 			)
 		);
