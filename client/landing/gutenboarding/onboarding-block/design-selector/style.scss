@@ -133,6 +133,10 @@
 		margin-left: 6px;
 		/* stylelint-disable-next-line scales/font-size */
 		font-size: rem( 10px ); //typography-exception
+
+		.components-popover__content {
+			background-color: var( --studio-gray-80 );
+		}
 	}
 
 	.design-selector__premium-badge {
