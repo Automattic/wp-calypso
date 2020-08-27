@@ -42,6 +42,20 @@
 /**
  * Upsell
  */
+
+.upsell__header-placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	min-height: 220px;
+	margin: 24px 0;
+}
+
+.upsell__product-card-placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	min-height: 540px;
+}
+
 .upsell__header {
 	text-align: center;
 

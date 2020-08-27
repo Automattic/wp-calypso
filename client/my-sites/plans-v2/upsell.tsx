@@ -84,87 +84,90 @@ const UpsellComponent = ( {
 	return (
 		<Main className="upsell">
 			<HeaderCake onClick={ onBackButtonClick }>{ translate( 'Product Options' ) }</HeaderCake>
-			{ ! isLoading && (
-				<>
-					<div className="upsell__header">
-						<FormattedHeader
-							headerText={ preventWidows(
-								translate( 'Would you like to add {{name/}}?', {
-									components: {
-										name: <>{ upsellProductName }</>,
-									},
-									comment:
-										'{{name/}} is the name of a product such as Jetpack Scan or Jetpack Backup',
-								} )
-							) }
-							brandFont
-						/>
-						<div className="upsell__icons">
-							<ProductIcon className="upsell__product-icon" slug={ mainProduct.iconSlug } />
-							<Gridicon className="upsell__plus-icon" icon="plus-small" />
-							<ProductIcon className="upsell__product-icon" slug={ upsellProduct.iconSlug } />
-						</div>
-						{ ( isScanProduct || isBackupProduct ) && (
-							<p className="upsell__subheader">
-								{ preventWidows(
-									isScanProduct
-										? translate(
-												'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
-												{
-													components: {
-														mainName: <>{ mainProductName }</>,
-														upsellName: <>{ upsellProductName }</>,
-													},
-													comment:
-														"{{mainName/}} refers to the product the customer is purchasing (Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
-												}
-										  )
-										: translate(
-												'Combine {{mainName/}} and {{upsellName/}} to be able to save every change and restore your site in one click.',
-												{
-													components: {
-														mainName: <>{ mainProductName }</>,
-														upsellName: <>{ upsellProductName }</>,
-													},
-													comment:
-														"{{mainName/}} refers to the product the customer is purchasing (Scan in that case), {{upsellName/}} to the product we're upselling (Backup in that case)",
-												}
-										  )
-								) }
-							</p>
+			{ isLoading ? (
+				<div className="upsell__header-placeholder" />
+			) : (
+				<div className="upsell__header">
+					<FormattedHeader
+						headerText={ preventWidows(
+							translate( 'Would you like to add {{name/}}?', {
+								components: {
+									name: <>{ upsellProductName }</>,
+								},
+								comment:
+									'{{name/}} is the name of a product such as Jetpack Scan or Jetpack Backup',
+							} )
 						) }
+						brandFont
+					/>
+					<div className="upsell__icons">
+						<ProductIcon className="upsell__product-icon" slug={ mainProduct.iconSlug } />
+						<Gridicon className="upsell__plus-icon" icon="plus-small" />
+						<ProductIcon className="upsell__product-icon" slug={ upsellProduct.iconSlug } />
 					</div>
-
-					<div className="upsell__product-card">
-						<JetpackProductCard
-							iconSlug={ upsellProduct.iconSlug }
-							productName={ upsellProduct.displayName }
-							subheadline={ upsellProduct.tagline }
-							description={ upsellProduct.description }
-							currencyCode={ currencyCode }
-							billingTimeFrame={ durationToText( upsellProduct.term ) }
-							buttonLabel={ translate( 'Yes, add {{name/}}', {
-								components: {
-									name: <>{ upsellProductName }</>,
-								},
-								comment:
-									'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
-							} ) }
-							features={ upsellProduct.features }
-							discountedPrice={ discountedPrice }
-							originalPrice={ originalPrice }
-							onButtonClick={ onPurchaseBothProducts }
-							cancelLabel={ translate( 'No, I do not want {{name/}}', {
-								components: {
-									name: <>{ upsellProductName }</>,
-								},
-								comment:
-									'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
-							} ) }
-							onCancelClick={ onPurchaseSingleProduct }
-						/>
-					</div>
-				</>
+					{ ( isScanProduct || isBackupProduct ) && (
+						<p className="upsell__subheader">
+							{ preventWidows(
+								isScanProduct
+									? translate(
+											'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
+											{
+												components: {
+													mainName: <>{ mainProductName }</>,
+													upsellName: <>{ upsellProductName }</>,
+												},
+												comment:
+													"{{mainName/}} refers to the product the customer is purchasing (Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
+											}
+									  )
+									: translate(
+											'Combine {{mainName/}} and {{upsellName/}} to be able to save every change and restore your site in one click.',
+											{
+												components: {
+													mainName: <>{ mainProductName }</>,
+													upsellName: <>{ upsellProductName }</>,
+												},
+												comment:
+													"{{mainName/}} refers to the product the customer is purchasing (Scan in that case), {{upsellName/}} to the product we're upselling (Backup in that case)",
+											}
+									  )
+							) }
+						</p>
+					) }
+				</div>
+			) }
+			{ isLoading ? (
+				<div className="upsell__product-card-placeholder" />
+			) : (
+				<div className="upsell__product-card">
+					<JetpackProductCard
+						iconSlug={ upsellProduct.iconSlug }
+						productName={ upsellProduct.displayName }
+						subheadline={ upsellProduct.tagline }
+						description={ upsellProduct.description }
+						currencyCode={ currencyCode }
+						billingTimeFrame={ durationToText( upsellProduct.term ) }
+						buttonLabel={ translate( 'Yes, add {{name/}}', {
+							components: {
+								name: <>{ upsellProductName }</>,
+							},
+							comment:
+								'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
+						} ) }
+						features={ upsellProduct.features }
+						discountedPrice={ discountedPrice }
+						originalPrice={ originalPrice }
+						onButtonClick={ onPurchaseBothProducts }
+						cancelLabel={ translate( 'No, I do not want {{name/}}', {
+							components: {
+								name: <>{ upsellProductName }</>,
+							},
+							comment:
+								'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
+						} ) }
+						onCancelClick={ onPurchaseSingleProduct }
+					/>
+				</div>
 			) }
 		</Main>
 	);
