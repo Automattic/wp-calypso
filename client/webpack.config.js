@@ -200,6 +200,7 @@ const webpackConfig = {
 					  }
 					: {
 							mangle: true,
+							compress: false,
 					  } ),
 			},
 		} ),
