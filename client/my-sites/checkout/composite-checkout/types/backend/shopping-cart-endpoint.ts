@@ -78,7 +78,8 @@ export interface ResponseCart {
 	coupon_discounts_integer: number[];
 	locale: string;
 	is_signup: boolean;
-	messages?: { errors: ResponseCartError[] };
+	messages?: ResponseCartMessages;
+	cart_generated_at_timestamp: number;
 	tax: {
 		location: {
 			country_code?: string;
@@ -89,12 +90,18 @@ export interface ResponseCart {
 	};
 }
 
-export interface ResponseCartError {
+export interface ResponseCartMessages {
+	errors?: ResponseCartMessage[];
+	success?: ResponseCartMessage[];
+}
+
+export interface ResponseCartMessage {
 	code: string;
 	message: string;
 }
 
 export const emptyResponseCart = {
+	cart_generated_at_timestamp: 0,
 	cart_key: '',
 	products: [],
 	total_tax_integer: 0,
