@@ -49,7 +49,7 @@ function WpcomBlockEditorNavSidebar() {
 		];
 	} );
 
-	const items = useNavItems();
+	const posts = useNavItems();
 	const statusLabels = usePostStatusLabels();
 
 	const prevIsOpen = useRef( isOpen );
@@ -114,7 +114,7 @@ function WpcomBlockEditorNavSidebar() {
 		const lastItem = nonSparse[ nonSparse.length - 1 ];
 		if ( firstItem ) observer.current.observe( firstItem );
 		if ( lastItem ) observer.current.observe( lastItem );
-	}, [ items, itemRefs, observer ] );
+	}, [ posts, itemRefs, observer ] );
 
 	if ( ! postType ) {
 		// Still loading
@@ -205,12 +205,7 @@ function WpcomBlockEditorNavSidebar() {
 					/>
 				</div>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
-					<h2>{ decodeEntities( siteTitle ) }</h2>
-					{ SITE_HOME_URL && (
-						<ExternalLink href={ SITE_HOME_URL }>
-							{ __( 'Visit site', 'full-site-editing' ) }
-						</ExternalLink>
-					) }
+					<h2>{ decodeEntities( siteTitle ) } YOU'RE SANDBOXING!!!</h2>
 				</div>
 				<Button
 					href={ closeUrl }
@@ -220,21 +215,59 @@ function WpcomBlockEditorNavSidebar() {
 				>
 					{ closeLabel }
 				</Button>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading">
+				<h2 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading">
 					{ listHeading }
-				</div>
-				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-					{ items.map( ( item, index ) => (
+				</h2>
+				<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
+					{ __( 'Currently editing', 'full-site-editing' ) }
+				</h3>
+				{ posts.current && posts.current.length && (
+					<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 						<NavItem
-							key={ item.id }
-							item={ item }
+							key={ posts.current[ 0 ]?.id }
+							item={ posts.current[ 0 ] }
 							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
-							selected={ item.id === selectedItemId }
-							statusLabel={ statusLabels[ item.status ] }
-							ref={ ( el ) => itemMount( el, index ) }
+							selected={ posts.current[ 0 ]?.id === selectedItemId }
+							statusLabel={ statusLabels[ posts.current[ 0 ]?.status ] }
 						/>
-					) ) }
-				</ul>
+					</ul>
+				) }
+				{ posts.recent && posts.recent.length && (
+					<>
+						<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
+							{ __( 'Recently edited', 'full-site-editing' ) }
+						</h3>
+						<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
+							{ posts.recent.map( ( item) => (
+								<NavItem
+									key={ item.id }
+									item={ item }
+									postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
+									selected={ item.id === selectedItemId }
+									statusLabel={ statusLabels[ item.status ] }
+								/>
+							) ) }
+						</ul>
+					</>
+				) }
+				{ posts.drafts && posts.drafts.length && (
+					<>
+						<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
+							{ __( 'Drafts', 'full-site-editing' ) }
+						</h3>
+						<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
+						{ posts.drafts.map( ( item ) => (
+							<NavItem
+								key={ item.id }
+								item={ item }
+								postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
+								selected={ item.id === selectedItemId }
+								statusLabel={ statusLabels[ item.status ] }
+							/>
+						) ) }
+						</ul>
+					</>
+				) }
 				<div
 					className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons', {
 						'is-scrollbar-present': isScrollbarPresent,
@@ -249,7 +282,7 @@ function WpcomBlockEditorNavSidebar() {
 
 export default compose( [ withConstrainedTabbing ] )( WpcomBlockEditorNavSidebar );
 
-function useNavItems(): Post[] {
+function useNavItems(): Record< string, Post[] > {
 	return useSelect( ( select ) => {
 		const {
 			isEditedPostNew,
@@ -258,7 +291,7 @@ function useNavItems(): Post[] {
 			getEditedPostAttribute,
 		} = select( 'core/editor' );
 
-		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
+		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' ) as any[];
 		if ( ! statuses ) {
 			return [];
 		}
@@ -271,7 +304,7 @@ function useNavItems(): Post[] {
 		const currentPostId = getCurrentPostId();
 		const currentPostType = getCurrentPostType();
 
-		const items =
+		const items: Array< Post[] > =
 			select( 'core' ).getEntityRecords( 'postType', currentPostType, {
 				_fields: 'id,status,title',
 				exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
@@ -280,20 +313,28 @@ function useNavItems(): Post[] {
 				status: statusFilter,
 			} ) || [];
 
-		const currentPost = {
+		const current = {
 			id: currentPostId,
 			slug: getEditedPostAttribute( 'slug' ),
 			status: isEditedPostNew() ? 'draft' : getEditedPostAttribute( 'status' ),
 			title: { raw: getEditedPostAttribute( 'title' ), rendered: '' },
 		};
 
-		return [ currentPost, ...items ] as any;
+		const partitionDraftPosts: Record< string, Array< Post[] > > = items.reduce( ( { drafts, recent }, item ) => {
+			return item.status === 'draft' ? { drafts: [ ...drafts, item ], recent } : { drafts, recent:  [ ...recent, item ] };
+		}, { drafts: [] as Array< Post[] >, recent: [] as Array< Post[] > } );
+
+		// @TODO Not sure if this is the most optimal model
+		return {
+			current: [ current ],
+			...partitionDraftPosts,
+		} as any;
 	} );
 }
 
 function usePostStatusLabels(): Record< string, string > {
 	return useSelect( ( select ) => {
-		const items = select( 'core' ).getEntityRecords( 'root', 'status' );
+		const items = select( 'core' ).getEntityRecords( 'root', 'status' ) as [];
 		return ( items || [] ).reduce(
 			( acc, { name, slug } ) => ( slug === 'publish' ? acc : { ...acc, [ slug ]: name } ),
 			{}

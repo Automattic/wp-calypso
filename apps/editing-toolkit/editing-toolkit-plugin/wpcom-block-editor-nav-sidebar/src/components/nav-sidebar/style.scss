@@ -122,16 +122,24 @@ $transition-period: 100ms;
 	}
 }
 
-.wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading {
-	padding: $grid-unit-20;
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
+	padding: $grid-unit-05 $grid-unit-20;
 	font-size: $big-font-size;
 	color: $white;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
+	font-size: $default-font-size;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__page-list {
 	padding: 0;
 	margin: 0;
+	/*
+	@TODO Work out how we're going to handle overflow
 	overflow-y: auto;
+	*/
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
