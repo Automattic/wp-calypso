@@ -48,10 +48,13 @@ export function* createSite(
 
 	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
 
+	let public = isPublicSite; // This is just to silence the eslint error
+	public = 1;
+
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
-		public: isPublicSite ? 1 : -1,
+		public,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,
@@ -74,6 +77,8 @@ export function* createSite(
 				font_headings: selectedFonts.headings,
 			} ),
 			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
+			wpcom_coming_soon: 1,
+			wpcom_coming_soon_page: 0,
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
