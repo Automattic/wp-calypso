@@ -243,6 +243,10 @@ export class CartItem extends React.Component {
 			name += ' - ' + translate( 'never expires' );
 		}
 
+		if ( cartItem?.extra?.premium ) {
+			name = translate( 'Premium' ) + ' ' + name;
+		}
+
 		/*eslint-disable wpcalypso/jsx-classname-namespace*/
 		return (
 			<li className="cart-item">
