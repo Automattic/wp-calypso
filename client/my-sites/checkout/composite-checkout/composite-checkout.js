@@ -346,7 +346,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ ...errors, loadingError ].filter( Boolean ), showErrorMessage );
+	useDisplayErrors( [ loadingError ].filter( Boolean ), showErrorMessage );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
