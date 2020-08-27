@@ -41,7 +41,7 @@ import { login } from 'lib/paths';
 import { waitForData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import Experiment, { DefaultVariation, Variation } from 'components/experiment';
 import user from 'lib/user';
 
@@ -131,7 +131,10 @@ export default {
 			} )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
-					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
+					if (
+						getABTestVariation( 'existingUsersGutenbergOnboard' ) !== 'control' &&
+						'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode )
+					) {
 						gutenbergRedirect( context.params.flowName );
 					} else if (
 						( ! user() || ! user().get() ) &&
