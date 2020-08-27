@@ -20,7 +20,7 @@ const args = yargs
 		from: {
 			alias: 'f',
 			describe:
-				'The original branch name against which to select open PRs that need to be retargted.',
+				'The original branch name against which to select open PRs that need to be retargeted.',
 			demandOption: true,
 			requiresArg: true,
 		},
