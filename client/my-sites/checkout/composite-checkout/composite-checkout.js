@@ -81,6 +81,7 @@ import { colors } from '@automattic/color-studio';
 import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
+import useDisplayErrors from './hooks/use-display-errors';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -605,23 +606,6 @@ CompositeCheckout.propTypes = {
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
-
-function useDisplayErrors( errors, displayError ) {
-	useEffect( () => {
-		errors.filter( isNotCouponError ).map( ( error ) => displayError( error.message ) );
-	}, [ errors, displayError ] );
-}
-
-function isNotCouponError( error ) {
-	const couponErrorCodes = [
-		'coupon-not-found',
-		'coupon-already-used',
-		'coupon-no-longer-valid',
-		'coupon-expired',
-		'coupon-unknown-error',
-	];
-	return ! couponErrorCodes.includes( error.code );
-}
 
 function useRedirectIfCartEmpty(
 	items,
