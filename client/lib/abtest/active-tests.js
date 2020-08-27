@@ -185,6 +185,7 @@ export default {
 			'VN',
 			'ZA',
 		],
+		excludedTests: [ 'existingUsersGutenbergOnboard' ],
 	},
 	[ RUM_DATA_COLLECTION.AB_NAME ]: {
 		datestamp: '20200602',

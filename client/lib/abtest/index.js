@@ -13,7 +13,7 @@ import activeTests from 'lib/abtest/active-tests';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import user from 'lib/user';
 import wpcom from 'lib/wp';
-import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+import { ABTEST_LOCALSTORAGE_KEY, getNameFromExperimentId } from 'lib/abtest/utility';
 import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso:abtests' );
@@ -154,6 +154,7 @@ ABTest.prototype.init = function ( name, geoLocation ) {
 	this.variationNames = variationNames;
 	this.assignmentMethod = assignmentMethod;
 	this.experimentId = name + '_' + variationDatestamp;
+	this.excludedTests = testConfig.excludedTests;
 
 	if ( testConfig.countryCodeTargets ) {
 		if ( false !== geoLocation ) {
@@ -275,6 +276,11 @@ ABTest.prototype.isEligibleForAbTest = function () {
 		return false;
 	}
 
+	if ( this.hasBeenInExcludedTest() ) {
+		debug( '%s: User has been part of a test excluded from the current one', this.experimentId );
+		return false;
+	}
+
 	return true;
 };
 
@@ -289,12 +295,19 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function () {
 	return some(
 		previousExperimentIds,
 		function ( previousExperimentId ) {
-			previousName = previousExperimentId.substring(
-				0,
-				previousExperimentId.length - '_YYYYMMDD'.length
-			);
+			previousName = getNameFromExperimentId( previousExperimentId );
 			return previousExperimentId !== this.experimentId && previousName === this.name;
 		}.bind( this )
+	);
+};
+
+ABTest.prototype.hasBeenInExcludedTest = function () {
+	const previousExperimentIds = keys( getSavedVariations() );
+	return (
+		this.excludedTests &&
+		previousExperimentIds
+			.map( getNameFromExperimentId )
+			.some( ( name ) => this.excludedTests.includes( name ) )
 	);
 };
 

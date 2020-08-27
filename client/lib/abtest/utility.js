@@ -16,3 +16,7 @@ export function getActiveTestNames( { appendDatestamp = false, asCSV = false } =
 	);
 	return asCSV ? output.join( ',' ) : output;
 }
+
+export function getNameFromExperimentId( id ) {
+	return id.substring( 0, id.length - '_YYYYMMDD'.length );
+}
