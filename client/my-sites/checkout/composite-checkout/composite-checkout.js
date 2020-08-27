@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import wp from 'lib/wp';
-import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import React, { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
@@ -35,11 +35,7 @@ import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'state/selectors/is-private-site';
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import {
-	requestContactDetailsCache,
-	updateContactDetailsCache,
-} from 'state/domains/management/actions';
+import { updateContactDetailsCache } from 'state/domains/management/actions';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { StateSelect } from 'my-sites/domains/components/form';
@@ -84,6 +80,7 @@ import useCountryList from './hooks/use-country-list';
 import { colors } from '@automattic/color-studio';
 import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -346,7 +343,7 @@ export default function CompositeCheckout( {
 	);
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails();
+	useCachedDomainContactDetails( updateLocation );
 
 	useDisplayErrors( [ ...errors, loadingError ].filter( Boolean ), showErrorMessage );
 
@@ -695,25 +692,6 @@ function useDetectedCountryCode() {
 			refHaveUsedDetectedCountryCode.current = true;
 		}
 	}, [ detectedCountryCode ] );
-}
-
-function useCachedDomainContactDetails() {
-	const reduxDispatch = useDispatch();
-	const [ haveRequestedCachedDetails, setHaveRequestedCachedDetails ] = useState( false );
-
-	useEffect( () => {
-		// Dispatch exactly once
-		if ( ! haveRequestedCachedDetails ) {
-			debug( 'requesting cached domain contact details' );
-			reduxDispatch( requestContactDetailsCache() );
-			setHaveRequestedCachedDetails( true );
-		}
-	}, [ haveRequestedCachedDetails, reduxDispatch ] );
-
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-	if ( cachedContactDetails ) {
-		dispatch( 'wpcom' ).loadDomainContactDetailsFromCache( cachedContactDetails );
-	}
 }
 
 function getPlanProductSlugs(

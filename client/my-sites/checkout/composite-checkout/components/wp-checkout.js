@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
@@ -29,6 +29,7 @@ import debugFactory from 'debug';
  */
 import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -575,23 +576,6 @@ const CheckoutTermsUI = styled.div`
 		text-decoration: none;
 	}
 `;
-
-function useUpdateCartLocationWhenPaymentMethodChanges(
-	activePaymentMethod,
-	updateCartContactDetails
-) {
-	const previousPaymentMethodId = useRef();
-	const hasInitialized = useRef( false );
-	useEffect( () => {
-		if ( activePaymentMethod?.id && activePaymentMethod.id !== previousPaymentMethodId.current ) {
-			previousPaymentMethodId.current = activePaymentMethod.id;
-			if ( hasInitialized.current ) {
-				updateCartContactDetails();
-			}
-			hasInitialized.current = true;
-		}
-	}, [ activePaymentMethod, updateCartContactDetails ] );
-}
 
 function SubmitButtonHeader() {
 	const translate = useTranslate();

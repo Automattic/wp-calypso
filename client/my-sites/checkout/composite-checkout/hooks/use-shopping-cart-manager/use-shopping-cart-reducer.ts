@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useReducer } from 'react';
+import { useReducer, useEffect } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -23,7 +23,22 @@ import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
 const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );
 
 export default function useShoppingCartReducer() {
-	return useReducer( shoppingCartReducer, getInitialShoppingCartState() );
+	const [ hookState, hookDispatch ] = useReducer(
+		shoppingCartReducer,
+		getInitialShoppingCartState()
+	);
+
+	useEffect( () => {
+		if ( hookState.queuedActions.length > 0 && hookState.cacheStatus !== 'fresh' ) {
+			debug( 'cart is loaded; playing queued actions', hookState.queuedActions );
+			hookDispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
+			hookState.queuedActions.forEach( ( action: ShoppingCartAction ) => {
+				hookDispatch( action );
+			} );
+			debug( 'cart is loaded; queued actions complete' );
+		}
+	}, [ hookState.queuedActions, hookState.cacheStatus ] );
+	return [ hookState, hookDispatch ];
 }
 
 function shoppingCartReducer(
@@ -31,7 +46,26 @@ function shoppingCartReducer(
 	action: ShoppingCartAction
 ): ShoppingCartState {
 	const couponStatus = state.couponStatus;
+
+	// If the cacheStatus is 'fresh', then the initial cart has not yet loaded
+	// and so we cannot make changes to it yet. We therefore will queue any
+	// action that comes through during that time except for
+	// 'RECEIVE_INITIAL_RESPONSE_CART' or 'RAISE_ERROR'.
+	if (
+		state.cacheStatus === 'fresh' &&
+		action.type !== 'RECEIVE_INITIAL_RESPONSE_CART' &&
+		action.type !== 'RAISE_ERROR'
+	) {
+		debug( 'cart has not yet loaded; queuing requested action', action );
+		return {
+			...state,
+			queuedActions: [ ...state.queuedActions, action ],
+		};
+	}
+
 	switch ( action.type ) {
+		case 'CLEAR_QUEUED_ACTIONS':
+			return { ...state, queuedActions: [] };
 		case 'REMOVE_CART_ITEM': {
 			const uuidToRemove = action.uuidToRemove;
 			debug( 'removing item from cart with uuid', uuidToRemove );
@@ -183,6 +217,7 @@ function getInitialShoppingCartState(): ShoppingCartState {
 		couponStatus: 'fresh',
 		variantRequestStatus: 'fresh',
 		variantSelectOverride: [],
+		queuedActions: [],
 	};
 }
 
