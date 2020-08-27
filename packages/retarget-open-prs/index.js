@@ -10,6 +10,7 @@ async function getPulls( octokit, repoOwner, repoName, base ) {
 			repo: repoName,
 			base,
 			per_page: 100,
+			state: 'open',
 		} );
 		return pulls;
 	} catch ( e ) {
@@ -17,26 +18,11 @@ async function getPulls( octokit, repoOwner, repoName, base ) {
 			console.error( 'Unable to find the repository. Please check `owner` and `repo` arguments.' );
 		} else {
 			console.error( 'An unknown error occurred.' );
-			console.error( e );
+			console.error( String( e ) );
 		}
 
 		return null;
 	}
-}
-
-async function updatePullRequestBaseBranch( octokit, repoOwner, repoName, pull, to ) {
-	try {
-		const {
-			headers: { 'x-ratelimit-remaining': remainingRateLimit, 'x-ratelimit-reset': rateLimitReset },
-		} = await octokit.request( 'PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
-			owner: repoOwner,
-			repo: repoName,
-			pull_number: pull.number,
-			base: to,
-		} );
-
-		return { remainingRateLimit, rateLimitReset };
-	} catch ( e ) {}
 }
 
 async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken, { dry } ) {
@@ -55,18 +41,29 @@ async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken, { dr
 		}
 
 		for ( const pull of pulls ) {
-			const rateLimitInfo = await updatePullRequestBaseBranch(
-				octokit,
-				repoOwner,
-				repoName,
-				pull,
-				to
-			);
+			try {
+				const {
+					headers: {
+						'x-ratelimit-remaining': remainingRateLimit,
+						'x-ratelimit-reset': rateLimitReset,
+					},
+				} = await octokit.request( 'PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
+					owner: repoOwner,
+					repo: repoName,
+					pull_number: pull.number,
+					base: to,
+				} );
 
-			if ( isHittingRateLimit( rateLimitInfo ) ) {
-				warnOfRateLimit( rateLimitInfo );
-				pulls = null;
-				return;
+				const rateLimitInfo = { remainingRateLimit, rateLimitReset };
+
+				if ( isHittingRateLimit( rateLimitInfo ) ) {
+					warnOfRateLimit( rateLimitInfo );
+					return;
+				}
+			} catch ( e ) {
+				console.error( 'An unknown error occurred.' );
+				console.error( String( e ) );
+				return null;
 			}
 		}
 
