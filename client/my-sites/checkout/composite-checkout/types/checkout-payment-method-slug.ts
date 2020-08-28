@@ -16,6 +16,7 @@ export type CheckoutPaymentMethodSlug =
 	| 'ebanx'
 	| 'brazil-tef'
 	| 'netbanking'
+	| 'id-wallet'
 	| 'eps'
 	| 'giropay'
 	| 'ideal'
