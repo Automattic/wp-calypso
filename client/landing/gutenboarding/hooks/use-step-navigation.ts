@@ -88,6 +88,16 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}
 
+	// Don't show the mandatory Plans step:
+	// - if the user landed from a marketing page after selecting a paid plan
+	// - if a plan has been selected using the PlansModal but only if there is no Features step
+	if (
+		hasPaidPlanFromPath ||
+		( ! steps.includes( Step.Features ) && plan && ! hasUsedPlansStep )
+	) {
+		steps = steps.filter( ( step ) => step !== Step.Plans );
+	}
+
 	const currentStepIndex = steps.findIndex( ( step ) => step === Step[ currentStep ] );
 	const previousStepPath = currentStepIndex > 0 ? makePath( steps[ currentStepIndex - 1 ] ) : '';
 	const nextStepPath =
