@@ -95,7 +95,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
-				singleColumn={ isExperimental && isEnabled( 'gutenboarding/feature-picker' ) }
+				isExperimental={ isExperimental && isEnabled( 'gutenboarding/feature-picker' ) }
 			/>
 		</div>
 	);

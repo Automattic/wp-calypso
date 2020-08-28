@@ -26,7 +26,7 @@ export interface Props {
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
-	singleColumn?: boolean;
+	isExperimental?: boolean;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -36,13 +36,13 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	onPlanSelect,
 	onPickDomainClick,
 	disabledPlans,
-	singleColumn,
+	isExperimental,
 } ) => {
 	const { __ } = useI18n();
 
-	// Note: singleColumn prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
+	// Note: isExperimental prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
 	// and Gutenboarding flow is started with ?latest query param
-	singleColumn && console.log( 'display accordion' ); // eslint-disable-line no-console
+	isExperimental && console.log( 'display PlansGrid experimental version' ); // eslint-disable-line no-console
 
 	return (
 		<div className="plans-grid">
