@@ -120,8 +120,8 @@ export default {
 	newSiteGutenbergOnboarding: {
 		datestamp: '20200818',
 		variations: {
-			gutenberg: 50,
-			control: 50,
+			gutenberg: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

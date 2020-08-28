@@ -131,9 +131,7 @@ export default {
 			} )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
-					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						gutenbergRedirect( context.params.flowName );
-					} else if (
+					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
 						-1 === context.pathname.indexOf( 'personal' ) &&
