@@ -232,7 +232,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					action: () => {
 						trackCtaButton( 'donations' );
 						if ( window && window.location ) {
-							window.location.href = localizeUrl( 'https://en.support.wordpress.com/donations/' );
+							window.location.href = localizeUrl( 'https://wordpress.com/support/donations/' );
 						}
 					},
 			  };
