@@ -10,6 +10,9 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class ContactFormBlockComponent extends GutenbergBlockComponent {
+	static blockTitle = 'Form';
+	static blockName = 'jetpack/contact-form';
+
 	async _postInit() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
@@ -49,8 +52,5 @@ class ContactFormBlockComponent extends GutenbergBlockComponent {
 		);
 	}
 }
-
-ContactFormBlockComponent.blockTitle = 'Form';
-ContactFormBlockComponent.blockName = 'jetpack/contact-form';
 
 export { ContactFormBlockComponent };

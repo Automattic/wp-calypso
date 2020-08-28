@@ -9,12 +9,8 @@ import { By } from 'selenium-webdriver';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class TiledGalleryBlockComponent extends GutenbergBlockComponent {
-	static get blockTitle() {
-		return 'Tiled Gallery';
-	}
-	static get blockName() {
-		return 'jetpack/tiled-gallery';
-	}
+	static blockTitle = 'Tiled Gallery';
+	static blockName = 'jetpack/tiled-gallery';
 
 	fileInputSelector = By.xpath(
 		`//*[@id="${ this.blockID.slice( 1 ) }"]/div/div/div[3]/div[2]/input`

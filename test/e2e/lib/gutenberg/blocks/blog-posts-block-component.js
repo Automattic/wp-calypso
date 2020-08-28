@@ -4,12 +4,8 @@
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class BlogPostsBlockComponent extends GutenbergBlockComponent {
-	static get blockTitle() {
-		return 'Blog Posts';
-	}
-	static get blockName() {
-		return 'a8c/blog-posts';
-	}
+	static blockTitle = 'Blog Posts';
+	static blockName = 'a8c/blog-posts';
 }
 
 export { BlogPostsBlockComponent };
