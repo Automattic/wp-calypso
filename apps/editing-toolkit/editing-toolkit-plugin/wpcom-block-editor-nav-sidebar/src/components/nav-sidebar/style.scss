@@ -62,15 +62,18 @@ $nav-header-background-color: #32373d; // WP-admin gray to match the close butto
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
-	min-height: $header-height;
 	box-sizing: content-box;
 	display: flex;
 	background-color: $nav-header-background-color;
+	align-items: stretch;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
-	margin: 12px 0 12px 74px;
-	overflow: hidden;
+	margin: 0 0 0 74px;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	min-height: 60px;
 
 	h2 {
 		color: $white;
@@ -79,6 +82,9 @@ $nav-header-background-color: #32373d; // WP-admin gray to match the close butto
 		line-height: $default-line-height;
 		word-wrap: break-word;
 		font-weight: normal;
+		display: flex;
+		align-items: center;
+		padding: 10px 0;
 	}
 
 	a {
@@ -152,6 +158,7 @@ $nav-header-background-color: #32373d; // WP-admin gray to match the close butto
 
 	.is-selected {
 		font-size: $text-editor-font-size;
+		color: $white;
 	}
 	/*
 	@TODO Work out how we're going to handle overflow

@@ -8,12 +8,11 @@ import {
 	Button as OriginalButton,
 	IsolatedEventContainer,
 	withConstrainedTabbing,
-	ExternalLink,
 } from '@wordpress/components';
-import { arrowLeft, wordpress } from '@wordpress/icons';
+import { chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { ESCAPE } from '@wordpress/keycodes';
@@ -22,7 +21,7 @@ import { compose } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { STORE_KEY, SITE_HOME_URL, POST_IDS_TO_EXCLUDE } from '../../constants';
+import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
 import { Post } from '../../types';
@@ -49,7 +48,8 @@ function WpcomBlockEditorNavSidebar() {
 		];
 	} );
 
-	const posts = useNavItems();
+	const { current: currentPost, drafts: draftPosts, recent: recentPosts } = useNavItems();
+	console.log( 'posts', currentPost, draftPosts, recentPosts );
 	const statusLabels = usePostStatusLabels();
 
 	const prevIsOpen = useRef( isOpen );
@@ -96,9 +96,9 @@ function WpcomBlockEditorNavSidebar() {
 		);
 	};
 
-	const itemMount = ( el: HTMLElement | null, itemIndex: number ) => {
+/*	const itemMount = ( el: HTMLElement | null, itemIndex: number ) => {
 		itemRefs.current[ itemIndex ] = el;
-	};
+	};*/
 
 	useEffect( () => {
 		if ( ! observer.current ) {
@@ -114,7 +114,7 @@ function WpcomBlockEditorNavSidebar() {
 		const lastItem = nonSparse[ nonSparse.length - 1 ];
 		if ( firstItem ) observer.current.observe( firstItem );
 		if ( lastItem ) observer.current.observe( lastItem );
-	}, [ posts, itemRefs, observer ] );
+	}, [ currentPost, draftPosts, recentPosts, itemRefs, observer ] );
 
 	if ( ! postType ) {
 		// Still loading
@@ -204,13 +204,13 @@ function WpcomBlockEditorNavSidebar() {
 						onClick={ dismissSidebar }
 					/>
 					<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__site-title">
-						<h2>{ decodeEntities( siteTitle ) } YOU'RE SANDBOXING!!!</h2>
+						<h2>{ decodeEntities( siteTitle ) }</h2>
 					</div>
 				</div>
 				<Button
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
-					icon={ arrowLeft }
+					icon={ chevronLeft }
 					onClick={ handleClose }
 				>
 					{ closeLabel }
@@ -221,25 +221,25 @@ function WpcomBlockEditorNavSidebar() {
 				<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
 					{ __( 'Currently editing', 'full-site-editing' ) }
 				</h3>
-				{ posts.current && posts.current.length && (
+				{ ! isEmpty( currentPost ) && (
 					<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 						<NavItem
-							key={ posts.current[ 0 ]?.id }
-							item={ posts.current[ 0 ] }
+							key={ currentPost[ 0 ]?.id }
+							item={ currentPost[ 0 ] }
 							postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
-							selected={ posts.current[ 0 ]?.id === selectedItemId }
-							statusLabel={ statusLabels[ posts.current[ 0 ]?.status ] }
+							selected={ currentPost[ 0 ]?.id === selectedItemId }
+							statusLabel={ statusLabels[ currentPost[ 0 ]?.status ] }
 						/>
 					</ul>
 				) }
 				<section className="wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area">
-					{ posts.recent && posts.recent.length && (
+					{ ! isEmpty( recentPosts ) && (
 						<>
 							<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
 								{ __( 'Recently edited', 'full-site-editing' ) }
 							</h3>
 							<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-								{ posts.recent.map( ( item) => (
+								{ recentPosts.map( ( item ) => (
 									<NavItem
 										key={ item.id }
 										item={ item }
@@ -251,20 +251,20 @@ function WpcomBlockEditorNavSidebar() {
 							</ul>
 						</>
 					) }
-					{ posts.drafts && posts.drafts.length && (
+					{ ! isEmpty( draftPosts ) && (
 						<>
 							<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
 								{ __( 'Drafts', 'full-site-editing' ) }
 							</h3>
 							<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
-							{ posts.drafts.map( ( item ) => (
-								<NavItem
-									key={ item.id }
-									item={ item }
-									postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
-									selected={ item.id === selectedItemId }
-								/>
-							) ) }
+								{ draftPosts.map( ( item ) => (
+									<NavItem
+										key={ item.id }
+										item={ item }
+										postType={ postType } // We know the post type of this item is always the same as the post type of the current editor
+										selected={ item.id === selectedItemId }
+									/>
+								) ) }
 							</ul>
 						</>
 					) }
@@ -305,7 +305,7 @@ function useNavItems(): Record< string, Post[] > {
 		const currentPostId = getCurrentPostId();
 		const currentPostType = getCurrentPostType();
 
-		const items: Array< Post[] > =
+		const items =
 			select( 'core' ).getEntityRecords( 'postType', currentPostType, {
 				_fields: 'id,status,title',
 				exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
@@ -321,9 +321,14 @@ function useNavItems(): Record< string, Post[] > {
 			title: { raw: getEditedPostAttribute( 'title' ), rendered: '' },
 		};
 
-		const partitionDraftPosts: Record< string, Array< Post[] > > = items.reduce( ( { drafts, recent }, item ) => {
-			return item.status === 'draft' ? { drafts: [ ...drafts, item ], recent } : { drafts, recent:  [ ...recent, item ] };
-		}, { drafts: [] as Array< Post[] >, recent: [] as Array< Post[] > } );
+		const partitionDraftPosts: Record< string, Array< Post[] > > = items.reduce(
+			( { drafts, recent }, item ) => {
+				return item.status === 'draft'
+					? { drafts: [ ...drafts, item ], recent }
+					: { drafts, recent: [ ...recent, item ] };
+			},
+			{ drafts: [] as Array< Post[] >, recent: [] as Array< Post[] > }
+		);
 
 		// @TODO Not sure if this is the most optimal model
 		return {
@@ -335,7 +340,7 @@ function useNavItems(): Record< string, Post[] > {
 
 function usePostStatusLabels(): Record< string, string > {
 	return useSelect( ( select ) => {
-		const items = select( 'core' ).getEntityRecords( 'root', 'status' ) as [];
+		const items = select( 'core' ).getEntityRecords( 'root', 'status' ) as [  ];
 		return ( items || [] ).reduce(
 			( acc, { name, slug } ) => ( slug === 'publish' ? acc : { ...acc, [ slug ]: name } ),
 			{}
