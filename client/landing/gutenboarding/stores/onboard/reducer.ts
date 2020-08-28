@@ -78,9 +78,6 @@ const isExperimental: Reducer< boolean, OnboardAction > = (
 	state = hasExperimentalQueryParam(),
 	action
 ) => {
-	if ( action.type === 'SET_ENABLE_EXPERIMENTAL' ) {
-		return true;
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return false;
 	}
