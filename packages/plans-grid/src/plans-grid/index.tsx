@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import type { Plans, DomainSuggestions } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -18,6 +19,8 @@ import PlansDetails from '../plans-details';
 import './style.scss';
 
 type PlansSlug = Plans.PlanSlug;
+
+const debug = debugFactory( 'plans-grid' );
 
 export interface Props {
 	header?: React.ReactElement;
@@ -42,7 +45,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 	// Note: isExperimental prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
 	// and Gutenboarding flow is started with ?latest query param
-	isExperimental && console.log( 'display PlansGrid experimental version' ); // eslint-disable-line no-console
+	isExperimental && debug( 'PlansGrid experimental version is active' );
 
 	return (
 		<div className="plans-grid">
