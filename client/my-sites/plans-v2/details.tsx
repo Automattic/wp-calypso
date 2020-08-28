@@ -9,7 +9,11 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY } from './constants';
+import {
+	OPTIONS_JETPACK_SECURITY,
+	OPTIONS_JETPACK_SECURITY_MONTHLY,
+	PRODUCTS_WITH_OPTIONS,
+} from './constants';
 import ProductCard from './product-card';
 import {
 	slugToSelectorProduct,
@@ -45,6 +49,12 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	const products = useSelector( ( state ) => getProductsList( state ) );
 	const translate = useTranslate();
 	const isLoading = ! currencyCode || ( isFetchingProducts && ! products );
+
+	// If the product slug isn't one that has options, proceed to the upsell.
+	if ( ! ( PRODUCTS_WITH_OPTIONS as readonly string[] ).includes( productSlug ) ) {
+		page.redirect( getPathToUpsell( rootUrl, productSlug, duration as Duration, siteSlug ) );
+		return null;
+	}
 
 	const selectorPageUrl = getPathToSelector( rootUrl, duration, siteSlug );
 
