@@ -143,20 +143,17 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	getDiscountTooltipMessage() {
-		const { currencyCode, currentSitePlan, translate, rawPrice } = this.props;
-		const isUserCurrentlyOnAFreePlan =
-			currentSitePlan && planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
+		const { currencyCode, currentSitePlan, translate, rawPrice, discountPrice } = this.props;
 		const price = formatCurrency( rawPrice, currencyCode );
-
-		if ( isUserCurrentlyOnAFreePlan ) {
-			return translate(
-				"You'll receive a discount for the first year. The plan will renew at %(price)s.",
-				{ args: { price } }
-			);
-		}
+		const isDiscounted = !! discountPrice;
 
 		if ( planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } ) ) {
-			return translate( 'Price for the next 12 months' );
+			return isDiscounted
+				? translate(
+						"You'll receive a discount for the first year. The plan will renew at %(price)s.",
+						{ args: { price } }
+				  )
+				: translate( 'Price for the next 12 months' );
 		}
 
 		return translate(
