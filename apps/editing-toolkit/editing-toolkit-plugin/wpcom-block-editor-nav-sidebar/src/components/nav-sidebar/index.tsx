@@ -195,6 +195,7 @@ function WpcomBlockEditorNavSidebar() {
 			>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
+						aria-label={ __( 'open sidebar', 'full-site-editing' ) }
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
 							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
