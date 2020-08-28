@@ -5,8 +5,8 @@ import assert from 'assert';
 import config from 'config';
 import { times } from 'lodash';
 import { By } from 'selenium-webdriver';
-import { promises as fs } from 'fs';
 import { join } from 'path';
+import { promises as fs } from 'fs';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-componen
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
 import * as mediaHelper from '../lib/media-helper';
+import * as driverHelper from '../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -42,25 +43,27 @@ let driver;
 let loginFlow;
 let gEditorComponent;
 let currentGutenbergBlocksCode;
-let galleryImages;
+let sampleImages;
 
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 
 	loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
-	galleryImages = times( 5, () => mediaHelper.createFile() );
+	sampleImages = times( 5, () => mediaHelper.createFile() );
 } );
 
 // Should we keep the @parallel tag here for this e2e test?
-describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
+describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
 		const now = Date.now() / 1000;
 
-		const siteSshotDir = join( mediaHelper.screenShotsDir(), siteName );
-		await fs.access( siteSshotDir ).catch( () => fs.mkdir( siteSshotDir ) );
+		const siteScreenshotsDir = join( mediaHelper.screenshotsDir, siteName );
+		await fs
+			.access( siteScreenshotsDir )
+			.catch( () => fs.mkdir( siteScreenshotsDir, { recursive: true } ) );
 
 		for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
 			await scrollCb( i );
@@ -71,7 +74,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					.then( ( url ) =>
 						mediaHelper.writeScreenshot(
 							data,
-							() => join( siteName, `${ siteName }-${ i }-${ now }.png` ),
+							() => join( siteName, `${ siteName }-${ i }-${ now }` ),
 							{ url }
 						)
 					);
@@ -79,14 +82,9 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		}
 	}
 
-	async function assertBlockIsDisplayed( blockClass ) {}
-
 	async function assertNoErrorInEditor() {
-		assert.strictEqual(
-			await gEditorComponent.errorDisplayed(),
-			false,
-			'There is an error shown on the editor page!'
-		);
+		const errorDisplayed = await gEditorComponent.errorDisplayed();
+		assert.strictEqual( errorDisplayed, false, 'There is an error shown on the editor page!' );
 	}
 
 	async function assertNoInvalidBlocksInEditor() {
@@ -152,20 +150,20 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					SubscriptionsBlockComponent,
 					TiledGalleryBlockComponent,
 					YoutubeBlockComponent,
-				].map( async ( blockClass ) =>
+				].map( async ( blockClass ) => {
+					const displayed = await gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
 					assert.strictEqual(
-						await gEditorComponent.blockDisplayedInEditor( blockClass.blockName ),
+						displayed,
 						true,
 						`The block "${ blockClass.blockName }" was not found in the editor`
-					)
-				)
+					);
+				} )
 			);
 		} );
 
 		step( 'Blocks do not error in the editor', async function () {
 			await assertNoErrorInEditor();
 		} );
-
 		// Commented-out for now because of https://github.com/Automattic/jetpack/issues/16514
 		/*step( 'Blocks do not invalidate', async function () {
 			await assertNoInvalidBlocksInEditor();
@@ -176,6 +174,30 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		} );
 	}
 
+	function verifyBlocksInPublishedPage( siteName ) {
+		step( 'Take screenshots of the published page', async function () {
+			await takePublishedScreenshots( siteName );
+		} );
+
+		step( 'Blocks are displayed in the published page', async function () {
+			await Promise.all(
+				[
+					BlogPostsBlockComponent,
+					ContactFormBlockComponent,
+					ContactInfoBlockComponent,
+					DynamicSeparatorBlockComponent,
+					GalleryMasonryBlockComponent,
+					LayoutGridBlockComponent,
+					RatingStarBlockComponent,
+					SubscriptionsBlockComponent,
+					TiledGalleryBlockComponent,
+				].map( ( blockClass ) =>
+					driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector )
+				)
+			);
+		} );
+	}
+
 	[
 		'e2egbupgradehever',
 		'e2egbupgradeshawburn',
@@ -183,7 +205,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		'e2egbupgradeexford',
 		'e2egbupgrademayland',
 	].forEach( ( siteName ) => {
-		describe( 'Can add most popular blocks to the editor without errors', function () {
+		describe( `[${ siteName }] Can add most popular blocks to the editor without errors`, function () {
 			step( `Login to ${ siteName }`, async function () {
 				await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
 				gEditorComponent = await GutenbergEditorComponent.Expect( driver );
@@ -195,7 +217,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 
 			step( 'Insert and configure jetpack/tiled-gallery', async function () {
 				const tiledGallery = await gEditorComponent.insertBlock( TiledGalleryBlockComponent );
-				await tiledGallery.uploadImages( galleryImages );
+				await tiledGallery.uploadImages( sampleImages );
 			} );
 
 			step( 'Insert and configure jetpack/contact-form', async function () {
@@ -251,9 +273,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				}
 			);
 
-			step( 'Take screenshots of the published page', async function () {
-				await takePublishedScreenshots( siteName );
-			} );
+			verifyBlocksInPublishedPage( siteName );
 
 			describe( 'Test the same blocks in the corresponding edge site', function () {
 				const edgeSiteName = siteName + 'edge';
@@ -269,17 +289,12 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				} );
 
 				verifyBlocksInEditor( edgeSiteName );
-
-				step( 'Take screenshots of the published page', async function () {
-					await takePublishedScreenshots( siteName );
-				} );
+				verifyBlocksInPublishedPage( siteName );
 			} );
 		} );
 	} );
 } );
 
 after( async function () {
-	await Promise.all(
-		galleryImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
-	);
+	await Promise.all( sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) ) );
 } );

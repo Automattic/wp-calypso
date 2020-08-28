@@ -74,7 +74,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( closePanel ) {
 			try {
 				await this.closePublishedPanel();
-
 			} catch ( e ) {
 				console.log( 'Publish panel already closed' );
 			}
@@ -154,24 +153,26 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return contactFormBlock.insertSubject( subject );
 	}
 
-	toggleMoreToolsAndOptions() {
-		return driverHelper.clickWhenClickable(
+	async toggleMoreToolsAndOptions() {
+		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='More tools & options']" )
+			By.xpath( "//button[@aria-label='More tools & options' or @aria-label='Options']" )
 		);
+
+		await this.driver.sleep( 1000 );
 	}
 
 	async switchToCodeView() {
 		await this.toggleMoreToolsAndOptions();
 
-		// Now click to switch to the code editor
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[2]" )
+			By.xpath(
+				"//div[@aria-label='More tools & options' or @aria-label='Options']/div[2]/div[2]/button[2]"
+			)
 		);
 
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
-
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
 
 		// close the menu
@@ -185,7 +186,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[1]" )
+			By.xpath(
+				"//div[@aria-label='More tools & options' or @aria-label='Options']/div[2]/div[2]/button[1]"
+			)
 		);
 
 		// close the menu
@@ -218,8 +221,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async errorDisplayed() {
-		await this.driver.sleep( 1000 );
-		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-error-boundary' ) );
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '.editor-error-boundary' )
+		);
 	}
 
 	async hasInvalidBlocks() {
@@ -392,7 +397,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * You can just import the class of the block(s) you want to add and pass it to this function, which
 	 * also means we don't need to couple the block class with this one.
 	 *
-	 * @param { GutenbergBlockComponent } blockClass A block class that responds to title and name
+	 * @param { typeof GutenbergBlockComponent } blockClass A block class that responds to title and name
 	 */
 	async insertBlock( blockClass ) {
 		const blockID = await this.addBlock( blockClass.blockTitle );
