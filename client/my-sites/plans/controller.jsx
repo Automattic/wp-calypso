@@ -29,7 +29,7 @@ export function plans( context, next ) {
 			return page.redirect( `/plans/${ context.params.site }` );
 		}
 		setJetpackPlansHeader( context );
-		return productSelect( '/plans/:site' )( context, next );
+		return productSelect( '/plans' )( context, next );
 	}
 
 	context.primary = (

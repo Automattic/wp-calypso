@@ -90,7 +90,7 @@ describe( 'Loads Jetpack plan page', () => {
 		shouldShowOfferResetFlow.mockReturnValueOnce( true );
 		router();
 		expect( plansV2 ).toHaveBeenCalledWith(
-			'/plans/:site',
+			'/plans',
 			siteSelection,
 			redirectToPlansIfNotJetpack,
 			navigation

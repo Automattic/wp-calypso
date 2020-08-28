@@ -22,13 +22,15 @@ import { isProductsListFetching } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import useItemPrice from './use-item-price';
 import {
-	durationToString,
 	durationToText,
 	getOptionFromSlug,
 	getProductUpsell,
+	getPathToSelector,
+	getPathToDetails,
 	slugToSelectorProduct,
 	checkout,
 } from './utils';
+import withRedirectToSelector from './with-redirect-to-selector';
 
 /**
  * Style dependencies
@@ -38,7 +40,7 @@ import './style.scss';
 /**
  * Type dependencies
  */
-import type { SelectorProduct, UpsellPageProps } from './types';
+import type { Duration, SelectorProduct, UpsellPageProps } from './types';
 
 interface Props {
 	currencyCode: string;
@@ -162,7 +164,7 @@ const UpsellComponent = ( {
 };
 
 const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellPageProps ) => {
-	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
@@ -171,9 +173,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	const upsellProductSlug = getProductUpsell( productSlug );
 	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
 
-	const checkoutCb = useCallback( ( slugs ) => checkout( selectedSiteSlug, slugs ), [
-		selectedSiteSlug,
-	] );
+	const checkoutCb = useCallback( ( slugs ) => checkout( siteSlug, slugs ), [ siteSlug ] );
 
 	const onPurchaseBothProducts = useCallback(
 		() => checkoutCb( [ productSlug, upsellProductSlug ] ),
@@ -185,12 +185,11 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 		productSlug,
 	] );
 
-	const urlWithSiteSlug = rootUrl.replace( ':site', selectedSiteSlug );
-	const durationSuffix = duration ? durationToString( duration ) : '';
+	const selectorPageUrl = getPathToSelector( rootUrl, duration, siteSlug );
 
 	// If the product is not valid send the user to the selector page.
 	if ( ! mainProduct ) {
-		page.redirect( urlWithSiteSlug + '/' + durationSuffix );
+		page.redirect( selectorPageUrl );
 		return null;
 	}
 
@@ -209,8 +208,8 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	// page.
 	const productOption = getOptionFromSlug( productSlug );
 	const backUrl = productOption
-		? [ urlWithSiteSlug, productOption, durationSuffix, 'details' ].join( '/' )
-		: urlWithSiteSlug;
+		? getPathToDetails( rootUrl, productOption, duration as Duration, siteSlug )
+		: selectorPageUrl;
 
 	const onBackButtonClick = () => page( backUrl );
 
@@ -230,4 +229,4 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	);
 };
 
-export default UpsellPage;
+export default withRedirectToSelector( UpsellPage );

@@ -142,7 +142,7 @@ export default function () {
 	}
 
 	if ( shouldShowOfferResetFlow() ) {
-		plansV2( `/jetpack/connect/plans/:site`, siteSelection, controller.offerResetContext );
+		plansV2( `/jetpack/connect/plans`, siteSelection, controller.offerResetContext );
 	} else {
 		page(
 			'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',

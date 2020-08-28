@@ -10,12 +10,18 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import {
-	PRODUCTS_WITH_OPTIONS,
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
+	PRODUCTS_WITH_OPTIONS,
 } from './constants';
 import ProductCard from './product-card';
-import { slugToSelectorProduct, durationToString, getProductUpsell, checkout } from './utils';
+import {
+	slugToSelectorProduct,
+	getProductUpsell,
+	getPathToSelector,
+	getPathToUpsell,
+	checkout,
+} from './utils';
 import ProductCardPlaceholder from 'components/jetpack/card/product-card-placeholder';
 import FormattedHeader from 'components/formatted-header';
 import HeaderCake from 'components/header-cake';
@@ -25,11 +31,12 @@ import { isProductsListFetching } from 'state/products-list/selectors/is-product
 import { getProductsList } from 'state/products-list/selectors';
 import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import withRedirectToSelector from './with-redirect-to-selector';
 
 /**
  * Type dependencies
  */
-import type { DetailsPageProps, PurchaseCallback, SelectorProduct } from './types';
+import type { Duration, DetailsPageProps, PurchaseCallback, SelectorProduct } from './types';
 
 import './style.scss';
 
@@ -41,33 +48,33 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
 	const translate = useTranslate();
-	const root = rootUrl.replace( ':site', siteSlug );
-	const durationSuffix = duration ? '/' + durationToString( duration ) : '';
 	const isLoading = ! currencyCode || ( isFetchingProducts && ! products );
 
 	// If the product slug isn't one that has options, proceed to the upsell.
 	if ( ! ( PRODUCTS_WITH_OPTIONS as readonly string[] ).includes( productSlug ) ) {
-		page.redirect( `${ root }/${ productSlug }${ durationSuffix }` );
+		page.redirect( getPathToUpsell( rootUrl, productSlug, duration as Duration, siteSlug ) );
 		return null;
 	}
+
+	const selectorPageUrl = getPathToSelector( rootUrl, duration, siteSlug );
 
 	// If the product is not valid, send the user to the selector page.
 	const product = slugToSelectorProduct( productSlug );
 	if ( ! product ) {
-		page.redirect( root + durationSuffix );
+		page.redirect( selectorPageUrl );
 		return null;
 	}
 
 	// Go to a new page for upsells.
-	const selectProduct: PurchaseCallback = ( { productSlug: slug, term }: SelectorProduct ) => {
+	const selectProduct: PurchaseCallback = ( { productSlug: slug }: SelectorProduct ) => {
 		const upsellProduct = getProductUpsell( slug );
 		if (
 			upsellProduct &&
-			! siteProducts.find(
+			! siteProducts?.find(
 				( { productSlug: siteProductSlug } ) => siteProductSlug === upsellProduct
 			)
 		) {
-			page( `${ root }/${ slug }/` + `${ durationToString( term ) }/additions` );
+			page( getPathToUpsell( rootUrl, slug, duration as Duration, siteSlug ) );
 			return;
 		}
 		checkout( siteSlug, slug );
@@ -77,7 +84,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	const isBundle = [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ].includes(
 		productSlug
 	);
-	const backButton = () => page( root + durationSuffix );
+	const backButton = () => page( selectorPageUrl );
 
 	return (
 		<Main className="details__main" wideLayout>
@@ -129,4 +136,4 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	);
 };
 
-export default DetailsPage;
+export default withRedirectToSelector( DetailsPage );
