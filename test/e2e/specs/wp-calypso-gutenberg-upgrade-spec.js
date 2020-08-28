@@ -168,9 +168,10 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			await assertNoErrorInEditor();
 		} );
 
-		step( 'Blocks do not invalidate', async function () {
+		// Commented-out for now because of https://github.com/Automattic/jetpack/issues/16514
+		/*step( 'Blocks do not invalidate', async function () {
 			await assertNoInvalidBlocksInEditor();
-		} );
+		} );*/
 
 		step( 'Take screenshots of all the blocks in the editor', async function () {
 			await takeBlockScreenshots( siteName );
@@ -195,7 +196,6 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			// since the API would be the same.
 
 			step( 'Insert and configure jetpack/tiled-gallery', async function () {
-				// jetpack/tiled-gallery
 				const tiledGallery = await gEditorComponent.insertBlock( TiledGalleryBlockComponent );
 				await tiledGallery.uploadImages( galleryImages );
 			} );
