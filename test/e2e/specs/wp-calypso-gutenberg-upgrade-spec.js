@@ -18,6 +18,7 @@ import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-componen
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
 import * as mediaHelper from '../lib/media-helper';
+import * as driverHelper from '../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -78,8 +79,6 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			} );
 		}
 	}
-
-	async function assertBlockIsDisplayed( blockClass ) {}
 
 	async function assertNoErrorInEditor() {
 		assert.strictEqual(
@@ -176,6 +175,34 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		} );
 	}
 
+	function verifyBlocksInPublishedPage( siteName ) {
+		step( 'Take screenshots of the published page', async function () {
+			await takePublishedScreenshots( siteName );
+		} );
+
+		step( 'Blocks are displayed in the published page', async function () {
+			// TODO Some blocks are commente-out because they are not being displayed on the fronted due to not being fed with sample data/assets in the editor
+			// I will uncomment as I set them up.
+			await Promise.all(
+				[
+					BlogPostsBlockComponent,
+					ContactFormBlockComponent,
+					// ContactInfoBlockComponent,
+					DynamicSeparatorBlockComponent,
+					GalleryMasonryBlockComponent,
+					// LayoutGridBlockComponent,
+					RatingStarBlockComponent,
+					// SlideshowBlockComponent,
+					SubscriptionsBlockComponent,
+					TiledGalleryBlockComponent,
+					// YoutubeBlockComponent,
+				].map( async ( blockClass ) =>
+					driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector )
+				)
+			);
+		} );
+	}
+
 	[
 		'e2egbupgradehever',
 		'e2egbupgradeshawburn',
@@ -251,9 +278,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				}
 			);
 
-			step( 'Take screenshots of the published page', async function () {
-				await takePublishedScreenshots( siteName );
-			} );
+			verifyBlocksInPublishedPage( siteName );
 
 			describe( 'Test the same blocks in the corresponding edge site', function () {
 				const edgeSiteName = siteName + 'edge';
@@ -269,10 +294,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				} );
 
 				verifyBlocksInEditor( edgeSiteName );
-
-				step( 'Take screenshots of the published page', async function () {
-					await takePublishedScreenshots( siteName );
-				} );
+				verifyBlocksInPublishedPage( siteName );
 			} );
 		} );
 	} );

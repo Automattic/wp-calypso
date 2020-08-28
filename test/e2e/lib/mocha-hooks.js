@@ -64,6 +64,7 @@ afterEach( async function () {
 	let filenameCallback;
 
 	if ( this.currentTest.state === 'failed' ) {
+		console.error( this.currentTest.err );
 		const neverSaveScreenshots = config.get( 'neverSaveScreenshots' );
 		if ( neverSaveScreenshots ) {
 			return null;

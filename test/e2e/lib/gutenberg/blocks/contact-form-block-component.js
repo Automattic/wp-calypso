@@ -12,6 +12,7 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 class ContactFormBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Form';
 	static blockName = 'jetpack/contact-form';
+	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-contact-form' );
 
 	async _postInit() {
 		return await driverHelper.clickWhenClickable(
