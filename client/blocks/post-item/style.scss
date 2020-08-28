@@ -37,25 +37,6 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	background: $post-item-background-color;
 }
 
-.post-item__select {
-	align-self: stretch;
-	display: flex;
-	align-items: flex-start;
-	cursor: pointer;
-
-	&:hover .form-checkbox {
-		border-color: var( --color-neutral-20 );
-	}
-
-	padding: 16px 16px 0;
-	margin-left: -16px;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		padding-left: 24px;
-		margin-left: -24px;
-	}
-}
-
 .post-item__site-info-link,
 .post-item__post-author-link {
 	display: block;

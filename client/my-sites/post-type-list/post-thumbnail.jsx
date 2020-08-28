@@ -15,7 +15,6 @@ import safeImageUrl from 'lib/safe-image-url';
 import { getNormalizedPost } from 'state/posts/selectors';
 import { getEditorPath } from 'state/editor/selectors';
 import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
-import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
 
 function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {
@@ -59,9 +58,8 @@ export default connect( ( state, ownProps ) => {
 		: get( post, 'URL' );
 	const isTrashed = post && 'trash' === post.status;
 
-	// Null if the item is a placeholder or bulk edit mode is active.
-	const postLink =
-		! ownProps.globalId || isMultiSelectEnabled( state ) || isTrashed ? null : postUrl;
+	// Null if the item is a placeholder.
+	const postLink = ! ownProps.globalId || isTrashed ? null : postUrl;
 
 	return { thumbnail, postLink };
 } )( PostTypeListPostThumbnail );
