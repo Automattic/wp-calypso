@@ -125,6 +125,7 @@ const oauthTokenMiddleware = () => {
 			'/authorize',
 			'/api/oauth/token',
 			'/connect',
+			'/pricing',
 		];
 
 		// Forces OAuth users to the /login page if no token is present
