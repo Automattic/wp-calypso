@@ -64,8 +64,49 @@
 		}
 
 		.twitter-thread-preview__media {
+			border-radius: 15px;
+			overflow: hidden;
+			display: grid;
+			grid-gap: 2px;
+			grid-template-areas: 'a';
+			height: 300px;
+			margin-top: 10px;
+
 			img {
-				max-width: 100%;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			img:nth-child( 1 ) {
+				grid-area: a;
+			}
+			img:nth-child( 2 ) {
+				grid-area: b;
+			}
+			img:nth-child( 3 ) {
+				grid-area: c;
+			}
+			img:nth-child( 4 ) {
+				grid-area: d;
+			}
+
+			&.twitter-thread-preview__media-children-0 {
+				height: 0;
+			}
+
+			&.twitter-thread-preview__media-children-2 {
+				grid-template-areas: 'a b';
+			}
+
+			&.twitter-thread-preview__media-children-3 {
+				grid-template-areas: 'a b'
+									 'a c';
+			}
+
+			&.twitter-thread-preview__media-children-4 {
+				grid-template-areas: 'a b'
+									 'c d';
 			}
 		}
 	}

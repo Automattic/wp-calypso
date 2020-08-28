@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import moment from 'moment';
@@ -35,6 +36,11 @@ export class TwitterThreadPreview extends PureComponent {
 			<div className="twitter-thread-preview">
 				{ tweets &&
 					tweets.map( ( tweet, index ) => {
+						const mediaCount = tweet.media.length > 4 ? 4 : tweet.media.length;
+						const mediaClasses = classnames( [
+							'twitter-thread-preview__media',
+							'twitter-thread-preview__media-children-' + mediaCount,
+						] );
 						return (
 							<div
 								className="twitter-thread-preview__container"
@@ -63,13 +69,11 @@ export class TwitterThreadPreview extends PureComponent {
 											className="twitter-thread-preview__text"
 											dangerouslySetInnerHTML={ this.createTweetMarkup( tweet ) }
 										/>
-										{ tweet.media && (
-											<div className="twitter-thread-preview__media">
-												{ tweet.media.map( ( mediaItem ) => (
-													<img alt="" src={ mediaItem.url } />
-												) ) }
-											</div>
-										) }
+										<div className={ mediaClasses }>
+											{ tweet.media.slice( 0, 4 ).map( ( mediaItem ) => (
+												<img alt="" src={ mediaItem.url } />
+											) ) }
+										</div>
 									</div>
 									<div className="twitter-thread-preview__footer">
 										<span className="twitter-thread-preview__icon-replies">
