@@ -43,7 +43,6 @@ import { getPlan } from 'lib/plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
-import useShowStripeLoadingErrors from './use-show-stripe-loading-errors';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
 	applePayProcessor,
@@ -168,8 +167,6 @@ export default function CompositeCheckout( {
 			} )
 		);
 	};
-
-	useShowStripeLoadingErrors( showErrorMessage, stripeLoadingError );
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
@@ -347,7 +344,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ loadingError ].filter( Boolean ), showErrorMessage );
+	useDisplayErrors( [ loadingError, stripeLoadingError ].filter( Boolean ), showErrorMessage );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
