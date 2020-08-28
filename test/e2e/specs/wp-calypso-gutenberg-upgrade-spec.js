@@ -79,13 +79,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		}
 	}
 
-	async function assertBlockIsDisplayed( blockClass ) {
-		assert.strictEqual(
-			await gEditorComponent.blockDisplayedInEditor( blockClass.blockName ),
-			true,
-			`The block "${ blockClass.name }" was not found in the editor`
-		);
-	}
+	async function assertBlockIsDisplayed( blockClass ) {}
 
 	async function assertNoErrorInEditor() {
 		assert.strictEqual(
@@ -101,22 +95,6 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			false,
 			'There is at least one invalid block on the editor page!'
 		);
-	}
-
-	function assertBlocksAreDisplayed() {
-		[
-			BlogPostsBlockComponent,
-			ContactFormBlockComponent,
-			ContactInfoBlockComponent,
-			DynamicSeparatorBlockComponent,
-			GalleryMasonryBlockComponent,
-			LayoutGridBlockComponent,
-			RatingStarBlockComponent,
-			SlideshowBlockComponent,
-			SubscriptionsBlockComponent,
-			TiledGalleryBlockComponent,
-			YoutubeBlockComponent,
-		].forEach( assertBlockIsDisplayed );
 	}
 
 	async function takeBlockScreenshots( siteName ) {
@@ -159,9 +137,29 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		);
 	}
 
-	function verifyBlocks( siteName ) {
+	function verifyBlocksInEditor( siteName ) {
 		step( 'Blocks are displayed in the editor', async function () {
-			await assertBlocksAreDisplayed();
+			await Promise.all(
+				[
+					BlogPostsBlockComponent,
+					ContactFormBlockComponent,
+					ContactInfoBlockComponent,
+					DynamicSeparatorBlockComponent,
+					GalleryMasonryBlockComponent,
+					LayoutGridBlockComponent,
+					RatingStarBlockComponent,
+					SlideshowBlockComponent,
+					SubscriptionsBlockComponent,
+					TiledGalleryBlockComponent,
+					YoutubeBlockComponent,
+				].map( async ( blockClass ) =>
+					assert.strictEqual(
+						await gEditorComponent.blockDisplayedInEditor( blockClass.blockName ),
+						true,
+						`The block "${ blockClass.blockName }" was not found in the editor`
+					)
+				)
+			);
 		} );
 
 		step( 'Blocks do not error in the editor', async function () {
@@ -244,7 +242,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				await gEditorComponent.insertBlock( ContactInfoBlockComponent );
 			} );
 
-			verifyBlocks( siteName );
+			verifyBlocksInEditor( siteName );
 
 			step(
 				'Switch to the code editor and copy the code markup for all the blocks',
@@ -270,7 +268,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					await gEditorComponent.switchToBlockEditor();
 				} );
 
-				verifyBlocks( edgeSiteName );
+				verifyBlocksInEditor( edgeSiteName );
 
 				step( 'Take screenshots of the published page', async function () {
 					await takePublishedScreenshots( siteName );
