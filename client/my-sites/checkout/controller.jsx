@@ -72,7 +72,9 @@ export function checkout( context, next ) {
 		'no-user' === context.query.cart;
 
 	const searchParams = new URLSearchParams( window.location.search );
-	if ( searchParams.get( 'signup' ) === '1' ) {
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+
+	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
 		window.addEventListener( 'beforeunload', function () {
 			const signupDestinationCookieExists = retrieveSignupDestination();
 
