@@ -254,7 +254,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		const learnMoreLink = isFreePlan
 			? {
-					url: 'https://en.support.wordpress.com/donations/',
+					url: 'https://wordpress.com/support/donations/',
 					onClick: () => trackLearnLink( 'donations' ),
 			  }
 			: null;
