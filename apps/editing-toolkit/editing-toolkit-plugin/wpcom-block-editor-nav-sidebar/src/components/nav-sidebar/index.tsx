@@ -165,6 +165,7 @@ function WpcomBlockEditorNavSidebar() {
 					</div>
 				</div>
 				<Button
+					aria-label={ __( 'View all pages in Dashboard', 'full-site-editing' ) }
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
 					icon={ chevronLeft }
