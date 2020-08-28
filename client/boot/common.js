@@ -127,7 +127,7 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
-		if ( config.isEnabled( 'jetpack/pricing-page' ) ) {
+		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
 			loggedOutRoutes.push( '/pricing' );
 		}
 
