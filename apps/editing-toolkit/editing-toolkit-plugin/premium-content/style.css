@@ -16,12 +16,6 @@
 	margin-bottom: 8px;
 }
 
-/* Hide Stripe nudge from Jetpack payments block */
-/* https://github.com/Automattic/wp-calypso/issues/44332 */
-.wp-block-premium-content-container .jetpack-block-nudge {
-	display: none;
-}
-
 /* Legacy Subscribe/Login buttons */
 
 .wp-block-premium-content-logged-out-view__buttons {
