@@ -50,6 +50,7 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	tefBank?: string;
 	pan?: string;
 	gstin?: string;
+	nik?: string;
 };
 
 export type WPCOMTransactionEndpointCart = {
@@ -181,6 +182,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	tefBank,
 	pan,
 	gstin,
+	nik,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -208,6 +210,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	tefBank?: string;
 	pan?: string;
 	gstin?: string;
+	nik?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
@@ -244,6 +247,7 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			tefBank,
 			pan,
 			gstin,
+			nik,
 		},
 	};
 }
