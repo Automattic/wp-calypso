@@ -22,7 +22,7 @@ import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
 import { domainManagementRoot, domainManagementList } from 'my-sites/domains/paths';
 import SectionHeader from 'components/section-header';
-import { Button, Card, CompactCard } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
@@ -563,9 +563,13 @@ export class List extends React.Component {
 		) );
 
 		const manageAllDomainsLink = hasSingleSite ? null : (
-			<Card className="list__view-all" key="manage-all-domains" href={ domainManagementRoot() }>
+			<CompactCard
+				className="list__no-chevron"
+				key="manage-all-domains"
+				href={ domainManagementRoot() }
+			>
 				{ translate( 'Manage all your domains' ) }
-			</Card>
+			</CompactCard>
 		);
 
 		return [
