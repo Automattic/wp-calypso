@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 /**
  * Internal dependencies
@@ -9,9 +9,16 @@ import React, { useEffect } from 'react';
 import notices from 'notices';
 
 export default function useDisplayErrors( errorMessages ) {
+	const previousMessages = useRef( [] );
 	useEffect( () => {
-		notices.error(
-			errorMessages.errors.map( ( errorMessage ) => <p key={ errorMessage }>{ errorMessage }</p> )
+		const messagesToDisplay = errorMessages.filter(
+			( message ) => ! previousMessages.current.includes( message )
 		);
+		if ( messagesToDisplay.length > 0 ) {
+			notices.error(
+				messagesToDisplay.errors.map( ( message ) => <p key={ message }>{ message }</p> )
+			);
+		}
+		previousMessages.current = messagesToDisplay;
 	}, [ errorMessages ] );
 }
