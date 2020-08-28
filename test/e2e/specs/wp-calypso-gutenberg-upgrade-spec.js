@@ -88,8 +88,19 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 	}
 
 	async function assertNoErrorInEditor() {
-		const errorShown = await gEditorComponent.errorDisplayed();
-		assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
+		assert.strictEqual(
+			await gEditorComponent.errorDisplayed(),
+			false,
+			'There is an error shown on the editor page!'
+		);
+	}
+
+	async function assertNoInvalidBlocksInEditor() {
+		assert.strictEqual(
+			await gEditorComponent.hasInvalidBlocks(),
+			false,
+			'There is at least one invalid block on the editor page!'
+		);
 	}
 
 	function assertBlocksAreDisplayed() {
@@ -146,6 +157,24 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		await takeScreenshot( `${ siteName }-published`, totalHeight, windowHeight, ( i ) =>
 			driver.executeScript( `window.scrollTo(0, window.outerHeight*${ i })` )
 		);
+	}
+
+	function verifyBlocks( siteName ) {
+		step( 'Blocks are displayed in the editor', async function () {
+			await assertBlocksAreDisplayed();
+		} );
+
+		step( 'Blocks do not error in the editor', async function () {
+			await assertNoErrorInEditor();
+		} );
+
+		step( 'Blocks do not invalidate', async function () {
+			await assertNoInvalidBlocksInEditor();
+		} );
+
+		step( 'Take screenshots of all the blocks in the editor', async function () {
+			await takeBlockScreenshots( siteName );
+		} );
 	}
 
 	[
@@ -215,17 +244,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				await gEditorComponent.insertBlock( ContactInfoBlockComponent );
 			} );
 
-			step( 'Blocks are displayed in the editor', async function () {
-				await assertBlocksAreDisplayed();
-			} );
-
-			step( 'Blocks do not error in the editor', async function () {
-				await assertNoErrorInEditor();
-			} );
-
-			step( 'Take screenshots of all the blocks in the editor', async function () {
-				await takeBlockScreenshots( siteName );
-			} );
+			verifyBlocks( siteName );
 
 			step(
 				'Switch to the code editor and copy the code markup for all the blocks',
@@ -234,14 +253,14 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				}
 			);
 
-			step( 'Take screenshots of the whole published page', async function () {
+			step( 'Take screenshots of the published page', async function () {
 				await takePublishedScreenshots( siteName );
 			} );
 
 			describe( 'Test the same blocks in the corresponding edge site', function () {
 				const edgeSiteName = siteName + 'edge';
 
-				step( 'Switches to edge site with next GB', async function () {
+				step( 'Switches to edge site', async function () {
 					// Re-use the same session created earlier but change the site
 					await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
 
@@ -251,20 +270,10 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					await gEditorComponent.switchToBlockEditor();
 				} );
 
-				step( 'Blocks are displayed in the editor', async function () {
-					await assertBlocksAreDisplayed();
-				} );
+				verifyBlocks( edgeSiteName );
 
-				step( 'Blocks do not error in the editor', async function () {
-					await assertNoErrorInEditor();
-				} );
-
-				step( 'Take screenshots of all the blocks in the editor', async function () {
-					await takeBlockScreenshots( edgeSiteName );
-				} );
-
-				step( 'Take screenshots of the whole published page', async function () {
-					await takePublishedScreenshots( edgeSiteName );
+				step( 'Take screenshots of the published page', async function () {
+					await takePublishedScreenshots( siteName );
 				} );
 			} );
 		} );
