@@ -18,8 +18,9 @@ import Main from 'components/main';
 import { preventWidows } from 'lib/formatting';
 import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { isProductsListFetching, getProductsList } from 'state/products-list/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import QueryProducts from './query-products';
+import useIsLoading from './use-is-loading';
 import useItemPrice from './use-item-price';
 import {
 	durationToText,
@@ -175,10 +176,9 @@ const UpsellComponent = ( {
 
 const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellPageProps ) => {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isLoading = useIsLoading( siteId );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
-	const isLoading = ! currencyCode || ( isFetchingProducts && ! products );
 
 	const mainProduct = slugToSelectorProduct( productSlug );
 	// TODO: Get upsells via API.
@@ -223,6 +223,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 
 	return (
 		<>
+			<QueryProducts />
 			{ header }
 			<UpsellComponent
 				currencyCode={ currencyCode as string }
