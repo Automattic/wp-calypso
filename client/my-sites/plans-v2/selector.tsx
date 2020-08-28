@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import page from 'page';
 
@@ -46,7 +46,7 @@ const SelectorPage = ( {
 	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
-	useMemo( () => {
+	useEffect( () => {
 		setDuration( defaultDuration );
 	}, [ defaultDuration ] );
 
