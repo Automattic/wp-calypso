@@ -11,6 +11,10 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export default class EmbedsBlockComponent extends GutenbergBlockComponent {
+	constructor( driver, blockID ) {
+		super( driver, blockID );
+	}
+
 	async embedUrl( url ) {
 		await driverHelper.setWhenSettable(
 			this.driver,

@@ -9,15 +9,13 @@ import { By } from 'selenium-webdriver';
 import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-class ContactFormBlockComponent extends GutenbergBlockComponent {
-	static blockTitle = 'Form';
-	static blockName = 'jetpack/contact-form';
+export class ContactFormBlockComponent extends GutenbergBlockComponent {
+	constructor( driver, blockID ) {
+		super( driver, blockID );
+	}
 
 	async _postInit() {
-		return await driverHelper.clickWhenClickable(
-			this.driver,
-			By.css( '.components-button.block-editor-block-variation-picker__variation' )
-		);
+		return await driverHelper.clickWhenClickable( this.driver, By.css( '.components-button.block-editor-block-variation-picker__variation' ) );
 	}
 
 	async openEditSettings() {
@@ -52,5 +50,3 @@ class ContactFormBlockComponent extends GutenbergBlockComponent {
 		);
 	}
 }
-
-export { ContactFormBlockComponent };
