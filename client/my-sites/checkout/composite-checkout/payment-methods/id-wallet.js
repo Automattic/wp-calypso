@@ -358,7 +358,8 @@ function IdWalletLabel() {
 }
 
 const IdWalletLogoUI = styled( IdWalletLogo )`
-	width: 76px;
+	width: 46px;
+	margin-right: -5px;
 `;
 
 function IdWalletLogo( { className } ) {
