@@ -10,7 +10,7 @@ import { kebabCase } from 'lodash';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
-import { ContactFormBlockComponent, GutenbergBlockComponent } from './blocks';
+import { ContactFormBlockComponent } from './blocks/contact-form-block-component';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 
@@ -145,70 +145,14 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const contactFormBlock = await ContactFormBlockComponent.Expect( this.driver, blockID );
 		await contactFormBlock.openEditSettings();
 		await contactFormBlock.insertEmail( email );
-		return contactFormBlock.insertSubject( subject );
+		return await contactFormBlock.insertSubject( subject );
 	}
 
-	toggleMoreToolsAndOptions() {
-		return driverHelper.clickWhenClickable(
+	async contactFormDisplayedInEditor() {
+		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.xpath( "//button[@aria-label='More tools & options']" )
+			By.css( '[data-type="jetpack/contact-form"]' )
 		);
-	}
-
-	async switchToCodeView() {
-		await this.toggleMoreToolsAndOptions();
-
-		// Now click to switch to the code editor
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[2]" )
-		);
-
-		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
-
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
-
-		// close the menu
-		await this.toggleMoreToolsAndOptions();
-
-		return this.driver.findElement( textAreaSelector );
-	}
-
-	async switchToBlockEditor() {
-		await this.toggleMoreToolsAndOptions();
-
-		await driverHelper.clickWhenClickable(
-			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[1]" )
-		);
-
-		// close the menu
-		await this.toggleMoreToolsAndOptions();
-	}
-
-	async copyBlocksCode() {
-		const codeEditor = await this.switchToCodeView();
-		return this.driver.executeScript(
-			'arguments[0].select(); document.execCommand("copy");',
-			codeEditor
-		);
-	}
-
-	async pasteBlocksCode() {
-		const codeEditor = await this.switchToCodeView();
-		// Might not work in a Mac?
-		return codeEditor.sendKeys( Key.CONTROL + 'v' );
-	}
-
-	blockDisplayedInEditor( dataTypeSelectorVal ) {
-		return driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			By.css( `[data-type="${ dataTypeSelectorVal }"]` )
-		);
-	}
-
-	contactFormDisplayedInEditor() {
-		return this.blockDisplayedInEditor( 'jetpack/contact-form' );
 	}
 
 	async errorDisplayed() {
@@ -269,13 +213,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
-	async addBlock( title ) {
-		title = title.charAt( 0 ).toUpperCase() + title.slice( 1 ); // Capitalize block name
-		let blockClass = kebabCase( title.toLowerCase() );
+	async addBlock( name ) {
+		name = name.charAt( 0 ).toUpperCase() + name.slice( 1 ); // Capitalize block name
+		let blockClass = kebabCase( name.toLowerCase() );
 		let hasChildBlocks = false;
 		let ariaLabel;
 		let prefix = '';
-		switch ( title ) {
+		switch ( name ) {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
@@ -313,37 +257,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Heading':
 				ariaLabel = 'Write heading…';
 				break;
-			case 'Layout Grid':
-				prefix = 'jetpack-';
-				break;
-			case 'Blog Posts':
-				prefix = 'a8c-';
-				break;
-			case 'Subscription Form':
-				prefix = 'jetpack-';
-				blockClass = 'subscriptions';
-				break;
-			case 'Tiled Gallery':
-				prefix = 'jetpack-';
-				break;
-			case 'Contact Info':
-				prefix = 'jetpack-';
-				hasChildBlocks = true;
-				break;
-			case 'Slideshow':
-				prefix = 'jetpack-';
-				break;
-			case 'Star Rating':
-				prefix = 'jetpack-';
-				blockClass = 'rating-star';
-				break;
-			case 'Masonry':
-				prefix = 'coblocks-';
-				blockClass = 'gallery-masonry';
-				break;
 		}
 
-		const selectorAriaLabel = ariaLabel || `Block: ${ title }`;
+		const selectorAriaLabel = ariaLabel || `Block: ${ name }`;
 
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
@@ -354,7 +270,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			}[aria-label*='${ selectorAriaLabel }']`
 		);
 
-		await this.openBlockInserterAndSearch( title );
+		await this.openBlockInserterAndSearch( name );
 
 		if ( await driverHelper.elementIsNotPresent( this.driver, inserterBlockItemSelector ) ) {
 			await driverHelper.waitTillPresentAndDisplayed( this.driver, inserterBlockItemSelector );
@@ -366,21 +282,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
 		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
-	}
-
-	/**
-	 * An alternative way of adding blocks to the editor by accepting the actual constructor
-	 * class for the block, adding it to the editor, and returning an instance of this class.
-	 *
-	 * This allows for adding new blocks without the need to create new factory method in this class.
-	 * You can just import the class of the block(s) you want to add and pass it to this function, which
-	 * also means we don't need to couple the block class with this one.
-	 *
-	 * @param { GutenbergBlockComponent } blockClass A block class that responds to title and name
-	 */
-	async insertBlock( blockClass ) {
-		const blockID = await this.addBlock( blockClass.blockTitle );
-		return blockClass.Expect( this.driver, blockID );
 	}
 
 	async titleShown() {

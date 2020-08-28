@@ -79,7 +79,10 @@ export function writeScreenshot( data, filenameCallback, metadata ) {
 		screenShotBase = process.env.TEMP_ASSET_PATH;
 	}
 
-	const directoryName = screenShotsDir();
+	let directoryName = 'screenshots';
+	if ( process.env.SCREENSHOTDIR ) {
+		directoryName = process.env.SCREENSHOTDIR;
+	}
 
 	const screenShotDir = path.resolve( screenShotBase, directoryName );
 	if ( ! fs.existsSync( screenShotDir ) ) {
@@ -116,8 +119,4 @@ export function writeTextLogFile( textContent, prefix, pathOverride ) {
 	fs.writeFileSync( logPath, textContent );
 
 	return logPath;
-}
-
-export function screenShotsDir() {
-	return process.env.SCREENSHOTDIR || 'screenshots';
 }
