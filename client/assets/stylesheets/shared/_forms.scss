@@ -14,7 +14,6 @@ input[type='password'],
 input[type='checkbox'],
 input[type='radio'],
 input[type='tel'],
-input[type='url'],
 textarea {
 	@extend %form-field;
 }
@@ -29,7 +28,6 @@ input[type='email'],
 input[type='number'],
 input[type='password'],
 input[type='tel'],
-input[type='url'],
 textarea,
 select,
 label {
@@ -37,8 +35,7 @@ label {
 }
 
 input[type='password'],
-input[type='email'],
-input[type='url'] {
+input[type='email'] {
 	/*!rtl:ignore*/
 	direction: ltr;
 }
