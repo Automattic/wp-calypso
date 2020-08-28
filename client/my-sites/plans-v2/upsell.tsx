@@ -18,7 +18,7 @@ import Main from 'components/main';
 import { preventWidows } from 'lib/formatting';
 import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { isProductsListFetching } from 'state/products-list/selectors';
+import { isProductsListFetching, getProductsList } from 'state/products-list/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import useItemPrice from './use-item-price';
 import {
@@ -49,6 +49,7 @@ interface Props {
 	onBackButtonClick: () => void;
 	onPurchaseSingleProduct: () => void;
 	onPurchaseBothProducts: () => void;
+	isLoading: boolean;
 }
 
 const UpsellComponent = ( {
@@ -58,6 +59,7 @@ const UpsellComponent = ( {
 	onPurchaseBothProducts,
 	mainProduct,
 	upsellProduct,
+	isLoading,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -82,83 +84,91 @@ const UpsellComponent = ( {
 	return (
 		<Main className="upsell">
 			<HeaderCake onClick={ onBackButtonClick }>{ translate( 'Product Options' ) }</HeaderCake>
-			<div className="upsell__header">
-				<FormattedHeader
-					headerText={ preventWidows(
-						translate( 'Would you like to add {{name/}}?', {
+			{ isLoading ? (
+				<div className="upsell__header-placeholder" />
+			) : (
+				<div className="upsell__header">
+					<FormattedHeader
+						headerText={ preventWidows(
+							translate( 'Would you like to add {{name/}}?', {
+								components: {
+									name: <>{ upsellProductName }</>,
+								},
+								comment:
+									'{{name/}} is the name of a product such as Jetpack Scan or Jetpack Backup',
+							} )
+						) }
+						brandFont
+					/>
+					<div className="upsell__icons">
+						<ProductIcon className="upsell__product-icon" slug={ mainProduct.iconSlug } />
+						<Gridicon className="upsell__plus-icon" icon="plus-small" />
+						<ProductIcon className="upsell__product-icon" slug={ upsellProduct.iconSlug } />
+					</div>
+					{ ( isScanProduct || isBackupProduct ) && (
+						<p className="upsell__subheader">
+							{ preventWidows(
+								isScanProduct
+									? translate(
+											'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
+											{
+												components: {
+													mainName: <>{ mainProductName }</>,
+													upsellName: <>{ upsellProductName }</>,
+												},
+												comment:
+													"{{mainName/}} refers to the product the customer is purchasing (Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
+											}
+									  )
+									: translate(
+											'Combine {{mainName/}} and {{upsellName/}} to be able to save every change and restore your site in one click.',
+											{
+												components: {
+													mainName: <>{ mainProductName }</>,
+													upsellName: <>{ upsellProductName }</>,
+												},
+												comment:
+													"{{mainName/}} refers to the product the customer is purchasing (Scan in that case), {{upsellName/}} to the product we're upselling (Backup in that case)",
+											}
+									  )
+							) }
+						</p>
+					) }
+				</div>
+			) }
+			{ isLoading ? (
+				<div className="upsell__product-card-placeholder" />
+			) : (
+				<div className="upsell__product-card">
+					<JetpackProductCard
+						iconSlug={ upsellProduct.iconSlug }
+						productName={ upsellProduct.displayName }
+						subheadline={ upsellProduct.tagline }
+						description={ upsellProduct.description }
+						currencyCode={ currencyCode }
+						billingTimeFrame={ durationToText( upsellProduct.term ) }
+						buttonLabel={ translate( 'Yes, add {{name/}}', {
 							components: {
 								name: <>{ upsellProductName }</>,
 							},
-							comment: '{{name/}} is the name of a product such as Jetpack Scan or Jetpack Backup',
-						} )
-					) }
-					brandFont
-				/>
-				<div className="upsell__icons">
-					<ProductIcon className="upsell__product-icon" slug={ mainProduct.iconSlug } />
-					<Gridicon className="upsell__plus-icon" icon="plus-small" />
-					<ProductIcon className="upsell__product-icon" slug={ upsellProduct.iconSlug } />
+							comment:
+								'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
+						} ) }
+						features={ upsellProduct.features }
+						discountedPrice={ discountedPrice }
+						originalPrice={ originalPrice }
+						onButtonClick={ onPurchaseBothProducts }
+						cancelLabel={ translate( 'No, I do not want {{name/}}', {
+							components: {
+								name: <>{ upsellProductName }</>,
+							},
+							comment:
+								'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
+						} ) }
+						onCancelClick={ onPurchaseSingleProduct }
+					/>
 				</div>
-				{ ( isScanProduct || isBackupProduct ) && (
-					<p className="upsell__subheader">
-						{ preventWidows(
-							isScanProduct
-								? translate(
-										'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
-										{
-											components: {
-												mainName: <>{ mainProductName }</>,
-												upsellName: <>{ upsellProductName }</>,
-											},
-											comment:
-												"{{mainName/}} refers to the product the customer is purchasing (Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
-										}
-								  )
-								: translate(
-										'Combine {{mainName/}} and {{upsellName/}} to be able to save every change and restore your site in one click.',
-										{
-											components: {
-												mainName: <>{ mainProductName }</>,
-												upsellName: <>{ upsellProductName }</>,
-											},
-											comment:
-												"{{mainName/}} refers to the product the customer is purchasing (Scan in that case), {{upsellName/}} to the product we're upselling (Backup in that case)",
-										}
-								  )
-						) }
-					</p>
-				) }
-			</div>
-
-			<div className="upsell__product-card">
-				<JetpackProductCard
-					iconSlug={ upsellProduct.iconSlug }
-					productName={ upsellProduct.displayName }
-					subheadline={ upsellProduct.tagline }
-					description={ upsellProduct.description }
-					currencyCode={ currencyCode }
-					billingTimeFrame={ durationToText( upsellProduct.term ) }
-					buttonLabel={ translate( 'Yes, add {{name/}}', {
-						components: {
-							name: <>{ upsellProductName }</>,
-						},
-						comment:
-							'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
-					} ) }
-					features={ upsellProduct.features }
-					discountedPrice={ discountedPrice }
-					originalPrice={ originalPrice }
-					onButtonClick={ onPurchaseBothProducts }
-					cancelLabel={ translate( 'No, I do not want {{name/}}', {
-						components: {
-							name: <>{ upsellProductName }</>,
-						},
-						comment:
-							'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
-					} ) }
-					onCancelClick={ onPurchaseSingleProduct }
-				/>
-			</div>
+			) }
 		</Main>
 	);
 };
@@ -167,6 +177,8 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
+	const products = useSelector( ( state ) => getProductsList( state ) );
+	const isLoading = ! currencyCode || ( isFetchingProducts && ! products );
 
 	const mainProduct = slugToSelectorProduct( productSlug );
 	// TODO: Get upsells via API.
@@ -199,10 +211,6 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 		return null;
 	}
 
-	if ( isFetchingProducts || ! currencyCode ) {
-		return <h1>Loading...</h1>;
-	}
-
 	// Construct a URL to send users to when they click the back button. Since at this moment
 	// there is only one Jetpack Scan option, the back button takes users back to the Selector
 	// page.
@@ -217,12 +225,13 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 		<>
 			{ header }
 			<UpsellComponent
-				currencyCode={ currencyCode }
+				currencyCode={ currencyCode as string }
 				mainProduct={ mainProduct }
 				upsellProduct={ upsellProduct }
 				onPurchaseSingleProduct={ onPurchaseSingleProduct }
 				onPurchaseBothProducts={ onPurchaseBothProducts }
 				onBackButtonClick={ onBackButtonClick }
+				isLoading={ isLoading }
 			/>
 			{ footer }
 		</>
