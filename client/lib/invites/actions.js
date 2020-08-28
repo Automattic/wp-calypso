@@ -67,7 +67,10 @@ export function createAccount( userData, invite, callback ) {
 							error: error.error,
 						} );
 					} else {
-						recordTracksEvent( 'calypso_invite_account_created' );
+						recordTracksEvent( 'calypso_invite_account_created', {
+							is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+							inviter_blog_id: get( invite, 'site.ID', false ),
+						} );
 					}
 					callback( error, bearerToken );
 				}
