@@ -344,7 +344,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ loadingError, stripeLoadingError ].filter( Boolean ), showErrorMessage );
+	useDisplayErrors( [ loadingError, stripeLoadingError ].filter( Boolean ) );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length

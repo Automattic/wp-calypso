@@ -3,8 +3,15 @@
  */
 import { useEffect } from 'react';
 
-export default function useDisplayErrors( errors, displayError ) {
+/**
+ * Internal dependencies
+ */
+import notices from 'notices';
+
+export default function useDisplayErrors( errors ) {
 	useEffect( () => {
-		errors.map( ( error ) => displayError( error.message ) );
-	}, [ errors, displayError ] );
+		errors.map( ( error ) => {
+			notices.error( error.message );
+		} );
+	}, [ errors ] );
 }
