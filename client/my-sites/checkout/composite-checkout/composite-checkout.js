@@ -191,7 +191,7 @@ export default function CompositeCheckout( {
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
-		loadingError,
+		loadingError: cartLoadingError,
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
@@ -219,8 +219,6 @@ export default function CompositeCheckout( {
 		couponItem?.wpcom_meta?.couponCode ?? '',
 		showAddCouponSuccessMessage
 	);
-
-	const errors = responseCart.messages?.errors ?? [];
 
 	const getThankYouUrl = useGetThankYouUrl( {
 		siteSlug,
@@ -344,7 +342,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ loadingError, stripeLoadingError ].filter( Boolean ) );
+	useDisplayErrors( [ cartLoadingError, stripeLoadingError?.message ].filter( Boolean ) );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -360,11 +358,12 @@ export default function CompositeCheckout( {
 		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
 	}
 
+	const errors = responseCart.messages?.errors ?? [];
 	useRedirectIfCartEmpty(
 		items,
 		cartEmptyRedirectUrl,
 		isLoadingCart,
-		[ ...errors, loadingError ].filter( Boolean ),
+		[ ...errors, cartLoadingError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
 
