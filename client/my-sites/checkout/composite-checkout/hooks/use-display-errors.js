@@ -8,10 +8,10 @@ import { useEffect } from 'react';
  */
 import notices from 'notices';
 
-export default function useDisplayErrors( errors ) {
+export default function useDisplayErrors( errorMessages ) {
 	useEffect( () => {
-		errors.map( ( error ) => {
-			notices.error( error.message );
+		errorMessages.map( ( errorMessage ) => {
+			notices.error( errorMessage );
 		} );
-	}, [ errors ] );
+	}, [ errorMessages ] );
 }
