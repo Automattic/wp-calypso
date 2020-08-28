@@ -49,9 +49,7 @@ function WpcomBlockEditorNavSidebar() {
 	} );
 
 	const { current: currentPost, drafts: draftPosts, recent: recentPosts } = useNavItems();
-	console.log( 'posts', currentPost, draftPosts, recentPosts );
 	const statusLabels = usePostStatusLabels();
-
 	const prevIsOpen = useRef( isOpen );
 
 	// Using layout effect to prevent a brief moment in time where both `isOpen` and `isClosing`
@@ -66,9 +64,10 @@ function WpcomBlockEditorNavSidebar() {
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
 	const [ isScrollbarPresent, setIsScrollbarPresent ] = useState( false );
-
 	const observer = useRef< IntersectionObserver >();
+	/*
 	const itemRefs = useRef< ( HTMLElement | null )[] >( [] );
+*/
 
 	const containerMount = ( el: HTMLDivElement | null ) => {
 		if ( el ) {
@@ -96,7 +95,7 @@ function WpcomBlockEditorNavSidebar() {
 		);
 	};
 
-/*	const itemMount = ( el: HTMLElement | null, itemIndex: number ) => {
+	/*	const itemMount = ( el: HTMLElement | null, itemIndex: number ) => {
 		itemRefs.current[ itemIndex ] = el;
 	};*/
 
@@ -107,14 +106,14 @@ function WpcomBlockEditorNavSidebar() {
 
 		observer.current.disconnect();
 
-		const nonSparse = itemRefs.current.filter( Boolean ) as HTMLElement[];
+		/*		const nonSparse = itemRefs.current.filter( Boolean ) as HTMLElement[];
 
 		// We only need to observe the first and last item in the list, might be better for performance
 		const firstItem = nonSparse[ 0 ];
 		const lastItem = nonSparse[ nonSparse.length - 1 ];
 		if ( firstItem ) observer.current.observe( firstItem );
-		if ( lastItem ) observer.current.observe( lastItem );
-	}, [ currentPost, draftPosts, recentPosts, itemRefs, observer ] );
+		if ( lastItem ) observer.current.observe( lastItem );*/
+	}, [ currentPost, draftPosts, recentPosts, observer ] );
 
 	if ( ! postType ) {
 		// Still loading
