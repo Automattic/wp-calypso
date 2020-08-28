@@ -30,7 +30,7 @@ import {
 	useMessages,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { StripeHookProvider, useStripe } from '../src/lib/stripe';
+import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
