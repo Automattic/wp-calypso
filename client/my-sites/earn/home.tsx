@@ -255,7 +255,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://en.support.wordpress.com/donations/',
-					onClick: () => trackLearnLink( 'recurring-payments' ),
+					onClick: () => trackLearnLink( 'donations' ),
 			  }
 			: null;
 		return {
