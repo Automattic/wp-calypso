@@ -8,7 +8,10 @@ import page from 'page';
  */
 import { makeLayout, render as clientRender } from 'controller';
 import { pricing } from 'landing/jetpack-cloud/sections/pricing/controller';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 export default function () {
-	page( '/pricing', pricing, makeLayout, clientRender );
+	if ( isJetpackCloud() ) {
+		page( '/pricing', pricing, makeLayout, clientRender );
+	}
 }
