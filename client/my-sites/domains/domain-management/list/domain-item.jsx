@@ -339,20 +339,19 @@ class DomainItem extends PureComponent {
 	}
 
 	renderSiteMeta() {
+		return <div className="domain-item__meta">{ this.getSiteMeta() }</div>;
+	}
+
+	getSiteMeta() {
 		const { domainDetails, isManagingAllSites, site, translate } = this.props;
 
 		if ( isManagingAllSites ) {
-			return (
-				<div className="domain-item__meta">
-					{ translate( 'Site: %(siteName)s', {
-						args: {
-							siteName: this.getSiteName( site ),
-						},
-						comment:
-							'%(siteName)s is the site name and URL or just the URL used to identify a site',
-					} ) }
-				</div>
-			);
+			return translate( 'Site: %(siteName)s', {
+				args: {
+					siteName: this.getSiteName( site ),
+				},
+				comment: '%(siteName)s is the site name and URL or just the URL used to identify a site',
+			} );
 		}
 
 		if ( domainDetails.isWPCOMDomain ) {
@@ -371,7 +370,7 @@ class DomainItem extends PureComponent {
 			);
 		}
 
-		return null;
+		return <span>Domain type</span>;
 	}
 
 	busyMessage() {
