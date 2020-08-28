@@ -22,7 +22,12 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
 import { handleRenewNowClick } from 'lib/purchases';
-import { resolveDomainStatus, isDomainInGracePeriod, isDomainUpdateable } from 'lib/domains';
+import {
+	resolveDomainStatus,
+	isDomainInGracePeriod,
+	isDomainUpdateable,
+	getDomainTypeText,
+} from 'lib/domains';
 import InfoPopover from 'components/info-popover';
 import { emailManagement } from 'my-sites/email/paths';
 import {
@@ -370,7 +375,7 @@ class DomainItem extends PureComponent {
 			);
 		}
 
-		return <span>Domain type</span>;
+		return <React.Fragment>{ getDomainTypeText( domainDetails ) }</React.Fragment>;
 	}
 
 	busyMessage() {
