@@ -36,6 +36,7 @@
 		"activity": true,
 		"backup": true,
 		"jetpack-cloud-auth": true,
+		"jetpack-cloud-pricing": false,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud": true,
 		"scan": true
