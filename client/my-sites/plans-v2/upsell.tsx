@@ -44,6 +44,7 @@ import './style.scss';
 import type { Duration, SelectorProduct, UpsellPageProps } from './types';
 
 interface Props {
+	siteId: number | null;
 	currencyCode: string;
 	mainProduct: SelectorProduct;
 	upsellProduct: SelectorProduct;
@@ -54,6 +55,7 @@ interface Props {
 }
 
 const UpsellComponent = ( {
+	siteId,
 	currencyCode,
 	onBackButtonClick,
 	onPurchaseSingleProduct,
@@ -66,6 +68,7 @@ const UpsellComponent = ( {
 
 	// Upsell prices should come from the API with the upsell products
 	const { originalPrice, discountedPrice } = useItemPrice(
+		siteId,
 		upsellProduct,
 		upsellProduct.monthlyProductSlug || ''
 	);
@@ -226,6 +229,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 			<QueryProducts />
 			{ header }
 			<UpsellComponent
+				siteId={ siteId }
 				currencyCode={ currencyCode as string }
 				mainProduct={ mainProduct }
 				upsellProduct={ upsellProduct }

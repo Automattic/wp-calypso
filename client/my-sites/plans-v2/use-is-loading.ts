@@ -18,7 +18,7 @@ type RawData = {
 	products: object[] | null;
 };
 
-const useProductListData = () => {
+const useProductListData = (): RawData => {
 	const isFetching = useSelector( ( state ) => !! isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
 
@@ -28,7 +28,7 @@ const useProductListData = () => {
 	};
 };
 
-const useSiteAvailableProductData = ( siteId: number | null ) => {
+const useSiteAvailableProductData = ( siteId: number | null ): RawData => {
 	const isFetching =
 		useSelector( ( state ) => siteId && !! isRequestingSiteProducts( state, siteId ) ) || null;
 	const products =
@@ -48,7 +48,7 @@ const useIsLoading = ( siteId: number | null ): boolean => {
 	const isFetching = siteId ? siteData.isFetching : listData.isFetching;
 	const products = siteId ? siteData.products : listData.products;
 
-	return ! currencyCode || ( isFetching && ! products );
+	return !! ( ! currencyCode || ( isFetching && ! products ) );
 };
 
 export default useIsLoading;

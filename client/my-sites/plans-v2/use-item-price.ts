@@ -20,7 +20,7 @@ import {
 import type { SelectorProduct } from './types';
 
 interface ItemPrices {
-	isFetching: boolean;
+	isFetching: boolean | null;
 	originalPrice: number;
 	discountedPrice?: number;
 }
@@ -31,7 +31,10 @@ interface ItemRawPrices {
 	monthlyItemCost: number | null;
 }
 
-const useProductListItemPrices = ( item: SelectorProduct | null, monthlyItemSlug = '' ) => {
+const useProductListItemPrices = (
+	item: SelectorProduct | null,
+	monthlyItemSlug = ''
+): ItemRawPrices => {
 	const isFetching = useSelector( ( state ) => !! isProductsListFetching( state ) );
 	const itemCost =
 		useSelector(
@@ -51,7 +54,7 @@ const useSiteAvailableProductPrices = (
 	siteId: number | null,
 	item: SelectorProduct | null,
 	monthlyItemSlug = ''
-) => {
+): ItemRawPrices => {
 	const isFetching =
 		useSelector( ( state ) => siteId && !! isRequestingSiteProducts( state, siteId ) ) || null;
 	const itemCost =
