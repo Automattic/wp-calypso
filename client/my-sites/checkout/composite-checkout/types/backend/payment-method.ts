@@ -183,7 +183,7 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 			return 'netbanking';
 		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
-			return 'id-wallet';
+			return 'id_wallet';
 		case 'WPCOM_Billing_Web_Payment':
 			return 'apple-pay';
 	}
@@ -203,7 +203,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return { name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef' };
 		case 'netbanking':
 			return { name: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking' };
-		case 'id-wallet':
+		case 'id_wallet':
 			return { name: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet' };
 		case 'paypal-direct':
 			return { name: 'WPCOM_Billing_PayPal_Direct' };
@@ -236,5 +236,4 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'free-purchase':
 			return { name: 'WPCOM_Billing_WPCOM' };
 	}
-	return null;
 }

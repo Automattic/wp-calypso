@@ -477,8 +477,8 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'wechat', transactionData, dataForRedirectProcessor ),
 			netbanking: ( transactionData ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForRedirectProcessor ),
-			'id-wallet': ( transactionData ) =>
-				genericRedirectProcessor( 'id-wallet', transactionData, dataForRedirectProcessor ),
+			id_wallet: ( transactionData ) =>
+				genericRedirectProcessor( 'id_wallet', transactionData, dataForRedirectProcessor ),
 			ideal: ( transactionData ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForRedirectProcessor ),
 			sofort: ( transactionData ) =>

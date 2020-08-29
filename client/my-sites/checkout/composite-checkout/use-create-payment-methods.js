@@ -318,7 +318,7 @@ function useCreateNetbanking( { onlyLoadPaymentMethods } ) {
 function useCreateIdWallet( { onlyLoadPaymentMethods } ) {
 	// If this PM is allowed by props and allowed by the cart, then create the PM.
 	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'id-wallet' )
+		? onlyLoadPaymentMethods.includes( 'id_wallet' )
 		: true;
 	const shouldLoad = isMethodAllowed;
 	const paymentMethodStore = useMemo( () => createIdWalletPaymentMethodStore(), [] );

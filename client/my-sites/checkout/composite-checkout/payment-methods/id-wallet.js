@@ -62,7 +62,7 @@ export function createIdWalletPaymentMethodStore() {
 		},
 	};
 
-	const store = registerStore( 'id-wallet', {
+	const store = registerStore( 'id_wallet', {
 		reducer(
 			state = {
 				customerName: { value: '', isTouched: false },
@@ -126,7 +126,7 @@ export function createIdWalletPaymentMethodStore() {
 
 export function createIdWalletMethod( { store, stripe, stripeConfiguration } ) {
 	return {
-		id: 'id-wallet',
+		id: 'id_wallet',
 		label: <IdWalletLabel />,
 		activeContent: <IdWalletFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
 		submitButton: (
@@ -144,7 +144,7 @@ export function createIdWalletMethod( { store, stripe, stripeConfiguration } ) {
 function IdWalletFields() {
 	const { __ } = useI18n();
 
-	const fields = useSelect( ( select ) => select( 'id-wallet' ).getFields() );
+	const fields = useSelect( ( select ) => select( 'id_wallet' ).getFields() );
 	const getField = ( key ) => fields[ key ] || {};
 	const getFieldValue = ( key ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key ) => {
@@ -154,10 +154,10 @@ function IdWalletFields() {
 		}
 		return managedValue.errors ?? [];
 	};
-	const { setFieldValue } = useDispatch( 'id-wallet' );
+	const { setFieldValue } = useDispatch( 'id_wallet' );
 
-	const customerName = useSelect( ( select ) => select( 'id-wallet' ).getCustomerName() );
-	const { changeCustomerName } = useDispatch( 'id-wallet' );
+	const customerName = useSelect( ( select ) => select( 'id_wallet' ).getCustomerName() );
+	const { changeCustomerName } = useDispatch( 'id_wallet' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== 'ready';
 	const countriesList = useCountryList( [] );
@@ -227,10 +227,10 @@ function IdWalletPayButton( { disabled, store } ) {
 		setTransactionError,
 		setTransactionPending,
 	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'id-wallet' );
+	const submitTransaction = usePaymentProcessor( 'id_wallet' );
 	const onEvent = useEvents();
-	const customerName = useSelect( ( select ) => select( 'id-wallet' ).getCustomerName() );
-	const fields = useSelect( ( select ) => select( 'id-wallet' ).getFields() );
+	const customerName = useSelect( ( select ) => select( 'id_wallet' ).getCustomerName() );
+	const fields = useSelect( ( select ) => select( 'id_wallet' ).getFields() );
 	const massagedFields = Object.entries( fields ).reduce(
 		( accum, [ key, managedValue ] ) => ( { ...accum, [ camelCase( key ) ]: managedValue.value } ),
 		{}
@@ -248,7 +248,7 @@ function IdWalletPayButton( { disabled, store } ) {
 					setTransactionPending();
 					onEvent( {
 						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'id-wallet' },
+						payload: { paymentMethodId: 'id_wallet' },
 					} );
 					submitTransaction( {
 						...massagedFields,
@@ -295,7 +295,7 @@ function ButtonContents( { formStatus, total } ) {
 }
 
 function IdWalletSummary() {
-	const customerName = useSelect( ( select ) => select( 'id-wallet' ).getCustomerName() );
+	const customerName = useSelect( ( select ) => select( 'id_wallet' ).getCustomerName() );
 
 	return (
 		<SummaryDetails>
@@ -328,7 +328,7 @@ function isFormValid( store, contactCountryCode, __ ) {
 			accum[ key ] = managedValue.value;
 			return accum;
 		}, {} ),
-		'id-wallet'
+		'id_wallet'
 	);
 
 	Object.entries( validationResults.errors ).map( ( [ key, errors ] ) => {
