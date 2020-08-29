@@ -171,7 +171,7 @@ function IdWalletFields() {
 			/>
 			<div className="id-wallet__contact-fields">
 				<CountrySpecificPaymentFieldsUI
-					countryCode={ 'ID' } // If this payment method is available and the country is not India, we have other problems
+					countryCode={ 'ID' }
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
 					getFieldValue={ getFieldValue }
