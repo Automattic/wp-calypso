@@ -234,7 +234,13 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			} );
 
 			step( 'Insert and configure jetpack/layout-grid', async function () {
-				await gEditorComponent.insertBlock( LayoutGridBlockComponent );
+				const layoutBlock = await gEditorComponent.insertBlock( LayoutGridBlockComponent );
+				await layoutBlock.setupColumns( 2 );
+				const ratingStarInnerBlock = await layoutBlock.insertBlock( RatingStarBlockComponent, 0 );
+				const DynamicHRInnerBlock = await layoutBlock.insertBlock(
+					DynamicSeparatorBlockComponent,
+					1
+				);
 			} );
 
 			step( 'Insert and configure core-embed/youtube', async function () {
