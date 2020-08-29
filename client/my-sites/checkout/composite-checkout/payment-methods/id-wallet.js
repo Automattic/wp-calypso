@@ -124,18 +124,12 @@ export function createIdWalletPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createIdWalletMethod( { store, stripe, stripeConfiguration } ) {
+export function createIdWalletMethod( { store } ) {
 	return {
 		id: 'id_wallet',
 		label: <IdWalletLabel />,
-		activeContent: <IdWalletFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
-		submitButton: (
-			<IdWalletPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <IdWalletFields />,
+		submitButton: <IdWalletPayButton store={ store } />,
 		inactiveContent: <IdWalletSummary />,
 		getAriaLabel: () => 'OVO',
 	};
