@@ -42,7 +42,8 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 		return fileDetails;
 	} );
 
-	describe( 'Commenting and replying to newly created post: @parallel @jetpack', function () {
+	//The Calypso editor is deprecated, so this test is not necessary
+	describe.skip( 'Commenting and replying to newly created post: @parallel @jetpack', function () {
 		if ( host !== 'WPCOM' ) {
 			step( 'Can log into Jetpack site', async function () {
 				const account = dataHelper.getAccountConfig();
@@ -96,7 +97,7 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	describe( 'Commenting and replying to newly created post in Gutenberg Editor: @parallel', function () {
 		step( 'Can login and create a new post', async function () {
 			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteUser' );
-			await this.loginFlow.loginAndStartNewPost( null, true );
+			await this.loginFlow.loginAndStartNewPost( null, true, { useFreshLogin: true } );
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.enterTitle( blogPostTitle );
 			return await gEditorComponent.enterText( blogPostQuote );
