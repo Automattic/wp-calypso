@@ -103,10 +103,10 @@ describe( 'Publish a New Post', function () {
 			content.indexOf( blogPostQuote ) > -1,
 			true,
 			'The post preview content (' +
-			content +
-			') does not include the expected content (' +
-			blogPostQuote +
-			')'
+				content +
+				') does not include the expected content (' +
+				blogPostQuote +
+				')'
 		);
 	} );
 
