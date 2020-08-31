@@ -26,7 +26,7 @@ export default class FormTextInput extends PureComponent {
 
 	updateValueIfNeeded( oldValue ) {
 		const { value } = this.props;
-		if ( oldValue !== value && value !== this.state.value ) {
+		if ( oldValue !== value || value !== this.state.value ) {
 			this.setState( { value } );
 		}
 	}
