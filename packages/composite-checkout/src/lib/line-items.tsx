@@ -9,7 +9,7 @@ import React, { useContext, useMemo } from 'react';
 import LineItemsContext from './line-items-context';
 import { LineItemsProviderProps, LineItem } from '../types';
 
-export const LineItemsProvider: React.SFC< LineItemsProviderProps > = ( {
+export const LineItemsProvider: React.FC< LineItemsProviderProps > = ( {
 	items,
 	total,
 	children,
