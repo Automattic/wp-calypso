@@ -85,13 +85,16 @@ export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type PaymentProcessorFunction = ( ...args: any[] ) => void;
+export type PaymentProcessorResponse = unknown;
+
+export type PaymentProcessorFunction = (
+	...args: unknown[]
+) => Promise< PaymentProcessorResponse >;
 
 export interface TransactionStatus {
 	transactionStatus: string;
 	previousTransactionStatus: string;
-	transactionLastResponse: object | null;
+	transactionLastResponse: PaymentProcessorResponse | null;
 	transactionError: string | null;
 	transactionRedirectUrl: string | null;
 }
@@ -104,18 +107,19 @@ export interface TransactionStatusPayload {
 }
 
 export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
+
 export interface TransactionStatusManager {
 	transactionStatus: string;
 	previousTransactionStatus: string;
 	transactionError: string | null;
-	transactionLastResponse: object | null;
+	transactionLastResponse: PaymentProcessorResponse | null;
 	transactionRedirectUrl: string | null;
 	resetTransaction: () => void;
 	setTransactionError: ( message: string ) => void;
-	setTransactionComplete: ( response: object ) => void;
+	setTransactionComplete: ( response: PaymentProcessorResponse ) => void;
 	setTransactionPending: () => void;
 	setTransactionRedirecting: ( url: string ) => void;
-	setTransactionAuthorizing: ( response: object ) => void;
+	setTransactionAuthorizing: ( response: PaymentProcessorResponse ) => void;
 }
 
 export interface LineItemsState {
