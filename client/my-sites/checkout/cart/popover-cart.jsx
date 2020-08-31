@@ -102,7 +102,11 @@ class PopoverCart extends React.Component {
 
 		return (
 			<div>
-				<CartMessages cart={ cart } selectedSite={ selectedSite } />
+				<CartMessages
+					cart={ cart }
+					selectedSite={ selectedSite }
+					isLoadingCart={ ! cart.hasLoadedFromServer }
+				/>
 				<div className={ classes }>
 					<HeaderButton
 						icon="cart"

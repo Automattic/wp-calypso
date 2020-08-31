@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, Dispatch } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -22,7 +22,10 @@ import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );
 
-export default function useShoppingCartReducer() {
+export default function useShoppingCartReducer(): [
+	ShoppingCartState,
+	Dispatch< ShoppingCartAction >
+] {
 	const [ hookState, hookDispatch ] = useReducer(
 		shoppingCartReducer,
 		getInitialShoppingCartState()
