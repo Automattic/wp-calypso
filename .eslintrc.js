@@ -204,9 +204,6 @@ module.exports = {
 					'comment_whitelist',
 					'blacklist_keys',
 
-					// We can update this stylelint rule name once https://github.com/stylelint/stylelint/pull/4845 is released
-					'unit-whitelist',
-
 					// For HotJar compatibility. HJ will reach out to @saramarcondes once a new
 					// and inclusive attribute name exists to be used: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
 					'data-hj-whitelist',
