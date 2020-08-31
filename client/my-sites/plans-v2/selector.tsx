@@ -14,6 +14,7 @@ import ProductsColumn from './products-column';
 import { SECURITY } from './constants';
 import { getProductUpsell, getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -82,6 +83,8 @@ const SelectorPage = ( {
 		/jetpack\/connect\/plans/.test( window.location.href ) &&
 		/source=jetpack-connect-plans/.test( window.location.href );
 
+	const showJetpackFreeCard = isInConnectFlow || isJetpackCloud();
+
 	return (
 		<Main className="selector__main" wideLayout>
 			{ header }
@@ -106,7 +109,7 @@ const SelectorPage = ( {
 				/>
 			</div>
 
-			{ isInConnectFlow && (
+			{ showJetpackFreeCard && (
 				<>
 					<div className="selector__divider" />
 					<JetpackFreeCard />
