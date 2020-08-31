@@ -1,39 +1,38 @@
 .support-article-dialog__story-content {
-	@extend %content-font;
 	margin: 0;
 	padding-top: 16px;
 	position: relative;
-	font-size: 17px;
+	font-size: $font-title-small;
 	line-height: 1.7;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
 	h1 {
 		font-size: $font-title-large;
-		font-weight: 700;
+		font-weight: 600;
 		margin: 0 0 16px;
 	}
 
 	h2 {
 		font-size: $font-title-medium;
-		font-weight: 700;
+		font-weight: 600;
 		margin: 0 0 8px;
 	}
 
 	h3 {
 		font-size: $font-title-small;
-		font-weight: 700;
+		font-weight: 600;
 		margin: 0 0 8px;
 	}
 
 	h4 {
 		font-size: $font-title-small;
-		font-weight: 700;
+		font-weight: 600;
 		margin: 0 0 8px;
 	}
 
 	h5 {
-		font-weight: 700;
+		font-weight: 600;
 	}
 
 	p, > div {
@@ -192,7 +191,7 @@
 	sup, sub {
 		vertical-align: baseline;
 		position: relative;
-		font-size: 0.83em;
+		font-size: $font-body-extra-small;
 	}
 
 	sup {
