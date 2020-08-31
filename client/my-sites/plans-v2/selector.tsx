@@ -13,12 +13,12 @@ import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
 import { SECURITY } from './constants';
 import { getProductUpsell, getPathToDetails, getPathToUpsell, checkout } from './utils';
+import QueryProducts from './query-products';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { managePurchase } from 'me/purchases/paths';
 import Main from 'components/main';
-import QueryProductsList from 'components/data/query-products-list';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySites from 'components/data/query-sites';
 import JetpackFreeCard from 'components/jetpack/card/jetpack-free-card';
@@ -113,7 +113,7 @@ const SelectorPage = ( {
 				</>
 			) }
 
-			<QueryProductsList />
+			<QueryProducts />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
 			{ footer }

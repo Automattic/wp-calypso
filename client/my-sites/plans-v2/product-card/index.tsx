@@ -50,17 +50,19 @@ const itemToCard = ( { type }: SelectorProduct ) => {
 };
 
 interface UpgradeNudgeProps {
+	siteId: number | null;
 	item: SelectorProduct;
 	currencyCode: string;
 	onClick: PurchaseCallback;
 }
 
-const UpgradeNudgeWrapper = ( { item, currencyCode, onClick }: UpgradeNudgeProps ) => {
+const UpgradeNudgeWrapper = ( { siteId, item, currencyCode, onClick }: UpgradeNudgeProps ) => {
 	const upgradeToProductSlug =
 		getRealtimeFromDaily( item.costProductSlug || item.productSlug ) || '';
 	const selectorProductToUpgrade = slugToSelectorProduct( upgradeToProductSlug );
 
 	const { isFetching, originalPrice, discountedPrice } = useItemPrice(
+		siteId,
 		selectorProductToUpgrade,
 		selectorProductToUpgrade?.monthlyProductSlug || ''
 	);
@@ -114,7 +116,11 @@ const ProductCardWrapper = ( {
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 
 	// Calculate the product price.
-	const { originalPrice, discountedPrice } = useItemPrice( item, item?.monthlyProductSlug || '' );
+	const { originalPrice, discountedPrice } = useItemPrice(
+		siteId,
+		item,
+		item?.monthlyProductSlug || ''
+	);
 
 	// Handles expiry.
 	const moment = useLocalizedMoment();
@@ -136,7 +142,12 @@ const ProductCardWrapper = ( {
 	const CardComponent = itemToCard( item ); // Get correct card component.
 
 	const UpgradeNudge = isOwned ? (
-		<UpgradeNudgeWrapper item={ item } currencyCode={ currencyCode } onClick={ onClick } />
+		<UpgradeNudgeWrapper
+			siteId={ siteId }
+			item={ item }
+			currencyCode={ currencyCode }
+			onClick={ onClick }
+		/>
 	) : null;
 
 	return (

@@ -18,8 +18,9 @@ import Main from 'components/main';
 import { preventWidows } from 'lib/formatting';
 import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { isProductsListFetching, getProductsList } from 'state/products-list/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import QueryProducts from './query-products';
+import useIsLoading from './use-is-loading';
 import useItemPrice from './use-item-price';
 import {
 	durationToText,
@@ -43,6 +44,7 @@ import './style.scss';
 import type { Duration, SelectorProduct, UpsellPageProps } from './types';
 
 interface Props {
+	siteId: number | null;
 	currencyCode: string;
 	mainProduct: SelectorProduct;
 	upsellProduct: SelectorProduct;
@@ -53,6 +55,7 @@ interface Props {
 }
 
 const UpsellComponent = ( {
+	siteId,
 	currencyCode,
 	onBackButtonClick,
 	onPurchaseSingleProduct,
@@ -65,6 +68,7 @@ const UpsellComponent = ( {
 
 	// Upsell prices should come from the API with the upsell products
 	const { originalPrice, discountedPrice } = useItemPrice(
+		siteId,
 		upsellProduct,
 		upsellProduct.monthlyProductSlug || ''
 	);
@@ -175,10 +179,9 @@ const UpsellComponent = ( {
 
 const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellPageProps ) => {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isLoading = useIsLoading( siteId );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
-	const isLoading = ! currencyCode || ( isFetchingProducts && ! products );
 
 	const mainProduct = slugToSelectorProduct( productSlug );
 	// TODO: Get upsells via API.
@@ -223,8 +226,10 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 
 	return (
 		<>
+			<QueryProducts />
 			{ header }
 			<UpsellComponent
+				siteId={ siteId }
 				currencyCode={ currencyCode as string }
 				mainProduct={ mainProduct }
 				upsellProduct={ upsellProduct }
