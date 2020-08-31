@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import reducer, { postTypeList } from '../reducer';
@@ -14,7 +9,7 @@ import {
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'postIdWithActiveSharePanel' ] );
+		expect( reducer( undefined, {} ) ).toHaveProperty( 'postIdWithActiveSharePanel' );
 	} );
 
 	describe( '#postTypeList()', () => {
@@ -28,7 +23,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.be.null;
+			expect( state.postIdWithActiveSharePanel ).toBeNull();
 		} );
 
 		test( 'should not fail when hiding an already hidden Share panel', () => {
@@ -37,7 +32,7 @@ describe( 'reducer', () => {
 				postGlobalId: 4,
 			} );
 
-			expect( state.postIdWithActiveSharePanel ).to.be.null;
+			expect( state.postIdWithActiveSharePanel ).toBeNull();
 		} );
 
 		test( 'should hide an already-visible Share panel when toggling', () => {
@@ -50,7 +45,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.be.null;
+			expect( state.postIdWithActiveSharePanel ).toBeNull();
 		} );
 
 		test( 'should show a hidden Share panel when toggling', () => {
@@ -63,7 +58,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.eql( postGlobalId );
+			expect( state.postIdWithActiveSharePanel ).toBe( postGlobalId );
 		} );
 
 		test( 'should only allow one active Share panel at a time', () => {
@@ -77,7 +72,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.eql( postGlobalId );
+			expect( state.postIdWithActiveSharePanel ).toBe( postGlobalId );
 		} );
 	} );
 } );

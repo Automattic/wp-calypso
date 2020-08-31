@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { isSharePanelOpen } from '../selectors';
@@ -22,7 +17,7 @@ describe( 'isSharePanelOpen', () => {
 			postGlobalId
 		);
 
-		expect( isOpen ).to.be.true;
+		expect( isOpen ).toBe( true );
 	} );
 
 	test( 'should return false if no Share panel is open', () => {
@@ -38,7 +33,7 @@ describe( 'isSharePanelOpen', () => {
 			postGlobalId
 		);
 
-		expect( isOpen ).to.be.false;
+		expect( isOpen ).toBe( false );
 	} );
 
 	test( 'should return false if the Share panel for a different post is open', () => {
@@ -55,6 +50,6 @@ describe( 'isSharePanelOpen', () => {
 			postGlobalId
 		);
 
-		expect( isOpen ).to.be.false;
+		expect( isOpen ).toBe( false );
 	} );
 } );
