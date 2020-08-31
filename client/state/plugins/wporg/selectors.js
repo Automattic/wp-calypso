@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import 'state/plugins/init';
+
 export function getAllPlugins( state ) {
 	return state?.plugins.wporg.items;
 }

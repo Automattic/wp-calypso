@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { every, find } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -14,6 +15,8 @@ import {
 import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import createSelector from 'lib/create-selector';
+
+import 'state/plugins/init';
 
 const getWcsPluginData = createSelector(
 	( state, siteId ) => {

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';
 
 /**
@@ -13,6 +12,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'state/sites/selectors';
+
+import 'state/plugins/init';
 
 const _filters = {
 	none: function () {

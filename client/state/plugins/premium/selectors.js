@@ -8,6 +8,8 @@ import { every, filter, find, get, includes, some } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
+import 'state/plugins/init';
+
 export const isRequesting = function ( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
