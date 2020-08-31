@@ -1,11 +1,3 @@
-export function isLikesPopoverOpen( state, postGlobalId ) {
-	if ( ! postGlobalId ) {
-		// Avoid returning `true` if an invalid post ID is passed.
-		return false;
-	}
-	return state.ui.postTypeList.postIdWithActiveLikesPopover === postGlobalId;
-}
-
 export function isSharePanelOpen( state, postGlobalId ) {
 	if ( ! postGlobalId ) {
 		// Avoid returning `true` if an invalid post ID is passed.
