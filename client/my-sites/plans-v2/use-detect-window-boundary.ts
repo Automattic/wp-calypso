@@ -8,9 +8,13 @@ import { throttle } from 'lodash';
  * Returns whether `elementRef` has touched/crossed the upper Window's boundary.
  *
  * @param {MutableRefObject} elementRef Reference to an HTMLElement
+ * @param {number} offsetY Add offset in the Y axis for the detection
  * @returns {boolean} Whether the element crossed the upper boundary
  */
-const useDetectWindowBoundary = ( elementRef: MutableRefObject< HTMLDivElement | null > ) => {
+const useDetectWindowBoundary = (
+	elementRef: MutableRefObject< HTMLDivElement | null >,
+	offsetY = 0
+) => {
 	// Indicates whether the elementRef has crossed the upper window boundary
 	const [ borderCrossed, setBorderCrossed ] = useState( false );
 	// Stores the initial position of the element in the Y axis. We need this to put the
@@ -30,7 +34,7 @@ const useDetectWindowBoundary = ( elementRef: MutableRefObject< HTMLDivElement |
 				initialTopPos.current = distanceRelativeToViewport;
 			}
 
-			setBorderCrossed( window.pageYOffset > initialTopPos.current );
+			setBorderCrossed( window.pageYOffset + offsetY > initialTopPos.current );
 		}, 50 )
 	);
 

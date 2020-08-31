@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -11,6 +12,7 @@ import classNames from 'classnames';
 import SegmentedControl from 'components/segmented-control';
 import SelectDropdown from 'components/select-dropdown';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
+import { masterbarIsVisible } from 'state/ui/selectors';
 import { PRODUCT_TYPE_OPTIONS } from '../constants';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 
@@ -38,7 +40,9 @@ const PlansFilterBar = ( {
 	onProductTypeChange,
 }: Props ) => {
 	const barRef = useRef< HTMLDivElement | null >( null );
-	const hasCrossed = useDetectWindowBoundary( barRef );
+	const isMasterbarVisible = useSelector( masterbarIsVisible );
+	const masterbarOffset = isMasterbarVisible ? 47 : 0;
+	const hasCrossed = useDetectWindowBoundary( barRef, masterbarOffset );
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
