@@ -228,36 +228,28 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Learn more about donations' ),
+					text: translate( 'Manage donations' ),
 					action: () => {
 						trackCtaButton( 'donations' );
-						if ( window && window.location ) {
-							window.location.href = localizeUrl( 'https://wordpress.com/support/donations/' );
-						}
+						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
 		const title = translate( 'Accept donations and tips' );
 
-		const freePlanBody = translate(
-			'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about. {{em}}Available with any paid plan{{/em}}.',
-			{
-				components: {
-					em: <em />,
-				},
-			}
-		);
-		const paidPlanBody = translate(
-			'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
+		const body = (
+			<>
+				{ translate(
+					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about. '
+				) }
+				{ isFreePlan && <em>{ translate( 'Available with any paid plan' ) }.</em> }
+			</>
 		);
 
-		const body = isFreePlan ? freePlanBody : paidPlanBody;
+		const learnMoreLink = {
+			url: localizeUrl( 'https://wordpress.com/support/donations/' ),
+			onClick: () => trackLearnLink( 'donations' ),
+		};
 
-		const learnMoreLink = isFreePlan
-			? {
-					url: 'https://wordpress.com/support/donations/',
-					onClick: () => trackLearnLink( 'donations' ),
-			  }
-			: null;
 		return {
 			title,
 			body,
