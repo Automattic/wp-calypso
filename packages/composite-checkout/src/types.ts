@@ -96,6 +96,14 @@ export interface TransactionStatus {
 	transactionRedirectUrl: string | null;
 }
 
+export interface TransactionStatusPayload {
+	status: 'not-started' | 'pending' | 'complete' | 'authorizing' | 'error' | 'redirecting';
+	response?: unknown | null;
+	error?: string;
+	url?: string;
+}
+
+export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
 export interface TransactionStatusManager {
 	transactionStatus: string;
 	previousTransactionStatus: string;

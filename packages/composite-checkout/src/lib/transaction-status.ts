@@ -7,7 +7,7 @@ import { useMemo, useContext, useCallback, useReducer } from 'react';
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
-import { ReactStandardAction, TransactionStatus, TransactionStatusManager } from '../types';
+import { TransactionStatus, TransactionStatusAction, TransactionStatusManager } from '../types';
 
 export function useTransactionStatus(): TransactionStatusManager {
 	const { transactionStatusManager } = useContext( CheckoutContext );
@@ -25,30 +25,48 @@ const initialState: TransactionStatus = {
 export function useTransactionStatusManager(): TransactionStatusManager {
 	const [ state, dispatch ] = useReducer( transactionStatusReducer, initialState );
 	const resetTransaction = useCallback(
-		() => dispatch( { type: 'STATUS_SET', payload: { status: 'not-started' } } ),
+		() =>
+			dispatch( {
+				type: 'STATUS_SET',
+				payload: { status: 'not-started' },
+			} as TransactionStatusAction ),
 		[]
 	);
 	const setTransactionComplete = useCallback(
-		( response ) => dispatch( { type: 'STATUS_SET', payload: { status: 'complete', response } } ),
+		( response ) =>
+			dispatch( {
+				type: 'STATUS_SET',
+				payload: { status: 'complete', response },
+			} as TransactionStatusAction ),
 		[]
 	);
 	const setTransactionError = useCallback(
 		( errorMessage ) =>
-			dispatch( { type: 'STATUS_SET', payload: { status: 'error', error: errorMessage } } ),
+			dispatch( {
+				type: 'STATUS_SET',
+				payload: { status: 'error', error: errorMessage },
+			} as TransactionStatusAction ),
 		[]
 	);
 	const setTransactionPending = useCallback(
-		() => dispatch( { type: 'STATUS_SET', payload: { status: 'pending' } } ),
+		() =>
+			dispatch( { type: 'STATUS_SET', payload: { status: 'pending' } } as TransactionStatusAction ),
 		[]
 	);
 	const setTransactionRedirecting = useCallback(
 		( url ) =>
-			dispatch( { type: 'STATUS_SET', payload: { status: 'redirecting', response: null, url } } ),
+			dispatch( {
+				type: 'STATUS_SET',
+				payload: { status: 'redirecting', response: null, url },
+			} as TransactionStatusAction ),
 		[]
 	);
 	const setTransactionAuthorizing = useCallback(
 		( response ) =>
-			dispatch( { type: 'STATUS_SET', payload: { status: 'authorizing', response } } ),
+			dispatch( {
+				type: 'STATUS_SET',
+				payload: { status: 'authorizing', response },
+			} as TransactionStatusAction ),
 		[]
 	);
 
@@ -92,11 +110,11 @@ export function useTransactionStatusManager(): TransactionStatusManager {
 
 function transactionStatusReducer(
 	state: TransactionStatus,
-	action: ReactStandardAction
+	action: TransactionStatusAction
 ): TransactionStatus {
 	switch ( action.type ) {
 		case 'STATUS_SET': {
-			const { status, response, error, url } = action.payload;
+			const { status, response, error = null, url = null } = action.payload;
 			return {
 				...state,
 				previousTransactionStatus: state.transactionStatus,
