@@ -66,9 +66,10 @@ function formStatusReducer( state: string, action: ReactStandardAction ): string
 	}
 }
 
-function validateStatus( status: string ): void {
-	const validStatuses = [ 'loading', 'ready', 'validating', 'submitting', 'complete' ];
-	if ( ! validStatuses.includes( status ) ) {
+const validStatuses = [ 'loading', 'ready', 'validating', 'submitting', 'complete' ] as const;
+
+function validateStatus( status: unknown ): asserts status is typeof validStatuses[ number ] {
+	if ( ! validStatuses.includes( status as never ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}
 }

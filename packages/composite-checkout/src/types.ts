@@ -18,6 +18,8 @@ export interface PaymentMethod {
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 }
 
+export type ExternalPaymentMethod = Partial< PaymentMethod >;
+
 export interface LineItem {
 	id: string;
 	type: string;
@@ -26,11 +28,20 @@ export interface LineItem {
 	amount: LineItemAmount;
 }
 
+export type ExternalLineItem = Partial< LineItem >;
+
+export interface TotalValidatedLineItem extends ExternalLineItem {
+	label: LineItem[ 'label' ];
+	amount: LineItem[ 'amount' ];
+}
+
 export interface LineItemAmount {
 	currency: string;
 	value: number;
 	displayValue: string;
 }
+
+export type ExternalLineItemAmount = Partial< LineItemAmount >;
 
 export interface FormStatusController {
 	formStatus: string;
@@ -43,10 +54,15 @@ export interface FormStatusController {
 
 export type FormStatusManager = [ string, ( newStatus: string ) => void ];
 
-export interface ReactStandardAction {
-	type: string;
-	payload?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
+export type ReactStandardAction< T = string, P = unknown > = P extends void
+	? {
+			type: T;
+			payload?: P;
+	  }
+	: {
+			type: T;
+			payload: P;
+	  };
 
 export interface CheckoutProviderProps {
 	theme?: Theme;
