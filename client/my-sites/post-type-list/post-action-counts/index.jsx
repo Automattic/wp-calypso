@@ -15,8 +15,6 @@ import { getNormalizedPost } from 'state/posts/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
-import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
 import { getRecentViewsForPost } from 'state/stats/recent-post-views/selectors';
 import { ScreenReaderText } from '@automattic/components';
 
@@ -30,6 +28,11 @@ class PostActionCounts extends PureComponent {
 		globalId: PropTypes.string,
 	};
 
+	state = {
+		likesPopoverContext: null,
+		likesPopoverPostId: null,
+	};
+
 	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;
 
@@ -41,14 +44,20 @@ class PostActionCounts extends PureComponent {
 	};
 
 	onLikesClick = ( event ) => {
+		const { globalId } = this.props;
+
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
-		this.props.toggleLikesPopover( this.props.globalId );
+		if ( this.state.likesPopoverPostId === globalId ) {
+			this.setState( { likesPopoverPostId: null } );
+		} else {
+			this.setState( { likesPopoverPostId: globalId } );
+		}
 	};
 
 	closeLikesPopover = () => {
-		this.props.hideActiveLikesPopover();
+		this.setState( { likesPopoverPostId: null } );
 	};
 
 	setLikesPopoverContext = ( element ) => {
@@ -133,6 +142,7 @@ class PostActionCounts extends PureComponent {
 
 	renderLikeCount() {
 		const {
+			globalId,
 			likeCount: count,
 			numberFormat,
 			siteId,
@@ -140,7 +150,6 @@ class PostActionCounts extends PureComponent {
 			showLikes,
 			siteSlug,
 			translate,
-			isCurrentLikesPopoverOpen,
 		} = this.props;
 
 		if ( count < 1 || ! showLikes ) {
@@ -158,7 +167,7 @@ class PostActionCounts extends PureComponent {
 						} )
 					}
 				</a>
-				{ isCurrentLikesPopoverOpen && (
+				{ globalId && this.state.likesPopoverPostId === globalId && (
 					<PostLikesPopover
 						siteId={ siteId }
 						postId={ postId }
@@ -212,12 +221,9 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			type: get( post, 'type', 'unknown' ),
 			viewCount: getRecentViewsForPost( state, siteId, postId ),
-			isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
 		};
 	},
 	{
-		hideActiveLikesPopover,
-		toggleLikesPopover,
 		recordTracksEvent,
 	}
 )( localize( PostActionCounts ) );
