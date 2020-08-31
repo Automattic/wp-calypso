@@ -4,6 +4,11 @@
 import { DataRegistry } from '@wordpress/data';
 import { ReactElement } from 'react';
 
+/**
+ * Internal dependencies
+ */
+import { Theme } from './lib/theme';
+
 export interface PaymentMethod {
 	id: string;
 	label: React.ReactNode;
@@ -44,7 +49,7 @@ export interface ReactStandardAction {
 }
 
 export interface CheckoutProviderProps {
-	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	theme?: Theme;
 	registry?: DataRegistry;
 	total: LineItem;
 	items: LineItem[];

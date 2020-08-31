@@ -8,6 +8,7 @@ import React from 'react';
  */
 import styled from '../lib/styled';
 import joinClasses from '../lib/join-classes';
+import { Theme } from '../lib/theme';
 
 type ButtonType = 'primary' | 'secondary' | 'text-button' | 'borderless' | 'paypal';
 
@@ -45,7 +46,6 @@ export interface ButtonProps {
 	buttonType?: ButtonType;
 	isBusy?: boolean;
 	fullWidth?: boolean;
-	props?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 interface CallToActionProps {
@@ -126,7 +126,7 @@ function getRollOverColor( {
 }: {
 	disabled?: boolean;
 	buttonType?: ButtonType;
-	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	theme: Theme;
 } ) {
 	const { colors } = theme;
 	if ( disabled ) {
@@ -154,7 +154,7 @@ function getTextColor( {
 }: {
 	disabled?: boolean;
 	buttonType?: ButtonType;
-	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	theme: Theme;
 } ) {
 	const { colors } = theme;
 	if ( disabled ) {
@@ -179,7 +179,7 @@ function getBackgroundColor( {
 }: {
 	disabled?: boolean;
 	buttonType?: ButtonType;
-	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	theme: Theme;
 } ) {
 	const { colors } = theme;
 	if ( disabled ) {
@@ -204,7 +204,7 @@ function getBackgroundAccentColor( {
 }: {
 	disabled?: boolean;
 	buttonType?: ButtonType;
-	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	theme: Theme;
 } ) {
 	const { colors } = theme;
 	if ( disabled ) {
@@ -232,7 +232,7 @@ function getFontWeight( {
 }: {
 	disabled?: boolean;
 	buttonType?: ButtonType;
-	theme: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	theme: Theme;
 } ) {
 	if ( disabled || buttonType === 'text-button' ) {
 		return theme.weights.normal;
