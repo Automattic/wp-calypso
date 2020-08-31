@@ -28,7 +28,7 @@ import type { ProductCardFeaturesItem } from './types';
 type OwnProps = {
 	billingTimeFrame: TranslateResult;
 	className?: string;
-	currencyCode: string;
+	currencyCode: string | null;
 	discountedPrice?: number;
 	features?: ProductCardFeaturesItem[];
 	onUpgradeClick: () => void;

@@ -34,7 +34,7 @@ type OwnProps = {
 	headingLevel?: number;
 	subheadline?: TranslateResult;
 	description?: ReactNode;
-	currencyCode: string;
+	currencyCode: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
 	withStartingPrice?: boolean;
