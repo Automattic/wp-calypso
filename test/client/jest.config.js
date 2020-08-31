@@ -1,4 +1,5 @@
 module.exports = {
+	cacheDirectory: '<rootDir>/../.cache/jest',
 	moduleNameMapper: {
 		'^config$': '<rootDir>/server/config/index.js',
 		'^wp-calypso-client/config$': '<rootDir>/server/config/index.js',
