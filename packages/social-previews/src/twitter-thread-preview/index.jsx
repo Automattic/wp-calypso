@@ -36,10 +36,40 @@ export class TwitterThreadPreview extends PureComponent {
 			<div className="twitter-thread-preview">
 				{ tweets &&
 					tweets.map( ( tweet, index ) => {
-						const mediaCount = tweet.media.length > 4 ? 4 : tweet.media.length;
+						// Ensure we're only trying to show valid media, and the correct quantity.
+						const filteredMedia = tweet.media
+							// Only image/ and video/ mime types are supported.
+							.filter(
+								( mediaItem ) =>
+									mediaItem.type.startsWith( 'image/' ) || mediaItem.type.startsWith( 'video/' )
+							)
+							.filter( ( mediaItem, idx, array ) => {
+								// We'll always keep the first item.
+								if ( 0 === idx ) {
+									return true;
+								}
+
+								// If the first item was a video or GIF, discard all subsequent items.
+								if ( array[ 0 ].type.startsWith( 'video/' ) || 'image/gif' === array[ 0 ].type ) {
+									return false;
+								}
+
+								// The first item wasn't a video or GIF, so discard all subsequent videos and GIFs.
+								if ( mediaItem.type.startsWith( 'video/' ) || 'image/gif' === mediaItem.type ) {
+									return false;
+								}
+
+								return true;
+							} )
+							// We only want the first four items of the array, at most.
+							.slice( 0, 4 );
+
+						const isVideo =
+							filteredMedia.length > 0 && filteredMedia[ 0 ].type.startsWith( 'video/' );
+
 						const mediaClasses = classnames( [
 							'twitter-thread-preview__media',
-							'twitter-thread-preview__media-children-' + mediaCount,
+							'twitter-thread-preview__media-children-' + filteredMedia.length,
 						] );
 						return (
 							<div
@@ -70,9 +100,20 @@ export class TwitterThreadPreview extends PureComponent {
 											dangerouslySetInnerHTML={ this.createTweetMarkup( tweet ) }
 										/>
 										<div className={ mediaClasses }>
-											{ tweet.media.slice( 0, 4 ).map( ( mediaItem ) => (
-												<img alt="" src={ mediaItem.url } />
-											) ) }
+											{
+												/* eslint-disable jsx-a11y/media-has-caption */
+												isVideo &&
+													filteredMedia.map( ( mediaItem ) => (
+														<video controls>
+															<source src={ mediaItem.url } type={ mediaItem.type } />{ ' ' }
+														</video>
+													) )
+												/* eslint-disable jsx-a11y/media-has-caption */
+											}
+											{ ! isVideo &&
+												filteredMedia.map( ( mediaItem ) => (
+													<img alt={ mediaItem.alt } src={ mediaItem.url } />
+												) ) }
 										</div>
 									</div>
 									<div className="twitter-thread-preview__footer">

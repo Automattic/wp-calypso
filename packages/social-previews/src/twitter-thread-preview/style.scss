@@ -74,23 +74,24 @@
 			height: 300px;
 			margin-top: 10px;
 
-			img {
+			img,
+			video {
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
-			}
 
-			img:nth-child( 1 ) {
-				grid-area: a;
-			}
-			img:nth-child( 2 ) {
-				grid-area: b;
-			}
-			img:nth-child( 3 ) {
-				grid-area: c;
-			}
-			img:nth-child( 4 ) {
-				grid-area: d;
+				&:nth-child( 1 ) {
+					grid-area: a;
+				}
+				&:nth-child( 2 ) {
+					grid-area: b;
+				}
+				&:nth-child( 3 ) {
+					grid-area: c;
+				}
+				&:nth-child( 4 ) {
+					grid-area: d;
+				}
 			}
 
 			&.twitter-thread-preview__media-children-0 {
