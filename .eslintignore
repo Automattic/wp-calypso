@@ -1,3 +1,4 @@
+.cache/
 .vscode
 .yarn
 /assets/
@@ -11,6 +12,11 @@ node_modules/
 /packages/calypso-codemods/tests
 /packages/wp-babel-makepot/test
 /packages/wpcom.js/webapp/tests/mocha.js
+/desktop/build/
+/desktop/client/
+/desktop/config/
+/desktop/public/
+/desktop/release/
 
 # Built packages
 /packages/*/dist/
