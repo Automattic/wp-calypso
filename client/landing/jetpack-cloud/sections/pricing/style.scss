@@ -1,0 +1,10 @@
+.is-group-jetpack-cloud .plans-filter-bar.sticky {
+	top: 0; // No masterbar here.
+	left: 0;
+
+	width: 100%;
+	max-width: none;
+
+	border-left: none;
+	border-right: none;
+}
