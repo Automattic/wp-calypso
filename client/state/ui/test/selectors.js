@@ -136,7 +136,6 @@ describe( 'selectors', () => {
 				paths: [ '/post', '/page' ],
 				module: 'post-editor',
 				group: 'editor',
-				secondary: true,
 			};
 			const section = getSection( {
 				ui: {
@@ -167,7 +166,6 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true,
 					},
 				},
 			} );
@@ -195,7 +193,6 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true,
 					},
 				},
 			} );
@@ -223,7 +220,6 @@ describe( 'selectors', () => {
 						paths: [ '/me' ],
 						module: 'me',
 						group: 'me',
-						secondary: true,
 					},
 				},
 			} );
@@ -239,7 +235,6 @@ describe( 'selectors', () => {
 						paths: [ '/post', '/page' ],
 						module: 'post-editor',
 						group: 'editor',
-						secondary: true,
 					},
 				},
 			} );
@@ -267,7 +262,6 @@ describe( 'selectors', () => {
 				module: 'my-sites/themes',
 				name: 'themes',
 				paths: [ '/themes' ],
-				secondary: false,
 			};
 
 			const selected = isSectionIsomorphic( {
