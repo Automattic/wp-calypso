@@ -52,7 +52,7 @@ const itemToCard = ( { type }: SelectorProduct ) => {
 interface UpgradeNudgeProps {
 	siteId: number | null;
 	item: SelectorProduct;
-	currencyCode: string;
+	currencyCode: string | null;
 	onClick: PurchaseCallback;
 }
 
@@ -87,7 +87,7 @@ interface ProductCardProps {
 	item: SelectorProduct;
 	onClick: PurchaseCallback;
 	siteId: number | null;
-	currencyCode: string;
+	currencyCode: string | null;
 	className?: string;
 	highlight?: boolean;
 }

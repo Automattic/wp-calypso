@@ -81,10 +81,6 @@ const ProductsColumn = ( {
 		[ duration, includedInPlanProducts, ownedProducts, productType ]
 	);
 
-	if ( ! currencyCode ) {
-		return null; // TODO: Loading component!
-	}
-
 	return (
 		<div className="plans-column products-column">
 			<FormattedHeader headerText={ translate( 'Individual Products' ) } isSecondary brandFont />

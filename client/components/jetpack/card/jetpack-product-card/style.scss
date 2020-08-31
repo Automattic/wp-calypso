@@ -360,3 +360,19 @@ $jetpack-product-card-icon-size: 55px;
 	font-weight: 400;
 	text-decoration: underline;
 }
+
+/* Prices Loading state */
+.jetpack-product-card__price-placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	width: 100px;
+	min-height: 36px;
+	margin-bottom: 4px;
+}
+
+.jetpack-product-card__time-frame-placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	width: 100px;
+	height: 12px;
+}

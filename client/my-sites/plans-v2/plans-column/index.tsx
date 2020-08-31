@@ -63,10 +63,6 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 		return plans;
 	}, [ duration, productType, currentPlan ] );
 
-	if ( ! currencyCode ) {
-		return null; // TODO: Loading component!
-	}
-
 	return (
 		<div className="plans-column">
 			<FormattedHeader headerText={ translate( 'Plans' ) } isSecondary brandFont />
