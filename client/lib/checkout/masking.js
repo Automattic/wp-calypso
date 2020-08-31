@@ -132,7 +132,7 @@ fieldMasks.document = {
 				digits.slice( 9, 11 );
 		}
 
-		return string.replace( /^[\s\.\-]+|[\s\.\-]+$/g, '' );
+		return string.replace( /^[\s.-]+|[\s.-]+$/g, '' );
 	},
 
 	unmask: identity,
