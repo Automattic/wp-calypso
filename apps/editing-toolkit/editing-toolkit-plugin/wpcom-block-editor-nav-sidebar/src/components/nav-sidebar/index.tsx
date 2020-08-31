@@ -230,9 +230,9 @@ function WpcomBlockEditorNavSidebar() {
 				>
 					{ closeLabel }
 				</Button>
-				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading">
+				<h2 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading">
 					{ listHeading }
-				</div>
+				</h2>
 				<ul className="wpcom-block-editor-nav-sidebar-nav-sidebar__page-list">
 					{ items.map( ( item, index ) => (
 						<NavItem
