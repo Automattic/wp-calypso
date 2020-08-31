@@ -25,7 +25,7 @@ export function registerStore< T = {} >( key: string, storeConfig: StoreConfig< 
 
 export function useRegisterStore< T >( id: string, store: StoreConfig< T > ) {
 	const registry = useRegistry();
-	const hasRegistered = useRef< boolean >( false );
+	const hasRegistered = useRef( false );
 	if ( ! hasRegistered.current ) {
 		debug( 'registering store', id );
 		registry.registerStore( id, store );
