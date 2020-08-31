@@ -127,6 +127,10 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
+		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
+			loggedOutRoutes.push( '/pricing' );
+		}
+
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', function ( context, next ) {
 			const isValidSection = loggedOutRoutes.some( ( route ) => startsWith( context.path, route ) );
