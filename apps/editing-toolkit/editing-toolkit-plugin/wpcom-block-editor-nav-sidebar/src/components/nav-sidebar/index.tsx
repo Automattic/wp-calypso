@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useLayoutEffect, useRef, useEffect, useState } from '@wordpress/element';
+import { forwardRef, useLayoutEffect, useRef, useEffect, useState } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
@@ -28,11 +28,10 @@ import NavItem from '../nav-item';
 import { Post } from '../../types';
 import './style.scss';
 
-const Button = ( {
-	children,
-	...rest
-}: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
-	<OriginalButton { ...rest }>{ children }</OriginalButton>
+const Button = forwardRef(
+	( { children, ...rest }: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
+		<OriginalButton { ...rest }>{ children }</OriginalButton>
+	)
 );
 
 function WpcomBlockEditorNavSidebar() {
@@ -53,6 +52,7 @@ function WpcomBlockEditorNavSidebar() {
 	const statusLabels = usePostStatusLabels();
 
 	const prevIsOpen = useRef( isOpen );
+	const closeButtonRef = useRef();
 
 	// Using layout effect to prevent a brief moment in time where both `isOpen` and `isClosing`
 	// are both false, causing a flicker during the fade out animation.
@@ -63,6 +63,10 @@ function WpcomBlockEditorNavSidebar() {
 		}
 
 		prevIsOpen.current = isOpen;
+
+		if ( isOpen && closeButtonRef.current ) {
+			closeButtonRef.current.focus();
+		}
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
 	const [ isScrollbarPresent, setIsScrollbarPresent ] = useState( false );
@@ -222,6 +226,7 @@ function WpcomBlockEditorNavSidebar() {
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
 					icon={ arrowLeft }
 					onClick={ handleClose }
+					ref={ closeButtonRef }
 				>
 					{ closeLabel }
 				</Button>
