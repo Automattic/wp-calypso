@@ -179,6 +179,7 @@ $jetpack-product-card-icon-size: 55px;
 
 	&.is-discounted {
 		color: var( --color-text );
+		margin-right: 0;
 
 		.plan-price__currency-symbol {
 			color: inherit;
@@ -359,4 +360,20 @@ $jetpack-product-card-icon-size: 55px;
 .jetpack-product-card__nudge-button--cancel {
 	font-weight: 400;
 	text-decoration: underline;
+}
+
+/* Prices Loading state */
+.jetpack-product-card__price-placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	width: 100px;
+	min-height: 36px;
+	margin-bottom: 4px;
+}
+
+.jetpack-product-card__time-frame-placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	width: 100px;
+	height: 12px;
 }
