@@ -110,10 +110,10 @@ export class ConciergeMain extends Component {
 		const hasIncludedSessions = scheduleId === 1;
 		const hasPurchasedSessions = scheduleId > 1;
 
-		const isBusinessOnboardingAvailable =
+		const hasAvailableSessions =
 			hasPurchasedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
 
-		if ( ! isBusinessOnboardingAvailable ) {
+		if ( ! hasAvailableSessions ) {
 			return <Upsell site={ site } />;
 		}
 
