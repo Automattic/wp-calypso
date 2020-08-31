@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useLayoutEffect, useRef, useEffect, useState } from '@wordpress/element';
+import { useLayoutEffect, useRef } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
@@ -62,58 +62,6 @@ function WpcomBlockEditorNavSidebar() {
 
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
-
-	const [ isScrollbarPresent, setIsScrollbarPresent ] = useState( false );
-	const observer = useRef< IntersectionObserver >();
-	/*
-	const itemRefs = useRef< ( HTMLElement | null )[] >( [] );
-*/
-
-	const containerMount = ( el: HTMLDivElement | null ) => {
-		if ( el ) {
-			el.focus();
-		}
-
-		if ( observer.current ) {
-			observer.current.disconnect();
-		}
-
-		if ( ! window.IntersectionObserver ) {
-			return;
-		}
-
-		observer.current = new window.IntersectionObserver(
-			( entries ) => {
-				// If one item isn't currently visible, then the scrollbar isn't present
-				const isPresent = entries.some( ( entry ) => ! entry.isIntersecting );
-				setIsScrollbarPresent( isPresent );
-			},
-			{
-				root: el,
-				threshold: [ 1 ], // We want to fire the above callback when an entry isn't 100% visible
-			}
-		);
-	};
-
-	/*	const itemMount = ( el: HTMLElement | null, itemIndex: number ) => {
-		itemRefs.current[ itemIndex ] = el;
-	};*/
-
-	useEffect( () => {
-		if ( ! observer.current ) {
-			return;
-		}
-
-		observer.current.disconnect();
-
-		/*		const nonSparse = itemRefs.current.filter( Boolean ) as HTMLElement[];
-
-		// We only need to observe the first and last item in the list, might be better for performance
-		const firstItem = nonSparse[ 0 ];
-		const lastItem = nonSparse[ nonSparse.length - 1 ];
-		if ( firstItem ) observer.current.observe( firstItem );
-		if ( lastItem ) observer.current.observe( lastItem );*/
-	}, [ currentPost, draftPosts, recentPosts, observer ] );
 
 	if ( ! postType ) {
 		// Still loading
@@ -188,7 +136,6 @@ function WpcomBlockEditorNavSidebar() {
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
-				ref={ containerMount }
 				role="dialog"
 				tabIndex={ -1 }
 			>
@@ -268,11 +215,7 @@ function WpcomBlockEditorNavSidebar() {
 						</>
 					) }
 				</section>
-				<div
-					className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons', {
-						'is-scrollbar-present': isScrollbarPresent,
-					} ) }
-				>
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons">
 					<CreatePage postType={ postType } />
 				</div>
 			</div>

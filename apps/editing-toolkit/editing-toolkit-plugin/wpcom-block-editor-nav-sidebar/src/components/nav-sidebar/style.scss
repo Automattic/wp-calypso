@@ -64,16 +64,13 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
 	box-sizing: content-box;
-	display: flex;
 	background-color: $sidebar-nav-header-background-color;
-	align-items: stretch;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
 	margin: 0 0 0 74px;
 	align-items: center;
 	display: flex;
-	justify-content: center;
 	min-height: 60px;
 
 	h2 {
@@ -88,7 +85,8 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 		padding: 10px 10px 10px 0;
 	}
 
-	a {
+	a,
+	a.is-untitled {
 		color: $light-gray-800;
 
 		&:active,
@@ -108,14 +106,13 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
-	height: 46px;
 	width: 100%;
 	border: none !important;
 	box-shadow: none !important;
 	color: $white;
 	flex-shrink: 0;
 	padding: 8px 11px !important;
-	margin: 14px 0;
+	margin: 12px 0;
 
 	&:hover,
 	&:not( [aria-disabled='true'] ):active {
@@ -158,7 +155,6 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 	}
 
 	.is-selected {
-		font-size: $text-editor-font-size;
 		color: $white;
 	}
 	/*
@@ -169,7 +165,7 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area {
 	overflow-y: auto;
-	margin-bottom: 54px;
+	margin-bottom: 50px;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
@@ -179,7 +175,4 @@ $sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the clo
 	width: 100%;
 	overflow: hidden;
 	background: $sidebar-background-color;
-	&.is-scrollbar-present {
-		border-top: 1px solid $dark-gray-600;
-	}
 }
