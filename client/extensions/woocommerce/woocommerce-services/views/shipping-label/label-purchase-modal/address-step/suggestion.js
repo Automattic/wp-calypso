@@ -51,17 +51,15 @@ const AddressSuggestion = ( {
 				<RadioButton
 					checked={ ! selectNormalized }
 					onChange={ onToggleSelectNormalizedAddress( false ) }
+					label={ translate( 'Address entered' ) }
 				>
-					<span className="address-step__suggestion-title">{ translate( 'Address entered' ) }</span>
 					<AddressSummary values={ values } countryNames={ countryNames } />
 				</RadioButton>
 				<RadioButton
 					checked={ selectNormalized }
 					onChange={ onToggleSelectNormalizedAddress( true ) }
+					label={ translate( 'Suggested address' ) }
 				>
-					<span className="address-step__suggestion-title">
-						{ translate( 'Suggested address' ) }
-					</span>
 					<AddressSummary
 						values={ normalized }
 						originalValues={ values }

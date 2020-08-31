@@ -141,8 +141,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							id="registrantType"
 							checked={ 'individual' === registrantType }
 							onChange={ this.handleChangeContactExtraEvent }
+							label={ translate( 'An individual' ) }
 						/>
-						<span>{ translate( 'An individual' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
@@ -151,8 +151,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							id="registrantType"
 							checked={ 'organization' === registrantType }
 							onChange={ this.handleChangeContactExtraEvent }
+							label={ translate( 'A company or organization' ) }
 						/>
-						<span>{ translate( 'A company or organization' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 

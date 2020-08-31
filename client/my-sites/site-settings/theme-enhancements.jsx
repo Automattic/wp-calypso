@@ -75,8 +75,8 @@ class ThemeEnhancements extends Component {
 					checked={ value === fields[ name ] }
 					onChange={ handleAutosavingRadio( name, value ) }
 					disabled={ this.isFormPending() }
+					label={ label }
 				/>
-				<span>{ label }</span>
 			</FormLabel>
 		);
 	}

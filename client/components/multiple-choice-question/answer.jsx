@@ -29,8 +29,8 @@ const MultipleChoiceAnswer = ( {
 				} }
 				checked={ isSelected }
 				disabled={ disabled }
+				label={ answerText }
 			/>
-			<span>{ answerText }</span>
 			{ isSelected && (
 				<div className="multiple-choice-question__answer-item-content">
 					{ textInput && (

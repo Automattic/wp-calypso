@@ -684,8 +684,8 @@ const Account = createReactClass( {
 								onClick={ this.handleUsernameChangeBlogRadio }
 								value={ key }
 								checked={ key === this.state.usernameAction }
+								label={ message }
 							/>
-							<span>{ message }</span>
 						</FormLabel>
 					) )
 				}
