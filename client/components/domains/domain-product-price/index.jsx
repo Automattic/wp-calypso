@@ -135,7 +135,7 @@ class DomainProductPrice extends React.Component {
 		return (
 			<div className={ className }>
 				<div className={ productPriceClassName }>
-					<span>{ translate( 'Free' ) }</span>
+					<span>{ translate( 'Free', { context: 'Adjective refers to subdomain' } ) }</span>
 				</div>
 			</div>
 		);
