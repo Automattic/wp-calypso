@@ -16,8 +16,8 @@ import EmptyContent from 'components/empty-content';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
-import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
+import FormattedHeader from 'components/formatted-header';
 import { addItem, removeItem } from 'lib/cart/actions';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import {
@@ -155,7 +155,7 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate } = this.props;
+		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains } = this.props;
 		const classes = classnames( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
@@ -188,7 +188,13 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+						<FormattedHeader
+							brandFont
+							headerText={
+								isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
+							}
+							align="left"
+						/>
 
 						<EmailVerificationGate
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
