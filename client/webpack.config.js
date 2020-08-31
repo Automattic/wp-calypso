@@ -181,9 +181,7 @@ const webpackConfig = {
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'natural',
 		minimize: shouldMinify,
 		minimizer: Minify( {
-			cache: process.env.CIRCLECI
-				? `${ process.env.HOME }/terser-cache/${ extraPath }`
-				: 'docker' !== process.env.CONTAINER,
+			cache: path.resolve( cachePath, 'terser' ),
 			// Desktop: number of workers should *not* exceed # of vCPUs available.
 			// For both medium Machine and Docker images, number of vCPUs == 2.
 			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
@@ -214,14 +212,14 @@ const webpackConfig = {
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory: path.resolve( 'build', '.babel-client-cache', extraPath ),
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
 				cacheIdentifier,
 				exclude: /node_modules\//,
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
 				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
-				cacheDirectory: path.resolve( 'build', '.babel-client-cache', extraPath ),
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
 				cacheIdentifier,
 				include: shouldTranspileDependency,
 			} ),
@@ -324,7 +322,7 @@ const webpackConfig = {
 		shouldShowProgress && new IncrementalProgressPlugin(),
 		new MomentTimezoneDataPlugin( {
 			startYear: 2000,
-			cacheDir: path.resolve( 'build', '.moment-timezone-data-webpack-plugin-cache', extraPath ),
+			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
 		new ConfigFlagPlugin( {
 			flags: { desktop: config.isEnabled( 'desktop' ) },

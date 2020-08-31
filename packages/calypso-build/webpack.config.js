@@ -27,6 +27,7 @@ const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/u
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const cachePath = path.resolve( '.cache' );
 
 /**
  * Return a webpack config object
@@ -91,9 +92,7 @@ function getWebpackConfig(
 		optimization: {
 			minimize: ! isDevelopment,
 			minimizer: Minify( {
-				cache: process.env.CIRCLECI
-					? `${ process.env.HOME }/terser-cache`
-					: 'docker' !== process.env.CONTAINER,
+				cache: path.resolve( cachePath, 'terser' ),
 				parallel: workerCount,
 				sourceMap: Boolean( process.env.SOURCEMAP ),
 				extractComments: false,
@@ -108,19 +107,22 @@ function getWebpackConfig(
 			strictExportPresence: true,
 			rules: [
 				TranspileConfig.loader( {
-					cacheDirectory: true,
+					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					configFile: babelConfig,
 					exclude: /node_modules\//,
 					presets,
 					workerCount,
 				} ),
 				TranspileConfig.loader( {
-					cacheDirectory: true,
+					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					include: shouldTranspileDependency,
 					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
 					workerCount,
 				} ),
-				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),
+				SassConfig.loader( {
+					postCssConfig: { path: postCssConfigPath },
+					cacheDirectory: path.resolve( cachePath, 'css-loader' ),
+				} ),
 				FileConfig.loader(),
 			],
 		},

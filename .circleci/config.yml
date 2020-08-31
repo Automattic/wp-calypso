@@ -35,8 +35,7 @@ references:
         "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
-        "$HOME/jest-cache"                      \
-        "$HOME/terser-cache"
+        "$HOME/jest-cache"
 
   # Jest cache caching
   #
@@ -68,20 +67,21 @@ references:
       - ~/jest-cache
 
   #
-  # Terser cache caching
+  # Build cache
   #
-  restore-terser-cache: &restore-terser-cache
-    name: Restore Terser cache
+  # This contains caches used by the build process (mainly webpack loaders and plugins)
+  restore-build-cache: &restore-build-cache
+    name: Restore build cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
-  save-terser-cache: &save-terser-cache
-    name: Save Terser cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build
+  save-build-cache: &save-build-cache
+    name: Save build cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/terser-cache
+      - .cache
 
   # Git cache
   #
@@ -160,21 +160,6 @@ references:
     paths:
       - ~/.cache/yarn
 
-  # Babel cache
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-babel-client-cache: &restore-babel-client-cache
-    name: Restore Babel Client Cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
-  save-babel-client-cache: &save-babel-client-cache
-    name: Save Babel Client Cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - 'build/.babel-client-cache'
-
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
@@ -212,32 +197,35 @@ references:
   desktop-restore-yarn-cache: &desktop-restore-yarn-cache
     name: Restore yarn cache
     keys:
-      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
-      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
   desktop-save-yarn-cache: &desktop-save-yarn-cache
     name: Save yarn cache
-    key: v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
     paths:
       - ~/.cache/yarn
   desktop-restore-packages-cache: &desktop-restore-packages-cache
     name: Restore packages cache
     keys:
-      - v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
   desktop-save-packages-cache: &desktop-save-packages-cache
     name: Save packages cache
-    key: v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
     paths:
       - packages
       - packages-cache-restored
-  desktop-restore-webpack-css-loader-cache: &desktop-restore-webpack-css-loader-cache
-    name: Restore webpack cache-loader cache
+  desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
+    name: Restore Calypso build cache
     keys:
-      - v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
-  desktop-save-webpack-css-loader-cache: &desktop-save-webpack-css-loader-cache
-    name: Save webpack cache-loader cache
-    key: v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+  desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
+    name: Save Calypso build cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/.cache/webpack/css
+      - .cache
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
@@ -672,12 +660,9 @@ jobs:
           command: |
             # Get latest commit that modified packages directory
             echo "$(git log -n 1 --format='%h' -- packages .nvmrc yarn.lock)" > packages-hash
-
-            # Get latest commit that modified .css and related files
-            echo "$(git log -n 1 --format='%h' -- '*.css' '*.scss' '*.sass')" > webpack-css-loader-hash
       - restore_cache: *desktop-restore-yarn-cache
       - restore_cache: *desktop-restore-packages-cache
-      - restore_cache: *desktop-restore-webpack-css-loader-cache
+      - restore_cache: *desktop-restore-calypso-build-cache
       - run:
           name: Install Linux deps
           command: |
@@ -727,7 +712,7 @@ jobs:
 
             yarn run build-desktop:source
       - save_cache: *desktop-save-packages-cache
-      - save_cache: *desktop-save-webpack-css-loader-cache
+      - save_cache: *desktop-save-calypso-build-cache
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
