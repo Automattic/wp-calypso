@@ -49,11 +49,25 @@ export function* __internalGetDomainSuggestions(
 		return receiveDomainSuggestions( queryObject, [] );
 	}
 
-	const suggestions = yield wpcomRequest( {
-		apiVersion: '1.1',
-		path: '/domains/suggestions',
-		query: stringify( queryObject ),
-	} );
+	let suggestions;
+	try {
+		// wpcomRequest should return a list of suggested domains
+		suggestions = yield wpcomRequest( {
+			apiVersion: '1.1',
+			path: '/domains/suggestions',
+			query: stringify( queryObject ),
+		} );
+	} catch ( e ) {
+		// Network request failed (e.g. no connection)
+		// console.log( `Error while requesting suggested domains ${ e }` );
+		// TODO: commaunicate the error to the UI
+	}
+
+	if ( suggestions === '' ) {
+		// APIs failed (e.g. JSON response was malformed, internal errors)
+		// (see https://github.com/Automattic/wp-calypso/issues/43503)
+		// TODO: commaunicate the error to the UI
+	}
 
 	return receiveDomainSuggestions( queryObject, suggestions );
 }
