@@ -14,7 +14,6 @@ import { reducer as httpData } from 'state/data-layer/http-data';
 /**
  * Reducers
  */
-import activityLog from './activity-log/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -58,7 +57,6 @@ import users from './users/reducer';
 // The reducers in this list are not modularized, and are always loaded on boot.
 // Please do not add to this list. See #39261 and p4TIVU-9lM-p2 for more details.
 const reducers = {
-	activityLog,
 	atomicTransfer,
 	currentUser,
 	dataRequests,
