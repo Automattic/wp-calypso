@@ -76,7 +76,7 @@ const PrePurchaseNotices = ( { cart } ) => {
 	// explicit declaration that all code beyond this point can
 	// safely assume a site ID has been defined.
 	if ( ! siteId ) {
-		return false;
+		return null;
 	}
 
 	// This site has an active Jetpack Backup product purchase,
@@ -112,7 +112,7 @@ const PrePurchaseNotices = ( { cart } ) => {
 		);
 	}
 
-	return false;
+	return null;
 };
 
 const Wrapper = ( props ) => {

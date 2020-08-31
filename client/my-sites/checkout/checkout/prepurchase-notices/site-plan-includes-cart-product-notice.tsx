@@ -38,7 +38,7 @@ const SitePlanIncludesCartProductNotice: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchase = isArray( purchases )
-		? purchases.find( ( p ) => p && p.productSlug === plan.product_slug )
+		? purchases.find( ( p ) => p.productSlug === plan.product_slug )
 		: null;
 	const purchaseId = purchase?.id;
 	const subscriptionUrl = purchaseId
