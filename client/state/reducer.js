@@ -22,7 +22,6 @@ import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
 import happychat from './happychat/reducer';
-import home from './home/reducer';
 import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
@@ -65,7 +64,6 @@ const reducers = {
 	experiments,
 	gsuiteUsers,
 	happychat,
-	home,
 	httpData,
 	i18n,
 	immediateLogin,
