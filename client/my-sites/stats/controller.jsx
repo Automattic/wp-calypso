@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import { isDesktop } from '@automattic/viewport';
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
-import { find, pick, get } from 'lodash';
+import { find, pick } from 'lodash';
 import moment from 'moment';
 
 /**
@@ -26,7 +25,6 @@ import StatsSummary from './summary';
 import StatsPostDetail from './stats-post-detail';
 import StatsCommentFollows from './comment-follows';
 import WordAds from './wordads';
-import { recordTracksEvent } from 'state/analytics/actions';
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -215,19 +213,6 @@ export default {
 			query: queryOptions,
 			store,
 		} = context;
-
-		if ( 'simplePaymentsEmailTour' === get( queryOptions, 'tour' ) ) {
-			if ( ! isDesktop() ) {
-				context.store.dispatch(
-					recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'mobile' } )
-				);
-				window.location.href = 'https://wordpress.com/support/simple-payments/';
-				return;
-			}
-			context.store.dispatch(
-				recordTracksEvent( 'calypso_simple_payment_email_tour', { source: 'desktop' } )
-			);
-		}
 
 		const filters = getSiteFilters( givenSiteId, context );
 		const state = store.getState();
