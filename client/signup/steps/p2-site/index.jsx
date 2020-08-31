@@ -202,7 +202,7 @@ class P2Site extends React.Component {
 
 						if ( error.error && SITE_TAKEN_ERROR_CODES.includes( error.error ) ) {
 							WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS.forEach( ( suffix ) => {
-								const suggestedSubdomain = `${ fields.site }${ suffix }.wordpress.com`;
+								const suggestedSubdomain = `${ fields.site }${ suffix }`;
 
 								wpcom
 									.domains()
