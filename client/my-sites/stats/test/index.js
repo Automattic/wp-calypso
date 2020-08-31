@@ -5,16 +5,6 @@ jest.mock( 'my-sites/controller', () => ( {
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-
-jest.mock( 'lib/route', () => ( {
-	getStatsDefaultSitePage: jest.fn(),
-} ) );
-jest.mock( 'my-sites/activity/controller', () => ( {
-	redirect: jest.fn(),
-} ) );
-jest.mock( 'config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
 jest.mock( 'controller', () => ( {
 	makeLayout: jest.fn(),
 	render: jest.fn(),
@@ -27,13 +17,9 @@ import page from 'page';
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import statsController from '../controller';
-import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
-import config from 'config';
 import { makeLayout, render as clientRender } from 'controller';
 
 import router from '../index';
-
-config.isEnabled.mockImplementation( ( flag ) => flag === 'manage/stats' );
 
 const validModules = [
 	'posts',
@@ -46,14 +32,18 @@ const validModules = [
 	'filedownloads',
 	'searchterms',
 	'annualstats',
-];
-const validPeriods = [ 'day', 'week', 'month', 'year' ];
+].join( '|' );
+
+const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
 
 const routes = {
-	'/stats/day': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
-	'/stats/week': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
-	'/stats/month': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
-	'/stats/year': [ siteSelection, navigation, statsController.overview, makeLayout, clientRender ],
+	[ `/stats/:period(${ validPeriods })` ]: [
+		siteSelection,
+		navigation,
+		statsController.overview,
+		makeLayout,
+		clientRender,
+	],
 	'/stats/insights': [ siteSelection, navigation, sites, makeLayout, clientRender ],
 	'/stats/insights/:site': [
 		siteSelection,
@@ -62,53 +52,15 @@ const routes = {
 		makeLayout,
 		clientRender,
 	],
-	'/stats/day/:site': [ siteSelection, navigation, statsController.site, makeLayout, clientRender ],
-	'/stats/week/:site': [
+	[ `/stats/:period(${ validPeriods })/:site` ]: [
 		siteSelection,
 		navigation,
 		statsController.site,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/month/:site': [
-		siteSelection,
-		navigation,
-		statsController.site,
-		makeLayout,
-		clientRender,
-	],
-	'/stats/year/:site': [
-		siteSelection,
-		navigation,
-		statsController.site,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/:module(${ validModules.join( '|' ) })/:site` ]: [
-		statsController.redirectToDefaultModulePage,
-	],
-	[ `/stats/day/:module(${ validModules.join( '|' ) })/:site` ]: [
-		siteSelection,
-		navigation,
-		statsController.summary,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/week/:module(${ validModules.join( '|' ) })/:site` ]: [
-		siteSelection,
-		navigation,
-		statsController.summary,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/month/:module(${ validModules.join( '|' ) })/:site` ]: [
-		siteSelection,
-		navigation,
-		statsController.summary,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/year/:module(${ validModules.join( '|' ) })/:site` ]: [
+	[ `/stats/:module(${ validModules })/:site` ]: [ statsController.redirectToDefaultModulePage ],
+	[ `/stats/:period(${ validPeriods })/:module(${ validModules })/:site` ]: [
 		siteSelection,
 		navigation,
 		statsController.summary,
@@ -144,15 +96,8 @@ const routes = {
 		makeLayout,
 		clientRender,
 	],
-	'/stats/activity': [ siteSelection, sites, redirectToAcivity, makeLayout, clientRender ],
-	'/stats/activity/:site': [
-		siteSelection,
-		navigation,
-		redirectToAcivity,
-		makeLayout,
-		clientRender,
-	],
-	[ `/stats/ads/:period(${ validPeriods.join( '|' ) })/:site` ]: [
+	'/stats/activity/:site?': [ statsController.redirectToAcivity ],
+	[ `/stats/ads/:period(${ validPeriods })/:site` ]: [
 		siteSelection,
 		navigation,
 		statsController.wordAds,
