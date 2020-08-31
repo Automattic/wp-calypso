@@ -1,39 +1,33 @@
 /* eslint-disable no-console */
 
+/**
+ * External dependencies
+ */
 const { Octokit } = require( '@octokit/core' );
-const { isHittingRateLimit, warnOfRateLimit } = require( './rate-limit' );
 
-async function getPulls( octokit, repoOwner, repoName, base ) {
-	try {
-		const { data: pulls } = await octokit.request( 'GET /repos/{owner}/{repo}/pulls', {
-			owner: repoOwner,
-			repo: repoName,
-			base,
-			per_page: 100,
-			state: 'open',
-		} );
-		return pulls;
-	} catch ( e ) {
-		if ( e.status === 404 ) {
-			console.error( 'Unable to find the repository. Please check `owner` and `repo` arguments.' );
-		} else {
-			console.error( 'An unknown error occurred.' );
-			console.error( String( e ) );
-		}
+/**
+ * Internal dependencies
+ */
+const { isHittingRateLimit, warnOfRateLimit, sleepUntilRateLimitOver } = require( './rate-limit' );
+const { getPulls, retargetPr } = require( './github' );
 
-		return null;
-	}
-}
+const pullsExist = ( pulls ) => ( ( pulls && pulls.length ) || 0 ) > 0;
 
-async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken, { dry } ) {
+async function retargetOpenPrs(
+	repoOwner,
+	repoName,
+	from,
+	to,
+	accessToken,
+	{ dry, waitForRateLimit }
+) {
 	const octokit = new Octokit( { auth: accessToken } );
 
 	let pulls = await getPulls( octokit, repoOwner, repoName, from );
 
-	// eslint-disable-next-line no-constant-condition
-	while ( ( ( pulls && pulls.length ) || 0 ) > 0 ) {
-		// We loop until there are no more pull requests to work on or we hit the rate limit
-		console.log( `Found ${ pulls.length } pull requests to retarget.` );
+	// We loop until there are no more pull requests to work on or we hit the rate limit
+	while ( pullsExist( pulls ) ) {
+		console.log( `Found ${ pulls.length } more pull requests to retarget.` );
 
 		if ( dry ) {
 			console.log( 'Exiting dry run without changes.' );
@@ -42,23 +36,15 @@ async function retargetOpenPrs( repoOwner, repoName, from, to, accessToken, { dr
 
 		for ( const pull of pulls ) {
 			try {
-				const {
-					headers: {
-						'x-ratelimit-remaining': remainingRateLimit,
-						'x-ratelimit-reset': rateLimitReset,
-					},
-				} = await octokit.request( 'PATCH /repos/{owner}/{repo}/pulls/{pull_number}', {
-					owner: repoOwner,
-					repo: repoName,
-					pull_number: pull.number,
-					base: to,
-				} );
-
-				const rateLimitInfo = { remainingRateLimit, rateLimitReset };
+				const rateLimitInfo = await retargetPr( octokit, repoOwner, repoName, pull, to );
 
 				if ( isHittingRateLimit( rateLimitInfo ) ) {
-					warnOfRateLimit( rateLimitInfo );
-					return;
+					if ( waitForRateLimit ) {
+						await sleepUntilRateLimitOver( rateLimitInfo );
+					} else {
+						warnOfRateLimit( rateLimitInfo );
+						return;
+					}
 				}
 			} catch ( e ) {
 				console.error( 'An unknown error occurred.' );

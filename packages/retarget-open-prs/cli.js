@@ -40,6 +40,11 @@ const args = yargs
 			describe:
 				'Run the command without making any changes, outputting the number of PRs that would be affected.',
 		},
+		'wait-for-rate-limit': {
+			alias: 'w',
+			describe:
+				'When true, this will wait for the rate limit reset rather than exiting after hitting the rate limit',
+		},
 	} )
 	.example(
 		'$0 --owner=Automattic --repo=wp-calypso --from="main" --to="trunk" --access-token="ABCDEFG1234567"'
@@ -49,4 +54,5 @@ const args = yargs
 
 retargetOpenPrs( args.owner, args.repo, args.from, args.to, args[ 'access-token' ], {
 	dry: args.dry,
+	waitForRateLimit: args[ 'wait-for-rate-limit' ],
 } );
