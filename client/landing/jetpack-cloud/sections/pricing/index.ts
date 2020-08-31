@@ -1,14 +1,9 @@
 /**
- * External dependencies
- */
-import page from 'page';
-
-/**
  * Internal dependencies
  */
-import { makeLayout, render as clientRender } from 'controller';
-import { pricing } from 'landing/jetpack-cloud/sections/pricing/controller';
+import plansV2 from 'my-sites/plans-v2';
+import * as controller from './controller';
 
 export default function () {
-	page( '/pricing', pricing, makeLayout, clientRender );
+	plansV2( `/pricing`, controller.jetpackPricingContext );
 }

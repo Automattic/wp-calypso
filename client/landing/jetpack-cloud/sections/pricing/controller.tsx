@@ -6,9 +6,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PricingPage from './main';
+import StoreFooter from 'jetpack-connect/store-footer';
 
-export function pricing( context: PageJS.Context, next: Function ) {
-	context.primary = <PricingPage />;
+export function jetpackPricingContext( context, next ) {
+	context.footer = <StoreFooter />;
 	next();
 }
