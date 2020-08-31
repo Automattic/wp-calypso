@@ -228,7 +228,7 @@ class DomainItem extends PureComponent {
 					) }
 					{ domain.type === domainTypes.WPCOM && ! domainDetails?.isWpcomStagingDomain && (
 						<PopoverMenuItem
-							icon="list-unordered"
+							icon="reblog"
 							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
 						>
 							{ translate( 'Change site address' ) }
