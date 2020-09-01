@@ -1,0 +1,22 @@
+.email-provider-details__feature {
+	margin: 8px 0;
+	display: block;
+
+	.gridicon {
+		position: absolute;
+		margin-left: -28px;
+		fill: var( --studio-green-40 );
+	}
+
+	&::before {
+		content: '';
+		display: block;
+		height: 1px;
+		border-bottom: 1px solid var( --color-neutral-5 );
+		margin-bottom: 8px;
+	}
+}
+
+.promo-card .action-panel__body p.email-provider-details__description {
+	flex-grow: 0;
+}
