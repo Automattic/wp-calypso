@@ -21,14 +21,15 @@ class WPCOM_Coming_Soon {
 	/**
 	 * WPCOM_Coming_Soon constructor.
 	 */
-	public function __construct() {}
+	public function __construct() {
+	}
 
 	/**
 	 * Creates instance.
 	 *
 	 * @return \A8C\FSE\WPCOM_Coming_Soon
 	 */
-	public static function init() {
+	public function init() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
 		}
@@ -38,7 +39,7 @@ class WPCOM_Coming_Soon {
 	// check whether we should show a coming soon page
 	// @TODO how are we to override any default behaviour for free simple sites?
 	// On free simple sites we want to show a default coming soon page
-	private function should_show_coming_soon_page() {
+	public static function should_show_coming_soon_page() {
 		global $post;
 
 		if ( is_user_logged_in() ) {
@@ -46,9 +47,9 @@ class WPCOM_Coming_Soon {
 		}
 
 		// Handle the case where we are not rendering a post.
-		if ( ! isset( $post ) ) {
+/*		if ( ! isset( $post ) ) {
 			return false;
-		}
+		}*/
 
 		// Allow anonymous previews
 		if ( isset( $_GET['preview'] ) ) {
@@ -62,7 +63,7 @@ class WPCOM_Coming_Soon {
 	// On WordPress.com probably on Headstart,
 	// so we can register this custom post type
 	// and change the post type based on some hs_custom_meta, e.g., "hs_custom_meta": "_hs_coming_soon_page" ???
-	// Should we add some custom post type dmin labels here?
+	// Should we add some custom post type admin labels here?
 	// How are users going to assign a page as a coming soon page (Via the Gutenberg editor perhaps?)
 	private function register_coming_soon_post_type() {
 		$args = array(
@@ -77,23 +78,28 @@ class WPCOM_Coming_Soon {
 		register_post_type( 'coming_soon', $args );
 	}
 
-	function display_coming_soon_page() {
+	public static function display_coming_soon_page() {
 		global $post;
-		if ( ! show_coming_soon_page() ) {
+
+		$should_show_display_fallback_coming_soon_page = false;
+
+		if ( ! self::should_show_coming_soon_page() ) {
 			return;
 		}
 
-		$id = (int) get_option( 'page_for_coming_soon', 0 );
+		$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
+
+		l( '$id<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<' );
+		l( $id );
 
 		if ( empty( $id ) ) {
-			return;
+			$should_show_display_fallback_coming_soon_page = true;
 		}
 
 		$page = get_post( $id );
 
-		if ( ! $page ) {
-			$this->display_fallback_coming_soon_page();
-			return;
+		if ( ! $page || ! isset( $post ) ) {
+			$should_show_display_fallback_coming_soon_page = true;
 		}
 
 		// Disable a few floating UI things
@@ -109,7 +115,9 @@ class WPCOM_Coming_Soon {
 				<?php wp_head(); ?>
 			</head>
 			<body>
-				<?php echo apply_filters( 'the_content', $page->post_content ); ?>
+				<?php
+					echo apply_filters( 'the_content', $should_show_display_fallback_coming_soon_page ? self::get_fallback_coming_soon_page_content() : $page->post_content );
+				?>
 				<?php wp_footer(); ?>
 			</body>
 		</html>
@@ -117,23 +125,13 @@ class WPCOM_Coming_Soon {
 		die();
 	}
 
-	private function display_fallback_coming_soon_page() {
-		?><!doctype html>
-		<html <?php language_attributes(); ?>>
-			<head>
-				<meta charset="<?php bloginfo( 'charset' ); ?>" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<?php wp_head(); ?>
-			</head>
-			<body>
-			Hey! This is a backup coming soon page that will show until you create your own!
-			<?php wp_footer(); ?>
-			</body>
-		</html>
-		<?php
-		die();
+	public static function get_fallback_coming_soon_page_content() {
+		return '<h1>Coming soooooooooooon!</h1><p>Hey! This is a backup coming soon page that will show until you create your own!</p';
 	}
 
 }
 
-add_action( 'init', array( __NAMESPACE__ . '\WPCOM_Coming_Soon', 'init' ) );
+add_action( 'wp', __NAMESPACE__ . '\WPCOM_Coming_Soon::display_coming_soon_page' );
+
+//add_action( 'init', array( __NAMESPACE__ . '\WPCOM_Block_Editor_Nav_Sidebar', 'init' ) );
+
