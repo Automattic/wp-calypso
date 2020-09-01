@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite } from 'lodash';
-import React, { useCallback } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -18,6 +18,7 @@ import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'my-sites/plans-v2/con
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import { DEFAULT_UPGRADE_NUDGE_FEATURES } from './fixtures';
+import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
 
 /**
  * Type dependencies
@@ -47,6 +48,8 @@ const UpgradeNudge = ( {
 	selectorProduct,
 }: OwnProps ) => {
 	const translate = useTranslate();
+	const priceEl = useRef( null );
+	const isHeaderWrapped = useFlexboxWrapDetection( priceEl );
 	const isDiscounted = isFinite( discountedPrice );
 
 	const storedPreference = useSelector( ( state ) =>
@@ -83,7 +86,12 @@ const UpgradeNudge = ( {
 						<span className="jetpack-product-card__nudge-product-type">{ displayName }</span>
 					</h3>
 				</div>
-				<div className="jetpack-product-card__price">
+				<div
+					className={ classNames( 'jetpack-product-card__price', {
+						'is-left-aligned': isHeaderWrapped,
+					} ) }
+					ref={ priceEl }
+				>
 					<span className="jetpack-product-card__raw-price">
 						<PlanPrice
 							rawPrice={ originalPrice }
