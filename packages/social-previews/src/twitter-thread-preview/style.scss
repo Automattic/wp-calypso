@@ -10,7 +10,7 @@
  /* stylelint-disable scales/font-size */
 
 .twitter-thread-preview {
-	width: inherit;
+	width: 100%;
 	background-color: #fff;
 }
 
@@ -94,10 +94,6 @@
 				}
 			}
 
-			&.twitter-thread-preview__media-children-0 {
-				height: 0;
-			}
-
 			&.twitter-thread-preview__media-children-2 {
 				grid-template-areas: 'a b';
 			}
@@ -111,6 +107,20 @@
 				grid-template-areas: 'a b'
 									 'c d';
 			}
+		}
+
+		.twitter-thread-preview__quote-tweet {
+			margin-top: 10px;
+			min-height: 200px;
+		}
+
+		.twitter-thread-preview__quote-tweet-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			opacity: 0;
 		}
 	}
 

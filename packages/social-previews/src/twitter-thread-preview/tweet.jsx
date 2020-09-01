@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { __ } from '@wordpress/i18n';
+import { SandBox } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -142,6 +143,31 @@ export class Tweet extends PureComponent {
 	}
 
 	/**
+	 * Given a tweet URL, renders it as a quoted tweet.
+	 *
+	 * @param {string} tweet The tweet URL.
+	 *
+	 * @returns {React.Element} The quoted tweet.
+	 */
+	renderQuoteTweet( tweet ) {
+		if ( ! tweet ) {
+			return;
+		}
+
+		return (
+			<div className="twitter-thread-preview__quote-tweet">
+				<SandBox
+					html={ `<blockquote class="twitter-tweet" data-conversation="none" data-dnt="true"><a href="${ tweet }"></a></blockquote>` }
+					scripts={ [ 'https://platform.twitter.com/widgets.js' ] }
+					title="Embedded tweet"
+					onFocus={ this.hideOverlay }
+				/>
+				<div className="twitter-thread-preview__quote-tweet-overlay" />
+			</div>
+		);
+	}
+
+	/**
 	 * Renders the footer section of a single tweet, showing (non-functioning) reply, retweet, etc buttons.
 	 *
 	 * @returns {React.Element} The footer.
@@ -175,7 +201,7 @@ export class Tweet extends PureComponent {
 	}
 
 	render() {
-		const { isLast, profileImage, name, screenName, date, text, media } = this.props;
+		const { isLast, profileImage, name, screenName, date, text, media, tweet } = this.props;
 
 		return (
 			<div className="twitter-thread-preview__container">
@@ -185,6 +211,7 @@ export class Tweet extends PureComponent {
 					<div className="twitter-thread-preview__content">
 						{ this.renderText( text ) }
 						{ this.renderMedia( media ) }
+						{ this.renderQuoteTweet( tweet ) }
 					</div>
 					{ this.renderFooter() }
 				</div>
@@ -199,9 +226,10 @@ Tweet.propTypes = {
 	profileImage: PropTypes.string,
 	name: PropTypes.string,
 	screenName: PropTypes.string,
-	date: PropTypes.date,
+	date: PropTypes.number,
 	text: PropTypes.string,
 	media: PropTypes.array,
+	tweet: PropTypes.string,
 };
 
 export default Tweet;
