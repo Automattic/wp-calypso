@@ -9,7 +9,10 @@ import React, { FunctionComponent } from 'react';
 import StepProgress from 'components/step-progress';
 
 const StepProgressExample: FunctionComponent = () => (
-	<StepProgress steps={ [ 'first', 'second', 'third' ] } />
+	<StepProgress
+		steps={ [ 'You got this!?', 'Host locator', 'Credentials', 'Verification' ] }
+		currentStep={ 1 }
+	/>
 );
 
 export default StepProgressExample;

@@ -1,0 +1,32 @@
+.step-progress {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
+	.step-progress__element {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.step-progress__element-visual,
+.step-progress__element-step-name {
+	display: flex;
+	justify-content: center;
+}
+.step-progress__element-number-current,
+.step-progress__element-number-complete,
+.step-progress__element-number {
+	border-radius: 50%;
+	background-color: var( --color-neutral-10 );
+	height: 24px;
+	width: 24px;
+	color: var( --color-text-inverted );
+	display: flex;
+	justify-content: center;
+}
+
+.step-progress__element-number-current,
+.step-progress__element-number-complete {
+	background-color: var( --color-primary );
+}
