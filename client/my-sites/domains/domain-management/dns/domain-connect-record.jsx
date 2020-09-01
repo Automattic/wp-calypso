@@ -121,7 +121,6 @@ class DomainConnectRecord extends React.Component {
 									id="domain-connect-record"
 									name="domain-connect-record"
 									onChange={ this.handleToggle }
-									type="checkbox"
 									checked={ enabled }
 									value="active"
 									disabled={ this.state.dnsRecordIsBeingUpdated }
