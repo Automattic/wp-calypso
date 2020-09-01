@@ -29,8 +29,8 @@ import {
 	useDispatch,
 	useMessages,
 	useFormStatus,
-} from '../src/public-api';
-import { StripeHookProvider, useStripe } from '../src/lib/stripe';
+} from '@automattic/composite-checkout';
+import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
