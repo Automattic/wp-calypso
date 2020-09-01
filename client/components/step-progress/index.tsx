@@ -3,6 +3,19 @@
  */
 import React, { FunctionComponent } from 'react';
 
-const StepProgress: FunctionComponent = () => <div className="step-progress" />;
+interface Props {
+	steps: string[];
+	currentStep: number;
+}
+
+const StepProgress: FunctionComponent< Props > = ( { steps } ) => (
+	<div className="step-progress">
+		<ol>
+			{ steps.map( ( stepName ) => (
+				<li>{ stepName }</li>
+			) ) }
+		</ol>
+	</div>
+);
 
 export default StepProgress;
