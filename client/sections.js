@@ -451,7 +451,6 @@ const sections = [
 		name: 'jetpack-cloud-pricing',
 		paths: [ '/pricing' ],
 		module: 'wp-calypso-client/landing/jetpack-cloud/sections/pricing',
-		secondary: false,
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
 	},

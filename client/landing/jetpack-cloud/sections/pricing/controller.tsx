@@ -6,9 +6,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PricingPage from './main';
+import StoreFooter from 'jetpack-connect/store-footer';
+import { hideMasterbar } from 'state/ui/actions';
+import Header from './header';
 
-export function pricing( context: PageJS.Context, next: Function ) {
-	context.primary = <PricingPage />;
+export function jetpackPricingContext( context, next ) {
+	context.store.dispatch( hideMasterbar() );
+	context.header = <Header />;
+	context.footer = <StoreFooter />;
 	next();
 }

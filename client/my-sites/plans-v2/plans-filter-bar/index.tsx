@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -11,6 +12,7 @@ import classNames from 'classnames';
 import SegmentedControl from 'components/segmented-control';
 import SelectDropdown from 'components/select-dropdown';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
+import { masterbarIsVisible } from 'state/ui/selectors';
 import { PRODUCT_TYPE_OPTIONS } from '../constants';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 
@@ -31,6 +33,8 @@ interface Props {
 	onProductTypeChange: Function;
 }
 
+const MASTERBAR_HEIGHT = 47;
+
 const PlansFilterBar = ( {
 	duration,
 	productType,
@@ -38,7 +42,11 @@ const PlansFilterBar = ( {
 	onProductTypeChange,
 }: Props ) => {
 	const barRef = useRef< HTMLDivElement | null >( null );
-	const hasCrossed = useDetectWindowBoundary( barRef );
+	const isMasterbarVisible = useSelector( masterbarIsVisible );
+	// if we can find the masterbar in the DOM, get its height directly from the element.
+	const masterbarHeight = document.querySelector( '.masterbar' )?.offsetHeight || MASTERBAR_HEIGHT;
+	const masterbarOffset = isMasterbarVisible ? masterbarHeight : 0;
+	const hasCrossed = useDetectWindowBoundary( barRef, masterbarOffset );
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
