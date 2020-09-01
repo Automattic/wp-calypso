@@ -35,10 +35,9 @@ const PrePurchaseNotices = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
 
-	// We used to directly reference the cart itself here,
-	// but for some reason, cart items take ~20 seconds
-	// to populate in some cases, whereas line items are
-	// immediately available on page load.
+	// We used to directly reference the cart itself here (passed in as a prop),
+	// but for some reason, cart items take ~20 seconds to populate in some cases,
+	// whereas line items are immediately available on page load.
 	const [ lineItems ] = useLineItems();
 	const cartItemSlugs = lineItems
 		.map( ( item ) => item.wpcom_meta?.product_slug )
