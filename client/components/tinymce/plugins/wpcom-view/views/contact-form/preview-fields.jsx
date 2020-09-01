@@ -11,6 +11,7 @@ import PreviewFieldset from './preview-fieldset';
 import PreviewLegend from './preview-legend';
 import PreviewRequired from './preview-required';
 
+import FormInputCheckbox from 'wp-calypso-client/components/forms/form-checkbox';
 import FormLabel from 'wp-calypso-client/components/forms/form-label';
 import FormRadio from 'wp-calypso-client/components/forms/form-radio';
 
@@ -30,11 +31,11 @@ const textarea = ( field, index ) => (
 
 const checkbox = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
-		<label>
-			<input type="checkbox" />
+		<FormLabel>
+			<FormInputCheckbox />
 			{ field.label }
 			<PreviewRequired required={ field.required } />
-		</label>
+		</FormLabel>
 	</PreviewFieldset>
 );
 
