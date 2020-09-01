@@ -25,7 +25,7 @@ class ReduxFormToggle extends Component {
 	};
 
 	render() {
-		return <Field component={ ToggleRenderer } type="checkbox" { ...this.props } />;
+		return <Field component={ ToggleRenderer } { ...this.props } />;
 	}
 }
 
