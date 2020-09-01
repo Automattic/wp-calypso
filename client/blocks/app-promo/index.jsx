@@ -14,7 +14,7 @@ import Gridicon from 'components/gridicon';
  */
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { Dialog } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import { fetchUserSettings } from 'state/user-settings/actions';
 import getUserSettings from 'state/selectors/get-user-settings';
 import { sendEmailLogin } from 'state/auth/actions';
@@ -129,15 +129,17 @@ export class AppPromo extends React.Component {
 
 		return (
 			<div className="app-promo">
-				<button
+				<Button
+					borderless
 					tabIndex="0"
 					className="app-promo__dismiss"
 					onClick={ this.dismiss }
 					aria-label={ translate( 'Dismiss' ) }
 				>
 					<Gridicon icon="cross" size={ 24 } />
-				</button>
-				<a
+				</Button>
+				<Button
+					borderless
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"
 					title="Try the desktop app!"
@@ -153,7 +155,7 @@ export class AppPromo extends React.Component {
 						alt="WordPress Desktop Icon"
 					/>
 					{ promoItem.message }
-				</a>
+				</Button>
 			</div>
 		);
 	};
@@ -164,15 +166,17 @@ export class AppPromo extends React.Component {
 
 		return (
 			<div className="app-promo">
-				<button
+				<Button
+					borderless
 					tabIndex="0"
 					className="app-promo__dismiss"
 					onClick={ this.dismiss }
 					aria-label={ translate( 'Dismiss' ) }
 				>
 					<Gridicon icon="cross" size={ 24 } />
-				</button>
-				<button
+				</Button>
+				<Button
+					borderless
 					onClick={ this.sendMagicLink }
 					className="app-promo__link"
 					title="Try the mobile app!"
@@ -185,7 +189,7 @@ export class AppPromo extends React.Component {
 						alt="WordPress App Icon"
 					/>
 					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
-				</button>
+				</Button>
 				<Dialog
 					className="app-promo__dialog"
 					isVisible={ this.state.showDialog }
