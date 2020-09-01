@@ -63,6 +63,12 @@ function WpcomBlockEditorNavSidebar() {
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
+	const containerMount = ( el: HTMLDivElement | null ) => {
+		if ( el ) {
+			el.focus();
+		}
+	};
+
 	if ( ! postType ) {
 		// Still loading
 		return null;
@@ -136,6 +142,7 @@ function WpcomBlockEditorNavSidebar() {
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
+				ref={ containerMount }
 				role="dialog"
 				tabIndex={ -1 }
 			>
@@ -178,7 +185,7 @@ function WpcomBlockEditorNavSidebar() {
 						/>
 					</ul>
 				) }
-				<section className="wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area">
+				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area">
 					{ ! isEmpty( recentPosts ) && (
 						<>
 							<h3 className="wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading">
@@ -214,7 +221,7 @@ function WpcomBlockEditorNavSidebar() {
 							</ul>
 						</>
 					) }
-				</section>
+				</div>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons">
 					<CreatePage postType={ postType } />
 				</div>
@@ -234,7 +241,7 @@ function useNavItems(): Record< string, Post[] > {
 			getEditedPostAttribute,
 		} = select( 'core/editor' );
 
-		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' ) as any[];
+		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
 		if ( ! statuses ) {
 			return [];
 		}
@@ -258,7 +265,6 @@ function useNavItems(): Record< string, Post[] > {
 
 		const current = {
 			id: currentPostId,
-			slug: getEditedPostAttribute( 'slug' ),
 			status: isEditedPostNew() ? 'draft' : getEditedPostAttribute( 'status' ),
 			title: { raw: getEditedPostAttribute( 'title' ), rendered: '' },
 		};
@@ -282,7 +288,7 @@ function useNavItems(): Record< string, Post[] > {
 
 function usePostStatusLabels(): Record< string, string > {
 	return useSelect( ( select ) => {
-		const items = select( 'core' ).getEntityRecords( 'root', 'status' ) as [  ];
+		const items = select( 'core' ).getEntityRecords( 'root', 'status' );
 		return ( items || [] ).reduce(
 			( acc, { name, slug } ) => ( slug === 'publish' ? acc : { ...acc, [ slug ]: name } ),
 			{}
