@@ -12,7 +12,7 @@ import {
 import { chevronLeft, wordpress } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, partition } from 'lodash';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { ESCAPE } from '@wordpress/keycodes';
@@ -240,8 +240,8 @@ function useNavItems(): Record< string, Post[] > {
 			getCurrentPostType,
 			getEditedPostAttribute,
 		} = select( 'core/editor' );
-
 		const statuses = select( 'core' ).getEntityRecords( 'root', 'status' );
+
 		if ( ! statuses ) {
 			return [];
 		}
@@ -250,11 +250,9 @@ function useNavItems(): Record< string, Post[] > {
 			.filter( ( { show_in_list } ) => show_in_list )
 			.map( ( { slug } ) => slug )
 			.join( ',' );
-
 		const currentPostId = getCurrentPostId();
 		const currentPostType = getCurrentPostType();
-
-		const items =
+		const items: Post[] =
 			select( 'core' ).getEntityRecords( 'postType', currentPostType, {
 				_fields: 'id,status,title',
 				exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
@@ -262,27 +260,14 @@ function useNavItems(): Record< string, Post[] > {
 				per_page: 10,
 				status: statusFilter,
 			} ) || [];
-
 		const current = {
 			id: currentPostId,
 			status: isEditedPostNew() ? 'draft' : getEditedPostAttribute( 'status' ),
 			title: { raw: getEditedPostAttribute( 'title' ), rendered: '' },
 		};
+		const [ drafts, recent ] = partition( items, { status: 'draft' } );
 
-		const partitionDraftPosts: Record< string, Array< Post[] > > = items.reduce(
-			( { drafts, recent }, item ) => {
-				return item.status === 'draft'
-					? { drafts: [ ...drafts, item ], recent }
-					: { drafts, recent: [ ...recent, item ] };
-			},
-			{ drafts: [] as Array< Post[] >, recent: [] as Array< Post[] > }
-		);
-
-		// @TODO Not sure if this is the most optimal model
-		return {
-			current: [ current ],
-			...partitionDraftPosts,
-		} as any;
+		return { current: [ current ], drafts, recent } as any;
 	} );
 }
 
