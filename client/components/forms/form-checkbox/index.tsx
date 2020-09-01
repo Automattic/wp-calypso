@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent, InputHTMLAttributes } from 'react';
 import classnames from 'classnames';
 
 /**
@@ -9,7 +9,9 @@ import classnames from 'classnames';
  */
 import './style.scss';
 
-const FormInputCheckbox = ( { className, ...otherProps } ) => (
+type CheckboxProps = InputHTMLAttributes< HTMLInputElement >;
+
+const FormInputCheckbox: FunctionComponent< CheckboxProps > = ( { className, ...otherProps } ) => (
 	<input { ...otherProps } type="checkbox" className={ classnames( className, 'form-checkbox' ) } />
 );
 
