@@ -18,11 +18,11 @@ class MyComponent extends React.Component {
 		return (
 			<EditorFieldset legend="Settings">
 				<FormLabel>
-					<FormInputCheckbox>
+					<FormInputCheckbox />
 					<span>Option One</span>
 				</FormLabel>
 				<FormLabel>
-					<FormInputCheckbox>
+					<FormInputCheckbox />
 					<span>Option Two</span>
 				</FormLabel>
 			</EditorFieldset>
