@@ -196,7 +196,7 @@ function WpcomBlockEditorNavSidebar() {
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
 						aria-label={ __(
-							'You are viewing the sidebar. To close select escape',
+							'You are viewing the sidebar. Press the Escape key to close.',
 							'full-site-editing'
 						) }
 						className={ classNames(
