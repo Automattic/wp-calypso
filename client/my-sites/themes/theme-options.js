@@ -20,7 +20,6 @@ import {
 } from 'state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
-	getThemeCustomizeUrl,
 	getThemeDetailsUrl,
 	getThemeHelpUrl,
 	getThemePurchaseUrl,
@@ -32,6 +31,8 @@ import {
 	isThemeGutenbergFirst,
 	isThemePremium,
 } from 'state/themes/selectors';
+
+import getCustomizeUrl from 'state/selectors/get-customize-url';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -112,7 +113,7 @@ function getAllThemeOptions() {
 			comment: 'label in the dialog for selecting a site for which to customize a theme',
 		} ),
 		icon: 'customize',
-		getUrl: getThemeCustomizeUrl,
+		getUrl: getCustomizeUrl,
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
