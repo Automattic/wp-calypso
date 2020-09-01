@@ -29,6 +29,7 @@ type Props = {
 	productSlug: string;
 };
 
+// TODO: prices be fetched from the API and take into account discounts for yearly terms
 const PRODUCT_TIERS_PRICES: Record< string, number > = {
 	[ JETPACK_SEARCH_TIER_UP_TO_100_RECORDS ]: 5,
 	[ JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS ]: 10,
