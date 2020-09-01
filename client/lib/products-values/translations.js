@@ -46,12 +46,8 @@ export const getJetpackProductsShortNames = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: shouldShowOfferResetFlow()
-			? translate( 'Scan' )
-			: translate( 'Daily Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Scan' )
-			: translate( 'Daily Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 	};
@@ -77,15 +73,7 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 	const search = translate( 'Jetpack Search' );
-	const scanDaily = (
-		<>
-			{ translate( 'Jetpack Scan {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
-		</>
-	);
+	const scan = translate( 'Jetpack Scan' );
 	const antiSpam = <>{ translate( 'Jetpack Anti-spam' ) }</>;
 
 	return {
@@ -97,8 +85,8 @@ export const getJetpackProductsDisplayNames = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: search,
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -124,15 +112,7 @@ export const getJetpackProductsCallToAction = () => {
 		</>
 	);
 	const search = translate( 'Get Search' );
-	const scanDaily = (
-		<>
-			{ translate( 'Get Scan {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
-		</>
-	);
+	const scan = translate( 'Get Scan' );
 	const antiSpam = <>{ translate( 'Get Anti-spam' ) }</>;
 
 	return {
@@ -142,8 +122,8 @@ export const getJetpackProductsCallToAction = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: search,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
