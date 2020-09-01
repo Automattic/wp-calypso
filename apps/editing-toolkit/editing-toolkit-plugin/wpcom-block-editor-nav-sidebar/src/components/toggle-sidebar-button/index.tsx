@@ -4,6 +4,7 @@
 import { Button as OriginalButton } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n/build-types';
 import classnames from 'classnames';
 
 /**
@@ -26,6 +27,7 @@ export default function ToggleSidebarButton() {
 
 	return (
 		<Button
+			aria-label={ __( 'Open sidebar', 'full-site-editing' ) }
 			className={ classnames(
 				'edit-post-fullscreen-mode-close',
 				'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',
