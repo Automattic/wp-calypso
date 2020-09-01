@@ -180,7 +180,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const allSitesSelector = By.css( '.current-section button' );
 		const sidebarSelector = By.css( '.sidebar .sidebar__region' );
 		const sidebar = await this.driver.findElement( sidebarSelector );
-		const rectangle = sidebar.getRect();
+		const rectangle = await sidebar.getRect();
 		const sidebarVisible = sidebar.isDisplayed() && rectangle.x >= -100;
 
 		if ( ! sidebarVisible ) {
