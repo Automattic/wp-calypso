@@ -23,6 +23,8 @@ const updateSiteFrontPageRequest = ( action ) =>
 				is_page_on_front: 'page' === get( action.frontPageOptions, 'show_on_front' ),
 				page_on_front_id: get( action.frontPageOptions, 'page_on_front' ),
 				page_for_posts_id: get( action.frontPageOptions, 'page_for_posts' ),
+				wpcom_coming_soon_page_id: get( action.frontPageOptions, 'wpcom_coming_soon_page_id' ),
+
 			},
 		},
 		action

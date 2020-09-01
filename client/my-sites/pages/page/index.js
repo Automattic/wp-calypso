@@ -356,10 +356,11 @@ class Page extends Component {
 		);
 	}
 
-	setComingSoonPage = ( pageId ) => () =>
+	setComingSoonPage = () => {
 		this.props.updateSiteFrontPage( this.props.siteId, {
-			wpcom_coming_soon_page_id: pageId,
+			wpcom_coming_soon_page_id: this.props.isComingSoonPage ? 0 : this.props.page.ID,
 		} );
+	}
 
 	getComingSoonPageItem() {
 		const { canManageOptions, translate } = this.props;
@@ -378,13 +379,13 @@ class Page extends Component {
 			<>
 				<MenuSeparator key="separator" />
 				{ this.props.isComingSoonPage && (
-					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage( 0 ) }>
+					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage }>
 						<Gridicon icon="undo" size={ 18 } />
 						{ translate( 'Set as Regular Page' ) }
 					</PopoverMenuItem>
 				) }
 				{ ! this.props.isComingSoonPage && (
-					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage( this.props.page.ID ) }>
+					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage }>
 						<Gridicon icon="time" size={ 18 } />
 						{ translate( 'Set as Coming Soon' ) }
 					</PopoverMenuItem>
