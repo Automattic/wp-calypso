@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import PostSelector from '../';
 import FormLabel from 'components/forms/form-label';
+import FormInputCheckbox from 'components/forms/form-checkbox';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 
 class PostSelectorExample extends Component {
@@ -36,8 +37,7 @@ class PostSelectorExample extends Component {
 		return (
 			<div style={ { width: 300 } }>
 				<FormLabel>
-					<input
-						type="checkbox"
+					<FormInputCheckbox
 						checked={ this.state.showTypeLabels }
 						onChange={ this.toggleTypeLabels }
 					/>
