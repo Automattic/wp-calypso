@@ -9,7 +9,6 @@ import React from 'react';
  */
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
-import Illustration from 'components/illustration';
 
 export default class Illustrations extends React.PureComponent {
 	static displayName = 'Illustrations';
@@ -25,20 +24,12 @@ export default class Illustrations extends React.PureComponent {
 					<table className="design__illustrations-table">
 						<tbody>
 							<tr>
-								<td>
-									<Illustration path="adwords-google.svg" />
-								</td>
-								<td>
-									<Illustration path="app-banner-editor.svg" />
-								</td>
+								<td></td>
+								<td></td>
 							</tr>
 							<tr>
-								<td>
-									<Illustration path="app-banner-notifications.svg" />
-								</td>
-								<td>
-									<Illustration path="app-banner-reader.svg" />
-								</td>
+								<td></td>
+								<td></td>
 							</tr>
 						</tbody>
 					</table>
