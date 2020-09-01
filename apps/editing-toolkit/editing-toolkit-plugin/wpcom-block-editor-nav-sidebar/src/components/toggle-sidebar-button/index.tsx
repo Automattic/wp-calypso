@@ -4,7 +4,7 @@
 import { Button as OriginalButton } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n/build-types';
+import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 
 /**
