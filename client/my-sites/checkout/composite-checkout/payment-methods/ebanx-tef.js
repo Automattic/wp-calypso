@@ -133,18 +133,12 @@ export function createEbanxTefPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createEbanxTefMethod( { store, stripe, stripeConfiguration } ) {
+export function createEbanxTefMethod( { store } ) {
 	return {
 		id: 'brazil-tef',
 		label: <EbanxTefLabel />,
-		activeContent: <EbanxTefFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
-		submitButton: (
-			<EbanxTefPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <EbanxTefFields />,
+		submitButton: <EbanxTefPayButton store={ store } />,
 		inactiveContent: <EbanxTefSummary />,
 		getAriaLabel: () => 'Transferência bancária',
 	};
@@ -330,8 +324,8 @@ function EbanxTefPayButton( { disabled, store } ) {
 						items,
 						total,
 					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
+						.then( ( transactionResponse ) => {
+							if ( ! transactionResponse?.redirect_url ) {
 								setTransactionError(
 									__(
 										'There was an error processing your payment. Please try again or contact support.'
@@ -339,8 +333,8 @@ function EbanxTefPayButton( { disabled, store } ) {
 								);
 								return;
 							}
-							debug( 'ebanx-tef transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
+							debug( 'ebanx-tef transaction requires redirect', transactionResponse.redirect_url );
+							setTransactionRedirecting( transactionResponse.redirect_url );
 						} )
 						.catch( ( error ) => {
 							setTransactionError( error.message );
