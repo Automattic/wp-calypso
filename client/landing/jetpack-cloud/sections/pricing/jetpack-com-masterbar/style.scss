@@ -1,41 +1,47 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-.pricing-masterbar {
+.jetpack-com-masterbar {
+	background-color: var( --studio-gray-0 );
+
+	padding: 1em 0;
+
+	// Undo the padding-top set by .layout__content.
+	margin-top: -78px;
+}
+
+.jetpack-com-masterbar__inner {
 	display: flex;
 	justify-content: space-between;
 
-	background-color: var( --studio-gray-0 );
-
 	text-align: left;
-
-	padding: 1em 0 1.5em;
 }
 
-.pricing-masterbar__logo {
+.jetpack-com-masterbar__logo {
 	display: inline-block;
 	padding-top: 0.25em;
 }
 
-.pricing-masterbar.sticky {
+.jetpack-com-masterbar.sticky {
 	position: fixed;
-	top: 0; // No masterbar here.
+	top: 0;
+	left: 0;
 
 	width: 100%;
-	max-width: 1040px;
 
-	z-index: 2;
+	margin-top: 0;
+
+	z-index: 3;
+
+	.jetpack-com-masterbar__inner {
+		max-width: 1040px;
+
+		margin: 0 auto;
+		padding: 0 32px;
+	}
 }
 
-.is-group-jetpack-cloud .plans-filter-bar.sticky {
-	width: 100%;
-	max-width: none;
-
-	border-left: none;
-	border-right: none;
-}
-
-.pricing-masterbar__nav {
+.jetpack-com-masterbar__nav {
 	display: flex;
 
 	padding: 0;
@@ -47,7 +53,7 @@
 	line-height: 150%;
 }
 
-.pricing-masterbar__nav-item {
+.jetpack-com-masterbar__nav-item {
 	padding: 0 3px;
 
 	a {

@@ -41,28 +41,30 @@ const Masterbar = () => {
 	const hasCrossed = useDetectWindowBoundary( barRef );
 
 	return (
-		<div ref={ barRef } className={ classNames( 'pricing-masterbar', { sticky: hasCrossed } ) }>
-			<a
-				className="pricing-masterbar__logo"
-				href={ JETPACK_COM_BASE_URL }
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<JetpackLogo full size={ 48 } />
-			</a>
+		<div ref={ barRef } className={ classNames( 'jetpack-com-masterbar', { sticky: hasCrossed } ) }>
+			<div className="jetpack-com-masterbar__inner">
+				<a
+					className="jetpack-com-masterbar__logo"
+					href={ JETPACK_COM_BASE_URL }
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<JetpackLogo full size={ 48 } />
+				</a>
 
-			<ul className="pricing-masterbar__nav">
-				{ NAVIGATION_ITEMS.map( ( { title, path } ) => (
-					<li className="pricing-masterbar__nav-item" key={ title }>
-						<a
-							className={ path === 'pricing' ? 'current' : null }
-							href={ `${ JETPACK_COM_BASE_URL }/${ path }` }
-						>
-							{ title }
-						</a>
-					</li>
-				) ) }
-			</ul>
+				<ul className="jetpack-com-masterbar__nav">
+					{ NAVIGATION_ITEMS.map( ( { title, path } ) => (
+						<li className="jetpack-com-masterbar__nav-item" key={ title }>
+							<a
+								className={ path === 'pricing' ? 'current' : null }
+								href={ `${ JETPACK_COM_BASE_URL }/${ path }` }
+							>
+								{ title }
+							</a>
+						</li>
+					) ) }
+				</ul>
+			</div>
 		</div>
 	);
 };
