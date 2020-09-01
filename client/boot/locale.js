@@ -97,12 +97,14 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 		initLanguageEmpathyMode();
 	}
 
+	let userLocaleSlug = currentUser.localeVariant || currentUser.localeSlug;
 	const shouldUseFallbackLocale =
 		currentUser?.use_fallback_for_incomplete_languages &&
-		isTranslatedIncompletely( currentUser.localeSlug );
-	const userLocaleSlug = shouldUseFallbackLocale
-		? config( 'i18n_default_locale_slug' )
-		: currentUser.localeSlug;
+		isTranslatedIncompletely( userLocaleSlug );
+
+	if ( shouldUseFallbackLocale ) {
+		userLocaleSlug = config( 'i18n_default_locale_slug' );
+	}
 
 	if ( useTranslationChunks && '__requireChunkCallback__' in window ) {
 		const localeSlug = userLocaleSlug || getLocaleFromPathname();
@@ -122,8 +124,13 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 			loadUserUndeployedTranslations( languageSlug );
 		}
 	} else if ( currentUser && currentUser.localeSlug ) {
-		// Use the current user's and load traslation data with a fetch request
-		reduxStore.dispatch( setLocale( userLocaleSlug, currentUser.localeVariant ) );
+		if ( shouldUseFallbackLocale ) {
+			// Use user locale fallback slug
+			reduxStore.dispatch( setLocale( userLocaleSlug ) );
+		} else {
+			// Use the current user's and load traslation data with a fetch request
+			reduxStore.dispatch( setLocale( currentUser.localeSlug, currentUser.localeVariant ) );
+		}
 	} else {
 		// For logged out Calypso pages, set the locale from slug
 		const pathLocaleSlug = getLocaleFromPathname();
