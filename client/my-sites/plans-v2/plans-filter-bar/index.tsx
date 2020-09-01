@@ -33,6 +33,8 @@ interface Props {
 	onProductTypeChange: Function;
 }
 
+const MASTERBAR_HEIGHT = 47;
+
 const PlansFilterBar = ( {
 	duration,
 	productType,
@@ -41,7 +43,9 @@ const PlansFilterBar = ( {
 }: Props ) => {
 	const barRef = useRef< HTMLDivElement | null >( null );
 	const isMasterbarVisible = useSelector( masterbarIsVisible );
-	const masterbarOffset = isMasterbarVisible ? 47 : 0;
+	// if we can find the masterbar in the DOM, get its height directly from the element.
+	const masterbarHeight = document.querySelector( '.masterbar' )?.offsetHeight || MASTERBAR_HEIGHT;
+	const masterbarOffset = isMasterbarVisible ? masterbarHeight : 0;
 	const hasCrossed = useDetectWindowBoundary( barRef, masterbarOffset );
 
 	return (
