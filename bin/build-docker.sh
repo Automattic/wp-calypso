@@ -10,7 +10,6 @@ if [[ -z "${1:-}" ]] ; then
 fi
 
 VERSION="$1"
-
 BUILDER_IMAGE_NAME="automattic/wp-calypso-base"
 CI_IMAGE_NAME="automattic/wp-calypso-ci"
 BUILDER_IMAGE="${BUILDER_IMAGE_NAME}:${VERSION}"
