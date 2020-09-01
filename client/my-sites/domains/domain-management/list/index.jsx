@@ -49,15 +49,15 @@ import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import PopoverCart from 'my-sites/checkout/cart/popover-cart';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
-import { getAllCartItems } from 'lib/cart-values/cart-items';
+import HeaderCart from 'my-sites/checkout/cart/header-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'my-sites/domains/style.scss';
 
 export class List extends React.Component {
 	static propTypes = {
@@ -81,7 +81,6 @@ export class List extends React.Component {
 		settingPrimaryDomain: false,
 		changePrimaryDomainModeEnabled: false,
 		primaryDomainIndex: -1,
-		isPopoverCartVisible: false,
 	};
 
 	isLoading() {
@@ -172,43 +171,22 @@ export class List extends React.Component {
 		);
 	}
 
-	togglePopoverCart = () => {
-		this.setState( {
-			isPopoverCartVisible: ! this.state.isPopoverCartVisible,
-		} );
-	};
-
-	renderCart() {
-		if ( isEmpty( getAllCartItems( this.props.cart ) ) ) {
-			return null;
-		}
-
-		return (
-			<PopoverCart
-				cart={ this.props.cart }
-				selectedSite={ this.props.selectedSite }
-				visible={ this.state.isPopoverCartVisible }
-				pinned={ false }
-				path={ this.props.currentRoute }
-				onToggle={ this.togglePopoverCart }
-				closeSectionNavMobilePanel={ noop }
-				compact
-			/>
-		);
-	}
-
 	renderNewDesign() {
 		return (
 			<>
-				<div className="list__domains-header">
+				<div className="domains__header">
 					<FormattedHeader
 						brandFont
 						className="domain-management__page-heading"
 						headerText={ this.props.translate( 'Site Domains' ) }
 						align="left"
 					/>
-					<div className="list__domains-header-buttons">
-						{ this.renderCart() }
+					<div className="domains__header-buttons">
+						<HeaderCart
+							cart={ this.props.cart }
+							selectedSite={ this.props.selectedSite }
+							currentRoute={ this.props.currentRoute }
+						/>
 						{ this.addDomainButton() }
 					</div>
 				</div>
