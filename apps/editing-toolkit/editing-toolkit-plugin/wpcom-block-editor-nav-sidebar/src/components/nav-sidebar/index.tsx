@@ -71,10 +71,6 @@ function WpcomBlockEditorNavSidebar() {
 	const itemRefs = useRef< ( HTMLElement | null )[] >( [] );
 
 	const containerMount = ( el: HTMLDivElement | null ) => {
-		if ( el ) {
-			el.focus();
-		}
-
 		if ( observer.current ) {
 			observer.current.disconnect();
 		}
@@ -198,6 +194,7 @@ function WpcomBlockEditorNavSidebar() {
 		>
 			<div
 				aria-label={ __( 'Block editor sidebar', 'full-site-editing' ) }
+				// Waiting for jsx-a11y version bump to support aria-description attribute
 				// eslint-disable-next-line jsx-a11y/aria-props
 				aria-description={ dialogDescription }
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
@@ -210,6 +207,9 @@ function WpcomBlockEditorNavSidebar() {
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
 						aria-label={ __( 'Close block editor sidebar', 'full-site-editing' ) }
+						// We need to shift the focus to something because we are opening a modal
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
 							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
@@ -228,6 +228,7 @@ function WpcomBlockEditorNavSidebar() {
 					) }
 				</div>
 				<Button
+					// Waiting for jsx-a11y version bump to support aria-description attribute
 					// eslint-disable-next-line jsx-a11y/aria-props
 					aria-description={ __( 'Returns to the dashboard', 'full-site-editing' ) }
 					href={ closeUrl }
