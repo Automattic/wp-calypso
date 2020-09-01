@@ -22,6 +22,7 @@
 		"jetpack/backups-restore": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/pricing-page": false,
+		"jetpack/server-credentials-advanced-flow": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
