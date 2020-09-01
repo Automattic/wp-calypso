@@ -179,7 +179,9 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	async ensureSidebarMenuVisible() {
 		const allSitesSelector = By.css( '.current-section button' );
 		const sidebarSelector = By.css( '.sidebar .sidebar__region' );
-		const sidebarVisible = await this.driver.findElement( sidebarSelector ).isDisplayed();
+		const sidebar = await this.driver.findElement( sidebarSelector );
+		const rectangle = sidebar.getRect();
+		const sidebarVisible = sidebar.isDisplayed() && rectangle.x >= -100;
 
 		if ( ! sidebarVisible ) {
 			await driverHelper.clickWhenClickable( this.driver, allSitesSelector );

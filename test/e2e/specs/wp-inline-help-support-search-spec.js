@@ -37,7 +37,7 @@ describe( `[${ host }] Inline Help: (${ screenSize }) @parallel`, async function
 
 		// The "/home" route is the only one where the "FAB" inline help
 		// is not shown.
-		await loginFlow.loginAndSelectSettings();
+		await loginFlow.loginAndSelectSettings( { useFreshLogin: true });
 
 		// Initialize the helper component
 		inlineHelpPopoverComponent = await InlineHelpPopoverComponent.Expect( driver );
