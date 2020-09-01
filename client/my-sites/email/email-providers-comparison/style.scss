@@ -1,0 +1,11 @@
+.email-providers-comparison__providers {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.promo-card {
+		width: calc( 33% - 0.5em );
+		margin: 0;
+	}
+}
