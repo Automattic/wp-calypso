@@ -1,0 +1,75 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.pricing-masterbar {
+	display: flex;
+	justify-content: space-between;
+
+	background-color: var( --studio-gray-0 );
+
+	text-align: left;
+
+	padding: 1em 0 1.5em;
+}
+
+.pricing-masterbar__logo {
+	display: inline-block;
+	padding-top: 0.25em;
+}
+
+.pricing-masterbar.sticky {
+	position: fixed;
+	top: 0; // No masterbar here.
+
+	width: 100%;
+	max-width: 1040px;
+
+	z-index: 2;
+}
+
+.is-group-jetpack-cloud .plans-filter-bar.sticky {
+	width: 100%;
+	max-width: none;
+
+	border-left: none;
+	border-right: none;
+}
+
+.pricing-masterbar__nav {
+	display: flex;
+
+	padding: 0;
+	margin: 0.5em 0;
+
+	list-style: none;
+	list-style-image: none;
+
+	line-height: 150%;
+}
+
+.pricing-masterbar__nav-item {
+	padding: 0 3px;
+
+	a {
+		color: #00be28;
+
+		display: inline-block;
+
+		padding: 10px 14px;
+
+		font-weight: 600;
+		font-size: 1.1em;
+
+		border-bottom: 2px transparent solid;
+		border-radius: 0;
+
+		transition: all 0.5s ease-in-out;
+	}
+
+	a.current,
+	a:hover {
+		border-bottom: 2px #87a6bc solid;
+		color: #000;
+		background: 0 0;
+	}
+}
