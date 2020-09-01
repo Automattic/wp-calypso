@@ -43,8 +43,21 @@ export interface LineItemAmount {
 
 export type ExternalLineItemAmount = Partial< LineItemAmount >;
 
-export interface FormStatusController {
-	formStatus: string;
+export enum FormStatus {
+	LOADING = 'loading',
+	READY = 'ready',
+	SUBMITTING = 'submitting',
+	VALIDATING = 'validating',
+	COMPLETE = 'complete',
+}
+
+export interface FormStatusState {
+	formStatus: FormStatus;
+}
+
+export type FormStatusAction = ReactStandardAction< 'FORM_STATUS_CHANGE', FormStatus >;
+
+export interface FormStatusController extends FormStatusState {
 	setFormReady: () => void;
 	setFormLoading: () => void;
 	setFormValidating: () => void;
@@ -52,7 +65,9 @@ export interface FormStatusController {
 	setFormComplete: () => void;
 }
 
-export type FormStatusManager = [ string, ( newStatus: string ) => void ];
+export type FormStatusSetter = ( newStatus: FormStatus ) => void;
+
+export type FormStatusManager = [ FormStatus, FormStatusSetter ];
 
 export type ReactStandardAction< T = string, P = unknown > = P extends void
 	? {
