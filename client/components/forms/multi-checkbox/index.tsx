@@ -8,6 +8,12 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 type OptionValue = number | string;
 
@@ -67,7 +73,7 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 	return (
 		<div className="multi-checkbox" { ...otherProps }>
 			{ options.map( ( option ) => (
-				<label key={ option.value }>
+				<FormLabel key={ option.value }>
 					<FormInputCheckbox
 						name={ name + '[]' }
 						value={ option.value }
@@ -76,7 +82,7 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 						disabled={ disabled }
 					/>
 					<span>{ option.label }</span>
-				</label>
+				</FormLabel>
 			) ) }
 		</div>
 	);
