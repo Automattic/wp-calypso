@@ -150,6 +150,11 @@ function WpcomBlockEditorNavSidebar() {
 		postType.slug
 	);
 
+	const closeAriaLabel =
+		postType.slug === 'page'
+			? __( 'View all pages in the Dashboard', 'full-site-editing' )
+			: __( 'View all posts in the Dashboard', 'full-site-editing' );
+
 	const dismissSidebar = () => {
 		if ( isOpen && ! isClosing ) {
 			toggleSidebar();
@@ -217,7 +222,7 @@ function WpcomBlockEditorNavSidebar() {
 					) }
 				</div>
 				<Button
-					aria-label={ __( 'View all pages in Dashboard', 'full-site-editing' ) }
+					aria-label={ closeAriaLabel }
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
 					icon={ arrowLeft }
