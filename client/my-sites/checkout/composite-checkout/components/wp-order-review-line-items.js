@@ -479,7 +479,8 @@ function LineItemSublabelAndPrice( { item } ) {
 				sublabel: item.sublabel,
 				interval: translate( 'billed annually' ),
 			},
-			comment: 'product type and billing interval, separated by a colon',
+			comment:
+				'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
 		} );
 	}
 	return item.sublabel || null;

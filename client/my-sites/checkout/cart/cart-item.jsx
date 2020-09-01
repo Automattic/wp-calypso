@@ -243,7 +243,7 @@ export class CartItem extends React.Component {
 			name += ' - ' + translate( 'never expires' );
 		}
 
-		if ( cartItem?.extra?.premium ) {
+		if ( isDomainProduct( cartItem ) && cartItem?.extra?.premium ) {
 			name = translate( 'Premium' ) + ' ' + name;
 		}
 
