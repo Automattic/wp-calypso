@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Count from 'components/count';
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 
 /**
  * Style dependencies
@@ -57,9 +59,8 @@ export class BulkSelect extends React.Component {
 
 		return (
 			<span className="bulk-select">
-				<label className="bulk-select__container">
-					<input
-						type="checkbox"
+				<FormLabel className="bulk-select__container">
+					<FormInputCheckbox
 						className={ inputClasses }
 						checked={ isChecked }
 						onChange={ this.handleToggleAll }
@@ -67,7 +68,7 @@ export class BulkSelect extends React.Component {
 					/>
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }
-				</label>
+				</FormLabel>
 			</span>
 		);
 	}
