@@ -685,10 +685,6 @@ export default function pages() {
 				req.context.chunkFiles = req.getEmptyAssets();
 			}
 
-			if ( section.secondary && req.context ) {
-				req.context.hasSecondary = true;
-			}
-
 			if ( section.group && req.context ) {
 				req.context.sectionGroup = section.group;
 			}
