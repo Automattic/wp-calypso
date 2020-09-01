@@ -2,6 +2,12 @@
  * External dependencies
  */
 import React, { useCallback, useRef } from 'react';
+import { noop } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import FormInputCheckbox from 'components/forms/form-checkbox';
 
 type OptionValue = number | string;
 
@@ -30,7 +36,7 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 		checked,
 		defaultChecked = [] as OptionValue[],
 		disabled = false,
-		onChange = () => {},
+		onChange = noop,
 		name = 'multiCheckbox',
 		options,
 		...otherProps
@@ -62,9 +68,8 @@ export default function MultiCheckbox( props: Props & DivProps ) {
 		<div className="multi-checkbox" { ...otherProps }>
 			{ options.map( ( option ) => (
 				<label key={ option.value }>
-					<input
+					<FormInputCheckbox
 						name={ name + '[]' }
-						type="checkbox"
 						value={ option.value }
 						checked={ checkedItems.includes( option.value ) }
 						onChange={ handleChange }
