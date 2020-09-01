@@ -152,8 +152,8 @@ function WpcomBlockEditorNavSidebar() {
 
 	const closeAriaLabel =
 		postType.slug === 'page'
-			? __( 'View all pages in the Dashboard', 'full-site-editing' )
-			: __( 'View all posts in the Dashboard', 'full-site-editing' );
+			? __( 'Return to the Dashboard to view all pages', 'full-site-editing' )
+			: __( 'Return to the Dashboard to view all posts', 'full-site-editing' );
 
 	const dismissSidebar = () => {
 		if ( isOpen && ! isClosing ) {
