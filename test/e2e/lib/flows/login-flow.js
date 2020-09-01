@@ -241,8 +241,8 @@ export default class LoginFlow {
 		return await sideBarComponent.selectPlugins();
 	}
 
-	async loginAndSelectSettings( { useFreshLogin = false } ) {
-		await this.loginAndSelectMySite( null, { useFreshLogin: useFreshLogin } );
+	async loginAndSelectSettings() {
+		await this.loginAndSelectMySite();
 
 		const sideBarComponent = await SidebarComponent.Expect( this.driver );
 		return await sideBarComponent.selectSettings();
