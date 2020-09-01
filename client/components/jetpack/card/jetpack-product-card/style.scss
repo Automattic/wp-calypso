@@ -241,6 +241,10 @@ $jetpack-product-card-icon-size: 55px;
 	padding: 0 4px;
 }
 
+.jetpack-product-card__children {
+	margin-bottom: 32px;
+}
+
 .jetpack-product-card .foldable-card.card.is-expanded {
 	margin-bottom: 0;
 }

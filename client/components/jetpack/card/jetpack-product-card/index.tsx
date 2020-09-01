@@ -45,6 +45,7 @@ type OwnProps = {
 	onButtonClick: () => void;
 	cancelLabel?: TranslateResult;
 	onCancelClick?: () => void;
+	children?: ReactNode;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
 	isDeprecated?: boolean;
@@ -73,6 +74,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	onButtonClick,
 	cancelLabel,
 	onCancelClick,
+	children,
 	isHighlighted,
 	isOwned,
 	isDeprecated,
@@ -198,6 +200,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 					</Button>
 				) }
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }
+				{ children && <div className="jetpack-product-card__children">{ children }</div> }
 			</div>
 			{ features && features.items.length > 0 && (
 				<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />

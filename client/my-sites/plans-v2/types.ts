@@ -89,6 +89,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	shortName: TranslateResult;
 	tagline: TranslateResult;
 	description: TranslateResult | ReactNode;
+	children?: ReactNode;
 	term: Duration;
 	buttonLabel?: TranslateResult;
 	features: SelectorProductFeatures;

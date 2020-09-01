@@ -130,3 +130,19 @@
 		margin-top: 40px;
 	}
 }
+
+/**
+ * Record slider
+ */
+
+.records-slider__tier {
+	font-weight: 700;
+}
+
+.records-slider__label {
+	padding: 0 16px;
+
+	color: var( --color-text-subtle );
+
+	text-align: center;
+}
