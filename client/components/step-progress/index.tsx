@@ -26,7 +26,7 @@ const StepProgress: FunctionComponent< Props > = ( { steps, currentStep } ) => {
 	return (
 		<div className="step-progress">
 			{ steps.map( ( stepName, index ) => (
-				<div className="step-progress__element">
+				<div className="step-progress__element" key={ `step-${ index }` }>
 					<div className="step-progress__element-visual">
 						<div className={ getElementNumberClass( index ) }>{ index + 1 }</div>
 					</div>
