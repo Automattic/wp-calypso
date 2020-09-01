@@ -1,3 +1,12 @@
 .header {
 	text-align: center;
 }
+
+.header__main-title {
+	h1 {
+		font-size: 2.5em;
+		font-weight: 600;
+
+		margin: 1.5em auto 0.25em;
+	}
+}

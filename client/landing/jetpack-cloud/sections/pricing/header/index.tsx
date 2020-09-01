@@ -8,6 +8,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
+import { preventWidows } from 'lib/formatting';
+import JetpackComMasterbar from '../jetpack-com-masterbar';
 
 /**
  * Style dependencies
@@ -15,18 +17,23 @@ import FormattedHeader from 'components/formatted-header';
 import './style.scss';
 
 const Header = () => (
-	<div className="header">
-		<FormattedHeader
-			headerText={ translate( 'Security, performance, and marketing tools for WordPress' ) }
-			align="center"
-		/>
-		<FormattedHeader headerText={ translate( 'Plans' ) } align="center" />
-		<p>
-			{ translate(
-				'Get everything your site needs, in one package — so you can focus on your business.'
-			) }
-		</p>
-	</div>
+	<>
+		<JetpackComMasterbar />
+		<div className="header">
+			<FormattedHeader
+				className="header__main-title"
+				headerText={ preventWidows(
+					translate( 'Security, performance, and marketing tools for WordPress' )
+				) }
+				align="center"
+			/>
+			<p>
+				{ translate(
+					'Get everything your site needs, in one package — so you can focus on your business.'
+				) }
+			</p>
+		</div>
+	</>
 );
 
 export default Header;
