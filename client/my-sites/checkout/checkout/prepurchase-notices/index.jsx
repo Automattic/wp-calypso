@@ -70,11 +70,19 @@ const PrePurchaseNotices = ( { cart } ) => {
 		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
 	);
 
+	// All these notices (and the selectors that drive them)
+	// require a site ID to work. We should *conceptually* always
+	// have a site ID handy; consider this a guard, or an
+	// explicit declaration that all code beyond this point can
+	// safely assume a site ID has been defined.
+	if ( ! siteId ) {
+		return null;
+	}
+
 	// This site has an active Jetpack Backup product purchase,
 	// but we're attempting to buy a plan that includes one as well
-	if ( cartPlanOverlapsSiteBackupPurchase ) {
-		const siteBackupProduct = currentSiteProducts.find( isJetpackBackup );
-
+	const siteBackupProduct = currentSiteProducts.find( isJetpackBackup );
+	if ( cartPlanOverlapsSiteBackupPurchase && siteBackupProduct ) {
 		return (
 			<CartPlanOverlapsOwnedProductNotice
 				product={ siteBackupProduct }
@@ -85,7 +93,7 @@ const PrePurchaseNotices = ( { cart } ) => {
 
 	// We're attempting to buy Jetpack Backup individually,
 	// but this site already has a plan that includes it
-	if ( sitePlanIncludesCartBackupProduct ) {
+	if ( sitePlanIncludesCartBackupProduct && currentSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }
@@ -104,7 +112,7 @@ const PrePurchaseNotices = ( { cart } ) => {
 		);
 	}
 
-	return false;
+	return null;
 };
 
 const Wrapper = ( props ) => {
