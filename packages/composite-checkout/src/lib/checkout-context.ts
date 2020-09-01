@@ -3,15 +3,16 @@
  */
 import { createContext } from 'react';
 import {
-	ReactStandardAction,
 	PaymentMethod,
 	PaymentProcessorProp,
+	ReactStandardAction,
+	TransactionStatus,
 	TransactionStatusManager,
 } from '../types';
 
 const defaultTransactionStatusManager: TransactionStatusManager = {
-	transactionStatus: 'not-started',
-	previousTransactionStatus: 'not-started',
+	transactionStatus: TransactionStatus.NOT_STARTED,
+	previousTransactionStatus: TransactionStatus.NOT_STARTED,
 	transactionError: null,
 	transactionLastResponse: null,
 	transactionRedirectUrl: null,
