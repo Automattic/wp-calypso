@@ -16,7 +16,7 @@ import './style.scss';
 const Button = ( {
 	children,
 	...rest
-}: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
+}: OriginalButton.Props & { icon?: any; iconSize?: number; showTooltip?: boolean } ) => (
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
@@ -27,7 +27,8 @@ export default function ToggleSidebarButton() {
 
 	return (
 		<Button
-			aria-label={ __( 'Open sidebar', 'full-site-editing' ) }
+			label={ __( 'Block editor sidebar', 'full-site-editing' ) }
+			showTooltip
 			className={ classnames(
 				'edit-post-fullscreen-mode-close',
 				'wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button',

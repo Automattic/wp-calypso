@@ -103,10 +103,16 @@ function WpcomBlockEditorNavSidebar() {
 		postType.slug
 	);
 
-	const closeAriaLabel =
+	const dialogDescription =
 		postType.slug === 'page'
-			? __( 'Return to the Dashboard to view all pages', 'full-site-editing' )
-			: __( 'Return to the Dashboard to view all posts', 'full-site-editing' );
+			? __(
+					'Contains links to your dashboard or to edit other pages on your site. Press the Escape key to close.',
+					'full-site-editing'
+			  )
+			: __(
+					'Contains links to your dashboard or to edit other posts on your site. Press the Escape key to close.',
+					'full-site-editing'
+			  );
 
 	const dismissSidebar = () => {
 		if ( isOpen && ! isClosing ) {
@@ -144,6 +150,9 @@ function WpcomBlockEditorNavSidebar() {
 			onKeyDown={ handleKeyDown }
 		>
 			<div
+				aria-label={ __( 'Block editor sidebar', 'full-site-editing' ) }
+				// eslint-disable-next-line jsx-a11y/aria-props
+				aria-description={ dialogDescription }
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
@@ -153,11 +162,7 @@ function WpcomBlockEditorNavSidebar() {
 			>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
-						// eslint-disable-next-line jsx-a11y/aria-props
-						aria-description={ __(
-							'You are viewing the sidebar. Press the Escape key to close.',
-							'full-site-editing'
-						) }
+						aria-label={ __( 'Close block editor sidebar', 'full-site-editing' ) }
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
 							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
@@ -171,7 +176,8 @@ function WpcomBlockEditorNavSidebar() {
 					</div>
 				</div>
 				<Button
-					aria-label={ closeAriaLabel }
+					// eslint-disable-next-line jsx-a11y/aria-props
+					aria-description={ __( 'Returns to the dashboard', 'full-site-editing' ) }
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
 					icon={ chevronLeft }
