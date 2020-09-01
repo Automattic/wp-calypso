@@ -31,7 +31,7 @@ import './style.scss';
 const Button = ( {
 	children,
 	...rest
-}: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
+}: OriginalButton.Props & { icon?: any; iconSize?: number; showTooltip?: boolean } ) => (
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
@@ -206,7 +206,8 @@ function WpcomBlockEditorNavSidebar() {
 			>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
-						aria-label={ __( 'Close block editor sidebar', 'full-site-editing' ) }
+						label={ __( 'Close block editor sidebar', 'full-site-editing' ) }
+						showTooltip
 						// We need to shift the focus to something because we are opening a modal
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
