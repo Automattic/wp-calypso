@@ -64,7 +64,7 @@ export function useFormStatusManager(
 function formStatusReducer( state: FormStatus, action: FormStatusAction ): FormStatus {
 	switch ( action.type ) {
 		case 'FORM_STATUS_CHANGE':
-			validateStatus( action.payload );
+			validateFormStatus( action.payload );
 			debug( 'setting form status to', action.payload );
 			return action.payload;
 		default:
@@ -72,10 +72,8 @@ function formStatusReducer( state: FormStatus, action: FormStatusAction ): FormS
 	}
 }
 
-const validStatuses = [ 'loading', 'ready', 'validating', 'submitting', 'complete' ] as const;
-
-function validateStatus( status: unknown ): asserts status is typeof validStatuses[ number ] {
-	if ( ! validStatuses.includes( status as never ) ) {
+function validateFormStatus( status: unknown ): asserts status is FormStatus {
+	if ( ! Object.values( FormStatus ).includes( status as never ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}
 }
