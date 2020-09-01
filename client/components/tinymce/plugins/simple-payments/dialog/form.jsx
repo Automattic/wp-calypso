@@ -146,7 +146,7 @@ class ProductForm extends Component {
 						component={ renderPriceField }
 					/>
 					<div>
-						<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
+						<ReduxFormFieldset name="multiple" component={ CompactFormToggle }>
 							{ translate( 'Allow people to buy more than one item at a time.' ) }
 						</ReduxFormFieldset>
 						<ReduxFormFieldset
