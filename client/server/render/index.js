@@ -325,7 +325,7 @@ export function setShouldServerSideRender( context, next ) {
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		isSectionIsomorphic( context.store.getState() ) &&
-		! context.user && // logged out only
+			! context.user && // logged out only
 			isDefaultLocale( context.lang ) &&
 			context.layout
 	);
