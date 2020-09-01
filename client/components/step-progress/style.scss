@@ -4,11 +4,6 @@
 	justify-content: space-between;
 	position: relative;
 
-	.step-progress__element {
-		display: flex;
-		flex-direction: column;
-	}
-
 	&::before {
 		background: var( --color-neutral-5 );
 		content: '';
@@ -19,6 +14,11 @@
 		width: 90%;
 		z-index: 0;
 	}
+}
+
+.step-progress__element {
+	display: flex;
+	flex-direction: column;
 }
 
 .step-progress__element-visual,
@@ -40,6 +40,21 @@
 		width: 60%;
 		z-index: 1;
 	}
+}
+
+.step-progress__element-step-name-current,
+.step-progress__element-step-name-complete,
+.step-progress__element-step-name {
+	margin-top: 9px;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 1;
+	line-height: 24px;
+}
+
+.step-progress__element-step-name-complete,
+.step-progress__element-step-name {
+	color: var( --color-text-subtle );
 }
 
 .step-progress__element-number-current,
