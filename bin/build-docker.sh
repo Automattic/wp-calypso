@@ -10,8 +10,8 @@ if [[ -z "${1:-}" ]] ; then
 fi
 
 VERSION="$1"
-BUILDER_IMAGE_NAME="automattic/wp-calypso-base"
-CI_IMAGE_NAME="automattic/wp-calypso-ci"
+BUILDER_IMAGE_NAME="registry.a8c.com/calypso/base"
+CI_IMAGE_NAME="registry.a8c.com/calypso/ci"
 BUILDER_IMAGE="${BUILDER_IMAGE_NAME}:${VERSION}"
 CI_IMAGE="${CI_IMAGE_NAME}:${VERSION}"
 
