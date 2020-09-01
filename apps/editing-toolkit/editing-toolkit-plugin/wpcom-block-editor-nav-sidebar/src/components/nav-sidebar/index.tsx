@@ -200,7 +200,8 @@ function WpcomBlockEditorNavSidebar() {
 			>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
-						aria-label={ __(
+						// eslint-disable-next-line jsx-a11y/aria-props
+						aria-description={ __(
 							'You are viewing the sidebar. Press the Escape key to close.',
 							'full-site-editing'
 						) }
