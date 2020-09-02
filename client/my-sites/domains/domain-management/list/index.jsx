@@ -478,6 +478,8 @@ export class List extends React.Component {
 			return <ListItemPlaceholder />;
 		}
 
+		const moreThanOneDomain = domains.filter( ( domain ) => domain?.canSetAsPrimary ).length > 1;
+
 		return [
 			<CompactCard className="list__header-primary-domain" key="primary-domain-header">
 				<div className="list__header-primary-domain-info">
@@ -491,6 +493,7 @@ export class List extends React.Component {
 				<div className="list__header-primary-domain-buttons">
 					<Button
 						compact
+						disabled={ ! moreThanOneDomain }
 						className="list__change-primary-domain"
 						onClick={
 							this.state.changePrimaryDomainModeEnabled
@@ -543,7 +546,7 @@ export class List extends React.Component {
 			<DomainItem
 				key={ `${ domain.name }-${ index }` }
 				currentRoute={ currentRoute }
-				domain={ { domain: domain.name } }
+				domain={ domain }
 				domainDetails={ domain }
 				site={ selectedSite }
 				isManagingAllSites={ false }
