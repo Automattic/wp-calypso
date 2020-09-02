@@ -36,9 +36,10 @@ function MacPlatform( mainWindow ) {
 
 	mainWindow.on( 'close', function ( ev ) {
 		if ( appQuit.shouldQuitToBackground() ) {
-			log.info( 'Window close puts app into background' );
+			log.info( `User clicked 'close': hiding main window...` );
 			ev.preventDefault();
 			mainWindow.hide();
+			mainWindow.webContents.send( 'close-notifications-panel' );
 		}
 	} );
 }
@@ -51,16 +52,21 @@ MacPlatform.prototype.restore = function () {
 	this.window.show();
 };
 
-MacPlatform.prototype.showNotificationsBadge = function ( count, bounceEnabled ) {
-	app.dock.setBadge( ' ' );
+MacPlatform.prototype.showNotificationsBadge = function ( count, bounce ) {
+	const badgeCount = app.getBadgeCount();
+	if ( count === badgeCount ) {
+		return;
+	}
 
-	if ( bounceEnabled ) {
+	app.setBadgeCount( count );
+
+	if ( bounce ) {
 		app.dock.bounce();
 	}
 };
 
 MacPlatform.prototype.clearNotificationsBadge = function () {
-	app.dock.setBadge( '' );
+	app.setBadgeCount( 0 );
 };
 
 MacPlatform.prototype.setDockMenu = function ( enabled ) {
