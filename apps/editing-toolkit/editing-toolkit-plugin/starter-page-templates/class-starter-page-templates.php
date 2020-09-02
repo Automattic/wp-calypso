@@ -203,7 +203,7 @@ class Starter_Page_Templates {
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
-			$vertical_id = get_option( 'site_vertical', 'default' );
+			$vertical_id = get_option( 'site_vertical' ) ? get_option( 'site_vertical' ) : 'default';
 			$request_url = add_query_arg(
 				array( '_locale' => $this->get_iso_639_locale() ),
 				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
