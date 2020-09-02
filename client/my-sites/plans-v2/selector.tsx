@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import page from 'page';
 
@@ -79,9 +79,12 @@ const SelectorPage = ( {
 		checkout( siteSlug, product.productSlug );
 	};
 
-	const isInConnectFlow =
-		/jetpack\/connect\/plans/.test( window.location.href ) &&
-		/source=jetpack-connect-plans/.test( window.location.href );
+	const isInConnectFlow = useMemo(
+		() =>
+			/jetpack\/connect\/plans/.test( window.location.href ) ||
+			/source=jetpack-connect-plans/.test( window.location.href ),
+		[]
+	);
 
 	const showJetpackFreeCard = isInConnectFlow || isJetpackCloud();
 

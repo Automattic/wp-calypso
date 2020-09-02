@@ -118,14 +118,14 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 							return null;
 						}
 						return (
-							<ProductCard
-								key={ subtypeSlug }
-								item={ subtypeItem }
-								siteId={ siteId }
-								currencyCode={ currencyCode as string }
-								onClick={ () => selectProduct( subtypeItem ) }
-								className="details__column"
-							/>
+							<div key={ subtypeSlug } className="details__column">
+								<ProductCard
+									item={ subtypeItem }
+									siteId={ siteId }
+									currencyCode={ currencyCode as string }
+									onClick={ () => selectProduct( subtypeItem ) }
+								/>
+							</div>
 						);
 					} )
 				) }
