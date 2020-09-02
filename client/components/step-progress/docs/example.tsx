@@ -40,4 +40,6 @@ const StepProgressExample: FunctionComponent = () => {
 	);
 };
 
+StepProgressExample.displayName = 'StepProgressExample';
+
 export default StepProgressExample;

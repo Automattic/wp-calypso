@@ -14,7 +14,7 @@ interface Props {
 }
 
 const StepProgress: FunctionComponent< Props > = ( { steps, currentStep } ) => {
-	const getElementNumberClass = ( stepNumber: number ): boolean => {
+	const getElementNumberClass = ( stepNumber: number ) => {
 		if ( currentStep === stepNumber ) {
 			return 'step-progress__element-number-current';
 		}
@@ -23,7 +23,7 @@ const StepProgress: FunctionComponent< Props > = ( { steps, currentStep } ) => {
 			: 'step-progress__element-number';
 	};
 
-	const getStepNameClass = ( stepNumber: number ): boolean => {
+	const getStepNameClass = ( stepNumber: number ) => {
 		if ( currentStep === stepNumber ) {
 			return 'step-progress__element-step-name-current';
 		}
