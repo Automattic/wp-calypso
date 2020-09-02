@@ -14,7 +14,7 @@ $markup = '
 <!-- /wp:spacer -->
 
 <!-- wp:paragraph {"style":{"typography":{"fontSize":72,"lineHeight":"0.9"}}} -->
-<p style="line-height:.9;font-size:72px;"></p><p style="line-height:.9;font-size:72px;"><strong>%1$s<br>%2$s<br>%3$s </strong><br><strong>%4$s<br>%5$s<br>%6$s<br>%7$s<br>%8$s<br>%9$s</strong></p><p></p>
+<p style="line-height:0.9;font-size:72px;"><strong>%1$s<br>%2$s<br>%3$s </strong><br><strong>%4$s<br>%5$s<br>%6$s<br>%7$s<br>%8$s<br>%9$s</strong></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:spacer {"height":20} -->
