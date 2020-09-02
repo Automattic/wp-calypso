@@ -11,7 +11,7 @@ import type { Plan } from './types';
 
 const mainFeatures = [
 	'Remove WordPress.com ads',
-	'Email & basic Live Chat Support',
+	'Email & basic live chat support',
 	'Collect recurring payments',
 	'Collect one-time payments',
 	'Earn ad revenue',
@@ -21,7 +21,7 @@ const mainFeatures = [
 	'Business features (incl. SEO)',
 	'Upload themes',
 	'Install plugins',
-	'Accept Payments in 60+ Countries',
+	'Accept payments in 60+ countries',
 ];
 
 export const PLANS_LIST: Record< string, Plan > = {
