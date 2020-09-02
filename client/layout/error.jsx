@@ -49,7 +49,6 @@ export function show( context, chunkName ) {
 	context.store.dispatch( {
 		type: SECTION_SET,
 		section: false,
-		hasSidebar: false,
 	} );
 	context.primary = <LoadingErrorMessage />;
 	makeLayout( context, noop );

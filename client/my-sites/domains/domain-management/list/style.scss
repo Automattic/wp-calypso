@@ -312,8 +312,8 @@ input[type='radio'].domain-management-list-item__radio {
 	font-weight: 600;
 }
 
-.list__no-chevron .gridicon {
-	display: none;
+.list__view-all {
+	margin-top: 24px;
 }
 
 .list__action_item_placeholder {
@@ -334,7 +334,7 @@ input[type='radio'].domain-management-list-item__radio {
 	display: flex;
 
 	.popover-cart {
-		margin-right: 4px;
+		margin-right: 8px;
 	}
 
 	.popover-cart .header-button, .popover-cart .header-button:hover {

@@ -170,27 +170,29 @@ const getLanguageManifest = ( langSlug, target ) => {
 };
 
 export function attachI18n( context ) {
+	let localeSlug = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
 	const shouldUseFallbackLocale =
-		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( context.lang );
-	const langSlug = shouldUseFallbackLocale ? config( 'i18n_default_locale_slug' ) : context.lang;
+		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( localeSlug );
 
-	if ( ! isDefaultLocale( langSlug ) ) {
-		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || langSlug;
-
-		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
+	if ( shouldUseFallbackLocale ) {
+		localeSlug = config( 'i18n_default_locale_slug' );
 	}
 
-	if ( ! isDefaultLocale( langSlug ) && context.useTranslationChunks ) {
+	if ( ! isDefaultLocale( localeSlug ) ) {
+		context.i18nLocaleScript = getLanguageFileUrl( localeSlug, 'js', context.languageRevisions );
+	}
+
+	if ( ! isDefaultLocale( localeSlug ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		const languageManifest = getLanguageManifest( langSlug, context.target );
+		const languageManifest = getLanguageManifest( localeSlug, context.target );
 
 		if ( languageManifest ) {
 			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
-				localeSlug: langSlug,
+				localeSlug: localeSlug,
 				fileType: 'js',
 				targetBuild: context.target,
-				hash: context?.languageRevisions?.hashes?.[ langSlug ],
+				hash: context?.languageRevisions?.hashes?.[ localeSlug ],
 			} );
 
 			context.entrypoint.language.translations = context.entrypoint.js
@@ -200,19 +202,19 @@ export function attachI18n( context ) {
 				.map( ( chunkId ) =>
 					getTranslationChunkFileUrl( {
 						chunkId,
-						localeSlug: langSlug,
+						localeSlug: localeSlug,
 						fileType: 'js',
 						targetBuild: context.target,
-						hash: context?.languageRevisions?.[ langSlug ],
+						hash: context?.languageRevisions?.[ localeSlug ],
 					} )
 				);
 		}
 	}
 
 	if ( context.store ) {
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || langSlug;
+		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
 
-		const isLocaleRTL = isLocaleRtl( langSlug );
+		const isLocaleRTL = isLocaleRtl( localeSlug );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
@@ -325,7 +327,7 @@ export function setShouldServerSideRender( context, next ) {
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		isSectionIsomorphic( context.store.getState() ) &&
-		! context.user && // logged out only
+			! context.user && // logged out only
 			isDefaultLocale( context.lang ) &&
 			context.layout
 	);

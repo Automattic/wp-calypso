@@ -14,7 +14,6 @@ import { reducer as httpData } from 'state/data-layer/http-data';
 /**
  * Reducers
  */
-import activityLog from './activity-log/reducer';
 import atomicTransfer from './atomic-transfer/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
@@ -23,7 +22,6 @@ import embeds from './embeds/reducer';
 import experiments from './experiments/reducer';
 import gsuiteUsers from './gsuite-users/reducer';
 import happychat from './happychat/reducer';
-import home from './home/reducer';
 import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
@@ -58,7 +56,6 @@ import users from './users/reducer';
 // The reducers in this list are not modularized, and are always loaded on boot.
 // Please do not add to this list. See #39261 and p4TIVU-9lM-p2 for more details.
 const reducers = {
-	activityLog,
 	atomicTransfer,
 	currentUser,
 	dataRequests,
@@ -67,7 +64,6 @@ const reducers = {
 	experiments,
 	gsuiteUsers,
 	happychat,
-	home,
 	httpData,
 	i18n,
 	immediateLogin,

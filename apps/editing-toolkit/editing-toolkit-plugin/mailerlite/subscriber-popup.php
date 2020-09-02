@@ -14,10 +14,10 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 		parent::__construct(
 			'wpcom-mailerlite',
 			/** This filter is documented in modules/widgets/facebook-likebox.php */
-			apply_filters( 'jetpack_widget_name', __( 'Mailerlite subscriber popup', 'jetpack' ) ),
+			apply_filters( 'jetpack_widget_name', __( 'Mailerlite subscriber popup', 'full-site-editing' ) ),
 			array(
 				'classname'                   => 'widget_mailerlite',
-				'description'                 => __( 'Display Mailerlite subscriber popup', 'jetpack' ),
+				'description'                 => __( 'Display Mailerlite subscriber popup', 'full-site-editing' ),
 				'customize_selective_refresh' => true,
 			)
 		);
@@ -39,7 +39,7 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 				echo '<p>' . sprintf(
 					wp_kses(
 						/* translators: %1$s - URL to manage the widget, %2$s - documentation URL. */
-						__( 'You need to enter your numeric account ID and UUID for the <a href="%1$s">Mailerlite Widget</a> to work correctly. <a href="%2$s" target="_blank">Full instructions</a>.', 'jetpack' ),
+						__( 'You need to enter your numeric account ID and UUID for the <a href="%1$s">Mailerlite Widget</a> to work correctly. <a href="%2$s" target="_blank">Full instructions</a>.', 'full-site-editing' ),
 						array(
 							'a' => array(
 								'href'  => array(),
@@ -110,10 +110,10 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 		echo '
 		<p><label for="' . esc_attr( $this->get_field_id( 'account' ) ) . '">';
 		/* translators: link to documentation */
-		printf( wp_kses_post( __( 'Account ID <a href="%s" target="_blank">(instructions)</a>:', 'jetpack' ) ), 'https://wordpress.com/support/widgets/mailerlite' );
+		printf( wp_kses_post( __( 'Account ID <a href="%s" target="_blank">(instructions)</a>:', 'full-site-editing' ) ), 'https://wordpress.com/support/widgets/mailerlite' );
 		echo '<input class="widefat" id="' . esc_attr( $this->get_field_id( 'account' ) ) . '" name="' . esc_attr( $this->get_field_name( 'account' ) ) . '" type="text" value="' . esc_attr( $instance['account'] ) . '" />
 		</label></p>
-		<p><label for="' . esc_attr( $this->get_field_id( 'shelf' ) ) . '">' . esc_html__( 'UUID:', 'jetpack' );
+		<p><label for="' . esc_attr( $this->get_field_id( 'shelf' ) ) . '">' . esc_html__( 'UUID:', 'full-site-editing' );
 		echo '<input class="widefat" id="' . esc_attr( $this->get_field_id( 'uuid' ) ) . '" name="' . esc_attr( $this->get_field_name( 'uuid' ) ) . '" type="text" value="' . esc_attr( $instance['uuid'] ) . '" />';
 		echo '</label></p>
 		';
@@ -127,4 +127,3 @@ function mailerlite_register_widget() {
 	register_widget( '\A8C\FSE\Mailerlite\WPCOM_Widget_Mailerlite' );
 }
 add_action( 'widgets_init', '\A8C\FSE\Mailerlite\mailerlite_register_widget' );
-

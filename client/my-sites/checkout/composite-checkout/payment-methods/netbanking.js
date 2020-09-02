@@ -124,20 +124,12 @@ export function createNetBankingPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createNetBankingMethod( { store, stripe, stripeConfiguration } ) {
+export function createNetBankingMethod( { store } ) {
 	return {
 		id: 'netbanking',
 		label: <NetBankingLabel />,
-		activeContent: (
-			<NetBankingFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
-		),
-		submitButton: (
-			<NetBankingPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <NetBankingFields />,
+		submitButton: <NetBankingPayButton store={ store } />,
 		inactiveContent: <NetBankingSummary />,
 		getAriaLabel: () => 'Transferência bancária',
 	};

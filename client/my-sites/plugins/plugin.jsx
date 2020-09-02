@@ -17,7 +17,11 @@ import { Card } from '@automattic/components';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
-import { getPlugin, isFetched, isFetching } from 'state/plugins/wporg/selectors';
+import {
+	isFetching as isWporgPluginFetching,
+	isFetched as isWporgPluginFetched,
+	getPlugin as getWporgPlugin,
+} from 'state/plugins/wporg/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';
 import MainComponent from 'components/main';
@@ -185,7 +189,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	isFetched() {
-		return isFetched( this.props.wporgPlugins, this.props.pluginSlug );
+		return this.props.wporgFetched;
 	},
 
 	isFetchingSites() {
@@ -193,11 +197,8 @@ const SinglePlugin = createReactClass( {
 	},
 
 	getPlugin() {
-		let plugin = Object.assign( {}, this.state.plugin );
 		// assign it .org details
-		plugin = Object.assign( plugin, getPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
-
-		return plugin;
+		return { ...this.state.plugin, ...this.props.wporgPlugin };
 	},
 
 	getPluginDoesNotExistView( selectedSite ) {
@@ -352,8 +353,9 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
-			wporgPlugins: state.plugins.wporg.items,
-			wporgFetching: isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
+			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
+			wporgFetching: isWporgPluginFetching( state, props.pluginSlug ),
+			wporgFetched: isWporgPluginFetched( state, props.pluginSlug ),
 			selectedSite: getSelectedSite( state ),
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),

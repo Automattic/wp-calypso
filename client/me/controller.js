@@ -48,11 +48,3 @@ export function apps( context, next ) {
 export function profileRedirect() {
 	page.redirect( '/me' );
 }
-
-export function trophiesRedirect() {
-	page.redirect( '/me' );
-}
-
-export function findFriendsRedirect() {
-	page.redirect( '/me' );
-}

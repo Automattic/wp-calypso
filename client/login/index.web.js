@@ -26,7 +26,6 @@ export const LOGIN_SECTION_DEFINITION = {
 	paths: [ '/log-in' ],
 	module: 'login',
 	enableLoggedOut: true,
-	secondary: false,
 	isomorphic: true,
 };
 

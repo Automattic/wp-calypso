@@ -22,10 +22,16 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
 import { withoutHttp } from 'lib/url';
 import { type as domainTypes } from 'lib/domains/constants';
 import { handleRenewNowClick } from 'lib/purchases';
-import { resolveDomainStatus, isDomainInGracePeriod, isDomainUpdateable } from 'lib/domains';
+import {
+	resolveDomainStatus,
+	isDomainInGracePeriod,
+	isDomainUpdateable,
+	getDomainTypeText,
+} from 'lib/domains';
 import InfoPopover from 'components/info-popover';
 import { emailManagement } from 'my-sites/email/paths';
 import {
+	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
 	domainManagementNameServers,
 	domainManagementTransfer,
@@ -225,6 +231,14 @@ class DomainItem extends PureComponent {
 							{ translate( 'DNS Records' ) }
 						</PopoverMenuItem>
 					) }
+					{ domain.type === domainTypes.WPCOM && ! domainDetails?.isWpcomStagingDomain && (
+						<PopoverMenuItem
+							icon="reblog"
+							href={ domainManagementChangeSiteAddress( site.slug, domain.domain, currentRoute ) }
+						>
+							{ translate( 'Change site address' ) }
+						</PopoverMenuItem>
+					) }
 					{ domain.type === domainTypes.REGISTERED &&
 						( isDomainUpdateable( domainDetails ) || isDomainInGracePeriod( domainDetails ) ) && (
 							<PopoverMenuItem
@@ -339,20 +353,19 @@ class DomainItem extends PureComponent {
 	}
 
 	renderSiteMeta() {
+		return <div className="domain-item__meta">{ this.getSiteMeta() }</div>;
+	}
+
+	getSiteMeta() {
 		const { domainDetails, isManagingAllSites, site, translate } = this.props;
 
 		if ( isManagingAllSites ) {
-			return (
-				<div className="domain-item__meta">
-					{ translate( 'Site: %(siteName)s', {
-						args: {
-							siteName: this.getSiteName( site ),
-						},
-						comment:
-							'%(siteName)s is the site name and URL or just the URL used to identify a site',
-					} ) }
-				</div>
-			);
+			return translate( 'Site: %(siteName)s', {
+				args: {
+					siteName: this.getSiteName( site ),
+				},
+				comment: '%(siteName)s is the site name and URL or just the URL used to identify a site',
+			} );
 		}
 
 		if ( domainDetails.isWPCOMDomain ) {
@@ -371,7 +384,7 @@ class DomainItem extends PureComponent {
 			);
 		}
 
-		return null;
+		return <React.Fragment>{ getDomainTypeText( domainDetails ) }</React.Fragment>;
 	}
 
 	busyMessage() {

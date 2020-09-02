@@ -90,10 +90,14 @@ export default function useInitializeCartFromServer(
 			} )
 			.catch( ( error ) => {
 				debug( 'error while initializing cart', error );
-				hookDispatch( { type: 'RAISE_ERROR', error: 'GET_SERVER_CART_ERROR', message: error } );
+				hookDispatch( {
+					type: 'RAISE_ERROR',
+					error: 'GET_SERVER_CART_ERROR',
+					message: error.message,
+				} );
 				onEvent?.( {
 					type: 'CART_ERROR',
-					payload: { type: 'GET_SERVER_CART_ERROR', message: error },
+					payload: { type: 'GET_SERVER_CART_ERROR', message: error.message },
 				} );
 			} );
 	}, [

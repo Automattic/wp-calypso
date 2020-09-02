@@ -15,8 +15,11 @@ import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/insta
 import { Button, ProgressBar } from '@automattic/components';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
+import { getAllPlugins as getAllWporgPlugins } from 'state/plugins/wporg/selectors';
+import {
+	getPlugins as getInstalledPlugins,
+	getStatusForSite,
+} from 'state/plugins/installed/selectors';
 import {
 	getRequiredPluginsForCalypso,
 	getPluginsForStoreSetup,
@@ -133,7 +136,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInitialization = () => {
-		const { fixMode, site, sitePlugins, wporg } = this.props;
+		const { fixMode, site, sitePlugins, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -165,7 +168,7 @@ class RequiredPluginsInstallView extends Component {
 		const requiredPlugins = fixMode ? getRequiredPluginsForCalypso() : getPluginsForStoreSetup();
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug of requiredPlugins ) {
-			const pluginData = getPlugin( wporg, requiredPluginSlug );
+			const pluginData = wporgPlugins?.[ requiredPluginSlug ] ?? {};
 			// pluginData will be null until the action has had
 			// a chance to try and fetch data for the plugin slug
 			// given. Note that non-wp-org plugins
@@ -230,7 +233,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInstallation = () => {
-		const { pluginsStatus, site, sitePlugins, wporg } = this.props;
+		const { pluginsStatus, site, sitePlugins, wporgPlugins } = this.props;
 
 		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
@@ -245,7 +248,7 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			const workingOn = toInstall.shift();
-			const thisPlugin = getPlugin( wporg, workingOn );
+			const thisPlugin = wporgPlugins?.[ workingOn ] ?? {};
 			// Set a default ID if needed.
 			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
 			this.props.installPlugin( site.ID, thisPlugin );
@@ -410,9 +413,9 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	renderContactSupport() {
-		const { translate, wporg } = this.props;
+		const { translate, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
-		const plugin = getPlugin( wporg, workingOn );
+		const plugin = wporgPlugins?.[ workingOn ] ?? {};
 
 		const subtitle = [
 			<p key="line-1">
@@ -484,7 +487,7 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site.ID;
 
-	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
+	const sitePlugins = site ? getInstalledPlugins( state, [ siteId ] ) : [];
 	const pluginsStatus = getStatusForSite( state, siteId );
 
 	return {
@@ -492,7 +495,7 @@ function mapStateToProps( state ) {
 		siteId,
 		sitePlugins,
 		pluginsStatus,
-		wporg: state.plugins.wporg.items,
+		wporgPlugins: getAllWporgPlugins( state ),
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 		hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
 	};

@@ -40,8 +40,8 @@ export const radioOption = (
 				value={ key }
 				checked={ key === radioValue }
 				onChange={ onRadioChange }
+				label={ radioPrompt }
 			/>
-			<span>{ radioPrompt }</span>
 			{ key === radioValue && textInput }
 		</FormLabel>
 	);

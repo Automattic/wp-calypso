@@ -5,7 +5,6 @@ import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -17,7 +16,6 @@ import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
 import PopoverCart from 'my-sites/checkout/cart/popover-cart';
-import { isATEnabled } from 'lib/automated-transfer';
 import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isJetpackSite } from 'state/sites/selectors';
@@ -45,24 +43,15 @@ class PlansNavigation extends React.Component {
 			case '/plans/yearly':
 				return 'Plans';
 
-			case '/domains/manage':
-			case '/domains/add':
-				return 'Domains';
-
-			case '/email':
-				return 'Email';
-
 			default:
 				return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 		}
 	}
 
 	render() {
-		const { isJetpack, site, shouldShowMyPlan, translate } = this.props;
+		const { site, shouldShowMyPlan, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
-		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
 		const cartToggleButton = this.cartToggleButton();
 		const hasPinnedItems = isMobile() && cartToggleButton != null;
 
@@ -90,19 +79,6 @@ class PlansNavigation extends React.Component {
 						>
 							{ translate( 'Plans' ) }
 						</NavItem>
-						{ canManageDomain && (
-							<NavItem
-								path={ `/domains/manage/${ site.slug }` }
-								selected={ path === '/domains/manage' || path === '/domains/add' }
-							>
-								{ translate( 'Domains' ) }
-							</NavItem>
-						) }
-						{ canManageDomain && (
-							<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
-								{ translate( 'Email' ) }
-							</NavItem>
-						) }
 					</NavTabs>
 					{ cartToggleButton }
 				</SectionNav>

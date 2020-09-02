@@ -22,13 +22,13 @@ import {
 	getPathToUpsell,
 	checkout,
 } from './utils';
+import QueryProducts from './query-products';
+import useIsLoading from './use-is-loading';
 import ProductCardPlaceholder from 'components/jetpack/card/product-card-placeholder';
 import FormattedHeader from 'components/formatted-header';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
-import { getProductsList } from 'state/products-list/selectors';
 import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import withRedirectToSelector from './with-redirect-to-selector';
@@ -44,11 +44,9 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
 	const translate = useTranslate();
-	const isLoading = ! currencyCode || ( isFetchingProducts && ! products );
+	const isLoading = useIsLoading( siteId );
 
 	// If the product slug isn't one that has options, proceed to the upsell.
 	if ( ! ( PRODUCTS_WITH_OPTIONS as readonly string[] ).includes( productSlug ) ) {
@@ -88,6 +86,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 
 	return (
 		<Main className="details__main" wideLayout>
+			<QueryProducts />
 			{ header }
 			<HeaderCake onClick={ backButton }>
 				{ isBundle ? translate( 'Bundle Options' ) : translate( 'Product Options' ) }

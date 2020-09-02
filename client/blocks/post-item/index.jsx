@@ -203,12 +203,13 @@ class PostItem extends React.Component {
 						globalId={ globalId }
 						onClick={ this.clickHandler( 'image' ) }
 					/>
-					{ ! isTypeWpBlock && <PostActionsEllipsisMenu globalId={ globalId } /> }
-					{ isTypeWpBlock && (
+					{ isTypeWpBlock ? (
 						<PostActionsEllipsisMenu globalId={ globalId } includeDefaultActions={ false }>
 							<PostActionsEllipsisMenuEdit key="edit" />
 							<PostActionsEllipsisMenuTrash key="trash" />
 						</PostActionsEllipsisMenu>
+					) : (
+						<PostActionsEllipsisMenu globalId={ globalId } />
 					) }
 				</div>
 				{ hasExpandedContent && this.renderExpandedContent() }

@@ -324,8 +324,8 @@ export class SiteSettingsFormGeneral extends Component {
 								}
 								disabled={ isRequestingSettings }
 								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+								label={ translate( 'Coming Soon' ) }
 							/>
-							<span>{ translate( 'Coming Soon' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
 							{ hasLocalizedText(
@@ -352,8 +352,8 @@ export class SiteSettingsFormGeneral extends Component {
 							}
 							disabled={ isRequestingSettings }
 							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+							label={ translate( 'Public' ) }
 						/>
-						<span>{ translate( 'Public' ) }</span>
 					</FormLabel>
 				) }
 				<FormSettingExplanation isIndented>
@@ -395,8 +395,8 @@ export class SiteSettingsFormGeneral extends Component {
 								}
 								disabled={ isRequestingSettings }
 								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+								label={ translate( 'Private' ) }
 							/>
-							<span>{ translate( 'Private' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
 							{ hasLocalizedText(

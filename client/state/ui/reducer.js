@@ -45,14 +45,6 @@ export const siteSelectionInitialized = withoutPersistence( ( state = false, act
 	return state;
 } );
 
-export function hasSidebar( state = true, action ) {
-	switch ( action.type ) {
-		case SECTION_SET:
-			return action.hasSidebar !== undefined ? action.hasSidebar : state;
-	}
-	return state;
-}
-
 export function isLoading( state = false, action ) {
 	switch ( action.type ) {
 		case SECTION_SET:
@@ -91,7 +83,6 @@ const reducer = combineReducers( {
 	checkout,
 	editorDeprecationDialog,
 	gutenbergOptInDialog,
-	hasSidebar,
 	isLoading,
 	isNotificationsOpen,
 	isPreviewShowing,

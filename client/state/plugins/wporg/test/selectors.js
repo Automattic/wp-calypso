@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -21,61 +20,64 @@ const fetchingItems = deepFreeze( {
 	fetchedTest: false,
 	fetchedTest2: true,
 } );
+const state = deepFreeze( {
+	plugins: { wporg: { items, fetchingItems } },
+} );
 
 describe( 'WPorg Selectors', () => {
 	test( 'Should contain getPlugin method', () => {
-		assert.equal( typeof getPlugin, 'function' );
+		expect( typeof getPlugin ).toBe( 'function' );
 	} );
 
 	test( 'Should contain isFetching method', () => {
-		assert.equal( typeof isFetching, 'function' );
+		expect( typeof isFetching ).toBe( 'function' );
 	} );
 
 	describe( 'getPlugin', () => {
 		test( 'Should get null if the requested plugin is not in the current state', () => {
-			assert.equal( getPlugin( items, 'no-test' ), null );
+			expect( getPlugin( state, 'no-test' ) ).toBeNull();
 		} );
 
 		test( 'Should get the plugin if the requested plugin is in the current state', () => {
-			assert.equal( getPlugin( items, 'test' ).slug, 'test' );
+			expect( getPlugin( state, 'test' ).slug ).toBe( 'test' );
 		} );
 
 		test( 'Should return a new object with no pointers to the one stored in state', () => {
-			const plugin = getPlugin( items, 'fetchedTest' );
+			const plugin = getPlugin( state, 'fetchedTest' );
 			plugin.fetched = false;
-			assert.equal( getPlugin( items, 'fetchedTest' ).fetched, true );
+			expect( getPlugin( state, 'fetchedTest' ).fetched ).toBe( true );
 		} );
 	} );
 
 	describe( 'isFetching', () => {
 		test( 'Should get `true` if the requested plugin is not in the current state', () => {
-			assert.equal( isFetching( fetchingItems, 'no.test' ), true );
+			expect( isFetching( state, 'no.test' ) ).toBe( true );
 		} );
 
 		test( 'Should get `false` if the requested plugin is not being fetched', () => {
-			assert.equal( isFetching( fetchingItems, 'test' ), false );
+			expect( isFetching( state, 'test' ) ).toBe( false );
 		} );
 
 		test( 'Should get `true` if the requested plugin is being fetched', () => {
-			assert.equal( isFetching( fetchingItems, 'fetchingTest' ), true );
+			expect( isFetching( state, 'fetchingTest' ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'isFetched', () => {
 		test( 'Should get `false` if the requested plugin is not in the current state', () => {
-			assert.equal( isFetched( items, 'no.test' ), false );
+			expect( isFetched( state, 'no.test' ) ).toBe( false );
 		} );
 
 		test( 'Should get `false` if the requested plugin has not being fetched', () => {
-			assert.equal( isFetched( items, 'test' ), false );
+			expect( isFetched( state, 'test' ) ).toBe( false );
 		} );
 
 		test( 'Should get `true` if the requested plugin has being fetched', () => {
-			assert.equal( isFetched( items, 'fetchedTest' ), true );
+			expect( isFetched( state, 'fetchedTest' ) ).toBe( true );
 		} );
 
 		test( "Should get `true` if the requested plugin has being fetched even if it's being fetche again", () => {
-			assert.equal( isFetched( items, 'fetchedTest2' ), true );
+			expect( isFetched( state, 'fetchedTest2' ) ).toBe( true );
 		} );
 	} );
 } );

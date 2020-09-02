@@ -3,7 +3,7 @@
  *
  */
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 /**
@@ -23,7 +23,6 @@ class Desktop extends React.Component {
 			i18nLocaleScript,
 			isRTL,
 			lang,
-			hasSecondary,
 			clientData,
 			badge,
 			abTestHelper,
@@ -47,12 +46,6 @@ class Desktop extends React.Component {
 							<div className="masterbar" />
 							<div className="layout__content">
 								<WordPressLogo size={ 72 } className="wpcom-site__logo" />
-								{ hasSecondary && (
-									<Fragment>
-										<div className="layout__secondary" />
-										<ul className="sidebar" />
-									</Fragment>
-								) }
 							</div>
 						</div>
 					</div>

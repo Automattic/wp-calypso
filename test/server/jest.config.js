@@ -1,4 +1,5 @@
 module.exports = {
+	cacheDirectory: '<rootDir>/../.cache/jest',
 	modulePaths: [ '<rootDir>/../test', '<rootDir>/server', '<rootDir>', '<rootDir>/extensions' ],
 	rootDir: '../../client',
 	roots: [ '<rootDir>/server' ],

@@ -29,7 +29,7 @@ import { addQueryArgs, sectionify } from 'lib/route';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
-import { hideMasterbar, showMasterbar, hideSidebar } from 'state/ui/actions';
+import { hideMasterbar, showMasterbar } from 'state/ui/actions';
 import { JPC_PATH_PLANS, ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from './constants';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
@@ -73,10 +73,7 @@ const analyticsPageTitleByType = {
 	antispam: 'Jetpack Anti-spam',
 };
 
-const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
-
 export function offerResetContext( context, next ) {
-	removeSidebar( context );
 	context.header = <StoreHeader />;
 	context.footer = <StoreFooter />;
 	next();
@@ -122,7 +119,6 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 
 export function newSite( context, next ) {
 	recordPageView( '/jetpack/new', 'Add a new site (Jetpack)' );
-	removeSidebar( context );
 	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
 }
@@ -162,8 +158,6 @@ export function connect( context, next ) {
 	planSlug && storePlan( planSlug );
 	recordPageView( pathname, analyticsPageTitle );
 
-	removeSidebar( context );
-
 	context.primary = (
 		<JetpackConnect
 			ctaFrom={ query.cta_from /* origin tracking params */ }
@@ -187,8 +181,6 @@ export function purchase( context, next ) {
 
 	planSlug && storePlan( planSlug );
 	recordPageView( pathname, analyticsPageTitle );
-
-	removeSidebar( context );
 
 	context.primary = (
 		<SearchPurchase
@@ -223,8 +215,6 @@ export function signupForm( context, next ) {
 		return window.location.replace( login( { isNative: true, redirectTo: context.path } ) );
 	}
 
-	removeSidebar( context );
-
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
 
@@ -249,8 +239,6 @@ export function credsForm( context, next ) {
 export function authorizeForm( context, next ) {
 	recordPageView( 'jetpack/connect/authorize', 'Jetpack Authorize' );
 
-	removeSidebar( context );
-
 	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
 
@@ -266,8 +254,6 @@ export function authorizeForm( context, next ) {
 export function sso( context, next ) {
 	const analyticsBasePath = '/jetpack/sso';
 	const analyticsPageTitle = 'Jetpack SSO';
-
-	removeSidebar( context );
 
 	recordPageView( analyticsBasePath, analyticsPageTitle );
 
@@ -287,8 +273,6 @@ export function plansLanding( context, next ) {
 	const basePath = sectionify( context.path );
 	const analyticsBasePath = basePath + '/:site';
 
-	removeSidebar( context );
-
 	recordTracksEvent( 'calypso_plans_view' );
 	recordPageView( analyticsBasePath, analyticsPageTitle );
 
@@ -306,8 +290,6 @@ export function plansSelection( context, next ) {
 	const analyticsPageTitle = 'Plans';
 	const basePath = sectionify( context.path );
 	const analyticsBasePath = basePath + '/:site';
-
-	removeSidebar( context );
 
 	recordTracksEvent( 'calypso_plans_view' );
 	recordPageView( analyticsBasePath, analyticsPageTitle );

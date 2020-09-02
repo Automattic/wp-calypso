@@ -20,6 +20,7 @@ import Spinner from 'components/spinner';
 import { withLocalizedMoment } from 'components/localized-moment';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import DomainNotice from 'my-sites/domains/domain-management/components/domain-notice';
+import FormRadio from 'wp-calypso-client/components/forms/form-radio';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
@@ -144,10 +145,9 @@ class ListItem extends React.PureComponent {
 		}
 
 		return (
-			<input
+			<FormRadio
 				id={ this.getInputId() }
 				className="domain-management-list-item__radio"
-				type="radio"
 				checked={ this.props.isSelected }
 				onChange={ noop }
 			/>

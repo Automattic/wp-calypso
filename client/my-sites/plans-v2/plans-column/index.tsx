@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { PRODUCTS_TYPES, SELECTOR_PLANS } from '../constants';
-import { slugToSelectorProduct } from '../utils';
+import { slugToSelectorProduct, getJetpackDescriptionWithOptions } from '../utils';
 import ProductCard from '../product-card';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -47,7 +47,11 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					! product.subtypes.includes( currentPlan || '' ) &&
 					// Don't include a card of a plan the user already owns
 					product.productSlug !== currentPlan
-			);
+			)
+			.map( ( product: SelectorProduct ) => ( {
+				...product,
+				description: getJetpackDescriptionWithOptions( product ),
+			} ) );
 
 		// If the user does not own a current plan, get it and insert it on the top of the plan array.
 		if ( currentPlan && currentPlan !== PLAN_JETPACK_FREE ) {
@@ -58,10 +62,6 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 		}
 		return plans;
 	}, [ duration, productType, currentPlan ] );
-
-	if ( ! currencyCode ) {
-		return null; // TODO: Loading component!
-	}
 
 	return (
 		<div className="plans-column">

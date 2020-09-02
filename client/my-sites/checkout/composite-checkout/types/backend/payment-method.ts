@@ -27,6 +27,7 @@ export type WPCOMPaymentMethodClass =
 	| WPCOMBillingEbanx
 	| WPCOMBillingEbanxRedirectBrazilTef
 	| WPCOMBillingDlocalRedirectIndiaNetbanking
+	| WPCOMBillingDlocalRedirectIndonesiaWallet
 	| WPCOMBillingPayPalDirect
 	| WPCOMBillingPayPalExpress
 	| WPCOMBillingStripePaymentMethod
@@ -54,6 +55,9 @@ export interface WPCOMBillingEbanx {
 }
 export interface WPCOMBillingDlocalRedirectIndiaNetbanking {
 	name: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
+}
+export interface WPCOMBillingDlocalRedirectIndonesiaWallet {
+	name: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet';
 }
 export interface WPCOMBillingEbanxRedirectBrazilTef {
 	name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef';
@@ -117,6 +121,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodC
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
+		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
@@ -177,6 +182,8 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'wechat';
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 			return 'netbanking';
+		case 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet':
+			return 'id_wallet';
 		case 'WPCOM_Billing_Web_Payment':
 			return 'apple-pay';
 	}
@@ -196,6 +203,8 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return { name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef' };
 		case 'netbanking':
 			return { name: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking' };
+		case 'id_wallet':
+			return { name: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet' };
 		case 'paypal-direct':
 			return { name: 'WPCOM_Billing_PayPal_Direct' };
 		case 'paypal':
@@ -227,5 +236,4 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'free-purchase':
 			return { name: 'WPCOM_Billing_WPCOM' };
 	}
-	return null;
 }

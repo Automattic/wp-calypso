@@ -8,7 +8,9 @@ import {
 	HOME_QUICK_LINKS_EXPAND,
 	HOME_QUICK_LINKS_COLLAPSE,
 } from 'state/action-types';
+
 import 'state/data-layer/wpcom/sites/home/layout';
+import 'state/home/init';
 
 export const requestHomeLayout = ( siteId, isDev = false, forcedView = null ) => ( {
 	type: HOME_LAYOUT_REQUEST,

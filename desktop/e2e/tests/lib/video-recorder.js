@@ -51,7 +51,7 @@ exports.startVideo = function () {
 		30,
 		'-i',
 		'0:none',
-		'-pixel_format',
+		'-pix_fmt',
 		'yuv420p',
 		'-loglevel',
 		'error',

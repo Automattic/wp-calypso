@@ -18,7 +18,9 @@ class PremiumBadge extends React.Component {
 		return (
 			<Badge className="premium-badge">
 				{ translate( 'Premium domain' ) }
-				<InfoPopover iconSize="16">Premium domain names are short and easy to remember</InfoPopover>
+				<InfoPopover iconSize={ 16 }>
+					Premium domain names are short and easy to remember
+				</InfoPopover>
 			</Badge>
 		);
 	}

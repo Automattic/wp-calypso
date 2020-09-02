@@ -4,7 +4,7 @@
 import { translate, TranslateResult } from 'i18n-calypso';
 import { compact, get, isArray, isObject } from 'lodash';
 import page from 'page';
-import { createElement, Fragment } from 'react';
+import React, { createElement, Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -20,6 +20,8 @@ import {
 	ITEM_TYPE_PLAN,
 	FEATURED_PRODUCTS,
 	SUBTYPE_TO_OPTION,
+	DAILY_PRODUCTS,
+	REALTIME_PRODUCTS,
 } from './constants';
 import { addItems } from 'lib/cart/actions';
 import { jetpackProductItem } from 'lib/cart-values/cart-items';
@@ -499,3 +501,30 @@ export function getPathToUpsell(
 	const strDuration = durationToString( duration );
 	return [ rootUrl, productSlug, strDuration, 'additions', siteSlug ].filter( Boolean ).join( '/' );
 }
+
+/**
+ * Append "Available Options: Real-time and Daily" to the product description.
+ *
+ * @param product SelectorProduct
+ *
+ * @returns ReactNode | TranslateResult
+ */
+export const getJetpackDescriptionWithOptions = (
+	product: SelectorProduct
+): React.ReactNode | TranslateResult => {
+	const em = React.createElement( 'em', null, null );
+
+	// If the product has 'subtypes' (containing daily and real-time product slugs).
+	// then append "Available options: Real-time or Daily" to the product description.
+	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
+		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
+		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
+				args: {
+					productDescription: product.description,
+				},
+				components: {
+					em,
+				},
+		  } )
+		: product.description;
+};

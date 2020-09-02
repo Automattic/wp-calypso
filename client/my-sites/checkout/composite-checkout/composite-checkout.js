@@ -43,7 +43,6 @@ import { getPlan } from 'lib/plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { useStripe } from 'lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
-import useShowStripeLoadingErrors from './use-show-stripe-loading-errors';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
 	applePayProcessor,
@@ -81,6 +80,8 @@ import { colors } from '@automattic/color-studio';
 import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
+import useDisplayErrors from './hooks/use-display-errors';
+import CartMessages from 'my-sites/checkout/cart/cart-messages';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -167,8 +168,6 @@ export default function CompositeCheckout( {
 		);
 	};
 
-	useShowStripeLoadingErrors( showErrorMessage, stripeLoadingError );
-
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const { productsForCart, canInitializeCart } = usePrepareProductsForCart( {
@@ -192,7 +191,7 @@ export default function CompositeCheckout( {
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
-		loadingError,
+		loadingError: cartLoadingError,
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
@@ -220,8 +219,6 @@ export default function CompositeCheckout( {
 		couponItem?.wpcom_meta?.couponCode ?? '',
 		showAddCouponSuccessMessage
 	);
-
-	const errors = responseCart.messages?.errors ?? [];
 
 	const getThankYouUrl = useGetThankYouUrl( {
 		siteSlug,
@@ -345,7 +342,7 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ ...errors, loadingError ].filter( Boolean ), showErrorMessage );
+	useDisplayErrors( [ cartLoadingError, stripeLoadingError?.message ].filter( Boolean ) );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -361,11 +358,12 @@ export default function CompositeCheckout( {
 		cartEmptyRedirectUrl = siteSlugLoggedOutCart ? `/plans/${ siteSlugLoggedOutCart }` : '/start';
 	}
 
+	const errors = responseCart.messages?.errors ?? [];
 	useRedirectIfCartEmpty(
 		items,
 		cartEmptyRedirectUrl,
 		isLoadingCart,
-		[ ...errors, loadingError ].filter( Boolean ),
+		[ ...errors, cartLoadingError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
 
@@ -479,6 +477,8 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'wechat', transactionData, dataForRedirectProcessor ),
 			netbanking: ( transactionData ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForRedirectProcessor ),
+			id_wallet: ( transactionData ) =>
+				genericRedirectProcessor( 'id_wallet', transactionData, dataForRedirectProcessor ),
 			ideal: ( transactionData ) =>
 				genericRedirectProcessor( 'ideal', transactionData, dataForRedirectProcessor ),
 			sofort: ( transactionData ) =>
@@ -546,6 +546,11 @@ export default function CompositeCheckout( {
 			<QueryProducts />
 			<QueryContactDetailsCache />
 			<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+			<CartMessages
+				cart={ responseCart }
+				selectedSite={ { slug: siteSlug } }
+				isLoadingCart={ isLoadingCart }
+			/>
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
 					items={ itemsForCheckout }
@@ -605,23 +610,6 @@ CompositeCheckout.propTypes = {
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
-
-function useDisplayErrors( errors, displayError ) {
-	useEffect( () => {
-		errors.filter( isNotCouponError ).map( ( error ) => displayError( error.message ) );
-	}, [ errors, displayError ] );
-}
-
-function isNotCouponError( error ) {
-	const couponErrorCodes = [
-		'coupon-not-found',
-		'coupon-already-used',
-		'coupon-no-longer-valid',
-		'coupon-expired',
-		'coupon-unknown-error',
-	];
-	return ! couponErrorCodes.includes( error.code );
-}
 
 function useRedirectIfCartEmpty(
 	items,
