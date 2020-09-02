@@ -12,7 +12,6 @@ import { isEnabled } from 'config';
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
-import Plans from './plans';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
@@ -21,6 +20,7 @@ import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import Features from './features';
+import Plans from './plans';
 import Domains from './domains';
 import Language from './language';
 
