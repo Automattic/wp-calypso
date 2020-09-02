@@ -4,7 +4,9 @@
 @import '~@wordpress/base-styles/z-index';
 
 $sidebar-width: 272px;
-$transition-period: 100ms;
+$sidebar-transition-period: 100ms;
+$sidebar-background-color: #23282e; // WP-admin gray to match the close button background color
+$sidebar-nav-header-background-color: #32373d; // WP-admin gray to match the close button background hover color
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__click-guard {
 	position: fixed;
@@ -14,11 +16,11 @@ $transition-period: 100ms;
 	bottom: 0;
 	// Use the same z-index as the edit-post-layout header
 	z-index: z-index( '.interface-interface-skeleton__header' );
-	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-out forwards;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-out forwards;
 	@include reduce-motion( 'animation' );
 
 	&.is-fading-out {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $transition-period ease-in reverse;
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-in reverse;
 		@include reduce-motion( 'animation' );
 	}
 }
@@ -38,15 +40,15 @@ $transition-period: 100ms;
 	top: 0;
 	bottom: 0;
 	width: $sidebar-width;
-	background: #23282e; // WP-admin gray to match the close button background color
+	background: $sidebar-background-color;
 	display: flex;
 	flex-direction: column;
 	box-shadow: -5px 0 20px $black;
-	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-out;
+	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-out;
 	@include reduce-motion( 'animation' );
 
 	&.is-sliding-left {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $transition-period ease-in reverse;
+		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-in reverse;
 		@include reduce-motion( 'animation' );
 	}
 }
@@ -61,25 +63,30 @@ $transition-period: 100ms;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__header {
-	height: $header-height;
 	box-sizing: content-box;
-	display: flex;
-	flex: $header-height 0 0;
+	background-color: $sidebar-nav-header-background-color;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__site-title {
-	padding: 8px 16px;
-	margin-top: 14px;
+	margin: 0 0 0 74px;
+	align-items: center;
+	display: flex;
+	min-height: 60px;
 
 	h2 {
 		color: $white;
 		margin: 0;
-		font-size: $big-font-size;
+		font-size: $text-editor-font-size;
 		line-height: $default-line-height;
 		word-wrap: break-word;
+		font-weight: normal;
+		display: flex;
+		align-items: center;
+		padding: 10px 10px 10px 0;
 	}
 
-	a {
+	a,
+	a.is-untitled {
 		color: $light-gray-800;
 
 		&:active,
@@ -95,17 +102,17 @@ $transition-period: 100ms;
 	top: 0;
 	left: 0;
 	height: $header-height !important;
+	background-color: $sidebar-nav-header-background-color !important;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__home-button {
-	height: 46px;
 	width: 100%;
 	border: none !important;
 	box-shadow: none !important;
 	color: $white;
 	flex-shrink: 0;
 	padding: 8px 11px !important;
-	margin: 14px 0;
+	margin: 12px 0;
 
 	&:hover,
 	&:not( [aria-disabled='true'] ):active {
@@ -122,20 +129,50 @@ $transition-period: 100ms;
 	}
 }
 
-.wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading {
-	padding: $grid-unit-20;
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-heading,
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
+	padding: $grid-unit-05 $grid-unit-20;
 	font-size: $big-font-size;
 	color: $white;
+	margin: 0 0 8px;
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__list-subheading {
+	font-size: $default-font-size;
+	font-weight: normal;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__page-list {
 	padding: 0;
-	margin: 0;
+	margin: 0 0 20px;
+
+	li {
+		margin-bottom: 2px;
+	}
+
+	a {
+		color: $light-gray-900;
+	}
+
+	.is-selected {
+		color: $white;
+	}
+	/*
+	@TODO Work out how we're going to handle overflow
 	overflow-y: auto;
+	*/
+}
+
+.wpcom-block-editor-nav-sidebar-nav-sidebar__post-scroll-area {
+	overflow-y: auto;
+	margin-bottom: 50px;
 }
 
 .wpcom-block-editor-nav-sidebar-nav-sidebar__bottom-buttons {
-	&.is-scrollbar-present {
-		border-top: 1px solid $dark-gray-600;
-	}
+	border-top: 1px solid $light-gray-900;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	overflow: hidden;
+	background: $sidebar-background-color;
 }
