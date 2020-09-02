@@ -36,23 +36,26 @@ class WPCOM_Coming_Soon {
 		return self::$instance;
 	}
 
-	// check whether we should show a coming soon page
-	// @TODO how are we to override any default behaviour for free simple sites?
-	// On free simple sites we want to show a default coming soon page
+
+	/**
+	 * Check whether we should show a coming soon page.
+	 *
+	 * @TODO how are we to override any default behaviour for free simple sites?
+	 * On free simple sites we want to show a default coming soon page.
+	 */
 	public static function should_show_coming_soon_page() {
 		global $post;
 
-		if ( is_user_logged_in() ) {
+		if ( is_user_logged_in() && current_user_can( 'read' ) ) {
 			return false;
 		}
 
 		// Handle the case where we are not rendering a post.
-		/*
-			  if ( ! isset( $post ) ) {
-			return false;
-		}*/
+		// if ( ! isset( $post ) ) {
+		// 	return false;
+		// }
 
-		// Allow anonymous previews
+		// Allow anonymous previews.
 		if ( isset( $_GET['preview'] ) ) {
 			return false;
 		}
@@ -60,12 +63,15 @@ class WPCOM_Coming_Soon {
 		return ( (int) get_option( 'wpcom_coming_soon' ) === 1 );
 	}
 
-	// @TODO when should we create the coming soon page?
-	// On WordPress.com probably on Headstart,
-	// so we can register this custom post type
-	// and change the post type based on some hs_custom_meta, e.g., "hs_custom_meta": "_hs_coming_soon_page" ???
-	// Should we add some custom post type admin labels here?
-	// How are users going to assign a page as a coming soon page (Via the Gutenberg editor perhaps?)
+	/**
+	 * Registers a coming soon post type.
+	 *
+	 * @TODO when should we create the coming soon page?
+	 * On WordPress.com probably on Headstart, so we can register this custom post type.
+	 * And change the post type based on some hs_custom_meta, e.g., "hs_custom_meta": "_hs_coming_soon_page" ?
+	 * Should we add some custom post type admin labels here?
+	 * How are users going to assign a page as a coming soon page (Via the Gutenberg editor perhaps)?
+	 */
 	private function register_coming_soon_post_type() {
 		$args = array(
 			'public'          => false,
@@ -109,7 +115,7 @@ class WPCOM_Coming_Soon {
 		// add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1, 999 );
 
 		if ( $should_show_display_fallback_coming_soon_page ) {
-			echo self::get_fallback_coming_soon_page();
+			self::render_fallback_coming_soon_page();
 		} else {
 			?><!doctype html>
 			<html <?php language_attributes(); ?>>
@@ -131,10 +137,23 @@ class WPCOM_Coming_Soon {
 		die();
 	}
 
-	public static function get_fallback_coming_soon_page() {
+	public static function render_fallback_coming_soon_page() {
+		remove_action( 'wp_enqueue_scripts', 'wpcom_actionbar_enqueue_scripts', 101 );
+		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
+		remove_action( 'wp_head', 'header_js', 5 );
+		remove_action( 'wp_head', 'global_css', 5 );
+		remove_action( 'wp_footer', 'wpcom_subs_js' );
+		remove_action( 'wp_footer', 'stats_footer', 101 );
+		wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css' );
+
+		if ( ! is_user_logged_in() ) {
+			wp_enqueue_style( 'buttons', '/wp-includes/css/buttons.css' );
+		}
+
 		ob_start();
 		include __DIR__ . '/fallback-coming-soon-page.php';
-		return ob_get_clean();
+		echo ob_get_clean();
 	}
 
 }
