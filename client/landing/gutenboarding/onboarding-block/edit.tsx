@@ -12,7 +12,7 @@ import { isEnabled } from 'config';
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
-import AsyncLoad from '../../../components/async-load';
+import Plans from './plans';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
@@ -118,22 +118,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Plans ) }>
-					{ canUseStyleStep() ? (
-						<AsyncLoad
-							require="landing/gutenboarding/onboarding-block/plans/index"
-							placeholder={ null }
-						/>
-					) : (
-						redirectToLatestStep
-					) }
+					{ canUseStyleStep() ? <Plans /> : redirectToLatestStep }
 				</Route>
 
 				<Route path={ makePath( Step.PlansModal ) }>
-					<AsyncLoad
-						require="landing/gutenboarding/onboarding-block/plans/index"
-						placeholder={ null }
-						isModal
-					/>
+					<Plans isModal />
 				</Route>
 
 				<Route path={ makePath( Step.LanguageModal ) }>
