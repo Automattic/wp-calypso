@@ -11,6 +11,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
 import Gridicon from 'components/gridicon';
 import Spinner from 'components/spinner';
 import TranslatableString from 'components/translatable/proptype';
@@ -349,7 +350,7 @@ class Search extends Component {
 					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
-					<input
+					<FormTextInput
 						type="search"
 						id={ 'search-component-' + this.instanceId }
 						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
