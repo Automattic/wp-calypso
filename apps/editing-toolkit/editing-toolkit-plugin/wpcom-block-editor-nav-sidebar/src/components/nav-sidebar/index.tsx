@@ -63,12 +63,6 @@ function WpcomBlockEditorNavSidebar() {
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
-	const containerMount = ( el: HTMLDivElement | null ) => {
-		if ( el ) {
-			el.focus();
-		}
-	};
-
 	if ( ! postType ) {
 		// Still loading
 		return null;
@@ -162,7 +156,6 @@ function WpcomBlockEditorNavSidebar() {
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
-				ref={ containerMount }
 				role="dialog"
 				tabIndex={ -1 }
 			>
