@@ -39,6 +39,8 @@ export default function ToggleSidebarButton() {
 			icon={ wordpress }
 			iconSize={ 36 }
 			onClick={ toggleSidebar }
+			aria-haspopup="dialog"
+			aria-expanded={ isSidebarOpen }
 		/>
 	);
 }
