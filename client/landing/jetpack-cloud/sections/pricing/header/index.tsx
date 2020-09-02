@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  */
 import FormattedHeader from 'components/formatted-header';
 import { preventWidows } from 'lib/formatting';
-import JetpackComMasterbar from '../jetpack-com-masterbar';
+import JetpackComMasterbar from '../jpcom-masterbar';
 
 /**
  * Style dependencies

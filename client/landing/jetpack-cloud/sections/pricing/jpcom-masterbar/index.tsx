@@ -47,36 +47,36 @@ const JetpackComMasterbar = () => {
 	};
 
 	return (
-		<div ref={ barRef } className={ classNames( 'jetpack-com-masterbar', { sticky: hasCrossed } ) }>
-			<div className="jetpack-com-masterbar__inner">
+		<div ref={ barRef } className={ classNames( 'jpcom-masterbar', { sticky: hasCrossed } ) }>
+			<div className="jpcom-masterbar__inner">
 				<a
-					className="jetpack-com-masterbar__logo"
+					className="jpcom-masterbar__logo"
 					href={ JETPACK_COM_BASE_URL }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					<JetpackLogo className="jetpack-com-masterbar__jetpack-logo" full size={ 48 } />
+					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 48 } />
 				</a>
 
 				<Button
-					className={ classNames( [ 'jetpack-com-masterbar__navbutton', 'mobilenav' ], {
+					className={ classNames( [ 'jpcom-masterbar__navbutton', 'mobilenav' ], {
 						'is-active': isMenuOpen,
 					} ) }
 					aria-label={ translate( 'Menu' ) }
 					aria-controls="navigation"
 					onClick={ toggleMenu }
 				>
-					<span className="jetpack-com-masterbar__navbox">
-						<span className="jetpack-com-masterbar__navinner"></span>
+					<span className="jpcom-masterbar__navbox">
+						<span className="jpcom-masterbar__navinner"></span>
 					</span>
-					<span className="jetpack-com-masterbar__navlabel">
+					<span className="jpcom-masterbar__navlabel">
 						{ isMenuOpen ? null : translate( 'Menu' ) }
 					</span>
 				</Button>
 
-				<ul className={ classNames( 'jetpack-com-masterbar__nav', { 'is-open': isMenuOpen } ) }>
+				<ul className={ classNames( 'jpcom-masterbar__nav', { 'is-open': isMenuOpen } ) }>
 					{ MENU_ITEMS.map( ( { title, path }, index ) => (
-						<li className="jetpack-com-masterbar__nav-item" key={ index }>
+						<li className="jpcom-masterbar__nav-item" key={ index }>
 							<a
 								className={ path === 'pricing' ? 'current' : '' }
 								href={ `${ JETPACK_COM_BASE_URL }/${ path }` }
