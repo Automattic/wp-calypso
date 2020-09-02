@@ -49,6 +49,11 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Update the Editing Toolkit readme (https://github.com/Automattic/wp-calypso/pull/45212)
 * Premium Content: Fix redirect behavior after connecting to Stripe (https://github.com/Automattic/wp-calypso/pull/45204)
 * Hide editor sidebar first time users sees the editor (https://github.com/Automattic/wp-calypso/pull/43716)
+* Add an aria-label to (W), in header and sidebar, that describes what the button is for, when sidebar is closed "Open sidebar", when W button is open "You are viewing sidebar. To close select "esc". (https://github.com/Automattic/wp-calypso/pull/45266)
+* Add aria-label for "View all pages" link: aria-label="View all pages in Dashboard" (or posts as appropriate)  (https://github.com/Automattic/wp-calypso/pull/45266)
+* Use an h2 instead of a div for the “Posts” heading  (https://github.com/Automattic/wp-calypso/pull/45266)
+* Set autoFocus to (W) icon when sidebar opens  (https://github.com/Automattic/wp-calypso/pull/45266)
+
 
 = 2.0 =
 * Rename directories from "full-site-editing*" to "editing-toolkit*" (https://github.com/Automattic/wp-calypso/pull/44501)
