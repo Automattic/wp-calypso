@@ -785,11 +785,13 @@ class RegisterDomainStep extends React.Component {
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
-					const allowedAvailableStatuses = config.isEnabled( 'domains/premium-domain-purchases' )
-						? [ domainAvailability.AVAILABLE, domainAvailability.AVAILABLE_PREMIUM ]
-						: [ domainAvailability.AVAILABLE ];
+					const isAvailable = domainAvailability.AVAILABLE === status;
+					const isAvailableSupportedPremiumDomain =
+						config.isEnabled( 'domains/premium-domain-purchases' ) &&
+						domainAvailability.AVAILABLE_PREMIUM === status &&
+						result?.premium_domains_supported;
 					resolve( {
-						status: ! allowedAvailableStatuses.includes( status ) ? status : null,
+						status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
 						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
 					} );
 				}
@@ -829,12 +831,13 @@ class RegisterDomainStep extends React.Component {
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 					} = domainAvailability;
-					const availableStatuses = config.isEnabled( 'domains/premium-domain-purchases' )
-						? [ AVAILABLE, AVAILABLE_PREMIUM, UNKNOWN ]
-						: [ AVAILABLE, UNKNOWN ];
-					const isDomainAvailable = includes( availableStatuses, status );
+					const isDomainAvailable = includes( [ AVAILABLE, UNKNOWN ], status );
 					const isDomainTransferrable = TRANSFERRABLE === status;
 					const isDomainMapped = MAPPED === mappable;
+					const isAvailableSupportedPremiumDomain =
+						config.isEnabled( 'domains/premium-domain-purchases' ) &&
+						AVAILABLE_PREMIUM === status &&
+						result?.premium_domains_supported;
 
 					// Mapped status always overrides other statuses.
 					const availabilityStatus = isDomainMapped ? mappable : status;
@@ -844,7 +847,7 @@ class RegisterDomainStep extends React.Component {
 						lastDomainStatus: availabilityStatus,
 						lastDomainIsTransferrable: isDomainTransferrable,
 					} );
-					if ( isDomainAvailable ) {
+					if ( isDomainAvailable || isAvailableSupportedPremiumDomain ) {
 						this.setState( {
 							showAvailabilityNotice: false,
 							availabilityError: null,
@@ -874,7 +877,7 @@ class RegisterDomainStep extends React.Component {
 					);
 
 					this.props.onDomainsAvailabilityChange( true );
-					resolve( isDomainAvailable ? result : null );
+					resolve( isDomainAvailable || isAvailableSupportedPremiumDomain ? result : null );
 				}
 			);
 		} );
