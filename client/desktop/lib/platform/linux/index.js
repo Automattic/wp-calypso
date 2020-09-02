@@ -52,7 +52,7 @@ LinuxPlatform.prototype.showNotificationsBadge = function ( count ) {
 };
 
 LinuxPlatform.prototype.clearNotificationsBadge = function () {
-	// no op
+	app.setBadgeCount( 0 );
 };
 
 LinuxPlatform.prototype.setDockMenu = function () {

@@ -66,7 +66,7 @@ MacPlatform.prototype.showNotificationsBadge = function ( count, bounce ) {
 };
 
 MacPlatform.prototype.clearNotificationsBadge = function () {
-	// no op
+	app.setBadgeCount( 0 );
 };
 
 MacPlatform.prototype.setDockMenu = function ( enabled ) {
