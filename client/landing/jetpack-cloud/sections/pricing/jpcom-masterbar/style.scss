@@ -232,10 +232,7 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 }
 
 // when mobilenav is tapped
-.jpcom-masterbar__navbutton.mobilenav.is-active {
-	.jpcom-masterbar__navlabel {
-		display: none;
-	}
+.jpcom-masterbar__navbutton.is-active {
 	.jpcom-masterbar__navbox {
 		margin-right: 0;
 	}
