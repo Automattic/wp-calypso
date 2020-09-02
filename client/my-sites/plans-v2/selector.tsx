@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'state/analytics/actions/record';
 import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
@@ -43,6 +44,8 @@ const SelectorPage = ( {
 	header,
 	footer,
 }: SelectorPageProps ) => {
+	const dispatch = useDispatch();
+
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
@@ -61,6 +64,12 @@ const SelectorPage = ( {
 		}
 
 		if ( product.subtypes.length ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_subtypes_view', {
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			page( getPathToDetails( rootUrl, product.productSlug, currentDuration, siteSlug ) );
 			return;
 		}
@@ -79,6 +88,26 @@ const SelectorPage = ( {
 		checkout( siteSlug, product.productSlug );
 	};
 
+	const trackProductTypeChange = ( selectedType: ProductType ) => {
+		if ( selectedType === productType ) {
+			return;
+		}
+
+		dispatch( recordTracksEvent( 'calypso_plans_type_change', { product_type: selectedType } ) );
+		setProductType( selectedType );
+	};
+
+	const trackDurationChange = ( selectedDuration: Duration ) => {
+		if ( selectedDuration === currentDuration ) {
+			return;
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_plans_duration_change', { duration: selectedDuration } )
+		);
+		setDuration( selectedDuration );
+	};
+
 	const isInConnectFlow = useMemo(
 		() =>
 			/jetpack\/connect\/plans/.test( window.location.href ) ||
@@ -92,9 +121,9 @@ const SelectorPage = ( {
 		<Main className="selector__main" wideLayout>
 			{ header }
 			<PlansFilterBar
-				onProductTypeChange={ setProductType }
+				onProductTypeChange={ trackProductTypeChange }
 				productType={ productType }
-				onDurationChange={ setDuration }
+				onDurationChange={ trackDurationChange }
 				duration={ currentDuration }
 			/>
 			<div className="plans-v2__columns">
