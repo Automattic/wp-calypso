@@ -233,7 +233,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInstallation = () => {
-		const { pluginsStatus, site, sitePlugins, wporgPlugins } = this.props;
+		const { pluginsStatus, site, sitePlugins } = this.props;
 
 		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
@@ -248,10 +248,13 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			const workingOn = toInstall.shift();
-			const thisPlugin = wporgPlugins?.[ workingOn ] ?? {};
-			// Set a default ID if needed.
-			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
-			this.props.installPlugin( site.ID, thisPlugin );
+			// In lieu of waiting on details of plugins from wporg, let's assemble the object ourselves.
+			const plugin = {
+				id: workingOn,
+				slug: workingOn,
+			};
+
+			this.props.installPlugin( site.ID, plugin );
 
 			this.setState( {
 				toInstall,
