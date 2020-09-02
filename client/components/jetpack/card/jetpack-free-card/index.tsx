@@ -2,20 +2,24 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
+
+/**
+ * Internal dependencies
+ */
+import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
+import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type Props = {
-	buttonUrl: string;
-};
-
-const JetpackFreeCard: FunctionComponent< Props > = ( { buttonUrl } ) => {
+const JetpackFreeCard: FunctionComponent = () => {
 	const translate = useTranslate();
+	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
 
 	return (
 		<div className="jetpack-free-card">
@@ -33,11 +37,12 @@ const JetpackFreeCard: FunctionComponent< Props > = ( { buttonUrl } ) => {
 						}
 					) }
 				</p>
-				{ buttonUrl && (
-					<Button className="jetpack-free-card__button" href={ buttonUrl } type="button">
-						{ translate( 'Start for free' ) }
-					</Button>
-				) }
+				<Button
+					className="jetpack-free-card__button"
+					href={ wpAdminUrl || JPC_PATH_REMOTE_INSTALL }
+				>
+					{ translate( 'Start for free' ) }
+				</Button>
 			</div>
 		</div>
 	);
