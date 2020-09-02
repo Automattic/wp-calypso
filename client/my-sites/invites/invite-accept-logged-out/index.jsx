@@ -71,7 +71,7 @@ class InviteAcceptLoggedOut extends React.Component {
 		const enhancedUserData = { ...userData };
 
 		if ( get( invite, 'site.is_wpforteams_site', false ) ) {
-			enhancedUserData.signup_flow_name = 'wp-for-teams';
+			enhancedUserData.signup_flow_name = 'p2';
 		}
 
 		this.props.createAccount( enhancedUserData, invite, createAccountCallback );

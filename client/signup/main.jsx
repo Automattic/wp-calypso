@@ -115,7 +115,7 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function isWPForTeamsFlow( flowName ) {
-	return flowName === 'wp-for-teams' || flowName === 'p2';
+	return flowName === 'p2';
 }
 
 class Signup extends React.Component {
