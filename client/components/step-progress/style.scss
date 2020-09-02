@@ -1,0 +1,77 @@
+.step-progress {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	position: relative;
+
+	&::before {
+		background: var( --color-neutral-5 );
+		content: '';
+		height: 1px;
+		left: 5%;
+		position: absolute;
+		top: 12px;
+		width: 90%;
+		z-index: 0;
+	}
+}
+
+.step-progress__element {
+	display: flex;
+	flex-direction: column;
+}
+
+.step-progress__element-visual,
+.step-progress__element-step-name {
+	display: flex;
+	justify-content: center;
+}
+
+.step-progress__element-visual {
+	position: relative;
+	// draw over the background line
+	&::before {
+		background: var( --color-surface );
+		content: '';
+		height: 1px;
+		left: 20%;
+		position: absolute;
+		top: 12px;
+		width: 60%;
+		z-index: 1;
+	}
+}
+
+.step-progress__element-step-name-current,
+.step-progress__element-step-name-complete,
+.step-progress__element-step-name {
+	margin-top: 9px;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 1;
+	line-height: 24px;
+}
+
+.step-progress__element-step-name-complete,
+.step-progress__element-step-name {
+	color: var( --color-text-subtle );
+}
+
+.step-progress__element-number-current,
+.step-progress__element-number-complete,
+.step-progress__element-number {
+	z-index: 2;
+	border-radius: 50%;
+	background-color: var( --color-neutral-10 );
+	height: 25px;
+	width: 25px;
+	color: var( --color-text-inverted );
+	display: flex;
+	justify-content: center;
+	text-align: center;
+}
+
+.step-progress__element-number-current,
+.step-progress__element-number-complete {
+	background-color: var( --color-primary );
+}

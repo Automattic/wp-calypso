@@ -112,6 +112,7 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
+import StepProgress from 'components/step-progress/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
@@ -272,6 +273,7 @@ export default class DesignAssets extends React.Component {
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<SplitButton readmeFilePath="split-button" />
+					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />
