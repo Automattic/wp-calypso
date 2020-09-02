@@ -4,11 +4,6 @@
  * paths here (e.g. `import * from '../../lib/`)
  */
 
-/**
- * Internal dependencies
- */
-import * as RUM_DATA_COLLECTION from '../../lib/performance-tracking/const';
-
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -185,16 +180,6 @@ export default {
 			'VN',
 			'ZA',
 		],
-	},
-	[ RUM_DATA_COLLECTION.AB_NAME ]: {
-		datestamp: '20200602',
-		variations: {
-			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 50,
-			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 50,
-		},
-		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
-		localeTargets: 'any',
-		allowExistingUsers: true,
 	},
 	showBusinessPlanBump: {
 		datestamp: '20300619',

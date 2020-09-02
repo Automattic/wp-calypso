@@ -7,8 +7,6 @@ import { start, stop } from '@automattic/browser-data-collector';
  * Internal dependencies
  */
 import config from 'config';
-import { abtest } from 'lib/abtest';
-import { CONFIG_NAME, AB_NAME, AB_VARIATION_ON } from './const';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
@@ -47,9 +45,7 @@ const buildMetadataCollector = ( metadata = {} ) => {
 };
 
 const isPerformanceTrackingEnabled = () => {
-	const isEnabledForEnvironment = config.isEnabled( CONFIG_NAME );
-	const isEnabledForCurrentInteraction = abtest( AB_NAME ) === AB_VARIATION_ON;
-	return isEnabledForEnvironment && isEnabledForCurrentInteraction;
+	return config.isEnabled( 'rum-tracking/logstash' );
 };
 
 export const startPerformanceTracking = ( name, { fullPageLoad = false } = {} ) => {
