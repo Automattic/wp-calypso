@@ -8,13 +8,13 @@
 $markup = '
 <!-- wp:columns {"align":"wide"} -->
 <div class="wp-block-columns alignwide"><!-- wp:column {"width":33.33} -->
-<div class="wp-block-column" style="flex-basis:33.33%"><!-- wp:heading -->
+<div class="wp-block-column" style="flex-basis:33.33%%"><!-- wp:heading -->
 <h2>%1$s</h2>
 <!-- /wp:heading --></div>
 <!-- /wp:column -->
 
 <!-- wp:column {"width":66.66} -->
-<div class="wp-block-column" style="flex-basis:66.66%"></div>
+<div class="wp-block-column" style="flex-basis:66.66%%"></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns -->
 

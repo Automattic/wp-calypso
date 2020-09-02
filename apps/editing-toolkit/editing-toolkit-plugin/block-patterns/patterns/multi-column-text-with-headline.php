@@ -56,13 +56,13 @@ $markup = '
 <!-- wp:jetpack/layout-grid-column -->
 <div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:columns -->
 <div class="wp-block-columns"><!-- wp:column {"width":25} -->
-<div class="wp-block-column" style="flex-basis:25%"><!-- wp:image {"id":1472,"sizeSlug":"full","className":"is-style-rounded"} -->
+<div class="wp-block-column" style="flex-basis:25%%"><!-- wp:image {"id":1472,"sizeSlug":"full","className":"is-style-rounded"} -->
 <figure class="wp-block-image size-full is-style-rounded"><img src="https://dotcompatterns.files.wordpress.com/2020/06/alexis-chloe-m226gm3bjwc-unsplash-2.jpg?w=300" alt="" class="wp-image-1472"/></figure>
 <!-- /wp:image --></div>
 <!-- /wp:column -->
 
 <!-- wp:column {"verticalAlignment":"center","width":75,"className":"margin-left-half"} -->
-<div class="wp-block-column is-vertically-aligned-center margin-left-half" style="flex-basis:75%"><!-- wp:paragraph {"style":{"typography":{"fontSize":17}}} -->
+<div class="wp-block-column is-vertically-aligned-center margin-left-half" style="flex-basis:75%%"><!-- wp:paragraph {"style":{"typography":{"fontSize":17}}} -->
 <p style="font-size:17px"><strong>%12$s<br></strong>%13$s</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column --></div>

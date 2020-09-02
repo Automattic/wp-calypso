@@ -7,7 +7,7 @@
 
 $markup = '
 <!-- wp:cover {"url":"https://dotcompatterns.files.wordpress.com/2020/05/andy-chilton-0jfvex0c778-unsplash.jpg","id":1047,"dimRatio":30,"focalPoint":{"x":0.5,"y":"0.85"},"align":"full"} -->
-<div class="wp-block-cover alignfull has-background-dim-30 has-background-dim" style="background-image:url(https://dotcompatterns.files.wordpress.com/2020/05/andy-chilton-0jfvex0c778-unsplash.jpg);background-position:50% 85%"><div class="wp-block-cover__inner-container"><!-- wp:spacer -->
+<div class="wp-block-cover alignfull has-background-dim-30 has-background-dim" style="background-image:url(https://dotcompatterns.files.wordpress.com/2020/05/andy-chilton-0jfvex0c778-unsplash.jpg);background-position:50%% 85%%"><div class="wp-block-cover__inner-container"><!-- wp:spacer -->
 <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
