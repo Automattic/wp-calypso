@@ -7,7 +7,6 @@ form {
 	@extend %form;
 }
 input[type='text'],
-input[type='search'],
 input[type='email'],
 input[type='number'],
 input[type='password'],
@@ -22,7 +21,6 @@ textarea {
 
 fieldset,
 input[type='text'],
-input[type='search'],
 input[type='email'],
 input[type='number'],
 input[type='password'],
@@ -179,12 +177,4 @@ select {
 		color: transparent;
 		text-shadow: 0 0 0 var( --color-neutral-70 );
 	}
-}
-
-/*Search Inputs*/
-input[type='search']::-webkit-search-decoration {
-	// We don't use the native results="" UI
-	// Ensures the input text is flush to the start of the element, as in regular text inputs
-	// See, for example, http://geek.michaelgrace.org/2011/06/webkit-search-input-styling/
-	display: none;
 }
