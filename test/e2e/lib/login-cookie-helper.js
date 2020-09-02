@@ -23,7 +23,6 @@ export async function loadLoginCookies( driver, filePath ) {
 	const rawData = await fs.readFileSync( filePath );
 	const cookies = await JSON.parse( rawData );
 	for ( const cookie of cookies ) {
-		cookie.sameSite='Strict';
 		await driver.manage().addCookie( cookie );
 	}
 }
