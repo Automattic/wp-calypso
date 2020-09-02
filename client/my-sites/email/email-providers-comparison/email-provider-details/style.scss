@@ -15,6 +15,10 @@
 		border-bottom: 1px solid var( --color-neutral-5 );
 		margin-bottom: 8px;
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-left: 28px;
+	}
 }
 
 .promo-card .action-panel__body p.email-provider-details__description {

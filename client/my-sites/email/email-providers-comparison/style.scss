@@ -6,6 +6,10 @@
 
 	.promo-card {
 		width: calc( 33% - 0.5em );
-		margin: 0;
+		margin: 8px 0;
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			width: 100%;
+		}
 	}
 }
