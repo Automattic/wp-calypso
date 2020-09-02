@@ -21,7 +21,7 @@ const mainFeatures = [
 	'Business features (incl. SEO)',
 	'Upload themes',
 	'Install plugins',
-	'Accept Payments in 60+ Countries',
+	'Accept payments in 60+ countries',
 ];
 
 export const PLANS_LIST: Record< string, Plan > = {
