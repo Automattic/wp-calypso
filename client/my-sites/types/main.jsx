@@ -34,13 +34,13 @@ function Types( {
 } ) {
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ get( postType, 'label' ) } />
+			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="types__page-heading"
-				headerText={ get( postType, 'label' ) }
+				headerText={ get( postType, 'label', '' ) }
 				align="left"
 			/>
 			{ false !== userCanEdit &&
@@ -81,7 +81,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		postType,
-		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
-		userCanEdit: canCurrentUser( state, siteId, capability ),
+		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ) || false,
+		userCanEdit: canCurrentUser( state, siteId, capability ) || false,
 	};
 } )( Types );
