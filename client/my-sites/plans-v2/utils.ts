@@ -23,7 +23,7 @@ import {
 	DAILY_PRODUCTS,
 	REALTIME_PRODUCTS,
 } from './constants';
-import RecordsSlider from './records-slider';
+import RecordsDetails from './records-detailss';
 import { addItems } from 'lib/cart/actions';
 import { jetpackProductItem } from 'lib/cart-values/cart-items';
 import {
@@ -239,7 +239,7 @@ export function itemToSelectorProduct(
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
 			children: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
-				? createElement( RecordsSlider, { productSlug: item.product_slug } )
+				? createElement( RecordsDetails, { productSlug: item.product_slug } )
 				: undefined,
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,

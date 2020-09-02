@@ -135,13 +135,13 @@
  * Record slider
  */
 
-.records-slider {
+.records-details {
 	background-color: var( --studio-gray-0 );
 	border: solid 1px var( --studio-wordpress-blue-30 );
 	color: var( --color-text-subtle );
 }
 
-.records-slider__records {
+.records-details__records {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -158,25 +158,25 @@
 	}
 }
 
-.records-slider__details {
+.records-details__details {
 	padding: 16px;
 
 	text-align: center;
 }
 
-.records-slider__tier {
+.records-details__tier {
 	margin-bottom: 8px;
 
 	color: var( --color-text );
 	font-weight: 600;
 }
 
-.records-slider__price {
+.records-details__price {
 	display: flex;
 	justify-content: center;
 }
 
-.records-slider__timeframe {
+.records-details__timeframe {
 	margin-top: -4px;
 
 	font-size: 0.75rem;

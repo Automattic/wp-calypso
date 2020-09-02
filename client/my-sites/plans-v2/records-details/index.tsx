@@ -23,7 +23,7 @@ type Props = {
 	productSlug: string;
 };
 
-const RecordsSlider: FunctionComponent< Props > = ( { productSlug } ) => {
+const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 	const selectorProduct = slugToSelectorProduct( productSlug );
 
 	const translate = useTranslate();
@@ -51,8 +51,8 @@ const RecordsSlider: FunctionComponent< Props > = ( { productSlug } ) => {
 		?.optionShortNamesCallback( searchProduct );
 
 	return (
-		<div className="records-slider">
-			<div className="records-slider__records">
+		<div className="records-details">
+			<div className="records-details__records">
 				{ translate(
 					'Your site has %(recordCount)s record',
 					'Your site has %(recordCount)s records',
@@ -74,9 +74,9 @@ const RecordsSlider: FunctionComponent< Props > = ( { productSlug } ) => {
 					) }
 				</InfoPopover>
 			</div>
-			<div className="records-slider__details">
-				<p className="records-slider__tier">{ tierText }</p>
-				<div className="records-slider__price">
+			<div className="records-details__details">
+				<p className="records-details__tier">{ tierText }</p>
+				<div className="records-details__price">
 					<PlanPrice
 						rawPrice={ originalPrice }
 						original={ isDiscounted }
@@ -86,10 +86,10 @@ const RecordsSlider: FunctionComponent< Props > = ( { productSlug } ) => {
 						<PlanPrice rawPrice={ discountedPrice } discounted currencyCode={ currencyCode } />
 					) }
 				</div>
-				<p className="records-slider__timeframe">{ durationToText( selectorProduct.term ) }</p>
+				<p className="records-details__timeframe">{ durationToText( selectorProduct.term ) }</p>
 			</div>
 		</div>
 	);
 };
 
-export default RecordsSlider;
+export default RecordsDetails;
