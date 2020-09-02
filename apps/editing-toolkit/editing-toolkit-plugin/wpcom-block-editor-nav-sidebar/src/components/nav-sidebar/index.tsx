@@ -122,6 +122,11 @@ function WpcomBlockEditorNavSidebar() {
 		return null;
 	}
 
+	// The `closeUrl` "closes" the editor, returning the user to the dashboard.
+	// It often takes the user back to the pages or posts list, but can also be overridden
+	// (using the filter) to take the user to the customer homepage or themes gallery instance.
+	// `closeLabel` can be overridden in the same way to correctly label where the user will
+	// be taken to after closing the editor.
 	const defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
 	const closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', defaultCloseUrl );
 
