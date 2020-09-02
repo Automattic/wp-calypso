@@ -52,7 +52,7 @@ import {
 } from 'state/help/directly/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
-import getSupportLevel from 'state/selectors/get-support-level';
+import getSupportLevel, { SUPPORT_LEVEL_PERSONAL } from 'state/selectors/get-support-level';
 import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
 import isDirectlyReady from 'state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
@@ -536,7 +536,7 @@ class HelpContact extends React.Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { activeSupportTickets, compact, supportVariation, translate } = this.props;
+		const { activeSupportTickets, compact, supportLevel, supportVariation, translate } = this.props;
 
 		debug( { supportVariation } );
 
@@ -598,7 +598,7 @@ class HelpContact extends React.Component {
 					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
 				) }
 
-				{ isUserAffectedByLiveChatClosure && (
+				{ isUserAffectedByLiveChatClosure && supportLevel === SUPPORT_LEVEL_PERSONAL && (
 					<ChatCovidLimitedAvailabilityNotice showAt="2020-08-24" compact={ compact } />
 				) }
 
