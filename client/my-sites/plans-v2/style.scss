@@ -5,6 +5,8 @@
 	.plans-v2__columns {
 		display: flex;
 
+		margin-bottom: 24px;
+
 		& > .plans-column,
 		& > .details__column {
 			flex-basis: 50%;
@@ -42,6 +44,11 @@
 /**
  * Upsell
  */
+
+.upsell.main {
+	padding-bottom: 0;
+	margin-bottom: 24px;
+}
 
 .upsell__header-placeholder {
 	@include placeholder( --color-neutral-10 );
