@@ -47,7 +47,8 @@ class WPCOM_Coming_Soon {
 		}
 
 		// Handle the case where we are not rendering a post.
-/*		if ( ! isset( $post ) ) {
+		/*
+			  if ( ! isset( $post ) ) {
 			return false;
 		}*/
 
@@ -67,12 +68,12 @@ class WPCOM_Coming_Soon {
 	// How are users going to assign a page as a coming soon page (Via the Gutenberg editor perhaps?)
 	private function register_coming_soon_post_type() {
 		$args = array(
-			'public'             => false,
-			'show_in_menu'       => false,
-			'capability_type'    => 'post',
-			'has_archive'        => false,
-			'hierarchical'       => false,
-			'menu_position'      => null,
+			'public'          => false,
+			'show_in_menu'    => false,
+			'capability_type' => 'post',
+			'has_archive'     => false,
+			'hierarchical'    => false,
+			'menu_position'   => null,
 		);
 
 		register_post_type( 'coming_soon', $args );
@@ -107,31 +108,35 @@ class WPCOM_Coming_Soon {
 		add_filter( 'wpl_is_enabled_sitewide', '__return_false', 1, 999 );
 		// add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1, 999 );
 
-		?><!doctype html>
-		<html <?php language_attributes(); ?>>
-			<head>
-				<meta charset="<?php bloginfo( 'charset' ); ?>" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
-				<?php wp_head(); ?>
-			</head>
-			<body>
-				<?php
-					echo apply_filters( 'the_content', $should_show_display_fallback_coming_soon_page ? self::get_fallback_coming_soon_page_content() : $page->post_content );
-				?>
-				<?php wp_footer(); ?>
-			</body>
-		</html>
-		<?php
+		if ( $should_show_display_fallback_coming_soon_page ) {
+			echo self::get_fallback_coming_soon_page();
+		} else {
+			?><!doctype html>
+			<html <?php language_attributes(); ?>>
+				<head>
+					<meta charset="<?php bloginfo( 'charset' ); ?>" />
+					<meta name="viewport" content="width=device-width, initial-scale=1" />
+					<?php wp_head(); ?>
+				</head>
+				<body>
+					<?php
+						echo apply_filters( 'the_content', $page->post_content );
+					?>
+					<?php wp_footer(); ?>
+				</body>
+			</html>
+			<?php
+		}
+
 		die();
 	}
 
-	public static function get_fallback_coming_soon_page_content() {
-		return '<h1>Coming soooooooooooon!</h1><p>Hey! This is a backup coming soon page that will show until you create your own!</p';
+	public static function get_fallback_coming_soon_page() {
+		ob_start();
+		include __DIR__ . '/fallback-coming-soon-page.php';
+		return ob_get_clean();
 	}
 
 }
 
 add_action( 'wp', __NAMESPACE__ . '\WPCOM_Coming_Soon::display_coming_soon_page' );
-
-//add_action( 'init', array( __NAMESPACE__ . '\WPCOM_Block_Editor_Nav_Sidebar', 'init' ) );
-
