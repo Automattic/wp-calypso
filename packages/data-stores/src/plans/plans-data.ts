@@ -11,7 +11,7 @@ import type { Plan } from './types';
 
 const mainFeatures = [
 	'Remove WordPress.com ads',
-	'Email & basic Live Chat Support',
+	'Email & basic live chat support',
 	'Collect recurring payments',
 	'Collect one-time payments',
 	'Earn ad revenue',
