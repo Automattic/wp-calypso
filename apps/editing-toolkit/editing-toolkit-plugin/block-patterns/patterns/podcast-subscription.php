@@ -27,7 +27,7 @@ $markup = '
 <!-- /wp:button -->
 
 <!-- wp:button {"style":{"color":{"text":"#ffffff"}},"className":"is-style-outline"} -->
-<div class="wp-block-button is-style-outline"><a class="wp-block-button__link has-text-color" style="color:#ffffff">%5%s</a></div>
+<div class="wp-block-button is-style-outline"><a class="wp-block-button__link has-text-color" style="color:#ffffff">%5$s</a></div>
 <!-- /wp:button -->
 
 <!-- wp:button {"style":{"color":{"text":"#ffffff"}},"className":"is-style-outline"} -->
