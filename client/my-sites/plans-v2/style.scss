@@ -135,14 +135,49 @@
  * Record slider
  */
 
-.records-slider__tier {
-	font-weight: 700;
+.records-slider {
+	background-color: var( --studio-gray-0 );
+	border: solid 1px var( --studio-wordpress-blue-30 );
+	color: var( --color-text-subtle );
 }
 
-.records-slider__label {
-	padding: 0 16px;
+.records-slider__records {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
-	color: var( --color-text-subtle );
+	padding: 14px;
+
+	border-bottom: solid 1px var( --studio-gray-5 );
+
+	.info-popover {
+		margin-top: 3px;
+		margin-left: 6px;
+
+		fill: var( --studio-gray-20 );
+	}
+}
+
+.records-slider__details {
+	padding: 16px;
 
 	text-align: center;
+}
+
+.records-slider__tier {
+	margin-bottom: 8px;
+
+	color: var( --color-text );
+	font-weight: 600;
+}
+
+.records-slider__price {
+	display: flex;
+	justify-content: center;
+}
+
+.records-slider__timeframe {
+	margin-top: -4px;
+
+	font-size: 0.75rem;
 }

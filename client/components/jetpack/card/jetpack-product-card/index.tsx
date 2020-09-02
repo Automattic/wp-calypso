@@ -51,6 +51,7 @@ type OwnProps = {
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
 	UpgradeNudge?: ReactNode;
+	hidePrice?: boolean;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -82,6 +83,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	features,
 	isExpanded,
 	UpgradeNudge,
+	hidePrice,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
@@ -145,39 +147,41 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 							<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
 						) }
 					</div>
-					<div
-						className={ classNames( 'jetpack-product-card__price', {
-							'is-left-aligned': isHeaderWrapped,
-						} ) }
-						ref={ priceEl }
-					>
-						{ currencyCode && originalPrice ? (
-							<span className="jetpack-product-card__raw-price">
-								{ withStartingPrice && (
-									<span className="jetpack-product-card__from">{ translate( 'from' ) }</span>
-								) }
-								<PlanPrice
-									rawPrice={ originalPrice }
-									original={ isDiscounted }
-									currencyCode={ currencyCode }
-								/>
-								{ isDiscounted && (
+					{ ! hidePrice && (
+						<div
+							className={ classNames( 'jetpack-product-card__price', {
+								'is-left-aligned': hidePrice && isHeaderWrapped,
+							} ) }
+							ref={ priceEl }
+						>
+							{ currencyCode && originalPrice ? (
+								<span className="jetpack-product-card__raw-price">
+									{ withStartingPrice && (
+										<span className="jetpack-product-card__from">{ translate( 'from' ) }</span>
+									) }
 									<PlanPrice
-										rawPrice={ discountedPrice }
-										discounted
+										rawPrice={ originalPrice }
+										original={ isDiscounted }
 										currencyCode={ currencyCode }
 									/>
-								) }
-							</span>
-						) : (
-							<div className="jetpack-product-card__price-placeholder" />
-						) }
-						{ currencyCode && originalPrice ? (
-							renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame )
-						) : (
-							<div className="jetpack-product-card__time-frame-placeholder" />
-						) }
-					</div>
+									{ isDiscounted && (
+										<PlanPrice
+											rawPrice={ discountedPrice }
+											discounted
+											currencyCode={ currencyCode }
+										/>
+									) }
+								</span>
+							) : (
+								<div className="jetpack-product-card__price-placeholder" />
+							) }
+							{ currencyCode && originalPrice ? (
+								renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame )
+							) : (
+								<div className="jetpack-product-card__time-frame-placeholder" />
+							) }
+						</div>
+					) }
 				</div>
 				{ badgeLabel && <div className="jetpack-product-card__badge">{ badgeLabel }</div> }
 			</header>

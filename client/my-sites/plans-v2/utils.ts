@@ -244,6 +244,7 @@ export function itemToSelectorProduct(
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
+			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
 			features: {
 				items: item.features
 					? buildCardFeaturesFromItem( item.features, {

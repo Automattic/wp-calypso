@@ -179,6 +179,7 @@ const ProductCardWrapper = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
+			hidePrice={ item.hidePrice }
 		/>
 	);
 };
