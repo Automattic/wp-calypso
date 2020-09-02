@@ -127,6 +127,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 			pendingCheckSuggestion,
+			premiumDomain,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -151,7 +152,9 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
-		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
+		if ( premiumDomain?.pending ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
+		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
