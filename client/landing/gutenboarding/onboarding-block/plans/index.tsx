@@ -19,7 +19,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { Step, usePath } from '../../path';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import AsyncLoad from '../../../../components/async-load';
+import AsyncLoad from 'components/async-load';
 
 type PlanSlug = Plans.PlanSlug;
 
