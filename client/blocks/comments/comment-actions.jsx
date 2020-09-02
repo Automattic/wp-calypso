@@ -11,6 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { changeCommentStatus } from 'state/comments/actions';
 import CommentLikeButtonContainer from './comment-likes';
 import CommentApproveAction from './comment-approve-action';
@@ -22,6 +23,12 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
  * Style dependencies
  */
 import './comment-actions.scss';
+
+const BorderlessCompactButtonTag = ( { children, ...props } ) => (
+	<Button { ...props } borderless compact>
+		{ children }
+	</Button>
+);
 
 const CommentActions = ( {
 	post,
@@ -55,34 +62,54 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore && (
-				<button className="comments__comment-actions-read-more" onClick={ onReadMore }>
+				<Button
+					borderless
+					compact
+					className="comments__comment-actions-read-more"
+					onClick={ onReadMore }
+				>
 					<Gridicon
 						icon="chevron-down"
 						size={ 18 }
 						className="comments__comment-actions-read-more-icon"
 					/>
 					{ translate( 'Read More' ) }
-				</button>
+				</Button>
 			) }
 			{ showReplyButton && (
-				<button className="comments__comment-actions-reply" onClick={ handleReply }>
+				<Button
+					borderless
+					compact
+					className="comments__comment-actions-reply"
+					onClick={ handleReply }
+				>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-				</button>
+				</Button>
 			) }
 			{ showCancelReplyButton && (
-				<button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
+				<Button
+					borderless
+					compact
+					className="comments__comment-actions-cancel-reply"
+					onClick={ onReplyCancel }
+				>
 					{ translate( 'Cancel reply' ) }
-				</button>
+				</Button>
 			) }
 			{ showCancelEditButton && (
-				<button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
+				<Button
+					borderless
+					compact
+					className="comments__comment-actions-cancel-reply"
+					onClick={ editCommentCancel }
+				>
 					{ translate( 'Cancel' ) }
-				</button>
+				</Button>
 			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
-				tagName="button"
+				tagName={ BorderlessCompactButtonTag }
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
