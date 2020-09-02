@@ -21,6 +21,7 @@ class EmailProviderDetails extends React.Component {
 		description: PropTypes.string.isRequired,
 		image: PropTypes.object.isRequired,
 		features: PropTypes.array.isRequired,
+		badge: PropTypes.string,
 	};
 
 	renderFeatures() {
@@ -30,10 +31,10 @@ class EmailProviderDetails extends React.Component {
 	}
 
 	render() {
-		const { description, image, title } = this.props;
+		const { badge, description, image, title } = this.props;
 
 		return (
-			<PromoCard title={ title } image={ image }>
+			<PromoCard title={ title } image={ image } badge={ badge }>
 				<p className="email-provider-details__description">{ description }</p>
 				<div>{ this.renderFeatures() }</div>
 			</PromoCard>

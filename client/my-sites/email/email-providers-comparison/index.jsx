@@ -61,6 +61,7 @@ class EmailProvidersComparison extends React.Component {
 					/>
 					<EmailProviderDetails
 						title={ translate( 'Titan Mail' ) }
+						badge={ translate( 'Recommended' ) }
 						description={ translate(
 							'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 						) }
