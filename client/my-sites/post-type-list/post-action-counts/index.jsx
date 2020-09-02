@@ -29,8 +29,7 @@ class PostActionCounts extends PureComponent {
 	};
 
 	state = {
-		likesPopoverContext: null,
-		likesPopoverPostId: null,
+		showLikesPopover: false,
 	};
 
 	onActionClick = ( action ) => () => {
@@ -44,20 +43,14 @@ class PostActionCounts extends PureComponent {
 	};
 
 	onLikesClick = ( event ) => {
-		const { globalId } = this.props;
-
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
-		if ( this.state.likesPopoverPostId === globalId ) {
-			this.setState( { likesPopoverPostId: null } );
-		} else {
-			this.setState( { likesPopoverPostId: globalId } );
-		}
+		this.setState( { showLikesPopover: ! this.state.showLikesPopover } );
 	};
 
 	closeLikesPopover = () => {
-		this.setState( { likesPopoverPostId: null } );
+		this.setState( { showLikesPopover: false } );
 	};
 
 	setLikesPopoverContext = ( element ) => {
@@ -142,7 +135,6 @@ class PostActionCounts extends PureComponent {
 
 	renderLikeCount() {
 		const {
-			globalId,
 			likeCount: count,
 			numberFormat,
 			siteId,
@@ -167,7 +159,7 @@ class PostActionCounts extends PureComponent {
 						} )
 					}
 				</a>
-				{ globalId && this.state.likesPopoverPostId === globalId && (
+				{ this.state.showLikesPopover && (
 					<PostLikesPopover
 						siteId={ siteId }
 						postId={ postId }
