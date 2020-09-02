@@ -17,6 +17,7 @@
 	input[type='text'],
 	input[type='number'] {
 		flex-grow: 1;
+		border-radius: 0;
 
 		&:focus {
 			// Fixes the right border of the box shadow displayed when this input element is focused which appears as

@@ -16,7 +16,6 @@
 	animation: appear 0.3s ease-in-out;
 	background: var( --color-neutral-80 );
 	color: var( --color-text-inverted );
-	border-radius: 3px;
 	line-height: 1.5;
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -95,7 +94,6 @@
 	align-items: center;
 	width: 47px;
 	justify-content: center;
-	border-radius: 3px 0 0 3px;
 	flex-shrink: 0;
 	align-self: stretch;
 }
@@ -212,7 +210,6 @@ a.notice__action {
 			flex-shrink: 1;
 			flex-grow: 0;
 		align-items: center;
-		border-radius: 0;
 		font-size: $font-body-small;
 		margin: 0 0 0 auto; // forces the element to the right;
 		padding: 13px 16px;
@@ -245,7 +242,6 @@ a.notice__action {
 		flex-wrap: nowrap;
 		flex-direction: row;
 	width: auto;
-	border-radius: 3px;
 	min-height: 20px;
 	margin: 0;
 	padding: 0;

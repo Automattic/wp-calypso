@@ -7,8 +7,8 @@
 
 	&:not( .is-collapsed ) .sub-masterbar-nav__select {
 		background-color: var( --color-primary-dark );
-		border-top-left-radius: 5px;
-		border-top-right-radius: 5px;
+		border-top-left-radius: 2px;
+		border-top-right-radius: 2px;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -57,8 +57,8 @@
 		z-index: 30;
 		width: 100%;
 		background-color: var( --color-primary-dark );
-		border-bottom-left-radius: 5px;
-		border-bottom-right-radius: 5px;
+		border-bottom-left-radius: 2px;
+		border-bottom-right-radius: 2px;
 
 		.sub-masterbar-nav__dropdown.is-collapsed &,
 		.sub-masterbar-nav__navbar.is-collapsed & {
@@ -106,7 +106,7 @@
 	&.is-selected {
 			background-color: var( --color-masterbar-item-active-background );
 			color: var( --color-masterbar-text );
-			border-radius: 5px;
+			border-radius: 2px;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -126,7 +126,7 @@
 		margin: 0 10px 10px 0;
 		font-size: $font-body-small;
 		text-align: center;
-		border-radius: 5px;
+		border-radius: 2px;
 	}
 }
 

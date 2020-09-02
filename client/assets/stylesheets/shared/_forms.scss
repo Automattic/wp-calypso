@@ -18,6 +18,7 @@ textarea {
 }
 textarea {
 	@extend %textarea;
+	border-radius: 2px;
 }
 
 fieldset,
