@@ -30,7 +30,7 @@ import './style.scss';
 const Button = ( {
 	children,
 	...rest
-}: OriginalButton.Props & { icon?: any; iconSize?: number } ) => (
+}: OriginalButton.Props & { icon?: any; iconSize?: number; showTooltip?: boolean } ) => (
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
@@ -63,12 +63,6 @@ function WpcomBlockEditorNavSidebar() {
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
 
-	const containerMount = ( el: HTMLDivElement | null ) => {
-		if ( el ) {
-			el.focus();
-		}
-	};
-
 	if ( ! postType ) {
 		// Still loading
 		return null;
@@ -79,6 +73,11 @@ function WpcomBlockEditorNavSidebar() {
 		return null;
 	}
 
+	// The `closeUrl` "closes" the editor, returning the user to the dashboard.
+	// It often takes the user back to the pages or posts list, but can also be overridden
+	// (using the filter) to take the user to the customer homepage or themes gallery instance.
+	// `closeLabel` can be overridden in the same way to correctly label where the user will
+	// be taken to after closing the editor.
 	const defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
 	const closeUrl = applyFilters( 'a8c.WpcomBlockEditorNavSidebar.closeUrl', defaultCloseUrl );
 
@@ -102,6 +101,17 @@ function WpcomBlockEditorNavSidebar() {
 		defaultListHeading,
 		postType.slug
 	);
+
+	const dialogDescription =
+		postType.slug === 'page'
+			? __(
+					'Contains links to your dashboard or to edit other pages on your site. Press the Escape key to close.',
+					'full-site-editing'
+			  )
+			: __(
+					'Contains links to your dashboard or to edit other posts on your site. Press the Escape key to close.',
+					'full-site-editing'
+			  );
 
 	const dismissSidebar = () => {
 		if ( isOpen && ! isClosing ) {
@@ -139,15 +149,23 @@ function WpcomBlockEditorNavSidebar() {
 			onKeyDown={ handleKeyDown }
 		>
 			<div
+				aria-label={ __( 'Block editor sidebar', 'full-site-editing' ) }
+				// Waiting for jsx-a11y version bump to support aria-description attribute
+				// eslint-disable-next-line jsx-a11y/aria-props
+				aria-description={ dialogDescription }
 				className={ classNames( 'wpcom-block-editor-nav-sidebar-nav-sidebar__container', {
 					'is-sliding-left': isClosing,
 				} ) }
-				ref={ containerMount }
 				role="dialog"
 				tabIndex={ -1 }
 			>
 				<div className="wpcom-block-editor-nav-sidebar-nav-sidebar__header">
 					<Button
+						label={ __( 'Close block editor sidebar', 'full-site-editing' ) }
+						showTooltip
+						// We need to shift the focus to something because we are opening a modal
+						// eslint-disable-next-line jsx-a11y/no-autofocus
+						autoFocus
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
 							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
@@ -161,6 +179,9 @@ function WpcomBlockEditorNavSidebar() {
 					</div>
 				</div>
 				<Button
+					// Waiting for jsx-a11y version bump to support aria-description attribute
+					// eslint-disable-next-line jsx-a11y/aria-props
+					aria-description={ __( 'Returns to the dashboard', 'full-site-editing' ) }
 					href={ closeUrl }
 					className="wpcom-block-editor-nav-sidebar-nav-sidebar__home-button"
 					icon={ chevronLeft }
