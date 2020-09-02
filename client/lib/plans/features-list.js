@@ -1123,6 +1123,10 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	// * Scan Daily *
+	// Currently we're not distinguishing between Scan 'Daily' or 'Real-time',
+	// but leaving this here because we may be implementing Scan 'Daily' and 'Real-time'
+	// in the near future.
 	[ constants.FEATURE_PRODUCT_SCAN_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
@@ -1143,6 +1147,10 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	// * Scan Real-time *
+	// Currently we're not distinguishing between Scan 'Daily' or 'Real-time',
+	// but leaving this here because we may be implementing Scan 'Daily' and 'Real-time'
+	// in the near future.
 	[ constants.FEATURE_PRODUCT_SCAN_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
