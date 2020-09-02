@@ -239,4 +239,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	oneClickUpsell: {
+		datestamp: '20200909',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };

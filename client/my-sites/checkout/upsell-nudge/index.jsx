@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import {
 	getProductsList,
 	getProductDisplayCost,
 	getProductCost,
+	getProductBySlug,
 	isProductsListFetching,
 } from 'state/products-list/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -35,6 +37,9 @@ import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
 import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import { PurchaseModal } from './purchase-modal';
+import { abtest } from 'lib/abtest';
+import { replaceCartWithItems } from 'lib/cart/actions';
 
 /**
  * Style dependencies
@@ -47,6 +52,10 @@ export class UpsellNudge extends React.Component {
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 	};
 
+	state = {
+		showPurchaseModal: false,
+	};
+
 	render() {
 		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
 
@@ -56,6 +65,7 @@ export class UpsellNudge extends React.Component {
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
+				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 			</Main>
 		);
 	}
@@ -180,9 +190,41 @@ export class UpsellNudge extends React.Component {
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
+		if ( this.isEligibleForOneClickUpsellABTest( buttonAction ) ) {
+			replaceCartWithItems( [ this.props.product ] );
+			this.setState( { showPurchaseModal: true } );
+			return;
+		}
+
 		return siteSlug
 			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
 			: page( `/checkout/${ upgradeItem }` );
+	};
+
+	isEligibleForOneClickUpsellABTest = ( buttonAction ) => {
+		const { cards, upsellType } = this.props;
+
+		if ( 'accept' !== buttonAction || 'concierge-quickstart-session' !== upsellType ) {
+			return false;
+		}
+
+		// stored cards should exist
+		if ( cards.length === 0 ) {
+			return false;
+		}
+
+		return 'test' === abtest( 'oneClickUpsell' );
+	};
+
+	renderPurchaseModal = () => {
+		return (
+			<PurchaseModal
+				cart={ this.props.cart }
+				cards={ this.props.cards }
+				onComplete={ () => this.props.handleCheckoutCompleteRedirect( true ) }
+				onClose={ () => this.setState( { showPurchaseModal: false } ) }
+			/>
+		);
 	};
 }
 
@@ -208,9 +250,13 @@ export default connect(
 
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
+			isLoading:
+				props.isFetchingStoredCards ||
+				isProductsListFetching( state ) ||
+				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
+			product: omit( getProductBySlug( state, 'concierge-session' ), 'prices' ),
 			productCost: getProductCost( state, 'concierge-session' ),
 			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
 			planRawPrice: annualPrice,
