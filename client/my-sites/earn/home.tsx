@@ -239,9 +239,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const body = (
 			<>
 				{ translate(
-					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about. '
+					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
 				) }
-				{ isFreePlan && <em>{ translate( 'Available with any paid plan' ) }.</em> }
+				{ isFreePlan && <em>{ ' ' + translate( 'Available with any paid plan' ) }.</em> }
 			</>
 		);
 
