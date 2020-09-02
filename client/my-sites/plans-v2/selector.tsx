@@ -14,6 +14,7 @@ import ProductsColumn from './products-column';
 import { SECURITY } from './constants';
 import { getProductUpsell, getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
+import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
 import { getSiteProducts } from 'state/sites/selectors';
@@ -23,6 +24,7 @@ import Main from 'components/main';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySites from 'components/data/query-sites';
 import JetpackFreeCard from 'components/jetpack/card/jetpack-free-card';
+import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 
 /**
  * Type dependencies
@@ -46,6 +48,7 @@ const SelectorPage = ( {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
 	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
@@ -115,7 +118,7 @@ const SelectorPage = ( {
 			{ showJetpackFreeCard && (
 				<>
 					<div className="selector__divider" />
-					<JetpackFreeCard />
+					<JetpackFreeCard buttonUrl={ wpAdminUrl || JPC_PATH_REMOTE_INSTALL } />
 				</>
 			) }
 
