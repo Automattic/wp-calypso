@@ -8,7 +8,6 @@ import { start, stop } from '@automattic/browser-data-collector';
  */
 import config from 'config';
 import { startPerformanceTracking, stopPerformanceTracking } from '../lib';
-import { abtest } from 'lib/abtest';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
 import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
@@ -19,9 +18,6 @@ jest.mock( 'config', () => ( {
 jest.mock( '@automattic/browser-data-collector', () => ( {
 	start: jest.fn(),
 	stop: jest.fn(),
-} ) );
-jest.mock( 'lib/abtest', () => ( {
-	abtest: jest.fn(),
 } ) );
 jest.mock( 'state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
@@ -36,16 +32,10 @@ const withFeatureEnabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key === 'rum-tracking/logstash' );
 const withFeatureDisabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key !== 'rum-tracking/logstash' );
-const withABTestEnabled = () =>
-	abtest.mockImplementation( ( test ) =>
-		test === 'rumDataCollection' ? 'collectData' : 'noData'
-	);
-const withABTestDisabled = () => abtest.mockImplementation( () => 'noData' );
 
 describe( 'startPerformanceTracking', () => {
 	beforeEach( () => {
 		withFeatureEnabled();
-		withABTestEnabled();
 	} );
 
 	afterEach( () => {
@@ -60,14 +50,6 @@ describe( 'startPerformanceTracking', () => {
 
 	it( 'do not start measuring when the config flag is off', () => {
 		withFeatureDisabled();
-
-		startPerformanceTracking( 'pageName' );
-
-		expect( start ).not.toHaveBeenCalled();
-	} );
-
-	it( 'do not start measuring when the abtest is disabled', () => {
-		withABTestDisabled();
 
 		startPerformanceTracking( 'pageName' );
 
@@ -111,7 +93,6 @@ describe( 'startPerformanceTracking', () => {
 describe( 'stopPerformanceTracking', () => {
 	beforeEach( () => {
 		withFeatureEnabled();
-		withABTestEnabled();
 	} );
 
 	afterEach( () => {
@@ -126,14 +107,6 @@ describe( 'stopPerformanceTracking', () => {
 
 	it( 'do not stop measuring when the config flag is off', () => {
 		withFeatureDisabled();
-
-		stopPerformanceTracking( 'pageName' );
-
-		expect( stop ).not.toHaveBeenCalled();
-	} );
-
-	it( 'do not stop measuring when the abtest is disabled', () => {
-		withABTestDisabled();
 
 		stopPerformanceTracking( 'pageName' );
 

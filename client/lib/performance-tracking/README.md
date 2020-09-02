@@ -9,7 +9,7 @@ This lib provides wrappers around `@automattic/browser-data-collector`
 
 It provides a function `startPerformanceTracking()` that accepts the name of the page being tracked and a flag for full page loads. It is a simple
 wrapper around the `start` method in `@automattic/browser-data-collector` with an additional check to validate that the performance tracking is
-enabled for this environment (by checking the feature flag `rum-tracking/logstash`) and user (by checking the abtest `rumDataCollection`).
+enabled for this environment (by checking the feature flag `rum-tracking/logstash`).
 
 Unless there is a specialized wrapper (eg: middleware `performanceTrackerStart`), using this function is the recommended approach to track performance
 of loading pages in Calypso.
