@@ -60,6 +60,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.ensureSaved(); // Needed so that we get a stable post slug for the block.
 			return await gEditorComponent.publish( { visit: true, closePanel: false } );
 		} );
 
