@@ -116,7 +116,7 @@
 	// The editor has its own sidebar which doesnt
 	// use the secondary element.
 	.is-section-post-editor &,
-	// .is-section-gutenberg-editor &,
+	.is-section-gutenberg-editor &,
 	// Some screens (like /theme/) simply dont have
 	// a sidebar.
 	.has-no-sidebar & {
