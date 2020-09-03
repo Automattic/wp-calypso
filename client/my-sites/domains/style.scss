@@ -11,6 +11,11 @@
 .domains__header-buttons {
 	display: flex;
 
+	> div {
+		margin-top: auto;
+		margin-bottom: auto;
+	}
+
 	.popover-cart {
 		margin-right: 8px;
 	}
