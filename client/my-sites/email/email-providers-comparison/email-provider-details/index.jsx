@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
  */
 import EmailProviderFeature from './email-provider-feature';
 import PromoCard from 'components/promo-section/promo-card';
+import PromoCardPrice from 'components/promo-section/promo-card/price';
 
 /**
  * Style dependencies
@@ -22,6 +23,9 @@ class EmailProviderDetails extends React.Component {
 		image: PropTypes.object.isRequired,
 		features: PropTypes.array.isRequired,
 		badge: PropTypes.string,
+		formattedPrice: PropTypes.string,
+		billingInterval: PropTypes.string,
+		discount: PropTypes.string,
 	};
 
 	renderFeatures() {
@@ -31,11 +35,20 @@ class EmailProviderDetails extends React.Component {
 	}
 
 	render() {
-		const { badge, description, image, title } = this.props;
+		const {
+			badge,
+			description,
+			image,
+			title,
+			formattedPrice,
+			billingInterval,
+			discount,
+		} = this.props;
 
 		return (
-			<PromoCard title={ title } image={ image } badge={ badge }>
+			<PromoCard { ...{ title, image, badge } }>
 				<p className="email-provider-details__description">{ description }</p>
+				<PromoCardPrice { ...{ formattedPrice, billingInterval, discount } } />
 				<div>{ this.renderFeatures() }</div>
 			</PromoCard>
 		);
