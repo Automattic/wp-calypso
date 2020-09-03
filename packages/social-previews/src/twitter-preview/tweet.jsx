@@ -81,13 +81,13 @@ export class Tweet extends PureComponent {
 	renderText( text, urls = [], card = {} ) {
 		// If the text ends with the card URL, remove it.
 		const cardUrl = card.url || '';
-		const unCardedText = text.endsWith( cardUrl )
+		const deCardedText = text.endsWith( cardUrl )
 			? text.substr( 0, text.lastIndexOf( cardUrl ) )
 			: text;
 
 		const __html = urls.reduce(
-			( html, url ) => html.replaceAll( url, `<a href="${ url }">${ url }</a>` ),
-			stripHtmlTags( unCardedText ).replaceAll( '\n', '<br/>' )
+			( html, url ) => html.replace( new RegExp( url, 'g' ), `<a href="${ url }">${ url }</a>` ),
+			stripHtmlTags( deCardedText ).replace( new RegExp( '\\n', 'g' ), '<br/>' )
 		);
 
 		// We can enable dangerouslySetInnerHTML here, since the text we're using is stripped
@@ -212,9 +212,7 @@ export class Tweet extends PureComponent {
 
 		const { description, image, title, type, url } = card;
 
-		const cardType = type === 'summary_large_image' ? type : 'summary';
-
-		const cardClassNames = classnames( `twitter-preview__card-${ cardType }`, {
+		const cardClassNames = classnames( `twitter-preview__card-${ type }`, {
 			'twitter-preview__card-has-image': !! image,
 		} );
 		return (
