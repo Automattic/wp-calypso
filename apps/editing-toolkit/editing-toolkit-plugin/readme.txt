@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.4
-Stable tag: 2.0
+Stable tag: 2.1
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,21 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.1 =
+* Fix site editor loading problem with Gutenberg 8.9.0 (https://github.com/Automattic/wp-calypso/pull/45360)
+* Added fallback for site vertical (https://github.com/Automattic/wp-calypso/pull/45010)
+* Update pages sidebar design in block editor (https://github.com/Automattic/wp-calypso/pull/45242)
+* Fix FSE Mailerlite translations namespacing (https://github.com/Automattic/wp-calypso/pull/45206)
+* Premium Content: Fix duplicate Stripe nudge notification (https://github.com/Automattic/wp-calypso/pull/45255)
+* Update the Editing Toolkit readme (https://github.com/Automattic/wp-calypso/pull/45212)
+* Premium Content: Fix redirect behavior after connecting to Stripe (https://github.com/Automattic/wp-calypso/pull/45204)
+* Hide editor sidebar first time users sees the editor (https://github.com/Automattic/wp-calypso/pull/43716)
+* Add an aria-label to (W), in header and sidebar, that describes what the button is for, when sidebar is closed "Open sidebar", when W button is open "You are viewing sidebar. To close select "esc". (https://github.com/Automattic/wp-calypso/pull/45266)
+* Add aria-label for "View all pages" link: aria-label="View all pages in Dashboard" (or posts as appropriate)  (https://github.com/Automattic/wp-calypso/pull/45266)
+* Use an h2 instead of a div for the “Posts” heading  (https://github.com/Automattic/wp-calypso/pull/45266)
+* Set autoFocus to (W) icon when sidebar opens  (https://github.com/Automattic/wp-calypso/pull/45266)
+
 
 = 2.0 =
 * Rename directories from "full-site-editing*" to "editing-toolkit*" (https://github.com/Automattic/wp-calypso/pull/44501)
