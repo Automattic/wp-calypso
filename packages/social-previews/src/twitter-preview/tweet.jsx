@@ -154,16 +154,20 @@ export class Tweet extends PureComponent {
 				{
 					/* eslint-disable jsx-a11y/media-has-caption */
 					isVideo &&
-						filteredMedia.map( ( mediaItem ) => (
-							<video controls>
+						filteredMedia.map( ( mediaItem, index ) => (
+							<video key={ `twitter-preview__media-item-${ index }` } controls>
 								<source src={ mediaItem.url } type={ mediaItem.type } />{ ' ' }
 							</video>
 						) )
 					/* eslint-disable jsx-a11y/media-has-caption */
 				}
 				{ ! isVideo &&
-					filteredMedia.map( ( mediaItem ) => (
-						<img alt={ mediaItem.alt } src={ mediaItem.url } />
+					filteredMedia.map( ( mediaItem, index ) => (
+						<img
+							key={ `twitter-preview__media-item-${ index }` }
+							alt={ mediaItem.alt }
+							src={ mediaItem.url }
+						/>
 					) ) }
 			</div>
 		);
