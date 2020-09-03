@@ -384,6 +384,16 @@ const sections = [
 		group: 'gutenberg',
 		trackLoadPerformance: true,
 	},
+	// This next section exists only temporarily as a dirty trick to test Gutenberg in Calypso
+	// without creating a whole new section for it. It allows us to apply specific styles to
+	// the `gutenberg-editor` section without affective the "without-iframe" route which will
+	// appear as a separate section.
+	{
+		name: 'gutenberg-in-calypso',
+		paths: [ '/without-iframe/block-editor' ],
+		module: 'wp-calypso-client/gutenberg/editor',
+		group: 'gutenberg',
+	},
 	{
 		name: 'import',
 		paths: [ '/import' ],
