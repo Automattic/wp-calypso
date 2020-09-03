@@ -39,7 +39,19 @@ function saveStepNumberToUrl( stepNumber ) {
 		? window.location.href.replace( window.location.hash, newHash )
 		: window.location.href + newHash;
 	debug( 'updating url to', newUrl );
-	window.history.replaceState( null, '', newUrl );
+	// We've seen this call to replaceState fail sometimes when the current URL
+	// is somehow different ("A history state object with URL
+	// 'https://wordpress.com/checkout/example.com#step2' cannot be created
+	// in a document with origin 'https://wordpress.com' and URL
+	// 'https://www.username@wordpress.com/checkout/example.com'.") so we
+	// wrap this in try/catch. It's not critical that the step number is saved to
+	// the URL.
+	try {
+		window.history.replaceState( null, '', newUrl );
+	} catch ( error ) {
+		debug( 'changing the url failed' );
+		return;
+	}
 	// Modifying history does not trigger a hashchange event which is what
 	// composite-checkout uses to change its current step, so we must fire one
 	// manually. (HashChangeEvent is part of the web API so I'm not sure why
