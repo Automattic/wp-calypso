@@ -178,16 +178,16 @@ const JetpackComFooter = () => {
 				</div>
 			</footer>
 			<hr className="jpcom-footer__separator" />
-			<div class="jpcom-footer__plugs">
-				<div class="jpcom-footer__plugs-group">
-					<div class="jpcom-footer__a8c-services-plug">
+			<div className="jpcom-footer__plugs">
+				<div className="jpcom-footer__plugs-group">
+					<div className="jpcom-footer__a8c-services-plug">
 						<SocialLogo icon="wordpress" size={ 20 } />
 						<ExternalLink href="https://wordpress.com/" title="Powering WordPress.com">
 							{ translate( 'Powering WordPress.com' ) }
 						</ExternalLink>
 					</div>
 
-					<div class="jpcom-footer__a8c-attr-plug">
+					<div className="jpcom-footer__a8c-attr-plug">
 						<ExternalLink
 							href="http://automattic.com"
 							title={ translate( 'Automattic – makers of WordPress.com and more!' ) }
@@ -231,7 +231,7 @@ const JetpackComFooter = () => {
 						</ExternalLink>
 					</div>
 				</div>
-				<div class="jpcom-footer__hiring-plug">
+				<div className="jpcom-footer__hiring-plug">
 					<ExternalLink
 						href="https://automattic.com/work-with-us/code-wrangler/?utm_source=jetpackcom&amp;utm_medium=link&amp;utm_campaign=cw-backend-a8c-anywhere"
 						title={ translate( 'We are super nice :)' ) }
