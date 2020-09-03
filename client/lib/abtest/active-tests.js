@@ -210,15 +210,14 @@ export default {
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
 	reskinSignupFlow: {
-		datestamp: '20200824',
+		datestamp: '20200903',
 		variations: {
 			reskinned: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-		localeTargets: 'any',
-		localeExceptions: [ 'en', 'es' ],
+		localeTargets: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
 		datestamp: '20200828',
