@@ -46,7 +46,7 @@ export default function CheckoutSystemDecider( {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
-	const prepurchaseNotices = <PrePurchaseNotices cart={ cart } />;
+	const prepurchaseNotices = <PrePurchaseNotices />;
 
 	const checkoutVariant = getCheckoutVariant();
 
