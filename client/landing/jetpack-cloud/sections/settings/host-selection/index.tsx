@@ -8,14 +8,12 @@ import React, { FunctionComponent, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-
 import { featuredProviders, getProviderNameFromId } from '../utils';
 import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { settingsCredentialsPath } from 'lib/jetpack/paths';
 import Badge from 'components/badge';
-
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
