@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import ExternalLink from 'components/external-link';
 import JetpackLogo from 'components/jetpack-logo';
 import useDetectWindowBoundary from 'my-sites/plans-v2/use-detect-window-boundary';
 
@@ -49,14 +50,9 @@ const JetpackComMasterbar = () => {
 	return (
 		<div ref={ barRef } className={ classNames( 'jpcom-masterbar', { sticky: hasCrossed } ) }>
 			<div className="jpcom-masterbar__inner">
-				<a
-					className="jpcom-masterbar__logo"
-					href={ JETPACK_COM_BASE_URL }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
+				<ExternalLink className="jpcom-masterbar__logo" href={ JETPACK_COM_BASE_URL }>
 					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 49 } />
-				</a>
+				</ExternalLink>
 
 				<Button
 					className={ classNames( [ 'jpcom-masterbar__navbutton', 'mobilenav' ], {
