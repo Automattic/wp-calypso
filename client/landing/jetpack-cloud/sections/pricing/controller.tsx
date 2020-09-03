@@ -6,13 +6,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import StoreFooter from 'jetpack-connect/store-footer';
 import { hideMasterbar } from 'state/ui/actions';
 import Header from './header';
+import JetpackComFooter from './jpcom-footer';
 
 export function jetpackPricingContext( context, next ) {
 	context.store.dispatch( hideMasterbar() );
 	context.header = <Header />;
-	context.footer = <StoreFooter />;
+	context.footer = <JetpackComFooter />;
 	next();
 }
