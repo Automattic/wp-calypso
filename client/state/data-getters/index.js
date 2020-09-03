@@ -120,6 +120,22 @@ export const requestActivity = ( siteId, rewindId, { freshness = 5 * 60 * 1000 }
 	);
 };
 
+export const getRequestHosingProviderGuessId = ( siteId ) =>
+	`site-hosting-provider-guess-${ siteId }`;
+
+export const requestHosingProviderGuess = ( siteId ) =>
+	requestHttpData(
+		getRequestHosingProviderGuessId( siteId ),
+		http( {
+			method: 'GET',
+			path: `/sites/${ siteId }/hosting-provider`,
+			apiNamespace: 'wpcom/v2',
+		} ),
+		{
+			fromApi: () => ( data ) => [ [ getRequestHosingProviderGuessId( siteId ), data ] ],
+		}
+	);
+
 const requestExternalContributorsId = ( siteId ) => `site-external-contributors-${ siteId }`;
 
 export const requestExternalContributors = ( siteId ) =>
