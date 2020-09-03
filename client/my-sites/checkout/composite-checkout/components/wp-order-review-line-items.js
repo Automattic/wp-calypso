@@ -4,7 +4,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { CheckoutModal, FormStatus, useFormStatus, useEvents, Button } from '@automattic/composite-checkout';
+import {
+	CheckoutModal,
+	FormStatus,
+	useFormStatus,
+	useEvents,
+	Button,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**

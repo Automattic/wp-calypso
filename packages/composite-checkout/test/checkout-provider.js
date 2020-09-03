@@ -90,7 +90,10 @@ const CustomFormWithTransactionStatus = () => {
 			>
 				Cause Error
 			</button>
-			<button disabled={ formStatus !== FormStatus.READY } onClick={ () => setTransactionPending() }>
+			<button
+				disabled={ formStatus !== FormStatus.READY }
+				onClick={ () => setTransactionPending() }
+			>
 				Submit
 			</button>
 			<button
@@ -99,7 +102,10 @@ const CustomFormWithTransactionStatus = () => {
 			>
 				Redirect
 			</button>
-			<button disabled={ formStatus !== FormStatus.READY } onClick={ () => setTransactionComplete() }>
+			<button
+				disabled={ formStatus !== FormStatus.READY }
+				onClick={ () => setTransactionComplete() }
+			>
 				Complete
 			</button>
 		</div>

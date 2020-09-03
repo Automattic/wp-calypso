@@ -5,7 +5,13 @@ import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
-import { FormStatus, useEvents, useSelect, useDispatch, useFormStatus } from '@automattic/composite-checkout';
+import {
+	FormStatus,
+	useEvents,
+	useSelect,
+	useDispatch,
+	useFormStatus,
+} from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
