@@ -125,7 +125,7 @@ const mapStateToProps = ( state, { postId, siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
 	const isPostView = !! postId;
 	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
-	const showPermissionError = false === canModerateComments;
+	const showPermissionError = ! canModerateComments;
 
 	const showCommentTree =
 		! showPermissionError && isPostView && isEnabled( 'comments/management/threaded-view' );

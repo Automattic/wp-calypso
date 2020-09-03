@@ -81,7 +81,7 @@ export default connect( ( state, ownProps ) => {
 	return {
 		siteId,
 		postType,
-		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ) || false,
-		userCanEdit: canCurrentUser( state, siteId, capability ) || false,
+		postTypeSupported: isPostTypeSupported( state, siteId, ownProps.query.type ),
+		userCanEdit: canCurrentUser( state, siteId, capability ),
 	};
 } )( Types );
