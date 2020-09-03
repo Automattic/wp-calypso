@@ -23,7 +23,7 @@ import {
 	DAILY_PRODUCTS,
 	REALTIME_PRODUCTS,
 } from './constants';
-import RecordsDetails from './records-detailss';
+import RecordsDetails from './records-details';
 import { addItems } from 'lib/cart/actions';
 import { jetpackProductItem } from 'lib/cart-values/cart-items';
 import {
