@@ -11,13 +11,8 @@ input[type='email'],
 input[type='number'],
 input[type='password'],
 input[type='checkbox'],
-input[type='tel'],
-textarea {
+input[type='tel'] {
 	@extend %form-field;
-}
-textarea {
-	@extend %textarea;
-	border-radius: 2px;
 }
 
 fieldset,
@@ -26,7 +21,6 @@ input[type='email'],
 input[type='number'],
 input[type='password'],
 input[type='tel'],
-textarea,
 select,
 label {
 	box-sizing: border-box;

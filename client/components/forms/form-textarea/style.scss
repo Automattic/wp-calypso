@@ -1,0 +1,7 @@
+.form-textarea {
+	@extend %form-field;
+	@extend %textarea;
+
+	appearance: none;
+	border-radius: 2px;
+}
