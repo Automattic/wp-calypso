@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -9,6 +10,11 @@ import { localize } from 'i18n-calypso';
  */
 import PromoCard from '../../../components/promo-section/promo-card';
 import EmailProviderDetails from './email-provider-details';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import { getProductBySlug } from 'state/products-list/selectors';
+import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
+import { getAnnualPrice } from 'lib/gsuite';
+import { hasDiscount } from '../../../components/gsuite/gsuite-price';
 import emailIllustration from 'assets/images/titan/email-illustration.svg';
 import forwardingIcon from 'assets/images/titan/forward.svg';
 import emailIcon from 'assets/images/customer-home/gsuite.svg';
@@ -42,7 +48,7 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { currencyCode, gSuiteProduct, translate } = this.props;
 
 		return (
 			<>
@@ -72,6 +78,8 @@ class EmailProvidersComparison extends React.Component {
 							translate( '10GB storage' ),
 							translate( 'Email, calendars, and contacts' ),
 						] }
+						formattedPrice={ '$4' }
+						billingInterval={ translate( '/user /month' ) }
 					/>
 					<EmailProviderDetails
 						title={ translate( 'G Suite by Google' ) }
@@ -86,6 +94,18 @@ class EmailProvidersComparison extends React.Component {
 							translate( 'Email, calendars, and contacts' ),
 							translate( 'Video calls, Docs, spreadsheets, and more' ),
 						] }
+						formattedPrice={ getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ) }
+						billingInterval={ translate( '/user /year' ) }
+						discount={
+							hasDiscount( gSuiteProduct )
+								? translate( 'First year %(discountedPrice)s', {
+										args: {
+											discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+										},
+										comment: '%(discountedPrice)s is a formatted price, e.g. $75',
+								  } )
+								: null
+						}
 					/>
 				</div>
 			</>
@@ -93,4 +113,9 @@ class EmailProvidersComparison extends React.Component {
 	}
 }
 
-export default localize( EmailProvidersComparison );
+export default connect( ( state ) => {
+	return {
+		currencyCode: getCurrentUserCurrencyCode( state ),
+		gSuiteProduct: getProductBySlug( state, GSUITE_BASIC_SLUG ),
+	};
+} )( localize( EmailProvidersComparison ) );
