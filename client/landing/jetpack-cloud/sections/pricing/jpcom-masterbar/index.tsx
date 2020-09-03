@@ -55,7 +55,7 @@ const JetpackComMasterbar = () => {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 48 } />
+					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 49 } />
 				</a>
 
 				<Button
