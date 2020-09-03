@@ -19,6 +19,11 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getAvailableProductsBySiteId } from 'state/sites/products/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
+/**
+ * Type dependencies
+ */
+import type { ProductTranslations } from 'lib/products-values/types';
+
 type Props = {
 	productSlug: string;
 };
@@ -38,17 +43,22 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 		selectorProduct?.monthlyProductSlug
 	);
 
-	const isDiscounted = isFinite( discountedPrice );
-	const searchProduct = products?.[ productSlug ];
-	const recordCount = searchProduct?.price_tier_usage_quantity;
-
-	if ( ! searchProduct || ! selectorProduct || ! currencyCode || isFetching ) {
+	if ( ! selectorProduct || ! currencyCode || ! siteId || isFetching ) {
 		return null;
 	}
 
-	const tierText = getJetpackProducts()
-		.find( ( i ) => i.slugs.includes( productSlug ) )
-		?.optionShortNamesCallback( searchProduct );
+	const searchProduct = products?.[ productSlug ];
+
+	if ( ! searchProduct ) {
+		return null;
+	}
+
+	const isDiscounted = isFinite( discountedPrice );
+	const recordCount = searchProduct?.price_tier_usage_quantity;
+	const translations = getJetpackProducts().find( ( p ) => p.slugs.includes( productSlug ) ) as
+		| ProductTranslations
+		| undefined;
+	const tier = translations?.optionShortNamesCallback?.( searchProduct );
 
 	return (
 		<div className="records-details">
@@ -78,7 +88,7 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 				</InfoPopover>
 			</div>
 			<div className="records-details__details">
-				<p className="records-details__tier">{ tierText }</p>
+				<p className="records-details__tier">{ tier }</p>
 				<div className="records-details__price">
 					<PlanPrice
 						rawPrice={ originalPrice }

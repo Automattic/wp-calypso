@@ -2,6 +2,7 @@
 /**
  * Type dependencies
  */
+import type { TranslateResult } from 'i18n-calypso';
 import type * as constants from './constants';
 
 export type JetpackProductSlug =
@@ -21,3 +22,31 @@ export type WPComProductSlug =
 	| typeof constants.PRODUCT_WPCOM_SEARCH_MONTHLY;
 
 export type ProductSlug = JetpackProductSlug | WPComProductSlug;
+
+export type ProductTranslations = {
+	title: TranslateResult;
+	description: TranslateResult;
+	forceRadios?: boolean;
+	hasPromo: boolean;
+	id: ProductSlug;
+	link: {
+		label: TranslateResult;
+		props: {
+			location: string;
+			slug: string;
+		};
+		url: string;
+	};
+	slugs: ProductSlug[];
+	options: {
+		yearly: ProductSlug[];
+		monthly: ProductSlug[];
+	};
+	optionShortNames: () => Record< ProductSlug, TranslateResult >;
+	optionActionButtonNames?: () => Record< ProductSlug, TranslateResult >;
+	optionDisplayNames: () => Record< ProductSlug, TranslateResult >;
+	optionDescriptions: () => Record< ProductSlug, TranslateResult >;
+	optionShortNamesCallback?: ( arg0: object ) => TranslateResult;
+	optionsLabelCallback?: ( arg0: object ) => TranslateResult;
+	optionsLabel: TranslateResult;
+};
