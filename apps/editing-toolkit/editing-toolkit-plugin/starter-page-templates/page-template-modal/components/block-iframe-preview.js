@@ -161,6 +161,16 @@ const BlockFramePreview = ( {
 				'editor-styles-wrapper',
 				'block-editor__container'
 			);
+			/*
+			 * Temporarly override height of the Post Title.
+			 * Post Title component doesn't resize correctly,
+			 * this quick CSS fix overrides the height to be auto
+			 * A Core PR will rectify this (see below).
+			 *
+			 * See: https://github.com/WordPress/gutenberg/pull/20609/
+			 */
+			iframeRef.current.contentDocument.head.innerHTML +=
+				'<style>.editor-post-title .editor-post-title__input { height: auto !important; }</style>';
 			rescale();
 		}, 0 );
 	}, [ setTimeout, bodyClassName, rescale ] );
