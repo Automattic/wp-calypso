@@ -1269,6 +1269,10 @@ export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestio
 		return 'FREE_DOMAIN';
 	}
 
+	if ( suggestion?.is_premium ) {
+		return 'PRICE';
+	}
+
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {
 		return 'FREE_WITH_PLAN';
 	}

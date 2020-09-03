@@ -472,12 +472,15 @@ function LineItemSublabelAndPrice( { item } ) {
 		( isDomainRegistration || isDomainMap || isGSuite ) &&
 		item.wpcom_meta?.months_per_bill_period === 12
 	) {
-		return translate( '%(sublabel)s: %(interval)s', {
+		const premiumLabel = item.wpcom_meta?.extra?.premium ? translate( 'Premium' ) : null;
+		return translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
 			args: {
+				premiumLabel,
 				sublabel: item.sublabel,
 				interval: translate( 'billed annually' ),
 			},
-			comment: 'product type and billing interval, separated by a colon',
+			comment:
+				'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
 		} );
 	}
 	return item.sublabel || null;
