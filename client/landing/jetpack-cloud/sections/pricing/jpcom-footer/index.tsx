@@ -25,7 +25,7 @@ const JetpackComFooter = () => {
 					<JetpackLogo classNameName="jpcom-footer__logo" full size={ 32 } />
 				</div>
 				<div className="jpcom-footer__col">
-					<h4 className="jpcom-footer__col-header">Product</h4>
+					<h4 className="jpcom-footer__col-header">{ translate( 'Product' ) }</h4>
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
 							<a href="/">{ translate( 'Tour' ) }</a>
@@ -51,7 +51,7 @@ const JetpackComFooter = () => {
 					</ul>
 				</div>
 				<div className="jpcom-footer__col">
-					<h4 className="jpcom-footer__col-header">Support & Resources</h4>
+					<h4 className="jpcom-footer__col-header">{ translate( 'Support & Resources' ) }</h4>
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
 							<a href="/">{ translate( 'Knowledge Base' ) }</a>
@@ -80,7 +80,7 @@ const JetpackComFooter = () => {
 					</ul>
 				</div>
 				<div className="jpcom-footer__col">
-					<h4 className="jpcom-footer__col-header">Developers</h4>
+					<h4 className="jpcom-footer__col-header">{ translate( 'Developers' ) }</h4>
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
 							<a href="/">{ translate( 'Developers Site' ) }</a>
@@ -100,7 +100,7 @@ const JetpackComFooter = () => {
 					</ul>
 				</div>
 				<div className="jpcom-footer__col">
-					<h4 className="jpcom-footer__col-header">More from Jetpack</h4>
+					<h4 className="jpcom-footer__col-header">{ translate( 'More from Jetpack' ) }</h4>
 
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
@@ -108,7 +108,7 @@ const JetpackComFooter = () => {
 						</li>
 					</ul>
 					<div className="jpcom-footer__sub-col">
-						<h4 className="jpcom-footer__col-header">Partnership</h4>
+						<h4 className="jpcom-footer__col-header">{ translate( 'Partnership' ) }</h4>
 						<ul className="jpcom-footer__links">
 							<li className="jpcom-footer__link">
 								<a href="/">{ translate( 'Become an Affiliate' ) }</a>
