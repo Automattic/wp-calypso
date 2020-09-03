@@ -60,9 +60,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			// We need to save the post to get a stable post slug for the block's `url` attribute.
-			// See https://github.com/godaddy-wordpress/coblocks/issues/1663.
-			await gEditorComponent.ensureSaved();
 			return await gEditorComponent.publish( { visit: true, closePanel: false } );
 		} );
 
