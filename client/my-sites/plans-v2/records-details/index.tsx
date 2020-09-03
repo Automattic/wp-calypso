@@ -66,11 +66,14 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 				) }
 				<InfoPopover>
 					{ preventWidows(
-						translate( '{{link}}Learn more.{{/link}}', {
-							components: {
-								link: <a href="https://jetpack.com/upgrade/search/"></a>,
-							},
-						} )
+						translate(
+							'Records are all posts, pages, custom post types and other types of content indexed by Jetpack Search. {{link}}Learn more.{{/link}}',
+							{
+								components: {
+									link: <a href="https://jetpack.com/upgrade/search/"></a>,
+								},
+							}
+						)
 					) }
 				</InfoPopover>
 			</div>
