@@ -83,4 +83,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	gutenbergInCalypso: {
+		datestamp: '20200903',
+		variations: {
+			on: 0,
+			off: 100,
+		},
+		defaultVariation: 'off',
+		allowExistingUsers: true,
+		localeTargets: 'any',
+	},
 };
