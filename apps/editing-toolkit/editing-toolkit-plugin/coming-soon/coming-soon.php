@@ -56,22 +56,44 @@ function coming_soon_page() {
 		return;
 	}
 
-	$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
+	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
+	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 
+	$should_show_fallback = false;
+
+	$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
 	if ( empty( $id ) ) {
+		$should_show_fallback = true;
+	}
+
+	$custom_coming_soon_page = get_post( $id );
+	if ( ! $custom_coming_soon_page ) {
+		$should_show_fallback = true;
+	}
+
+	if ( $should_show_fallback ) {
 		render_fallback_coming_soon_page();
 		die();
 	}
 
-	if ( $post->ID === $id ) {
-		// We're already viewing the coming soon page, don't redirect.
-		return;
-	}
+	?>
+	<!doctype html>
+	<html <?php language_attributes(); ?>>
+		<head>
+			<meta charset="<?php bloginfo( 'charset' ); ?>" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+			<?php wp_head(); ?>
+		</head>
+		<body>
+			<?php
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo apply_filters( 'the_content', $custom_coming_soon_page->post_content );
+			?>
+			<?php wp_footer(); ?>
+		</body>
+	</html>
+	<?php
 
-	$coming_soon_page_url = get_page_link( $id );
-
-	if ( wp_safe_redirect( $coming_soon_page_url ) ) {
-		exit;
-	}
+	die();
 }
 add_action( 'template_redirect', __NAMESPACE__ . '\coming_soon_page' );
