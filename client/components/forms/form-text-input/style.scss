@@ -1,12 +1,20 @@
 .form-text-input {
 	@at-root {
-		input[type='url'] {
+		input[type='url'],
+		input[type='search'] {
 			@extend %form-field;
 
 			appearance: none;
 
 			/*!rtl:ignore*/
 			direction: ltr;
+		}
+
+		input[type='search']::-webkit-search-decoration {
+			// We don't use the native results="" UI
+			// Ensures the input text is flush to the start of the element, as in regular text inputs
+			// See, for example, http://geek.michaelgrace.org/2011/06/webkit-search-input-styling/
+			display: none;
 		}
 	}
 }
