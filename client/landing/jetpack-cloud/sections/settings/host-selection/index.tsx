@@ -11,10 +11,8 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Card } from '@automattic/components';
 import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { settingsCredentialsPath } from 'lib/jetpack/paths';
 import StepProgress from 'components/step-progress';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -24,11 +22,12 @@ import VerticalNavItem from 'components/vertical-nav/item';
  */
 import './style.scss';
 
-const SettingsFlow: FunctionComponent = () => {
+const HostSelection: FunctionComponent = () => {
 	const translate = useTranslate();
 	const [ step ] = useState( 0 );
 
 	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const steps = [
 		translate( 'Host locator' ).toString(),
@@ -37,15 +36,20 @@ const SettingsFlow: FunctionComponent = () => {
 	];
 
 	const featuredProviders = [
-		{ id: 'bluehost', name: 'Bluehost' },
-		{ id: 'siteground', name: 'SiteGround' },
-		{ id: 'amazon', name: 'Amazon / AWS' },
-		{ id: 'dreamhost', name: 'Dreamhost' },
-		{ id: 'godaddy', name: 'GoDaddy' },
-		{ id: 'hostgator', name: 'HostGator' },
+		{ id: 'bluehost', name: 'Bluehost', path: settingsCredentialsPath( siteSlug, 'bluehost' ) },
 		{
-			id: 'other',
+			id: 'siteground',
+			name: 'SiteGround',
+			path: settingsCredentialsPath( siteSlug, 'siteground' ),
+		},
+		{ id: 'amazon', name: 'Amazon / AWS', path: settingsCredentialsPath( siteSlug, 'amazon' ) },
+		{ id: 'dreamhost', name: 'Dreamhost', path: settingsCredentialsPath( siteSlug, 'dreamhost' ) },
+		{ id: 'godaddy', name: 'GoDaddy', path: settingsCredentialsPath( siteSlug, 'godaddy' ) },
+		{ id: 'hostgator', name: 'HostGator', path: settingsCredentialsPath( siteSlug, 'hostgator' ) },
+		{
+			id: 'unknown',
 			name: translate( 'I don’t know / my host is not listed here / I have my server credentials' ),
+			path: settingsCredentialsPath( siteSlug, 'unknown' ),
 		},
 	];
 
@@ -58,17 +62,16 @@ const SettingsFlow: FunctionComponent = () => {
 	const loadingProviderGuess = ! [ DataState.Success, DataState.Failure ].includes(
 		providerGuessState
 	);
+
 	useEffect( () => {
 		requestHosingProviderGuess( siteId );
 	}, [ siteId ] );
 
 	return (
-		<Main className="settings-flow">
-			<DocumentHead title={ translate( 'Settings' ) } />
-			<SidebarNavigation />
+		<>
 			<Card>
 				<StepProgress currentStep={ step } steps={ steps } />
-				<div className="settings-flow__notice">
+				<div className="host-selection__notice">
 					{ translate(
 						'In order to restore your site, should something go wrong, you’ll need to provide your websites {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials. We’ll guide you through it:',
 						{
@@ -81,11 +84,11 @@ const SettingsFlow: FunctionComponent = () => {
 			</Card>
 			<VerticalNav>
 				{ featuredProviders.map( ( { id, name } ) => (
-					<VerticalNavItem>{ name }</VerticalNavItem>
+					<VerticalNavItem key={ id }>{ name }</VerticalNavItem>
 				) ) }
 			</VerticalNav>
-		</Main>
+		</>
 	);
 };
 
-export default SettingsFlow;
+export default HostSelection;
