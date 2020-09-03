@@ -43,8 +43,8 @@ function Types( {
 				headerText={ get( postType, 'label', '' ) }
 				align="left"
 			/>
-			{ false !== userCanEdit &&
-				false !== postTypeSupported && [
+			{ userCanEdit &&
+				postTypeSupported && [
 					<PostTypeFilter
 						key="filter"
 						query={ userCanEdit ? query : null }
@@ -57,8 +57,8 @@ function Types( {
 						scrollContainer={ document.body }
 					/>,
 				] }
-			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
-			{ false === userCanEdit && <PostTypeForbidden /> }
+			{ ! postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
+			{ ! userCanEdit && <PostTypeForbidden /> }
 		</Main>
 	);
 }
