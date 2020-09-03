@@ -9,6 +9,7 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
+import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
 import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 
 /**
@@ -36,7 +37,12 @@ const JetpackFreeCard: FunctionComponent = () => {
 						}
 					) }
 				</p>
-				<Button href={ wpAdminUrl }>{ translate( 'Start for free' ) }</Button>
+				<Button
+					className="jetpack-free-card__button"
+					href={ wpAdminUrl || JPC_PATH_REMOTE_INSTALL }
+				>
+					{ translate( 'Start for free' ) }
+				</Button>
 			</div>
 		</div>
 	);

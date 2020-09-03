@@ -29,24 +29,29 @@
 .jetpack-free-card__body {
 	padding: 24px 16px;
 
-	display: grid;
-	grid-template-rows: auto auto;
 	@include break-medium {
-		grid-template-columns: 50% 50%;
+		display: flex;
+		align-items: flex-start;
 	}
 
 	p {
 		margin-bottom: 0;
+
 		@include break-medium {
+			width: 50%;
 			margin-right: 24px;
 		}
 	}
+}
 
-	a {
-		text-align: center;
-		height: 40px;
-		@include break-medium {
-			margin-left: 24px;
-		}
+.jetpack-free-card__button {
+	display: block;
+
+	margin-top: 24px;
+
+	@include break-medium {
+		flex: 1;
+
+		margin-top: 0;
 	}
 }
