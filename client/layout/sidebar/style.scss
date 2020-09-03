@@ -32,6 +32,7 @@
 	// Reset lists to avoid bullets and margins.
 	ul {
 		margin: 0;
+		padding: 0;
 	}
 
 	li {
@@ -59,6 +60,8 @@
 	font-size: $font-body;
 	font-weight: 600;
 	padding: 16px 8px 6px 16px;
+	margin: 0;
+	outline: 0;
 }
 
 // Sidebar menu icons for main sections
