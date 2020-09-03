@@ -15,7 +15,7 @@ import '@wordpress/edit-post';
 
 import { registerCoreBlocks } from '@wordpress/block-library';
 import '@wordpress/format-library';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 import '@wordpress/components/build-style/style.css';
 import '@wordpress/block-editor/build-style/style.css';
@@ -70,12 +70,16 @@ function Gutenberg( props ) {
 	setCurrentSiteId( siteId );
 
 	const { toggleFeature } = useDispatch( 'core/edit-post' );
+	const isFullscreenActive = useSelect( ( select ) =>
+		select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' )
+	);
 
 	useEffect( () => {
-		// the default for fullscreen mode is true, so toggle it to false to start off with
-		// is there a better way to do this?
-		toggleFeature( 'fullscreenMode' );
-	}, [ toggleFeature ] );
+		if ( isFullscreenActive ) {
+			// toggle fullscreen off by default
+			toggleFeature( 'fullscreenMode' );
+		}
+	}, [ toggleFeature, isFullscreenActive ] );
 
 	return (
 		<>

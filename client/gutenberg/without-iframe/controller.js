@@ -2,41 +2,43 @@
  * External dependencies
  */
 import React from 'react';
-import { get, has, isInteger, noop } from 'lodash';
+import page from 'page';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
-import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CalypsoifyIframe from './calypsoify-iframe';
-import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
-import { addQueryArgs } from 'calypso/lib/route';
-import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
-import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
+import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
+import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import { EDITOR_START, POST_EDIT } from 'state/action-types';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import WithoutIframe from './without-iframe';
+import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
+import { addQueryArgs, getSiteFragment, sectionify } from 'lib/route';
+import { getSelectedEditor } from 'state/selectors/get-selected-editor';
+import { requestSelectedEditor } from 'state/selected-editor/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
 	getSite,
 	isJetpackSite,
 	isSSOEnabled,
-} from 'calypso/state/sites/selectors';
-import { isEnabled } from 'calypso/config';
-import { Placeholder } from './placeholder';
-import { makeLayout, render } from 'calypso/controller';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
-import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
-import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/window-events';
-import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
-import { requestSite } from 'calypso/state/sites/actions';
-import { stopEditingPost } from 'calypso/state/editor/actions';
+} from 'state/sites/selectors';
+import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { isEnabled } from 'config';
+import { makeLayout, render } from 'controller';
+import { Placeholder } from '../editor/placeholder';
+import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
+import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/window-events';
+import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
+import NavigationComponent from 'my-sites/navigation';
 
 function determinePostType( context ) {
-	if ( context.path.startsWith( '/post/' ) || context.path.startsWith( '/without-iframe/post/' ) ) {
+	if ( context.path.startsWith( '/without-iframe/block-editor/post/' ) ) {
 		return 'post';
 	}
-	if ( context.path.startsWith( '/page/' ) || context.path.startsWith( '/without-iframe/page/' ) ) {
+	if ( context.path.startsWith( '/without-iframe/block-editor/page/' ) ) {
 		return 'page';
 	}
 
@@ -101,31 +103,20 @@ export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
 	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
 	const isDesktop = isEnabled( 'desktop' );
 	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
 	let isAuthenticated =
 		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
-		! isJetpack || // If the site is not Jetpack (Atomic or self hosted) then it's a simple site and users are always authenticated.
-		( isJetpack && isSSOEnabled( state, siteId ) ) || // Assume we can authenticate with SSO
+		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
+	if ( isDesktop && isJetpackSite( state, siteId ) && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
 
 	if ( isAuthenticated ) {
-		/*
-		 * Make sure we have an up-to-date frame nonce.
-		 *
-		 * By requesting the site here instead of using <QuerySites /> we avoid a race condition, where
-		 * if a render occurs before the site is requested, the first request for retrieving the iframe
-		 * will get aborted.
-		 */
-		context.store.dispatch( requestSite( siteId ) );
-
 		globalThis.sessionStorage.setItem( storageKey, 'true' );
 		return next();
 	}
@@ -177,7 +168,7 @@ export const redirect = async ( context, next ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( ! isEligibleForGutenframe( state, siteId ) ) {
+	if ( shouldRedirectGutenberg( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 
@@ -189,35 +180,38 @@ export const redirect = async ( context, next ) => {
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
 
-	return next();
+	if ( shouldLoadGutenberg( state, siteId ) ) {
+		return next();
+	}
+
+	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
-function getPressThisData( query ) {
-	const { text, url, title, image, embed } = query;
-	return url ? { text, url, title, image, embed } : null;
+function createNavigation( context ) {
+	const siteFragment = getSiteFragment( context.pathname );
+	let basePath = context.pathname;
+
+	if ( siteFragment ) {
+		basePath = sectionify( context.pathname );
+	}
+
+	return (
+		<NavigationComponent
+			path={ context.path }
+			allSitesPath={ basePath }
+			siteBasePath={ basePath }
+		/>
+	);
 }
 
-function getAnchorFmData( query ) {
-	const { anchor_podcast, anchor_episode, spotify_show_url } = query;
-	return { anchor_podcast, anchor_episode, spotify_show_url };
-}
-
-export const post = ( context, next ) => {
+export const gutenbergWithoutIframe = ( context, next ) => {
 	// See post-editor/controller.js for reference.
 
 	const postId = getPostID( context );
 	const postType = determinePostType( context );
-	const jetpackCopy = parseInt( get( context, 'query.jetpack-copy', null ) );
-
-	// Check if this value is an integer.
-	const duplicatePostId = isInteger( jetpackCopy ) ? jetpackCopy : null;
 
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const pressThis = getPressThisData( context.query );
-	const anchorFmData = getAnchorFmData( context.query );
-	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
-	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
 	// Set postId on state.editor.postId, so components like editor revisions can read from it.
 	context.store.dispatch( { type: EDITOR_START, siteId, postId } );
@@ -225,45 +219,10 @@ export const post = ( context, next ) => {
 	// Set post type on state.posts.[ id ].type, so components like document head can read from it.
 	context.store.dispatch( { type: POST_EDIT, post: { type: postType }, siteId, postId } );
 
+	context.secondary = createNavigation( context );
 	context.primary = (
-		<CalypsoifyIframe
-			key={ postId }
-			postId={ postId }
-			postType={ postType }
-			duplicatePostId={ duplicatePostId }
-			pressThis={ pressThis }
-			anchorFmData={ anchorFmData }
-			fseParentPageId={ fseParentPageId }
-			parentPostId={ parentPostId }
-			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
-			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
-		/>
+		<WithoutIframe key={ postId } siteId={ siteId } postId={ postId } postType={ postType } />
 	);
 
 	return next();
-};
-
-export const siteEditor = ( context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-
-	context.primary = (
-		<CalypsoifyIframe
-			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
-			// It will force the component to remount completely when the Id changes.
-			key={ siteId }
-			editorType={ 'site' }
-		/>
-	);
-
-	return next();
-};
-
-export const exitPost = ( context, next ) => {
-	const postId = getPostID( context );
-	const siteId = getSelectedSiteId( context.store.getState() );
-	if ( siteId ) {
-		context.store.dispatch( stopEditingPost( siteId, postId ) );
-	}
-	next();
 };
