@@ -13,7 +13,7 @@ Options:
   --repo, -r      The full name of the repository in which to retarget PRs.
                                                                  [required]
   --from, -f      The original branch name against which to select open PRs
-                  that need to be retargted.                     [required]
+                  that need to be retargeted.                     [required]
   --to, -t        The new branch towards which to retarget PRs open against
                   "from"                                         [required]
   --access-token  A GitHub access token authorized to retarget open PRs in the
