@@ -169,9 +169,7 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 
 	overflow: visible;
 
-	transition-property: opacity, -webkit-filter;
 	transition-property: opacity, filter;
-	transition-property: opacity, filter, -webkit-filter;
 	transition-duration: 0.15s;
 	transition-timing-function: linear;
 	transition: all 0.5s ease-in-out;
@@ -204,9 +202,7 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 		background-color: $jpcom-gray-darken30;
 		border-radius: 4px;
 		position: absolute;
-		transition-property: -webkit-transform;
 		transition-property: transform;
-		transition-property: transform, -webkit-transform;
 		transition-duration: 0.15s;
 		transition-timing-function: ease;
 	}
@@ -238,43 +234,28 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 	}
 }
 
-// mobile nav animation
-.jpcom-masterbar__navbutton .jpcom-masterbar__navinner {
-	transition-duration: 0.1s;
-	transition-timing-function: cubic-bezier( 0.55, 0.055, 0.675, 0.19 );
-}
-
-.jpcom-masterbar__navbutton .jpcom-masterbar__navinner::before {
+.jpcom-masterbar__navbutton.mobilenav .jpcom-masterbar__navinner::before {
 	transition: top 0.1s 0.14s ease, opacity 0.1s ease;
 }
 
-.jpcom-masterbar__navbutton .jpcom-masterbar__navinner::after {
-	transition: bottom 0.1s 0.14s ease,
-		-webkit-transform 0.1s cubic-bezier( 0.55, 0.055, 0.675, 0.19 );
+.jpcom-masterbar__navbutton.mobilenav .jpcom-masterbar__navinner::after {
 	transition: bottom 0.1s 0.14s ease, transform 0.1s cubic-bezier( 0.55, 0.055, 0.675, 0.19 );
-	transition: bottom 0.1s 0.14s ease, transform 0.1s cubic-bezier( 0.55, 0.055, 0.675, 0.19 ),
-		-webkit-transform 0.1s cubic-bezier( 0.55, 0.055, 0.675, 0.19 );
 }
 
-.jpcom-masterbar__navbutton.is-active .jpcom-masterbar__navinner {
-	-webkit-transform: rotate( 45deg );
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner {
 	transform: rotate( 45deg );
 	transition-delay: 0.14s;
 	transition-timing-function: cubic-bezier( 0.215, 0.61, 0.355, 1 );
 }
 
-.jpcom-masterbar__navbutton.is-active .jpcom-masterbar__navinner::before {
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner::before {
 	top: 0;
 	opacity: 0;
 	transition: top 0.1s ease, opacity 0.1s 0.14s ease;
 }
 
-.jpcom-masterbar__navbutton.is-active .jpcom-masterbar__navinner::after {
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner::after {
 	bottom: 0;
-	-webkit-transform: rotate( -90deg );
 	transform: rotate( -90deg );
-	transition: bottom 0.1s ease, -webkit-transform 0.1s 0.14s cubic-bezier( 0.215, 0.61, 0.355, 1 );
 	transition: bottom 0.1s ease, transform 0.1s 0.14s cubic-bezier( 0.215, 0.61, 0.355, 1 );
-	transition: bottom 0.1s ease, transform 0.1s 0.14s cubic-bezier( 0.215, 0.61, 0.355, 1 ),
-		-webkit-transform 0.1s 0.14s cubic-bezier( 0.215, 0.61, 0.355, 1 );
 }
