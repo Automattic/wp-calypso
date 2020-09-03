@@ -20,14 +20,29 @@ function show_coming_soon_page() {
 		return false;
 	}
 
-	$should_show = true;
+	$should_show = ( (int) get_option( 'wpcom_coming_soon' ) === 1 );
 
-	// TODO: Is this dealing with the case where they're logged in but aren't a member of the site?
-	if ( is_user_logged_in() ) {
+	if ( is_user_logged_in() && current_user_can( 'read' ) ) {
 		$should_show = false;
 	}
 
 	return apply_filters( 'a8c_show_coming_soon_page', $should_show );
+}
+
+/**
+ * Renders a fallback coming soon page
+ */
+function render_fallback_coming_soon_page() {
+	remove_action( 'wp_enqueue_scripts', 'wpcom_actionbar_enqueue_scripts', 101 );
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_action( 'wp_head', 'header_js', 5 );
+	remove_action( 'wp_head', 'global_css', 5 );
+	remove_action( 'wp_footer', 'wpcom_subs_js' );
+	remove_action( 'wp_footer', 'stats_footer', 101 );
+	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), PLUGIN_VERSION );
+
+	include __DIR__ . '/fallback-coming-soon-page.php';
 }
 
 /**
@@ -41,10 +56,11 @@ function coming_soon_page() {
 		return;
 	}
 
-	$id = (int) get_option( 'wpcom_coming_soon_page', 0 );
+	$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
 
 	if ( empty( $id ) ) {
-		return;
+		render_fallback_coming_soon_page();
+		die();
 	}
 
 	if ( $post->ID === $id ) {
