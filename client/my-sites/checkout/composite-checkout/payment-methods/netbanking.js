@@ -8,6 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -153,7 +154,7 @@ function NetBankingFields() {
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'netbanking' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
 
 	return (
@@ -269,7 +270,7 @@ function NetBankingPayButton( { disabled, store } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -279,10 +280,10 @@ function NetBankingPayButton( { disabled, store } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

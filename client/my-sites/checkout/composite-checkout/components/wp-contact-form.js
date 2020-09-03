@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import {
+	FormStatus,
 	useSelect,
 	useDispatch,
 	useFormStatus,
@@ -54,7 +55,7 @@ export default function WPContactForm( {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
-	const isDisabled = ! isStepActive || formStatus !== 'ready';
+	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
 
 	useSkipToLastStepIfFormComplete( isCachedContactFormValid );

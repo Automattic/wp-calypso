@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { CheckoutModal, useFormStatus, useEvents, Button } from '@automattic/composite-checkout';
+import { CheckoutModal, FormStatus, useFormStatus, useEvents, Button } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -47,7 +47,7 @@ function WPLineItem( {
 		createUserAndSiteBeforeTransaction
 	);
 	const onEvent = useEvents();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
 	// Show the variation picker when this is not a renewal
@@ -76,7 +76,7 @@ function WPLineItem( {
 				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
-			{ hasDeleteButton && formStatus === 'ready' && (
+			{ hasDeleteButton && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
 						className="checkout-line-item__remove-product"

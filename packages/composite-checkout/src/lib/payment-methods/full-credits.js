@@ -10,6 +10,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Button from '../../components/button';
 import {
+	FormStatus,
 	useTransactionStatus,
 	usePaymentProcessor,
 	useLineItems,
@@ -68,7 +69,7 @@ function FullCreditsSubmitButton( { disabled } ) {
 			disabled={ disabled }
 			onClick={ onClick }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -78,10 +79,10 @@ function FullCreditsSubmitButton( { disabled } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s with WordPress.com Credits' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

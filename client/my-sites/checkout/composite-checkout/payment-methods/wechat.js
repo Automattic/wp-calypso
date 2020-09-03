@@ -8,6 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -91,7 +92,7 @@ function WeChatFields() {
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'wechat' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<WeChatFormWrapper>
@@ -212,7 +213,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -242,10 +243,10 @@ const WeChatPaymentQRcodeUI = styled( WeChatPaymentQRcode )`
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

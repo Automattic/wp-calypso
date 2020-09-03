@@ -13,6 +13,7 @@ import { useI18n } from '@automattic/react-i18n';
 import Field from '../../components/field';
 import Button from '../../components/button';
 import {
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -78,7 +79,7 @@ function EpsFields() {
 	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'eps' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<EpsFormWrapper>
@@ -172,7 +173,7 @@ function EpsPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -182,10 +183,10 @@ function EpsPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

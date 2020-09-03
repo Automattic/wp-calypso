@@ -13,6 +13,7 @@ import { useI18n } from '@automattic/react-i18n';
 import Field from '../../components/field';
 import Button from '../../components/button';
 import {
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -88,7 +89,7 @@ function P24Fields() {
 	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
 	const { changeCustomerName, changeCustomerEmail } = useDispatch( 'p24' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<P24FormWrapper>
@@ -198,7 +199,7 @@ function P24PayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -208,10 +209,10 @@ function P24PayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
