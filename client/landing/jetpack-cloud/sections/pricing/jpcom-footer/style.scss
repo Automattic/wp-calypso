@@ -85,3 +85,44 @@
 		display: block;
 	}
 }
+
+.jpcom-footer__plugs {
+	text-align: center;
+
+	font-size: 0.875rem;
+}
+
+.jpcom-footer__plugs-group {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+
+	padding: 20px 10px 10px;
+
+	a {
+		color: #2e4453;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
+.jpcom-footer__a8c-services-plug {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	svg {
+		margin-right: 8px;
+	}
+}
+
+.jpcom-footer__a8c-attr-plug {
+	width: 180px;
+}
+
+.jpcom-footer__hiring-plug {
+	padding: 20px;
+}
