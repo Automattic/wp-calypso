@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/plugins/init';
 
 /**
  * Indicates whether a plugin upload is currently in progress

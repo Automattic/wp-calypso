@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import wpcom from 'lib/wp';
 import { get, keys } from 'lodash';
 
@@ -19,6 +18,8 @@ import {
 	PLUGIN_SETUP_FINISH,
 	PLUGIN_SETUP_ERROR,
 } from 'state/action-types';
+
+import 'state/plugins/init';
 
 /**
  *  Local variables;
@@ -44,7 +45,7 @@ const normalizePluginInstructions = ( data ) => {
  *
  * @param {object} site - site object
  * @param {string} plugin - plugin identifier
- * @returns {SitePlugin} SitePlugin instance
+ * @returns {any} SitePlugin instance
  */
 const getPluginHandler = ( site, plugin ) => {
 	const siteHandler = wpcom.site( site.ID );
