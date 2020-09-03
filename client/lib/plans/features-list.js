@@ -1243,7 +1243,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
-		getTitle: () => i18n.translate( 'Search' ),
+		getTitle: () => i18n.translate( 'Search: up to 100k records' ),
 		getDescription: () =>
 			i18n.translate(
 				'Help your site visitors find answers instantly so they keep reading and buying. Powerful filtering and customization options. {{link}}Learn more.{{/link}}',
@@ -1271,7 +1271,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CRM_V2 ]: {
 		getSlug: () => constants.FEATURE_CRM_V2,
-		getTitle: () => i18n.translate( 'CRM' ),
+		getTitle: () => i18n.translate( 'CRM: Entrepreneur bundle' ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1330,7 +1330,12 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
 		getDescription: () =>
 			i18n.translate(
-				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: <a href="https://jetpack.com/features/design/themes/" />,
+					},
+				}
 			),
 	},
 
@@ -1338,7 +1343,14 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_PRIORITY_SUPPORT_V2,
 		getTitle: () => i18n.translate( 'Priority support' ),
 		getDescription: () =>
-			i18n.translate( 'Get fast WordPress support from the WordPress experts. ' ),
+			i18n.translate(
+				'Get fast WordPress support from the WordPress experts. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: <a href="https://jetpack.com/features/security/expert-priority-support/" />,
+					},
+				}
+			),
 	},
 
 	[ constants.FEATURE_SECURE_STORAGE_V2 ]: {
