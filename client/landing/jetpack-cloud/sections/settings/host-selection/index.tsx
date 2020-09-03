@@ -3,12 +3,13 @@
  */
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import { featuredProviders, getProviderNameFromId } from '../utils';
 import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -25,36 +26,14 @@ import './style.scss';
 
 const HostSelection: FunctionComponent = () => {
 	const translate = useTranslate();
-	const [ step ] = useState( 0 );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const steps = [
-		translate( 'Host locator' ).toString(),
-		translate( 'Credentials' ).toString(),
-		translate( 'Verification' ).toString(),
-	];
-
-	// TODO: move to utils, check host "ids"
-	const featuredProviders = [
-		{ id: 'bluehost', name: 'Bluehost' },
-		{
-			id: 'siteground',
-			name: 'SiteGround',
-		},
-		{ id: 'amazon', name: 'Amazon / AWS' },
-		{ id: 'dreamhost', name: 'Dreamhost' },
-		{ id: 'godaddy', name: 'GoDaddy' },
-		{ id: 'hostgator', name: 'HostGator' },
-		{
-			id: 'unknown',
-			name: translate( 'I don’t know / my host is not listed here / I have my server credentials' ),
-		},
-		{
-			id: 'pressable',
-			name: 'Pressable',
-		},
+		translate( 'Host locator' ),
+		translate( 'Credentials' ),
+		translate( 'Verification' ),
 	];
 
 	const {
@@ -67,6 +46,8 @@ const HostSelection: FunctionComponent = () => {
 		providerGuessState
 	);
 
+	const providerGuessName = getProviderNameFromId( guess );
+
 	useEffect( () => {
 		requestHosingProviderGuess( siteId );
 	}, [ siteId ] );
@@ -74,7 +55,7 @@ const HostSelection: FunctionComponent = () => {
 	return (
 		<>
 			<Card>
-				<StepProgress currentStep={ step } steps={ steps } />
+				<StepProgress currentStep={ 0 } steps={ steps } />
 				<div className="host-selection__notice">
 					{ translate(
 						'In order to restore your site, should something go wrong, you’ll need to provide your websites {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials. We’ll guide you through it:',
@@ -90,7 +71,13 @@ const HostSelection: FunctionComponent = () => {
 						},
 					} ) }
 				</h3>
-				<p>{ translate( 'It looks like your host is SiteGround' ) }</p>
+				{ providerGuessName && (
+					<p>
+						{ translate( 'It looks like your host is %(providerGuessName)s', {
+							args: { providerGuessName },
+						} ) }
+					</p>
+				) }
 			</Card>
 			<VerticalNav>
 				{ featuredProviders.map( ( { id, name } ) => (
@@ -107,6 +94,15 @@ const HostSelection: FunctionComponent = () => {
 						</div>
 					</VerticalNavItem>
 				) ) }
+				<VerticalNavItem
+					isPlaceholder={ loadingProviderGuess }
+					key={ 'unknown' }
+					path={ settingsCredentialsPath( siteSlug, 'unknown' ) }
+				>
+					{ translate(
+						'I don’t know / my host is not listed here / I have my server credentials'
+					) }
+				</VerticalNavItem>
 			</VerticalNav>
 		</>
 	);
