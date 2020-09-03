@@ -98,7 +98,7 @@
 	justify-content: space-around;
 	align-items: center;
 
-	padding: 20px 10px 10px;
+	padding: 20px 10px;
 
 	a {
 		color: #2e4453;
@@ -113,6 +113,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	padding-bottom: 14px;
+
+	@include break-mobile {
+		padding-bottom: 0;
+	}
 
 	svg {
 		margin-right: 8px;
