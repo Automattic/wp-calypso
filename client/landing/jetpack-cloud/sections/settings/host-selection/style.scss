@@ -3,3 +3,15 @@
 	margin: 24px 0;
 	background: var( --studio-yellow-0 );
 }
+
+.host-selection__host-guess-badge {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	// prevent badge from overlapping with right chevron
+	margin-right: 24px;
+
+	.badge {
+		background: var( --studio-yellow-0 );
+	}
+}

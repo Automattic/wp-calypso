@@ -13,6 +13,7 @@ import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { settingsCredentialsPath } from 'lib/jetpack/paths';
+import Badge from 'components/badge';
 import StepProgress from 'components/step-progress';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
@@ -35,28 +36,31 @@ const HostSelection: FunctionComponent = () => {
 		translate( 'Verification' ).toString(),
 	];
 
+	// TODO: move to utils, check host "ids"
 	const featuredProviders = [
-		{ id: 'bluehost', name: 'Bluehost', path: settingsCredentialsPath( siteSlug, 'bluehost' ) },
+		{ id: 'bluehost', name: 'Bluehost' },
 		{
 			id: 'siteground',
 			name: 'SiteGround',
-			path: settingsCredentialsPath( siteSlug, 'siteground' ),
 		},
-		{ id: 'amazon', name: 'Amazon / AWS', path: settingsCredentialsPath( siteSlug, 'amazon' ) },
-		{ id: 'dreamhost', name: 'Dreamhost', path: settingsCredentialsPath( siteSlug, 'dreamhost' ) },
-		{ id: 'godaddy', name: 'GoDaddy', path: settingsCredentialsPath( siteSlug, 'godaddy' ) },
-		{ id: 'hostgator', name: 'HostGator', path: settingsCredentialsPath( siteSlug, 'hostgator' ) },
+		{ id: 'amazon', name: 'Amazon / AWS' },
+		{ id: 'dreamhost', name: 'Dreamhost' },
+		{ id: 'godaddy', name: 'GoDaddy' },
+		{ id: 'hostgator', name: 'HostGator' },
 		{
 			id: 'unknown',
 			name: translate( 'I don’t know / my host is not listed here / I have my server credentials' ),
-			path: settingsCredentialsPath( siteSlug, 'unknown' ),
+		},
+		{
+			id: 'pressable',
+			name: 'Pressable',
 		},
 	];
 
 	const {
 		state: providerGuessState,
-		data: { guess } = { guess: 'unknown' },
-		error: providerGuessError,
+		data: { guess } = { guess: null },
+		// error: providerGuessError,
 	} = useSelector( () => getHttpData( getRequestHosingProviderGuessId( siteId ) ) );
 
 	const loadingProviderGuess = ! [ DataState.Success, DataState.Failure ].includes(
@@ -79,13 +83,28 @@ const HostSelection: FunctionComponent = () => {
 						}
 					) }
 				</div>
-				<h3>{ translate( 'Select your website host for example.com' ) }</h3>
+				<h3>
+					{ translate( 'Select your website host for %(siteSlug)s', {
+						args: {
+							siteSlug,
+						},
+					} ) }
+				</h3>
 				<p>{ translate( 'It looks like your host is SiteGround' ) }</p>
 			</Card>
 			<VerticalNav>
-				{ featuredProviders.map( ( { id, name, path } ) => (
-					<VerticalNavItem key={ id } path={ path }>
-						{ name }
+				{ featuredProviders.map( ( { id, name } ) => (
+					<VerticalNavItem
+						isPlaceholder={ loadingProviderGuess }
+						key={ id }
+						path={ settingsCredentialsPath( siteSlug, id ) }
+					>
+						<div className="host-selection__host-guess-badge">
+							{ name }
+							{ guess === id && (
+								<Badge>{ translate( 'If we had to guess your host, this would be it' ) }</Badge>
+							) }
+						</div>
 					</VerticalNavItem>
 				) ) }
 			</VerticalNav>
