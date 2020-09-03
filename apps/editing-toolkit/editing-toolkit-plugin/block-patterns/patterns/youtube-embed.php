@@ -22,8 +22,8 @@ $markup = '
 <div style="height:24px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
 
-<!-- wp:core-embed/youtube {"url":"https://www.youtube.com/watch?v=k58xZ6osP3Y","type":"rich","providerNameSlug":"","align":"wide","className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} -->
-<figure class="wp-block-embed-youtube alignwide wp-block-embed is-type-rich wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
+<!-- wp:core-embed/youtube {"url":"https://www.youtube.com/watch?v=k58xZ6osP3Y","type":"rich","providerNameSlug":"youtube","align":"wide","className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} -->
+<figure class="wp-block-embed-youtube alignwide wp-block-embed is-type-rich is-provider-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">
 https://www.youtube.com/watch?v=k58xZ6osP3Y
 </div></figure>
 <!-- /wp:core-embed/youtube -->
