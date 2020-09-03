@@ -36,13 +36,18 @@ const SettingsFlow: FunctionComponent = () => {
 		translate( 'Verification' ).toString(),
 	];
 
-	const supportedProviders = {
-		bluehost: 'Bluehost',
-		amazon: 'Amazon / AWS',
-		dreamhost: 'Dreamhost',
-		godaddy: 'GoDaddy',
-		siteground: 'SiteGround',
-	};
+	const featuredProviders = [
+		{ id: 'bluehost', name: 'Bluehost' },
+		{ id: 'siteground', name: 'SiteGround' },
+		{ id: 'amazon', name: 'Amazon / AWS' },
+		{ id: 'dreamhost', name: 'Dreamhost' },
+		{ id: 'godaddy', name: 'GoDaddy' },
+		{ id: 'hostgator', name: 'HostGator' },
+		{
+			id: 'other',
+			name: translate( 'I don’t know / my host is not listed here / I have my server credentials' ),
+		},
+	];
 
 	const {
 		state: providerGuessState,
@@ -73,10 +78,12 @@ const SettingsFlow: FunctionComponent = () => {
 				</div>
 				<h3>{ translate( 'Select your website host for example.com' ) }</h3>
 				<p>{ translate( 'It looks like your host is SiteGround' ) }</p>
-				<VerticalNav>
-					<VerticalNavItem>{ tra }</VerticalNavItem>
-				</VerticalNav>
 			</Card>
+			<VerticalNav>
+				{ featuredProviders.map( ( { id, name } ) => (
+					<VerticalNavItem>{ name }</VerticalNavItem>
+				) ) }
+			</VerticalNav>
 		</Main>
 	);
 };
