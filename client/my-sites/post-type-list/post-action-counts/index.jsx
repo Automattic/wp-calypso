@@ -32,6 +32,8 @@ class PostActionCounts extends PureComponent {
 		showLikesPopover: false,
 	};
 
+	liRef = React.createRef();
+
 	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;
 
@@ -51,10 +53,6 @@ class PostActionCounts extends PureComponent {
 
 	closeLikesPopover = () => {
 		this.setState( { showLikesPopover: false } );
-	};
-
-	setLikesPopoverContext = ( element ) => {
-		this.setState( { likesPopoverContext: element } );
 	};
 
 	renderCommentCount() {
@@ -149,7 +147,7 @@ class PostActionCounts extends PureComponent {
 		}
 
 		return (
-			<li ref={ this.setLikesPopoverContext }>
+			<li ref={ this.liRef }>
 				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onLikesClick }>
 					{
 						// translators: count is the number of likes
@@ -164,7 +162,7 @@ class PostActionCounts extends PureComponent {
 						siteId={ siteId }
 						postId={ postId }
 						showDisplayNames={ true }
-						context={ this.state.likesPopoverContext }
+						context={ this.liRef.current }
 						position="bottom"
 						onClose={ this.closeLikesPopover }
 					/>
