@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { get } from 'lodash';
+import { get, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,9 +29,10 @@ import cloudSuccessIcon from './icons/cloud-success.svg';
 const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const hasRealtimeBackups = useSelector( ( state ) =>
-		getRewindCapabilities( state, siteId )?.includes( 'backup-realtime' )
-	);
+	const hasRealtimeBackups = useSelector( ( state ) => {
+		const capabilities = getRewindCapabilities( state, siteId );
+		return isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
+	} );
 
 	const moment = useLocalizedMoment();
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
