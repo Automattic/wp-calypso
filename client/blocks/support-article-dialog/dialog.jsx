@@ -18,6 +18,7 @@ import EmbedContainer from 'components/embed-container';
 import Emojify from 'components/emojify';
 import QueryReaderPost from 'components/data/query-reader-post';
 import QueryReaderSite from 'components/data/query-reader-site';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
 import getInlineSupportArticlePostId from 'state/selectors/get-inline-support-article-post-id';
@@ -25,6 +26,7 @@ import getInlineSupportArticleActionUrl from 'state/selectors/get-inline-support
 import getInlineSupportArticleActionLabel from 'state/selectors/get-inline-support-article-action-label';
 import getInlineSupportArticleActionIsExternal from 'state/selectors/get-inline-support-article-action-is-external';
 import { closeSupportArticleDialog as closeDialog } from 'state/inline-support-article/actions';
+import { getSupportArticleAlternatesForLocale } from 'state/support-articles-alternates/selectors';
 
 /**
  * Style Dependencies
@@ -38,11 +40,10 @@ export const SupportArticleDialog = ( {
 	actionUrl,
 	closeSupportArticleDialog,
 	post,
-	postId,
+	postKey,
 } ) => {
 	const translate = useTranslate();
 	const isLoading = ! post;
-	const postKey = { blogId: SUPPORT_BLOG_ID, postId };
 	const siteId = post?.site_ID;
 
 	useEffect( () => {
@@ -118,9 +119,21 @@ const mapStateToProps = ( state ) => {
 	const actionUrl = getInlineSupportArticleActionUrl( state );
 	const actionLabel = getInlineSupportArticleActionLabel( state );
 	const actionIsExternal = getInlineSupportArticleActionIsExternal( state );
-	const post = getPostByKey( state, { blogId: SUPPORT_BLOG_ID, postId } );
 
-	return { post, postId, actionUrl, actionLabel, actionIsExternal };
+	let postKey = { blogId: SUPPORT_BLOG_ID, postId };
+	const locale = getCurrentLocaleSlug( state );
+	const supportArticleAlternates = getSupportArticleAlternatesForLocale( state, postKey, locale );
+
+	if ( supportArticleAlternates ) {
+		postKey = {
+			blogId: supportArticleAlternates.blog_id,
+			postId: supportArticleAlternates.page_id,
+		};
+	}
+
+	const post = getPostByKey( state, postKey );
+
+	return { post, postKey, postId, actionUrl, actionLabel, actionIsExternal };
 };
 
 export default connect( mapStateToProps, { closeSupportArticleDialog: closeDialog } )(

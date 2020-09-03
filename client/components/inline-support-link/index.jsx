@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
+import QuerySupportArticleAlternates from 'components/data/query-support-article-alternates';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import {
 	bumpStat,
@@ -80,6 +81,7 @@ class InlineSupportLink extends Component {
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
+				<QuerySupportArticleAlternates postId={ supportPostId } />
 				{ showText && text }
 				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
 			</LinkComponent>

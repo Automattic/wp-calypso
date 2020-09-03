@@ -45,6 +45,7 @@ import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
+import supportArticlesAlternates from './support-articles-alternates/reducer';
 import ui from './ui/reducer';
 import userDevices from './user-devices/reducer';
 import userProfileLinks from './profile-links/reducer';
@@ -87,6 +88,7 @@ const reducers = {
 	sites,
 	storedCards,
 	support,
+	supportArticlesAlternates,
 	ui,
 	userDevices,
 	userProfileLinks,
