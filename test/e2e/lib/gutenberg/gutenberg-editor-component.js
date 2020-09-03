@@ -271,24 +271,15 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
 	async addBlock( title ) {
 		title = title.charAt( 0 ).toUpperCase() + title.slice( 1 ); // Capitalize block name
-		const customEmbedSelectorFor = ( embedType ) =>
-			` iframe[title='Embedded content from ${ embedType }']`;
 		let blockClass = kebabCase( title.toLowerCase() );
 		let hasChildBlocks = false;
 		let ariaLabel;
 		let prefix = '';
-		let customBlockSelector;
 		switch ( title ) {
 			case 'Instagram':
-				customBlockSelector = customEmbedSelectorFor( 'instagram.com' );
-				prefix = 'embed-';
-				break;
 			case 'Twitter':
-				customBlockSelector = customEmbedSelectorFor( 'twitter' );
-				prefix = 'embed-';
-				break;
 			case 'YouTube':
-				customBlockSelector = customEmbedSelectorFor( 'youtube.com' );
+				ariaLabel = 'Block: Embed';
 				prefix = 'embed-';
 				break;
 			case 'Form':
@@ -353,22 +344,16 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 		}
 
-		const selectorAriaLabel = `[aria-label*='${ ariaLabel || `Block: ${ title }` }'`;
-
-		const buildBlockSelector = ( selector ) => {
-			return By.css(
-				`.block-editor-block-list__block.${
-					hasChildBlocks ? 'has-child-selected' : 'is-selected'
-				}${ selector }`
-			);
-		};
+		const selectorAriaLabel = ariaLabel || `Block: ${ title }`;
 
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
-
-		const insertedBlockSelectorByAriaLabel = buildBlockSelector( selectorAriaLabel );
-		const insertedBlockSelectorByCustomSelector = buildBlockSelector( customBlockSelector );
+		const insertedBlockSelector = By.css(
+			`.block-editor-block-list__block.${
+				hasChildBlocks ? 'has-child-selected' : 'is-selected'
+			}[aria-label*='${ selectorAriaLabel }']`
+		);
 
 		await this.openBlockInserterAndSearch( title );
 
@@ -380,20 +365,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
 
-		await driverHelper
-			.waitTillPresentAndDisplayed( this.driver, insertedBlockSelectorByAriaLabel )
-			.catch( () =>
-				driverHelper.waitTillPresentAndDisplayed(
-					this.driver,
-					insertedBlockSelectorByCustomSelector
-				)
-			);
-
-		const element = await this.driver
-			.findElement( insertedBlockSelectorByAriaLabel )
-			.catch( () => this.driver.findElement( insertedBlockSelectorByCustomSelector ) );
-
-		return element.getAttribute( 'id' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
+		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
 
 	/**
