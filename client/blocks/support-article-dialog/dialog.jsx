@@ -18,6 +18,7 @@ import EmbedContainer from 'components/embed-container';
 import Emojify from 'components/emojify';
 import QueryReaderPost from 'components/data/query-reader-post';
 import QueryReaderSite from 'components/data/query-reader-site';
+import QuerySupportArticleAlternates from 'components/data/query-support-article-alternates';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
@@ -40,6 +41,7 @@ export const SupportArticleDialog = ( {
 	actionUrl,
 	closeSupportArticleDialog,
 	post,
+	postId,
 	postKey,
 } ) => {
 	const translate = useTranslate();
@@ -85,6 +87,7 @@ export const SupportArticleDialog = ( {
 			<Emojify>
 				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 				{ isLoading && <QueryReaderPost postKey={ postKey } /> }
+				<QuerySupportArticleAlternates postId={ postId } blogId={ SUPPORT_BLOG_ID } />
 				<article className="support-article-dialog__story">
 					<SupportArticleHeader post={ post } isLoading={ isLoading } />
 					{ isLoading ? (

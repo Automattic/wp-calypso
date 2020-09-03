@@ -27,6 +27,10 @@ import { localizeUrl } from 'lib/i18n-utils';
 import './style.scss';
 
 class InlineSupportLink extends Component {
+	state = {
+		shouldLazyLoadAlternates: false,
+	};
+
 	static propTypes = {
 		supportPostId: PropTypes.number,
 		supportLink: PropTypes.string,
@@ -47,6 +51,10 @@ class InlineSupportLink extends Component {
 		iconSize: 14,
 	};
 
+	loadAlternates = () => {
+		this.setState( { shouldLazyLoadAlternates: true } );
+	};
+
 	render() {
 		const {
 			showText,
@@ -58,6 +66,7 @@ class InlineSupportLink extends Component {
 			openDialog,
 			children,
 		} = this.props;
+		const { shouldLazyLoadAlternates } = this.state;
 
 		if ( ! supportPostId && ! supportLink ) {
 			return null;
@@ -77,11 +86,12 @@ class InlineSupportLink extends Component {
 				className="inline-support-link"
 				href={ url }
 				onClick={ openDialog }
+				onMouseEnter={ ! shouldLazyLoadAlternates && this.loadAlternates }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				<QuerySupportArticleAlternates postId={ supportPostId } />
+				{ shouldLazyLoadAlternates && <QuerySupportArticleAlternates postId={ supportPostId } /> }
 				{ showText && text }
 				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
 			</LinkComponent>
