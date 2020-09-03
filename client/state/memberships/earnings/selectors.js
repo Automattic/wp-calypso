@@ -20,6 +20,6 @@ export function getEarningsWithDefaultsForSiteId( state, siteId ) {
 		last_month: earnings.last_month ?? 0,
 		forecast: earnings.forecast ?? 0,
 		currency: earnings.currency ?? 'USD',
-		commission: earnings.commission ?? false,
+		commission: earnings.commission ?? null,
 	};
 }
