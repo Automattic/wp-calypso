@@ -10,14 +10,30 @@ import React, { FunctionComponent } from 'react';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import StepProgress from 'components/step-progress';
+import { Card } from '@automattic/components';
 
-const SettingsTopLevel: FunctionComponent = ( { children } ) => {
+interface Props {
+	step: number;
+}
+
+const SettingsTopLevel: FunctionComponent< Props > = ( { children, step } ) => {
 	const translate = useTranslate();
+
+	const steps = [
+		translate( 'Host locator' ),
+		translate( 'Credentials' ),
+		translate( 'Verification' ),
+	];
+
 	return (
 		<Main className="settings">
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
-			{ children }
+			<Card>
+				<StepProgress currentStep={ step } steps={ steps } />
+				{ children }
+			</Card>
 		</Main>
 	);
 };

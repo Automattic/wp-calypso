@@ -8,14 +8,14 @@ import React, { FunctionComponent, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+
 import { featuredProviders, getProviderNameFromId } from '../utils';
 import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { settingsCredentialsPath } from 'lib/jetpack/paths';
 import Badge from 'components/badge';
-import StepProgress from 'components/step-progress';
+
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
 
@@ -29,12 +29,6 @@ const HostSelection: FunctionComponent = () => {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-
-	const steps = [
-		translate( 'Host locator' ),
-		translate( 'Credentials' ),
-		translate( 'Verification' ),
-	];
 
 	const {
 		state: providerGuessState,
@@ -54,31 +48,29 @@ const HostSelection: FunctionComponent = () => {
 
 	return (
 		<>
-			<Card>
-				<StepProgress currentStep={ 0 } steps={ steps } />
-				<div className="host-selection__notice">
-					{ translate(
-						'In order to restore your site, should something go wrong, you’ll need to provide your websites {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials. We’ll guide you through it:',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-				</div>
-				<h3>
-					{ translate( 'Select your website host for %(siteSlug)s', {
-						args: {
-							siteSlug,
-						},
-					} ) }
-				</h3>
-				{ providerGuessName && (
-					<p>
-						{ translate( 'It looks like your host is %(providerGuessName)s', {
-							args: { providerGuessName },
-						} ) }
-					</p>
+			<div className="host-selection__notice">
+				{ translate(
+					'In order to restore your site, should something go wrong, you’ll need to provide your websites {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials. We’ll guide you through it:',
+					{
+						components: { strong: <strong /> },
+					}
 				) }
-			</Card>
+			</div>
+			<h3>
+				{ translate( 'Select your website host for %(siteSlug)s', {
+					args: {
+						siteSlug,
+					},
+				} ) }
+			</h3>
+			{ providerGuessName && (
+				<p>
+					{ translate( 'It looks like your host is %(providerGuessName)s', {
+						args: { providerGuessName },
+					} ) }
+				</p>
+			) }
+
 			<VerticalNav>
 				{ featuredProviders.map( ( { id, name } ) => (
 					<VerticalNavItem

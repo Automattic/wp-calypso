@@ -18,8 +18,8 @@ export const settingsToHostSelection: PageJS.Callback = ( context ) => {
 	page.redirect( settingsHostSelectionPath( site ) );
 };
 
-export const withTop: PageJS.Callback = ( context, next ) => {
-	context.primary = <Top>{ context.primary }</Top>;
+export const withTop = ( step: number ): PageJS.Callback => ( context, next ) => {
+	context.primary = <Top step={ step }>{ context.primary }</Top>;
 	next();
 };
 

@@ -41,7 +41,7 @@ export default function () {
 				siteSelection,
 				navigation,
 				hostSelection,
-				withTop,
+				withTop( 0 ),
 				makeLayout,
 				clientRender
 			);
@@ -51,7 +51,7 @@ export default function () {
 				siteSelection,
 				navigation,
 				credentials,
-				withTop,
+				withTop( 1 ),
 				makeLayout,
 				clientRender
 			);
