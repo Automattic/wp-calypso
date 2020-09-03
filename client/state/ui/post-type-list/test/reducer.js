@@ -1,26 +1,15 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import reducer, { postTypeList } from '../reducer';
 import {
-	POST_TYPE_LIST_LIKES_POPOVER_HIDE,
-	POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
-	ROUTE_SET,
 } from 'state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'postIdWithActiveSharePanel',
-			'postIdWithActiveLikesPopover',
-		] );
+		expect( reducer( undefined, {} ) ).toHaveProperty( 'postIdWithActiveSharePanel' );
 	} );
 
 	describe( '#postTypeList()', () => {
@@ -34,7 +23,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.be.null;
+			expect( state.postIdWithActiveSharePanel ).toBeNull();
 		} );
 
 		test( 'should not fail when hiding an already hidden Share panel', () => {
@@ -43,7 +32,7 @@ describe( 'reducer', () => {
 				postGlobalId: 4,
 			} );
 
-			expect( state.postIdWithActiveSharePanel ).to.be.null;
+			expect( state.postIdWithActiveSharePanel ).toBeNull();
 		} );
 
 		test( 'should hide an already-visible Share panel when toggling', () => {
@@ -56,7 +45,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.be.null;
+			expect( state.postIdWithActiveSharePanel ).toBeNull();
 		} );
 
 		test( 'should show a hidden Share panel when toggling', () => {
@@ -69,7 +58,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.eql( postGlobalId );
+			expect( state.postIdWithActiveSharePanel ).toBe( postGlobalId );
 		} );
 
 		test( 'should only allow one active Share panel at a time', () => {
@@ -83,87 +72,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.postIdWithActiveSharePanel ).to.eql( postGlobalId );
-		} );
-
-		test( 'should remove postGlobalId from the state when hiding likes popover', () => {
-			const postGlobalId = 4;
-			const state = postTypeList(
-				{ postIdWithActiveLikesPopover: postGlobalId },
-				{
-					type: POST_TYPE_LIST_LIKES_POPOVER_HIDE,
-					postGlobalId: postGlobalId,
-				}
-			);
-
-			expect( state.postIdWithActiveLikesPopover ).to.be.null;
-		} );
-
-		test( 'should not fail when hiding an already hidden likes popover', () => {
-			const state = postTypeList( undefined, {
-				type: POST_TYPE_LIST_LIKES_POPOVER_HIDE,
-				postGlobalId: 4,
-			} );
-
-			expect( state.postIdWithActiveLikesPopover ).to.be.null;
-		} );
-
-		test( 'should hide an already-visible likes popover when toggling', () => {
-			const postGlobalId = 4;
-			const state = postTypeList(
-				{ postIdWithActiveLikesPopover: postGlobalId },
-				{
-					type: POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
-					postGlobalId: postGlobalId,
-				}
-			);
-
-			expect( state.postIdWithActiveLikesPopover ).to.be.null;
-		} );
-
-		test( 'should show a hidden likes popover when toggling', () => {
-			const postGlobalId = 4;
-			const state = postTypeList(
-				{ postIdWithActiveLikesPopover: null },
-				{
-					type: POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
-					postGlobalId: postGlobalId,
-				}
-			);
-
-			expect( state.postIdWithActiveLikesPopover ).to.eql( postGlobalId );
-		} );
-
-		test( 'should only allow one active likes popover at a time', () => {
-			const existingPostGlobalId = 5;
-			const postGlobalId = 4;
-			const state = postTypeList(
-				{ postIdWithActiveLikesPopover: existingPostGlobalId },
-				{
-					type: POST_TYPE_LIST_LIKES_POPOVER_TOGGLE,
-					postGlobalId: postGlobalId,
-				}
-			);
-
-			expect( state.postIdWithActiveLikesPopover ).to.eql( postGlobalId );
-		} );
-
-		test( 'should reset postIdWithActiveLikesPopover when navigating', () => {
-			const postGlobalId = '0123456789abcdef';
-			const state = postTypeList(
-				{
-					postIdWithActiveLikesPopover: postGlobalId,
-				},
-				{
-					type: ROUTE_SET,
-					path: '/',
-					query: {},
-				}
-			);
-
-			expect( state ).to.eql( {
-				postIdWithActiveLikesPopover: null,
-			} );
+			expect( state.postIdWithActiveSharePanel ).toBe( postGlobalId );
 		} );
 	} );
 } );

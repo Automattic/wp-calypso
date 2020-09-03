@@ -15,8 +15,6 @@ import { getNormalizedPost } from 'state/posts/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { hideActiveLikesPopover, toggleLikesPopover } from 'state/ui/post-type-list/actions';
-import { isLikesPopoverOpen } from 'state/ui/post-type-list/selectors';
 import { getRecentViewsForPost } from 'state/stats/recent-post-views/selectors';
 import { ScreenReaderText } from '@automattic/components';
 
@@ -29,6 +27,12 @@ class PostActionCounts extends PureComponent {
 	static propTypes = {
 		globalId: PropTypes.string,
 	};
+
+	state = {
+		showLikesPopover: false,
+	};
+
+	liRef = React.createRef();
 
 	onActionClick = ( action ) => () => {
 		const { recordTracksEvent: record, type } = this.props;
@@ -44,15 +48,11 @@ class PostActionCounts extends PureComponent {
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
-		this.props.toggleLikesPopover( this.props.globalId );
+		this.setState( { showLikesPopover: ! this.state.showLikesPopover } );
 	};
 
 	closeLikesPopover = () => {
-		this.props.hideActiveLikesPopover();
-	};
-
-	setLikesPopoverContext = ( element ) => {
-		this.setState( { likesPopoverContext: element } );
+		this.setState( { showLikesPopover: false } );
 	};
 
 	renderCommentCount() {
@@ -140,7 +140,6 @@ class PostActionCounts extends PureComponent {
 			showLikes,
 			siteSlug,
 			translate,
-			isCurrentLikesPopoverOpen,
 		} = this.props;
 
 		if ( count < 1 || ! showLikes ) {
@@ -148,7 +147,7 @@ class PostActionCounts extends PureComponent {
 		}
 
 		return (
-			<li ref={ this.setLikesPopoverContext }>
+			<li ref={ this.liRef }>
 				<a href={ `/stats/post/${ postId }/${ siteSlug }` } onClick={ this.onLikesClick }>
 					{
 						// translators: count is the number of likes
@@ -158,12 +157,12 @@ class PostActionCounts extends PureComponent {
 						} )
 					}
 				</a>
-				{ isCurrentLikesPopoverOpen && (
+				{ this.state.showLikesPopover && (
 					<PostLikesPopover
 						siteId={ siteId }
 						postId={ postId }
 						showDisplayNames={ true }
-						context={ this.state.likesPopoverContext }
+						context={ this.liRef.current }
 						position="bottom"
 						onClose={ this.closeLikesPopover }
 					/>
@@ -212,12 +211,9 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			type: get( post, 'type', 'unknown' ),
 			viewCount: getRecentViewsForPost( state, siteId, postId ),
-			isCurrentLikesPopoverOpen: isLikesPopoverOpen( state, globalId ),
 		};
 	},
 	{
-		hideActiveLikesPopover,
-		toggleLikesPopover,
 		recordTracksEvent,
 	}
 )( localize( PostActionCounts ) );
