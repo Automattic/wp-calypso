@@ -366,10 +366,23 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isLoading } = this.state;
-		const { isPromptedFromSidebar, hidePageTitle, isOpen } = this.props;
+		const { isPromptedFromSidebar, hidePageTitle, isOpen, currentBlocks } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
+		}
+
+		// Sometimes currentBlocks is not loaded before getBlocksForPreview is called
+		// getBlocksForPreview memoizes the function call which causes it to always
+		// call it with an empty array. We delete the the cache for the function
+		// to allow it to memoize the loaded currentBlocks.
+		const currentBlocksPreviewCache = this.getBlocksForPreview.cache.get( 'current' );
+		if (
+			currentBlocksPreviewCache &&
+			currentBlocks &&
+			currentBlocksPreviewCache.length !== currentBlocks.length
+		) {
+			this.getBlocksForPreview.cache.delete( 'current' );
 		}
 
 		const {
