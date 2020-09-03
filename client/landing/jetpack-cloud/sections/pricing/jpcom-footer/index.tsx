@@ -21,6 +21,7 @@ const JetpackComFooter = () => {
 	return (
 		<>
 			<StoreFooter />
+			<hr className="jpcom-footer__separator" />
 			<footer className="jpcom-footer">
 				<div className="jpcom-footer__col jpcom-footer__col--logo">
 					<JetpackLogo classNameName="jpcom-footer__logo" full size={ 41 } />
@@ -175,6 +176,7 @@ const JetpackComFooter = () => {
 					</div>
 				</div>
 			</footer>
+			<hr className="jpcom-footer__separator" />
 		</>
 	);
 };

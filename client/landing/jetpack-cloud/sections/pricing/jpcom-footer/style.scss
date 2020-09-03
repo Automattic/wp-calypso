@@ -2,25 +2,32 @@
 @import '~@wordpress/base-styles/mixins';
 
 .jpcom-footer {
-	$jpmcom-border-color: c9d7e1;
-
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
 
-	padding: 0 16px 24px;
-
-	border-bottom: 1px solid $jpcom-border-color;
+	padding: 12px 16px 24px;
 
 	@include break-mobile {
-		padding: 0 12px 24px;
-
-		border-top: 1px solid $jpcom-border-color;
+		padding: 12px 12px 24px;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
-		padding: 40px 0;
+		padding: 40px 0 24px;
 	}
+}
+
+.jpcom-footer__separator {
+	// This color comes from design (not present in color-studio).
+	background: #c9d7e1;
+
+	margin: 0;
+
+	// These 3 properties make the line go across the whole viewport even when the
+	// parent component doesn't go that far.
+	position: relative;
+	left: calc( -50vw + 50% );
+	width: 100vw;
 }
 
 .jpcom-footer__col {
