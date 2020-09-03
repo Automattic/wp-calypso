@@ -47,7 +47,7 @@ const HostSelection: FunctionComponent = () => {
 	}, [ siteId ] );
 
 	return (
-		<>
+		<div className="host-selection">
 			<div className="host-selection__notice">
 				{ translate(
 					'In order to restore your site, should something go wrong, you’ll need to provide your websites {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials. We’ll guide you through it:',
@@ -96,7 +96,7 @@ const HostSelection: FunctionComponent = () => {
 					) }
 				</VerticalNavItem>
 			</VerticalNav>
-		</>
+		</div>
 	);
 };
 

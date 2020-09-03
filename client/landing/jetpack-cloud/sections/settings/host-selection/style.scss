@@ -1,3 +1,12 @@
+.host-selection {
+	.vertical-nav {
+		margin-left: -24px;
+		margin-right: -24px;
+		//bring the final space in the card to the same height as the vertical nav items
+		margin-bottom: 32px;
+	}
+}
+
 .host-selection__notice {
 	padding: 21px 24px 24px 27px;
 	margin: 24px 0;

@@ -7,11 +7,16 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
+import { Card } from '@automattic/components';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StepProgress from 'components/step-progress';
-import { Card } from '@automattic/components';
+
+/**
+ * Internal dependencies
+ */
+import './style.scss';
 
 interface Props {
 	step: number;
@@ -27,7 +32,7 @@ const SettingsTopLevel: FunctionComponent< Props > = ( { children, step } ) => {
 	];
 
 	return (
-		<Main className="settings">
+		<Main className="top">
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
 			<Card>
