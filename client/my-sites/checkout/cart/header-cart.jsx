@@ -23,8 +23,10 @@ class HeaderCart extends React.Component {
 	};
 
 	togglePopoverCart = () => {
-		this.setState( {
-			isPopoverCartVisible: ! this.state.isPopoverCartVisible,
+		this.setState( ( state ) => {
+			return {
+				isPopoverCartVisible: ! state.isPopoverCartVisible,
+			};
 		} );
 	};
 
