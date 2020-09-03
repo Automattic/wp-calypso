@@ -24,10 +24,8 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
  */
 import './comment-actions.scss';
 
-const BorderlessCompactButtonTag = ( { children, ...props } ) => (
-	<Button { ...props } borderless compact>
-		{ children }
-	</Button>
+const BorderlessCompactButton = ( { children, ...props } ) => (
+	<Button { ...props } borderless compact />
 );
 
 const CommentActions = ( {
@@ -62,9 +60,7 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore && (
-				<Button
-					borderless
-					compact
+				<BorderlessCompactButton
 					className="comments__comment-actions-read-more"
 					onClick={ onReadMore }
 				>
@@ -74,42 +70,36 @@ const CommentActions = ( {
 						className="comments__comment-actions-read-more-icon"
 					/>
 					{ translate( 'Read More' ) }
-				</Button>
+				</BorderlessCompactButton>
 			) }
 			{ showReplyButton && (
-				<Button
-					borderless
-					compact
+				<BorderlessCompactButton
 					className="comments__comment-actions-reply"
 					onClick={ handleReply }
 				>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-				</Button>
+				</BorderlessCompactButton>
 			) }
 			{ showCancelReplyButton && (
-				<Button
-					borderless
-					compact
+				<BorderlessCompactButton
 					className="comments__comment-actions-cancel-reply"
 					onClick={ onReplyCancel }
 				>
 					{ translate( 'Cancel reply' ) }
-				</Button>
+				</BorderlessCompactButton>
 			) }
 			{ showCancelEditButton && (
-				<Button
-					borderless
-					compact
+				<BorderlessCompactButton
 					className="comments__comment-actions-cancel-reply"
 					onClick={ editCommentCancel }
 				>
 					{ translate( 'Cancel' ) }
-				</Button>
+				</BorderlessCompactButton>
 			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
-				tagName={ BorderlessCompactButtonTag }
+				tagName={ BorderlessCompactButton }
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
