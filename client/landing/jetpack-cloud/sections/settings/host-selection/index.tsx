@@ -83,8 +83,10 @@ const HostSelection: FunctionComponent = () => {
 				<p>{ translate( 'It looks like your host is SiteGround' ) }</p>
 			</Card>
 			<VerticalNav>
-				{ featuredProviders.map( ( { id, name } ) => (
-					<VerticalNavItem key={ id }>{ name }</VerticalNavItem>
+				{ featuredProviders.map( ( { id, name, path } ) => (
+					<VerticalNavItem key={ id } path={ path }>
+						{ name }
+					</VerticalNavItem>
 				) ) }
 			</VerticalNav>
 		</>
