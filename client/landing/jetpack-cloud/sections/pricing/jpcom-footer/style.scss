@@ -2,18 +2,24 @@
 @import '~@wordpress/base-styles/mixins';
 
 .jpcom-footer {
+	$jpmcom-border-color: c9d7e1;
+
 	display: flex;
 	justify-content: space-between;
 	flex-wrap: wrap;
 
-	padding: 0 16px;
+	padding: 0 16px 24px;
+
+	border-bottom: 1px solid $jpcom-border-color;
 
 	@include break-mobile {
-		padding: 0 24px;
+		padding: 0 12px 24px;
+
+		border-top: 1px solid $jpcom-border-color;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
-		padding: 0;
+		padding: 40px 0;
 	}
 }
 
@@ -23,7 +29,17 @@
 	padding: 10px 0;
 
 	@include break-mobile {
-		flex: 0 0 50%;
+		flex: 0 0 calc( 50% - 24px );
+
+		padding: 10px 12px;
+	}
+
+	// We need this deprecated breakpoint since Calypso still uses it to determine
+	// the layout padding.
+	@include breakpoint-deprecated( '>660px' ) {
+		flex: 0 0 calc( 50% - 12px );
+
+		padding: 10px 0;
 	}
 
 	@include break-large {
@@ -44,6 +60,10 @@
 	list-style-image: none;
 
 	margin: 0;
+}
+
+.jpcom-footer__link {
+	padding-bottom: 8px;
 }
 
 .jpcom-footer__col-header {
