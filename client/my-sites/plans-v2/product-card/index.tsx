@@ -149,7 +149,6 @@ const ProductCardWrapper = ( {
 			onClick={ onClick }
 		/>
 	) : null;
-
 	return (
 		<CardComponent
 			headingLevel={ 3 }
@@ -169,6 +168,7 @@ const ProductCardWrapper = ( {
 			badgeLabel={ productBadgeLabel( item, isOwned, highlight, sitePlan ) }
 			onButtonClick={ () => onClick( item, purchase ) }
 			features={ item.features }
+			children={ item.children }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			withStartingPrice={ item.subtypes.length > 0 }
@@ -179,6 +179,7 @@ const ProductCardWrapper = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
+			hidePrice={ item.hidePrice }
 		/>
 	);
 };
