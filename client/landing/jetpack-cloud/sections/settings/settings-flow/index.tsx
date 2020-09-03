@@ -1,64 +1,68 @@
 /**
  * External dependencies
  */
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import { getHttpData, DataState } from 'state/data-layer/http-data';
+import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import DocumentHead from 'components/data/document-head';
 import Main from 'components/main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StepProgress from 'components/step-progress';
+import VerticalNav from 'components/vertical-nav';
+import VerticalNavItem from 'components/vertical-nav/item';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
 
-<<<<<<< HEAD:client/landing/jetpack-cloud/sections/settings/top/index.tsx
-interface Props {
-	step: number;
-}
-
-const SettingsTopLevel: FunctionComponent< Props > = ( { children, step } ) => {
-=======
-const SettingsFlow: FunctionComponent = () => {
->>>>>>> add message:client/landing/jetpack-cloud/sections/settings/settings-flow/index.tsx
+const SettingsTopLevel: FunctionComponent = () => {
 	const translate = useTranslate();
 
+	const siteId = useSelector( getSelectedSiteId );
+
 	const steps = [
-		translate( 'Host locator' ),
-		translate( 'Credentials' ),
-		translate( 'Verification' ),
+		translate( 'Host locator' ).toString(),
+		translate( 'Credentials' ).toString(),
+		translate( 'Verification' ).toString(),
 	];
 
+	const supportedProviders = {
+		bluehost: 'Bluehost',
+		amazon: 'Amazon / AWS',
+		dreamhost: 'Dreamhost',
+		godaddy: 'GoDaddy',
+		siteground: 'SiteGround',
+	};
+
+	const {
+		state: providerGuessState,
+		data: { guess } = { guess: 'unknown' },
+		error: providerGuessError,
+	} = useSelector( () => getHttpData( getRequestHosingProviderGuessId( siteId ) ) );
+
+	const loadingProviderGuess = ! [ DataState.Success, DataState.Failure ].includes(
+		providerGuessState
+	);
+	useEffect( () => {
+		requestHosingProviderGuess( siteId );
+	}, [ siteId ] );
+
 	return (
-<<<<<<< HEAD:client/landing/jetpack-cloud/sections/settings/top/index.tsx
 		<Main className="top">
-=======
-		<Main className="settings-flow">
->>>>>>> add message:client/landing/jetpack-cloud/sections/settings/settings-flow/index.tsx
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
 			<Card>
 				<StepProgress currentStep={ step } steps={ steps } />
-<<<<<<< HEAD:client/landing/jetpack-cloud/sections/settings/top/index.tsx
 				{ children }
-=======
-				<div className="settings-flow__notice">
-					{ translate(
-						'In order to restore your site, should something go wrong, you’ll need to provide your websites {{strong}}SSH{{/strong}}, {{strong}}SFTP{{/strong}} or {{strong}}FTP{{/strong}} server credentials. We’ll guide you through it:',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-				</div>
-				<h3>{ translate( 'Select your website host for example.com' ) }</h3>
-				<p>{ translate( 'It looks like your host is SiteGround' ) }</p>
->>>>>>> add message:client/landing/jetpack-cloud/sections/settings/settings-flow/index.tsx
 			</Card>
 		</Main>
 	);
