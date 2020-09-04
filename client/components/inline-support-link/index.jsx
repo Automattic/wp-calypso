@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  */
 import ExternalLink from 'components/external-link';
 import QuerySupportArticleAlternates from 'components/data/query-support-article-alternates';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import {
 	bumpStat,
@@ -19,7 +20,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import { isDefaultLocale, localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -41,6 +42,7 @@ class InlineSupportLink extends Component {
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
+		localeSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -65,6 +67,7 @@ class InlineSupportLink extends Component {
 			translate,
 			openDialog,
 			children,
+			localeSlug,
 		} = this.props;
 		const { shouldLazyLoadAlternates } = this.state;
 
@@ -86,7 +89,9 @@ class InlineSupportLink extends Component {
 				className="inline-support-link"
 				href={ url }
 				onClick={ openDialog }
-				onMouseEnter={ ! shouldLazyLoadAlternates && this.loadAlternates }
+				onMouseEnter={
+					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates && this.loadAlternates
+				}
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
@@ -98,6 +103,12 @@ class InlineSupportLink extends Component {
 		);
 	}
 }
+
+const mapStateToProps = ( state ) => {
+	return {
+		localeSlug: getCurrentLocaleSlug( state ),
+	};
+};
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const {
@@ -136,4 +147,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineSupportLink ) );

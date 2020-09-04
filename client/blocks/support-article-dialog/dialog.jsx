@@ -19,6 +19,7 @@ import Emojify from 'components/emojify';
 import QueryReaderPost from 'components/data/query-reader-post';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QuerySupportArticleAlternates from 'components/data/query-support-article-alternates';
+import { isDefaultLocale } from 'lib/i18n-utils';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { getPostByKey } from 'state/reader/posts/selectors';
 import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
@@ -94,7 +95,9 @@ export const SupportArticleDialog = ( {
 			<Emojify>
 				{ siteId && <QueryReaderSite siteId={ +siteId } /> }
 				{ shouldQueryReaderPost && <QueryReaderPost postKey={ postKey } /> }
-				<QuerySupportArticleAlternates postId={ postId } blogId={ SUPPORT_BLOG_ID } />
+				{ shouldRequestAlternates && (
+					<QuerySupportArticleAlternates postId={ postId } blogId={ SUPPORT_BLOG_ID } />
+				) }
 				<article className="support-article-dialog__story">
 					<SupportArticleHeader post={ post } isLoading={ isLoading } />
 					{ isLoading ? (
@@ -134,9 +137,10 @@ const mapStateToProps = ( state ) => {
 
 	let postKey = getPostKey( SUPPORT_BLOG_ID, postId );
 	const locale = getCurrentLocaleSlug( state );
-	const supportArticleAlternates = getSupportArticleAlternatesForLocale( state, postKey, locale );
-	const shouldRequestAlternates = shouldRequestSupportArticleAlternates( state, postKey );
+	const shouldRequestAlternates =
+		! isDefaultLocale( locale ) && shouldRequestSupportArticleAlternates( state, postKey );
 	const isRequestingAlternates = isRequestingSupportArticleAlternates( state, postKey );
+	const supportArticleAlternates = getSupportArticleAlternatesForLocale( state, postKey, locale );
 
 	if ( supportArticleAlternates ) {
 		postKey = getPostKey( supportArticleAlternates.blog_id, supportArticleAlternates.page_id );
