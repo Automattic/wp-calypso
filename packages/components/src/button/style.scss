@@ -295,8 +295,10 @@
 .button-bare {
 	appearance: none;
 	background: transparent;
+	color: inherit;
 	border: none;
 	font-size: inherit;
+	font-weight: inherit;
 	outline: 0;
 	padding: 0;
 	vertical-align: baseline;
