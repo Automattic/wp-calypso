@@ -42,8 +42,8 @@ export const fetchAlternates = ( payload ) => ( dispatch ) => {
 		.undocumented()
 		.supportAlternates( { site: blogId, postId } )
 		.then( ( data ) => {
-			dispatch( fetchAlternatesRequestSuccess( postKey ) );
-			return dispatch( fetchAlternatesReceive( postKey, data ) );
+			dispatch( fetchAlternatesReceive( postKey, data ) );
+			return dispatch( fetchAlternatesRequestSuccess( postKey ) );
 		} )
 		.catch( ( error ) => {
 			return dispatch( fetchAlternatesRequestFailure( postKey, error ) );

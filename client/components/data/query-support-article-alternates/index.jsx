@@ -11,10 +11,7 @@ import { connect } from 'react-redux';
  */
 import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
 import { fetchAlternates } from 'state/support-articles-alternates/actions';
-import {
-	isRequestingSupportArticleAlternates,
-	isRequestingSupportArticleAlternatesCompleted,
-} from 'state/support-articles-alternates/selectors';
+import { shouldRequestSupportArticleAlternates } from 'state/support-articles-alternates/selectors';
 import { isPostKeyLike } from 'reader/post-key';
 
 class QuerySupportArticleAlternates extends Component {
@@ -22,8 +19,7 @@ class QuerySupportArticleAlternates extends Component {
 		postKey: PropTypes.object.isRequired,
 		blogId: PropTypes.number,
 		postId: PropTypes.number.isRequired,
-		isRequesting: PropTypes.bool,
-		isRequestingCompleted: PropTypes.bool,
+		shouldRequestAlternates: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -35,7 +31,7 @@ class QuerySupportArticleAlternates extends Component {
 	}
 
 	maybeFetch = ( props = this.props ) => {
-		if ( isPostKeyLike( props.postKey ) && ! props.isRequesting && ! props.isRequestingCompleted ) {
+		if ( isPostKeyLike( props.postKey ) && props.shouldRequestAlternates ) {
 			this.props.fetchAlternates( props.postKey );
 		}
 	};
@@ -54,8 +50,7 @@ export default connect(
 
 		return {
 			postKey,
-			isRequesting: isRequestingSupportArticleAlternates( state, postKey ),
-			isRequestingCompleted: isRequestingSupportArticleAlternatesCompleted( state, postKey ),
+			shouldRequestAlternates: shouldRequestSupportArticleAlternates( state, postKey ),
 		};
 	},
 	{ fetchAlternates }
