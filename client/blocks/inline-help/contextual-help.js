@@ -624,6 +624,14 @@ const getContextLinksForSection = () => ( {
 				'Get ready to publish! Our five-step checklist walks you through all the fundamentals.'
 			),
 		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
 	],
 	themes: [
 		{
@@ -737,6 +745,14 @@ const getContextLinksForSection = () => ( {
 			title: translate( 'Jetpack Plans' ),
 			description: translate(
 				'Learn about the free Jetpack plugin, its benefits, and the useful capabilities and features that a Jetpack plan unlocks.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
 			),
 		},
 	],
@@ -867,6 +883,14 @@ const getContextLinksForSection = () => ( {
 			link: localizeUrl( 'https://learn.wordpress.com/' ),
 			title: translate( 'Self-guided Online Tutorial' ),
 			description: translate( 'A step-by-step guide to getting familiar with the platform.' ),
+		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
 		},
 	],
 	comments: [
