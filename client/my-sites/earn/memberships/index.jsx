@@ -111,7 +111,7 @@ class MembershipsSection extends Component {
 						</ul>
 					</div>
 					<div className="memberships__earnings-breakdown-notes">
-						{ commission &&
+						{ commission !== null &&
 							translate(
 								'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
 								{
