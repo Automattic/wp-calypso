@@ -79,12 +79,12 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'shouldRequestSupportArticleAlternates()', () => {
-		test( 'should return true if article alternates request has not been initiated yet or has failed', () => {
+		test( 'should return true if article alternates request has not been initiated yet or has not been flagged', () => {
 			expect( shouldRequestSupportArticleAlternates( storeState, { blogId: 1, postId: 1 } ) ).toBe(
 				false
 			);
 			expect( shouldRequestSupportArticleAlternates( storeState, { blogId: 1, postId: 2 } ) ).toBe(
-				true
+				false
 			);
 			expect( shouldRequestSupportArticleAlternates( storeState, { blogId: 1, postId: 3 } ) ).toBe(
 				false

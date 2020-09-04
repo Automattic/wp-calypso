@@ -60,10 +60,9 @@ export const isRequestingSupportArticleAlternatesFailed = ( state, postKeySegmen
  * @returns {boolean}                Should post alternates be requested
  */
 export const shouldRequestSupportArticleAlternates = ( state, postKeySegments ) => {
-	return (
-		! isRequestingSupportArticleAlternates( state, postKeySegments ) &&
-		! isRequestingSupportArticleAlternatesCompleted( state, postKeySegments )
-	);
+	const postKey = keyToString( postKeySegments );
+
+	return ! has( state.supportArticlesAlternates.requests, [ postKey ] );
 };
 
 /**
