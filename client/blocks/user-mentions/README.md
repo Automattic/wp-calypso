@@ -13,6 +13,7 @@ import withUserMentions from 'blocks/user-mentions';
 
 const ExampleInput = React.forwardRef( ( props, ref ) => (
 	<textarea
+		className="form-textarea"
 		ref={ ref }
 		onKeyUp={ props.onKeyUp }
 		onKeyDown={ props.onKeyDown } />
