@@ -10,6 +10,8 @@ import {
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST_FAILURE,
 } from 'state/action-types';
 
+import 'state/support-articles-alternates/init';
+
 export const fetchAlternatesReceive = ( postKey, payload ) => ( {
 	type: SUPPORT_ARTICLE_ALTERNATES_RECEIVE,
 	postKey,

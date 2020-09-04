@@ -8,6 +8,8 @@ import { get, has, isEmpty } from 'lodash';
  */
 import { keyToString } from 'reader/post-key';
 
+import 'state/support-articles-alternates/init';
+
 /**
  * Whether it's currently requesting alternates for a post
  *
