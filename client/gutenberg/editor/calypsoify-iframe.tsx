@@ -691,6 +691,7 @@ class CalypsoifyIframe extends Component<
 							onLoad={ () => {
 								this.onIframeLoaded( iframeUrl );
 							} }
+							style={ { display: isIframeLoaded ? 'block' : 'none' } }
 						/>
 						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
