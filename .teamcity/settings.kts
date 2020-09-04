@@ -83,8 +83,7 @@ object BuildBaseImages : BuildType({
 
         cleanCheckout = true
         branchFilter = """
-            +:*
-            +:wip/docker-for-ci
+            +:master
         """.trimIndent()
         excludeDefaultBranchChanges = true
     }
@@ -113,6 +112,17 @@ object BuildBaseImages : BuildType({
             """.trimIndent()
             dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
             dockerRunParameters = "-u %env.UID%"
+        }
+    }
+
+    triggers{
+        schedule {
+            schedulingPolicy = daily {
+                hour = 0
+            }
+            branchFilter = "+:master"
+            triggerBuild = always()
+            withPendingChangesOnly = false
         }
     }
 
