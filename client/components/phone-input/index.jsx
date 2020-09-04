@@ -12,6 +12,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import FormCountrySelect from 'components/forms/form-country-select';
+import FormTextInput from 'components/forms/form-text-input';
 import {
 	formatNumber,
 	toIcannFormat,
@@ -80,7 +81,7 @@ function PhoneInput( {
 
 	return (
 		<div className={ classnames( className, 'phone-input' ) }>
-			<input
+			<FormTextInput
 				placeholder={ translate( 'Phone' ) }
 				onChange={ handleInput }
 				onClick={ handleCursorMove }
