@@ -789,7 +789,7 @@ class RegisterDomainStep extends React.Component {
 					const isAvailableSupportedPremiumDomain =
 						config.isEnabled( 'domains/premium-domain-purchases' ) &&
 						domainAvailability.AVAILABLE_PREMIUM === status &&
-						result?.premium_domains_supported;
+						result?.is_supported_premium_domain;
 					resolve( {
 						status: ! isAvailable && ! isAvailableSupportedPremiumDomain ? status : null,
 						trademarkClaimsNoticeInfo: get( result, 'trademark_claims_notice_info', null ),
@@ -837,7 +837,7 @@ class RegisterDomainStep extends React.Component {
 					const isAvailableSupportedPremiumDomain =
 						config.isEnabled( 'domains/premium-domain-purchases' ) &&
 						AVAILABLE_PREMIUM === status &&
-						result?.premium_domains_supported;
+						result?.is_supported_premium_domain;
 
 					// Mapped status always overrides other statuses.
 					const availabilityStatus = isDomainMapped ? mappable : status;
