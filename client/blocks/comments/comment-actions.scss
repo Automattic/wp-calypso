@@ -50,6 +50,16 @@
 			margin-right: 0;
 			padding-right: 0;
 		}
+
+		&.comments__comment-actions-read-more {
+			color: var( --color-primary );
+			margin: 0 10px 0 -3px;
+			padding-left: 0;
+			
+			.comments__comment-actions-read-more-icon {
+				fill: var( --color-primary );
+			}
+		}
 	}
 	
 	// Aligns Like icon to comment text when it's by itself
@@ -83,16 +93,6 @@
 			display: inline;
 		}
 	}
-}
-
-.comments__comment-actions .comments__comment-actions-read-more {
-	color: var( --color-primary );
-	margin: 0 10px 0 -3px;
-	padding-left: 0;
-}
-
-.comments__comment-actions-read-more-icon {
-	fill: var( --color-primary );
 }
 
 .comments__comment-actions-moderation-tools {
