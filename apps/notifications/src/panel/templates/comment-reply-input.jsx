@@ -314,6 +314,7 @@ const CommentReplyInput = createReactClass( {
 		return (
 			<div className="wpnc__reply-box">
 				<textarea
+					className="form-textarea"
 					ref={ this.storeReplyInput }
 					rows={ this.state.rowCount }
 					value={ value }
