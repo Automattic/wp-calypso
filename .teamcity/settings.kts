@@ -98,10 +98,10 @@ object BuildBaseImages : BuildType({
                 CI_IMAGE_NAME="registry.a8c.com/calypso/ci"
                 BUILDER_IMAGE="${'$'}{BUILDER_IMAGE_NAME}:${'$'}{VERSION}"
                 CI_IMAGE="${'$'}{CI_IMAGE_NAME}:${'$'}{VERSION}"
-                
-                docker build -f docker/Dockerfile --no-cache --target builder -t "${'$'}BUILDER_IMAGE" .
-                docker build -f docker/Dockerfile --target ci -t "${'$'}CI_IMAGE" .
-                
+
+                docker build -f Dockerfile.base --no-cache --target builder -t "${'$'}BUILDER_IMAGE" .
+                docker build -f Dockerfile.base --target ci -t "${'$'}CI_IMAGE" .
+
                 docker tag "${'$'}BUILDER_IMAGE" "${'$'}{BUILDER_IMAGE_NAME}:latest"
                 docker tag "${'$'}CI_IMAGE" "${'$'}{CI_IMAGE_NAME}:latest"
                 
