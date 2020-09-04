@@ -36,7 +36,7 @@ export default class TextareaAutosize extends Component {
 	}
 
 	render() {
-		const classes = classnames( 'textarea-autosize', this.props.className );
+		const classes = classnames( 'form-textarea textarea-autosize', this.props.className );
 
 		return <textarea ref="textarea" { ...this.props } className={ classes } />;
 	}
