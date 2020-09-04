@@ -12,9 +12,10 @@ import * as controller from './controller';
 import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { getLanguageRouteParam } from 'lib/i18n-utils';
 import plansV2 from 'my-sites/plans-v2';
+import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
 
 /**
  * Style dependencies
@@ -34,6 +35,7 @@ export default function () {
 		'scan',
 		'realtimebackup',
 		'antispam',
+		...OFFER_RESET_FLOW_TYPES,
 	].join( '|' );
 
 	page(

@@ -35,6 +35,7 @@ import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
+import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -80,6 +81,12 @@ export function offerResetContext( context, next ) {
 }
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
+	// Return early if `type` is already a real product slug that is part
+	// of the Offer Reset flow.
+	if ( OFFER_RESET_FLOW_TYPES.includes( type ) ) {
+		return type;
+	}
+
 	const planSlugs = {
 		yearly: {
 			personal: PLAN_JETPACK_PERSONAL,
