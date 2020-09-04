@@ -9,6 +9,7 @@ exports[`TemplateSelectorPreview Basic rendering renders the preview and no plac
       <iframe
         class="editor-styles-wrapper block-iframe-preview"
         style="transform: scale( 1 );"
+        tabindex="-1"
         title="Preview"
       />
     </div>
