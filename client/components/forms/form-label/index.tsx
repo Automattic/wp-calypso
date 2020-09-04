@@ -11,8 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 interface Props {
-	optional: boolean;
-	required: boolean;
+	optional?: boolean;
+	required?: boolean;
 }
 
 type LabelProps = LabelHTMLAttributes< HTMLLabelElement >;

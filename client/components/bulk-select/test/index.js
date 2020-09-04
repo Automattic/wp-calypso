@@ -6,7 +6,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import { identity, noop } from 'lodash';
 import React from 'react';
 
@@ -77,7 +77,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should add the aria-label to the input', () => {
-		const bulkSelect = shallow(
+		const bulkSelect = mount(
 			<BulkSelect
 				translate={ identity }
 				selectedElements={ 2 }
@@ -90,7 +90,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should not mark the input readOnly', () => {
-		const bulkSelect = shallow(
+		const bulkSelect = mount(
 			<BulkSelect
 				translate={ identity }
 				selectedElements={ 2 }
@@ -107,7 +107,7 @@ describe( 'index', () => {
 		const callback = function () {
 			hasBeenCalled = true;
 		};
-		const bulkSelect = shallow(
+		const bulkSelect = mount(
 			<BulkSelect
 				translate={ identity }
 				selectedElements={ 0 }
@@ -124,7 +124,7 @@ describe( 'index', () => {
 			assert.equal( newState, true );
 			done();
 		};
-		const bulkSelect = shallow(
+		const bulkSelect = mount(
 			<BulkSelect
 				translate={ identity }
 				selectedElements={ 0 }
@@ -140,7 +140,7 @@ describe( 'index', () => {
 			assert.equal( newState, false );
 			done();
 		};
-		const bulkSelect = shallow(
+		const bulkSelect = mount(
 			<BulkSelect
 				translate={ identity }
 				selectedElements={ 1 }
@@ -156,7 +156,7 @@ describe( 'index', () => {
 			assert.equal( newState, false );
 			done();
 		};
-		const bulkSelect = shallow(
+		const bulkSelect = mount(
 			<BulkSelect
 				translate={ identity }
 				selectedElements={ 3 }

@@ -10,7 +10,6 @@ input[type='text'],
 input[type='email'],
 input[type='number'],
 input[type='password'],
-input[type='checkbox'],
 input[type='tel'],
 textarea {
 	@extend %form-field;
@@ -38,47 +37,6 @@ input[type='email'] {
 	direction: ltr;
 }
 
-/*Checkbooms*/
-
-input[type='checkbox'] {
-	clear: none;
-	cursor: pointer;
-	display: inline-block;
-	line-height: 0;
-	height: 16px;
-	margin: 2px 0 0;
-	float: left;
-	outline: 0;
-	padding: 0;
-	text-align: center;
-	vertical-align: middle;
-	width: 16px;
-	min-width: 16px;
-	appearance: none;
-}
-
-input[type='checkbox'] + span {
-	display: block;
-	margin-left: 24px;
-}
-
-input[type='checkbox'] {
-	border-radius: 2px;
-
-	&:checked::before {
-		content: url( '/calypso/images/checkbox-icons/checkmark-primary.svg' );
-		width: 12px;
-		height: 12px;
-		margin: 1px auto;
-		display: inline-block;
-		speak: none;
-	}
-
-	&:disabled:checked::before {
-		color: var( --color-neutral-20 );
-	}
-}
-
 @keyframes grow {
 	0% {
 		transform: scale( 0.3 );
@@ -92,8 +50,6 @@ input[type='checkbox'] {
 		transform: scale( 1 );
 	}
 }
-
-/* end checkbooms */
 
 select {
 	background: var( --color-surface )
