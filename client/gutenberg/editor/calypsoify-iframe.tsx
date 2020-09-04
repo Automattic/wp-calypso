@@ -24,6 +24,7 @@ import {
 	getSite,
 } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
+import omitUrlParams from 'lib/url/omit-url-params';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, navigate } from 'state/ui/actions';
 import { clearLastNonEditorRoute, setRoute } from 'state/route/actions';
@@ -142,7 +143,6 @@ class CalypsoifyIframe extends Component<
 		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
-		const isDesktop = config.isEnabled( 'desktop' );
 		// If the iframe fails to load for some reson, eg. an unexpected auth loop, this timeout
 		// provides a redirect to wpadmin for web users - this should now be a rare occurance with
 		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
@@ -150,13 +150,7 @@ class CalypsoifyIframe extends Component<
 			if ( this.props.shouldLoadIframe ) {
 				clearInterval( this.waitForIframeToInit );
 				this.waitForIframeToLoad = setTimeout( () => {
-					isDesktop
-						? this.props.notifyDesktopCannotOpenEditor(
-								this.props.site,
-								REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
-								this.props.iframeUrl
-						  )
-						: window.location.replace( this.props.iframeUrl );
+					this.redirectToIframeUrl( this.props.iframeUrl );
 				}, 25000 );
 			}
 		}, 1000 );
@@ -640,11 +634,23 @@ class CalypsoifyIframe extends Component<
 			clearInterval( pendingIsLoadedInterval );
 
 			if ( finishCondition === 'timeout' ) {
-				window.location.replace( iframeUrl );
+				this.redirectToIframeUrl( iframeUrl );
 				return;
 			}
 		}
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
+	};
+
+	redirectToIframeUrl = ( iframeUrl: string ) => {
+		const isDesktop = config.isEnabled( 'desktop' );
+		const redirectUrl = addQueryArgs( { calypsoify: 0 }, omitUrlParams( iframeUrl, 'calypsoify' ) );
+		isDesktop
+			? this.props.notifyDesktopCannotOpenEditor(
+					this.props.site,
+					REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE,
+					redirectUrl
+			  )
+			: window.location.replace( redirectUrl );
 	};
 
 	render() {
