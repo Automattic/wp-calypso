@@ -39,11 +39,13 @@ import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
+import HeaderCart from 'my-sites/checkout/cart/header-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'my-sites/domains/style.scss';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -188,13 +190,25 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<FormattedHeader
-							brandFont
-							headerText={
-								isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
-							}
-							align="left"
-						/>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<div className="domains__header">
+							<FormattedHeader
+								brandFont
+								headerText={
+									isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
+								}
+								align="left"
+							/>
+							{ ! isManagingAllDomains /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ && (
+								<div className="domains__header-buttons">
+									<HeaderCart
+										cart={ this.props.cart }
+										selectedSite={ this.props.selectedSite }
+										currentRoute={ this.props.currentRoute }
+									/>
+								</div>
+							) }
+						</div>
 
 						<EmailVerificationGate
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }

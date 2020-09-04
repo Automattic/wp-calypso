@@ -320,35 +320,6 @@ input[type='radio'].domain-management-list-item__radio {
 	@include placeholder( --color-neutral-5 );
 }
 
-.list__domains-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		align-items: center;
-	}
-}
-
-.list__domains-header-buttons {
-	display: flex;
-
-	.popover-cart {
-		margin-right: 8px;
-	}
-
-	.popover-cart .header-button, .popover-cart .header-button:hover {
-		min-height: initial;
-		background: none;
-		color: var( --color-text );
-	}
-
-	.cart__count-badge .count {
-		top: -7px;
-		right: -3px;
-	}
-}
-
 .domain-item__enable-selection {
 	> .list__domain-transfer-lock, > .list__domain-privacy, > .list__domain-auto-renew, > .list__domain-email, > .list__domain-options {
 		visibility: hidden;
