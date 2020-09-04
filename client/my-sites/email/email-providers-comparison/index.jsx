@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -25,8 +26,12 @@ import emailIcon from 'assets/images/customer-home/gsuite.svg';
 import './style.scss';
 
 class EmailProvidersComparison extends React.Component {
+	static propTypes = {
+		domain: PropTypes.string.isRequired,
+	};
+
 	renderHeaderSection() {
-		const { translate } = this.props;
+		const { domain, translate } = this.props;
 		const image = {
 			path: emailIllustration,
 			align: 'right',
@@ -34,7 +39,12 @@ class EmailProvidersComparison extends React.Component {
 		return (
 			<PromoCard
 				isPrimary
-				title={ translate( 'Get your own @example.com email address' ) }
+				title={ translate( 'Get your own @%(domainName)s email address', {
+					args: {
+						domainName: domain,
+					},
+					comment: '%(domainName)s is the domain name, e.g example.com',
+				} ) }
 				image={ image }
 			>
 				<p>
