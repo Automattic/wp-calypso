@@ -5,12 +5,11 @@
 	list-style: none;
 	margin-top: -6px;
 	
-	button.button {
+	.button-bare {
 		display: inline-block;
 		color: var( --color-text-subtle );
 		padding: 4px;
 		margin-right: 8px;
-		margin-top: 6px;
 		cursor: pointer;
 		font-size: $font-body-small;
 		font-weight: 400;
@@ -37,7 +36,6 @@
 		
 		&.like-button {
 			.gridicon {
-				top: 10px;
 				position: absolute;
 			}
 		}

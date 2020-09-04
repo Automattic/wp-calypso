@@ -24,9 +24,7 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
  */
 import './comment-actions.scss';
 
-const BorderlessCompactButton = ( { children, ...props } ) => (
-	<Button { ...props } borderless compact />
-);
+const BareButton = ( props ) => <Button { ...props } bare />;
 
 const CommentActions = ( {
 	post,
@@ -60,46 +58,37 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore && (
-				<BorderlessCompactButton
-					className="comments__comment-actions-read-more"
-					onClick={ onReadMore }
-				>
+				<BareButton className="comments__comment-actions-read-more" onClick={ onReadMore }>
 					<Gridicon
 						icon="chevron-down"
 						size={ 18 }
 						className="comments__comment-actions-read-more-icon"
 					/>
 					{ translate( 'Read More' ) }
-				</BorderlessCompactButton>
+				</BareButton>
 			) }
 			{ showReplyButton && (
-				<BorderlessCompactButton
-					className="comments__comment-actions-reply"
-					onClick={ handleReply }
-				>
+				<BareButton className="comments__comment-actions-reply" onClick={ handleReply }>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-				</BorderlessCompactButton>
+				</BareButton>
 			) }
 			{ showCancelReplyButton && (
-				<BorderlessCompactButton
-					className="comments__comment-actions-cancel-reply"
-					onClick={ onReplyCancel }
-				>
+				<BareButton className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
-				</BorderlessCompactButton>
+				</BareButton>
 			) }
 			{ showCancelEditButton && (
-				<BorderlessCompactButton
+				<BareButton
 					className="comments__comment-actions-cancel-reply"
 					onClick={ editCommentCancel }
 				>
 					{ translate( 'Cancel' ) }
-				</BorderlessCompactButton>
+				</BareButton>
 			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
-				tagName={ BorderlessCompactButton }
+				tagName={ BareButton }
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
@@ -107,18 +96,18 @@ const CommentActions = ( {
 			{ showModerationTools && (
 				<div className="comments__comment-actions-moderation-tools">
 					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
-					<button className="comments__comment-actions-trash" onClick={ trashComment }>
+					<BareButton className="comments__comment-actions-trash" onClick={ trashComment }>
 						<Gridicon icon="trash" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
-					</button>
-					<button className="comments__comment-actions-spam" onClick={ spamComment }>
+					</BareButton>
+					<BareButton className="comments__comment-actions-spam" onClick={ spamComment }>
 						<Gridicon icon="spam" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
-					</button>
-					<button className="comments__comment-actions-edit" onClick={ editComment }>
+					</BareButton>
+					<BareButton className="comments__comment-actions-edit" onClick={ editComment }>
 						<Gridicon icon="pencil" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
-					</button>
+					</BareButton>
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 						<PopoverMenuItem
 							className={ classnames( 'comments__comment-actions-approve', {
