@@ -33,7 +33,7 @@ import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expand
 import {
 	expandHomeQuickLinks,
 	collapseHomeQuickLinks,
-	skipCurrentViewHomeLayout
+	skipCurrentViewHomeLayout,
 } from 'state/home/actions';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
 
