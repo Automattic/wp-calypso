@@ -10,6 +10,7 @@ import { invoke } from 'lodash';
  */
 import * as constants from './constants';
 import MaterialIcon from 'components/material-icon';
+import ExternalLink from 'components/external-link';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
 
@@ -1027,7 +1028,7 @@ export const FEATURES_LIST = {
 				'Includes all Jetpack security features to protect your site in real-time: backups, malware scanning, spam protection. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/security/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/features/security/" />,
 					},
 				}
 			),
@@ -1057,7 +1058,7 @@ export const FEATURES_LIST = {
 				'Automatic backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/backup/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/backup/" />,
 					},
 				}
 			),
@@ -1077,7 +1078,7 @@ export const FEATURES_LIST = {
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/backup/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/backup/" />,
 					},
 				}
 			),
@@ -1097,7 +1098,7 @@ export const FEATURES_LIST = {
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/backup/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/backup/" />,
 					},
 				}
 			),
@@ -1117,7 +1118,7 @@ export const FEATURES_LIST = {
 				'Automated scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/scan/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/scan/" />,
 					},
 				}
 			),
@@ -1141,7 +1142,7 @@ export const FEATURES_LIST = {
 				'Automated daily scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/scan/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/scan/" />,
 					},
 				}
 			),
@@ -1165,7 +1166,7 @@ export const FEATURES_LIST = {
 				'Automated real-time scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/scan/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/scan/" />,
 					},
 				}
 			),
@@ -1185,7 +1186,7 @@ export const FEATURES_LIST = {
 				'Automated spam protection for comments and forms, powered by Akismet. Save time, get more responses, and give your visitors a better experience. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/anti-spam/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/anti-spam/" />,
 					},
 				}
 			),
@@ -1200,7 +1201,7 @@ export const FEATURES_LIST = {
 				'View every change to your site. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/security/activity-log/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
 					},
 				}
 			),
@@ -1215,7 +1216,7 @@ export const FEATURES_LIST = {
 				'View every change to your site in the last 30 days. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/security/activity-log/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
 					},
 				}
 			),
@@ -1230,7 +1231,7 @@ export const FEATURES_LIST = {
 				'View every change to your site in the last year. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/security/activity-log/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/features/security/activity-log/" />,
 					},
 				}
 			),
@@ -1249,7 +1250,7 @@ export const FEATURES_LIST = {
 				'Help your site visitors find answers instantly so they keep reading and buying. Powerful filtering and customization options. {{link}}Learn more.{{/link}}',
 				{
 					components: {
-						link: <a href="https://jetpack.com/upgrade/search/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/search/" />,
 					},
 				}
 			),
@@ -1263,7 +1264,7 @@ export const FEATURES_LIST = {
 				'Easy video uploads through an unbranded, customizable video player, enhanced with rich stats and unlimited storage space. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/writing/video-hosting/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/features/writing/video-hosting/" />,
 					},
 				}
 			),
@@ -1277,7 +1278,7 @@ export const FEATURES_LIST = {
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpackcrm.com"></a>,
+						link: <ExternalLink icon href="https://jetpackcrm.com" />,
 					},
 				}
 			),
@@ -1291,7 +1292,12 @@ export const FEATURES_LIST = {
 				'Automate and schedule your social media content on Facebook, Instagram, Twitter, LinkedIn, and Tumblr. {{link}}Learn more.{{/link}}',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/traffic/automatic-publishing/"></a>,
+						link: (
+							<ExternalLink
+								icon
+								href="https://jetpack.com/features/traffic/automatic-publishing/"
+							/>
+						),
 					},
 				}
 			),
@@ -1305,7 +1311,12 @@ export const FEATURES_LIST = {
 				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/support/jetpack-blocks/payments-block/"></a>,
+						link: (
+							<ExternalLink
+								icon
+								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
+							/>
+						),
 					},
 				}
 			),
@@ -1319,7 +1330,7 @@ export const FEATURES_LIST = {
 				'Earn money on your site by displaying ads from the WordPress.com ad network. {{link}}Learn more.{{/link}}',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/traffic/ads/"></a>,
+						link: <ExternalLink icon href="https://jetpack.com/features/traffic/ads/" />,
 					},
 				}
 			),
@@ -1333,7 +1344,7 @@ export const FEATURES_LIST = {
 				'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/design/themes/" />,
+						link: <ExternalLink icon href="https://jetpack.com/features/design/themes/" />,
 					},
 				}
 			),
@@ -1347,7 +1358,12 @@ export const FEATURES_LIST = {
 				'Get fast WordPress support from the WordPress experts. {{link}}Learn more{{/link}}.',
 				{
 					components: {
-						link: <a href="https://jetpack.com/features/security/expert-priority-support/" />,
+						link: (
+							<ExternalLink
+								icon
+								href="https://jetpack.com/features/security/expert-priority-support/"
+							/>
+						),
 					},
 				}
 			),
