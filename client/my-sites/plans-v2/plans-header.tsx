@@ -23,12 +23,14 @@ const StandardPlansHeader = () => (
 );
 const ConnectFlowPlansHeader = () => (
 	<>
-		<FormattedHeader
-			headerText={ translate( 'Explore our Jetpack plans' ) }
-			subHeaderText={ translate( "Now that you're set up, pick a plan that suits your needs." ) }
-			align="left"
-			brandFont
-		/>
+		<div className="plans-v2__heading">
+			<FormattedHeader
+				headerText={ translate( 'Explore our Jetpack plans' ) }
+				subHeaderText={ translate( "Now that you're set up, pick a plan that suits your needs." ) }
+				align="left"
+				brandFont
+			/>
+		</div>
 		<CartData>
 			<PlansNavigation path={ '/plans' } />
 		</CartData>
