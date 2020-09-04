@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useLayoutEffect, useRef } from '@wordpress/element';
+import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useDispatch, useSelect } from '@wordpress/data';
 import {
@@ -27,11 +27,18 @@ import NavItem from '../nav-item';
 import { Post } from '../../types';
 import './style.scss';
 
-const Button = ( {
-	children,
-	...rest
-}: OriginalButton.Props & { icon?: any; iconSize?: number; showTooltip?: boolean } ) => (
-	<OriginalButton { ...rest }>{ children }</OriginalButton>
+const Button = forwardRef(
+	(
+		{
+			children,
+			...rest
+		}: OriginalButton.Props & { icon?: any; iconSize?: number; showTooltip?: boolean },
+		ref
+	) => (
+		<OriginalButton ref={ ref as any } { ...rest }>
+			{ children }
+		</OriginalButton>
+	)
 );
 
 function WpcomBlockEditorNavSidebar() {
@@ -62,6 +69,21 @@ function WpcomBlockEditorNavSidebar() {
 
 		prevIsOpen.current = isOpen;
 	}, [ isOpen, prevIsOpen, setSidebarClosing ] );
+
+	// When the sidebar closes the previously focused element should be re-focused
+	const activeElementOnMount = useRef< HTMLElement | null >( null );
+	const dismissButtonMount = ( el: HTMLDivElement | null ) => {
+		if ( el ) {
+			activeElementOnMount.current = document.activeElement as HTMLElement;
+			el.focus();
+		}
+	};
+	useEffect( () => {
+		if ( ! isOpen && ! isClosing && activeElementOnMount.current ) {
+			activeElementOnMount.current.focus();
+			activeElementOnMount.current = null;
+		}
+	}, [ isOpen, isClosing, activeElementOnMount ] );
 
 	if ( ! postType ) {
 		// Still loading
@@ -163,9 +185,7 @@ function WpcomBlockEditorNavSidebar() {
 					<Button
 						label={ __( 'Close block editor sidebar', 'full-site-editing' ) }
 						showTooltip
-						// We need to shift the focus to something because we are opening a modal
-						// eslint-disable-next-line jsx-a11y/no-autofocus
-						autoFocus
+						ref={ dismissButtonMount }
 						className={ classNames(
 							'edit-post-fullscreen-mode-close',
 							'wpcom-block-editor-nav-sidebar-nav-sidebar__dismiss-sidebar-button'
