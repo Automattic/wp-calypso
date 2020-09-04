@@ -224,6 +224,7 @@ class RegisterDomainStep extends React.Component {
 		return {
 			availabilityError: null,
 			availabilityErrorData: null,
+			availabilityErrorDomain: null,
 			availableTlds: [],
 			bloggerFilterAdded: false,
 			clickedExampleSuggestion: false,
@@ -244,6 +245,7 @@ class RegisterDomainStep extends React.Component {
 			subdomainSearchResults: null,
 			suggestionError: null,
 			suggestionErrorData: null,
+			suggestionErrorDomain: null,
 			pendingCheckSuggestion: null,
 			unavailableDomains: [],
 			trademarkClaimsNoticeInfo: null,
@@ -408,11 +410,12 @@ class RegisterDomainStep extends React.Component {
 		const {
 			availabilityError,
 			availabilityErrorData,
-			lastDomainSearched,
+			availabilityErrorDomain,
 			showAvailabilityNotice,
 			showSuggestionNotice,
 			suggestionError,
 			suggestionErrorData,
+			suggestionErrorDomain,
 			trademarkClaimsNoticeInfo,
 		} = this.state;
 
@@ -421,10 +424,10 @@ class RegisterDomainStep extends React.Component {
 		}
 
 		const { message: suggestionMessage, severity: suggestionSeverity } = showSuggestionNotice
-			? getAvailabilityNotice( lastDomainSearched, suggestionError, suggestionErrorData )
+			? getAvailabilityNotice( suggestionErrorDomain, suggestionError, suggestionErrorData )
 			: {};
 		const { message: availabilityMessage, severity: availabilitySeverity } = showAvailabilityNotice
-			? getAvailabilityNotice( lastDomainSearched, availabilityError, availabilityErrorData )
+			? getAvailabilityNotice( availabilityErrorDomain, availabilityError, availabilityErrorData )
 			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
@@ -631,6 +634,7 @@ class RegisterDomainStep extends React.Component {
 		const nextState = {
 			availabilityError: null,
 			availabilityErrorData: null,
+			availabilityErrorDomain: null,
 			exactMatchDomain: null,
 			lastDomainSearched: null,
 			loadingResults,
@@ -639,6 +643,7 @@ class RegisterDomainStep extends React.Component {
 			showSuggestionNotice: false,
 			suggestionError: null,
 			suggestionErrorData: null,
+			suggestionErrorDomain: null,
 			...stateOverride,
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
@@ -730,6 +735,7 @@ class RegisterDomainStep extends React.Component {
 				isInitialQueryActive,
 				availabilityError: null,
 				availabilityErrorData: null,
+				availabilityErrorDomain: null,
 				exactMatchDomain: null,
 				lastDomainSearched: null,
 				lastQuery: cleanedQuery,
@@ -742,6 +748,7 @@ class RegisterDomainStep extends React.Component {
 				subdomainSearchResults: null,
 				suggestionError: null,
 				suggestionErrorData: null,
+				suggestionErrorDomain: null,
 			},
 			callback
 		);
@@ -1462,6 +1469,7 @@ class RegisterDomainStep extends React.Component {
 			showAvailabilityNotice: true,
 			availabilityError: error,
 			availabilityErrorData: errorData,
+			availabilityErrorDomain: domain,
 		} );
 	}
 
@@ -1477,6 +1485,7 @@ class RegisterDomainStep extends React.Component {
 			showSuggestionNotice: true,
 			suggestionError: error,
 			suggestionErrorData: errorData,
+			suggestionErrorDomain: domain,
 		} );
 	}
 }
