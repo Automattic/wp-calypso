@@ -1,5 +1,10 @@
+@import '~@automattic/typography/styles/fonts';
+@import '~@automattic/typography/styles/variables';
+
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
 	background-color: var( --color-surface );
+
+	font-family: 'Noto Sans', $sans;
 }
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .plans-filter-bar.sticky {

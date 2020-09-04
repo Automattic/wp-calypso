@@ -35,6 +35,7 @@ import {
 import stateCache from 'server/state-cache';
 import getBootstrappedUser from 'server/user-bootstrap';
 import { createReduxStore } from 'state';
+import { setDocumentHeadLink } from 'state/document-head/actions';
 import { setStore } from 'state/redux-store';
 import initialReducer from 'state/reducer';
 import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
@@ -687,6 +688,12 @@ export default function pages() {
 
 			if ( section.group && req.context ) {
 				req.context.sectionGroup = section.group;
+			}
+
+			if ( Array.isArray( section.links ) ) {
+				section.links.forEach( ( link ) =>
+					req.context.store.dispatch( setDocumentHeadLink( link ) )
+				);
 			}
 
 			next();

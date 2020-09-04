@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { uniqWith, isEqual } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers, withSchemaValidation } from 'state/utils';
@@ -48,7 +53,8 @@ export const meta = withSchemaValidation( metaSchema, ( state = DEFAULT_META_STA
 export const link = withSchemaValidation( linkSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case DOCUMENT_HEAD_LINK_SET:
-			return action.link;
+			// Prevent duplicate objects
+			return uniqWith( [ ...state, action.link ], isEqual );
 	}
 
 	return state;
