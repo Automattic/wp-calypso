@@ -296,7 +296,6 @@ object RunAllUnitTests : BuildType({
             }
         }
         commitStatusPublisher {
-            enabled = false
             vcsRootExtId = "${WpCalypso.id}"
             publisher = github {
                 githubUrl = "https://api.github.com"
