@@ -179,9 +179,13 @@ function useAddProductFromSlug( {
 					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
 					return validProduct ? { ...validProduct, product_alias: productAlias } : validProduct;
 				} )
-				// Remove invalid products
-				.filter( Boolean ),
-		[ isJetpackNotAtomic, productAliasFromUrl, products ]
+				// Remove plans since they are handled in another hook and there is no need to support
+				// combinations of plans and products in the cart
+				.filter(
+					( product ) =>
+						product && ! plans.find( ( plan ) => plan.product_slug === product.product_slug )
+				),
+		[ isJetpackNotAtomic, plans, productAliasFromUrl, products ]
 	);
 
 	useEffect( () => {
