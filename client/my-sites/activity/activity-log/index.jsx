@@ -560,7 +560,7 @@ class ActivityLog extends Component {
 	render() {
 		const { canViewActivityLog, siteId, translate } = this.props;
 
-		if ( false === canViewActivityLog ) {
+		if ( ! canViewActivityLog ) {
 			return (
 				<Main>
 					<QuerySitePurchases siteId={ siteId } />
