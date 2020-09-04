@@ -11,6 +11,7 @@ import { get, isEmpty, throttle } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import FormTextarea from 'components/forms/form-textarea';
 import scrollbleed from './scrollbleed';
 
 /**
@@ -81,7 +82,7 @@ export const Composer = createReactClass( {
 				onMouseLeave={ this.scrollbleedUnlock }
 			>
 				<div className="happychat__message">
-					<textarea
+					<FormTextarea
 						aria-label="Enter your support request"
 						ref={ this.setScrollbleedTarget }
 						onFocus={ onFocus }
