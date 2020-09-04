@@ -359,7 +359,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 		case domainAvailability.AVAILABLE_PREMIUM:
 			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchases of this type of premium domains on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
 				{
 					args: { domain },
 					components: {
