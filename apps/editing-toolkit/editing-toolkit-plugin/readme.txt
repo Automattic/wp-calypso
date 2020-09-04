@@ -2,8 +2,8 @@
 Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons, dmsnell, get_dave, glendaviesnz, gwwar, iamtakashi, iandstewart, jeryj, Joen, jonsurrell, kwight, marekhrabe, mattwiebe, mkaz, mmtr86, mppfeiffer, noahtallen, nosolosw, nrqsnchz, obenland, okenobi, owolski, philipmjackson, vindl
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
-Tested up to: 5.4
-Stable tag: 2.1
+Tested up to: 5.5
+Stable tag: 2.2
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.2 =
+* Improve experience of opening and closing the sidebar with assistive technology (https://github.com/Automattic/wp-calypso/pull/45349)
 
 = 2.1 =
 * Fix site editor loading problem with Gutenberg 8.9.0 (https://github.com/Automattic/wp-calypso/pull/45360)
