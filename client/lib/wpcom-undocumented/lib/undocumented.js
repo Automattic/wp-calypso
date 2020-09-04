@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase, set } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -1705,8 +1705,7 @@ Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function ( domain, records, fn ) {
-	const filtered = reject( records, 'isBeingDeleted' ),
-		body = { dns: JSON.stringify( filtered ) };
+	const body = { dns: JSON.stringify( records ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
