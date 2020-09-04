@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -19,11 +19,7 @@ import {
 } from 'lib/products-values/constants';
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
-import {
-	getProductBySlug,
-	getProductsList,
-	isProductsListFetching,
-} from 'state/products-list/selectors';
+import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { createItemToAddToCart } from './add-items';
@@ -156,7 +152,7 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalP
 }
 
 function useAddProductFromSlug( {
-	productAlias,
+	productAlias: productAliasFromUrl,
 	planSlug,
 	setState,
 	isJetpackNotAtomic,
@@ -168,29 +164,28 @@ function useAddProductFromSlug( {
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
 
-	// Special handling for search products: Always add Jetpack Search to
-	// Jetpack sites and WPCOM Search to WordPress.com sites, regardless of
-	// which slug was provided. This allows e.g. code on jetpack.com to
-	// redirect to a valid checkout URL for a search purchase without worrying
-	// about which type of site the user has.
-	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
-		if ( isJetpackNotAtomic ) {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_JETPACK_SEARCH_MONTHLY
-				: PRODUCT_JETPACK_SEARCH;
-		} else {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_WPCOM_SEARCH_MONTHLY
-				: PRODUCT_WPCOM_SEARCH;
-		}
-	}
-
-	const product = useSelector( ( state ) =>
-		getProductBySlug( state, getProductSlugFromAlias( productAlias ) )
+	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
+	// referencing more than one product. Because of this, the rest of this function will
+	// work with an array of products even if `productAliasFromUrl` includes only one.
+	const validProducts = useMemo(
+		() =>
+			productAliasFromUrl &&
+			productAliasFromUrl
+				.split( ',' )
+				// Special treatment for Jetpack Search products
+				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) )
+				// Get the product information if it exists, and keep a reference to its product alias
+				.map( ( productAlias ) => {
+					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
+					return validProduct ? { ...validProduct, product_alias: productAlias } : validProduct;
+				} )
+				// Remove invalid products
+				.filter( Boolean ),
+		[ isJetpackNotAtomic, productAliasFromUrl, products ]
 	);
 
 	useEffect( () => {
-		if ( ! productAlias ) {
+		if ( ! productAliasFromUrl ) {
 			return;
 		}
 		if ( planSlug ) {
@@ -210,28 +205,39 @@ function useAddProductFromSlug( {
 			debug( 'waiting on products/plans fetch' );
 			return;
 		}
-		if ( ! product ) {
-			debug( 'there is a request to add a product but no product was found', productAlias );
+		if ( ! validProducts || validProducts.length < 1 ) {
+			debug(
+				'there is a request to add one ore more products but no product was found',
+				productAliasFromUrl,
+				validProducts
+			);
 			setState( { canInitializeCart: true } );
 			return;
 		}
-		const cartProduct = createItemToAddToCart( {
-			productAlias,
-			product_id: product.product_id,
-			isJetpackNotAtomic,
-			isPrivate,
-		} );
-		if ( ! cartProduct ) {
-			debug( 'there is a request to add a product but creating an item failed', productAlias );
+
+		const cartProducts = validProducts.map( ( product ) =>
+			createItemToAddToCart( {
+				productAlias: product.product_alias,
+				product_id: product.product_id,
+				isJetpackNotAtomic,
+				isPrivate,
+			} )
+		);
+
+		if ( ! cartProducts || cartProducts.length < 1 ) {
+			debug(
+				'there is a request to add a one or more products but creating them failed',
+				productAliasFromUrl
+			);
 			setState( { canInitializeCart: true } );
 			return;
 		}
 		debug(
-			'preparing product that was requested in url',
-			{ productAlias, isJetpackNotAtomic },
-			cartProduct
+			'preparing products that were requested in url',
+			{ productAliasFromUrl, isJetpackNotAtomic },
+			cartProducts
 		);
-		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
+		setState( { productsForCart: cartProducts, canInitializeCart: true } );
 	}, [
 		isPrivate,
 		plans,
@@ -240,8 +246,8 @@ function useAddProductFromSlug( {
 		isFetchingPlans,
 		planSlug,
 		isJetpackNotAtomic,
-		productAlias,
-		product,
+		productAliasFromUrl,
+		validProducts,
 		isFetchingProducts,
 		setState,
 	] );
@@ -312,4 +318,26 @@ function createRenewalItemToAddToCart( productAlias, productId, purchaseId, sele
 			domain: selectedSiteSlug,
 		}
 	);
+}
+
+/*
+ * Provides an special handling for search products: Always add Jetpack Search to
+ * Jetpack sites and WPCOM Search to WordPress.com sites, regardless of
+ * which slug was provided. This allows e.g. code on jetpack.com to
+ * redirect to a valid checkout URL for a search purchase without worrying
+ * about which type of site the user has.
+ */
+function getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) {
+	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
+		if ( isJetpackNotAtomic ) {
+			productAlias = productAlias.includes( 'monthly' )
+				? PRODUCT_JETPACK_SEARCH_MONTHLY
+				: PRODUCT_JETPACK_SEARCH;
+		} else {
+			productAlias = productAlias.includes( 'monthly' )
+				? PRODUCT_WPCOM_SEARCH_MONTHLY
+				: PRODUCT_WPCOM_SEARCH;
+		}
+	}
+	return productAlias;
 }
