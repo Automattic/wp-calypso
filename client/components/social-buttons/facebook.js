@@ -13,6 +13,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import FacebookIcon from 'components/social-icons/facebook';
 import { isFormDisabled } from 'state/login/selectors';
 
@@ -113,8 +114,8 @@ class FacebookLoginButton extends Component {
 
 		return (
 			<div className="social-buttons__button-container">
-				<button
-					className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+				<Button
+					className={ classNames( 'social-buttons__button', { disabled: isDisabled } ) }
 					onClick={ this.handleClick }
 				>
 					<FacebookIcon />
@@ -126,7 +127,7 @@ class FacebookLoginButton extends Component {
 								'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 						} ) }
 					</span>
-				</button>
+				</Button>
 			</div>
 		);
 	}

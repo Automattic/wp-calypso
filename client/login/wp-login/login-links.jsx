@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
@@ -174,13 +175,14 @@ export class LoginLinks extends React.Component {
 		}
 
 		return (
-			<button
+			<Button
+				bare
 				key="lost-phone-link"
 				data-e2e-link="lost-phone-link"
 				onClick={ this.handleLostPhoneLinkClick }
 			>
 				{ this.props.translate( "I can't access my phone" ) }
-			</button>
+			</Button>
 		);
 	}
 

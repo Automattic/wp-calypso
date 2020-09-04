@@ -12,6 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import GoogleIcon from 'components/social-icons/google';
 import Popover from 'components/popover';
 import { preventWidows } from 'lib/formatting';
@@ -209,8 +210,8 @@ class GoogleLoginButton extends Component {
 				{ customButton ? (
 					customButton
 				) : (
-					<button
-						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+					<Button
+						className={ classNames( 'social-buttons__button', { disabled: isDisabled } ) }
 						onMouseOver={ this.showError }
 						onFocus={ this.showError }
 						onMouseOut={ this.hideError }
@@ -226,7 +227,7 @@ class GoogleLoginButton extends Component {
 									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 							} ) }
 						</span>
-					</button>
+					</Button>
 				) }
 				<Popover
 					id="social-buttons__error"

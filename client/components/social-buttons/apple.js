@@ -13,6 +13,7 @@ import { loadScript } from '@automattic/load-script';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import { isFormDisabled } from 'state/login/selectors';
 import requestExternalAccess from '@automattic/request-external-access';
 
@@ -144,8 +145,8 @@ class AppleLoginButton extends Component {
 				{ customButton ? (
 					customButton
 				) : (
-					<button
-						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
+					<Button
+						className={ classNames( 'social-buttons__button', { disabled: isDisabled } ) }
 						onClick={ this.handleClick }
 					>
 						<AppleIcon isDisabled={ isDisabled } />
@@ -157,7 +158,7 @@ class AppleLoginButton extends Component {
 									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 							} ) }
 						</span>
-					</button>
+					</Button>
 				) }
 			</Fragment>
 		);
