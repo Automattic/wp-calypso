@@ -176,3 +176,14 @@ body {
 		display: none !important;
 	}
 }
+
+// Duplicates the style from components/forms/form-textarea, because
+// the community translator uses an external JS widget that we can't
+// modify from within Calypso.
+.ct-new-translation .translation {
+	@extend %form-field;
+	@extend %textarea;
+
+	appearance: none;
+	border-radius: 2px;
+}
