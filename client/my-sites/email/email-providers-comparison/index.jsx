@@ -18,6 +18,7 @@ import { getAnnualPrice } from 'lib/gsuite';
 import { hasDiscount } from '../../../components/gsuite/gsuite-price';
 import emailIllustration from 'assets/images/titan/email-illustration.svg';
 import forwardingIcon from 'assets/images/titan/forward.svg';
+import titanLogo from 'assets/images/titan/titan-logo.svg';
 import emailIcon from 'assets/images/customer-home/gsuite.svg';
 
 /**
@@ -82,7 +83,7 @@ class EmailProvidersComparison extends React.Component {
 						description={ translate(
 							'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 						) }
-						image={ { path: emailIcon } }
+						image={ { path: titanLogo } }
 						features={ [
 							translate( 'Monthly billing' ),
 							translate( 'Send and receive from your custom domain' ),
