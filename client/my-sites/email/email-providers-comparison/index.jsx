@@ -37,21 +37,25 @@ class EmailProvidersComparison extends React.Component {
 			path: emailIllustration,
 			align: 'right',
 		};
+
+		const translateArgs = {
+			args: {
+				domainName: domain,
+			},
+			comment: '%(domainName)s is the domain name, e.g example.com',
+		};
+
 		return (
 			<PromoCard
 				isPrimary
-				title={ translate( 'Get your own @%(domainName)s email address', {
-					args: {
-						domainName: domain,
-					},
-					comment: '%(domainName)s is the domain name, e.g example.com',
-				} ) }
+				title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
 				image={ image }
 			>
 				<p>
 					{ translate(
 						'Pick from one of our flexible options to connect your domain with email ' +
-							'and start getting emails @example.com today.'
+							'and start getting emails @%(domainName)s today.',
+						translateArgs
 					) }
 				</p>
 			</PromoCard>
