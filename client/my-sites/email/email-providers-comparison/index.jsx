@@ -64,6 +64,7 @@ class EmailProvidersComparison extends React.Component {
 							translate( 'No billing' ),
 							translate( 'Receive emails sent to your custom domain' ),
 						] }
+						cta={ translate( 'Add email forwarding' ) }
 					/>
 					<EmailProviderDetails
 						title={ translate( 'Titan Mail' ) }
@@ -80,6 +81,8 @@ class EmailProvidersComparison extends React.Component {
 						] }
 						formattedPrice={ '$4' }
 						billingInterval={ translate( '/user /month' ) }
+						cta={ translate( 'Add Titan Mail' ) }
+						primaryCTA={ true }
 					/>
 					<EmailProviderDetails
 						title={ translate( 'G Suite by Google' ) }
@@ -106,6 +109,7 @@ class EmailProvidersComparison extends React.Component {
 								  } )
 								: null
 						}
+						cta={ translate( 'Add G Suite' ) }
 					/>
 				</div>
 			</>

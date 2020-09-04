@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import EmailProviderFeature from './email-provider-feature';
 import PromoCard from 'components/promo-section/promo-card';
 import PromoCardPrice from 'components/promo-section/promo-card/price';
@@ -26,6 +27,8 @@ class EmailProviderDetails extends React.Component {
 		formattedPrice: PropTypes.string,
 		billingInterval: PropTypes.string,
 		discount: PropTypes.string,
+		cta: PropTypes.string,
+		primaryCTA: PropTypes.bool,
 	};
 
 	renderFeatures() {
@@ -43,12 +46,17 @@ class EmailProviderDetails extends React.Component {
 			formattedPrice,
 			billingInterval,
 			discount,
+			cta,
+			primaryCTA,
 		} = this.props;
 
 		return (
 			<PromoCard { ...{ title, image, badge } }>
 				<p className="email-provider-details__description">{ description }</p>
 				<PromoCardPrice { ...{ formattedPrice, billingInterval, discount } } />
+				<Button className="email-provider-details__cta" primary={ primaryCTA }>
+					{ cta }
+				</Button>
 				<div>{ this.renderFeatures() }</div>
 			</PromoCard>
 		);
