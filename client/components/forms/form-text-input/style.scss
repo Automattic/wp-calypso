@@ -1,9 +1,13 @@
 .form-text-input {
 	@at-root {
 		input[type='url'],
+		input[type='tel'],
 		input[type='search'] {
 			@extend %form-field;
+		}
 
+		input[type='url'],
+		input[type='search'] {
 			appearance: none;
 
 			/*!rtl:ignore*/
