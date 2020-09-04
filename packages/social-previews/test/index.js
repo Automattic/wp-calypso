@@ -254,6 +254,34 @@ describe( 'Twitter previews', () => {
 		);
 	} );
 
+	it( 'should only replace URLs in parentheses', () => {
+		const tweets = [
+			{
+				...emptyTweet,
+				text:
+					'This text (https://jetpack.com/) has (https://wordpress.com/) some (https://jetpack.com/) URLs (https://wordpress.org/).',
+				urls: [
+					'https://jetpack.com/',
+					'https://wordpress.com/',
+					'https://jetpack.com/',
+					'https://wordpress.org/',
+				],
+			},
+		];
+
+		const wrapper = shallow( <Twitter tweets={ tweets } /> );
+		const tweetWrapper = wrapper.find( Tweet );
+
+		expect( tweetWrapper ).toHaveLength( 1 );
+
+		const textEl = tweetWrapper.dive().find( '.twitter-preview__text' );
+		expect( textEl ).toHaveLength( 1 );
+
+		expect( textEl.render().html() ).toEqual(
+			'This text (<a href="https://jetpack.com/">https://jetpack.com/</a>) has (<a href="https://wordpress.com/">https://wordpress.com/</a>) some (<a href="https://jetpack.com/">https://jetpack.com/</a>) URLs (<a href="https://wordpress.org/">https://wordpress.org/</a>).'
+		);
+	} );
+
 	it( 'should render a quoted tweet', () => {
 		const tweet = 'https://twitter.com/GaryPendergast/status/934003415507546112';
 

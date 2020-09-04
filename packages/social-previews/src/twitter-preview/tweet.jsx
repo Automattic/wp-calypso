@@ -86,7 +86,8 @@ export class Tweet extends PureComponent {
 			: text;
 
 		const __html = urls.reduce(
-			( html, url ) => html.replace( new RegExp( url, 'g' ), `<a href="${ url }">${ url }</a>` ),
+			( html, url ) =>
+				html.replace( new RegExp( '\\(' + url + '\\)', 'g' ), `(<a href="${ url }">${ url }</a>)` ),
 			stripHtmlTags( deCardedText ).replace( new RegExp( '\\n', 'g' ), '<br/>' )
 		);
 
