@@ -1,0 +1,7 @@
+The archive contains settings for a TeamCity project.
+
+To edit the settings in IntelliJ Idea, open the pom.xml and
+select the 'Open as a project' option.
+
+If you want to move this dsl to version control, save it in the
+.teamcity directory.
