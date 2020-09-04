@@ -30,9 +30,8 @@ import {
 } from 'state/analytics/actions';
 import ActionBox from './action-box';
 import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
-import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
+import { expandHomeQuickLinks, collapseHomeQuickLinks, skipCurrentViewHomeLayout } from 'state/home/actions';
 import { getHomeLayout } from 'state/selectors/get-home-layout';
-import { skipCurrentViewHomeLayout } from 'state/home/actions';
 
 /**
  * Image dependencies
@@ -286,7 +285,7 @@ const finishStoreSetup = ( siteId, isStaticHomePage ) =>
 			} ),
 			bumpStat( 'calypso_customer_home', 'my_site_finish_store_setup' )
 		),
-		skipCurrentViewHomeLayout( siteId ),
+		skipCurrentViewHomeLayout( siteId )
 	);
 
 const mapStateToProps = ( state ) => {
