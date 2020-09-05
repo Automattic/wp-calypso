@@ -13,7 +13,7 @@ $markup = '
 
 <!-- wp:jetpack/layout-grid {"addGutterEnds":false,"column1DesktopSpan":5,"column1DesktopOffset":1,"column1TabletSpan":4,"column1MobileSpan":4,"column2DesktopSpan":5,"column2TabletSpan":4,"column2MobileSpan":4,"column3DesktopOffset":1,"className":"column1-desktop-grid__span-5 column1-desktop-grid__start-2 column1-desktop-grid__row-1 column2-desktop-grid__span-5 column2-desktop-grid__start-7 column2-desktop-grid__row-1 column1-tablet-grid__span-4 column1-tablet-grid__row-1 column2-tablet-grid__span-4 column2-tablet-grid__start-5 column2-tablet-grid__row-1 column1-mobile-grid__span-4 column1-mobile-grid__row-1 column2-mobile-grid__span-4 column2-mobile-grid__row-2"} -->
 <div class="wp-block-jetpack-layout-grid alignfull column1-desktop-grid__span-5 column1-desktop-grid__start-2 column1-desktop-grid__row-1 column2-desktop-grid__span-5 column2-desktop-grid__start-7 column2-desktop-grid__row-1 column1-tablet-grid__span-4 column1-tablet-grid__row-1 column2-tablet-grid__span-4 column2-tablet-grid__start-5 column2-tablet-grid__row-1 column1-mobile-grid__span-4 column1-mobile-grid__row-1 column2-mobile-grid__span-4 column2-mobile-grid__row-2 wp-block-jetpack-layout-gutter__nowrap"><!-- wp:jetpack/layout-grid-column -->
-<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:heading {"level":5,"customTextColor":"#000000"} -->
+<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:heading {"level":5} -->
 <h5 class="has-text-color" style="color:#000000">%1$s</h5>
 <!-- /wp:heading --></div>
 <!-- /wp:jetpack/layout-grid-column -->
