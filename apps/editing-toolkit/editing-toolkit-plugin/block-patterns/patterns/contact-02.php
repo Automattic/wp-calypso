@@ -15,7 +15,7 @@ $markup = '
 <!-- /wp:jetpack/layout-grid-column -->
 
 <!-- wp:jetpack/layout-grid-column -->
-<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph {"customTextColor":"#ffffff"} -->
+<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph -->
 <p style="color:#ffffff" class="has-text-color">%2$s<br>%3$s</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:jetpack/layout-grid-column -->
