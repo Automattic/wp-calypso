@@ -21,8 +21,8 @@ $markup = '
 <!-- /wp:jetpack/layout-grid-column -->
 
 <!-- wp:jetpack/layout-grid-column -->
-<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph {"customTextColor":"#ffffff","className":"margin-bottom-half"} -->
-<p style="color:#ffffff" class="has-text-color margin-bottom-half"><a href="mailto:hello@example.com">%4$s</a></p>
+<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph {"className":"margin-bottom-half"} -->
+<p class="margin-bottom-half has-text-color" style="color:#ffffff"><a href="mailto:hello@example.com">%4$s</a></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:social-links {"className":"margin-top-half"} -->
