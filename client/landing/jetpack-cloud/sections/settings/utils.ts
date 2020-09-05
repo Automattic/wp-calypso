@@ -14,7 +14,7 @@ export const featuredProviders = [
 	},
 ];
 
-export const getProviderNameFromId = ( searchId: string ) => {
+export const getProviderNameFromId = ( searchId?: string ) => {
 	for ( const { id, name } of featuredProviders ) {
 		if ( id === searchId ) {
 			return name;
@@ -23,3 +23,6 @@ export const getProviderNameFromId = ( searchId: string ) => {
 
 	return null;
 };
+
+export const isFeaturedProvider = ( searchId?: string ) =>
+	getProviderNameFromId( searchId ) !== null;
