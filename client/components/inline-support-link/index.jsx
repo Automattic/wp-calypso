@@ -90,7 +90,9 @@ class InlineSupportLink extends Component {
 				href={ url }
 				onClick={ openDialog }
 				onMouseEnter={
-					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates && this.loadAlternates
+					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
+						? this.loadAlternates
+						: undefined
 				}
 				target="_blank"
 				rel="noopener noreferrer"
