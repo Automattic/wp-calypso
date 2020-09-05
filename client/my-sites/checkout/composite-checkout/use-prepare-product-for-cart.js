@@ -169,9 +169,8 @@ function useAddProductFromSlug( {
 	// work with an array of products even if `productAliasFromUrl` includes only one.
 	const validProducts = useMemo(
 		() =>
-			productAliasFromUrl &&
 			productAliasFromUrl
-				.split( ',' )
+				?.split( ',' )
 				// Special treatment for Jetpack Search products
 				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) )
 				// Get the product information if it exists, and keep a reference to its product alias
@@ -184,7 +183,7 @@ function useAddProductFromSlug( {
 				.filter(
 					( product ) =>
 						product && ! plans.find( ( plan ) => plan.product_slug === product.product_slug )
-				),
+				) ?? [],
 		[ isJetpackNotAtomic, plans, productAliasFromUrl, products ]
 	);
 
@@ -209,11 +208,10 @@ function useAddProductFromSlug( {
 			debug( 'waiting on products/plans fetch' );
 			return;
 		}
-		if ( ! validProducts || validProducts.length < 1 ) {
+		if ( validProducts.length < 1 ) {
 			debug(
-				'there is a request to add one ore more products but no product was found',
-				productAliasFromUrl,
-				validProducts
+				'there is a request to add one or more products but no product was found',
+				productAliasFromUrl
 			);
 			setState( { canInitializeCart: true } );
 			return;
@@ -228,7 +226,7 @@ function useAddProductFromSlug( {
 			} )
 		);
 
-		if ( ! cartProducts || cartProducts.length < 1 ) {
+		if ( cartProducts.length < 1 ) {
 			debug(
 				'there is a request to add a one or more products but creating them failed',
 				productAliasFromUrl
