@@ -43,6 +43,7 @@ import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { localizeUrl } from 'lib/i18n-utils';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import EmailProvidersComparison from '../email-providers-comparison';
 
 /**
  * Style dependencies
@@ -133,6 +134,9 @@ class EmailManagement extends React.Component {
 		}
 
 		if ( hasGSuiteSupportedDomain( domainList ) ) {
+			if ( config.isEnabled( 'email/titan-mvp' ) ) {
+				return <EmailProvidersComparison domain={ domainList[ 0 ].name } />;
+			}
 			return this.addGSuiteCta();
 		}
 
