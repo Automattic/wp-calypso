@@ -14,16 +14,16 @@ $markup = '
          <!-- wp:jetpack/layout-grid-column -->
          <div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
             <!-- wp:paragraph {"align":"center","customTextColor":"#ffffff","style":{"typography":{"fontSize":80}},"className":"margin-bottom-none"} -->
-            <p style="color:#ffffff;font-size:80px" class="has-text-color has-text-align-center margin-bottom-none"><strong>' . esc_html__( 'Get it delivered', 'full-site-editing' ) . '</strong></p>
+            <p class="has-text-align-center" style="font-size:80px"><p style="color:#ffffff;font-size:80px" class="has-text-color has-text-align-center margin-bottom-none"><strong>' . esc_html__( 'Get it delivered', 'full-site-editing' ) . '</strong></p></p>
             <!-- /wp:paragraph -->
 
             <!-- wp:paragraph {"align":"center","customTextColor":"#ffffff","className":"margin-top-none"} -->
-            <p style="color:#ffffff" class="has-text-color has-text-align-center margin-top-none">' . esc_html__( 'If you can&#8217;t come to us, we&#8217;ll go to you.', 'full-site-editing' ) . '</p>
+            <p class="has-text-align-center margin-top-none has-text-color" style="color:#ffffff">' . esc_html__( 'If you can&#8217;t come to us, we&#8217;ll go to you.', 'full-site-editing' ) . '</p>
             <!-- /wp:paragraph -->
 
             <!-- wp:buttons {"align":"center"} -->
             <div class="wp-block-buttons aligncenter"><!-- wp:button {"style":{"color":{"text":"#ffffff","background":"#a5150f"}}} -->
-               <a class="wp-block-button wp-block-button__link has-text-color has-background" style="background-color:#a5150f;color:#ffffff">' . esc_html__( 'Order now', 'full-site-editing' ) . '</a>
+            <div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background" style="background-color:#a5150f;color:#ffffff">' . esc_html__( 'Order now', 'full-site-editing' ) . '</a></div>
             <!-- /wp:button -->
             </div>
             <!-- /wp:buttons -->
