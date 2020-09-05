@@ -17,7 +17,7 @@ $markup = '
             <p class="has-text-align-center" style="font-size:80px"><p style="color:#ffffff;font-size:80px" class="has-text-color has-text-align-center margin-bottom-none"><strong>' . esc_html__( 'Get it delivered', 'full-site-editing' ) . '</strong></p></p>
             <!-- /wp:paragraph -->
 
-            <!-- wp:paragraph {"align":"center","customTextColor":"#ffffff","className":"margin-top-none"} -->
+            <!-- wp:paragraph {"align":"center","className":"margin-top-none"} -->
             <p class="has-text-align-center margin-top-none has-text-color" style="color:#ffffff">' . esc_html__( 'If you can&#8217;t come to us, we&#8217;ll go to you.', 'full-site-editing' ) . '</p>
             <!-- /wp:paragraph -->
 
