@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
@@ -197,10 +199,9 @@ class SharingButtonsOptions extends Component {
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
 				</legend>
-				<label>
-					<input
+				<FormLabel>
+					<FormInputCheckbox
 						name="jetpack_comment_likes_enabled"
-						type="checkbox"
 						checked={ checked }
 						onChange={ this.handleChange }
 						disabled={ ! initialized }
@@ -216,7 +217,7 @@ class SharingButtonsOptions extends Component {
 						privacyLink={ false }
 						position={ 'bottom left' }
 					/>
-				</label>
+				</FormLabel>
 			</fieldset>
 		);
 	}

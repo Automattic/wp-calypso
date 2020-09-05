@@ -22,6 +22,9 @@ import {
 /**
  * Internal dependencies
  */
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormRadio from 'components/forms/form-radio';
+import FormLabel from 'components/forms/form-label';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import NoResults from './no-results';
 import Search from './search';
@@ -324,13 +327,12 @@ class TermTreeSelectorList extends Component {
 		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 		const checked = includes( selected, itemId );
-		const inputType = multiple ? 'checkbox' : 'radio';
+		const InputComponent = multiple ? FormCheckbox : FormRadio;
 		const disabled =
 			multiple && checked && defaultTermId && 1 === selected.length && defaultTermId === itemId;
 
 		const input = (
-			<input
-				type={ inputType }
+			<InputComponent
 				value={ itemId }
 				onChange={ onChange }
 				disabled={ disabled }
@@ -375,16 +377,14 @@ class TermTreeSelectorList extends Component {
 			return this.renderItem( item );
 		}
 
+		const InputComponent = this.props.multiple ? FormCheckbox : FormRadio;
+
 		return (
 			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
-				<label>
-					<input
-						type={ this.props.multiple ? 'checkbox' : 'radio' }
-						disabled
-						className="term-tree-selector__input"
-					/>
+				<FormLabel>
+					<InputComponent disabled className="term-tree-selector__input" />
 					<span className="term-tree-selector__label">{ this.props.translate( 'Loading…' ) }</span>
-				</label>
+				</FormLabel>
 			</div>
 		);
 	};

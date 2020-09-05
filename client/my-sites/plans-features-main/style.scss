@@ -54,7 +54,7 @@
 .plans-features-main__banner-content {
 	display: inline-block;
 	background: var( --color-surface );
-	border-radius: 3px;
+	border-radius: 2px;
 	padding: 2px 12px;
 	@include elevation( 2dp );
 
@@ -127,7 +127,7 @@ body.is-section-signup.is-white-signup {
 			.is-free-plan {
 				padding: 12px 32px;
 				margin-left: 12px;
-				border-radius: 4px;
+				border-radius: 2px;
 				font-weight: 400;
 			}
 		}
@@ -179,8 +179,8 @@ body.is-section-signup.is-white-signup {
 				}
 		
 				tbody:first-child tr {
-					border-top-left-radius: 5px;
-					border-top-right-radius: 5px;
+					border-top-left-radius: 2px;
+					border-top-right-radius: 2px;
 				}
 		
 				.plan-features__table-item {

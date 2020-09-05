@@ -23,6 +23,7 @@ import {
 	DAILY_PRODUCTS,
 	REALTIME_PRODUCTS,
 } from './constants';
+import RecordsDetails from './records-details';
 import { addItems } from 'lib/cart/actions';
 import { jetpackProductItem } from 'lib/cart-values/cart-items';
 import {
@@ -35,7 +36,10 @@ import {
 } from 'lib/plans/constants';
 import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
-import { JETPACK_PRODUCT_PRICE_MATRIX } from 'lib/products-values/constants';
+import {
+	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+} from 'lib/products-values/constants';
 import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
@@ -234,9 +238,13 @@ export function itemToSelectorProduct(
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ),
 			description: getJetpackProductDescription( item ),
+			children: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
+				? createElement( RecordsDetails, { productSlug: item.product_slug } )
+				: undefined,
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
+			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
 			features: {
 				items: item.features
 					? buildCardFeaturesFromItem( item.features, {

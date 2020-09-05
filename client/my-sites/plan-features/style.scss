@@ -712,7 +712,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-price,
 	.plan-price.is-original {
-		font-size: 1em;
+		font-size: $font-body;
 	}
 
 	.plan-features__header-price-group {
@@ -819,7 +819,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		text-align: left;
 		box-sizing: border-box;
 		border-top: solid 8px;
-		border-radius: 3px 3px 0 0;
+		border-radius: 2px 2px 0 0;
 		padding-bottom: 12px;
 
 		.plans-features-main__group.is-wpcom & {
@@ -879,7 +879,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 
 		.plan-price__currency-symbol {
-			font-size: 50%;
+			font-size: $font-title-medium;
 			font-weight: 400;
 		}
 
@@ -923,7 +923,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	tr:first-child .plan-features__table-item {
-		border-radius: 5px 5px 0 0;
+		border-radius: 2px 2px 0 0;
 	}
 
 	tr:last-child .plan-features__table-item {
@@ -1065,7 +1065,7 @@ button.plan-features__scroll-button {
 	width: 8px;
 	height: 8px;
 	margin: 0 2px;
-	border-radius: 4px;
+	border-radius: 2px;
 
 	.is-section-signup & {
 		background: var( --color-surface );

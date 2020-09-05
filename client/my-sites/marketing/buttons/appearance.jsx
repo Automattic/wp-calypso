@@ -14,6 +14,8 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import SupportInfo from 'components/support-info';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -109,10 +111,9 @@ class SharingButtonsAppearance extends Component {
 	getReblogOptionElement() {
 		if ( ! this.props.isJetpack ) {
 			return (
-				<label>
-					<input
+				<FormLabel>
+					<FormInputCheckbox
 						name="disabled_reblogs"
-						type="checkbox"
 						checked={ this.isReblogButtonEnabled() }
 						onChange={ this.onReblogsLikesCheckboxClicked }
 						disabled={ ! this.props.initialized }
@@ -122,7 +123,7 @@ class SharingButtonsAppearance extends Component {
 							context: 'Sharing options: Checkbox label',
 						} ) }
 					</span>
-				</label>
+				</FormLabel>
 			);
 		}
 	}
@@ -138,10 +139,9 @@ class SharingButtonsAppearance extends Component {
 						: translate( 'Reblog & Like', { context: 'Sharing options: Header' } ) }
 				</legend>
 				{ this.getReblogOptionElement() }
-				<label>
-					<input
+				<FormLabel>
+					<FormInputCheckbox
 						name="disabled_likes"
-						type="checkbox"
 						checked={ this.isLikeButtonEnabled() }
 						onChange={ this.onReblogsLikesCheckboxClicked }
 						disabled={ ! this.props.initialized }
@@ -157,7 +157,7 @@ class SharingButtonsAppearance extends Component {
 						privacyLink={ false }
 						position={ 'bottom left' }
 					/>
-				</label>
+				</FormLabel>
 			</fieldset>
 		);
 	}

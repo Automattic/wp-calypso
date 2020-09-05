@@ -39,6 +39,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 import earnSectionImage from 'assets/images/earn/earn-section.svg';
 import adsImage from 'assets/images/earn/ads.svg';
 import recurringImage from 'assets/images/earn/recurring.svg';
+import donationsImage from 'assets/images/earn/donations.svg';
 import referralImage from 'assets/images/earn/referral.svg';
 import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
 import premiumContentImage from 'assets/images/earn/premium-content.svg';
@@ -204,6 +205,57 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			badge: translate( 'New' ),
 			image: {
 				path: recurringImage,
+			},
+			actions: {
+				cta,
+				learnMoreLink,
+			},
+		};
+	};
+
+	/**
+	 * Return the content to display in the Donations card based on the current plan.
+	 *
+	 * @returns {object} Object with props to render a PromoCard.
+	 */
+	const getDonationsCard = () => {
+		const cta = isFreePlan
+			? {
+					text: translate( 'Unlock this feature' ),
+					action: () => {
+						trackUpgrade( 'any-paid-plan', 'donations' );
+						page( `/plans/${ selectedSiteSlug }` );
+					},
+			  }
+			: {
+					text: translate( 'Manage donations' ),
+					action: () => {
+						trackCtaButton( 'donations' );
+						page( `/earn/payments/${ selectedSiteSlug }` );
+					},
+			  };
+		const title = translate( 'Accept donations and tips' );
+
+		const body = (
+			<>
+				{ translate(
+					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
+				) }
+				{ isFreePlan && <em>{ ' ' + translate( 'Available with any paid plan' ) }.</em> }
+			</>
+		);
+
+		const learnMoreLink = {
+			url: localizeUrl( 'https://wordpress.com/support/donations/' ),
+			onClick: () => trackLearnLink( 'donations' ),
+		};
+
+		return {
+			title,
+			body,
+			badge: translate( 'New' ),
+			image: {
+				path: donationsImage,
 			},
 			actions: {
 				cta,
@@ -455,10 +507,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const promos: PromoSectionProps = {
 		header: getHeaderCard(),
 		promos: compact( [
-			getSimplePaymentsCard(),
 			getRecurringPaymentsCard(),
+			getDonationsCard(),
 			getPremiumContentCard(),
 			getPaidNewsletterCard(),
+			getSimplePaymentsCard(),
 			getAdsCard(),
 			getPeerReferralsCard(),
 		] ),

@@ -74,11 +74,11 @@ class MembershipsSection extends Component {
 		}
 	}
 	renderEarnings() {
-		const { translate } = this.props;
+		const { commission, currency, forecast, lastMonth, siteId, total, translate } = this.props;
 		return (
 			<div>
-				<SectionHeader label={ this.props.translate( 'Earnings' ) } />
-				<QueryMembershipsEarnings siteId={ this.props.siteId } />
+				<SectionHeader label={ translate( 'Earnings' ) } />
+				<QueryMembershipsEarnings siteId={ siteId } />
 				<Card>
 					<div className="memberships__module-content module-content">
 						<ul className="memberships__earnings-breakdown-list">
@@ -87,7 +87,7 @@ class MembershipsSection extends Component {
 									{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
 								</span>
 								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( this.props.total, this.props.currency ) }
+									{ formatCurrency( total, currency ) }
 								</span>
 							</li>
 							<li className="memberships__earnings-breakdown-item">
@@ -95,7 +95,7 @@ class MembershipsSection extends Component {
 									{ translate( 'Last 30 days', { context: 'Sum of earnings over last 30 days' } ) }
 								</span>
 								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( this.props.lastMonth, this.props.currency ) }
+									{ formatCurrency( lastMonth, currency ) }
 								</span>
 							</li>
 							<li className="memberships__earnings-breakdown-item">
@@ -105,31 +105,32 @@ class MembershipsSection extends Component {
 									} ) }
 								</span>
 								<span className="memberships__earnings-breakdown-value">
-									{ formatCurrency( this.props.forecast, this.props.currency ) }
+									{ formatCurrency( forecast, currency ) }
 								</span>
 							</li>
 						</ul>
 					</div>
 					<div className="memberships__earnings-breakdown-notes">
-						{ translate(
-							'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
-							{
-								args: {
-									commission: '' + parseFloat( this.props.commission ) * 100 + '%',
-									stripe: '2.9%+30c',
-								},
-								components: {
-									em: <em />,
-									br: <br />,
-									a: (
-										<ExternalLink
-											href="https://wordpress.com/support/recurring-payments-button/#related-fees"
-											icon={ true }
-										/>
-									),
-								},
-							}
-						) }
+						{ commission !== null &&
+							translate(
+								'On your current plan, WordPress.com charges {{em}}%(commission)s{{/em}}.{{br/}} Additionally, Stripe charges are typically %(stripe)s. {{a}}Learn more{{/a}}',
+								{
+									args: {
+										commission: '' + parseFloat( commission ) * 100 + '%',
+										stripe: '2.9%+30c',
+									},
+									components: {
+										em: <em />,
+										br: <br />,
+										a: (
+											<ExternalLink
+												href="https://wordpress.com/support/recurring-payments-button/#related-fees"
+												icon={ true }
+											/>
+										),
+									},
+								}
+							) }
 					</div>
 				</Card>
 			</div>

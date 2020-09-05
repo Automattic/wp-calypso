@@ -46,12 +46,8 @@ export const getJetpackProductsShortNames = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: shouldShowOfferResetFlow()
-			? translate( 'Scan' )
-			: translate( 'Daily Scan' ),
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Scan' )
-			: translate( 'Daily Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: translate( 'Scan' ),
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: translate( 'Scan' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Anti-spam' ),
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 	};
@@ -77,15 +73,7 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 	const search = translate( 'Jetpack Search' );
-	const scanDaily = (
-		<>
-			{ translate( 'Jetpack Scan {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
-		</>
-	);
+	const scan = translate( 'Jetpack Scan' );
 	const antiSpam = <>{ translate( 'Jetpack Anti-spam' ) }</>;
 
 	return {
@@ -97,8 +85,8 @@ export const getJetpackProductsDisplayNames = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: search,
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -124,15 +112,7 @@ export const getJetpackProductsCallToAction = () => {
 		</>
 	);
 	const search = translate( 'Get Search' );
-	const scanDaily = (
-		<>
-			{ translate( 'Get Scan {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
-		</>
-	);
+	const scan = translate( 'Get Scan' );
 	const antiSpam = <>{ translate( 'Get Anti-spam' ) }</>;
 
 	return {
@@ -142,8 +122,8 @@ export const getJetpackProductsCallToAction = () => {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: search,
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanDaily,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanDaily,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scan,
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scan,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 	};
@@ -310,15 +290,15 @@ export const getJetpackProducts = () => {
 				const numberOfDefinedTiers = 5;
 				switch ( productObject.price_tier_slug ) {
 					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
-						return translate( 'Tier 1: Up to 100 records' );
+						return translate( 'Pricing Tier 1: Up to 100 records' );
 					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
-						return translate( 'Tier 2: Up to 1,000 records' );
+						return translate( 'Pricing Tier 2: Up to 1,000 records' );
 					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
-						return translate( 'Tier 3: Up to 10,000 records' );
+						return translate( 'Pricing Tier 3: Up to 10,000 records' );
 					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
-						return translate( 'Tier 4: Up to 100,000 records' );
+						return translate( 'Pricing Tier 4: Up to 100,000 records' );
 					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
-						return translate( 'Tier 5: Up to 1,000,000 records' );
+						return translate( 'Pricing Tier 5: Up to 1,000,000 records' );
 					case CONSTANTS.JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
 						// This is a catch-all tier with prices increasing
 						// proportionally per million records, so define fake
@@ -329,7 +309,7 @@ export const getJetpackProducts = () => {
 							Math.floor( productObject.price_tier_usage_quantity / 1000000 );
 						const tierMaximumRecords =
 							1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
-						return translate( 'Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
+						return translate( 'Pricing Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
 							args: {
 								tierNumber,
 								tierMaximumRecords: numberFormat( tierMaximumRecords ),

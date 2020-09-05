@@ -54,9 +54,12 @@ const getIsVisible = () => {
 	return document.visibilityState === 'visible';
 };
 
+const isDesktop = config.isEnabled( 'desktop' );
+
 export class Notifications extends Component {
 	state = {
-		isVisible: getIsVisible(),
+		// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
+		isVisible: isDesktop ? true : getIsVisible(),
 	};
 
 	componentDidMount() {
@@ -122,7 +125,8 @@ export class Notifications extends Component {
 		}
 	};
 
-	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
+	// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
+	handleVisibilityChange = () => this.setState( { isVisible: isDesktop ? true : getIsVisible() } );
 
 	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker

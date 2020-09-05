@@ -148,7 +148,6 @@ class BackupsPage extends Component {
 			logs,
 			moment,
 			siteId,
-			siteUrl,
 			siteSlug,
 			isLoadingBackups,
 			oldestDateAvailable,
@@ -200,15 +199,9 @@ class BackupsPage extends Component {
 
 							<DailyBackupStatus
 								{ ...{
-									siteUrl,
-									siteSlug,
-									backup: lastBackup,
-									lastDateAvailable,
 									selectedDate: this.getSelectedDate(),
-									timezone,
-									gmtOffset,
-									hasRealtimeBackups,
-									onDateChange: this.onDateChange,
+									lastBackupDate: lastDateAvailable,
+									backup: lastBackup,
 									deltas,
 									// metaDiff, todo: commented because the non-english account issue
 								} }

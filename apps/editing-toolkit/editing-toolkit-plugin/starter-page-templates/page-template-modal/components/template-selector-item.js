@@ -7,13 +7,6 @@ import { isNil, isEmpty } from 'lodash';
 import classnames from 'classnames';
 
 /**
- * WordPress dependencies
- */
-/* eslint-disable import/no-extraneous-dependencies */
-import { Disabled } from '@wordpress/components';
-/* eslint-enable import/no-extraneous-dependencies */
-
-/**
  * Internal dependencies
  */
 import BlockIframePreview from './block-iframe-preview';
@@ -41,9 +34,7 @@ const TemplateSelectorItem = ( props ) => {
 
 	// Define static or dynamic preview.
 	const innerPreview = useDynamicPreview ? (
-		<Disabled>
-			<BlockIframePreview blocks={ blocks } viewportWidth={ 960 } />
-		</Disabled>
+		<BlockIframePreview blocks={ blocks } viewportWidth={ 960 } />
 	) : (
 		<img
 			className="template-selector-item__media"

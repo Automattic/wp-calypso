@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.0
+ * Version: 2.2
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '2.0' );
+define( 'PLUGIN_VERSION', '2.2' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -47,7 +47,11 @@ function load_core_site_editor() {
 	require_once __DIR__ . '/site-editor/index.php';
 	initialize_site_editor();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor' );
+// Change priority so this code is loaded before Gutenberg. This is needed because
+// FSE files are conditionally loaded based on the existence of experiment option
+// as of https://github.com/WordPress/gutenberg/pull/24182. initialize_site_editor
+// is setting the required option and needs to kick in first.
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor', 7 );
 
 /**
  * Load dotcom-FSE.

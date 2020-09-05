@@ -6,7 +6,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 
@@ -86,9 +88,9 @@ class PieChartExample extends Component {
 
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.changeShowDataControls }>
+				<Button className="docs__design-toggle" onClick={ this.changeShowDataControls }>
 					{ this.state.showDataControls ? 'Hide Data Controls' : 'Show Data Controls' }
-				</a>
+				</Button>
 
 				<Card>
 					<PieChart data={ data } title={ this.titleFunc } />
@@ -107,13 +109,14 @@ class PieChartExample extends Component {
 										value={ this.state[ seriesName ].value }
 										onChange={ this.changeValue }
 									/>
-									<label>{ 'Show' }</label>{ ' ' }
-									<input
-										name={ seriesName }
-										type="checkbox"
-										checked={ this.state[ seriesName ].show }
-										onChange={ this.changeShow }
-									/>
+									<FormLabel>
+										<FormInputCheckbox
+											name={ seriesName }
+											checked={ this.state[ seriesName ].show }
+											onChange={ this.changeShow }
+										/>
+										<span>Show</span>
+									</FormLabel>
 								</div>
 							);
 						} ) }

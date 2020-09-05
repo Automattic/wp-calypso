@@ -60,18 +60,20 @@ export default class LoginFlow {
 	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
 
-		if (
-			! useFreshLogin &&
-			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
-		) {
-			console.log( 'Reusing login cookie for ' + this.account.username );
-			await this.driver.navigate().refresh();
-			const continueSelector = By.css( 'div.continue-as-user a' );
-			if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, continueSelector );
-			}
-			return;
-		}
+		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
+		// We can check later to see if we can find a different way to support it.
+		// if (
+		// 	! useFreshLogin &&
+		// 	( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
+		// ) {
+		// 	console.log( 'Reusing login cookie for ' + this.account.username );
+		// 	await this.driver.navigate().refresh();
+		// 	const continueSelector = By.css( 'div.continue-as-user a' );
+		// 	if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
+		// 		await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		// 	}
+		// 	return;
+		// }
 
 		console.log( 'Logging in as ' + this.account.username );
 

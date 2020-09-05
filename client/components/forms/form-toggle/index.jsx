@@ -11,6 +11,11 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import FormInputCheckbox from 'components/forms/form-checkbox';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -87,10 +92,9 @@ export default class FormToggle extends PureComponent {
 
 		return (
 			<span className={ wrapperClasses }>
-				<input
+				<FormInputCheckbox
 					id={ id }
 					className={ toggleClasses }
-					type="checkbox"
 					checked={ this.props.checked }
 					readOnly={ true }
 					disabled={ this.props.disabled }

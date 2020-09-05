@@ -18,13 +18,13 @@
 	}
 
 	.register-domain-step__search-card {
-		border-radius: 3px;
+		border-radius: 2px;
 		@include elevation( 2dp );
 	}
 
 	.search.is-open.has-focus {
 		border: none;
-		border-radius: 3px;
+		border-radius: 2px;
 		box-shadow: 0 0 0 3px var( --color-accent-light );
 	}
 
@@ -67,7 +67,7 @@ body.is-section-signup.is-white-signup {
 		.register-domain-step__search-card {
 			background: $light-white;
 			box-shadow: 0 0 0 1.5px  var( --color-neutral-10 );
-			border-radius: 4px;
+			border-radius: 2px;
 			margin: 20px;
 
 			@include break-mobile {

@@ -2,11 +2,12 @@
 	display: inline-block;
 }
 
-.bulk-select__container {
+.bulk-select__container.form-label {
 	cursor: pointer;
 	display: flex;
 		align-items: center;
 	position: relative;
+	margin-bottom: 0;
 
 	.gridicon {
 		color: var( --color-primary );
@@ -19,6 +20,7 @@
 
 	> .count {
 		margin-left: 8px;
+		font-weight: 600;
 	}
 }
 

@@ -37,7 +37,6 @@ import mapBlocksRecursively from './utils/map-blocks-recursively';
 import containsMissingBlock from './utils/contains-missing-block';
 /* eslint-enable import/no-extraneous-dependencies */
 
-const DEFAULT_HOMEPAGE_TEMPLATE = 'maywood';
 const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
 const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-template';
 
@@ -167,32 +166,27 @@ class PageTemplateModal extends Component {
 
 	static getDefaultSelectedTemplate = ( props ) => {
 		const blankTemplate = get( props.templates, [ 0, 'slug' ] );
-		let previouslyChosenTemplate = props._starter_page_template;
+		const previouslyChosenTemplate = props._starter_page_template;
 
-		// Usally the "new page" case
+		// Usually the "new page" case
 		if ( ! props.isFrontPage && ! previouslyChosenTemplate ) {
 			return blankTemplate;
 		}
 
-		// Normalize "home" slug into the current theme.
-		if ( previouslyChosenTemplate === 'home' ) {
-			previouslyChosenTemplate = props.theme;
-		}
-
-		const slug = previouslyChosenTemplate || props.theme;
-
-		if ( find( props.templates, { slug } ) ) {
-			return slug;
-		} else if ( find( props.templates, { slug: DEFAULT_HOMEPAGE_TEMPLATE } ) ) {
-			return DEFAULT_HOMEPAGE_TEMPLATE;
-		}
-		return blankTemplate;
+		// if the page isn't new, select "Current" as the default template
+		return 'current';
 	};
 
 	setTemplate = ( slug ) => {
 		// Track selection and mark post as using a template in its postmeta.
 		trackSelection( this.props.segment.id, this.props.vertical.id, slug );
 		this.props.saveTemplateChoice( slug );
+
+		// Skip setting template if user selects current layout
+		if ( 'current' === slug ) {
+			this.props.setIsOpen( false );
+			return;
+		}
 
 		// Check to see if this is a blank template selection
 		// and reset the template if so.
@@ -291,6 +285,9 @@ class PageTemplateModal extends Component {
 	};
 
 	getBlocksByTemplateSlug( slug ) {
+		if ( slug === 'current' ) {
+			return this.props.currentBlocks;
+		}
 		return get( this.getBlocksByTemplateSlugs( this.props.templates ), [ slug ], [] );
 	}
 
@@ -301,6 +298,7 @@ class PageTemplateModal extends Component {
 	getTemplateGroups = () => {
 		return {
 			blankTemplate: filter( this.props.templates, { slug: 'blank' } ),
+			currentTemplate: filter( this.props.templates, { slug: 'current' } ),
 			aboutTemplates: filter( this.props.templates, { category: 'about' } ),
 			blogTemplates: filter( this.props.templates, { category: 'blog' } ),
 			contactTemplates: filter( this.props.templates, { category: 'contact' } ),
@@ -319,12 +317,17 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
-		// The raw `templates` prop is not filtered to remove Templates that
-		// contain missing Blocks. Therefore we compare with the keys of the
-		// filtered templates from `getBlocksByTemplateSlugs()` and filter this
-		// list to match. This ensures that the list of Template thumbnails is
-		// filtered so that it does not include Templates that have missing Blocks.
-		const blocksByTemplateSlug = this.getBlocksByTemplateSlugs( this.props.templates );
+		const isCurrentPreview = templatesList[ 0 ]?.slug === 'current';
+
+		const blocksByTemplateSlug = isCurrentPreview
+			? { current: this.props.currentBlocks }
+			: // The raw `templates` prop is not filtered to remove Templates that
+			  // contain missing Blocks. Therefore we compare with the keys of the
+			  // filtered templates from `getBlocksByTemplateSlugs()` and filter this
+			  // list to match. This ensures that the list of Template thumbnails is
+			  // filtered so that it does not include Templates that have missing Blocks.
+			  this.getBlocksByTemplateSlugs( this.props.templates );
+
 		const templatesWithoutMissingBlocks = Object.keys( blocksByTemplateSlug );
 
 		const filterOutTemplatesWithMissingBlocks = ( templatesToFilter, filterIn ) => {
@@ -340,6 +343,11 @@ class PageTemplateModal extends Component {
 			return null;
 		}
 
+		// Skip rendering current preview if there is no page content.
+		if ( isCurrentPreview && ! blocksByTemplateSlug.current?.length ) {
+			return null;
+		}
+
 		return (
 			<fieldset className="page-template-modal__list">
 				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
@@ -348,7 +356,7 @@ class PageTemplateModal extends Component {
 					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }
-					useDynamicPreview={ false }
+					useDynamicPreview={ isCurrentPreview }
 					siteInformation={ this.props.siteInformation }
 					selectedTemplate={ this.state.previewedTemplate }
 				/>
@@ -358,14 +366,28 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isLoading } = this.state;
-		const { isPromptedFromSidebar, hidePageTitle, isOpen } = this.props;
+		const { isPromptedFromSidebar, hidePageTitle, isOpen, currentBlocks } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
 		}
 
+		// Sometimes currentBlocks is not loaded before getBlocksForPreview is called
+		// getBlocksForPreview memoizes the function call which causes it to always
+		// call it with an empty array. We delete the the cache for the function
+		// to allow it to memoize the loaded currentBlocks.
+		const currentBlocksPreviewCache = this.getBlocksForPreview.cache.get( 'current' );
+		if (
+			currentBlocksPreviewCache &&
+			currentBlocks &&
+			currentBlocksPreviewCache.length !== currentBlocks.length
+		) {
+			this.getBlocksForPreview.cache.delete( 'current' );
+		}
+
 		const {
 			blankTemplate,
+			currentTemplate,
 			aboutTemplates,
 			blogTemplates,
 			contactTemplates,
@@ -413,59 +435,52 @@ class PageTemplateModal extends Component {
 					) : (
 						<>
 							<form className="page-template-modal__form">
+								{ this.renderTemplatesList(
+									currentTemplate,
+									__( 'Current', 'full-site-editing' )
+								) }
 								{ this.props.isFrontPage &&
 									this.renderTemplatesList(
 										homepageTemplates,
 										__( 'Home Pages', 'full-site-editing' )
 									) }
-
 								{ this.renderTemplatesList( blankTemplate, __( 'Blank', 'full-site-editing' ) ) }
-
 								{ this.renderTemplatesList(
 									aboutTemplates,
 									__( 'About Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									blogTemplates,
 									__( 'Blog Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									contactTemplates,
 									__( 'Contact Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									eventTemplates,
 									__( 'Event Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									menuTemplates,
 									__( 'Menu Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									portfolioTemplates,
 									__( 'Portfolio Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									productTemplates,
 									__( 'Product Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									servicesTemplates,
 									__( 'Services Pages', 'full-site-editing' )
 								) }
-
 								{ this.renderTemplatesList(
 									teamTemplates,
 									__( 'Team Pages', 'full-site-editing' )
 								) }
-
 								{ ! this.props.isFrontPage &&
 									this.renderTemplatesList(
 										homepageTemplates,
@@ -475,7 +490,11 @@ class PageTemplateModal extends Component {
 							<TemplateSelectorPreview
 								blocks={ this.getBlocksForPreview( previewedTemplate ) }
 								viewportWidth={ 1200 }
-								title={ ! hidePageTitle && this.getTitleByTemplateSlug( previewedTemplate ) }
+								title={
+									! hidePageTitle && previewedTemplate === 'current'
+										? this.props.currentPostTitle
+										: this.getTitleByTemplateSlug( previewedTemplate )
+								}
 							/>
 						</>
 					) }
@@ -507,13 +526,14 @@ export const PageTemplatesPlugin = compose(
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
 		const isOpen = select( 'automattic/starter-page-layouts' ).isOpen();
+		const currentBlocks = select( 'core/editor' ).getBlocks();
 		return {
 			isOpen,
 			getMeta,
 			_starter_page_template,
-			postContentBlock: select( 'core/editor' )
-				.getBlocks()
-				.find( ( block ) => block.name === 'a8c/post-content' ),
+			currentBlocks,
+			currentPostTitle: select( 'core/editor' ).getCurrentPost().title,
+			postContentBlock: currentBlocks.find( ( block ) => block.name === 'a8c/post-content' ),
 			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ), // Gutenberg 7.2.0 or higher
 			areTipsEnabled: select( 'core/nux' ) ? select( 'core/nux' ).areTipsEnabled() : false, // Gutenberg 7.1.0 or lower
 		};

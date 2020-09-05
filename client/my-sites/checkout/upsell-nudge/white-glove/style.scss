@@ -196,7 +196,7 @@ main.white-glove.main {
 	&__footer &__accept-offer-button {
 		background: #117ac9;
 		color: var( --color-text-inverted );
-		border-radius: 5px;
+		border-radius: 2px;
 		padding: 15px 50px;
 		font-family: helvetica, arial, sans-serif;
 		font-size: 16px;
@@ -218,7 +218,7 @@ main.white-glove.main {
 	.white-glove__benefits {
 		display: flex;
 		background: #ecf7ff;
-		border-radius: 4px;
+		border-radius: 2px;
 		padding: 30px 0 30px 25px;
 
 		@include breakpoint-deprecated( '<660px' ) {

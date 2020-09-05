@@ -13,6 +13,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'components/forms/form-checkbox';
 import { ScreenReaderText } from '@automattic/components';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -190,9 +191,8 @@ class SharingConnection extends Component {
 
 		if ( this.props.userHasCaps ) {
 			content.push(
-				<input
+				<FormInputCheckbox
 					key="checkbox"
-					type="checkbox"
 					checked={ this.isConnectionShared() }
 					onChange={ this.toggleSitewideConnection }
 					readOnly={ this.state.isSavingSitewide }

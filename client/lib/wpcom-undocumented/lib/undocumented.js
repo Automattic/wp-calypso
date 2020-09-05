@@ -1381,6 +1381,17 @@ Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
 	);
 };
 
+Undocumented.prototype.supportAlternates = function ( query, fn ) {
+	const params = omit( query, [ 'site', 'postId' ] );
+	debug( '/support/alternates/:site/posts/:post' );
+	addReaderContentWidth( params );
+	return this.wpcom.req.get(
+		'/support/alternates/' + query.site + '/posts/' + query.postId,
+		params,
+		fn
+	);
+};
+
 /**
  * Saves a user's A/B test variation on the backend
  *
@@ -2534,10 +2545,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.applePayMerchantValidation = function ( validationURL ) {
-	return this.wpcom.req.get( '/apple-pay/merchant-validation/', { validation_url: validationURL } );
 };
 
 Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {

@@ -163,7 +163,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 
 	&::before {
 		background-color: var( --color-surface );
-		border-radius: 3px;
+		border-radius: 2px;
 		content: '';
 		display: block;
 		height: 22px;

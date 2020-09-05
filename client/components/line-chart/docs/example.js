@@ -9,6 +9,8 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import LineChart from 'components/line-chart';
 
 const NUM_DATA_SERIES = 3;
@@ -107,7 +109,7 @@ export default class LineChartExample extends Component {
 
 				{ this.state.showDataControls && (
 					<div>
-						<label>
+						<FormLabel>
 							Data Min
 							<input
 								type="number"
@@ -115,9 +117,9 @@ export default class LineChartExample extends Component {
 								min="0"
 								onChange={ this.changeDataMin }
 							/>
-						</label>
+						</FormLabel>
 
-						<label>
+						<FormLabel>
 							Data Max
 							<input
 								type="number"
@@ -125,9 +127,9 @@ export default class LineChartExample extends Component {
 								min="0"
 								onChange={ this.changeDataMax }
 							/>
-						</label>
+						</FormLabel>
 
-						<label>
+						<FormLabel>
 							Series Length
 							<input
 								type="number"
@@ -135,17 +137,16 @@ export default class LineChartExample extends Component {
 								min="3"
 								onChange={ this.changeSeriesLength }
 							/>
-						</label>
+						</FormLabel>
 
 						<div>
-							<label>
-								<input
-									type="checkbox"
+							<FormLabel>
+								<FormInputCheckbox
 									checked={ this.state.fillArea }
 									onChange={ this.toggleFillArea }
 								/>
 								Fill Area
-							</label>
+							</FormLabel>
 						</div>
 					</div>
 				) }
