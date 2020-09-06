@@ -13,3 +13,15 @@
 		}
 	}
 }
+
+.email-providers-comparison__action-panel {
+	@include breakpoint-deprecated( '>1040px' ) {
+		&.is-primary {
+			padding-left: 73px;
+		}
+	}
+
+	&.is-primary .action-panel__figure {
+		max-width: 170px;
+	}
+}

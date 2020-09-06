@@ -50,6 +50,7 @@ class EmailProvidersComparison extends React.Component {
 				isPrimary
 				title={ translate( 'Get your own @%(domainName)s email address', translateArgs ) }
 				image={ image }
+				className="email-providers-comparison__action-panel"
 			>
 				<p>
 					{ translate(
