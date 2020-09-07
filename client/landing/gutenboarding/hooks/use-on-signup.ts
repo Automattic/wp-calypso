@@ -29,7 +29,7 @@ export default function useOnSignup() {
 		( username: string, bearerToken?: string, isPublicSite?: number ) => {
 			createSite( username, i18nLocale, bearerToken, isPublicSite );
 		},
-		[ createSite ]
+		[ createSite, i18nLocale ]
 	);
 
 	React.useEffect( () => {
