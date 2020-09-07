@@ -88,7 +88,7 @@ function PhoneInput( {
 				onKeyUp={ handleCursorMove }
 				name={ name }
 				value={ displayValue }
-				ref={ numberInputRef }
+				inputRef={ numberInputRef }
 				type="tel"
 				disabled={ disabled }
 				className={ classnames( 'phone-input__number-input', {
