@@ -9,6 +9,7 @@ import { useSelect } from '@wordpress/data';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { usePlanRouteParam } from '../path';
+import { isEnabled } from 'config';
 
 export function usePlanFromPath() {
 	const planPath = usePlanRouteParam();
@@ -52,5 +53,9 @@ export function useHasPaidPlanFromPath() {
 
 export function useShouldSiteBePublic() {
 	const currentSlug = useSelectedPlan()?.storeSlug;
-	return useSelect( ( select ) => select( PLANS_STORE ).isPlanEcommerce( currentSlug ) );
+	const isEcommerce = useSelect( ( select ) =>
+		select( PLANS_STORE ).isPlanEcommerce( currentSlug )
+	);
+
+	return isEnabled( 'gutenboarding/public-coming-soon' ) ? true : isEcommerce;
 }

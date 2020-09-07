@@ -34,7 +34,7 @@ export function* createSite(
 	username: string,
 	languageSlug: string,
 	bearerToken?: string,
-	isPublicSite = false
+	isPublicSite = isEnabled( 'gutenboarding/public-coming-soon' )
 ) {
 	const {
 		domain,
