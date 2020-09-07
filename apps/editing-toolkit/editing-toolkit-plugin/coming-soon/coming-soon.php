@@ -86,8 +86,14 @@ function coming_soon_page() {
 		</head>
 		<body>
 			<?php
+				// Replicates the core `the_content()` function except using the custom
+				// coming soon page instead of the current page.
+				$content = get_the_content( null, false, $custom_coming_soon_page );
+				$content = apply_filters( 'the_content', $content );
+
+				// Perform the same escaping done by the `the_content()` function.
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo apply_filters( 'the_content', $custom_coming_soon_page->post_content );
+				echo str_replace( ']]>', ']]&gt;', $content );
 			?>
 			<?php wp_footer(); ?>
 		</body>
