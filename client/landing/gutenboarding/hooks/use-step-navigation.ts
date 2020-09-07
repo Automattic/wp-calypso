@@ -12,7 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Step, usePath, useCurrentStep, StepType } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { useShouldSiteBePublic, useHasPaidPlanFromPath } from './use-selected-plan';
+import { useNewSiteVisibility, useHasPaidPlanFromPath } from './use-selected-plan';
 import useSignup from './use-signup';
 
 /**
@@ -64,11 +64,11 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { createSite } = useDispatch( ONBOARD_STORE );
-	const shouldSiteBePublic = useShouldSiteBePublic();
+	const newSiteVisibility = useNewSiteVisibility();
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, i18nLocale, undefined, shouldSiteBePublic )
+			? createSite( currentUser.username, i18nLocale, undefined, newSiteVisibility )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps

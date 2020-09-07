@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { Site } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 
 /**
@@ -51,11 +52,21 @@ export function useHasPaidPlanFromPath() {
 	return planFromPath && ! isPlanFree( planFromPath?.storeSlug );
 }
 
-export function useShouldSiteBePublic() {
+export function useNewSiteVisibility(): Site.Visibility {
 	const currentSlug = useSelectedPlan()?.storeSlug;
 	const isEcommerce = useSelect( ( select ) =>
 		select( PLANS_STORE ).isPlanEcommerce( currentSlug )
 	);
 
-	return isEnabled( 'gutenboarding/public-coming-soon' ) ? true : isEcommerce;
+	if ( isEcommerce ) {
+		return Site.Visibility.PublicIndexed;
+	} else if ( isEnabled( 'gutenboarding/public-coming-soon' ) ) {
+		return Site.Visibility.PublicNotIndexed;
+	}
+
+	return Site.Visibility.Private;
+}
+
+export function useShouldSiteBePublic() {
+	return useNewSiteVisibility() !== -1;
 }

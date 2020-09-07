@@ -34,7 +34,9 @@ export function* createSite(
 	username: string,
 	languageSlug: string,
 	bearerToken?: string,
-	isPublicSite = isEnabled( 'gutenboarding/public-coming-soon' )
+	visibility: number = isEnabled( 'gutenboarding/public-coming-soon' )
+		? Site.Visibility.PublicNotIndexed
+		: Site.Visibility.Private
 ) {
 	const {
 		domain,
@@ -55,7 +57,7 @@ export function* createSite(
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
-		public: isPublicSite ? Site.Visibility.PublicIndexed : Site.Visibility.Private,
+		public: visibility,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,
@@ -79,7 +81,10 @@ export function* createSite(
 			} ),
 			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
 			selected_features: selectedFeatures,
-			public_coming_soon: isEnabled( 'gutenboarding/public-coming-soon' ) || undefined,
+			...( isEnabled( 'gutenboarding/public-coming-soon' ) &&
+				visibility === Site.Visibility.PublicNotIndexed && {
+					public_coming_soon: true,
+				} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
