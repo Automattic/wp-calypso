@@ -15,13 +15,13 @@ $markup = '
 <!-- /wp:jetpack/layout-grid-column -->
 
 <!-- wp:jetpack/layout-grid-column -->
-<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph -->
+<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph {"style":{"color":{"text":"#ffffff"}}} -->
 <p style="color:#ffffff" class="has-text-color">%2$s<br>%3$s</p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:jetpack/layout-grid-column -->
 
 <!-- wp:jetpack/layout-grid-column -->
-<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph {"className":"margin-bottom-half"} -->
+<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none"><!-- wp:paragraph {"className":"margin-bottom-half","style":{"color":{"text":"#ffffff"}}} -->
 <p class="margin-bottom-half has-text-color" style="color:#ffffff"><a href="mailto:hello@example.com">%4$s</a></p>
 <!-- /wp:paragraph -->
 
