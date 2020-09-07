@@ -3,12 +3,18 @@
  */
 import React, { FunctionComponent } from 'react';
 
+/**
+ * Internal dependencies
+ */
+import Form from './form';
+// import { isFeaturedProvider } from '../utils';
+
 interface Props {
-	host: string;
+	host?: string;
 }
 
-const Credentials: FunctionComponent< Props > = ( { host } ) => {
-	return <h3>{ `Host is ${ host }` }</h3>;
+const Credentials: FunctionComponent< Props > = () => {
+	return <Form />;
 };
 
 export default Credentials;

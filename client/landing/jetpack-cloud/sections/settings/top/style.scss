@@ -4,3 +4,44 @@
 		margin-bottom: 16px;
 	}
 }
+
+.top__server-connection-status {
+	margin-bottom: 0;
+}
+
+.top__server-connection-status-content {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.top__connection-status-failed,
+.top__connection-status-connected,
+.top__connection-status-connecting,
+.top__connection-status-disconnected {
+	display: flex;
+	*:not( first-child ) {
+		margin-left: 8px;
+	}
+	svg {
+		height: 16px;
+		width: 16px;
+	}
+	align-items: center;
+}
+
+.top__connection-status-failed,
+.top__connection-status-disconnected {
+	color: var( --color-error );
+	fill: var( --color-error );
+}
+
+.top__connection-status-connecting {
+	color: var( --color-warning );
+	fill: var( --color-warning );
+}
+
+.top__connection-status-connected {
+	color: var( --color-primary-50 );
+	fill: var( --color-primary-50 );
+}
