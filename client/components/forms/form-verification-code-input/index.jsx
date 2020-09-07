@@ -8,6 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
 import constants from 'me/constants';
 
 /**
@@ -53,7 +54,7 @@ export default class FormVerificationCodeInput extends React.Component {
 		}
 
 		return (
-			<input
+			<FormTextInput
 				autoComplete="off"
 				className={ classes }
 				pattern="[0-9 ]*"
