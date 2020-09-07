@@ -79,6 +79,7 @@ export function* createSite(
 			} ),
 			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
 			selected_features: selectedFeatures,
+			public_coming_soon: isEnabled( 'gutenboarding/public-coming-soon' ) || undefined,
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};

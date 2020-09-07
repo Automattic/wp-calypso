@@ -52,6 +52,7 @@ export interface CreateSiteParams {
 		font_base?: string;
 		use_patterns?: boolean;
 		selected_features?: string[];
+		public_coming_soon?: boolean;
 	};
 }
 
