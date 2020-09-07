@@ -12,7 +12,7 @@ $markup = '
 	<div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
 		<!-- wp:image {"sizeSlug":"full"} -->
 		<figure class="wp-block-image size-full">
-			<img src="%1$s" alt="" />
+			<img src="%1$s" alt=""/>
 		</figure>
 		<!-- /wp:image -->
 	</div>
