@@ -2,6 +2,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
@@ -304,6 +305,23 @@ object RunAllUnitTests : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#team-calypso-bot"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = """
+				+:master
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
 		}
 	}
 })
