@@ -20,7 +20,7 @@ function show_coming_soon_page() {
 		return false;
 	}
 
-	$should_show = ( (int) get_option( 'wpcom_coming_soon' ) === 1 );
+	$should_show = ( (int) get_option( 'wpcom_public_coming_soon' ) === 1 );
 
 	if ( is_user_logged_in() && current_user_can( 'read' ) ) {
 		$should_show = false;
@@ -61,7 +61,7 @@ function coming_soon_page() {
 
 	$should_show_fallback = false;
 
-	$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
+	$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
 	if ( empty( $id ) ) {
 		$should_show_fallback = true;
 	}
