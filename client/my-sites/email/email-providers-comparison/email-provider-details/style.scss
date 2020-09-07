@@ -29,6 +29,10 @@
 	background-color: var( --studio-gray-80 );
 }
 
+.promo-card h2.action-panel__title {
+	flex-wrap: wrap;
+}
+
 .email-provider-details__cta {
 	margin: 16px auto 16px 0;
 }
