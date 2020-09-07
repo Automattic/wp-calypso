@@ -50,8 +50,6 @@ function render_fallback_coming_soon_page() {
  * the redirect.
  */
 function coming_soon_page() {
-	global $post;
-
 	if ( ! show_coming_soon_page() ) {
 		return;
 	}
