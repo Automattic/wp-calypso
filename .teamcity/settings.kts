@@ -7,7 +7,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
@@ -56,11 +55,6 @@ project {
 	}
 
 	features {
-		dockerRegistry {
-			id = "PROJECT_EXT_6"
-			name = "Docker Registry"
-			url = "https://registry.a8c.com"
-		}
 		githubConnection {
 			id = "PROJECT_EXT_8"
 			displayName = "GitHub.com"
@@ -132,9 +126,7 @@ object BuildBaseImages : BuildType({
 		perfmon {
 		}
 		dockerSupport {
-			loginToRegistry = on {
-				dockerRegistryId = "PROJECT_EXT_6"
-			}
+			cleanupPushedImages = true
 		}
 	}
 })
