@@ -13,8 +13,8 @@ $markup = '
       <div class="wp-block-jetpack-layout-grid alignfull column1-desktop-grid__span-10 column1-desktop-grid__start-2 column1-desktop-grid__row-1 column1-tablet-grid__span-8 column1-tablet-grid__row-1 column1-mobile-grid__span-4 column1-mobile-grid__row-1 wp-block-jetpack-layout-gutter__nowrap">
          <!-- wp:jetpack/layout-grid-column -->
          <div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
-            <!-- wp:paragraph {"align":"center","customTextColor":"#ffffff","style":{"typography":{"fontSize":80}},"className":"margin-bottom-none"} -->
-            <p class="has-text-align-center" style="font-size:80px"><p style="color:#ffffff;font-size:80px" class="has-text-color has-text-align-center margin-bottom-none"><strong>' . esc_html__( 'Get it delivered', 'full-site-editing' ) . '</strong></p></p>
+            <!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":80}},"className":"margin-bottom-none"} -->
+            <p style="color:#ffffff;font-size:80px" class="has-text-color has-text-align-center margin-bottom-none"><strong>' . esc_html__( 'Get it delivered', 'full-site-editing' ) . '</strong></p>
             <!-- /wp:paragraph -->
 
             <!-- wp:paragraph {"align":"center","className":"margin-top-none"} -->
