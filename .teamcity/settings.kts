@@ -131,9 +131,7 @@ object BuildBaseImages : BuildType({
 		perfmon {
 		}
 		dockerSupport {
-			loginToRegistry = on {
-				dockerRegistryId = "PROJECT_EXT_6"
-			}
+			cleanupPushedImages = true
 		}
 	}
 })
