@@ -4,6 +4,7 @@
 import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Button as OriginalButton,
 	IsolatedEventContainer,
@@ -113,6 +114,7 @@ function WpcomBlockEditorNavSidebar() {
 	const handleClose = ( e: React.MouseEvent ) => {
 		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
 			e.preventDefault();
+			recordTracksEvent( 'calypso_editor_sidebar_close' );
 			doAction( 'a8c.wpcom-block-editor.closeEditor' );
 		}
 	};
