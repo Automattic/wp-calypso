@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { TranslateResult } from 'i18n-calypso';
 
 /**
  * Style dependencies
@@ -9,7 +10,7 @@ import React, { FunctionComponent } from 'react';
 import './style.scss';
 
 interface Props {
-	steps: string[];
+	steps: ( string | TranslateResult )[];
 	currentStep: number;
 }
 
