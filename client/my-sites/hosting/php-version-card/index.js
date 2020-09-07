@@ -55,6 +55,7 @@ const PhpVersionCard = ( {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.2',
+				disabled: true,
 			},
 			{
 				label: translate( '7.3 (recommended)', {
@@ -90,6 +91,11 @@ const PhpVersionCard = ( {
 						value={ selectedValue }
 					>
 						{ getPhpVersions().map( ( option ) => {
+							// Show disabled PHP versions only if the site is still using it.
+							if ( option.value !== version && option?.disabled ) {
+								return null;
+							}
+
 							return (
 								<option
 									disabled={ option.value === version }
