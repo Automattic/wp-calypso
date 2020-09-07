@@ -24,7 +24,7 @@ export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 
 	}
 
 	if ( postId ) {
-		return `/block-editor${ getEditorPath( state, siteId, postId, postType ) }`;
+		return getEditorPath( state, siteId, postId, postType );
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );

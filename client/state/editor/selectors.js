@@ -84,7 +84,7 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
 		path += `/${ siteId }`;
 	}
 
-	return path;
+	return `/block-editor${ path }`;
 }
 
 /**
@@ -98,7 +98,7 @@ export function getEditorNewPostPath( state, siteId, type = 'post' ) {
  */
 export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
 	if ( ! siteId ) {
-		return '/post';
+		return 'block-editor/post';
 	}
 	const editedPost = getEditedPost( state, siteId, postId );
 	const type = get( editedPost, 'type', defaultType );

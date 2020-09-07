@@ -42,7 +42,8 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 		return fileDetails;
 	} );
 
-	describe( 'Commenting and replying to newly created post: @parallel @jetpack', function () {
+	//The Calypso editor is deprecated, so this test is not necessary
+	describe.skip( 'Commenting and replying to newly created post: @parallel @jetpack', function () {
 		if ( host !== 'WPCOM' ) {
 			step( 'Can log into Jetpack site', async function () {
 				const account = dataHelper.getAccountConfig();

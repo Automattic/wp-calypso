@@ -46,7 +46,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Editor: Posts (${ screenSize })`, function () {
+describe.skip( `[${ host }] Editor: Posts (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Public Posts: Preview and Publish a Public Post @parallel @jetpack', function () {
