@@ -1,5 +1,4 @@
 .log-item {
-	border-radius: 2px;
 	--color-log-item: var( --color-text );
 
 	$highlights: ( 'info': 'primary-20', 'success': 'success-20', 'error': 'error-50', 'warning': 'warning-20' );
