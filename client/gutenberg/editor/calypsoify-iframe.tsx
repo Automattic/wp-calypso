@@ -232,7 +232,7 @@ class CalypsoifyIframe extends Component<
 		// any other message is unknown and may indicate a bug
 	};
 
-	onIframePortMessage = ( { data, ports }: MessageEvent ) => {
+	onIframePortMessage = ( { data, data: { ports } }: MessageEvent ) => {
 		/* eslint-disable @typescript-eslint/no-explicit-any */
 		const { action, payload }: { action: EditorActions; payload: any } = data;
 

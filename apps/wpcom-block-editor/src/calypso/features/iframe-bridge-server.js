@@ -934,6 +934,7 @@ function initPort( message ) {
 						multiple: this.props.multiple,
 						value: this.props.value,
 					},
+					ports: [ mediaSelectChannel.port2, mediaCancelChannel.port2 ],
 				},
 				[ mediaSelectChannel.port2, mediaCancelChannel.port2 ]
 			);
