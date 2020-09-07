@@ -13,17 +13,17 @@ $markup = '
       <div class="wp-block-jetpack-layout-grid alignfull column1-desktop-grid__span-10 column1-desktop-grid__start-2 column1-desktop-grid__row-1 column1-tablet-grid__span-8 column1-tablet-grid__row-1 column1-mobile-grid__span-4 column1-mobile-grid__row-1 wp-block-jetpack-layout-gutter__nowrap">
          <!-- wp:jetpack/layout-grid-column -->
          <div class="wp-block-jetpack-layout-grid-column wp-block-jetpack-layout-grid__padding-none">
-            <!-- wp:paragraph {"align":"center","style":{"typography":{"fontSize":80}},"className":"margin-bottom-none"} -->
+            <!-- wp:paragraph {"align":"center","style":{"color":{"text":"#ffffff"},"typography":{"fontSize":80}},"className":"margin-bottom-none"} -->
             <p style="color:#ffffff;font-size:80px" class="has-text-color has-text-align-center margin-bottom-none"><strong>' . esc_html__( 'Get it delivered', 'full-site-editing' ) . '</strong></p>
             <!-- /wp:paragraph -->
 
-            <!-- wp:paragraph {"align":"center","className":"margin-top-none"} -->
+            <!-- wp:paragraph {"align":"center","className":"margin-top-none","style":{"color":{"text":"#ffffff"}}} -->
             <p class="has-text-align-center margin-top-none has-text-color" style="color:#ffffff">' . esc_html__( 'If you can&#8217;t come to us, we&#8217;ll go to you.', 'full-site-editing' ) . '</p>
             <!-- /wp:paragraph -->
 
             <!-- wp:buttons {"align":"center"} -->
             <div class="wp-block-buttons aligncenter"><!-- wp:button {"style":{"color":{"text":"#ffffff","background":"#a5150f"}}} -->
-            <div class="wp-block-button"><a class="wp-block-button__link has-text-color has-background" style="background-color:#a5150f;color:#ffffff">' . esc_html__( 'Order now', 'full-site-editing' ) . '</a></div>
+            <a class="wp-block-button wp-block-button__link has-text-color has-background" style="background-color:#a5150f;color:#ffffff">' . esc_html__( 'Order now', 'full-site-editing' ) . '</a>
             <!-- /wp:button -->
             </div>
             <!-- /wp:buttons -->
