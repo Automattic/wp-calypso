@@ -22,7 +22,6 @@
 /client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/cobalt
 /client/components/upgrades/gsuite @Automattic/cobalt
 /client/lib/domains/email-forwarding @Automattic/cobalt
-/client/lib/domains/google-apps-users @Automattic/cobalt
 /client/lib/gsuite @Automattic/cobalt
 /client/me/purchases/remove-purchase/index.jsx @Automattic/cobalt
 /client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/cobalt
