@@ -13,7 +13,7 @@ interface Props {
 	host?: string;
 }
 
-const Credentials: FunctionComponent< Props > = ( { host } ) => {
+const Credentials: FunctionComponent< Props > = () => {
 	return <Form />;
 };
 
