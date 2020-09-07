@@ -46,6 +46,7 @@ import {
 } from 'lib/plans/constants';
 
 import {
+	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
@@ -75,6 +76,7 @@ const analyticsPageTitleByType = {
 };
 
 export function offerResetContext( context, next ) {
+	debug( 'controller: offerResetContext', context.params );
 	context.header = <StoreHeader />;
 	context.footer = <StoreFooter />;
 	next();
@@ -114,6 +116,7 @@ const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 };
 
 export function redirectWithoutLocaleIfLoggedIn( context, next ) {
+	debug( 'controller: redirectWithoutLocaleIfLoggedIn', context.params );
 	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
 	if ( isLoggedIn && getLocaleFromPath( context.path ) ) {
 		const urlWithoutLocale = removeLocaleFromPath( context.path );
@@ -131,6 +134,7 @@ export function newSite( context, next ) {
 }
 
 export function persistMobileAppFlow( context, next ) {
+	debug( 'controller: persistMobileAppFlow', context.params );
 	const { query } = context;
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		if (
@@ -148,6 +152,7 @@ export function persistMobileAppFlow( context, next ) {
 }
 
 export function setMasterbar( context, next ) {
+	debug( 'controller: setMasterbar', context.params );
 	if ( config.isEnabled( 'jetpack/connect/mobile-app-flow' ) ) {
 		const masterbarToggle = retrieveMobileRedirect() ? hideMasterbar() : showMasterbar();
 		context.store.dispatch( masterbarToggle );
@@ -155,7 +160,22 @@ export function setMasterbar( context, next ) {
 	next();
 }
 
+export function loginBeforeJetpackSearch( context, next ) {
+	debug( 'controller: loginBeforeJetpackSearch', context.params );
+	const { params, path } = context;
+	const { type } = params;
+	const isLoggedOut = ! getCurrentUserId( context.store.getState() );
+
+	// Log in to WP.com happens at the start of the flow for Search products
+	// ( to facilitate site selection ).
+	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) && isLoggedOut ) {
+		return page( login( { isNative: true, isJetpack: true, redirectTo: path } ) );
+	}
+	next();
+}
+
 export function connect( context, next ) {
+	debug( 'controller: connect', context.params );
 	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
 	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
@@ -165,40 +185,31 @@ export function connect( context, next ) {
 	planSlug && storePlan( planSlug );
 	recordPageView( pathname, analyticsPageTitle );
 
-	context.primary = (
-		<JetpackConnect
-			ctaFrom={ query.cta_from /* origin tracking params */ }
-			ctaId={ query.cta_id /* origin tracking params */ }
-			locale={ params.locale }
-			path={ path }
-			type={ type }
-			url={ query.url }
-			forceRemoteInstall={ query.forceInstall }
-		/>
-	);
-	next();
-}
+	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) ) {
+		context.primary = (
+			<SearchPurchase
+				ctaFrom={ query.cta_from /* origin tracking params */ }
+				ctaId={ query.cta_id /* origin tracking params */ }
+				locale={ params.locale }
+				path={ path }
+				type={ type }
+				url={ query.url }
+			/>
+		);
+	} else {
+		context.primary = (
+			<JetpackConnect
+				ctaFrom={ query.cta_from /* origin tracking params */ }
+				ctaId={ query.cta_id /* origin tracking params */ }
+				locale={ params.locale }
+				path={ path }
+				type={ type }
+				url={ query.url }
+				forceRemoteInstall={ query.forceInstall }
+			/>
+		);
+	}
 
-// Purchase Jetpack Search
-export function purchase( context, next ) {
-	const { path, pathname, params, query } = context;
-	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
-	const planSlug = getPlanSlugFromFlowType( type, interval );
-
-	planSlug && storePlan( planSlug );
-	recordPageView( pathname, analyticsPageTitle );
-
-	context.primary = (
-		<SearchPurchase
-			ctaFrom={ query.cta_from /* origin tracking params */ }
-			ctaId={ query.cta_id /* origin tracking params */ }
-			locale={ params.locale }
-			path={ path }
-			type={ type }
-			url={ query.url }
-		/>
-	);
 	next();
 }
 
