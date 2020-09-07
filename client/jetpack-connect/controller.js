@@ -58,6 +58,8 @@ import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 } from 'lib/products-values/constants';
+import { getProductFromSlug } from 'lib/products-values/get-product-from-slug';
+import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 
 /**
  * Module variables
@@ -178,12 +180,20 @@ export function connect( context, next ) {
 	debug( 'controller: connect', context.params );
 	const { path, pathname, params, query } = context;
 	const { type = false, interval } = params;
-	const analyticsPageTitle = get( type, analyticsPageTitleByType, 'Jetpack Connect' );
 	const planSlug = getPlanSlugFromFlowType( type, interval );
+
+	// If `type` doesn't exist in `analyticsPageTitleByType`, we try to get the name of the
+	// product from its slug (if we have one). If none of these options work, we use 'Jetpack Connect'
+	// as the default value.
+	let analyticsPageTitle = analyticsPageTitleByType[ type ];
+	if ( ! analyticsPageTitle && planSlug ) {
+		const product = getProductFromSlug( planSlug );
+		analyticsPageTitle = getJetpackProductDisplayName( product );
+	}
+	recordPageView( pathname, analyticsPageTitle || 'Jetpack Connect' );
 
 	// Not clearing the plan here, because other flows can set the cookie before arriving here.
 	planSlug && storePlan( planSlug );
-	recordPageView( pathname, analyticsPageTitle );
 
 	if ( JETPACK_SEARCH_PRODUCTS.includes( type ) ) {
 		context.primary = (
