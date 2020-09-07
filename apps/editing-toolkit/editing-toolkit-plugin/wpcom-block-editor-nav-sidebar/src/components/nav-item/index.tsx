@@ -7,6 +7,7 @@ import { forwardRef } from '@wordpress/element';
 import { _x } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { applyFilters } from '@wordpress/hooks';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -38,12 +39,16 @@ const NavItem = forwardRef< HTMLLIElement, NavItemProps >(
 			item.id,
 			postType.slug
 		);
+		const trackEvent = () => {
+			recordTracksEvent( `calypso_editor_sidebar_${ postType.slug }_open` );
+		};
 
 		return (
 			<li ref={ ref }>
 				<Button
 					className={ buttonClasses }
 					href={ editUrl }
+					onClick={ trackEvent }
 					target={ applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) }
 				>
 					<div className={ titleClasses } title={ item.title?.raw }>
