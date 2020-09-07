@@ -1,7 +1,7 @@
 .activity-card {
 	.card {
-		border-radius: 2px;
 		padding: 16px;
+		border-radius: var( --jetpack-corners-sharp );
 	}
 
 	.activity-card__actor {
