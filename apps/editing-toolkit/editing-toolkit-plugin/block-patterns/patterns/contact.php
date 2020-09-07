@@ -6,7 +6,7 @@
  */
 
 $markup = '
-<!-- wp:group {"customBackgroundColor":"#eeedeb","customTextColor":"#000000","align":"full"} -->
+<!-- wp:group {"align":"full","style":{"color":{"background":"#eeedeb","text":"#000000"}}} -->
 <div class="wp-block-group alignfull has-text-color has-background" style="background-color:#eeedeb;color:#000000"><div class="wp-block-group__inner-container"><!-- wp:spacer -->
 <div style="height:100px" aria-hidden="true" class="wp-block-spacer"></div>
 <!-- /wp:spacer -->
