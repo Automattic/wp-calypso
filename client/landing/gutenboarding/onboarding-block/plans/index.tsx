@@ -41,7 +41,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {
 		! isModal && setHasUsedPlansStep( true );
-	}, [] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
 	const selectedPlanRef = React.useRef< string | undefined >();
