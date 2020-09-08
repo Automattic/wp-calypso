@@ -45,7 +45,7 @@ export default function CreatePage( { postType }: Props ) {
 	);
 
 	const trackEvent = () => {
-		recordTracksEvent( `calypso_editor_sidebar_${ postType.slug }_add` );
+		recordTracksEvent( `calypso_editor_sidebar_item_add`, { post_type: postType.slug } );
 	};
 
 	return (
