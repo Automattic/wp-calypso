@@ -1,0 +1,63 @@
+
+/**
+ * Nav unification styles
+ *
+ * This file contains all relevant styles for the nav unification prototype (see pbAPfg-O2).
+ * Using a single place to store these styles will allow us to easily (re)move them later.
+ * Depending on the outcome they'll either be deleted or moved to the relevant places.
+ * 
+ * IMPORTANT: When adding to this file please also add the source file in a comment.
+ */
+
+.is-nav-unification {
+	$nav-unification-primary: #23282d;
+
+	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
+	--color-masterbar-background: #23282d;
+	--color-masterbar-border: #333;
+	--color-masterbar-item-hover-background: #333;
+	--color-masterbar-item-active-background: #fff;
+	--color-masterbar-unread-dot-background: #f0821e;
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item {
+		&.is-active {
+			.masterbar__item-content {
+				color: $nav-unification-primary;
+			}
+
+			.gridicon {
+				fill: $nav-unification-primary;
+			}
+		}
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item-new {
+		&:hover {
+			background: #e9e9ea;
+			color: $nav-unification-primary;
+		}
+
+		.masterbar__item-content {
+			color: $nav-unification-primary;
+		}
+		.gridicon {
+			fill: $nav-unification-primary;
+		}
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__toggle-drafts.button.is-borderless {
+		&:hover {
+			background-color: #e9e9ea;
+
+			.count {
+				border-color: $nav-unification-primary;
+				color: $nav-unification-primary;
+			}
+		}
+
+	}
+
+}
