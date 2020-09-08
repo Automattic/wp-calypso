@@ -396,9 +396,17 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 			}
 		} catch ( err ) {
+			// This is a fallback to catch any errors caused by the analytics code
+			// (particularly for the error reporting analytics code). Anything in
+			// this block should remain very simple and extremely tolerant of any
+			// kind of data. It should make no assumptions about the data it uses.
+			// There's no fallback for the fallback!
 			debug( 'checkout event error', err.message );
 			return reduxDispatch(
-				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message )
+				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
+					type: String( action?.type ),
+					payload: String( action?.payload ),
+				} )
 			);
 		}
 	};
