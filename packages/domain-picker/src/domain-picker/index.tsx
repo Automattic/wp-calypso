@@ -211,8 +211,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			{ showErrorMessage && (
 				<div className="domain-picker__error">
 					<p className="domain-picker__error-message">
-						<span>{ __( 'An error has occurred ' ) }</span>
-						<small>{ domainSuggestionErrorMessage }</small>
+						<span>{ __( 'An error has occurred, please check your connection and retry' ) }</span>
 					</p>
 					<button className="domain-picker__error-retry" onClick={ retryDomainSuggestionRequest }>
 						Retry
