@@ -78,10 +78,6 @@ object BuildBaseImages : BuildType({
 		root(WpCalypso)
 
 		cleanCheckout = true
-		branchFilter = """
-			+:master
-		""".trimIndent()
-		excludeDefaultBranchChanges = true
 	}
 
 	steps {
