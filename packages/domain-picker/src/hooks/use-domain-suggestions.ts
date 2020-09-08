@@ -29,7 +29,7 @@ export function useDomainSuggestions(
 	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 	// @ts-ignore
 	// Missing types for invalidateResolutionForStoreSelector
-	// (https://github.com/WordPress/gutenberg/blob/master/packages/data/src/namespace-store/metadata/actions.js#L57)
+	// (see packages/data/src/namespace-store/metadata/actions.js#L57)
 	const { invalidateResolutionForStoreSelector } = useDispatch( DOMAIN_SUGGESTIONS_STORE );
 
 	return useSelect(
