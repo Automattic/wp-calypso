@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import type { Plans, DomainSuggestions } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -19,6 +20,8 @@ import './style.scss';
 
 type PlansSlug = Plans.PlanSlug;
 
+const debug = debugFactory( 'plans-grid' );
+
 export interface Props {
 	header?: React.ReactElement;
 	currentPlan?: Plans.Plan;
@@ -26,7 +29,7 @@ export interface Props {
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
-	singleColumn?: boolean;
+	isExperimental?: boolean;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -36,13 +39,13 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	onPlanSelect,
 	onPickDomainClick,
 	disabledPlans,
-	singleColumn,
+	isExperimental,
 } ) => {
 	const { __ } = useI18n();
 
-	// Note: singleColumn prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
+	// Note: isExperimental prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
 	// and Gutenboarding flow is started with ?latest query param
-	singleColumn && console.log( 'display accordion' ); // eslint-disable-line no-console
+	isExperimental && debug( 'PlansGrid experimental version is active' );
 
 	return (
 		<div className="plans-grid">
