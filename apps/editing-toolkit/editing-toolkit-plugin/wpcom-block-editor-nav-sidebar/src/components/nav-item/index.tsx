@@ -40,7 +40,7 @@ const NavItem = forwardRef< HTMLLIElement, NavItemProps >(
 			postType.slug
 		);
 		const trackEvent = () => {
-			recordTracksEvent( `calypso_editor_sidebar_${ postType.slug }_open` );
+			recordTracksEvent( 'calypso_editor_sidebar_item_edit', { post_type: postType.slug } );
 		};
 
 		return (
