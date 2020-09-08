@@ -11,6 +11,8 @@
 
 .is-nav-unification {
 	$nav-unification-primary: #23282d;
+	$nav-unification-masterbar-height: 32px;
+	$nav-unification-masterbar-font-size: 13px;
 
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
 	--color-masterbar-background: #23282d;
@@ -19,8 +21,24 @@
 	--color-masterbar-item-active-background: #fff;
 	--color-masterbar-unread-dot-background: #f0821e;
 
+	// client/layout/style.scss
+	.layout__secondary {
+		top: $nav-unification-masterbar-height;
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar {
+		height: $nav-unification-masterbar-height;
+		border-bottom: none;
+		font-size: $nav-unification-masterbar-font-size;
+	}
+
 	// client/layout/masterbar/style.scss
 	.masterbar__item {
+		height: $nav-unification-masterbar-height;
+		font-size: $nav-unification-masterbar-font-size;
+		line-height: $nav-unification-masterbar-height;
+
 		&.is-active {
 			.masterbar__item-content {
 				color: $nav-unification-primary;
@@ -33,7 +51,16 @@
 	}
 
 	// client/layout/masterbar/style.scss
+
+	.masterbar__item-new,
+	.masterbar__toggle-drafts.button.is-borderless {
+		height: 24px;
+		margin: 4px 8px;
+		border-radius: 5px;
+	}
+
 	.masterbar__item-new {
+
 		&:hover {
 			background: #e9e9ea;
 			color: $nav-unification-primary;
@@ -47,8 +74,9 @@
 		}
 	}
 
-	// client/layout/masterbar/style.scss
 	.masterbar__toggle-drafts.button.is-borderless {
+		margin-left: -26px;
+
 		&:hover {
 			background-color: #e9e9ea;
 
@@ -58,6 +86,22 @@
 			}
 		}
 
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item-me {
+		padding-right: 8px;
+		padding-left: 8px;
+		.gravatar {
+			top: 5px;
+			left: 9px;
+		}
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item-notifications {
+		padding-right: 5px;
+		padding-left: 5px;
 	}
 
 }
