@@ -78,7 +78,7 @@
 		"me/my-profile": true,
 		"me/notifications": true,
 		"memberships": true,
-		"navUnification": false,
+		"nav-unification": false,
 		"network-connection": true,
 		"perfmon": false,
 		"persist-redux": true,
