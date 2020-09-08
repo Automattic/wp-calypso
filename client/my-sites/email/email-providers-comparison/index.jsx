@@ -95,8 +95,12 @@ class EmailProvidersComparison extends React.Component {
 							translate( '10GB storage' ),
 							translate( 'Email, calendars, and contacts' ),
 						] }
-						formattedPrice={ '$4' }
-						billingInterval={ translate( '/user /month' ) }
+						formattedPrice={ translate( '{{price/}} /user /month', {
+							components: {
+								price: <span>$4</span>,
+							},
+							comment: '{{price/}} is the formatted price, e.g. $20',
+						} ) }
 						buttonLabel={ translate( 'Add Titan Mail' ) }
 						hasPrimaryButton={ true }
 					/>
@@ -113,8 +117,12 @@ class EmailProvidersComparison extends React.Component {
 							translate( 'Email, calendars, and contacts' ),
 							translate( 'Video calls, Docs, spreadsheets, and more' ),
 						] }
-						formattedPrice={ getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ) }
-						billingInterval={ translate( '/user /year' ) }
+						formattedPrice={ translate( '{{price/}} /user /year', {
+							components: {
+								price: <span>{ getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
+							},
+							comment: '{{price/}} is the formatted price, e.g. $20',
+						} ) }
 						discount={
 							hasDiscount( gSuiteProduct )
 								? translate( 'First year %(discountedPrice)s', {

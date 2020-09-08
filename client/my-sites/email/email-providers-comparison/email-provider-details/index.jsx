@@ -25,7 +25,6 @@ class EmailProviderDetails extends React.Component {
 		features: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		badge: PropTypes.string,
 		formattedPrice: PropTypes.string,
-		billingInterval: PropTypes.string,
 		discount: PropTypes.string,
 		buttonLabel: PropTypes.string,
 		hasPrimaryButton: PropTypes.bool,
@@ -44,7 +43,6 @@ class EmailProviderDetails extends React.Component {
 			image,
 			title,
 			formattedPrice,
-			billingInterval,
 			discount,
 			buttonLabel,
 			hasPrimaryButton,
@@ -53,7 +51,7 @@ class EmailProviderDetails extends React.Component {
 		return (
 			<PromoCard { ...{ title, image, badge } }>
 				<p className="email-provider-details__description">{ description }</p>
-				<PromoCardPrice { ...{ formattedPrice, billingInterval, discount } } />
+				<PromoCardPrice { ...{ formattedPrice, discount } } />
 				<Button className="email-provider-details__cta" primary={ hasPrimaryButton }>
 					{ buttonLabel }
 				</Button>

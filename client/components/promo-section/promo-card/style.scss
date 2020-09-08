@@ -105,20 +105,18 @@
 
 	.promo-card__price {
 		.price__cost {
-			font-size: $font-title-medium;
-			color: var( --studio-gray-100 );
-		}
-
-		.price__discounted {
-			text-decoration: line-through;
-		}
-
-		.price__interval {
 			font-size: $font-body-small;
 			color: var( --studio-gray-80 );
-			margin-left: 4px;
+
+			span {
+				font-size: $font-title-medium;
+				color: var( --studio-gray-100 );
+			}
 		}
 
+		.price__discounted span {
+			text-decoration: line-through;
+		}
 		.price__discount {
 			font-size: $font-body-small;
 			color: var( --studio-green-50 );
