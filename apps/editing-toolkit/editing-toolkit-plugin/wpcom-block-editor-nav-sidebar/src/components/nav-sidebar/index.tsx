@@ -114,7 +114,7 @@ function WpcomBlockEditorNavSidebar() {
 	const handleClose = ( e: React.MouseEvent ) => {
 		if ( hasAction( 'a8c.wpcom-block-editor.closeEditor' ) ) {
 			e.preventDefault();
-			recordTracksEvent( 'calypso_editor_sidebar_close' );
+			recordTracksEvent( 'calypso_editor_sidebar_editor_close' );
 			doAction( 'a8c.wpcom-block-editor.closeEditor' );
 		}
 	};
