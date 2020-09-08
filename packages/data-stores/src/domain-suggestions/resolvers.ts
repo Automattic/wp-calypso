@@ -6,7 +6,13 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { receiveCategories, receiveDomainSuggestions, receiveDomainAvailability } from './actions';
+import {
+	receiveCategories,
+	receiveDomainSuggestionsSuccess,
+	receiveDomainSuggestionsError,
+	fetchDomainSuggestions,
+	receiveDomainAvailability,
+} from './actions';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 import type { Selectors } from './selectors';
 import type { TailParameters } from '../mapped-types';
@@ -46,28 +52,27 @@ export function* __internalGetDomainSuggestions(
 ) {
 	// If normalized search string (`query`) contains no alphanumerics, endpoint 404s
 	if ( ! queryObject.query ) {
-		return receiveDomainSuggestions( queryObject, [] );
+		return receiveDomainSuggestionsError( 'Empty query' );
 	}
+
+	yield fetchDomainSuggestions();
 
 	let suggestions;
 	try {
-		// wpcomRequest should return a list of suggested domains
 		suggestions = yield wpcomRequest( {
 			apiVersion: '1.1',
 			path: '/domains/suggestions',
 			query: stringify( queryObject ),
 		} );
 	} catch ( e ) {
-		// Network request failed (e.g. no connection)
-		// console.log( `Error while requesting suggested domains ${ e }` );
-		// TODO: commaunicate the error to the UI
+		// e.g. no connection, or JSON parsing error
+		return receiveDomainSuggestionsError( e.message );
 	}
 
-	if ( suggestions === '' ) {
-		// APIs failed (e.g. JSON response was malformed, internal errors)
-		// (see https://github.com/Automattic/wp-calypso/issues/43503)
-		// TODO: commaunicate the error to the UI
+	if ( ! suggestions || suggestions === '' ) {
+		// Other internal errors
+		return receiveDomainSuggestionsError( 'Invalid response' );
 	}
 
-	return receiveDomainSuggestions( queryObject, suggestions );
+	return receiveDomainSuggestionsSuccess( queryObject, suggestions );
 }

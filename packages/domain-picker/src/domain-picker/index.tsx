@@ -9,6 +9,8 @@ import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import { DataState } from '@automattic/data-stores/src/domain-suggestions/constants';
+
 /**
  * Internal dependencies
  */
@@ -116,12 +118,18 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestionVendor()
 	);
 
-	const allDomainSuggestions = useDomainSuggestions(
-		domainSearch.trim(),
-		quantityExpanded,
-		domainCategory,
-		useI18n().i18nLocale
-	) as DomainSuggestion[] | undefined;
+	const {
+		allDomainSuggestions,
+		errorMessage: domainSuggestionErrorMessage,
+		state: domainSuggestionState,
+		retryRequest: retryDomainSuggestionRequest,
+	} =
+		useDomainSuggestions(
+			domainSearch.trim(),
+			quantityExpanded,
+			domainCategory,
+			useI18n().i18nLocale
+		) || {};
 
 	const domainSuggestions = allDomainSuggestions?.slice(
 		existingSubdomain ? 1 : 0,
@@ -176,6 +184,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		onSetDomainSearch( searchQuery );
 	};
 
+	const showErrorMessage = domainSuggestionState === DataState.Failure;
+	const isDomainSearchEmpty = domainSearch.trim()?.length <= 1;
+	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
+	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
+
 	return (
 		<div className="domain-picker">
 			{ header && header }
@@ -194,7 +207,18 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					value={ domainSearch }
 				/>
 			</div>
-			{ domainSearch.trim()?.length > 1 ? (
+			{ showErrorMessage && (
+				<div className="domain-picker__error">
+					<p className="domain-picker__error-message">
+						<span>{ __( 'An error has occurred ' ) }</span>
+						<small>{ domainSuggestionErrorMessage }</small>
+					</p>
+					<button className="domain-picker__error-retry" onClick={ retryDomainSuggestionRequest }>
+						Retry
+					</button>
+				</div>
+			) }
+			{ showDomainSuggestionsResults && (
 				<div className="domain-picker__body">
 					{ showDomainCategories && (
 						<div className="domain-picker__aside">
@@ -282,7 +306,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) }
 					</div>
 				</div>
-			) : (
+			) }
+			{ showDomainSuggestionsEmpty && (
 				<div className="domain-picker__empty-state">
 					<p className="domain-picker__empty-state--text">
 						{ __(
