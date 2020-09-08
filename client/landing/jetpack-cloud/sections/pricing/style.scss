@@ -16,6 +16,11 @@
 
 		border-left: none;
 		border-right: none;
+
+		@include break-large {
+			// This is the height of the jpcom masterbar
+			top: 94px;
+		}
 	}
 
 	.header {
