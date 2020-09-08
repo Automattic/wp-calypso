@@ -9,13 +9,13 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import PromoCard from '../../../components/promo-section/promo-card';
+import PromoCard from 'components/promo-section/promo-card';
 import EmailProviderDetails from './email-provider-details';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductBySlug } from 'state/products-list/selectors';
 import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
 import { getAnnualPrice } from 'lib/gsuite';
-import { hasDiscount } from '../../../components/gsuite/gsuite-price';
+import { hasDiscount } from 'components/gsuite/gsuite-price';
 import emailIllustration from 'assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'assets/images/email-providers/titan.svg';
 import gSuiteLogo from 'assets/images/email-providers/gsuite.svg';
