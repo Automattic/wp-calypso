@@ -24,7 +24,7 @@
 		display: flex;
 		align-items: center;
 		background-color: var( --color-surface );
-		border-radius: inherit;
+		border-radius: 0;
 		height: 100%;
 
 		.accessible-focus &:focus {
@@ -113,7 +113,7 @@
 	height: 100%;
 	background: var( --color-surface );
 	appearance: none;
-	border-radius: inherit;
+	border-radius: 0;
 	box-sizing: border-box;
 	padding: 0;
 	-webkit-appearance: none;
