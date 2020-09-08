@@ -66,12 +66,12 @@ export function* __internalGetDomainSuggestions(
 		} );
 	} catch ( e ) {
 		// e.g. no connection, or JSON parsing error
-		return receiveDomainSuggestionsError( e.message );
+		return receiveDomainSuggestionsError( `Error while fetching server response, ${ e.message }` );
 	}
 
 	if ( ! suggestions || suggestions === '' ) {
-		// Other internal errors
-		return receiveDomainSuggestionsError( 'Invalid response' );
+		// Other internal server errors
+		return receiveDomainSuggestionsError( 'Invalid response from the server' );
 	}
 
 	return receiveDomainSuggestionsSuccess( queryObject, suggestions );
