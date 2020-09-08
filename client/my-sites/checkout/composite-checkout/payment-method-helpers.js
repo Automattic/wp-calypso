@@ -45,7 +45,6 @@ export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
 			return getStoredCards();
 		}
 
-		// TODO: handle errors
 		fetchStoredCards()
 			.then( ( cards ) => {
 				debug( 'stored cards fetched', cards );

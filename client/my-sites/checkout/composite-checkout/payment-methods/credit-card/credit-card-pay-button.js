@@ -111,12 +111,10 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 							paymentPartner,
 						} )
 							.then( ( ebanxResponse ) => {
-								// TODO
 								debug( 'ebanx transaction is successful', ebanxResponse );
 								setTransactionComplete();
 							} )
 							.catch( ( error ) => {
-								// TODO
 								debug( 'ebanx transaction error', error );
 								setTransactionError( error );
 							} );
