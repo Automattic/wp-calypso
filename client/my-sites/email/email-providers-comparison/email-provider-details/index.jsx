@@ -22,7 +22,7 @@ class EmailProviderDetails extends React.Component {
 		title: PropTypes.string.isRequired,
 		description: PropTypes.string.isRequired,
 		image: PropTypes.object.isRequired,
-		features: PropTypes.array.isRequired,
+		features: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		badge: PropTypes.string,
 		formattedPrice: PropTypes.string,
 		billingInterval: PropTypes.string,
