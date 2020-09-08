@@ -3,6 +3,7 @@
  */
 import React, { useEffect } from 'react';
 
+// A hack to make React available for non-transpiled components imported by `wp/edit-post`
 window.React = React;
 
 /**
