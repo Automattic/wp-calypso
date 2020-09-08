@@ -358,9 +358,9 @@ class Page extends Component {
 
 	setComingSoonPage = () => {
 		this.props.updateSiteFrontPage( this.props.siteId, {
-			wpcom_coming_soon_page_id: this.props.isComingSoonPage ? 0 : this.props.page.ID,
+			wpcom_public_coming_soon_page_id: this.props.isComingSoonPage ? 0 : this.props.page.ID,
 		} );
-	}
+	};
 
 	getComingSoonPageItem() {
 		const { canManageOptions, translate } = this.props;

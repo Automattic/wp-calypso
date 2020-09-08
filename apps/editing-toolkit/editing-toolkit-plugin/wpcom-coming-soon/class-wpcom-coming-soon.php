@@ -31,7 +31,7 @@ class WPCOM_Coming_Soon {
 		// @TODO this is a filter used in an older version of a mu-plugin/sitemap
 		add_filter( 'sitemap_skip_post', array( $this, 'exclude_from_sitemap' ), 10, 2 );
 		/*
-			  $id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
+			  $id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
 
 		if ( ! empty( $id ) ) {
 			delete_post_meta( $id, '_sitemap_priority' );
@@ -97,7 +97,7 @@ class WPCOM_Coming_Soon {
 		$exclude = (bool) $exclude;
 		l( '$post<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<' );
 		l( $post );
-		$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
+		$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
 
 		if ( ! empty( $id ) && $post->ID === $id ) {
 			$exclude = (bool) apply_filters( 'wpcom_sitemaps_exclude_post', true, get_post( $id ) );
@@ -108,7 +108,7 @@ class WPCOM_Coming_Soon {
 	}
 
 	public function exclude_from_public_queries( $query ) {
-		$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
+		$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
 		if ( ! empty( $id ) && ! is_admin() && $query->is_main_query() ) {
 			$query->set( 'post__not_in', array( $id ) );
 		}
@@ -123,7 +123,7 @@ class WPCOM_Coming_Soon {
 			return;
 		}
 
-		$id = (int) get_option( 'wpcom_coming_soon_page_id', 0 );
+		$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
 
 		if ( empty( $id ) ) {
 			$should_show_display_fallback_coming_soon_page = true;
