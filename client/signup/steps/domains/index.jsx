@@ -46,7 +46,7 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
-import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { isSitePreviewVisible, isPlanStepExistsAndSkipped } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 import { getABTestVariation } from 'lib/abtest';
 import getSitesItems from 'state/selectors/get-sites-items';
@@ -128,6 +128,15 @@ class DomainsStep extends React.Component {
 		};
 	}
 
+	/**
+	 * Derive if the "plans" step actually will be visible to the customer in a given flow
+	 */
+	getIsPlanSelectionUnavailableInFlow = () => {
+		const { steps, isPlanStepSkipped } = this.props;
+		const isPlansStepExistsInFlow = steps?.some( ( planName ) => planName.includes( 'plans' ) );
+		return ! isPlansStepExistsInFlow || isPlanStepSkipped;
+	};
+
 	componentDidUpdate( prevProps ) {
 		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
 		if ( prevProps.stepSectionName !== this.props.stepSectionName ) {
@@ -201,7 +210,9 @@ class DomainsStep extends React.Component {
 	}
 
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const hideFreePlanTracksProp = { should_hide_free_plan: shouldHideFreePlan };
+		const hideFreePlanTracksProp = this.getIsPlanSelectionUnavailableInFlow()
+			? { should_hide_free_plan: shouldHideFreePlan }
+			: {};
 
 		const tracksProperties = Object.assign(
 			{
@@ -227,7 +238,9 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = { shouldHideFreePlan };
+		const shouldHideFreePlanItem = this.getIsPlanSelectionUnavailableInFlow()
+			? { shouldHideFreePlan }
+			: {};
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -434,7 +447,7 @@ class DomainsStep extends React.Component {
 		const selectedFreePlanInSwapFlow =
 			'onboarding-plan-first' === this.props.flowName && hasSelectedFreePlan;
 		const selectedPaidPlanInSwapFlow = 'onboarding-plan-first' === this.props.flowName && cartItem;
-
+		const isPlanSelectionUnavailableInFlow = this.getIsPlanSelectionUnavailableInFlow();
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
@@ -455,6 +468,7 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
+				isPlanSelectionUnavailableInFlow={ isPlanSelectionUnavailableInFlow }
 				showExampleSuggestions={ showExampleSuggestions }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
@@ -750,6 +764,7 @@ export default connect(
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isReskinned,
+			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
 		};
 	},
 	{

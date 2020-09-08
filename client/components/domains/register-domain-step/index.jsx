@@ -1308,8 +1308,11 @@ class RegisterDomainStep extends React.Component {
 			<Notice text={ domainForwardingExplainer } showDismiss={ false } />
 		);
 
+		const { isPlanSelectionUnavailableInFlow = false } = this.props;
 		const shouldHideFreeDomainExplainer =
-			this.props.selectedFreePlanInSwapFlow || this.props.selectedPaidPlanInSwapFlow;
+			isPlanSelectionUnavailableInFlow ||
+			this.props.selectedFreePlanInSwapFlow ||
+			this.props.selectedPaidPlanInSwapFlow;
 		return (
 			<>
 				{ renderCustomDomainForFreePlanExplainer }
