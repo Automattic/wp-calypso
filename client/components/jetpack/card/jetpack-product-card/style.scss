@@ -203,20 +203,13 @@ $jetpack-product-card-icon-size: 55px;
 	height: $jetpack-product-card-badge-height;
 	padding: 0 16px;
 
-	background: var( --color-surface );
-	border: 1px solid currentColor;
+	background: var( --color-neutral-40 );
 	border-radius: 2px;
-	color: $jetpack-product-card-color;
+	color: var( --color-text-inverted );
 
 	font-size: 0.75rem;
 	line-height: $jetpack-product-card-badge-height;
 	text-transform: uppercase;
-}
-
-.jetpack-product-card.is-owned .jetpack-product-card__badge {
-	background-color: var( --color-neutral-40 );
-	border: none;
-	color: var( --color-text-inverted );
 }
 
 .jetpack-product-card__body {

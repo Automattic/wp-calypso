@@ -9,7 +9,13 @@
 		border-color: $jetpack-bundle-card-color;
 	}
 
-	.jetpack-product-card__badge {
-		color: $jetpack-bundle-card-color;
+	&.is-featured {
+		.jetpack-product-card__badge {
+			border: 1px solid $jetpack-bundle-card-color;
+
+			color: $jetpack-bundle-card-color;
+
+			background-color: var( --color-surface );
+		}
 	}
 }
