@@ -1,14 +1,19 @@
+# master
+
 # 6.3.0
 
 - Add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the
   PostCSS loader, deprecating the less capable `postCssConfig` option
 - Updated terser-webpack-plugin to ^4.1.0
-- Added packages to transpile:
+- Added packages to the list of transpiled NPM dependencies:
 	- dom7
 	- query-string
 	- split-on-first
 	- strict-uri-encode
 	- swiper
+	- calypso
+- Removed packages to the list of transpiled NPM dependencies:
+	- wp-calypso-client
 
 # 6.2.0
 

@@ -13,8 +13,8 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import FormLabel from 'wp-calypso-client/components/forms/form-label';
-import FormRadio from 'wp-calypso-client/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 class SharingButtonsStyle extends React.Component {
 	static displayName = 'SharingButtonsStyle';
