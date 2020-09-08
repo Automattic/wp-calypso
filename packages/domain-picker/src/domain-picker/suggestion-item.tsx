@@ -11,6 +11,7 @@ import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 interface Props {
 	domain: string;
 	cost: string;
+	hstsRequired?: boolean;
 	isFree?: boolean;
 	isExistingSubdomain?: boolean;
 	isRecommended?: boolean;
