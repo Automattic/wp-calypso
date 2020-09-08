@@ -20,7 +20,6 @@ import {
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
-import { requestProductsList } from 'state/products-list/actions';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { createItemToAddToCart } from './add-items';
 
@@ -253,19 +252,6 @@ function useAddProductFromSlug( {
 		isFetchingProducts,
 		setState,
 	] );
-}
-
-export function useFetchProductsIfNotLoaded() {
-	const reduxDispatch = useDispatch();
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
-	useEffect( () => {
-		if ( ! isFetchingProducts && Object.keys( products || {} ).length < 1 ) {
-			debug( 'fetching products list' );
-			reduxDispatch( requestProductsList() );
-			return;
-		}
-	}, [ isFetchingProducts, products, reduxDispatch ] );
 }
 
 function useFetchPlansIfNotLoaded() {

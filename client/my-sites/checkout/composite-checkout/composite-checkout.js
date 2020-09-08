@@ -28,9 +28,8 @@ import {
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
-import usePrepareProductsForCart, {
-	useFetchProductsIfNotLoaded,
-} from './use-prepare-product-for-cart';
+import usePrepareProductsForCart from './use-prepare-product-for-cart';
+import useFetchProductsIfNotLoaded from './hooks/use-fetch-products-if-not-loaded';
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
