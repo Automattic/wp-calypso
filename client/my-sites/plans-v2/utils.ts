@@ -452,7 +452,7 @@ export function getOptionFromSlug( slug: string ): string | null {
 export function getAllOptionsFromSlug( slug: string ): string[] | null {
 	const allProductsWithOption = Object.keys( SUBTYPE_TO_OPTION );
 
-	if ( ! allProductsWithOption.includes( slug ) ) {
+	if ( ! slug || ! allProductsWithOption.includes( slug ) ) {
 		return null;
 	}
 

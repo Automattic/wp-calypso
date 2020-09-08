@@ -9,7 +9,11 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { PRODUCTS_TYPES, SELECTOR_PLANS } from '../constants';
-import { slugToSelectorProduct, getJetpackDescriptionWithOptions } from '../utils';
+import {
+	getAllOptionsFromSlug,
+	getJetpackDescriptionWithOptions,
+	slugToSelectorProduct,
+} from '../utils';
 import ProductCard from '../product-card';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -33,6 +37,8 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
+	const optionsFromCurrentPlan = getAllOptionsFromSlug( currentPlan ) || [];
+
 	// This gets all plan objects for us to parse.
 	const planObjects: SelectorProduct[] = useMemo( () => {
 		// Map over all plan slugs and convert them to SelectorProduct types.
@@ -43,10 +49,10 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					!! product &&
 					duration === product.term &&
 					PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
-					// Don't include a generic/option card if the user already owns a subtype
-					! product.subtypes.includes( currentPlan || '' ) &&
 					// Don't include a card of a plan the user already owns
-					product.productSlug !== currentPlan
+					product.productSlug !== currentPlan &&
+					// Don't include a generic/option card if the user already owns a subtype
+					! optionsFromCurrentPlan.includes( product.productSlug )
 			)
 			.map( ( product: SelectorProduct ) => ( {
 				...product,
