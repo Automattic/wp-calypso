@@ -28,7 +28,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack`, function () {
+describe.skip( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Image Upload:', function () {

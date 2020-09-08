@@ -127,7 +127,10 @@ SupportArticleDialog.propTypes = {
 	postId: PropTypes.number,
 };
 
-const getPostKey = memoize( ( blogId, postId ) => ( { blogId, postId } ) );
+const getPostKey = memoize(
+	( blogId, postId ) => ( { blogId, postId } ),
+	( ...args ) => JSON.stringify( args )
+);
 
 const mapStateToProps = ( state ) => {
 	const postId = getInlineSupportArticlePostId( state );

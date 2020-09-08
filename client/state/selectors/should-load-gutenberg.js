@@ -1,13 +1,8 @@
-/**
- * Internal dependencies
- */
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
-
-export const shouldLoadGutenberg = ( state, siteId ) => {
-	const validEditors = [ 'gutenberg-iframe', 'gutenberg-redirect', 'gutenberg-redirect-and-style' ];
-	const selectedEditor = getSelectedEditor( state, siteId );
-	return inEditorDeprecationGroup( state ) || validEditors.indexOf( selectedEditor ) > -1;
+export const shouldLoadGutenberg = () => {
+	/* Now the Calypso editor is deprecated we should always load Gutenberg.
+	 * If we need to redirect to wp-admin, that is handled as Gutenberg is loaded.
+	 */
+	return true;
 };
 
 export default shouldLoadGutenberg;

@@ -22,7 +22,6 @@
 /client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/cobalt
 /client/components/upgrades/gsuite @Automattic/cobalt
 /client/lib/domains/email-forwarding @Automattic/cobalt
-/client/lib/domains/google-apps-users @Automattic/cobalt
 /client/lib/gsuite @Automattic/cobalt
 /client/me/purchases/remove-purchase/index.jsx @Automattic/cobalt
 /client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/cobalt
@@ -85,3 +84,10 @@
 # FSE Workflow Files
 /.github/workflows/editing-toolkit-plugin.yml @Automattic/cylon
 /.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
+
+# Experimentation platform legacy library and new client
+/client/lib/abtest @Automattic/experimentation-platform
+/client/components/data/query-experiments @Automattic/experimentation-platform
+/client/components/experiment @Automattic/experimentation-platform
+/client/state/data-layer/wpcom/experiments @Automattic/experimentation-platform
+/client/state/experiments @Automattic/experimentation-platform
