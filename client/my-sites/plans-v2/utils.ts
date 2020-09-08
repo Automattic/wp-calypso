@@ -34,7 +34,7 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 } from 'lib/plans/constants';
-import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
+import { getPlan, getMonthlyPlanByYearly, getYearlyPlanByMonthly, planHasFeature } from 'lib/plans';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
 import {
 	JETPACK_SEARCH_PRODUCTS,
@@ -439,6 +439,26 @@ export function getProductUpsell( slug: string ): string | null {
  */
 export function getOptionFromSlug( slug: string ): string | null {
 	return SUBTYPE_TO_OPTION[ slug ];
+}
+
+/**
+ * Returns all options, both yearly and monthly, given a slug.
+ * e.g. jetpack_security_daily -> [ jetpack_security_monthly, jetpack_security ]
+ * e.g. jetpack_scan -> null
+ *
+ * @param slug string
+ * @returns string[] | null
+ */
+export function getAllOptionsFromSlug( slug: string ): string[] | null {
+	const allProductsWithOption = Object.keys( SUBTYPE_TO_OPTION );
+
+	if ( ! allProductsWithOption.includes( slug ) ) {
+		return null;
+	}
+
+	return [ getMonthlyPlanByYearly( slug ), getYearlyPlanByMonthly( slug ) ].map( ( s ) =>
+		getOptionFromSlug( s )
+	);
 }
 
 /**
