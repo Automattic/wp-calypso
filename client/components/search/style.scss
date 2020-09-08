@@ -24,7 +24,6 @@
 		display: flex;
 		align-items: center;
 		background-color: var( --color-surface );
-		border-radius: 0;
 		height: 100%;
 
 		.accessible-focus &:focus {
@@ -159,7 +158,7 @@
 	}
 
 	.search__input-fade {
-		border-radius: inherit;
+		border-radius: 0;
 		flex: 1 1 auto;
 		height: 100%;
 		position: relative;
