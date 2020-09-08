@@ -138,6 +138,7 @@ function WpcomBlockEditorNavSidebar() {
 			  );
 
 	const dismissSidebar = () => {
+		recordTracksEvent( 'calypso_editor_sidebar_dismiss' );
 		if ( isOpen && ! isClosing ) {
 			toggleSidebar();
 		}
