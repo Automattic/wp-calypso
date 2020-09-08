@@ -402,6 +402,13 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			// kind of data. It should make no assumptions about the data it uses.
 			// There's no fallback for the fallback!
 			debug( 'checkout event error', err.message );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_error', {
+					error_message: err.message,
+					type: String( action?.type ),
+					payload: String( action?.payload ),
+				} )
+			);
 			return reduxDispatch(
 				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
 					type: String( action?.type ),
