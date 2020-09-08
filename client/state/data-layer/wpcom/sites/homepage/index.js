@@ -13,6 +13,16 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { bypassDataLayer } from 'state/data-layer/utils';
 import { updateSiteFrontPage } from 'state/sites/actions';
 
+const getIsPageOnFront = ( show_on_front ) => {
+	if ( 'page' === show_on_front ) {
+		return true;
+	}
+	if ( 'posts' === show_on_front ) {
+		return false;
+	}
+	return undefined;
+};
+
 const updateSiteFrontPageRequest = ( action ) =>
 	http(
 		{
@@ -20,11 +30,13 @@ const updateSiteFrontPageRequest = ( action ) =>
 			method: 'POST',
 			apiVersion: '1.1',
 			body: {
-				is_page_on_front: 'page' === get( action.frontPageOptions, 'show_on_front' ),
+				is_page_on_front: getIsPageOnFront( get( action.frontPageOptions, 'show_on_front' ) ),
 				page_on_front_id: get( action.frontPageOptions, 'page_on_front' ),
 				page_for_posts_id: get( action.frontPageOptions, 'page_for_posts' ),
-				wpcom_coming_soon_page_id: get( action.frontPageOptions, 'wpcom_coming_soon_page_id' ),
-
+				wpcom_public_coming_soon_page_id: get(
+					action.frontPageOptions,
+					'wpcom_public_coming_soon_page_id'
+				),
 			},
 		},
 		action
