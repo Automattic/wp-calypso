@@ -27,8 +27,8 @@ class EmailProviderDetails extends React.Component {
 		formattedPrice: PropTypes.string,
 		billingInterval: PropTypes.string,
 		discount: PropTypes.string,
-		cta: PropTypes.string,
-		primaryCTA: PropTypes.bool,
+		buttonLabel: PropTypes.string,
+		hasPrimaryButton: PropTypes.bool,
 	};
 
 	renderFeatures() {
@@ -46,16 +46,16 @@ class EmailProviderDetails extends React.Component {
 			formattedPrice,
 			billingInterval,
 			discount,
-			cta,
-			primaryCTA,
+			buttonLabel,
+			hasPrimaryButton,
 		} = this.props;
 
 		return (
 			<PromoCard { ...{ title, image, badge } }>
 				<p className="email-provider-details__description">{ description }</p>
 				<PromoCardPrice { ...{ formattedPrice, billingInterval, discount } } />
-				<Button className="email-provider-details__cta" primary={ primaryCTA }>
-					{ cta }
+				<Button className="email-provider-details__cta" primary={ hasPrimaryButton }>
+					{ buttonLabel }
 				</Button>
 				<div>{ this.renderFeatures() }</div>
 			</PromoCard>
