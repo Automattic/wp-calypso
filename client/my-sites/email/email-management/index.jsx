@@ -135,7 +135,7 @@ class EmailManagement extends React.Component {
 
 		if ( hasGSuiteSupportedDomain( domainList ) ) {
 			if ( config.isEnabled( 'email/titan-mvp' ) ) {
-				return <EmailProvidersComparison domain={ domainList[ 0 ].name } />;
+				return <EmailProvidersComparison domainName={ domainList[ 0 ].name } />;
 			}
 			return this.addGSuiteCta();
 		}

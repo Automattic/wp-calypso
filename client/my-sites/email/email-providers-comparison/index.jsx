@@ -28,11 +28,11 @@ import './style.scss';
 
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
-		domain: PropTypes.string.isRequired,
+		domainName: PropTypes.string.isRequired,
 	};
 
 	renderHeaderSection() {
-		const { domain, translate } = this.props;
+		const { domainName, translate } = this.props;
 		const image = {
 			path: emailIllustration,
 			align: 'right',
@@ -40,7 +40,7 @@ class EmailProvidersComparison extends React.Component {
 
 		const translateArgs = {
 			args: {
-				domainName: domain,
+				domainName: domainName,
 			},
 			comment: '%(domainName)s is the domain name, e.g example.com',
 		};
