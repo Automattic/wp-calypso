@@ -29,6 +29,7 @@ import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
 import { planHasFeature } from 'lib/plans';
+import { JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 
@@ -171,7 +172,10 @@ const ProductCardWrapper = ( {
 			children={ item.children }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
-			withStartingPrice={ item.subtypes.length > 0 }
+			withStartingPrice={
+				// Search has several pricing tiers
+				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
+			}
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
@@ -179,7 +183,11 @@ const ProductCardWrapper = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={ item.hidePrice }
+			hidePrice={
+				// Don't hide price if siteId is not defined, since it most likely won't be shown
+				// in other parts of the card (e.g. Jetpack Search)
+				siteId && item.hidePrice
+			}
 		/>
 	);
 };
