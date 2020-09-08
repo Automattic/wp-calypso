@@ -75,6 +75,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/my-profile": true,
 		"me/notifications": true,
+		"nav-unification": false,
 		"oauth": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,

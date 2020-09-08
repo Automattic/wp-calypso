@@ -23,6 +23,7 @@
 	"hotjar_enabled",
 	"jetpack_support_blog",
 	"mc_analytics_enabled",
+	"nav-unification",
 	"oauth_client_id",
 	"oauth_response_type",
 	"oauth_url",
