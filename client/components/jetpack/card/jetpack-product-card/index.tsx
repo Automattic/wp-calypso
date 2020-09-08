@@ -123,6 +123,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
 				'with-nudge': !! UpgradeNudge,
+				'is-featured': isHighlighted,
 			} ) }
 			data-icon={ iconSlug }
 		>
