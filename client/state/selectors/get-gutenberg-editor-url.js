@@ -6,7 +6,7 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getEditorPath } from 'calypso/state/editor/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
-import { abtest } from 'calypso/lib/abtest';
+import { isEnabled } from 'calypso/config';
 
 export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
 	if ( ! isEligibleForGutenframe( state, siteId ) ) {
@@ -24,7 +24,7 @@ export const getGutenbergEditorUrl = ( state, siteId, postId = null, postType = 
 		return url;
 	}
 
-	const prefix = abtest( 'gutenbergInCalypso' ) === 'on' ? '/without-iframe' : '';
+	const prefix = isEnabled( 'gutenberg-in-calypso' ) ? '/without-iframe' : '';
 
 	if ( postId ) {
 		return `${ prefix }${ getEditorPath( state, siteId, postId, postType ) }`;
