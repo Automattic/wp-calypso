@@ -232,7 +232,14 @@ class CalypsoifyIframe extends Component<
 		// any other message is unknown and may indicate a bug
 	};
 
-	onIframePortMessage = ( { data, data: { ports } }: MessageEvent ) => {
+	onIframePortMessage = ( event: MessageEvent ) => {
+		const { data, ports: backCompatPorts } = event;
+
+		// in a previous release of wpcom-block-editor, ports array wasn't explicitly passed into the data object
+		// and the MessageEvent.ports prop was used instead. This gives support for both versions of wpcom-block-editor
+		// see: https://github.com/Automattic/wp-calypso/pull/45436
+		const ports = data.ports ?? backCompatPorts;
+
 		/* eslint-disable @typescript-eslint/no-explicit-any */
 		const { action, payload }: { action: EditorActions; payload: any } = data;
 
