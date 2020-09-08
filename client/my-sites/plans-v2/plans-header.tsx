@@ -26,7 +26,7 @@ const ConnectFlowPlansHeader = () => (
 		<div className="plans-v2__heading">
 			<FormattedHeader
 				headerText={ translate( 'Explore our Jetpack plans' ) }
-				subHeaderText={ translate( "Now that you're set up, pick a plan that suits your needs." ) }
+				subHeaderText={ translate( "Now that you're set up, pick a plan that fits your needs." ) }
 				align="left"
 				brandFont
 			/>
@@ -41,10 +41,9 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
+	// When coming from in-connect flow, the url contains 'source=jetpack-plans' query param.
 	const isInConnectFlow = useMemo(
-		() =>
-			/jetpack\/connect\/plans/.test( window.location.href ) ||
-			/source=jetpack-(connect-)?plans/.test( window.location.href ),
+		() => context.query?.source && context.query.source === 'jetpack-plans',
 		[ siteId ]
 	);
 
