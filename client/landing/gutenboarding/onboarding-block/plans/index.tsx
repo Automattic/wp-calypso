@@ -6,6 +6,7 @@ import { isEnabled } from 'config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import PlansGrid from '@automattic/plans-grid';
 import type { Plans } from '@automattic/data-stores';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
@@ -19,7 +20,6 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { Step, usePath } from '../../path';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import AsyncLoad from 'components/async-load';
 
 type PlanSlug = Plans.PlanSlug;
 
@@ -90,9 +90,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	return (
 		<div className="gutenboarding-page plans">
-			<AsyncLoad
-				require="@automattic/plans-grid"
-				placeholder={ null }
+			<PlansGrid
 				header={ header }
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
