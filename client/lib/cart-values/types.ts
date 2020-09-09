@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import type { GSuiteProductUser } from 'lib/gsuite/new-users';
-import type { WPCOMTransactionEndpointDomainDetails } from 'my-sites/checkout/composite-checkout/types/transaction-endpoint';
+import type { DomainContactDetails } from 'my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 
 export type CartItemValue = {
 	product_id?: number;
@@ -23,7 +23,7 @@ export type CartItemExtra = {
 	source?: string;
 	domain_to_bundle?: string;
 	google_apps_users?: GSuiteProductUser[];
-	google_apps_registration_data?: WPCOMTransactionEndpointDomainDetails;
+	google_apps_registration_data?: DomainContactDetails;
 	purchaseId?: string;
 	purchaseDomain?: string;
 	purchaseType?: string;

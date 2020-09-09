@@ -26,11 +26,11 @@ export function createItemToAddToCart( {
 	isJetpackNotAtomic,
 	isPrivate,
 }: {
-	planSlug: string | undefined;
-	productAlias: string | undefined;
 	product_id: number;
-	isJetpackNotAtomic: boolean | undefined;
-	isPrivate: boolean | undefined;
+	planSlug?: string;
+	productAlias?: string;
+	isJetpackNotAtomic?: boolean;
+	isPrivate?: boolean;
 } ): RequestCartProduct | null {
 	let cartItem, cartMeta;
 

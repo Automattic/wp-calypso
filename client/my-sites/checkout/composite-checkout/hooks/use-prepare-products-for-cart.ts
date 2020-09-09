@@ -9,7 +9,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRenewalItemFromCartItem } from 'lib/cart-values/cart-items';
+import { getRenewalItemFromCartItem, CartItemValue } from 'lib/cart-values/cart-items';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
@@ -20,11 +20,20 @@ import {
 import { requestPlans } from 'state/plans/actions';
 import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
 import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
-import { requestProductsList } from 'state/products-list/actions';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import { createItemToAddToCart } from './add-items';
+import { createItemToAddToCart } from '../add-items';
+import { RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
+
+interface PreparedProductsForCart {
+	productsForCart: RequestCartProduct[];
+	canInitializeCart: boolean;
+}
+
+function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined > {
+	return !! value;
+}
 
 export default function usePrepareProductsForCart( {
 	siteId,
@@ -32,14 +41,22 @@ export default function usePrepareProductsForCart( {
 	purchaseId: originalPurchaseId,
 	isJetpackNotAtomic,
 	isPrivate,
-} ) {
+}: {
+	siteId: number;
+	product: string | null | undefined;
+	purchaseId: string | number | null | undefined;
+	isJetpackNotAtomic: boolean;
+	isPrivate: boolean;
+} ): PreparedProductsForCart {
 	const planSlug = useSelector( ( state ) =>
-		getUpgradePlanSlugFromPath( state, siteId, productAlias )
+		productAlias ? getUpgradePlanSlugFromPath( state, siteId, productAlias ) : null
 	);
-	const [ { canInitializeCart, productsForCart }, setState ] = useState( {
-		canInitializeCart: ! planSlug && ! productAlias,
-		productsForCart: [],
-	} );
+	const [ { canInitializeCart, productsForCart }, setState ] = useState< PreparedProductsForCart >(
+		{
+			canInitializeCart: ! planSlug && ! productAlias,
+			productsForCart: [],
+		}
+	);
 
 	useFetchPlansIfNotLoaded();
 
@@ -57,7 +74,15 @@ export default function usePrepareProductsForCart( {
 	return { productsForCart, canInitializeCart };
 }
 
-function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
+function useAddRenewalItems( {
+	originalPurchaseId,
+	productAlias,
+	setState,
+}: {
+	originalPurchaseId: string | number | null | undefined;
+	productAlias: string | null | undefined;
+	setState: ( state: PreparedProductsForCart ) => void;
+} ) {
 	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
@@ -70,8 +95,8 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 			debug( 'waiting on products fetch for renewal' );
 			return;
 		}
-		const productSlugs = productAlias.split( ',' );
-		const purchaseIds = originalPurchaseId.split( ',' );
+		const productSlugs = productAlias?.split( ',' ) ?? [];
+		const purchaseIds = originalPurchaseId ? String( originalPurchaseId ).split( ',' ) : [];
 
 		const productsForCart = purchaseIds
 			.map( ( subscriptionId, currentIndex ) => {
@@ -89,6 +114,7 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 				const product = products[ slug ];
 				if ( ! product ) {
 					debug( 'no product found with slug', productSlug );
+					// TODO: show and record an error
 					return null;
 				}
 				return createRenewalItemToAddToCart(
@@ -98,7 +124,7 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 					selectedSiteSlug
 				);
 			} )
-			.filter( Boolean );
+			.filter( doesValueExist );
 		debug( 'preparing renewals requested in url', productsForCart );
 		setState( { productsForCart, canInitializeCart: true } );
 	}, [
@@ -111,7 +137,17 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 	] );
 }
 
-function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } ) {
+function useAddPlanFromSlug( {
+	planSlug,
+	setState,
+	isJetpackNotAtomic,
+	originalPurchaseId,
+}: {
+	planSlug: string | null | undefined;
+	setState: ( state: PreparedProductsForCart ) => void;
+	isJetpackNotAtomic: boolean;
+	originalPurchaseId: string | number | null | undefined;
+} ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
 	const plans = useSelector( ( state ) => getPlans( state ) );
 	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
@@ -129,7 +165,8 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalP
 		}
 		if ( ! plan ) {
 			debug( 'there is a request to add a plan but no plan was found', planSlug );
-			setState( { canInitializeCart: true } );
+			// TODO: show and record an error
+			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
 		const cartProduct = createItemToAddToCart( {
@@ -139,7 +176,8 @@ function useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalP
 		} );
 		if ( ! cartProduct ) {
 			debug( 'there is a request to add a plan but creating an item failed', planSlug );
-			setState( { canInitializeCart: true } );
+			// TODO: show and record an error
+			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
 		debug(
@@ -158,6 +196,13 @@ function useAddProductFromSlug( {
 	isJetpackNotAtomic,
 	isPrivate,
 	originalPurchaseId,
+}: {
+	productAlias: string | undefined | null;
+	planSlug: string | undefined | null;
+	setState: ( state: PreparedProductsForCart ) => void;
+	isJetpackNotAtomic: boolean;
+	isPrivate: boolean;
+	originalPurchaseId: string | number | undefined | null;
 } ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
 	const plans = useSelector( ( state ) => getPlans( state ) );
@@ -213,25 +258,29 @@ function useAddProductFromSlug( {
 				'there is a request to add one or more products but no product was found',
 				productAliasFromUrl
 			);
-			setState( { canInitializeCart: true } );
+			// TODO: show and record an error
+			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
 
-		const cartProducts = validProducts.map( ( product ) =>
-			createItemToAddToCart( {
-				productAlias: product.product_alias,
-				product_id: product.product_id,
-				isJetpackNotAtomic,
-				isPrivate,
-			} )
-		);
+		const cartProducts = validProducts
+			.map( ( product ) =>
+				createItemToAddToCart( {
+					productAlias: product.product_alias,
+					product_id: product.product_id,
+					isJetpackNotAtomic,
+					isPrivate,
+				} )
+			)
+			.filter( doesValueExist );
 
 		if ( cartProducts.length < 1 ) {
 			debug(
 				'there is a request to add a one or more products but creating them failed',
 				productAliasFromUrl
 			);
-			setState( { canInitializeCart: true } );
+			// TODO: show and record an error
+			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
 		debug(
@@ -255,19 +304,6 @@ function useAddProductFromSlug( {
 	] );
 }
 
-export function useFetchProductsIfNotLoaded() {
-	const reduxDispatch = useDispatch();
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
-	useEffect( () => {
-		if ( ! isFetchingProducts && Object.keys( products || {} ).length < 1 ) {
-			debug( 'fetching products list' );
-			reduxDispatch( requestProductsList() );
-			return;
-		}
-	}, [ isFetchingProducts, products, reduxDispatch ] );
-}
-
 function useFetchPlansIfNotLoaded() {
 	const reduxDispatch = useDispatch();
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
@@ -281,11 +317,8 @@ function useFetchPlansIfNotLoaded() {
 	}, [ isFetchingPlans, plans, reduxDispatch ] );
 }
 
-/**
- * @param {string | null} productAlias - A fake slug like 'theme:ovation'
- * @returns {string | null} A real slug like 'premium_theme'
- */
-function getProductSlugFromAlias( productAlias ) {
+// Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
+function getProductSlugFromAlias( productAlias: string ): string {
 	if ( productAlias?.startsWith?.( 'domain-mapping:' ) ) {
 		return 'domain_map';
 	}
@@ -298,7 +331,12 @@ function getProductSlugFromAlias( productAlias ) {
 	return productAlias;
 }
 
-function createRenewalItemToAddToCart( productAlias, productId, purchaseId, selectedSiteSlug ) {
+function createRenewalItemToAddToCart(
+	productAlias: string,
+	productId: string | number,
+	purchaseId: string | number | undefined | null,
+	selectedSiteSlug: string | null
+): RequestCartProduct | null {
 	const [ slug, meta ] = productAlias.split( ':' );
 	// See https://github.com/Automattic/wp-calypso/pull/15043 for explanation of
 	// the no-ads alias (seems a little strange to me that the product slug is a
@@ -309,17 +347,27 @@ function createRenewalItemToAddToCart( productAlias, productId, purchaseId, sele
 		return null;
 	}
 
-	return getRenewalItemFromCartItem(
+	const renewalItem = getRenewalItemFromCartItem(
 		{
 			meta,
 			product_slug: productSlug,
-			product_id: productId,
+			product_id: parseInt( String( productId ), 10 ),
 		},
 		{
 			id: purchaseId,
 			domain: selectedSiteSlug,
 		}
 	);
+	if ( ! isRequestCartProduct( renewalItem ) ) {
+		return null;
+	}
+	return renewalItem;
+}
+
+function isRequestCartProduct(
+	product: CartItemValue | RequestCartProduct
+): product is RequestCartProduct {
+	return ( product as RequestCartProduct ).product_slug !== undefined;
 }
 
 /*
@@ -329,7 +377,7 @@ function createRenewalItemToAddToCart( productAlias, productId, purchaseId, sele
  * redirect to a valid checkout URL for a search purchase without worrying
  * about which type of site the user has.
  */
-function getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) {
+function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: boolean ): string {
 	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) ) {
 		if ( isJetpackNotAtomic ) {
 			productAlias = productAlias.includes( 'monthly' )
