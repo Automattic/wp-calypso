@@ -14,10 +14,10 @@ import * as dataHelper from '../lib/data-helper.js';
 
 import WPHomePage from '../lib/pages/wp-home-page.js';
 import StartPage from '../lib/pages/signup/start-page.js';
-import JetpackAddNewSitePage from '../lib/pages/signup/jetpack-add-new-site-page';
+// import JetpackAddNewSitePage from '../lib/pages/signup/jetpack-add-new-site-page';
 
 import AboutPage from '../lib/pages/signup/about-page.js';
-import CustomerHomePage from '../lib/pages/customer-home-page';
+// import CustomerHomePage from '../lib/pages/customer-home-page';
 import DomainFirstPage from '../lib/pages/signup/domain-first-page';
 import ReaderLandingPage from '../lib/pages/signup/reader-landing-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page.js';
@@ -26,8 +26,8 @@ import CheckOutPage from '../lib/pages/signup/checkout-page';
 import ImportFromURLPage from '../lib/pages/signup/import-from-url-page';
 import SiteTypePage from '../lib/pages/signup/site-type-page';
 import SiteTitlePage from '../lib/pages/signup/site-title-page';
-import LoginPage from '../lib/pages/login-page';
-import MagicLoginPage from '../lib/pages/magic-login-page';
+// import LoginPage from '../lib/pages/login-page';
+// import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
 import DomainOnlySettingsPage from '../lib/pages/domain-only-settings-page';
 import DomainDetailsPage from '../lib/pages/domain-details-page';
@@ -55,7 +55,7 @@ import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
 import ActivateAccountFlow from '../lib/flows/activate-account-flow';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
-import AccountSettingsPage from '../lib/pages/account/account-settings-page';
+// import AccountSettingsPage from '../lib/pages/account/account-settings-page';
 import MyHomePage from '../lib/pages/my-home-page';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
@@ -78,117 +78,118 @@ before( async function () {
 describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 	this.timeout( mochaTimeOut );
 
-	describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
-		const blogName = dataHelper.getNewBlogName();
-		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-		let magicLoginLink;
+	// eslint-disable-next-line jest/no-commented-out-tests
+	// describe( 'Sign up for a free WordPress.com site from the Jetpack new site page, and log in via a magic link @signup @email', function () {
+	// 	const blogName = dataHelper.getNewBlogName();
+	// 	// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+	// 	const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
+	// 	let magicLoginLink;
 
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
+	// 	before( async function () {
+	// 		return await driverManager.ensureNotLoggedIn( driver );
+	// 	} );
 
-		step(
-			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
-			async function () {
-				const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
-				await jetpackAddNewSitePage.createNewWordPressDotComSite();
-			}
-		);
+	// 	step(
+	// 		'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
+	// 		async function () {
+	// 			const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
+	// 			await jetpackAddNewSitePage.createNewWordPressDotComSite();
+	// 		}
+	// 	);
 
-		step( 'Can see the account page and enter account details', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-			return await createYourAccountPage.enterAccountDetailsAndSubmit(
-				emailAddress,
-				blogName,
-				passwordForTestAccounts
-			);
-		} );
+	// 	step( 'Can see the account page and enter account details', async function () {
+	// 		const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+	// 		return await createYourAccountPage.enterAccountDetailsAndSubmit(
+	// 			emailAddress,
+	// 			blogName,
+	// 			passwordForTestAccounts
+	// 		);
+	// 	} );
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				// );
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
+	// 	step(
+	// 		'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
+	// 		async function () {
+	// 			const findADomainComponent = await FindADomainComponent.Expect( driver );
+	// 			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+	// 			// See https://github.com/Automattic/wp-calypso/pull/38641/
+	// 			// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+	// 			// 	expectedBlogAddresses,
+	// 			// 	blogName
+	// 			// );
+	// 			// const actualAddress = await findADomainComponent.freeBlogAddress();
+	// 			// assert(
+	// 			// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
+	// 			// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+	// 			// );
+	// 			return await findADomainComponent.selectFreeAddress();
+	// 		}
+	// 	);
 
-		step( 'Can see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
-		} );
+	// 	step( 'Can see the plans page and pick the free plan', async function () {
+	// 		const pickAPlanPage = await PickAPlanPage.Expect( driver );
+	// 		return await pickAPlanPage.selectFreePlan();
+	// 	} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+	// 	step(
+	// 		'Can then see the sign up processing page which will finish automatically move along',
+	// 		async function () {
+	// 			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+	// 		}
+	// 	);
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+	// 	sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can log out and request a magic link', async function () {
-			if ( process.env.HORIZON_TESTS === 'true' ) {
-				return this.skip();
-			}
-			await driverManager.ensureNotLoggedIn( driver );
-			const loginPage = await LoginPage.Visit( driver );
-			return await loginPage.requestMagicLink( emailAddress );
-		} );
+	// 	step( 'Can log out and request a magic link', async function () {
+	// 		if ( process.env.HORIZON_TESTS === 'true' ) {
+	// 			return this.skip();
+	// 		}
+	// 		await driverManager.ensureNotLoggedIn( driver );
+	// 		const loginPage = await LoginPage.Visit( driver );
+	// 		return await loginPage.requestMagicLink( emailAddress );
+	// 	} );
 
-		step( 'Can see email containing magic link', async function () {
-			if ( process.env.HORIZON_TESTS === 'true' ) {
-				return this.skip();
-			}
-			const emailClient = new EmailClient( signupInboxId );
-			const validator = ( emails ) =>
-				emails.find( ( email ) => email.subject.includes( 'WordPress.com' ) );
-			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
-			assert.strictEqual(
-				emails.length,
-				2,
-				'The number of newly registered emails is not equal to 2 (activation and magic link)'
-			);
-			for ( const email of emails ) {
-				if ( email.subject.includes( 'WordPress.com' ) ) {
-					return ( magicLoginLink = email.html.links[ 0 ].href );
-				}
-			}
-			return assert(
-				magicLoginLink !== undefined,
-				'Could not locate the magic login link email link'
-			);
-		} );
+	// 	step( 'Can see email containing magic link', async function () {
+	// 		if ( process.env.HORIZON_TESTS === 'true' ) {
+	// 			return this.skip();
+	// 		}
+	// 		const emailClient = new EmailClient( signupInboxId );
+	// 		const validator = ( emails ) =>
+	// 			emails.find( ( email ) => email.subject.includes( 'WordPress.com' ) );
+	// 		const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
+	// 		assert.strictEqual(
+	// 			emails.length,
+	// 			2,
+	// 			'The number of newly registered emails is not equal to 2 (activation and magic link)'
+	// 		);
+	// 		for ( const email of emails ) {
+	// 			if ( email.subject.includes( 'WordPress.com' ) ) {
+	// 				return ( magicLoginLink = email.html.links[ 0 ].href );
+	// 			}
+	// 		}
+	// 		return assert(
+	// 			magicLoginLink !== undefined,
+	// 			'Could not locate the magic login link email link'
+	// 		);
+	// 	} );
 
-		step( 'Can visit the magic link and we should be logged in', async function () {
-			if ( process.env.HORIZON_TESTS === 'true' ) {
-				return this.skip();
-			}
-			await driver.get( magicLoginLink );
-			const magicLoginPage = await MagicLoginPage.Expect( driver );
-			await magicLoginPage.finishLogin();
-			try {
-				await CustomerHomePage.Expect( driver );
-			} catch ( e ) {
-				await ReaderPage.Expect( driver );
-			}
-		} );
+	// 	step( 'Can visit the magic link and we should be logged in', async function () {
+	// 		if ( process.env.HORIZON_TESTS === 'true' ) {
+	// 			return this.skip();
+	// 		}
+	// 		await driver.get( magicLoginLink );
+	// 		const magicLoginPage = await MagicLoginPage.Expect( driver );
+	// 		await magicLoginPage.finishLogin();
+	// 		try {
+	//  		await CustomerHomePage.Expect( driver );
+	// 		} catch ( e ) {
+	// 			await ReaderPage.Expect( driver );
+	// 		}
+	// 	} );
 
-		after( 'Can delete our newly created account', async function () {
-			return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
-		} );
-	} );
+	// 	after( 'Can delete our newly created account', async function () {
+	// 		return await new DeleteAccountFlow( driver ).deleteAccount( blogName );
+	// 	} );
+	// } );
 
 	describe( 'Sign up for a free site, see the site preview, activate email and can publish @signup', function () {
 		const blogName = dataHelper.getNewBlogName();
@@ -1647,99 +1648,99 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 	// Disable test while Passwordless functionality is completely switched off
 	// https://github.com/Automattic/wp-calypso/pull/37054
-	describe.skip( 'Passwordless signup @parallel', function () {
-		const blogName = dataHelper.getNewBlogName();
-		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
-		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
-		let verificationLink;
+	// describe.skip( 'Passwordless signup @parallel', function () {
+	// 	const blogName = dataHelper.getNewBlogName();
+	// 	const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
+	// 	const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
+	// 	let verificationLink;
 
-		before( async function () {
-			await driverManager.ensureNotLoggedIn( driver );
-		} );
+	// 	before( async function () {
+	// 		await driverManager.ensureNotLoggedIn( driver );
+	// 	} );
 
-		step(
-			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
-			async function () {
-				const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
-				await jetpackAddNewSitePage.overrideABTestInLocalStorage(
-					'passwordlessSignup',
-					'passwordless'
-				);
-				return await jetpackAddNewSitePage.createNewWordPressDotComSite();
-			}
-		);
+	// 	step(
+	// 		'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
+	// 		async function () {
+	// 			const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
+	// 			await jetpackAddNewSitePage.overrideABTestInLocalStorage(
+	// 				'passwordlessSignup',
+	// 				'passwordless'
+	// 			);
+	// 			return await jetpackAddNewSitePage.createNewWordPressDotComSite();
+	// 		}
+	// 	);
 
-		step( 'Can see passwordless Start page and enter an email', async function () {
-			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
-			return await createYourAccountPage.enterEmailAndSubmit( emailAddress );
-		} );
+	// 	step( 'Can see passwordless Start page and enter an email', async function () {
+	// 		const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
+	// 		return await createYourAccountPage.enterEmailAndSubmit( emailAddress );
+	// 	} );
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-					expectedBlogAddresses,
-					blogName
-				);
-				const actualAddress = await findADomainComponent.freeBlogAddress();
-				assert(
-					expectedBlogAddresses.indexOf( actualAddress ) > -1,
-					`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				);
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
+	// 	step(
+	// 		'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
+	// 		async function () {
+	// 			const findADomainComponent = await FindADomainComponent.Expect( driver );
+	// 			await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
+	// 			await findADomainComponent.checkAndRetryForFreeBlogAddresses(
+	// 				expectedBlogAddresses,
+	// 				blogName
+	// 			);
+	// 			const actualAddress = await findADomainComponent.freeBlogAddress();
+	// 			assert(
+	// 				expectedBlogAddresses.indexOf( actualAddress ) > -1,
+	// 				`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
+	// 			);
+	// 			return await findADomainComponent.selectFreeAddress();
+	// 		}
+	// 	);
 
-		step( 'Can see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
-		} );
+	// 	step( 'Can see the plans page and pick the free plan', async function () {
+	// 		const pickAPlanPage = await PickAPlanPage.Expect( driver );
+	// 		return await pickAPlanPage.selectFreePlan();
+	// 	} );
 
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
+	// 	step(
+	// 		'Can then see the sign up processing page which will finish automatically move along',
+	// 		async function () {
+	// 			return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
+	// 		}
+	// 	);
 
-		sharedSteps.canSeeTheOnboardingChecklist();
+	// 	sharedSteps.canSeeTheOnboardingChecklist();
 
-		step( 'Can see email containing verification link', async function () {
-			if ( process.env.HORIZON_TESTS === 'true' ) {
-				return this.skip();
-			}
+	// 	step( 'Can see email containing verification link', async function () {
+	// 		if ( process.env.HORIZON_TESTS === 'true' ) {
+	// 			return this.skip();
+	// 		}
 
-			const emailClient = await new EmailClient( signupInboxId );
-			const validator = ( emails ) =>
-				emails.find( ( email ) => email.subject.includes( emailAddress ) );
-			const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
+	// 		const emailClient = await new EmailClient( signupInboxId );
+	// 		const validator = ( emails ) =>
+	// 			emails.find( ( email ) => email.subject.includes( emailAddress ) );
+	// 		const emails = await emailClient.pollEmailsByRecipient( emailAddress, validator );
 
-			for ( const email of emails ) {
-				if ( email.subject.includes( emailAddress ) ) {
-					return ( verificationLink = email.html.links[ 0 ].href );
-				}
-			}
-			return assert( verificationLink !== undefined, 'Could not locate the login link email.' );
-		} );
+	// 		for ( const email of emails ) {
+	// 			if ( email.subject.includes( emailAddress ) ) {
+	// 				return ( verificationLink = email.html.links[ 0 ].href );
+	// 			}
+	// 		}
+	// 		return assert( verificationLink !== undefined, 'Could not locate the login link email.' );
+	// 	} );
 
-		step( 'Can open verification link and verify account', async function () {
-			if ( process.env.HORIZON_TESTS === 'true' ) {
-				return this.skip();
-			}
-			await driver.get( verificationLink );
-			const myHomePage = await MyHomePage.Expect( this.driver );
-			return await myHomePage.isEmailVerified();
-		} );
+	// 	step( 'Can open verification link and verify account', async function () {
+	// 		if ( process.env.HORIZON_TESTS === 'true' ) {
+	// 			return this.skip();
+	// 		}
+	// 		await driver.get( verificationLink );
+	// 		const myHomePage = await MyHomePage.Expect( this.driver );
+	// 		return await myHomePage.isEmailVerified();
+	// 	} );
 
-		after( 'Can delete our newly created account', async function () {
-			// Get username from Account settings page
-			// (it's automatically generated for passwordless signup)
-			const accountSettingsPage = await AccountSettingsPage.Visit( this.driver );
-			const username = await accountSettingsPage.getUsername();
+	// 	after( 'Can delete our newly created account', async function () {
+	// 		// Get username from Account settings page
+	// 		// (it's automatically generated for passwordless signup)
+	// 		const accountSettingsPage = await AccountSettingsPage.Visit( this.driver );
+	// 		const username = await accountSettingsPage.getUsername();
 
-			return await new DeleteAccountFlow( driver ).deleteAccount( username );
-		} );
-	} );
+	// 		return await new DeleteAccountFlow( driver ).deleteAccount( username );
+	// 	} );
+	// } );
 } );
