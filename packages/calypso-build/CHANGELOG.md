@@ -1,4 +1,4 @@
-# 6.3.0 (next)
+# 6.3.0
 
 - add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the
   PostCSS loader, deprecating the less capable `postCssConfig` option
