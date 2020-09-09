@@ -11,17 +11,21 @@ import React, { createElement, Fragment } from 'react';
  */
 import {
 	DAILY_PLAN_TO_REALTIME_PLAN,
-	PRODUCTS_WITH_OPTIONS,
-	OPTIONS_SLUG_MAP,
-	UPGRADEABLE_WITH_NUDGE,
-	UPSELL_PRODUCT_MATRIX,
+	DAILY_PRODUCTS,
+	FEATURED_PRODUCTS,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	FEATURED_PRODUCTS,
-	SUBTYPE_TO_OPTION,
-	DAILY_PRODUCTS,
+	OPTIONS_JETPACK_BACKUP,
+	OPTIONS_JETPACK_BACKUP_MONTHLY,
+	OPTIONS_JETPACK_SECURITY,
+	OPTIONS_JETPACK_SECURITY_MONTHLY,
+	OPTIONS_SLUG_MAP,
+	PRODUCTS_WITH_OPTIONS,
 	REALTIME_PRODUCTS,
+	SUBTYPE_TO_OPTION,
+	UPGRADEABLE_WITH_NUDGE,
+	UPSELL_PRODUCT_MATRIX,
 } from './constants';
 import RecordsDetails from './records-details';
 import { addItems } from 'lib/cart/actions';
@@ -34,11 +38,12 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 } from 'lib/plans/constants';
-import { getPlan, getMonthlyPlanByYearly, getYearlyPlanByMonthly, planHasFeature } from 'lib/plans';
+import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_BACKUP_PRODUCTS,
 } from 'lib/products-values/constants';
 import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
@@ -442,7 +447,8 @@ export function getOptionFromSlug( slug: string ): string | null {
 }
 
 /**
- * Returns all options, both yearly and monthly, given a slug.
+ * Returns all options, both yearly and monthly, given a slug. If the slug
+ * is not related to any option, it returns null.
  * e.g. jetpack_security_daily -> [ jetpack_security_monthly, jetpack_security ]
  * e.g. jetpack_scan -> null
  *
@@ -450,15 +456,15 @@ export function getOptionFromSlug( slug: string ): string | null {
  * @returns string[] | null
  */
 export function getAllOptionsFromSlug( slug: string ): string[] | null {
-	const allProductsWithOption = Object.keys( SUBTYPE_TO_OPTION );
-
-	if ( ! slug || ! allProductsWithOption.includes( slug ) ) {
-		return null;
+	if ( JETPACK_BACKUP_PRODUCTS.includes( slug ) ) {
+		return [ OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY ];
 	}
 
-	return [ getMonthlyPlanByYearly( slug ), getYearlyPlanByMonthly( slug ) ].map( ( s ) =>
-		getOptionFromSlug( s )
-	);
+	if ( JETPACK_SECURITY_PLANS.includes( slug ) ) {
+		return [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ];
+	}
+
+	return null;
 }
 
 /**

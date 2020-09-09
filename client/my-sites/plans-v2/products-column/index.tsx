@@ -8,7 +8,11 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { slugToSelectorProduct, getJetpackDescriptionWithOptions } from '../utils';
+import {
+	getAllOptionsFromSlug,
+	slugToSelectorProduct,
+	getJetpackDescriptionWithOptions,
+} from '../utils';
 import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
 import ProductCard from '../product-card';
 import FormattedHeader from 'components/formatted-header';
@@ -42,11 +46,7 @@ const ProductsColumn = ( {
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
-	// Owned products (plans are filtered out)
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) ) || [];
-	const ownedProducts = siteProducts
-		.map( ( { productSlug } ) => productSlug )
-		.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) );
 
 	// Features included in plan
 	const includedInPlanProducts: string[] =
@@ -56,30 +56,45 @@ const ProductsColumn = ( {
 	// - Owned products from a direct purchase.
 	// - Included as a feature of an owned plan.
 	// - Generic/option product bundles with subtypes.
-	const productObjects: SelectorProduct[] = useMemo(
-		() =>
-			// Convert product slugs to ProductSelector types.
-			[ ...new Set( [ ...ownedProducts, ...includedInPlanProducts, ...SELECTOR_PRODUCTS ] ) ]
-				.map( slugToSelectorProduct )
-				// Remove products that don't fit the filters or have invalid data.
-				.filter(
-					( product: SelectorProduct | null ): product is SelectorProduct =>
-						!! product &&
-						duration === product.term &&
-						PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
-						// Don't include a generic/option card if the user already owns a subtype.
-						! ownedProducts.some( ( ownedProduct ) => product.subtypes.includes( ownedProduct ) ) &&
-						// Don't include a generic/option card if the product is included in the owned plan.
-						! includedInPlanProducts.some( ( includedProduct ) =>
-							product.subtypes.includes( includedProduct )
-						)
-				)
-				.map( ( product: SelectorProduct ) => ( {
-					...product,
-					description: getJetpackDescriptionWithOptions( product ),
-				} ) ),
-		[ duration, includedInPlanProducts, ownedProducts, productType ]
-	);
+	const productObjects: SelectorProduct[] = useMemo( () => {
+		// Owned products (plans are filtered out).
+		const ownedProducts = siteProducts
+			.map( ( { productSlug } ) => productSlug )
+			.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) )
+			.map( slugToSelectorProduct );
+
+		// Slugs of options associated with owned products. We don't want to show an option
+		// if the user owns a subtype of it.
+		const allOptionsFromOwnedSlugs = ownedProducts.flatMap( ( product ) =>
+			getAllOptionsFromSlug( product.productSlug )
+		);
+
+		// Convert product slugs to ProductSelector types.
+		const otherProducts = [ ...new Set( [ ...includedInPlanProducts, ...SELECTOR_PRODUCTS ] ) ]
+			.map( slugToSelectorProduct )
+			// Remove products that don't fit the filters or have invalid data.
+			.filter(
+				( product: SelectorProduct | null ): product is SelectorProduct =>
+					!! product &&
+					duration === product.term &&
+					// Only show card that correspond to the selected filter
+					PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
+					// Don't include a generic/option card if the user already owns a subtype.
+					! allOptionsFromOwnedSlugs.includes( product.productSlug ) &&
+					// Don't include a generic/option card if the product is included in the owned plan.
+					! includedInPlanProducts.some( ( includedProduct ) =>
+						product.subtypes.includes( includedProduct )
+					) &&
+					//  Don't show if the user owns the product regardless of the duration.
+					! ownedProducts.find(
+						( ownedProduct ) => ownedProduct.productslug === product.productSlug
+					)
+			);
+		return ownedProducts.concat( otherProducts ).map( ( product: SelectorProduct ) => ( {
+			...product,
+			description: getJetpackDescriptionWithOptions( product ),
+		} ) );
+	}, [ duration, includedInPlanProducts, siteProducts, productType ] );
 
 	return (
 		<div className="plans-column products-column">
