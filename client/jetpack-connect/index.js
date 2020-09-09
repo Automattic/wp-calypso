@@ -154,6 +154,7 @@ export default function () {
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );
 	page( '/jetpack/sso/*', controller.sso, makeLayout, clientRender );
-	page( '/jetpack/new', controller.newSite, makeLayout, clientRender );
+	// Redirect to '/start' instead of showing Jetpack modal
+	page( '/jetpack/new', '/start' );
 	page( '/jetpack/new/*', '/jetpack/connect' );
 }
