@@ -25,16 +25,12 @@ import getSearchQuery from 'state/inline-help/selectors/get-search-query';
 import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
-import { getSelectedSiteId, getSection } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import QueryActiveTheme from 'components/data/query-active-theme';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
-		redirect: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -150,7 +146,6 @@ class InlineHelpPopover extends Component {
 					/>
 				</div>
 				{ this.renderSecondaryView() }
-				{ ! this.state.showSecondaryView && this.renderPrimaryView() }
 			</Fragment>
 		);
 	};
@@ -186,17 +181,6 @@ class InlineHelpPopover extends Component {
 		);
 	};
 
-	renderPrimaryView = () => {
-		const { siteId, isCheckout } = this.props;
-
-		// Don't show additional items inside Checkout.
-		if ( isCheckout ) {
-			return null;
-		}
-
-		return <QueryActiveTheme siteId={ siteId } />;
-	};
-
 	render() {
 		const popoverClasses = {
 			'is-secondary-view-active': this.state.showSecondaryView,
@@ -218,14 +202,9 @@ class InlineHelpPopover extends Component {
 }
 
 function mapStateToProps( state ) {
-	const siteId = getSelectedSiteId( state );
-	const section = getSection( state );
-
 	return {
 		searchQuery: getSearchQuery( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
-		siteId,
-		isCheckout: section.name && section.name === 'checkout',
 	};
 }
 
