@@ -19,6 +19,7 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
 import ConfirmationDialog from './dialog';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -245,7 +246,7 @@ export class SiteAddressChanger extends Component {
 			<span className="site-address-changer__affix">
 				{ newDomainSuffix }
 				<Gridicon icon="chevron-down" size={ 18 } className="site-address-changer__select-icon" />
-				<select
+				<FormSelect
 					className="site-address-changer__select"
 					value={ newDomainSuffix }
 					onChange={ this.onDomainSuffixChange }
@@ -255,7 +256,7 @@ export class SiteAddressChanger extends Component {
 							{ suffix }
 						</option>
 					) ) }
-				</select>
+				</FormSelect>
 			</span>
 		);
 	}
