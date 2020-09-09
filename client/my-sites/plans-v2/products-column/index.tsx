@@ -61,7 +61,8 @@ const ProductsColumn = ( {
 		const ownedProducts = siteProducts
 			.map( ( { productSlug } ) => productSlug )
 			.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) )
-			.map( slugToSelectorProduct );
+			.map( slugToSelectorProduct )
+			.filter( ( product ): product is SelectorProduct => product !== null );
 
 		// Slugs of options associated with owned products. We don't want to show an option
 		// if the user owns a subtype of it.
@@ -87,7 +88,7 @@ const ProductsColumn = ( {
 					) &&
 					//  Don't show if the user owns the product regardless of the duration.
 					! ownedProducts.find(
-						( ownedProduct ) => ownedProduct.productslug === product.productSlug
+						( ownedProduct ) => ownedProduct.productSlug === product.productSlug
 					)
 			);
 		return ownedProducts.concat( otherProducts ).map( ( product: SelectorProduct ) => ( {

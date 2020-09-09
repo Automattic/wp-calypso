@@ -29,6 +29,7 @@ import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
 import { planHasFeature } from 'lib/plans';
+import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
 import { JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
@@ -36,7 +37,7 @@ import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 /**
  * Type dependencies
  */
-import type { PurchaseCallback, SelectorProduct } from '../types';
+import type { Duration, PurchaseCallback, SelectorProduct } from '../types';
 
 const itemToCard = ( { type }: SelectorProduct ) => {
 	switch ( type ) {
@@ -91,6 +92,7 @@ interface ProductCardProps {
 	currencyCode: string | null;
 	className?: string;
 	highlight?: boolean;
+	selectedTerm?: Duration;
 }
 
 const ProductCardWrapper = ( {
@@ -100,6 +102,7 @@ const ProductCardWrapper = ( {
 	currencyCode,
 	className,
 	highlight = false,
+	selectedTerm,
 }: ProductCardProps ) => {
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -142,6 +145,9 @@ const ProductCardWrapper = ( {
 
 	const CardComponent = itemToCard( item ); // Get correct card component.
 
+	const isUpgradeableToYearly =
+		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
+
 	const UpgradeNudge = isOwned ? (
 		<UpgradeNudgeWrapper
 			siteId={ siteId }
@@ -159,16 +165,16 @@ const ProductCardWrapper = ( {
 			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item, isOwned, sitePlan ) }
+			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
 			badgeLabel={ productBadgeLabel( item, isOwned, highlight, sitePlan ) }
-			onButtonClick={ () => onClick( item, purchase ) }
+			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			children={ item.children }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			withStartingPrice={
 				// Search has several pricing tiers
-				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
+				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.productSlug )
 			}
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
@@ -180,7 +186,7 @@ const ProductCardWrapper = ( {
 			hidePrice={
 				// Don't hide price if siteId is not defined, since it most likely won't be shown
 				// in other parts of the card (e.g. Jetpack Search)
-				siteId && item.hidePrice
+				!! siteId && item.hidePrice
 			}
 		/>
 	);

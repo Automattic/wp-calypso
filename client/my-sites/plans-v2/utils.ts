@@ -109,8 +109,13 @@ export function durationToText( duration: Duration ): TranslateResult {
 export function productButtonLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
+	isUpgradeableToYearly: boolean,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
+	if ( isUpgradeableToYearly ) {
+		return translate( 'Upgrade to Yearly' );
+	}
+
 	if (
 		isOwned ||
 		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
