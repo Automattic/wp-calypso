@@ -25,15 +25,17 @@ export const handleSuccess = ( { siteId }, menuData ) => {
 	return receiveAdminMenu( siteId, menuData );
 };
 
+export const handleError = ( error ) => {
+	return null;
+};
+
 registerHandlers( 'state/data-layer/wpcom/admin-menu/index.js', {
 	[ ADMIN_MENU_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestFetchAdminMenu,
 			fromApi: transformAPIData,
 			onSuccess: handleSuccess,
-			onError: ( error ) => {
-				console.warn( 'Error retrieving Menu items', error );
-			},
+			onError: handleError,
 		} ),
 	],
 } );
