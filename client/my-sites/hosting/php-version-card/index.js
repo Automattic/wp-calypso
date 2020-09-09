@@ -55,7 +55,7 @@ const PhpVersionCard = ( {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: '7.2',
-				disabled: true,
+				disabled: true, // EOL 30th November, 2020
 			},
 			{
 				label: translate( '7.3 (recommended)', {
