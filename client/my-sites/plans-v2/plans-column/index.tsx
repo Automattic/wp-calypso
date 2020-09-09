@@ -16,7 +16,7 @@ import {
 } from '../utils';
 import ProductCard from '../product-card';
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'lib/plans';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import { JETPACK_LEGACY_PLANS, PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import FormattedHeader from 'components/formatted-header';
@@ -68,7 +68,8 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 		if (
 			currentPlan &&
 			currentPlan !== PLAN_JETPACK_FREE &&
-			PRODUCTS_TYPES[ productType ].includes( currentPlan )
+			( JETPACK_LEGACY_PLANS.includes( currentPlan ) ||
+				PRODUCTS_TYPES[ productType ].includes( currentPlan ) )
 		) {
 			const item = slugToSelectorProduct( currentPlan );
 			if ( item ) {
