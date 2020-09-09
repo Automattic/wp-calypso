@@ -54,6 +54,13 @@ export default function () {
 			clientRender
 		);
 		page(
+			'/devdocs/wordpress-components-gallery',
+			controller.sidebar,
+			controller.wpComponentsGallery,
+			makeLayout,
+			clientRender
+		);
+		page(
 			'/devdocs/selectors/:selector?',
 			controller.sidebar,
 			controller.selectors,

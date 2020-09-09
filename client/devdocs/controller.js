@@ -109,6 +109,11 @@ const devdocs = {
 		next();
 	},
 
+	wpComponentsGallery( context, next ) {
+		context.primary = <AsyncLoad require="./design/wordpress-components-gallery" />;
+		next();
+	},
+
 	selectors: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
