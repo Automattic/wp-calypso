@@ -405,14 +405,14 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_checkout_composite_error', {
 					error_message: err.message,
-					type: String( action?.type ),
-					payload: String( action?.payload ),
+					action_type: String( action?.type ),
+					action_payload: String( action?.payload ),
 				} )
 			);
 			return reduxDispatch(
 				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
-					type: String( action?.type ),
-					payload: String( action?.payload ),
+					action_type: String( action?.type ),
+					action_payload: String( action?.payload ),
 				} )
 			);
 		}
