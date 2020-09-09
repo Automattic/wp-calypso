@@ -4,6 +4,7 @@
   PostCSS loader, deprecating the less capable `postCssConfig` option
 - Updated terser-webpack-plugin to ^4.1.0
 - Add `query-string`, `split-on-first`, and `strict-uri-encode` to the list of transpiled NPM dependencies.
+- Add `dom7` and `swiper` to the list of transpiled NPM dependencies.
 
 # 6.2.0
 
