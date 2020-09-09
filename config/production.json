@@ -40,7 +40,7 @@
 		"external-media/free-photo-library": true,
 		"gdpr-banner": true,
 		"google-my-business": true,
-		"gutenboarding/feature-picker": false,
+		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch": true,
 		"gutenboarding/use-patterns": false,
 		"happychat": true,
