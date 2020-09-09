@@ -25,7 +25,7 @@ export const handleSuccess = ( { siteId }, menuData ) => {
 	return receiveAdminMenu( siteId, menuData );
 };
 
-export const handleError = ( error ) => {
+export const handleError = () => {
 	return null;
 };
 
