@@ -9,6 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 
@@ -21,7 +22,11 @@ class SiteSelectorAddSite extends Component {
 		const { translate } = this.props;
 		return (
 			<span className="site-selector__add-new-site">
-				<Button borderless href="/start" onClick={ this.recordAddNewSite }>
+				<Button
+					borderless
+					href={ `${ config( 'signup_url' ) }?ref=calypso-selector` }
+					onClick={ this.recordAddNewSite }
+				>
 					<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }
 				</Button>
 			</span>
