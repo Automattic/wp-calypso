@@ -12,6 +12,14 @@ import * as React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import SuggestionItem from '../src/domain-picker/suggestion-item';
 
+/**
+ * disabled the below test suite as these tests have been unmaintained whilst the codebase has moved on
+ * and have now become stale. A separate task will be raised to fixed them.
+ */
+
+/* eslint-disable */
+
+/*
 const testSuggestion = {
 	domain_name: 'example.com',
 	relevance: 0.9,
@@ -22,13 +30,11 @@ const testSuggestion = {
 	product_slug: '1234',
 };
 
-// disabled the below while the suite is being skipped due to being stale.
-// beforeAll( () => {
-// 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-// 	( window as any ).configData = require( '../../../../../../config/test.json' );
-// } );
+beforeAll( () => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	( window as any ).configData = require( '../../../../../../config/test.json' );
+} );
 
-// skipped the suite below due to being stale.
 describe.skip( 'traintracks events', () => {
 	describe( 'render event', () => {
 		it( 'sends render events when first rendered', async () => {
@@ -272,6 +278,9 @@ describe.skip( 'traintracks events', () => {
 		} );
 	} );
 } );
+*/
+
+/* eslint-enable */
 
 describe( 'check conditional elements render correctly', () => {
 	it( 'renders info tooltip for domains that require HSTS', async () => {
