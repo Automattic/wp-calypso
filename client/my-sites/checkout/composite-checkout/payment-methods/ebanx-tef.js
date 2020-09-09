@@ -448,7 +448,6 @@ function EbanxTefLogo( { className } ) {
 }
 
 function getBankOptions( __ ) {
-	// Source TODO
 	const banks = [
 		{ value: 'banrisul', label: 'Banrisul' },
 		{ value: 'bradesco', label: 'Bradesco' },
