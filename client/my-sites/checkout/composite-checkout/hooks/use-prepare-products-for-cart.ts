@@ -31,6 +31,10 @@ interface PreparedProductsForCart {
 	canInitializeCart: boolean;
 }
 
+function doesValueExist< T >( value: T ): value is Exclude< T, null > {
+	return !! value;
+}
+
 export default function usePrepareProductsForCart( {
 	siteId,
 	product: productAlias,
@@ -119,7 +123,7 @@ function useAddRenewalItems( {
 					selectedSiteSlug
 				);
 			} )
-			.filter( < T >( x: T ): x is Exclude< T, null > => !! x );
+			.filter( doesValueExist );
 		debug( 'preparing renewals requested in url', productsForCart );
 		setState( { productsForCart, canInitializeCart: true } );
 	}, [
@@ -264,7 +268,7 @@ function useAddProductFromSlug( {
 					isPrivate,
 				} )
 			)
-			.filter( < T >( x: T ): x is Exclude< T, null > => !! x );
+			.filter( doesValueExist );
 
 		if ( cartProducts.length < 1 ) {
 			debug(
