@@ -11,7 +11,7 @@ export const requestFetchAdminMenu = ( action ) =>
 	http(
 		{
 			method: 'GET',
-			path: `/admin-menu/`,
+			path: `/sites/${ action.siteId }/admin-menu/`,
 			apiNamespace: 'wpcom/v2',
 		},
 		action
