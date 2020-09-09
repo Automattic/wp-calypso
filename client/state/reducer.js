@@ -50,6 +50,7 @@ import userDevices from './user-devices/reducer';
 import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import users from './users/reducer';
+import adminMenu from './admin-menu/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -92,6 +93,7 @@ const reducers = {
 	userProfileLinks,
 	userSettings,
 	users,
+	adminMenu,
 };
 
 export default combineReducers( reducers );

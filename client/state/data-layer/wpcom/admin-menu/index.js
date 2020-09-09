@@ -23,8 +23,7 @@ export const fromApi = ( data ) => {
 };
 
 export const onSuccess = ( { siteId, postId }, data ) => {
-	console.info( 'SUCddCESS request!' );
-	// receiveLikes( siteId, postId, data );
+	console.info( 'Successful request!', data );
 };
 
 registerHandlers(
