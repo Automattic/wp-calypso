@@ -15,6 +15,7 @@ import {
 	slugToSelectorProduct,
 } from '../utils';
 import ProductCard from '../product-card';
+import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'lib/plans';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
@@ -37,7 +38,11 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
-	const optionsFromCurrentPlan = getAllOptionsFromSlug( currentPlan ) || [];
+	const optionsFromCurrentPlan = ( currentPlan && getAllOptionsFromSlug( currentPlan ) ) || [];
+
+	const currentPlanAllTerms = currentPlan
+		? [ getMonthlyPlanByYearly( currentPlan ), getYearlyPlanByMonthly( currentPlan ) ]
+		: [];
 
 	// This gets all plan objects for us to parse.
 	const planObjects: SelectorProduct[] = useMemo( () => {
@@ -49,8 +54,8 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					!! product &&
 					duration === product.term &&
 					PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
-					// Don't include a card of a plan the user already owns
-					product.productSlug !== currentPlan &&
+					// Don't include a card of a plan the user already owns regardless of the term
+					! currentPlanAllTerms.includes( product.productSlug ) &&
 					// Don't include a generic/option card if the user already owns a subtype
 					! optionsFromCurrentPlan.includes( product.productSlug )
 			)
@@ -67,7 +72,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			}
 		}
 		return plans;
-	}, [ duration, productType, currentPlan ] );
+	}, [ duration, productType, currentPlan, optionsFromCurrentPlan ] );
 
 	return (
 		<div className="plans-column">
