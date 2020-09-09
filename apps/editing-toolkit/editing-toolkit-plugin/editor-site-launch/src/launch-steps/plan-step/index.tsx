@@ -13,7 +13,6 @@ import { Title, SubTitle } from '@automattic/onboarding';
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );

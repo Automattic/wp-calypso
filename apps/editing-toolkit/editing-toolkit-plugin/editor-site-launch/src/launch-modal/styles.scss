@@ -50,7 +50,8 @@ body.has-nux-launch-modal {
 
 .nux-launch-modal-body {
 	padding-top: $header-height;
-	padding-right: $sidebar-width;
+	margin-right: $sidebar-width;
+	position: relative;
 }
 
 .nux-launch-modal-aside {
