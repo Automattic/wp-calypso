@@ -50,6 +50,8 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import canCurrentUser from 'state/selectors/can-current-user';
 import config from 'config';
 
+import 'state/data-layer/wpcom/sites/homepage';
+
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
 function preloadEditor() {
