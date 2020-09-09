@@ -22,7 +22,7 @@ import {
 } from '../positioning';
 import { contextTypes } from '../context-types';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
-import { TimestampMS } from 'wp-calypso-client/types';
+import { TimestampMS } from 'calypso/types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 

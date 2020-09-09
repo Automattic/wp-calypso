@@ -228,7 +228,7 @@ module.exports = {
 				mappings: [
 					{
 						dir: path.join( __dirname, 'client' ),
-						module: 'wp-calypso-client',
+						module: 'calypso',
 					},
 				],
 				warnOnNonLiteralImport: true,

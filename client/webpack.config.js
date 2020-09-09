@@ -267,9 +267,9 @@ const webpackConfig = {
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 				'@wordpress/data': require.resolve( '@wordpress/data' ),
 				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
-				// Alias wp-calypso-client to ./client. This allows for smaller bundles, as it ensures that
-				// importing `./client/file.js` is the same thing than importing `wp-calypso-client/file.js`
-				'wp-calypso-client': __dirname,
+				// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
+				// importing `./client/file.js` is the same thing than importing `calypso/file.js`
+				calypso: __dirname,
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -338,7 +338,7 @@ const webpackConfig = {
 			? [
 					new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
 					new webpack.NormalModuleReplacementPlugin(
-						/^wp-calypso-client[/\\]lib[/\\]desktop$/,
+						/^calypso[/\\]lib[/\\]desktop$/,
 						'lodash/noop'
 					),
 			  ]
@@ -369,7 +369,7 @@ const webpackConfig = {
 						'lodash-es/noop'
 					),
 					new webpack.NormalModuleReplacementPlugin(
-						/^wp-calypso-client[/\\]lib[/\\]local-storage-polyfill$/,
+						/^calypso[/\\]lib[/\\]local-storage-polyfill$/,
 						'lodash-es/noop'
 					),
 			  ]
