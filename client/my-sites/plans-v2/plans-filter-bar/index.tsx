@@ -11,6 +11,7 @@ import classNames from 'classnames';
  */
 import SegmentedControl from 'components/segmented-control';
 import SelectDropdown from 'components/select-dropdown';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
 import { masterbarIsVisible } from 'state/ui/selectors';
 import { PRODUCT_TYPE_OPTIONS } from '../constants';
@@ -33,7 +34,8 @@ interface Props {
 	onProductTypeChange: Function;
 }
 
-const MASTERBAR_HEIGHT = 47;
+const CALYPSO_MASTERBAR_HEIGHT = 47;
+const CLOUD_MASTERBAR_HEIGHT = 94;
 
 const PlansFilterBar = ( {
 	duration,
@@ -41,11 +43,16 @@ const PlansFilterBar = ( {
 	onDurationChange,
 	onProductTypeChange,
 }: Props ) => {
+	const isCloud = isJetpackCloud();
+	const masterbarSelector = isCloud ? '.jpcom-masterbar' : '.masterbar';
+	const masterbarDefaultHeight = isCloud ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
+
 	const barRef = useRef< HTMLDivElement | null >( null );
 	const isMasterbarVisible = useSelector( masterbarIsVisible );
 	// if we can find the masterbar in the DOM, get its height directly from the element.
-	const masterbarHeight = document.querySelector( '.masterbar' )?.offsetHeight || MASTERBAR_HEIGHT;
-	const masterbarOffset = isMasterbarVisible ? masterbarHeight : 0;
+	const masterbarHeight =
+		document.querySelector( masterbarSelector )?.offsetHeight || masterbarDefaultHeight;
+	const masterbarOffset = isMasterbarVisible || isCloud ? masterbarHeight : 0;
 	const hasCrossed = useDetectWindowBoundary( barRef, masterbarOffset );
 
 	return (
