@@ -147,7 +147,6 @@
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/personal-plan": true,
-		"post-editor-github-link": false,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"press-this": true,
