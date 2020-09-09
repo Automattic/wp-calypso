@@ -64,15 +64,19 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 				description: getJetpackDescriptionWithOptions( product ),
 			} ) );
 
-		// If the user does not own a current plan, get it and insert it on the top of the plan array.
-		if ( currentPlan && currentPlan !== PLAN_JETPACK_FREE ) {
+		// If the user owns a plan, get it and insert it on the top of the plan array.
+		if (
+			currentPlan &&
+			currentPlan !== PLAN_JETPACK_FREE &&
+			PRODUCTS_TYPES[ productType ].includes( currentPlan )
+		) {
 			const item = slugToSelectorProduct( currentPlan );
 			if ( item ) {
 				plans.unshift( item );
 			}
 		}
 		return plans;
-	}, [ duration, productType, currentPlan, optionsFromCurrentPlan ] );
+	}, [ duration, productType, currentPlan, currentPlanAllTerms, optionsFromCurrentPlan ] );
 
 	return (
 		<div className="plans-column">
