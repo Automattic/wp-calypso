@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-// import { ADMIN_MENU_FETCH } from 'state/action-types';
+// import { ADMIN_MENU_REQUEST } from 'state/action-types';
 import { combineReducers, keyedReducer, withStorageKey } from 'state/utils';
 import 'state/data-layer/wpcom/admin-menu';
 
