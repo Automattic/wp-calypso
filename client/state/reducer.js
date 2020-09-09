@@ -10,6 +10,7 @@
  */
 import { combineReducers } from 'state/utils';
 import { reducer as httpData } from 'state/data-layer/http-data';
+import config from 'config';
 
 /**
  * Reducers
@@ -93,7 +94,9 @@ const reducers = {
 	userProfileLinks,
 	userSettings,
 	users,
-	adminMenu,
+	// TODO: remove this once admin-menu state is consumed by UI components
+	// to allow it to be loaded as modularized state.
+	...( config.isEnabled( 'nav-unification' ) && { adminMenu } ),
 };
 
 export default combineReducers( reducers );

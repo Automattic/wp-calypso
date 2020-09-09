@@ -15,7 +15,4 @@ export const adminMenu = ( state = {}, action ) => {
 	}
 };
 
-// TODO - reinstate this to use modularized state
-// export default withStorageKey( 'adminMenu', combinedReducer );
-
-export default adminMenu;
+export default withStorageKey( 'adminMenu', adminMenu );
