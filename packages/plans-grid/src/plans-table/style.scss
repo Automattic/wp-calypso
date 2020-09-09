@@ -3,6 +3,9 @@
 @import '~@automattic/typography/styles/variables';
 @import '../variables.scss';
 
+/* stylelint-disable scales/font-size */
+// @TODO: re-enable lint rule in https://github.com/Automattic/wp-calypso/issues/44933
+
 .plans-table {
 	width: 100%;
 	display: flex;
@@ -315,23 +318,19 @@ ul.plan-item__feature-item-group {
 	}
 
 	.plan-item__disabled-message {
-		svg {
-			align-self: flex-start;
-			width: 18px;
-			height: 18px;
+		font-size: $font-body-small;
+		line-height: 20px;
+		letter-spacing: 0.2px;
+		font-weight: bold;
+		color: var( --studio-orange-40 );
+		display: flex;
 
+		svg {
+			flex-shrink: 0;
 			path {
 				fill: var( --studio-orange-40 );
 				stroke: var( --studio-orange-40 );
 			}
-		}
-
-		p {
-			font-size: $font-body-small;
-			line-height: 20px;
-			letter-spacing: 0.2px;
-			font-weight: bold;
-			color: var( --studio-orange-40 );
 		}
 	}
 }

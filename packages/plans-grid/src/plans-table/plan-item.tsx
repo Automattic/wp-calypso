@@ -4,7 +4,7 @@
 import * as React from 'react';
 import classNames from 'classnames';
 import { createInterpolateElement } from '@wordpress/element';
-import { Button, Tip } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
@@ -191,7 +191,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								<li className="plan-item__feature-item">
 									{ disabledLabel ? (
 										<span className="plan-item__disabled-message">
-											<Tip>{ disabledLabel }</Tip>
+											{ CrossIcon }
+											{ disabledLabel }
 										</span>
 									) : (
 										domainMessage && (
