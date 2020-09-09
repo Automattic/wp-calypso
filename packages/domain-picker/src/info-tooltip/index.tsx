@@ -48,6 +48,7 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 			<button
 				type="button"
 				aria-haspopup
+				data-testid="info-tooltip"
 				onClick={ handleClick }
 				className={ classnames( 'info-tooltip', 'domain-picker__info-tooltip', className, {
 					'is-active': showTooltip,
