@@ -48,7 +48,6 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
-import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'state/media/thunks';
 import Iframe from './iframe';
@@ -764,7 +763,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( inEditorDeprecationGroup( state ) && 'classic' === getSelectedEditor( state, siteId ) ) {
+	if ( 'classic' === getSelectedEditor( state, siteId ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
