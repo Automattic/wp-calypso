@@ -185,6 +185,10 @@ export function* updatePlan( planSlug: Plans.PlanSlug ) {
 	yield setPlan( plan );
 }
 
+export const startOnboarding = () => ( {
+	type: 'ONBOARDING_START' as const,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -207,4 +211,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteVertical
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
+	| typeof startOnboarding
 >;

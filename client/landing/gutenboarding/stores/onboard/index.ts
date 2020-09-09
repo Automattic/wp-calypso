@@ -40,6 +40,7 @@ registerStore< State >( STORE_KEY, {
 		'siteTitle',
 		'siteVertical',
 		'wasVerticalSkipped',
+		'hasOnboardingStarted',
 	],
 } );
 
