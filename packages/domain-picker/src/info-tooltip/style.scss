@@ -4,5 +4,9 @@
         font-size: $font-body-small;
         padding: 16px;
         text-align: left;
+
+        a {
+            color: var( --studio-blue-40 );
+        }
     }
 }
