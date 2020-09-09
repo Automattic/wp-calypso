@@ -24,7 +24,7 @@ import { requestProductsList } from 'state/products-list/actions';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { createItemToAddToCart } from './add-items';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-prepare-product-for-cart' );
+const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
 export default function usePrepareProductsForCart( {
 	siteId,
@@ -66,7 +66,7 @@ function useAddRenewalItems( { originalPurchaseId, productAlias, setState } ) {
 		if ( ! originalPurchaseId ) {
 			return;
 		}
-		if ( isFetchingProducts ) {
+		if ( isFetchingProducts || Object.keys( products || {} ).length < 1 ) {
 			debug( 'waiting on products fetch for renewal' );
 			return;
 		}
