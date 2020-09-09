@@ -1,0 +1,8 @@
+.info-tooltip {
+	.components-popover__content > div {
+        color: var( --color-neutral-50 );
+        font-size: $font-body-small;
+        padding: 16px;
+        text-align: left;
+    }
+}

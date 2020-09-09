@@ -8,6 +8,11 @@ import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 
+/**
+ * Internal dependencies
+ */
+import InfoTooltip from '../info-tooltip';
+
 interface Props {
 	domain: string;
 	cost: string;
@@ -25,6 +30,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	domain,
 	cost,
 	railcarId,
+	hstsRequired = false,
 	isFree = false,
 	isExistingSubdomain = false,
 	isRecommended = false,
@@ -80,9 +86,22 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				checked={ selected }
 			/>
 			<div className="domain-picker__suggestion-item-name">
-				<div>
+				<div className="domain-picker__suggestion-item-name-inner">
 					<span className="domain-picker__domain-name">{ domainName }</span>
 					<span className="domain-picker__domain-tld">{ domainTld }</span>
+					{ hstsRequired && (
+						<InfoTooltip position="middle right" noArrow={ false }>
+							{ __(
+								'All domains ending with {{strong}}.dev{{/strong}} require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. {{a}}Learn more{{/a}}',
+								{
+									components: {
+										a: <a href="https://google.com" />,
+										strong: <strong />,
+									},
+								}
+							) }
+						</InfoTooltip>
+					) }
 					{ isRecommended && (
 						<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
 					) }
