@@ -37,14 +37,8 @@
 }
 
 .selector__divider {
-	margin: 40px 0;
-
 	border-bottom: solid 1px var( --color-border-subtle );
-	visibility: hidden;
-
-	@include break-large {
-		visibility: visible;
-	}
+	margin: 40px 0;
 }
 
 /**

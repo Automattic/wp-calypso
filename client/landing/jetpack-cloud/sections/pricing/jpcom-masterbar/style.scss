@@ -34,14 +34,11 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 }
 
 .jpcom-masterbar__inner {
-	// Breakpoint taken from jetpack.com, not standard in Calypso
-	@media ( min-width: 375px ) {
-		display: flex;
-		justify-content: space-between;
-		flex-wrap: wrap;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
 
-		text-align: left;
-	}
+	text-align: left;
 
 	@include break-large {
 		flex-wrap: nowrap;
@@ -107,12 +104,7 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 }
 
 .jpcom-masterbar__nav-item {
-	padding: 0 30px;
-
-	// Breakpoint taken from jetpack.com, not standard in Calypso
-	@media ( min-width: 375px ) {
-		padding: 0 3px;
-	}
+	padding: 0 3px;
 
 	a {
 		color: $jpcom-primary;
@@ -123,19 +115,15 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 
 		padding: 10px 0;
 
+		margin-left: 16px;
+
 		font-weight: 600;
-		font-size: 0.875rem;
+		font-size: 1.1em;
 
 		border-bottom: 2px transparent solid;
 		border-radius: 0;
 
 		transition: all 0.5s ease-in-out;
-
-		@media ( min-width: 375px ) {
-			margin-left: 16px;
-
-			font-size: 1.125rem;
-		}
 
 		@include break-large {
 			width: inherit;
@@ -155,16 +143,6 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 }
 
 .jpcom-masterbar__navbutton.mobilenav {
-	width: 100%;
-	margin-top: 24px;
-
-	// Breakpoint taken from jetpack.com, not standard in Calypso
-	@media ( min-width: 375px ) {
-		width: auto;
-		margin-top: 0;
-		margin-bottom: 8px;
-	}
-
 	@include break-large {
 		display: none;
 	}
@@ -174,7 +152,8 @@ $jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
 	flex-grow: 0;
 	flex-shrink: 0;
 
-	padding: 16px;
+	padding: 1em;
+	margin-bottom: 8px;
 
 	color: $jpcom-gray-darken30;
 	font-weight: bold;
