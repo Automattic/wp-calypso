@@ -902,23 +902,6 @@ Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 };
 
 /**
- * Return a list of third-party services that WordPress.com can integrate with
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-Undocumented.prototype.metaKeyring = function ( fn ) {
-	debug( '/meta/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/meta/external-services/',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
  * @param {number|string} siteId The site ID or domain
