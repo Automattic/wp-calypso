@@ -3,10 +3,18 @@
  */
 import 'state/inline-help/init';
 import 'state/data-layer/wpcom/admin-menu';
-import { ADMIN_MENU_REQUEST } from 'state/action-types';
+import { ADMIN_MENU_REQUEST, ADMIN_MENU_RECEIVE } from 'state/action-types';
 
 export const requestAdminMenu = function requestAdminMenu() {
 	return {
 		type: ADMIN_MENU_REQUEST,
+	};
+};
+
+export const receiveAdminMenu = function receiveAdminMenu( siteId, menu ) {
+	return {
+		type: ADMIN_MENU_RECEIVE,
+		siteId,
+		menu,
 	};
 };
