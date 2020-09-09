@@ -27,5 +27,5 @@ export default function useTrackOnboardingStart() {
 			recordOnboardingStart( ref, siteCount );
 			startOnboarding();
 		}
-	}, [ currentUser ] );
+	}, [ currentUser, hasOnboardingStarted, startOnboarding ] );
 }
