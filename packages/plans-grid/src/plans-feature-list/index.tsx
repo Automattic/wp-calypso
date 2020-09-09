@@ -123,11 +123,8 @@ const PlansFeatureList: React.FunctionComponent< Props > = ( {
 				} ) }
 			>
 				{ disabledLabel ? (
-					<li className="plans-feature-list__item">
-						<span className="plans-feature-list__disabled-message">
-							{ CrossIcon }
-							{ disabledLabel }
-						</span>
+					<li className="plans-feature-list__item plans-feature-list__item--disabled-message">
+						{ CrossIcon } <span>{ disabledLabel }</span>
 					</li>
 				) : (
 					domainMessage && (

@@ -10,12 +10,21 @@
 
 ul.plans-feature-list__item-group {
 	margin: 0;
-	display: flex;
-	flex-wrap: wrap;
 
-	@supports ( display: grid ) {
-		display: grid;
-    	grid-template-columns: repeat(auto-fill,minmax(300px, 1fr));
+	&--columns {
+		display: flex;
+		flex-wrap: wrap;
+
+		@media ( min-width: $break-mobile ) {
+			@supports ( display: grid ) {
+				display: grid;
+				grid-template-columns: repeat( auto-fill, minmax( 300px, 1fr ) );
+			}
+		}
+
+		.plans-feature-list__item {
+			margin-right: 10px;
+		}
 	}
 }
 
@@ -38,20 +47,13 @@ ul.plans-feature-list__item-group {
 		stroke: var( --studio-green-40 );
 	}
 
-	.plans-feature-list__disabled-message {
-		font-size: $font-body-small;
-		line-height: 20px;
-		letter-spacing: 0.2px;
+	&--disabled-message {
 		font-weight: bold;
 		color: var( --studio-orange-40 );
-		display: flex;
 
-		svg {
-			flex-shrink: 0;
-			path {
-				fill: var( --studio-orange-40 );
-				stroke: var( --studio-orange-40 );
-			}
+		& > svg path {
+			fill: var( --studio-orange-40 );
+			stroke: var( --studio-orange-40 );
 		}
 	}
 }
