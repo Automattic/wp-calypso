@@ -140,7 +140,6 @@
 		"upgrades/presale-chat": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"webpack/hot-loader": false,
 		"woocommerce/extension-dashboard": true,
 		"woocommerce/extension-orders": true,
 		"woocommerce/extension-orders-create": true,
