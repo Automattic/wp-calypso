@@ -1,10 +1,14 @@
-# 6.3.0 (next)
+# 6.3.0
 
-- add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the
+- Add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the
   PostCSS loader, deprecating the less capable `postCssConfig` option
 - Updated terser-webpack-plugin to ^4.1.0
-- Add `query-string`, `split-on-first`, and `strict-uri-encode` to the list of transpiled NPM dependencies.
-- Add `dom7` and `swiper` to the list of transpiled NPM dependencies.
+- Added packages to transpile:
+	- dom7
+	- query-string
+	- split-on-first
+	- strict-uri-encode
+	- swiper
 
 # 6.2.0
 
