@@ -4,7 +4,7 @@
 import { get } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { calculateMonthlyPriceForPlan } from 'lib/plans';
 import { getPlan } from './plan';

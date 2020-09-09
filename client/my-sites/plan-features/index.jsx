@@ -894,7 +894,7 @@ export default connect(
 					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: discountPrice,
+					discountPrice,
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
@@ -912,7 +912,7 @@ export default connect(
 						newPlan ||
 						bestValue ||
 						plans.length === 1,
-					rawPrice: rawPrice,
+					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};
