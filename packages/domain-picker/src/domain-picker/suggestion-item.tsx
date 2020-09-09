@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
+import { createInterpolateElement } from '@wordpress/element';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
@@ -91,13 +92,19 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					<span className="domain-picker__domain-tld">{ domainTld }</span>
 					{ hstsRequired && (
 						<InfoTooltip position="middle right" noArrow={ false }>
-							{ __(
-								'All domains ending with {{strong}}.dev{{/strong}} require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. {{a}}Learn more{{/a}}',
+							{ createInterpolateElement(
+								__(
+									'All domains ending with <tld /> require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. <learn_more_link>Learn more</learn_more_link>'
+								),
 								{
-									components: {
-										a: <a href="https://google.com" />,
-										strong: <strong />,
-									},
+									tld: <b>{ domainTld }</b>,
+									learn_more_link: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href="https://wordpress.com/support/https-ssl"
+										/>
+									), // TODO Wrap this in `localizeUrl` from lib/i18n-utils
 								}
 							) }
 						</InfoTooltip>
