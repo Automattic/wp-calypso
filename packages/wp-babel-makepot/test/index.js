@@ -4,6 +4,7 @@
 const fs = require( 'fs' );
 const glob = require( 'glob' );
 const path = require( 'path' );
+const rimraf = require('rimraf');
 
 /**
  * Internal dependencies
@@ -26,6 +27,10 @@ describe( 'makePot', () => {
 
 		concatPot( potOutputDir, concatenatedPotOutputPath );
 	} );
+
+	afterAll(() => {
+		rimraf.sync(potOutputDir);
+	})
 
 	test( 'pot files should match their snapshots', () => {
 		const potGlob = path.join( __dirname, '**', '*.pot' );
