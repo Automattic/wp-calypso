@@ -91,8 +91,8 @@ const PhpVersionCard = ( {
 						value={ selectedValue }
 					>
 						{ getPhpVersions().map( ( option ) => {
-							// Show disabled PHP versions only if the site is still using it.
-							if ( option.value !== version && option?.disabled ) {
+							// Show disabled PHP version only if the site is still using it.
+							if ( option.value !== version && option.disabled ) {
 								return null;
 							}
 
