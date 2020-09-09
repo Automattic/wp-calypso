@@ -1,14 +1,20 @@
 /**
  * External dependencies
  */
-import { useReducer, useMemo, useCallback, useContext, useEffect } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
-import { FormStatusManager, FormStatusController, ReactStandardAction } from '../types';
+import {
+	FormStatus,
+	FormStatusAction,
+	FormStatusController,
+	FormStatusManager,
+	FormStatusSetter,
+} from '../types';
 
 const debug = debugFactory( 'composite-checkout:form-status' );
 
@@ -16,11 +22,11 @@ export function useFormStatus(): FormStatusController {
 	const { formStatus, setFormStatus } = useContext( CheckoutContext );
 	const formStatusActions = useMemo(
 		() => ( {
-			setFormLoading: () => setFormStatus( 'loading' ),
-			setFormReady: () => setFormStatus( 'ready' ),
-			setFormSubmitting: () => setFormStatus( 'submitting' ),
-			setFormValidating: () => setFormStatus( 'validating' ),
-			setFormComplete: () => setFormStatus( 'complete' ),
+			setFormLoading: () => setFormStatus( FormStatus.LOADING ),
+			setFormReady: () => setFormStatus( FormStatus.READY ),
+			setFormSubmitting: () => setFormStatus( FormStatus.SUBMITTING ),
+			setFormValidating: () => setFormStatus( FormStatus.VALIDATING ),
+			setFormComplete: () => setFormStatus( FormStatus.COMPLETE ),
 		} ),
 		[ setFormStatus ]
 	);
@@ -39,9 +45,9 @@ export function useFormStatusManager(
 ): FormStatusManager {
 	const [ formStatus, dispatchFormStatus ] = useReducer(
 		formStatusReducer,
-		isLoading ? 'loading' : 'ready'
+		isLoading ? FormStatus.LOADING : FormStatus.READY
 	);
-	const setFormStatus = useCallback( ( payload ) => {
+	const setFormStatus = useCallback< FormStatusSetter >( ( payload ) => {
 		return dispatchFormStatus( { type: 'FORM_STATUS_CHANGE', payload } );
 	}, [] );
 
@@ -55,10 +61,10 @@ export function useFormStatusManager(
 	return [ formStatus, setFormStatus ];
 }
 
-function formStatusReducer( state: string, action: ReactStandardAction ): string {
+function formStatusReducer( state: FormStatus, action: FormStatusAction ): FormStatus {
 	switch ( action.type ) {
 		case 'FORM_STATUS_CHANGE':
-			validateStatus( action.payload );
+			validateFormStatus( action.payload );
 			debug( 'setting form status to', action.payload );
 			return action.payload;
 		default:
@@ -66,10 +72,8 @@ function formStatusReducer( state: string, action: ReactStandardAction ): string
 	}
 }
 
-const validStatuses = [ 'loading', 'ready', 'validating', 'submitting', 'complete' ] as const;
-
-function validateStatus( status: unknown ): asserts status is typeof validStatuses[ number ] {
-	if ( ! validStatuses.includes( status as never ) ) {
+function validateFormStatus( status: unknown ): asserts status is FormStatus {
+	if ( ! Object.values( FormStatus ).includes( status as never ) ) {
 		throw new Error( `Invalid form status '${ status }'` );
 	}
 }
@@ -80,12 +84,12 @@ function getNewStatusFromProps( {
 }: {
 	isLoading: boolean;
 	isValidating: boolean;
-} ): string {
+} ): FormStatus {
 	if ( isLoading ) {
-		return 'loading';
+		return FormStatus.LOADING;
 	}
 	if ( isValidating ) {
-		return 'validating';
+		return FormStatus.VALIDATING;
 	}
-	return 'ready';
+	return FormStatus.READY;
 }

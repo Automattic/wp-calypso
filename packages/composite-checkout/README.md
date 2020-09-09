@@ -98,11 +98,11 @@ When a payment method is ready to submit its data, it can use an appropriate "pa
 
 When the `submitButton` component has been clicked, it should do the following:
 
-1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to 'submitting' and disable the form.
+1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
 3. Payment processor functions return a `Promise`. When the `Promise` resolves, call `setTransactionComplete()` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. Depending on the payment processor, some transactions might require additional actions before they are complete. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead. If the transaction requires 3DS auth, use `setTransactionAuthorizing(response: object)`.
 4. If the `Promise` rejects, call `setTransactionError(message: string)`.
-5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is 'complete' (call [onPaymentComplete](#CheckoutProvider)), 'error' (display the error and re-enable the form), or 'redirecting' (redirect to the url). No action will be taken if the status is 'authorizing'; the payment method must handle that status manually and eventually set one of the other statuses. If for some reason the transaction should be cancelled, call `resetTransaction()`.
+5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is [`.COMPLETE`](#TransactionStatus) (call [onPaymentComplete](#CheckoutProvider)), [`.ERROR`](#TransactionStatus) (display the error and re-enable the form), or [`.REDIRECTING`](#TransactionStatus) (redirect to the url). No action will be taken if the status is [`.AUTHORIZING`](#TransactionStatus); the payment method must handle that status manually and eventually set one of the other statuses. If for some reason the transaction should be cancelled, call `resetTransaction()`.
 
 ## Line Items
 
@@ -165,19 +165,19 @@ It has the following props.
 - `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
 - `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
-- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to 'loading' (see [useFormStatus](#useFormStatus)).
-- `isValidating?: boolean`. If set and true, the form status will be set to 'validating' (see [useFormStatus](#useFormStatus)).
+- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to [`.LOADING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
+- `isValidating?: boolean`. If set and true, the form status will be set to [`.VALIDATING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
 - `redirectToUrl?: (url: string) => void`. Will be used by [useTransactionStatus](#useTransactionStatus) if it needs to redirect. If not set, it will change `window.location.href`.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
 In addition, `CheckoutProvider` monitors the [transaction status](#useTransactionStatus) and will take actions when it changes.
 
-- If the `transactionStatus` changes to 'pending', the [form status](#useFormStatus) will be set to 'submitting'.
-- If the `transactionStatus` changes to 'error', the transaction status will be set to 'not-started', the [form status](#useFormStatus) will be set to 'ready', and the error message will be displayed.
-- If the `transactionStatus` changes to 'complete', the [form status](#useFormStatus) will be set to 'complete' (which will cause the `onPaymentComplete` function to be called).
-- If the `transactionStatus` changes to 'redirecting', the page will be redirected to the `transactionRedirectUrl` (or will display an error as above if there is no url).
-- If the `transactionStatus` changes to 'not-started', the [form status](#useFormStatus) will be set to 'ready'.
+- If the `transactionStatus` changes to [`.PENDING`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.SUBMITTING`](#FormStatus).
+- If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be displayed.
+- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.COMPLETE`](#FormStatus) (which will cause the `onPaymentComplete` function to be called).
+- If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will display an error as above if there is no url).
+- If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
 ### CheckoutReviewOrder
 
@@ -209,7 +209,7 @@ Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutSte
 This component's props are:
 
 - `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
-- `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is 'ready'.
+- `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
 
 ## CheckoutStepBody
 
@@ -247,7 +247,7 @@ A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps 
 
 ### CheckoutSummaryArea
 
-Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
+Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CheckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
 
 - `className?: string`. The className for the component.
 
@@ -371,16 +371,26 @@ A React Hook that will return all the bound action creators for a [Data store](#
 
 A React Hook that will return the `onEvent` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
+### FormStatus
+
+An enum that holds the values of the [form status](#useFormStatus).
+
+- `.LOADING`
+- `.READY`
+- `.SUBMITTING`
+- `.VALIDATING`
+- `.COMPLETE`
+
 ### useFormStatus
 
 A React Hook that will return an object with the following properties. Used to represent and change the current status of the checkout form (eg: causing it to be disabled). This differs from the status of the transaction itself, which is handled by [useTransactionStatus](#useTransactionStatus).
 
-- `formStatus: string`. The current status of the form; one of 'loading', 'ready', 'validating', 'submitting', or 'complete'.
-- `setFormReady: () => void`. Function to change the form status to 'ready'.
-- `setFormLoading: () => void`. Function to change the form status to 'loading'.
-- `setFormValidating: () => void`. Function to change the form status to 'validating'.
-- `setFormSubmitting: () => void`. Function to change the form status to 'submitting'. Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
-- `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
+- `formStatus: `[`FormStatus`](#FormStatus). The current status of the form.
+- `setFormReady: () => void`. Function to change the form status to [`.READY`](#FormStatus).
+- `setFormLoading: () => void`. Function to change the form status to [`.LOADING`](#FormStatus).
+- `setFormValidating: () => void`. Function to change the form status to [`.VALIDATING`](#FormStatus).
+- `setFormSubmitting: () => void`. Function to change the form status to [`.SUBMITTING`](#FormStatus). Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
+- `setFormComplete: () => void`. Function to change the form status to [`.COMPLETE`](#FormStatus). Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
 
 Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 
@@ -436,21 +446,32 @@ A React Hook that will return a function to set a step to "complete". Only works
 
 A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
 
+### TransactionStatus
+
+An enum that holds the values of the [transaction status](#useTransactionStatus).
+
+- `.NOT_STARTED`
+- `.PENDING`
+- `.AUTHORIZING`
+- `.COMPLETE`
+- `.REDIRECTING`
+- `.ERROR`
+
 ### useTransactionStatus
 
 A React Hook that returns an object with the following properties to be used by [payment methods](#payment-methods) for storing and communicating the current status of the transaction. This differs from the current status of the _form_, which is handled by [useFormStatus](#useFormStatus). Note, however, that [CheckoutProvider](#CheckoutProvider) will automatically perform certain actions when the transaction status changes. See [CheckoutProvider](#CheckoutProvider) for the details.
 
-- `transactionStatus: string`. The current status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
-- `previousTransactionStatus: string`. The last status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
-- `transactionError: string | null`. The most recent error message encountered by the transaction if its status is 'error'.
-- `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is 'redirecting'.
+- `transactionStatus: `[`TransactionStatus`](#TransactionStatus). The current status of the transaction.
+- `previousTransactionStatus: `[`TransactionStatus.`](#TransactionStatus). The last status of the transaction.
+- `transactionError: string | null`. The most recent error message encountered by the transaction if its status is [`.ERROR`](#TransactionStatus).
+- `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is [`.REDIRECTING`](#TransactionStatus).
 - `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionAuthorizing` or `setTransactionComplete`.
-- `resetTransaction: () => void`. Function to change the transaction status to 'not-started'.
-- `setTransactionComplete: ( object ) => void`. Function to change the transaction status to 'complete' and save the response object in `transactionLastResponse`.
-- `setTransactionError: ( string ) => void`. Function to change the transaction status to 'error' and save the error in `transactionError`.
-- `setTransactionPending: () => void`. Function to change the transaction status to 'pending'.
-- `setTransactionRedirecting: ( string ) => void`. Function to change the transaction status to 'redirecting' and save the redirect URL in `transactionRedirectUrl`.
-- `setTransactionAuthorizing: ( object ) => void`. Function to change the transaction status to 'authorizing' and save the response object in `transactionLastResponse`.
+- `resetTransaction: () => void`. Function to change the transaction status to [`.NOT_STARTED`](#TransactionStatus).
+- `setTransactionComplete: ( object ) => void`. Function to change the transaction status to [`.COMPLETE`](#TransactionStatus) and save the response object in `transactionLastResponse`.
+- `setTransactionError: ( string ) => void`. Function to change the transaction status to [`.ERROR`](#TransactionStatus) and save the error in `transactionError`.
+- `setTransactionPending: () => void`. Function to change the transaction status to [`.PENDING`](#TransactionStatus).
+- `setTransactionRedirecting: ( string ) => void`. Function to change the transaction status to [`.REDIRECTING`](#TransactionStatus) and save the redirect URL in `transactionRedirectUrl`.
+- `setTransactionAuthorizing: ( object ) => void`. Function to change the transaction status to [`.AUTHORIZING`](#TransactionStatus) and save the response object in `transactionLastResponse`.
 
 ## FAQ
 

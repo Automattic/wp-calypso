@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useCallback, useMemo, useState, useRef, FunctionComponent } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
 import { useI18n } from '@automattic/react-i18n';
@@ -13,18 +13,18 @@ import { DataRegistry } from '@wordpress/data';
 import CheckoutContext from '../lib/checkout-context';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { LineItemsProvider } from '../lib/line-items';
-import { RegistryProvider, defaultRegistry } from '../lib/registry';
+import { defaultRegistry, RegistryProvider } from '../lib/registry';
 import { useFormStatusManager } from '../lib/form-status';
 import { useTransactionStatusManager } from '../lib/transaction-status';
 import defaultTheme from '../lib/theme';
 import {
 	validateArg,
-	validateTotal,
 	validateLineItems,
 	validatePaymentMethods,
+	validateTotal,
 } from '../lib/validation';
 import TransactionStatusHandler from './transaction-status-handler';
-import { PaymentMethod, CheckoutProviderProps } from '../types';
+import { CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -65,7 +65,7 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 	const transactionStatusManager = useTransactionStatusManager();
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
-		if ( formStatus === 'complete' && ! didCallOnPaymentComplete.current ) {
+		if ( formStatus === FormStatus.COMPLETE && ! didCallOnPaymentComplete.current ) {
 			debug( "form status is complete so I'm calling onPaymentComplete" );
 			didCallOnPaymentComplete.current = true;
 			onPaymentComplete( { paymentMethodId } );

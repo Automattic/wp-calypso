@@ -10,6 +10,8 @@ import '@testing-library/jest-dom/extend-expect';
  */
 import {
 	CheckoutProvider,
+	FormStatus,
+	TransactionStatus,
 	useSelect,
 	useDispatch,
 	useRegisterStore,
@@ -21,25 +23,25 @@ const noop = () => {};
 
 const CustomFormWithFormStatus = () => {
 	const { formStatus, setFormComplete, setFormLoading, setFormSubmitting } = useFormStatus();
-	if ( formStatus === 'loading' ) {
+	if ( formStatus === FormStatus.LOADING ) {
 		return <div>Loading</div>;
 	}
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <div>Submitting</div>;
 	}
-	if ( formStatus === 'complete' ) {
+	if ( formStatus === FormStatus.COMPLETE ) {
 		return <div>Form Complete</div>;
 	}
 	return (
 		<div>
 			<input type="text" />
-			<button disabled={ formStatus !== 'ready' } onClick={ setFormLoading }>
+			<button disabled={ formStatus !== FormStatus.READY } onClick={ setFormLoading }>
 				Load
 			</button>
-			<button disabled={ formStatus !== 'ready' } onClick={ setFormSubmitting }>
+			<button disabled={ formStatus !== FormStatus.READY } onClick={ setFormSubmitting }>
 				Submit
 			</button>
-			<button disabled={ formStatus !== 'ready' } onClick={ setFormComplete }>
+			<button disabled={ formStatus !== FormStatus.READY } onClick={ setFormComplete }>
 				Complete
 			</button>
 		</div>
@@ -56,26 +58,26 @@ const CustomFormWithTransactionStatus = () => {
 		setTransactionError,
 		setTransactionPending,
 	} = useTransactionStatus();
-	if ( formStatus === 'loading' ) {
+	if ( formStatus === FormStatus.LOADING ) {
 		return <div>Loading</div>;
 	}
-	if ( transactionStatus === 'redirecting' ) {
+	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 		return <div>Redirecting</div>;
 	}
 	if (
-		transactionStatus === 'not-started' &&
-		previousTransactionStatus === 'error' &&
-		formStatus === 'ready'
+		transactionStatus === TransactionStatus.NOT_STARTED &&
+		previousTransactionStatus === TransactionStatus.ERROR &&
+		formStatus === FormStatus.READY
 	) {
 		return <div>Showing Error</div>;
 	}
-	if ( transactionStatus === 'error' && formStatus !== 'ready' ) {
+	if ( transactionStatus === TransactionStatus.ERROR && formStatus !== FormStatus.READY ) {
 		return <div>Error State but Form Status is '{ formStatus }'</div>;
 	}
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <div>Submitting</div>;
 	}
-	if ( formStatus === 'complete' ) {
+	if ( formStatus === FormStatus.COMPLETE ) {
 		return <div>Form Complete</div>;
 	}
 	return (
@@ -83,21 +85,27 @@ const CustomFormWithTransactionStatus = () => {
 			previous { previousTransactionStatus }
 			<input type="text" />
 			<button
-				disabled={ formStatus !== 'ready' }
+				disabled={ formStatus !== FormStatus.READY }
 				onClick={ () => setTransactionError( 'bad things happened' ) }
 			>
 				Cause Error
 			</button>
-			<button disabled={ formStatus !== 'ready' } onClick={ () => setTransactionPending() }>
+			<button
+				disabled={ formStatus !== FormStatus.READY }
+				onClick={ () => setTransactionPending() }
+			>
 				Submit
 			</button>
 			<button
-				disabled={ formStatus !== 'ready' }
+				disabled={ formStatus !== FormStatus.READY }
 				onClick={ () => setTransactionRedirecting( 'url.here' ) }
 			>
 				Redirect
 			</button>
-			<button disabled={ formStatus !== 'ready' } onClick={ () => setTransactionComplete() }>
+			<button
+				disabled={ formStatus !== FormStatus.READY }
+				onClick={ () => setTransactionComplete() }
+			>
 				Complete
 			</button>
 		</div>

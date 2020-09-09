@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -104,7 +104,7 @@ function CouponFieldArea( {
 		return (
 			<CouponField
 				id="order-review-coupon"
-				disabled={ formStatus !== 'ready' }
+				disabled={ formStatus !== FormStatus.READY }
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
 			/>

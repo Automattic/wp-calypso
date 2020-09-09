@@ -5,7 +5,13 @@ import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
-import { useEvents, useSelect, useDispatch, useFormStatus } from '@automattic/composite-checkout';
+import {
+	FormStatus,
+	useEvents,
+	useSelect,
+	useDispatch,
+	useFormStatus,
+} from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -78,7 +84,7 @@ export default function CreditCardFields() {
 		contactCountryCode === 'BR' &&
 		Boolean( cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) ) );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	// Cache the country code in our store for use by the processor function
 	useEffect( () => {
