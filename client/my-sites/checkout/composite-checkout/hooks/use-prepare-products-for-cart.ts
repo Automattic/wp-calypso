@@ -114,6 +114,7 @@ function useAddRenewalItems( {
 				const product = products[ slug ];
 				if ( ! product ) {
 					debug( 'no product found with slug', productSlug );
+					// TODO: show and record an error
 					return null;
 				}
 				return createRenewalItemToAddToCart(
@@ -164,6 +165,7 @@ function useAddPlanFromSlug( {
 		}
 		if ( ! plan ) {
 			debug( 'there is a request to add a plan but no plan was found', planSlug );
+			// TODO: show and record an error
 			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
@@ -174,6 +176,7 @@ function useAddPlanFromSlug( {
 		} );
 		if ( ! cartProduct ) {
 			debug( 'there is a request to add a plan but creating an item failed', planSlug );
+			// TODO: show and record an error
 			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
@@ -255,6 +258,7 @@ function useAddProductFromSlug( {
 				'there is a request to add one or more products but no product was found',
 				productAliasFromUrl
 			);
+			// TODO: show and record an error
 			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
@@ -275,6 +279,7 @@ function useAddProductFromSlug( {
 				'there is a request to add a one or more products but creating them failed',
 				productAliasFromUrl
 			);
+			// TODO: show and record an error
 			setState( { productsForCart: [], canInitializeCart: true } );
 			return;
 		}
