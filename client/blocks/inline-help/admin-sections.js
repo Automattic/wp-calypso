@@ -367,7 +367,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Create a new site' ),
-		link: '/jetpack/new?ref=calypso-selector',
+		link: '/start',
 		synonyms: [ 'site' ],
 		icon: 'cog',
 	},

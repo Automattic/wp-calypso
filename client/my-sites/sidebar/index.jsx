@@ -847,13 +847,10 @@ export class MySitesSidebar extends Component {
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked WP Admin' );
 	};
 
-	focusContent = () => {
+	trackAddNewSiteClick = () => {
+		this.props.recordTracksEvent( 'calypso_add_new_wordpress_click' );
 		this.props.setLayoutFocus( 'content' );
 	};
-
-	getAddNewSiteUrl() {
-		return '/jetpack/new/?ref=calypso-selector';
-	}
 
 	addNewSite() {
 		if ( this.props.currentUser.visible_site_count > 1 ) {
@@ -863,8 +860,8 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Add new site' ) }
-				link={ this.getAddNewSiteUrl() }
-				onNavigate={ this.focusContent }
+				link="/start"
+				onNavigate={ this.trackAddNewSiteClick }
 				icon="add-outline"
 			/>
 		);

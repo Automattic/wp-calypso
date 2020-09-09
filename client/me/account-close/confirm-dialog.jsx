@@ -76,7 +76,7 @@ class AccountCloseConfirmDialog extends React.Component {
 			{
 				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
-				href: '/jetpack/new',
+				href: '/start',
 				supportLink:
 					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
 				supportPostId: 3991,

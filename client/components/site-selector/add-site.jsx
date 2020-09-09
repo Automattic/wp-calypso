@@ -13,10 +13,6 @@ import { Button } from '@automattic/components';
 import { recordTracksEvent } from 'state/analytics/actions';
 
 class SiteSelectorAddSite extends Component {
-	getAddNewSiteUrl() {
-		return '/jetpack/new/?ref=calypso-selector';
-	}
-
 	recordAddNewSite = () => {
 		this.props.recordTracksEvent( 'calypso_add_new_wordpress_click' );
 	};
@@ -25,7 +21,7 @@ class SiteSelectorAddSite extends Component {
 		const { translate } = this.props;
 		return (
 			<span className="site-selector__add-new-site">
-				<Button borderless href={ this.getAddNewSiteUrl() } onClick={ this.recordAddNewSite }>
+				<Button borderless href="/start" onClick={ this.recordAddNewSite }>
 					<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }
 				</Button>
 			</span>
