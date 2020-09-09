@@ -1,3 +1,4 @@
+/* stylelint-disable selector-max-id */
 
 /**
  * Nav unification styles
@@ -11,14 +12,14 @@
 
 .is-nav-unification {
 	$nav-unification-primary: #23282d;
+	$nav-unification-secondary: #101517;
 	$nav-unification-masterbar-height: 32px;
 	$nav-unification-masterbar-font-size: 13px;
 
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
-	--color-masterbar-background: #23282d;
-	--color-masterbar-border: #333;
+	--color-masterbar-background: #101517;
 	--color-masterbar-item-hover-background: #333;
-	--color-masterbar-item-active-background: #fff;
+	--color-masterbar-item-active-background: #23282d;
 	--color-masterbar-unread-dot-background: #f0821e;
 
 	// client/layout/style.scss
@@ -36,18 +37,15 @@
 	// client/layout/masterbar/style.scss
 	.masterbar__item {
 		height: $nav-unification-masterbar-height;
+		padding: 0 8px;
 		font-size: $nav-unification-masterbar-font-size;
 		line-height: $nav-unification-masterbar-height;
+	}
 
-		&.is-active {
-			.masterbar__item-content {
-				color: $nav-unification-primary;
-			}
-
-			.gridicon {
-				fill: $nav-unification-primary;
-			}
-		}
+	// client/layout/masterbar/style.scss
+	.masterbar__item-bubble {
+		top: 2px;
+		left: -7px;
 	}
 
 	// client/layout/masterbar/style.scss
@@ -60,6 +58,7 @@
 	}
 
 	.masterbar__item-new {
+		padding: 0 10px;
 
 		&:hover {
 			background: #e9e9ea;
@@ -71,11 +70,16 @@
 		}
 		.gridicon {
 			fill: $nav-unification-primary;
+			transform: translateX( 1px );
+
+			+ .masterbar__item-content {
+				padding: 0 1px 0 5px;
+			}
 		}
 	}
 
 	.masterbar__toggle-drafts.button.is-borderless {
-		margin-left: -26px;
+		margin-left: -23px;
 
 		&:hover {
 			background-color: #e9e9ea;
@@ -94,7 +98,7 @@
 		padding-left: 8px;
 		.gravatar {
 			top: 5px;
-			left: 9px;
+			left: 8px;
 		}
 	}
 
@@ -102,6 +106,15 @@
 	.masterbar__item-notifications {
 		padding-right: 5px;
 		padding-left: 5px;
+
+		.gridicon {
+			margin-top: 1px;
+		}
+	}
+
+	// apps/notifications/style.scss
+	#wpnc-panel {
+		top: $nav-unification-masterbar-height;
 	}
 
 }
