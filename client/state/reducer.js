@@ -51,7 +51,6 @@ import userDevices from './user-devices/reducer';
 import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import users from './users/reducer';
-import adminMenu from './admin-menu/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -94,9 +93,12 @@ const reducers = {
 	userProfileLinks,
 	userSettings,
 	users,
-	// TODO: remove this once admin-menu state is consumed by UI components
-	// to allow it to be loaded as modularized state.
-	...( config.isEnabled( 'nav-unification' ) && { adminMenu } ),
 };
+
+// TODO: remove this once admin-menu state is consumed by UI components
+// to allow it to be loaded on demand as modularized state.
+if ( config.isEnabled( 'nav-unification' ) ) {
+	import( 'state/admin-menu/init' );
+}
 
 export default combineReducers( reducers );
