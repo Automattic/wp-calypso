@@ -53,7 +53,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
-import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -231,13 +230,9 @@ class CurrentPlan extends Component {
 				) }
 
 				{ showExpiryNotice && (
-					<Notice
-						status="is-info"
-						text={ <PlanRenewalMessage purchase={ purchase } withoutLink /> }
-						showDismiss={ false }
-					>
-						<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>
-							{ translate( 'More info' ) }
+					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+						<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+							{ translate( 'View plans' ) }
 						</NoticeAction>
 					</Notice>
 				) }
