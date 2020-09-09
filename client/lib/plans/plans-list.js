@@ -511,7 +511,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		constants.FEATURE_JETPACK_SEARCH,
-		constants.FEATURE_JETPACK_SEARCH,
+		constants.FEATURE_JETPACK_SEARCH_MONTHLY,
 	],
 	getInferiorHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
