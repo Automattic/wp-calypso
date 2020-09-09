@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { createI18n, I18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { createHooks } from '@wordpress/hooks';
 
 export interface I18nReact {
 	__: I18n[ '__' ];
@@ -14,8 +15,9 @@ export interface I18nReact {
 	i18nLocale: string;
 	localeData?: LocaleData;
 	hasTranslation: Function;
-	registerTranslationHook?: Function;
-	unregisterTranslationHook?: Function;
+	addFilter?: Function;
+	removeFilter?: Function;
+	applyFilters?: Function;
 }
 
 const I18nContext = React.createContext< I18nReact >( makeContextValue() );
@@ -24,33 +26,43 @@ interface Props {
 	localeData?: LocaleData;
 }
 
-interface I18nTransformHooks {
-	registerHook: Function;
-	unregisterHook: Function;
-	hooks: Function[];
-}
+const FILTER_PREFIX = 'a8c.reactI18n';
 
-/**
- * React hook for managing I18n transformation hooks
- */
-const useI18nTransformHooks = (): I18nTransformHooks => {
-	const [ hooks, setHooks ] = React.useState< Function[] >( [] );
-	const registerHook = ( hook: Function ) => setHooks( hooks.concat( hook ) );
-	const unregisterHook = ( hook: Function ) =>
-		setHooks( hooks.filter( ( _hook ) => _hook !== hook ) );
+const useFilters = (): any => {
+	const [ , setFiltersUpdates ] = React.useState( 0 ); // State is only used to provide reactivity when add/removing filters
+	const { filters, addFilter, removeFilter, applyFilters } = React.useMemo(
+		() => createHooks(),
+		[]
+	);
 
-	return { hooks, registerHook, unregisterHook };
+	const bindFn = ( fn, shouldUpdate = true ) => ( ...args ) => {
+		args[ 0 ] = `${ FILTER_PREFIX }.${ args[ 0 ] }`; // Apply hook name prefix
+		const result = fn( ...args );
+
+		if ( shouldUpdate ) {
+			setFiltersUpdates( ( i ) => ++i );
+		}
+
+		return result;
+	};
+
+	return {
+		filters,
+		addFilter: bindFn( addFilter ),
+		removeFilter: bindFn( removeFilter ),
+		applyFilters: bindFn( applyFilters, false ),
+	};
 };
 
 export const I18nProvider: React.FunctionComponent< Props > = ( { children, localeData } ) => {
 	const options = {
-		lookup: useI18nTransformHooks(),
-		translation: useI18nTransformHooks(),
+		filters: useFilters(),
 	};
 	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData, options ), [
 		localeData,
 		options,
 	] );
+
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
 
@@ -108,18 +120,20 @@ function bindI18nFunction(
 ) {
 	const boundFn = i18n[ fnName ].bind( i18n );
 
+	if ( ! options?.filters ) {
+		return boundFn;
+	}
+
 	return ( ...args: ( string | number )[] ) => {
-		const transformedArguments = ( options?.lookup?.hooks || [] ).reduce(
-			( accumulator, hook ) => hook( accumulator, args, fnName, options ),
-			args
-		);
+		const filteredArguments = options.filters.applyFilters( 'arguments', args, fnName, options );
 
-		const transformedTranslation = ( options?.translation?.hooks || [] ).reduce(
-			( accumulator, hook ) => hook( accumulator, transformedArguments, fnName, options ),
-			boundFn( ...transformedArguments )
+		return options.filters.applyFilters(
+			'translation',
+			boundFn( ...filteredArguments ),
+			filteredArguments,
+			fnName,
+			options
 		);
-
-		return transformedTranslation;
 	};
 }
 
@@ -162,7 +176,8 @@ function makeContextValue( localeData?: LocaleData, options?: MakeContextValueOp
 		i18nLocale,
 		localeData,
 		hasTranslation: boundHasTranslation,
-		registerTranslationHook: options?.translation?.registerHook,
-		unregisterTranslationHook: options?.translation?.unregisterHook,
+		addFilter: options?.filters?.addFilter,
+		removeFilter: options?.filters?.removeFilter,
+		applyFilters: options?.filters?.applyFilters,
 	};
 }
