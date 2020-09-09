@@ -271,7 +271,7 @@ function load_block_patterns() {
 
 	Block_Patterns::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_patterns' );
+add_action( 'init', __NAMESPACE__ . '\load_block_patterns', 20 );
 
 /**
  * Load Premium Content Block
