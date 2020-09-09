@@ -9,7 +9,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRenewalItemFromCartItem } from 'lib/cart-values/cart-items';
+import { getRenewalItemFromCartItem, CartItemValue } from 'lib/cart-values/cart-items';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
@@ -342,7 +342,7 @@ function createRenewalItemToAddToCart(
 		return null;
 	}
 
-	return getRenewalItemFromCartItem(
+	const renewalItem = getRenewalItemFromCartItem(
 		{
 			meta,
 			product_slug: productSlug,
@@ -352,7 +352,17 @@ function createRenewalItemToAddToCart(
 			id: purchaseId,
 			domain: selectedSiteSlug,
 		}
-	) as RequestCartProduct;
+	);
+	if ( ! isRequestCartProduct( renewalItem ) ) {
+		return null;
+	}
+	return renewalItem;
+}
+
+function isRequestCartProduct(
+	product: CartItemValue | RequestCartProduct
+): product is RequestCartProduct {
+	return ( product as RequestCartProduct ).product_slug !== undefined;
 }
 
 /*
