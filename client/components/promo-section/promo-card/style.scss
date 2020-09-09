@@ -59,7 +59,7 @@
 			}
 
 			.action-panel__body {
-				font-size: 16px;
+				font-size: $font-body;
 				line-height: 24px;
 			}
 		}
@@ -101,5 +101,26 @@
 		background-color: var( --color-accent-60 );
 		color: var( --color-text-inverted );
 		margin: auto 0 auto 8px;
+	}
+
+	.promo-card__price {
+		.price__cost {
+			font-size: $font-body-small;
+			color: var( --studio-gray-80 );
+
+			span {
+				font-size: $font-title-medium;
+				color: var( --studio-gray-100 );
+			}
+		}
+
+		.price__discounted span {
+			text-decoration: line-through;
+		}
+		.price__discount {
+			font-size: $font-body-small;
+			color: var( --studio-green-50 );
+			margin-left: 8px;
+		}
 	}
 }
