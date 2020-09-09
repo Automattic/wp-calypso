@@ -156,13 +156,7 @@ const ProductCardWrapper = ( {
 			iconSlug={ item.iconSlug }
 			productName={ item.displayName }
 			subheadline={ item.tagline }
-			description={
-				showExpiryNotice && purchase ? (
-					<PlanRenewalMessage purchase={ purchase } />
-				) : (
-					item.description
-				)
-			}
+			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned, sitePlan ) }
