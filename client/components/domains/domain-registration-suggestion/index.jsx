@@ -418,24 +418,27 @@ const mapStateToProps = ( state, props ) => {
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
+	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 
 	let productCost;
+	let productSaleCost;
 
-	if ( props.premiumDomain?.is_premium ) {
+	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
-	}
-
-	return {
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: productCost,
-		productSaleCost: getDomainSalePrice(
+		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
 			stripZeros
-		),
+		);
+	}
+
+	return {
+		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		productCost,
+		productSaleCost,
 	};
 };
 
