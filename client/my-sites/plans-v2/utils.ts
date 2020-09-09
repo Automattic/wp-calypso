@@ -448,8 +448,16 @@ export function getOptionFromSlug( slug: string ): string | null {
  * @param {string | string[]} products Slugs of the products to add to the cart
  */
 export function checkout( siteSlug: string, products: string | string[] ): void {
-	addItems( ( isArray( products ) ? products : [ products ] ).map( jetpackProductItem ) );
-	page.redirect( `/checkout/${ siteSlug }` );
+	const productsArray = isArray( products ) ? products : [ products ];
+	if ( siteSlug ) {
+		addItems( productsArray.map( jetpackProductItem ) );
+		page.redirect( `/checkout/${ siteSlug }` );
+	} else {
+		// There is not siteSlug, we need to redirect the user to the site selection
+		// step of the flow. Since purchases of multiple products are allowed, we need
+		// to pass all products separated by comma in the URL.
+		page.redirect( `/jetpack/connect/${ productsArray.join( ',' ) }` );
+	}
 }
 
 /**

@@ -12,9 +12,10 @@ import * as controller from './controller';
 import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { getLanguageRouteParam } from 'lib/i18n-utils';
 import plansV2 from 'my-sites/plans-v2';
+import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
 
 /**
  * Style dependencies
@@ -34,32 +35,20 @@ export default function () {
 		'scan',
 		'realtimebackup',
 		'antispam',
+		'jetpack_search',
+		'wpcom_search',
+		...OFFER_RESET_FLOW_TYPES,
 	].join( '|' );
 
 	page(
 		`/jetpack/connect/:type(${ planTypeString })/:interval(yearly|monthly)?`,
+		controller.loginBeforeJetpackSearch,
 		controller.persistMobileAppFlow,
 		controller.setMasterbar,
 		controller.connect,
 		makeLayout,
 		clientRender
 	);
-
-	if ( isLoggedOut ) {
-		page(
-			'/jetpack/connect/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
-			( { path } ) => page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
-		);
-	} else {
-		page(
-			'/jetpack/connect/:type(jetpack_search|wpcom_search)/:interval(yearly|monthly)?',
-			controller.persistMobileAppFlow,
-			controller.setMasterbar,
-			controller.purchase,
-			makeLayout,
-			clientRender
-		);
-	}
 
 	if ( config.isEnabled( 'jetpack/connect/remote-install' ) ) {
 		page(
