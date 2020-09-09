@@ -1,7 +1,6 @@
 /**
  * Internal Dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
@@ -23,22 +22,18 @@ export const transformAPIData = ( data ) => {
 };
 
 export const handleSuccess = ( { siteId }, menuData ) => {
-	// console.info( 'Successful request!', siteId, postId, data );
 	return receiveAdminMenu( siteId, menuData );
 };
 
-registerHandlers(
-	'state/data-layer/wpcom/admin-menu/index.js',
-	mergeHandlers( {
-		[ ADMIN_MENU_REQUEST ]: [
-			dispatchRequest( {
-				fetch: requestFetchAdminMenu,
-				fromApi: transformAPIData,
-				onSuccess: handleSuccess,
-				onError: ( error ) => {
-					console.warn( 'Error retrieving Menu items', error );
-				},
-			} ),
-		],
-	} )
-);
+registerHandlers( 'state/data-layer/wpcom/admin-menu/index.js', {
+	[ ADMIN_MENU_REQUEST ]: [
+		dispatchRequest( {
+			fetch: requestFetchAdminMenu,
+			fromApi: transformAPIData,
+			onSuccess: handleSuccess,
+			onError: ( error ) => {
+				console.warn( 'Error retrieving Menu items', error );
+			},
+		} ),
+	],
+} );
