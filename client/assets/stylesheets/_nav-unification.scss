@@ -14,6 +14,7 @@
 	$nav-unification-primary: #23282d;
 	$nav-unification-secondary: #101517;
 	$nav-unification-masterbar-height: 32px;
+	$nav-unification-masterbar-height-mobile: 46px;
 	$nav-unification-masterbar-font-size: 13px;
 
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
@@ -117,4 +118,61 @@
 		top: $nav-unification-masterbar-height;
 	}
 
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+
+		// client/layout/style.scss
+		.layout__secondary {
+			top: $nav-unification-masterbar-height-mobile;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar {
+			height: $nav-unification-masterbar-height-mobile;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item {
+			height: $nav-unification-masterbar-height-mobile;
+			line-height: $nav-unification-masterbar-height-mobile;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-new,
+		.masterbar__toggle-drafts.button.is-borderless {
+			height: 36px;
+			margin-top: 5px;
+		}
+
+		.masterbar__toggle-drafts.button.is-borderless {
+			margin-left: -20px;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-bubble {
+			top: 9px;
+			left: 2px;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-me {
+
+			// fix for profile picture currently hidden in production
+			.masterbar__item-content {
+				display: block;
+			}
+			.gravatar {
+				top: 12px;
+				left: 20px;
+			}
+		}
+
+		// apps/notifications/style.scss
+		#wpnc-panel {
+			top: $nav-unification-masterbar-height-mobile;
+		}
+
+	}
+
 }
+
