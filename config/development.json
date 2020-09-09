@@ -189,7 +189,6 @@
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
-		"upgrades/in-app-purchase": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/premium-themes": true,
 		"upgrades/precancellation-chat": true,
