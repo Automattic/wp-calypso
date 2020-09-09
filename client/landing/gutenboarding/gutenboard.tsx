@@ -19,12 +19,12 @@ import Header from './components/header';
 import SignupForm from './components/signup-form';
 import { name, settings } from './onboarding-block';
 import { fontPairings, getFontTitle } from './constants';
-import { recordOnboardingStart } from './lib/analytics';
 import useOnSiteCreation from './hooks/use-on-site-creation';
 import { usePageViewTracksEvents } from './hooks/use-page-view-tracks-events';
 import useSignup from './hooks/use-signup';
 import useOnSignup from './hooks/use-on-signup';
 import useOnLogin from './hooks/use-on-login';
+import useTrackOnboardingStart from './hooks/use-track-onboarding-start';
 
 import './style.scss';
 
@@ -36,6 +36,7 @@ const Gutenboard: React.FunctionComponent = () => {
 	useOnSignup();
 	useOnSiteCreation();
 	usePageViewTracksEvents();
+	useTrackOnboardingStart();
 	const { showSignupDialog, onSignupDialogClose } = useSignup();
 
 	// TODO: Explore alternatives for loading fonts and optimizations
@@ -61,8 +62,6 @@ const Gutenboard: React.FunctionComponent = () => {
 			document.head.appendChild( linkBase );
 			document.head.appendChild( linkHeadings );
 		} );
-
-		recordOnboardingStart();
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// @TODO: This is currently needed in addition to the routing (inside the Onboarding Block)

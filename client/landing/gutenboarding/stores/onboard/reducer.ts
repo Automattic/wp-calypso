@@ -221,6 +221,16 @@ const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, a
 	return state;
 };
 
+const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'ONBOARDING_START' ) {
+		return true;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -240,6 +250,7 @@ const reducer = combineReducers( {
 	wasVerticalSkipped,
 	isExperimental,
 	randomizedDesigns,
+	hasOnboardingStarted,
 } );
 
 export type State = ReturnType< typeof reducer >;
