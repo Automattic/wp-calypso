@@ -19,6 +19,8 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextArea from 'components/forms/form-textarea';
+// import SupportInfo from 'components/support-info';
+import InfoPopover from 'components/info-popover';
 
 /**
  * Style dependencies
@@ -37,6 +39,7 @@ const ServerCredentialsForm = ( {
 	formErrors,
 	labels = {},
 	showCancelButton = true,
+	support = {},
 } ) => {
 	React.useEffect( () => {
 		if ( formSubmissionStatus === 'success' ) {
@@ -46,8 +49,14 @@ const ServerCredentialsForm = ( {
 
 	return (
 		<div className="server-credentials-form">
+			{ support.protocol && (
+				<InfoPopover position="left">
+					<p>{ support.protocol }</p>
+				</InfoPopover>
+			) }
 			<FormFieldset>
-				<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
+				<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) } </FormLabel>
+
 				<FormSelect
 					name="protocol"
 					id="protocol-type"

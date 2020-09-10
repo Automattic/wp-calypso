@@ -15,7 +15,14 @@ const Form: FunctionComponent = () => {
 	return (
 		<div className="credentials__form">
 			<h1>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h1>
-			<ServerCredentialsForm />
+			<ServerCredentialsForm
+				support={ {
+					host:
+						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus blandit, odio in ultrices dapibus, lacus mauris convallis nibh, quis feugiat justo leo ut ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget condimentum magna.',
+					protocol:
+						'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus blandit, odio in ultrices dapibus, lacus mauris convallis nibh, quis feugiat justo leo ut ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eget condimentum magna.',
+				} }
+			/>
 		</div>
 	);
 };
