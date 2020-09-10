@@ -1,5 +1,10 @@
 # Changelog
 
+#### v1.1.0 (2020-09-10)
+
+- Twitter: Add previewing for attached images, videos, or quoted tweets.
+- Twitter: Add support for previewing entire threads.
+
 #### v1.0.4 (2020-08-24)
 
 - Fixed Twitter styles for viewports < 600px in width
