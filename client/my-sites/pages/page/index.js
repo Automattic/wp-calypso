@@ -747,6 +747,7 @@ class Page extends Component {
 		if ( isVisible ) {
 			// record a GA event when the menu is opened
 			this.props.recordMoreOptions();
+			preloadEditor();
 		}
 	};
 }
