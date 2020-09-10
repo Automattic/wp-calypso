@@ -530,8 +530,9 @@ function GSuiteDiscountCallout( { item } ) {
 }
 function DiscountForFirstYearOnly( { item } ) {
 	const translate = useTranslate();
-	const hasDiscount = !! item.wpcom_meta.item_original_cost_integer;
-	if ( ! hasDiscount ) {
+	const origCost = item.wpcom_meta.item_original_cost_integer;
+	const cost = item.wpcom_meta.product_cost_integer;
+	if ( origCost <= cost ) {
 		return null;
 	}
 	const isWpcomOneYearPlan = planMatches( item.wpcom_meta.product_slug, {
