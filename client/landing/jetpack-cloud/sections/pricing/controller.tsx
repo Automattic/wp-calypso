@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ export function jetpackPricingContext( context, next ) {
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
+		page.redirect( '/pricing' );
 	}
 
 	context.store.dispatch( hideMasterbar() );
