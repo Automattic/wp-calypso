@@ -388,6 +388,7 @@ export function useGetThankYouUrl( {
 		const isTransactionResultEmpty = isEmpty( transactionResult );
 
 		if ( siteSlug === 'no-user' || ! siteSlug ) {
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 			siteSlug = select( 'wpcom' ).getSiteSlug();
 		}
 
