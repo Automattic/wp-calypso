@@ -149,24 +149,23 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return contactFormBlock.insertSubject( subject );
 	}
 
-	toggleMoreToolsAndOptions() {
-		return driverHelper.clickWhenClickable(
+	async toggleMoreToolsAndOptions() {
+		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.xpath( "//button[@aria-label='More tools & options']" )
 		);
+		await this.driver.sleep( 1000 );
 	}
 
 	async switchToCodeView() {
 		await this.toggleMoreToolsAndOptions();
 
-		// Now click to switch to the code editor
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[2]" )
 		);
 
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
-
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
 
 		// close the menu
