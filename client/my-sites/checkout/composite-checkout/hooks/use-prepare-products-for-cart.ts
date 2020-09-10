@@ -29,11 +29,13 @@ const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for
 interface PreparedProductsForCart {
 	productsForCart: RequestCartProduct[];
 	canInitializeCart: boolean;
+	error: string | null;
 }
 
 const initialPreparedProductsState = {
 	canInitializeCart: false,
 	productsForCart: [],
+	error: null,
 };
 
 function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined > {
@@ -71,6 +73,8 @@ export default function usePrepareProductsForCart( {
 
 	useFetchPlansIfNotLoaded();
 
+	// Only one of these three should ever operate. The others should bail if
+	// they think another hook will handle the data.
 	useAddPlanFromSlug( { planSlug, dispatch, isJetpackNotAtomic, originalPurchaseId } );
 	useAddProductFromSlug( {
 		productAlias,
@@ -98,7 +102,7 @@ function preparedProductsReducer(
 			return { ...state, productsForCart: action.products, canInitializeCart: true };
 		case 'PRODUCTS_ADD_ERROR':
 			// TODO: show and record an error
-			return { ...state, canInitializeCart: true };
+			return { ...state, canInitializeCart: true, error: action.message };
 		default:
 			return state;
 	}
