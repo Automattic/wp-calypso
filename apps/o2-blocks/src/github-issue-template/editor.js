@@ -27,13 +27,13 @@ const icon = (
 	</SVG>
 );
 
-const Shell = ( { as: El = 'div', className, title, subTitle, icon, body, ...elementProps } ) => {
+const Shell = ( { as: El = 'div', className, title, subtitle, body, ...elementProps } ) => {
 	return (
 		<El { ...elementProps } className={ classNames( 'wp-block-a8c-github-template', className ) }>
-			<div className="github-template__icon" />
-			<div className="github-template__title">{ title }</div>
-			<div className="github-template__sub-title">{ subTitle }</div>
-			{ body && <div className="github-template__body">{ body }</div> }
+			<div className="wp-block-a8c-github-template__icon" />
+			<div className="wp-block-a8c-github-template__title">{ title }</div>
+			<div className="wp-block-a8c-github-template__sub-title">{ subtitle }</div>
+			{ body && <div className="wp-block-a8c-github-template__body">{ body }</div> }
 		</El>
 	);
 };
@@ -51,7 +51,7 @@ const Edit = ( {
 	<Shell
 		className="is-edit"
 		title={ <TextControl placeholder="Issue Title" onChange={ onChangeTitle } value={ title } /> }
-		subTitle={
+		subtitle={
 			<>
 				<TextControl
 					placeholder="User or Organization"
@@ -69,7 +69,7 @@ const Edit = ( {
 const View = ( { title, userOrOrg, repo, ...rest } ) => (
 	<Shell
 		title={ __( 'Create Issue' ) + ( title ? ` "${ title }"` : '' ) }
-		subTitle={ `${ userOrOrg }/${ repo }` }
+		subtitle={ `${ userOrOrg }/${ repo }` }
 		{ ...rest }
 	/>
 );
@@ -78,7 +78,7 @@ const Invalid = () => (
 	<Shell
 		className="is-warning"
 		title={ __( 'Please fill in the required fields' ) }
-		subTitle={ __(
+		subtitle={ __(
 			'Org, and Repository are required. Select this block to open the form and fill them.'
 		) }
 	/>
@@ -102,7 +102,7 @@ registerBlockType( 'a8c/github-issue-template', {
 			type: 'string',
 		},
 	},
-	edit: ( { setAttributes, attributes, attributes: { title, userOrOrg, repo }, isSelected } ) => {
+	edit: ( { setAttributes, attributes, attributes: { userOrOrg, repo }, isSelected } ) => {
 		const handlers = {
 			onChangeUserOrOrg( newUserOrOrg ) {
 				setAttributes( { userOrOrg: newUserOrOrg } );
@@ -121,7 +121,7 @@ registerBlockType( 'a8c/github-issue-template', {
 			},
 		};
 
-		const isValid = userOrOrg && repo;
+		const isValid = Boolean( userOrOrg && repo );
 		const { body, ...viewAttributes } = attributes;
 
 		if ( isSelected ) {
@@ -131,7 +131,7 @@ registerBlockType( 'a8c/github-issue-template', {
 		return isValid ? <View { ...viewAttributes } /> : <Invalid />;
 	},
 	save: ( { attributes: { userOrOrg, repo, title, body } } ) => {
-		const isValid = userOrOrg && repo;
+		const isValid = Boolean( userOrOrg && repo );
 		if ( isValid ) {
 			const url = createIssueUrl( {
 				title,
