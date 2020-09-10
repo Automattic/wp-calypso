@@ -26,6 +26,7 @@ import {
 import RecordsDetails from './records-details';
 import { addItems } from 'lib/cart/actions';
 import { jetpackProductItem } from 'lib/cart-values/cart-items';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -449,14 +450,19 @@ export function getOptionFromSlug( slug: string ): string | null {
  */
 export function checkout( siteSlug: string, products: string | string[] ): void {
 	const productsArray = isArray( products ) ? products : [ products ];
-	if ( siteSlug ) {
-		addItems( productsArray.map( jetpackProductItem ) );
-		page.redirect( `/checkout/${ siteSlug }` );
+
+	// There is not siteSlug, we need to redirect the user to the site selection
+	// step of the flow. Since purchases of multiple products are allowed, we need
+	// to pass all products separated by comma in the URL.
+	const path = siteSlug
+		? `/checkout/${ siteSlug }`
+		: `/jetpack/connect/${ productsArray.join( ',' ) }`;
+
+	if ( isJetpackCloud() ) {
+		window.location.href = `https://wordpress.com${ path }`;
 	} else {
-		// There is not siteSlug, we need to redirect the user to the site selection
-		// step of the flow. Since purchases of multiple products are allowed, we need
-		// to pass all products separated by comma in the URL.
-		page.redirect( `/jetpack/connect/${ productsArray.join( ',' ) }` );
+		addItems( productsArray.map( jetpackProductItem ) );
+		page.redirect( path );
 	}
 }
 
