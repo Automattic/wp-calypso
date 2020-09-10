@@ -43,6 +43,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 = 2.3 =
 * Bump NewsPack version to 1.8.0 (https://github.com/Automattic/wp-calypso/pull/45423)
 * Starter Page Templates: Add Current layout to page layout picker when editing a homepage (https://github.com/Automattic/wp-calypso/pull/43980)
+* Add tracks events for the block editor sidebar (https://github.com/Automattic/wp-calypso/pull/45429)
 
 = 2.2 =
 * Improve experience of opening and closing the sidebar with assistive technology (https://github.com/Automattic/wp-calypso/pull/45349)
