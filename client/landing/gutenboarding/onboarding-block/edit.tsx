@@ -39,7 +39,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const { pathname } = useLocation();
 
 	React.useEffect( () => {
-		window.scrollTo( 0, 0 );
+		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 	}, [ pathname ] );
 
 	const canUseDesignStep = React.useCallback( (): boolean => {
