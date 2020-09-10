@@ -81,6 +81,7 @@ import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useDisplayErrors from './hooks/use-display-errors';
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
+import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -346,6 +347,11 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
+	useActOnceOnStrings( [ cartProductPrepError ].filter( Boolean ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
+		);
+	} );
 	useDisplayErrors(
 		[ cartLoadingError, stripeLoadingError?.message, cartProductPrepError ].filter( Boolean )
 	);
