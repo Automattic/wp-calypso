@@ -95,10 +95,6 @@ export default function useInitializeCartFromServer(
 					error: 'GET_SERVER_CART_ERROR',
 					message: error.message,
 				} );
-				onEvent?.( {
-					type: 'CART_ERROR',
-					payload: { type: 'GET_SERVER_CART_ERROR', message: error.message },
-				} );
 			} );
 	}, [
 		cacheStatus,

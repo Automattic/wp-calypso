@@ -354,6 +354,10 @@ export default function CompositeCheckout( {
 		);
 	} );
 
+	useActOnceOnStrings( [ cartLoadingError ].filter( Boolean ), ( messages ) => {
+		messages.forEach( ( message ) => recordEvent( { type: 'CART_ERROR', payload: message } ) );
+	} );
+
 	// Display errors. Note that we display all errors if any of them change,
 	// because notices.error() otherwise will remove the previously displayed
 	// errors.
