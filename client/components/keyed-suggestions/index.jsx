@@ -108,7 +108,7 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
-	sanitizeInput = ( input ) => input.replace( /\W/g, '' );
+	sanitizeInput = ( input ) => input.replace( /[-/\\^$*+?.()|[\]{}]/g, '' );
 
 	/**
 	 * Provides keybord support for suggestings component by managing items highlith position
