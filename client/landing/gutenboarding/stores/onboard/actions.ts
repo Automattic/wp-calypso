@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
+import { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'lib/i18n-utils';
@@ -55,7 +55,7 @@ export function* createSite(
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
-		public: isPublicSite ? 1 : -1,
+		public: isPublicSite ? Site.Visibility.PublicIndexed : Site.Visibility.Private,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,
