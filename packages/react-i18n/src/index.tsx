@@ -25,18 +25,29 @@ const I18nContext = React.createContext< I18nReact >( makeContextValue() );
 interface Props {
 	localeData?: LocaleData;
 }
-
+/**
+ * Prefix for filter hook names
+ */
 const FILTER_PREFIX = 'a8c.reactI18n';
 
-const useFilters = (): any => {
-	const [ , setFiltersUpdates ] = React.useState( 0 ); // State is only used to provide reactivity when add/removing filters
-	const { filters, addFilter, removeFilter, applyFilters } = React.useMemo(
-		() => createHooks(),
-		[]
-	);
+interface I18nReactFilters {
+	addFilter: Function;
+	removeFilter: Function;
+	applyFilters: Function;
+}
 
-	const bindFn = ( fn, shouldUpdate = true ) => ( ...args ) => {
-		args[ 0 ] = `${ FILTER_PREFIX }.${ args[ 0 ] }`; // Apply hook name prefix
+/**
+ * React hook for managing filters
+ */
+const useFilters = (): I18nReactFilters => {
+	// State is only used to provide reactivity when add/removing filters
+	const [ , setFiltersUpdates ] = React.useState( 0 );
+	const { addFilter, removeFilter, applyFilters } = React.useMemo( () => createHooks(), [] );
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const bindFn = ( fn: Function, shouldUpdate = true ) => ( ...args: any[] ) => {
+		// Apply filter hook name prefix
+		args[ 0 ] = `${ FILTER_PREFIX }.${ args[ 0 ] }`;
 		const result = fn( ...args );
 
 		if ( shouldUpdate ) {
@@ -47,7 +58,6 @@ const useFilters = (): any => {
 	};
 
 	return {
-		filters,
 		addFilter: bindFn( addFilter ),
 		removeFilter: bindFn( removeFilter ),
 		applyFilters: bindFn( applyFilters, false ),
@@ -101,8 +111,7 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
 }, 'withI18n' );
 
 interface MakeContextValueOptions {
-	translation?: I18nTransformHooks;
-	lookup?: I18nTransformHooks;
+	filters: I18nReactFilters;
 }
 
 /**
