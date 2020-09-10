@@ -67,6 +67,9 @@ export function useNewSiteVisibility(): Site.Visibility {
 	return Site.Visibility.Private;
 }
 
-export function useShouldSiteBePublic() {
-	return useNewSiteVisibility() !== -1;
+export function useShouldRedirectToEditorAfterCheckout() {
+	// The ecommerce plan follows another flow, so we shouldn't interrupt
+	// it by trying to redirect to the editor.
+	const currentSlug = useSelectedPlan()?.storeSlug;
+	return ! useSelect( ( select ) => select( PLANS_STORE ).isPlanEcommerce( currentSlug ) );
 }
