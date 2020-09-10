@@ -28,12 +28,12 @@ const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for
 
 interface PreparedProductsForCart {
 	productsForCart: RequestCartProduct[];
-	canInitializeCart: boolean;
+	isLoading: boolean;
 	error: string | null;
 }
 
 const initialPreparedProductsState = {
-	canInitializeCart: false,
+	isLoading: true,
 	productsForCart: [],
 	error: null,
 };
@@ -63,7 +63,7 @@ export default function usePrepareProductsForCart( {
 		initialState: PreparedProductsForCart
 	): PreparedProductsForCart => ( {
 		...initialState,
-		canInitializeCart: ! planSlug && ! productAlias,
+		isLoading: !! ( planSlug || productAlias ),
 	} );
 	const [ state, dispatch ] = useReducer(
 		preparedProductsReducer,
@@ -99,10 +99,9 @@ function preparedProductsReducer(
 ): PreparedProductsForCart {
 	switch ( action.type ) {
 		case 'PRODUCTS_ADD':
-			return { ...state, productsForCart: action.products, canInitializeCart: true };
+			return { ...state, productsForCart: action.products, isLoading: false };
 		case 'PRODUCTS_ADD_ERROR':
-			// TODO: show and record an error
-			return { ...state, canInitializeCart: true, error: action.message };
+			return { ...state, isLoading: false, error: action.message };
 		default:
 			return state;
 	}

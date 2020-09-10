@@ -169,7 +169,7 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const { productsForCart, canInitializeCart } = usePrepareProductsForCart( {
+	const { productsForCart, isLoading: areCartProductsPreparing } = usePrepareProductsForCart( {
 		siteId,
 		product,
 		purchaseId,
@@ -195,7 +195,8 @@ export default function CompositeCheckout( {
 		variantSelectOverride,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
+		canInitializeCart:
+			! areCartProductsPreparing && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsToAddOnInitialize: productsForCart,
 		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
