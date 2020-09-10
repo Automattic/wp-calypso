@@ -64,5 +64,64 @@ export default withI18n( MyComponent );
 
 ## API
 
-The translation functions `__`, `_n`, `_nx`, and `_x` are exposed from [`@wordpress/i18n`](https://github.com/WordPress/gutenberg/tree/HEAD/packages/i18n). Refer to their documentation there.
-`i18nLocale` is a `string` containing the current locale. This is determined from the provided localeData and will fall back to `en`.
+### Translation Functions
+
+`__`, `_n`, `_nx`, and `_x` are exposed from [`@wordpress/i18n`](https://github.com/WordPress/gutenberg/tree/HEAD/packages/i18n). Refer to their documentation there.
+
+### i18nLocale
+
+A `string` containing the current locale. This is determined from the provided localeData and will fall back to `en`.
+
+### localeData
+
+Locale data in Jed-formatted JSON object, that is used by the active Tannin instance.
+
+### hasTranslation
+
+A helper function that can be used to determine if translation entry exists in the locale data. It is based on a similar logic as Tannin's translations lookup.
+
+_Parameters_
+
+- _text_ `string`: Text to lookup for.
+- _context_ `[string]`: Context information for the translators.
+
+_Returns_
+
+- `boolean`: Whether translation entry exists in locale data.
+
+```js
+hasTranslation( 'post', 'verb' );
+```
+
+### Filter Functions
+
+`addFilter`, `removeFilter`, `applyFilters` are based on [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/packages/packages-hooks/). Refer to their documentation there.
+
+In order to keep filter hook names short filter and avoid collision with other package in the same time, the exposed filter functions from within the package will prefix the passed hook name with `a8c.reactI18n.{hookName}`:
+
+```js
+addFilter( 'translation', 'namespace', () => {} ); // Hook name will become `a8c.reactI18n.translation`
+```
+
+#### Available Filters
+
+**arguments**
+
+Allows you to modify the arguments passed to a translate function.
+
+_Parameters_
+
+- _args_ `array`: The arguments array passed to the translate function.
+- _fnName_ `string`: The name of the translation function. Could be `__`, `_n`, `_nx`, or `_x`.
+- _options_ `object`: `@automattic/react-i18n` context options object.
+
+**arguments**
+
+Allows you to modify the arguments passed to a translate function.
+
+_Parameters_
+
+- _translation_ `string`: The retrieved translation string.
+- _args_ `array`: The arguments array passed to the translate function.
+- _fnName_ `string`: The name of the translation function. Could be `__`, `_n`, `_nx`, or `_x`.
+- _options_ `object`: `@automattic/react-i18n` context options object.
