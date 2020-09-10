@@ -68,7 +68,7 @@ const Edit = ( {
 
 const View = ( { title, userOrOrg, repo, ...rest } ) => (
 	<Shell
-		title={ __( 'Create Issue' ) + `${ title ? `: ${ title }` : '' }` }
+		title={ __( 'Create Issue' ) + ( title ? ` "${ title }"` : '' ) }
 		subTitle={ `${ userOrOrg }/${ repo }` }
 		{ ...rest }
 	/>
