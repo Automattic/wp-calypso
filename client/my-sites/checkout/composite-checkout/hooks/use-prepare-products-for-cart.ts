@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -31,6 +31,11 @@ interface PreparedProductsForCart {
 	canInitializeCart: boolean;
 }
 
+const initialPreparedProductsState = {
+	canInitializeCart: false,
+	productsForCart: [],
+};
+
 function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined > {
 	return !! value;
 }
@@ -51,37 +56,62 @@ export default function usePrepareProductsForCart( {
 	const planSlug = useSelector( ( state ) =>
 		productAlias ? getUpgradePlanSlugFromPath( state, siteId, productAlias ) : null
 	);
-	const [ { canInitializeCart, productsForCart }, setState ] = useState< PreparedProductsForCart >(
-		{
-			canInitializeCart: ! planSlug && ! productAlias,
-			productsForCart: [],
-		}
+
+	const initializePreparedProductsState = (
+		initialState: PreparedProductsForCart
+	): PreparedProductsForCart => ( {
+		...initialState,
+		canInitializeCart: ! planSlug && ! productAlias,
+	} );
+	const [ state, dispatch ] = useReducer(
+		preparedProductsReducer,
+		initialPreparedProductsState,
+		initializePreparedProductsState
 	);
 
 	useFetchPlansIfNotLoaded();
 
-	useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } );
+	useAddPlanFromSlug( { planSlug, dispatch, isJetpackNotAtomic, originalPurchaseId } );
 	useAddProductFromSlug( {
 		productAlias,
 		planSlug,
-		setState,
+		dispatch,
 		isJetpackNotAtomic,
 		isPrivate,
 		originalPurchaseId,
 	} );
-	useAddRenewalItems( { originalPurchaseId, productAlias, setState } );
+	useAddRenewalItems( { originalPurchaseId, productAlias, dispatch } );
 
-	return { productsForCart, canInitializeCart };
+	return state;
+}
+
+type PreparedProductsAction =
+	| { type: 'PRODUCTS_ADD'; products: RequestCartProduct[] }
+	| { type: 'PRODUCTS_ADD_ERROR'; message: string };
+
+function preparedProductsReducer(
+	state: PreparedProductsForCart,
+	action: PreparedProductsAction
+): PreparedProductsForCart {
+	switch ( action.type ) {
+		case 'PRODUCTS_ADD':
+			return { ...state, productsForCart: action.products, canInitializeCart: true };
+		case 'PRODUCTS_ADD_ERROR':
+			// TODO: show and record an error
+			return { ...state, canInitializeCart: true };
+		default:
+			return state;
+	}
 }
 
 function useAddRenewalItems( {
 	originalPurchaseId,
 	productAlias,
-	setState,
+	dispatch,
 }: {
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
-	setState: ( state: PreparedProductsForCart ) => void;
+	dispatch: ( action: PreparedProductsAction ) => void;
 } ) {
 	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
@@ -113,8 +143,11 @@ function useAddRenewalItems( {
 
 				const product = products[ slug ];
 				if ( ! product ) {
-					debug( 'no product found with slug', productSlug );
-					// TODO: show and record an error
+					debug( 'no renewal product found with slug', productSlug );
+					dispatch( {
+						type: 'PRODUCTS_ADD_ERROR',
+						message: `Could not find renewal product matching slug '${ productSlug }'`,
+					} );
 					return null;
 				}
 				return createRenewalItemToAddToCart(
@@ -125,26 +158,35 @@ function useAddRenewalItems( {
 				);
 			} )
 			.filter( doesValueExist );
+
+		if ( productsForCart.length < 1 ) {
+			debug( 'creating renewal products failed', productAlias );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: `Creating renewal products failed for slug '${ productAlias }'`,
+			} );
+			return;
+		}
 		debug( 'preparing renewals requested in url', productsForCart );
-		setState( { productsForCart, canInitializeCart: true } );
+		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
 	}, [
 		isFetchingProducts,
 		products,
 		originalPurchaseId,
 		productAlias,
-		setState,
+		dispatch,
 		selectedSiteSlug,
 	] );
 }
 
 function useAddPlanFromSlug( {
 	planSlug,
-	setState,
+	dispatch,
 	isJetpackNotAtomic,
 	originalPurchaseId,
 }: {
 	planSlug: string | null | undefined;
-	setState: ( state: PreparedProductsForCart ) => void;
+	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	originalPurchaseId: string | number | null | undefined;
 } ) {
@@ -165,8 +207,10 @@ function useAddPlanFromSlug( {
 		}
 		if ( ! plan ) {
 			debug( 'there is a request to add a plan but no plan was found', planSlug );
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: `Could not find plan matching slug '${ planSlug }'`,
+			} );
 			return;
 		}
 		const cartProduct = createItemToAddToCart( {
@@ -176,8 +220,10 @@ function useAddPlanFromSlug( {
 		} );
 		if ( ! cartProduct ) {
 			debug( 'there is a request to add a plan but creating an item failed', planSlug );
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: `Creating a plan failed for the slug '${ planSlug }'`,
+			} );
 			return;
 		}
 		debug(
@@ -185,21 +231,21 @@ function useAddPlanFromSlug( {
 			{ planSlug, plan, isJetpackNotAtomic },
 			cartProduct
 		);
-		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
-	}, [ plans, originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
+		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
+	}, [ plans, originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, dispatch ] );
 }
 
 function useAddProductFromSlug( {
 	productAlias: productAliasFromUrl,
 	planSlug,
-	setState,
+	dispatch,
 	isJetpackNotAtomic,
 	isPrivate,
 	originalPurchaseId,
 }: {
 	productAlias: string | undefined | null;
 	planSlug: string | undefined | null;
-	setState: ( state: PreparedProductsForCart ) => void;
+	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 	originalPurchaseId: string | number | undefined | null;
@@ -258,8 +304,10 @@ function useAddProductFromSlug( {
 				'there is a request to add one or more products but no product was found',
 				productAliasFromUrl
 			);
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: `Could not find any products matching requested '${ productAliasFromUrl }'`,
+			} );
 			return;
 		}
 
@@ -279,8 +327,10 @@ function useAddProductFromSlug( {
 				'there is a request to add a one or more products but creating them failed',
 				productAliasFromUrl
 			);
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: `Creating products failed for the requested '${ productAliasFromUrl }'`,
+			} );
 			return;
 		}
 		debug(
@@ -288,7 +338,7 @@ function useAddProductFromSlug( {
 			{ productAliasFromUrl, isJetpackNotAtomic },
 			cartProducts
 		);
-		setState( { productsForCart: cartProducts, canInitializeCart: true } );
+		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
 		isPrivate,
 		plans,
@@ -300,7 +350,7 @@ function useAddProductFromSlug( {
 		productAliasFromUrl,
 		validProducts,
 		isFetchingProducts,
-		setState,
+		dispatch,
 	] );
 }
 
