@@ -351,8 +351,7 @@ ABTest.prototype.saveVariation = function ( variation ) {
 	}
 	this.saveVariationInLocalStorage( variation );
 
-	const experimentId = this.experimentId.replace( /[A-Z]/g, ( s ) => `_${ s.toLowerCase() }` );
-	bumpStat( experimentId, variation );
+	bumpStat( this.experimentId, variation );
 };
 
 ABTest.prototype.saveVariationOnBackend = function ( variation ) {
