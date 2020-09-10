@@ -48,7 +48,9 @@ class PostActionCounts extends PureComponent {
 		this.onActionClick( 'likes' )();
 		event.preventDefault();
 
-		this.setState( { showLikesPopover: ! this.state.showLikesPopover } );
+		this.setState( ( { showLikesPopover } ) => ( {
+			showLikesPopover: ! showLikesPopover,
+		} ) );
 	};
 
 	closeLikesPopover = () => {
