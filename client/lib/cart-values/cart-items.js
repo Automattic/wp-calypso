@@ -47,6 +47,7 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
+	isBusiness,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
@@ -353,6 +354,10 @@ export function hasPersonalPlan( cart ) {
 
 export function hasPremiumPlan( cart ) {
 	return some( getAllCartItems( cart ), isPremium );
+}
+
+export function hasBusinessPlan( cart ) {
+	return some( getAllCartItems( cart ), isBusiness );
 }
 
 export function hasDomainCredit( cart ) {

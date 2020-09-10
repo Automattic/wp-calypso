@@ -25,6 +25,7 @@ import {
 	hasBloggerPlan,
 	hasPersonalPlan,
 	hasPremiumPlan,
+	hasBusinessPlan,
 	hasEcommercePlan,
 } from 'lib/cart-values/cart-items';
 import { managePurchase } from 'me/purchases/paths';
@@ -267,7 +268,10 @@ function getRedirectUrlForConciergeNudge( {
 		config.isEnabled( 'upsell/concierge-session' ) &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
-		( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
+		( hasBloggerPlan( cart ) ||
+			hasPersonalPlan( cart ) ||
+			hasPremiumPlan( cart ) ||
+			hasBusinessPlan( cart ) )
 	) {
 		// A user just purchased one of the qualifying plans
 		// Show them the concierge session upsell page
