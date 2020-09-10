@@ -25,7 +25,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			switch ( action.type ) {
 				case 'PRODUCTS_ADD_ERROR':
 					reduxDispatch(
-						logStashLoadErrorEventAction( 'products_load', String( action.payload ) )
+						logStashEventAction( 'calypso_composite_checkout_products_load_error', {
+							error_message: String( action.payload ),
+						} )
 					);
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_products_load_error', {
