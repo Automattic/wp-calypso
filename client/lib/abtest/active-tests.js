@@ -217,7 +217,8 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-		localeTargets: [ 'en', 'es' ],
+		localeTargets: 'any',
+		localeExceptions: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
 		datestamp: '20200828',
