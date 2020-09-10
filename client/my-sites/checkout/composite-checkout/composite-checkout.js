@@ -79,7 +79,6 @@ import { colors } from '@automattic/color-studio';
 import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
-import useDisplayErrors from './hooks/use-display-errors';
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 
@@ -352,8 +351,11 @@ export default function CompositeCheckout( {
 			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
 		);
 	} );
-	useDisplayErrors(
-		[ cartLoadingError, stripeLoadingError?.message, cartProductPrepError ].filter( Boolean )
+	useActOnceOnStrings(
+		[ cartLoadingError, stripeLoadingError?.message, cartProductPrepError ].filter( Boolean ),
+		( messages ) => {
+			notices.error( messages.map( ( message ) => <p key={ message }>{ message }</p> ) );
+		}
 	);
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
