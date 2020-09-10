@@ -154,7 +154,6 @@ ul.plans-accordion-item__feature-item-group {
 }
 
 .plans-accordion-item__price-amount {
-	display: inline-block;
 	font-size: $font-title-medium;
 
 	@include break-small {
@@ -163,6 +162,9 @@ ul.plans-accordion-item__feature-item-group {
 
 	&.is-loading {
 		max-width: 60px;
+		@include break-small {
+			max-width: none;
+		}
 		@include onboarding-placeholder();
 	}
 

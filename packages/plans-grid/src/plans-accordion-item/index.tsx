@@ -62,7 +62,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	const { __ } = useI18n();
 
 	// show a nbps in price while loading to prevent a janky UI
-	const nbsp = '\u00A0';
+	const nbsp = '\u00A0\u00A0';
 
 	const handleToggle = () => {
 		! disabledLabel && onToggle?.( slug, ! isOpen );
@@ -102,7 +102,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								} ) }
 							>
 								{ price || nbsp }
-								<span>{ __( '/mo' ) }</span>
+								{ price && <span>{ __( '/mo' ) }</span> }
 							</div>
 							<div className="plans-accordion-item__price-note">
 								{ isFree ? __( 'free forever' ) : __( 'billed annually' ) }
