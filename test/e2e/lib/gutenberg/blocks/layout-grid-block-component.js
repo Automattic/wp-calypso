@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By } from 'selenium-webdriver';
+import { By, Actions } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -64,6 +64,26 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 			`.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`
 		);
 		const blockId = await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+
+		// We need to move focus away from the layout grid, or any subsequent blocks inserted will be part of it
+		const blockAppenderWrapper = await this.driver.findElement(
+			By.css( '.interface-interface-skeleton__content' )
+		);
+
+		const blockAppenderWrapperBox = await this.driver.executeScript(
+			'return arguments[0].getBoundingClientRect()',
+			blockAppenderWrapper
+		);
+
+		const actions = await this.driver.actions( { bridge: true } );
+
+		await actions
+			.move( {
+				x: blockAppenderWrapperBox.x + blockAppenderWrapperBox.width / 2,
+				y: blockAppenderWrapperBox.bottom - 50,
+			} )
+			.click()
+			.perform();
 
 		return blockClass.Expect( this.driver, blockId );
 	}

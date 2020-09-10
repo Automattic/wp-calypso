@@ -195,7 +195,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					// SlideshowBlockComponent,
 					SubscriptionsBlockComponent,
 					TiledGalleryBlockComponent,
-					// YoutubeBlockComponent,
+					YoutubeBlockComponent,
 				].map( async ( blockClass ) =>
 					driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector )
 				)
@@ -235,16 +235,15 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 
 			step( 'Insert and configure jetpack/layout-grid', async function () {
 				const layoutBlock = await gEditorComponent.insertBlock( LayoutGridBlockComponent );
+
 				await layoutBlock.setupColumns( 2 );
-				const ratingStarInnerBlock = await layoutBlock.insertBlock( RatingStarBlockComponent, 0 );
-				const DynamicHRInnerBlock = await layoutBlock.insertBlock(
-					DynamicSeparatorBlockComponent,
-					1
-				);
+				await layoutBlock.insertBlock( RatingStarBlockComponent, 0 );
+				await layoutBlock.insertBlock( DynamicSeparatorBlockComponent, 1 );
 			} );
 
 			step( 'Insert and configure core-embed/youtube', async function () {
-				await gEditorComponent.insertBlock( YoutubeBlockComponent );
+				const youtubeBlock = await gEditorComponent.insertBlock( YoutubeBlockComponent );
+				await youtubeBlock.embed( 'https://www.youtube.com/watch?v=FhMO5QnRNvo' );
 			} );
 
 			step( 'Insert and configure a8c/blog-posts', async function () {
