@@ -169,7 +169,11 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const { productsForCart, isLoading: areCartProductsPreparing } = usePrepareProductsForCart( {
+	const {
+		productsForCart,
+		isLoading: areCartProductsPreparing,
+		error: cartProductPrepError,
+	} = usePrepareProductsForCart( {
 		siteId,
 		product,
 		purchaseId,
@@ -342,7 +346,9 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ cartLoadingError, stripeLoadingError?.message ].filter( Boolean ) );
+	useDisplayErrors(
+		[ cartLoadingError, stripeLoadingError?.message, cartProductPrepError ].filter( Boolean )
+	);
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -363,7 +369,7 @@ export default function CompositeCheckout( {
 		items,
 		cartEmptyRedirectUrl,
 		isLoadingCart,
-		[ ...errors, cartLoadingError ].filter( Boolean ),
+		[ ...errors, cartLoadingError, cartProductPrepError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
 
