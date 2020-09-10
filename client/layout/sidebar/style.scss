@@ -1,6 +1,3 @@
-$sidebar-item-padding: 8px 0;
-$font-size: rem( 14px );
-
 .sidebar {
 	// Setting the position and clearing some
 	// margins and paddings.
@@ -60,10 +57,9 @@ $font-size: rem( 14px );
 // like in Reader, and for the expandable menus.
 .sidebar__heading {
 	color: var( --color-sidebar-text-alternative );
-	font-size: $font-size;
-	font-weight: 400;
-	line-height: 1.3;
-	padding: $sidebar-item-padding;
+	font-size: $font-body;
+	font-weight: 600;
+	padding: 16px 8px 6px 16px;
 	margin: 0;
 	outline: 0;
 }
@@ -71,9 +67,7 @@ $font-size: rem( 14px );
 // Sidebar menu icons for main sections
 .sidebar__menu-icon {
 	fill: var( --color-sidebar-gridicon-fill );
-	margin: 0 8px;
-	width: 20px;
-	height: 20px;
+	margin-right: 11px;
 	flex-shrink: 0;
 }
 
@@ -116,10 +110,10 @@ $font-size: rem( 14px );
 // Menu links: The actual anchor tags that contain links to
 // various sections of Calypso.
 .sidebar__menu-link {
-	font-size: $font-size;
+	font-size: $font-body;
 	line-height: 1.2;
 	position: relative;
-	padding: $sidebar-item-padding;
+	padding: 10px 16px 10px 20px;
 	box-sizing: border-box;
 	overflow: hidden;
 	display: flex;
@@ -222,8 +216,8 @@ $font-size: rem( 14px );
 .sidebar__menu.is-togglable {
 	.sidebar__heading {
 		display: flex;
-		padding: $sidebar-item-padding;
-		font-weight: 400;
+		padding: 10px 16px 10px 20px;
+		font-weight: 600;
 		cursor: pointer;
 
 		&:hover {
@@ -244,8 +238,6 @@ $font-size: rem( 14px );
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
 		fill: var( --color-sidebar-gridicon-fill );
-		width: 20px;
-		height: 20px;
 	}
 
 	.sidebar__menu-link {

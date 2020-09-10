@@ -1,0 +1,35 @@
+// This files overrides client/layout/sidebar/style.scss
+// Changes should be merged before nav unification goes to production
+// Override Global Vars
+$sidebar-width-max: 200px;
+$sidebar-width-min: 228px;
+
+// Local Vars
+$sidebar-item-padding: 8px 0;
+$font-size: rem( 14px );
+
+.sidebar {
+	.sidebar__heading {
+		font-size: $font-size;
+		font-weight: 400;
+		line-height: 1.3;
+		padding: $sidebar-item-padding;
+	}
+
+	.sidebar__menu-link {
+		font-size: $font-size;
+		padding: $sidebar-item-padding;
+	}
+
+	.sidebar__menu.is-togglable {
+		.sidebar__heading {
+			padding: $sidebar-item-padding;
+			font-weight: 400;
+		}
+
+		.sidebar__expandable-arrow {
+			width: 20px;
+			height: 20px;
+		}
+	}
+}
