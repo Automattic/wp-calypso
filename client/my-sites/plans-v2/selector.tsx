@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
+import { intersection } from 'lodash';
+import page from 'page';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import QueryProducts from './query-products';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
+import { getProductTermVariants } from 'lib/products-values';
 import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { managePurchase } from 'me/purchases/paths';
@@ -36,6 +38,7 @@ import type {
 	SelectorProduct,
 	PurchaseCallback,
 } from './types';
+import type { ProductSlug } from 'lib/products-values/types';
 
 import './style.scss';
 
@@ -86,11 +89,14 @@ const SelectorPage = ( {
 		}
 
 		// Redirect to the Upsell page only if there is an upsell product and the site
-		// doesn't already own the product.
-		const upsellProduct = getProductUpsell( product.productSlug );
+		// doesn't already own the product or a similar term.
+		const upsellProduct = getProductUpsell( product.productSlug ) as ProductSlug;
+		const upsellVariants = ( upsellProduct && getProductTermVariants( upsellProduct ) ) || [];
+		const siteProductsSlug = siteProducts?.map( ( { productSlug } ) => productSlug ) || [];
+
 		if (
 			upsellProduct &&
-			! siteProducts?.find( ( { productSlug } ) => productSlug === upsellProduct )
+			intersection( [ upsellProduct, ...upsellVariants ], siteProductsSlug ).length === 0
 		) {
 			page( getPathToUpsell( rootUrl, product.productSlug, currentDuration, siteSlug ) );
 			return;
