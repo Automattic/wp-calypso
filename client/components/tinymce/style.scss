@@ -57,9 +57,9 @@
 			border-right-width: 0;
 
 			.focus-sidebar & {
-				width: calc( 100% - ( #{$sidebar-width-max + 1} ) );
+				width: calc( 100% - ( #{var( --sidebar-width-max ) + 1} ) );
 				@include breakpoint-deprecated( '660px-960px' ) {
-					width: calc( 100% - ( #{$sidebar-width-min + 1} ) );
+					width: calc( 100% - ( #{var( --sidebar-width-min ) + 1} ) );
 				}
 				margin: 0;
 			}
@@ -96,7 +96,7 @@
 		}
 
 		.focus-sidebar & {
-			@media screen and ( max-width: ( 700px + $sidebar-width-min ) ) {
+			@media screen and ( max-width: ( 700px + var( --sidebar-width-min ) ) ) {
 				border-left-width: 0;
 				border-right-width: 0;
 			}
@@ -181,7 +181,8 @@
 
 .mce-toolbar
 	.mce-btn-group
-	.mce-btn.mce-toolbar-segment-end:not( .mce-hidden ) + .mce-btn.mce-toolbar-segment-start {
+	.mce-btn.mce-toolbar-segment-end:not( .mce-hidden )
+	+ .mce-btn.mce-toolbar-segment-start {
 	margin-left: 2px;
 
 	&::before {
