@@ -210,7 +210,7 @@ export default {
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
 	reskinSignupFlow: {
-		datestamp: '20200903',
+		datestamp: '21200903',
 		variations: {
 			reskinned: 50,
 			control: 50,
