@@ -83,10 +83,6 @@ export default function useInitializeCartFromServer(
 					type: 'RECEIVE_INITIAL_RESPONSE_CART',
 					initialResponseCart,
 				} );
-				onEvent?.( {
-					type: 'CART_INIT_COMPLETE',
-					payload: initialResponseCart,
-				} );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while initializing cart', error );

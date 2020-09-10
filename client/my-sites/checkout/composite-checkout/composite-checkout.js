@@ -82,6 +82,7 @@ import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-det
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
+import useEffectOnChange from './hooks/use-effect-on-change';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -208,6 +209,13 @@ export default function CompositeCheckout( {
 		getCart: getCart || wpcomGetCart,
 		onEvent: recordEvent,
 	} );
+
+	useEffectOnChange( () => {
+		recordEvent( {
+			type: 'CART_INIT_COMPLETE',
+			payload: responseCart,
+		} );
+	}, [ isLoadingCart ] );
 
 	const {
 		items,
