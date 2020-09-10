@@ -66,7 +66,7 @@ const SelectorPage = ( {
 		if ( product.subtypes.length ) {
 			dispatch(
 				recordTracksEvent( 'calypso_product_subtypes_view', {
-					site_id: siteId,
+					site_id: siteId || undefined,
 					product_slug: product.productSlug,
 					duration: currentDuration,
 				} )
@@ -96,7 +96,7 @@ const SelectorPage = ( {
 
 		dispatch(
 			recordTracksEvent( 'calypso_plans_type_change', {
-				site_id: siteId,
+				site_id: siteId || undefined,
 				product_type: selectedType,
 			} )
 		);
@@ -110,7 +110,7 @@ const SelectorPage = ( {
 
 		dispatch(
 			recordTracksEvent( 'calypso_plans_duration_change', {
-				site_id: siteId,
+				site_id: siteId || undefined,
 				duration: selectedDuration,
 			} )
 		);
