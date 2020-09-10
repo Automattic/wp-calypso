@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withStorageKey } from 'state/utils';
+import { withStorageKey, keyedReducer } from 'state/utils';
 import 'state/data-layer/wpcom/admin-menu';
 import { ADMIN_MENU_RECEIVE } from 'state/action-types';
 
@@ -14,4 +14,4 @@ export const adminMenu = ( state = {}, action ) => {
 	}
 };
 
-export default withStorageKey( 'adminMenu', adminMenu );
+export default withStorageKey( 'adminMenu', keyedReducer( 'siteId', adminMenu ) );
