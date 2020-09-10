@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import { getDiscountedRawPrice, getPlanRawPrice } from '../';
@@ -33,25 +28,25 @@ describe( 'selectors', () => {
 				],
 			},
 		};
-		test( 'should return a plan price', () => {
+		it( 'should return a plan price', () => {
 			const rawPrice = getDiscountedRawPrice( state, 1008, false );
-			expect( rawPrice ).to.equal( 300 );
+			expect( rawPrice ).toEqual( 300 );
 		} );
-		test( 'should return a monthly price - annual term', () => {
+		it( 'should return a monthly price - annual term', () => {
 			const rawPrice = getDiscountedRawPrice( state, 1008, true );
-			expect( rawPrice ).to.equal( 25 );
+			expect( rawPrice ).toEqual( 25 );
 		} );
-		test( 'should return a monthly price - biennial term', () => {
+		it( 'should return a monthly price - biennial term', () => {
 			const rawPrice = getDiscountedRawPrice( state, 1028, false );
-			expect( rawPrice ).to.equal( 480 );
+			expect( rawPrice ).toEqual( 480 );
 		} );
-		test( 'should return a monthly price - monthly term', () => {
+		it( 'should return a monthly price - monthly term', () => {
 			const rawPrice = getDiscountedRawPrice( state, 1028, true );
-			expect( rawPrice ).to.equal( 20 );
+			expect( rawPrice ).toEqual( 20 );
 		} );
-		test( 'should return null if there is no discount', () => {
+		it( 'should return null if there is no discount', () => {
 			const rawPrice = getDiscountedRawPrice( state, 1003, false );
-			expect( rawPrice ).to.be.a( 'null' );
+			expect( rawPrice ).toBeNull();
 		} );
 	} );
 	describe( '#getPlanRawPrice()', () => {
@@ -78,29 +73,29 @@ describe( 'selectors', () => {
 				],
 			},
 		};
-		test( 'should return a plan price', () => {
+		it( 'should return a plan price', () => {
 			const rawPrice = getPlanRawPrice( state, 1008, false );
-			expect( rawPrice ).to.equal( 324 );
+			expect( rawPrice ).toEqual( 324 );
 		} );
-		test( 'should return a monthly price - annual term', () => {
+		it( 'should return a monthly price - annual term', () => {
 			const rawPrice = getPlanRawPrice( state, 1008, true );
-			expect( rawPrice ).to.equal( 27 );
+			expect( rawPrice ).toEqual( 27 );
 		} );
-		test( 'should return a monthly price - biennial term', () => {
+		it( 'should return a monthly price - biennial term', () => {
 			const rawPrice = getPlanRawPrice( state, 1028, false );
-			expect( rawPrice ).to.equal( 540 );
+			expect( rawPrice ).toEqual( 540 );
 		} );
-		test( 'should return a monthly price - monthly term', () => {
+		it( 'should return a monthly price - monthly term', () => {
 			const rawPrice = getPlanRawPrice( state, 1028, true );
-			expect( rawPrice ).to.equal( 22.5 );
+			expect( rawPrice ).toEqual( 22.5 );
 		} );
-		test( 'should return raw_price if there is no discount', () => {
+		it( 'should return raw_price if there is no discount', () => {
 			const rawPrice = getPlanRawPrice( state, 1003, false );
-			expect( rawPrice ).to.equal( 96 );
+			expect( rawPrice ).toEqual( 96 );
 		} );
-		test( 'should return monthly raw_price if there is no discount', () => {
+		it( 'should return monthly raw_price if there is no discount', () => {
 			const rawPrice = getPlanRawPrice( state, 1003, true );
-			expect( rawPrice ).to.equal( 8 );
+			expect( rawPrice ).toEqual( 8 );
 		} );
 	} );
 } );
