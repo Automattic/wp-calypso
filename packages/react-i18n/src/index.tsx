@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { createI18n, I18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { createHooks } from '@wordpress/hooks';
+import { addFilter, removeFilter, applyFilters } from '@wordpress/hooks';
 
 export interface I18nReact {
 	__: I18n[ '__' ];
@@ -42,7 +42,6 @@ interface I18nReactFilters {
 const useFilters = (): I18nReactFilters => {
 	// State is only used to provide reactivity when add/removing filters
 	const [ , setFiltersUpdates ] = React.useState( 0 );
-	const { addFilter, removeFilter, applyFilters } = React.useMemo( () => createHooks(), [] );
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const bindFn = ( fn: Function, shouldUpdate = true ) => ( ...args: any[] ) => {
