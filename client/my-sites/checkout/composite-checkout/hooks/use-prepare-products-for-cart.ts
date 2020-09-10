@@ -149,7 +149,7 @@ function useAddRenewalItems( {
 					debug( 'no renewal product found with slug', productSlug );
 					dispatch( {
 						type: 'PRODUCTS_ADD_ERROR',
-						message: `Could not find renewal product matching slug '${ productSlug }'`,
+						message: `Could not find renewal product matching '${ productSlug }'`,
 					} );
 					return null;
 				}
@@ -166,7 +166,7 @@ function useAddRenewalItems( {
 			debug( 'creating renewal products failed', productAlias );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Creating renewal products failed for slug '${ productAlias }'`,
+				message: `Creating renewal products failed for '${ productAlias }'`,
 			} );
 			return;
 		}
@@ -212,7 +212,7 @@ function useAddPlanFromSlug( {
 			debug( 'there is a request to add a plan but no plan was found', planSlug );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Could not find plan matching slug '${ planSlug }'`,
+				message: `Could not find plan matching '${ planSlug }'`,
 			} );
 			return;
 		}
@@ -225,7 +225,7 @@ function useAddPlanFromSlug( {
 			debug( 'there is a request to add a plan but creating an item failed', planSlug );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Creating a plan failed for the slug '${ planSlug }'`,
+				message: `Creating a plan failed for '${ planSlug }'`,
 			} );
 			return;
 		}
@@ -309,7 +309,7 @@ function useAddProductFromSlug( {
 			);
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Could not find any products matching requested '${ productAliasFromUrl }'`,
+				message: `Could not find any products matching '${ productAliasFromUrl }'`,
 			} );
 			return;
 		}
@@ -332,7 +332,7 @@ function useAddProductFromSlug( {
 			);
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Creating products failed for the requested '${ productAliasFromUrl }'`,
+				message: `Creating products failed for '${ productAliasFromUrl }'`,
 			} );
 			return;
 		}
