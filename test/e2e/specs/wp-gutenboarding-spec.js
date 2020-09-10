@@ -14,6 +14,7 @@ import DesignSelectorPage from '../lib/pages/gutenboarding/design-selector-page.
 import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
+import FeaturesPage from '../lib/pages/gutenboarding/features-page.js';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -64,6 +65,11 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		step( 'Can see Style Preview and continue', async function () {
 			const stylePreviewPage = await StylePreviewPage.Expect( driver );
 			await stylePreviewPage.continue();
+		} );
+
+		step( 'Can see Feature picker and skip', async function () {
+			const featureswPage = await FeaturesPage.Expect( driver );
+			await featureswPage.skipStep();
 		} );
 
 		step( 'Can see Plans Grid with no selected plan', async function () {

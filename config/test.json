@@ -38,6 +38,7 @@
 		"devdocs/redirect-loggedout-homepage": true,
 		"gdpr-banner": false,
 		"google-my-business": false,
+		"gutenboarding/feature-picker": true,
 		"help": true,
 		"inline-help": true,
 		"ive/use-external-assignment": true,

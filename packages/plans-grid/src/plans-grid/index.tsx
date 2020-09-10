@@ -11,6 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import PlansTable from '../plans-table';
+import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
 
 /**
@@ -24,6 +25,7 @@ const debug = debugFactory( 'plans-grid' );
 
 export interface Props {
 	header?: React.ReactElement;
+	recommendedPlan?: Plans.Plan;
 	currentPlan?: Plans.Plan;
 	onPlanSelect: ( plan: PlansSlug ) => void;
 	onPickDomainClick?: () => void;
@@ -34,6 +36,7 @@ export interface Props {
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
 	header,
+	recommendedPlan,
 	currentPlan,
 	currentDomain,
 	onPlanSelect,
@@ -53,13 +56,24 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
-					<PlansTable
-						selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
-						onPlanSelect={ onPlanSelect }
-						currentDomain={ currentDomain }
-						onPickDomainClick={ onPickDomainClick }
-						disabledPlans={ disabledPlans }
-					></PlansTable>
+					{ isExperimental ? (
+						<PlansAccordion
+							recommendedPlanSlug={ recommendedPlan?.storeSlug ?? '' }
+							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
+							onPlanSelect={ onPlanSelect }
+							currentDomain={ currentDomain }
+							onPickDomainClick={ onPickDomainClick }
+							disabledPlans={ disabledPlans }
+						></PlansAccordion>
+					) : (
+						<PlansTable
+							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
+							onPlanSelect={ onPlanSelect }
+							currentDomain={ currentDomain }
+							onPickDomainClick={ onPickDomainClick }
+							disabledPlans={ disabledPlans }
+						></PlansTable>
+					) }
 				</div>
 			</div>
 
