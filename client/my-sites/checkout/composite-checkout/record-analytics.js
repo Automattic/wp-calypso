@@ -23,6 +23,15 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
+				case 'PRODUCTS_ADD_ERROR':
+					reduxDispatch(
+						logStashLoadErrorEventAction( 'products_load', String( action.payload ) )
+					);
+					return reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_products_load_error', {
+							error_message: String( action.payload ),
+						} )
+					);
 				case 'CHECKOUT_LOADED':
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_page_view', {
