@@ -4191,10 +4191,10 @@
     "@types/wordpress__rich-text" "*"
     re-resizable "^4.7.1"
 
-"@types/wordpress__components@^9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__components/-/wordpress__components-9.0.0.tgz#51988818f6c4aa8abb5fadd39f9f5ac1ede7ed43"
-  integrity sha512-bYTEGINPQcAJ6/dABZQXBZfPrLz3T4+B8sVopFiT99qMxOR0Mt8x3VsdaFUxh/ArLjI8bgf1uBYzvx/PSQpjSA==
+"@types/wordpress__components@^9.8.0":
+  version "9.8.0"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__components/-/wordpress__components-9.8.0.tgz#25b9799178b777910304aec35e6453b6faec3fb2"
+  integrity sha512-pt0FxWz9Spbqk7xF7YVDUosW5YMTHkfCzkG7lWESm6OuEXc6HmHN3JSmC82FS+NQjht3qTGjbdULYLxXrxzTvQ==
   dependencies:
     "@types/react" "*"
     "@types/wordpress__components" "*"
