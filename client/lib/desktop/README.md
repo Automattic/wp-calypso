@@ -18,7 +18,7 @@ The following events can be sent to Calypso from Electron via IPC:
 - `cookie-auth-complete` - Forces the notification client to refresh (with new cookie details)
 - `page-help` - Navigate to the help page
 
-#### Output Events
+#### Output Events
 
 The following events are sent from Calypso to Electron via IPC:
 

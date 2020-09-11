@@ -20,6 +20,6 @@ import EnvironmentBadge, { PreferencesHelper } from 'components/environment-badg
 
 ## Props
 
-- `badge` – mirrors the environment e.g. dev or staging:
+- `badge` – mirrors the environment e.g. dev or staging:
 - `feedbackURL` – link to the feedback tracker e.g. github issues
-- `children` (optional) – Any children elements which extend the badge and are being rendered next to it
+- `children` (optional) – Any children elements which extend the badge and are being rendered next to it

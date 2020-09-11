@@ -45,7 +45,7 @@ import PaymentLogo from 'components/payment-logo';
 
 ## Required props
 
-- `type` – String that determines which type of logo is displayed. Currently accepts:
+- `type` – String that determines which type of logo is displayed. Currently accepts:
   - `alipay`
   - `amex`
   - `apple-pay`
@@ -62,4 +62,4 @@ import PaymentLogo from 'components/payment-logo';
   - `placeholder`
   - `unionpay`
   - `visa`
-- `isCompact` (optional) – Boolean that determines if the compact PayPal logo is rendered.
+- `isCompact` (optional) – Boolean that determines if the compact PayPal logo is rendered.

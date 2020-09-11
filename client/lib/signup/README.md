@@ -21,7 +21,7 @@ The array of steps in the store is returned by the `SignupProgressStore#get()`.
 Each action takes a `step` object with the following properties:
 
 - `stepName` (required)
-- `apiRequestFunction` (optional) — Used to submit the step to the API. Its presence determines of the `status` of the step is `pending` or `completed`.
+- `apiRequestFunction` (optional) — Used to submit the step to the API. Its presence determines of the `status` of the step is `pending` or `completed`.
 
 ```js
 {
