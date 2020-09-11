@@ -36,10 +36,14 @@ export function* createSite(
 	bearerToken?: string,
 	isPublicSite = false
 ) {
-	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
-		ONBOARD_STORE,
-		'getState'
-	);
+	const {
+		domain,
+		selectedDesign,
+		selectedFonts,
+		siteTitle,
+		siteVertical,
+		selectedFeatures,
+	}: State = yield select( ONBOARD_STORE, 'getState' );
 
 	const shouldEnableFse = !! selectedDesign?.is_fse;
 
@@ -74,6 +78,7 @@ export function* createSite(
 				font_headings: selectedFonts.headings,
 			} ),
 			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
+			selected_features: selectedFeatures,
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
