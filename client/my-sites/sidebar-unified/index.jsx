@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
  */
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getAdminMenu } from 'state/admin-menu/selectors';
 import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'my-sites/email/paths';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
@@ -38,11 +39,8 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 	// Extract this?
 	const menuItems = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state );
-		if ( siteId != null && state.adminMenu != null && siteId in state.adminMenu ) {
-			return Object.values( state.adminMenu[ siteId ] );
-		}
-		return [];
+		const menu = getAdminMenu( state, getSelectedSiteId( state ) );
+		return menu != null ? Object.values( menu ) : [];
 	} );
 
 	// Extract this?
