@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { intersection } from 'lodash';
 import page from 'page';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,13 +13,12 @@ import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
 import { SECURITY } from './constants';
-import { getProductUpsell, getPathToDetails, getPathToUpsell, checkout } from './utils';
+import { getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
+import useHasProductUpsell from './use-has-product-upsell';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
-import { getProductTermVariants } from 'lib/products-values';
-import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { managePurchase } from 'me/purchases/paths';
 import Main from 'components/main';
@@ -52,7 +50,7 @@ const SelectorPage = ( {
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
-	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const hasUpsell = useHasProductUpsell();
 	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
@@ -88,16 +86,7 @@ const SelectorPage = ( {
 			return;
 		}
 
-		// Redirect to the Upsell page only if there is an upsell product and the site
-		// doesn't already own the product or a similar term.
-		const upsellProduct = getProductUpsell( product.productSlug ) as ProductSlug;
-		const upsellVariants = ( upsellProduct && getProductTermVariants( upsellProduct ) ) || [];
-		const siteProductsSlug = siteProducts?.map( ( { productSlug } ) => productSlug ) || [];
-
-		if (
-			upsellProduct &&
-			intersection( [ upsellProduct, ...upsellVariants ], siteProductsSlug ).length === 0
-		) {
+		if ( hasUpsell( product.productSlug as ProductSlug ) ) {
 			page( getPathToUpsell( rootUrl, product.productSlug, currentDuration, siteSlug ) );
 			return;
 		}
