@@ -95,14 +95,6 @@ class MasterbarLoggedOut extends React.Component {
 		}
 
 		/**
-		 * Hide signup from from New Site screen. This allows starting with a new Jetpack or
-		 * WordPress.com site.
-		 */
-		if ( startsWith( currentRoute, '/jetpack/new' ) ) {
-			return null;
-		}
-
-		/**
 		 * Hide signup from the screen when we have been sent to the login page from a redirect
 		 * by a service provider to authorize a Domain Connect template application.
 		 */
