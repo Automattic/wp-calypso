@@ -485,10 +485,8 @@ class InvitePeople extends React.Component {
 			</div>,
 			( accepted ) => {
 				if ( accepted ) {
-					this.setState( {
-						isGeneratingInviteLinks: false,
-					} );
 					this.props.disableInviteLinks( this.props.siteId );
+					this.setState( this.resetState() );
 				}
 			},
 			this.props.translate( 'Disable' )
