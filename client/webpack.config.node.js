@@ -47,39 +47,48 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
  * @returns {Array} list of externals
  */
 function getExternals() {
-	return [
-		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
-		// with modules that are incompatible with webpack bundling.
-		nodeExternals( {
-			allowlist: [
-				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
-				// non-JS asset imports that couldn't be processed by Node.js at runtime.
-				'@automattic/components',
+	const externals = [];
 
-				// The polyfills module is transpiled by Babel and only the `core-js` modules that are
-				// needed by current Node.js are included instead of the whole package.
-				'@automattic/calypso-polyfills',
-				/^core-js\//,
+	// In development mode, don't bundle node_modules to avoid a massive bundle that includes
+	// the webpack dev server with complete built pipeline.
+	// In production mode, we want to bundle node_modules to create a self-contained artifact
+	// that can run standalone without any dependencies.
+	if ( isDevelopment ) {
+		externals.push(
+			nodeExternals( {
+				allowlist: [
+					// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
+					// non-JS asset imports that couldn't be processed by Node.js at runtime.
+					'@automattic/components',
 
-				// Ensure that file-loader files imported from packages in node_modules are
-				// _not_ externalized and can be processed by the fileLoader.
-				fileLoader.test,
+					// The polyfills module is transpiled by Babel and only the `core-js` modules that are
+					// needed by current Node.js are included instead of the whole package.
+					'@automattic/calypso-polyfills',
+					/^core-js\//,
 
-				/^calypso\//,
-			],
-		} ),
-		// Some imports should be resolved to runtime `require()` calls, with paths relative
-		// to the path of the `build/server.js` bundle.
-		{
-			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
-			'webpack.config': {
-				commonjs: '../client/webpack.config.js',
-			},
-			'calypso/webpack.config': {
-				commonjs: '../client/webpack.config.js',
-			},
+					// Ensure that file-loader files imported from packages in node_modules are
+					// _not_ externalized and can be processed by the fileLoader.
+					fileLoader.test,
+
+					/^calypso\//,
+				],
+			} )
+		);
+	}
+
+	// Some imports should be resolved to runtime `require()` calls, with paths relative
+	// to the path of the `build/bundle.js` bundle.
+	externals.push( {
+		// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
+		'webpack.config': {
+			commonjs: '../client/webpack.config.js',
 		},
-	];
+		'calypso/webpack.config': {
+			commonjs: '../client/webpack.config.js',
+		},
+	} );
+
+	return externals;
 }
 
 const buildDir = path.resolve( 'build' );
