@@ -28,6 +28,8 @@ import MySitesSidebarUnifiedMenu from './menu';
 import Sidebar from 'layout/sidebar';
 import SidebarSeparator from 'layout/sidebar/separator';
 
+import 'layout/sidebar-unified/style.scss';
+
 export const MySitesSidebarUnified = ( { path } ) => {
 	const reduxDispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
