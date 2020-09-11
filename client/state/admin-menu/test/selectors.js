@@ -38,10 +38,10 @@ describe( 'selectors', () => {
 		test( 'returns menu data when siteId is present', () => {
 			const state = {
 				adminMenu: {
-					56789: frozenFixture,
+					56789: {},
 					12345: frozenFixture,
-					84649: frozenFixture,
-					95538: frozenFixture,
+					84649: {},
+					95538: {},
 				},
 			};
 
