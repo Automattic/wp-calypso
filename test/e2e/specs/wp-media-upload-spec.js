@@ -122,8 +122,8 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 				} );
 
 				step( 'Can open Featured Image upload modal', async function () {
+					await gutenbergEditor.openSidebar();
 					gutenbergSidebar = await GutenbergSidebarComponent.Expect( driver );
-					await gutenbergSidebar.displayed();
 					await gutenbergSidebar.selectTab( 'Page' );
 					await gutenbergSidebar.expandFeaturedImage();
 					await gutenbergSidebar.openFeaturedImageDialog();
