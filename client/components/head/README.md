@@ -1,5 +1,4 @@
-Head
-====
+# Head
 
 Provides an HTML `<head>` prefilled with boilerplate (such as `meta`s and `links` for stylesheets, favicons, etc.) that is common for all of Calypso. Accepts children which will be rendered as children of `head`.
 

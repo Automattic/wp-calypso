@@ -67,7 +67,6 @@ export default {
 
 For `index.js`, this is the essential boilerplate, which comprises the imports and the `makeTour` wrapping:
 
-
 ```JavaScript
 /**
  * External dependencies

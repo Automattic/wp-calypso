@@ -1,5 +1,4 @@
-Plans
-=====
+# Plans
 
 A module for managing plans data.
 
@@ -10,7 +9,6 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 ### `fetchWordPressPlans()`
 
 Fetches plans
-
 
 ## Action creators
 
@@ -51,6 +49,7 @@ wpcom
 ```
 
 # Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `plans`, with the following structure:
 
 ```js

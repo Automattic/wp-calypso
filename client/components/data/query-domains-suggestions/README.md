@@ -1,5 +1,4 @@
-Query Domains Suggestions
-===========================
+# Query Domains Suggestions
 
 `<QueryDomainsSuggestions />` is a React component used in managing network requests for domains/suggestions.
 
@@ -32,7 +31,7 @@ export default function defaultSuggestions() {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The query we use when searching for domains suggestions. 
+The query we use when searching for domains suggestions.
 
 ### `vendor`
 
@@ -59,4 +58,4 @@ The maximum number of suggestions to return.
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-(Default false) When true, includes *.wordpress.com suggestions.
+(Default false) When true, includes \*.wordpress.com suggestions.

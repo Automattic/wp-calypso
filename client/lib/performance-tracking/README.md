@@ -1,5 +1,4 @@
-Performance Tracking
-====================
+# Performance Tracking
 
 This lib provides wrappers around `@automattic/browser-data-collector`
 
@@ -15,9 +14,11 @@ Unless there is a specialized wrapper (eg: middleware `performanceTrackerStart`)
 of loading pages in Calypso.
 
 #### Middleware
+
 It provides a middleware expected to be used with Page router.
 
 Example:
+
 ```jsx
 page('/my-page/*', performanceTrackerStart('my-page'), /*...*/);
 ```
@@ -36,6 +37,7 @@ The counterpart of the generic start function.
 A hook `usePerformanceTrackerStop`. This is custom hook uses `useEffect` to stop a performance tracking.
 
 Example:
+
 ```jsx
 function MyComponent() {
 	usePerformanceTrackerStop();
@@ -47,15 +49,15 @@ function MyComponent() {
 
 It will also get the current section name from the Redux store and use it as the `id` of the performance tracker report to stop.
 
-This is the recommended approach when using function components and rendering that component *always* means the page is ready and you want to stop the tracking. If the component
+This is the recommended approach when using function components and rendering that component _always_ means the page is ready and you want to stop the tracking. If the component
 can render different states (eg: loading vs main content), then you should use `<PerformanceTrackerStop/>` as part of the "main" state output.
-
 
 #### Component
 
 A component `PerformanceTrackerStop`. This is a wrapper around the above hook.
 
 Example:
+
 ```jsx
 function MyComponent( { isLoading } ) {
 	if ( isLoading ) return <Loading/>;
@@ -71,12 +73,12 @@ function MyComponent( { isLoading } ) {
 
 Using this component is the recommended approach when the parent component can render different states and we only want to stop the performance tracking in one of them.
 
-
 #### High Order Component
 
 A HoC `withPerformanceTrackerStop` that will automatically append `<PerformanceTrackerStop/>` to the wrapped component.
 
 Example:
+
 ```jsx
 class MyComponent extends React.Component {
 	//...

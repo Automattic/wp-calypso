@@ -1,5 +1,4 @@
-Extension Redirect
-==================
+# Extension Redirect
 
 `<ExtensionRedirect />` is a React component that conditionally redirects a user from an
 extension page to the corresponding plugin installation page (or a custom URL), if the

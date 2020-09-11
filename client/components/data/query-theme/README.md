@@ -1,5 +1,4 @@
-Query Theme
-============
+# Query Theme
 
 Query Theme is a React component used in managing the fetching of individual theme objects.
 

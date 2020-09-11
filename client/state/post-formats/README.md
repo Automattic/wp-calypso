@@ -1,5 +1,4 @@
-Post Formats
-===============
+# Post Formats
 
 A module for managing post formats.
 

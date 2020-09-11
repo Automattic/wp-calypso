@@ -1,7 +1,6 @@
-Concierge
-=======
+# Concierge
 
-These components are used to render Business Concierge Sessions flows for booking, cancelling and 
+These components are used to render Business Concierge Sessions flows for booking, cancelling and
 rescheduling appointments.
 
 ## Supported routes
@@ -25,6 +24,7 @@ rescheduling appointments.
 `shared/` - components that are shared between multiple flows
 
 ## Components
+
 `ConciergeMain` multi step wrapper component that is used for both booking and rescheduling flows
 
 `ConciergeCancel` wrapper component for cancellation flow

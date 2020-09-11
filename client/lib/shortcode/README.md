@@ -1,5 +1,4 @@
-Shortcode
-=========
+# Shortcode
 
 Utility functions for working with WordPress shortcodes. These functions largely mirror those made available in the core WordPress `wp.shortcode` JavaScript class. More information about shortcodes is available [at the WordPress Codex](https://codex.wordpress.org/Shortcode_API).
 

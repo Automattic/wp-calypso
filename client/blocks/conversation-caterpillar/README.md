@@ -1,5 +1,4 @@
-Conversation Caterpillar
-========================
+# Conversation Caterpillar
 
 This component is used to show who's involved in a conversation, and how many comments have been made.
 
@@ -16,8 +15,9 @@ render() {
 ```
 
 #### Props
-* `blogId`
-* `postId`
+
+- `blogId`
+- `postId`
 
 #### Footnote
 

@@ -1,6 +1,6 @@
-Stats Geochart
-==============
-This component creates the geochart used in the Countries module.  It utilizes the [geo chart](https://developers.google.com/chart/interactive/docs/gallery/geochart) provided by Google.
+# Stats Geochart
+
+This component creates the geochart used in the Countries module. It utilizes the [geo chart](https://developers.google.com/chart/interactive/docs/gallery/geochart) provided by Google.
 
 #### How to use:
 
@@ -16,4 +16,4 @@ const MyComponent = () => {
 
 #### Required Props
 
-* `query`: A query object used as a prop for `QuerySiteStats` component
+- `query`: A query object used as a prop for `QuerySiteStats` component

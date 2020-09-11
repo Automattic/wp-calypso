@@ -1,4 +1,3 @@
-
 # CommentLike
 
 `CommentLike` handler class.

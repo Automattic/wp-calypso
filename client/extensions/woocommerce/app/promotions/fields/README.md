@@ -1,5 +1,4 @@
-Form Fields
-===========
+# Form Fields
 
 Specific FormField components in this directory are created for a data-driven
 promotions UI.

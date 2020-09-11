@@ -1,5 +1,4 @@
-Query Site Monitor Settings
-================
+# Query Site Monitor Settings
 
 `<QuerySiteMonitorSettings />` is a React component used in managing network requests for retrieving Monitor settings for a Jetpack site.
 

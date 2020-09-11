@@ -97,9 +97,10 @@ Button target, to use in conjunction with `buttonHref`
 Button onClick handler
 
 ### `buttonDisabled`
-  - **Type:** `Boolean`
-  - **Required:** `no`
-  - **Default:** `false`
+
+- **Type:** `Boolean`
+- **Required:** `no`
+- **Default:** `false`
 
 Make the button disabled.
 

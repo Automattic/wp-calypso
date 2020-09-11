@@ -1,5 +1,4 @@
-CurrentTheme
-============
+# CurrentTheme
 
 Card showing the current active theme for a site with related actions.
 

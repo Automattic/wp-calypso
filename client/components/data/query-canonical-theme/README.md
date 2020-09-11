@@ -1,5 +1,4 @@
-Query Canonical Theme
-=====================
+# Query Canonical Theme
 
 Query Canonical Theme is a React component used in managing the fetching of individual theme objects from what is considered their 'canonical' source, i.e. the one with richest information. It checks WP.com (which has a long description and multiple screenshots, and a preview URL) first, then WP.org (which has a preview URL), then the given fallback JP site.
 

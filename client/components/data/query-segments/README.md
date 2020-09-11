@@ -1,5 +1,4 @@
-Query Site Segments
-===========================
+# Query Site Segments
 
 `<QuerySegments />` is a React component used to fire a network request for the `/segments` endpoint, which returns site segment information for signup.
 
@@ -39,4 +38,3 @@ export default connect(
 )( MyComponent );
 
 ```
-

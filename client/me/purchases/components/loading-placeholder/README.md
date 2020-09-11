@@ -1,5 +1,4 @@
-Loading Placeholder
-===================
+# Loading Placeholder
 
 ## Usage
 
@@ -24,5 +23,5 @@ export default localize( MyComponentLoadingPlaceholder );
 
 ## Props
 
-* `path` - **optional** Add a path where back button should lead to.
-* `title` - Add a header title.
+- `path` - **optional** Add a path where back button should lead to.
+- `title` - Add a header title.

@@ -1,6 +1,6 @@
-FollowList
-===========
-If you have components that utlize 'Follow' actions for users, the follow-list acts as a central store for all site/follow data.  So if a user clicks follow within one component, all other associated follow buttons can be updated by an emitted change event.
+# FollowList
+
+If you have components that utlize 'Follow' actions for users, the follow-list acts as a central store for all site/follow data. So if a user clicks follow within one component, all other associated follow buttons can be updated by an emitted change event.
 
 ```js
 import FollowList from 'follow-list';
@@ -8,7 +8,8 @@ var follow-list = FollowList();
 ```
 
 ### add( { site_id: site.ID, is_following: true } )
-If the `site_id` being passed in does not yet exist in the array of `follow-list` data, a new `FollowListSite` object is created and added to the array.  The method returns the instance of the `FollowListSite` so you can use that object to subscribe to change events:
+
+If the `site_id` being passed in does not yet exist in the array of `follow-list` data, a new `FollowListSite` object is created and added to the array. The method returns the instance of the `FollowListSite` so you can use that object to subscribe to change events:
 
 ```js
 var newFollowListSite = follow-list.add( { site_id: 1, is_following: false } );
@@ -19,24 +20,28 @@ mixins: [ observe( 'newFollowListSite' ) ]
 
 ```
 
-FollowListSite
-==============
+# FollowListSite
+
 Instances of `FollowListSite` are created using the steps outlined above.
 
 ### follow()
-If the `is_following === false` this method will call the api to start following the site.  Once the api operation complets, a change event is fired.
+
+If the `is_following === false` this method will call the api to start following the site. Once the api operation complets, a change event is fired.
 
 ### unfollow()
-If the `is_following === true` this method will call the api to stop following the site.  Once the api operation complets, a change event is fired.
 
-Module Dependencies
-===================
+If the `is_following === true` this method will call the api to stop following the site. Once the api operation complets, a change event is fired.
+
+# Module Dependencies
 
 # External Dependencies
-* `EventEmitter` to send `change` events which are subscribed to via the `mixins\data-observe` within your jsx component.
+
+- `EventEmitter` to send `change` events which are subscribed to via the `mixins\data-observe` within your jsx component.
 
 # Internal Dependencies
-* `wp` for api operations
+
+- `wp` for api operations
 
 # Tests
+
 Execute `make` from the root of the directory

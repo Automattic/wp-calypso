@@ -2,7 +2,6 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com in general.
 
-
 ## Table of contents
 
 - [Pre-requisites](#pre-requisites)

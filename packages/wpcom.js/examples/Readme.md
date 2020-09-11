@@ -14,8 +14,8 @@ Keep in mind that this app gets the config data from test/data.json file.
 
 There are two pages to test:
 
-* index.html
-* file_upload.html
+- index.html
+- file_upload.html
 
 ## CORS (Browser)
 

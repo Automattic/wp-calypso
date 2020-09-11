@@ -1,5 +1,4 @@
-VerticalNav
-===========
+# VerticalNav
 
 These are two components to display rows of links.
 
@@ -16,6 +15,7 @@ These are two components to display rows of links.
 ```
 
 ## Props
+
 `VerticalNavItem` is the only component thats behavior changes based on the given props.
 
 - **external** - Boolean _optional_ - determines whether or not the link is opened in a new window.

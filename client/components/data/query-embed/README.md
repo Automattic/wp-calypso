@@ -1,5 +1,4 @@
-Query Embed
-================
+# Query Embed
 
 `<QueryEmbed />` is a React component used in managing network requests for embed rendering for a given site and URL pair.
 

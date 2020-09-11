@@ -1,5 +1,4 @@
-Media
-=====
+# Media
 
 Media is a set of stores and actions for interacting with the WordPress.com REST API media endpoints. The stores are modelled as Flux stores, and actions are made available to interact with the stores.
 

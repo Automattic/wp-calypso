@@ -1,5 +1,4 @@
-Site Indicator
-==============
+# Site Indicator
 
 This component is used to display a round badge next to a site with information about updates available, connection issues with Jetpack, whether a site is Jetpack, upgrades expiring soon, etc. It takes `site` object as property.
 
@@ -24,7 +23,7 @@ render() {
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-The site object. 
+The site object.
 
 ### `onSelect`
 

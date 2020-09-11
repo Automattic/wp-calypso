@@ -1,5 +1,5 @@
-PostTrends
-=========
+# PostTrends
+
 This module provides a React component to visualize frequency of posting in a GitHub-like calendar view
 
 #### How to use:

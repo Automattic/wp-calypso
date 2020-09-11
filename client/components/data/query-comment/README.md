@@ -1,5 +1,4 @@
-Query Comment
-=============
+# Query Comment
 
 `<QueryComment>` requests a single comment to be loaded into Calypso.
 
@@ -18,8 +17,8 @@ const CommentDetail = ( { comment, commentId, siteId } ) =>
 
 ## Props
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `commentId` | Number | The comment to request. |
-| `siteId` | Number | The site ID for which the comment should be queried. |
-| `forceWpcom` | Bool | (default: false) Forces the request to wpcom. |
+| Name         | Type   | Description                                          |
+| ------------ | ------ | ---------------------------------------------------- |
+| `commentId`  | Number | The comment to request.                              |
+| `siteId`     | Number | The site ID for which the comment should be queried. |
+| `forceWpcom` | Bool   | (default: false) Forces the request to wpcom.        |

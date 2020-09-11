@@ -21,16 +21,6 @@ module.exports = {
 				'md/remark': [ 'off' ],
 			},
 		},
-		// {
-		// 	files: [ '*.md.js' ], // Will match js code inside *.md files
-		// 	rules: {
-		// 		'no-unused-vars': 'off',
-		// 		'no-undef': 'off',
-		// 		'react/react-in-jsx-scope': 'off',
-		// 		'react/jsx-no-undef': 'off',
-		// 		'wpcalypso/import-docblock': 'off',
-		// 	},
-		// },
 		{
 			files: [ 'bin/**/*' ],
 			rules: {

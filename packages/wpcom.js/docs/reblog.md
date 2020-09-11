@@ -1,4 +1,3 @@
-
 # Reblog
 
 `Reblog` handler class.

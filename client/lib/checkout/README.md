@@ -1,5 +1,4 @@
-Checkout validation and API
--------------------
+## Checkout validation and API
 
 This module contains functions to validate and mask checkout form fields such as credit card fields.
 
@@ -26,4 +25,3 @@ Returns a masked input value for the given field based on the current value and 
 ### `unmaskField( fieldName, previousValue, nextValue )`
 
 Returns an unmasked input value that is meant to be used within the program rather than displayed to the user.
-

@@ -1,5 +1,4 @@
-Query Sites
-===========================
+# Query Sites
 
 `<QuerySites />` is a React component used in managing network requests for sites.
 

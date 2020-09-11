@@ -1,5 +1,4 @@
-Site Title Control
-==================
+# Site Title Control
 
 Site Title Control component: Form input controls to set a site's title and tagline.
 
@@ -13,9 +12,10 @@ props, respectively, and pass an `onChange` function prop (accepting an object w
 For an example of how to use, have a look at [docs/example.jsx](docs/example.jsx).
 
 #### Props
-- `autoFocusBlogname` - *optional* (bool) Whether to auto-focus the site title input field (defaults to `false`).
-- `blogname` - *optional* (string) Site title to be displayed in corresponding input field.
-- `blogdescription` - *optional* (string) Site tagline to be displayed in corresponding input field.
-- `disabled` - *optional* (bool) Whether input fields should be disabled (defaults to `false`).
-- `isBlognameRequired` - *optional* (bool) Whether set the blogname field as required 
-- `onChange` - *optional* (function) Called whenever user changes either the site title or tagline field. Invoked with an object with `blogname` and `blogdescription` attributes.
+
+- `autoFocusBlogname` - _optional_ (bool) Whether to auto-focus the site title input field (defaults to `false`).
+- `blogname` - _optional_ (string) Site title to be displayed in corresponding input field.
+- `blogdescription` - _optional_ (string) Site tagline to be displayed in corresponding input field.
+- `disabled` - _optional_ (bool) Whether input fields should be disabled (defaults to `false`).
+- `isBlognameRequired` - _optional_ (bool) Whether set the blogname field as required
+- `onChange` - _optional_ (function) Called whenever user changes either the site title or tagline field. Invoked with an object with `blogname` and `blogdescription` attributes.

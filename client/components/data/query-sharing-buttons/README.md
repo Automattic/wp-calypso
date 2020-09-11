@@ -1,5 +1,4 @@
-Query Sharing Buttons
-=====================
+# Query Sharing Buttons
 
 `<QuerySharingButtons />` is a React component used in managing network requests for site's sharing buttons.
 

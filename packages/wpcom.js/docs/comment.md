@@ -1,4 +1,3 @@
-
 # Comment
 
 `Comment` handler class.

@@ -1,5 +1,4 @@
-Keyring Connections
-===================
+# Keyring Connections
 
 A module for managing keyring connections.
 
@@ -82,7 +81,7 @@ import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 const twitterConnections = getKeyringConnectionsByName( state, 'twitter' );
 ```
 
-#### `getUserConnections( state: object,  userId: number  )`
+#### `getUserConnections( state: object, userId: number )`
 
 Returns an array of keyring connection objects for a specific user.
 

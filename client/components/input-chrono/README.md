@@ -1,5 +1,4 @@
-InputChrono
-============
+# InputChrono
 
 React component that creates a Date object from a user-entered textual date description.
 
