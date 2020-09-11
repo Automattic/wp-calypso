@@ -361,3 +361,8 @@
 .is-reader-page .search-stream__single-column-results .empty-content {
 	margin-top: 0;
 }
+
+// This is a quick fix for definition hovercards https://github.com/Automattic/wp-calypso/issues/45563
+.reader-hovercard-popover {
+	display: none;
+}
