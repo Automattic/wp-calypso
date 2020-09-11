@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
 import StatsSparkline from 'blocks/stats-sparkline';
@@ -40,7 +40,7 @@ const blankSvg =
 const blankSvgStyle = { height: '24px', width: '24px' };
 
 export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug, isTopLevel } ) => {
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const fixedUrl = removePrefix( url, 'https://wordpress.com' );
 	const selected = path === fixedUrl;
 	let customIcon = null;
@@ -54,11 +54,11 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug, isTop
 
 	// "Stats" item has sparkline inside of it
 	const isStats = typeof slug === 'string' && slug.includes( '-comstats' );
-	if ( isStats && selectedSite && selectedSite.ID ) {
+	if ( isStats && selectedSiteId ) {
 		// TODO: Change sidebar__menu-icon to sidebar-unified__menu-icon and
 		// copy the CSS rules
 		// eslint-disable-next-line
-		children = <StatsSparkline className="sidebar__sparkline" siteId={ selectedSite.ID } />;
+		children = <StatsSparkline className="sidebar__sparkline" siteId={ selectedSiteId } />;
 	}
 
 	return (
