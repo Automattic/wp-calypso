@@ -54,7 +54,7 @@ class EmailProvidersComparison extends React.Component {
 			>
 				<p>
 					{ translate(
-						'Pick from one of our flexible options to connect your domain with email ' +
+						'Pick one of our flexible options to connect your domain with email ' +
 							'and start getting emails @%(domainName)s today.',
 						translateArgs
 					) }
