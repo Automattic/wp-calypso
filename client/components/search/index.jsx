@@ -361,7 +361,7 @@ class Search extends Component {
 						placeholder={ placeholder }
 						role="searchbox"
 						value={ searchValue }
-						ref={ this.setSearchInputRef }
+						inputRef={ this.setSearchInputRef }
 						onChange={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
