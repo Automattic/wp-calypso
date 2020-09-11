@@ -23,6 +23,7 @@ test-results*.xml
 /chart.json
 /style.json
 /client/stats.json
+/client/stats-server.json
 /client/chart.json
 /client/style.json
 spec-xunit-reporter-0.0.1.tgz
