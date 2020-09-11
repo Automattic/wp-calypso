@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import menuFixture from './menu-fixture.skip';
+import menuFixture from './fixture/menu-fixture';
 import { getAdminMenu } from '../selectors';
 
 const frozenFixture = deepFreeze( menuFixture );
