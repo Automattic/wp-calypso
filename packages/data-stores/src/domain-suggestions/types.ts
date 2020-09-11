@@ -136,8 +136,45 @@ export interface DomainCategory {
 }
 
 export interface DomainAvailability {
+	/**
+	 * The domain name the availability was checked for.
+	 */
 	domain_name: string;
+
+	/**
+	 * The mappability status of the domain.
+	 */
 	mappable: string;
+
+	/**
+	 * The availability status of the domain.
+	 */
 	status: string;
+
+	/**
+	 * Whether the domain supports privacy.
+	 */
 	supports_privacy: boolean;
+
+	/**
+	 * ID of the product
+	 */
+	product_id?: number;
+
+	/**
+	 * The product slug
+	 */
+	product_slug?: string;
+
+	/**
+	 * Rendered cost with currency
+	 *
+	 * @example "€15.00"
+	 */
+	cost?: string;
+
+	/**
+	 * Vendor
+	 */
+	vendor?: string;
 }
