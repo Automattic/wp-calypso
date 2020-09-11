@@ -8,6 +8,7 @@
 - [User account requirements](#user-account-requirements)
 - [List of wrapper repos & friends](#list-of-wrapper-repos--friends)
 - [What to name your branch](#what-to-name-your-branch)
+- [How to fix the `chromedriver not found` error when running e2e tests locally](#how-to-fix-the-chromedriver-not-found-error-when-running-e2e-tests-locally)
 
 ## NodeJS Version
 
@@ -61,3 +62,16 @@ Friends:
 
 - Use the same naming conventions as listed in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/git-workflow.md#branch-naming-scheme)
 - If you have changes to jetpack tests, be sure to add "jetpack" into your branch name so those tests are run on CI
+
+## How to fix the `chromedriver not found` error when running e2e tests locally
+
+When runnning e2e tests locally, an error can appear about chromedriver not being found in `/wp-calypso/node_modules/chromedriver/lib/chromedriver/chromedriver`
+
+This is likely due to a few `env` variables that are recommended by `yarn calypso-doctor`, since installing `chromedriver` is really slow and not needed most of the time. In particular:
+
+- `CHROMEDRIVER_SKIP_DOWNLOAD`
+- `PUPPETEER_SKIP_DOWNLOAD`
+
+You can force the download of `chromedriver` by overriding the environment variablew, and forcing a fresh install:
+
+`CHROMEDRIVER_SKIP_DOWNLOAD='' PUPPETEER_SKIP_DOWNLOAD='' yarn install --force`
