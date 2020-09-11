@@ -337,7 +337,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Manage my blog posts' ),
-		link: '/posts/${ siteSlug }',
+		link: `/posts/${ siteSlug }`,
 		synonyms: [ 'lists', 'posts' ],
 		icon: 'my-sites',
 	},
