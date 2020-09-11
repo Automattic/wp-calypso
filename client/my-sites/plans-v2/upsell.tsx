@@ -63,7 +63,6 @@ const UpsellComponent = ( {
 	mainProduct,
 	upsellProduct,
 	isLoading,
-	header,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -87,8 +86,7 @@ const UpsellComponent = ( {
 	);
 
 	return (
-		<Main className="upsell" wideLayout>
-			{ header }
+		<Main className="upsell">
 			<HeaderCake onClick={ onBackButtonClick }>{ translate( 'Product Options' ) }</HeaderCake>
 			{ isLoading ? (
 				<div className="upsell__header-placeholder" />
@@ -229,6 +227,7 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	return (
 		<>
 			<QueryProducts />
+			{ header }
 			<UpsellComponent
 				siteId={ siteId }
 				currencyCode={ currencyCode as string }
@@ -238,7 +237,6 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 				onPurchaseBothProducts={ onPurchaseBothProducts }
 				onBackButtonClick={ onBackButtonClick }
 				isLoading={ isLoading }
-				header={ header }
 			/>
 			{ footer }
 		</>
