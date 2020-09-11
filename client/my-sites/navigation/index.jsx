@@ -26,14 +26,11 @@ class MySitesNavigation extends React.Component {
 			siteBasePath: this.props.siteBasePath,
 		};
 
-		let asyncSidebar = null;
-		if ( config.isEnabled( 'jetpack-cloud' ) ) {
-			asyncSidebar = <AsyncLoad require="components/jetpack/sidebar" { ...asyncProps } />;
-		} else if ( config.isEnabled( 'nav-unification' ) ) {
-			asyncSidebar = <AsyncLoad require="my-sites/sidebar-unified/switcher" { ...asyncProps } />;
-		} else {
-			asyncSidebar = <AsyncLoad require="my-sites/sidebar" { ...asyncProps } />;
-		}
+		const asyncSidebar = config.isEnabled( 'jetpack-cloud' ) ? (
+			<AsyncLoad require="components/jetpack/sidebar" { ...asyncProps } />
+		) : (
+			<AsyncLoad require="my-sites/sidebar" { ...asyncProps } />
+		);
 
 		return (
 			<div>
