@@ -158,6 +158,7 @@ export default function () {
 	// connect a Jetpack site. The redirect rule will skip this page and take
 	// the user directly to the .com site creation flow.
 	// See https://github.com/Automattic/wp-calypso/issues/45486
+	// TODO: should we leave these redirection rules?
 	page( '/jetpack/new', config( 'signup_url' ) );
 	page( '/jetpack/new/*', '/jetpack/connect' );
 }
