@@ -45,6 +45,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Starter Page Templates: Add Current layout to page layout picker when editing a homepage (https://github.com/Automattic/wp-calypso/pull/43980)
 * Add tracks events for the block editor sidebar (https://github.com/Automattic/wp-calypso/pull/45429)
 * Site setup: add PlansGrid accordion (https://github.com/Automattic/wp-calypso/pull/45054)
+* Disable the sidebar if the editor is not in fullscreen mode (https://github.com/Automattic/wp-calypso/pull/45561)
 
 = 2.2 =
 * Improve experience of opening and closing the sidebar with assistive technology (https://github.com/Automattic/wp-calypso/pull/45349)
