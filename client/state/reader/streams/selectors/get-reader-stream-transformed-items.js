@@ -25,13 +25,13 @@ export const getTransformedStreamItems = treeSelect(
 			return [];
 		}
 
-		if ( recs.length > 0 ) {
-			items = injectRecommendations( items, recs, getDistanceBetweenRecs( follows.length ) );
-		}
+		// if ( recs.length > 0 ) {
+		// 	items = injectRecommendations( items, recs, getDistanceBetweenRecs( follows.length ) );
+		// }
 
-		if ( shouldCombine ) {
-			items = combineCards( items );
-		}
+		// if ( shouldCombine ) {
+		// 	items = combineCards( items );
+		// }
 
 		return items;
 	},

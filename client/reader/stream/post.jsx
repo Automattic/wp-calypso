@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import ReaderPostCard from 'blocks/reader-post-card';
+import ReaderPostCard from 'blocks/reader-post-card/single-line';
 import { getSite } from 'state/reader/sites/selectors';
 import { getFeed } from 'state/reader/feeds/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';

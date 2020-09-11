@@ -659,6 +659,43 @@
 	}
 }
 
+.reader-post-card__single-line-post {
+	padding-top: 1em;
+	display: flex;
+	align-items: center;
+	border-top: 1px solid #e9eaed;
+	font-size: .875rem;
+	justify-content: flex-start;
+
+	h1 {
+		font-size: .875rem;
+		max-width: 75%;
+	}
+
+	.reader-post-card__title-link {
+		font-size: .875rem;
+	}
+
+	.reader-post-card__author-name {
+		color: var(--p2-color-link);
+	}
+
+	.reader-post-card__fuzzy-date,
+	.reader-post-card__comment-count {
+		font-size: 0.75rem;
+		color: #767676;
+	}
+
+	.reader-post-card__avatar,
+	.reader-post-card__author-name,
+	.reader-post-card__title-link,
+	.reader-post-card__fuzzy-date,
+	.reader-post-card__comment-count {
+		padding-right: 0.5em;
+	}
+
+}
+
 // For these borderless cards to look more presentable on Devdocs
 .is-section-devdocs .reader-post-card.card {
 	padding: 16px;
