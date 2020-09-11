@@ -165,6 +165,10 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 		return state.filter( ( id ) => id !== action.featureId );
 	}
 
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+
 	return state;
 };
 
