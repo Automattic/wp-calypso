@@ -3,7 +3,7 @@
  */
 import { requestAdminMenu, receiveAdminMenu } from '../actions';
 import { ADMIN_MENU_REQUEST, ADMIN_MENU_RECEIVE } from 'state/action-types';
-import menuFixture from './menu-fixture.skip';
+import menuFixture from './fixture/menu-fixture';
 
 describe( 'actions', () => {
 	describe( 'requestAdminMenu', () => {

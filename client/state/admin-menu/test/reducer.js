@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import menuFixture from './menu-fixture.skip';
+import menuFixture from './fixture/menu-fixture';
 import { ADMIN_MENU_RECEIVE } from 'state/action-types';
 import adminReducer from '../reducer';
 
