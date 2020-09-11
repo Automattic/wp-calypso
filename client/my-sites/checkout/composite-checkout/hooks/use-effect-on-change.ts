@@ -10,9 +10,9 @@ import { useEffect, useRef } from 'react';
  *
  * Also, there is no clean-up function (the return value of the callback has no effect).
  */
-export default function useEffectOnChange(
-	handleChange: () => void,
-	dependencies: unknown[]
+export default function useEffectOnChange< T >(
+	handleChange: ( previous: T[] ) => void,
+	dependencies: T[]
 ): void {
 	const previous = useRef( dependencies );
 	useEffect( () => {
@@ -22,9 +22,11 @@ export default function useEffectOnChange(
 				didChange = true;
 			}
 		} );
-		previous.current = dependencies;
 		if ( didChange ) {
-			handleChange();
+			handleChange( previous.current );
 		}
-	}, [ dependencies ] ); // eslint-disable-line react-hooks/exhaustive-deps
+		previous.current = dependencies;
+		// Only depend on the dependencies; if handleChange is an anonymous
+		// function, there's no need to run this every time it changes.
+	}, dependencies ); // eslint-disable-line react-hooks/exhaustive-deps
 }

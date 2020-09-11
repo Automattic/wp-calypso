@@ -211,9 +211,7 @@ export default function CompositeCheckout( {
 	} );
 
 	useEffectOnChange(
-		// FIXME: we need to modify the hook to pass the previous value to the callback
 		( previous ) => {
-			// FIXME: productsForCart is recreated so this won't work; we want this block to run only once but only once productsForCart is set
 			if ( productsForCart.length > 0 && productsForCart !== previous ) {
 				productsForCart.forEach( ( productToAdd ) => {
 					recordEvent( {
