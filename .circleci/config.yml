@@ -646,6 +646,7 @@ jobs:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       NODE_OPTIONS: --max-old-space-size=6144
       YARN_CACHE_FOLDER: ~/.cache/yarn
+      CONFIG_ENV: release
     steps:
       - checkout
       - when:
