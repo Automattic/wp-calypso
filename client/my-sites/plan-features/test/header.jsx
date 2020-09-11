@@ -78,6 +78,19 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 		} );
 	} );
 
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( productSlug ) => {
+		test( `Should return a particular message for free plans with discount (${ productSlug })`, () => {
+			const comp = new PlanFeaturesHeader( {
+				...props,
+				currentSitePlan: { productSlug },
+				discountPrice: 3,
+			} );
+			expect( comp.getDiscountTooltipMessage() ).toBe(
+				"You'll receive a discount for the first year. The plan will renew at %(price)s."
+			);
+		} );
+	} );
+
 	[
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
