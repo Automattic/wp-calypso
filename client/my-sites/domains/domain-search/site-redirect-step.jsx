@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-
+import FormFieldset from 'components/forms/form-fieldset';
 import { Button } from '@automattic/components';
 import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
 import { errorNotice } from 'state/notices/actions';
@@ -54,7 +54,7 @@ class SiteRedirectStep extends React.Component {
 
 					<DomainProductPrice price={ price } requiresPlan={ false } />
 
-					<fieldset>
+					<FormFieldset>
 						<input
 							className="site-redirect-step__external-domain"
 							type="text"
@@ -73,7 +73,7 @@ class SiteRedirectStep extends React.Component {
 								context: 'Upgrades: Label for adding Site Redirect',
 							} ) }
 						</Button>
-					</fieldset>
+					</FormFieldset>
 				</form>
 			</div>
 		);
