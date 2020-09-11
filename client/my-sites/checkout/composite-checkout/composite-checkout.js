@@ -197,6 +197,7 @@ export default function CompositeCheckout( {
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
 		loadingError: cartLoadingError,
+		loadingErrorType: cartLoadingErrorType,
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
@@ -377,7 +378,9 @@ export default function CompositeCheckout( {
 	} );
 
 	useActOnceOnStrings( [ cartLoadingError ].filter( Boolean ), ( messages ) => {
-		messages.forEach( ( message ) => recordEvent( { type: 'CART_ERROR', payload: message } ) );
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
+		);
 	} );
 
 	// Display errors. Note that we display all errors if any of them change,
