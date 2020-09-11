@@ -79,7 +79,7 @@ const Invalid = () => (
 		className="is-warning"
 		title={ __( 'Please fill in the required fields' ) }
 		subtitle={ __(
-			'Org, and Repository are required. Select this block to open the form and fill them.'
+			'Org and Repository are required. Select this block to open the form and fill them.'
 		) }
 	/>
 );
