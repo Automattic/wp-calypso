@@ -30,7 +30,6 @@ export default function useShoppingCartManager( {
 	couponToAddOnInitialize,
 	setCart,
 	getCart,
-	onEvent,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
 	const cartKeyString = String( cartKey || 'no-site' );
 	const setServerCart = useCallback( ( cartParam ) => setCart( cartKeyString, cartParam ), [
@@ -66,12 +65,8 @@ export default function useShoppingCartManager( {
 	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
 		( requestCartProductToAdd ) => {
 			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
-			onEvent?.( {
-				type: 'CART_ADD_ITEM',
-				payload: requestCartProductToAdd,
-			} );
 		},
-		[ hookDispatch, onEvent ]
+		[ hookDispatch ]
 	);
 
 	const removeItem: ( arg0: string ) => void = useCallback(

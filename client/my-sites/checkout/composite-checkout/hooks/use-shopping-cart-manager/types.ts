@@ -17,7 +17,6 @@ export interface ShoppingCartManagerArguments {
 	couponToAddOnInitialize: string | null;
 	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
-	onEvent?: ( action: ReactStandardAction ) => void;
 }
 
 export interface VariantSelectOverride {

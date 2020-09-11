@@ -208,9 +208,9 @@ export default function CompositeCheckout( {
 		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
-		onEvent: recordEvent,
 	} );
 
+	// This will record cart items being added when the page loads
 	useEffectOnChange(
 		( previous ) => {
 			if ( productsForCart.length > 0 && productsForCart !== previous ) {
@@ -223,6 +223,25 @@ export default function CompositeCheckout( {
 			}
 		},
 		[ productsForCart ]
+	);
+
+	// This will record cart items being added after the page loads
+	useEffectOnChange(
+		( previous ) => {
+			if (
+				! isLoadingCart &&
+				isCartPendingUpdate &&
+				responseCart.products.length > previous.length
+			) {
+				responseCart.products.forEach( ( productToAdd ) => {
+					recordEvent( {
+						type: 'CART_ADD_ITEM',
+						payload: productToAdd,
+					} );
+				} );
+			}
+		},
+		[ responseCart.products ]
 	);
 
 	useEffectOnChange( () => {
