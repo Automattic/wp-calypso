@@ -10,8 +10,27 @@ module.exports = {
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
 		'prettier/react',
+		'plugin:md/prettier',
 	],
 	overrides: [
+		{
+			files: [ '*.md' ],
+			parser: 'markdown-eslint-parser',
+			rules: {
+				// Disable remark rules for now, as they are not auto-fixable.
+				'md/remark': [ 'off' ],
+			},
+		},
+		// {
+		// 	files: [ '*.md.js' ], // Will match js code inside *.md files
+		// 	rules: {
+		// 		'no-unused-vars': 'off',
+		// 		'no-undef': 'off',
+		// 		'react/react-in-jsx-scope': 'off',
+		// 		'react/jsx-no-undef': 'off',
+		// 		'wpcalypso/import-docblock': 'off',
+		// 	},
+		// },
 		{
 			files: [ 'bin/**/*' ],
 			rules: {
