@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-// https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
-import '../matchMedia.mock';
 
 /**
  * External dependencies
@@ -10,6 +8,12 @@ import '../matchMedia.mock';
 import * as React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { render, fireEvent, screen } from '@testing-library/react';
+
+/**
+ * Internal dependencies
+ */
+// https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
+import '../matchMedia.mock';
 import SuggestionItem from '../src/domain-picker/suggestion-item';
 
 /**
