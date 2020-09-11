@@ -13,7 +13,7 @@ import { ProgressBar } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import config, { isEnabled } from 'config';
 import CurrentSite from 'my-sites/current-site';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import ExternalLink from 'components/external-link';
@@ -847,13 +847,10 @@ export class MySitesSidebar extends Component {
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked WP Admin' );
 	};
 
-	focusContent = () => {
+	trackAddNewSiteClick = () => {
+		this.props.recordTracksEvent( 'calypso_add_new_wordpress_click' );
 		this.props.setLayoutFocus( 'content' );
 	};
-
-	getAddNewSiteUrl() {
-		return '/jetpack/new/?ref=calypso-selector';
-	}
 
 	addNewSite() {
 		if ( this.props.currentUser.visible_site_count > 1 ) {
@@ -863,8 +860,8 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ this.props.translate( 'Add new site' ) }
-				link={ this.getAddNewSiteUrl() }
-				onNavigate={ this.focusContent }
+				link={ `${ config( 'signup_url' ) }?ref=calypso-selector` }
+				onNavigate={ this.trackAddNewSiteClick }
 				icon="add-outline"
 			/>
 		);

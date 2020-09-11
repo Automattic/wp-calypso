@@ -154,6 +154,10 @@ export default function () {
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );
 	page( '/jetpack/sso/*', controller.sso, makeLayout, clientRender );
-	page( '/jetpack/new', controller.newSite, makeLayout, clientRender );
+	// The /jetpack/new route previously allowed to create a .com site and
+	// connect a Jetpack site. The redirect rule will skip this page and take
+	// the user directly to the .com site creation flow.
+	// See https://github.com/Automattic/wp-calypso/issues/45486
+	page( '/jetpack/new', config( 'signup_url' ) );
 	page( '/jetpack/new/*', '/jetpack/connect' );
 }

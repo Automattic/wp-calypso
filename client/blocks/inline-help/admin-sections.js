@@ -8,6 +8,7 @@ import { getCustomizerUrl } from 'state/sites/selectors';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import { getLocaleSlug } from 'lib/i18n-utils';
 import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
@@ -367,7 +368,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Create a new site' ),
-		link: '/jetpack/new?ref=calypso-selector',
+		link: `${ config( 'signup_url' ) }?ref=calypso-selector`,
 		synonyms: [ 'site' ],
 		icon: 'cog',
 	},
