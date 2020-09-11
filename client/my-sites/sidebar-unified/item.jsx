@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 import SidebarItem from 'layout/sidebar/item';
+import SidebarCustomIcon from 'layout/sidebar/custom-icon';
 import StatsSparkline from 'blocks/stats-sparkline';
 
 const onNav = () => null;
@@ -44,20 +45,9 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 	const selected = path === fixedUrl;
 	let customIcon = null;
 	if ( icon && typeof icon === 'string' && icon.match( /data:image/ ) ) {
-		// TODO: Change sidebar__menu-icon to sidebar-unified__menu-icon and
-		// copy the CSS rules
-		// I would do now, but this will cause a conflict w/ the update/left-nav-geometries
-		// branch
-		// eslint-disable-next-line
-		customIcon = <img src={ icon } className="sidebar__menu-icon" alt="" />;
+		customIcon = <SidebarCustomIcon src={ icon } />;
 	} else {
-		// Demo workaround for items missing icons
-		// TODO: Change sidebar__menu-icon to sidebar-unified__menu-icon (See above)
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		customIcon = (
-			<img src={ blankSvg } style={ blankSvgStyle } className="sidebar__menu-icon" alt="" />
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		customIcon = <SidebarCustomIcon crc={ blankSvg } style={ blankSvgStyle } />;
 	}
 
 	let children = null;
