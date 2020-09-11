@@ -62,9 +62,15 @@ const sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/me/purchases', '/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
+		paths: [ '/me/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
 		module: 'calypso/me/purchases',
 		group: 'me',
+	},
+	{
+		name: 'site-purchases',
+		paths: [ '/purchases' ],
+		module: 'calypso/my-sites/purchases',
+		group: 'sites',
 	},
 	{
 		name: 'notification-settings',
