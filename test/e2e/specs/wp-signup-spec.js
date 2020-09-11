@@ -14,7 +14,6 @@ import * as dataHelper from '../lib/data-helper.js';
 
 import WPHomePage from '../lib/pages/wp-home-page.js';
 import StartPage from '../lib/pages/signup/start-page.js';
-import JetpackAddNewSitePage from '../lib/pages/signup/jetpack-add-new-site-page';
 
 import AboutPage from '../lib/pages/signup/about-page.js';
 import CustomerHomePage from '../lib/pages/customer-home-page';
@@ -1656,12 +1655,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step(
 			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
 			async function () {
-				const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
-				await jetpackAddNewSitePage.overrideABTestInLocalStorage(
-					'passwordlessSignup',
-					'passwordless'
-				);
-				return await jetpackAddNewSitePage.createNewWordPressDotComSite();
+				const startPage = await StartPage.Visit( this.driver, StartPage.getStartURL() );
+				await startPage.overrideABTestInLocalStorage( 'passwordlessSignup', 'passwordless' );
 			}
 		);
 
