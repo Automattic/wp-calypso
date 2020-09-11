@@ -10,6 +10,31 @@
 
 namespace A8C\FSE;
 
+if ( ! function_exists( 'fix_widows' ) ) {
+	/**
+	 * Fix_widows stub
+	 *
+	 * @param  string $string String.
+	 * @param  array  $args   Args.
+	 * @return string String.
+	 */
+	function fix_widows( $string, $args = array() ) {
+		return $string;
+	}
+}
+
+if ( ! function_exists( 'localized_wpcom_url' ) ) {
+	/**
+	 * Localized_wpcom_url stub
+	 *
+	 * @param  string $url Url.
+	 * @return string Url.
+	 */
+	function localized_wpcom_url( $url ) {
+		return $url;
+	}
+}
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
