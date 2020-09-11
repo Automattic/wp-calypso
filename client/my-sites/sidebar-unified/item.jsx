@@ -39,14 +39,14 @@ const blankSvg =
 	"data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E";
 const blankSvgStyle = { height: '24px', width: '24px' };
 
-export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) => {
+export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug, isTopLevel } ) => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const fixedUrl = removePrefix( url, 'https://wordpress.com' );
 	const selected = path === fixedUrl;
 	let customIcon = null;
 	if ( icon && typeof icon === 'string' && icon.match( /data:image/ ) ) {
 		customIcon = <SidebarCustomIcon src={ icon } />;
-	} else {
+	} else if ( isTopLevel ) {
 		customIcon = <SidebarCustomIcon crc={ blankSvg } style={ blankSvgStyle } />;
 	}
 
@@ -75,6 +75,7 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 };
 
 MySitesSidebarUnifiedItem.propTypes = {
+	isTopLevel: PropTypes.bool,
 	path: PropTypes.string,
 	title: PropTypes.string,
 	icon: PropTypes.string,
