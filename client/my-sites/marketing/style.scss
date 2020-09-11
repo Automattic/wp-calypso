@@ -50,7 +50,7 @@
 		float: left;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		.sharing-service__name {
 			margin-top: 12px;
 		}
@@ -60,11 +60,11 @@
 		margin-left: 56px;
 		width: 100%;
 
-		@include breakpoint( '<800px' ) {
+		@include breakpoint-deprecated( '<800px' ) {
 			margin-left: 0;
 		}
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-left: 6px;
 		}
 	}
@@ -79,7 +79,7 @@
 	}
 
 	select {
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 
 	input[type='number'] {
@@ -89,17 +89,17 @@
 	}
 
 	h4 {
-		font-size: 18px;
+		font-size: $font-title-small;
 		margin-bottom: 0.5em;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		padding: 0 0.25em;
 	}
 }
 
 .connections__sharing-settings.connections__sharing-connections {
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		padding: 16px 0;
 	}
 
@@ -108,7 +108,7 @@
 		vertical-align: top;
 		width: 48%;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: block;
 			width: 100%;
 			margin: 20px 0;
@@ -118,12 +118,12 @@
 		&:first-child {
 			padding-right: 4%;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				border-bottom: 1px solid var( --color-neutral-0 );
 				padding-bottom: 10px;
 			}
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				margin-bottom: 16px;
 				padding: 0 0 16px;
 			}
@@ -148,7 +148,7 @@
 
 	.connections__sharing-service-tip {
 		margin-top: 16px;
-		font-size: 14px;
+		font-size: $font-body-small;
 		color: var( --color-neutral-40 );
 
 		.gridicons-info {
@@ -170,7 +170,7 @@
 			display: block;
 		}
 
-		&.not-connected .sharing-service-accounts-detail,
+		&.not-connected .connections__sharing-service-accounts-detail,
 		&.not-connected .connections__sharing-service-tip {
 			display: none;
 		}
@@ -180,7 +180,7 @@
 		display: none;
 	}
 
-	.sharing-service-accounts-detail {
+	.connections__sharing-service-accounts-detail {
 		h2 {
 			font-size: 1.2em;
 		}
@@ -195,7 +195,7 @@
 		}
 	}
 
-	.sharing-service-connected-accounts {
+	.connections__sharing-service-connected-accounts {
 		margin-left: 0;
 		margin-bottom: 8px;
 	}
@@ -205,7 +205,7 @@
 	position: relative;
 
 	h3 {
-		font-size: 18px;
+		font-size: $font-title-small;
 		margin-bottom: 10px;
 	}
 
@@ -246,9 +246,9 @@
 	margin: 0 15px 0 0;
 	text-align: center;
 	width: 50px;
-	border-radius: 4px;
+	border-radius: 2px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		height: 21px;
 		padding-top: 5px;
 		margin: 2px 8px 0 32px;
@@ -270,12 +270,12 @@
 	}
 }
 
-@include sharing-service( 'facebook', var( --color-facebook ));
-@include sharing-service( 'twitter', var( --color-twitter ));
-@include sharing-service( 'google_plus', var( --color-google-plus ));
-@include sharing-service( 'tumblr', var( --color-tumblr ));
-@include sharing-service( 'linkedin', var( --color-linkedin ));
-@include sharing-service( 'instagram-basic-display', var( --color-instagram ));
+@include sharing-service( 'facebook', var( --color-facebook ) );
+@include sharing-service( 'twitter', var( --color-twitter ) );
+@include sharing-service( 'google_plus', var( --color-google-plus ) );
+@include sharing-service( 'tumblr', var( --color-tumblr ) );
+@include sharing-service( 'linkedin', var( --color-linkedin ) );
+@include sharing-service( 'instagram-basic-display', var( --color-instagram ) );
 
 .sharing-service__name {
 	clear: none;
@@ -284,9 +284,9 @@
 .sharing-service__description {
 	margin: 0;
 	color: var( --color-neutral-50 );
-	font-size: 14px;
+	font-size: $font-body-small;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }
@@ -297,17 +297,17 @@
 
 .sharing-service.reconnect .sharing-service__description,
 .sharing-service.must-disconnect .sharing-service__description {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .sharing-service__content-toggle {
 	position: absolute;
 	right: 16px;
 	top: 30px;
-	font-size: 22px;
+	font-size: $font-title-small;
 	color: #aeb8be;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		left: 14px;
 		top: 20px;
 	}
@@ -329,7 +329,7 @@
 	position: absolute;
 	left: 80px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 30%;
 	}
 }
@@ -375,7 +375,7 @@
 		padding-bottom: 0;
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		padding-right: 0;
 	}
 }
@@ -383,7 +383,7 @@
 .sharing-service.reconnect .sharing-connection__account-status {
 	padding-right: 200px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		padding-right: 0;
 	}
 }
@@ -395,7 +395,7 @@
 .sharing-connection__keyring-user {
 	display: inline-block;
 	margin-left: 8px;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	font-weight: 600;
 	text-transform: uppercase;
 	color: var( --color-neutral-light );
@@ -420,7 +420,7 @@
 	top: 50%;
 	margin-top: -16px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		position: static;
 		margin-top: 4px;
 		text-align: right;
@@ -486,7 +486,7 @@
 
 .sharing-buttons-tray__buttons {
 	@include clear-fix;
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-right: -16px;
 	}
 }
@@ -543,14 +543,15 @@
 	margin-bottom: 20px;
 	padding: 20px 24px;
 	background: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 }
 
 .sharing-buttons__fieldset-group {
 	@include clear-fix;
 	margin: 0 -3%;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin: 0;
 	}
 }
@@ -562,7 +563,7 @@
 	padding: 0 3%;
 	margin-bottom: 20px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;
 		padding: 0;
 	}
@@ -597,7 +598,7 @@
 .sharing-buttons__fieldset-detail {
 	display: block;
 	margin: 5px 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	color: var( --color-neutral-light );
 }
@@ -647,7 +648,7 @@
 
 .sharing-buttons-preview__fake-like {
 	color: var( --color-neutral-40 );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 }
 
 .sharing-buttons-preview .sortable-list__navigation {
@@ -662,12 +663,12 @@
 	padding: 8px;
 	cursor: pointer;
 	border: 1px solid var( --color-neutral-10 );
-	border-radius: 4px;
+	border-radius: 2px;
 	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
 	background-color: var( --color-surface );
 	color: var( --color-primary );
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		padding-right: 0;
 	}
 
@@ -708,7 +709,7 @@
 
 	&.is-bottom {
 		margin-top: 14px;
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			margin: 14px 1% 0;
 		}
 	}
@@ -739,7 +740,7 @@
 }
 
 .sharing-buttons-preview__button-tray-actions {
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin: 0 -6%;
 	}
 }
@@ -747,24 +748,24 @@
 .sharing-buttons-preview-action + .sharing-buttons-preview-action {
 	margin-left: 8px;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-left: 1%;
 	}
 }
 
 .sharing-buttons-preview-action:last-child {
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 46%;
 	}
 }
 
 .sharing-buttons-preview-action {
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 50%;
 	}
 
 	&::before {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			float: left;
 			margin: 6px 6px 0 0;
 		}
@@ -783,9 +784,9 @@
 	background-color: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
 	border-bottom: 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	line-height: 1;
-	font-weight: bold;
+	font-weight: 600;
 	text-transform: uppercase;
 	text-align: center;
 	color: var( --color-neutral-light );
@@ -801,8 +802,8 @@
 .sharing-buttons-preview__label {
 	display: block;
 	margin: 8px 0;
-	font-size: 11px;
-	font-weight: bold;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
 	line-height: 1.2;
 	text-transform: uppercase;
 	color: #767676;
@@ -827,8 +828,8 @@
 	display: inline-block;
 	margin: 8px 8px 0 0;
 	cursor: default;
-	font-size: 12px;
-	border-radius: 3px;
+	font-size: $font-body-extra-small;
+	border-radius: 2px;
 	color: #777;
 	background: #f8f8f8;
 	border: 1px solid #ccc;
@@ -915,29 +916,29 @@
 	}
 }
 
-@include sharing-button-service( 'facebook', var( --color-facebook ));
-@include sharing-button-service( 'twitter', var( --color-twitter ));
-@include sharing-button-service( 'press-this', var( --color-wordpress-com ));
-@include sharing-button-service( 'google-plus-1', var( --color-google-plus ));
-@include sharing-button-service( 'instagram-basic-display', var( --color-instagram ));
-@include sharing-button-service( 'linkedin', var( --color-linkedin ));
-@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ));
-@include sharing-button-service( 'tumblr', var( --color-tumblr ));
-@include sharing-button-service( 'reddit', var( --color-reddit ));
-@include sharing-button-service( 'pinterest', var( --color-pinterest ));
-@include sharing-button-service( 'pocket', var( --color-pocket ));
-@include sharing-button-service( 'email', var( --color-email ));
-@include sharing-button-service( 'print', var( --color-print ));
-@include sharing-button-service( 'skype', var( --color-skype ));
-@include sharing-button-service( 'telegram', var( --color-telegram ));
-@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp ));
+@include sharing-button-service( 'facebook', var( --color-facebook ) );
+@include sharing-button-service( 'twitter', var( --color-twitter ) );
+@include sharing-button-service( 'press-this', var( --color-wordpress-com ) );
+@include sharing-button-service( 'google-plus-1', var( --color-google-plus ) );
+@include sharing-button-service( 'instagram-basic-display', var( --color-instagram ) );
+@include sharing-button-service( 'linkedin', var( --color-linkedin ) );
+@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ) );
+@include sharing-button-service( 'tumblr', var( --color-tumblr ) );
+@include sharing-button-service( 'reddit', var( --color-reddit ) );
+@include sharing-button-service( 'pinterest', var( --color-pinterest ) );
+@include sharing-button-service( 'pocket', var( --color-pocket ) );
+@include sharing-button-service( 'email', var( --color-email ) );
+@include sharing-button-service( 'print', var( --color-print ) );
+@include sharing-button-service( 'skype', var( --color-skype ) );
+@include sharing-button-service( 'telegram', var( --color-telegram ) );
+@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp ) );
 
 .sharing-buttons-preview__panel {
 	position: relative;
 	display: none;
 	background: var( --color-surface );
 	border: 1px solid var( --color-neutral-10 );
-	border-radius: 4px;
+	border-radius: 2px;
 	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
 
 	&::before {
@@ -967,12 +968,12 @@
 		margin: 14px 0 0;
 
 		.sharing-buttons-preview-button {
-			border-width: 1px 1px 2px;
-			font-weight: 500;
+			border-width: 1px;
+			font-weight: 600;
 			box-shadow: none;
 			box-sizing: border-box;
 			line-height: 1;
-			border-radius: 4px;
+			border-radius: 2px;
 			padding: 7px;
 			float: left;
 			color: var( --color-neutral-5 );
@@ -983,7 +984,7 @@
 				color: var( --color-neutral-10 );
 			}
 			&:active {
-				border-width: 2px 1px 1px;
+				border-width: 1px;
 			}
 
 			&.is-enabled {
@@ -1002,7 +1003,7 @@
 			}
 		}
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			margin: 15px -8px 0;
 		}
 	}
@@ -1026,7 +1027,7 @@
 }
 
 .sharing-buttons-preview__panel-heading {
-	font-size: 20px;
+	font-size: $font-title-small;
 	font-weight: normal;
 	color: var( --color-neutral-70 );
 }
@@ -1068,7 +1069,7 @@
 .sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
 	margin-top: 8px;
 	cursor: pointer;
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin: 18px 18px 0 0;
 	}
 }

@@ -25,8 +25,8 @@ function PendingGSuiteTosNoticeAction( props ) {
 
 	return (
 		<Fragment>
-			<Button primary={ true } compact={ true } onClick={ onFixClickHandler }>
-				{ translate( 'Finish Setup' ) }
+			<Button primary={ true } compact={ props.isCompact } onClick={ onFixClickHandler }>
+				{ props.cta || translate( 'Finish Setup' ) }
 			</Button>
 			<PendingGSuiteTosNoticeDialog
 				domainName={ props.domainName }
@@ -47,6 +47,12 @@ PendingGSuiteTosNoticeAction.propTypes = {
 	severity: PropTypes.string.isRequired,
 	siteSlug: PropTypes.string.isRequired,
 	user: PropTypes.string.isRequired,
+	cta: PropTypes.string,
+	isCompact: PropTypes.bool,
+};
+
+PendingGSuiteTosNoticeAction.defaultProps = {
+	isCompact: true,
 };
 
 export default PendingGSuiteTosNoticeAction;

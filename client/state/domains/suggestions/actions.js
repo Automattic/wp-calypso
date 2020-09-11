@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
@@ -9,6 +8,8 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
+
+import 'state/domains/init';
 
 /**
  * Returns an action object to be used in signalling that a domains suggestion object

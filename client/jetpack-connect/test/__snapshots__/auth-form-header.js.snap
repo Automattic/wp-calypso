@@ -3,7 +3,13 @@
 exports[`AuthFormHeader renders as expected 1`] = `
 <div>
   <FormattedHeader
+    align="center"
+    brandFont={false}
+    className=""
+    compactOnMobile={false}
     headerText="Create an account to set up Jetpack"
+    id=""
+    isSecondary={false}
     subHeaderText="You are moments away from a better WordPress."
   />
   <CompactCard

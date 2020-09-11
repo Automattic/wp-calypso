@@ -1022,7 +1022,7 @@ export const purchaseLabel = ( orderId, siteId ) => ( dispatch, getState ) => {
 					} );
 					return {
 						...packageFields,
-						shipment_id: form.rates.available[ pckgId ].shipment_id,
+						shipment_id: form.rates.available[ pckgId ].shipment_id || rate.shipment_id,
 						rate_id: rate.rate_id,
 						service_id: form.rates.values[ pckgId ],
 						carrier_id: rate.carrier_id,

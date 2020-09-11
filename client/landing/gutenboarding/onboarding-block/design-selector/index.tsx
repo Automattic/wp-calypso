@@ -1,52 +1,44 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+import { Tooltip } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import designs from '../../available-designs';
-import { usePath, Step } from '../../path';
-import { isEnabled } from '../../../../config';
-import Link from '../../components/link';
-import { SubTitle, Title } from '../../components/titles';
-import { useTrackStep } from '../../hooks/use-track-step';
-import './style.scss';
 
-type Design = import('../../stores/onboard/types').Design;
+import { useTrackStep } from '../../hooks/use-track-step';
+import useStepNavigation from '../../hooks/use-step-navigation';
+import Badge from '../../components/badge';
+import { getDesignImageUrl } from '../../available-designs';
+import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
+import type { Design } from '../../stores/onboard/types';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
 const DesignSelector: React.FunctionComponent = () => {
-	useTrackStep( 'DesignSelection' );
-
 	const { __ } = useI18n();
-	const { push } = useHistory();
-	const makePath = usePath();
+	const { goBack, goNext } = useStepNavigation();
+
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
+	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
+		select( ONBOARD_STORE )
+	);
 
-	const getDesignUrl = ( design: Design ) => {
-		// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
-		// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
-		// https://github.com/Automattic/mShots/issues/16
-		// https://github.com/Automattic/wp-calypso/issues/40564
-		if ( ! isEnabled( 'gutenboarding/mshot-preview' ) ) {
-			return `/calypso/page-templates/design-screenshots/${ design.slug }_${ design.template }_${ design.theme }.jpg`;
-		}
-
-		const mshotsUrl = 'https://s.wordpress.com/mshots/v1/';
-		const previewUrl = addQueryArgs( design.src, {
-			font_headings: design.fonts.headings,
-			font_base: design.fonts.base,
-		} );
-		return mshotsUrl + encodeURIComponent( previewUrl );
-	};
+	useTrackStep( 'DesignSelection', () => ( {
+		selected_design: getSelectedDesign()?.slug,
+		is_selected_design_premium: hasPaidDesign(),
+	} ) );
 
 	return (
 		<div className="gutenboarding-page design-selector">
@@ -57,41 +49,54 @@ const DesignSelector: React.FunctionComponent = () => {
 						{ __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
 					</SubTitle>
 				</div>
-				<Link
-					className="design-selector__start-over-button"
-					to={ makePath( Step.IntentGathering ) }
-					isLink
-				>
-					{ __( 'Go back' ) }
-				</Link>
+				<ActionButtons>
+					<BackButton onClick={ goBack } />
+				</ActionButtons>
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
-					{ designs.featured.map( ( design ) => (
+					{ getRandomizedDesigns().featured.map( ( design ) => (
 						<button
 							key={ design.slug }
 							className="design-selector__design-option"
+							data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 							onClick={ () => {
 								setSelectedDesign( design );
 
 								// Update fonts to the design defaults
 								setFonts( design.fonts );
 
-								if ( isEnabled( 'gutenboarding/style-preview' ) ) {
-									push( makePath( Step.Style ) );
-								}
+								goNext();
 							} }
 						>
 							<span className="design-selector__image-frame">
 								<img
 									alt=""
 									aria-labelledby={ makeOptionId( design ) }
-									src={ getDesignUrl( design ) }
+									src={ getDesignImageUrl( design ) }
 								/>
 							</span>
 							<span className="design-selector__option-overlay">
-								<span id={ makeOptionId( design ) } className="design-selector__option-name">
-									{ design.title }
+								<span id={ makeOptionId( design ) } className="design-selector__option-meta">
+									<span className="design-selector__option-name">{ design.title }</span>
+									{ design.is_premium && (
+										<Tooltip
+											position="bottom center"
+											text={ __( 'Requires a Personal plan or above' ) }
+										>
+											<div className="design-selector__premium-container">
+												<Badge className="design-selector__premium-badge">
+													<JetpackLogo
+														className="design-selector__premium-badge-logo"
+														size={ 20 }
+													/>
+													<span className="design-selector__premium-badge-text">
+														{ __( 'Premium' ) }
+													</span>
+												</Badge>
+											</div>
+										</Tooltip>
+									) }
 								</span>
 							</span>
 						</button>

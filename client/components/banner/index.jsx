@@ -32,6 +32,7 @@ import DismissibleCard from 'blocks/dismissible-card';
 import PlanPrice from 'my-sites/plan-price';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Style dependencies
@@ -52,6 +53,7 @@ export class Banner extends Component {
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
 		icon: PropTypes.string,
+		iconPath: PropTypes.string,
 		jetpack: PropTypes.bool,
 		compact: PropTypes.bool,
 		list: PropTypes.arrayOf( PropTypes.string ),
@@ -59,6 +61,7 @@ export class Banner extends Component {
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
+		primaryButton: PropTypes.bool,
 		showIcon: PropTypes.bool,
 		siteSlug: PropTypes.string,
 		target: PropTypes.string,
@@ -82,6 +85,7 @@ export class Banner extends Component {
 		jetpack: false,
 		onClick: noop,
 		onDismiss: noop,
+		primaryButton: true,
 		showIcon: true,
 		tracksImpressionName: 'calypso_banner_cta_impression',
 		tracksClickName: 'calypso_banner_cta_click',
@@ -141,7 +145,7 @@ export class Banner extends Component {
 	};
 
 	getIcon() {
-		const { icon, jetpack, showIcon } = this.props;
+		const { icon, iconPath, jetpack, showIcon } = this.props;
 
 		if ( ! showIcon ) {
 			return;
@@ -155,14 +159,17 @@ export class Banner extends Component {
 			);
 		}
 
+		let iconComponent;
+		if ( iconPath ) {
+			iconComponent = <img src={ iconPath } alt="" />;
+		} else {
+			iconComponent = <Gridicon icon={ icon || 'star' } size={ 18 } />;
+		}
+
 		return (
 			<div className="banner__icons">
-				<div className="banner__icon">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
-				</div>
-				<div className="banner__icon-circle">
-					<Gridicon icon={ icon || 'star' } size={ 18 } />
-				</div>
+				<div className="banner__icon">{ iconComponent }</div>
+				<div className="banner__icon-circle">{ iconComponent }</div>
 			</div>
 		);
 	}
@@ -177,6 +184,7 @@ export class Banner extends Component {
 			compact,
 			list,
 			price,
+			primaryButton,
 			title,
 			target,
 			tracksImpressionName,
@@ -223,18 +231,18 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary target={ target }>
-									{ callToAction }
+								<Button compact primary={ primaryButton } target={ target }>
+									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
 									compact
 									href={ this.getHref() }
 									onClick={ this.handleClick }
-									primary
+									primary={ primaryButton }
 									target={ target }
 								>
-									{ callToAction }
+									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
 					</div>

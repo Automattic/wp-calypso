@@ -134,8 +134,9 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	const spreadHappiness = ( message ) => {
 		const tracksEvent = recordTracksEvent( 'calypso_rewind_creds_update_failure', {
 			site_id: action.siteId,
-			error: error.error,
-			status_code: error.statusCode,
+			error: error.code,
+			error_message: error.message,
+			status_code: error.data ?? error.statusCode,
 			host: action.credentials.host,
 			kpri: action.credentials.krpi ? 'provided but [omitted here]' : 'not provided',
 			pass: action.credentials.pass ? 'provided but [omitted here]' : 'not provided',
@@ -152,7 +153,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		);
 	};
 
-	switch ( error.error ) {
+	switch ( error.code ) {
 		case 'service_unavailable':
 			announce(
 				i18n.translate(

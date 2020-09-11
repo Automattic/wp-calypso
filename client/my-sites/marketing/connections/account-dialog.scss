@@ -3,7 +3,7 @@
 }
 
 .account-dialog__authorizing-service {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 400;
 	margin-bottom: 8px;
 	color: var( --color-neutral-70 );
@@ -19,7 +19,7 @@
 	overflow: hidden;
 	margin: 14px 0;
 	padding: 2px 0;
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 	color: var( --color-neutral-light );
 

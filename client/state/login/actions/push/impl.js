@@ -9,6 +9,7 @@ import {
 
 import { remoteLoginUser } from 'state/login/actions/remote-login-user';
 
+import 'state/data-layer/wpcom/login-2fa';
 import 'state/login/init';
 
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );

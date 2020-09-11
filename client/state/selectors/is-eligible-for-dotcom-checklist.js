@@ -9,6 +9,7 @@ import { get } from 'lodash';
 import getSiteOptions from 'state/selectors/get-site-options';
 import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 /**
  * @param {object} state Global state tree
@@ -17,6 +18,10 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
  */
 export default function isEligibleForDotcomChecklist( state, siteId ) {
 	if ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) {
+		return false;
+	}
+
+	if ( isSiteWPForTeams( state, siteId ) ) {
 		return false;
 	}
 

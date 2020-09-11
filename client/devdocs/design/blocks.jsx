@@ -27,7 +27,6 @@ import CalendarButton from 'blocks/calendar-button/docs/example';
 import CalendarPopover from 'blocks/calendar-popover/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
 import FollowButton from 'blocks/follow-button/docs/example';
 import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
@@ -42,8 +41,6 @@ import Theme from 'components/theme/docs/example';
 import HappinessSupport from 'components/happiness-support/docs/example';
 import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'blocks/plan-storage/docs/example';
-import UpgradeNudge from 'blocks/upgrade-nudge/docs/example';
-import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import DomainTip from 'blocks/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
@@ -85,6 +82,7 @@ import ConversationFollowButton from 'blocks/conversation-follow-button/docs/exa
 import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
 import UserMentions from 'blocks/user-mentions/docs/example';
 import SupportArticleDialog from 'blocks/support-article-dialog/docs/example';
+import TimeMismatchWarning from 'blocks/time-mismatch-warning/docs/example';
 import UpsellNudge from 'blocks/upsell-nudge/docs/example';
 
 export default class AppComponents extends React.Component {
@@ -142,7 +140,6 @@ export default class AppComponents extends React.Component {
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
-					<DisconnectJetpackDialog />
 					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
 					<HappinessSupport />
@@ -163,8 +160,6 @@ export default class AppComponents extends React.Component {
 					<SiteIcon readmeFilePath="site-icon" />
 					<Theme />
 					<ThemesListExample />
-					<UpgradeNudge readmeFilePath="upgrade-nudge" />
-					<UpgradeNudgeExpanded readmeFilePath="upgrade-nudge-expanded" />
 					<PlanCompareCard />
 					<DomainTip />
 					<RelatedPostCard />
@@ -202,6 +197,7 @@ export default class AppComponents extends React.Component {
 					) }
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
+					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />
 					<UpsellNudge />
 				</Collection>
 			</Main>

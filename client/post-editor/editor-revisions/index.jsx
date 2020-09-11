@@ -10,11 +10,11 @@ import { flow, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import getPostRevisions from 'state/selectors/get-post-revisions';
-import getPostRevisionsAuthorsId from 'state/selectors/get-post-revisions-authors-id';
-import getPostRevisionsComparisons from 'state/selectors/get-post-revisions-comparisons';
-import getPostRevisionsSelectedRevisionId from 'state/selectors/get-post-revisions-selected-revision-id';
+import { getEditorPostId } from 'state/editor/selectors';
+import { getPostRevisions } from 'state/posts/selectors/get-post-revisions';
+import { getPostRevisionsAuthorsId } from 'state/posts/selectors/get-post-revisions-authors-id';
+import { getPostRevisionsComparisons } from 'state/posts/selectors/get-post-revisions-comparisons';
+import { getPostRevisionsSelectedRevisionId } from 'state/posts/selectors/get-post-revisions-selected-revision-id';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import EditorDiffViewer from 'post-editor/editor-diff-viewer';

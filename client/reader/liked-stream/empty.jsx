@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import EmptyContent from 'components/empty-content';
 import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 import { isDiscoverEnabled } from 'reader/discover/helper';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 class TagEmptyContent extends React.Component {
 	shouldComponentUpdate() {
@@ -63,4 +64,4 @@ class TagEmptyContent extends React.Component {
 	}
 }
 
-export default localize( TagEmptyContent );
+export default withPerformanceTrackerStop( localize( TagEmptyContent ) );

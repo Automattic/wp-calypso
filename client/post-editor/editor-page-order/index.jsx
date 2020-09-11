@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,7 +13,7 @@ import AccordionSection from 'components/accordion/section';
 import TextInput from 'components/forms/form-text-input';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 

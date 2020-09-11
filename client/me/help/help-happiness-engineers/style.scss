@@ -2,13 +2,13 @@
 	margin: 12px 0 64px;
 	padding: 0 24px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 24px 0 64px;
 	}
 }
 
 .help-happiness-engineers .form-section-heading {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		font: 300 16px/21px $sans;
 	}
 }
@@ -17,7 +17,7 @@
 	margin: -16px 0 12px;
 	font: 14px/21px $sans;
 	color: var( --color-neutral-40 );
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: -16px 0 20px;
 	}
 }

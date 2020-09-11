@@ -1,0 +1,64 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+@import '../variables.scss';
+
+@mixin plans-grid-edge2edge-padding {
+	padding-left: $onboarding-block-margin-mobile;
+	padding-right: $onboarding-block-margin-mobile;
+
+	@include break-small {
+		padding-left: $onboarding-block-margin-small;
+		padding-right: $onboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		padding-left: $onboarding-block-margin-medium;
+		padding-right: $onboarding-block-margin-medium;
+	}
+}
+
+.plans-grid {
+	// Space to accomadate sticky footer
+	margin-bottom: 85px; // @TODO: replace with a variable
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+}
+
+.plans-grid__header {
+	@include onboarding-heading-padding;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.plans-grid__details {
+	margin-top: 70px;
+}
+
+.plans-grid__details-container {
+	@media ( max-width: $plans-grid-max-page-width ) {
+		overflow-x: auto;
+		width: 100%;
+		position: absolute;
+		left: 0;
+
+		@include plans-grid-edge2edge-padding;
+	}
+	// this is needed on mobiles to uncover the CTA button
+	// without it, it's covered by the sticky bottom bar
+	padding-bottom: 120px;
+}
+
+.plans-grid__details-heading {
+	.plans-ui-title {
+		color: var( --studio-black );
+		margin-bottom: 40px;
+		font-size: 32px;
+		line-height: 40px;
+		letter-spacing: 0.2px;
+	}
+}

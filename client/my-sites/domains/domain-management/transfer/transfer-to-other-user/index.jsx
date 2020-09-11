@@ -27,6 +27,7 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -117,7 +118,11 @@ class TransferOtherUser extends React.Component {
 					this.props.successNotice( successMessage, { duration: 4000, isPersistent: true } );
 					closeDialog();
 					page(
-						domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName )
+						domainManagementEdit(
+							this.props.selectedSite.slug,
+							this.props.selectedDomainName,
+							this.props.currentRoute
+						)
 					);
 				},
 				( err ) => {
@@ -156,14 +161,14 @@ class TransferOtherUser extends React.Component {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
-		const { selectedSite, selectedDomainName } = this.props,
+		const { selectedSite, selectedDomainName, currentRoute } = this.props,
 			{ slug } = selectedSite;
 
 		return (
 			<Main>
 				<Header
 					selectedDomainName={ selectedDomainName }
-					backHref={ domainManagementTransfer( slug, selectedDomainName ) }
+					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				>
 					{ this.props.translate( 'Transfer Domain To Another User' ) }
 				</Header>
@@ -298,6 +303,7 @@ export default connect(
 		currentUser: getCurrentUser( state ),
 		isAtomic: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
 		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, ownProps.selectedSite.ID ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	{
 		successNotice,

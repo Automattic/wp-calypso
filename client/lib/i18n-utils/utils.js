@@ -182,23 +182,44 @@ const setLocalizedUrlHost = ( hostname, validLocales = [] ) => ( urlParts, local
 	return urlParts;
 };
 
-const setLocalizedWpComPath = ( prefix, validLocales = [] ) => ( urlParts, localeSlug ) => {
+const setLocalizedWpComPath = ( prefix, validLocales = [], limitPathMatch = null ) => (
+	urlParts,
+	localeSlug
+) => {
 	urlParts.host = 'wordpress.com';
+	if (
+		typeof limitPathMatch === 'object' &&
+		limitPathMatch instanceof RegExp &&
+		! limitPathMatch.test( urlParts.pathname )
+	) {
+		validLocales = []; // only rewrite to English.
+	}
 	urlParts.pathname = prefix + urlParts.pathname;
 
 	if ( typeof validLocales === 'string' ) {
 		validLocales = config( validLocales );
 	}
+
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
 		urlParts.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + urlParts.pathname;
 	}
 	return urlParts;
 };
 
-const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug ) => {
+const prefixLocalizedUrlPath = ( validLocales = [], limitPathMatch = null ) => (
+	urlParts,
+	localeSlug
+) => {
 	if ( typeof validLocales === 'string' ) {
 		validLocales = config( validLocales );
 	}
+
+	if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
+		if ( ! limitPathMatch.test( urlParts.pathname ) ) {
+			return urlParts; // No rewriting if not matches the path.
+		}
+	}
+
 	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
 		urlParts.pathname = ( localesToSubdomains[ localeSlug ] || localeSlug ) + urlParts.pathname;
 	}
@@ -207,11 +228,11 @@ const prefixLocalizedUrlPath = ( validLocales = [] ) => ( urlParts, localeSlug )
 
 const urlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( 'support_site_locales' ),
-	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog ),
+	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
 	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', 'magnificent_non_en_locales' ),
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', 'jetpack_com_locales' ),
-	'wordpress.com/support': setLocalizedWpComPath( '/support', 'support_site_locales' ),
-	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog ),
+	'en.support.wordpress.com': setLocalizedWpComPath( '/support', 'support_site_locales' ),
+	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'en.forums.wordpress.com': setLocalizedUrlHost( 'forums.wordpress.com', 'forum_locales' ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
@@ -305,4 +326,24 @@ export function filterLanguageRevisions( languageRevisions ) {
 
 		return true;
 	} );
+}
+
+/**
+ * Checks if provided locale is one of the magnificenet non-english locales.
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} true when provided magnificent non-english locale.
+ */
+export function isMagnificentLocale( locale ) {
+	return config( 'magnificent_non_en_locales' ).includes( locale );
+}
+
+/**
+ * Checks if provided locale is translated incompletely (is missing essential translations).
+ *
+ * @param   {string}  locale Locale slug
+ * @returns {boolean} Whether provided locale is flagged as translated incompletely.
+ */
+export function isTranslatedIncompletely( locale ) {
+	return getLanguage( locale )?.isTranslatedIncompletely === true;
 }

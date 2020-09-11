@@ -1,7 +1,7 @@
 Desktop
 ==========
 
-Provides an interface between Calypso and [Electron](https://github.com/atom/electron) using Electron's [IPC](https://github.com/atom/electron/blob/master/docs/api/ipc-main.md) mechanism.
+Provides an interface between Calypso and [Electron](https://github.com/atom/electron) using Electron's [IPC](https://github.com/atom/electron/blob/HEAD/docs/api/ipc-main.md) mechanism.
 
 Note this module only runs when the `desktop` feature is enabled. The `ipc` module is defined as an external in Calypso, and so will only
 run inside Electron (where `ipc` is defined).

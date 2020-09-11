@@ -35,11 +35,12 @@ const PALETTE_ILLUSTRATION_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colo
 	}
 	// Since illustrations are a part of WordPress.com’s and Jetpack’s visual
 	// identity, we prefer them over generic Blue, Green, and Celadon. We don’t
-	// use WooCommerce Purple either
+	// use Simplenote Blue or WooCommerce Purple either
 	return ! (
 		_.startsWith( colorName, 'Blue' ) ||
 		_.startsWith( colorName, 'Green' ) ||
 		_.startsWith( colorName, 'Celadon' ) ||
+		_.startsWith( colorName, 'Simplenote Blue' ) ||
 		_.startsWith( colorName, 'WooCommerce Purple' )
 	);
 } );
@@ -51,8 +52,12 @@ const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) =
 	if ( colorValue === '#000' ) {
 		return;
 	}
-	// Don’t use WooCommerce Purple for any WordPress.com images
-	return ! _.startsWith( colorName, 'WooCommerce Purple' );
+	// Don’t use brand colors for any WordPress.com app images
+	return ! (
+		_.startsWith( colorName, 'Simplenote Blue' ) ||
+		_.startsWith( colorName, 'WooCommerce Purple' ) ||
+		_.startsWith( colorName, 'WordPress Blue' )
+	);
 } );
 
 // Making sure both sets contain only unique color values
@@ -74,15 +79,19 @@ const SVG_IGNORE_PATHS = [
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
-	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)\.svg$/,
+	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|ovo|p24|paypal|paytm|sofort|tef|wechat)\.svg$/,
 
 	// Old WooCommerce mascotte
 	/ninja-joy\.svg$/,
 
 	// Specific directories
+	/^apps\/editing-toolkit\/editing-toolkit-plugin/,
 	/^docs/,
 	/^static\/images\/marketing/,
 	/^static\/images\/me/,
+
+	// Images that seem to be based on a completely different set of colors
+	/customer-home\/illustration-+(?:task|webinars)/,
 ];
 
 // The image paths that match the following patterns will use `PALETTE_APP_COLORS`,
@@ -91,7 +100,8 @@ const SVG_APP_PATHS = [
 	// Color scheme thumbnails
 	/color-scheme-thumbnail-[a-z-]+\.svg$/,
 
-	// Gutenberg images
+	// Screenshots and Gutenberg images
+	/^client\/assets\/images\/customer-home\/illustration/,
 	/^static\/images\/illustrations\/gutenberg/,
 
 	// Plan icons

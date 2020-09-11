@@ -1,11 +1,15 @@
 /**
+ * Internal dependencies
+ */
+import 'state/happiness-engineers/init';
+
+/**
  * Returns happiness engineers
  *
  *
  * @param {{}} state currents state
  * @returns {Array} happiness engineers
  */
-
 export function getHappinessEngineers( state ) {
 	return state.happinessEngineers.items;
 }

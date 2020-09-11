@@ -13,15 +13,16 @@ import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 
 const SharingServiceConnectedAccounts = ( { children, connect, service, translate } ) => (
-	<div className="sharing-service-accounts-detail">
-		<ul className="sharing-service-connected-accounts">{ children }</ul>
-		{ 'publicize' === service.type && 'google_plus' !== service.ID && (
-			<Button onClick={ connect }>
-				{ translate( 'Connect a different account', {
-					comment: 'Sharing: Publicize connections',
-				} ) }
-			</Button>
-		) }
+	<div className="connections__sharing-service-accounts-detail">
+		<ul className="connections__sharing-service-connected-accounts">{ children }</ul>
+		{ ( 'publicize' === service.type || 'instagram-basic-display' === service.ID ) &&
+			'google_plus' !== service.ID && (
+				<Button onClick={ connect }>
+					{ translate( 'Connect a different account', {
+						comment: 'Sharing: Publicize connections',
+					} ) }
+				</Button>
+			) }
 	</div>
 );
 

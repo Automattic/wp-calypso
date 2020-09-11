@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import toggleState from 'state/notification-settings/toggle-state';
 import {
 	NOTIFICATION_SETTINGS_FETCH,
@@ -63,7 +63,9 @@ export const settings = ( state = { clean: null, dirty: null }, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	isFetching,
 	settings,
 } );
+
+export default withStorageKey( 'notificationSettings', combinedReducer );

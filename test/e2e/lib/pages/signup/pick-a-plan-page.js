@@ -87,14 +87,15 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 		// Defaults to showing business plan first, so we need to move to correct plan
 		if ( driverManager.currentScreenSize() === 'mobile' ) {
 			switch ( level ) {
-				case 'premium':
-					await this.clickDirectionArrow( 'left' );
+				case 'business':
+					await this.clickDirectionArrow( 'right' );
 					break;
 				case 'personal':
 					await this.clickDirectionArrow( 'left' );
 					await this.clickDirectionArrow( 'left' );
 					break;
 				case 'ecommerce':
+					await this.clickDirectionArrow( 'right' );
 					await this.clickDirectionArrow( 'right' );
 					break;
 				default:

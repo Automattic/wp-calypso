@@ -6,21 +6,21 @@ import { pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import reducer, { initialClientsData } from '../reducer';
+import { clients, initialClientsData } from '../reducer';
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'state/action-types';
 
-describe( 'reducer', () => {
+describe( 'clients reducer', () => {
 	// Uses default data but reduces the size of this data set for tests
 	const initialState = pick( initialClientsData, [ 930, 973 ] );
 
 	test( 'should return the current state for an unknown action type', () => {
-		const newState = reducer( initialState, { type: 'BUY_BURGER' } );
+		const newState = clients( initialState, { type: 'BUY_BURGER' } );
 
 		expect( newState ).toBe( initialState );
 	} );
 
 	test( 'should return updated state with updated data when client data was fetched successful', () => {
-		const newState = reducer( initialState, {
+		const newState = clients( initialState, {
 			type: OAUTH2_CLIENT_DATA_RECEIVE,
 			data: {
 				id: 930,
@@ -47,7 +47,7 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should return updated state with new data when client data was fetched successful', () => {
-		const newState = reducer( initialState, {
+		const newState = clients( initialState, {
 			type: OAUTH2_CLIENT_DATA_RECEIVE,
 			data: {
 				id: 2665,

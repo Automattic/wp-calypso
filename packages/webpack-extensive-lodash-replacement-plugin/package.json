@@ -8,7 +8,7 @@
 		"Webpack",
 		"lodash"
 	],
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/webpack-extensive-lodash-replacement-plugin",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/webpack-extensive-lodash-replacement-plugin",
 	"license": "GPL-2.0-or-later",
 	"publishConfig": {
 		"access": "public"
@@ -23,7 +23,7 @@
 	},
 	"scripts": {},
 	"peerDependencies": {
-		"webpack": "^4.29.6"
+		"webpack": "^4.44.1"
 	},
 	"dependencies": {
 		"semver": "^7.0.0"

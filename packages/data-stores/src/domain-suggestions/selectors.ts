@@ -7,19 +7,27 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { STORE_KEY } from './constants';
-import { DomainSuggestionQuery } from './types';
-import { State } from './reducer';
+import type { DomainSuggestionQuery } from './types';
+import type { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
 
 type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
 
 const createSelectors = ( vendor: string ) => {
-	function getState( state: State ) {
-		return state;
+	function getDomainSuggestionVendor() {
+		return vendor;
 	}
 
-	function isAvailable( state: State, domainName: string ) {
-		return state.availability[ domainName ];
+	function getCategories( state: State ) {
+		// Sort domain categories by tier, then by title.
+		return [
+			...state.categories
+				.filter( ( { tier } ) => tier !== null )
+				.sort( ( a, b ) => ( a > b ? 1 : -1 ) ),
+			...state.categories
+				.filter( ( { tier } ) => tier === null )
+				.sort( ( a, b ) => a.title.localeCompare( b.title ) ),
+		];
 	}
 
 	function getDomainSuggestions(
@@ -68,7 +76,7 @@ const createSelectors = ( vendor: string ) => {
 			include_dotblogsubdomain: false,
 			only_wordpressdotcom: false,
 			quantity: 5,
-			vendor: vendor,
+			vendor,
 
 			// Merge options
 			...queryOptions,
@@ -81,8 +89,6 @@ const createSelectors = ( vendor: string ) => {
 	/**
 	 * Do not use this selector. It is for internal use.
 	 *
-	 * @private
-	 *
 	 * @param state Store state
 	 * @param queryObject Normalized object representing the query
 	 * @returns suggestions
@@ -91,13 +97,17 @@ const createSelectors = ( vendor: string ) => {
 		return state.domainSuggestions[ stringifyDomainQueryObject( queryObject ) ];
 	}
 
-	return {
-		getDomainSuggestions,
-		getState,
-		isAvailable,
-		isLoadingDomainSuggestions,
+	function isAvailable( state: State, domainName: string ) {
+		return state.availability[ domainName ];
+	}
 
+	return {
+		getCategories,
+		getDomainSuggestions,
+		getDomainSuggestionVendor,
+		isLoadingDomainSuggestions,
 		__internalGetDomainSuggestions,
+		isAvailable,
 	};
 };
 

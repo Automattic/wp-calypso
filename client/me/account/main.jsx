@@ -47,19 +47,23 @@ import { successNotice, errorNotice } from 'state/notices/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
 import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import _user from 'lib/user';
 import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
 import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
 import { requestGeoLocation } from 'state/data-getters';
 import { withLocalizedMoment } from 'components/localized-moment';
+import {
+	getCurrentUserDate,
+	getCurrentUserDisplayName,
+	getCurrentUserName,
+	getCurrentUserVisibleSiteCount,
+} from 'state/current-user/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const user = _user();
 const colorSchemeKey = 'calypso_preferences.colorScheme';
 
 /**
@@ -123,13 +127,27 @@ const Account = createReactClass( {
 	},
 
 	updateLanguage( event ) {
-		const { value } = event.target;
+		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
 		this.updateUserSetting( 'language', value );
-		const redirect =
+
+		if ( typeof empathyMode !== 'undefined' ) {
+			this.updateUserSetting( 'i18n_empathy_mode', empathyMode );
+		}
+
+		if ( typeof useFallbackForIncompleteLanguages !== 'undefined' ) {
+			this.updateUserSetting(
+				'use_fallback_for_incomplete_languages',
+				useFallbackForIncompleteLanguages
+			);
+		}
+
+		const shouldRedirect =
 			value !== this.getUserOriginalSetting( 'language' ) ||
-			value !== this.getUserOriginalSetting( 'locale_variant' )
-				? '/me/account'
-				: false;
+			value !== this.getUserOriginalSetting( 'locale_variant' ) ||
+			( typeof empathyMode !== 'undefined' &&
+				empathyMode !== this.getUserOriginalSetting( 'i18n_empathy_mode' ) );
+
+		const redirect = shouldRedirect ? '/me/account' : false;
 		// store any selected locale variant so we can test it against those with no GP translation sets
 		const localeVariantSelected = isLocaleVariant( value ) ? value : '';
 		this.setState( { redirect, localeVariantSelected } );
@@ -398,8 +416,8 @@ const Account = createReactClass( {
 	},
 
 	renderJoinDate() {
-		const { translate, moment } = this.props;
-		const dateMoment = moment( user.get().date );
+		const { currentUserDate, translate, moment } = this.props;
+		const dateMoment = moment( currentUserDate );
 
 		return (
 			<span>
@@ -488,9 +506,9 @@ const Account = createReactClass( {
 	},
 
 	renderPrimarySite() {
-		const { requestingMissingSites, translate } = this.props;
+		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
-		if ( ! user.get().visible_site_count ) {
+		if ( ! visibleSiteCount ) {
 			return (
 				<Button
 					href={ config( 'signup_url' ) }
@@ -552,7 +570,7 @@ const Account = createReactClass( {
 		return (
 			<div className="account__settings-form" key="settingsForm">
 				<FormFieldset>
-					<FormLabel htmlFor="user_email">{ translate( 'Email Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
 						id="user_email"
@@ -570,12 +588,12 @@ const Account = createReactClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary Site' ) }</FormLabel>
+					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>
 					{ this.renderPrimarySite() }
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="user_URL">{ translate( 'Web Address' ) }</FormLabel>
+					<FormLabel htmlFor="user_URL">{ translate( 'Web address' ) }</FormLabel>
 					<FormTextInput
 						disabled={ this.getDisabledState() }
 						id="user_URL"
@@ -591,7 +609,9 @@ const Account = createReactClass( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="language">{ translate( 'Interface Language' ) }</FormLabel>
+					<FormLabel id="account__language" htmlFor="language">
+						{ translate( 'Interface language' ) }
+					</FormLabel>
 					<LanguagePicker
 						disabled={ this.getDisabledState() }
 						languages={ languages }
@@ -600,6 +620,10 @@ const Account = createReactClass( {
 						value={
 							this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
 						}
+						empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
+						useFallbackForIncompleteLanguages={ this.getUserSetting(
+							'use_fallback_for_incomplete_languages'
+						) }
 						onChange={ this.updateLanguage }
 					/>
 					<FormSettingExplanation>
@@ -615,7 +639,9 @@ const Account = createReactClass( {
 
 				{ config.isEnabled( 'me/account/color-scheme-picker' ) && supportsCssCustomProperties() && (
 					<FormFieldset>
-						<FormLabel htmlFor="color_scheme">{ translate( 'Dashboard Color Scheme' ) }</FormLabel>
+						<FormLabel id="account__color_scheme" htmlFor="color_scheme">
+							{ translate( 'Dashboard color scheme' ) }
+						</FormLabel>
 						<ColorSchemePicker temporarySelection onSelection={ this.updateColorScheme } />
 					</FormFieldset>
 				) }
@@ -658,8 +684,8 @@ const Account = createReactClass( {
 								onClick={ this.handleUsernameChangeBlogRadio }
 								value={ key }
 								checked={ key === this.state.usernameAction }
+								label={ message }
 							/>
-							<span>{ message }</span>
 						</FormLabel>
 					) )
 				}
@@ -671,7 +697,7 @@ const Account = createReactClass( {
 	 * These form fields are displayed when a username change is in progress.
 	 */
 	renderUsernameFields() {
-		const { translate, username } = this.props;
+		const { currentUserDisplayName, currentUserName, translate, username } = this.props;
 
 		const isSaveButtonDisabled =
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
@@ -710,7 +736,7 @@ const Account = createReactClass( {
 							'You will not be able to change your username back.',
 						{
 							args: {
-								username: user.get().username,
+								username: currentUserName,
 							},
 							components: {
 								strong: <strong />,
@@ -725,7 +751,7 @@ const Account = createReactClass( {
 							'you can do so under {{myProfileLink}}My Profile{{/myProfileLink}}.',
 						{
 							args: {
-								displayName: user.get().display_name,
+								displayName: currentUserDisplayName,
 							},
 							components: {
 								myProfileLink: (
@@ -835,6 +861,10 @@ export default compose(
 		( state ) => ( {
 			requestingMissingSites: isRequestingMissingSites( state ),
 			countryCode: requestGeoLocation().data,
+			currentUserDate: getCurrentUserDate( state ),
+			currentUserDisplayName: getCurrentUserDisplayName( state ),
+			currentUserName: getCurrentUserName( state ),
+			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 		} ),
 		{ bumpStat, errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),

@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, compact } from 'lodash';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -16,6 +16,7 @@ import warn from 'lib/warn';
 import PlanFeatures from 'my-sites/plan-features';
 import {
 	JETPACK_PLANS,
+	PLAN_JETPACK_PERSONAL,
 	TYPE_FREE,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
@@ -27,12 +28,10 @@ import {
 	TERM_BIENNIALLY,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	PLAN_PERSONAL,
 } from 'lib/plans/constants';
-import {
-	JETPACK_PRODUCTS_LIST,
-	JETPACK_PRODUCT_PRICE_MATRIX,
-	getJetpackProducts,
-} from 'lib/products-values/constants';
+import { JETPACK_PRODUCTS_LIST, JETPACK_PRODUCT_PRICE_MATRIX } from 'lib/products-values/constants';
+import { getJetpackProducts } from 'lib/products-values/translations';
 import { addQueryArgs } from 'lib/url';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';
@@ -76,6 +75,7 @@ import getPreviousRoute from 'state/selectors/get-previous-route';
 import { getTld } from 'lib/domains';
 import { isDiscountActive } from 'state/selectors/get-active-discount.js';
 import { selectSiteId as selectHappychatSiteId } from 'state/help/actions';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -147,6 +147,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			customHeader,
+			isReskinned,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -200,8 +201,10 @@ export class PlansFeaturesMain extends Component {
 					popularPlanSpec={ getPopularPlanSpec( {
 						customerType,
 						isJetpack,
+						availablePlans,
 					} ) }
 					siteId={ siteId }
+					isReskinned={ isReskinned }
 				/>
 			</div>
 		);
@@ -213,6 +216,8 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			selectedPlan,
 			hideFreePlan,
+			hidePersonalPlan,
+			hidePremiumPlan,
 			sitePlanSlug,
 		} = this.props;
 
@@ -248,12 +253,13 @@ export class PlansFeaturesMain extends Component {
 		if ( plansFromProps.length ) {
 			plans = plansFromProps;
 		} else if ( group === GROUP_JETPACK ) {
-			plans = [
+			plans = compact( [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
-				findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
+				( isEnabled( 'jetpack/personal-plan' ) || PLAN_JETPACK_PERSONAL === sitePlanSlug ) &&
+					findPlansKeys( { group, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group, term, type: TYPE_BUSINESS } )[ 0 ],
-			];
+			] );
 		} else {
 			plans = [
 				findPlansKeys( { group, type: TYPE_FREE } )[ 0 ],
@@ -269,8 +275,16 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
 		}
 
+		if ( hidePersonalPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+		}
+
+		if ( hidePremiumPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
 		if ( ! isEnabled( 'plans/personal-plan' ) && ! displayJetpackPlans ) {
-			plans.splice( plans.indexOf( plans.filter( ( p ) => p.type === TYPE_PERSONAL )[ 0 ] ), 1 );
+			plans.splice( plans.indexOf( plans.filter( ( p ) => p === PLAN_PERSONAL )[ 0 ] ), 1 );
 		}
 
 		return plans;
@@ -290,6 +304,11 @@ export class PlansFeaturesMain extends Component {
 
 			return plan ? [ ...accum, plan ] : accum;
 		}, [] );
+	}
+
+	isPersonalCustomerTypePlanVisible() {
+		const { hidePersonalPlan } = this.props;
+		return ! hidePersonalPlan;
 	}
 
 	getVisiblePlansForPlanFeatures( plans ) {
@@ -320,7 +339,7 @@ export class PlansFeaturesMain extends Component {
 			);
 		}
 
-		if ( customerType === 'personal' ) {
+		if ( customerType === 'personal' && this.isPersonalCustomerTypePlanVisible() ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [ TYPE_FREE, TYPE_BLOGGER, TYPE_PERSONAL, TYPE_PREMIUM ] )
 			);
@@ -390,7 +409,7 @@ export class PlansFeaturesMain extends Component {
 						document.location.search
 					) }
 				>
-					{ translate( 'Blogs and Personal Sites' ) }
+					{ translate( 'Blogs and personal sites' ) }
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
@@ -400,7 +419,7 @@ export class PlansFeaturesMain extends Component {
 						document.location.search
 					) }
 				>
-					{ translate( 'Business Sites and Online Stores' ) }
+					{ translate( 'Business sites and online stores' ) }
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
@@ -412,7 +431,7 @@ export class PlansFeaturesMain extends Component {
 	};
 
 	renderFreePlanBanner() {
-		const { hideFreePlan, translate, flowName, isInSignup, customHeader } = this.props;
+		const { hideFreePlan, translate, flowName, isInSignup, customHeader, isReskinned } = this.props;
 		const className = 'is-free-plan';
 		const callToAction =
 			isInSignup && flowName === 'launch-site'
@@ -426,8 +445,12 @@ export class PlansFeaturesMain extends Component {
 		return (
 			<div className="plans-features-main__banner">
 				<div className="plans-features-main__banner-content">
-					{ translate( 'Not sure yet?' ) }
-					<Button className={ className } onClick={ this.handleFreePlanButtonClick } borderless>
+					<span>{ translate( 'Not sure yet?' ) }</span>
+					<Button
+						className={ className }
+						onClick={ this.handleFreePlanButtonClick }
+						borderless={ ! isReskinned }
+					>
 						{ callToAction }
 					</Button>
 				</div>
@@ -437,13 +460,14 @@ export class PlansFeaturesMain extends Component {
 
 	renderToggle() {
 		const { displayJetpackPlans, withWPPlanTabs } = this.props;
+
 		if ( this.isDisplayingPlansNeededForFeature() ) {
 			return null;
 		}
 		if ( displayJetpackPlans ) {
 			return this.getIntervalTypeToggle();
 		}
-		if ( withWPPlanTabs ) {
+		if ( withWPPlanTabs && this.isPersonalCustomerTypePlanVisible() ) {
 			return this.getCustomerTypeToggle();
 		}
 		return false;
@@ -556,6 +580,8 @@ PlansFeaturesMain.propTypes = {
 	basePlansPath: PropTypes.string,
 	displayJetpackPlans: PropTypes.bool.isRequired,
 	hideFreePlan: PropTypes.bool,
+	hidePersonalPlan: PropTypes.bool,
+	hidePremiumPlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.string,
@@ -573,11 +599,14 @@ PlansFeaturesMain.propTypes = {
 	plansWithScroll: PropTypes.bool,
 	planTypes: PropTypes.array,
 	customHeader: PropTypes.node,
+	isReskinned: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
 	basePlansPath: null,
 	hideFreePlan: false,
+	hidePersonalPlan: false,
+	hidePremiumPlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
 	showFAQ: true,
@@ -585,6 +614,7 @@ PlansFeaturesMain.defaultProps = {
 	siteSlug: '',
 	withWPPlanTabs: false,
 	plansWithScroll: false,
+	isReskinned: false,
 };
 
 export default connect(
@@ -597,6 +627,11 @@ export default connect(
 			selectedPlan: props.selectedPlan,
 			currentPlan,
 		} );
+
+		const isReskinned =
+			props.isInSignup &&
+			'onboarding' === props.flowName &&
+			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
@@ -614,6 +649,7 @@ export default connect(
 			siteId,
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
+			isReskinned,
 		};
 	},
 	{

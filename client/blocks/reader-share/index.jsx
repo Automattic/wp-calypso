@@ -21,6 +21,7 @@ import * as stats from 'reader/stats';
 import { preload } from 'sections-helper';
 import SiteSelector from 'components/site-selector';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -123,8 +124,7 @@ class ReaderShare extends React.Component {
 		} );
 	};
 
-	toggle = ( event ) => {
-		event.preventDefault();
+	toggle = () => {
 		if ( ! this.state.showingMenu ) {
 			stats.recordAction( 'open_share' );
 			stats.recordGaEvent( 'Opened Share' );
@@ -177,17 +177,24 @@ class ReaderShare extends React.Component {
 			this.props.tagName,
 			{
 				className: 'reader-share',
-				onClick: this.toggle,
+				onClick: ( event ) => event.preventDefault(),
 				onTouchStart: preloadEditor,
 				onMouseEnter: preloadEditor,
 			},
 			[
-				<span key="button" ref={ this.shareButton } className={ buttonClasses }>
-					<Gridicon icon="share" size={ this.props.iconSize } />
+				<Button
+					key="button"
+					ref={ this.shareButton }
+					className={ buttonClasses }
+					onClick={ this.toggle }
+					borderless
+					compact={ this.props.iconSize === 18 }
+				>
+					<Gridicon icon="share" />
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>
-				</span>,
+				</Button>,
 				this.state.showingMenu && (
 					<ReaderPopoverMenu
 						key="menu"

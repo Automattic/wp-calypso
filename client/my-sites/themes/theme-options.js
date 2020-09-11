@@ -19,22 +19,23 @@ import {
 	showAutoLoadingHomepageWarning as showAutoLoadingHomepageWarningAction,
 } from 'state/themes/actions';
 import {
-	getThemeSignupUrl,
-	getThemePurchaseUrl,
-	getThemeDetailsUrl,
-	getThemeSupportUrl,
 	getJetpackUpgradeUrlIfPremiumTheme,
+	getThemeDetailsUrl,
 	getThemeHelpUrl,
-	isThemeActive,
-	isThemePremium,
+	getThemePurchaseUrl,
+	getThemeSignupUrl,
+	getThemeSupportUrl,
 	isPremiumThemeAvailable,
+	isThemeActive,
 	isThemeAvailableOnJetpackSite,
 	isThemeGutenbergFirst,
+	isThemePremium,
 } from 'state/themes/selectors';
+
+import getCustomizeUrl from 'state/selectors/get-customize-url';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUser } from 'state/current-user/selectors';
-import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 
 function getAllThemeOptions() {
 	const purchase = config.isEnabled( 'upgrades/checkout' )
@@ -112,7 +113,7 @@ function getAllThemeOptions() {
 			comment: 'label in the dialog for selecting a site for which to customize a theme',
 		} ),
 		icon: 'customize',
-		getUrl: getCustomizeOrEditFrontPageUrl,
+		getUrl: getCustomizeUrl,
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),

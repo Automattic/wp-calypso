@@ -19,6 +19,7 @@ import {
 	CART_PRIVACY_PROTECTION_REMOVE,
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
+	CART_RELOAD,
 } from 'lib/cart/action-types';
 import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
@@ -53,13 +54,14 @@ import wp from 'lib/wp';
 import { getReduxStore } from 'lib/redux-bridge';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isUserLoggedIn } from 'state/current-user/selectors';
-import { extractStoredCardMetaValue } from 'state/ui/payment/reducer';
+import { extractStoredCardMetaValue } from 'state/payment/util';
 
 const wpcom = wp.undocumented();
 
 let _cartKey = null;
 let _synchronizer = null;
 let _poller = null;
+let _userLoggedIn = true;
 
 const CartStore = {
 	get() {
@@ -71,11 +73,17 @@ const CartStore = {
 		} );
 	},
 	setSelectedSiteId( selectedSiteId, userLoggedIn = true ) {
-		if ( ! userLoggedIn ) {
-			return;
-		}
+		let newCartKey = selectedSiteId;
+		_userLoggedIn = userLoggedIn;
+		const urlParams = new URLSearchParams( window.location.search );
 
-		const newCartKey = selectedSiteId || 'no-site';
+		if ( ! newCartKey && window.location.pathname.includes( '/checkout/no-site' ) ) {
+			newCartKey = 'no-user';
+
+			if ( _userLoggedIn ) {
+				newCartKey = 'no-user' === urlParams.get( 'cart' ) ? 'no-user' : 'no-site';
+			}
+		}
 
 		if ( _cartKey === newCartKey ) {
 			return;
@@ -91,7 +99,12 @@ const CartStore = {
 		_synchronizer = cartSynchronizer( _cartKey, wpcom );
 		_synchronizer.on( 'change', emitChange );
 
-		_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
+		const shouldPollFromLocalStorage =
+			'no-user' === newCartKey || 'no-user' === urlParams.get( 'cart' );
+
+		_poller = shouldPollFromLocalStorage
+			? PollerPool.add( CartStore, _synchronizer._pollFromLocalStorage.bind( _synchronizer ) )
+			: PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 	},
 };
 
@@ -129,6 +142,12 @@ function disable() {
 	_synchronizer = null;
 	_poller = null;
 	_cartKey = null;
+}
+
+function fetch() {
+	if ( _synchronizer ) {
+		_synchronizer.fetch();
+	}
 }
 
 CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
@@ -229,6 +248,10 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 
 		case CART_TAX_POSTAL_CODE_SET:
 			update( setTaxPostalCode( action.postalCode ) );
+			break;
+
+		case CART_RELOAD:
+			fetch();
 			break;
 	}
 } );

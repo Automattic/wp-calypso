@@ -6,7 +6,7 @@ import {
 	HOME_QUICK_LINKS_EXPAND,
 	HOME_QUICK_LINKS_COLLAPSE,
 } from 'state/action-types';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
 
 export const layout = ( state = {}, action ) =>
 	action.type === HOME_LAYOUT_SET ? action.layout : state;
@@ -24,7 +24,7 @@ const schema = {
 
 export const quickLinksToggleStatus = withSchemaValidation(
 	schema,
-	( state = 'collapsed', action ) => {
+	( state = 'expanded', action ) => {
 		switch ( action.type ) {
 			case HOME_QUICK_LINKS_EXPAND:
 				return 'expanded';
@@ -36,7 +36,9 @@ export const quickLinksToggleStatus = withSchemaValidation(
 	}
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	quickLinksToggleStatus,
 	sites,
 } );
+
+export default withStorageKey( 'home', combinedReducer );

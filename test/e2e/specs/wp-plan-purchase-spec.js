@@ -76,7 +76,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 		}
 	} );
 
-	describe( 'Viewing a specific plan with coupon:  @parallel @jetpack', function () {
+	describe( 'Viewing a specific plan with coupon: @parallel @jetpack', function () {
 		let originalCartAmount, loginFlow;
 
 		before( async function () {
@@ -96,7 +96,9 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 		step( 'Can Select Plans tab', async function () {
 			const plansPage = await PlansPage.Expect( driver );
 			await plansPage.openPlansTab();
-			await plansPage.openAdvancedPlansSegment();
+			if ( host === 'WPCOM' ) {
+				await plansPage.openAdvancedPlansSegment();
+			}
 			return await plansPage.waitForComparison();
 		} );
 
@@ -139,7 +141,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 		step( 'Remove from cart', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 
-			return await securePaymentComponent.removeFromCart();
+			return await securePaymentComponent.removeBusinessPlan();
 		} );
 	} );
 

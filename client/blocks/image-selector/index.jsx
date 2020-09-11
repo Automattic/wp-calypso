@@ -14,12 +14,10 @@ import { noop } from 'lodash';
 import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
 import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
-import MediaActions from 'lib/media/actions';
 import MediaModal from 'post-editor/media-modal';
-import MediaStore from 'lib/media/store';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { setMediaLibrarySelectedItems } from 'state/media/actions';
 
 /**
  * Style dependencies
@@ -42,6 +40,7 @@ export class ImageSelector extends Component {
 		showEditIcon: PropTypes.bool,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
+		setMediaLibrarySelectedItems: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -59,8 +58,10 @@ export class ImageSelector extends Component {
 		const { siteId, imageIds } = this.props;
 
 		if ( imageIds ) {
-			const images = imageIds.map( ( imageId ) => MediaStore.get( siteId, imageId ) );
-			MediaActions.setLibrarySelectedItems( siteId, images );
+			this.props.setMediaLibrarySelectedItems(
+				siteId,
+				imageIds.map( ( ID ) => ( { ID } ) )
+			);
 		}
 
 		this.setState( {
@@ -104,17 +105,15 @@ export class ImageSelector extends Component {
 		const { isSelecting } = this.state;
 
 		return (
-			<MediaLibrarySelectedData siteId={ siteId }>
-				<MediaModal
-					visible={ selecting || isSelecting }
-					onClose={ this.setImage }
-					siteId={ siteId }
-					labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
-					enabledFilters={ [ 'images' ] }
-					galleryViewEnabled={ false }
-					{ ...( ! multiple && { single: true } ) }
-				/>
-			</MediaLibrarySelectedData>
+			<MediaModal
+				visible={ selecting || isSelecting }
+				onClose={ this.setImage }
+				siteId={ siteId }
+				labels={ { confirm: multiple ? translate( 'Set images' ) : translate( 'Set image' ) } }
+				enabledFilters={ [ 'images' ] }
+				galleryViewEnabled={ false }
+				{ ...( ! multiple && { single: true } ) }
+			/>
 		);
 	}
 
@@ -162,15 +161,18 @@ export class ImageSelector extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const { siteId } = ownProps;
-	const props = {
-		siteId: getSelectedSiteId( state ),
-		isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
-	};
+export default connect(
+	( state, ownProps ) => {
+		const { siteId } = ownProps;
+		const props = {
+			siteId: getSelectedSiteId( state ),
+			isImageSelectorDropZoneVisible: isDropZoneVisible( state, 'imageSelector' ),
+		};
 
-	if ( siteId ) {
-		props.siteId = siteId;
-	}
-	return props;
-} )( localize( ImageSelector ) );
+		if ( siteId ) {
+			props.siteId = siteId;
+		}
+		return props;
+	},
+	{ setMediaLibrarySelectedItems }
+)( localize( ImageSelector ) );

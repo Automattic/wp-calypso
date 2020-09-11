@@ -14,8 +14,8 @@ import NpsSurvey from 'blocks/nps-survey';
 import {
 	setNpsSurveyDialogShowing,
 	setupNpsSurveyDevTrigger,
-} from 'state/ui/nps-survey-notice/actions';
-import { isNpsSurveyDialogShowing } from 'state/ui/nps-survey-notice/selectors';
+} from 'state/nps-survey/notice/actions';
+import { isNpsSurveyDialogShowing } from 'state/nps-survey/notice/selectors';
 import {
 	submitNpsSurveyWithNoScore,
 	setupNpsSurveyEligibility,

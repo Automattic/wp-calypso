@@ -3,11 +3,12 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop } from 'lodash';
+import { noop, size, map } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -30,6 +31,12 @@ import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { READER_POST_OPTIONS_MENU } from 'reader/follow-sources';
+import {
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+} from 'state/reader/seen-posts/actions';
 
 /**
  * Style dependencies
@@ -48,6 +55,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		showReportPost: PropTypes.bool,
 		showReportSite: PropTypes.bool,
 		position: PropTypes.string,
+		posts: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -59,6 +67,7 @@ class ReaderPostOptionsMenu extends React.Component {
 		showConversationFollow: true,
 		showReportPost: true,
 		showReportSite: false,
+		posts: [],
 	};
 
 	blockSite = () => {
@@ -150,8 +159,88 @@ class ReaderPostOptionsMenu extends React.Component {
 		window.open( post.URL, '_blank' );
 	};
 
+	markAsSeen = () => {
+		const { post, posts } = this.props;
+
+		if ( ! post ) {
+			return;
+		}
+
+		const feedId = post.feed_ID;
+		let postIds = [ post.ID ];
+		let feedItemIds = [ post.feed_item_ID ];
+		let globalIds = [ post.global_ID ];
+
+		if ( size( posts ) ) {
+			postIds = map( posts, 'ID' );
+			feedItemIds = map( posts, 'feed_item_ID' );
+			globalIds = map( posts, 'global_ID' );
+		}
+
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsSeen( {
+				feedId,
+				feedUrl: post.feed_URL,
+				feedItemIds,
+				globalIds,
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsSeenBlog( {
+				feedId,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds,
+				globalIds,
+			} );
+		}
+
+		this.onMenuToggle();
+	};
+
+	markAsUnSeen = () => {
+		const { post, posts } = this.props;
+
+		if ( ! post ) {
+			return;
+		}
+
+		const feedId = post.feed_ID;
+		let postIds = [ post.ID ];
+		let feedItemIds = [ post.feed_item_ID ];
+		let globalIds = [ post.global_ID ];
+
+		if ( size( posts ) ) {
+			postIds = map( posts, 'ID' );
+			feedItemIds = map( posts, 'feed_item_ID' );
+			globalIds = map( posts, 'global_ID' );
+		}
+
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsUnseen( {
+				feedId,
+				feedUrl: post.feed_URL,
+				feedItemIds,
+				globalIds,
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsUnseenBlog( {
+				feedId,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds,
+				globalIds,
+			} );
+		}
+
+		this.onMenuToggle();
+	};
+
 	render() {
-		const { post, site, feed, teams, translate, position } = this.props;
+		const { post, site, feed, teams, translate, position, posts } = this.props;
 
 		if ( ! post ) {
 			return null;
@@ -188,7 +277,7 @@ class ReaderPostOptionsMenu extends React.Component {
 				{ ! teams && <QueryReaderTeams /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
-					popoverClassName="reader-post-options-menu__popover"
+					popoverClassName="reader-post-options-menu__popover ignore-click"
 					onToggle={ this.onMenuToggle }
 					position={ position }
 				>
@@ -211,6 +300,20 @@ class ReaderPostOptionsMenu extends React.Component {
 							post={ post }
 							followSource={ READER_POST_OPTIONS_MENU }
 						/>
+					) }
+
+					{ config.isEnabled( 'reader/seen-posts' ) && post.is_seen && (
+						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
+							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
+							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
+						</PopoverMenuItem>
+					) }
+
+					{ config.isEnabled( 'reader/seen-posts' ) && ! post.is_seen && (
+						<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
+							{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
+							{ size( posts ) === 0 && translate( 'Mark as seen' ) }
+						</PopoverMenuItem>
 					) }
 
 					{ this.props.showVisitPost && post.URL && (
@@ -265,5 +368,9 @@ export default connect(
 	},
 	{
 		blockSite,
+		requestMarkAsSeen,
+		requestMarkAsUnseen,
+		requestMarkAsSeenBlog,
+		requestMarkAsUnseenBlog,
 	}
 )( localize( ReaderPostOptionsMenu ) );

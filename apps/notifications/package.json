@@ -17,12 +17,33 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prebuild": "check-npm-client && yarn run clean",
-		"build": "check-npm-client && calypso-build --config='./webpack.config.js'"
+		"clean": "npx rimraf dist",
+		"prebuild": "yarn run clean",
+		"build": "calypso-build --config='./webpack.config.js'"
 	},
 	"dependencies": {
-		"@automattic/calypso-color-schemes": "^2.1.0",
-		"@automattic/calypso-polyfills": "^1.0.0"
+		"@automattic/calypso-color-schemes": "^2.1.1",
+		"@automattic/calypso-polyfills": "^1.0.0",
+		"classnames": "^2.2.6",
+		"create-react-class": "^15.6.3",
+		"debug": "^4.1.1",
+		"i18n-calypso": "^5.0.0",
+		"lodash": "^4.17.15",
+		"moment": "^2.26.0",
+		"page": "^1.11.5",
+		"prop-types": "^15.7.2",
+		"react": "^16.12.0",
+		"react-dom": "^16.12.0",
+		"react-redux": "^7.2.0",
+		"redux": "^4.0.5",
+		"calypso": "^0.17.0",
+		"wpcom": "^6.0.0",
+		"wpcom-proxy-request": "^6.0.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "^6.1.0",
+		"enzyme": "^3.11.0",
+		"html-webpack-plugin": "^3.2.0",
+		"webpack": "^4.44.1"
 	}
 }

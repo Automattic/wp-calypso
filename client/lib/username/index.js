@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import i18n from 'i18n-calypso';
 
 /**
@@ -9,8 +8,7 @@ import i18n from 'i18n-calypso';
  */
 import Emitter from 'lib/mixins/emitter';
 import wpcom from 'lib/wp';
-import userFactory from 'lib/user';
-const user = userFactory();
+import user from 'lib/user';
 
 /**
  * Initialize Username with defaults
@@ -27,7 +25,7 @@ function Username() {
 Emitter( Username.prototype );
 
 Username.prototype.validate = function ( username ) {
-	if ( username !== user.get().username ) {
+	if ( username !== user().get().username ) {
 		if ( username.length < 4 ) {
 			this.validation = {
 				error: 'invalid_input',
@@ -80,7 +78,7 @@ Username.prototype.change = function ( username, action, callback ) {
 					this.validation = error;
 					this.emit( 'change' );
 				} else {
-					user.fetch();
+					user().fetch();
 				}
 
 				if ( callback ) {

@@ -7,7 +7,7 @@
 .import-url__wrapper {
 	padding: 0;
 	@include elevation ( 0 );
-	border-radius: 3px;
+	border-radius: 2px;
 	max-width: 640px;
 	margin: auto;
 }
@@ -15,10 +15,10 @@
 // Actual form input for typing the URL
 .import-url__wrapper .import-url__url-input {
 	border: none;
-	border-radius: 3px;
+	border-radius: 2px;
 	padding: 10px 14px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding: 14px;
 	}
 }
@@ -39,7 +39,7 @@
 		top: 2px;
 		right: 2px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			top: 1px;
 			right: 1px;
 		}
@@ -66,7 +66,7 @@
 
 	&__example-url {
 		font-family: monospace;
-		font-size: 14px;
+		font-size: $font-body-small;
 		color: var( --color-text-inverted );
 
 		&:first-of-type {

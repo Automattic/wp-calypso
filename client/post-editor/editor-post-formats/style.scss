@@ -5,15 +5,16 @@
 
 .editor-post-formats__format {
 	margin: 12px 0;
+
+	.form-radio__label {
+		color: var( --color-text );
+		font-size: $font-body-extra-small;
+		position: relative;
+		padding-left: 26px;
+		cursor: pointer;
+	}
 }
 
-.editor-post-formats__format-label {
-	color: var( --color-text );
-	font-size: 12px;
-	position: relative;
-	padding-left: 26px;
-	cursor: pointer;
-}
 
 .editor-post-formats__format-icon {
 	position: absolute;
@@ -29,5 +30,5 @@
 }
 
 .editor-post-formats__help-link {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

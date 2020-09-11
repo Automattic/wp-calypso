@@ -14,7 +14,7 @@ import url from 'url';
 import config from 'config';
 // This is a custom AsyncLoad component for devdocs that includes a
 // `props.component`-aware placeholder. It still needs to be imported as
-// `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/master/index.js#L12
+// `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
 import AsyncLoad from './devdocs-async-load';
 import DocsComponent from './main';
 import { login } from 'lib/paths';
@@ -137,7 +137,7 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function ( context, next ) {
-		const currentUrl = url.parse( location.href );
+		const currentUrl = url.parse( window.location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 		if ( ! getCurrentUserId( context.store.getState() ) ) {
 			context.primary = React.createElement( EmptyContent, {

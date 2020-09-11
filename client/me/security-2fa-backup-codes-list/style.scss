@@ -15,12 +15,12 @@
 		display: inline-block;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-bottom: 24px;
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.security-2fa-backup-codes-list__btn-group .button {
 		display: inline-block;
 	}
@@ -49,8 +49,8 @@ button.security-2fa-backups-codes-list__generate-button {
 .security-2fa-backup-codes-list__codes li {
 	color: var( --color-neutral-70 );
 	float: left;
-	font-size: 18px;
-	font-weight: bold;
+	font-size: $font-title-small;
+	font-weight: 600;
 	line-height: 28px;
 	width: 50%;
 

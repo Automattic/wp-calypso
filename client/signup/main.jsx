@@ -7,14 +7,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
 	assign,
+	clone,
 	defer,
 	find,
 	get,
 	includes,
 	indexOf,
+	isEmpty,
 	isEqual,
 	kebabCase,
 	map,
+	omit,
 	pick,
 	startsWith,
 } from 'lodash';
@@ -40,7 +43,7 @@ import SignupProcessingScreen from 'signup/processing-screen';
 import SignupHeader from 'signup/signup-header';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { loadTrackingTool } from 'state/analytics/actions';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 import {
 	isUserLoggedIn,
 	getCurrentUser,
@@ -50,7 +53,7 @@ import {
 import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { getSignupProgress } from 'state/signup/progress/selectors';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { submitSignupStep, removeStep, addStep } from 'state/signup/progress/actions';
 import { setSurvey } from 'state/signup/steps/survey/actions';
 import { submitSiteType } from 'state/signup/steps/site-type/actions';
 import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
@@ -74,11 +77,17 @@ import {
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
+import P2SignupProcessingScreen from 'signup/p2-processing-screen';
+import ReskinnedProcessingScreen from 'signup/reskinned-processing-screen';
+import user from 'lib/user';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { abtest } from 'lib/abtest';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import { addP2SignupClassName } from './controller';
 
 const debug = debugModule( 'calypso:signup' );
 
@@ -87,6 +96,26 @@ function dependenciesContainCartItem( dependencies ) {
 		dependencies &&
 		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
 	);
+}
+
+function addLoadingScreenClassNamesToBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'has-loading-screen-signup' );
+}
+
+function removeLoadingScreenClassNamesFromBody() {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'has-loading-screen-signup' );
+}
+
+function isWPForTeamsFlow( flowName ) {
+	return flowName === 'p2';
 }
 
 class Signup extends React.Component {
@@ -145,6 +174,10 @@ class Signup extends React.Component {
 
 		this.updateShouldShowLoadingScreen();
 
+		// Only applies to the P2 signup flow (/start/p2) and only after logging in to
+		// a WP.com account during the signup flow.
+		this.completeP2FlowAfterLoggingIn();
+
 		if ( canResumeFlow( this.props.flowName, this.props.progress ) ) {
 			// Resume from the current window location
 			return;
@@ -157,12 +190,18 @@ class Signup extends React.Component {
 			this.setState( { resumingStep: destinationStep } );
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, this.props.locale ) );
 		}
+
+		if ( this.props.isReskinned ) {
+			this.addCssClassToBodyForReskinnedFlow();
+		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { stepName, flowName, progress } = nextProps;
+		const { stepName, flowName, progress, isReskinned } = nextProps;
 
-		this.removeFulfilledSteps( nextProps );
+		if ( this.props.stepName !== stepName ) {
+			this.removeFulfilledSteps( nextProps );
+		}
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
@@ -174,6 +213,9 @@ class Signup extends React.Component {
 
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
+		}
+		if ( isReskinned ) {
+			this.addCssClassToBodyForReskinnedFlow();
 		}
 	}
 
@@ -211,6 +253,21 @@ class Signup extends React.Component {
 		}
 	}
 
+	completeP2FlowAfterLoggingIn() {
+		if ( ! this.props.progress ) {
+			return;
+		}
+
+		const p2SiteStep = this.props.progress[ 'p2-site' ];
+
+		if ( p2SiteStep && p2SiteStep.status === 'pending' && user() && user().get() ) {
+			// By removing and adding the p2-site step, we trigger the `SignupFlowController` store listener
+			// to process the signup flow.
+			this.props.removeStep( p2SiteStep );
+			this.props.addStep( p2SiteStep );
+		}
+	}
+
 	maybeShowSitePreview() {
 		// Only show the site preview on main step pages, not sub step section screens
 		if ( this.props.shouldStepShowSitePreview && ! this.props.stepSectionName ) {
@@ -221,7 +278,12 @@ class Signup extends React.Component {
 	}
 
 	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
-		const filteredDestination = getDestination( destination, dependencies, this.props.flowName );
+		const filteredDestination = getDestination(
+			destination,
+			dependencies,
+			this.props.flowName,
+			this.props.localeSlug
+		);
 
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
@@ -250,18 +312,25 @@ class Signup extends React.Component {
 
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
+
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				addLoadingScreenClassNamesToBody();
+
+				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
+				addP2SignupClassName();
+			}
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
+
+			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+				removeLoadingScreenClassNamesFromBody();
+			}
 		}
 	};
 
 	processFulfilledSteps = ( stepName, nextProps ) => {
-		if ( includes( flows.excludedSteps, stepName ) ) {
-			return;
-		}
-
 		const isFulfilledCallback = steps[ stepName ].fulfilledStepCallback;
 		const defaultDependencies = steps[ stepName ].defaultDependencies;
 		isFulfilledCallback && isFulfilledCallback( stepName, defaultDependencies, nextProps );
@@ -270,6 +339,8 @@ class Signup extends React.Component {
 	removeFulfilledSteps = ( nextProps ) => {
 		const { flowName, stepName } = nextProps;
 		const flowSteps = flows.getFlow( flowName ).steps;
+		const excludedSteps = clone( flows.excludedSteps );
+		map( excludedSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 		map( flowSteps, ( flowStepName ) => this.processFulfilledSteps( flowStepName, nextProps ) );
 
 		if ( includes( flows.excludedSteps, stepName ) ) {
@@ -354,6 +425,15 @@ class Signup extends React.Component {
 			debug( `Handling regular login` );
 
 			const { bearer_token: bearerToken, username } = dependencies;
+
+			if (
+				isEmpty( bearerToken ) &&
+				isEmpty( username ) &&
+				'onboarding-registrationless' === this.props.flowName
+			) {
+				window.location.href = destination;
+				return;
+			}
 
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
 				this.setState( {
@@ -468,15 +548,35 @@ class Signup extends React.Component {
 		return flows.getFlow( this.props.flowName ).steps.length;
 	}
 
+	renderProcessingScreen() {
+		if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			return <P2SignupProcessingScreen />;
+		}
+
+		if ( this.props.isReskinned ) {
+			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
+			const hasPaidDomain = isDomainRegistration( domainItem );
+
+			return <ReskinnedProcessingScreen hasPaidDomain={ hasPaidDomain } />;
+		}
+
+		return <SignupProcessingScreen />;
+	}
+
 	renderCurrentStep() {
 		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
 		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
 		const CurrentComponent = this.props.stepComponent;
-		const propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props );
+		const propsFromConfig = assign(
+			{},
+			omit( this.props, 'locale' ),
+			steps[ this.props.stepName ].props
+		);
 		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
 		const flow = flows.getFlow( this.props.flowName );
 		const planWithDomain =
 			this.props.domainsWithPlansOnly &&
+			domainItem &&
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
@@ -492,7 +592,7 @@ class Signup extends React.Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						<SignupProcessingScreen />
+						this.renderProcessingScreen()
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
@@ -537,6 +637,14 @@ class Signup extends React.Component {
 		}
 	}
 
+	/**
+	 * Temporary hack for adding a css class to the body
+	 * for a user who is assigned to the reskinned group of reskinSignupFlow a/b test.
+	 */
+	addCssClassToBodyForReskinnedFlow() {
+		document.body.classList.add( 'is-white-signup' );
+	}
+
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -558,13 +666,16 @@ class Signup extends React.Component {
 		return (
 			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 				<DocumentHead title={ this.props.pageTitle } />
-				<SignupHeader
-					positionInFlow={ this.getPositionInFlow() }
-					flowLength={ this.getFlowLength() }
-					flowName={ this.props.flowName }
-					showProgressIndicator={ showProgressIndicator }
-					shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-				/>
+				{ ! isWPForTeamsFlow( this.props.flowName ) && (
+					<SignupHeader
+						positionInFlow={ this.getPositionInFlow() }
+						flowLength={ this.getFlowLength() }
+						flowName={ this.props.flowName }
+						showProgressIndicator={ showProgressIndicator }
+						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+						isReskinned={ this.props.isReskinned }
+					/>
+				) }
 				<div className="signup__steps">{ this.renderCurrentStep() }</div>
 				{ ! this.state.shouldShowLoadingScreen && this.props.isSitePreviewVisible && (
 					<SiteMockups stepName={ this.props.stepName } />
@@ -591,9 +702,12 @@ export default connect(
 			'props.showSiteMockups',
 			false
 		);
+		const isReskinned =
+			'onboarding' === ownProps.flowName && 'reskinned' === abtest( 'reskinSignupFlow' );
+
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ) // this is intentional, not a mistake
 				: true,
 			isDomainOnlySite: isDomainOnlySite( state, siteId ),
 			progress: getSignupProgress( state ),
@@ -608,6 +722,8 @@ export default connect(
 			siteType: getSiteType( state ),
 			shouldStepShowSitePreview,
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
+			localeSlug: getCurrentLocaleSlug( state ),
+			isReskinned,
 		};
 	},
 	{
@@ -615,8 +731,10 @@ export default connect(
 		submitSiteType,
 		submitSiteVertical,
 		submitSignupStep,
+		removeStep,
 		loadTrackingTool,
 		showSitePreview,
 		hideSitePreview,
+		addStep,
 	}
 )( Signup );

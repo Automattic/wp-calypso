@@ -107,12 +107,6 @@ describe( 'reducer', () => {
 				[ siteId ]: {
 					[ period ]: [
 						{
-							period: '2018-09-20',
-							views: 247,
-							labelDay: 'Sep 20',
-							classNames: [],
-						},
-						{
 							period: '2018-09-30',
 							views: 487,
 							labelDay: 'Sep 30',

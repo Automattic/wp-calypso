@@ -17,6 +17,7 @@ import { preventWidows } from 'lib/formatting';
 import './style.scss';
 
 function FormattedHeader( {
+	brandFont,
 	id,
 	headerText,
 	subHeaderText,
@@ -32,14 +33,12 @@ function FormattedHeader( {
 		'is-right-align': 'right' === align,
 	} );
 
+	const headerClasses = classNames( 'formatted-header__title', { 'wp-brand-font': brandFont } );
+
 	return (
 		<header id={ id } className={ classes }>
-			{ ! isSecondary && (
-				<h1 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h1>
-			) }
-			{ isSecondary && (
-				<h2 className="formatted-header__title">{ preventWidows( headerText, 2 ) }</h2>
-			) }
+			{ ! isSecondary && <h1 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h1> }
+			{ isSecondary && <h2 className={ headerClasses }>{ preventWidows( headerText, 2 ) }</h2> }
 			{ subHeaderText && (
 				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
 			) }
@@ -48,11 +47,24 @@ function FormattedHeader( {
 }
 
 FormattedHeader.propTypes = {
-	headerText: PropTypes.node,
-	subHeaderText: PropTypes.node,
+	id: PropTypes.string,
+	className: PropTypes.string,
+	brandFont: PropTypes.bool,
+	headerText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ).isRequired,
+	subHeaderText: PropTypes.oneOfType( [ PropTypes.node, PropTypes.string ] ),
 	compactOnMobile: PropTypes.bool,
 	isSecondary: PropTypes.bool,
-	align: PropTypes.string,
+	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
+};
+
+FormattedHeader.defaultProps = {
+	id: '',
+	className: '',
+	brandFont: false,
+	subHeaderText: '',
+	compactOnMobile: false,
+	isSecondary: false,
+	align: 'center',
 };
 
 export default FormattedHeader;

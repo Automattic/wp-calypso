@@ -28,6 +28,20 @@ function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	);
 }
 
+function rectIsZero( rect: NullableDOMRect ) {
+	if ( rect === null ) {
+		return null;
+	}
+	return (
+		rect.bottom === 0 &&
+		rect.left === 0 &&
+		rect.right === 0 &&
+		rect.top === 0 &&
+		rect.width === 0 &&
+		rect.height === 0
+	);
+}
+
 /**
  * React hook that subscribes a consumer to changes to the bounding client rect of an element, based
  * on window resize events.
@@ -52,9 +66,8 @@ export function useWindowResizeCallback(
 		// Measure the element in the DOM.
 		const measureElement = () => {
 			const rect = elementRef.current ? elementRef.current.getBoundingClientRect() : null;
-
 			// Avoid notifying consumer if nothing's changed.
-			if ( ! rectIsEqual( lastRect.current, rect ) ) {
+			if ( ! rectIsEqual( lastRect.current, rect ) && ! rectIsZero( rect ) ) {
 				lastRect.current = rect;
 
 				// Notify consumer of bounding client rect change.

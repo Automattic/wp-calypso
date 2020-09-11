@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import { noop } from 'lodash';
 import i18n from 'i18n-calypso';
 
@@ -36,6 +35,8 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
+	addOrRemoveFromProgressStore = noop,
+	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -145,7 +146,30 @@ export function generateSteps( {
 			stepName: 'user',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username' ],
+			providesDependencies: [ 'bearer_token', 'username', 'marketing_price_group' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-new': {
+			stepName: 'user-new',
+			apiRequestFunction: createAccount,
+			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
+			providesToken: true,
+			dependencies: [ 'cartItem', 'domainItem' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
+			optionalDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'allowUnauthenticated',
+			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -164,6 +188,12 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-new': {
+			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
@@ -251,30 +281,28 @@ export function generateSteps( {
 			},
 		},
 
+		'upsell-plan': {
+			stepName: 'upsell-plan',
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+		},
+
+		'plans-plan-only': {
+			stepName: 'plans-plan-only',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: addOrRemoveFromProgressStore,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
+			},
+		},
+
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
-		},
-
-		'plans-with-domain': {
-			stepName: 'plans-with-domain',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem', 'isPreLaunch', 'isGutenboardingCreate' ],
-			props: {
-				headerText: i18n.translate( 'Choose a plan' ),
-				subHeaderText: i18n.translate(
-					'Pick a plan that’s right for you. Switch plans as your needs change. {{br/}} There’s no risk, you can cancel for a full refund within 30 days.',
-					{
-						components: { br: <br /> },
-						comment:
-							'Subheader of the plans page where users land from onboarding after they picked a paid domain',
-					}
-				),
-			},
 		},
 
 		domains: {
@@ -298,6 +326,16 @@ export function generateSteps( {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
+				isDomainOnly: true,
+				shouldShowDomainTestCopy: false,
+			},
+		},
+
+		'select-domain': {
+			stepName: 'select-domain',
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
+			props: {
+				isAllDomains: true,
 				isDomainOnly: true,
 				shouldShowDomainTestCopy: false,
 			},
@@ -350,14 +388,26 @@ export function generateSteps( {
 				oauth2Signup: true,
 			},
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+			],
 		},
 
 		'oauth2-name': {
 			stepName: 'oauth2-name',
 			apiRequestFunction: createAccount,
 			providesToken: true,
-			providesDependencies: [ 'bearer_token', 'username', 'oauth2_client_id', 'oauth2_redirect' ],
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'oauth2_client_id',
+				'oauth2_redirect',
+				'marketing_price_group',
+			],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
@@ -612,8 +662,12 @@ export function generateSteps( {
 			unstorableDependencies: [ 'bearer_token' ],
 		},
 
-		'team-site': {
-			stepName: 'team-site',
+		'p2-details': {
+			stepName: 'p2-details',
+		},
+
+		'p2-site': {
+			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,
 			providesDependencies: [ 'siteSlug' ],
 		},

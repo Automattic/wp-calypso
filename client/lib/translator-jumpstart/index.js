@@ -12,14 +12,13 @@ import { find, isUndefined } from 'lodash';
  */
 import { languages } from 'languages';
 import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
-import User from 'lib/user';
+import user from 'lib/user';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { canBeTranslated } from 'lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
 
-const user = new User(),
-	communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
+const communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
 	communityTranslatorVersion = '1.160729',
 	// lookup for the translation set slug on GP
 	translateSetSlugs = {
@@ -54,7 +53,7 @@ let injectUrl,
  */
 const communityTranslatorJumpstart = {
 	isEnabled() {
-		const currentUser = user.get();
+		const currentUser = user().get();
 
 		// disable for locales
 		if (
@@ -188,7 +187,7 @@ const communityTranslatorJumpstart = {
 			languageJson[ '' ][ 'Plural-Forms' ] ||
 			languageJson[ '' ][ 'plural-forms' ] ||
 			translationDataFromPage.pluralForms;
-		translationDataFromPage.currentUserId = user.data.ID;
+		translationDataFromPage.currentUserId = user().get().ID;
 
 		const currentLocale = find( languages, ( lang ) => lang.langSlug === localeCode );
 		if ( currentLocale ) {
@@ -323,7 +322,7 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );
-		recordTracksEvent( tracksEvent, { locale: user.data.localeSlug } );
+		recordTracksEvent( tracksEvent, { locale: user().get().localeSlug } );
 	}
 
 	_isTranslatorEnabled = newSetting;

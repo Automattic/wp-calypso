@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 import { debounce } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,9 +13,10 @@ import PropTypes from 'prop-types';
  */
 import MediaLibraryScale from './scale';
 import { Card, Button } from '@automattic/components';
-import MediaActions from 'lib/media/actions';
-import MediaListStore from 'lib/media/list-store';
 import StickyPanel from 'components/sticky-panel';
+import { addExternalMedia, fetchNextMediaPage } from 'state/media/thunks';
+import { changeMediaSource } from 'state/media/actions';
+import isFetchingNextPage from 'state/selectors/is-fetching-next-page';
 
 const DEBOUNCE_TIME = 250;
 
@@ -30,73 +31,67 @@ class MediaLibraryExternalHeader extends React.Component {
 		sticky: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,
+		isFetchingNextPage: PropTypes.bool,
 	};
 
 	constructor( props ) {
 		super( props );
 
 		this.handleClick = this.onClick.bind( this );
-		this.handleMedia = this.onUpdateState.bind( this );
 
-		// The MediaListStore fetching state can bounce between true and false quickly.
+		// The redux `isFetchingNextPage` state can bounce between true and false quickly.
 		// We disable the refresh button if fetching and rather than have the button flicker
-		// we debounce when fetching=false, but don't debounce when fetching=true - this means
+		// we debounce when debouncedFetching=false, but don't debounce when debouncedFetching=true - this means
 		// our refresh button is disabled instantly but only enabled after the debounce time
 		this.handleFetchOn = this.onSetFetch.bind( this );
 		this.handleFetchOff = debounce( this.onDisableFetch.bind( this ), DEBOUNCE_TIME );
 
-		this.state = this.getState();
+		this.state = {
+			debouncedFetching: props.isFetchingNextPage,
+		};
 	}
 
 	onSetFetch() {
-		// We're now fetching - cancel any fetch=off debounce as we want the button to be disabled instantly
+		// We're now debouncedFetching - cancel any fetch=off debounce as we want the button to be disabled instantly
 		this.handleFetchOff.cancel();
-		this.setState( { fetching: true } );
+		this.setState( { debouncedFetching: true } );
 	}
 
 	onDisableFetch() {
-		// This is debounced so we only enable the button DEBOUNCE_TIME after fetching is false
-		this.setState( { fetching: false } );
-	}
-
-	componentDidMount() {
-		MediaListStore.on( 'change', this.handleMedia );
+		// This is debounced so we only enable the button DEBOUNCE_TIME after debouncedFetching is false
+		this.setState( { debouncedFetching: false } );
 	}
 
 	componentWillUnmount() {
 		// Cancel the debounce, just in case it fires after we've unmounted
 		this.handleFetchOff.cancel();
-		MediaListStore.off( 'change', this.handleMedia );
 	}
 
-	onUpdateState() {
-		const { fetching } = this.getState();
+	componentDidUpdate() {
+		if ( this.props.isFetchingNextPage === this.state.debouncedFetching ) {
+			// don't force a re-update if already synced
+			return;
+		}
 
-		if ( fetching ) {
+		if ( this.props.isFetchingNextPage ) {
 			this.handleFetchOn();
 		} else {
 			this.handleFetchOff();
 		}
 	}
 
-	getState() {
-		return {
-			fetching: MediaListStore.isFetchingNextPage( this.props.site.ID ),
-		};
-	}
-
 	onClick() {
 		const { ID } = this.props.site;
 
-		MediaActions.sourceChanged( ID );
-		MediaActions.fetchNextPage( ID );
+		this.props.fetchNextMediaPage( ID );
+		this.props.changeMediaSource( ID );
 	}
 
 	onCopy = () => {
 		const { site, selectedItems, source, onSourceChange } = this.props;
 
 		onSourceChange( '', () => {
-			MediaActions.addExternal( site, selectedItems, source );
+			this.props.addExternalMedia( selectedItems, site, source );
 		} );
 	};
 
@@ -128,7 +123,7 @@ class MediaLibraryExternalHeader extends React.Component {
 				{ hasAttribution && this.renderPexelsAttribution() }
 
 				{ hasRefreshButton && (
-					<Button compact disabled={ this.state.fetching } onClick={ this.handleClick }>
+					<Button compact disabled={ this.state.debouncedFetching } onClick={ this.handleClick }>
 						<Gridicon icon="refresh" size={ 24 } />
 
 						{ translate( 'Refresh' ) }
@@ -157,4 +152,12 @@ class MediaLibraryExternalHeader extends React.Component {
 	}
 }
 
-export default localize( MediaLibraryExternalHeader );
+const mapStateToProps = ( state, { site } ) => ( {
+	isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
+} );
+
+export default connect( mapStateToProps, {
+	addExternalMedia,
+	changeMediaSource,
+	fetchNextMediaPage,
+} )( localize( MediaLibraryExternalHeader ) );

@@ -47,12 +47,11 @@ class DomainRegistrationAgreement extends React.Component {
 		const preamble = this.props.translate(
 			'You agree to the following domain name registration agreements:'
 		);
-		let key = 0;
 		return (
 			<Fragment>
 				<p>{ preamble }</p>
 				{ map( agreementsList, ( { url, domains } ) => (
-					<p key={ key++ }>{ this.renderAgreementLinkForList( url, domains ) }</p>
+					<p key={ url + domains.length }>{ this.renderAgreementLinkForList( url, domains ) }</p>
 				) ) }
 			</Fragment>
 		);

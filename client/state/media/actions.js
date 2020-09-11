@@ -12,16 +12,22 @@ import {
 	MEDIA_ERRORS_CLEAR,
 	MEDIA_ITEM_CREATE,
 	MEDIA_ITEM_ERRORS_CLEAR,
+	MEDIA_ITEM_ERRORS_SET,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
-	MEDIA_ITEM_REQUESTING,
+	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
-	MEDIA_REQUESTING,
+	MEDIA_SET_NEXT_PAGE_HANDLE,
 	MEDIA_SOURCE_CHANGE,
+	MEDIA_ITEM_UPDATE,
+	MEDIA_ITEM_EDIT,
+	MEDIA_ITEM_DELETE,
+	MEDIA_SET_QUERY,
+	MEDIA_CLEAR_SITE,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/media';
@@ -29,6 +35,9 @@ import 'state/data-layer/wpcom/sites/media';
 /**
  * Returns an action object used in signalling that media item(s) for the site
  * have been received.
+ *
+ * Note: `media` items may contain an optional `transientId` field which when
+ * present denotes the transient ID that referred to the media item.
  *
  * @param  {number}         siteId Site ID
  * @param  {(Array|object)} media  Media item(s) received
@@ -57,22 +66,6 @@ export function receiveMedia( siteId, media, found, query ) {
 export function requestMedia( siteId, query ) {
 	return {
 		type: MEDIA_REQUEST,
-		siteId,
-		query,
-	};
-}
-
-/**
- * Returns an action object used in signalling that media item(s) for the site
- * are being requested.
- *
- * @param  {number} siteId Site ID
- * @param  {object} query  Query object
- * @returns {object}        Action object
- */
-export function requestingMedia( siteId, query ) {
-	return {
-		type: MEDIA_REQUESTING,
 		siteId,
 		query,
 	};
@@ -129,22 +122,6 @@ export function requestMediaItem( siteId, mediaId ) {
 }
 
 /**
- * Returns an action object used in signalling that a media item for the site
- * are being requested.
- *
- * @param  {number} siteId  Site ID
- * @param  {number} mediaId Media ID
- * @returns {object}         Action object
- */
-export function requestingMediaItem( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUESTING,
-		siteId,
-		mediaId,
-	};
-}
-
-/**
  * Returns an action object used in signalling that a request for media item(s)
  * has failed.
  *
@@ -195,6 +172,34 @@ export function createMediaItem( site, transientMedia ) {
 }
 
 /**
+ * Returns an action object used in signalling that media item for the site
+ * are to be edited.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} mediaItem media item with updated properties
+ * @param {object} data binary updated item data (to be sent to the server)
+ */
+export const editMediaItem = ( siteId, mediaItem, data ) => ( {
+	type: MEDIA_ITEM_EDIT,
+	siteId,
+	mediaItem,
+	data,
+} );
+
+/**
+ * Returns an action object used in signalling that media item data for the site
+ * are to be updated.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} item media item
+ */
+export const updateMediaItem = ( siteId, item ) => ( {
+	type: MEDIA_ITEM_UPDATE,
+	siteId,
+	item,
+} );
+
+/**
  * Returns an action object used in signalling that media item(s) for the site
  * are to be deleted.
  *
@@ -213,6 +218,12 @@ export function deleteMedia( siteId, mediaIds ) {
 		siteId,
 	};
 }
+
+export const deleteMediaItem = ( siteId, mediaId ) => ( {
+	type: MEDIA_ITEM_DELETE,
+	siteId,
+	mediaId,
+} );
 
 /**
  * Returns an action object used in signalling that the media source for the site has changed.
@@ -254,5 +265,79 @@ export function clearMediaItemErrors( siteId, mediaId ) {
 		type: MEDIA_ITEM_ERRORS_CLEAR,
 		siteId,
 		mediaId,
+	};
+}
+
+/**
+ * Returns an action object used in signaling to store errors for a certain media item.
+ *
+ * @param {number} siteId Site ID
+ * @param {(number|string)} mediaId Server or transient media ID to set the errors for
+ * @param {Array<object>} errors Errors for the media item
+ */
+export function setMediaItemErrors( siteId, mediaId, errors ) {
+	return {
+		type: MEDIA_ITEM_ERRORS_SET,
+		siteId,
+		mediaId,
+		errors,
+	};
+}
+
+/**
+ * Returns an action object used in signalling that new selected media item(s)
+ * are being set for the site's media library.
+ *
+ * @param  {number}  siteId Site ID
+ * @param  {Array}   media  Array of media objects
+ * @returns {object}        Action object
+ */
+export function setMediaLibrarySelectedItems( siteId, media ) {
+	return {
+		type: MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
+		media,
+		siteId,
+	};
+}
+
+/**
+ * Returns an action object used in signallying that a new next page handle
+ * needs to be set based on the metadata from a media request.
+ *
+ * @param {number} siteId Site ID
+ * @param {object} mediaRequestMeta The `meta` object from a media request data
+ */
+export function setNextPageHandle( siteId, mediaRequestMeta ) {
+	return {
+		type: MEDIA_SET_NEXT_PAGE_HANDLE,
+		siteId,
+		mediaRequestMeta,
+	};
+}
+
+/**
+ * Returns an action object used in signallying that a new next page handle
+ * needs to be set based on the metadata from a media request.
+ *
+ * @param {number} siteId Site ID
+ * @param {object} query query object
+ */
+export function setQuery( siteId, query ) {
+	return {
+		type: MEDIA_SET_QUERY,
+		siteId,
+		query,
+	};
+}
+
+/**
+ * Returns an action object used in signallying that a media data from a given site
+ *
+ * @param {number} siteId Site ID
+ */
+export function clearSite( siteId ) {
+	return {
+		type: MEDIA_CLEAR_SITE,
+		siteId,
 	};
 }

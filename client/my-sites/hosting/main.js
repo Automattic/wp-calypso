@@ -181,6 +181,7 @@ class Hosting extends Component {
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					headerText={ translate( 'Hosting Configuration' ) }
 					subHeaderText={ translate(
 						'Access your website’s database and more advanced settings.'

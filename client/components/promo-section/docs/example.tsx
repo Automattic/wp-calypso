@@ -39,14 +39,14 @@ const PromoSectionExample = () => {
 				},
 			},
 			{
-				title: 'Collect recurring payments',
+				title: 'Collect payments',
 				body:
-					'Charge for services, collect membership dues, or take recurring donations. Automate recurring payments, and use your site to earn reliable revenue. Available to any site with a paid plan.',
+					'Charge for services, collect membership dues, or take one-time or recurring donations. Automate recurring payments, and use your site to earn reliable revenue. Available to any site with a paid plan.',
 				image: {
 					path: recurringImage,
 				},
 				cta: {
-					text: 'Collect Recurring Payments',
+					text: 'Collect Payments',
 					url: '/',
 				},
 			},

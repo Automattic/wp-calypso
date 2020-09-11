@@ -53,6 +53,8 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
 import { localizeUrl } from 'lib/i18n-utils';
 
+import 'state/form/init';
+
 // Utility function for checking the state of the Payment Buttons list
 const isEmptyArray = ( a ) => Array.isArray( a ) && a.length === 0;
 
@@ -478,7 +480,7 @@ class SimplePaymentsDialog extends Component {
 							className="editor-simple-payments-modal__nudge-nudge"
 							title={ translate( 'Upgrade your plan to our Premium or Business plan!' ) }
 							description={ translate(
-								'Get simple payments, advanced social media tools, your own domain, and more.'
+								'Get Pay with PayPal buttons, advanced social media tools, your own domain, and more.'
 							) }
 							feature={ FEATURE_SIMPLE_PAYMENTS }
 							event="editor_simple_payments_modal_nudge"
@@ -490,9 +492,9 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' ) }
 						>
-							{ translate( 'Learn more about Simple Payments' ) }
+							{ translate( 'Learn more about Pay with PayPal' ) }
 						</a>
 					}
 				/>,
@@ -523,9 +525,9 @@ class SimplePaymentsDialog extends Component {
 					secondaryAction={
 						<a
 							className="empty-content__action button"
-							href={ localizeUrl( 'https://wordpress.com/support/simple-payments/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support/pay-with-paypal/' ) }
 						>
-							{ translate( 'Learn more about Simple Payments' ) }
+							{ translate( 'Learn more about Pay with PayPal' ) }
 						</a>
 					}
 				/>,

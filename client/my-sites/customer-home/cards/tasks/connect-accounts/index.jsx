@@ -11,7 +11,8 @@ import { isMobile } from '@automattic/viewport';
  */
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Task from '../task';
+import Task from 'my-sites/customer-home/cards/tasks/task';
+import { TASK_CONNECT_ACCOUNTS } from 'my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
@@ -37,7 +38,7 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 				}
 				illustration={ connectSocialAccountsIllustration }
 				timing={ 3 }
-				taskId="connect-accounts"
+				taskId={ TASK_CONNECT_ACCOUNTS }
 			/>
 		</>
 	);

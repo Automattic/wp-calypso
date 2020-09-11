@@ -10,6 +10,8 @@ import { Field } from 'redux-form';
  */
 import FormTextarea from 'components/forms/form-textarea';
 
+import 'state/form/init';
+
 const TextareaRenderer = ( { input, meta, ...props } ) => (
 	<FormTextarea { ...input } { ...props } />
 );

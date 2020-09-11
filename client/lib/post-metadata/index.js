@@ -148,6 +148,19 @@ const PostMetadata = {
 		}
 	},
 
+	geoStaticMapUrl: function ( post ) {
+		if ( ! post ) {
+			return;
+		}
+
+		const coordinates = this.geoCoordinates( post );
+		if ( ! coordinates ) {
+			return;
+		}
+
+		return post?.geo?.map_url;
+	},
+
 	/**
 	 * Given a post object, return a boolean, indicating whether the geo-location data
 	 * associated with the post is allowed to be displayed publicly.

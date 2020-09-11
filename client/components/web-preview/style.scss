@@ -1,8 +1,11 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .web-preview {
 	position: fixed;
-		top: 0;
-		right: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	left: 0;
 	margin: 0 auto;
 	overflow: hidden;
 	opacity: 0;
@@ -21,7 +24,7 @@
 	}
 
 	&.is-with-sidebar {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			left: 273px;
 		}
 	}
@@ -29,10 +32,10 @@
 
 .web-preview__backdrop {
 	position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	display: block;
 	background: rgba( var( --color-neutral-0-rgb ), 0.8 );
 }
@@ -42,19 +45,18 @@
 	flex-direction: column;
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-light-rgb ), 0.5 );
 	background: var( --color-neutral-0 );
-	border-radius: 4px 4px 0 0;
+	border-radius: 2px 2px 0 0;
 	position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	margin: 0 auto;
 	opacity: 0;
 	transform: translateY( 80vh );
-	transition: transform 0.2s ease-out,
-		opacity 0.1s ease-in-out;
+	transition: transform 0.2s ease-out, opacity 0.1s ease-in-out;
 
-	@include breakpoint( '>960px' ) {
+	@include break-large {
 		top: 24px;
 		left: 24px;
 		right: 24px;
@@ -66,7 +68,7 @@
 	height: 46px;
 	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-10 );
-	border-radius: 4px 4px 0 0;
+	border-radius: 2px 2px 0 0;
 	display: flex;
 }
 
@@ -77,7 +79,26 @@
 	color: var( --color-primary );
 	border-radius: 0;
 
-	@include breakpoint( '>960px' ) {
+	@include break-large {
+		padding: 6px 32px;
+	}
+
+	&:hover {
+		color: var( --color-accent );
+	}
+}
+
+.web-preview__edit-header-link.button {
+	padding: 6px 16px;
+	line-height: 34px;
+	color: var( --color-primary );
+	border-radius: 0;
+
+	@include break-small {
+		border-left: 1px solid var( --color-neutral-5 );
+	}
+
+	@include break-large {
 		padding: 6px 32px;
 	}
 
@@ -103,7 +124,7 @@ a.web-preview__external.button {
 	display: flex;
 	justify-content: flex-end;
 
-	@include breakpoint( '>960px' ) {
+	@include break-large {
 		// Matches __device-switcher width + margin
 		// and allows the center area to flex equally
 		min-width: 212px;
@@ -111,9 +132,12 @@ a.web-preview__external.button {
 }
 
 .web-preview__device-switcher {
-	display: flex;
-	margin: 6px 0 0 12px;
-	width: 200px;
+	display: none;
+
+	@include break-small {
+		display: flex;
+		margin: 6px 12px 0;
+	}
 }
 
 .web-preview__url-clipboard-input {
@@ -123,7 +147,7 @@ a.web-preview__external.button {
 
 	.form-text-input {
 		color: var( --color-text-subtle );
-		font-size: 14px;
+		font-size: $font-body-small;
 		height: 35px;
 		border-color: transparent;
 		text-overflow: ellipsis;
@@ -152,7 +176,7 @@ a.web-preview__external.button {
 		color: var( --color-neutral-70 );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@media ( max-width: $break-small ) {
 		display: none;
 	}
 }
@@ -178,10 +202,10 @@ a.web-preview__external.button {
 }
 
 .web-preview__back-to-preview-button {
-	display: none;
+	display: block;
 
-	@include breakpoint( '<660px' ) {
-		display: block;
+	@include break-small {
+		display: none;
 	}
 }
 
@@ -189,7 +213,7 @@ a.web-preview__external.button {
 	.button {
 		margin: 4px;
 		&:not( :last-child ) {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: none;
 			}
 		}
@@ -202,8 +226,7 @@ a.web-preview__external.button {
 	max-width: 100%;
 	height: 100%;
 	opacity: 0;
-	transition: opacity 0.2s ease-in-out,
-		max-width 0.2s ease-out;
+	transition: opacity 0.2s ease-in-out, max-width 0.2s ease-out;
 	margin: 0 auto;
 	pointer-events: none;
 
@@ -227,8 +250,8 @@ a.web-preview__external.button {
 
 .web-preview__frame-wrapper {
 	position: absolute;
-		top: 0;
-		left: 0;
+	top: 0;
+	left: 0;
 	height: 100%;
 	width: 100%;
 
@@ -275,26 +298,26 @@ a.web-preview__external.button {
 
 .web-preview__loading-message {
 	color: var( --color-text-subtle );
-	font-size: 16px;
+	font-size: $font-body;
 }
 
 .web-preview__loading-message strong {
 	color: var( --color-text-subtle );
 	display: block;
-	font-size: 24px;
+	font-size: $font-title-medium;
 	margin-bottom: 5px;
 }
 
 .web-preview__inner .spinner-line {
 	position: absolute;
-		top: 22px;
+	top: 22px;
 	width: 100%;
 	z-index: z-index( 'root', '.web-preview__inner .spinner-line' );
 }
 
 .web-preview__inner .spinner-line {
 	position: absolute;
-		top: 22px;
+	top: 22px;
 	width: 100%;
 	z-index: z-index( 'root', '.web-preview__inner .spinner-line' );
 }

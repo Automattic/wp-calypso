@@ -14,6 +14,7 @@ import {
 import 'state/data-layer/wpcom/me/two-step/application-passwords';
 import 'state/data-layer/wpcom/me/two-step/application-passwords/delete';
 import 'state/data-layer/wpcom/me/two-step/application-passwords/new';
+import 'state/application-passwords/init';
 
 /**
  * Returns an action object to signal the request of the user's application passwords.

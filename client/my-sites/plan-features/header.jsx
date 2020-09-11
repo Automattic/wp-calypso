@@ -19,7 +19,7 @@ import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer'
 import PlanPrice from 'my-sites/plan-price';
 import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import PlanPill from 'components/plans/plan-pill';
-import { TYPE_FREE } from 'lib/plans/constants';
+import { TYPE_FREE, GROUP_WPCOM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import { getYearlyPlanByMonthly, planMatches, getPlanClass } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
@@ -143,13 +143,18 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	getDiscountTooltipMessage() {
-		const { currencyCode, currentSitePlan, translate, rawPrice } = this.props;
+		const { currencyCode, currentSitePlan, translate, rawPrice, discountPrice } = this.props;
+		const price = formatCurrency( rawPrice, currencyCode );
+		const isDiscounted = !! discountPrice;
 
 		if ( planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } ) ) {
-			return translate( 'Price for the next 12 months' );
+			return isDiscounted
+				? translate(
+						"You'll receive a discount for the first year. The plan will renew at %(price)s.",
+						{ args: { price } }
+				  )
+				: translate( 'Price for the next 12 months' );
 		}
-
-		const price = formatCurrency( rawPrice, currencyCode );
 
 		return translate(
 			"You'll receive a discount from the full price of %(price)s because you already have a plan.",
@@ -157,9 +162,29 @@ export class PlanFeaturesHeader extends Component {
 		);
 	}
 
+	getPerMonthDescription() {
+		const { discountPrice, rawPrice, translate, planType } = this.props;
+		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
+			return null;
+		}
+		if ( ! planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) ) {
+			return null;
+		}
+		const discountPercent = Math.round( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );
+		if ( discountPercent <= 0 ) {
+			return null;
+		}
+		return translate(
+			'Save %(discountPercent)s%% for 12 months!{{br/}} Per month, billed yearly.',
+			{
+				args: { discountPercent },
+				components: { br: <br /> },
+			}
+		);
+	}
+
 	getBillingTimeframe() {
 		const {
-			currentSitePlan,
 			billingTimeFrame,
 			discountPrice,
 			isPlaceholder,
@@ -175,17 +200,15 @@ export class PlanFeaturesHeader extends Component {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder,
 		} );
-
+		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 		if ( isInSignup || plansWithScroll ) {
 			return (
 				<div className={ 'plan-features__header-billing-info' }>
-					<span>{ billingTimeFrame }</span>
+					<span>{ perMonthDescription }</span>
 				</div>
 			);
 		}
 
-		const isUserCurrentlyOnAFreePlan =
-			currentSitePlan && planMatches( currentSitePlan.productSlug, { type: TYPE_FREE } );
 		if (
 			isSiteAT ||
 			! isJetpack ||
@@ -194,8 +217,8 @@ export class PlanFeaturesHeader extends Component {
 		) {
 			return (
 				<p className={ timeframeClasses }>
-					{ ! isPlaceholder ? billingTimeFrame : '' }
-					{ isDiscounted && ! isUserCurrentlyOnAFreePlan && ! isPlaceholder && (
+					{ ! isPlaceholder ? perMonthDescription : '' }
+					{ isDiscounted && ! isPlaceholder && (
 						<InfoPopover
 							className="plan-features__header-tip-info"
 							position={ isMobile() ? 'top' : 'bottom left' }

@@ -2,7 +2,7 @@ export const remoteValuesSchema = {
 	type: [ 'null', 'object' ],
 	patternProperties: {
 		'^dismissible-card-.+$': {
-			type: 'boolean',
+			type: [ 'boolean', 'object' ],
 		},
 	},
 	properties: {

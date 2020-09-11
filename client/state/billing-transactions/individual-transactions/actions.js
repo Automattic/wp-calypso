@@ -10,6 +10,8 @@ import {
 } from 'state/action-types';
 import wp from 'lib/wp';
 
+import 'state/billing-transactions/init';
+
 export const requestBillingTransaction = ( transactionId ) => ( dispatch ) => {
 	dispatch( {
 		type: BILLING_TRANSACTION_REQUEST,

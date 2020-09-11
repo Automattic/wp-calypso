@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, includes } from 'lodash';
+import { find, includes, isObject } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import i18n from 'i18n-calypso';
@@ -13,16 +13,20 @@ import debugFactory from 'debug';
 import notices from 'notices';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
+import { getPlan } from 'lib/plans';
+import { isMonthly as isMonthlyPlan } from 'lib/plans/constants';
 import {
+	getProductFromSlug,
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
 	isJetpackPlan,
+	isMonthly as isMonthlyProduct,
 	isPlan,
 	isTheme,
 	isConciergeSession,
 } from 'lib/products-values';
-import { getJetpackProductsDisplayNames } from 'lib/products-values/constants';
+import { getJetpackProductsDisplayNames } from 'lib/products-values/translations';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -62,7 +66,7 @@ function getPurchasesBySite( purchases, sites ) {
 
 			return result;
 		}, [] )
-		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1)  );
+		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 ) );
 }
 
 function getName( purchase ) {
@@ -112,27 +116,86 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 		...tracksProps,
 	} );
 
-	const { product_slug, extra, meta } = renewItem;
-	const { purchaseId, purchaseDomain } = extra;
-	if ( ! purchaseId ) {
+	if ( ! renewItem.extra.purchaseId ) {
 		notices.error( 'Could not find purchase id for renewal.' );
 		throw new Error( 'Could not find purchase id for renewal.' );
 	}
-	if ( ! product_slug ) {
+	if ( ! renewItem.product_slug ) {
 		notices.error( 'Could not find product slug for renewal.' );
 		throw new Error( 'Could not find product slug for renewal.' );
 	}
-	// There is a product with this weird slug, but left to itself the slug will
-	// cause a routing error since it contains a slash, so we encode it here and
-	// then decode it in the checkout code before adding to the cart.
-	const productSlug = product_slug === 'no-adverts/no-adverts.php' ? 'no-ads' : product_slug;
-	const productList = meta ? `${ productSlug }:${ meta }` : productSlug;
-	const renewalUrl = `/checkout/${ productList }/renew/${ purchaseId }/${
-		siteSlug || purchaseDomain || ''
+	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
+
+	const renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
+		siteSlug || renewItem.extra.purchaseDomain || ''
 	}`;
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 	page( renewalUrl );
+}
+
+/**
+ * Adds all purchases renewal to the cart and redirects to checkout.
+ *
+ * @param {Array} purchases - the purchases to be renewed
+ * @param {string} siteSlug - the site slug to renew the purchase for
+ * @param {object} tracksProps - where was the renew button clicked from
+ */
+function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {} ) {
+	purchases.forEach( ( purchase ) => {
+		// Track the renew now submit.
+		recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
+			product_slug: purchase.productSlug,
+			...tracksProps,
+		} );
+	} );
+
+	const renewItems = purchases.map( ( otherPurchase ) =>
+		getRenewalItemFromProduct( otherPurchase, {
+			domain: otherPurchase.meta,
+		} )
+	);
+	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
+
+	if ( purchaseIds.length === 0 ) {
+		notices.error( 'Could not find product slug or purchase id for renewal.' );
+		throw new Error( 'Could not find product slug or purchase id for renewal.' );
+	}
+
+	const renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
+		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
+	}`;
+	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
+
+	page( renewalUrl );
+}
+
+function getProductSlugsAndPurchaseIds( renewItems ) {
+	const productSlugs = [];
+	const purchaseIds = [];
+
+	renewItems.forEach( ( currentRenewItem ) => {
+		if ( ! currentRenewItem.extra.purchaseId ) {
+			debug( 'Could not find purchase id for renewal.', currentRenewItem );
+			return null;
+		}
+		if ( ! currentRenewItem.product_slug ) {
+			debug( 'Could not find product slug for renewal.', currentRenewItem );
+			return null;
+		}
+		// There is a product with this weird slug, but left to itself the slug will
+		// cause a routing error since it contains a slash, so we encode it here and
+		// then decode it in the checkout code before adding to the cart.
+		const productSlug =
+			currentRenewItem.product_slug === 'no-adverts/no-adverts.php'
+				? 'no-ads'
+				: currentRenewItem.product_slug;
+		productSlugs.push(
+			currentRenewItem.meta ? `${ productSlug }:${ currentRenewItem.meta }` : productSlug
+		);
+		purchaseIds.push( currentRenewItem.extra.purchaseId );
+	} );
+	return { productSlugs, purchaseIds };
 }
 
 function hasIncludedDomain( purchase ) {
@@ -202,6 +265,91 @@ function hasPaymentMethod( purchase ) {
 
 function isPendingTransfer( purchase ) {
 	return purchase.pendingTransfer;
+}
+
+/**
+ * Determines if this is a monthly purchase.
+ *
+ * This function takes into account WordPress.com and Jetpack plans as well as
+ * Jetpack products.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase is monthly, or false if not
+ */
+function isMonthlyPurchase( purchase ) {
+	const plan = getPlan( purchase.productSlug );
+	if ( isObject( plan ) ) {
+		return isMonthlyPlan( purchase.productSlug );
+	}
+
+	// Note that getProductFromSlug() returns a string when given a non-product
+	// slug, so we need to check that it's an object before using it.
+	const product = getProductFromSlug( purchase.productSlug );
+	if ( isObject( product ) ) {
+		return isMonthlyProduct( product );
+	}
+
+	return false;
+}
+
+/**
+ * Determines if this is a recent monthly purchase (bought within the past week).
+ *
+ * This is often used to ensure that notices about purchases which expire
+ * "soon" are not displayed with error styling to a user who just purchased a
+ * monthly subscription (which by definition will expire relatively soon).
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase is a recent monthy purchase, or false if not
+ */
+function isRecentMonthlyPurchase( purchase ) {
+	return subscribedWithinPastWeek( purchase ) && isMonthlyPurchase( purchase );
+}
+
+/**
+ * Determines if the purchase needs to renew soon.
+ *
+ * This will return true if the purchase is either already expired or
+ * expiring/renewing soon.
+ *
+ * The intention here is to identify purchases that the user might reasonably
+ * want to manually renew (regardless of whether they are also scheduled to
+ * auto-renew).
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase needs to renew soon, or false if not
+ */
+function needsToRenewSoon( purchase ) {
+	// Skip purchases that never need to renew or that can't be renewed.
+	if (
+		isOneTimePurchase( purchase ) ||
+		isPartnerPurchase( purchase ) ||
+		! isRenewable( purchase ) ||
+		! canExplicitRenew( purchase )
+	) {
+		return false;
+	}
+
+	return isCloseToExpiration( purchase );
+}
+
+/**
+ * Returns true for purchases that are expired or expiring/renewing soon.
+ *
+ * The latter is defined as within one month of expiration for monthly
+ * subscriptions (i.e., one billing period) and within three months of
+ * expiration for everything else.
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean}  True if the provided purchase is close to expiration, or false if not
+ */
+function isCloseToExpiration( purchase ) {
+	if ( ! purchase.expiryDate ) {
+		return false;
+	}
+
+	const expiryThresholdInMonths = isMonthlyPurchase( purchase ) ? 1 : 3;
+	return moment( purchase.expiryDate ).diff( Date.now(), 'months' ) < expiryThresholdInMonths;
 }
 
 /**
@@ -521,9 +669,11 @@ export {
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
+	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasIncludedDomain,
+	isAutoRenewing,
 	isCancelable,
 	isPaidWithCreditCard,
 	isPaidWithPayPalDirect,
@@ -531,10 +681,13 @@ export {
 	isPaidWithCredits,
 	isPartnerPurchase,
 	hasPaymentMethod,
+	isCloseToExpiration,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
+	isMonthlyPurchase,
 	isOneTimePurchase,
+	isRecentMonthlyPurchase,
 	isRechargeable,
 	isRefundable,
 	isRemovable,
@@ -543,6 +696,7 @@ export {
 	isRenewing,
 	isSubscription,
 	maybeWithinRefundPeriod,
+	needsToRenewSoon,
 	paymentLogoType,
 	purchaseType,
 	cardProcessorSupportsUpdates,

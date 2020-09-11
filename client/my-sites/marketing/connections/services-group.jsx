@@ -14,6 +14,7 @@ import {
 	getEligibleKeyringServices,
 	isKeyringServicesFetching,
 } from 'state/sharing/services/selectors';
+import { getExpandedService } from 'state/sharing/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Notice from 'components/notice';
 import SectionHeader from 'components/section-header';
@@ -45,7 +46,7 @@ const serviceWarningLevelToNoticeStatus = ( level ) => {
 
 const SharingServicesGroup = ( { isFetching, services, title, expandedService } ) => {
 	useEffect( () => {
-		if ( expandedService ) {
+		if ( expandedService && ! isFetching ) {
 			const serviceElement = document.querySelector(
 				'.sharing-service.' + expandedService.replace( /_/g, '-' )
 			);
@@ -53,7 +54,7 @@ const SharingServicesGroup = ( { isFetching, services, title, expandedService } 
 				serviceElement.scrollIntoView();
 			}
 		}
-	}, [ expandedService, services ] );
+	}, [ expandedService, isFetching ] );
 
 	if ( ! services.length && ! isFetching ) {
 		return null;
@@ -113,5 +114,5 @@ SharingServicesGroup.defaultProps = {
 export default connect( ( state, { type } ) => ( {
 	isFetching: isKeyringServicesFetching( state ),
 	services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type ),
-	expandedService: state.sharing.expandedService,
+	expandedService: getExpandedService( state ),
 } ) )( SharingServicesGroup );

@@ -1,6 +1,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const api = require.requireActual( './api' );
+const api = jest.requireActual( './api' );
 
 function test_folder( dir ) {
 	const testFiles = fs

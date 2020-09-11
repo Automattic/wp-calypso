@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get, map, toPairs } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import getTimezonesLabel from 'state/selectors/get-timezones-label';
+
+import 'state/timezones/init';
 
 /**
  * Return all timezones ordered by arrays with

@@ -15,3 +15,4 @@ export {
 } from 'state/login/actions/push';
 export { sendSmsCode } from 'state/login/actions/send-sms-code';
 export { updateNonce } from 'state/login/actions/update-nonce';
+export { rebootAfterLogin } from 'state/login/actions/reboot-after-login';

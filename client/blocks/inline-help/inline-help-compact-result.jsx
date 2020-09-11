@@ -32,6 +32,7 @@ class InlineHelpCompactResult extends Component {
 					href={ helpLink.link }
 					title={ decodeEntities( helpLink.description ) }
 					onClick={ this.onClick }
+					tabIndex={ -1 }
 				>
 					{ preventWidows( decodeEntities( helpLink.title ) ) }
 				</a>

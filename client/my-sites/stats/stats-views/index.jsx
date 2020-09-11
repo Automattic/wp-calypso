@@ -47,8 +47,8 @@ class StatsViews extends Component {
 	render() {
 		const { query, siteId, statType, viewData, translate, siteSlug } = this.props;
 		const monthViewOptions = [
-			{ value: 'total', label: translate( 'Months and Years' ) },
-			{ value: 'average', label: translate( 'Average per Day' ) },
+			{ value: 'total', label: translate( 'Months and years' ) },
+			{ value: 'average', label: translate( 'Average per day' ) },
 		];
 
 		return (
@@ -68,7 +68,7 @@ class StatsViews extends Component {
 					<div className="stats-views__key-container">
 						<span className="stats-views__key-label">
 							{ translate( 'Fewer Views', {
-								context: 'Legend label in stats all time views table',
+								context: 'Legend label in stats all-time views table',
 							} ) }
 						</span>
 						<ul className="stats-views__key">
@@ -80,7 +80,7 @@ class StatsViews extends Component {
 						</ul>
 						<span className="stats-views__key-label">
 							{ translate( 'More Views', {
-								context: 'Legend label in stats all time views table',
+								context: 'Legend label in stats all-time views table',
 							} ) }
 						</span>
 					</div>

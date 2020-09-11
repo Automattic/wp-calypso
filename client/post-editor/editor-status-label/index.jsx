@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import * as postUtils from 'state/posts/utils';
 import EditorStatusLabelPlaceholder from './placeholder';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
+import { getEditorPostId, isEditorNewPost } from 'state/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
 

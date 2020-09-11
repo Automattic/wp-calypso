@@ -17,7 +17,7 @@ import { isPaymentAgreement, isCreditCard } from 'lib/checkout/payment-methods';
  */
 
 export const getStoredCards = ( state ) =>
-	state.storedCards.items
+	( state.storedCards?.items ?? [] )
 		.filter( ( method ) => isCreditCard( method ) )
 		.map( ( card ) => ( {
 			...card,
@@ -32,7 +32,7 @@ export const getStoredCards = ( state ) =>
  * @returns {Array} Stored Payment Agreements
  */
 export const getStoredPaymentAgreements = ( state ) =>
-	state.storedCards.items
+	( state.storedCards?.items ?? [] )
 		.filter( ( stored ) => isPaymentAgreement( stored ) )
 		.map( ( method ) => ( {
 			...method,
@@ -71,8 +71,9 @@ export const getStoredCardById = ( state, cardId ) =>
 		.filter( ( card ) => card.stored_details_id === cardId )
 		.shift();
 
-export const hasLoadedStoredCardsFromServer = ( state ) => state.storedCards.hasLoadedFromServer;
+export const hasLoadedStoredCardsFromServer = ( state ) =>
+	Boolean( state.storedCards?.hasLoadedFromServer );
 
 export const isDeletingStoredCard = ( state, cardId ) =>
-	Boolean( state.storedCards.isDeleting[ cardId ] );
-export const isFetchingStoredCards = ( state ) => state.storedCards.isFetching;
+	Boolean( state.storedCards?.isDeleting[ cardId ] );
+export const isFetchingStoredCards = ( state ) => Boolean( state.storedCards?.isFetching );

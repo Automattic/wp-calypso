@@ -59,5 +59,5 @@ Friends:
 
 ## What to name your branch
 
-- Use the same naming conventions as listed in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/master/docs/git-workflow.md#branch-naming-scheme)
+- Use the same naming conventions as listed in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/git-workflow.md#branch-naming-scheme)
 - If you have changes to jetpack tests, be sure to add "jetpack" into your branch name so those tests are run on CI

@@ -68,7 +68,7 @@ If you do need a token, here are some links that will help you generate one:
 - [`wpcom-oauth`]( https://github.com/Automattic/node-wpcom-oauth ):
 	a server-side ( Node.js ) WordPress.com OAuth2 library
 - If you just want to quickly create a token, the
-	[example app bundled with `wpcom-oauth`]( https://github.com/Automattic/node-wpcom-oauth/tree/master/example )
+	[example app bundled with `wpcom-oauth`]( https://github.com/Automattic/node-wpcom-oauth/tree/HEAD/example )
 	is probably the easiest way.
 
 ## API

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { Fragment } from 'react';
 
 /**
@@ -17,7 +16,7 @@ import {
 	Quit,
 	Continue,
 } from 'layout/guided-tours/config-elements';
-import { doesSelectedSiteHaveMediaFiles } from 'state/ui/guided-tours/contexts';
+import { doesSelectedSiteHaveMediaFiles } from 'state/guided-tours/contexts';
 import {
 	AddNewButton,
 	EditButton,

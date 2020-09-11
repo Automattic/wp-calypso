@@ -7,7 +7,7 @@ Automatticians may refer to internal documentation for more information about Tr
 
 ## Usage
 
-Note: In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/master/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
+Note: In most situations it is best to use the [Analytics Middleware](https://github.com/Automattic/wp-calypso/tree/HEAD/client/state/analytics), which has no direct browser dependencies and therefore will not complicate any unit testing of the modules where it is used.
 
 ### `recordTracksEvent( name, properties )`
 

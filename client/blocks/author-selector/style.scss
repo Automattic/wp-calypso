@@ -42,7 +42,7 @@
 	}
 
 	.user__name {
-		font-size: 13px;
+		font-size: $font-body-small;
 	}
 }
 
@@ -54,7 +54,7 @@
 	.search {
 		border-top: 0;
 		border-bottom: 1px solid var( --color-neutral-0 );
-		border-radius: 5px;
+		border-radius: 2px;
 		margin-bottom: 0;
 
 		&.is-open {
@@ -70,7 +70,7 @@
 	padding: 8px 16px;
 	line-height: 26px;
 	width: 168px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-style: italic;
 	color: var( --color-text-subtle );
 }

@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { get, includes } from 'lodash';
+import { includes } from 'lodash';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -12,6 +12,7 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { appStates } from 'state/imports/constants';
+import { isUploading } from 'state/imports/uploads/selectors';
 import ImporterLogo from 'my-sites/importer/importer-logo';
 
 /**
@@ -58,5 +59,5 @@ class ImporterHeader extends React.PureComponent {
 }
 
 export default connect( ( state ) => ( {
-	isUploading: get( state, 'imports.uploads.inProgress' ),
+	isUploading: isUploading( state ),
 } ) )( localize( ImporterHeader ) );

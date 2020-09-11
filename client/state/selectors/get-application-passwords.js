@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/application-passwords/init';
+
+/**
  * Returns the application passwords of the current user.
  *
  * @param  {object} state Global state tree

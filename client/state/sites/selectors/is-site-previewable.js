@@ -29,6 +29,11 @@ export default function isSitePreviewable( state, siteId ) {
 		return false;
 	}
 
+	const isWPForTeamsSite = getSiteOption( state, siteId, 'is_wpforteams_site' );
+	if ( isWPForTeamsSite ) {
+		return false;
+	}
+
 	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
 	return !! unmappedUrl && isHttps( unmappedUrl );
 }

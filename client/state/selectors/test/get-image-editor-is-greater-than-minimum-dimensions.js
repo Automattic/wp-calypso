@@ -11,11 +11,9 @@ import getImageEditorIsGreaterThanMinimumDimensions from 'state/selectors/get-im
 describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 	test( 'should return false if the image has not loaded yet and therefore originalAspectRatio not set', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions( {
-			ui: {
-				editor: {
-					imageEditor: {
-						originalAspectRatio: null,
-					},
+			editor: {
+				imageEditor: {
+					originalAspectRatio: null,
 				},
 			},
 		} );
@@ -25,11 +23,9 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 	test( 'should return false if the width value is not an integer', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
-				ui: {
-					editor: {
-						imageEditor: {
-							originalAspectRatio: { width: null, height: 100 },
-						},
+				editor: {
+					imageEditor: {
+						originalAspectRatio: { width: null, height: 100 },
 					},
 				},
 			},
@@ -42,11 +38,9 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 	test( 'should return false if the height value is not an integer', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
-				ui: {
-					editor: {
-						imageEditor: {
-							originalAspectRatio: { width: 100, height: undefined },
-						},
+				editor: {
+					imageEditor: {
+						originalAspectRatio: { width: 100, height: undefined },
 					},
 				},
 			},
@@ -60,11 +54,9 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 	test( 'should return false if the dimensions do not meet the supplied minimum dimensions', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
-				ui: {
-					editor: {
-						imageEditor: {
-							originalAspectRatio: { width: 45, height: 45 },
-						},
+				editor: {
+					imageEditor: {
+						originalAspectRatio: { width: 45, height: 45 },
 					},
 				},
 			},
@@ -78,11 +70,9 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 	test( 'should return true if the dimensions meet the supplied minimum dimensions', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
 			{
-				ui: {
-					editor: {
-						imageEditor: {
-							originalAspectRatio: { width: 100, height: 200 },
-						},
+				editor: {
+					imageEditor: {
+						originalAspectRatio: { width: 100, height: 200 },
 					},
 				},
 			},

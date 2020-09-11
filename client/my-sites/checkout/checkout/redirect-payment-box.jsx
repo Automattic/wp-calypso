@@ -26,8 +26,9 @@ import CountrySpecificPaymentFields from './country-specific-payment-fields';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { validatePaymentDetails, maskField, unmaskField } from 'lib/checkout';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 export class RedirectPaymentBox extends PureComponent {
 	static displayName = 'RedirectPaymentBox';
@@ -38,6 +39,7 @@ export class RedirectPaymentBox extends PureComponent {
 		countriesList: PropTypes.array.isRequired,
 		transaction: PropTypes.object.isRequired,
 		redirectTo: PropTypes.func.isRequired,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	eventFormName = 'Checkout Form';
@@ -333,7 +335,7 @@ export class RedirectPaymentBox extends PureComponent {
 					<TermsOfService
 						hasRenewableSubscription={ hasRenewableSubscription( this.props.cart ) }
 					/>
-					<DomainRegistrationRefundPolicy cart={ this.props.cart } />
+					<DomainRefundPolicy cart={ this.props.cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
@@ -342,7 +344,9 @@ export class RedirectPaymentBox extends PureComponent {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary "
-									disabled={ this.state.formDisabled }
+									disabled={
+										this.state.formDisabled || this.props.incompatibleProducts?.blockCheckout
+									}
 								>
 									{ this.renderButtonText() }
 								</button>
@@ -352,7 +356,7 @@ export class RedirectPaymentBox extends PureComponent {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ this.props.translate( 'Secure Payment' ) }
+									{ this.props.translate( 'Secure payment' ) }
 								</div>
 							</div>
 
@@ -363,6 +367,7 @@ export class RedirectPaymentBox extends PureComponent {
 								/>
 							) }
 						</div>
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />

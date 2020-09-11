@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	KEYRING_CONNECTION_DELETE,
@@ -12,8 +11,12 @@ import {
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/sharing/init';
+
 /**
  * Triggers a network request for a user's connected services.
+ *
+ * @param {boolean} forceExternalUsersRefetch Whether to force refetching of external users
  *
  * @returns {Function} Action thunk
  */

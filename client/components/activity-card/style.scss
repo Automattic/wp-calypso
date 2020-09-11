@@ -1,0 +1,209 @@
+.activity-card {
+	.card {
+		padding: 16px;
+		border-radius: var( --jetpack-corners-sharp );
+	}
+
+	.activity-card__actor {
+		margin-left: 0;
+		display: flex;
+		align-items: center;
+
+		.activity-card__actor-info {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			margin-left: 8px;
+			> *:not( :last-child ) {
+				margin-right: 8px;
+			}
+		}
+		> img.gravatar,
+		> svg {
+			max-height: 24px;
+			max-width: 24px;
+		}
+	}
+
+	.activity-card__actor-info,
+	.activity-card__actor-role,
+	.activity-card__activity-title {
+		font-size: 0.8rem;
+		color: rgb( 100, 105, 112 );
+	}
+
+	.activity-card__activity-title {
+		margin: 8px 0;
+		font-style: italic;
+	}
+}
+
+.activity-card__time {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	margin: 24px 0 8px;
+}
+
+.activity-card__time-icon {
+	fill: var( --color-neutral-40 );
+	height: 17px;
+	width: 17px;
+}
+
+.activity-card__time-text {
+	color: var( --color-neutral-40 );
+	font-size: $font-body-extra-small;
+	line-height: 17px;
+	margin-left: 4px;
+}
+
+.activity-card__activity-description {
+	margin: 1rem 0 0.5rem;
+	font-size: $font-body;
+	word-wrap: break-word;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-title-small;
+	}
+}
+
+.activity-card__activity-media {
+	margin-bottom: 16px;
+}
+
+.activity-card__activity-actions,
+.activity-card__activity-actions-reverse {
+	align-items: center;
+	border-top: 1px solid var( --color-neutral-5 );
+	display: flex;
+	justify-content: space-between;
+	padding-top: 0.7rem;
+	// balance top and bottom against the 8px overall card padding
+	padding-bottom: calc( 0.7rem - 8px );
+	position: relative;
+	top: 0.5rem;
+
+	a,
+	button.button.is-borderless.is-compact {
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+		display: flex;
+		align-items: center;
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-body;
+		}
+
+		// gridicons within buttons have very specific rules for font sizes, disable them to let flex take care of it
+		.gridicon {
+			display: block;
+			margin-top: 0;
+			top: 0;
+		}
+	}
+}
+
+.activity-card__activity-actions-reverse {
+	flex-direction: row-reverse;
+}
+
+.backup-delta__realtime .activity-card__actions-button.button.is-borderless.is-primary {
+	float: right;
+}
+
+.button.activity-card__see-content-link {
+	margin-left: 0;
+	color: var( --studio-jetpack-green-40 );
+}
+
+.button.is-borderless.is-primary:focus {
+	box-shadow: none;
+}
+
+.activity-card__restore-button {
+	margin: 0.8rem;
+	margin-bottom: 0;
+}
+
+.activity-card__download-button.is-borderless {
+	margin: 0.8rem;
+	border-radius: 0;
+	border-top: 1px solid #e4e4e6;
+	margin-bottom: 0.5rem;
+	padding-top: 0.8rem;
+	display: flex;
+	justify-content: left;
+	font-size: 0.9rem;
+}
+
+.activity-card__download-icon {
+	margin-right: 0.6rem;
+}
+
+.activity-card__actions-icon {
+	margin-left: 0.3rem;
+}
+
+.activity-card__see-content-icon {
+	margin-left: 0.3rem;
+}
+
+.activity-card__content {
+	margin-top: 32px;
+}
+
+.activity-card__streams-item {
+	margin: 24px 0;
+}
+
+.activity-card__streams-item-title {
+	margin-bottom: 12px;
+	font-size: $font-body-extra-small;
+	text-align: left;
+}
+
+.activity-card__credentials-warning {
+	display: flex;
+	justify-content: left;
+	align-items: middle;
+	max-width: 16rem;
+	margin: 1rem;
+	text-align: left;
+}
+
+.activity-card__credentials-warning img {
+	width: 1.1rem;
+	height: 1.1rem;
+	margin-right: 0.5rem;
+}
+.activity-card__credentials-warning-text {
+	line-height: 0.9rem;
+}
+
+.activity-card__credentials-warning-text a.external-link {
+	color: var( --color-text );
+	text-decoration: underline;
+}
+.activity-card__streams-media-preview {
+	display: flex;
+	flex-direction: row;
+	margin: 16px 0;
+
+	div {
+		max-width: 72px;
+		max-height: 72px;
+		overflow: hidden;
+		text-align: center;
+
+		img {
+			min-width: 72px;
+			max-width: none;
+			max-height: 72px;
+			margin: 0 -100%;
+		}
+
+		&:not( :first-child ) {
+			margin-left: 16px;
+		}
+	}
+}

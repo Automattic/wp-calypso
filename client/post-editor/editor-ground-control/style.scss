@@ -10,7 +10,7 @@
 	right: 0;
 	z-index: z-index( 'root', '.editor-ground-control' );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		padding-top: 0;
 	}
 }
@@ -27,7 +27,7 @@
 	flex: 0 0 auto;
 	max-width: $sidebar-width-max;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -59,7 +59,7 @@
 	display: flex;
 
 	// Hide the ground-control save buttons on mobile
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -75,7 +75,7 @@
 		padding: 12px 16px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: block;
 	}
 }
@@ -87,7 +87,7 @@
 	position: relative;
 	padding-left: 16px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -104,7 +104,7 @@
 	padding: 0 8px;
 	line-height: 46px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0 12px;
 	}
 }
@@ -118,7 +118,7 @@
 	flex-grow: 1;
 	padding: 7px 12px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		min-width: 100px;
 		padding: 7px 16px;
 	}
@@ -153,7 +153,7 @@
 
 .editor-ground-control__toggle-sidebar.button.is-borderless,
 .editor-ground-control__preview-button.button.is-borderless {
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .editor-ground-control__publish-button {
@@ -162,11 +162,11 @@
 }
 
 .editor-ground-control .editor-publish-button {
-	border-radius: 4px;
+	border-radius: 2px;
 	padding: 7px 12px;
 	margin: 0 0 0 8px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		min-width: 120px;
 		padding: 7px 16px;
 		margin: 0 8px;
@@ -174,7 +174,7 @@
 }
 
 .editor-ground-control__time-button {
-	border-radius: 0 4px 4px 0;
+	border-radius: 0 2px 2px 0;
 	padding-left: 8px;
 	padding-right: 8px;
 	margin-left: -1px;
@@ -188,7 +188,7 @@
 .editor-ground-control__history-button.button.is-link,
 .editor-ground-control__save.button.is-link,
 .editor-ground-control__save-status {
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .editor-ground-control__save-status {
@@ -204,11 +204,11 @@
 }
 
 .editor-ground-control__view-site-tooltip {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .editor-ground-control__email-verification-notice {
-	font-size: 13px;
+	font-size: $font-body-small;
 	padding: 8px 8px 8px 40px;
 	background: white;
 	color: var( --color-primary );
@@ -269,7 +269,7 @@
 	border-radius: 0;
 	color: var( --color-primary );
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		padding: 6px 32px;
 	}
 

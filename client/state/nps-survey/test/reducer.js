@@ -41,6 +41,7 @@ describe( 'reducer', () => {
 			'surveyName',
 			'score',
 			'feedback',
+			'notice',
 		] );
 	} );
 

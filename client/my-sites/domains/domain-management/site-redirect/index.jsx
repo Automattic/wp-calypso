@@ -21,7 +21,10 @@ import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affi
 import Main from 'components/main';
 import Notice from 'components/notice';
 import notices from 'notices';
-import { domainManagementEdit, domainManagementRedirectSettings } from 'my-sites/domains/paths';
+import {
+	domainManagementSiteRedirect,
+	domainManagementRedirectSettings,
+} from 'my-sites/domains/paths';
 import {
 	closeSiteRedirectNotice,
 	fetchSiteRedirect,
@@ -33,6 +36,8 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteRedirectLocation } from 'state/domains/site-redirect/selectors';
 import { withoutHttp } from 'lib/url';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { SITE_REDIRECT } from 'lib/url/support';
 
 /**
  * Style dependencies
@@ -90,7 +95,8 @@ class SiteRedirect extends React.Component {
 					page(
 						domainManagementRedirectSettings(
 							this.props.selectedSite.slug,
-							trim( trimEnd( this.state.redirectUrl, '/' ) )
+							trim( trimEnd( this.state.redirectUrl, '/' ) ),
+							this.props.currentRoute
 						)
 					);
 				}
@@ -143,7 +149,17 @@ class SiteRedirect extends React.Component {
 								/>
 
 								<p className="site-redirect__explanation">
-									{ translate( 'All domains on this site will redirect here.' ) }
+									{ translate(
+										'All domains on this site will redirect here as long as this domain is set as your primary domain. ' +
+											'{{learnMoreLink}}Learn more{{/learnMoreLink}}',
+										{
+											components: {
+												learnMoreLink: (
+													<a href={ SITE_REDIRECT } target="_blank" rel="noopener noreferrer" />
+												),
+											},
+										}
+									) }
 								</p>
 							</FormFieldset>
 
@@ -169,10 +185,10 @@ class SiteRedirect extends React.Component {
 	}
 
 	goToEdit = () => {
-		const { selectedDomainName, selectedSite } = this.props;
+		const { selectedDomainName, selectedSite, currentRoute } = this.props;
 
 		this.props.recordCancelClick( selectedDomainName );
-		page( domainManagementEdit( selectedSite.slug, selectedDomainName ) );
+		page( domainManagementSiteRedirect( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 }
 
@@ -221,7 +237,8 @@ export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const location = getSiteRedirectLocation( state, selectedSite.domain );
-		return { selectedSite, location };
+		const currentRoute = getCurrentRoute( state );
+		return { selectedSite, location, currentRoute };
 	},
 	{
 		fetchSiteRedirect,

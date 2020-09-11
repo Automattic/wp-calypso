@@ -97,6 +97,17 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				}
 			);
 			break;
+		case domainAvailability.CONFLICTING_CNAME_EXISTS:
+			message = translate(
+				'There is an existing CNAME for {{strong}}%(domain)s{{/strong}}. If you want to map this subdomain, you should remove the conflicting CNAME DNS record first.',
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
 		case domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE:
 			message = translate(
 				'{{strong}}%(domain)s{{/strong}} is already connected to this site, but registered somewhere else. Do you want to move ' +
@@ -233,7 +244,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
-		case domainAvailability.BLACKLISTED:
+		case domainAvailability.DISALLOWED:
 			if ( domain && domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 				message = translate(
 					'Due to {{a1}}trademark policy{{/a1}}, ' +
@@ -254,7 +265,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 				);
 			} else {
 				message = translate(
-					'Domain cannot be mapped to a WordPress.com blog because of blacklisted term.'
+					'Domain cannot be mapped to a WordPress.com blog because of disallowed term.'
 				);
 			}
 			break;
@@ -348,7 +359,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 		case domainAvailability.AVAILABLE_PREMIUM:
 			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchases of premium domains on WordPress.com, but if you purchase this domain elsewhere, you can {{a}}map it to your site{{/a}}.",
+				"Sorry, {{strong}}%(domain)s{{/strong}} is a premium domain. We don't support purchasing this premium domain on WordPress.com, but if you purchase the domain elsewhere, you can {{a}}map it to your site{{/a}}.",
 				{
 					args: { domain },
 					components: {

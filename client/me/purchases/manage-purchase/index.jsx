@@ -17,12 +17,14 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { applyTestFiltersToPlansList } from 'lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from 'config';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
 	getDisplayName,
 	getPartnerName,
 	getRenewalPrice,
+	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
@@ -34,15 +36,22 @@ import {
 	isRenewable,
 	isRenewing,
 	isSubscription,
+	isCloseToExpiration,
 	purchaseType,
 	getName,
 } from 'lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+	getRenewableSitePurchases,
+} from 'state/purchases/selectors';
 import { getCanonicalTheme } from 'state/themes/selectors';
 import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
 import Gridicon from 'components/gridicon';
 import HeaderCake from 'components/header-cake';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import {
 	isPersonal,
 	isPremium,
@@ -52,13 +61,14 @@ import {
 	isDomainRegistration,
 	isDomainMapping,
 	isDomainTransfer,
+	isGoogleApps,
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
 } from 'lib/products-values';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { JETPACK_PLANS } from 'lib/plans/constants';
+import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
 import Main from 'components/main';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
@@ -76,6 +86,7 @@ import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
+import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
 import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
@@ -96,6 +107,8 @@ class ManagePurchase extends Component {
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		purchase: PropTypes.object,
+		purchaseAttachedTo: PropTypes.object,
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
@@ -145,6 +158,10 @@ class ManagePurchase extends Component {
 		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
 	};
 
+	handleRenewMultiplePurchases = ( purchases ) => {
+		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug );
+	};
+
 	shouldShowNonPrimaryDomainWarning() {
 		const { hasNonPrimaryDomainsFlag, hasCustomPrimaryDomain, purchase } = this.props;
 		return hasNonPrimaryDomainsFlag && isPlan( purchase ) && hasCustomPrimaryDomain;
@@ -164,6 +181,16 @@ class ManagePurchase extends Component {
 		return (
 			<Button className="manage-purchase__renew-button" onClick={ this.handleRenew } compact>
 				{ translate( 'Renew now' ) }
+			</Button>
+		);
+	}
+
+	renderSelectNewButton() {
+		const { translate, siteId } = this.props;
+
+		return (
+			<Button className="manage-purchase__renew-button" href={ `/plans/${ siteId }/` } compact>
+				{ translate( 'Select a new plan' ) }
 			</Button>
 		);
 	}
@@ -190,14 +217,20 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	renderSelectNewNavItem() {
+		const { translate, siteId } = this.props;
+
+		return (
+			<CompactCard tagName="button" displayAsLink href={ `/plans/${ siteId }/` }>
+				{ translate( 'Select a new plan' ) }
+			</CompactCard>
+		);
+	}
+
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate } = this.props;
 
 		if ( ! this.props.site ) {
-			return null;
-		}
-
-		if ( isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 
@@ -226,10 +259,6 @@ class ManagePurchase extends Component {
 	}
 
 	renderRemovePurchaseNavItem() {
-		if ( isPartnerPurchase( this.props.purchase ) ) {
-			return null;
-		}
-
 		return (
 			<RemovePurchase
 				hasLoadedSites={ this.props.hasLoadedSites }
@@ -283,14 +312,14 @@ class ManagePurchase extends Component {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
 
-		if ( ! isCancelable( purchase ) || isPartnerPurchase( purchase ) ) {
+		if ( ! isCancelable( purchase ) ) {
 			return null;
 		}
 
 		let text,
 			link = cancelPurchase( this.props.siteSlug, id );
 
-		if ( isAtomicSite && isSubscription( purchase ) ) {
+		if ( isAtomicSite && isSubscription( purchase ) && ! isGoogleApps( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );
 			link = CALYPSO_CONTACT;
 		} else if ( hasAmountAvailableToRefund( purchase ) ) {
@@ -402,9 +431,7 @@ class ManagePurchase extends Component {
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">{ description }</span>
 				<span className="manage-purchase__settings-link">
-					{ ! isPartnerPurchase( purchase ) && site && (
-						<ProductLink purchase={ purchase } selectedSite={ site } />
-					) }
+					{ site && <ProductLink purchase={ purchase } selectedSite={ site } /> }
 				</span>
 				{ registrationAgreementUrl && (
 					<a href={ registrationAgreementUrl } target="_blank" rel="noopener noreferrer">
@@ -450,7 +477,7 @@ class ManagePurchase extends Component {
 		return ! hasLoadedDomains;
 	}
 
-	renderPurchaseDetail() {
+	renderPurchaseDetail( preventRenewal ) {
 		if ( isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
@@ -498,10 +525,10 @@ class ManagePurchase extends Component {
 					{ ! isPartnerPurchase( purchase ) && (
 						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
 					) }
-					{ this.renderRenewButton() }
+					{ preventRenewal ? this.renderSelectNewButton() : this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
-				{ this.renderRenewNowNavItem() }
+				{ preventRenewal ? this.renderSelectNewNavItem() : this.renderRenewNowNavItem() }
 				{ this.renderEditPaymentMethodNavItem() }
 				{ this.renderCancelPurchaseNavItem() }
 				{ this.renderRemovePurchaseNavItem() }
@@ -513,12 +540,33 @@ class ManagePurchase extends Component {
 		if ( ! this.isDataValid() ) {
 			return null;
 		}
-		const { site, siteId, siteSlug, purchase, isPurchaseTheme } = this.props;
+		const {
+			site,
+			siteId,
+			siteSlug,
+			renewableSitePurchases,
+			purchase,
+			purchaseAttachedTo,
+			isPurchaseTheme,
+			translate,
+		} = this.props;
 		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
 		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
 			editCardDetailsPath = getEditCardDetailsPath( siteSlug, purchase );
+		}
+
+		let showExpiryNotice = false;
+		let preventRenewal = false;
+
+		if (
+			shouldShowOfferResetFlow() &&
+			purchase &&
+			JETPACK_LEGACY_PLANS.includes( purchase.productSlug )
+		) {
+			showExpiryNotice = isCloseToExpiration( purchase );
+			preventRenewal = ! isRenewable( purchase );
 		}
 
 		return (
@@ -536,13 +584,24 @@ class ManagePurchase extends Component {
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
-					<PurchaseNotice
-						isDataLoading={ isDataLoading( this.props ) }
-						handleRenew={ this.handleRenew }
-						selectedSite={ site }
-						purchase={ purchase }
-						editCardDetailsPath={ editCardDetailsPath }
-					/>
+					{ showExpiryNotice ? (
+						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+							<NoticeAction href={ `/plans/${ site.slug || '' }` }>
+								{ translate( 'View plans' ) }
+							</NoticeAction>
+						</Notice>
+					) : (
+						<PurchaseNotice
+							isDataLoading={ isDataLoading( this.props ) }
+							handleRenew={ this.handleRenew }
+							handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
+							selectedSite={ site }
+							purchase={ purchase }
+							purchaseAttachedTo={ purchaseAttachedTo }
+							renewableSitePurchases={ renewableSitePurchases }
+							editCardDetailsPath={ editCardDetailsPath }
+						/>
+					) }
 					<AsyncLoad
 						require="blocks/product-plan-overlap-notices"
 						placeholder={ null }
@@ -551,7 +610,7 @@ class ManagePurchase extends Component {
 						siteId={ siteId }
 						currentPurchase={ purchase }
 					/>
-					{ this.renderPurchaseDetail() }
+					{ this.renderPurchaseDetail( preventRenewal ) }
 					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 				</Main>
 			</Fragment>
@@ -561,7 +620,12 @@ class ManagePurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
+	const purchaseAttachedTo =
+		purchase && purchase.attachedToPurchaseId
+			? getByPurchaseId( state, purchase.attachedToPurchaseId )
+			: null;
 	const siteId = purchase ? purchase.siteId : null;
+	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
 	const site = getSite( state, siteId );
@@ -576,8 +640,10 @@ export default connect( ( state, props ) => {
 			: false,
 		hasCustomPrimaryDomain: hasCustomDomain( site ),
 		purchase,
+		purchaseAttachedTo,
 		siteId,
 		site,
+		renewableSitePurchases,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),

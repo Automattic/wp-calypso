@@ -26,6 +26,7 @@ import CartToggle from './cart-toggle';
 import wp from 'lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 const wpcom = wp.undocumented();
 
@@ -148,7 +149,7 @@ export class PaypalPaymentBox extends React.Component {
 	};
 
 	render = () => {
-		const { cart, translate } = this.props;
+		const { cart, incompatibleProducts, translate } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
@@ -192,7 +193,11 @@ export class PaypalPaymentBox extends React.Component {
 								<button
 									type="submit"
 									className="checkout__pay-button-button button is-primary"
-									disabled={ this.state.formDisabled || cart.hasPendingServerUpdates }
+									disabled={
+										this.state.formDisabled ||
+										cart.hasPendingServerUpdates ||
+										incompatibleProducts?.blockCheckout
+									}
 								>
 									{ this.renderButtonText() }
 								</button>
@@ -202,7 +207,7 @@ export class PaypalPaymentBox extends React.Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ translate( 'Secure payment' ) }
 								</div>
 							</div>
 
@@ -210,6 +215,7 @@ export class PaypalPaymentBox extends React.Component {
 								<PaymentChatButton paymentType="paypal" cart={ this.props.cart } />
 							) }
 						</div>
+						<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
 					</div>
 				</form>
 				<CartCoupon cart={ this.props.cart } />

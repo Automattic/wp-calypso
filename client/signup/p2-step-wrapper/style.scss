@@ -1,0 +1,108 @@
+@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap' );
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.p2-step-wrapper {
+	box-sizing: border-box;
+	margin: 0 auto;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	padding: 32px 32px 0;
+	font-family: var( --p2-font-inter );
+	line-height: 1.8;
+
+	@include break-mobile {
+		padding: 80px 20px 0;
+		max-width: 400px;
+	}
+
+	input,
+	button {
+		font-family: var( --p2-font-inter );
+	}
+
+	a {
+		color: var( --p2-color-link );
+		transition: color 0.2s ease;
+		text-decoration: none;
+		border-bottom: 1px solid var( --p2-color-link );
+
+		&:hover {
+			color: var( --p2-color-link-dark );
+			border-color: currentColor;
+		}
+	}
+}
+
+.p2-step-wrapper__header {
+	margin-bottom: 40px;
+	@include break-mobile {
+		margin-bottom: 80px;
+	}
+}
+
+.p2-step-wrapper__header-text {
+	font-size: var( --p2-font-size-form-s );
+}
+
+.p2-step-wrapper__header-logo {
+	margin-bottom: 40px;
+}
+
+.p2-step-wrapper__footer {
+	text-align: center;
+	margin-top: auto;
+	margin-bottom: 24px;
+	@include break-mobile {
+		margin-bottom: 32px;
+	}
+}
+
+.p2-step-wrapper__w-logo {
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	margin-bottom: 3px;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.p2-step-wrapper__footer-text {
+	font-size: var( --p2-font-size-form-xs );
+	line-height: 17px;
+}
+
+.p2-step-wrapper button {
+	float: none;
+	margin: 0;
+	padding: 18px 24px;
+	width: 100%;
+	background-color: var( --p2-color-button );
+	color: var( --p2-color-text );
+	border: none;
+	border-radius: 40px;
+	font-weight: normal;
+	font-size: var( --p2-font-size-form );
+	transition: background 0.2s ease;
+
+	&.is-primary {
+		background-color: var( --p2-color-link );
+		color: var( --p2-color-text-white );
+
+		&:hover,
+		&:focus {
+			background-color: var( --p2-color-link-dark );
+			border: none;
+			color: var( --p2-color-text-white );
+		}
+	}
+
+
+	&[disabled] {
+		opacity: 0.5;
+		color: var( --p2-color-text-white );
+		background-color: var( --p2-color-link );
+		border: none;
+	}
+}

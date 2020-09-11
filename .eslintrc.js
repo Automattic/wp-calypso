@@ -1,4 +1,5 @@
 const { merge } = require( 'lodash' );
+const path = require( 'path' );
 const reactVersion = require( './client/package.json' ).dependencies.react;
 
 module.exports = {
@@ -129,6 +130,18 @@ module.exports = {
 						name: 'superagent',
 						message: 'Please use native `fetch` instead.',
 					},
+					// Use `@wordpress/icons` instead of `Icon` or `Dashicon` from `@wordpress/components`.
+					{
+						name: '@wordpress/components',
+						importNames: [ 'Dashicon', 'Icon' ],
+						message: 'Please use `@wordpress/icons` instead.',
+					},
+					// Use `lib/url` instead of Node's 'url'.
+					{
+						name: 'url',
+						message:
+							"Node's `url` is deprecated. Please consider migrating to `lib/url` (see `client/lib/url/README.md`).",
+					},
 				],
 			},
 		],
@@ -170,5 +183,57 @@ module.exports = {
 		// - events because we use it for some event emitters
 		// - path because we use it quite a bit
 		'import/no-nodejs-modules': [ 'error', { allow: [ 'url', 'events', 'path', 'config' ] } ],
+
+		/**
+		 * temporarily demote inclusive language rule to a warning until we clear the repository
+		 * and allow certain terms that we can't fix yet due to complexity or lack of control over the name
+		 */
+		'inclusive-language/use-inclusive-words': [
+			'warn',
+			{
+				words: [],
+				allowedTerms: [
+					// `masterbar` is going to require a whole lot of coordination across multiple repositories
+					// to fix and it's unclear when that will be possible
+					{ term: 'masterbar', allowPartialMatches: true },
+
+					// It's not likely that this will change
+					{ term: 'mastercard', allowPartialMatches: true },
+
+					// The next two are stored in a site's meta so would require a data migration of all sites to fix
+					'comment_whitelist',
+					'blacklist_keys',
+
+					// For HotJar compatibility. HJ will reach out to @saramarcondes once a new
+					// and inclusive attribute name exists to be used: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
+					'data-hj-whitelist',
+
+					// Depends on https://github.com/Automattic/jetpack/blob/3dae8f80e5020338e84bfc20bb41786f056a2eec/json-endpoints/jetpack/class.wpcom-json-api-get-option-endpoint.php#L38
+					'option_name_not_in_whitelist',
+
+					// Depends on https://github.com/Automattic/jetpack/blob/792b26b5539d07cc35fdd93567942f2ad481eef2/modules/protect/shared-functions.php#L74
+					'jetpack_protect_global_whitelist',
+
+					// These are WP.com errors that need coordination to change
+					// https://github.com/Automattic/wp-calypso/issues/43998
+					'site_blacklisted',
+					'blacklisted_domain',
+				],
+			},
+		],
+		// Disabled for now until we finish the migration
+		'wpcalypso/no-package-relative-imports': [
+			'off',
+			{
+				mappings: [
+					{
+						dir: path.join( __dirname, 'client' ),
+						module: 'calypso',
+					},
+				],
+				warnOnNonLiteralImport: true,
+				automaticExtensions: [ '.js', '.ts', '.json', '.jsx', '.tsx' ],
+			},
+		],
 	},
 };

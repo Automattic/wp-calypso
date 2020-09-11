@@ -11,6 +11,7 @@ import {
 import wpcom from 'lib/wp';
 
 import 'state/data-layer/wpcom/sites/memberships/subscriptions';
+import 'state/memberships/init';
 
 export const requestSubscriptionsList = () => ( {
 	type: MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,

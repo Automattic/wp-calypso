@@ -13,7 +13,7 @@ import { identity } from 'lodash';
  */
 import { JetpackConnectNotices } from '../jetpack-connect-notices';
 
-const terminalErrorNoticeType = 'notExists';
+const terminalErrorNoticeType = 'siteBlocked';
 const nonTerminalErrorNoticeType = 'retryAuth';
 const requiredProps = { translate: identity };
 

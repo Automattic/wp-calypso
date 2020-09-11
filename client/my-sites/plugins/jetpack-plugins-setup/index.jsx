@@ -38,7 +38,7 @@ import './style.scss';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { getPlugin } from 'state/plugins/wporg/selectors';
+import { getAllPlugins as getAllWporgPlugins } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
 import { installPlugin } from 'state/plugins/premium/actions';
@@ -88,11 +88,11 @@ class PlansSetup extends React.Component {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins = ( plugins ) => {
 		return plugins.map( ( plugin ) => {
-			const pluginData = getPlugin( this.props.wporg, plugin.slug );
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
 			if ( ! pluginData ) {
 				this.props.fetchPluginData( plugin.slug );
 			}
-			return Object.assign( {}, plugin, pluginData );
+			return { ...plugin, ...pluginData };
 		} );
 	};
 
@@ -161,7 +161,7 @@ class PlansSetup extends React.Component {
 		const site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
-		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
+		plugin = { ...plugin, ...this.props.wporgPlugins?.[ plugin.slug ] };
 
 		const getPluginFromStore = function () {
 			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
@@ -240,7 +240,7 @@ class PlansSetup extends React.Component {
 	};
 
 	renderPluginsPlaceholders = () => {
-		const placeholderCount = this.props.whitelist ? 1 : 2;
+		const placeholderCount = this.props.forSpecificPlugin ? 1 : 2;
 		return range( placeholderCount ).map( ( i ) => <PluginItem key={ 'placeholder-' + i } /> );
 	};
 
@@ -253,7 +253,7 @@ class PlansSetup extends React.Component {
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
 
 		return plugins.map( ( item, i ) => {
-			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
+			const plugin = { ...item, ...this.props.wporgPlugins?.[ item.slug ] };
 
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -558,17 +558,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const selectedSite = getSelectedSite( state );
-		const whitelist = ownProps.whitelist || false;
+		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
 		return {
-			wporg: state.plugins.wporg.items,
+			wporgPlugins: getAllWporgPlugins( state ),
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId, whitelist ),
-			isFinished: isFinished( state, siteId, whitelist ),
-			plugins: getPluginsForSite( state, siteId, whitelist ),
-			activePlugin: getActivePlugin( state, siteId, whitelist ),
-			nextPlugin: getNextPlugin( state, siteId, whitelist ),
+			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
+			isFinished: isFinished( state, siteId, forSpecificPlugin ),
+			plugins: getPluginsForSite( state, siteId, forSpecificPlugin ),
+			activePlugin: getActivePlugin( state, siteId, forSpecificPlugin ),
+			nextPlugin: getNextPlugin( state, siteId, forSpecificPlugin ),
 			selectedSite: selectedSite,
 			isRequestingSites: isRequestingSites( state ),
 			sitesInitialized: hasInitializedSites( state ),

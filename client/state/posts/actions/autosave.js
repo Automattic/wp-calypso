@@ -9,8 +9,8 @@ import store from 'store';
 import { saveEdited } from 'state/posts/actions/save-edited';
 import { getSitePost, getEditedPost, isEditedPostDirty } from 'state/posts/selectors';
 import { isPublished } from 'state/posts/utils';
-import { editorAutosave } from 'state/ui/editor/actions';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { editorAutosave } from 'state/editor/actions';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 import 'state/posts/init';

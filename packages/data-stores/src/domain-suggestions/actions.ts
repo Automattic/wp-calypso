@@ -1,7 +1,18 @@
 /**
  * Internal dependencies
  */
-import type { DomainAvailability, DomainSuggestion, DomainSuggestionQuery } from './types';
+import type {
+	DomainSuggestion,
+	DomainSuggestionQuery,
+	DomainCategory,
+	DomainAvailability,
+} from './types';
+
+export const receiveCategories = ( categories: DomainCategory[] ) =>
+	( {
+		type: 'RECEIVE_CATEGORIES',
+		categories,
+	} as const );
 
 export const receiveDomainSuggestions = (
 	queryObject: DomainSuggestionQuery,
@@ -21,5 +32,5 @@ export const receiveDomainAvailability = ( domainName: string, availability: Dom
 	} as const );
 
 export type Action = ReturnType<
-	typeof receiveDomainSuggestions | typeof receiveDomainAvailability
+	typeof receiveCategories | typeof receiveDomainSuggestions | typeof receiveDomainAvailability
 >;

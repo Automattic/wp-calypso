@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import {
 	capitalize,
 	deburr,
@@ -23,16 +23,21 @@ import {
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { Dialog } from '@automattic/components';
 import QueryLanguageNames from 'components/data/query-language-names';
 import SectionNav from 'components/section-nav';
 import SectionNavTabs from 'components/section-nav/tabs';
 import SectionNavTabItem from 'components/section-nav/item';
 import Search from 'components/search';
+import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+import LanguagePickerItemTooltip from './tooltip';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils/utils';
 
 /**
  * Style dependencies
@@ -48,6 +53,9 @@ export class LanguagePickerModal extends PureComponent {
 		languages: PropTypes.array.isRequired,
 		selected: PropTypes.string,
 		countryCode: PropTypes.string,
+		showEmpathyModeControl: PropTypes.bool,
+		empathyMode: PropTypes.bool,
+		getIncompleteLocaleNoticeMessage: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -57,6 +65,9 @@ export class LanguagePickerModal extends PureComponent {
 		isVisible: false,
 		selected: 'en',
 		countryCode: '',
+		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
+		empathyMode: false,
+		useFallbackForIncompleteLanguages: false,
 	};
 
 	constructor( props ) {
@@ -69,6 +80,8 @@ export class LanguagePickerModal extends PureComponent {
 			isSearchOpen: false,
 			selectedLanguageSlug: this.props.selected,
 			suggestedLanguages: this.getSuggestedLanguages(),
+			empathyMode: props.empathyMode,
+			useFallbackForIncompleteLanguages: props.useFallbackForIncompleteLanguages,
 		};
 
 		this.languagesList = React.createRef();
@@ -216,6 +229,32 @@ export class LanguagePickerModal extends PureComponent {
 		return Math.floor( wrapperWidth / wrapperChildWidth );
 	}
 
+	getShouldRenderNoticeForIncompleteLocale( langSlug ) {
+		return ! isDefaultLocale( langSlug ) && isTranslatedIncompletely( langSlug );
+	}
+
+	getIncompleteLocaleNoticeMessage( langSlug ) {
+		const { translate, getIncompleteLocaleNoticeMessage } = this.props;
+		const language = getLanguage( langSlug );
+
+		if ( typeof getIncompleteLocaleNoticeMessage === 'function' ) {
+			return getIncompleteLocaleNoticeMessage( language );
+		}
+
+		return translate(
+			'%(language)s is only %(percentTranslated)d%% translated :(. You can help translate WordPress.com into your language. {{a}}Learn more.{{/a}}',
+			{
+				components: {
+					a: <a href="https://translate.wordpress.com/faq/" />,
+				},
+				args: {
+					language: language.name,
+					percentTranslated: language.calypsoPercentTranslated,
+				},
+			}
+		);
+	}
+
 	selectLanguageFromSearch( search ) {
 		const filteredLanguages = this.getFilteredLanguages();
 		const exactMatch = filteredLanguages.find( ( { langSlug } ) => langSlug === search );
@@ -313,8 +352,10 @@ export class LanguagePickerModal extends PureComponent {
 			return;
 		}
 
+		const hasModifierKey = event.altKey || event.ctrlKey || event.metaKey;
+
 		// Handle character input
-		if ( isPrintableCharacter && ! isSearchOpen ) {
+		if ( ! hasModifierKey && isPrintableCharacter && ! isSearchOpen ) {
 			event.preventDefault();
 
 			this.handleSearch( event.key );
@@ -361,9 +402,18 @@ export class LanguagePickerModal extends PureComponent {
 		}
 	};
 
+	handleEmpathyModeToggle = ( event ) => {
+		this.setState( { empathyMode: event.target.checked } );
+	};
+
+	handleUseFallbackForIncompleteLanguages = ( event ) => {
+		this.setState( { useFallbackForIncompleteLanguages: event.target.checked } );
+	};
+
 	handleSelectLanguage = () => {
-		const langSlug = this.state.selectedLanguageSlug;
-		this.props.onSelected( langSlug );
+		const { empathyMode, selectedLanguageSlug, useFallbackForIncompleteLanguages } = this.state;
+		const langSlug = selectedLanguageSlug;
+		this.props.onSelected( langSlug, { empathyMode, useFallbackForIncompleteLanguages } );
 		this.handleClose();
 	};
 
@@ -419,6 +469,12 @@ export class LanguagePickerModal extends PureComponent {
 			>
 				<span className={ classes } lang={ language.langSlug }>
 					{ language.name }
+
+					{ this.getShouldRenderNoticeForIncompleteLocale( language.langSlug ) && (
+						<LanguagePickerItemTooltip langSlug={ language.langSlug }>
+							{ this.getIncompleteLocaleNoticeMessage( language.langSlug ) }
+						</LanguagePickerItemTooltip>
+					) }
 				</span>
 			</div>
 		);
@@ -443,6 +499,58 @@ export class LanguagePickerModal extends PureComponent {
 						</div>
 					</div>
 				</div>
+			</div>
+		);
+	}
+
+	renderEmpathyModeCheckbox() {
+		const { showEmpathyModeControl } = this.props;
+
+		if ( ! showEmpathyModeControl ) {
+			return null;
+		}
+
+		const { empathyMode, selectedLanguageSlug } = this.state;
+		const isDefaultLanguageSelected = i18n.defaultLocaleSlug === selectedLanguageSlug;
+
+		return (
+			<div className="language-picker__modal-empathy-mode">
+				<FormLabel>
+					<FormCheckbox
+						checked={ empathyMode && ! isDefaultLanguageSelected }
+						disabled={ isDefaultLanguageSelected }
+						onChange={ this.handleEmpathyModeToggle }
+					/>
+					<span title="Pretend to use that language but display English where a translated exists">
+						Empathy mode
+					</span>
+				</FormLabel>
+			</div>
+		);
+	}
+
+	renderIncompleteLocaleNotice() {
+		const { selectedLanguageSlug, useFallbackForIncompleteLanguages } = this.state;
+
+		if ( ! this.getShouldRenderNoticeForIncompleteLocale( selectedLanguageSlug ) ) {
+			return null;
+		}
+
+		return (
+			<div className="language-picker__modal-locale-notice">
+				{ ! this.props.getIncompleteLocaleNoticeMessage && (
+					<FormLabel>
+						<FormCheckbox
+							checked={ useFallbackForIncompleteLanguages }
+							onChange={ this.handleUseFallbackForIncompleteLanguages }
+						/>
+						<span>{ this.props.translate( 'Display interface in English' ) }</span>
+					</FormLabel>
+				) }
+
+				<p className="language-picker__modal-locale-explanation form-setting-explanation">
+					{ this.getIncompleteLocaleNoticeMessage( selectedLanguageSlug ) }
+				</p>
 			</div>
 		);
 	}
@@ -491,6 +599,8 @@ export class LanguagePickerModal extends PureComponent {
 				</SectionNav>
 				{ this.renderLanguageList() }
 				{ this.renderSuggestedLanguages() }
+				{ this.renderEmpathyModeCheckbox() }
+				{ this.renderIncompleteLocaleNotice() }
 			</Dialog>
 		);
 	}

@@ -9,10 +9,10 @@ import { useDispatch } from 'react-redux';
  */
 import { requestHomeLayout } from 'state/home/actions';
 
-export default function QueryHomeLayout( { siteId } ) {
+export default function QueryHomeLayout( { isDev, forcedView, siteId } ) {
 	const dispatch = useDispatch();
 	React.useEffect( () => {
-		dispatch( requestHomeLayout( siteId ) );
+		dispatch( requestHomeLayout( siteId, isDev, forcedView ) );
 	}, [ dispatch, siteId ] );
 
 	return null;

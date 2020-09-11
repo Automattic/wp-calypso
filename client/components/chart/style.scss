@@ -58,7 +58,7 @@ $y-axis-padding: 0 20px 0 10px;
 	float: right;
 	height: 200px;
 	padding: $y-axis-padding;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-40 );
 	margin-bottom: 30px;
 }
@@ -90,7 +90,7 @@ $y-axis-padding: 0 20px 0 10px;
 	position: absolute;
 	display: inline-block;
 	vertical-align: top;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-align: center;
 }
 
@@ -225,11 +225,11 @@ $y-axis-padding: 0 20px 0 10px;
 	color: var( --color-neutral );
 	list-style-type: none;
 	margin: 0;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 100%;
 	}
 }
@@ -241,7 +241,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		width: 50%;
 		display: inline-block;
 	}
@@ -254,6 +254,13 @@ $y-axis-padding: 0 20px 0 10px;
 	display: inline-block;
 	padding: 12px 19px 10px 20px; // 1
 
+	&.form-label {
+		display: inline-block;
+		margin-bottom: 0;
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+	}
+
 	&.is-selectable {
 		cursor: pointer;
 
@@ -263,7 +270,7 @@ $y-axis-padding: 0 20px 0 10px;
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: block;
 	}
 }
@@ -282,7 +289,7 @@ $y-axis-padding: 0 20px 0 10px;
 	margin: 3px 5px 3px 8px; // 1
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.chart__legend-option:first-child .chart__legend-color {
 		margin-left: 2px; // 2
 	}
@@ -330,7 +337,7 @@ $y-axis-padding: 0 20px 0 10px;
 			padding: 0;
 
 			li {
-				font-size: 11px;
+				font-size: $font-body-extra-small;
 				text-transform: uppercase;
 				font-weight: 400;
 				height: 24px;
@@ -379,7 +386,7 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: center;
 
 					.rtl & {
-						font-size: 11px;
+						font-size: $font-body-extra-small;
 					}
 
 					.post-count {
@@ -396,7 +403,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__tooltip .module-content-list-item {
 	&.is-date-label {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 2px;
 		text-transform: uppercase;
 		font-weight: 600;

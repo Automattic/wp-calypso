@@ -21,6 +21,10 @@ export const getAllDomains = ( state ) => {
 	return state.sites.domains.items;
 };
 
+export const getFlatDomainsList = ( state ) => {
+	return state.allDomains.domains ?? [];
+};
+
 /**
  * Returns the list of site domains for the specified site.
  *

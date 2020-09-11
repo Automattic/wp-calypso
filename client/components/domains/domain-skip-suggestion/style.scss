@@ -10,7 +10,7 @@
 .domain-skip-suggestion__domain-description {
 	padding-right: 1em;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 75%;
 	}
 
@@ -20,10 +20,10 @@
 
 	p {
 		color: var( --color-neutral-70 );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-bottom: 0;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			margin-bottom: 8px;
 		}
 	}

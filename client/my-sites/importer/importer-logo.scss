@@ -8,7 +8,7 @@
 
 	background-color: var( --color-neutral-70 );
 	fill: var( --color-text-inverted );
-	border-radius: 4px;
+	border-radius: 2px;
 
 	&.wordpress {
 		background-color: var( --color-wordpress-com );
@@ -34,7 +34,7 @@
 		background-color: var( --color-squarespace );
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 56px;
 		height: 56px;
 		padding: 4px;

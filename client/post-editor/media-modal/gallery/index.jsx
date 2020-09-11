@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -12,15 +11,15 @@ import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import MediaStore from 'lib/media/store';
 import EditorMediaModalContent from '../content';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { setEditorMediaModalView } from 'state/editor/actions';
 import { isModuleActive } from 'lib/site/utils';
+import getMediaItem from 'state/media/thunks/get-media-item';
 
 /**
  * Style dependencies
@@ -80,7 +79,7 @@ class EditorMediaModalGallery extends React.Component {
 				} )
 			)
 			.map( ( item ) => {
-				return MediaStore.get( this.props.site.ID, item.ID );
+				return this.props.getMediaItem( this.props.site.ID, item.ID );
 			} );
 
 		if ( ! isEqual( newItems, settings.items ) ) {
@@ -129,6 +128,7 @@ class EditorMediaModalGallery extends React.Component {
 		const { site, items, settings } = this.props;
 
 		return (
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			<div className="editor-media-modal-gallery">
 				<EditorMediaModalGalleryDropZone
 					site={ site }
@@ -157,10 +157,12 @@ class EditorMediaModalGallery extends React.Component {
 					</div>
 				</EditorMediaModalContent>
 			</div>
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		);
 	}
 }
 
 export default connect( null, {
 	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	getMediaItem,
 } )( localize( EditorMediaModalGallery ) );

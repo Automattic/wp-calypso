@@ -15,6 +15,8 @@ import config from 'config';
 import SidebarItem from 'layout/sidebar/item';
 import { getPostTypes } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
+import { getSiteCommentCounts } from 'state/comments/selectors';
+import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
 import { bumpStat } from 'lib/analytics/mc';
 import { decodeEntities } from 'lib/formatting';
 import compareProps from 'lib/compare-props';
@@ -107,6 +109,7 @@ class SiteMenu extends PureComponent {
 			{
 				name: 'comments',
 				label: translate( 'Comments' ),
+				count: get( this.props.commentCounts, 'pending' ),
 				capability: 'edit_posts',
 				queryable: true,
 				config: 'manage/comments',
@@ -176,6 +179,7 @@ class SiteMenu extends PureComponent {
 			<SidebarItem
 				key={ menuItem.name }
 				label={ menuItem.label }
+				count={ menuItem.count > 0 ? menuItem.count : null }
 				selected={ itemLinkMatches( menuItem.paths || menuItem.link, this.props.path ) }
 				link={ link }
 				onNavigate={ this.onNavigate( menuItem.name ) }
@@ -257,11 +261,13 @@ class SiteMenu extends PureComponent {
 	}
 
 	render() {
+		const { siteId, canCurrentUser } = this.props;
 		const menuItems = [ ...this.getDefaultMenuItems(), ...this.getCustomMenuItems() ];
 
 		return (
 			<ul>
-				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
+				{ siteId && <QueryPostTypes siteId={ siteId } /> }
+				{ siteId && canCurrentUser( 'edit_posts' ) && <QuerySiteCommentCounts siteId={ siteId } /> }
 				{ menuItems.map( this.renderMenuItem, this ) }
 			</ul>
 		);
@@ -282,6 +288,7 @@ export default connect(
 		siteSlug: getSiteSlug( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		commentCounts: getSiteCommentCounts( state, siteId ),
 	} ),
 	{ expandSection, recordTracksEvent },
 	null,

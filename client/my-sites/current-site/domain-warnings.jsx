@@ -18,7 +18,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import isSiteEligibleForFullSiteEditing from 'state/selectors/is-site-eligible-for-full-site-editing';
 
-const ruleWhiteList = [
+const allowedRules = [
 	'unverifiedDomainsCanManage',
 	'unverifiedDomainsCannotManage',
 	'expiredDomainsCanManage',
@@ -53,7 +53,7 @@ const CurrentSiteDomainWarnings = ( {
 				isCompact
 				selectedSite={ selectedSite }
 				domains={ domains }
-				ruleWhiteList={ ruleWhiteList }
+				allowedRules={ allowedRules }
 				isSiteEligibleForFSE={ isSiteEligibleForFSE }
 				siteIsUnlaunched={ siteIsUnlaunched }
 			/>

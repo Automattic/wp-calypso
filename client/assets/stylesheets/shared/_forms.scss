@@ -7,29 +7,22 @@ form {
 	@extend %form;
 }
 input[type='text'],
-input[type='search'],
 input[type='email'],
 input[type='number'],
 input[type='password'],
-input[type='checkbox'],
-input[type='radio'],
-input[type='tel'],
-input[type='url'],
 textarea {
 	@extend %form-field;
 }
 textarea {
 	@extend %textarea;
+	border-radius: 2px;
 }
 
 fieldset,
 input[type='text'],
-input[type='search'],
 input[type='email'],
 input[type='number'],
 input[type='password'],
-input[type='tel'],
-input[type='url'],
 textarea,
 select,
 label {
@@ -37,77 +30,9 @@ label {
 }
 
 input[type='password'],
-input[type='email'],
-input[type='url'] {
+input[type='email'] {
 	/*!rtl:ignore*/
 	direction: ltr;
-}
-
-/*Checkbooms*/
-
-input[type='checkbox'],
-input[type='radio'] {
-	clear: none;
-	cursor: pointer;
-	display: inline-block;
-	line-height: 0;
-	height: 16px;
-	margin: 2px 0 0;
-	float: left;
-	outline: 0;
-	padding: 0;
-	text-align: center;
-	vertical-align: middle;
-	width: 16px;
-	min-width: 16px;
-	appearance: none;
-}
-
-input[type='checkbox'] + span,
-input[type='radio'] + span {
-	display: block;
-	margin-left: 24px;
-}
-
-input[type='checkbox'] {
-	border-radius: 2px;
-
-	&:checked::before {
-		content: url( '/calypso/images/checkbox-icons/checkmark-primary.svg' );
-		width: 12px;
-		height: 12px;
-		margin: 1px auto;
-		display: inline-block;
-		speak: none;
-	}
-
-	&:disabled:checked::before {
-		color: var( --color-neutral-20 );
-	}
-}
-
-input[type='radio'] {
-	border-radius: 50%;
-	margin-right: 4px;
-	line-height: 10px;
-
-	&:checked::before {
-		float: left;
-		display: inline-block;
-		content: '\2022';
-		margin: 3px;
-		width: 8px;
-		height: 8px;
-		text-indent: -9999px;
-		background: var( --color-primary );
-		vertical-align: middle;
-		border-radius: 50%;
-		animation: grow 0.2s ease-in-out;
-	}
-
-	&:disabled:checked::before {
-		background: var( --color-neutral-0 );
-	}
 }
 
 @keyframes grow {
@@ -124,23 +49,21 @@ input[type='radio'] {
 	}
 }
 
-/* end checkbooms */
-
 select {
 	background: var( --color-surface )
 		url( 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjQzhEN0UxIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==' )
 		no-repeat right 10px center;
 	border-color: var( --color-neutral-10 );
 	border-style: solid;
-	border-radius: 4px;
-	border-width: 1px 1px 2px;
+	border-radius: 2px;
+	border-width: 1px;
 	color: var( --color-neutral-70 );
 	cursor: pointer;
 	display: inline-block;
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
-	font-size: 16px;
+	font-size: $font-body;
 	font-weight: 400;
 	line-height: 1.4em;
 	text-overflow: ellipsis;
@@ -209,12 +132,4 @@ select {
 		color: transparent;
 		text-shadow: 0 0 0 var( --color-neutral-70 );
 	}
-}
-
-/*Search Inputs*/
-input[type='search']::-webkit-search-decoration {
-	// We don't use the native results="" UI
-	// Ensures the input text is flush to the start of the element, as in regular text inputs
-	// See, for example, http://geek.michaelgrace.org/2011/06/webkit-search-input-styling/
-	display: none;
 }

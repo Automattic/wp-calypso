@@ -38,6 +38,7 @@ class DomainSearchResults extends React.Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
+		premiumDomains: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
 		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
@@ -197,6 +198,12 @@ class DomainSearchResults extends React.Component {
 						</Notice>
 					);
 				}
+			} else {
+				availabilityElement = (
+					<Notice status="is-warning" showDismiss={ false }>
+						{ domainUnavailableMessage }
+					</Notice>
+				);
 			}
 		}
 
@@ -249,6 +256,7 @@ class DomainSearchResults extends React.Component {
 					isSignupStep={ this.props.isSignupStep }
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
+					premiumDomains={ this.props.premiumDomains }
 					primarySuggestion={ first( bestMatchSuggestions ) }
 					query={ this.props.lastDomainSearched }
 					railcarId={ this.props.railcarId }
@@ -257,6 +265,8 @@ class DomainSearchResults extends React.Component {
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 				/>
 			);
 
@@ -279,9 +289,12 @@ class DomainSearchResults extends React.Component {
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
+						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
+						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				);
 			} );

@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-const req = require( 'superagent' );
-const bodyParser = require( 'body-parser' );
+import req from 'superagent';
+import bodyParser from 'body-parser';
 
 /**
  * Internal dependencies
  */
-const config = require( 'config' );
+import config from 'config';
 
 function oauth() {
 	return {
@@ -108,10 +108,10 @@ function sms( request, response ) {
 		);
 }
 
-module.exports = function ( app ) {
+export default function ( app ) {
 	return app
 		.use( bodyParser.json() )
 		.post( '/oauth', proxyOAuth )
 		.get( '/logout', logout )
 		.post( '/sms', sms );
-};
+}

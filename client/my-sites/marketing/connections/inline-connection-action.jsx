@@ -16,7 +16,7 @@ import {
 	isKeyringConnectionsFetching,
 } from 'state/sharing/keyring/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
-import requestExternalAccess from 'lib/sharing';
+import requestExternalAccess from '@automattic/request-external-access';
 
 export const getNamedConnectedService = ( state, name ) =>
 	getKeyringConnections( state ).filter( ( item ) => item.service === name );

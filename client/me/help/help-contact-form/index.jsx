@@ -32,7 +32,7 @@ import {
 	composeAnalytics,
 } from 'state/analytics/actions';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { isShowingQandAInlineHelpContactForm } from 'state/inline-help/selectors';
+import isShowingQandAInlineHelpContactForm from 'state/selectors/is-showing-q-and-a-inline-help-contact-form';
 import { showQandAOnInlineHelpContactForm } from 'state/inline-help/actions';
 import { getNpsSurveyFeedback } from 'state/nps-survey/selectors';
 import { generateSubjectFromMessage } from './utils';
@@ -55,8 +55,28 @@ const trackSibylClick = ( event, helpLink ) =>
 		} )
 	);
 
+const trackSibylFirstClick = ( event, helpLink ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_first_question_click', {
+			question_id: helpLink.id,
+		} )
+	);
+
 const trackSupportAfterSibylClick = () =>
 	composeAnalytics( recordTracksEventAction( 'calypso_sibyl_support_after_question_click' ) );
+
+const trackSupportWithSibylSuggestions = ( query, suggestions ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_support_with_suggestions_showing', {
+			query,
+			suggestions,
+		} )
+	);
+
+const trackSupportWithoutSibylSuggestions = ( query ) =>
+	composeAnalytics(
+		recordTracksEventAction( 'calypso_sibyl_support_without_suggestions_showing', { query } )
+	);
 
 export class HelpContactForm extends React.PureComponent {
 	static propTypes = {
@@ -153,8 +173,10 @@ export class HelpContactForm extends React.PureComponent {
 		}
 	};
 
+	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
+
 	doQandASearch = () => {
-		const query = ( this.state.subject + ' ' + this.state.message ).trim();
+		const query = this.getSibylQuery();
 
 		if ( '' === query ) {
 			this.setState( { qanda: [] } );
@@ -187,6 +209,9 @@ export class HelpContactForm extends React.PureComponent {
 	};
 
 	trackSibylClick = ( event, helpLink ) => {
+		if ( ! this.state.sibylClicked ) {
+			this.props.trackSibylFirstClick( event, helpLink );
+		}
 		this.props.trackSibylClick( event, helpLink );
 		this.setState( { sibylClicked: true } );
 	};
@@ -284,6 +309,15 @@ export class HelpContactForm extends React.PureComponent {
 			this.setState( { sibylClicked: false } );
 		}
 
+		if ( isEmpty( this.state.qanda ) ) {
+			this.props.trackSupportWithoutSibylSuggestions( this.getSibylQuery() );
+		} else {
+			this.props.trackSupportWithSibylSuggestions(
+				this.getSibylQuery(),
+				this.state.qanda.map( ( { id, title } ) => `${ id } - ${ title }` ).join( ' / ' )
+			);
+		}
+
 		this.props.onSubmit( {
 			howCanWeHelp,
 			howYouFeel,
@@ -338,17 +372,17 @@ export class HelpContactForm extends React.PureComponent {
 		const howCanWeHelpOptions = [
 			{
 				value: 'gettingStarted',
-				label: translate( 'Help getting started' ),
+				label: translate( 'Get started' ),
 				subtext: translate( 'Can you show me how to…' ),
 			},
 			{
 				value: 'somethingBroken',
-				label: translate( 'Something is broken' ),
+				label: translate( "Report something isn't working" ),
 				subtext: translate( 'Can you check this out…' ),
 			},
 			{
 				value: 'suggestion',
-				label: translate( 'I have a suggestion' ),
+				label: translate( 'Make a suggestion' ),
 				subtext: translate( 'I think it would be cool if…' ),
 			},
 		];
@@ -385,7 +419,7 @@ export class HelpContactForm extends React.PureComponent {
 
 				{ showHowCanWeHelpField && (
 					<div>
-						<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
+						<FormLabel>{ translate( "You're reaching out to…" ) }</FormLabel>
 						{ this.renderFormSelection( 'howCanWeHelp', howCanWeHelpOptions ) }
 					</div>
 				) }
@@ -486,7 +520,10 @@ const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
 	recordTracksEventAction,
 	trackSibylClick,
+	trackSibylFirstClick,
 	trackSupportAfterSibylClick,
+	trackSupportWithSibylSuggestions,
+	trackSupportWithoutSibylSuggestions,
 	showQandAOnInlineHelpContactForm,
 };
 

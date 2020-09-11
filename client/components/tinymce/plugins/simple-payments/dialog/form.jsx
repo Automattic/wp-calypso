@@ -23,6 +23,8 @@ import ReduxFormFieldset, { FieldsetRenderer } from 'components/redux-forms/redu
 import ProductImagePicker from './product-image-picker';
 import { SUPPORTED_CURRENCY_LIST } from 'lib/simple-payments/constants';
 
+import 'state/form/init';
+
 export const REDUX_FORM_NAME = 'simplePaymentsForm';
 
 // Export some selectors that are needed by the code that submits the form

@@ -345,11 +345,12 @@ class SectionImport extends Component {
 
 		return (
 			<Main>
-				<DocumentHead title={ translate( 'Import Your Content' ) } />
+				<DocumentHead title={ translate( 'Import Content' ) } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="importer__page-heading"
-					headerText={ translate( 'Import Your Content' ) }
+					headerText={ translate( 'Import Content' ) }
 					align="left"
 				/>
 				<EmailVerificationGate allowUnlaunched>

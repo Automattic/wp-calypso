@@ -14,7 +14,7 @@ import fs from 'fs';
  * Internal dependencies
  */
 import config from 'config';
-import { isDefaultLocale, isLocaleRtl } from 'lib/i18n-utils';
+import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -125,6 +125,23 @@ export function render( element, key = JSON.stringify( element ), req ) {
 	} catch ( ex ) {
 		if ( process.env.NODE_ENV === 'development' ) {
 			throw ex;
+		} else {
+			try {
+				req.context.store.dispatch(
+					logToLogstash( {
+						feature: 'calypso_ssr',
+						message: 'Exception thrown on render',
+						user_id: req.context.user?.ID,
+						extra: {
+							message: ex.message,
+							stack: ex.stack,
+						},
+					} )
+				);
+			} catch {
+				// Failed to log the error, swallow it so it doesn't break anything. This will serve
+				// a blank page and the client will render on top of it.
+			}
 		}
 	}
 	//todo: render an error?
@@ -145,51 +162,59 @@ const getLanguageManifest = ( langSlug, target ) => {
 			'languages',
 			`${ langSlug }-language-manifest.json`
 		);
-		cachedLanguageManifest[ key ] = JSON.parse(
-			fs.readFileSync( languageManifestFilepath, 'utf8' )
-		);
+		cachedLanguageManifest[ key ] = fs.existsSync( languageManifestFilepath )
+			? JSON.parse( fs.readFileSync( languageManifestFilepath, 'utf8' ) )
+			: null;
 	}
 	return cachedLanguageManifest[ key ];
 };
 
 export function attachI18n( context ) {
-	if ( ! isDefaultLocale( context.lang ) ) {
-		const langFileName = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+	let localeSlug = getCurrentLocaleVariant( context.store.getState() ) || context.lang;
+	const shouldUseFallbackLocale =
+		context.user?.use_fallback_for_incomplete_languages && isTranslatedIncompletely( localeSlug );
 
-		context.i18nLocaleScript = getLanguageFileUrl( langFileName, 'js', context.languageRevisions );
+	if ( shouldUseFallbackLocale ) {
+		localeSlug = config( 'i18n_default_locale_slug' );
 	}
 
-	if ( ! isDefaultLocale( context.lang ) && context.useTranslationChunks ) {
+	if ( ! isDefaultLocale( localeSlug ) ) {
+		context.i18nLocaleScript = getLanguageFileUrl( localeSlug, 'js', context.languageRevisions );
+	}
+
+	if ( ! isDefaultLocale( localeSlug ) && context.useTranslationChunks ) {
 		context.entrypoint.language = {};
 
-		context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
-			localeSlug: context.lang,
-			fileType: 'js',
-			targetBuild: context.target,
-			languageRevisions: context.languageRevisions,
-		} );
+		const languageManifest = getLanguageManifest( localeSlug, context.target );
 
-		const translatedChunks = getLanguageManifest( context.lang, context.target ).translatedChunks;
+		if ( languageManifest ) {
+			context.entrypoint.language.manifest = getLanguageManifestFileUrl( {
+				localeSlug: localeSlug,
+				fileType: 'js',
+				targetBuild: context.target,
+				hash: context?.languageRevisions?.hashes?.[ localeSlug ],
+			} );
 
-		context.entrypoint.language.translations = context.entrypoint.js
-			.concat( context.chunkFiles.js )
-			.map( ( chunk ) => path.parse( chunk ).name )
-			.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
-			.map( ( chunkId ) =>
-				getTranslationChunkFileUrl( {
-					chunkId,
-					localeSlug: context.lang,
-					fileType: 'js',
-					buildTarget: context.target,
-					languageRevisions: context.languageRevisions,
-				} )
-			);
+			context.entrypoint.language.translations = context.entrypoint.js
+				.concat( context.chunkFiles.js )
+				.map( ( chunk ) => path.parse( chunk ).name )
+				.filter( ( chunkId ) => languageManifest.translatedChunks.includes( chunkId ) )
+				.map( ( chunkId ) =>
+					getTranslationChunkFileUrl( {
+						chunkId,
+						localeSlug: localeSlug,
+						fileType: 'js',
+						targetBuild: context.target,
+						hash: context?.languageRevisions?.[ localeSlug ],
+					} )
+				);
+		}
 	}
 
 	if ( context.store ) {
-		context.lang = getCurrentLocaleSlug( context.store.getState() ) || context.lang;
+		context.lang = getCurrentLocaleSlug( context.store.getState() ) || localeSlug;
 
-		const isLocaleRTL = isLocaleRtl( context.lang );
+		const isLocaleRTL = isLocaleRtl( localeSlug );
 		context.isRTL = isLocaleRTL !== null ? isLocaleRTL : context.isRTL;
 	}
 }
@@ -302,7 +327,7 @@ export function setShouldServerSideRender( context, next ) {
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		isSectionIsomorphic( context.store.getState() ) &&
-		! context.user && // logged out only
+			! context.user && // logged out only
 			isDefaultLocale( context.lang ) &&
 			context.layout
 	);

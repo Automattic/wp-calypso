@@ -37,7 +37,7 @@ export const PAYMENT_PROCESSOR_COUNTRIES_FIELDS = {
 		],
 	},
 	ID: {
-		fields: [ 'name', 'nik' ],
+		fields: [ 'name', 'nik', 'phone-number' ],
 	},
 };
 

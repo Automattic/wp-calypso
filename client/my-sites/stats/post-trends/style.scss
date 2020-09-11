@@ -4,7 +4,7 @@ client/my-sites/stats/post-trends/style.scss
 	user-select: none;
 	position: relative;
 	width: 100%;
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }
@@ -20,7 +20,7 @@ client/my-sites/stats/post-trends/style.scss
 
 .post-trends__value {
 	text-align: center;
-	font-size: 16px;
+	font-size: $font-body;
 	color: var( --color-neutral-50 );
 	margin: 20px 0 30px;
 }
@@ -52,7 +52,7 @@ client/my-sites/stats/post-trends/style.scss
 	text-align: left;
 	z-index: z-index( 'root', '.post-trends__scroll' );
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		.focus-sidebar & {
 			z-index: 0;
 		}
@@ -114,7 +114,7 @@ client/my-sites/stats/post-trends/style.scss
 
 .post-trends__label {
 	text-align: center;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-40 );
 	margin-top: 10px;
 	text-transform: uppercase;
@@ -174,7 +174,7 @@ client/my-sites/stats/post-trends/style.scss
 	}
 }
 
-@include breakpoint( '>1040px' ) {
+@include breakpoint-deprecated( '>1040px' ) {
 
 	.post-trends__scroll-left,
 	.post-trends__scroll-right {
@@ -187,7 +187,7 @@ client/my-sites/stats/post-trends/style.scss
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -201,7 +201,7 @@ client/my-sites/stats/post-trends/style.scss
 }
 
 .post-trends__key-label {
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral );
 	letter-spacing: 0.1em;
 	text-transform: uppercase;

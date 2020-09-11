@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -13,7 +12,7 @@ import { connect } from 'react-redux';
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
+import { isEditorNewPost, getEditorPostId } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isJetpackModuleActive } from 'state/sites/selectors';
 import { getEditedPost } from 'state/posts/selectors';

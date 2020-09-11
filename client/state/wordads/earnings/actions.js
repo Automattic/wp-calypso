@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { WORDADS_EARNINGS_REQUEST, WORDADS_EARNINGS_RECEIVE } from 'state/action-types';
 
 import 'state/data-layer/wpcom/wordads/earnings';
+import 'state/wordads/init';
 
 export const requestWordadsEarnings = ( siteId ) => ( {
 	type: WORDADS_EARNINGS_REQUEST,

@@ -16,3 +16,4 @@ export { startEditingExistingPost } from 'state/posts/actions/start-editing-exis
 export { startEditingPostCopy } from 'state/posts/actions/start-editing-post-copy';
 export { trashPost } from 'state/posts/actions/trash-post';
 export { updatePostMetadata } from 'state/posts/actions/update-post-metadata';
+export { requestPostGeoImageUrl } from 'state/posts/geo/actions';

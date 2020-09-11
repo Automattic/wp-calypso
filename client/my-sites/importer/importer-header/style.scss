@@ -9,7 +9,7 @@
 	.importer-header__service-title {
 		line-height: 40px;
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			line-height: 56px;
 		}
 	}
@@ -25,14 +25,12 @@
 }
 
 .importer-header__service-title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	color: var( --color-text-subtle );
 	clear: none;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		line-height: 1;
 		margin-bottom: 0.25em;
 	}
 }
-
-

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { every, get, includes, isArray, keys, reduce, some } from 'lodash';
+import { every, includes, isArray, keys, reduce, some } from 'lodash';
 import store from 'store';
 import { getLocaleSlug } from 'i18n-calypso';
 
@@ -11,13 +11,12 @@ import { getLocaleSlug } from 'i18n-calypso';
  */
 import activeTests from 'lib/abtest/active-tests';
 import { recordTracksEvent } from 'lib/analytics/tracks';
-import userFactory from 'lib/user';
+import user from 'lib/user';
 import wpcom from 'lib/wp';
 import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
 import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso:abtests' );
-const user = userFactory();
 
 function ABTest( name, geoLocation ) {
 	if ( ! ( this instanceof ABTest ) ) {
@@ -64,7 +63,7 @@ export const saveABTestVariation = ( name, variation ) =>
 
 export const getAllTests = () => keys( activeTests ).map( ABTest );
 
-const isUserSignedIn = () => user && user.get() !== false;
+const isUserSignedIn = () => user() && user().get() !== false;
 
 const parseDateStamp = ( datestamp ) => {
 	const format = 'YYYYMMDD';
@@ -209,7 +208,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
 	const localeFromSession = getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
-	const userLocale = user.get().localeSlug || 'en';
+	const userLocale = user().get()?.localeSlug || 'en';
 
 	if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
 		debug( '%s: User has a %s locale', experimentId, userLocale );
@@ -300,7 +299,7 @@ ABTest.prototype.hasBeenInPreviousSeriesTest = function () {
 };
 
 ABTest.prototype.hasRegisteredBeforeTestBegan = function () {
-	return user && user.get() && new Date( user.get().date ) < new Date( this.startDate );
+	return user() && user().get() && new Date( user().get().date ) < new Date( this.startDate );
 };
 
 ABTest.prototype.getSavedVariation = function () {
@@ -311,7 +310,7 @@ ABTest.prototype.assignVariation = function () {
 	let variationName, randomAllocationAmount;
 	let sum = 0;
 
-	const userId = get( user, 'data.ID' );
+	const userId = user()?.get()?.ID;
 	const allocationsTotal = reduce(
 		this.variationDetails,
 		( allocations, allocation ) => {
@@ -321,7 +320,7 @@ ABTest.prototype.assignVariation = function () {
 	);
 
 	if ( this.assignmentMethod === 'userId' && ! isNaN( +userId ) ) {
-		randomAllocationAmount = Number( user.data.ID ) % allocationsTotal;
+		randomAllocationAmount = Number( userId ) % allocationsTotal;
 	} else {
 		randomAllocationAmount = Math.random() * allocationsTotal;
 	}

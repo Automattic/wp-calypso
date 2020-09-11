@@ -6,6 +6,7 @@
 		"allowJs": false,
 		"jsx": "react",
 		"declaration": true,
+		"declarationMap": true,
 		"declarationDir": "dist/types",
 		"rootDir": "src",
 		"outDir": "dist/esm",
@@ -22,14 +23,15 @@
 
 		"forceConsistentCasingInFileNames": true,
 
+		"importsNotUsedAsValues": "error",
+
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 
 		"noEmitHelpers": true,
 		"importHelpers": true,
 
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__data-stores"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

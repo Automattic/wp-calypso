@@ -10,6 +10,8 @@ import { Field } from 'redux-form';
  */
 import FormTextInput from 'components/forms/form-text-input';
 
+import 'state/form/init';
+
 const TextInputRenderer = ( { input, meta, ...props } ) => (
 	<FormTextInput { ...input } { ...props } />
 );

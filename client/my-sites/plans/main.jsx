@@ -29,8 +29,8 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { getByPurchaseId } from 'state/purchases/selectors';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { isPartnerPurchase, getPartnerName } from 'lib/purchases';
 import CartData from 'components/data/cart';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -77,33 +77,6 @@ class Plans extends React.Component {
 		}
 	}
 
-	renderPlanWithPartner = () => {
-		const { context, purchase, translate } = this.props;
-
-		const partnerName = getPartnerName( purchase );
-
-		return (
-			<div>
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
-				<Main wideLayout={ true }>
-					<SidebarNavigation />
-					<div id="plans" className="plans plans__has-sidebar">
-						<PlansNavigation path={ context.path } />
-						<EmptyContent
-							illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-							title={ translate( 'Your plan is managed by %(partnerName)s', {
-								args: { partnerName },
-							} ) }
-							line={ translate(
-								'You purchased this plan as part of an all inclusive package with your website host.'
-							) }
-						/>
-					</div>
-				</Main>
-			</div>
-		);
-	};
-
 	renderPlaceholder = () => {
 		return (
 			<div>
@@ -118,14 +91,16 @@ class Plans extends React.Component {
 	};
 
 	render() {
-		const { selectedSite, translate, displayJetpackPlans, canAccessPlans, purchase } = this.props;
+		const {
+			selectedSite,
+			translate,
+			displayJetpackPlans,
+			canAccessPlans,
+			customerType,
+		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
 			return this.renderPlaceholder();
-		}
-
-		if ( purchase && isPartnerPurchase( purchase ) ) {
-			return this.renderPlanWithPartner();
 		}
 
 		return (
@@ -145,7 +120,7 @@ class Plans extends React.Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<FormattedHeader headerText={ translate( 'Plans' ) } align="left" />
+							<FormattedHeader brandFont headerText={ translate( 'Plans' ) } align="left" />
 							<div id="plans" className="plans plans__has-sidebar">
 								<CartData>
 									<PlansNavigation path={ this.props.context.path } />
@@ -153,7 +128,7 @@ class Plans extends React.Component {
 								<PlansFeaturesMain
 									displayJetpackPlans={ displayJetpackPlans }
 									hideFreePlan={ true }
-									customerType={ this.props.customerType }
+									customerType={ customerType }
 									intervalType={ this.props.intervalType }
 									selectedFeature={ this.props.selectedFeature }
 									selectedPlan={ this.props.selectedPlan }
@@ -163,6 +138,7 @@ class Plans extends React.Component {
 									site={ selectedSite }
 									plansWithScroll={ false }
 								/>
+								<PerformanceTrackerStop />
 							</div>
 						</>
 					) }

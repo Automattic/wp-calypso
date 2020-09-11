@@ -11,6 +11,10 @@ import {
 } from 'state/action-types';
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import { translate } from 'i18n-calypso';
+import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/notices/actions';
+
+const infoNoticeId = 'email-verification-info-notice';
 
 /**
  * Creates an action for request for email verification
@@ -18,7 +22,10 @@ import { registerHandlers } from 'state/data-layer/handler-registry';
  * @param 	{object} action The action to dispatch next
  * @returns {object} Redux action
  */
-export const requestEmailVerification = ( action ) =>
+export const requestEmailVerification = ( action ) => [
+	...( action?.showGlobalNotices
+		? [ infoNotice( translate( 'Sending email…' ), { id: infoNoticeId, duration: 4000 } ) ]
+		: [] ),
 	http(
 		{
 			apiVersion: '1.1',
@@ -26,7 +33,8 @@ export const requestEmailVerification = ( action ) =>
 			path: '/me/send-verification-email',
 		},
 		action
-	);
+	),
+];
 
 /**
  * Creates an action for handling email verification error
@@ -35,10 +43,21 @@ export const requestEmailVerification = ( action ) =>
  * @param   {object} rawError The error object
  * @returns {object} Redux action
  */
-export const handleError = ( action, rawError ) => ( {
-	type: EMAIL_VERIFY_REQUEST_FAILURE,
-	message: rawError.message,
-} );
+export const handleError = ( action, rawError ) => [
+	{
+		type: EMAIL_VERIFY_REQUEST_FAILURE,
+		message: rawError.message,
+	},
+	...( action?.showGlobalNotices
+		? [
+				removeNotice( infoNoticeId ),
+				errorNotice( translate( 'Sorry, we couldn’t send the email.' ), {
+					id: 'email-verification-error-notice',
+					duration: 4000,
+				} ),
+		  ]
+		: [] ),
+];
 
 /**
  * Creates an action for email verification success
@@ -46,7 +65,18 @@ export const handleError = ( action, rawError ) => ( {
  * @param 	{object} action The action to dispatch next
  * @returns {object} Redux action
  */
-export const handleSuccess = () => ( { type: EMAIL_VERIFY_REQUEST_SUCCESS } );
+export const handleSuccess = ( action ) => [
+	{ type: EMAIL_VERIFY_REQUEST_SUCCESS },
+	...( action?.showGlobalNotices
+		? [
+				removeNotice( infoNoticeId ),
+				successNotice( translate( 'Email sent' ), {
+					id: 'email-verification-success-notice',
+					duration: 4000,
+				} ),
+		  ]
+		: [] ),
+];
 
 export const dispatchEmailVerification = dispatchRequest( {
 	fetch: requestEmailVerification,

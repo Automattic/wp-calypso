@@ -7,10 +7,19 @@ import page from 'page';
  * Internal dependencies
  */
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { getStatsDefaultSitePage } from 'lib/route';
-import statsController from './controller';
-import { redirect as redirectToAcivity } from 'my-sites/activity/controller';
-import config from 'config';
+import {
+	follows,
+	insights,
+	overview,
+	post,
+	site,
+	summary,
+	wordAds,
+	redirectToActivity,
+	redirectToDefaultModulePage,
+	redirectToDefaultSitePage,
+	redirectToDefaultWordAdsPeriod,
+} from './controller';
 import { makeLayout, render as clientRender } from 'controller';
 
 /**
@@ -18,209 +27,65 @@ import { makeLayout, render as clientRender } from 'controller';
  */
 import './style.scss';
 
+// all Stats pages (except redirects) have the same handler structure
+const statsPage = ( url, controller ) => {
+	page( url, siteSelection, navigation, controller, makeLayout, clientRender );
+};
+
 export default function () {
-	const validPeriods = [ 'day', 'week', 'month', 'year' ];
+	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
 
-	if ( config.isEnabled( 'manage/stats' ) ) {
-		// Redirect this to default /stats/day/ view in order to keep
-		// the paths and page view reporting consistent.
-		page( '/stats', () => page.redirect( getStatsDefaultSitePage() ) );
+	const validModules = [
+		'posts',
+		'referrers',
+		'clicks',
+		'countryviews',
+		'authors',
+		'videoplays',
+		'videodetails',
+		'filedownloads',
+		'searchterms',
+		'annualstats',
+	].join( '|' );
 
-		// Stat Overview Page
-		page(
-			'/stats/day',
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/week',
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/month',
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/year',
-			siteSelection,
-			navigation,
-			statsController.overview,
-			makeLayout,
-			clientRender
-		);
+	// Redirect this to default /stats/day view in order to keep
+	// the paths and page view reporting consistent.
+	page( '/stats', '/stats/day' );
 
-		page( '/stats/insights', siteSelection, navigation, sites, makeLayout, clientRender );
+	// Stat Overview Page
+	statsPage( `/stats/:period(${ validPeriods })`, overview );
 
-		// Stat Insights Page
-		page(
-			'/stats/insights/:site',
-			siteSelection,
-			navigation,
-			statsController.insights,
-			makeLayout,
-			clientRender
-		);
+	statsPage( '/stats/insights', sites );
 
-		// Stat Site Pages
-		page(
-			'/stats/day/:site',
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/week/:site',
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/month/:site',
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/year/:site',
-			siteSelection,
-			navigation,
-			statsController.site,
-			makeLayout,
-			clientRender
-		);
+	// Stat Insights Page
+	statsPage( '/stats/insights/:site', insights );
 
-		const validModules = [
-			'posts',
-			'referrers',
-			'clicks',
-			'countryviews',
-			'authors',
-			'videoplays',
-			'videodetails',
-			'filedownloads',
-			'searchterms',
-			'annualstats',
-		];
+	// Stat Site Pages
+	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
 
-		// Redirect this to default /stats/day/:module/:site view to
-		// keep the paths and page view reporting consistent.
-		page(
-			`/stats/:module(${ validModules.join( '|' ) })/:site`,
-			statsController.redirectToDefaultModulePage
-		);
+	// Redirect this to default /stats/day/:module/:site view to
+	// keep the paths and page view reporting consistent.
+	page( `/stats/:module(${ validModules })/:site`, redirectToDefaultModulePage );
 
-		// Stat Summary Pages
-		page(
-			`/stats/day/:module(${ validModules.join( '|' ) })/:site`,
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
-		);
-		page(
-			`/stats/week/:module(${ validModules.join( '|' ) })/:site`,
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
-		);
-		page(
-			`/stats/month/:module(${ validModules.join( '|' ) })/:site`,
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
-		);
-		page(
-			`/stats/year/:module(${ validModules.join( '|' ) })/:site`,
-			siteSelection,
-			navigation,
-			statsController.summary,
-			makeLayout,
-			clientRender
-		);
+	// Stat Summary Pages
+	statsPage( `/stats/:period(${ validPeriods })/:module(${ validModules })/:site`, summary );
 
-		// Stat Single Post Page
-		page(
-			'/stats/post/:post_id/:site',
-			siteSelection,
-			navigation,
-			statsController.post,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/page/:post_id/:site',
-			siteSelection,
-			navigation,
-			statsController.post,
-			makeLayout,
-			clientRender
-		);
+	// Stat Single Post Page
+	statsPage( '/stats/post/:post_id/:site', post );
+	statsPage( '/stats/page/:post_id/:site', post );
 
-		// Stat Follows Page
-		page(
-			'/stats/follows/comment/:site',
-			siteSelection,
-			navigation,
-			statsController.follows,
-			makeLayout,
-			clientRender
-		);
-		page(
-			'/stats/follows/comment/:page_num/:site',
-			siteSelection,
-			navigation,
-			statsController.follows,
-			makeLayout,
-			clientRender
-		);
+	// Stat Follows Page
+	statsPage( '/stats/follows/comment/:site', follows );
+	statsPage( '/stats/follows/comment/:page_num/:site', follows );
 
-		page( '/stats/activity', siteSelection, sites, redirectToAcivity, makeLayout, clientRender );
+	page( '/stats/activity/:site?', redirectToActivity );
 
-		page(
-			'/stats/activity/:site',
-			siteSelection,
-			navigation,
-			redirectToAcivity,
-			makeLayout,
-			clientRender
-		);
+	statsPage( `/stats/ads/:period(${ validPeriods })/:site`, wordAds );
 
-		page(
-			`/stats/ads/:period(${ validPeriods.join( '|' ) })/:site`,
-			siteSelection,
-			navigation,
-			statsController.wordAds,
-			makeLayout,
-			clientRender
-		);
+	// Anything else should redirect to default WordAds stats page
+	page( '/stats/wordads/(.*)', redirectToDefaultWordAdsPeriod );
+	page( '/stats/ads/(.*)', redirectToDefaultWordAdsPeriod );
 
-		// Anything else should redirect to default WordAds stats page
-		page( '/stats/wordads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
-		page( '/stats/ads/(.*)', statsController.redirectToDefaultWordAdsPeriod );
-
-		// Anything else should redirect to default stats page
-		page( '/stats/(.*)', statsController.redirectToDefaultSitePage );
-	}
+	// Anything else should redirect to default stats page
+	page( '/stats/(.*)', redirectToDefaultSitePage );
 }

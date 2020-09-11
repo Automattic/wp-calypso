@@ -15,9 +15,7 @@ import { connectSocialUser, disconnectSocialUser } from 'state/login/actions';
 import FormButton from 'components/forms/form-button';
 import GoogleLoginButton from 'components/social-buttons/google';
 import AppleLoginButton from 'components/social-buttons/apple';
-import userFactory from 'lib/user';
-
-const user = userFactory();
+import user from 'lib/user';
 
 class SocialLoginActionButton extends Component {
 	static propTypes = {
@@ -36,11 +34,11 @@ class SocialLoginActionButton extends Component {
 	};
 
 	refreshUser = () => {
-		user.fetch();
+		user().fetch();
 
 		this.setState( { fetchingUser: true } );
 
-		user.once( 'change', () => this.setState( { fetchingUser: false } ) );
+		user().once( 'change', () => this.setState( { fetchingUser: false } ) );
 	};
 
 	handleSocialServiceResponse = ( response ) => {

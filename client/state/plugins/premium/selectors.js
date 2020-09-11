@@ -8,6 +8,8 @@ import { every, filter, find, get, includes, some } from 'lodash';
  */
 import createSelector from 'lib/create-selector';
 
+import 'state/plugins/init';
+
 export const isRequesting = function ( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
@@ -24,35 +26,44 @@ export const hasRequested = function ( state, siteId ) {
 	return state.plugins.premium.hasRequested[ siteId ];
 };
 
-export const getPluginsForSite = function ( state, siteId, whitelist = false ) {
+/**
+ * Gets the list of plugins for a site and optionally filters to a single specific
+ * plugin.
+ *
+ * @param {object} state The current state.
+ * @param {number} siteId The site ID.
+ * @param {string?} forPlugin Name of a specific plugin to filter for, `false` otherwise to return the full list.
+ * @returns {Array<object>} The list of plugins.
+ */
+export const getPluginsForSite = function ( state, siteId, forPlugin = false ) {
 	const pluginList = state.plugins.premium.plugins[ siteId ];
 	if ( typeof pluginList === 'undefined' ) {
 		return [];
 	}
 
 	// patch to solve a bug in jp 4.3 ( https://github.com/Automattic/jetpack/issues/5498 )
-	if ( whitelist === 'backups' || whitelist === 'scan' ) {
-		whitelist = 'vaultpress';
+	if ( forPlugin === 'backups' || forPlugin === 'scan' ) {
+		forPlugin = 'vaultpress';
 	}
 
 	return filter( pluginList, ( plugin ) => {
 		// eslint-disable-next-line no-extra-boolean-cast
-		if ( !! whitelist ) {
-			return whitelist === plugin.slug;
+		if ( !! forPlugin ) {
+			return forPlugin === plugin.slug;
 		}
 		return true;
 	} );
 };
 
-export const isStarted = function ( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
+export const isStarted = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	return ! every( pluginList, ( item ) => {
 		return 'wait' === item.status;
 	} );
 };
 
-export const isFinished = function ( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
+export const isFinished = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	if ( pluginList.length === 0 ) {
 		return true;
 	}
@@ -62,8 +73,8 @@ export const isFinished = function ( state, siteId, whitelist = false ) {
 	} );
 };
 
-export const isInstalling = function ( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
+export const isInstalling = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	if ( pluginList.length === 0 ) {
 		return false;
 	}
@@ -74,8 +85,8 @@ export const isInstalling = function ( state, siteId, whitelist = false ) {
 	} );
 };
 
-export const getActivePlugin = function ( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
+export const getActivePlugin = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	const plugin = find( pluginList, ( item ) => {
 		return ! includes( [ 'done', 'wait' ], item.status ) && item.error === null;
 	} );
@@ -85,8 +96,8 @@ export const getActivePlugin = function ( state, siteId, whitelist = false ) {
 	return plugin;
 };
 
-export const getNextPlugin = function ( state, siteId, whitelist = false ) {
-	const pluginList = getPluginsForSite( state, siteId, whitelist );
+export const getNextPlugin = function ( state, siteId, forPlugin = false ) {
+	const pluginList = getPluginsForSite( state, siteId, forPlugin );
 	const plugin = find( pluginList, ( item ) => {
 		return 'wait' === item.status && item.error === null;
 	} );
@@ -97,8 +108,8 @@ export const getNextPlugin = function ( state, siteId, whitelist = false ) {
 };
 
 export const getPluginKeys = createSelector(
-	( state, siteId, whitelist = false ) => {
-		const pluginList = getPluginsForSite( state, siteId, whitelist );
+	( state, siteId, forPlugin = false ) => {
+		const pluginList = getPluginsForSite( state, siteId, forPlugin );
 
 		return pluginList.reduce( ( keys, plugin ) => {
 			const key = get( plugin, 'key' );

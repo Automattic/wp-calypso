@@ -7,17 +7,22 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isJetpackCloudOAuth2Client,
+} from 'lib/oauth2-clients';
 import StepWrapper from 'signup/step-wrapper';
 import flows from 'signup/config/flows';
 import SignupForm from 'blocks/signup-form';
 import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -28,6 +33,13 @@ import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
+import { abtest, getABTestVariation } from 'lib/abtest';
+import JetpackLogo from 'components/jetpack-logo';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export class UserStep extends Component {
 	static propTypes = {
@@ -58,6 +70,7 @@ export class UserStep extends Component {
 
 		if (
 			this.props.flowName !== nextProps.flowName ||
+			this.props.locale !== nextProps.locale ||
 			this.props.subHeaderText !== nextProps.subHeaderText
 		) {
 			this.setSubHeaderText( nextProps );
@@ -169,6 +182,18 @@ export class UserStep extends Component {
 		} );
 	}
 
+	isEligibleForSwapStepsTest() {
+		const cookies = cookie.parse( document.cookie );
+		const countryCodeFromCookie = cookies.country_code;
+		const isUserFromUS = 'US' === countryCodeFromCookie;
+
+		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -193,6 +218,14 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
+
+		if (
+			this.isEligibleForSwapStepsTest() &&
+			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+		) {
+			const switchFlowName = 'onboarding-plan-first';
+			this.props.goToNextStep( switchFlowName );
+		}
 
 		this.props.goToNextStep();
 	};
@@ -302,6 +335,15 @@ export class UserStep extends Component {
 			);
 		}
 
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			return (
+				<div className={ classNames( 'signup-form__jetpack-cloud-wrapper' ) }>
+					<JetpackLogo full={ false } size={ 60 } />
+					<h3>{ translate( 'Sign up to Jetpack.com with a WordPress.com account.' ) }</h3>
+				</div>
+			);
+		}
+
 		if ( includes( [ 'wpcc' ], flowName ) && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
@@ -352,7 +394,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, wccomFrom } = this.props;
+		const { oauth2Client, wccomFrom, flowName } = this.props;
 		let socialService, socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
@@ -373,6 +415,9 @@ export class UserStep extends Component {
 			isSocialSignupEnabled = true;
 		}
 
+		const isReskinned =
+			'onboarding' === flowName && 'reskinned' === getABTestVariation( 'reskinSignupFlow' );
+
 		return (
 			<>
 				<SignupForm
@@ -390,6 +435,7 @@ export class UserStep extends Component {
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
 					showRecaptchaToS={ flows.getFlow( this.props.flowName )?.showRecaptcha }
+					horizontal={ isReskinned }
 				/>
 				<div id="g-recaptcha"></div>
 			</>

@@ -57,6 +57,7 @@ const StatsInsights = ( props ) => {
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="stats__section-header"
 				headerText={ translate( 'Stats and Insights' ) }
 				align="left"
@@ -64,7 +65,7 @@ const StatsInsights = ( props ) => {
 			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<PostingActivity />
-				<SectionHeader label={ translate( 'All Time Views' ) } />
+				<SectionHeader label={ translate( 'All-time views' ) } />
 				<StatsViews />
 				{ siteId && (
 					<DomainTip

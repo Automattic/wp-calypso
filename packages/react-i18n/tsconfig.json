@@ -8,6 +8,7 @@
 		"allowJs": false,
 		"jsx": "react",
 		"declaration": true,
+		"declarationMap": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
@@ -27,8 +28,7 @@
 		"types": [],
 
 		"importHelpers": true,
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__react-i18n"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

@@ -20,6 +20,8 @@ import {
 	INVITE_RESEND_REQUEST_SUCCESS,
 } from 'state/action-types';
 
+import 'state/invites/init';
+
 /**
  * Triggers a network request to fetch invites for the specified site.
  *
@@ -36,12 +38,13 @@ export function requestSiteInvites( siteId ) {
 		wpcom
 			.undocumented()
 			.invitesList( siteId, { status: 'all', number: 100 } )
-			.then( ( { found, invites } ) => {
+			.then( ( { found, invites, links } ) => {
 				dispatch( {
 					type: INVITES_REQUEST_SUCCESS,
 					siteId,
 					found,
 					invites,
+					links,
 				} );
 			} )
 			.catch( ( error ) => {

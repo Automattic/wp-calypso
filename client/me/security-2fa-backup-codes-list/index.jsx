@@ -27,6 +27,7 @@ import Tooltip from 'components/tooltip';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { getCurrentUserName } from 'state/current-user/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
+import { notifyDesktopSendToPrinter } from 'state/desktop/actions';
 
 /**
  * Style dependencies
@@ -89,7 +90,7 @@ class Security2faBackupCodesList extends React.Component {
 		this.props.recordGoogleEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
 
 		if ( config.isEnabled( 'desktop' ) ) {
-			require( 'lib/desktop' ).print(
+			this.props.notifyDesktopSendToPrinter(
 				this.props.translate( 'Backup verification codes' ),
 				this.getBackupCodeHTML( this.props.backupCodes )
 			);
@@ -291,7 +292,7 @@ class Security2faBackupCodesList extends React.Component {
 						onClick={ this.onNextStep }
 						disabled={ this.isSubmitDisabled() }
 					>
-						{ this.props.translate( 'All Finished!', {
+						{ this.props.translate( 'All finished!', {
 							context: 'The user presses the All Finished button at the end of Two-Step setup.',
 						} ) }
 					</FormButton>
@@ -376,7 +377,10 @@ class Security2faBackupCodesList extends React.Component {
 }
 
 export default compose(
-	connect( ( state ) => ( { username: getCurrentUserName( state ) } ), { recordGoogleEvent } ),
+	connect( ( state ) => ( { username: getCurrentUserName( state ) } ), {
+		recordGoogleEvent,
+		notifyDesktopSendToPrinter,
+	} ),
 	localize,
 	withLocalizedMoment
 )( Security2faBackupCodesList );

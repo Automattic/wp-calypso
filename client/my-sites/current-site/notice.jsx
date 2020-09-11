@@ -31,6 +31,7 @@ import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getUnformattedDomainPrice, getUnformattedDomainSalePrice } from 'lib/domains';
 import formatCurrency from '@automattic/format-currency/src';
 import { getPreference } from 'state/preferences/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import { savePreference } from 'state/preferences/actions';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
@@ -114,6 +115,10 @@ export class SiteNotice extends React.Component {
 			return null;
 		}
 
+		if ( this.props.isJetpack ) {
+			return null;
+		}
+
 		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
 			return null;
 		}
@@ -189,6 +194,7 @@ export class SiteNotice extends React.Component {
 				dismissPreferenceName="calypso_upgrade_nudge_cta_click"
 				event="calypso_upgrade_nudge_impression"
 				forceDisplay={ true }
+				horizontal={ true }
 				title={ preventWidows( noticeText ) }
 				tracksClickName="calypso_upgrade_nudge_cta_click"
 				tracksClickProperties={ { cta_name: 'domain-upsell-nudge' } }
@@ -290,6 +296,7 @@ export default connect(
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isEligibleForFreeToPaidUpsell: isEligibleForFreeToPaidUpsell( state, siteId ),
+			isJetpack: isJetpackSite( state, siteId ),
 			activeDiscount: getActiveDiscount( state ),
 			hasDomainCredit: hasDomainCredit( state, siteId ),
 			canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),

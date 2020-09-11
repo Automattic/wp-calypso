@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase, set } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -640,6 +640,20 @@ Undocumented.prototype.getDomainContactInformation = function ( fn ) {
 		}
 	);
 };
+/**
+ *
+ * @param domain {string}
+ * @param fn {function}
+ */
+Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
+	return this.wpcom.req.get(
+		`/domains/${ encodeURIComponent( domain ) }/price`,
+		{
+			apiVersion: '1.1',
+		},
+		fn
+	);
+};
 
 Undocumented.prototype.getDomainRegistrationSupportedStates = function ( countryCode, fn ) {
 	debug( '/domains/supported-states/ query' );
@@ -687,6 +701,14 @@ Undocumented.prototype.validateDomainContactInformation = function (
 	debug( '/me/domain-contact-information/validate query' );
 	data = mapKeysRecursively( data, snakeCase );
 
+	// Due to backend limitations some versions of this endpoint
+	// serialize a nested object in the response, encoding e.g.
+	//   { foo: { bar: { baz: [ "error" ] } } }
+	// as
+	//   { foo.bar.baz: [ "error" ] }
+	// here we decide whether to rehydrate this.
+	const shouldReshapeResponse = query?.apiVersion === '1.2';
+
 	return this.wpcom.req.post(
 		{ path: '/me/domain-contact-information/validate' },
 		query,
@@ -697,7 +719,7 @@ Undocumented.prototype.validateDomainContactInformation = function (
 			}
 
 			// Reshape the error messages to a nested object
-			if ( successData.messages && query?.apiVersion === '1.2' ) {
+			if ( successData.messages && shouldReshapeResponse ) {
 				successData.messages = Object.keys( successData.messages ).reduce( ( obj, key ) => {
 					set( obj, key, successData.messages[ key ] );
 					return obj;
@@ -716,31 +738,41 @@ Undocumented.prototype.validateDomainContactInformation = function (
 /**
  * Validates the specified Google Apps contact information
  *
+ * The contactInformation keys can be in camelCase or snake_case, and will be
+ * converted to snake_case before being submitted. The returned data keys will
+ * be converted to camelCase before being passed to the callback or the resolved
+ * Promise.
+ *
  * @param {object} contactInformation - user's contact information
- * @param {Function} callback The callback function
- * @returns {Promise} A promise that resolves when the request completes
+ * @param {string[]} domainNames - domain names for which GSuite is being purchased
+ * @param {(error: string, data: object) => void} [callback] The callback function.
+ * @returns {Promise|undefined} If no callback, returns a Promise that resolves when the request completes
  */
 Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	contactInformation,
+	domainNames,
 	callback
 ) {
-	const data = mapKeysRecursively( { contactInformation }, snakeCase );
+	const { contact_information } = mapKeysRecursively( { contactInformation }, snakeCase );
+	debug( '/me/google-apps/validate', contact_information, domainNames );
 
-	return this.wpcom.req.post(
-		{ path: '/me/google-apps/validate' },
-		data,
-		( error, successData ) => {
-			if ( error ) {
-				return callback( error );
-			}
+	const stripHeadersFromHttpResponse = ( httpResponse ) =>
+		Object.keys( httpResponse )
+			.filter( ( key ) => key !== '_headers' )
+			.reduce( ( newResponse, key ) => ( { ...newResponse, [ key ]: httpResponse[ key ] } ), {} );
 
-			const newData = mapKeysRecursively( successData, ( key ) => {
-				return key === '_headers' ? key : camelCase( key );
-			} );
+	const camelCaseKeys = ( httpResponse ) =>
+		mapKeysRecursively( stripHeadersFromHttpResponse( httpResponse ), ( key ) => camelCase( key ) );
 
-			callback( null, newData );
-		}
+	const camelCaseCallback = ( error, httpResponse ) =>
+		callback( error, error ? null : camelCaseKeys( httpResponse ) );
+
+	const result = this.wpcom.req.post(
+		{ path: '/me/google-apps/validate', body: { contact_information, domain_names: domainNames } },
+		callback ? camelCaseCallback : null
 	);
+
+	return result.then?.( camelCaseKeys );
 };
 
 /**
@@ -870,23 +902,6 @@ Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 };
 
 /**
- * Return a list of third-party services that WordPress.com can integrate with
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-Undocumented.prototype.metaKeyring = function ( fn ) {
-	debug( '/meta/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/meta/external-services/',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
  * @param {number|string} siteId The site ID or domain
@@ -961,7 +976,7 @@ Undocumented.prototype.saveSharingButtons = function ( siteId, buttons, fn ) {
  * @returns {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefetch, fn ) {
-	debug( '/me/keyring-connections query' );
+	debug( '/me/connections query' );
 
 	// set defaults, first argument is actually a callback
 	if ( typeof forceExternalUsersRefetch === 'function' ) {
@@ -970,7 +985,7 @@ Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefet
 	}
 
 	return this.wpcom.req.get(
-		'/me/keyring-connections',
+		{ path: '/me/connections', apiNamespace: 'wpcom/v2' },
 		forceExternalUsersRefetch ? { force_external_users_refetch: forceExternalUsersRefetch } : {},
 		fn
 	);
@@ -983,11 +998,12 @@ Undocumented.prototype.mekeyringConnections = function ( forceExternalUsersRefet
  * @param {Function} fn Method to invoke when request is complete
  */
 Undocumented.prototype.deletekeyringConnection = function ( keyringConnectionId, fn ) {
-	debug( '/me/keyring-connections/:keyring_connection_id:/delete query' );
-	return this.wpcom.req.post(
+	debug( '/me/connections/:keyring_connection_id:/ delete' );
+	return this.wpcom.req.get(
 		{
-			path: '/me/keyring-connections/' + keyringConnectionId + '/delete',
-			apiVersion: '1.1',
+			path: '/me/connections/' + keyringConnectionId,
+			apiNamespace: 'wpcom/v2',
+			method: 'DELETE',
 		},
 		fn
 	);
@@ -1299,21 +1315,6 @@ Undocumented.prototype.readLists = function ( fn ) {
 	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
 };
 
-Undocumented.prototype.readListsUpdate = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:list/update' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/update',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.followList = function ( query, fn ) {
 	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:slug/follow' );
@@ -1358,6 +1359,17 @@ Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
 	addReaderContentWidth( params );
 	return this.wpcom.req.get(
 		'/read/site/' + query.site_id + '/post/' + query.post_id + '/related',
+		params,
+		fn
+	);
+};
+
+Undocumented.prototype.supportAlternates = function ( query, fn ) {
+	const params = omit( query, [ 'site', 'postId' ] );
+	debug( '/support/alternates/:site/posts/:post' );
+	addReaderContentWidth( params );
+	return this.wpcom.req.get(
+		'/support/alternates/' + query.site + '/posts/' + query.postId,
 		params,
 		fn
 	);
@@ -1427,6 +1439,21 @@ Undocumented.prototype.usersSocialNew = function ( query, fn ) {
 		body: query,
 	};
 
+	return this.wpcom.req.post( args, fn );
+};
+
+Undocumented.prototype.createUserAndSite = function ( query, fn ) {
+	debug( '/users/new' );
+
+	// This API call is restricted to these OAuth keys
+	restrictByOauthKeys( query );
+
+	// Set the language for the user
+	query.locale = getLocaleSlug();
+	const args = {
+		path: '/users/new',
+		body: query,
+	};
 	return this.wpcom.req.post( args, fn );
 };
 
@@ -1672,8 +1699,7 @@ Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function ( domain, records, fn ) {
-	const filtered = reject( records, 'isBeingDeleted' ),
-		body = { dns: JSON.stringify( filtered ) };
+	const body = { dns: JSON.stringify( records ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
@@ -2039,13 +2065,20 @@ Undocumented.prototype.getDirectlyConfiguration = function ( fn ) {
 	);
 };
 
-Undocumented.prototype.submitKayakoTicket = function ( subject, message, locale, client, fn ) {
+Undocumented.prototype.submitKayakoTicket = function (
+	subject,
+	message,
+	locale,
+	client,
+	isChatOverflow,
+	fn
+) {
 	debug( 'submitKayakoTicket' );
 
 	return this.wpcom.req.post(
 		{
 			path: '/help/tickets/kayako/new',
-			body: { subject, message, locale, client },
+			body: { subject, message, locale, client, is_chat_overflow: isChatOverflow },
 		},
 		fn
 	);
@@ -2158,14 +2191,14 @@ Undocumented.prototype.getSiteConnectInfo = function ( inputUrl ) {
 };
 
 /**
- * Exports the user's Reader feed as an OPML XML file.
+ * Exports the user's Reader subscriptions as an OPML XML file.
  * A JSON object is returned with the XML given as a String
  * in the `opml` field.
  *
- * @param  {Function} fn      The callback function
- * @returns {Promise}  promise
+ * @param  {Function} 	fn      The callback function
+ * @returns {Promise}  	promise
  */
-Undocumented.prototype.exportReaderFeed = function ( fn ) {
+Undocumented.prototype.exportReaderSubscriptions = function ( fn ) {
 	debug( '/read/following/mine/export' );
 	const query = {
 		apiVersion: '1.2',
@@ -2194,6 +2227,19 @@ Undocumented.prototype.importReaderFeed = function ( file, fn ) {
 		apiVersion: '1.2',
 	};
 	return this.wpcom.req.post( params, query, null, fn );
+};
+
+/**
+ * Exports a Reader list as an OPML XML file.
+ * A JSON object is returned with the XML given as a String
+ * in the `opml` field.
+ *
+ * @param 	{number}	listId	The list ID
+ * @param  	{Function} 	fn      The callback function
+ * @returns {Promise}  	promise
+ */
+Undocumented.prototype.exportReaderList = function ( listId, fn ) {
+	return this.wpcom.req.get( `/read/lists/${ listId }/export`, { apiNamespace: 'wpcom/v2' }, fn );
 };
 
 /**
@@ -2481,10 +2527,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.applePayMerchantValidation = function ( validationURL ) {
-	return this.wpcom.req.get( '/apple-pay/merchant-validation/', { validation_url: validationURL } );
 };
 
 Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {

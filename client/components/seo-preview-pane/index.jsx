@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -12,16 +11,14 @@ import { compact, find, get, identity, overSome } from 'lodash';
  */
 import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'components/seo/reader-preview';
-import FacebookPreview from 'components/seo/facebook-preview';
-import TwitterPreview from 'components/seo/twitter-preview';
-import SearchPreview from 'components/seo/search-preview';
+import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import VerticalMenu from 'components/vertical-menu';
 import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
 import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { getSeoTitle } from 'state/sites/selectors';
 import { getSectionName, getSelectedSite } from 'state/ui/selectors';
@@ -114,7 +111,7 @@ const GoogleSite = ( site, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
-		snippet={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 	/>
 );
 
@@ -122,7 +119,7 @@ const GooglePost = ( site, post, frontPageMetaDescription ) => (
 	<SearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
-		snippet={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 	/>
 );
 

@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { filter, values } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+
+import 'state/sharing/init';
 
 /**
  * Returns an array of keyring connection objects.

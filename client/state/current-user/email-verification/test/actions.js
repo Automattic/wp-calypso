@@ -13,7 +13,12 @@ describe( 'actions', () => {
 	describe( '#verifyEmail', () => {
 		test( 'returns request action', () => {
 			const result = verifyEmail();
-			expect( result ).to.eql( { type: EMAIL_VERIFY_REQUEST } );
+			expect( result ).to.eql( { type: EMAIL_VERIFY_REQUEST, showGlobalNotices: false } );
+		} );
+
+		test( 'returns request action with notices', () => {
+			const result = verifyEmail( { showGlobalNotices: true } );
+			expect( result ).to.eql( { type: EMAIL_VERIFY_REQUEST, showGlobalNotices: true } );
 		} );
 	} );
 

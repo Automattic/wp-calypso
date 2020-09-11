@@ -3,6 +3,7 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -10,12 +11,20 @@ import { combineReducers } from '@wordpress/data';
 import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
-import type { DomainCategory } from '../../domains-constants';
+import type { FeatureId } from '../../onboarding-block/features/data';
 
-const domain: Reducer<
-	import('@automattic/data-stores').DomainSuggestions.DomainSuggestion | undefined,
-	OnboardAction
-> = ( state, action ) => {
+// Returns true if the url has a `?latest`, which is used to enable experimental features
+export function hasExperimentalQueryParam() {
+	if ( typeof window !== 'undefined' ) {
+		return new URLSearchParams( window.location.search ).has( 'latest' );
+	}
+	return false;
+}
+
+const domain: Reducer< DomainSuggestions.DomainSuggestion | undefined, OnboardAction > = (
+	state,
+	action
+) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
 	}
@@ -29,20 +38,106 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
 	}
-	if ( action.type === 'SET_SITE_TITLE' ) {
-		return action.siteTitle;
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
 	}
 	return state;
 };
 
-const domainCategory: Reducer< DomainCategory | undefined, OnboardAction > = ( state, action ) => {
+const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const hasUsedDomainsStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_DOMAINS_STEP' ) {
+		return action.hasUsedDomainsStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
+		return action.hasUsedPlansStep;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const isExperimental: Reducer< boolean, OnboardAction > = (
+	state = hasExperimentalQueryParam(),
+	action
+) => {
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const isRedirecting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_REDIRECTING' ) {
+		return action.isRedirecting;
+	}
+	// This reducer is intentionally not cleared by 'RESET_ONBOARD_STORE' to prevent
+	// a flash of the IntentGathering step after the store is reset.
+	return state;
+};
+
+const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
+	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
+		const layout = action.pageLayout;
+		if ( state.includes( layout.slug ) ) {
+			return state.filter( ( item ) => item !== layout.slug );
+		}
+		return [ ...state, layout.slug ];
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+	return state;
+};
+
+const plan: Reducer< Plans.Plan | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLAN' ) {
+		return action.plan;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
+	state = { featured: [] },
+	action
+) => {
+	if ( action.type === 'SET_RANDOMIZED_DESIGNS' ) {
+		return action.randomizedDesigns;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return { featured: [] };
+	}
+	return state;
+};
+
+const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_FONTS' ) {
+		return action.fonts;
+	}
+	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
 	}
 	return state;
@@ -54,6 +149,44 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
+	}
+	return state;
+};
+
+const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
+	state: FeatureId[] = [],
+	action
+) => {
+	if ( action.type === 'ADD_FEATURE' ) {
+		return [ ...state, action.featureId ];
+	}
+
+	if ( action.type === 'REMOVE_FEATURE' ) {
+		return state.filter( ( id ) => id !== action.featureId );
+	}
+
+	return state;
+};
+
+const selectedSite: Reducer< number | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_SELECTED_SITE' ) {
+		return action.selectedSite;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_SHOW_SIGNUP_DIALOG' ) {
+		return action.showSignup;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
 	}
 	return state;
 };
@@ -78,42 +211,22 @@ const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state
 	return state;
 };
 
-const pageLayouts: Reducer< string[], OnboardAction > = ( state = [], action ) => {
-	if ( action.type === 'TOGGLE_PAGE_LAYOUT' ) {
-		const layout = action.pageLayout;
-		if ( state.includes( layout.slug ) ) {
-			return state.filter( ( item ) => item !== layout.slug );
-		}
-		return [ ...state, layout.slug ];
+const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SKIP_SITE_VERTICAL' ) {
+		return true;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return [];
+		return false;
 	}
 	return state;
 };
 
-const selectedSite: Reducer< number | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_SELECTED_SITE' ) {
-		return action.selectedSite;
+const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'ONBOARDING_START' ) {
+		return true;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
-const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_FONTS' ) {
-		return action.fonts;
-	}
-	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
+		return false;
 	}
 	return state;
 };
@@ -122,12 +235,22 @@ const reducer = combineReducers( {
 	domain,
 	domainSearch,
 	domainCategory,
+	isRedirecting,
+	hasUsedDomainsStep,
+	hasUsedPlansStep,
+	pageLayouts,
 	selectedFonts,
 	selectedDesign,
+	selectedSite,
 	siteTitle,
 	siteVertical,
-	pageLayouts,
-	selectedSite,
+	showSignupDialog,
+	plan,
+	selectedFeatures,
+	wasVerticalSkipped,
+	isExperimental,
+	randomizedDesigns,
+	hasOnboardingStarted,
 } );
 
 export type State = ReturnType< typeof reducer >;

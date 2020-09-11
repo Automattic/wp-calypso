@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'components/forms/form-checkbox';
 import Site from 'blocks/site';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
@@ -41,15 +42,15 @@ class ProfileLinksAddWordPressSite extends Component {
 	render() {
 		const { checked, onChange, site } = this.props;
 
+		/* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<li
 				key={ site.ID }
 				className="profile-links-add-wordpress__item"
 				onClick={ this.getCheckboxEventHandler( 'Add WordPress Site' ) }
 			>
-				<input
+				<FormInputCheckbox
 					className="profile-links-add-wordpress__checkbox"
-					type="checkbox"
 					name={ this.getInputName() }
 					onChange={ onChange }
 					checked={ checked }
@@ -57,6 +58,7 @@ class ProfileLinksAddWordPressSite extends Component {
 				<Site site={ site } indicator={ false } onSelect={ this.onSelect } />
 			</li>
 		);
+		/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions */
 	}
 }
 

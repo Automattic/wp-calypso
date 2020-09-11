@@ -60,7 +60,7 @@ const newTransfersWrongNSWarning = 'new-transfer-wrong-ns';
 export class DomainWarnings extends React.PureComponent {
 	static propTypes = {
 		domains: PropTypes.array,
-		ruleWhiteList: PropTypes.array,
+		allowedRules: PropTypes.array,
 		domain: PropTypes.object,
 		isCompact: PropTypes.bool,
 		siteIsUnlaunched: PropTypes.bool,
@@ -69,7 +69,7 @@ export class DomainWarnings extends React.PureComponent {
 
 	static defaultProps = {
 		isCompact: false,
-		ruleWhiteList: [
+		allowedRules: [
 			'expiredDomainsCanManage',
 			'expiringDomainsCanManage',
 			'unverifiedDomainsCanManage',
@@ -125,7 +125,7 @@ export class DomainWarnings extends React.PureComponent {
 			this.newTransfersWrongNS,
 			this.pendingConsent,
 		];
-		const validRules = this.props.ruleWhiteList.map( ( ruleName ) => this[ ruleName ] );
+		const validRules = this.props.allowedRules.map( ( ruleName ) => this[ ruleName ] );
 		return intersection( allRules, validRules );
 	}
 
@@ -153,8 +153,8 @@ export class DomainWarnings extends React.PureComponent {
 		debug( 'Rendering wrongNSMappedDomains' );
 
 		if (
-			get( this.props, 'selectedSite.jetpack' ) ||
-			get( this.props, 'selectedSite.options.is_automated_transfer' )
+			get( this.props, 'selectedSite.jetpack' ) &&
+			! get( this.props, 'selectedSite.options.is_automated_transfer' )
 		) {
 			return null;
 		}

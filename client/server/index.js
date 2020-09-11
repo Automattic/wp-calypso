@@ -1,19 +1,19 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-nodejs-modules */
 
-require( '@automattic/calypso-polyfills' );
+import '@automattic/calypso-polyfills';
 
 /**
  * External dependencies.
  */
-const chalk = require( 'chalk' );
-const fs = require( 'fs' );
+import chalk from 'chalk';
+import fs from 'fs';
 
 /**
  * Internal dependencies
  */
-const boot = require( './boot' );
-const config = require( './config' );
+import boot from './boot';
+import config from './config';
 
 const start = Date.now();
 const protocol = process.env.PROTOCOL || config( 'protocol' );

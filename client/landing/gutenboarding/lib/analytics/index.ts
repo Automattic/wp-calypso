@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { v4 as uuid } from 'uuid';
-import { DependencyList } from 'react';
 
 /**
  * Internal dependencies
  */
 import { FLOW_ID } from '../../constants';
-import { StepNameType } from '../../path';
-import { ErrorParameters, OnboardingCompleteParameters } from './types';
+import type { StepNameType } from '../../path';
+import type { ErrorParameters, OnboardingCompleteParameters, TracksEventProperties } from './types';
+
+export * from './recaptcha';
 
 /**
  * Make tracks call with embedded flow.
@@ -30,12 +30,16 @@ export function trackEventWithFlow( eventId: string, params = {}, flow = FLOW_ID
  * Analytics call at the start of the Gutenboarding flow
  *
  * @param {string} ref  The value of a `ref` query parameter, usually set by marketing landing pages
+ * @param {number} site_count The number of sites owned by the current user or 0 if there is no logged in user
  */
-export function recordOnboardingStart( ref = '' ): void {
+export function recordOnboardingStart( ref = '', site_count: number ): void {
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
-	trackEventWithFlow( 'calypso_signup_start', { ref } );
+
+	trackEventWithFlow( 'calypso_newsite_start', { ref, site_count } );
+	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
+	trackEventWithFlow( 'calypso_signup_start', { ref, site_count } );
 }
 
 /**
@@ -44,11 +48,15 @@ export function recordOnboardingStart( ref = '' ): void {
  * @param {object} params A set of params to pass to analytics for signup completion
  */
 export function recordOnboardingComplete( params: OnboardingCompleteParameters ): void {
-	trackEventWithFlow( 'calypso_signup_complete', {
+	const trackingParams = {
 		is_new_user: params.isNewUser,
 		is_new_site: params.isNewSite,
 		blog_id: params.blogId,
-	} );
+		has_cart_items: params.hasCartItems,
+	};
+	trackEventWithFlow( 'calypso_newsite_complete', trackingParams );
+	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
+	trackEventWithFlow( 'calypso_signup_complete', trackingParams );
 }
 
 /**
@@ -57,68 +65,10 @@ export function recordOnboardingComplete( params: OnboardingCompleteParameters )
  * @param {object} params A set of params to pass to analytics for signup errors
  */
 export function recordOnboardingError( params: ErrorParameters ): void {
-	trackEventWithFlow( 'calypso_signup_error', {
+	trackEventWithFlow( 'calypso_newsite_error', {
 		error: params.error,
 		step: params.step,
 	} );
-}
-
-interface TrainTracksRenderProps {
-	trainTracksType: 'render';
-	railcarId: string;
-	uiAlgo: string;
-	uiPosition: number;
-	fetchAlgo: string;
-	result: string;
-	query: string;
-}
-
-interface TrainTracksInteractProps {
-	trainTracksType: 'interact';
-	railcarId: string;
-	action: string;
-}
-
-export function recordTrainTracksRender( {
-	railcarId,
-	uiAlgo,
-	uiPosition,
-	fetchAlgo,
-	result,
-	query,
-}: TrainTracksRenderProps ) {
-	recordTracksEvent( 'calypso_traintracks_render', {
-		railcar: railcarId,
-		ui_algo: uiAlgo,
-		ui_position: uiPosition,
-		fetch_algo: fetchAlgo,
-		rec_result: result,
-		fetch_query: query,
-	} );
-}
-
-export function recordTrainTracksInteract( { railcarId, action }: TrainTracksInteractProps ) {
-	recordTracksEvent( 'calypso_traintracks_interact', {
-		railcar: railcarId,
-		action,
-	} );
-}
-
-export type RecordTrainTracksEventProps =
-	| Omit< TrainTracksRenderProps, 'uiAlgo' >
-	| TrainTracksInteractProps;
-
-export function recordTrainTracksEvent( uiAlgo: string, event: RecordTrainTracksEventProps ) {
-	if ( event.trainTracksType === 'render' ) {
-		recordTrainTracksRender( { ...event, uiAlgo } );
-	}
-	if ( event.trainTracksType === 'interact' ) {
-		recordTrainTracksInteract( event );
-	}
-}
-
-export function getNewRailcarId( suffix = 'suggestion' ) {
-	return `${ uuid().replace( /-/g, '' ) }-${ suffix }`;
 }
 
 /**
@@ -127,8 +77,8 @@ export function getNewRailcarId( suffix = 'suggestion' ) {
  * @param modalName The name of the modal to record in tracks
  * @param eventProperties Additional properties to record on closing the modal
  */
-export function recordCloseModal( modalName: string, eventProperties?: DependencyList ) {
-	trackEventWithFlow( 'calypso_signup_modal_close', {
+export function recordCloseModal( modalName: string, eventProperties?: TracksEventProperties ) {
+	trackEventWithFlow( 'calypso_newsite_modal_close', {
 		name: modalName,
 		...eventProperties,
 	} );
@@ -140,7 +90,7 @@ export function recordCloseModal( modalName: string, eventProperties?: Dependenc
  * @param modalName The name of the modal to record in tracks
  */
 export function recordEnterModal( modalName: string ) {
-	trackEventWithFlow( 'calypso_signup_modal_open', {
+	trackEventWithFlow( 'calypso_newsite_modal_open', {
 		name: modalName,
 	} );
 }
@@ -151,8 +101,8 @@ export function recordEnterModal( modalName: string ) {
  * @param stepName The name of the step to record in tracks
  * @param eventProperties Additional properties to record on leaving the step
  */
-export function recordLeaveStep( stepName: StepNameType, eventProperties?: DependencyList ) {
-	trackEventWithFlow( 'calypso_signup_step_leave', {
+export function recordLeaveStep( stepName: StepNameType, eventProperties?: TracksEventProperties ) {
+	trackEventWithFlow( 'calypso_newsite_step_leave', {
 		step: stepName,
 		...eventProperties,
 	} );
@@ -164,7 +114,45 @@ export function recordLeaveStep( stepName: StepNameType, eventProperties?: Depen
  * @param stepName The name of the step to record in tracks
  */
 export function recordEnterStep( stepName: StepNameType ) {
-	trackEventWithFlow( 'calypso_signup_step_enter', {
+	trackEventWithFlow( 'calypso_newsite_step_enter', {
 		step: stepName,
 	} );
+}
+
+/**
+ * Records selecting a site topic in tracks
+ *
+ * @param slug The slug of the selected topic. If undefined, the vertical input is free-form
+ * @param label Translated label of vertical or free-form user input
+ */
+export function recordVerticalSelection( slug?: string, label?: string ) {
+	trackEventWithFlow( 'calypso_newsite_vertical_selected', {
+		selected_vertical_slug: slug,
+		selected_vertical_label: label,
+	} );
+}
+
+/**
+ * Records entering a site title in tracks
+ *
+ * @param hasValue The site title entered by the user is not empty
+ */
+export function recordSiteTitleSelection( hasValue: boolean ) {
+	trackEventWithFlow( 'calypso_newsite_site_title_selected', {
+		has_selected_site_title: hasValue,
+	} );
+}
+
+/**
+ * Records site topic input skip on Intent Gathering step
+ */
+export function recordVerticalSkip() {
+	trackEventWithFlow( 'calypso_newsite_vertical_skipped' );
+}
+
+/**
+ * Records site title input skip on Intent Gathering step
+ */
+export function recordSiteTitleSkip() {
+	trackEventWithFlow( 'calypso_newsite_site_title_skipped' );
 }

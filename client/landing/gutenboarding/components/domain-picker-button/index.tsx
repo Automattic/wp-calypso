@@ -1,102 +1,86 @@
 /**
  * External dependencies
  */
-import React, { createRef, FunctionComponent, useState } from 'react';
-import { Button, Dashicon } from '@wordpress/components';
-
+import * as React from 'react';
 import classnames from 'classnames';
+import { useSelect } from '@wordpress/data';
+import { Icon, chevronDown } from '@wordpress/icons';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
-import { Props as DomainPickerProps } from '../domain-picker';
-import DomainPickerPopover from '../domain-picker-popover';
-import DomainPickerModal from '../domain-picker-modal';
-import { FLOW_ID } from '../../constants';
-import { recordTrainTracksEvent, RecordTrainTracksEventProps } from '../../lib/analytics';
+import Link from '../link';
+import { usePath, Step } from '../../path';
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
+import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-type DomainSuggestion = import('@automattic/data-stores').DomainSuggestions.DomainSuggestion;
+const DomainPickerButton: React.FunctionComponent = () => {
+	const { __, i18nLocale } = useI18n();
+	const makePath = usePath();
+	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getState()
+	);
 
-interface Props extends Omit< DomainPickerProps, 'onClose' >, Button.BaseProps {
-	className?: string;
-	currentDomain?: DomainSuggestion;
-}
+	// Use site title or vertical as search query for a domain suggestion
+	const suggestionQuery = siteTitle || siteVertical?.label || '';
+	const isValidQuery = suggestionQuery.length > 1;
 
-const DomainPickerButton: FunctionComponent< Props > = ( {
-	children,
-	className,
-	onDomainSelect,
-	currentDomain,
-	...buttonProps
-} ) => {
-	const buttonRef = createRef< HTMLButtonElement >();
+	const domainSuggestion = useSelect(
+		( select ) => {
+			// Get suggestion only if the query is valid and if there isn't a selected domain
+			if ( domain || ! isValidQuery ) {
+				return;
+			}
+			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( suggestionQuery, {
+				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
+				include_wordpressdotcom: false,
+				include_dotblogsubdomain: false,
+				quantity: 1, // this will give the recommended domain only
+				locale: i18nLocale,
+			} );
+		},
+		[ suggestionQuery ]
+	)?.[ 0 ];
 
-	const [ isDomainPopoverVisible, setDomainPopoverVisibility ] = useState( false );
-	const [ isDomainModalVisible, setDomainModalVisibility ] = useState( false );
+	const isLoadingSuggestion = ! domain && ! domainSuggestion && isValidQuery;
 
-	const handlePopoverClose = ( e?: React.FocusEvent ) => {
-		// Don't collide with button toggling
-		if ( e?.relatedTarget === buttonRef.current ) {
-			return;
+	// Show slide-in animation when a domain suggestion is loaded only if the user didn't interacted with Domain Picker
+	const showAnimation = ! domain && ! selectedDesign && domainSuggestion;
+
+	const getDomainElementContent = () => {
+		if ( isLoadingSuggestion ) {
+			return null;
 		}
-		setDomainPopoverVisibility( false );
-	};
-
-	const handleModalClose = () => {
-		setDomainModalVisibility( false );
-	};
-
-	const handleMoreOptions = () => {
-		setDomainPopoverVisibility( false );
-		setDomainModalVisibility( true );
-	};
-
-	const recordAnalytics = ( event: RecordTrainTracksEventProps ) => {
-		recordTrainTracksEvent( `/${ FLOW_ID }/domain-popover`, event );
+		if ( domain ) {
+			return domain.domain_name;
+		}
+		if ( domainSuggestion ) {
+			/* translators: domain name is available, eg: "yourname.com is available" */
+			return sprintf( __( '%s is available' ), domainSuggestion.domain_name );
+		}
+		// If there is no selected domain and no site title / vertical, show a static button
+		return __( 'Choose a domain' );
 	};
 
 	return (
-		<>
-			<Button
-				{ ...buttonProps }
-				aria-expanded={ isDomainPopoverVisible }
-				aria-haspopup="menu"
-				aria-pressed={ isDomainPopoverVisible }
-				className={ classnames( 'domain-picker-button', className, {
-					'is-open': isDomainPopoverVisible,
-					'is-modal-open': isDomainModalVisible,
-				} ) }
-				onClick={ () => setDomainPopoverVisibility( ( s ) => ! s ) }
-				ref={ buttonRef }
-			>
-				<span className="domain-picker-button__label">{ children }</span>
-				<Dashicon icon="arrow-down-alt2" size={ 16 } />
-			</Button>
-			<DomainPickerPopover
-				isOpen={ isDomainPopoverVisible }
-				showDomainConnectButton={ false }
-				showDomainCategories={ false }
-				currentDomain={ currentDomain }
-				onDomainSelect={ onDomainSelect }
-				onMoreOptions={ handleMoreOptions }
-				onClose={ handlePopoverClose }
-				recordAnalytics={ recordAnalytics }
-			/>
-			<DomainPickerModal
-				isOpen={ isDomainModalVisible }
-				showDomainConnectButton
-				showDomainCategories
-				currentDomain={ currentDomain }
-				onDomainSelect={ onDomainSelect }
-				onClose={ handleModalClose }
-				recordAnalytics={ recordAnalytics }
-			/>
-		</>
+		<div
+			className={ classnames( 'domain-picker-button', {
+				'domain-picker-button--has-first-content': showAnimation,
+				'domain-picker-button--has-content': ! isLoadingSuggestion,
+			} ) }
+		>
+			<Link to={ makePath( Step.DomainsModal ) }>
+				<span className="domain-picker-button__label">{ getDomainElementContent() }</span>
+				<Icon icon={ chevronDown } size={ 22 } />
+			</Link>
+		</div>
 	);
 };
 

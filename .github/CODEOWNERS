@@ -9,58 +9,32 @@
 #
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
-# Root level files and configuration
-/*.* @Automattic/team-calypso
-
-# Scripts
-/bin @Automattic/team-calypso
-
-# Client initialization
-/client/boot @Automattic/team-calypso
-
-# Client framework parts
-/client/config @Automattic/team-calypso
-/client/controller @Automattic/team-calypso
-/client/document @Automattic/team-calypso
-/client/layout @Automattic/team-calypso
-
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 
 # Customer Home
 /client/my-sites/customer-home @Automattic/manage
 
-# Developer guides
-/docs/coding-guidelines @Automattic/team-calypso
-/docs/guide @Automattic/team-calypso
-/docs/testing @Automattic/team-calypso
-
 # G Suite
-/client/blocks/gsuite-stats-nudge @Automattic/larimar
-/client/components/data/query-gsuite-users @Automattic/larimar
-/client/components/domains/contact-details-form-fields/index.jsx @Automattic/larimar
-/client/components/gsuite @Automattic/larimar
-/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/larimar
-/client/components/upgrades/gsuite @Automattic/larimar
-/client/lib/domains/email-forwarding @Automattic/larimar
-/client/lib/domains/google-apps-users @Automattic/larimar
-/client/lib/gsuite @Automattic/larimar
-/client/me/purchases/remove-purchase/index.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/larimar
-/client/my-sites/checkout/checkout/index.jsx @Automattic/larimar
-/client/my-sites/checkout/controller.jsx @Automattic/larimar
-/client/my-sites/checkout/gsuite-nudge @Automattic/larimar
-/client/my-sites/domains/components/domain-warnings @Automattic/larimar
-/client/my-sites/domains/controller.jsx @Automattic/larimar
-/client/my-sites/email @Automattic/larimar
-/client/my-sites/stats/stats-banners/index.jsx @Automattic/larimar
-/client/state/data-layer/wpcom/gsuite-users @Automattic/larimar
-/client/state/gsuite-users @Automattic/larimar
-
-# Gutenberg editor (Gutenframe)
-/client/gutenberg @Automattic/cylon @Automattic/ajax
+/client/components/data/query-gsuite-users @Automattic/cobalt
+/client/components/domains/contact-details-form-fields/index.jsx @Automattic/cobalt
+/client/components/gsuite @Automattic/cobalt
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/cobalt
+/client/components/upgrades/gsuite @Automattic/cobalt
+/client/lib/domains/email-forwarding @Automattic/cobalt
+/client/lib/gsuite @Automattic/cobalt
+/client/me/purchases/remove-purchase/index.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/cobalt
+/client/my-sites/checkout/checkout/index.jsx @Automattic/cobalt
+/client/my-sites/checkout/controller.jsx @Automattic/cobalt
+/client/my-sites/checkout/gsuite-nudge @Automattic/cobalt
+/client/my-sites/domains/components/domain-warnings @Automattic/cobalt
+/client/my-sites/domains/controller.jsx @Automattic/cobalt
+/client/my-sites/email @Automattic/cobalt
+/client/state/data-layer/wpcom/gsuite-users @Automattic/cobalt
+/client/state/gsuite-users @Automattic/cobalt
 
 # Payments
 /client/blocks/credit-card-form/ @Automattic/payments
@@ -97,33 +71,23 @@
 /client/blocks/reader-* @Automattic/reader
 /client/state/reader @Automattic/reader
 
-# Server infrastructure
-/server @Automattic/team-calypso
-
-# Test infrastructure
-/test @Automattic/team-calypso
-
 # Types, TypeScript, and type annotations
 /client/types.ts @Automattic/type-review
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # FSE (Full Site Editing)
-/apps/full-site-editing/* @Automattic/cylon @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/* @Automattic/cylon @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/full-site-editing @Automattic/cylon
-/apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/starter-page-templates @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
+/apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
+/apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
+/apps/editing-toolkit/editing-toolkit-plugin/posts-list-block @Automattic/ajax
+/apps/editing-toolkit/editing-toolkit-plugin/global-styles @Automattic/cylon @nosolosw
 
 # FSE Workflow Files
-/.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
+/.github/workflows/editing-toolkit-plugin.yml @Automattic/cylon
 /.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
 
-# WPcom Block Editor
-/apps/wpcom-block-editor @Automattic/cylon @Automattic/ajax
-
-# Gutenboarding
-/client/landing/gutenboarding @Automattic/luna
-
-# @automattic/data-stores package
-/packages/data-stores @Automattic/luna
+# Experimentation platform legacy library and new client
+/client/lib/abtest @Automattic/experimentation-platform
+/client/components/data/query-experiments @Automattic/experimentation-platform
+/client/components/experiment @Automattic/experimentation-platform
+/client/state/data-layer/wpcom/experiments @Automattic/experimentation-platform
+/client/state/experiments @Automattic/experimentation-platform

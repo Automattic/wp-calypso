@@ -28,9 +28,10 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { Button } from '@automattic/components';
 import RecentRenewals from './recent-renewals';
-import DomainRegistrationRefundPolicy from './domain-registration-refund-policy';
+import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import CheckoutTerms from './checkout-terms';
+import IncompatibleProductMessage from './incompatible-product-message';
 
 export class WechatPaymentBox extends Component {
 	static propTypes = {
@@ -47,6 +48,7 @@ export class WechatPaymentBox extends Component {
 		redirectUrl: PropTypes.string,
 		orderId: PropTypes.number,
 		isMobile: PropTypes.bool,
+		incompatibleProducts: PropTypes.object,
 	};
 
 	state = { name: '', errorMessage: '' };
@@ -175,7 +177,7 @@ export class WechatPaymentBox extends Component {
 
 					<CheckoutTerms cart={ cart } />
 
-					<DomainRegistrationRefundPolicy cart={ cart } />
+					<DomainRefundPolicy cart={ cart } />
 					<DomainRegistrationAgreement cart={ this.props.cart } />
 
 					<div className="checkout__payment-box-actions">
@@ -185,7 +187,11 @@ export class WechatPaymentBox extends Component {
 									type="submit"
 									className="checkout__payment-button-button button is-primary button-pay pay-button__button"
 									busy={ this.props.pending }
-									disabled={ this.props.pending || this.props.failure }
+									disabled={
+										this.props.pending ||
+										this.props.failure ||
+										this.props.incompatibleProducts?.blockCheckout
+									}
 								>
 									{ translate( 'Pay %(price)s with WeChat Pay', {
 										args: { price: cart.total_cost_display },
@@ -196,13 +202,15 @@ export class WechatPaymentBox extends Component {
 							<div className="checkout__secure-payment">
 								<div className="checkout__secure-payment-content">
 									<Gridicon icon="lock" />
-									{ translate( 'Secure Payment' ) }
+									{ translate( 'Secure payment' ) }
 								</div>
 							</div>
 							{ showPaymentChatButton && (
 								<PaymentChatButton paymentType={ paymentType } cart={ cart } />
 							) }
 						</div>
+
+						<IncompatibleProductMessage incompatibleProducts={ this.props.incompatibleProducts } />
 					</div>
 				</form>
 

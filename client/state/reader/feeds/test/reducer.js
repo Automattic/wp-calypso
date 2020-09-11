@@ -15,7 +15,7 @@ import {
 	READER_FEED_UPDATE,
 } from 'state/reader/action-types';
 import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { captureConsole } from 'test/helpers/console';
+import { captureConsole } from 'test-helpers/console';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {
@@ -48,6 +48,8 @@ describe( 'reducer', () => {
 				description: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -76,6 +78,8 @@ describe( 'reducer', () => {
 				subscribers_count: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -105,6 +109,8 @@ describe( 'reducer', () => {
 				subscribers_count: undefined,
 				last_update: undefined,
 				image: undefined,
+				organization_id: undefined,
+				unseen_count: undefined,
 			} );
 		} );
 
@@ -189,6 +195,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: 'http://example.com/image',
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 			} );
 		} );
@@ -227,6 +235,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 				1: {
 					feed_ID: 1,
@@ -239,6 +249,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 				2: {
 					feed_ID: 2,
@@ -251,6 +263,8 @@ describe( 'reducer', () => {
 					description: undefined,
 					last_update: undefined,
 					image: undefined,
+					organization_id: undefined,
+					unseen_count: undefined,
 				},
 			} );
 		} );

@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-const express = require( 'express' );
+import express from 'express';
 
 /**
  * Internal dependencies
  */
-const { version } = require( '../../package.json' );
-const config = require( 'config' );
-const oauth = require( './oauth' );
-const signInWithApple = require( './sign-in-with-apple' );
+import { version } from '../../package.json';
+import config from 'config';
+import oauth from './oauth';
+import signInWithApple from './sign-in-with-apple';
 
-module.exports = function () {
+export default function api() {
 	const app = express();
 
 	app.get( '/version', function ( request, response ) {
 		response.json( { version } );
 	} );
 
-	if ( config.isEnabled( 'oauth' ) ) {
+	if ( config.isEnabled( 'oauth' ) && ! config.isEnabled( 'jetpack-cloud' ) ) {
 		oauth( app );
 	}
 
@@ -27,4 +27,4 @@ module.exports = function () {
 	}
 
 	return app;
-};
+}

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import { BlockConfiguration } from '@wordpress/blocks';
+import type { BlockConfiguration } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
-import { Attributes } from './types';
+import type { Attributes } from './types';
 import edit from './edit';
 
 export const name = 'automattic/onboarding';
@@ -28,7 +28,6 @@ export const settings: BlockConfiguration< Attributes > = {
 		multiple: false,
 		reusable: false,
 	},
-	icon: 'universal-access-alt',
 	edit,
 	save: () => null,
 	getEditWrapperProps() {

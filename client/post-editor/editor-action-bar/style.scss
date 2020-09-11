@@ -7,7 +7,7 @@
 	margin-bottom: 24px;
 	padding: 12px 16px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-bottom: 8px;
 	}
 
@@ -19,24 +19,24 @@
 		margin-right: 2px;
 		background-color: rgba( var( --color-surface-rgb ), 0.92 );
 		text-transform: uppercase;
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		line-height: 1;
 		color: var( --color-neutral-20 );
 		pointer-events: none;
 		z-index: z-index( 'root', '.editor-action-bar .editor-status-label' );
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			display: none;
 		}
 
 		.focus-sidebar & {
 			right: 228px;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: none;
 			}
 
-			@include breakpoint( '>960px' ) {
+			@include breakpoint-deprecated( '>960px' ) {
 				right: 273px;
 			}
 		}
@@ -62,7 +62,7 @@
 }
 
 .post-editor__content .editor-action-bar {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -79,7 +79,7 @@
 		color: var( --color-neutral-40 );
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		color: var( --color-neutral-10 );
 	}
 

@@ -1,11 +1,10 @@
-/** @format */
-
 /**
  * External dependencies
  */
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { localize, translate } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -18,6 +17,7 @@ import Main from 'components/main';
 import SiteAddressChanger from 'blocks/site-address-changer';
 import { getSelectedDomain, isRegisteredDomain } from 'lib/domains';
 import { domainManagementEdit, domainManagementNameServers } from 'my-sites/domains/paths';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -40,7 +40,9 @@ class ChangeSiteAddress extends React.Component {
 			path = domainManagementEdit;
 		}
 
-		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			path( this.props.selectedSite.slug, this.props.selectedDomainName, this.props.currentRoute )
+		);
 	};
 
 	render() {
@@ -60,4 +62,6 @@ class ChangeSiteAddress extends React.Component {
 	}
 }
 
-export default localize( ChangeSiteAddress );
+export default connect( ( state ) => ( {
+	currentRoute: getCurrentRoute( state ),
+} ) )( localize( ChangeSiteAddress ) );

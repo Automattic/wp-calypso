@@ -6,66 +6,35 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg-compact';
-import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library-compact';
-import GoMobile from 'my-sites/customer-home/cards/features/go-mobile';
-import GrowEarn from 'my-sites/customer-home/cards/features/grow-earn';
-import LaunchSite from 'my-sites/customer-home/cards/features/launch-site';
 import Stats from 'my-sites/customer-home/cards/features/stats';
-import StatsV2 from 'my-sites/customer-home/cards/features/stats-v2';
-import Support from 'my-sites/customer-home/cards/features/support';
+import QuickStartVideo from 'my-sites/customer-home/cards/education/quick-start-video';
 import LearnGrow from './learn-grow';
-import DotPager from 'components/dot-pager';
-import config from 'config';
+import {
+	FEATURE_STATS,
+	SECTION_LEARN_GROW,
+	FEATURE_QUICK_START_VIDEO,
+} from 'my-sites/customer-home/cards/constants';
 
 const cardComponents = {
-	'home-action-launch-site': LaunchSite,
-	'home-education-gutenberg': MasteringGutenberg,
-	'home-education-free-photo-library': FreePhotoLibrary,
-	'home-feature-go-mobile-desktop': GoMobile,
-	'home-feature-grow-and-earn': GrowEarn,
-	'home-feature-stats': config.isEnabled( 'home/experimental-layout' ) ? StatsV2 : Stats,
-	'home-feature-support': Support,
-	'home-section-learn-grow': LearnGrow,
+	[ FEATURE_STATS ]: Stats,
+	[ FEATURE_QUICK_START_VIDEO ]: QuickStartVideo,
+	[ SECTION_LEARN_GROW ]: LearnGrow,
 };
 
 const Secondary = ( { cards } ) => {
-	if ( ! cards ) {
+	if ( ! cards || ! cards.length ) {
 		return null;
 	}
-	const allPossibleEducationalCards = [
-		'home-education-gutenberg',
-		'home-education-free-photo-library',
-	];
-	const educationalCards = cards.filter( ( card ) => allPossibleEducationalCards.includes( card ) );
-	let skipEducationalCard = false;
 
 	return (
 		<>
-			{ cards.map( ( card ) => {
-				if ( ! cardComponents[ card ] ) {
-					return null;
-				}
-				if ( educationalCards.includes( card ) ) {
-					if ( skipEducationalCard ) {
-						return null;
-					}
-
-					skipEducationalCard = true;
-					return (
-						<DotPager key={ card }>
-							{ educationalCards.map( ( educationalCard ) =>
-								React.createElement( cardComponents[ educationalCard ], {
-									key: educationalCard,
-								} )
-							) }
-						</DotPager>
-					);
-				}
-				return React.createElement( cardComponents[ card ], {
-					key: card,
-				} );
-			} ) }
+			{ cards.map(
+				( card ) =>
+					cardComponents[ card ] &&
+					React.createElement( cardComponents[ card ], {
+						key: card,
+					} )
+			) }
 		</>
 	);
 };

@@ -74,7 +74,7 @@
 }
 
 
-@include breakpoint('<800px') {
+@include breakpoint-deprecated('<800px') {
 	&.migrate__plan-upsell {
 		flex-wrap: wrap;
 		margin: 16px 0;
@@ -129,23 +129,23 @@
 }
 
 .migrate__plan-name {
-	font-size: 18px;
+	font-size: $font-title-small;
 }
 
 .migrate__plan-price {
 	.plan-price__currency-symbol {
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 
 	.plan-price__integer {
-		font-size: 48px;
-		font-weight: bold;
+		font-size: $font-headline-medium;
+		font-weight: 600;
 	}
 }
 
 .migrate__plan-feature-header {
 	font-weight: 600;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .migrate__plan-upsell-item {
@@ -181,7 +181,7 @@
 
 .migrate__card-footer {
 	color: var( --color-text-subtle );
-	font-size: 13px;
+	font-size: $font-body-small;
 
 	a {
 		color: var( --color-text-subtle );
@@ -204,7 +204,7 @@
 	li {
 		list-style-type: none;
 		line-height: 30px;
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 }
 
@@ -234,15 +234,15 @@
 
 .migrate__section-header {
 	.formatted-header__title {
-		font-size: 24px;
-		@include breakpoint('>660px') {
-			font-size: 32px;
+		font-size: $font-title-medium;
+		@include breakpoint-deprecated('>660px') {
+			font-size: $font-title-large;
 		}
 	}
 
 	.formatted-header__subtitle {
 		margin-bottom: 0;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 }
 
@@ -259,7 +259,7 @@
 	height: 1.5rem;
 	margin-bottom: 8px;
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .migrate__progress-item {
@@ -267,7 +267,7 @@
 	list-style-type: none;
 	margin-left: 8px;
 	margin-bottom: 8px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 24px;
 	display: flex;
 }
@@ -301,7 +301,7 @@
 	background-color: lightgrey;
 	border-radius: 10px;
 	padding: 2px 5px;
-	font-size: 10px;
+	font-size: $font-body-extra-small;
 	color: darkgray;
 	margin: 5px 3px 5px 0;
 }

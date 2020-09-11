@@ -11,6 +11,7 @@
 *.iml
 *.iws
 /.tsc-cache/
+/.cache/
 /tags
 node_modules
 /npm-debug.log*
@@ -46,11 +47,10 @@ yarn-error.log
 /server/devdocs/search-index.js
 /server/devdocs/components-usage-stats.json
 /server/devdocs/proptypes-index.json
-/server/bundler/assets*.json
 /client/server/devdocs/search-index.js
 /client/server/devdocs/components-usage-stats.json
 /client/server/devdocs/proptypes-index.json
-/client/server/bundler/assets*.json
+/client/languages/languages-meta.json
 
 *.rdb
 *.db
@@ -66,3 +66,26 @@ cached-requests.json
 /apps/*/dist/
 /apps/*/types/
 /packages/*/dist/
+/apps/*/.cache/
+
+# webpack assets
+/assets*.json
+/desktop/assets*.json
+/server/bundler/assets*.json
+/client/server/bundler/assets*.json
+
+# Desktop app
+/desktop/build
+/desktop/client
+/desktop/config
+/desktop/public
+/desktop/release
+/desktop/resource/certificates/mac.p12
+/desktop/resource/certificates/win.p12
+/client/desktop/config.json
+/desktop/id_rsa
+/desktop/e2e/logs
+/desktop/e2e/screenshots
+
+# Typescript
+*.tsbuildinfo

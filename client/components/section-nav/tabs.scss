@@ -1,5 +1,5 @@
 .section-nav-tabs {
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		width: 0;
 		flex: 1 0 auto;
 
@@ -16,7 +16,7 @@
 	margin: 0;
 	list-style: none;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: flex;
 		width: 100%;
 		overflow: hidden;
@@ -26,4 +26,3 @@
 		}
 	}
 }
-

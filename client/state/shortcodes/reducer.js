@@ -7,7 +7,12 @@ import { intersection, merge, pickBy } from 'lodash';
  * Internal dependencies
  */
 import { shortcodesSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
@@ -109,7 +114,8 @@ export const items = withSchemaValidation( shortcodesSchema, ( state = {}, actio
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	requesting,
 	items,
 } );
+export default withStorageKey( 'shortcodes', combinedReducer );

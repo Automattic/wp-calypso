@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
+import user from 'lib/user';
 
 // State actions and selectors
 import getSiteId from 'state/selectors/get-site-id';
@@ -16,7 +16,6 @@ import { promisify } from 'utils';
 /**
  * Constants
  */
-const user = userFactory();
 const debug = debugFactory( 'calypso:signup:step-actions:fetch-sites-and-user' );
 
 function fetchSitesUntilSiteAppears( siteSlug, reduxStore, callback ) {
@@ -38,8 +37,8 @@ export function fetchSitesAndUser( siteSlug, onComplete, reduxStore ) {
 	Promise.all( [
 		promisify( fetchSitesUntilSiteAppears )( siteSlug, reduxStore ),
 		new Promise( ( resolve ) => {
-			user.once( 'change', resolve );
-			user.fetch();
+			user().once( 'change', resolve );
+			user().fetch();
 		} ),
 	] ).then( onComplete );
 }

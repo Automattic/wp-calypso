@@ -1,5 +1,5 @@
 # Console Dispatcher
-**A Redux [store enhancer](https://github.com/reactjs/redux/blob/master/docs/Glossary.md#store-enhancer)**
+**A Redux [store enhancer](https://github.com/reactjs/redux/blob/HEAD/docs/Glossary.md#store-enhancer)**
 
 The console dispatcher is a Redux store enhancer which provides access to the Redux store from the developer console when running in a browser environment.
 This can be used for debugging and interactive design.

@@ -1,17 +1,17 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../../variables.scss';
+@import '../../../mixins';
+@import '~@automattic/onboarding/styles/z-index';
 
 // Restyle `<Suggestion />` component
 .vertical-select {
 	transition: flex-grow $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
 	display: flex;
 	flex-direction: column;
-	&--with-suggestions {
-		flex-grow: 1;
-	}
 
 	@include break-small {
 		display: block;
+		margin-top: 0;
 	}
 
 	.suggestions__category-heading {
@@ -37,23 +37,29 @@
 	}
 }
 
+.vertical-select__whitespace {
+	display: inline-block;
+	visibility: hidden;
+	width: 0;
+	height: 0;
+}
+
 .vertical-select__suggestions-wrapper {
 	position: relative;
 	display: block;
-	padding-right: 20px; // prevent arrow overflow on mobile
 	flex: 1;
+	z-index: z-index( '.vertical-select__suggestions-wrapper' );
 
 	@include break-small {
-		display: inline;
-		padding-right: 0;
+		display: inline-block;
+		padding-bottom: 5px;
 	}
 }
 
 .vertical-select__suggestions {
 	position: absolute;
 	left: -16px;
-	margin-top: 20px;
-	min-height: 100px;
+	min-height: 300px;
 	max-height: calc( 100% - 50px );
 	overflow: auto;
 
@@ -61,28 +67,19 @@
 		width: 250px;
 		max-height: 400px;
 	}
+
+	@include break-medium {
+		left: 0;
+	}
 }
 
 .vertical-select__input-wrapper {
 	position: relative;
 }
 
-.vertical-select__placeholder {
-	color: var( --studio-gray-5 );
-	position: absolute;
-	left: 0;
-
-	@include break-small {
-		width: 400px;
-	}
-}
-
-.vertical-select__arrow {
-	position: absolute;
-	bottom: 8px;
-	margin-left: 15px;
-
-	@include break-small {
-		bottom: 25px;
-	}
+.vertical-select__input {
+	height: 100%;
+	display: inline-block;
+	line-height: 1;
+	padding-bottom: 5px;
 }

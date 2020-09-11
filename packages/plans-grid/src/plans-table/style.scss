@@ -1,0 +1,196 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/variables';
+@import '../variables.scss';
+
+/* stylelint-disable scales/font-size */
+// @TODO: re-enable lint rule in https://github.com/Automattic/wp-calypso/issues/44933
+
+.plans-table {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.plan-item {
+	display: inline-flex;
+	min-width: 250px;
+	flex-grow: 1;
+	flex-basis: 0;
+	flex-direction: column;
+
+	@media ( min-width: $break-mobile ) {
+		// to collapse double borders into one
+		+ .plan-item {
+			margin-left: -1px;
+		}
+	}
+
+	// we need to push all items down so the popular badge
+	// doesn't get truncated from top
+	margin-top: 30px;
+
+	@media ( max-width: $break-mobile ) {
+		// on mobile, we have the plans stacked on top of each other
+		// the -1 is to collapse shared borders
+		&:not( .is-popular ) {
+			margin-top: -1px;
+		}
+
+		&.is-open:not( .is-popular ) {
+			margin-bottom: 30px;
+		}
+	}
+}
+
+.plan-item__viewport {
+	width: 100%;
+	height: 100%;
+	flex: 1;
+
+	border: 1px solid #999;
+	padding: 20px;
+}
+
+.plan-item:not( .is-popular ) .plan-item__heading {
+	display: flex;
+	align-items: center;
+
+	@media ( max-width: $break-mobile ) {
+		font-size: 1em;
+	}
+}
+
+.plan-item__name {
+	font-weight: 700;
+	font-size: 18px;
+	line-height: 24px;
+	display: inline-block;
+
+	@media ( max-width: $break-mobile ) {
+		font-size: 14px;
+	}
+}
+
+.plan-item:not( .is-popular ) .plan-item__name {
+	@media ( max-width: $break-mobile ) {
+		font-weight: normal;
+	}
+}
+
+.plan-item__mobile-expand-all-plans {
+	// increase specificity
+	&.components-button.is-link {
+		margin: 20px auto;
+		color: $dark-gray-500;
+	}
+}
+
+.plan-item__badge {
+	position: relative;
+	margin: 0;
+	display: block;
+	background: black;
+	text-align: center;
+	text-transform: uppercase;
+	color: white;
+	padding: 0 5px;
+	font-size: $font-body-extra-small;
+	margin-top: -24px;
+	height: 24px;
+	line-height: 24px;
+}
+
+.plan-item__price-amount {
+	font-weight: 600;
+	font-size: 32px;
+	line-height: 24px;
+
+	&.is-loading {
+		max-width: 60px;
+		@include onboarding-placeholder();
+	}
+}
+
+.plan-item:not( .is-open ) .plan-item__price-amount {
+	@media ( max-width: $break-mobile ) {
+		font-weight: normal;
+		font-size: 1em;
+	}
+}
+
+.plan-item__summary {
+	width: 100%;
+	&::-webkit-details-marker {
+		display: none;
+	}
+}
+
+// FIX ME
+.plan-item.is-popular .plan-item__summary,
+.plan-item__summary {
+	// disable toggling on desktop and for popular plan
+	@media ( min-width: $break-mobile ) {
+		pointer-events: none;
+	}
+}
+
+.plan-item:not( .is-open ) .plan-item__summary {
+	@media ( max-width: $break-mobile ) {
+		display: flex;
+	}
+}
+
+.plan-item__price-note {
+	font-size: 12px;
+	line-height: 19px;
+	letter-spacing: -0.4px;
+	color: var( --studio-gray-40 );
+	margin-top: 8px;
+	margin-bottom: 10px;
+}
+
+.plan-item__details .plan-item__summary .plan-item__price {
+	margin-top: 16px;
+	margin-bottom: 8px;
+}
+
+.plan-item:not( .is-open ) .plan-item__summary .plan-item__price {
+	margin-top: 0;
+	margin-bottom: 0;
+	margin-left: 10px;
+	color: $dark-gray-500;
+}
+
+.plan-item__actions {
+	margin-bottom: 16px;
+}
+
+.plan-item__dropdown-chevron {
+	flex: 1;
+	text-align: right;
+}
+
+.plan-item.is-open .plan-item__dropdown-chevron {
+	display: none;
+}
+
+.plan-item.is-popular {
+	@media ( max-width: $break-mobile ) {
+		order: -3;
+	}
+}
+
+.plan-item__select-button.components-button.is-primary {
+	padding: 0 24px;
+	height: 40px;
+
+	&:disabled {
+		opacity: 0.5;
+	}
+
+	svg {
+		margin-left: -8px;
+		margin-right: 10px;
+	}
+}

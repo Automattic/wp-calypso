@@ -178,7 +178,7 @@ Runs a custom validation check after a field update
 #### Arguments
 
 1. {object} The full form object model containing the new values
-2. {Function} A callback to be triggered when validation is complete. See `form-state` ([this._validatorFunction](https://github.com/Automattic/wp-calypso/blob/master/client/lib/form-state/index.js)) for details.
+2. {Function} A callback to be triggered when validation is complete. See `form-state` ([this._validatorFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
 
 Usage:
 
@@ -199,7 +199,7 @@ Runs a custom sanitize method after a field update
 #### Arguments
 
 1. {object} The full form object model containing the new values
-2. {Function} A callback to be triggered when sanitization is complete. See `form-state` ([this._sanitizerFunction](https://github.com/Automattic/wp-calypso/blob/master/client/lib/form-state/index.js)) for details.
+2. {Function} A callback to be triggered when sanitization is complete. See `form-state` ([this._sanitizerFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
 
 Usage:
 

@@ -12,7 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import i18n from 'i18n-calypso';
-import { taxonomiesWelcomeWhitelist, taxonomyToGridicon } from './taxonomies-config.js';
+import { allowedSearchWelcomeTaxonomies, taxonomyToGridicon } from './taxonomies-config.js';
 
 class MagicSearchWelcome extends React.Component {
 	constructor( props ) {
@@ -123,7 +123,7 @@ class MagicSearchWelcome extends React.Component {
 
 	renderTaxonomies = () => {
 		const { taxonomies } = this.props;
-		this.visibleTaxonomies = intersection( taxonomies, taxonomiesWelcomeWhitelist );
+		this.visibleTaxonomies = intersection( taxonomies, allowedSearchWelcomeTaxonomies );
 		return this.visibleTaxonomies.map( ( taxonomy ) => this.renderToken( taxonomy ) );
 	};
 

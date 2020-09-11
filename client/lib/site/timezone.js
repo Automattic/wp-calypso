@@ -24,7 +24,7 @@ export function applySiteOffset( input, { timezone, gmtOffset } ) {
 	if ( timezone ) {
 		return moment.tz( input, timezone );
 	}
-	if ( gmtOffset ) {
+	if ( gmtOffset || gmtOffset === 0 ) {
 		return moment( input ).utcOffset( gmtOffset );
 	}
 	return moment( input );

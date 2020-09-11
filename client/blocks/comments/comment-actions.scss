@@ -1,7 +1,7 @@
 // Actions for Individual Comments
 .comments__comment-actions {
 	color: var( --color-text-subtle );
-	font-size: 14px;
+	font-size: $font-body-small;
 	list-style: none;
 	margin-top: -6px;
 
@@ -12,7 +12,7 @@
 		margin-right: 8px;
 		margin-top: 0;
 		cursor: pointer;
-		font-size: 14px;
+		font-size: $font-body-small;
 
 		.gridicon {
 			position: relative;
@@ -64,7 +64,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		.comments__comment-actions-approve,
 		.comments__comment-actions-trash,
 		.comments__comment-actions-spam,
@@ -77,7 +77,7 @@
 		}
 	}
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}

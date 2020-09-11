@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { FieldArray, reduxForm } from 'redux-form';
@@ -15,6 +14,8 @@ import { CompactCard } from '@automattic/components';
 import FormButton from 'components/forms/form-button';
 import SectionHeader from 'components/section-header';
 import PostsList from './posts-list';
+
+import 'state/form/init';
 
 const form = 'extensions.zoninator.zoneContent';
 

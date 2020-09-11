@@ -15,11 +15,12 @@ import { noop } from 'lodash';
 import { Button, CompactCard } from '@automattic/components';
 import DomainPrimaryFlag from 'my-sites/domains/domain-management/components/domain/primary-flag';
 import DomainTransferFlag from 'my-sites/domains/domain-management/components/domain/transfer-flag';
-import Notice from 'components/notice';
 import { type as domainTypes, gdprConsentStatus } from 'lib/domains/constants';
 import Spinner from 'components/spinner';
 import { withLocalizedMoment } from 'components/localized-moment';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import DomainNotice from 'my-sites/domains/domain-management/components/domain-notice';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 class ListItem extends React.PureComponent {
 	static propTypes = {
@@ -144,10 +145,9 @@ class ListItem extends React.PureComponent {
 		}
 
 		return (
-			<input
+			<FormRadio
 				id={ this.getInputId() }
 				className="domain-management-list-item__radio"
-				type="radio"
 				checked={ this.props.isSelected }
 				onChange={ noop }
 			/>
@@ -159,29 +159,30 @@ class ListItem extends React.PureComponent {
 
 		if ( domain.expired ) {
 			return (
-				<Notice isCompact status="is-error" icon="spam">
-					{ translate( 'Expired %(timeSinceExpiry)s', {
+				<DomainNotice
+					status="alert"
+					text={ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
 							timeSinceExpiry: moment( domain.expiry ).fromNow(),
 						},
 						context:
-							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+							'timeSinceExpiry is of the form "[number] [time-period] ago" e.g. "3 days ago"',
 					} ) }
-				</Notice>
+				/>
 			);
 		}
 
 		if ( domain.expiry && moment( domain.expiry ) < this.props.moment().add( 30, 'days' ) ) {
 			return (
-				<Notice isCompact status="is-error" icon="spam">
-					{ translate( 'Expires %(timeUntilExpiry)s', {
+				<DomainNotice
+					status="warning"
+					text={ translate( 'Expires %(timeUntilExpiry)s', {
 						args: {
 							timeUntilExpiry: moment( domain.expiry ).fromNow(),
 						},
-						context:
-							'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+						context: 'timeUntilExpiry is of the form "in [number] [time-period]" e.g. "in 3 days"',
 					} ) }
-				</Notice>
+				/>
 			);
 		}
 	}
@@ -192,11 +193,7 @@ class ListItem extends React.PureComponent {
 			domain.gdprConsentStatus &&
 			gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus
 		) {
-			return (
-				<Notice isCompact status="is-error" icon="spam">
-					{ translate( 'Action Required' ) }
-				</Notice>
-			);
+			return <DomainNotice status="alert" text={ translate( 'Action Required' ) } />;
 		}
 	}
 

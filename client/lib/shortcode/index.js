@@ -16,7 +16,7 @@ const REGEXP_SHORTCODE = /\[(\[?)([^\[\]\/\s\u00a0\u200b]+)(?![\w-])([^\]\/]*(?:
  * can be formatted as either `name="value"`, `name='value'`, or `name=value`.
  * Numeric attributes can be formatted as `"value"` or just `value`.
  *
- * @see https://github.com/WordPress/WordPress/blob/master/wp-includes/js/shortcode.js
+ * @see https://github.com/WordPress/WordPress/blob/HEAD/wp-includes/js/shortcode.js
  *
  * @param  {string} text A shortcode attribute string
  * @returns {object}      An object of attributes, split as named and numeric

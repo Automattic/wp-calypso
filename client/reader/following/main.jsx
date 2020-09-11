@@ -5,7 +5,8 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { initial, flatMap, trim } from 'lodash';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -22,6 +23,10 @@ import { getSearchPlaceholderText } from 'reader/search/utils';
 import Banner from 'components/banner';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import SectionHeader from 'components/section-header';
+import { requestMarkAllAsSeen } from 'state/reader/seen-posts/actions';
+import { SECTION_FOLLOWING } from 'state/reader/seen-posts/constants';
+import { getReaderOrganizationFeedsInfo } from 'state/reader/organizations/selectors';
+import { NO_ORG_ID } from 'state/reader/organizations/constants';
 
 /**
  * Style dependencies
@@ -53,6 +58,12 @@ const FollowingStream = ( props ) => {
 	const now = new Date();
 	const showRegistrationMsg = props.userInUSA && now < lastDayForVoteBanner;
 	const { translate } = props;
+	const dispatch = useDispatch();
+
+	const markAllAsSeen = ( feedsInfo ) => {
+		const { feedIds, feedUrls } = feedsInfo;
+		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
+	};
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
@@ -68,6 +79,7 @@ const FollowingStream = ( props ) => {
 					event="reader-vote-prompt"
 					href="https://www.usa.gov/election-office"
 					icon="star"
+					horizontal
 				/>
 			) }
 			<CompactCard className="following__search">
@@ -80,6 +92,15 @@ const FollowingStream = ( props ) => {
 			</CompactCard>
 			<BlankSuggestions suggestions={ suggestionList } />
 			<SectionHeader label={ translate( 'Followed Sites' ) }>
+				{ config.isEnabled( 'reader/seen-posts' ) && (
+					<Button
+						compact
+						onClick={ () => markAllAsSeen( props.feedsInfo ) }
+						disabled={ ! props.feedsInfo.unseenCount }
+					>
+						{ translate( 'Mark all as seen' ) }
+					</Button>
+				) }
 				<Button primary compact className="following__manage" href="/following/manage">
 					{ translate( 'Manage' ) }
 				</Button>
@@ -91,4 +112,5 @@ const FollowingStream = ( props ) => {
 
 export default connect( ( state ) => ( {
 	userInUSA: getCurrentUserCountryCode( state ) === 'US',
+	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );

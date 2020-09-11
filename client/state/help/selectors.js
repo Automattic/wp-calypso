@@ -9,7 +9,9 @@ import { get } from 'lodash';
 import getSelectedOrPrimarySiteId from 'state/selectors/get-selected-or-primary-site-id';
 import { getSite } from 'state/sites/selectors';
 
-export const getHelpSiteId = ( state ) => state.help.selectedSiteId;
+import 'state/help/init';
+
+export const getHelpSiteId = ( state ) => state.help?.selectedSiteId;
 
 /*
  * Returns the site the customer wishes to request help for. Returns in order of preference:

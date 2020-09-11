@@ -9,8 +9,9 @@ import { orderBy } from 'lodash';
 import {
 	combineReducers,
 	keyedReducer,
-	withSchemaValidation,
 	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
 } from 'state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,
@@ -180,7 +181,7 @@ export const requestErrorReducer = withoutPersistence( ( state = false, action )
 	return state;
 } );
 
-export default keyedReducer(
+const combinedReducer = keyedReducer(
 	'domainName',
 	combineReducers( {
 		forwards: forwardsReducer,
@@ -190,3 +191,5 @@ export default keyedReducer(
 		type: typeReducer,
 	} )
 );
+
+export default withStorageKey( 'emailForwarding', combinedReducer );

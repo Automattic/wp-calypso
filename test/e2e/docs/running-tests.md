@@ -14,16 +14,18 @@
 You will need to generate a `config/local-decrypted.json` file by following these [fieldguide steps](https://fieldguide.automattic.com/automated-end-to-end-testing/).
 
 ```bash
-# in another terminal session/tab start the devlopment server
-npm start
+# in another terminal session/tab:
+# install dependencies.
+yarn
+# start the devlopment server
+yarn start
 
 # in the e2e tests tab
 cd test/e2e
-npm ci
 # Follow these instructions to get the secret (https://fieldguide.automattic.com/automated-end-to-end-testing/
-export CONFIG_KEY='<SECRET_FROM_SECRET_STORE>' 
+export CONFIG_KEY='<SECRET_FROM_SECRET_STORE>'
 export NODE_CONFIG_ENV='decrypted'
-npm run decryptconfig
+yarn run decryptconfig
 # a file `config/local-decrypted.json` will be generated and ignored by git. Make sure to set the `NODE_CONFIG_ENV` variable on every bash/zsh session
 
 # now run tests

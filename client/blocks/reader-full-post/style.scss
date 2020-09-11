@@ -5,7 +5,7 @@
 
 .is-group-reader.has-no-sidebar {
 	.masterbar {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none; // Hides masterbar in fullpost mobile
 		}
 	}
@@ -22,23 +22,23 @@
 .reader-full-post__content {
 	margin: 0 auto;
 
-	@include breakpoint( '>1280px' ) {
+	@include breakpoint-deprecated( '>1280px' ) {
 		width: 720px;
 		padding-left: 260px;
 	}
 
-	@include breakpoint( '1040px-1280px' ) {
+	@include breakpoint-deprecated( '1040px-1280px' ) {
 		width: 720px;
 		padding-left: 240px;
 	}
 
-	@include breakpoint( '660px-1040px' ) {
+	@include breakpoint-deprecated( '660px-1040px' ) {
 		width: auto;
 		margin: 0;
 		padding-left: 240px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		width: auto;
 		padding: 0 20px;
 	}
@@ -47,8 +47,8 @@
 .reader-full-post__visit-site-container {
 	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-0 );
-	font-size: 11px;
-	font-weight: 500;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
 	height: 46px;
 	margin: 0;
 	position: fixed;
@@ -60,7 +60,7 @@
 		'.reader-full-post__visit-site-container'
 	);
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		border: 0;
 		position: absolute;
 		top: 47px;
@@ -71,7 +71,7 @@
 		fill: var( --color-neutral-40 );
 		top: 5px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			top: 3px;
 		}
 	}
@@ -81,7 +81,7 @@
 		display: block;
 		padding: 10px 10px 15px 6px;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			padding: 10px 20px 15px;
 		}
 
@@ -95,7 +95,7 @@
 	}
 
 	.reader-full-post__visit-site-label {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 	}
@@ -106,34 +106,50 @@
 	position: fixed;
 	text-align: center;
 
-	@include breakpoint( '>1280px' ) {
+	@include breakpoint-deprecated( '>1280px' ) {
 		left: calc( 50% - 490px );
 	}
 
-	@include breakpoint( '1040px-1280px' ) {
+	@include breakpoint-deprecated( '1040px-1280px' ) {
 		left: calc( 50% - 480px );
 	}
 
-	@include breakpoint( '660px-1040px' ) {
+	@include breakpoint-deprecated( '660px-1040px' ) {
 		left: 20px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		position: static;
 		text-align: left;
 		width: auto;
 	}
 }
 
+.reader-full-post__seen-button {
+	align-items: center;
+	box-sizing: border-box;
+	color: #646970;
+	cursor: pointer;
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+	user-select: none;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		top: 12px;
+	}
+}
+
 .reader-full-post__story {
 	max-width: 720px;
 
-	@include breakpoint( '<480px' ) {
-		font-size: 15px;
+	@include breakpoint-deprecated( '<480px' ) {
+		font-size: $font-body;
 		line-height: 24px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: -35px;
 	}
 }
@@ -157,7 +173,7 @@
 }
 
 .reader-full-post .back-button {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		background: transparent;
 		border-bottom: 0;
 		position: fixed;
@@ -170,7 +186,7 @@
 	display: inline-flex;
 	flex-direction: column;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-bottom: 35px;
 		padding-right: 10px;
 		position: relative;
@@ -190,7 +206,7 @@
 		margin-top: 0;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		flex-direction: row;
 		margin-top: 20px;
 
@@ -233,7 +249,7 @@
 				font-size: 32px !important;
 
 				.gridicon {
-					@include breakpoint( '<660px' ) {
+					@include breakpoint-deprecated( '<660px' ) {
 						height: 32px !important;
 						width: 32px !important;
 						line-height: 32px !important;
@@ -244,13 +260,13 @@
 		}
 
 		.reader-author-link {
-			font-weight: 700;
+			font-weight: 600;
 			display: inline;
 			margin-right: 5px;
 
 			&::after {
 				content: ',';
-				font-weight: normal;
+				font-weight: 400;
 			}
 		}
 
@@ -258,7 +274,7 @@
 			flex: 1 0 0;
 			display: inline;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				margin-top: 0;
 			}
 		}
@@ -273,7 +289,7 @@
 			left: calc( 100% - 270px );
 			top: 5px;
 
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				background: transparent;
 				position: fixed;
 				z-index: z-index(
@@ -294,7 +310,7 @@
 		}
 
 		.author-compact-profile__follow .follow-button__label {
-			@include breakpoint( '<660px' ) {
+			@include breakpoint-deprecated( '<660px' ) {
 				display: none;
 			}
 		}
@@ -332,7 +348,7 @@
 }
 
 .reader-full-post__sidebar-comment-like {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		align-items: flex-start;
 		background: white;
 		display: flex;
@@ -341,7 +357,7 @@
 		height: 47px;
 		justify-content: flex-end;
 		position: fixed;
-		left: 0;
+		right: 60px;
 		top: 0;
 		width: 100%;
 		z-index: z-index( 'root', '.reader-full-post__sidebar-comment-like' );
@@ -349,8 +365,9 @@
 }
 
 .reader-full-post__sidebar .like-button {
-	@include breakpoint( '<660px' ) {
-		margin-right: 60px;
+	margin-right: 18px;
+
+	@include breakpoint-deprecated( '<660px' ) {
 		top: 9px;
 	}
 
@@ -361,13 +378,13 @@
 
 .reader-full-post__sidebar .comment-button__label,
 .reader-full-post__sidebar .like-button__label {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .reader-full-post__sidebar .comment-button {
 	margin-right: 18px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		top: 9px;
 	}
 
@@ -384,7 +401,7 @@
 .reader-full-post .has-author-link.has-author-icon {
 	margin-top: 25px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 5px;
 	}
 
@@ -402,7 +419,7 @@
 }
 
 .reader-full-post .has-author-link .reader-author-link {
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 4px;
 	}
 }
@@ -422,23 +439,23 @@
 	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	font-size: 26px;
+	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 34px;
 	margin: 56px 0 0;
 	max-width: 750px;
 
-	@include breakpoint( '>960px' ) {
-		font-size: 36px;
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: $font-headline-small;
 		line-height: 46px;
 	}
 
-	@include breakpoint( '480px-960px' ) {
-		font-size: 32px;
+	@include breakpoint-deprecated( '480px-960px' ) {
+		font-size: $font-title-large;
 		line-height: 40px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: 8px;
 	}
 
@@ -455,14 +472,14 @@
 .reader-full-post__header-meta {
 	display: flex;
 	flex-direction: row;
-	font-size: 15px;
+	font-size: $font-body;
 	max-width: 750px;
 }
 
 .reader-full-post__header-date {
 	line-height: 1.6;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		line-height: 1.4;
 	}
 }
@@ -491,7 +508,7 @@
 		position: relative;
 		top: 4px;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			top: 2px;
 		}
 	}
@@ -544,28 +561,6 @@
 
 .reader-full-post__featured-image {
 	margin: 28px 0 26px;
-}
-
-.reader-full-post .embed-youtube,
-.reader-full-post .embed-vimeo {
-	display: block;
-	margin-bottom: 25px;
-	position: relative;
-	padding: 25px 0 56.25%;
-	// We currently have to use !important here to override the inline style on the Youtube embed
-	// - see https://github.com/Automattic/wp-calypso/issues/9615
-	text-align: initial !important;
-
-	iframe {
-		height: 100%;
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
-}
-
-.reader-full-post .embed-vimeo {
-	margin-bottom: 0;
 }
 
 .reader-full-post__unavailable-body {

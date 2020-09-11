@@ -47,6 +47,7 @@ import {
 	POST_COMMENT_DISPLAY_TYPES,
 } from './constants';
 import trees from './trees/reducer';
+import ui from './ui/reducer';
 import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
 const isCommentManagementEdit = ( newProperties ) =>
@@ -539,6 +540,7 @@ const combinedReducer = combineReducers( {
 	trees,
 	treesInitialized,
 	activeReplies,
+	ui,
 } );
 const commentsReducer = withStorageKey( 'comments', combinedReducer );
 export default commentsReducer;

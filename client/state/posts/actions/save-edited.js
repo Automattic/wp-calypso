@@ -17,20 +17,20 @@ import {
 	normalizePostForActions,
 	normalizeTermsForApi,
 } from 'state/posts/utils';
-import editedPostHasContent from 'state/selectors/edited-post-has-content';
+import { editedPostHasContent } from 'state/posts/selectors/edited-post-has-content';
 import {
 	editorAutosaveReset,
 	editorInitRawContent,
 	editorLoadingErrorReset,
 	editorSave,
-} from 'state/ui/editor/actions';
+} from 'state/editor/actions';
 import {
 	getEditorInitialRawContent,
 	getEditorPostId,
 	getEditorRawContent,
 	isEditorSaveBlocked,
-} from 'state/ui/editor/selectors';
-import { resetEditorLastDraft, setEditorLastDraft } from 'state/ui/editor/last-draft/actions';
+} from 'state/editor/selectors';
+import { resetEditorLastDraft, setEditorLastDraft } from 'state/editor/last-draft/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPreference } from 'state/preferences/selectors';
 

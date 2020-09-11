@@ -4,6 +4,7 @@
 
 .following__search.card.is-compact {
 	padding: 0;
+	border-radius: 2px;
 	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
 	z-index: z-index( 'root', '.reader-following-search' );
 }
@@ -37,12 +38,12 @@
 		background-position: 150px 20px;
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		background-position: 120px 20px;
 	}
 
 	.following__intro-copy-hidden {
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 	}
@@ -68,7 +69,7 @@
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
-	font-size: 18px;
+	font-size: $font-title-small;
 	justify-content: center;
 	margin-left: 24px;
 
@@ -77,23 +78,23 @@
 		margin-top: 20px;
 	}
 
-	@include breakpoint( '<960px' ) {
-		font-size: 16px;
+	@include breakpoint-deprecated( '<960px' ) {
+		font-size: $font-body;
 	}
 
-	@include breakpoint( '<660px' ) {
-		font-size: 18px;
+	@include breakpoint-deprecated( '<660px' ) {
+		font-size: $font-title-small;
 	}
 
-	@include breakpoint( '<480px' ) {
-		font-size: 16px;
+	@include breakpoint-deprecated( '<480px' ) {
+		font-size: $font-body;
 	}
 }
 
 .following__search {
 	margin-top: 8px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 30px;
 	}
 }

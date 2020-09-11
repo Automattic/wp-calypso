@@ -9,6 +9,7 @@ import {
 
 import 'state/data-layer/wpcom/jetpack-blogs/product-install';
 import 'state/data-layer/wpcom/jetpack-blogs/product-install-status';
+import 'state/jetpack-product-install/init';
 
 /**
  * Start the Jetpack product install process for that site.

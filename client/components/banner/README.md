@@ -4,6 +4,8 @@ Banner
 
 This component renders a customizable banner.
 
+(Need to add an upsell? Use `UpsellNudge` instead.)
+
 ## Usage
 
 ```jsx

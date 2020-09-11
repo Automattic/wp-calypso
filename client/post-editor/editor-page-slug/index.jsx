@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -13,7 +12,7 @@ import Gridicon from 'components/gridicon';
 import EditorSlug from 'post-editor/editor-slug';
 import * as utils from 'state/posts/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getSite } from 'state/sites/selectors';
 

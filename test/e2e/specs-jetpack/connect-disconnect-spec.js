@@ -67,7 +67,7 @@ describe( `Jetpack Connect and Disconnect: (${ screenSize })`, function () {
 
 		step( 'Can click the Connect Jetpack button', async function () {
 			const wpAdminJetpack = await WPAdminJetpackPage.Expect( driver );
-			return await wpAdminJetpack.connectWordPressCom();
+			return await wpAdminJetpack.inPlaceConnect();
 		} );
 
 		step( 'Can approve connection on the authorization page', async function () {

@@ -1,6 +1,6 @@
 .memberships__subscription-meta {
 	padding: 0;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .memberships__subscription-inner-meta {
@@ -11,25 +11,25 @@
 	padding: 0 24px;
 	border-top: 1px solid var( --color-neutral-0 );
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		flex-direction: column;
 		padding: 0 16px 16px;
 	}
 
 	li {
 		color: var( --color-neutral-60 );
-		font-size: 13px;
+		font-size: $font-body-small;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			clear: both;
 			overflow: auto;
 			margin-top: 15px;
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			box-sizing: border-box;
 			flex: 1 1 auto;
-			font-size: 14px;
+			font-size: $font-body-small;
 			text-align: center;
 			padding: 15px 8px 12px;
 
@@ -42,7 +42,7 @@
 		}
 
 		+ li {
-			@include breakpoint( '>660px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				border-left: 1px solid var( --color-neutral-0 );
 			}
 		}
@@ -59,23 +59,23 @@
 	font-style: normal;
 	font-weight: 600;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		flex-direction: row;
 		float: left;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		color: var( --color-text-subtle );
 		display: block;
 		font-family: $sans;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		font-weight: 400;
 		margin: 0 0 12px;
 	}
 }
 
 .memberships__subscription-inner-detail {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: block;
 		float: right;
 		text-align: right;
@@ -94,7 +94,7 @@
 .memberships__subscription-title {
 	color: var( --color-primary );
 	display: block;
-	font-size: 18px;
+	font-size: $font-title-small;
 	line-height: 1.2em;
 	padding: 20px;
 	white-space: nowrap;

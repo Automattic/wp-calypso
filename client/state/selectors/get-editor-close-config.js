@@ -52,12 +52,21 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	if ( ! lastNonEditorRoute || ! postType || doesRouteMatch( /^\/home\/?/ ) ) {
 		return {
 			url: `/home/${ getSiteSlug( state, siteId ) }`,
-			label: translate( 'Home' ),
+			label: translate( 'My Home' ),
 		};
 	}
 
 	// Otherwise, just return to post type listings
+
+	let label = translate( 'Back' );
+	if ( postType === 'post' ) {
+		label = translate( 'View Posts' );
+	} else if ( postType === 'page' ) {
+		label = translate( 'View Pages' );
+	}
+
 	return {
 		url: getPostTypeAllPostsUrl( state, postType ),
+		label,
 	};
 }

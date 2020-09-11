@@ -1,5 +1,5 @@
 .post-share__sharing-preview-modal {
-	border-radius: 4px;
+	border-radius: 2px;
 	overflow: hidden;
 	width: 100%;
 }
@@ -13,7 +13,7 @@
 	bottom: 0;
 	left: 0;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		top: 24px;
 	}
 }
@@ -29,7 +29,7 @@
 	height: 48px;
 	background: var( --color-surface );
 	border-bottom: 1px solid var( --color-neutral-10 );
-	border-radius: 4px 4px 0 0;
+	border-radius: 2px 2px 0 0;
 	display: flex;
 }
 
@@ -51,7 +51,7 @@
 	flex-direction: column;
 	height: 100%;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: row;
 	}
 }
@@ -81,7 +81,7 @@
 			display: none;
 		}
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			flex-direction: column;
 			justify-content: flex-start;
 			border-bottom: 1px solid #c8d7e1;
@@ -103,7 +103,7 @@
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		border-right: 1px solid var( --color-neutral-10 );
 		flex: 0 0 250px;
 	}
@@ -116,16 +116,16 @@
 	font-family: $sans;
 
 	.sharing-preview-pane__title {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: normal;
 		margin: 0;
 	}
 
 	.sharing-preview-pane__description {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 40px 0 40px 20px;
 		max-width: 200px;
 	}

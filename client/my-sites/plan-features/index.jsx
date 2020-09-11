@@ -15,7 +15,6 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import FoldableCard from 'components/foldable-card';
-import InlineSupportLink from 'components/inline-support-link';
 import Notice from 'components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
@@ -24,11 +23,16 @@ import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
+import {
+	getPlan,
+	getPlanBySlug,
+	getPlanRawPrice,
+	getPlanSlug,
+	getDiscountedRawPrice,
+} from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
 import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
 import { getDiscountByName } from 'lib/discounts';
@@ -40,11 +44,12 @@ import {
 	getPlanPath,
 	isFreePlan,
 	isWpComEcommercePlan,
+	isWpComBusinessPlan,
 	getPlanClass,
 } from 'lib/plans';
 import {
-	getCurrentPlan,
 	getPlanDiscountedRawPrice,
+	getSitePlanRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
 } from 'state/sites/plans/selectors';
@@ -67,6 +72,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
+	FEATURE_BUSINESS_ONBOARDING,
 } from 'lib/plans/constants';
 import { getPlanFeaturesObject } from 'lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
@@ -75,59 +81,8 @@ import PlanFeaturesScroller from './scroller';
  * Style dependencies
  */
 import './style.scss';
-import { Dialog } from '@automattic/components';
-
-const defaultState = {
-	checkoutUrl: '/checkout',
-	settingPublic: false,
-	showingSiteLaunchDialog: false,
-	choosingPlanSlug: '',
-};
 
 export class PlanFeatures extends Component {
-	state = { ...defaultState };
-
-	setDefaultState = () => {
-		this.setState( defaultState );
-	};
-
-	onLaunchDialogClose = async ( action ) => {
-		const { currentSitePlanSlug, siteId } = this.props;
-		const { checkoutUrl, choosingPlanSlug } = this.state;
-
-		if ( action !== 'continue' ) {
-			this.setDefaultState();
-			return;
-		}
-
-		this.setState( { settingPublic: true } );
-
-		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_confirmed', {
-			current_plan: currentSitePlanSlug,
-			upgrading_to: choosingPlanSlug,
-		} );
-
-		try {
-			const setPublicResult = await this.props.saveSiteSettings( siteId, {
-				blog_public: 1,
-			} );
-			if ( ! get( setPublicResult, [ 'updated', 'blog_public' ] ) ) {
-				this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_failed', {
-					current_plan: currentSitePlanSlug,
-					upgrading_to: choosingPlanSlug,
-				} );
-			}
-		} catch ( e ) {}
-
-		page( checkoutUrl );
-	};
-
-	UNSAFE_componentWillReceiveProps( { siteId } ) {
-		if ( siteId !== this.props.siteId ) {
-			this.setDefaultState();
-		}
-	}
-
 	render() {
 		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
 		const tableClasses = classNames(
@@ -159,7 +114,6 @@ export class PlanFeatures extends Component {
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
-					{ this.renderSiteLaunchDialog() }
 					<div ref={ this.contentRef } className="plan-features__content">
 						{ mobileView }
 						<PlanFeaturesScroller
@@ -220,46 +174,6 @@ export class PlanFeatures extends Component {
 				{ activeDiscount.plansPageNoticeText }
 			</Notice>,
 			bannerContainer
-		);
-	}
-
-	renderSiteLaunchDialog() {
-		const { currentSitePlanSlug, translate } = this.props;
-		const { choosingPlanSlug, settingPublic, showingSiteLaunchDialog } = this.state;
-
-		if ( ! showingSiteLaunchDialog ) {
-			return null;
-		}
-
-		this.props.recordTracksEvent( 'calypso_plan_upgrade_launch_dialog_shown', {
-			current_plan: currentSitePlanSlug,
-			upgrading_to: choosingPlanSlug,
-		} );
-
-		return (
-			<Dialog
-				additionalClassNames="plan-features__upgrade-launch-dialog"
-				isVisible
-				buttons={ [
-					{ action: 'cancel', disabled: settingPublic, label: translate( 'Cancel' ) },
-					{
-						action: 'continue',
-						disabled: settingPublic,
-						label: translate( "Let's do it!" ),
-						isPrimary: true,
-					},
-				] }
-				onClose={ this.onLaunchDialogClose }
-			>
-				<h1>{ translate( 'Site Privacy' ) }</h1>
-				<p>{ translate( 'Your site is only visible to you and users you approve.' ) }</p>
-				<p>{ translate( 'Upgrading to this plan makes your site visible to the public.' ) }</p>
-				<InlineSupportLink
-					showIcon={ false }
-					supportLink="https://wordpress.com/support/settings/privacy-settings/"
-					supportPostId={ 1507 }
-				/>
-			</Dialog>
 		);
 	}
 
@@ -580,7 +494,6 @@ export class PlanFeatures extends Component {
 			cartItemForPlan,
 			checkoutUrl,
 			siteIsPrivateAndGoingAtomic,
-			productSlug,
 		} = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && ownPropsOnUpgradeClick !== noop && cartItemForPlan ) {
@@ -599,16 +512,7 @@ export class PlanFeatures extends Component {
 				// Let signup do its thing
 				return;
 			}
-			if ( 'variant' === abtest( 'ATPrivacy' ) ) {
-				// When coming soon feature is enabled, we don't want to show any warnings
-				page( checkoutUrlWithArgs );
-				return;
-			}
-			this.setState( {
-				checkoutUrl: checkoutUrlWithArgs,
-				choosingPlanSlug: productSlug,
-				showingSiteLaunchDialog: true,
-			} );
+			page( checkoutUrlWithArgs );
 			return;
 		}
 
@@ -716,7 +620,7 @@ export class PlanFeatures extends Component {
 				key={ index }
 				description={ description }
 				hideInfoPopover={ feature.hideInfoPopover }
-				hideGridicon={ this.props.withScroll }
+				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 			>
 				<span className="plan-features__item-info">
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
@@ -857,17 +761,13 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
-		.map( ( { planName, planConstantObj, availableForPurchase } ) => {
+		.map( ( { planName, availableForPurchase } ) => {
 			if ( ! availableForPurchase ) {
 				return 0;
 			}
-			const planProductId = planConstantObj.getProductId();
-			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName, {
-				isMonthly: false,
-			} );
-			const annualRawPrice = getPlanRawPrice( state, planProductId, false );
-
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number' ) {
+			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName );
+			const annualRawPrice = getSitePlanRawPrice( state, siteId, planName );
+			if ( typeof annualDiscountPrice !== 'number' || typeof annualRawPrice !== 'number' ) {
 				return 0;
 			}
 
@@ -898,7 +798,6 @@ export default connect(
 		const isJetpack = selectedSiteId ? isJetpackSite( state, selectedSiteId ) : displayJetpackPlans;
 		const isSiteAT = selectedSiteId ? isSiteAutomatedTransfer( state, selectedSiteId ) : false;
 		const siteIsPrivate = isPrivateSite( state, selectedSiteId );
-		const currentPlanObj = getCurrentPlan( state, selectedSiteId );
 		const sitePlan = getSitePlan( state, selectedSiteId );
 		const sitePlans = getPlansBySiteId( state, selectedSiteId );
 		const isPaid = isCurrentPlanPaid( state, selectedSiteId );
@@ -938,11 +837,14 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
+				let features = planConstantObj.getPlanCompareFeatures( abtest );
 
-				let planFeatures = getPlanFeaturesObject(
-					planConstantObj.getPlanCompareFeatures( abtest )
-				);
+				// TODO: remove this once Quick Start sessions have been removed from Business Plan
+				if ( isWpComBusinessPlan( plan ) ) {
+					features = features.filter( ( feature ) => feature !== FEATURE_BUSINESS_ONBOARDING );
+				}
 
+				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
 				}
@@ -967,15 +869,24 @@ export default connect(
 							break;
 						default:
 							if ( planConstantObj.getSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+								planFeatures = getPlanFeaturesObject(
+									planConstantObj.getSignupFeatures( currentPlan )
+								);
 							}
 					}
 				}
 
 				if ( displayJetpackPlans ) {
-					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( abtest ) );
+					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
 				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
+				const isMonthlyObj = { isMonthly: showMonthlyPrice };
+				const rawPrice = siteId
+					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
+					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
+				const discountPrice = siteId
+					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
+					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
 				return {
 					availableForPurchase,
@@ -983,9 +894,7 @@ export default connect(
 					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
-						isMonthly: showMonthlyPrice,
-					} ),
+					discountPrice,
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
@@ -1003,7 +912,7 @@ export default connect(
 						newPlan ||
 						bestValue ||
 						plans.length === 1,
-					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
+					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};
@@ -1020,7 +929,6 @@ export default connect(
 
 		return {
 			canPurchase,
-			currentSitePlanSlug: get( currentPlanObj, 'productSlug', null ),
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
@@ -1039,7 +947,6 @@ export default connect(
 	},
 	{
 		recordTracksEvent,
-		saveSiteSettings,
 	}
 )( localize( PlanFeatures ) );
 

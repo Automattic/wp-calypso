@@ -36,7 +36,7 @@
 		border-color: var( --color-accent );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.button.is-borderless.inline-help__button {
 			padding: 1px;
 		}
@@ -116,29 +116,29 @@
 }
 
 .inline-help__popover.popover {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		margin-top: -5px;
 		width: calc( 100% - 28px );
 	}
 
 	p {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
-		@include breakpoint( '>660px' ) {
-			font-size: 14px;
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-body-small;
 		}
 	}
 
 	a,
 	button {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
-		@include breakpoint( '>660px' ) {
-			font-size: 14px;
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-body-small;
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 320px;
 
 		position: fixed;
@@ -159,34 +159,32 @@
 	}
 
 	.search-card {
-		border-radius: 4px 4px 0 0;
+		border-radius: 2px 2px 0 0;
 		margin: 0;
 
 		.search {
-			border-radius: 4px 4px 0 0;
-			height: auto;
+			border-radius: 2px 2px 0 0;
 
 			&.is-open.has-focus {
 				box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
 
-				@include breakpoint( '>660px' ) {
+				@include breakpoint-deprecated( '>660px' ) {
 					box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
 				}
 			}
 
 			.search__input {
-				font-size: 18px;
+				font-size: $font-body;
 				padding: 12px 0;
 				color: var( --color-text );
 
-				@include breakpoint( '>660px' ) {
-					font-size: 15px;
+				@include breakpoint-deprecated( '>660px' ) {
 					padding: 16px 0;
 				}
 			}
 
 			.search__icon-navigation:focus {
-				border-radius: 3px;
+				border-radius: 2px;
 				box-shadow: 0 0 0 3px var( --color-primary-light );
 			}
 		}
@@ -218,7 +216,7 @@
 
 .inline-help__view-heading {
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 5px;
 }
@@ -228,7 +226,7 @@
 
 	.inline-help__richresult__title {
 		display: block;
-		font-size: 14px;
+		font-size: $font-body-small;
 		font-weight: 600;
 		margin-bottom: 5px;
 	}
@@ -239,12 +237,17 @@
 }
 
 .inline-help__contact {
+
+	.inline-help__title {
+		@include hide-content-accessibly;
+	}
+
 	.help-contact__form {
 		margin: 0;
 		padding: 0;
 		box-shadow: none;
 		text-align: left;
-		border-radius: 4px 4px 0 0;
+		border-radius: 2px 2px 0 0;
 
 		.sites-dropdown__wrapper {
 			max-width: 100%;
@@ -281,7 +284,7 @@
 .inline-help__footer {
 	background: var( --color-neutral-0 );
 	border-top: 1px solid var( --color-neutral-10 );
-	border-radius: 0 0 4px 4px;
+	border-radius: 0 0 2px 2px;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -338,10 +341,9 @@
 	}
 }
 
-.inline-help__results-list {
-	list-style: none;
-	text-align: left;
-	margin: 0;
+
+.inline-help__results {
+
 	padding: 8px 0;
 
 	.help-contact-form & {
@@ -349,12 +351,36 @@
 	}
 }
 
+.inline-help__results-list {
+	list-style: none;
+	text-align: left;
+	margin: 0;
+	padding: 0;
+}
+
+.inline-help__results-title {
+	font-weight: bold;
+	line-height: 1.4;
+	display: block;
+	padding: 8px 16px;
+	font-size: $font-body-small;
+	text-align: left;
+
+	&::after {
+		content: ':';
+	}
+}
+
+.inline-help__results-cell {
+	width: 100%;
+}
+
 .inline-help__results-item {
 	margin: 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 
-	@include breakpoint( '>660px' ) {
-		font-size: 18px;
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-title-small;
 		line-height: 1.3;
 	}
 
@@ -363,27 +389,41 @@
 		text-decoration: underline;
 		font-weight: normal;
 		line-height: 1.4;
-		display: block;
+		display: flex;
 		padding: 8px 16px;
+
+		span {
+			flex-grow: 2;
+		}
+
+		.gridicon {
+			align-self: baseline;
+			color: var( --color-neutral-light );
+			flex-shrink: 0;
+			margin-right: 8px;
+			position: relative;
+			top: 2px;
+		}
 
 		&:hover {
 			cursor: pointer;
 			//color: var( --color-primary );
 			background: var( --color-neutral-0 );
-		}
-	}
 
-	&.is-selected {
-		background: var( --color-primary );
-		cursor: pointer;
-		color: var( --color-text-inverted );
-
-		a {
-			color: var( --color-text-inverted );
-			&:hover {
-				background: none;
+			.gridicon {
+				color: var( --color-neutral );
 			}
 		}
+
+		&:focus {
+			background: var( --color-primary );
+			color: var( --color-text-inverted );
+
+			.gridicon {
+				color: var( --color-text-inverted );
+			}
+		}
+		
 	}
 
 	.help-contact-form & {
@@ -398,14 +438,15 @@
 }
 
 .inline-help__empty-results {
-	padding: 16px 0 0;
+	padding: 8px 16px 0;
 	margin: 0;
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	font-style: italic;
+	text-align: left;
 
-	@include breakpoint( '>660px' ) {
-		font-size: 16px;
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-body;
 	}
 }
 
@@ -421,8 +462,7 @@
 	border-radius: 16px;
 	background-color: var( --color-neutral-0 );
 	color: transparent;
-	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 )
-		infinite;
+	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ) infinite;
 	animation-delay: 0s;
 
 	&:nth-child( 1 ) {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { TimeoutMS } from 'client/types';
+import { TimeoutMS } from 'calypso/types';
 
 export { Interval } from './interval';
 export { useInterval } from './use-interval';

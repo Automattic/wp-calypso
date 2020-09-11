@@ -55,6 +55,8 @@ function createPurchaseObject( purchase ) {
 		productId: Number( purchase.product_id ),
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
+		totalRefundAmount: Number( purchase.total_refund_amount ),
+		totalRefundText: purchase.total_refund_text,
 		refundAmount: Number( purchase.refund_amount ),
 		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,

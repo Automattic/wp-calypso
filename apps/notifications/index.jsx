@@ -17,19 +17,19 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
-import wpcom from 'lib/wp';
 import { connect } from 'react-redux';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import config from 'calypso/config';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import { setUnseenCount } from 'calypso/state/notifications';
 
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import config from 'config';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
-import { setUnseenCount } from 'state/notifications';
 
 /**
  * Style dependencies
@@ -54,9 +54,12 @@ const getIsVisible = () => {
 	return document.visibilityState === 'visible';
 };
 
+const isDesktop = config.isEnabled( 'desktop' );
+
 export class Notifications extends Component {
 	state = {
-		isVisible: getIsVisible(),
+		// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
+		isVisible: isDesktop ? true : getIsVisible(),
 	};
 
 	componentDidMount() {
@@ -122,7 +125,8 @@ export class Notifications extends Component {
 		}
 	};
 
-	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
+	// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
+	handleVisibilityChange = () => this.setState( { isVisible: isDesktop ? true : getIsVisible() } );
 
 	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker

@@ -13,8 +13,8 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import getPostRevision from 'state/selectors/get-post-revision';
-import getPostRevisionsDiffView from 'state/selectors/get-post-revisions-diff-view';
+import { getPostRevision } from 'state/posts/selectors/get-post-revision';
+import { getPostRevisionsDiffView } from 'state/posts/selectors/get-post-revisions-diff-view';
 import TextDiff from 'components/text-diff';
 import scrollTo from 'lib/scroll-to';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -215,6 +215,7 @@ class EditorDiffViewer extends PureComponent {
 					) }
 				</div>
 				{ showHints && countAbove > 0 && (
+					// eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events
 					<div className="editor-diff-viewer__hint-above" onClick={ this.scrollAbove }>
 						<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-up" />
 						{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {
@@ -224,6 +225,7 @@ class EditorDiffViewer extends PureComponent {
 					</div>
 				) }
 				{ showHints && countBelow > 0 && (
+					// eslint-disable-next-line jsx-a11y/no-static-element-interactions,jsx-a11y/click-events-have-key-events
 					<div className="editor-diff-viewer__hint-below" onClick={ this.scrollBelow }>
 						<Gridicon className="editor-diff-viewer__hint-icon" size={ 18 } icon="arrow-down" />
 						{ this.props.translate( '%(numberOfChanges)d change', '%(numberOfChanges)d changes', {

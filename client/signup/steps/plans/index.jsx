@@ -26,6 +26,7 @@ import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import hasInitializedSites from 'state/selectors/has-initialized-sites';
 
 /**
  * Style dependencies
@@ -73,12 +74,6 @@ export class PlansStep extends Component {
 
 		this.props.submitSignupStep( step, {
 			cartItem,
-			// dependencies used only for 'plans-with-domain' step in Gutenboarding pre-launch flow
-			...( this.isGutenboarding() &&
-				! this.props.isLaunchPage && {
-					isPreLaunch: true,
-					isGutenboardingCreate: true,
-				} ),
 		} );
 		this.props.goToNextStep();
 	};
@@ -106,11 +101,9 @@ export class PlansStep extends Component {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
-	isGutenboarding = () =>
-		this.props.flowName === 'frankenflow' || this.props.flowName === 'prelaunch'; // signup flows coming from Gutenboarding
-
 	getGutenboardingHeader() {
-		if ( this.isGutenboarding() ) {
+		// launch flow coming from Gutenboarding
+		if ( this.props.flowName === 'new-launch' ) {
 			const { headerText, subHeaderText } = this.props;
 
 			return (
@@ -160,7 +153,13 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, translate, selectedSite, siteSlug } = this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			translate,
+			hasInitializedSitesBackUrl,
+		} = this.props;
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -170,9 +169,9 @@ export class PlansStep extends Component {
 
 		let backUrl, backLabelText;
 
-		if ( 0 === positionInFlow && selectedSite ) {
-			backUrl = '/view/' + siteSlug;
-			backLabelText = translate( 'Back to Site' );
+		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
+			backUrl = hasInitializedSitesBackUrl;
+			backLabelText = translate( 'Back to My Sites' );
 		}
 
 		return (
@@ -186,10 +185,10 @@ export class PlansStep extends Component {
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() }
-				allowBackFirstStep={ !! selectedSite }
+				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ backUrl }
 				backLabelText={ backLabelText }
-				hideFormattedHeader={ this.isGutenboarding() }
+				hideFormattedHeader={ !! this.getGutenboardingHeader() }
 			/>
 		);
 	}
@@ -246,7 +245,7 @@ export default connect(
 		customerType: parseQs( path.split( '?' ).pop() ).customerType,
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
-		siteSlug,
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

@@ -4,7 +4,7 @@
 	padding: 0;
 	flex-grow: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		width: 640px;
 	}
 
@@ -51,7 +51,7 @@
 		margin-bottom: 16px;
 		width: 100%;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 40%;
 			margin-bottom: 0;
 		}
@@ -64,7 +64,7 @@
 	.order-payment__details {
 		margin-bottom: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			width: 55%;
 		}
 	}
@@ -82,11 +82,11 @@
 
 	.order-payment__amount-value {
 		text-align: right;
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	.order-payment__method h3 {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 		margin-bottom: 8px;
 		color: var( --color-text-subtle );

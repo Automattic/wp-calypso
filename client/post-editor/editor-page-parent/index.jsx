@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -17,7 +16,7 @@ import FormLegend from 'components/forms/form-legend';
 import FormToggle from 'components/forms/form-toggle/compact';
 import AccordionSection from 'components/accordion/section';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { editPost } from 'state/posts/actions';
 import { getPostType } from 'state/post-types/selectors';

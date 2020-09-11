@@ -1,79 +1,48 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 @import '../../mixins';
+@import '../colors';
 
-$progress-step-title-height: 40px;
-$progress-step-number-step-height: 45px;
 $progress-duration: 800ms;
-$progress-widget-height: 300px;
 
-.create-site__background {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	z-index: 50;
-	background-color: $white;
+.create-site {
+	padding: 1em;
+	max-width: 540px;
 
-	.create-site__header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		height: 56px;
-		padding: 8px;
+	margin: 32vh auto;
+
+	.create-site__progress-bar {
+		position: relative;
+		overflow: hidden;
+		height: 6px;
+		margin-top: 1em;
+		background: var( --studio-gray-10 );
+		--progress: 0;
+
+		&::before {
+			background: var( --studio-blue-40 );
+			transform: translateX( calc( -100% * min( 1 - var( --progress, 0 ), 1 ) ) );
+			position: absolute;
+			content: '';
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			transition: transform $progress-duration ease-out;
+		}
 	}
 
-	.create-site__content {
-		position: absolute;
-		top: calc( 50% - #{$progress-widget-height / 4} );
-		left: 50%;
-		width: 100%;
-		max-width: 540px;
-		height: $progress-widget-height;
-		transform: translateX( -50% );
-		// for mobiles
+	.create-site__progress-step {
+		@include onboarding-heading-text-mobile;
+
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
+	}
+
+	.create-site__progress-numbered-steps {
+		margin-top: 0.7em;
 		padding: 1em;
-
-		.create-site__progress {
-			margin-bottom: 20px;
-		}
-
-		.create-site__progress-bar {
-			position: relative;
-			overflow: hidden;
-			height: 6px;
-			margin-top: 1em;
-			background: var( --studio-gray-10 );
-			--progress: 0;
-
-			&::before {
-				background: var( --studio-blue-40 );
-				transform: translateX( calc( -100% * min( 1 - var( --progress, 0 ), 1 ) ) );
-				position: absolute;
-				content: '';
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				transition: transform $progress-duration ease-out;
-			}
-		}
-
-		.create-site__progress-step {
-			@include onboarding-heading-text-mobile;
-			text-align: center;
-			vertical-align: middle;
-			margin: 0;
-		}
-
-		.create-site__progress-numbered-steps {
-			margin-top: 0.7em;
-
-			> p {
-				padding: 1em;
-				text-align: center;
-				color: var( --studio-gray-40 );
-			}
-		}
+		text-align: center;
+		color: var( --studio-gray-40 );
 	}
 }

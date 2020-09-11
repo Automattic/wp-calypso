@@ -30,6 +30,7 @@ import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getProductsList } from 'state/products-list/selectors';
 import Badge from 'components/badge';
+import PremiumBadge from '../premium-badge';
 import InfoPopover from 'components/info-popover';
 import { HTTPS_SSL } from 'lib/url/support';
 
@@ -50,6 +51,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		premiumDomain: PropTypes.object,
 		selectedSite: PropTypes.object,
 		railcarId: PropTypes.string,
 		recordTracksEvent: PropTypes.func,
@@ -60,6 +62,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -124,6 +127,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 			pendingCheckSuggestion,
+			premiumDomain,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -148,7 +152,9 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
-		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
+		if ( premiumDomain?.pending ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
+		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
@@ -167,8 +173,50 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
-		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
+		const {
+			cart,
+			isDomainOnly,
+			domainsWithPlansOnly,
+			selectedSite,
+			suggestion,
+			selectedFreePlanInSwapFlow,
+		} = this.props;
+		const shouldShowFullDomainPrice = isDomainOnly || selectedFreePlanInSwapFlow;
+		return getDomainPriceRule(
+			domainsWithPlansOnly,
+			selectedSite,
+			cart,
+			suggestion,
+			shouldShowFullDomainPrice
+		);
+	}
+
+	/**
+	 * Splits a domain into name and tld. Everything after the "first dot"
+	 * becomes the tld. This is not very comprehensive since there can be
+	 * subdomains which would fail this test. However, for our purpose of
+	 * highlighting the TLD in domain suggestions, this is good enough.
+	 *
+	 * @param {string} domain The domain to be parsed
+	 */
+	getDomainParts( domain ) {
+		const parts = domain.split( '.' );
+		const name = parts[ 0 ];
+		const tld = `.${ parts.slice( 1 ).join( '.' ) }`;
+		return {
+			name,
+			tld,
+		};
+	}
+
+	renderDomainParts( domain ) {
+		const { name, tld } = this.getDomainParts( domain );
+		return (
+			<div className="domain-registration-suggestion__domain-title">
+				<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+				<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+			</div>
+		);
 	}
 
 	renderDomain() {
@@ -176,8 +224,9 @@ class DomainRegistrationSuggestion extends React.Component {
 			isFeatured,
 			showHstsNotice,
 			productSaleCost,
-			suggestion: { domain_name: domain },
+			suggestion: { domain_name: domain, is_premium: isPremium },
 			translate,
+			isReskinned,
 		} = this.props;
 
 		let isAvailable = false;
@@ -187,7 +236,11 @@ class DomainRegistrationSuggestion extends React.Component {
 			isAvailable = true;
 		}
 
-		const title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		let title = isAvailable ? translate( '%s is available!', { args: domain } ) : domain;
+		if ( isReskinned ) {
+			title = this.renderDomainParts( domain );
+		}
+
 		const paidDomain = isPaidDomain( this.getPriceRule() );
 		const saleBadgeText = translate( 'Sale', {
 			comment: 'Shown next to a domain that has a special discounted sale price',
@@ -201,6 +254,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
+				{ isPremium && <PremiumBadge /> }
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
 					<InfoPopover
@@ -326,6 +380,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { domain_name: domain },
 			productCost,
 			productSaleCost,
+			premiumDomain,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -338,6 +393,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<DomainSuggestion
 				extraClasses={ extraClasses }
+				premiumDomain={ premiumDomain }
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
 				salePrice={ productSaleCost }
@@ -347,6 +403,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				{ ...this.getButtonProps() }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
+				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -361,16 +418,27 @@ const mapStateToProps = ( state, props ) => {
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
+	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 
-	return {
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros ),
-		productSaleCost: getDomainSalePrice(
+	let productCost;
+	let productSaleCost;
+
+	if ( isPremium ) {
+		productCost = props.premiumDomain?.cost;
+	} else {
+		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
 			stripZeros
-		),
+		);
+	}
+
+	return {
+		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		productCost,
+		productSaleCost,
 	};
 };
 

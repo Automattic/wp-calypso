@@ -15,6 +15,8 @@ export const readerSitesSchema = {
 				feed_ID: { type: 'number' },
 				subscription: { type: 'object' },
 				is_blocked: { type: 'boolean' },
+				organization_id: { type: 'number' },
+				unseen_count: { type: 'number' },
 			},
 		},
 	},

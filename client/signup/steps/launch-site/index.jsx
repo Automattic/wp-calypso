@@ -14,7 +14,7 @@ class LaunchSiteComponent extends Component {
 		const { flowName, stepName } = this.props;
 		this.props.submitSignupStep(
 			{ stepName },
-			{ isPreLaunch: this.props.flowName === 'frankenflow' }
+			{ isPreLaunch: this.props.flowName === 'new-launch' }
 		);
 		this.props.goToNextStep( flowName );
 	}

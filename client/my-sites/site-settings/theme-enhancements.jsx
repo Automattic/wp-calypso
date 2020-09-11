@@ -75,8 +75,8 @@ class ThemeEnhancements extends Component {
 					checked={ value === fields[ name ] }
 					onChange={ handleAutosavingRadio( name, value ) }
 					disabled={ this.isFormPending() }
+					label={ label }
 				/>
-				<span>{ label }</span>
 			</FormLabel>
 		);
 	}
@@ -87,7 +87,7 @@ class ThemeEnhancements extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLegend>{ translate( 'Infinite Scroll' ) }</FormLegend>
+				<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
 				<SupportInfo
 					text={ translate( 'Control how additional posts are loaded.' ) }
 					link="https://wordpress.com/support/infinite-scroll/"
@@ -286,7 +286,7 @@ class ThemeEnhancements extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div>
-				<SettingsSectionHeader title={ translate( 'Theme Enhancements' ) } />
+				<SettingsSectionHeader title={ translate( 'Theme enhancements' ) } />
 
 				<Card className="theme-enhancements__card site-settings">
 					{ siteIsJetpack ? (

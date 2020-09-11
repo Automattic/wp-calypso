@@ -35,7 +35,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Editor: Pages (${ screenSize })`, function () {
+describe.skip( `[${ host }] Editor: Pages (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Public Pages: @parallel @jetpack', function () {

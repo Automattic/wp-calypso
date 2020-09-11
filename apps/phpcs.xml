@@ -1,11 +1,24 @@
 <?xml version="1.0"?>
-<ruleset name="full-site-editing">
-	<description>Full Site Editing</description>
+<ruleset name="editing-toolkit">
+	<description>Editing Toolkit Plugin Rules</description>
 
 	<rule ref="WordPress"/>
 	<rule ref="WordPress-Core"/>
 	<rule ref="WordPress-Docs"/>
 	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+	<rule ref="WordPress.Utils.I18nTextDomainFixer">
+		<properties>
+			<property name="old_text_domain" type="array">
+				<element value="newspack-blocks" />
+				<element value="premium-content" />
+			</property>
+			<property name="new_text_domain" value="full-site-editing" />
+		</properties>
+	</rule>
+
+	<!-- Check for cross-version support for PHP 7.2 and higher. -->
+	<rule ref="PHPCompatibility"/>
+	<config name="testVersion" value="7.2-"/>
 
 	<arg name="extensions" value="php"/>
 

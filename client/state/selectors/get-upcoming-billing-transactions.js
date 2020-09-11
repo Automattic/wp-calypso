@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import getBillingTransactions from 'state/selectors/get-billing-transactions';
+
+import 'state/billing-transactions/init';
 
 /**
  * Returns all upcoming billing transactions.

@@ -7,8 +7,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, includes, startsWith } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { parse as parseUrl } from 'url';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -17,9 +15,13 @@ import config, { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Gridicon from 'components/gridicon';
 import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { addQueryArgs } from 'lib/url';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import {
+	isCrowdsignalOAuth2Client,
+	isJetpackCloudOAuth2Client,
+	isWooOAuth2Client,
+} from 'lib/oauth2-clients';
+import { addQueryArgs, getUrlParts } from 'lib/url';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -27,7 +29,6 @@ import { login } from 'lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
 import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
-import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -84,7 +85,7 @@ export class LoginLinks extends React.Component {
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
 		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = `${ GUTENBOARDING_BASE_NAME }/link`;
+			loginParameters.twoFactorAuthType = 'new/link';
 		}
 
 		page( login( loginParameters ) );
@@ -99,9 +100,17 @@ export class LoginLinks extends React.Component {
 	};
 
 	renderBackLink() {
-		const redirectTo = get( this.props, [ 'query', 'redirect_to' ] );
+		if (
+			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
+			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
+			this.props.isGutenboarding
+		) {
+			return null;
+		}
+
+		const redirectTo = this.props.query?.redirect_to;
 		if ( redirectTo ) {
-			const { pathname, query: redirectToQuery } = parseUrl( redirectTo, true );
+			const { pathname, searchParams: redirectToQuery } = getUrlParts( redirectTo );
 
 			// If we are in a Domain Connect authorization flow, don't show the back link
 			// since this page was loaded by a redirect from a third party service provider.
@@ -111,13 +120,13 @@ export class LoginLinks extends React.Component {
 
 			// If we seem to be in a Jetpack connection flow, provide some special handling
 			// so users can go back to their site rather than WordPress.com
-			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.client_id ) {
+			if ( pathname === '/jetpack/connect/authorize' && redirectToQuery.get( 'client_id' ) ) {
 				const returnToSiteUrl = addQueryArgs(
-					{ client_id: redirectToQuery.client_id },
+					{ client_id: redirectToQuery.get( 'client_id' ) },
 					'https://jetpack.wordpress.com/jetpack.returntosite/1/'
 				);
 
-				const { hostname } = parseUrl( redirectToQuery.site_url );
+				const { hostname } = getUrlParts( redirectToQuery.get( 'site_url' ) );
 				const linkText = hostname
 					? // translators: hostname is a the hostname part of the URL. eg "google.com"
 					  this.props.translate( 'Back to %(hostname)s', { args: { hostname } } )
@@ -184,6 +193,11 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		// jetpack cloud cannot have users being sent to WordPress.com
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+			return null;
+		}
+
 		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
 		if (
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
@@ -212,7 +226,7 @@ export class LoginLinks extends React.Component {
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {
 			loginParameters.twoFactorAuthType = 'jetpack/link';
 		} else if ( this.props.isGutenboarding ) {
-			loginParameters.twoFactorAuthType = `${ GUTENBOARDING_BASE_NAME }/link`;
+			loginParameters.twoFactorAuthType = 'new/link';
 		}
 
 		return (
@@ -232,9 +246,24 @@ export class LoginLinks extends React.Component {
 			return null;
 		}
 
+		const queryArgs = { action: 'lostpassword' };
+
+		// If we got here coming from Jetpack Cloud login page, we want to go back
+		// to it after we finish the process
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+			const currentUrl = new URL( window.location.href );
+			currentUrl.searchParams.append( 'lostpassword_flow', true );
+			queryArgs.redirect_to = currentUrl.toString();
+
+			// This parameter tells WPCOM that we are coming from Jetpack.com,
+			// so it can present the user a Lost password page that works in
+			// the context of Jetpack.com.
+			queryArgs.client_id = this.props.oauth2Client.id;
+		}
+
 		return (
 			<a
-				href={ addQueryArgs( { action: 'lostpassword' }, login( { locale: this.props.locale } ) ) }
+				href={ addQueryArgs( queryArgs, login( { locale: this.props.locale } ) ) }
 				key="lost-password-link"
 				onClick={ this.recordResetPasswordLinkClick }
 				rel="external"
@@ -256,6 +285,10 @@ export class LoginLinks extends React.Component {
 			isGutenboarding,
 			locale,
 		} = this.props;
+
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
+			return null;
+		}
 
 		let signupUrl = config( 'signup_url' );
 		const signupFlow = get( currentQuery, 'signup_flow' );
@@ -286,12 +319,12 @@ export class LoginLinks extends React.Component {
 		if ( config.isEnabled( 'signup/wpcc' ) && isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			const oauth2Flow = 'crowdsignal';
 			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = {
+			const oauth2Params = new URLSearchParams( {
 				oauth2_client_id: oauth2Client.id,
 				oauth2_redirect: redirectTo,
-			};
+			} );
 
-			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ stringify( oauth2Params ) }`;
+			signupUrl = `${ signupUrl }/${ oauth2Flow }?${ oauth2Params.toString() }`;
 		}
 
 		if (
@@ -301,18 +334,28 @@ export class LoginLinks extends React.Component {
 			wccomFrom
 		) {
 			const redirectTo = get( currentQuery, 'redirect_to', '' );
-			const oauth2Params = {
+			const oauth2Params = new URLSearchParams( {
 				oauth2_client_id: oauth2Client.id,
 				'wccom-from': wccomFrom,
 				oauth2_redirect: redirectTo,
-			};
+			} );
 
-			signupUrl = `${ signupUrl }/wpcc?${ stringify( oauth2Params ) }`;
+			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 		}
 
 		if ( isGutenboarding ) {
 			const langFragment = locale && locale !== 'en' ? `/${ locale }` : '';
-			signupUrl = this.props.signupUrl || `/${ GUTENBOARDING_BASE_NAME }` + langFragment;
+			signupUrl = this.props.signupUrl || '/new' + langFragment;
+		}
+
+		if ( oauth2Client && isJetpackCloudOAuth2Client( oauth2Client ) ) {
+			const redirectTo = get( currentQuery, 'redirect_to', '' );
+			const oauth2Params = new URLSearchParams( {
+				oauth2_client_id: oauth2Client.id,
+				oauth2_redirect: redirectTo,
+			} );
+
+			signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 		}
 
 		return (
@@ -335,9 +378,7 @@ export class LoginLinks extends React.Component {
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
 				{ this.renderResetPasswordLink() }
-				{ ! isCrowdsignalOAuth2Client( this.props.oauth2Client ) &&
-					! this.props.isGutenboarding &&
-					this.renderBackLink() }
+				{ this.renderBackLink() }
 			</div>
 		);
 	}

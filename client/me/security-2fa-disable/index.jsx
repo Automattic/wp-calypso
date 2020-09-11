@@ -64,7 +64,7 @@ class Security2faDisable extends Component {
 				<div>
 					<p>
 						{ translate(
-							"You've enabled Two-Step Authentication. " +
+							"You've enabled two-step authentication. " +
 								'While enabled, logging in to WordPress.com ' +
 								'requires you to enter a unique passcode, sent via text message, ' +
 								'in addition to your username and password.'
@@ -76,7 +76,7 @@ class Security2faDisable extends Component {
 							"You're all set to receive authentication codes at " +
 								'{{strong}}%(smsNumber)s{{/strong}}. ' +
 								'Want to switch to a different number? No problem! ' +
-								"You'll need to disable Two-Step Authentication, " +
+								"You'll need to disable two-step authentication, " +
 								'then complete the setup process again on another device.',
 							{
 								components: {
@@ -96,7 +96,7 @@ class Security2faDisable extends Component {
 			<div>
 				<p>
 					{ translate(
-						"You've enabled Two-Step Authentication on your account — smart move! " +
+						"You've enabled two-step authentication on your account — smart move! " +
 							"When you log in to WordPress.com, you'll need to enter your " +
 							'username and password, as well as a unique passcode generated ' +
 							'by an app on your mobile device.'
@@ -132,11 +132,11 @@ class Security2faDisable extends Component {
 			return (
 				<div className="security-2fa-disable__prompt">
 					<FormSectionHeading>
-						{ translate( 'Disable Two-Step Authentication' ) }
+						{ translate( 'Disable two-step authentication' ) }
 					</FormSectionHeading>
 					<p>
 						{ translate(
-							'You are about to disable Two-Step Authentication. ' +
+							'You are about to disable two-step authentication. ' +
 								'This means we will no longer ask for your authentication ' +
 								'code when you sign into your {{strong}}%(userlogin)s{{/strong}} account.',
 							{
@@ -151,18 +151,18 @@ class Security2faDisable extends Component {
 					</p>
 					<p>
 						{ translate(
-							'This will also disable your Application Passwords, ' +
+							'This will also disable your application passwords, ' +
 								'though you can access them again if you ever re-enable ' +
-								'Two-Step Authentication. If you decide to re-enable ' +
-								"Two-Step Authentication, keep in mind you'll need to " +
+								'two-step authentication. If you decide to re-enable ' +
+								"two-step authentication, keep in mind you'll need to " +
 								'generate new backup codes.'
 						) }
 					</p>
 					<p>
 						{ translate(
-							'To verify that you wish to disable Two-Step Authentication, ' +
+							'To verify that you wish to disable two-step authentication, ' +
 								'enter the verification code from your device or a backup code, ' +
-								'and click "Disable Two-Step."'
+								'and click "Disable two-step."'
 						) }
 					</p>
 					<Security2faCodePrompt
@@ -178,7 +178,7 @@ class Security2faDisable extends Component {
 
 		return (
 			<FormButton isPrimary={ false } scary onClick={ this.onRevealCodePrompt }>
-				{ translate( 'Disable Two-Step Authentication' ) }
+				{ translate( 'Disable two-step authentication' ) }
 			</FormButton>
 		);
 	}

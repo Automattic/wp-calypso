@@ -6,12 +6,15 @@ import management from './management/reducer';
 import siteRedirect from './site-redirect/reducer';
 import suggestions from './suggestions/reducer';
 import transfer from './transfer/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	dns,
 	management,
 	siteRedirect,
 	suggestions,
 	transfer,
 } );
+
+const domainsReducer = withStorageKey( 'domains', combinedReducer );
+export default domainsReducer;

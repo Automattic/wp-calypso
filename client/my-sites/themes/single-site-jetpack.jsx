@@ -90,6 +90,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		<Main className="themes">
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="themes__page-heading"
 				headerText={ translate( 'Themes' ) }
 				align="left"

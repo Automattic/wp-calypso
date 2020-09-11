@@ -1,8 +1,58 @@
-@import '../landing/gutenboarding/mixins';
+@import '~@automattic/onboarding/styles/mixins';
 
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
 	background: var( --color-wordpress-com );
+
+	&.is-white-signup {
+		background: var( --studio-white );
+
+		.layout:not( .dops ) .wpcom-site__logo {
+			fill: var( --color-neutral-10 );
+			opacity: 1;
+
+			path {
+				fill: var( --color-neutral-10 );
+				opacity: 1;
+			}
+		}
+	}
+
+	&.is-p2-signup {
+		background: var( --p2-color-text-white );
+		color: var( --p2-color-text );
+
+		&.has-loading-screen-signup {
+			background: var( --p2-color-text );
+			color: var( --p2-color-text-white );
+			&::before {
+				content: '';
+				position: absolute;
+				display: block;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient( 126.81deg, #001424 7.92%, #02223a 89.27% );
+				animation: p2-fade 5s ease-in-out infinite alternate;
+			}
+		}
+
+		.layout__content {
+			padding: 0;
+		}
+
+		.layout:not( .dops ) .step-wrapper {
+			margin: 0 0 24px;
+		}
+
+		@include breakpoint-deprecated( '<480px' ) {
+			.locale-suggestions {
+				margin-top: 0;
+				.notice {
+					border-radius: 0;
+				}
+			}
+		}
+	}
 
 	// Adjust the padding as we no longer
 	// show the masterbar.
@@ -36,7 +86,6 @@ body.is-section-signup {
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
 body.is-section-signup .layout:not( .dops ),
 body.is-section-signup .layout.gravatar {
-
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
@@ -52,7 +101,7 @@ body.is-section-signup .layout.gravatar {
 			padding-bottom: 16px;
 			margin-bottom: 24px;
 			border-radius: 6px;
-			@include elevation ( 3dp );
+			@include elevation( 3dp );
 		}
 
 		.empty-content__title {
@@ -81,12 +130,12 @@ body.is-section-signup .layout.gravatar {
 		right: 0;
 		max-height: 350px;
 		overflow: auto;
-		@include elevation ( 2dp );
+		@include elevation( 2dp );
 	}
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		button {
-			font-size: 16px;
+			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;
 		}
@@ -120,7 +169,7 @@ body.is-section-signup .layout:not( .dops ) .step-wrapper {
 
 	// On small screens remove the margin from the
 	// bottom of the cards.
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		.card {
 			margin-bottom: 0;
 		}
@@ -140,7 +189,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 	.formatted-header__subtitle {
 		margin: 0;
-		font-size: 15px;
+		font-size: $font-body;
 		color: var( --color-text-inverted );
 	}
 
@@ -178,7 +227,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		.text-control__label,
 		.components-base-control__label {
 			color: var( --color-neutral-50 );
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			font-weight: normal;
 		}
 
@@ -238,7 +287,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		.formatted-header__subtitle {
 			color: var( --color-primary-10 );
 			margin-top: 1em;
-			font-size: 16px;
+			font-size: $font-body;
 			line-height: 24px;
 			font-weight: 400;
 		}
@@ -252,7 +301,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		text-align: center;
 		text-decoration: underline;
 		color: var( --studio-gray-60 );
-		font-size: 14px;
+		font-size: $font-body-small;
 	}
 
 	.signup-form__terms-of-service-link {
@@ -270,7 +319,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		padding-bottom: 0;
 		margin-top: 16px;
 		p {
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			color: var( --studio-gray-60 );
 		}
 
@@ -282,7 +331,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 			height: 48px;
 		}
 	}
-
 
 	.logged-out-form__footer {
 		text-align: center;
@@ -298,7 +346,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 }
 
 // Background color and plans grid overrides for new flow
-body.is-section-signup.is-frankenflow {
+body.is-section-signup.is-new-launch-flow {
 	background: var( --color-white );
 
 	.signup-header {
@@ -321,7 +369,7 @@ body.is-section-signup.is-frankenflow {
 		}
 	}
 
-	.flow-progress-indicator.flow-progress-indicator__frankenflow {
+	.flow-progress-indicator.flow-progress-indicator__new-launch {
 		color: var( --color-text );
 	}
 
@@ -346,21 +394,21 @@ body.is-section-signup.is-frankenflow {
 	}
 
 	.plan-price__integer {
-		font-weight: 500;
+		font-weight: 600;
 	}
 
 	.plan-price__integer {
-		font-weight: 500;
+		font-weight: 600;
 	}
 
 	.plan-features__header-title {
-		font-weight: 500;
+		font-weight: 600;
 	}
 
 	.formatted-header__title {
 		@include onboarding-heading-text-mobile;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			@include onboarding-heading-text;
 		}
 	}
@@ -371,8 +419,9 @@ body.is-section-signup.is-frankenflow {
 }
 
 // Text and heading color override for new flow
-body.is-section-signup.is-frankenflow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
-	&.gravatar .formatted-header, .formatted-header {
+body.is-section-signup.is-new-launch-flow .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+	&.gravatar .formatted-header,
+	.formatted-header {
 		.formatted-header__title {
 			color: var( --color-text );
 		}
@@ -392,5 +441,84 @@ body.is-section-signup.is-frankenflow .layout:not( .dops ):not( .is-wccom-oauth-
 
 	.empty-content .empty-content__title {
 		color: var( --color-text );
+	}
+}
+
+/**
+ * Common styles for reskinSignupFlow a/b test
+ */
+body.is-section-signup.is-white-signup .signup.is-onboarding {
+	$gray-100: #101517;
+	$gray-60: #50575e;
+	$gray-50: #646970;
+	$breakpoint-mobile: 660px;
+
+	--color-accent: #117ac9;
+	--color-accent-60: #0e64a5;
+
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			left: 24px;
+			top: 20px;
+			fill: var( --color-text );
+			transform-origin: 0 0;
+		}
+		.signup-header__right {
+			top: 22px;
+			right: 24px;
+			
+			.flow-progress-indicator {
+				color: var( --color-text );
+				font-weight: normal;
+			}
+		}
+	}
+
+	.navigation-link.button.back {
+		svg {
+			display: none;
+		}
+
+		color: $gray-50;
+		top: 23px;
+		left: 72px;
+		text-decoration: underline;
+		font-weight: normal;
+	}
+
+	.formatted-header {
+		margin-top: 48px;
+		.formatted-header__title {
+			@include onboarding-font-recoleta;
+			color: $gray-100;
+			letter-spacing: 0.2px;
+			font-size: 2.6rem;
+
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				max-width: 328px;
+				font-size: 1.6rem;
+				text-align: left;
+				padding: 0 16px;
+				margin: 0 auto;
+			}
+		}
+
+		.formatted-header__subtitle {
+			color: $gray-60;
+
+			@media screen and ( max-width: $breakpoint-mobile ) {
+				max-width: 328px;
+				font-size: 0.875rem;
+				text-align: left;
+				padding: 0 16px;
+				margin: 0 auto;
+			}
+		}
+	}
+
+	button.is-primary {
+		box-shadow: none;
+		border: 0;
 	}
 }

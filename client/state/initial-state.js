@@ -11,18 +11,21 @@ import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
 import { getAllStoredItems, setStoredItem, clearStorage } from 'lib/browser-storage';
 import { isSupportSession } from 'lib/user/support-user-interop';
 import config from 'config';
-import User from 'lib/user';
+import user from 'lib/user';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:state' );
-const user = User();
 
 const DAY_IN_HOURS = 24;
 const HOUR_IN_MS = 3600000;
 export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
+
+// Store the timestamp at which the module loads as a proxy for the timestamp
+// when the server data (if any) was generated.
+const bootTimestamp = Date.now();
 
 /**
  * In-memory copy of persisted state.
@@ -40,16 +43,6 @@ function serialize( state, reducer ) {
 function deserialize( state, reducer ) {
 	delete state._timestamp;
 	return reducer( state, { type: DESERIALIZE } );
-}
-
-// get bootstrapped state from a server-side render
-function getInitialServerState( initialReducer ) {
-	if ( typeof window !== 'object' || ! window.initialReduxState || isSupportSession() ) {
-		return null;
-	}
-
-	const serverState = deserialize( window.initialReduxState, initialReducer );
-	return pick( serverState, Object.keys( window.initialReduxState ) );
 }
 
 function shouldPersist() {
@@ -95,7 +88,7 @@ function shouldAddSympathy() {
 // scenario where state data may have been stored without this
 // check being performed.
 function verifyStoredRootState( state ) {
-	const currentUserId = user?.get()?.ID ?? null;
+	const currentUserId = user()?.get()?.ID ?? null;
 	const storedUserId = state?.currentUser?.id ?? null;
 
 	if ( currentUserId !== storedUserId ) {
@@ -106,6 +99,13 @@ function verifyStoredRootState( state ) {
 	return true;
 }
 
+// Verifies that the server-provided Redux state isn't too old.
+// This is rarely a problem, and only comes up in extremely long-lived sessions.
+function verifyBootTimestamp() {
+	return bootTimestamp + MAX_AGE > Date.now();
+}
+
+// Verifies that the persisted Redux state isn't too old.
 function verifyStateTimestamp( state ) {
 	return state._timestamp && state._timestamp + MAX_AGE > Date.now();
 }
@@ -116,7 +116,7 @@ export async function loadAllState() {
 		debug( 'fetched stored Redux state from persistent storage', storedState );
 		stateCache = storedState ?? {};
 	} catch ( error ) {
-		debug( 'error while loading stored Redux state:', error );
+		debug( 'error while loading persisted Redux state:', error );
 	}
 }
 
@@ -125,42 +125,12 @@ export async function clearAllState() {
 	await clearStorage();
 }
 
-export function getStateFromCache( reducer, subkey, forceLoggedOutUser = false ) {
-	const reduxStateKey = getReduxStateKey( forceLoggedOutUser ) + ( subkey ? ':' + subkey : '' );
-
-	try {
-		const storedState = stateCache[ reduxStateKey ] ?? null;
-
-		if ( storedState === null ) {
-			debug( 'stored Redux state not found in cache' );
-			return null;
-		}
-
-		if ( ! verifyStateTimestamp( storedState ) ) {
-			debug( 'stored Redux state is too old, dropping' );
-			return null;
-		}
-
-		const deserializedState = deserialize( storedState, reducer );
-		if ( ! deserializedState ) {
-			debug( 'stored Redux state failed to deserialize, dropping' );
-			return null;
-		}
-
-		if ( ! subkey && ! verifyStoredRootState( deserializedState ) ) {
-			debug( 'stored root Redux state has invalid currentUser.id, dropping' );
-			return null;
-		}
-
-		return deserializedState;
-	} catch ( error ) {
-		debug( 'error while loading stored Redux state:', error );
-		return null;
-	}
+function getPersistenceKey( subkey, forceLoggedOutUser ) {
+	return getReduxStateKey( forceLoggedOutUser ) + ( subkey ? ':' + subkey : '' );
 }
 
 function getReduxStateKey( forceLoggedOutUser = false ) {
-	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user?.get()?.ID ?? null );
+	return getReduxStateKeyForUserId( forceLoggedOutUser ? null : user()?.get()?.ID ?? null );
 }
 
 function getReduxStateKeyForUserId( userId ) {
@@ -237,7 +207,31 @@ export function persistOnChange( reduxStore ) {
 	reduxStore.subscribe( throttledSaveState );
 }
 
-function getInitialStoredState( initialReducer ) {
+// Retrieve the initial state for the application, combining it from server and
+// local persistence (server data gets priority).
+// This function only handles legacy Redux state for the monolithic root reducer
+// `loadAllState` must have completed first.
+export function getInitialState( initialReducer ) {
+	const storedState = getInitialPersistedState( initialReducer );
+	const serverState = getInitialServerState( initialReducer );
+	return { ...storedState, ...serverState };
+}
+
+// Retrieve the initial bootstrapped state from a server-side render.
+// This function only handles legacy Redux state for the monolithic root reducer
+function getInitialServerState( initialReducer ) {
+	if ( typeof window !== 'object' || ! window.initialReduxState || isSupportSession() ) {
+		return null;
+	}
+
+	const serverState = deserialize( window.initialReduxState, initialReducer );
+	return pick( serverState, Object.keys( window.initialReduxState ) );
+}
+
+// Retrieve the initial persisted state from the cached local client data.
+// This function only handles legacy Redux state for the monolithic root reducer
+// `loadAllState` must have completed first.
+function getInitialPersistedState( initialReducer ) {
 	if ( ! shouldPersist() ) {
 		return null;
 	}
@@ -257,16 +251,11 @@ function getInitialStoredState( initialReducer ) {
 		}
 	}
 
-	let initialStoredState = getStateFromCache( initialReducer );
+	let initialStoredState = getStateFromPersistence( initialReducer );
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
 	function loadReducerState( { storageKey, reducer } ) {
-		let storedState = getStateFromCache( reducer, storageKey, false );
-
-		if ( ! storedState && storageKey === 'signup' ) {
-			storedState = getStateFromCache( reducer, storageKey, true );
-			debug( 'fetched signup state from logged out state', storedState );
-		}
+		const storedState = getStateFromPersistence( reducer, storageKey, false );
 
 		if ( storedState ) {
 			initialStoredState = initialReducer( initialStoredState, {
@@ -284,8 +273,92 @@ function getInitialStoredState( initialReducer ) {
 	return initialStoredState;
 }
 
-export function getInitialState( initialReducer ) {
-	const storedState = getInitialStoredState( initialReducer );
-	const serverState = getInitialServerState( initialReducer );
-	return { ...storedState, ...serverState };
+// Retrieve the initial state for a portion of state, from persisted data alone.
+// This function handles both legacy and modularized Redux state.
+// `loadAllState` must have completed first.
+function getStateFromPersistence( reducer, subkey, forceLoggedOutUser = false ) {
+	const reduxStateKey = getPersistenceKey( subkey, forceLoggedOutUser );
+
+	const state = stateCache[ reduxStateKey ] ?? null;
+	return deserializeState( subkey, state, reducer, false );
+}
+
+// Retrieve the initial state for a portion of state, choosing the freshest
+// between server and local persisted data.
+// This function handles both legacy and modularized Redux state.
+// `loadAllState` must have completed first.
+export function getStateFromCache( reducer, subkey ) {
+	let reduxStateKey = getPersistenceKey( subkey, false );
+
+	let serverState = null;
+
+	if ( subkey && typeof window !== 'undefined' ) {
+		serverState = window.initialReduxState?.[ subkey ] ?? null;
+	}
+
+	let persistedState = stateCache[ reduxStateKey ] ?? null;
+
+	// Special case for handling signup flows where the user logs in halfway through.
+	if ( ! persistedState && subkey === 'signup' ) {
+		reduxStateKey = getPersistenceKey( subkey, true );
+		persistedState = stateCache[ reduxStateKey ] ?? null;
+
+		// If we are logged in, we no longer need the 'user' step in signup progress tree.
+		if ( persistedState && persistedState.progress && persistedState.progress.user ) {
+			delete persistedState.progress.user;
+		}
+
+		debug( 'fetched signup state from logged out state', persistedState );
+	}
+
+	// Default to server state, if it exists.
+	let useServerState = serverState !== null;
+
+	// Replace with persisted state if it's fresher.
+	if ( persistedState?._timestamp && persistedState._timestamp > bootTimestamp ) {
+		useServerState = false;
+	}
+
+	return deserializeState(
+		subkey,
+		useServerState ? serverState : persistedState,
+		reducer,
+		useServerState
+	);
+}
+
+// Deserialize a portion of state.
+// This function handles both legacy and modularized Redux state.
+function deserializeState( subkey, state, reducer, isServerState = false ) {
+	const origin = isServerState ? 'server' : 'persisted';
+
+	try {
+		if ( state === null ) {
+			debug( `Redux state for subkey '${ subkey }' not found in ${ origin } data` );
+			return null;
+		}
+
+		const validTimestamp = isServerState ? verifyBootTimestamp() : verifyStateTimestamp( state );
+
+		if ( ! validTimestamp ) {
+			debug( `${ origin } Redux state is too old, dropping` );
+			return null;
+		}
+
+		const deserializedState = deserialize( state, reducer );
+		if ( ! deserializedState ) {
+			debug( `${ origin } Redux state failed to deserialize, dropping` );
+			return null;
+		}
+
+		if ( ! subkey && ! verifyStoredRootState( deserializedState ) ) {
+			debug( `${ origin } root Redux state has invalid currentUser.id, dropping` );
+			return null;
+		}
+
+		return deserializedState;
+	} catch ( error ) {
+		debug( `error while loading ${ origin } Redux state:`, error );
+		return null;
+	}
 }

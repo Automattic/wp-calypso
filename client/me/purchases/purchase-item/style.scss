@@ -65,7 +65,7 @@
 	}
 
 	.gridicons-themes {
-		border-radius: 4px;
+		border-radius: 2px;
 	}
 }
 
@@ -79,7 +79,7 @@
 .purchase-item__title {
 	color: var( --color-text );
 	display: block;
-	font-size: 14px;
+	font-size: $font-body-small;
 	line-height: 1.2em;
 	margin: 4px 20px 4px 0;
 	overflow: hidden;
@@ -90,8 +90,8 @@
 		@include long-content-fade();
 	}
 
-	@include breakpoint( '>480px' ) {
-		font-size: 18px;
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-title-small;
 		max-width: none;
 	}
 }
@@ -99,7 +99,7 @@
 .purchase-item__term-label,
 .purchase-item__purchase-type, {
 	color: var( --color-text-subtle );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 0 0 4px;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -107,5 +107,5 @@
 
 .purchase-item__purchase-date {
 	color: var( --color-neutral-70 );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }

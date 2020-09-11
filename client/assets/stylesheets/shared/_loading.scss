@@ -9,7 +9,7 @@
 		fill: var( --color-neutral-10 );
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		width: 100px;
 		height: 100px;
 	}

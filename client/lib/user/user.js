@@ -1,13 +1,10 @@
 /**
  * External dependencies
  */
-
 import { entries, isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:user' );
 import config from 'config';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -25,6 +22,8 @@ import { getComputedAttributes, filterUserObject } from './shared-utils';
 import { getLanguage } from 'lib/i18n-utils/utils';
 import { clearStorage } from 'lib/browser-storage';
 import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+
+const debug = debugFactory( 'calypso:user' );
 
 /**
  * User component
@@ -207,19 +206,17 @@ User.prototype.getLanguage = function () {
  *
  * @returns {string} The user's avatar URL based on the options parameter.
  */
-User.prototype.getAvatarUrl = function ( options ) {
-	const default_options = {
+User.prototype.getAvatarUrl = function ( options = {} ) {
+	const defaultOptions = {
 		s: 80,
 		d: 'mm',
 		r: 'G',
 	};
-	const avatar_URL = this.get().avatar_URL;
-	const avatar = typeof avatar_URL === 'string' ? avatar_URL.split( '?' )[ 0 ] : '';
+	const avatarURL = this.get().avatar_URL;
+	const avatar = typeof avatarURL === 'string' ? avatarURL.split( '?' )[ 0 ] : '';
 
-	options = options || {};
-	options = Object.assign( {}, options, default_options );
-
-	return avatar + '?' + stringify( options );
+	options = { ...options, ...defaultOptions };
+	return avatar + '?' + new URLSearchParams( options ).toString();
 };
 
 /**

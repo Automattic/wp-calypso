@@ -23,6 +23,7 @@ import {
 	CONCIERGE_STATUS_BOOKING_ERROR,
 } from '../constants';
 import { recordTracksEvent } from 'state/analytics/actions';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -79,7 +80,29 @@ class CalendarStep extends Component {
 		return (
 			<div>
 				<HeaderCake onClick={ onBack }>{ translate( 'Choose Session' ) }</HeaderCake>
-				<CompactCard>{ translate( 'Please select a day to have your session.' ) }</CompactCard>
+				<CompactCard>
+					<p>
+						<strong>{ translate( 'Please select from the available sessions below.' ) }</strong>
+					</p>
+					<p>
+						<em>
+							{ translate(
+								'If you don’t see a day or time that works for you, please check back soon for more options! In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink}}View webinars{{/externalLink}}.',
+								{
+									components: {
+										externalLink: (
+											<ExternalLinkWithTracking
+												icon={ false }
+												href="/webinars"
+												tracksEventName="calypso_concierge_book_view_webinars"
+											/>
+										),
+									},
+								}
+							) }
+						</em>
+					</p>
+				</CompactCard>
 
 				<AvailableTimePicker
 					actionText={ translate( 'Book this session' ) }

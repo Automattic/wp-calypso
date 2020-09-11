@@ -1,0 +1,84 @@
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+
+.nux-launch__feature-list {
+	padding: 20px;
+
+	p {
+		margin: 10px 0 0;
+	}
+}
+.nux-launch__feature-list-title {
+	margin: 0 0 10px;
+	color: $dark-gray-500;
+	font-weight: 400;
+}
+ul.nux-launch__feature-item-group {
+	margin: 0;
+}
+.nux-launch__feature-item {
+	font-size: $font-body-small;
+	line-height: 20px;
+	letter-spacing: 0.2px;
+	margin: 4px 0;
+	vertical-align: middle;
+	color: $dark-gray-500;
+	display: flex;
+	align-items: flex-start;
+
+	svg {
+		display: block;
+		margin-right: 6px;
+		margin-top: 2px;
+	}
+
+	// the tick
+	svg path {
+		fill: var( --studio-green-40 );
+		stroke: var( --studio-green-40 );
+	}
+}
+.nux-launch__submit-button.components-button.is-primary {
+	background: var( --color-accent );
+	border: 1px solid var( --color-accent-dark );
+	width: 100%;
+	justify-content: center;
+
+	&:hover,
+	&:active {
+		background: var( --color-accent-dark );
+	}
+
+	&:disabled {
+		color: $white;
+		opacity: 0.5;
+
+		&:hover {
+			background: var( --color-accent );
+		}
+	}
+}
+
+.nux-launch__summary-item {
+	p {
+		margin: 0;
+		word-break: break-word;
+	}
+	.components-tip {
+		margin-top: 10px;
+
+		svg {
+			align-self: flex-start;
+		}
+	}
+	&__plan-name {
+		color: var( --color-text );
+	}
+	&__domain-name {
+		font-weight: 600;
+
+		&.is-loading {
+			@include onboarding-placeholder();
+		}
+	}
+}

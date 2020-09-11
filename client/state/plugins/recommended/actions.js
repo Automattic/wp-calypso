@@ -8,6 +8,7 @@ import {
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/sites/plugins/recommended';
+import 'state/plugins/init';
 
 /**
  * Returns an action object that's bound to the data layer;

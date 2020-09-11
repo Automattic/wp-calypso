@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
@@ -10,6 +9,8 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'state/action-types';
+
+import 'state/wordads/init';
 
 export const requestWordAdsApproval = ( siteId ) => ( dispatch ) => {
 	dispatch( {

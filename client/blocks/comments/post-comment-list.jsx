@@ -6,10 +6,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { get, size, takeRight, delay } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import {
 	commentsFetchingStatus,
 	getActiveReplyCommentId,
@@ -23,9 +25,11 @@ import PostComment from './post-comment';
 import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
 import SegmentedControl from 'components/segmented-control';
+import Gridicon from 'components/gridicon';
 import ConversationFollowButton from 'blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
 import { getCurrentUserId } from 'state/current-user/selectors';
+import canCurrentUser from 'state/selectors/can-current-user';
 
 /**
  * Style dependencies
@@ -224,6 +228,25 @@ class PostCommentList extends React.Component {
 		);
 	};
 
+	renderCommentManageLink = () => {
+		const { siteId, postId } = this.props;
+
+		if ( ! siteId || ! postId ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="comments__manage-comments-button"
+				href={ `/comments/all/${ siteId }/${ postId }` }
+				borderless
+			>
+				<Gridicon icon="chat" />
+				<span>{ translate( 'Manage comments' ) }</span>
+			</Button>
+		);
+	};
+
 	onEditCommentClick = ( commentId ) => {
 		this.setState( { activeEditCommentId: commentId } );
 	};
@@ -392,17 +415,14 @@ class PostCommentList extends React.Component {
 			this.props.showConversationFollowButton &&
 			shouldShowConversationFollowButton( this.props.post );
 
+		const showManageCommentsButton = this.props.canUserModerateComments && commentCount > 0;
+
 		return (
-			<div className="comments__comment-list">
-				{ showConversationFollowButton && (
-					<ConversationFollowButton
-						className="comments__conversation-follow-button"
-						siteId={ siteId }
-						postId={ postId }
-						post={ this.props.post }
-						followSource={ followSource }
-					/>
-				) }
+			<div
+				className={ classnames( 'comments__comment-list', {
+					'has-double-actions': showManageCommentsButton && showConversationFollowButton,
+				} ) }
+			>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
 						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
@@ -418,6 +438,18 @@ class PostCommentList extends React.Component {
 						) }
 					</div>
 				) }
+				<div className="comments__actions-wrapper">
+					{ showManageCommentsButton && this.renderCommentManageLink() }
+					{ showConversationFollowButton && (
+						<ConversationFollowButton
+							className="comments__conversation-follow-button"
+							siteId={ siteId }
+							postId={ postId }
+							post={ this.props.post }
+							followSource={ followSource }
+						/>
+					) }
+				</div>
 				{ showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
@@ -484,6 +516,7 @@ export default connect(
 		return {
 			siteId,
 			postId,
+			canUserModerateComments: canCurrentUser( state, siteId, 'moderate_comments' ),
 			commentsTree: getPostCommentsTree(
 				state,
 				siteId,

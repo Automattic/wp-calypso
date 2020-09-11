@@ -4,12 +4,13 @@
 import emailValidator from 'email-validator';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Internal dependencies
  */
 import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
-import { hasGSuiteWithUs } from '.';
+import { hasGSuiteWithUs } from './has-gsuite-with-us';
 
 // exporting these in the big export below causes trouble
 export interface GSuiteNewUserField {
@@ -18,6 +19,7 @@ export interface GSuiteNewUserField {
 }
 
 export interface GSuiteNewUser {
+	uuid: string;
 	domain: GSuiteNewUserField;
 	mailBox: GSuiteNewUserField;
 	firstName: GSuiteNewUserField;
@@ -29,8 +31,30 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 }
+
+/**
+ * Retrieves all fields from the specified user.
+ *
+ * @param {object} user - user with a list of fields
+ */
+const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
+	Object.keys( user )
+		.filter( ( key ) => 'uuid' !== key )
+		.map( ( key ) => user[ key ] );
+
+/**
+ * Retrieves the specified user after applying a callback to all of its fields.
+ *
+ * @param {object} user - user with a list of fields
+ * @param {Function} callback - function to call for each field
+ */
+const mapFieldValues = ( user: GSuiteNewUser, callback: Function ): GSuiteNewUser =>
+	mapValues( user, ( fieldValue, fieldName ) =>
+		'uuid' === fieldName ? fieldValue : callback( fieldValue, fieldName, user )
+	);
+
 /*
- * Clear all previous errors from a field
+ * Clears all previous errors from the specified field.
  */
 const removePreviousErrors = ( { value }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
@@ -38,7 +62,7 @@ const removePreviousErrors = ( { value }: GSuiteNewUserField ): GSuiteNewUserFie
 } );
 
 /*
- * Add a new error if field has no errors and value is empty
+ * Adds a new error to the specified field if it has no errors and its value is empty.
  */
 const requiredField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
@@ -49,7 +73,7 @@ const requiredField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserFie
 } );
 
 /*
- * Add a new error if field has no errors and is more than sixty characters
+ * Adds a new error to the specified field if it has no errors and is more than sixty characters.
  */
 const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
@@ -62,7 +86,7 @@ const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewU
 } );
 
 /*
- * Add a new error if field has no errors and contains invalid characters
+ * Adds a new error to the specified email field if it has no errors and contains invalid characters.
  */
 const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
@@ -74,8 +98,16 @@ const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuit
 			: error,
 } );
 
+/**
+ * Sanitizes the specified email address by removing any character that is not allowed, and converting it to lowercase.
+ *
+ * @param {string} email - email address
+ */
+const sanitizeEmail = ( email: string ): string =>
+	email.replace( /[^0-9a-z_'.-]/gi, '' ).toLowerCase();
+
 /*
- * Add a new error if the mailBox field has no errors and the full email failed the emailValidator
+ * Adds a new error if the mailbox has no errors and the email address is invalid.
  */
 const validateOverallEmail = (
 	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
@@ -89,12 +121,12 @@ const validateOverallEmail = (
 } );
 
 /*
- * Add a new error if the mailBox field has no errors and the existing mailboxes matches the field
+ * Adds a new error if the mailbox has no errors and matches an existing email address.
  */
 const validateOverallEmailAgainstExistingEmails = (
 	{ value: mailBox, error: mailBoxError }: GSuiteNewUserField,
 	{ value: domain }: GSuiteNewUserField,
-	existingGSuiteUsers: any[]
+	existingGSuiteUsers: [  ]
 ): GSuiteNewUserField => ( {
 	value: mailBox,
 	error:
@@ -105,14 +137,16 @@ const validateOverallEmailAgainstExistingEmails = (
 } );
 
 /*
- * Clear all previous errors from all fields on a User
+ * Clears all previous errors from all fields for the specified user.
  */
 const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
-	return users.map( ( user ) => mapValues( user, ( field ) => removePreviousErrors( field ) ) );
+	return users.map( ( user ) =>
+		mapFieldValues( user, ( field ) => removePreviousErrors( field ) )
+	);
 };
 
 /*
- *  Add a new error if the mailBox field has no errors and the mailBox appear more than once in the map
+ *  Adds a new error if the specified mailbox field has no errors and appears more than once in the provided map.
  */
 const validateNewUserMailboxIsUnique = (
 	{ value: mailBox, error: previousError }: GSuiteNewUserField,
@@ -133,7 +167,8 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
 		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
 	);
 
-	return users.map( ( { domain, mailBox, firstName, lastName } ) => ( {
+	return users.map( ( { uuid, domain, mailBox, firstName, lastName } ) => ( {
+		uuid,
 		firstName,
 		lastName,
 		domain,
@@ -144,17 +179,18 @@ const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
 /*
  * Run all validations on a user:
  * domain - required
- * mailBox - required, vaildEmailCharacters, valid overall email
+ * mailBox - required, validEmailCharacters, valid overall email
  * firstName - required, less than sixty characters
  * lastName - required, less than sixty characters
  */
 const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 	// every field is required. Also scrubs previous errors.
-	const { domain, mailBox, firstName, lastName } = mapValues( user, ( field ) =>
+	const { domain, mailBox, firstName, lastName } = mapFieldValues( user, ( field ) =>
 		requiredField( field )
 	);
 
 	return {
+		uuid: user.uuid,
 		domain,
 		mailBox: validateOverallEmail( validEmailCharacterField( mailBox ), domain ),
 		firstName: sixtyCharacterField( firstName ),
@@ -179,22 +215,24 @@ const validateUsers = (
 };
 
 const validateAgainstExistingUsers = (
-	{ domain, mailBox, firstName, lastName }: GSuiteNewUser,
-	existingGSuiteUsers: any[]
+	{ uuid, domain, mailBox, firstName, lastName }: GSuiteNewUser,
+	existingGSuiteUsers: [  ]
 ) => ( {
+	uuid,
 	firstName,
 	lastName,
 	domain,
 	mailBox: validateOverallEmailAgainstExistingEmails( mailBox, domain, existingGSuiteUsers ),
 } );
 
-const newField = ( value: string = '' ): GSuiteNewUserField => ( {
+const newField = ( value = '' ): GSuiteNewUserField => ( {
 	value,
 	error: null,
 } );
 
-const newUser = ( domain: string = '' ): GSuiteNewUser => {
+const newUser = ( domain = '' ): GSuiteNewUser => {
 	return {
+		uuid: uuidv4(),
 		firstName: newField(),
 		lastName: newField(),
 		mailBox: newField(),
@@ -207,15 +245,16 @@ const newUsers = ( domain: string ): GSuiteNewUser[] => {
 };
 
 const isUserComplete = ( user: GSuiteNewUser ): boolean => {
-	return Object.values( user ).every( ( { value } ) => '' !== value );
+	return getFields( user ).every( ( { value } ) => '' !== value );
 };
 
 const doesUserHaveError = ( user: GSuiteNewUser ): boolean => {
-	return Object.values( user ).some( ( { error } ) => null !== error );
+	return getFields( user ).some( ( { error } ) => null !== error );
 };
 
 /**
  * Returns if a user is ready to be added as a new email aka valid
+ *
  * @param user user to check
  * @returns boolean if the user is valid or not
  */
@@ -266,6 +305,7 @@ export {
 	isUserValid,
 	newUser,
 	newUsers,
+	sanitizeEmail,
 	validateAgainstExistingUsers,
 	validateNewUsersAreUnique,
 	validateUser,

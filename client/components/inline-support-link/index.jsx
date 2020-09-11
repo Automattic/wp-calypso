@@ -11,6 +11,8 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
+import QuerySupportArticleAlternates from 'components/data/query-support-article-alternates';
+import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import {
 	bumpStat,
@@ -18,7 +20,7 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import { isDefaultLocale, localizeUrl } from 'lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -26,39 +28,48 @@ import { localizeUrl } from 'lib/i18n-utils';
 import './style.scss';
 
 class InlineSupportLink extends Component {
+	state = {
+		shouldLazyLoadAlternates: false,
+	};
+
 	static propTypes = {
 		supportPostId: PropTypes.number,
 		supportLink: PropTypes.string,
 		showText: PropTypes.bool,
-		text: PropTypes.string,
 		showIcon: PropTypes.bool,
 		iconSize: PropTypes.number,
 		tracksEvent: PropTypes.string,
 		tracksOptions: PropTypes.object,
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
+		localeSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
 		supportPostId: null,
 		supportLink: null,
 		showText: true,
-		text: null,
 		showIcon: true,
 		iconSize: 14,
+	};
+
+	loadAlternates = () => {
+		this.setState( { shouldLazyLoadAlternates: true } );
 	};
 
 	render() {
 		const {
 			showText,
-			text,
 			supportPostId,
 			supportLink,
 			showIcon,
 			iconSize,
 			translate,
 			openDialog,
+			children,
+			localeSlug,
 		} = this.props;
+		const { shouldLazyLoadAlternates } = this.state;
 
 		if ( ! supportPostId && ! supportLink ) {
 			return null;
@@ -71,21 +82,35 @@ class InlineSupportLink extends Component {
 			iconSize,
 		};
 
+		const text = children ? children : translate( 'Learn more' );
+
 		return (
 			<LinkComponent
 				className="inline-support-link"
 				href={ url }
 				onClick={ openDialog }
+				onMouseEnter={
+					! isDefaultLocale( localeSlug ) && ! shouldLazyLoadAlternates
+						? this.loadAlternates
+						: undefined
+				}
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }
 			>
-				{ showText && ( text || translate( 'Learn more' ) ) }
+				{ shouldLazyLoadAlternates && <QuerySupportArticleAlternates postId={ supportPostId } /> }
+				{ showText && text }
 				{ supportPostId && showIcon && <Gridicon icon="help-outline" size={ iconSize } /> }
 			</LinkComponent>
 		);
 	}
 }
+
+const mapStateToProps = ( state ) => {
+	return {
+		localeSlug: getCurrentLocaleSlug( state ),
+	};
+};
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
 	const {
@@ -124,4 +149,4 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default connect( null, mapDispatchToProps )( localize( InlineSupportLink ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( InlineSupportLink ) );

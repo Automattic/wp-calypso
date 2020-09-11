@@ -17,7 +17,6 @@ import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { hideSidebar } from 'state/ui/actions';
 import { getSelectedSite } from 'state/ui/selectors';
 import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
 
@@ -115,10 +114,8 @@ function renderPluginWarnings( context ) {
 }
 
 function renderProvisionPlugins( context ) {
-	context.store.dispatch( hideSidebar() );
-
 	context.primary = React.createElement( PlanSetup, {
-		whitelist: context.query.only || false,
+		forSpecificPlugin: context.query.only || false,
 	} );
 }
 

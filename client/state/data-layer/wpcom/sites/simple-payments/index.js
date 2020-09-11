@@ -69,7 +69,11 @@ function customPostMetadataToProductAttributes( metadata ) {
  */
 export function customPostToProduct( customPost ) {
 	if ( ! isValidSimplePaymentsProduct( customPost ) ) {
-		throw new TransformerError( 'Custom post is not a valid simple payment product', customPost );
+		const simplePaymentsName = 'Pay with PayPal';
+		throw new TransformerError(
+			'Custom post is not a valid ' + simplePaymentsName + ' product',
+			customPost
+		);
 	}
 
 	const metadataAttributes = customPostMetadataToProductAttributes( customPost.metadata );

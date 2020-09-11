@@ -1,7 +1,7 @@
 .use-your-domain-step__content {
 	display: flex;
 
-	@include breakpoint( '<800px' ) {
+	@include breakpoint-deprecated( '<800px' ) {
 		flex-flow: wrap;
 	}
 
@@ -40,7 +40,7 @@
 		margin: 1em 0;
 		max-height: 150px;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 	}
@@ -57,7 +57,7 @@
 	}
 
 	.use-your-domain-step__option-title {
-		font-size: 1.4em;
+		font-size: $font-title-small;
 		font-weight: 400;
 		line-height: 1.4;
 		margin-bottom: 0.25em;

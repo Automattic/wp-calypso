@@ -53,7 +53,6 @@ new RuleTester( config ).run( 'i18n-no-collapsible-whitespace', rule, {
 			errors: [
 				{
 					message: NO_NEWLINES,
-					problem: ' (\\n)',
 				},
 			],
 		},

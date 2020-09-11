@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-color-schemes",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"description": "Calypso Shared Style Bits",
 	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
@@ -10,7 +10,7 @@
 		"sass",
 		"css"
 	],
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/calypso-color-schemes/README.md",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-color-schemes/README.md",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso.git",
@@ -19,12 +19,17 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"main": "dist/calypso-color-schemes.css",
+	"main": "css/index.css",
 	"publishConfig": {
 		"access": "public"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist src/__color-studio",
-		"prepare": "check-npm-client && node bin/prepare-sass-assets.js && node bin/build-css.js"
+		"clean": "npx rimraf js css src/__color-studio",
+		"prepare": "node bin/prepare-sass-assets.js && node bin/build-css.js"
+	},
+	"devDependencies": {
+		"postcss": "^7.0.32",
+		"postcss-custom-properties": "^9.1.1",
+		"node-sass": "^4.13.0"
 	}
 }

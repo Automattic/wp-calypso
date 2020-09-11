@@ -15,7 +15,7 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
 /**
  * Image dependencies
  */
-import googleAdwordsImage from 'assets/images/illustrations/google-adwords.svg';
+import googleAdwordsImage from 'assets/images/illustrations/adwords-google.svg';
 
 export default ( { selectedSite } ) => {
 	const translate = useTranslate();

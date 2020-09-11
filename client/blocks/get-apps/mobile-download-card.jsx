@@ -190,18 +190,8 @@ class MobileDownloadCard extends React.Component {
 						</p>
 					</div>
 					<div className="get-apps__badges">
-						<AppsBadge
-							storeLink="https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3Dcalypso-get-apps%26utm_medium%3Dweb%26utm_campaign%3Dmobile-download-promo-pages"
-							storeName={ 'android' }
-							titleText={ translate( 'Download the WordPress Android mobile app.' ) }
-							altText={ translate( 'Google Play Store download badge' ) }
-						/>
-						<AppsBadge
-							storeLink="https://itunes.apple.com/app/apple-store/id335703880?pt=299112&ct=calpyso-get-apps-button&mt=8"
-							storeName={ 'ios' }
-							titleText={ translate( 'Download the WordPress iOS mobile app.' ) }
-							altText={ translate( 'Apple App Store download badge' ) }
-						/>
+						<AppsBadge storeName={ 'android' } utm_source={ 'calypso-get-apps' } />
+						<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-get-apps-button' } />
 					</div>
 				</div>
 

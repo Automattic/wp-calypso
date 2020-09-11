@@ -42,6 +42,7 @@ import QueryEmailForwards from 'components/data/query-email-forwards';
 import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import getGSuiteUsers from 'state/selectors/get-gsuite-users';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -152,7 +153,13 @@ class GSuiteAddUsers extends React.Component {
 	}
 
 	goToEmail = () => {
-		page( emailManagement( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page(
+			emailManagement(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
+		);
 	};
 
 	renderAddGSuite() {
@@ -188,13 +195,17 @@ class GSuiteAddUsers extends React.Component {
 				) : (
 					''
 				) }
+
 				{ selectedDomainInfo.map( ( domain ) => {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
+
 				<SectionHeader label={ translate( 'Add G Suite' ) } />
+
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
 						<GSuiteNewUserList
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							extraValidation={ ( user ) => validateAgainstExistingUsers( user, gsuiteUsers ) }
 							domains={ selectedDomainInfo }
 							onUsersChange={ this.handleUsersChange }
@@ -226,8 +237,10 @@ class GSuiteAddUsers extends React.Component {
 		return (
 			<Fragment>
 				<PageViewTracker path={ analyticsPath } title="Domain Management > Add G Suite Users" />
+
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 				{ selectedSite && <QueryGSuiteUsers siteId={ selectedSite.ID } /> }
+
 				<Main>
 					<DomainManagementHeader
 						onClick={ this.goToEmail }
@@ -266,6 +279,7 @@ export default connect(
 		const siteId = get( selectedSite, 'ID', null );
 		const domains = getDomainsBySiteId( state, siteId );
 		return {
+			currentRoute: getCurrentRoute( state ),
 			domains,
 			domainsWithForwards: getDomainsWithForwards( state, domains ),
 			gsuiteUsers: getGSuiteUsers( state, siteId ),

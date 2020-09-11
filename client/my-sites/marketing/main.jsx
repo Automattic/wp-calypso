@@ -90,6 +90,7 @@ export const Sharing = ( {
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			<SidebarNavigation />
 			<FormattedHeader
+				brandFont
 				className="marketing__page-heading"
 				headerText={ translate( 'Marketing and Integrations' ) }
 				align="left"
@@ -110,7 +111,7 @@ export const Sharing = ( {
 					event="sharing_no_ads"
 					feature={ FEATURE_NO_ADS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No Ads with WordPress.com Premium' ) }
+					title={ translate( 'No ads with WordPress.com Premium' ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }

@@ -1,4 +1,4 @@
-// This list comes from https://github.com/eggert/tz/blob/master/backward
+// This list comes from https://github.com/eggert/tz/blob/HEAD/backward
 const linkedTimezones = {
 	'Africa/Asmera': 'Africa/Nairobi',
 	'Africa/Timbuktu': 'Africa/Abidjan',

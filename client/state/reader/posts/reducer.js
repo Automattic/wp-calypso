@@ -2,12 +2,18 @@
 /**
  * External dependencies
  */
-import { keyBy, get } from 'lodash';
+import { keyBy, get, forEach } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
+import {
+	READER_POSTS_RECEIVE,
+	READER_POST_SEEN,
+	READER_SEEN_MARK_AS_SEEN_RECEIVE,
+	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
+	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
+} from 'state/reader/action-types';
 import { combineReducers } from 'state/utils';
 
 /**
@@ -22,6 +28,19 @@ export function items( state = {}, action ) {
 		case READER_POSTS_RECEIVE:
 			const posts = action.posts || action.payload.posts;
 			return { ...state, ...keyBy( posts, 'global_ID' ) };
+
+		case READER_SEEN_MARK_AS_SEEN_RECEIVE:
+		case READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE:
+			forEach( action.globalIds, ( globalId ) => {
+				state[ globalId ] = { ...state[ globalId ], is_seen: true };
+			} );
+			return { ...state };
+
+		case READER_SEEN_MARK_AS_UNSEEN_RECEIVE:
+			forEach( action.globalIds, ( globalId ) => {
+				state[ globalId ] = { ...state[ globalId ], is_seen: false };
+			} );
+			return { ...state };
 	}
 	return state;
 }

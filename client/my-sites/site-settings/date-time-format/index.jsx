@@ -107,7 +107,7 @@ export class DateTimeFormat extends Component {
 
 		return (
 			<div>
-				<div className="date-time-format__title">{ translate( 'Date and Time Format' ) }</div>
+				<div className="date-time-format__title">{ translate( 'Date and time format' ) }</div>
 				<div className="date-time-format__info">
 					{ dateFormat && phpToMomentDatetimeFormat( localizedDate, dateFormat ) } &bull;{ ' ' }
 					{ timeFormat && phpToMomentDatetimeFormat( localizedDate, timeFormat ) } &bull;{ ' ' }

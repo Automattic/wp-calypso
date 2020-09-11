@@ -14,6 +14,7 @@ import StatsPage from '../pages/stats-page';
 import StoreDashboardPage from '../pages/woocommerce/store-dashboard-page';
 import PluginsBrowserPage from '../pages/plugins-browser-page';
 import GutenbergEditorComponent from '../gutenberg/gutenberg-editor-component';
+import CustomerHome from '../pages/customer-home-page';
 
 import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
@@ -59,18 +60,20 @@ export default class LoginFlow {
 	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
 
-		if (
-			! useFreshLogin &&
-			( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
-		) {
-			console.log( 'Reusing login cookie for ' + this.account.username );
-			await this.driver.navigate().refresh();
-			const continueSelector = By.css( 'div.continue-as-user a' );
-			if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
-				await driverHelper.clickWhenClickable( this.driver, continueSelector );
-			}
-			return;
-		}
+		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
+		// We can check later to see if we can find a different way to support it.
+		// if (
+		// 	! useFreshLogin &&
+		// 	( await loginCookieHelper.useLoginCookies( this.driver, this.account.username ) )
+		// ) {
+		// 	console.log( 'Reusing login cookie for ' + this.account.username );
+		// 	await this.driver.navigate().refresh();
+		// 	const continueSelector = By.css( 'div.continue-as-user a' );
+		// 	if ( await driverHelper.isElementPresent( this.driver, continueSelector ) ) {
+		// 		await driverHelper.clickWhenClickable( this.driver, continueSelector );
+		// 	}
+		// 	return;
+		// }
 
 		console.log( 'Logging in as ' + this.account.username );
 
@@ -115,7 +118,12 @@ export default class LoginFlow {
 
 		await this.checkForDevDocsAndRedirectToReader();
 
-		await ReaderPage.Expect( this.driver );
+		try {
+			await ReaderPage.Expect( this.driver );
+		} catch ( e ) {
+			await CustomerHome.Expect( this.driver );
+		}
+
 		await NavBarComponent.Expect( this.driver );
 
 		const navbarComponent = await NavBarComponent.Expect( this.driver );
@@ -255,6 +263,12 @@ export default class LoginFlow {
 		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
 		await this.sideBarComponent.selectStoreOption();
 		return await StoreDashboardPage.Expect( this.driver );
+	}
+
+	async loginAndSelectWPAdmin() {
+		await this.loginAndSelectMySite();
+		this.sideBarComponent = await SidebarComponent.Expect( this.driver );
+		return await this.sideBarComponent.selectWPAdmin();
 	}
 
 	end() {

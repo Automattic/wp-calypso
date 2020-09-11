@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ACCOUNT_CLOSE } from 'state/action-types';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
@@ -38,6 +39,7 @@ export function fromApi( response ) {
 }
 
 export function receiveAccountCloseSuccess() {
+	recordTracksEvent( 'calypso_account_closed' );
 	return closeAccountSuccess();
 }
 

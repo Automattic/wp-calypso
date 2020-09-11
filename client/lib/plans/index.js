@@ -1,13 +1,15 @@
 /**
  * External dependencies
  */
-import { difference, get, includes, pick, values } from 'lodash';
+import { difference, get, has, includes, pick, values, isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'config';
-import { isFreeJetpackPlan, isJetpackPlan, isMonthly } from 'lib/products-values';
+import { isFreeJetpackPlan } from 'lib/products-values/is-free-jetpack-plan';
+import { isJetpackPlan } from 'lib/products-values/is-jetpack-plan';
+import { isMonthly } from 'lib/products-values/is-monthly';
 import { format as formatUrl, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
 import {
 	PLAN_FREE,
@@ -41,6 +43,19 @@ export function getPlan( planKey ) {
 		}
 	}
 	return PLANS_LIST[ planKey ];
+}
+
+/**
+ * Find a plan by its path slug
+ *
+ * @param {string} pathSlug Path slug
+ * @param {string?} group Group to search in
+ * @returns {object} The plan
+ */
+export function getPlanByPathSlug( pathSlug, group ) {
+	return Object.values( PLANS_LIST )
+		.filter( ( p ) => ( group ? p.group === group : true ) )
+		.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {
@@ -171,6 +186,10 @@ export function filterPlansBySiteAndProps(
  * @returns {string}          Monthly version slug or "" if the slug could not be converted.
  */
 export function getMonthlyPlanByYearly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( has( plan, 'getMonthlySlug' ) ) {
+		return plan.getMonthlySlug();
+	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_MONTHLY } ) || '';
 }
 
@@ -182,6 +201,10 @@ export function getMonthlyPlanByYearly( planSlug ) {
  * @returns {string}          Yearly version slug or "" if the slug could not be converted.
  */
 export function getYearlyPlanByMonthly( planSlug ) {
+	const plan = getPlan( planSlug );
+	if ( has( plan, 'getAnnualSlug' ) ) {
+		return plan.getAnnualSlug();
+	}
 	return findFirstSimilarPlanKey( planSlug, { term: TERM_ANNUALLY } ) || '';
 }
 
@@ -445,22 +468,44 @@ export function getPlanTermLabel( planName, translate ) {
 	}
 }
 
-export const getPopularPlanSpec = ( { customerType, isJetpack } ) => {
+export const getPopularPlanSpec = ( { customerType, isJetpack, availablePlans } ) => {
 	// Jetpack doesn't currently highlight "Popular" plans
 	if ( isJetpack ) {
 		return false;
 	}
 
-	const spec = {
-		type: TYPE_BUSINESS,
-		group: GROUP_WPCOM,
-	};
-
-	if ( customerType === 'personal' ) {
-		spec.type = TYPE_PREMIUM;
+	if ( availablePlans.length === 0 ) {
+		return false;
 	}
 
-	return spec;
+	const defaultPlan = getPlan( availablePlans[ 0 ] );
+
+	if ( ! defaultPlan ) {
+		return false;
+	}
+
+	const group = GROUP_WPCOM;
+
+	if ( customerType === 'personal' ) {
+		if ( availablePlans.findIndex( isPremiumPlan ) !== -1 ) {
+			return {
+				type: TYPE_PREMIUM,
+				group,
+			};
+		}
+		// when customerType is not personal, default to business
+	} else if ( availablePlans.findIndex( isBusinessPlan ) !== -1 ) {
+		return {
+			type: TYPE_BUSINESS,
+			group,
+		};
+	}
+
+	// finally, just return the default one.
+	return {
+		type: defaultPlan.type,
+		group,
+	};
 };
 
 export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, currentPlan } ) => {

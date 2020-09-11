@@ -12,7 +12,7 @@ That is, you can work in these files and rely on the normal Calypso dev server.
 **However** things are often different inside the `iframe` in unexpected ways and so we need to verify that any changes apply properly in both environments.
 
 CircleCI generates notifications panel build artifacts on every commit that it processes.
-Alternatively you can manually build the app with `lerna` and copy the built files to your sandbox.
+Alternatively you can manually build the app with `yarn` and copy the built files to your sandbox.
 
 ```bash
 # Builds files and places them in `apps/notifications/dist`

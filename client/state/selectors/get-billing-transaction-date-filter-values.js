@@ -10,6 +10,8 @@ import moment from 'moment';
 import createSelector from 'lib/create-selector';
 import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
 
+import 'state/billing-transactions/init';
+
 /**
  * Based on the transactions list, returns metadata for rendering the date filters with counts
  *

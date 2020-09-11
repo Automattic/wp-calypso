@@ -6,7 +6,7 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence, withStorageKey } from 'state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -87,7 +87,7 @@ function updatePurchases( existingPurchases, action ) {
 
 const assignError = ( state, action ) => ( { ...state, error: action.error } );
 
-export default withoutPersistence( ( state = initialState, action ) => {
+const reducer = withoutPersistence( ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case PURCHASES_REMOVE:
 			return {
@@ -136,3 +136,6 @@ export default withoutPersistence( ( state = initialState, action ) => {
 
 	return state;
 } );
+
+const purchasesReducer = withStorageKey( 'purchases', reducer );
+export default purchasesReducer;

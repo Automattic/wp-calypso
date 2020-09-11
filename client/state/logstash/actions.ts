@@ -13,7 +13,7 @@ interface LogToLogstashParams {
 	/**
 	 * Feature name.
 	 *
-	 * Should be whitelisted. @see D31385-code
+	 * Should be explicitly allowed. @see D31385-code
 	 */
 	feature: 'calypso_ssr' | 'calypso_client';
 	message: string;

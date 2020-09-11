@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { errorNotice, successNotice } from 'state/notices/actions';
 import { acceptedNotice } from 'my-sites/invites/utils';
 import { requestSites, receiveSites } from 'state/sites/actions';
+import { requestSiteInvites } from 'state/invites/actions';
 
 /**
  * Module variables
@@ -66,11 +67,42 @@ export function createAccount( userData, invite, callback ) {
 							error: error.error,
 						} );
 					} else {
-						recordTracksEvent( 'calypso_invite_account_created' );
+						recordTracksEvent( 'calypso_invite_account_created', {
+							is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+							inviter_blog_id: get( invite, 'site.ID', false ),
+						} );
 					}
 					callback( error, bearerToken );
 				}
 			);
+	};
+}
+
+export function generateInviteLinks( siteId ) {
+	debug( 'generateInviteLinks', siteId );
+
+	return ( dispatch ) => {
+		wpcom
+			.undocumented()
+			.site( siteId )
+			.generateInviteLinks()
+			.then( () => {
+				dispatch( requestSiteInvites( siteId ) );
+			} );
+	};
+}
+
+export function disableInviteLinks( siteId ) {
+	debug( 'disableInviteLinks', siteId );
+
+	return ( dispatch ) => {
+		wpcom
+			.undocumented()
+			.site( siteId )
+			.disableInviteLinks()
+			.then( () => {
+				dispatch( requestSiteInvites( siteId ) );
+			} );
 	};
 }
 
@@ -105,7 +137,10 @@ export function acceptInvite( invite, callback ) {
 					dispatch( successNotice( ...acceptedNotice( invite ) ) );
 				}
 
-				recordTracksEvent( 'calypso_invite_accepted' );
+				recordTracksEvent( 'calypso_invite_accepted', {
+					is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+					inviter_blog_id: get( invite, 'site.ID', false ),
+				} );
 			}
 			dispatch( requestSites() );
 			if ( typeof callback === 'function' ) {

@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getFiltersKey } from 'state/ui/comments/utils';
+import { getFiltersKey } from 'state/comments/ui/utils';
+
+import 'state/comments/init';
 
 /**
  * Returns a list of comment IDs for the requested page and filters.
@@ -26,7 +27,7 @@ export const getCommentsPage = ( state, siteId, query ) => {
 	const { page = 1, postId } = query;
 	const parent = postId || 'site';
 	const filter = getFiltersKey( query );
-	return get( state, [ 'ui', 'comments', 'queries', siteId, parent, filter, page ] );
+	return get( state, [ 'comments', 'ui', 'queries', siteId, parent, filter, page ] );
 };
 
 export default getCommentsPage;

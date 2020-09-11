@@ -38,7 +38,7 @@ export default localize( ( { selectedSite, translate } ) => {
 				icon={ <img alt="" src={ customizeImage } /> }
 				title={ translate( 'Custom CSS' ) }
 				description={ translate(
-					"Make advanced changes to your site's appearance by writing your own CSS."
+					'Enjoy more control over your site’s look and feel by writing your own CSS.'
 				) }
 				buttonText={ translate( 'Edit CSS' ) }
 				href={ getEditCSSLink( selectedSite ) }

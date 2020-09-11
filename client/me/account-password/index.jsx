@@ -157,7 +157,7 @@ const AccountPassword = createReactClass( {
 			<form className="account-password" onSubmit={ this.submitForm }>
 				<ProtectFormGuard isChanged={ this.state.isUnsaved } />
 				<FormFieldset>
-					<FormLabel htmlFor="password">{ translate( 'New Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ translate( 'New password' ) }</FormLabel>
 					<FormPasswordInput
 						autoCapitalize="off"
 						autoComplete="off"

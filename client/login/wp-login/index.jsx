@@ -24,7 +24,7 @@ import LoginLinks from './login-links';
 import Main from 'components/main';
 import PrivateSite from './private-site';
 import { localizeUrl } from 'lib/i18n-utils';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import {
 	recordPageViewWithClientId as recordPageView,

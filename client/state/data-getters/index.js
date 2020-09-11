@@ -10,7 +10,9 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
 import { filterStateToApiQuery } from 'state/activity-log/utils';
 import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-import fromActivityLogApi from 'state/data-layer/wpcom/sites/activity/from-api';
+import fromActivityLogApi, {
+	fromActivityApi,
+} from 'state/data-layer/wpcom/sites/activity/from-api';
 import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
 
 /**
@@ -93,6 +95,46 @@ export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000
 		}
 	);
 };
+
+export const getRequestActivityId = ( siteId, rewindId ) =>
+	`activity-single-${ siteId }-${ rewindId }`;
+
+export const requestActivity = ( siteId, rewindId, { freshness = 5 * 60 * 1000 } = {} ) => {
+	const id = getRequestActivityId( siteId, rewindId );
+	return requestHttpData(
+		id,
+		http(
+			{
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+				path: `/sites/${ siteId }/activity/${ rewindId }`,
+			},
+			{}
+		),
+		{
+			freshness,
+			fromApi: () => ( data ) => {
+				return [ [ id, fromActivityApi( data ) ] ];
+			},
+		}
+	);
+};
+
+export const getRequestHosingProviderGuessId = ( siteId ) =>
+	`site-hosting-provider-guess-${ siteId }`;
+
+export const requestHosingProviderGuess = ( siteId ) =>
+	requestHttpData(
+		getRequestHosingProviderGuessId( siteId ),
+		http( {
+			method: 'GET',
+			path: `/sites/${ siteId }/hosting-provider`,
+			apiNamespace: 'wpcom/v2',
+		} ),
+		{
+			fromApi: () => ( data ) => [ [ getRequestHosingProviderGuessId( siteId ), data ] ],
+		}
+	);
 
 const requestExternalContributorsId = ( siteId ) => `site-external-contributors-${ siteId }`;
 

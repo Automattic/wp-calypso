@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import ReactDom from 'react-dom';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -15,7 +14,7 @@ import { identity, includes, noop, without } from 'lodash';
  */
 import { RootChild } from '@automattic/components';
 import Gridicon from 'components/gridicon';
-import { hideDropZone, showDropZone } from 'state/ui/drop-zone/actions';
+import { hideDropZone, showDropZone } from 'state/drop-zone/actions';
 import TranslatableString from 'components/translatable/proptype';
 
 /**

@@ -47,6 +47,7 @@ import {
 	domainManagementTransfer,
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
+	domainManagementRoot,
 } from 'my-sites/domains/paths';
 import {
 	emailManagement,
@@ -97,12 +98,8 @@ function createNavigation( context ) {
 	);
 }
 
-function removeSidebar( context ) {
-	context.store.dispatch( setSection( { group: 'sites', secondary: false } ) );
-}
-
 function renderEmptySites( context ) {
-	removeSidebar( context );
+	context.store.dispatch( setSection( { group: 'sites' } ) );
 
 	context.primary = React.createElement( NoSitesMessage );
 
@@ -116,7 +113,7 @@ function renderNoVisibleSites( context ) {
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
-	removeSidebar( context );
+	context.store.dispatch( setSection( { group: 'sites' } ) );
 
 	context.primary = React.createElement( EmptyContentComponent, {
 		title: i18n.translate(
@@ -180,6 +177,12 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		}
 		return pathFactory( slug, slug );
 	} );
+
+	domainManagementPaths = domainManagementPaths.concat(
+		allPaths.map( ( pathFactory ) => {
+			return pathFactory( slug, slug, domainManagementRoot() );
+		} )
+	);
 
 	if ( primaryDomain && slug !== primaryDomain.name ) {
 		domainManagementPaths = domainManagementPaths.concat(
@@ -270,8 +273,14 @@ function onSelectedSiteAvailable( context, basePath ) {
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
 
+	let filteredPathName = contextPath.split( '/no-site' )[ 0 ];
+
+	if ( context.querystring ) {
+		filteredPathName = `${ filteredPathName }?${ context.querystring }`;
+	}
+
 	// This path sets the URL to be visited once a site is selected
-	const basePath = contextPath === '/sites' ? '/home' : contextPath;
+	const basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
 
 	recordPageView( contextPath, sitesPageTitleForAnalytics );
 
@@ -308,8 +317,17 @@ function showMissingPrimaryError( currentUser, dispatch ) {
 
 // Clears selected site from global redux state
 export function noSite( context, next ) {
-	context.store.dispatch( setSelectedSiteId( null ) );
-	return next();
+	const { getState } = getStore( context );
+	const currentUser = getCurrentUser( getState() );
+	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+
+	if ( ! isDomainOnlyFlow && hasSite ) {
+		siteSelection( context, next );
+	} else {
+		context.store.dispatch( setSelectedSiteId( null ) );
+		return next();
+	}
 }
 
 /*
@@ -351,7 +369,9 @@ export function siteSelection( context, next ) {
 		const primarySiteId = getPrimarySiteId( getState() );
 
 		const redirectToPrimary = ( primarySiteSlug ) => {
-			let redirectPath = `${ context.pathname }/${ primarySiteSlug }`;
+			const pathNameSplit = context.pathname.split( '/no-site' )[ 0 ];
+			const pathname = pathNameSplit.replace( /\/?$/, '/' ); // append trailing slash if not present
+			let redirectPath = `${ pathname }${ primarySiteSlug }`;
 			if ( context.querystring ) {
 				redirectPath += `?${ context.querystring }`;
 			}
@@ -395,7 +415,15 @@ export function siteSelection( context, next ) {
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) ).then( () => {
-			const freshSiteId = getSiteId( getState(), siteFragment );
+			let freshSiteId = getSiteId( getState(), siteFragment );
+
+			if ( ! freshSiteId ) {
+				const wpcomStagingFragment = siteFragment.replace(
+					/\b.wordpress.com/,
+					'.wpcomstaging.com'
+				);
+				freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+			}
 
 			if ( freshSiteId ) {
 				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
@@ -457,7 +485,7 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	removeSidebar( context );
+	context.store.dispatch( setSection( { group: 'sites' } ) );
 
 	context.primary = createSitesComponent( context );
 	next();

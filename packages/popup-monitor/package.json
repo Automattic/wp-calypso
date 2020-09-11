@@ -10,7 +10,7 @@
 		"popup"
 	],
 	"author": "Automattic Inc.",
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/popup-monitor",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/popup-monitor",
 	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
@@ -34,5 +34,8 @@
 	},
 	"dependencies": {
 		"lodash": "^4.17.15"
+	},
+	"devDependencies": {
+		"chai": "^4.2.0"
 	}
 }

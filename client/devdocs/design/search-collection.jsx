@@ -62,6 +62,10 @@ const Collection = ( {
 	let showCounter = 0;
 	const summary = [];
 
+	const scroll = () => {
+		window.scrollTo( 0, 0 );
+	};
+
 	const examples = React.Children.map( children, ( example ) => {
 		if ( ! example || ! shouldShowInstance( example, filter, component ) ) {
 			return null;
@@ -102,7 +106,12 @@ const Collection = ( {
 
 		return (
 			<div>
-				<DocsExampleWrapper name={ exampleName } unique={ !! component } url={ exampleLink }>
+				<DocsExampleWrapper
+					name={ exampleName }
+					unique={ !! component }
+					url={ exampleLink }
+					onTitleClick={ scroll }
+				>
 					{ example }
 				</DocsExampleWrapper>
 				{ component && <ReadmeViewer readmeFilePath={ readmeFilePath } /> }

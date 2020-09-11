@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort */
+/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
 /**
  * External dependencies
@@ -7,58 +7,24 @@
 import $ from 'jquery';
 import { filter, find, forEach, get, map, partialRight } from 'lodash';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
-import { createBlock, parse, rawHandler } from '@wordpress/blocks';
-import { addFilter } from '@wordpress/hooks';
+import { createBlock, parse } from '@wordpress/blocks';
+import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { Component } from 'react';
+import { registerPlugin } from '@wordpress/plugins';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
+import { Button } from '@wordpress/components';
+import { wordpress } from '@wordpress/icons';
+import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
+import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
  * Internal dependencies
  */
-import { inIframe, isEditorReadyWithBlocks, sendMessage } from '../../utils';
+import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
-
-/**
- *
- * Monitors Gutenberg for when an editor is opened with content originally authored in the classic editor.
- *
- * @param {MessagePort} calypsoPort Port used for communication with parent frame.
- */
-async function triggerConversionPrompt( calypsoPort ) {
-	const { port1, port2 } = new MessageChannel();
-
-	const editorHasBlocks = await isEditorReadyWithBlocks();
-	if ( ! editorHasBlocks ) {
-		return;
-	}
-
-	const blocks = select( 'core/editor' ).getBlocks();
-	const eligible = blocks.length === 1 && blocks[ 0 ].name === 'core/freeform';
-
-	if ( ! eligible ) {
-		return;
-	}
-
-	calypsoPort.postMessage( { action: 'triggerConversionRequest' }, [ port2 ] );
-
-	port1.onmessage = ( { data: confirmed } ) => {
-		port1.close();
-
-		if ( confirmed !== true ) {
-			return;
-		}
-
-		dispatch( 'core/editor' ).replaceBlock(
-			blocks[ 0 ].clientId,
-			rawHandler( {
-				HTML: blocks[ 0 ].originalContent,
-			} )
-		);
-	};
-}
 
 /**
  * Monitors Gutenberg store for draft ID assignment and transmits it to parent frame when needed.
@@ -564,13 +530,7 @@ function handleInsertClassicBlockMedia( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleCloseEditor( calypsoPort ) {
-	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a'; // maintain support for Gutenberg plugin < v7.7
-	const selector = '.edit-post-header .edit-post-fullscreen-mode-close';
-	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
-
-	const dispatchAction = ( e ) => {
-		e.preventDefault();
-
+	addAction( 'a8c.wpcom-block-editor.closeEditor', 'a8c/wpcom-block-editor/closeEditor', () => {
 		const { port2 } = new MessageChannel();
 		calypsoPort.postMessage(
 			{
@@ -581,16 +541,92 @@ function handleCloseEditor( calypsoPort ) {
 			},
 			[ port2 ]
 		);
+	} );
+
+	const dispatchAction = ( e ) => {
+		e.preventDefault();
+		doAction( 'a8c.wpcom-block-editor.closeEditor' );
 	};
 
-	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, dispatchAction );
-	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, dispatchAction );
+	handleCloseInLegacyEditors( dispatchAction );
+
+	if ( isNavSidebarPresent() ) {
+		return;
+	}
+
+	registerPlugin( 'a8c-wpcom-block-editor-close-button-override', {
+		render: function CloseWpcomBlockEditor() {
+			const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
+			const [ label, setLabel ] = useState( calypsoifyGutenberg.closeButtonLabel );
+
+			useEffect( () => {
+				addAction(
+					'updateCloseButtonOverrides',
+					'a8c/wpcom-block-editor/CloseWpcomBlockEditor',
+					( data ) => {
+						setCloseUrl( data.closeUrl );
+						setLabel( data.label );
+					}
+				);
+				return () =>
+					removeAction(
+						'updateCloseButtonOverrides',
+						'a8c/wpcom-block-editor/CloseWpcomBlockEditor'
+					);
+			} );
+
+			return (
+				<MainDashboardButton>
+					<Button
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="edit-post-fullscreen-mode-close wpcom-block-editor__close-button"
+						href={ closeUrl }
+						icon={ wordpress }
+						iconSize={ 36 }
+						label={ label }
+						onClick={ dispatchAction }
+					/>
+				</MainDashboardButton>
+			);
+		},
+	} );
+}
+
+// The close button is generally overridden using the <MainDashboardButton> slot API
+// which was introduced in Gutenberg 8.2. In older editors we still need to override
+// the click handler so that the link will open in the parent frame instead of the
+// iframe. We try not to add the click handler if <MainDashboardButton> has been used.
+function handleCloseInLegacyEditors( handleClose ) {
+	// Selects close buttons in Gutenberg plugin < v7.7
+	const legacySelector = '.edit-post-fullscreen-mode-close__toolbar a';
+
+	// Selects the close button in modern Gutenberg versions, unless it itself is a close button override
+	const wpcomCloseSelector = '.wpcom-block-editor__close-button';
+	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
+	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
+
+	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
+
+	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
+	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, handleClose );
+}
+
+/**
+ * Uses presence of data store to detect whether the nav sidebar has been loaded.
+ * Could run into timing issues, but the nav sidebar's data store is currently
+ * loaded early enough that this works for our needs.
+ */
+function isNavSidebarPresent() {
+	const selectors = select( NAV_SIDEBAR_STORE_KEY );
+	return !! selectors;
 }
 
 /**
  * Modify links in order to open them in parent window and not in a child iframe.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
-function openLinksInParentFrame() {
+function openLinksInParentFrame( calypsoPort ) {
 	const viewPostLinkSelectors = [
 		'.components-notice-list .is-success .components-notice__action.is-link', // View Post link in success notice, Gutenberg <5.9
 		'.components-snackbar-list .components-snackbar__content a', // View Post link in success snackbar, Gutenberg >=5.9
@@ -599,12 +635,15 @@ function openLinksInParentFrame() {
 	].join( ',' );
 	$( '#editor' ).on( 'click', viewPostLinkSelectors, ( e ) => {
 		e.preventDefault();
-		window.open( e.target.href, '_top' );
+		calypsoPort.postMessage( {
+			action: 'viewPost',
+			payload: { postUrl: e.target.href },
+		} );
 	} );
 
 	if ( calypsoifyGutenberg.manageReusableBlocksUrl ) {
 		const manageReusableBlocksLinkSelectors = [
-			'.editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
+			'.block-editor-inserter__manage-reusable-blocks', // Link in the Blocks Inserter
 			'a.components-menu-item__button[href*="post_type=wp_block"]', // Link in the More Menu
 		].join( ',' );
 		$( '#editor' ).on( 'click', manageReusableBlocksLinkSelectors, ( e ) => {
@@ -685,6 +724,18 @@ function getCloseButtonUrl( calypsoPort ) {
 
 		window.wp.hooks.doAction( 'updateCloseButtonOverrides', data );
 	};
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
+		'a8c/wpcom-block-editor/getCloseButtonUrl',
+		( closeUrl ) => calypsoifyGutenberg.closeUrl || closeUrl
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
+		'a8c/wpcom-block-editor/getCloseButtonUrl',
+		( closeLabel ) => calypsoifyGutenberg.closeButtonLabel || closeLabel
+	);
 }
 
 /**
@@ -704,12 +755,104 @@ function getGutenboardingStatus( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { isGutenboarding, frankenflowUrl } = data;
+		const { isGutenboarding, frankenflowUrl, isNewLaunch, isExperimental } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
+		calypsoifyGutenberg.isNewLaunch = isNewLaunch;
+		calypsoifyGutenberg.isExperimental = isExperimental;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
 	};
+}
+
+/**
+ * Hooks the nav sidebar to change some of its button labels and behaviour.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getNavSidebarLabels( calypsoPort ) {
+	let createPostLabels = null;
+	let listHeadings = null;
+
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getNavSidebarLabels',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		createPostLabels = data.createPostLabels;
+		listHeadings = data.listHeadings;
+	};
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.createPostLabel',
+		'wpcom-block-editor/getNavSidebarLabels',
+		( label, postType ) => ( createPostLabels && createPostLabels[ postType ] ) || label
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.listHeading',
+		'wpcom-block-editor/getNavSidebarLabels',
+		( label, postType ) => ( listHeadings && listHeadings[ postType ] ) || label
+	);
+}
+
+/**
+ * Retrieves info to allow the bridge to build calypso urls. Hook parts of
+ * the editor that use this info.
+ *
+ * @param {MessagePort} calypsoPort Port used for communication with parent frame.
+ */
+function getCalypsoUrlInfo( calypsoPort ) {
+	let origin = null;
+	let siteSlug = null;
+
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCalypsoUrlInfo',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( { data } ) => {
+		origin = data.origin;
+		siteSlug = data.siteSlug;
+	};
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.createPostUrl',
+		'wpcom-block-editor/getSiteSlug',
+		( url, postType ) => {
+			if ( origin && siteSlug && ( postType === 'page' || postType === 'post' ) ) {
+				return `${ origin }/block-editor/${ postType }/${ siteSlug }`;
+			}
+
+			return url;
+		}
+	);
+
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.editPostUrl',
+		'wpcom-block-editor/getSiteSlug',
+		( url, postId, postType ) => {
+			if ( origin && siteSlug && ( postType === 'page' || postType === 'post' ) ) {
+				return `${ origin }/block-editor/${ postType }/${ siteSlug }/${ postId }`;
+			}
+
+			return url;
+		}
+	);
+
+	// All links should open outside the iframe
+	addFilter(
+		'a8c.WpcomBlockEditorNavSidebar.linkTarget',
+		'wpcom-block-editor/getSiteSlug',
+		() => '_parent'
+	);
 }
 
 /**
@@ -733,6 +876,43 @@ function handleUncaughtErrors( calypsoPort ) {
 	};
 }
 
+async function handleEditorLoaded( calypsoPort ) {
+	await isEditorReadyWithBlocks();
+	const isNew = select( 'core/editor' ).isCleanNewPost();
+	const blocks = select( 'core/block-editor' ).getBlocks();
+
+	requestAnimationFrame( () => {
+		calypsoPort.postMessage( {
+			action: 'trackPerformance',
+			payload: {
+				mark: 'editor.ready',
+				isNew,
+				blockCount: blocks.length,
+			},
+		} );
+	} );
+
+	preselectParentPage();
+}
+
+async function preselectParentPage() {
+	const parentPostId = parseInt( getQueryArg( window.location.href, 'parent_post' ) );
+	if ( ! parentPostId || isNaN( parseInt( parentPostId ) ) ) {
+		return;
+	}
+
+	const postType = select( 'core/editor' ).getCurrentPostType();
+	if ( 'page' !== postType ) {
+		return;
+	}
+
+	const pages = await getPages();
+	const isValidParentId = pages.some( ( page ) => page.id === parentPostId );
+	if ( isValidParentId ) {
+		dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
+	}
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -742,7 +922,8 @@ function initPort( message ) {
 
 	class MediaUpload extends Component {
 		openModal = () => {
-			const mediaChannel = new MessageChannel();
+			const mediaSelectChannel = new MessageChannel();
+			const mediaCancelChannel = new MessageChannel();
 
 			calypsoPort.postMessage(
 				{
@@ -753,17 +934,27 @@ function initPort( message ) {
 						multiple: this.props.multiple,
 						value: this.props.value,
 					},
+					ports: [ mediaSelectChannel.port2, mediaCancelChannel.port2 ],
 				},
-				[ mediaChannel.port2 ]
+				[ mediaSelectChannel.port2, mediaCancelChannel.port2 ]
 			);
 
-			mediaChannel.port1.onmessage = ( { data } ) => {
+			mediaSelectChannel.port1.onmessage = ( { data } ) => {
 				this.props.onSelect( data );
 
 				// this is a once-only port
 				// to send more messages we have to re-open the
 				// modal and create a new channel
-				mediaChannel.port1.close();
+				mediaSelectChannel.port1.close();
+			};
+
+			mediaCancelChannel.port1.onmessage = () => {
+				this.props.onClose();
+
+				// this is a once-only port
+				// to send more messages we have to re-open the
+				// modal and create a new channel
+				mediaCancelChannel.port1.close();
 			};
 		};
 
@@ -784,9 +975,6 @@ function initPort( message ) {
 
 		// Transmit draft ID to parent window once it has been assigned.
 		transmitDraftId( calypsoPort );
-
-		// Check if the "Convert to Blocks" prompt should be opened for this content.
-		triggerConversionPrompt( calypsoPort );
 
 		handlePostTrash( calypsoPort );
 
@@ -810,7 +998,7 @@ function initPort( message ) {
 
 		handleCloseEditor( calypsoPort );
 
-		openLinksInParentFrame();
+		openLinksInParentFrame( calypsoPort );
 
 		openCustomizer( calypsoPort );
 
@@ -820,7 +1008,13 @@ function initPort( message ) {
 
 		getGutenboardingStatus( calypsoPort );
 
+		getNavSidebarLabels( calypsoPort );
+
+		getCalypsoUrlInfo( calypsoPort );
+
 		handleUncaughtErrors( calypsoPort );
+
+		handleEditorLoaded( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

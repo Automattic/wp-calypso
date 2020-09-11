@@ -55,9 +55,10 @@ import CrowdsignalSignupForm from './crowdsignal';
 import SocialSignupForm from './social';
 import { recordTracksEventWithClientId } from 'state/analytics/actions';
 import { createSocialUserFailed } from 'state/login/actions';
-import { getCurrentOAuth2Client } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import { getSectionName } from 'state/ui/selectors';
 import TextControl from 'extensions/woocommerce/components/text-control';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
  * Style dependencies
@@ -92,6 +93,7 @@ class SignupForm extends Component {
 		formHeader: PropTypes.node,
 		redirectToAfterLoginUrl: PropTypes.string.isRequired,
 		goToNextStep: PropTypes.func,
+		handleLogin: PropTypes.func,
 		handleSocialResponse: PropTypes.func,
 		isSocialSignupEnabled: PropTypes.bool,
 		locale: PropTypes.string,
@@ -105,6 +107,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		showRecaptchaToS: PropTypes.bool,
+		horizontal: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -117,6 +120,7 @@ class SignupForm extends Component {
 		flowName: '',
 		isSocialSignupEnabled: false,
 		showRecaptchaToS: false,
+		horizontal: false,
 	};
 
 	state = {
@@ -240,7 +244,7 @@ class SignupForm extends Component {
 	validate = ( fields, onComplete ) => {
 		const fieldsForValidation = filter( [
 			'email',
-			this.state.focusPassword && 'password',
+			'password',
 			this.props.displayUsernameInput && 'username',
 			this.props.displayNameInput && 'firstName',
 			this.props.displayNameInput && 'lastName',
@@ -310,6 +314,14 @@ class SignupForm extends Component {
 
 	setFormState = ( state ) => {
 		this.setState( { form: state } );
+	};
+
+	handleLoginClick = ( event, fieldValue ) => {
+		this.props.trackLoginMidFlow( event );
+		if ( this.props.handleLogin ) {
+			event.preventDefault();
+			this.props.handleLogin( fieldValue );
+		}
 	};
 
 	handleFormControllerError( error ) {
@@ -406,8 +418,7 @@ class SignupForm extends Component {
 	getLoginLink() {
 		return login( {
 			isJetpack: this.isJetpack(),
-			isWoo:
-				config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+			from: this.props.from,
 			isNative: config.isEnabled( 'login/native-login-links' ),
 			redirectTo: this.props.redirectToAfterLoginUrl,
 			locale: this.props.locale,
@@ -470,9 +481,8 @@ class SignupForm extends Component {
 
 		return map( messages, ( message, error_code ) => {
 			if ( error_code === 'taken' ) {
-				link +=
-					'&email_address=' +
-					encodeURIComponent( formState.getFieldValue( this.state.form, fieldName ) );
+				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
+				link += '&email_address=' + encodeURIComponent( fieldValue );
 				return (
 					<span key={ error_code }>
 						<p>
@@ -480,7 +490,12 @@ class SignupForm extends Component {
 							&nbsp;
 							{ this.props.translate( 'If this is you {{a}}log in now{{/a}}.', {
 								components: {
-									a: <a href={ link } onClick={ this.props.trackLoginMidFlow } />,
+									a: (
+										<a
+											href={ link }
+											onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
+										/>
+									),
 								},
 							} ) }
 						</p>
@@ -622,7 +637,7 @@ class SignupForm extends Component {
 
 	handleWooCommerceSocialConnect = ( ...args ) => {
 		this.recordWooCommerceSignupTracks( 'social' );
-		this.props.handleSocialResponse( args );
+		this.props.handleSocialResponse( ...args );
 	};
 
 	handleWooCommerceSubmit = ( event ) => {
@@ -915,6 +930,7 @@ class SignupForm extends Component {
 		if (
 			( config.isEnabled( 'jetpack/connect/woocommerce' ) &&
 				this.props.isJetpackWooCommerceFlow ) ||
+			this.props.isJetpackWooDnaFlow ||
 			( config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom )
@@ -941,9 +957,11 @@ class SignupForm extends Component {
 						) }
 					</LoggedOutForm>
 
-					<LoggedOutFormLinkItem href={ logInUrl }>
-						{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
-					</LoggedOutFormLinkItem>
+					{ this.props.footerLink || (
+						<LoggedOutFormLinkItem href={ logInUrl }>
+							{ this.props.translate( 'Log in with an existing WordPress.com account' ) }
+						</LoggedOutFormLinkItem>
+					) }
 				</div>
 			);
 		}
@@ -999,6 +1017,7 @@ class SignupForm extends Component {
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
 					'is-showing-recaptcha-tos': this.props.showRecaptchaToS,
+					'is-horizontal': this.props.horizontal,
 				} ) }
 			>
 				{ this.getNotice() }
@@ -1012,6 +1031,12 @@ class SignupForm extends Component {
 
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
+
+				{ this.props.horizontal && (
+					<div className="signup-form__separator">
+						<span className="signup-form__separator-text">{ this.props.translate( 'or' ) }</span>
+					</div>
+				) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<SocialSignupForm
@@ -1041,6 +1066,8 @@ export default connect(
 		sectionName: getSectionName( state ),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 	} ),
 	{

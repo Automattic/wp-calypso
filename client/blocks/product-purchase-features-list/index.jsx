@@ -18,12 +18,14 @@ import {
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
 	TYPE_FREE,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_ONBOARDING_EXPIRE,
+	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
 } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
-import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
 import CustomCSS from './custom-css';
 import VideoAudioPosts from './video-audio-posts';
@@ -37,14 +39,15 @@ import JetpackPublicize from './jetpack-publicize';
 import MobileApps from './mobile-apps';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
+import { withLocalizedMoment } from 'components/localized-moment';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { hasDomainCredit, getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 /**
  * Style dependencies
  */
@@ -77,7 +80,6 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
@@ -96,10 +98,31 @@ export class ProductPurchaseFeaturesList extends Component {
 		const {
 			isPlaceholder,
 			plan,
+			currentPlan,
 			planHasDomainCredit,
 			selectedSite,
 			showCustomizerFeature,
+			scheduleId,
 		} = this.props;
+
+		let hasBusinessOnboardingExpired;
+		if ( currentPlan ) {
+			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
+
+			const is2YearPlan = plan === PLAN_BUSINESS_2_YEARS;
+			const businessOnboardingExpiration = this.props.moment(
+				is2YearPlan ? PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE : PLAN_BUSINESS_ONBOARDING_EXPIRE
+			);
+
+			hasBusinessOnboardingExpired = businessOnboardingExpiration.diff( expiryDateMoment ) < 0;
+		}
+
+		const hasIncludedSessions = scheduleId === 1;
+		const hasPurchasedSessions = scheduleId > 1;
+
+		const isBusinessOnboardingAvailable =
+			hasPurchasedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
+
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -108,15 +131,16 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<BusinessOnboarding
-					isWpcomPlan
-					onClick={ this.handleBusinessOnboardingClick }
-					link={ `/me/concierge/${ selectedSite.slug }/book` }
-				/>
+				{ isBusinessOnboardingAvailable && (
+					<BusinessOnboarding
+						isWpcomPlan
+						onClick={ this.handleBusinessOnboardingClick }
+						link={ `/me/concierge/${ selectedSite.slug }/book` }
+					/>
+				) }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
-				<GoogleVouchers selectedSite={ selectedSite } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
@@ -148,7 +172,6 @@ export class ProductPurchaseFeaturesList extends Component {
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
-				<GoogleVouchers selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
 				{ ! showCustomizerFeature && <CustomCSS selectedSite={ selectedSite } /> }
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
@@ -329,9 +352,11 @@ export default connect(
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+			currentPlan: getCurrentPlan( state, selectedSiteId ),
+			scheduleId: getConciergeScheduleId( state ),
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( ProductPurchaseFeaturesList );
+)( withLocalizedMoment( ProductPurchaseFeaturesList ) );

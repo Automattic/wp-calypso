@@ -29,7 +29,7 @@ export default function getSiteComputedAttributes( state, siteId ) {
 	const computedAttributes = {
 		domain: getSiteDomain( state, siteId ),
 		hasConflict: isSiteConflicting( state, siteId ),
-		is_customizable: !! canCurrentUser( state, siteId, 'edit_theme_options' ),
+		is_customizable: canCurrentUser( state, siteId, 'edit_theme_options' ),
 		is_previewable: !! isSitePreviewable( state, siteId ),
 		options: getSiteOptions( state, siteId ),
 		slug: getSiteSlug( state, siteId ),

@@ -31,7 +31,12 @@ class SimplePaymentsView extends Component {
 			<div className="wpview-content wpview-type-simple-payments">
 				<QuerySimplePayments siteId={ siteId } productId={ productId } />
 				<QuerySitePlans siteId={ siteId } />
-				{ product && <QueryMedia siteId={ siteId } mediaId={ product.featuredImageId } /> }
+				{ product && (
+					<QueryMedia
+						siteId={ siteId }
+						mediaId={ product.featuredImageId === '' ? 0 : parseInt( product.featuredImageId ) }
+					/>
+				) }
 				{ this.renderContent() }
 			</div>
 		);
@@ -51,7 +56,7 @@ class SimplePaymentsView extends Component {
 						<Gridicon icon="cross" />
 					</div>
 					<p className="wpview-type-simple-payments__unsupported-message">
-						{ translate( "Your plan doesn't include Simple Payments." ) }
+						{ translate( "Your plan doesn't include Pay with PayPal" ) }
 					</p>
 				</div>
 			);
@@ -104,7 +109,7 @@ class SimplePaymentsView extends Component {
 	}
 }
 
-SimplePaymentsView = connect( ( state, props ) => {
+const EnhancedSimplePaymentsView = connect( ( state, props ) => {
 	const { content: shortcode } = props;
 
 	const shortcodeData = deserialize( shortcode );
@@ -125,7 +130,7 @@ SimplePaymentsView = connect( ( state, props ) => {
 	};
 } )( localize( SimplePaymentsView ) );
 
-SimplePaymentsView.match = ( content ) => {
+EnhancedSimplePaymentsView.match = ( content ) => {
 	const match = next( 'simple-payment', content );
 
 	if ( match ) {
@@ -139,12 +144,12 @@ SimplePaymentsView.match = ( content ) => {
 	}
 };
 
-SimplePaymentsView.serialize = ( content ) => {
+EnhancedSimplePaymentsView.serialize = ( content ) => {
 	return encodeURIComponent( content );
 };
 
-SimplePaymentsView.edit = ( editor, content ) => {
+EnhancedSimplePaymentsView.edit = ( editor, content ) => {
 	editor.execCommand( 'simplePaymentsButton', content );
 };
 
-export default SimplePaymentsView;
+export default EnhancedSimplePaymentsView;

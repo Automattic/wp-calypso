@@ -15,7 +15,7 @@ import * as utils from 'state/posts/utils';
 import EditorViewLink from './view-link';
 import EditorStatusLabel from 'post-editor/editor-status-label';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
 import PodcastIndicator from 'components/podcast-indicator';
 import QuerySiteSettings from 'components/data/query-site-settings';

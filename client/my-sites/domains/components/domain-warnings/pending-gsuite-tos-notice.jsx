@@ -28,10 +28,12 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		domains: PropTypes.array.isRequired,
 		section: PropTypes.string.isRequired,
 		isCompact: PropTypes.bool,
+		showDomainStatusNotice: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isCompact: false,
+		showDomainStatusNotice: false,
 	};
 
 	componentDidMount() {
@@ -106,6 +108,46 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 					{ this.props.translate( 'Finish Setup' ) }
 				</NoticeAction>
 			</Notice>
+		);
+	}
+
+	domainStatusNotice() {
+		const { domains, translate } = this.props;
+		const domainName = domains[ 0 ].name;
+		const users = domains[ 0 ].googleAppsSubscription.pendingUsers;
+		const emails = users.join( ', ' );
+
+		const button = (
+			<PendingGSuiteTosNoticeAction
+				domainName={ domainName }
+				isMultipleDomains={ false }
+				section={ this.props.section }
+				severity={ null }
+				siteSlug={ this.props.siteSlug }
+				user={ users[ 0 ] }
+				isCompact={ false }
+				cta={ translate( 'Finish Setup' ) }
+			/>
+		);
+
+		return (
+			<>
+				<p>
+					{ translate(
+						'Your mailbox {{strong}}%(emails)s{{/strong}} is almost ready! Complete the setup to activate your new email address.',
+						'Your mailboxes {{strong}}%(emails)s{{/strong}} are almost ready! Complete the setup to activate your new email addresses.',
+						{
+							count: users.length,
+							args: { emails },
+							comment:
+								'%(emails)s will be a list of email addresses separated by a comma, ' +
+								'e.g. test@example.com, test2@example.com',
+							components: { strong },
+						}
+					) }
+				</p>
+				{ button }
+			</>
 		);
 	}
 
@@ -188,6 +230,10 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 	}
 
 	render() {
+		if ( this.props.showDomainStatusNotice ) {
+			return this.domainStatusNotice();
+		}
+
 		if ( this.props.isCompact ) {
 			return this.compactNotice();
 		}

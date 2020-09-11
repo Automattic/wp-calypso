@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,6 +11,7 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	getName,
 	isExpired,
@@ -22,8 +24,10 @@ import {
 	isPaidWithPayPalDirect,
 	isRenewing,
 	isSubscription,
+	isCloseToExpiration,
 	paymentLogoType,
 	hasPaymentMethod,
+	isRenewable,
 } from 'lib/purchases';
 import {
 	isDomainRegistration,
@@ -47,7 +51,7 @@ import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
-import { TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -321,7 +325,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const { purchase, site, translate, moment, isAutorenewalEnabled } = this.props;
+		const { purchase, site, translate, moment, isAutorenewalEnabled, hideAutoRenew } = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -335,34 +339,42 @@ class PurchaseMeta extends Component {
 			const subsRenewText = isAutorenewalEnabled
 				? translate( 'Auto-renew is ON' )
 				: translate( 'Auto-renew is OFF' );
-			const subsBillingText = isAutorenewalEnabled
-				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
-						args: {
-							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } )
-				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
-						args: {
-							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } );
+			const subsBillingText =
+				isAutorenewalEnabled && ! hideAutoRenew
+					? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
+							args: {
+								renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
+							},
+							components: {
+								dateSpan,
+							},
+					  } )
+					: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+							args: {
+								expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+							},
+							components: {
+								dateSpan,
+							},
+					  } );
 
 			return (
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-					<span className="manage-purchase__detail">{ subsRenewText }</span>
-					<span className="manage-purchase__detail">{ subsBillingText }</span>
-					{ site && (
+					{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
+					<span
+						className={ classNames( 'manage-purchase__detail', {
+							'is-expiring': isCloseToExpiration( purchase ),
+						} ) }
+					>
+						{ subsBillingText }
+					</span>
+					{ site && ! hideAutoRenew && (
 						<span className="manage-purchase__detail">
 							<AutoRenewToggle
 								planName={ site.plan.product_name_short }
 								siteDomain={ site.domain }
+								siteSlug={ site.slug }
 								purchase={ purchase }
 								toggleSource="manage-purchase"
 							/>
@@ -427,6 +439,11 @@ export default connect( ( state, { purchaseId } ) => {
 		site: purchase ? getSite( state, purchase.siteId ) : null,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
+		hideAutoRenew:
+			purchase &&
+			shouldShowOfferResetFlow() &&
+			JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) &&
+			! isRenewable( purchase ),
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
 	};
 } )( localize( withLocalizedMoment( PurchaseMeta ) ) );

@@ -39,7 +39,7 @@ __Advantages:__
 - Data logic (e.g. fetching) is not intertwined with the storage of the data
 - Adopting an accepted pattern grants us access to a community-driven ecosystem of reference implementations
 
-### Third Era: Redux Global State Tree (December 2015 - Present)
+### Third Era: Redux Global State Tree (December 2015 - February 2020)
 
 [Redux](http://redux.js.org/), described as a "predictable state container", is an evolution of the principles advocated in Flux. It is not a far departure from Flux, but is distinct in many ways:
 
@@ -60,9 +60,29 @@ __Advantages:__
 - Encourages and often forces a developer toward writing functional, testable code
 - Extendable, supporting middlewares to suit our specific needs and [conveniences for use with React](https://github.com/reactjs/react-redux)
 
+### Fourth Era: Modularized Redux State Tree (February 2020 - Present)
+
+This era builds upon the previous, using the same selectors, reducers and action creators that were created before. However, instead of creating a single monolithic root reducer on boot, the goal is instead to have individual reducers register themselves when needed. This is done synchronously and automatically through dependency graph resolution.
+
+See [the Modularized State documentation](./modularized-state.md) for more details on how it works and how to implement it in new portions of state.
+
+__Identifying characteristics:__
+
+- Modularized reducers are not imported in the root reducer (`client/state/reducer`)
+- Modularized reducers use `withStorageKey` to persist their state separately
+- Modularized portions of state include an `init` module that registers the reducer as a side effect
+- Action creators and selectors for a modularized portion of state import the `init` module
+
+__Advantages:__
+
+- Preserves most of the advantages of Redux, with the tradeoff that action creators and selectors need to import the `init` file for the portions of state they touch
+- Significantly reduces the amount of code required to boot Calypso, improving loading performance
+- More scalable approach, as Redux state continues to grow
+
+
 ## Current Recommendations
 
-All new data requirements should be implemented as part of the global Redux state tree. The `client/state` directory contains all of the behavior describing the global application state. The folder structure of the `state` directory should directly mirror the sub-trees within the global state tree. Each sub-tree can include their own reducer and actions.
+All new data requirements should be implemented as part of the global, modularized Redux state tree. The `client/state` directory contains all of the behavior describing the global application state. The folder structure of the `state` directory should directly mirror the sub-trees within the global state tree. Each sub-tree should include its own reducer, and preferably also its action creators and selectors.
 
 ### Terminology
 
@@ -77,29 +97,42 @@ The Redux documentation includes a [detailed glossary of terms](https://redux.js
 
 ### Folder Structure
 
-The root module of the `state` directory exports a single reducer function. We leverage [Redux's `combineReducers` function](https://redux.js.org/api/combinereducers) to separate data concerns into their own piece of the overall state. These pieces are reflected by the folder structure of the `state` directory, as shown in the hierarchy below:
+The root module of the `state` directory exports a single reducer function. As the ongoing state modularization work isn't yet completed, it starts off with some legacy sub-reducers always being loaded, through a wrapped version of [Redux's `combineReducers` function](https://redux.js.org/api/combinereducers). Modularized sub-reducers are instead dynamically added to the single reducer as they're needed, rather than unconditionally added at boot.
+
+Separating state into sub-reducers, whether legacy or modularized, allows us to separate data concerns into their own piece of the overall state. These pieces are reflected by the folder structure of the `state` directory, as shown in the hierarchy below:
 
 ```text
 client/state/
 ├── index.js
 ├── action-types.js
 └── { subject }/
-    ├── actions.js
+    ├── actions/
+    |   ├── index.js
+    |   ├── action1.js
+    |   └── action2.js
+    ├── init.js          (for modularized state)
+    ├── package.json     (for modularized state)
     ├── reducer.js
     ├── schema.js
-    ├── selectors.js
+    ├── selectors/
+    |    ├── index.js
+    |    ├── selector1.js
+    |    └── selector2.js
     └── test/
-        ├── actions.js
-        └── reducer.js
+        ├── actions.js   (or actions/)
+        ├── reducer.js
+        └── selectors.js (or selectors/)
 ```
 
 For example, the reducer responsible for maintaining the `state.sites` key within the global state can be found in `client/state/sites/reducer.js`. It's quite common that the subject reducer is itself a combined reducer. Just as it helps to split the global state into subdirectories responsible for their own part of the tree, as a subject grows, you may find that it's easier to maintain pieces as nested subdirectories. This ease of composability is one of Redux's strengths.
+
+Do bear in mind that state is always modularized at the top level, though. Even if a top-level reducer is composed of multiple smaller reducers, the top-level reducer is always loaded as a single atomic unit.
 
 ### Actions
 
 An action describes an intent to change the state of the application. When an action object is [dispatched](https://redux.js.org/api/store#dispatchaction) to an instance of a Redux store, the reducer function for that store is called with the action. Given the structure of our application state, specific subtrees can maintain their own state in response to any actions for which they are concerned.
 
-An action object should contain a `type` key describing the action. All action types are defined in [`state/action-types.js`](https://github.com/Automattic/wp-calypso/blob/master/client/state/action-types.js). For example, to describe the intent of changing the state to include a few new post objects, you might create an action with the type `POSTS_RECEIVE`. Any other relevant properties can be included in this object if they are needed by the reducer function handler.
+An action object should contain a `type` key describing the action. All action types are defined in [`state/action-types.js`](https://github.com/Automattic/wp-calypso/blob/HEAD/client/state/action-types.js). For example, to describe the intent of changing the state to include a few new post objects, you might create an action with the type `POSTS_RECEIVE`. Any other relevant properties can be included in this object if they are needed by the reducer function handler.
 
 As mentioned above, new actions should be added to `action-types.js`. Action types are considered global such that any state subtree's reducer can react to any action types dispatched through the system. The file should remain alphabetized, and we recommend suffixing the verb so that all actions within the same domain scope are in relative proximity. For example, rather than naming your actions `FETCH_POSTS` AND `RECEIVE_POSTS`, you should name them `POSTS_FETCH` AND `POSTS_RECEIVE`.
 
@@ -243,7 +276,7 @@ The benefits of query components are that they (a) are reusable, (b) take advant
 
 When creating a component that needs to consume data, we can simply include a query component as a child of that component.
 
-Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/master/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
+Refer to the [`<QueryPosts />` component](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/data/query-posts) as an example of a query component. New query components should be added to the `components/data` directory, prefixed with `query-` such to distinguish them from legacy data components.
 
 ### Selectors
 
@@ -257,7 +290,7 @@ let posts = getSitePosts( state, siteId );
 let posts = state.sites.sitePosts[ siteId ].map( ( postId ) => state.posts.items[ postId ] );
 ```
 
-In addition, following our modularized state approach (see [`client/state/README.md`](https://github.com/Automattic/wp-calypso/blob/master/client/state/README.md) for more details), we make sure to initialize the relevant portion of state by importing its `init` module. This is best handled in a dedicated selector module, rather than in individual connected components.
+In addition, following our modularized state approach (see [`client/state/README.md`](https://github.com/Automattic/wp-calypso/blob/HEAD/client/state/README.md) for more details), we make sure to initialize the relevant portion of state by importing its `init` module. This is best handled in a dedicated selector module, rather than in individual connected components.
 
 You'll note in the example above that the entire `state` object is passed to the selector. We've chosen to standardize on always sending the entire state object to any selector as the first parameter. This consistency should alleviate uncertainty in calling selectors, as you can always assume that it'll have a similar argument signature. More importantly, it's not uncommon for selectors to need to traverse different parts of the global state, as in the example above where we pull from both the `sites` and `posts` top-level state keys.
 
@@ -278,7 +311,7 @@ By now, you're hopefully convinced that a global application state can enable us
 
 We recommend that you only use the state tree to store user interface state when you know that the data being stored should be persisted between page views, or when it's to be used by distinct areas of the application on the same page. As an example, consider the currently selected site. When navigating between pages in the [_My Sites_](https://wordpress.com/stats) section, I'd expect that the selected site should not change. Additionally, many parts of the rendered application make use of selected site. For these reasons, it makes sense that the currently selected site be saved in the global state. By contrast, when I navigate to the Sharing page and expand one of the available sharing services, I don't have the same expectation that this interaction be preserved when I later leave and return to the page. In these cases, it might be more appropriate to use React state to track the expanded status of the component, local only to the current rendering context. Use your best judgment when considering whether to add to the global state, but don't feel compelled to avoid React state altogether.
 
-Files related to user-interface state can be found in the [`client/state/ui` directory](../client/state/ui).
+Files related to global application user-interface state (such as sections and masterbar visibility) can be found in the [`client/state/ui` directory](../client/state/ui), whereas feature-specific UI state should be kept together with the rest of that feature's state sub-tree or as a separate top-level entry.
 
 ### Data Persistence
 

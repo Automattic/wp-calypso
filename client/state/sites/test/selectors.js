@@ -128,7 +128,7 @@ describe( 'selectors', () => {
 				canUpdateFiles: true,
 				isMainNetworkSite: false,
 				isSecondaryNetworkSite: false,
-				isSiteUpgradeable: null,
+				isSiteUpgradeable: false,
 				options: {
 					jetpack_version: '8.0',
 					unmapped_url: 'https://example.wordpress.com',
@@ -3204,6 +3204,31 @@ describe( 'selectors', () => {
 			);
 
 			chaiExpect( customizerUrl ).to.equal( '/customize/example.com' );
+		} );
+
+		test( 'should return customizer URL with return query for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl(
+				{
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: false,
+							},
+						},
+					},
+				},
+				77203199,
+				null,
+				'https://wordpress.com/things/are/going?to=be&okay=true'
+			);
+
+			chaiExpect( customizerUrl ).to.equal(
+				`/customize/example.com?return=${ encodeURIComponent(
+					'https://wordpress.com/things/are/going?to=be&okay=true'
+				) }`
+			);
 		} );
 
 		test( 'should return null if admin URL for Jetpack site is not known', () => {

@@ -13,7 +13,6 @@ import { flowRight, partialRight, pick } from 'lodash';
 import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
 import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
 import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
@@ -43,13 +42,13 @@ const SiteSettingsTraffic = ( {
 	isJetpackAdmin,
 	isRequestingSettings,
 	isSavingSettings,
+	onChangeField,
 	setFieldValue,
 	translate,
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<Main className="settings-traffic site-settings" wideLayout>
 		<PageViewTracker path="/marketing/traffic/:site" title="Marketing > Traffic" />
-		<DocumentHead title={ translate( 'Marketing and Integrations' ) } />
 		{ ! isAdmin && (
 			<EmptyContent
 				illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -64,6 +63,8 @@ const SiteSettingsTraffic = ( {
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
+				onSubmitForm={ handleSubmitForm }
+				onChangeField={ onChangeField }
 			/>
 		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
@@ -128,6 +129,8 @@ const getFormSettings = partialRight( pick, [
 	'count_roles',
 	'roles',
 	'enable_header_ad',
+	'wordads_ccpa_enabled',
+	'wordads_ccpa_privacy_policy_url',
 	'jetpack_relatedposts_allowed',
 	'jetpack_relatedposts_enabled',
 	'jetpack_relatedposts_show_headline',

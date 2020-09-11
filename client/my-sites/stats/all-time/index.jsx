@@ -94,7 +94,7 @@ class StatsAllTime extends Component {
 						<StatsTab
 							className="all-time__is-best"
 							gridicon="trophy"
-							label={ translate( 'Best Views Ever' ) }
+							label={ translate( 'Best views ever' ) }
 							loading={ isLoading }
 							value={ viewsBestDayTotal }
 							compact

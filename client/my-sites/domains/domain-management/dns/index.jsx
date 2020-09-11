@@ -30,6 +30,7 @@ import { getDomainDns } from 'state/domains/dns/selectors';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import QueryDomainDns from 'components/data/query-domain-dns';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -113,15 +114,16 @@ class Dns extends React.Component {
 	}
 
 	goBack = () => {
+		const { selectedSite, selectedDomainName, currentRoute } = this.props;
 		let path;
 
 		if ( isRegisteredDomain( getSelectedDomain( this.props ) ) ) {
-			path = domainManagementNameServers;
+			path = domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute );
 		} else {
-			path = domainManagementEdit;
+			path = domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute );
 		}
 
-		page( path( this.props.selectedSite.slug, this.props.selectedDomainName ) );
+		page( path );
 	};
 }
 
@@ -132,5 +134,11 @@ export default connect( ( state, { selectedDomainName } ) => {
 	const dns = getDomainDns( state, selectedDomainName );
 	const showPlaceholder = ! dns.hasLoadedFromServer || isRequestingDomains;
 
-	return { selectedSite, domains, dns, showPlaceholder };
+	return {
+		selectedSite,
+		domains,
+		dns,
+		showPlaceholder,
+		currentRoute: getCurrentRoute( state ),
+	};
 } )( localize( Dns ) );

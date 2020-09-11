@@ -8,17 +8,16 @@ import {
 
 import 'state/data-layer/wpcom/sites/alerts/fix';
 import 'state/data-layer/wpcom/sites/alerts/ignore';
+import 'state/jetpack/init';
 
-export const fixThreatAlert = ( siteId, threatId, requestScanState = false ) => ( {
+export const fixThreatAlert = ( siteId, threatId ) => ( {
 	type: JETPACK_SITE_ALERT_THREAT_FIX,
 	siteId,
 	threatId,
-	requestScanState,
 } );
 
-export const ignoreThreatAlert = ( siteId, threatId, requestScanState = false ) => ( {
+export const ignoreThreatAlert = ( siteId, threatId ) => ( {
 	type: JETPACK_SITE_ALERT_THREAT_IGNORE,
 	siteId,
 	threatId,
-	requestScanState,
 } );

@@ -10,6 +10,8 @@ import { Field } from 'redux-form';
  */
 import FormRadio from 'components/forms/form-radio';
 
+import 'state/form/init';
+
 const RadioRenderer = ( { input, meta, type, ...props } ) => (
 	<FormRadio { ...input } { ...props } />
 );

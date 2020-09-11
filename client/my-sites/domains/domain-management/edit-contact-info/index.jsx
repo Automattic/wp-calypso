@@ -21,6 +21,7 @@ import Main from 'components/main';
 import { domainManagementContactsPrivacy } from 'my-sites/domains/paths';
 import { getSelectedDomain } from 'lib/domains';
 import isRequestingWhois from 'state/selectors/is-requesting-whois';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 class EditContactInfo extends React.Component {
 	static propTypes = {
@@ -85,13 +86,18 @@ class EditContactInfo extends React.Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName )
+			domainManagementContactsPrivacy(
+				this.props.selectedSite.slug,
+				this.props.selectedDomainName,
+				this.props.currentRoute
+			)
 		);
 	};
 }
 
 export default connect( ( state, ownProps ) => {
 	return {
+		currentRoute: getCurrentRoute( state ),
 		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
 	};
 } )( localize( EditContactInfo ) );

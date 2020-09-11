@@ -4,7 +4,7 @@
 	&__header {
 		margin-bottom: 10px;
 		flex-basis: 100%;
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	&__options {
@@ -21,7 +21,7 @@
 			margin-top: 8px;
 		}
 
-		@include breakpoint( '>960px' ) {
+		@include breakpoint-deprecated( '>960px' ) {
 			&:first-child:nth-last-child( 2 ),
 			&:first-child:nth-last-child( 2 ) ~ div {
 				flex-basis: calc( 50% - 10px );
@@ -39,7 +39,7 @@
 	cursor: pointer;
 
 	padding: $padding-size;
-	border-radius: 5px;
+	border-radius: 2px;
 
 	background: var( --color-surface );
 
@@ -83,7 +83,7 @@
 
 	.subscription-length-picker__option-term {
 		display: inline-block;
-		font-size: 24px;
+		font-size: $font-title-medium;
 		line-height: 24px;
 	}
 
@@ -92,7 +92,7 @@
 	}
 
 	.subscription-length-picker__option-description {
-		font-size: 16px;
+		font-size: $font-body;
 		margin-top: 2px;
 	}
 
@@ -122,7 +122,7 @@
 	.subscription-length-picker__option-tax {
 		color: var( --color-text-subtle );
 		vertical-align: super;
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		margin-left: 1px;
 	}
 

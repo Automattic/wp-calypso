@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
+import { withMobileBreakpoint } from '@automattic/viewport-react';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal Dependencies
@@ -19,7 +21,8 @@ import Popover from 'components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import { getSearchQuery, getInlineHelpCurrentlySelectedResult } from 'state/inline-help/selectors';
+import getSearchQuery from 'state/inline-help/selectors/get-search-query';
+import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
 import { getHelpSelectedSite } from 'state/help/selectors';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
 import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
@@ -35,11 +38,12 @@ import {
 	bumpStat,
 } from 'state/analytics/actions';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import QueryActiveTheme from 'components/data/query-active-theme';
 import isGutenbergOptInEnabled from 'state/selectors/is-gutenberg-opt-in-enabled';
 import isGutenbergOptOutEnabled from 'state/selectors/is-gutenberg-opt-out-enabled';
+import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {
@@ -63,14 +67,26 @@ class InlineHelpPopover extends Component {
 		activeSecondaryView: '',
 	};
 
+	secondaryViewRef = React.createRef();
+
 	openResultView = ( event ) => {
 		event.preventDefault();
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
+	setAdminSection = () => {
+		const { isBreakpointActive: isMobile, onClose } = this.props;
+		if ( ! isMobile ) {
+			return;
+		}
+		onClose();
+	};
+
 	moreHelpClicked = () => {
 		this.props.onClose();
-		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click' );
+		this.props.recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+			location: 'inline-help-popover',
+		} );
 	};
 
 	setSecondaryViewKey = ( secondaryViewKey ) => {
@@ -79,13 +95,24 @@ class InlineHelpPopover extends Component {
 
 	openSecondaryView = ( secondaryViewKey ) => {
 		this.setSecondaryViewKey( secondaryViewKey );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show` );
-		this.setState( { showSecondaryView: true } );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
+			location: 'inline-help-popover',
+		} );
+		// Focus the secondary popover contents after the state is set
+		this.setState( { showSecondaryView: true }, () => {
+			const contentTitle = this.secondaryViewRef.current.querySelector( 'h2' );
+
+			if ( contentTitle ) {
+				contentTitle.focus();
+			}
+		} );
 	};
 
 	closeSecondaryView = () => {
 		this.setSecondaryViewKey( '' );
-		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide` );
+		this.props.recordTracksEvent( `calypso_inlinehelp_${ this.state.activeSecondaryView }_hide`, {
+			location: 'inline-help-popover',
+		} );
 		this.props.selectResult( -1 );
 		this.props.resetContactForm();
 		this.setState( { showSecondaryView: false } );
@@ -133,11 +160,13 @@ class InlineHelpPopover extends Component {
 				<QuerySupportTypes />
 				<div className="inline-help__search">
 					<InlineHelpSearchCard
-						openResult={ this.openResultView }
+						onSelect={ this.openResultView }
 						query={ this.props.searchQuery }
+						isVisible={ ! this.state.showSecondaryView }
 					/>
 					<InlineHelpSearchResults
-						openResult={ this.openResultView }
+						onSelect={ this.openResultView }
+						onAdminSectionSelect={ this.setAdminSection }
 						searchQuery={ this.props.searchQuery }
 					/>
 				</div>
@@ -154,10 +183,17 @@ class InlineHelpPopover extends Component {
 			`inline-help__${ this.state.activeSecondaryView }`
 		);
 		return (
-			<div className={ classes }>
+			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
 					{
-						[ VIEW_CONTACT ]: <InlineHelpContactView />,
+						[ VIEW_CONTACT ]: (
+							<Fragment>
+								<h2 className="inline-help__title" tabIndex="-1">
+									{ __( 'Get Support' ) }
+								</h2>
+								<InlineHelpContactView />
+							</Fragment>
+						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
 								result={ selectedResult }
@@ -167,12 +203,12 @@ class InlineHelpPopover extends Component {
 						),
 					}[ this.state.activeSecondaryView ]
 				}
-			</div>
+			</section>
 		);
 	};
 
 	renderPrimaryView = () => {
-		const { translate, siteId, showOptIn, showOptOut, isCheckout } = this.props;
+		const { translate, siteId, showOptIn, showOptOut, isCheckout, isEditorDeprecated } = this.props;
 
 		// Don't show additional items inside Checkout.
 		if ( isCheckout ) {
@@ -182,7 +218,7 @@ class InlineHelpPopover extends Component {
 		return (
 			<>
 				<QueryActiveTheme siteId={ siteId } />
-				{ showOptOut && (
+				{ showOptOut && ! isEditorDeprecated && (
 					<Button
 						onClick={ this.switchToClassicEditor }
 						className="inline-help__classic-editor-toggle"
@@ -191,7 +227,7 @@ class InlineHelpPopover extends Component {
 					</Button>
 				) }
 
-				{ showOptIn && (
+				{ showOptIn && ! isEditorDeprecated && (
 					<Button
 						onClick={ this.switchToBlockEditor }
 						className="inline-help__gutenberg-editor-toggle"
@@ -205,9 +241,11 @@ class InlineHelpPopover extends Component {
 
 	switchToClassicEditor = () => {
 		const { siteId, onClose, optOut, classicUrl, translate } = this.props;
+
 		const proceed =
 			typeof window === 'undefined' ||
 			window.confirm( translate( 'Are you sure you wish to leave this page?' ) );
+
 		if ( proceed ) {
 			optOut( siteId, classicUrl );
 			onClose();
@@ -251,6 +289,7 @@ const optOut = ( siteId, classicUrl ) => {
 			),
 			recordTracksEvent( 'calypso_gutenberg_opt_in', {
 				opt_in: false,
+				location: 'inline-help-popover',
 			} ),
 			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt Out' )
 		),
@@ -269,6 +308,7 @@ const optIn = ( siteId, gutenbergUrl ) => {
 			),
 			recordTracksEvent( 'calypso_gutenberg_opt_in', {
 				opt_in: true,
+				location: 'inline-help-popover',
 			} ),
 			bumpStat( 'gutenberg-opt-in', 'Calypso Help Opt In' )
 		),
@@ -299,6 +339,7 @@ function mapStateToProps( state ) {
 		showOptIn: showSwitchEditorButton && optInEnabled && isCalypsoClassic,
 		gutenbergUrl,
 		isCheckout: section.name && section.name === 'checkout',
+		isEditorDeprecated: inEditorDeprecationGroup( state ),
 	};
 }
 
@@ -313,4 +354,4 @@ const mapDispatchToProps = {
 export default compose(
 	localize,
 	connect( mapStateToProps, mapDispatchToProps )
-)( InlineHelpPopover );
+)( withMobileBreakpoint( InlineHelpPopover ) );

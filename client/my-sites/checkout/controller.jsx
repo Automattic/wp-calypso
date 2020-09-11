@@ -19,18 +19,28 @@ import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
-import { isGSuiteRestricted } from 'lib/gsuite';
+import { canUserPurchaseGSuite } from 'lib/gsuite';
 import { getRememberedCoupon } from 'lib/cart/actions';
 import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
+import userFactory from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
 
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const currentUser = getCurrentUser( state );
+	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
+	const isDisallowedForSitePicker =
+		context.pathname.includes( '/checkout/no-site' ) &&
+		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 
-	if ( ! selectedSite && '/checkout/no-site' !== context.pathname ) {
+	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );
 		return;
 	}
@@ -49,10 +59,16 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout' } ) );
 
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
+
+	const isLoggedOutCart = isLoggedOut && context.pathname.includes( '/checkout/no-site' );
+	const isNoSiteCart =
+		! isLoggedOut &&
+		context.pathname.includes( '/checkout/no-site' ) &&
+		'no-user' === context.query.cart;
 
 	context.primary = (
 		<CartData>
@@ -64,12 +80,15 @@ export function checkout( context, next ) {
 				isComingFromSignup={ !! context.query.signup }
 				isComingFromGutenboarding={ !! context.query.preLaunch }
 				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
+				isComingFromUpsell={ !! context.query.upgrade }
 				plan={ plan }
 				selectedSite={ selectedSite }
 				reduxStore={ context.store }
 				redirectTo={ context.query.redirect_to }
 				upgradeIntent={ context.query.intent }
 				clearTransaction={ false }
+				isLoggedOutCart={ isLoggedOutCart }
+				isNoSiteCart={ isNoSiteCart }
 			/>
 		</CartData>
 	);
@@ -81,7 +100,7 @@ export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
 
 	context.primary = (
 		<CheckoutPendingComponent
@@ -102,7 +121,7 @@ export function checkoutThankYou( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const displayMode = get( context, 'query.d' );
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
@@ -126,7 +145,7 @@ export function checkoutThankYou( context, next ) {
 
 export function gsuiteNudge( context, next ) {
 	const { domain, site, receiptId } = context.params;
-	context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'gsuite-nudge' } ) );
 
 	const state = context.store.getState();
 	const selectedSite =
@@ -136,7 +155,7 @@ export function gsuiteNudge( context, next ) {
 		return null;
 	}
 
-	if ( isGSuiteRestricted() ) {
+	if ( ! canUserPurchaseGSuite() ) {
 		next();
 	}
 
@@ -173,7 +192,7 @@ export function upsellNudge( context, next ) {
 		upgradeItem = context.params.upgradeItem;
 	}
 
-	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: upsellType } ) );
 
 	context.primary = (
 		<CheckoutContainer

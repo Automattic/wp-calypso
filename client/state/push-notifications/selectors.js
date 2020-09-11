@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import 'state/push-notifications/init';
+
 // `getState().pushNotifications.system`
 export const isApiReady = ( state ) => !! state.pushNotifications.system.apiReady;
 export const isAuthorized = ( state ) => !! state.pushNotifications.system.authorized;

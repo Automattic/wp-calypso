@@ -36,6 +36,7 @@ export default function RockOnButton() {
 - **Scary**: Use when the action will delete customer data or be otherwise difficult to recover from. Destructive buttons should trigger a confirmation dialog before the action is completed. Be thoughtful about using destructive buttons because they can feel stressful for customers.
 - **Borderless**: Use for less important or less commonly used actions since they’re less prominent.
 - **Busy**: Use when a button has been pressed and the associated action is in progress.
+- **Bare**: Use when you need a "button-as-div", to reset all styles from a button that will then be augmented by a consumer. For example, if you need something to _behave_ as a button but not _appear_ as a button, this is a good option.
 
 #### Icon buttons
 
@@ -57,7 +58,8 @@ export default function RockOnButton() {
 
 ### General guidelines
 
-- Use clear and accurate labels. Use sentence-style capitalization.
+- Use clear and accurate labels.
+- Use sentence-style capitalization.
 - Lead with strong, concise, and actionable verbs.
 - When the customer is confirming an action, use specific labels, such as **Save** or **Trash**, instead of using **OK** and **Cancel**.
 - Prioritize the most important actions. Too many calls to action can cause confusion and make customers unsure of what to do next.

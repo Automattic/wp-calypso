@@ -167,7 +167,7 @@ Because we're passing the list as an argument, we can pass mock  `validValuesLis
 
 Often our code will use methods and properties from imported external and internal libraries in multiple places, which makes passing around arguments messy and impracticable. For these cases `jest.mock` offers a neat way to stub these dependencies. 
 
-For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp-calypso/tree/master/client/config) module to control a great deal of functionality via feature flags. 
+For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp-calypso/tree/HEAD/client/config) module to control a great deal of functionality via feature flags. 
 
 ```javascript
 // bilbo.js
@@ -229,9 +229,9 @@ describe( 'my module', () => {
 
 Calypso is an amorphous, ever-changing creature, so you might find yourself having to extend or edit tests for legacy code.
 
-For example, the current preference for manage fetching and updating data remotely/asynchronously is via the [data layer](https://github.com/Automattic/wp-calypso/tree/master/client/state/data-layer).
+For example, the current preference for manage fetching and updating data remotely/asynchronously is via the [data layer](https://github.com/Automattic/wp-calypso/tree/HEAD/client/state/data-layer).
 
-Still, you may come across components and actions containing calls to [lib/wp](https://github.com/Automattic/wp-calypso/tree/master/client/lib/wp):
+Still, you may come across components and actions containing calls to [lib/wp](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/wp):
 
 ```javascript
 wpcom
@@ -252,6 +252,6 @@ jest.mock( 'lib/wp', () => ( {
 
 ## Further reading
 * [React testing with Jest](https://facebook.github.io/jest/docs/en/tutorial-react.html)
-* [Enyzme API](https://github.com/airbnb/enzyme/tree/master/docs/api)
+* [Enyzme API](https://github.com/airbnb/enzyme/tree/HEAD/docs/api)
 * [Test Contra-variance](http://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html)
 * [The Failures of "Into to TDD"](http://blog.testdouble.com/posts/2014-01-25-the-failures-of-intro-to-tdd.html)

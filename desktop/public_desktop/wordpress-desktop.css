@@ -1,0 +1,209 @@
+/**
+ * CSS specific to the WordPress.com Desktop app
+ */
+
+/* Disable text selection where it doesn't make sense. Let's be conservative as it's a usability hit. */
+header.masterbar,
+.layout__secondary
+{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+
+/**
+ * Change scrollbar behavior for desktop app
+ */
+
+/*
+	Some background for this:
+	When you navigate from a page that doesn't need a scrollbar, to a page that does need one, everything that's centered or right-aligned "jumps" a little bit to the left to accomodate the presence of a scrollbar. Permanently enabling it even when not needed is an easy fix for that.
+	But in the desktop app, it looks really ugly on screens like the login screen, when there's a vertical scrollbar. And it's also very rare that a vertical scrollbar isn't present after logged in. So therefore, revert to stock browser behavior in the desktop app.
+*/
+
+html.is-desktop {
+	overflow-y: auto;
+}
+
+html.is-desktop.detail-page-open {
+	overflow-y: hidden;
+}
+
+
+/**
+ * Desktop-only screens (failed-to-start.html etc.)
+ */
+
+html.desktop-auth body {
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+	line-height: 1.5;
+	font-size: 15px;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #0085be;
+	color: #fff;
+	margin: 0;
+}
+
+html.desktop-auth .welcome {
+	max-width: 320px;
+	width: 100%;
+	max-height: 100%;
+	margin: 0 auto;
+	text-align: center;
+}
+
+html.desktop-auth p {
+	margin-bottom: 1.5em;
+}
+
+html.desktop-auth .welcome h2 {
+	margin-bottom: 20px;
+}
+
+html.desktop-auth .welcome ol {
+	text-align: left;
+}
+
+html.desktop-auth .welcome code {
+	font-size: 15px;
+	color: #c7d6e0;
+}
+
+html.desktop-auth .sadface {
+	width: 144px;
+	height: 144px;
+}
+
+html.desktop-auth a {
+	color: #74dbfa;
+}
+
+html.desktop-auth a:hover {
+	color: #fff;
+}
+
+html.desktop-auth img {
+	max-width: 100%;
+	height: auto;
+}
+
+html.desktop-auth img.instructions {
+	border-radius: 2px;
+}
+
+html.desktop-auth #showme {
+	width: 640px;
+	margin-left: -160px;
+}
+
+html.desktop-auth .button-emphasis {
+    background: #00a8db;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+    line-height: 21px;
+    border-radius: 4px;
+    padding: 7px 14px 9px;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+
+/**
+ * Offline warning
+ */
+
+html.is-desktop .warning {
+	position: fixed;
+	z-index: 1000;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 12px 16px 12px 48px;
+	color: #fff;
+	background-color: #f0b849;	/* $alert-yellow */
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI0IDI0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTEyLDJDNi41LDIsMiw2LjUsMiwxMnM0LjUsMTAsMTAsMTBzMTAtNC41LDEwLTEwUzE3LjUsMiwxMiwyeiBNMTMsMTdoLTJ2LTJoMlYxN3ogTTEzLDEzaC0ybC0wLjUtNmgzTDEzLDEzeiIgLz48L3N2Zz4=);
+	background-size: 24px 24px;
+	background-position: 12px center;
+	background-repeat: no-repeat;
+}
+
+html.is-desktop .warning button {
+	color: white;
+	border-bottom: 1px solid white;
+	cursor: pointer;
+}
+
+
+/**
+ * Keep the masterbar sticky even in small sizes
+ */
+
+html.is-desktop header#header {
+	position: fixed;
+}
+
+.form-password-input .form-label {
+	text-align: left;
+	color: #c8d7e1;
+}
+
+
+/**
+ * Disable link dragging when it refers to the localhost
+ */
+
+a:not([href*="//"]) {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-user-drag: none;
+}
+
+/**
+ * Pin app reminder
+ */
+
+.pin-app {
+	max-width: 290px;
+	color: #fff;
+	background: #005083;
+	border-radius: 8px;
+	padding: 10px 15px;
+	position: absolute;
+	bottom: 20px;
+	left: 20px;
+}
+
+.pin-app h2 {
+	font-weight: bold;
+	margin-bottom: 1em;
+}
+
+.pin-app img {
+	display: block;
+	margin: 0 auto;
+}
+
+.pin-app .pin-app-close {
+	display: block;
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	text-decoration: none;
+	fill: #fff;
+}

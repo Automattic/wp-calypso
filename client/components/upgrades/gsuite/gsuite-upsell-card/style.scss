@@ -3,11 +3,11 @@
 }
 
 .gsuite-upsell-card__product-intro {
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		margin-bottom: 1em;
 	}
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		display: flex;
 	}
 }
@@ -18,8 +18,8 @@
 
 .gsuite-upsell-card__product-name {
 	color: #888;
-	font-size: 25px;
-	font-weight: 100;
+	font-size: $font-title-medium;
+	font-weight: 400;
 	margin: 0;
 }
 
@@ -62,7 +62,7 @@
 		width: 100%;
 	}
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 
 		button {
@@ -71,7 +71,7 @@
 		}
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		flex-direction: column;
 		button {
 			margin: 5px 0 0;
@@ -79,7 +79,7 @@
 		}
 	}
 
-	@include breakpoint( '>800px' ) {
+	@include breakpoint-deprecated( '>800px' ) {
 		flex-direction: row;
 		button {
 			margin: 0 0 0 5px;

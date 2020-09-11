@@ -23,7 +23,7 @@ import 'state/jetpack-connect/init';
 const _fetching = {};
 const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
-export function checkUrl( url, isUrlOnSites ) {
+export function checkUrl( url, isUrlOnSites, allowWPCOMSite ) {
 	return ( dispatch ) => {
 		if ( _fetching[ url ] ) {
 			return;
@@ -73,7 +73,11 @@ export function checkUrl( url, isUrlOnSites ) {
 
 				let errorCode = null;
 				let instructionsType = null;
-				if ( data && data.isWordPressDotCom ) {
+				let isSearch = true;
+				if ( allowWPCOMSite ) {
+					isSearch = false;
+				}
+				if ( data && data.isWordPressDotCom && isSearch ) {
 					errorCode = 'calypso_jpc_error_wpdotcomsite';
 				} else if ( data && ! data.exists ) {
 					errorCode = 'calypso_jpc_error_notexists';

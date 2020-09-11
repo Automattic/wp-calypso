@@ -11,9 +11,11 @@ import isRequestingMediaItem from 'state/selectors/is-requesting-media-item';
 describe( 'isRequestingMediaItem()', () => {
 	const state = {
 		media: {
-			mediaItemRequests: {
+			fetching: {
 				2916284: {
-					10: true,
+					items: {
+						10: true,
+					},
 				},
 			},
 		},

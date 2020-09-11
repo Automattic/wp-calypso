@@ -1,0 +1,295 @@
+{
+	"featured": [
+		{
+			"title": "Reynolds (FSE)",
+			"slug": "reynolds-fse",
+			"template": "reynolds-fse",
+			"theme": "seedlet-blocks",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false,
+			"is_fse": true
+		},
+		{
+			"title": "Vesta (FSE)",
+			"slug": "vesta-fse",
+			"template": "vesta",
+			"theme": "seedlet-blocks",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false,
+			"is_fse": true
+		},
+		{
+			"title": "Ibis (FSE)",
+			"slug": "ibis-fse",
+			"template": "ibis",
+			"theme": "ibis",
+			"fonts": {
+				"headings": "Lora",
+				"base": "Lora"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false,
+			"is_fse": true
+		},
+		{
+			"title": "Cassel",
+			"slug": "cassel",
+			"template": "cassel",
+			"theme": "mayland",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "blog" ],
+			"is_premium": false
+		},
+		{
+			"title": "Edison",
+			"slug": "edison",
+			"template": "edison",
+			"theme": "stratford",
+			"fonts": {
+				"headings": "Chivo",
+				"base": "Open Sans"
+			},
+			"categories": [ "featured", "blog" ],
+			"is_premium": true
+		},
+		{
+			"title": "Vesta",
+			"slug": "vesta",
+			"template": "vesta",
+			"theme": "mayland",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Doyle",
+			"slug": "doyle",
+			"template": "doyle",
+			"theme": "alves",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "business" ],
+			"is_premium": true
+		},
+		{
+			"title": "Bowen",
+			"slug": "bowen",
+			"template": "bowen",
+			"theme": "coutoire",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "blog" ],
+			"is_premium": false
+		},
+		{
+			"title": "Easley",
+			"slug": "easley",
+			"template": "easley",
+			"theme": "maywood",
+			"fonts": {
+				"headings": "Space Mono",
+				"base": "Roboto"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Camdem",
+			"slug": "Camdem",
+			"template": "camdem",
+			"theme": "maywood",
+			"fonts": {
+				"headings": "Space Mono",
+				"base": "Roboto"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Reynolds",
+			"slug": "reynolds",
+			"template": "reynolds",
+			"theme": "rockfield",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Overton",
+			"slug": "overton",
+			"template": "overton",
+			"theme": "alves",
+			"fonts": {
+				"headings": "Cabin",
+				"base": "Raleway"
+			},
+			"categories": [ "featured", "business" ],
+			"is_premium": false
+		},
+		{
+			"title": "Brice",
+			"slug": "brice",
+			"template": "brice",
+			"theme": "mayland",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "charity", "non-profit" ],
+			"is_premium": false
+		},
+		{
+			"title": "Barnsbury",
+			"slug": "barnsbury",
+			"template": "barnsbury",
+			"theme": "barnsbury",
+			"fonts": {
+				"headings": "Open Sans",
+				"base": "Chivo"
+			},
+			"categories": [ "featured", "business" ],
+			"is_premium": false
+		},
+		{
+			"title": "Alves",
+			"slug": "alves",
+			"template": "alves",
+			"theme": "alves",
+			"fonts": {
+				"headings": "Arvo",
+				"base": "Montserrat"
+			},
+			"categories": [ "featured", "non-profit", "charity" ],
+			"is_premium": false
+		},
+		{
+			"title": "Mayland",
+			"slug": "mayland",
+			"template": "mayland",
+			"theme": "mayland",
+			"fonts": {
+				"headings": "Raleway",
+				"base": "Cabin"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Rivington",
+			"slug": "rivington",
+			"template": "rivington",
+			"theme": "rivington",
+			"fonts": {
+				"headings": "Arvo",
+				"base": "Montserrat"
+			},
+			"categories": [ "featured", "real estate listing" ],
+			"is_premium": false
+		},
+		{
+			"title": "Maywood",
+			"slug": "maywood",
+			"template": "maywood",
+			"theme": "maywood",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "restaurant, small business" ],
+			"is_premium": false
+		},
+		{
+			"title": "Balasana",
+			"slug": "balasana",
+			"template": "balasana",
+			"theme": "balasana",
+			"fonts": {
+				"headings": "Open Sans",
+				"base": "Chivo"
+			},
+			"categories": [ "featured", "restaurant, small business" ],
+			"is_premium": false
+		},
+		{
+			"title": "Stratford",
+			"slug": "stratford",
+			"template": "stratford",
+			"theme": "stratford",
+			"fonts": {
+				"headings": "Chivo",
+				"base": "Open Sans"
+			},
+			"categories": [ "featured", "school" ],
+			"is_premium": false
+		},
+		{
+			"title": "Rockfield",
+			"slug": "rockfield",
+			"template": "rockfield",
+			"theme": "rockfield",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "restaurant", "small business" ],
+			"is_premium": false
+		},
+		{
+			"title": "Coutoire",
+			"slug": "coutoire",
+			"template": "coutoire",
+			"theme": "coutoire",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "portfolio" ],
+			"is_premium": false
+		},
+		{
+			"title": "Leven",
+			"slug": "leven",
+			"template": "leven",
+			"theme": "leven",
+			"fonts": {
+				"headings": "Chivo",
+				"base": "Open Sans"
+			},
+			"categories": [ "featured", "portfolio", "small business" ],
+			"is_premium": false
+		},
+		{
+			"title": "Gibbs",
+			"slug": "gibbs",
+			"template": "gibbs",
+			"theme": "rockfield",
+			"fonts": {
+				"headings": "Fira Sans",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "restaurant", "small business" ],
+			"is_premium": false
+		}
+	]
+}

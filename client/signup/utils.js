@@ -10,16 +10,38 @@ import { translate } from 'i18n-calypso';
  */
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
-import userFactory from 'lib/user';
-
-const user = userFactory();
+import user from 'lib/user';
+import { abtest } from 'lib/abtest';
 
 const { defaultFlowName } = flows;
+
+function isEligibleForSwapStepsTest() {
+	const cookies = cookie.parse( document.cookie );
+	const countryCodeFromCookie = cookies.country_code;
+	const isUserFromUS = 'US' === countryCodeFromCookie;
+
+	if ( user() && user().get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
+		return true;
+	}
+
+	return false;
+}
+
+function getDefaultFlowName() {
+	if (
+		isEligibleForSwapStepsTest() &&
+		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
+	) {
+		return 'onboarding-plan-first';
+	}
+
+	return defaultFlowName;
+}
 
 export function getFlowName( parameters ) {
 	return parameters.flowName && isFlowName( parameters.flowName )
 		? parameters.flowName
-		: defaultFlowName;
+		: getDefaultFlowName();
 }
 
 function isFlowName( pathFragment ) {
@@ -49,7 +71,7 @@ export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 		// when the user is logged in, the locale slug is meaningless in a
 		// signup URL, as the page will be translated in the language the user
 		// has in their settings.
-		locale = localeSlug && ! user.get() ? `/${ localeSlug }` : '';
+		locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route
@@ -98,8 +120,8 @@ export function getValueFromProgressStore( { signupProgress, stepName, fieldName
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
 }
 
-export function getDestination( destination, dependencies, flowName ) {
-	return flows.filterDestination( destination, dependencies, flowName );
+export function getDestination( destination, dependencies, flowName, localeSlug ) {
+	return flows.filterDestination( destination, dependencies, flowName, localeSlug );
 }
 
 export function getThemeForDesignType( designType ) {

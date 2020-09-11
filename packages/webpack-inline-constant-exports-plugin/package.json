@@ -7,7 +7,7 @@
 	"keywords": [
 		"Webpack"
 	],
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/webpack-inline-constant-exports-plugin",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/webpack-inline-constant-exports-plugin",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -21,6 +21,9 @@
 	},
 	"scripts": {},
 	"peerDependencies": {
-		"webpack": "^4.29.6"
+		"webpack": "^4.44.1"
+	},
+	"devDependencies": {
+		"rimraf": "^3.0.0"
 	}
 }

@@ -8,6 +8,8 @@ import { get, find, indexOf, values } from 'lodash';
  */
 import treeSelect from '@automattic/tree-select';
 
+import 'state/invites/init';
+
 /**
  * Returns true if currently requesting invites for the given site, or false
  * otherwise.
@@ -50,6 +52,22 @@ export function getAcceptedInvitesForSite( state, siteId ) {
 		return null;
 	}
 	return invites.accepted;
+}
+
+/**
+ * Returns an array of all invite links for the given site, or
+ * `null` if there are none.
+ *
+ * @param  {object} state  Global state tree
+ * @param  {number} siteId Site ID
+ * @returns {?Array}       The list of invite links for the given site
+ */
+export function getInviteLinksForSite( state, siteId ) {
+	const inviteLinks = state.invites.links[ siteId ];
+	if ( ! inviteLinks ) {
+		return null;
+	}
+	return inviteLinks;
 }
 
 /**
@@ -144,7 +162,7 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
-
+ *
  * @returns {boolean}          Whether an invite is being deleted
  */
 export function isDeletingAnyInvite( state, siteId ) {

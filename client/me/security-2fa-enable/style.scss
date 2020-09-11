@@ -19,14 +19,14 @@
 
 .security-2fa-enable__app-options {
 	font-color: var( --color-neutral-0 );
-	font-size: 13px;
+	font-size: $font-body-small;
 	font-style: italic;
 	margin-top: 10px;
 }
 
 .security-2fa-enable__time-code {
-	font-weight: bold;
-	font-size: 16px;
+	font-weight: 600;
+	font-size: $font-body;
 }
 
 .security-2fa-enable__toggle {

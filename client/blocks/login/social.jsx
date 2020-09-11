@@ -172,7 +172,7 @@ class SocialLoginForm extends Component {
 	trackLoginAndRememberRedirect = ( service ) => {
 		this.recordEvent( 'calypso_login_social_button_click', service );
 
-		if ( this.props.redirectTo ) {
+		if ( this.props.redirectTo && typeof window !== 'undefined' ) {
 			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectTo );
 		}
 	};

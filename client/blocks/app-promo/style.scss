@@ -5,7 +5,7 @@
 	padding: 5px 0;
 	overflow: hidden;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
@@ -33,7 +33,7 @@
 	padding: 8px 34px 8px 50px;
 	background-color: var( --color-surface );
 	color: var( --color-primary );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 

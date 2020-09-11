@@ -29,6 +29,7 @@ import {
 	isJetpackProduct,
 	isPlan,
 } from 'lib/products-values';
+import { isJetpackSearch } from 'lib/products-values/constants';
 import notices from 'notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'state/purchases/selectors';
@@ -63,6 +64,7 @@ class RemovePurchase extends Component {
 		setAllSitesSelected: PropTypes.func.isRequired,
 		userId: PropTypes.number.isRequired,
 		useVerticalNavItem: PropTypes.bool,
+		onClickTracks: PropTypes.func,
 	};
 
 	state = {
@@ -89,6 +91,9 @@ class RemovePurchase extends Component {
 	openDialog = ( event ) => {
 		event.preventDefault();
 
+		if ( this.props.onClickTracks ) {
+			this.props.onClickTracks( event );
+		}
 		if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
@@ -336,8 +341,7 @@ class RemovePurchase extends Component {
 				/>
 			);
 		}
-
-		if ( this.props.isAtomicSite ) {
+		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase.productSlug ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 

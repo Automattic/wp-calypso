@@ -1,18 +1,8 @@
 // @TODO: Remove this line and restore the import in `./gutenboard.tsx` when a release after @wordpress/components@8.5.0 is published.
 // See https://github.com/WordPress/gutenberg/pull/19535
 @import '~@wordpress/components/build-style/style';
+@import '~@automattic/typography/styles/fonts';
 @import 'assets/stylesheets/gutenberg-base-styles';
-
-@font-face {
-	font-display: swap;
-	font-family: 'Recoleta';
-	font-weight: 400;
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot' );
-	src: url( 'https://s1.wp.com/i/fonts/recoleta/400.eot?#iefix' ) format( 'embedded-opentype' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff2' ) format( 'woff2' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.woff' ) format( 'woff' ),
-		url( 'https://s1.wp.com/i/fonts/recoleta/400.ttf' ) format( 'truetype' );
-}
 
 // Override core variables: we don't have wp-admin header and sidebar in Calypso
 // Targetting styles from `@wordpress/edit-post`
@@ -34,12 +24,14 @@ $admin-sidebar-width-collapsed: 0;
 	// overrides .edit-post-visual-editor
 	padding-top: 0;
 
+	// hide the block toolbar
+	.block-editor-block-list__block-popover,
 	// overrides box-shadow added on focus
 	.block-editor-block-list__block::after {
 		display: none;
 	}
 	@include break-small {
-		padding-top: $gutenboarding-header-height;
+		padding-top: $onboarding-header-height;
 	}
 }
 

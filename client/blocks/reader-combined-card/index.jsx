@@ -158,6 +158,7 @@ class ReaderCombinedCardComponent extends React.Component {
 						showReportSite={ true }
 						showReportPost={ false }
 						post={ posts[ 0 ] }
+						posts={ posts }
 					/>
 				</div>
 				{ feedId && <QueryReaderFeed feedId={ +feedId } includeMeta={ false } /> }

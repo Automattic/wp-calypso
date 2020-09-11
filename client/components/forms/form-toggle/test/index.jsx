@@ -93,7 +93,7 @@ describe( 'FormToggle', () => {
 					<FormToggle checked={ false } />
 				</div>
 			);
-			const toggleInputs = toggles.find( '.form-toggle' );
+			const toggleInputs = toggles.find( 'input.form-toggle' );
 			const ids = toggleInputs.map( ( input ) => input.props().id );
 
 			assert( ids.length === uniq( ids ).length );

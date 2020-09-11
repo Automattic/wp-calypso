@@ -10,9 +10,15 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'state/utils';
 import { billingTransactionsSchema } from './schema';
 import individualTransactions from './individual-transactions/reducer';
+import ui from './ui/reducer';
 
 /**
  * Returns the updated items state after an action has been dispatched.
@@ -93,11 +99,14 @@ export const sendingReceiptEmail = withoutPersistence( ( state = {}, action ) =>
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	requesting,
 	sendingReceiptEmail,
 	//individual transactions contains transactions that are not part of the items tree.
 	//TODO: if pagination is implemented, address potential data duplication between individualTransactions and items
 	individualTransactions,
+	ui,
 } );
+
+export default withStorageKey( 'billingTransactions', combinedReducer );

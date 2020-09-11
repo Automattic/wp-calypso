@@ -9,7 +9,7 @@ import { pickBy } from 'lodash';
 import { AppState } from 'types';
 import { getSiteAdminUrl } from 'state/sites/selectors';
 import { addQueryArgs } from 'lib/route';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
 import wpcom from 'lib/wp';
 

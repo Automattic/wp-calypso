@@ -20,6 +20,7 @@ import 'state/data-layer/wpcom/email-forwarding/add';
 import 'state/data-layer/wpcom/email-forwarding/get';
 import 'state/data-layer/wpcom/email-forwarding/remove';
 import 'state/data-layer/wpcom/email-forwarding/resend-email-verification';
+import 'state/email-forwarding/init';
 
 export const getEmailForwards = ( domainName ) => {
 	return {

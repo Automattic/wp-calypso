@@ -32,7 +32,7 @@
 .email-forwarding__form {
 	margin-top: 0;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		margin-top: 15px;
 	}
 }
@@ -49,11 +49,11 @@ ul.email-forwarding__list {
 		position: relative;
 
 		span {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 40px;
 
-			@include breakpoint( '<660px' ) {
-				font-size: 12px;
+			@include breakpoint-deprecated( '<660px' ) {
+				font-size: $font-body-extra-small;
 				line-height: 150%;
 			}
 
@@ -62,12 +62,12 @@ ul.email-forwarding__list {
 				font-weight: normal;
 
 				&:first-child {
-					@include breakpoint( '<660px' ) {
+					@include breakpoint-deprecated( '<660px' ) {
 						display: block;
 					}
 				}
 
-				@include breakpoint( '>660px' ) {
+				@include breakpoint-deprecated( '>660px' ) {
 					font-weight: 600;
 				}
 			}
@@ -85,7 +85,7 @@ ul.email-forwarding__list {
 }
 
 .email-forwarding__limit {
-	color: var( --color-neutral-light );
+	color: var( --color-text-subtle );
 	line-height: 3em;
 	margin-bottom: 15px;
 }

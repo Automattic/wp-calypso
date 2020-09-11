@@ -4,33 +4,30 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { head, uniqueId } from 'lodash';
+import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import DropZone from 'components/drop-zone';
-import MediaActions from 'lib/media/actions';
-import MediaStore from 'lib/media/store';
-import { filterItemsByMimePrefix, isItemBeingUploaded } from 'lib/media/utils';
+import { filterItemsByMimePrefix } from 'lib/media/utils';
 import ImageSelectorDropZoneIcon from './dropzone-icon';
 
-import { receiveMedia, deleteMedia } from 'state/media/actions';
+import { addMedia } from 'state/media/thunks';
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 
 class ImageSelectorDropZone extends Component {
 	static propTypes = {
-		deleteMedia: PropTypes.func,
 		onDroppedImage: PropTypes.func,
-		receiveMedia: PropTypes.func,
+		addMedia: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 	};
 
-	onFilesDrop = ( files ) => {
+	onFilesDrop = async ( files ) => {
 		/**
 		 * Filter files for `image` media prefix and return the first image.
 		 *
@@ -42,36 +39,13 @@ class ImageSelectorDropZone extends Component {
 			return false;
 		}
 
-		const transientMediaId = uniqueId( 'image-selector' );
-		const { siteId, site } = this.props;
-
-		const handleImageSelectorUpload = () => {
-			const media = MediaStore.get( siteId, transientMediaId );
-			const isUploadInProgress = media && isItemBeingUploaded( media );
-			const isFailedUpload = ! media;
-
-			if ( isFailedUpload ) {
-				this.props.deleteMedia( siteId, transientMediaId );
-			} else {
-				this.props.receiveMedia( siteId, media );
-			}
-
-			/**
-			 * File upload finished. No need to listen for changes anymore.
-			 */
-			if ( ! isUploadInProgress ) {
-				MediaStore.off( 'change', handleImageSelectorUpload );
-			}
-			this.props.onDroppedImage( media );
-		};
-
-		MediaStore.on( 'change', handleImageSelectorUpload );
-
-		MediaActions.add( site, {
-			ID: transientMediaId,
+		const file = {
 			fileContents: droppedImage,
 			fileName: droppedImage.name,
-		} );
+		};
+		const [ uploadedMedia ] = await this.props.addMedia( file, this.props.site );
+
+		this.props.onDroppedImage( uploadedMedia );
 	};
 
 	render() {
@@ -101,7 +75,6 @@ export default connect(
 		return props;
 	},
 	{
-		deleteMedia,
-		receiveMedia,
+		addMedia,
 	}
 )( localize( ImageSelectorDropZone ) );

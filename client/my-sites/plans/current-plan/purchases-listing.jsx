@@ -18,6 +18,7 @@ import {
 } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
+import isJetpackCloudEligible from 'state/selectors/is-jetpack-cloud-eligible';
 import { Button, Card } from '@automattic/components';
 import MyPlanCard from './my-plan-card';
 import QuerySites from 'components/data/query-sites';
@@ -26,7 +27,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import ProductExpiration from 'components/product-expiration';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from 'me/purchases/paths';
-import { getPlan } from 'lib/plans';
+import { getPlan, planHasFeature } from 'lib/plans';
 import {
 	isExpiring,
 	isPartnerPurchase,
@@ -38,7 +39,17 @@ import {
 	isJetpackProduct,
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
+	isJetpackBackup,
+	isJetpackScan,
 } from 'lib/products-values';
+import {
+	isJetpackSearch,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_SCAN,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+} from 'lib/products-values/constants';
+import Gridicon from 'components/gridicon';
+import QueryRewindState from 'components/data/query-rewind-state';
 
 class PurchasesListing extends Component {
 	static propTypes = {
@@ -59,9 +70,9 @@ class PurchasesListing extends Component {
 	};
 
 	isLoading() {
-		const { currentPlan, selectedSite, isRequestingPlans } = this.props;
+		const { currentPlan, selectedSite, isRequestingPlans, isCloudEligible } = this.props;
 
-		return ! currentPlan || ! selectedSite || isRequestingPlans;
+		return ! currentPlan || ! selectedSite || isRequestingPlans || undefined === isCloudEligible;
 	}
 
 	isFreePlan( purchase ) {
@@ -88,13 +99,18 @@ class PurchasesListing extends Component {
 		return (
 			filter(
 				this.props.purchases,
-				( purchase ) => purchase.active && isJetpackProduct( purchase )
+				( purchase ) =>
+					purchase.active && ( isJetpackProduct( purchase ) || isJetpackSearch( purchase ) )
 			) ?? null
 		);
 	}
 
 	getTitle( purchase ) {
 		const { currentPlanSlug } = this.props;
+
+		if ( isJetpackSearch( purchase.productSlug ) ) {
+			return getJetpackProductDisplayName( purchase );
+		}
 
 		if ( isJetpackProduct( purchase ) ) {
 			return getJetpackProductDisplayName( purchase );
@@ -115,8 +131,11 @@ class PurchasesListing extends Component {
 			return getJetpackProductTagline( purchase );
 		}
 
-		const productPurchases = this.getProductPurchases();
+		if ( isJetpackSearch( purchase ) ) {
+			return getJetpackProductTagline( 'search' );
+		}
 
+		const productPurchases = this.getProductPurchases();
 		if ( currentPlanSlug ) {
 			const planObject = getPlan( currentPlanSlug );
 			return (
@@ -163,8 +182,8 @@ class PurchasesListing extends Component {
 	getActionButton( purchase ) {
 		const { selectedSiteSlug, translate } = this.props;
 
-		// No action button if there's no site selected or we're dealing with a partner site.
-		if ( ! selectedSiteSlug || ! purchase || isPartnerPurchase( purchase ) ) {
+		// No action button if there's no site selected.
+		if ( ! selectedSiteSlug || ! purchase ) {
 			return null;
 		}
 
@@ -188,7 +207,7 @@ class PurchasesListing extends Component {
 		let label = translate( 'Manage plan' );
 
 		if ( isJetpackProduct( purchase ) ) {
-			label = translate( 'Manage product' );
+			label = translate( 'Manage subscription' );
 		}
 
 		if ( purchase.autoRenew && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
@@ -199,6 +218,86 @@ class PurchasesListing extends Component {
 			<Button href={ managePurchase( selectedSiteSlug, purchase.id ) } compact>
 				{ label }
 			</Button>
+		);
+	}
+
+	getPlanActionButtons( plan ) {
+		const { translate, selectedSiteSlug: site } = this.props;
+
+		// Determine if the plan contains Backup or Scan.
+		let serviceButtonText = null;
+
+		// The function planHasFeature does not check inferior features.
+		const planHasBackup =
+			planHasFeature( plan.productSlug, PRODUCT_JETPACK_BACKUP_DAILY ) ||
+			planHasFeature( plan.productSlug, PRODUCT_JETPACK_BACKUP_REALTIME );
+		const planHasScan = planHasFeature( plan.productSlug, PRODUCT_JETPACK_SCAN );
+
+		if ( planHasBackup && planHasScan ) {
+			serviceButtonText = translate( 'View Backup & Scan' );
+		} else if ( planHasBackup ) {
+			serviceButtonText = translate( 'View Backup' );
+		} else if ( planHasScan ) {
+			serviceButtonText = translate( 'View Scan' );
+		}
+
+		let serviceButton = null;
+		if ( serviceButtonText ) {
+			// Scan threats always show regardless of filter, so they'll display as well.
+			serviceButton = (
+				<Button href={ `/activity-log/${ site }?group=rewind` } compact>
+					{ serviceButtonText }
+				</Button>
+			);
+		}
+
+		return (
+			<>
+				{ this.getActionButton( plan ) }
+				{ serviceButton }
+			</>
+		);
+	}
+
+	getProductActionButtons( purchase ) {
+		const { translate, selectedSiteSlug: site, isCloudEligible } = this.props;
+		const actionButton = this.getActionButton( purchase );
+
+		const maybeExternalIcon = isCloudEligible && (
+			<>
+				&nbsp;
+				<Gridicon icon="external" />
+			</>
+		);
+
+		let serviceButton = null;
+		if ( isJetpackBackup( purchase ) ) {
+			const target = isCloudEligible
+				? `https://cloud.jetpack.com/backup/${ site }`
+				: `/activity-log/${ site }?group=rewind`;
+			serviceButton = (
+				<Button href={ target } compact>
+					{ translate( 'View backups' ) }
+					{ maybeExternalIcon }
+				</Button>
+			);
+		} else if ( isJetpackScan( purchase ) ) {
+			const target = isCloudEligible
+				? `https://cloud.jetpack.com/scan/${ site }`
+				: `/activity-log/${ site }`;
+			serviceButton = (
+				<Button href={ target } compact>
+					{ translate( 'View scan results' ) }
+					{ maybeExternalIcon }
+				</Button>
+			);
+		}
+
+		return (
+			<>
+				{ actionButton }
+				{ serviceButton }
+			</>
 		);
 	}
 
@@ -214,7 +313,7 @@ class PurchasesListing extends Component {
 					<MyPlanCard isPlaceholder />
 				) : (
 					<MyPlanCard
-						action={ this.getActionButton( currentPlan ) }
+						action={ this.getPlanActionButtons( currentPlan ) }
 						details={ this.getExpirationInfoForPlan( currentPlan ) }
 						isError={ isPlanExpiring }
 						product={ currentPlanSlug }
@@ -235,7 +334,6 @@ class PurchasesListing extends Component {
 		if ( isEmpty( productPurchases ) ) {
 			return null;
 		}
-
 		return (
 			<Fragment>
 				<Card compact>
@@ -244,11 +342,11 @@ class PurchasesListing extends Component {
 				{ productPurchases.map( ( purchase ) => (
 					<MyPlanCard
 						key={ purchase.id }
-						action={ this.getActionButton( purchase ) }
+						action={ this.getProductActionButtons( purchase ) }
 						details={ this.getExpirationInfoForPurchase( purchase ) }
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
-						product={ purchase?.productSlug }
+						product={ purchase.productSlug }
 						tagline={ this.getTagline( purchase ) }
 						title={ this.getTitle( purchase ) }
 					/>
@@ -265,6 +363,7 @@ class PurchasesListing extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
+				<QueryRewindState siteId={ selectedSiteId } />
 
 				{ this.renderPlan() }
 				{ this.renderProducts() }
@@ -285,5 +384,6 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		selectedSiteId,
 		selectedSiteSlug: getSelectedSiteSlug( state ),
+		isCloudEligible: isJetpackCloudEligible( state, selectedSiteId ),
 	};
 } )( localize( withLocalizedMoment( PurchasesListing ) ) );

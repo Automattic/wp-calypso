@@ -85,7 +85,7 @@ class MediaLibraryListNoContent extends Component {
 					className="media-library__no-content-upload-button is-primary"
 					site={ this.props.site }
 				>
-					{ this.props.translate( 'Upload Media' ) }
+					{ this.props.translate( 'Upload media' ) }
 				</UploadButton>
 			);
 		} else if ( 'google_photos' === this.props.source ) {

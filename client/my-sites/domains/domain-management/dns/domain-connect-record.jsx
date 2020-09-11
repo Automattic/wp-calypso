@@ -30,7 +30,7 @@ class DomainConnectRecord extends React.Component {
 	};
 
 	state = {
-		enabled: this.props.enabled,
+		dnsRecordIsBeingUpdated: false,
 	};
 
 	disableDomainConnect = () => {
@@ -41,21 +41,24 @@ class DomainConnectRecord extends React.Component {
 			type: 'TXT',
 		};
 
-		this.props.deleteDns( selectedDomainName, record ).then(
-			() => {
-				const successNoticeId = 'domain-connect-disable-success-notice';
-				this.props.successNotice( translate( 'The Domain Connect record has been disabled.' ), {
-					id: successNoticeId,
-					showDismiss: false,
-					duration: 5000,
-				} );
-			},
-			( error ) => {
-				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be disabled.' )
-				);
-			}
-		);
+		this.props
+			.deleteDns( selectedDomainName, record )
+			.then(
+				() => {
+					const successNoticeId = 'domain-connect-disable-success-notice';
+					this.props.successNotice( translate( 'The Domain Connect record has been disabled.' ), {
+						id: successNoticeId,
+						showDismiss: false,
+						duration: 5000,
+					} );
+				},
+				( error ) => {
+					this.props.errorNotice(
+						error.message || translate( 'The Domain Connect record could not be disabled.' )
+					);
+				}
+			)
+			.then( () => this.setState( { dnsRecordIsBeingUpdated: false } ) );
 	};
 
 	enableDomainConnect() {
@@ -68,23 +71,26 @@ class DomainConnectRecord extends React.Component {
 
 		const normalizedData = getNormalizedData( record, this.props.selectedDomainName );
 
-		this.props.addDns( this.props.selectedDomainName, normalizedData ).then(
-			() => {
-				this.props.successNotice( translate( 'The Domain Connect record has been enabled.' ), {
-					showDismiss: false,
-					duration: 5000,
-				} );
-			},
-			( error ) => {
-				this.props.errorNotice(
-					error.message || translate( 'The Domain Connect record could not be enabled.' )
-				);
-			}
-		);
+		this.props
+			.addDns( this.props.selectedDomainName, normalizedData )
+			.then(
+				() => {
+					this.props.successNotice( translate( 'The Domain Connect record has been enabled.' ), {
+						showDismiss: false,
+						duration: 5000,
+					} );
+				},
+				( error ) => {
+					this.props.errorNotice(
+						error.message || translate( 'The Domain Connect record could not be enabled.' )
+					);
+				}
+			)
+			.then( () => this.setState( { dnsRecordIsBeingUpdated: false } ) );
 	}
 
 	handleToggle = () => {
-		// this.setState( { enabled: ! this.state.enabled } );
+		this.setState( { dnsRecordIsBeingUpdated: true } );
 		if ( this.props.enabled ) {
 			this.disableDomainConnect();
 		} else {
@@ -115,9 +121,9 @@ class DomainConnectRecord extends React.Component {
 									id="domain-connect-record"
 									name="domain-connect-record"
 									onChange={ this.handleToggle }
-									type="checkbox"
 									checked={ enabled }
 									value="active"
+									disabled={ this.state.dnsRecordIsBeingUpdated }
 								/>
 							</form>
 						}

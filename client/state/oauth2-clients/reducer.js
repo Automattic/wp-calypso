@@ -2,6 +2,8 @@
  * Internal dependencies
  */
 import { OAUTH2_CLIENT_DATA_RECEIVE } from 'state/action-types';
+import { combineReducers, withStorageKey } from 'state/utils';
+import ui from './ui/reducer';
 
 export const initialClientsData = {
 	930: {
@@ -46,9 +48,24 @@ export const initialClientsData = {
 		title: 'WooCommerce.com',
 		icon: 'https://woocommerce.com/wp-content/themes/woo/images/logo-woocommerce@2x.png',
 	},
+	68663: {
+		id: 68663,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
+	69040: {
+		id: 69040,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
+	69041: {
+		id: 69041,
+		name: 'jetpack-cloud',
+		title: 'Jetpack Cloud',
+	},
 };
 
-export default function oauth2Clients( state = initialClientsData, action ) {
+export function clients( state = initialClientsData, action ) {
 	switch ( action.type ) {
 		case OAUTH2_CLIENT_DATA_RECEIVE:
 			return {
@@ -62,3 +79,10 @@ export default function oauth2Clients( state = initialClientsData, action ) {
 			return state;
 	}
 }
+
+const combinedReducer = combineReducers( {
+	clients,
+	ui,
+} );
+
+export default withStorageKey( 'oauth2Clients', combinedReducer );

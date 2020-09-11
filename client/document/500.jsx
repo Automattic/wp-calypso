@@ -14,14 +14,12 @@ import Head from 'components/head';
 import EmptyContent from 'components/empty-content';
 import { chunkCssLinks } from './utils';
 
-function ServerError( { faviconURL, entrypoint } ) {
+function ServerError( { entrypoint } ) {
 	const theme = config( 'theme' );
 
 	return (
 		<html lang="en">
-			<Head faviconURL={ faviconURL } cdn={ '//s1.wp.com' }>
-				{ chunkCssLinks( entrypoint ) }
-			</Head>
+			<Head>{ chunkCssLinks( entrypoint ) }</Head>
 			<body
 				className={ classNames( {
 					[ 'theme-' + theme ]: theme,

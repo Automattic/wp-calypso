@@ -29,6 +29,7 @@ import Search from 'components/search';
 import SiteSelectorAddSite from './add-site';
 import searchSites from 'components/search-sites';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'lib/url';
 
 /**
  * Style dependencies
@@ -480,7 +481,31 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			// There is currently no "all sites" version of the insights page
 			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 		} else if ( siteBasePath ) {
-			return getSiteBasePath( site ) + '/' + site.slug;
+			const base = getSiteBasePath( site );
+
+			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+			const urlType = determineUrlType( base );
+
+			// Get URL parts and modify the path.
+			const { protocol, hostname, port, pathname: urlPathname, search } = getUrlParts( base );
+			const newPathname = `${ urlPathname }/${ site.slug }`;
+
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					protocol: protocol || window.location.protocol,
+					hostname: hostname || window.location.hostname,
+					port: port || window.location.port,
+					pathname: newPathname,
+					search,
+				} );
+
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+				return null;
+			}
 		}
 	}
 
@@ -512,8 +537,8 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 		}
 
 		// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-		if ( path.match( /^\/backups\/.*\/(download|restore|detail)/ ) ) {
-			path = '/backups';
+		if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+			path = '/backup';
 		}
 
 		return path;

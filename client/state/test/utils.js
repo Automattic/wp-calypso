@@ -296,9 +296,9 @@ describe( 'utils', () => {
 			const keyed = keyedReducer( 'id', age );
 
 			// state with non-initial value
-			const state = { '1': 1 };
+			const state = { 1: 1 };
 			const serialized = keyed( state, { type: 'SERIALIZE' } );
-			expect( serialized.root() ).toEqual( { '1': 1 } );
+			expect( serialized.root() ).toEqual( { 1: 1 } );
 		} );
 
 		test( 'should not serialize nested empty state', () => {
@@ -315,9 +315,9 @@ describe( 'utils', () => {
 			// right thing.
 			// Another reason why empty state might not be persisted is that the tested reducer didn't
 			// opt in into persistence in the first place -- and we DON'T want to test that!
-			const stateWithData = { a: { '1': 1 } };
+			const stateWithData = { a: { 1: 1 } };
 			const serializedWithData = nestedReducer( stateWithData, { type: 'SERIALIZE' } );
-			expect( serializedWithData.root() ).toEqual( { a: { '1': 1 } } );
+			expect( serializedWithData.root() ).toEqual( { a: { 1: 1 } } );
 
 			// initial state should not serialize
 			const state = nestedReducer( undefined, { type: 'INIT' } );
@@ -357,7 +357,7 @@ describe( 'utils', () => {
 			minimum: 0,
 		};
 
-		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state) ;
+		const age = ( state = 0, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
 		const date = ( state = new Date( 0 ), action ) => {
 			switch ( action.type ) {
@@ -412,8 +412,8 @@ describe( 'utils', () => {
 		const age = withSchemaValidation( schema, ( state = 0, action ) =>
 			'GROW' === action.type ? state + 1 : state
 		);
-		const height = ( state = 160, action ) => ( 'GROW' === action.type ? state + 1 : state) ;
-		const count = ( state = 1, action ) => ( 'GROW' === action.type ? state + 1 : state) ;
+		const height = ( state = 160, action ) => ( 'GROW' === action.type ? state + 1 : state );
+		const count = ( state = 1, action ) => ( 'GROW' === action.type ? state + 1 : state );
 
 		const date = ( state = new Date( 0 ), action ) => {
 			switch ( action.type ) {

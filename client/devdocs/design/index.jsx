@@ -73,8 +73,11 @@ import InfoPopover from 'components/info-popover/docs/example';
 import InlineSupportLink from 'components/inline-support-link/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
 import JetpackColophonExample from 'components/jetpack-colophon/docs/example';
+import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card/docs/example';
 import JetpackHeaderExample from 'components/jetpack-header/docs/example';
 import JetpackLogoExample from 'components/jetpack-logo/docs/example';
+import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card/docs/example';
+import JetpackProductCard from 'components/jetpack/card/jetpack-product-card/docs/example';
 import LanguagePicker from 'components/language-picker/docs/example';
 import LineChart from 'components/line-chart/docs/example';
 import ListEnd from 'components/list-end/docs/example';
@@ -109,6 +112,7 @@ import Spinner from 'components/spinner/docs/example';
 import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import SplitButton from 'components/split-button/docs/example';
+import StepProgress from 'components/step-progress/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import SuggestionSearchExample from 'components/suggestion-search/docs/example';
 import SupportInfoExample from 'components/support-info/docs/example';
@@ -229,9 +233,12 @@ export default class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InlineSupportLink readmeFilePath="inline-support-link" />
 					<InputChrono readmeFilePath="input-chrono" />
+					<JetpackBundleCard readmeFilePath="jetpack-bundle-card" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
+					<JetpackPlanCard readmeFilePath="jetpack-plan-card" />
+					<JetpackProductCard readmeFilePath="jetpack-product-card" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LineChart readmeFilePath="line-chart" />
 					<ListEnd readmeFilePath="list-end" />
@@ -266,6 +273,7 @@ export default class DesignAssets extends React.Component {
 					<SpinnerButton searchKeywords="loading input submit" readmeFilePath="spinner-button" />
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<SplitButton readmeFilePath="split-button" />
+					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />
 					<SupportInfoExample />

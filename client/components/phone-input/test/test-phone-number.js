@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { equal, ok } from 'assert';
+import { equal, ok, deepStrictEqual } from 'assert';
 import { groupBy, pickBy, forIn } from 'lodash';
 
 /**
@@ -17,7 +17,14 @@ import {
 	DIGIT_PLACEHOLDER,
 	applyTemplate,
 	toE164,
+	indexOfLongestCommonSuffix,
+	indexOfStrictSubsequenceEnd,
+	nonDigitsAtStart,
+	numDigitsBeforeIndex,
+	getUpdatedCursorPosition,
 } from '../phone-number';
+
+/* eslint-disable jest/expect-expect */
 
 describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {
@@ -268,5 +275,229 @@ describe( 'metadata:', () => {
 		test( 'should separate country codes properly for countries with +1 and a separate leading digit', () => {
 			equal( toIcannFormat( '+18686559999', countries.TT ), '+1.8686559999' );
 		} );
+	} );
+} );
+
+describe( 'indexOfLongestCommonSuffix', () => {
+	test( 'if array1 === array2 === []', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [], [] ), [ 0, 0 ] );
+	} );
+
+	test( 'if array1 === ["a"] and array2 === []', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a' ], [] ), [ 1, 0 ] );
+	} );
+
+	test( 'if array1 === [] and array2 === ["a"]', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [], [ 'a' ] ), [ 0, 1 ] );
+	} );
+
+	test( 'if array1 === array2 === ["a"]', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a' ], [ 'a' ] ), [ 0, 0 ] );
+	} );
+
+	test( 'if array1 === array2', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c' ] ), [ 0, 0 ] );
+	} );
+
+	test( 'if array1 is a proper prefix of array2', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c', 'd' ] ), [
+			3,
+			4,
+		] );
+	} );
+
+	test( 'if array2 is a proper suffix of array1', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'b', 'c' ] ), [ 1, 0 ] );
+	} );
+
+	test( 'if longest common suffix of array1 and array2 is empty', () => {
+		deepStrictEqual( indexOfLongestCommonSuffix( [ 'x', 'y', 'z' ], [ 'a', 'b', 'c', 'd' ] ), [
+			3,
+			4,
+		] );
+	} );
+} );
+
+describe( 'indexOfStrictSubsequenceEnd', () => {
+	test( 'proper contiguous subsequence', () => {
+		equal( indexOfStrictSubsequenceEnd( [ 'a', 'b' ], [ 'a', 'b', 'c' ] )[ 0 ], 2 );
+	} );
+
+	test( 'proper noncontiguous subsequence', () => {
+		equal( indexOfStrictSubsequenceEnd( [ 'a', 'b' ], [ 'a', 'd', 'b', 'c' ] )[ 0 ], 3 );
+	} );
+} );
+
+describe( 'nonDigitsAtStart', () => {
+	test( 'if all digits, then return 0', () => {
+		equal( nonDigitsAtStart( [ '1', '2', '3' ] ), 0 );
+	} );
+
+	test( 'if all nondigits, then return length', () => {
+		equal( nonDigitsAtStart( [ 'x', 'y', 'z' ] ), 3 );
+	} );
+
+	test( 'nondigits followed by digits', () => {
+		equal( nonDigitsAtStart( [ 'x', 'y', '7' ] ), 2 );
+	} );
+
+	test( 'nondigits followed by digits followed by nondigits', () => {
+		equal( nonDigitsAtStart( [ 'x', 'y', '7', 'z' ] ), 2 );
+	} );
+} );
+
+describe( 'numDigitsBeforeIndex', () => {
+	test( 'empty array', () => {
+		equal( numDigitsBeforeIndex( [], 1 ), 0 );
+	} );
+
+	test( 'all digits, index < length', () => {
+		equal( numDigitsBeforeIndex( [ '1', '2', '3', '4' ], 3 ), 3 );
+	} );
+
+	test( 'all digits, index == length', () => {
+		equal( numDigitsBeforeIndex( [ '1', '2', '3', '4' ], 4 ), 4 );
+	} );
+
+	test( 'all digits, index > length', () => {
+		equal( numDigitsBeforeIndex( [ '1', '2', '3', '4' ], 5 ), 4 );
+	} );
+
+	test( 'not all digits, index < length', () => {
+		equal( numDigitsBeforeIndex( [ '1', 'x', '3', '4' ], 3 ), 2 );
+	} );
+
+	test( 'not all digits, index == length', () => {
+		equal( numDigitsBeforeIndex( [ '1', 'x', '3', '4' ], 4 ), 3 );
+	} );
+
+	test( 'not all digits, index > length', () => {
+		equal( numDigitsBeforeIndex( [ '1', 'x', '3', '4' ], 5 ), 3 );
+	} );
+
+	test( 'no digits, index < length', () => {
+		equal( numDigitsBeforeIndex( [ 'x', 'y', 'z', 'w' ], 3 ), 0 );
+	} );
+
+	test( 'no digits, index == length', () => {
+		equal( numDigitsBeforeIndex( [ 'x', 'y', 'z', 'w' ], 4 ), 0 );
+	} );
+
+	test( 'no digits, index > length', () => {
+		equal( numDigitsBeforeIndex( [ 'x', 'y', 'z', 'w' ], 5 ), 0 );
+	} );
+} );
+
+describe( 'getUpdatedCursorPosition', () => {
+	test( 'should return position after plus if appending only plus', () => {
+		equal( getUpdatedCursorPosition( '', '+', 1 ), 1 );
+	} );
+
+	test( 'should return position after plus if deleting to only plus', () => {
+		equal( getUpdatedCursorPosition( '+5', '+', 2 ), 1 );
+	} );
+
+	test( 'should return position after plus if replacing to only plus', () => {
+		equal( getUpdatedCursorPosition( '555', '+', 3 ), 1 );
+	} );
+
+	test( 'should return last position for appending without special characters', () => {
+		equal( getUpdatedCursorPosition( '23', '234', 2 ), 3 );
+	} );
+
+	test( 'should return last position for appending with special characters', () => {
+		equal( getUpdatedCursorPosition( '234', '234-5', 3 ), 5 );
+	} );
+
+	test( 'should return last position for appending duplicate numbers with special characters', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-22', 5 ), 6 );
+	} );
+
+	test( 'should return last position for appending duplicate substrings with special characters', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-232', 5 ), 7 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-22', 4 ), 5 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters (2)', () => {
+		equal( getUpdatedCursorPosition( '223-2', '223-22', 3 ), 5 );
+	} );
+
+	test( 'should return last position for appending duplicate numbers with special characters - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-225', 5 ), 6 );
+	} );
+
+	test( 'should return last position for appending duplicate substrings with special characters - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-2325', 5 ), 7 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-225', 4 ), 5 );
+	} );
+
+	test( 'should return last position for inserting duplicate numbers with special characters (2) - interior', () => {
+		equal( getUpdatedCursorPosition( '223-25', '223-225', 3 ), 5 );
+	} );
+
+	test( 'should return last position for deleting from end with special characters', () => {
+		equal( getUpdatedCursorPosition( '234-5', '234', 5 ), 3 );
+	} );
+
+	test( 'should return last position for appending with initial plus', () => {
+		equal( getUpdatedCursorPosition( '+1 234', '+1 234-5', 6 ), 8 );
+	} );
+
+	test( 'should return last position for appending with initial parenthesis', () => {
+		equal( getUpdatedCursorPosition( '(802) 234', '(802) 234-5', 9 ), 11 );
+	} );
+
+	test( 'should return last position for appending when initial parenthesis are added', () => {
+		equal( getUpdatedCursorPosition( '802-2343', '(802) 234-39', 8 ), 12 );
+	} );
+
+	test( 'should return last position for deleting when initial parenthesis are removed', () => {
+		equal( getUpdatedCursorPosition( '(802) 234-39', '802-2343', 12 ), 8 );
+	} );
+
+	test( 'should return last position for deleting in between special characters', () => {
+		equal( getUpdatedCursorPosition( '(802) 234-3943', '(802) 233-943', 9 ), 8 );
+	} );
+
+	test( 'should return last position for deleting multiple characters in between special characters', () => {
+		equal( getUpdatedCursorPosition( '(802) 687-6234', '802-6234', 6 ), 3 );
+	} );
+
+	test( 'should return last position for replacing multiple characters in between special characters', () => {
+		equal( getUpdatedCursorPosition( '(802) 687-6234', '(802) 555-6234', 6 ), 9 );
+	} );
+
+	test( 'should return position after cursor for inserting without special characters', () => {
+		equal( getUpdatedCursorPosition( '124', '1234', 2 ), 3 );
+	} );
+
+	test( 'should return position after cursor for inserting before special characters', () => {
+		equal( getUpdatedCursorPosition( '124', '123-4', 2 ), 3 );
+	} );
+
+	test( 'should return position after cursor for inserting multiple numbers before special characters', () => {
+		equal( getUpdatedCursorPosition( '224', '223-764', 2 ), 6 );
+	} );
+
+	test( 'should return position after cursor for inserting after special characters', () => {
+		equal( getUpdatedCursorPosition( '124-4', '124-64', 4 ), 5 );
+	} );
+
+	test( 'should return position after cursor for inserting after parenthesis before hyphen', () => {
+		equal( getUpdatedCursorPosition( '(802) 614-21', '(802) 619-421', 8 ), 9 );
+	} );
+
+	test( 'should return last position when replacing characters with parenthesis', () => {
+		equal( getUpdatedCursorPosition( '(802) 222-2222', '6', 14 ), 1 );
+	} );
+
+	test( 'should return last position when replacing characters with a plus', () => {
+		equal( getUpdatedCursorPosition( '+1 802 222-2222', '6', 15 ), 1 );
 	} );
 } );

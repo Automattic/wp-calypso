@@ -13,11 +13,11 @@
 	}
 
 	.focus-sidebar & {
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin-left: 52px;
 		}
 
-		@include breakpoint( '>1040px' ) {
+		@include breakpoint-deprecated( '>1040px' ) {
 			margin-left: 0;
 		}
 	}
@@ -29,7 +29,7 @@
 		top: 18px;
 	display: none;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		display: block;
 	}
 }
@@ -40,7 +40,7 @@
 	padding-right: 10px;
 	border: none;
 	font-family: $serif;
-	font-size: 28px;
+	font-size: $font-title-medium;
 	color: var( --color-neutral-70 );
 	font-weight: 600;
 	resize: none;
@@ -50,8 +50,8 @@
 		box-shadow: none;
 	}
 
-	@include breakpoint( '>480px' ) {
-		font-size: 32px;
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-title-large;
 	}
 }
 

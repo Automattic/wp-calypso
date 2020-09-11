@@ -41,7 +41,7 @@ describe( 'getSimplePayments()', () => {
 		expect( simplePayments ).to.eql( null );
 	} );
 
-	test( "should return null if siteId can't be found in Simple Payments", () => {
+	test( "should return null if siteId can't be found in Pay with PayPal", () => {
 		const state = {
 			simplePayments: {
 				productList: {
@@ -57,7 +57,7 @@ describe( 'getSimplePayments()', () => {
 		expect( simplePayments ).to.eql( null );
 	} );
 
-	test( 'should return empty array if there are no simple payments', () => {
+	test( 'should return empty array if there are no Pay with PayPal buttons', () => {
 		const state = {
 			simplePayments: {
 				productList: {
@@ -73,7 +73,7 @@ describe( 'getSimplePayments()', () => {
 		expect( simplePayments ).to.eql( [] );
 	} );
 
-	test( 'should return all Simple Payments for a given siteId ordered by ID DESC', () => {
+	test( 'should return all Pay with PayPal buttons for a given siteId ordered by ID DESC', () => {
 		const simplePaymentsInState = [ simplePayment2, simplePayment3, simplePayment1 ];
 
 		const state = {

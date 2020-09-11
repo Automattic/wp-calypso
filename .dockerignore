@@ -1,5 +1,8 @@
 Dockerfile
+Dockerfile.base
+bin/build-docker.sh
 /.tsc-cache
+/.cache
 .dockerignore
 .git
 .npm-debug.log*

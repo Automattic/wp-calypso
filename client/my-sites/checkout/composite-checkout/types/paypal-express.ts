@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
-import { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/wpcom/types';
+import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/lib/translate-cart';
+import type { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/types/checkout-cart';
+import type { DomainContactDetails } from 'my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 
 /**
  * Internal dependencies
  */
 import {
 	WPCOMTransactionEndpointCart,
-	WPCOMTransactionEndpointDomainDetails,
 	createTransactionEndpointCartFromLineItems,
 } from './transaction-endpoint';
 
@@ -21,7 +21,7 @@ export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
 	cancelUrl: string;
 	cart: WPCOMTransactionEndpointCart;
-	domainDetails: WPCOMTransactionEndpointDomainDetails;
+	domainDetails: DomainContactDetails | null;
 	country: string;
 	postalCode: string;
 };
@@ -44,7 +44,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	country: string;
 	postalCode: string;
 	subdivisionCode: string;
-	domainDetails: WPCOMTransactionEndpointDomainDetails;
+	domainDetails: DomainContactDetails | null;
 	items: WPCOMCartItem[];
 } ): PayPalExpressEndpointRequestPayload {
 	return {
@@ -57,6 +57,7 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 			postalCode,
 			subdivisionCode,
 			items: items.filter( ( item ) => ! getNonProductWPCOMCartItemTypes().includes( item.type ) ),
+			contactDetails: domainDetails,
 		} ),
 		country,
 		postalCode,

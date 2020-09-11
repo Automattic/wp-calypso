@@ -6,39 +6,18 @@
 .design-selector {
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
+	padding-bottom: $onboarding-footer-height;
 
 	.design-selector__header {
-		display: block;
 		@include onboarding-heading-padding;
 
-		@include break-large {
-			display: flex;
-			align-items: center;
-		}
-
-		@include onboarding-break-gigantic {
-			display: flex;
-			align-items: center;
-		}
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.design-selector__heading {
 		flex-grow: 1;
-	}
-
-	.design-selector__start-over-button {
-		&.is-link {
-			color: var( --color-text-subtle );
-			padding-top: 1em;
-
-			@include break-large {
-				padding-top: 0;
-			}
-
-			@include onboarding-break-gigantic {
-				padding-top: 0;
-			}
-		}
 	}
 
 	.design-selector__grid {
@@ -47,9 +26,10 @@
 
 	.design-selector__design-option {
 		cursor: pointer;
+		font-family: inherit;
 		float: left;
 		width: 100%;
-		margin: 0;
+		margin: 32px; // only applies in IE
 
 		&:hover,
 		&:focus {
@@ -57,6 +37,11 @@
 				border-color: var( --highlightColor );
 			}
 		}
+
+		@include break-mobile {
+			width: calc( 50% - 32px );
+		}
+
 		@include break-large {
 			width: calc( 33.33% - 64px );
 		}
@@ -70,12 +55,17 @@
 		.design-selector__grid {
 			display: grid;
 			grid-template-columns: 1fr;
-			column-gap: 64px;
 			row-gap: 48px;
 			margin: 0 0 30px;
 
+			@include break-mobile {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 32px;
+			}
+
 			@include break-large {
 				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 64px;
 			}
 
 			@include onboarding-break-gigantic {
@@ -117,12 +107,64 @@
 		}
 	}
 
-	.design-selector__option-name {
-		color: var( --studio-gray-40 );
-		display: block;
-		margin: 16px 0;
-		text-align: center;
+	.design-selector__option-meta {
+		align-items: center;
+		display: inline-flex;
+		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
+		justify-content: center;
+		margin-top: 8px;
 		width: 100%;
-		@include onboarding-medium-text;
+
+		> * {
+			// This is to create space between Tooltip component and other elements
+			min-height: 2em;
+		}
+	}
+
+	.design-selector__option-name {
+		align-items: center;
+		color: var( --studio-gray-40 );
+		display: inline-flex;
+		font-size: $font-body-small;
+		margin-top: -0.1em;
+	}
+
+	.design-selector__premium-container {
+		margin-left: 6px;
+		/* stylelint-disable-next-line scales/font-size */
+		font-size: rem( 10px ); //typography-exception
+
+		.components-popover__content {
+			background-color: var( --studio-gray-80 );
+		}
+	}
+
+	.design-selector__premium-badge {
+		background-color: var( --studio-gray-80 );
+		border-radius: 1em;
+		color: var( --studio-white );
+		margin: 0;
+		padding: 2px 8px;
+		white-space: nowrap;
+	}
+
+	.design-selector__premium-badge-logo {
+		height: auto;
+		margin-left: -4px;
+		width: 14px;
+
+		.jetpack-logo__icon-circle {
+			fill: transparent;
+		}
+
+		.jetpack-logo__icon-triangle {
+			fill: var( --studio-white );
+		}
+	}
+
+	.design-selector__premium-badge-text {
+		display: inline-block;
+		margin-top: -0.05em;
+		text-transform: uppercase;
 	}
 }

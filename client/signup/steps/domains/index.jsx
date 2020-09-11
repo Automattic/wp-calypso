@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, includes, isEmpty } from 'lodash';
+import { defer, endsWith, get, has, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -15,6 +15,7 @@ import MapDomainStep from 'components/domains/map-domain-step';
 import TransferDomainStep from 'components/domains/transfer-domain-step';
 import UseYourDomainStep from 'components/domains/use-your-domain-step';
 import RegisterDomainStep from 'components/domains/register-domain-step';
+import CartData from 'components/data/cart';
 import { getStepUrl } from 'signup/utils';
 import StepWrapper from 'signup/step-wrapper';
 import {
@@ -23,7 +24,6 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'lib/cart-values/cart-items';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -31,7 +31,7 @@ import {
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'state/domains/actions';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
+import { domainManagementRoot } from 'my-sites/domains/paths';
 import Notice from 'components/notice';
 import { getDesignType } from 'state/signup/steps/design-type/selectors';
 import { setDesignType } from 'state/signup/steps/design-type/actions';
@@ -49,8 +49,8 @@ import { isDomainStepSkippable } from 'signup/config/steps';
 import { fetchUsernameSuggestion } from 'state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
+import getSitesItems from 'state/selectors/get-sites-items';
 
 /**
  * Style dependencies
@@ -73,6 +73,7 @@ class DomainsStep extends React.Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		vertical: PropTypes.string,
+		isReskinned: PropTypes.bool,
 	};
 
 	getDefaultState = () => ( {
@@ -123,10 +124,20 @@ class DomainsStep extends React.Component {
 
 		this.showTestCopy = false;
 
+		const isEligibleFlowForDomainTest = includes(
+			[
+				'onboarding',
+				'onboarding-plan-first',
+				'onboarding-passwordless',
+				'onboarding-registrationless',
+			],
+			props.flowName
+		);
+
 		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
 		if (
 			false !== this.props.shouldShowDomainTestCopy &&
-			! props.isPlanStepFulfilled &&
+			isEligibleFlowForDomainTest &&
 			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
 		) {
 			this.showTestCopy = true;
@@ -376,7 +387,7 @@ class DomainsStep extends React.Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteGoals, signupDependencies } = this.props;
+		const { flowName, isDomainOnly, siteType, siteGoals, signupDependencies } = this.props;
 		const siteGoalsArray = siteGoals ? siteGoals.split( ',' ) : [];
 
 		// 'subdomain' flow coming from .blog landing pages
@@ -399,7 +410,8 @@ class DomainsStep extends React.Component {
 			// All flows where 'about' step is before 'domains' step, user picked only 'share' on the `about` step
 			( siteGoalsArray.length === 1 && siteGoalsArray.indexOf( 'share' ) !== -1 ) ||
 			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' )
+			'blog' === get( signupDependencies, 'siteType' ) ||
+			'blog' === siteType
 		) {
 			return true;
 		}
@@ -445,7 +457,15 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		return (
+		const hasCartItemInDependencyStore = has( this.props, 'signupDependencies.cartItem' );
+		const cartItem = get( this.props, 'signupDependencies.cartItem', false );
+		const hasSelectedFreePlan = hasCartItemInDependencyStore && ! cartItem;
+
+		const selectedFreePlanInSwapFlow =
+			'onboarding-plan-first' === this.props.flowName && hasSelectedFreePlan;
+		const selectedPaidPlanInSwapFlow = 'onboarding-plan-first' === this.props.flowName && cartItem;
+
+		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
 				path={ this.props.path }
@@ -469,15 +489,24 @@ class DomainsStep extends React.Component {
 				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( true ) }
+				vendor={ getSuggestionsVendor( { isSignup: true, isDomainOnly: this.props.isDomainOnly } ) }
 				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 				selectedSite={ this.props.selectedSite }
 				showSkipButton={ this.props.showSkipButton }
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
+				selectedFreePlanInSwapFlow={ selectedFreePlanInSwapFlow }
+				selectedPaidPlanInSwapFlow={ selectedPaidPlanInSwapFlow }
+				isReskinned={ this.props.isReskinned }
 			/>
 		);
+
+		if ( 'launch-site' === this.props.flowName ) {
+			return <CartData>{ registerDomainStep }</CartData>;
+		}
+
+		return registerDomainStep;
 	};
 
 	mappingForm = () => {
@@ -547,7 +576,12 @@ class DomainsStep extends React.Component {
 	};
 
 	getSubHeaderText() {
-		const { flowName, siteType, translate } = this.props;
+		const { flowName, isAllDomains, siteType, translate } = this.props;
+
+		if ( isAllDomains ) {
+			return translate( 'Find the domain that defines you' );
+		}
+
 		const subHeaderPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepSubheaderTestCopy'
 			: 'domainsStepSubheader';
@@ -566,7 +600,12 @@ class DomainsStep extends React.Component {
 	}
 
 	getHeaderText() {
-		const { headerText, siteType } = this.props;
+		const { headerText, isAllDomains, siteType, translate } = this.props;
+
+		if ( isAllDomains ) {
+			return translate( 'Your next big idea starts here' );
+		}
+
 		const headerPropertyName = this.isEligibleVariantForDomainTest()
 			? 'domainsStepHeaderTestCopy'
 			: 'domainsStepHeader';
@@ -624,8 +663,9 @@ class DomainsStep extends React.Component {
 			return null;
 		}
 
-		const { flowName, translate, hasInitializedSitesBackUrl } = this.props;
-		let backUrl, backLabelText;
+		const { flowName, isAllDomains, translate, sites } = this.props;
+		const hasSite = Object.keys( sites ).length > 0;
+		let backUrl, backLabelText, isExternalBackUrl;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
 			backUrl = getStepUrl(
@@ -636,9 +676,29 @@ class DomainsStep extends React.Component {
 			);
 		} else if ( this.props.stepSectionName ) {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, undefined, getLocaleSlug() );
-		} else if ( 0 === this.props.positionInFlow && hasInitializedSitesBackUrl ) {
-			backUrl = hasInitializedSitesBackUrl;
+		} else if ( 0 === this.props.positionInFlow && hasSite ) {
+			backUrl = '/sites/';
 			backLabelText = translate( 'Back to My Sites' );
+
+			if ( isAllDomains ) {
+				backUrl = domainManagementRoot();
+				backLabelText = translate( 'Back to All Domains' );
+			}
+		}
+
+		// Override Back link if source parameter is found below
+		const backUrlSourceOverrides = {
+			'business-name-generator': '/business-name-generator',
+			domains: '/domains',
+		};
+		const source = get( this.props, 'queryObject.source' );
+
+		if ( source && backUrlSourceOverrides[ source ] ) {
+			backUrl = backUrlSourceOverrides[ source ];
+			backLabelText = translate( 'Back' );
+
+			// Solves route conflicts between LP and calypso (ex. /domains).
+			isExternalBackUrl = true;
 		}
 
 		const headerText = this.getHeaderText();
@@ -653,6 +713,7 @@ class DomainsStep extends React.Component {
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
 				subHeaderText={ fallbackSubHeaderText }
+				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
@@ -662,7 +723,7 @@ class DomainsStep extends React.Component {
 					</div>
 				}
 				showSiteMockups={ this.props.showSiteMockups }
-				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+				allowBackFirstStep={ !! backUrl }
 				backLabelText={ backLabelText }
 				hideSkip={ ! showSkip }
 				isTopButtons={ showSkip }
@@ -710,13 +771,12 @@ export default connect(
 	( state, ownProps ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
+		const isReskinned =
+			'onboarding' === ownProps.flowName &&
+			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
 		return {
 			designType: getDesignType( state ),
-			// no user = DOMAINS_WITH_PLANS_ONLY
-			domainsWithPlansOnly: getCurrentUser( state )
-				? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-				: true,
 			productsList,
 			productsLoaded,
 			siteGoals: getSiteGoals( state ),
@@ -724,8 +784,8 @@ export default connect(
 			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite: getSite( state, ownProps.signupDependencies.siteSlug ),
 			isSitePreviewVisible: isSitePreviewVisible( state ),
-			isPlanStepFulfilled: get( ownProps.signupDependencies, 'cartItem', false ),
-			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+			sites: getSitesItems( state ),
+			isReskinned,
 		};
 	},
 	{

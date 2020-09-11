@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,7 +14,7 @@ import * as postUtils from 'state/posts/utils';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId, getEditorPublishButtonStatus } from 'state/ui/editor/selectors';
+import { getEditorPostId, getEditorPublishButtonStatus } from 'state/editor/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import {
 	getSitePost,

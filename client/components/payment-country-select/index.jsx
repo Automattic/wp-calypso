@@ -11,7 +11,7 @@ import { isFunction, noop, omit, some } from 'lodash';
  */
 import CountrySelect from 'my-sites/domains/components/form/country-select';
 import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
-import { setPaymentCountryCode } from 'state/ui/payment/actions';
+import { setPaymentCountryCode } from 'state/payment/actions';
 import { setTaxCountryCode } from 'lib/cart/actions';
 
 export class PaymentCountrySelect extends Component {

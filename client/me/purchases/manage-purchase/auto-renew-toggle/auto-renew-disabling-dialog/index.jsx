@@ -192,18 +192,29 @@ class AutoRenewDisablingDialog extends Component {
 		const { isVisible, translate } = this.props;
 		const description = this.getCopy( this.getVariation() );
 
+		const buttons = [
+			{
+				action: 'close',
+				label: translate( "I'll keep it" ),
+				onClick: this.closeAndCleanup,
+			},
+			{
+				action: 'confirm',
+				label: translate( 'Confirm cancellation' ),
+				onClick: this.onClickGeneralConfirm,
+				isPrimary: true,
+			},
+		];
+
 		return (
 			<Dialog
 				isVisible={ isVisible }
 				additionalClassNames="auto-renew-disabling-dialog"
 				onClose={ this.closeAndCleanup }
+				buttons={ buttons }
 			>
 				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
 				<p>{ description }</p>
-				<Button onClick={ this.closeAndCleanup }>{ translate( "I'll keep it" ) }</Button>
-				<Button onClick={ this.onClickGeneralConfirm } primary>
-					{ translate( 'Confirm cancellation' ) }
-				</Button>
 			</Dialog>
 		);
 	};

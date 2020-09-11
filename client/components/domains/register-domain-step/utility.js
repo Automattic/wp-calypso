@@ -57,10 +57,10 @@ export function markFeaturedSuggestions(
 	return output;
 }
 
-export function filterOutDomainsWithTlds( suggestions, blacklistTlds ) {
+export function filterOutDomainsWithTlds( suggestions, disallowedTlds ) {
 	return suggestions.filter( ( suggestion ) => {
 		const tld = suggestion.domain_name.split( '.' ).pop();
-		return blacklistTlds.indexOf( tld ) === -1;
+		return disallowedTlds.indexOf( tld ) === -1;
 	} );
 }
 

@@ -20,6 +20,7 @@ import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	FormStatus,
 	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
@@ -29,8 +30,8 @@ import {
 	useDispatch,
 	useMessages,
 	useFormStatus,
-} from '../src/public-api';
-import { StripeHookProvider, useStripe } from '../src/lib/stripe';
+} from '@automattic/composite-checkout';
+import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
@@ -46,7 +47,7 @@ const initialItems = [
 		subLabel: 'example.com',
 		id: 'wpcom-domain',
 		type: 'domain',
-		amount: { currency: 'USD', value: 0, displayValue: '~~$17~~ 0' },
+		amount: { currency: 'USD', value: 0, displayValue: '$0' },
 	},
 ];
 
@@ -77,8 +78,17 @@ async function fetchStripeConfiguration() {
 	};
 }
 
-async function sendStripeTransaction( data ) {
+async function stripeCardProcessor( data ) {
 	window.console.log( 'Processing stripe transaction with data', data );
+	// This simulates the transaction and provisioning time
+	await asyncTimeout( 2000 );
+	return {
+		success: true,
+	};
+}
+
+async function applePayProcessor( data ) {
+	window.console.log( 'Processing apple-pay transaction with data', data );
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
 	return {
@@ -93,7 +103,7 @@ async function makePayPalExpressRequest( data ) {
 	return window.location.href;
 }
 
-const { registerStore, select } = defaultRegistry;
+const { registerStore } = defaultRegistry;
 
 registerStore( 'demo', {
 	actions: {
@@ -202,13 +212,13 @@ const ContactFormTitle = () => {
 
 const Label = styled.label`
 	display: block;
-	color: ${( props ) => props.theme.colors.textColor};
-	font-weight: ${( props ) => props.theme.weights.bold};
+	color: ${ ( props ) => props.theme.colors.textColor };
+	font-weight: ${ ( props ) => props.theme.weights.bold };
 	font-size: 14px;
 	margin-bottom: 8px;
 
 	:hover {
-		cursor: ${( props ) => ( props.disabled ? 'default' : 'pointer') };
+		cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
 	}
 `;
 
@@ -218,12 +228,12 @@ const Input = styled.input`
 	box-sizing: border-box;
 	font-size: 16px;
 	border: 1px solid
-		${( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor) };
+		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	padding: 13px 10px 12px 10px;
 
 	:focus {
-		outline: ${( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline}
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
 			solid 2px !important;
 	}
 `;
@@ -255,7 +265,7 @@ function ContactForm( { summary } ) {
 				type="text"
 				value={ country }
 				onChange={ onChangeCountry }
-				disabled={ formStatus !== 'ready' }
+				disabled={ formStatus !== FormStatus.READY }
 			/>
 		</Form>
 	);
@@ -310,18 +320,7 @@ function MyCheckout() {
 		setTimeout( () => setIsLoading( false ), 1500 );
 	}, [ isStripeLoading, stripeLoadingError, stripe, stripeConfiguration, isApplePayLoading ] );
 
-	const stripeStore = useMemo(
-		() =>
-			createStripePaymentMethodStore( {
-				getCountry: () => select( 'demo' ).getCountry(),
-				getPostalCode: () => 90210,
-				getSubdivisionCode: () => 'CA',
-				getSiteId: () => 12345,
-				getDomainDetails: {},
-				submitTransaction: sendStripeTransaction,
-			} ),
-		[]
-	);
+	const stripeStore = useMemo( () => createStripePaymentMethodStore(), [] );
 
 	const stripeMethod = useMemo( () => {
 		if ( isStripeLoading || stripeLoadingError || ! stripe || ! stripeConfiguration ) {
@@ -345,14 +344,7 @@ function MyCheckout() {
 		) {
 			return null;
 		}
-		return createApplePayMethod( {
-			getCountry: () => select( 'demo' ).getCountry(),
-			getPostalCode: () => 90210,
-			registerStore,
-			submitTransaction: sendStripeTransaction,
-			stripe,
-			stripeConfiguration,
-		} );
+		return createApplePayMethod( stripe, stripeConfiguration );
 	}, [
 		isApplePayLoading,
 		stripe,
@@ -375,7 +367,6 @@ function MyCheckout() {
 
 	return (
 		<CheckoutProvider
-			locale={ 'en' }
 			items={ items }
 			total={ total }
 			onEvent={ onEvent }
@@ -386,6 +377,7 @@ function MyCheckout() {
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
 			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+			paymentProcessors={ { 'apple-pay': applePayProcessor, card: stripeCardProcessor } }
 		>
 			<MyCheckoutBody />
 		</CheckoutProvider>
@@ -406,11 +398,9 @@ function MyCheckoutBody() {
 					activeStepContent={ orderSummaryStep.activeStepContent }
 					completeStepContent={ orderSummaryStep.completeStepContent }
 					titleContent={ orderSummaryStep.titleContent }
-					errorMessage={ 'There was an error with this step.' }
 					isStepActive={ false }
 					isStepComplete={ true }
 					stepNumber={ 1 }
-					totalSteps={ 1 }
 					stepId={ 'order-summary' }
 				/>
 				<CheckoutSteps>

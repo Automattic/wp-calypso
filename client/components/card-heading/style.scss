@@ -3,44 +3,50 @@
 	margin-bottom: 5px;
 	margin-top: 5px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-bottom: 10px;
 		margin-top: 10px;
 	}
 }
 
 .card-heading-54 {
-	font-size: 54px;
+	font-size: $font-headline-large;
 }
 
-.card-heading-47 {
-	font-size: 47px;
+/* 47px is deprecated, use .card-heading-48 */
+.card-heading-47,
+.card-heading-48 {
+	font-size: $font-headline-medium;
 }
 
 .card-heading-36 {
-	font-size: 36px;
+	font-size: $font-headline-small;
 }
 
 .card-heading-32 {
-	font-size: 32px;
+	font-size: $font-title-large;
 }
 
 .card-heading-24 {
-	font-size: 24px;
+	font-size: $font-title-medium;
 }
 
-.card-heading-21 {
-	font-size: 21px;
+/* 21px is deprecated, use .card-heading-20 */
+.card-heading-21,
+.card-heading-20 {
+	font-size: $font-title-small;
 }
 
 .card-heading-16 {
-	font-size: 16px;
+	font-size: $font-body;
 }
 
 .card-heading-14 {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
-.card-heading-11 {
-	font-size: 11px;
+/* 11px is deprecated, use .card-heading-12 */
+.card-heading-11,
+.card-heading-12 {
+	font-size: $font-body-extra-small;
 }

@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -7,8 +7,9 @@ import { map, partial, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { connect } from 'react-redux';
+
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { recordAction, recordTrackWithRailcar, recordTracksRailcarRender } from 'reader/stats';
 import { Button } from '@automattic/components';
@@ -61,7 +62,7 @@ export class RecommendedSites extends React.PureComponent {
 			<div className="reader-recommended-sites">
 				<h2 className="reader-recommended-sites__header text-subtitle">
 					<Gridicon icon="thumbs-up" size={ 18 } />
-					{ this.props.translate( 'Recommended Sites' ) }
+					{ this.props.translate( 'Recommended sites' ) }
 				</h2>
 				<ul className="reader-recommended-sites__list">
 					{ map( sites, ( site, index ) => {
@@ -71,15 +72,17 @@ export class RecommendedSites extends React.PureComponent {
 								className="reader-recommended-sites__site-list-item card is-compact"
 								key={ `site-rec-${ index }` }
 							>
-								<div className="reader-recommended-sites__recommended-site-dismiss">
-									<Button
-										borderless
-										title={ this.props.translate( 'Dismiss this recommendation' ) }
-										onClick={ partial( this.handleSiteDismiss, siteId, index ) }
-									>
-										<Gridicon icon="cross" size={ 18 } />
-									</Button>
-								</div>
+								{ siteId && (
+									<div className="reader-recommended-sites__recommended-site-dismiss">
+										<Button
+											borderless
+											title={ this.props.translate( 'Dismiss this recommendation' ) }
+											onClick={ partial( this.handleSiteDismiss, siteId, index ) }
+										>
+											<Gridicon icon="cross" size={ 18 } />
+										</Button>
+									</div>
+								) }
 								<ConnectedListItem
 									siteId={ siteId }
 									railcar={ site.railcar }

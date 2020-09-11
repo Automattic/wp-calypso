@@ -2,3 +2,61 @@
 .sidebar ul.reader-sidebar-tags__list {
 	margin-bottom: 20px;
 }
+
+.is-section-reader {
+	.sidebar__menu {
+		user-select: none;
+	}
+
+	.sidebar__menu-link-reader {
+		line-height: 1.8;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	}
+
+	.sidebar__menu .count {
+		position: relative;
+		flex-shrink: 0;
+		top: 0;
+		margin-left: auto;
+		box-sizing: border-box;
+		padding: 4px 6px;
+		line-height: 1;
+		min-width: 22px;
+		background-color: var( --color-sidebar-menu-hover-background );
+		border-color: var( --color-sidebar-menu-hover-background );
+		outline-color: var( --color-sidebar-menu-hover-background );
+		color: var( --color-sidebar-text-alternative );
+
+	}
+
+	.sidebar__menu-link:hover .count {
+		border-color: var( --color-sidebar-menu-hover-text );
+		outline-color: red;
+		color: var( --color-sidebar-menu-hover-text );
+	}
+
+	.selected .sidebar__menu-link .count {
+		background: transparent;
+		color: var( --color-sidebar-menu-selected-text );
+		border-color: var( --color-sidebar-menu-selected-text );
+	}
+
+	.sidebar__menu-item-siteicon {
+		margin-right: 15px;
+		position: relative;
+		flex-shrink: 0;
+	}
+
+	.sidebar__separator {
+		height: 0;
+	}
+
+	.sidebar__menu-item-sitename {
+		max-width: 80%;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		margin-right: 4px;
+	}
+}

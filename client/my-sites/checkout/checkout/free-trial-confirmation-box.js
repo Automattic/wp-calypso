@@ -50,7 +50,11 @@ class FreeTrialConfirmationBox extends React.Component {
 	};
 
 	render() {
-		return <PaymentBox classSet="credits-payment-box">{ this.content() }</PaymentBox>;
+		return (
+			<PaymentBox classSet="credits-payment-box" infoMessage={ this.props.infoMessage }>
+				{ this.content() }
+			</PaymentBox>
+		);
 	}
 }
 

@@ -6,7 +6,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 
 			&:focus {
 				color: var( --color-link-dark );
@@ -36,7 +36,7 @@
 	}
 
 	.value {
-		font-size: 24px;
+		font-size: $font-title-medium;
 		padding: 16px 0;
 	}
 
@@ -45,6 +45,6 @@
 //TODO see if this is used anywhere
 .stats__latest-post-summary {
 		.value {
-			font-size: 32px;
+			font-size: $font-title-large;
 		}
 }

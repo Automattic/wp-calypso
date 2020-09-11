@@ -5,7 +5,7 @@
 }
 
 .editor-media-modal__gallery-help-content {
-	font-size: 15px;
+	font-size: $font-body;
 	text-align: left;
 }
 
@@ -42,7 +42,7 @@
 .editor-media-modal__gallery-help-remember-dismiss {
 	float: left;
 	margin-top: 4px;
-	font-size: 13px;
+	font-size: $font-body-small;
 }
 
 .editor-media-modal__gallery-help-remember-dismiss .form-checkbox {
@@ -83,7 +83,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		&.is-mobile {
 			display: none;
 		}
@@ -135,7 +135,7 @@
 		display: none;
 	}
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		.is-desktop {
 			display: inherit;
 		}
@@ -149,7 +149,7 @@
 .editor-media-modal__plan-storage {
 	display: none;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		display: inline-block;
 	}
 }

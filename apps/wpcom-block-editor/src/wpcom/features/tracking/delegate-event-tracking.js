@@ -8,6 +8,10 @@ import debugFactory from 'debug';
  */
 import wpcomBlockEditorCloseClick from './wpcom-block-editor-close-click';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
+import wpcomBlockDonationsPlanUpgrade from './wpcom-block-donations-plan-upgrade';
+import wpcomBlockDonationsStripeConnect from './wpcom-block-donations-stripe-connect';
+import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-plan-upgrade';
+import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -18,7 +22,14 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
  *
  * @type {Array}
  */
-const EVENTS_MAPPING = [ wpcomBlockEditorCloseClick(), wpcomInserterInlineSearchTerm() ];
+const EVENTS_MAPPING = [
+	wpcomBlockEditorCloseClick(),
+	wpcomInserterInlineSearchTerm(),
+	wpcomBlockDonationsPlanUpgrade(),
+	wpcomBlockDonationsStripeConnect(),
+	wpcomBlockPremiumContentPlanUpgrade(),
+	wpcomBlockPremiumContentStripeConnect(),
+];
 
 /**
  * Checks the event for a selector which matches

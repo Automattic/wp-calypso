@@ -10,7 +10,7 @@ ul.module-tabs {
 
 	.module-tab {
 		margin: 0;
-		font-size: 16px;
+		font-size: $font-body;
 		clear: none;
 		border-top: 1px solid var( --color-neutral-0 );
 		box-sizing: border-box;
@@ -19,7 +19,7 @@ ul.module-tabs {
 			border-top: none;
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			border-top: none;
 			border-left: 1px solid var( --color-neutral-0 );
 			float: left;
@@ -35,7 +35,7 @@ ul.module-tabs {
 			}
 		}
 
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: auto;
 			float: none;
 			text-align: left;
@@ -53,7 +53,7 @@ ul.module-tabs {
 			display: block;
 			background: var( --color-surface );
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				line-height: 24px;
 				padding-top: 10px;
 				-webkit-touch-callout: none;
@@ -61,13 +61,13 @@ ul.module-tabs {
 		}
 
 		.label {
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			letter-spacing: 0.1em;
 			line-height: inherit;
 			text-transform: uppercase;
 
-			@include breakpoint( '<480px' ) {
-				font-size: 14px;
+			@include breakpoint-deprecated( '<480px' ) {
+				font-size: $font-body-small;
 				line-height: 24px;
 				float: left;
 			}
@@ -78,7 +78,7 @@ ul.module-tabs {
 			margin-right: 4px;
 			margin-top: -2px;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				width: 24px;
 				height: 24px;
 				margin-left: 24px;
@@ -94,16 +94,16 @@ ul.module-tabs {
 			color: var( --color-primary );
 			transition: font-size 0.3s 0 ease-out;
 
-			@include breakpoint( '<480px' ) {
+			@include breakpoint-deprecated( '<480px' ) {
 				clear: none;
 				float: right;
-				font-size: 16px;
+				font-size: $font-body;
 				margin-right: 24px;
 				padding: 0;
 			}
 		}
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			// Hover state
 			a:hover,
 			a:hover .value,
@@ -197,7 +197,7 @@ ul.module-tabs {
 		}
 
 		.label {
-			font-size: 14px;
+			font-size: $font-body-small;
 			line-height: 24px;
 			float: left;
 		}

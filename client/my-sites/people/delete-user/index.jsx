@@ -258,9 +258,8 @@ class DeleteUser extends React.Component {
 								onChange={ this.handleRadioChange }
 								value="reassign"
 								checked={ 'reassign' === this.state.radioOption }
+								label={ this.getTranslatedAssignLabel() }
 							/>
-
-							<span>{ this.getTranslatedAssignLabel() }</span>
 						</FormLabel>
 
 						{ this.state.authorSelectorToggled ? (
@@ -273,17 +272,16 @@ class DeleteUser extends React.Component {
 								onChange={ this.handleRadioChange }
 								value="delete"
 								checked={ 'delete' === this.state.radioOption }
+								label={
+									this.props.user.name
+										? translate( 'Delete all content created by %(username)s', {
+												args: {
+													username: this.props.user.name ? this.props.user.name : '',
+												},
+										  } )
+										: translate( 'Delete all content created by this user' )
+								}
 							/>
-
-							<span>
-								{ this.props.user.name
-									? translate( 'Delete all content created by %(username)s', {
-											args: {
-												username: this.props.user.name ? this.props.user.name : '',
-											},
-									  } )
-									: translate( 'Delete all content created by this user' ) }
-							</span>
 						</FormLabel>
 					</FormFieldset>
 

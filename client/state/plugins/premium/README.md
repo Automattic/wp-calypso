@@ -19,7 +19,7 @@ fetchInstallInstructions( 106093271 );
 
 ### `installPlugin( plugin: object, siteId: object )`
 
-Start the install process for a plugin. Plugin object should be pulled from the [PluginsStore](https://github.com/Automattic/wp-calypso/tree/master/client/lib/plugins).
+Start the install process for a plugin. Plugin object should be pulled from the [PluginsStore](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/plugins).
 
 ```js
 import { installPlugin } from 'state/plugins/premium/actions';

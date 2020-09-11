@@ -32,7 +32,7 @@ function getDescription( plan, translate ) {
 
 	if ( isWpComPremiumPlan( plan ) ) {
 		return translate(
-			'Enrich your posts and pages with video or audio. Upload up to 13GB of media directly to your site.'
+			'Enrich your posts and pages with video or audio. Upload up to 13 GB of media directly to your site.'
 		);
 	}
 

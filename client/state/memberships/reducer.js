@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers, withStorageKey } from 'state/utils';
 import connectedAccounts from './connected-accounts/reducer';
 import productList from './product-list/reducer';
 import subscriptions from './subscriptions/reducer';
@@ -18,4 +18,5 @@ const reducers = {
 	productList,
 };
 
-export default combineReducers( reducers );
+const combinedReducer = combineReducers( reducers );
+export default withStorageKey( 'memberships', combinedReducer );

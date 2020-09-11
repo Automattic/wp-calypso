@@ -17,7 +17,7 @@
 	}
 }
 
-@include breakpoint( '<480px' ) {
+@include breakpoint-deprecated( '<480px' ) {
 	.media-library__upload-button {
 		margin-left: 0;
 	}

@@ -1,8 +1,9 @@
 /**
  * Internal dependencies
  */
-
 import { HELP_COURSES_RECEIVE } from 'state/action-types';
+
+import 'state/help/init';
 
 /**
  * Returns an action object used in signalling that a set of help courses has been

@@ -13,7 +13,7 @@
 	padding: 16px;
 	padding-right: 36px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 24px;
 		padding-right: 48px;
 	}
@@ -63,7 +63,7 @@
 	padding: 16px 0;
 	text-align: center;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 16px;
 	}
 }
@@ -78,7 +78,7 @@
 	padding: 0 3px;
 	margin-bottom: 8px;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		padding: 0 6px;
 	}
 }
@@ -98,7 +98,7 @@
 
 .nps-survey__recommendation-option.is-selected {
 	color: var( --color-primary-40 );
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .nps-survey__recommendation-option input[type='radio'] {

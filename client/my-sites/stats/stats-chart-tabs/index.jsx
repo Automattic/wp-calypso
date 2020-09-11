@@ -25,6 +25,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { buildChartData, getQueryDate } from './utility';
 import StatTabs from '../stats-tabs';
 import memoizeLast from 'lib/memoize-last';
+import { withPerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -178,4 +179,7 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
-export default flowRight( localize, connectComponent )( StatModuleChartTabs );
+export default flowRight(
+	localize,
+	connectComponent
+)( withPerformanceTrackerStop( StatModuleChartTabs ) );

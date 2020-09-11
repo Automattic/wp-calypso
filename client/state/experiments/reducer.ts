@@ -56,6 +56,7 @@ const reducer: Reducer< ExperimentState, HandledActions > = (
 		case EXPERIMENT_FETCH:
 			return {
 				...state,
+				anonId: getAnonIdFromCookie(),
 				isLoading: true,
 			};
 		default:

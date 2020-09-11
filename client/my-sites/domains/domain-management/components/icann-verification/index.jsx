@@ -32,7 +32,7 @@ class IcannVerificationCard extends React.Component {
 
 		if ( 'new-status' === explanationContext ) {
 			return translate(
-				'We sent {{strong}}%(email)s{{/strong}} an email to verify your contact information. Please complete the verification or your domain will stop working in {{strong}}10 days{{/strong}}.',
+				'We sent you an email at {{strong}}%(email)s{{/strong}} to verify your contact information. Please complete the verification or your domain will stop working in {{strong}}10 days{{/strong}}.',
 				{
 					args: { email: contactDetails.email },
 					components: {

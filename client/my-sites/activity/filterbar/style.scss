@@ -33,7 +33,7 @@
 		color: var( --color-neutral );
 		white-space: nowrap;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin: 0 8px 0 16px;
 		}
 	}
@@ -42,7 +42,7 @@
 		margin: 8px;
 		padding: 8px;
 		border: 1px solid var( --color-neutral-20 );
-		border-radius: 5px;
+		border-radius: 2px;
 		overflow: hidden;
 		white-space: nowrap;
 	}
@@ -51,21 +51,24 @@
 	.filterbar__selection.is-selected:focus,
 	.filterbar__selection.is-selected:hover {
 		margin: 8px;
-		border-radius: 5px;
+		border-radius: 2px;
 		border: 1px solid var( --color-neutral-60 );
 		background: var( --color-neutral-60 );
 		color: var( --color-text-inverted );
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin-right: 0;
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 		}
 	}
 
-	.filterbar__selection.is-active {
+	.filterbar__selection.is-active,
+	.filterbar__selection.is-active:focus,
+	.filterbar__selection.is-active:hover,
+	.date-range.toggle-visible .filterbar__selection.button:not( .is-selected ) {
 		margin: 8px;
-		border-radius: 5px;
+		border-radius: 2px;
 		border: 1px solid var( --color-neutral-60 );
 		background: var( --color-neutral-60 );
 		color: var( --color-text-inverted );
@@ -77,12 +80,12 @@
 		background-color: var( --color-neutral-60 );
 		color: var( --color-text-inverted );
 		border-radius: 0;
-		border-top-right-radius: 5px;
-		border-bottom-right-radius: 5px;
+		border-top-right-radius: 2px;
+		border-bottom-right-radius: 2px;
 		border: 1px solid var( --color-neutral-60 );
 		display: none;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			display: inline;
 		}
 	}
@@ -97,19 +100,19 @@
 	min-width: 200px;
 	padding: 0;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 24px 24px 18px;
 	}
 
 	label {
 		margin-bottom: 7px;
-		font-size: 15px;
+		font-size: $font-body;
 		text-align: left;
 		cursor: pointer;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			margin-bottom: 5px;
-			font-size: 14px;
+			font-size: $font-body-small;
 		}
 	}
 
@@ -145,7 +148,7 @@
 	width: 280px;
 	margin: 0 auto;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		padding: 16px;
 	}
 
@@ -171,7 +174,7 @@
 	}
 
 	.filterbar__date-range-info {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 
 		.button.is-borderless {
 			margin-top: 2px;

@@ -620,7 +620,7 @@ class PushNotificationSettings extends React.Component {
 				<div className="notification-settings-push-notification-settings__instruction-content">
 					<div>
 						<div className="notification-settings-push-notification-settings__instruction-title">
-							{ this.props.translate( 'Enable Browser Notifications' ) }
+							{ this.props.translate( 'Enable browser notifications' ) }
 						</div>
 						<div className="notification-settings-push-notification-settings__instruction-step">
 							<div className="notification-settings-push-notification-settings__instruction-image">
@@ -769,7 +769,7 @@ class PushNotificationSettings extends React.Component {
 						className="notification-settings-push-notification-settings__settings-icon"
 						icon="bell"
 					/>
-					{ this.props.translate( 'Browser Notifications' ) }
+					{ this.props.translate( 'Browser notifications' ) }
 					<small
 						className={ classNames(
 							'notification-settings-push-notification-settings__settings-state',

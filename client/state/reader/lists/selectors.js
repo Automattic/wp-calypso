@@ -7,7 +7,6 @@ import { filter, find, has, includes, sortBy } from 'lodash';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-
 import 'state/reader/init';
 
 /**
@@ -30,6 +29,26 @@ export function isRequestingList( state ) {
  */
 export function isRequestingSubscribedLists( state ) {
 	return !! state.reader.lists.isRequestingLists;
+}
+
+/**
+ * Returns true if currently creating a Reader list.
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {boolean}        Whether lists are being requested
+ */
+export function isCreatingList( state ) {
+	return !! state.reader.lists.isCreatingList;
+}
+
+/**
+ * Returns true if currently updating a Reader list.
+ *
+ * @param  {object}  state  Global state tree
+ * @returns {boolean}        Whether lists are being requested
+ */
+export function isUpdatingList( state ) {
+	return !! state.reader.lists.isUpdatingList;
 }
 
 /**
@@ -98,6 +117,10 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
 	return find( state.reader.lists.items, ( list ) => {
 		return list.owner === preparedOwner && list.slug === preparedSlug;
 	} );
+}
+
+export function getListItems( state, listId ) {
+	return state.reader?.lists?.listItems?.[ listId ];
 }
 
 /**

@@ -1,6 +1,6 @@
 .two-factor-authentication__small-print {
 	clear: both;
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	padding: 1em 0;
 }
 
@@ -30,5 +30,5 @@
 }
 
 .security-key-form__add-wait-for-key-heading {
-	font-weight: bold;
+	font-weight: 600;
 }

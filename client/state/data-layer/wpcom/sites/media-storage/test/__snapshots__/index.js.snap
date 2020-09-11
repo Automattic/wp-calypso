@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`wpcom-api #requestMediaStorageError() should dispatch receive media storage actions 1`] = `
+Array [
+  Object {
+    "error": [Error: arbitrary error],
+    "siteId": 12378129379,
+    "type": "SITE_MEDIA_STORAGE_REQUEST_FAILURE",
+  },
+]
+`;
+
+exports[`wpcom-api #requestMediaStorageSuccess() should dispatch receive media storage actions 1`] = `
+Array [
+  Object {
+    "mediaStorage": Object {
+      "max_storage_bytes": 214748364800,
+      "storage_used_bytes": 349630702,
+    },
+    "siteId": 12378129379,
+    "type": "SITE_MEDIA_STORAGE_RECEIVE",
+  },
+  Object {
+    "siteId": 12378129379,
+    "type": "SITE_MEDIA_STORAGE_REQUEST_SUCCESS",
+  },
+]
+`;

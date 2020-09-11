@@ -10,16 +10,23 @@ import meta from './meta';
 import { ButtonRow, makeTour, Quit, Link, Step, Tour } from 'layout/guided-tours/config-elements';
 import { localizeUrl } from 'lib/i18n-utils';
 
+const CONNECT_BUTTON_SELECTOR = '.sharing-service.not-connected .button.is-compact';
+
+const handleDisappear = ( { quit } ) => quit();
+
 export const marketingConnectionsTour = makeTour(
 	<Tour { ...meta }>
 		<Step
 			arrow="right-middle"
 			name="init"
-			placement="beside"
+			placement="left"
 			style={ {
 				marginLeft: '-24px',
 			} }
-			target={ '.sharing-service.not-connected .button.is-compact' }
+			waitForTarget={ true }
+			target={ CONNECT_BUTTON_SELECTOR }
+			onTargetDisappear={ handleDisappear }
+			keepRepositioning={ true }
 		>
 			{ ( { translate } ) => (
 				<>

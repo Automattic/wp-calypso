@@ -97,6 +97,10 @@ function getExtractedComment( path, _originalNodeLine ) {
 
 	let comment;
 	forEach( node.leadingComments, ( commentNode ) => {
+		if ( ! commentNode.loc ) {
+			return;
+		}
+
 		const { line } = commentNode.loc.end;
 		if ( line < _originalNodeLine - 1 || line > _originalNodeLine ) {
 			return;
@@ -183,6 +187,35 @@ function isValidTranslationKey( key ) {
 	return Object.values( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).some( ( args ) =>
 		args.includes( key )
 	);
+}
+
+/**
+ * Merge the properties of extracted string objects.
+ *
+ * @param   {object} source left-hand string object
+ * @param   {object} target right-hand string object
+ *
+ * @returns {void}
+ */
+function mergeStrings( source, target ) {
+	if ( ! source.comments.reference.includes( target.comments.reference ) ) {
+		source.comments.reference += '\n' + target.comments.reference;
+	}
+
+	if ( ! source.comments.extracted ) {
+		source.comments.extracted = target.comments.extracted;
+	} else if (
+		target.comments.extracted &&
+		! source.comments.extracted.includes( target.comments.extracted )
+	) {
+		source.comments.extracted += '\n' + target.comments.extracted;
+	}
+
+	// A previous singular string matches a plural string. In PO files those are merged.
+	if ( ! source.hasOwnProperty( 'msgid_plural' ) && target.hasOwnProperty( 'msgid_plural' ) ) {
+		source.msgid_plural = target.msgid_plural;
+		source.msgstr = target.msgstr;
+	}
 }
 
 module.exports = function () {
@@ -313,12 +346,8 @@ module.exports = function () {
 
 				if ( ! strings[ msgctxt ].hasOwnProperty( msgid ) ) {
 					strings[ msgctxt ][ msgid ] = translation;
-				} else if (
-					! strings[ msgctxt ][ msgid ].comments.reference.includes(
-						translation.comments.reference
-					)
-				) {
-					strings[ msgctxt ][ msgid ].comments.reference += '\n' + translation.comments.reference;
+				} else {
+					mergeStrings( strings[ msgctxt ][ msgid ], translation );
 				}
 			},
 			Program: {

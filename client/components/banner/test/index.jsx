@@ -35,26 +35,10 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { Banner } from '../index';
-import {
-	PLAN_FREE,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
 import PlanPrice from 'my-sites/plan-price/';
 
 const props = {
 	callToAction: null,
-	plan: PLAN_FREE,
 	title: 'banner title',
 };
 
@@ -184,7 +168,7 @@ describe( 'Banner basic tests', () => {
 
 		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Button' ).props().href ).toBe( '/' );
-		expect( comp.find( 'Button' ).props().children ).toBe( 'Go WordPress!' );
+		expect( comp.find( 'Button' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventwidows adds \xA0 non-breaking space;
 		expect( comp.find( 'Button' ).props().onClick ).toBe( comp.instance().handleClick );
 	} );
 
@@ -198,44 +182,6 @@ describe( 'Banner basic tests', () => {
 
 		expect( comp.find( 'Button' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Button' ).props().href ).toBeUndefined();
-		expect( comp.find( 'Button' ).props().children ).toBe( 'Go WordPress!' );
-	} );
-} );
-
-describe( 'Banner should have a class name corresponding to appropriate plan', () => {
-	[
-		PLAN_PERSONAL,
-		PLAN_PERSONAL_2_YEARS,
-		PLAN_JETPACK_PERSONAL,
-		PLAN_JETPACK_PERSONAL_MONTHLY,
-	].forEach( ( plan ) => {
-		test( 'Personal', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
-		} );
-	} );
-
-	[
-		PLAN_PREMIUM,
-		PLAN_PREMIUM_2_YEARS,
-		PLAN_JETPACK_PREMIUM,
-		PLAN_JETPACK_PREMIUM_MONTHLY,
-	].forEach( ( plan ) => {
-		test( 'Premium', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
-		} );
-	} );
-
-	[
-		PLAN_BUSINESS,
-		PLAN_BUSINESS_2_YEARS,
-		PLAN_JETPACK_BUSINESS,
-		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( ( plan ) => {
-		test( 'Business', () => {
-			const comp = shallow( <Banner { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );
-		} );
+		expect( comp.find( 'Button' ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventWidows adds \xA0 non-breaking space;
 	} );
 } );

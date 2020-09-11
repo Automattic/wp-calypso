@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -16,7 +15,7 @@ import { getMimePrefix, filterItemsByMimePrefix, url } from 'lib/media/utils';
 import HeaderCake from 'components/header-cake';
 import preloadImage from '../preload-image';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { setEditorMediaModalView } from 'state/editor/actions';
 
 /**
  * Style dependencies

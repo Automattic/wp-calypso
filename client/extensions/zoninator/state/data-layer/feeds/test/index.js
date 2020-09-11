@@ -22,6 +22,8 @@ import { errorNotice, removeNotice, successNotice } from 'state/notices/actions'
 import { updateFeed } from 'zoninator/state/feeds/actions';
 import { resetLock } from 'zoninator/state/locks/actions';
 
+import 'state/form/init';
+
 const dummyAction = {
 	type: 'DUMMY_ACTION',
 	form: 'test-form',

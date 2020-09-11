@@ -1,13 +1,11 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -19,21 +17,19 @@ import PostMetadata from 'lib/post-metadata';
 import EditorLocationSearch from './search';
 import Notice from 'components/notice';
 import RemoveButton from 'components/remove-button';
-import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
+import {
+	updatePostMetadata,
+	deletePostMetadata,
+	requestPostGeoImageUrl,
+} from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getSitePost, getEditedPost } from 'state/posts/selectors';
-import config from 'config';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Module variables
- */
-const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
 // Convert a float coordinate to formatted string with 7 decimal places.
 // Ensures correct equality comparison with values returned from WP.com API
@@ -74,6 +70,8 @@ class EditorLocation extends React.Component {
 			geo_longitude: longitude,
 			geo_public: '1',
 		} );
+
+		this.props.requestPostGeoImageUrl( this.props.siteId, this.props.postId, latitude, longitude );
 
 		this.props.recordEditorStat( 'location_geolocate_success' );
 
@@ -125,9 +123,13 @@ class EditorLocation extends React.Component {
 			locating: true,
 		} );
 
-		navigator.geolocation.getCurrentPosition( this.onGeolocateSuccess, this.onGeolocateFailure, {
-			enableHighAccuracy: true,
-		} );
+		window.navigator.geolocation.getCurrentPosition(
+			this.onGeolocateSuccess,
+			this.onGeolocateFailure,
+			{
+				enableHighAccuracy: true,
+			}
+		);
 
 		this.props.recordEditorStat( 'location_geolocate' );
 		this.props.recordEditorEvent( 'Location Geolocated' );
@@ -149,23 +151,27 @@ class EditorLocation extends React.Component {
 			geo_address: result.formatted_address,
 			geo_public: '1',
 		} );
+
+		this.props.requestPostGeoImageUrl(
+			this.props.siteId,
+			this.props.postId,
+			toGeoString( result.geometry.location.lat() ),
+			toGeoString( result.geometry.location.lng() )
+		);
 	};
 
 	renderCurrentLocation = () => {
-		if ( ! this.props.coordinates ) {
+		if ( ! this.props.mapUrl ) {
 			return;
 		}
 
-		const src =
-			GOOGLE_MAPS_BASE_URL +
-			stringify( {
-				markers: this.props.coordinates.join( ',' ),
-				zoom: 8,
-				size: '400x300',
-				key: config( 'google_maps_and_places_api_key' ),
-			} );
-
-		return <img src={ src } className="editor-location__map" />;
+		return (
+			<img
+				src={ this.props.mapUrl }
+				alt={ this.props.translate( 'Map of post location' ) }
+				className="editor-location__map"
+			/>
+		);
 	};
 
 	privateCoordinatesHaveBeenEdited() {
@@ -225,7 +231,7 @@ class EditorLocation extends React.Component {
 				<EditorDrawerWell
 					icon="location"
 					label={ buttonText }
-					empty={ ! this.props.coordinates }
+					empty={ ! this.props.mapUrl }
 					onClick={ this.geolocate }
 					disabled={ this.state.locating }
 				>
@@ -254,6 +260,7 @@ export default connect(
 
 		const editedPost = getEditedPost( state, siteId, postId );
 		const coordinates = PostMetadata.geoCoordinates( editedPost );
+		const mapUrl = PostMetadata.geoStaticMapUrl( editedPost );
 		const isSharedPublicly = PostMetadata.geoIsSharedPublicly( editedPost );
 		const label = PostMetadata.geoLabel( editedPost );
 
@@ -263,12 +270,14 @@ export default connect(
 			savedCoordinates,
 			savedIsSharedPublicly,
 			coordinates,
+			mapUrl,
 			isSharedPublicly,
 			label,
 		};
 	},
 	{
 		updatePostMetadata,
+		requestPostGeoImageUrl,
 		deletePostMetadata,
 		recordEditorStat,
 		recordEditorEvent,

@@ -1,0 +1,30 @@
+.what-is-jetpack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	font-size: $font-body-small;
+	line-height: 21px;
+	padding: 16px;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		flex-direction: row;
+	}
+
+	&__jetpack-logo {
+		margin: 0 32px 24px;
+	}
+
+	&__question {
+		margin-bottom: 12px;
+		font-weight: 600;
+		color: var( --color-neutral-40 );
+	}
+
+	&__answer {
+		color: var( --color-neutral-50 );
+
+		a {
+			text-decoration: underline;
+		}
+	}
+}

@@ -2,10 +2,8 @@
  * External dependencies
  */
 import page from 'page';
-import { parse } from 'qs';
 import React from 'react';
 import { includes } from 'lodash';
-import { parse as parseUrl } from 'url';
 
 /**
  * Internal dependencies
@@ -14,9 +12,9 @@ import config from 'config';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import MagicLogin from './magic-login';
 import WPLogin from './wp-login';
+import { getUrlParts } from 'lib/url';
 import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
 import { getCurrentUser, getCurrentUserLocale } from 'state/current-user/selectors';
-import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
 
 const enhanceContextWithLogin = ( context ) => {
 	const {
@@ -34,7 +32,7 @@ const enhanceContextWithLogin = ( context ) => {
 	context.primary = (
 		<WPLogin
 			isJetpack={ isJetpack === 'jetpack' }
-			isGutenboarding={ isGutenboarding === GUTENBOARDING_BASE_NAME }
+			isGutenboarding={ isGutenboarding === 'new' }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
@@ -67,10 +65,9 @@ export async function login( context, next ) {
 			return next( error );
 		}
 
-		const parsedRedirectUrl = parseUrl( redirect_to );
-		const redirectQueryString = parse( parsedRedirectUrl.query );
+		const { searchParams: redirectParams } = getUrlParts( redirect_to );
 
-		if ( client_id !== redirectQueryString.client_id ) {
+		if ( client_id !== redirectParams.get( 'client_id' ) ) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);

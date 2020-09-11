@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import { planHasFeature, isBusinessPlan, isEcommercePlan } from 'lib/plans';
 import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
 import PlanStorageBar from './bar';
+import Tooltip from './tooltip';
 
 /**
  * Style dependencies
@@ -42,6 +44,7 @@ export class PlanStorage extends Component {
 			siteId,
 			sitePlanSlug,
 			siteSlug,
+			translate,
 		} = this.props;
 
 		if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
@@ -55,18 +58,35 @@ export class PlanStorage extends Component {
 		const planHasTopStorageSpace =
 			isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
 
-		return (
-			<div className={ classNames( className, 'plan-storage' ) }>
+		const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
+
+		const planStorageComponents = (
+			<>
 				<QueryMediaStorage siteId={ siteId } />
 				<PlanStorageBar
-					siteSlug={ siteSlug }
 					sitePlanSlug={ sitePlanSlug }
 					mediaStorage={ this.props.mediaStorage }
-					displayUpgradeLink={ canUserUpgrade && ! planHasTopStorageSpace }
+					displayUpgradeLink={ displayUpgradeLink }
 				>
 					{ this.props.children }
 				</PlanStorageBar>
-			</div>
+			</>
+		);
+
+		if ( displayUpgradeLink ) {
+			return (
+				<Tooltip
+					title={ translate( 'Upgrade your plan to increase your storage space.' ) }
+					className="plan-storage__tooltip"
+				>
+					<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
+						{ planStorageComponents }
+					</a>
+				</Tooltip>
+			);
+		}
+		return (
+			<div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>
 		);
 	}
 }
@@ -82,4 +102,4 @@ export default connect( ( state, ownProps ) => {
 		canUserUpgrade: canCurrentUser( state, siteId, 'manage_options' ),
 		canViewBar: canCurrentUser( state, siteId, 'publish_posts' ),
 	};
-} )( PlanStorage );
+} )( localize( PlanStorage ) );

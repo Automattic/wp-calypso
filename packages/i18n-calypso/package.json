@@ -16,11 +16,11 @@
 	"bugs": {
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/master/packages/i18n-calypso#readme",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
 	"dependencies": {
-		"@babel/runtime": "^7.8.4",
+		"@babel/runtime": "^7.11.1",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^3.7.2",
+		"@wordpress/compose": "^3.19.3",
 		"debug": "^4.0.0",
 		"events": "^3.0.0",
 		"hash.js": "^1.1.5",
@@ -30,12 +30,15 @@
 		"tannin": "^1.1.1",
 		"use-subscription": "^1.2.0"
 	},
+	"devDependencies": {
+		"react-dom": "^16.12.0"
+	},
 	"peerDependencies": {
 		"react": "^16.8"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile"
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile"
 	}
 }

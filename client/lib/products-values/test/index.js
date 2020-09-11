@@ -19,12 +19,8 @@ import {
 	getJetpackProductDisplayName,
 	getJetpackProductTagline,
 } from '..';
-import {
-	JETPACK_BACKUP_PRODUCTS,
-	JETPACK_PRODUCTS_LIST,
-	getJetpackProductsDisplayNames,
-	getJetpackProductsTaglines,
-} from '../constants';
+import { JETPACK_BACKUP_PRODUCTS, JETPACK_PRODUCTS_LIST } from '../constants';
+import { getJetpackProductsDisplayNames, getJetpackProductsTaglines } from '../translations';
 import {
 	JETPACK_PLANS,
 	PLAN_FREE,
@@ -197,8 +193,8 @@ describe( 'getJetpackProductDisplayName', () => {
 	test( 'should return Jetpack Backup product display name', () => {
 		const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
 		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( ( product ) =>
-			expect( getJetpackProductDisplayName( product ) ).toBe(
-				jetpackProductsDisplayNames[ product.productSlug ]
+			expect( getJetpackProductDisplayName( product ) ).toStrictEqual(
+				jetpackProductsDisplayNames[ product.product_slug ]
 			)
 		);
 	} );
@@ -209,7 +205,7 @@ describe( 'getJetpackProductTagline', () => {
 		const jetpackProductsTaglines = getJetpackProductsTaglines();
 		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( ( product ) =>
 			expect( getJetpackProductTagline( product ) ).toBe(
-				jetpackProductsTaglines[ product.productSlug ]
+				jetpackProductsTaglines[ product.product_slug ]
 			)
 		);
 	} );

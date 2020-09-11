@@ -1,0 +1,86 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@automattic/typography/styles/variables';
+
+.plans-grid__details-heading {
+	margin-bottom: 20px;
+}
+
+.plans-details__table {
+	width: 100%;
+	border-spacing: 0;
+
+	th,
+	td {
+		padding: 13px 24px;
+
+		&:first-child {
+			padding-left: 0;
+			width: 20%;
+
+			@include break-mobile {
+				width: 40%;
+			}
+		}
+
+		&:not( :first-child ) {
+			white-space: nowrap;
+		}
+	}
+
+	// TODO: Deal with a11y later.
+	.hidden {
+		display: none;
+	}
+}
+
+.plans-details__header-row {
+	th {
+		font-weight: 600;
+		font-size: $font-body-small;
+		line-height: 20px;
+		text-transform: uppercase;
+		color: var( --studio-gray-20 );
+		padding-top: 5px;
+		padding-bottom: 5px;
+		border-bottom: 1px solid #eaeaeb;
+		text-align: left;
+	}
+
+	thead & {
+		th:not( :first-child ) {
+			text-align: center;
+		}
+	}
+}
+
+.plans-details__feature-row {
+	th,
+	td {
+		font-size: $font-body-small;
+		font-weight: normal;
+		line-height: 17px;
+		letter-spacing: 0.2px;
+		border-bottom: 1px solid #eaeaeb;
+		vertical-align: middle;
+	}
+
+	th {
+		text-align: left;
+	}
+
+	td {
+		text-align: center;
+	}
+}
+
+.plans-details__select-button.components-button {
+	height: 36px;
+	padding: 0 18px;
+	border-radius: 4px;
+
+	@include break-small {
+		height: 40px;
+		padding: 0 24px;
+	}
+}

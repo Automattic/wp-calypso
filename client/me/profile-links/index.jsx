@@ -173,7 +173,7 @@ class ProfileLinks extends React.Component {
 		return (
 			<Fragment>
 				<QueryProfileLinks />
-				<SectionHeader label={ this.props.translate( 'Profile Links' ) }>
+				<SectionHeader label={ this.props.translate( 'Profile links' ) }>
 					<AddProfileLinksButtons
 						showingForm={ this.state.showingForm }
 						onShowAddOther={ this.showAddOther }

@@ -13,7 +13,7 @@ jest.mock( 'lib/plugins/wporg-data/list-store', () => ( {
 	getSearchList: () => {},
 	on: () => {},
 } ) );
-jest.mock( 'state/ui/guided-tours/selectors', () => ( {} ) );
+jest.mock( 'state/guided-tours/selectors', () => ( {} ) );
 jest.mock( 'my-sites/plugins/utils', () => ( {
 	getExtensionSettingsPath: () => '',
 } ) );

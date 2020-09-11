@@ -18,10 +18,12 @@ import CartToggle from './cart-toggle';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
+import IncompatibleProductMessage from './incompatible-product-message';
+import IncompatibleProductNotice from './incompatible-product-notice';
 
 export class CreditsPaymentBox extends React.Component {
 	content = () => {
-		const { cart, transactionStep, presaleChatAvailable } = this.props;
+		const { cart, transactionStep, presaleChatAvailable, incompatibleProducts } = this.props;
 		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
 			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
 		);
@@ -30,6 +32,7 @@ export class CreditsPaymentBox extends React.Component {
 		return (
 			<React.Fragment>
 				<form onSubmit={ this.props.onSubmit }>
+					<IncompatibleProductNotice incompatibleProducts={ incompatibleProducts } />
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-section">
 						<WordPressLogo size={ 52 } />
@@ -60,7 +63,11 @@ export class CreditsPaymentBox extends React.Component {
 
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<div className="payment-box-actions">
-						<PayButton cart={ this.props.cart } transactionStep={ transactionStep } />
+						<PayButton
+							cart={ this.props.cart }
+							transactionStep={ transactionStep }
+							notAllowed={ incompatibleProducts?.blockCheckout }
+						/>
 						{ showPaymentChatButton && (
 							<PaymentChatButton
 								paymentType="credits"
@@ -69,6 +76,7 @@ export class CreditsPaymentBox extends React.Component {
 							/>
 						) }
 					</div>
+					<IncompatibleProductMessage incompatibleProducts={ incompatibleProducts } />
 				</form>
 
 				<CartCoupon cart={ cart } />
@@ -79,7 +87,11 @@ export class CreditsPaymentBox extends React.Component {
 
 	render() {
 		return (
-			<PaymentBox classSet="credits-payment-box" title={ this.props.translate( 'Secure Payment' ) }>
+			<PaymentBox
+				classSet="credits-payment-box"
+				title={ this.props.translate( 'Secure payment' ) }
+				infoMessage={ this.props.infoMessage }
+			>
 				{ this.content() }
 			</PaymentBox>
 		);

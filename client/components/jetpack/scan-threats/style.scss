@@ -1,0 +1,65 @@
+.scan-threats {
+	&__threats {
+		margin: 16px 0;
+	}
+
+	&__error, &__rerun {
+		text-align: center;
+		font-size: $font-body-small;
+		line-height: 20px;
+		color: var( --studio-gray-40 );
+		margin-top: 24px;
+	}
+
+	&__run-scan-button.scan-threats__run-scan-button {
+		padding: initial;
+		border: initial;
+		font-weight: normal;
+		vertical-align: initial;
+		color: var( --color-link );
+		background: inherit;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background: initial;
+			color: var( --color-link-dark );
+		}
+
+		&:hover,
+		&:active {
+			outline: initial;
+		}
+
+		&:focus {
+			outline: thin dotted;
+			box-shadow: initial;
+			border: initial;
+		}
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 16px;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			justify-content: flex-end;
+		}
+	}
+
+	&__fix-all-threats-button {
+		flex: 1 1 75%;
+		padding: 10px 30px;
+
+		@include breakpoint-deprecated( '>800px' ) {
+			flex: 0 0 170px;
+		}
+	}
+
+	&__options-button {
+		flex: 0 0 50px;
+		padding: 10px 0;
+		margin-left: 16px;
+	}
+}

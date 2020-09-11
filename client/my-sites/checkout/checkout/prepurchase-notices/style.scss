@@ -1,0 +1,35 @@
+.prepurchase-notices__container {
+	padding: 32px 32px 20px;
+
+	border-bottom: solid 1px var( --color-border-subtle );
+
+	.notice {
+		margin: 0;
+	}
+
+	.notice.is-info .notice__icon-wrapper-drop {
+		background-color: var( --color-accent-40 );
+	}
+}
+
+.prepurchase-notices__container .notice .prepurchase-notice {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&__message {
+		max-width: 600px;
+	}
+
+	&__link {
+		margin-left: 20px;
+
+		color: var( --color-neutral-10 );
+
+		text-decoration: none;
+
+		&:visited {
+			color: var( --color-neutral-10 );
+		}
+	}
+}

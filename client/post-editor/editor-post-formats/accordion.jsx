@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React, { Component, Fragment } from 'react';
@@ -17,7 +16,7 @@ import EditorPostFormats from './';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorPostFormatsAccordion extends Component {

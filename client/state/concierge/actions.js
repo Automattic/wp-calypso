@@ -16,6 +16,8 @@ import {
 import 'state/data-layer/wpcom/concierge';
 import 'state/data-layer/wpcom/concierge/initial';
 
+import 'state/concierge/init';
+
 export const requestConciergeAppointmentDetails = ( scheduleId, appointmentId ) => ( {
 	type: CONCIERGE_APPOINTMENT_DETAILS_REQUEST,
 	scheduleId,

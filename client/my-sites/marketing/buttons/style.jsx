@@ -13,6 +13,8 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 class SharingButtonsStyle extends React.Component {
 	static displayName = 'SharingButtonsStyle';
@@ -67,16 +69,15 @@ class SharingButtonsStyle extends React.Component {
 			},
 		].map( function ( option ) {
 			return (
-				<label key={ option.value }>
-					<input
+				<FormLabel key={ option.value }>
+					<FormRadio
 						name="sharing_button_style"
-						type="radio"
 						checked={ option.value === this.props.value }
 						onChange={ this.onChange.bind( null, option.value ) }
 						disabled={ this.props.disabled }
 					/>
 					{ option.label }
-				</label>
+				</FormLabel>
 			);
 		}, this );
 	};

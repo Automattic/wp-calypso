@@ -165,7 +165,7 @@ class PostShare extends Component {
 	};
 
 	sharePost = () => {
-		const { postId, siteId, connections } = this.props;
+		const { postId, siteId, connections, isJetpack } = this.props;
 		const servicesToPublish = connections.filter(
 			( connection ) => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
 		);
@@ -181,7 +181,11 @@ class PostShare extends Component {
 			},
 			{ service_all: 0 }
 		);
-		const additionalProperties = { context_path: sectionify( currentPage ) };
+		const additionalProperties = {
+			context_path: sectionify( currentPage ),
+			is_jetpack: isJetpack,
+			blog_id: siteId,
+		};
 		const eventProperties = { ...numberOfAccountsPerService, ...additionalProperties };
 
 		if ( this.state.scheduledDate ) {

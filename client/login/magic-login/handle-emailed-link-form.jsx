@@ -15,7 +15,6 @@ import { Button } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 import config from 'config';
-import userFactory from 'lib/user';
 import { login } from 'lib/paths';
 import { localize } from 'i18n-calypso';
 import { LINK_EXPIRED_PAGE } from 'state/login/magic-login/constants';
@@ -23,6 +22,7 @@ import {
 	fetchMagicLoginAuthenticate,
 	showMagicLoginLinkExpiredPage,
 } from 'state/login/magic-login/actions';
+import { rebootAfterLogin } from 'state/login/actions';
 import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestAuthError from 'state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'state/selectors/get-magic-login-requested-auth-successfully';
@@ -39,8 +39,8 @@ import {
 } from 'state/immediate-login/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-
-const user = userFactory();
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 class HandleEmailedLinkForm extends React.Component {
 	static propTypes = {
@@ -61,9 +61,11 @@ class HandleEmailedLinkForm extends React.Component {
 		redirectToSanitized: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
+		initialQuery: PropTypes.object,
 
 		// Connected action creators
 		fetchMagicLoginAuthenticate: PropTypes.func.isRequired,
+		rebootAfterLogin: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		showMagicLoginLinkExpiredPage: PropTypes.func.isRequired,
 	};
@@ -96,7 +98,7 @@ class HandleEmailedLinkForm extends React.Component {
 		const { redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent } = this.props;
 
 		if ( ! twoFactorEnabled ) {
-			this.rebootAfterLogin();
+			this.props.rebootAfterLogin( { magic_login: 1 } );
 		} else {
 			page(
 				login( {
@@ -107,27 +109,6 @@ class HandleEmailedLinkForm extends React.Component {
 				} )
 			);
 		}
-	};
-
-	// Lifted from `blocks/login`
-	// @TODO move to `state/login/actions` & use both places
-	rebootAfterLogin = () => {
-		const { redirectToSanitized, twoFactorEnabled } = this.props;
-
-		this.props.recordTracksEvent( 'calypso_login_success', {
-			two_factor_enabled: twoFactorEnabled,
-			magic_login: 1,
-		} );
-
-		// Redirects to / if no redirect url is available
-		const url = redirectToSanitized || '/';
-
-		// user data is persisted in localstorage at `lib/user/user` line 157
-		// therefore we need to reset it before we redirect, otherwise we'll get
-		// mixed data from old and new user
-		user.clear().then( () => {
-			window.location.href = url;
-		} );
 	};
 
 	UNSAFE_componentWillUpdate( nextProps, nextState ) {
@@ -148,23 +129,40 @@ class HandleEmailedLinkForm extends React.Component {
 	}
 
 	render() {
-		const { currentUser, emailAddress, isExpired, isFetching, translate } = this.props;
+		const {
+			currentUser,
+			emailAddress,
+			isExpired,
+			isFetching,
+			translate,
+			initialQuery,
+		} = this.props;
+		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 
 		if ( isExpired ) {
 			return <EmailedLoginLinkExpired />;
 		}
 
+		let buttonLabel;
+		if ( this.props.isImmediateLoginAttempt ) {
+			buttonLabel = translate( 'Confirm Login to WordPress.com' );
+		} else if ( isWooDna ) {
+			buttonLabel = translate( 'Connect' );
+		} else {
+			buttonLabel = translate( 'Continue to WordPress.com' );
+		}
+
 		const action = (
 			<Button primary disabled={ this.state.hasSubmitted } onClick={ this.handleSubmit }>
-				{ this.props.isImmediateLoginAttempt
-					? translate( 'Confirm Login to WordPress.com' )
-					: translate( 'Continue to WordPress.com' ) }
+				{ buttonLabel }
 			</Button>
 		);
 
 		let title;
 		if ( this.props.isManualRenewalImmediateLoginAttempt ) {
 			title = translate( 'Update your payment details and renew your subscription' );
+		} else if ( isWooDna ) {
+			title = wooDnaConfig( initialQuery ).getServiceName();
 		} else {
 			title =
 				this.props.clientId === config( 'wpcom_signup_id' )
@@ -194,6 +192,10 @@ class HandleEmailedLinkForm extends React.Component {
 			);
 		}
 
+		const illustration =
+			'/calypso/images/illustrations/' +
+			( isWooDna ? 'illustration-woo-magic-link.svg' : 'illustration-nosites.svg' );
+
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
 		return (
@@ -202,7 +204,7 @@ class HandleEmailedLinkForm extends React.Component {
 				className={ classNames( 'magic-login__handle-link', {
 					'magic-login__is-fetching-auth': isFetching,
 				} ) }
-				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+				illustration={ illustration }
 				illustrationWidth={ 500 }
 				line={ line }
 				title={ title }
@@ -224,11 +226,13 @@ const mapState = ( state ) => {
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		initialQuery: getInitialQueryArguments( state ),
 	};
 };
 
 const mapDispatch = {
 	fetchMagicLoginAuthenticate,
+	rebootAfterLogin,
 	recordTracksEvent,
 	showMagicLoginLinkExpiredPage,
 };

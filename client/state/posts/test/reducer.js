@@ -23,6 +23,7 @@ import {
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
+	POST_GEO_IMAGE_RECEIVE,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -37,7 +38,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -935,6 +936,31 @@ describe( 'reducer', () => {
 							discussion: {
 								comments_open: false,
 								pings_open: false,
+							},
+						},
+					],
+				},
+			} );
+		} );
+
+		test( 'should update the post object with new geo data after the receiving the new info', () => {
+			const state = edits( deepFreeze( {} ), {
+				type: POST_GEO_IMAGE_RECEIVE,
+				siteId: 2916284,
+				postId: 841,
+				map_url: 'https://map.url.com/...',
+				latitude: 12.121212,
+				longitude: 123.123123,
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					841: [
+						{
+							geo: {
+								map_url: 'https://map.url.com/...',
+								latitude: 12.121212,
+								longitude: 123.123123,
 							},
 						},
 					],

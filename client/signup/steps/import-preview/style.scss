@@ -1,7 +1,7 @@
 .import-preview__card {
 	max-width: 360px;
 	padding: rem( 16px );
-	border-radius: 3px;
+	border-radius: 2px;
 
 	.button {
 		display: block;
@@ -33,7 +33,7 @@
 }
 
 .import-preview__url {
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	color: var( --color-neutral-40 );
 }
 

@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -8,6 +9,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
 } from 'lib/products-values/constants';
 
 // plans constants
@@ -30,12 +35,52 @@ export const PLAN_JETPACK_PERSONAL = 'jetpack_personal';
 export const PLAN_JETPACK_PREMIUM_MONTHLY = 'jetpack_premium_monthly';
 export const PLAN_JETPACK_BUSINESS_MONTHLY = 'jetpack_business_monthly';
 export const PLAN_JETPACK_PERSONAL_MONTHLY = 'jetpack_personal_monthly';
+export const PLAN_JETPACK_SECURITY_DAILY = 'jetpack_security_daily';
+export const PLAN_JETPACK_SECURITY_DAILY_MONTHLY = 'jetpack_security_daily_monthly';
+export const PLAN_JETPACK_SECURITY_REALTIME = 'jetpack_security_realtime';
+export const PLAN_JETPACK_SECURITY_REALTIME_MONTHLY = 'jetpack_security_realtime_monthly';
+export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
+export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 
+export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
+export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';
+
 export const NEW_PLANS = [];
 export const BEST_VALUE_PLANS = [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ];
+
+export const JETPACK_MONTHLY_PLANS = [
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+];
+export const JETPACK_LEGACY_PLANS = [
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+];
+export const JETPACK_SECURITY_PLANS = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+];
+export const JETPACK_RESET_PLANS = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+];
 export const JETPACK_PLANS = [
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -44,11 +89,7 @@ export const JETPACK_PLANS = [
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-];
-export const JETPACK_MONTHLY_PLANS = [
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
+	...( shouldShowOfferResetFlow() ? JETPACK_RESET_PLANS : [] ),
 ];
 
 export const PLAN_MONTHLY_PERIOD = 31;
@@ -117,6 +158,14 @@ export const FEATURE_ADVANCED_SEO_TOOLS = 'advanced-seo-tools';
 export const FEATURE_FREE_THEMES_SIGNUP = 'free-themes-signup';
 export const FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED_SIGNUP = 'unlimited-backup';
 export const FEATURE_MEMBERSHIPS = 'memberships';
+export const FEATURE_PREMIUM_CONTENT_BLOCK = 'premium-content-block';
+
+// jetpack features category
+export const FEATURE_CATEGORY_SECURITY = Symbol();
+export const FEATURE_CATEGORY_PERFORMANCE = Symbol();
+export const FEATURE_CATEGORY_GROWTH = Symbol();
+export const FEATURE_CATEGORY_DESIGN = Symbol();
+export const FEATURE_CATEGORY_OTHER = Symbol();
 
 // jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -172,6 +221,47 @@ export const FEATURE_JETPACK_BACKUP_REALTIME = PRODUCT_JETPACK_BACKUP_REALTIME;
 export const FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY = PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY;
 export const FEATURE_JETPACK_SCAN_DAILY = PRODUCT_JETPACK_SCAN;
 export const FEATURE_JETPACK_SCAN_DAILY_MONTHLY = PRODUCT_JETPACK_SCAN_MONTHLY;
+export const FEATURE_JETPACK_ANTI_SPAM = PRODUCT_JETPACK_ANTI_SPAM;
+export const FEATURE_JETPACK_ANTI_SPAM_MONTHLY = PRODUCT_JETPACK_ANTI_SPAM_MONTHLY;
+export const FEATURE_JETPACK_SEARCH = PRODUCT_JETPACK_SEARCH;
+export const FEATURE_JETPACK_SEARCH_MONTHLY = PRODUCT_JETPACK_SEARCH_MONTHLY;
+
+// jetpack features constants (offer reset)
+export const FEATURE_SECURITY_REALTIME_V2 = Symbol();
+export const FEATURE_BACKUP_V2 = Symbol();
+export const FEATURE_BACKUP_DAILY_V2 = Symbol();
+export const FEATURE_BACKUP_REALTIME_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_DAILY_V2 = Symbol();
+export const FEATURE_PRODUCT_BACKUP_REALTIME_V2 = Symbol();
+export const FEATURE_SCAN_V2 = Symbol();
+export const FEATURE_PRODUCT_SCAN_V2 = Symbol();
+export const FEATURE_PRODUCT_SCAN_DAILY_V2 = Symbol();
+export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = Symbol();
+export const FEATURE_ANTISPAM_V2 = Symbol();
+export const FEATURE_PRODUCT_ANTISPAM_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = Symbol();
+export const FEATURE_ACTIVITY_LOG_30_DAYS_V2 = Symbol();
+export const FEATURE_SEARCH_V2 = Symbol();
+export const FEATURE_PRODUCT_SEARCH_V2 = Symbol();
+export const FEATURE_VIDEO_HOSTING_V2 = Symbol();
+export const FEATURE_CRM_V2 = Symbol();
+export const FEATURE_SOCIAL_MEDIA_POSTING_V2 = Symbol();
+export const FEATURE_COLLECT_PAYMENTS_V2 = Symbol();
+export const FEATURE_SITE_MONETIZATION_V2 = Symbol();
+export const FEATURE_PREMIUM_THEMES_V2 = Symbol();
+export const FEATURE_PRIORITY_SUPPORT_V2 = Symbol();
+export const FEATURE_SECURE_STORAGE_V2 = Symbol();
+export const FEATURE_ONE_CLICK_RESTORE_V2 = Symbol();
+export const FEATURE_ONE_CLICK_FIX_V2 = Symbol();
+export const FEATURE_INSTANT_EMAIL_V2 = Symbol();
+export const FEATURE_AKISMET_V2 = Symbol();
+export const FEATURE_SPAM_BLOCK_V2 = Symbol();
+export const FEATURE_ADVANCED_STATS_V2 = Symbol();
+export const FEATURE_FILTERING_V2 = Symbol();
+export const FEATURE_LANGUAGE_SUPPORT_V2 = Symbol();
+export const FEATURE_SPELLING_CORRECTION_V2 = Symbol();
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';
@@ -187,6 +277,9 @@ export const TYPE_PERSONAL = 'TYPE_PERSONAL';
 export const TYPE_PREMIUM = 'TYPE_PREMIUM';
 export const TYPE_BUSINESS = 'TYPE_BUSINESS';
 export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
+export const TYPE_SECURITY_DAILY = 'TYPE_SECURITY_DAILY';
+export const TYPE_SECURITY_REALTIME = 'TYPE_SECURITY_REALTIME';
+export const TYPE_ALL = 'TYPE_ALL';
 
 export function isMonthly( plan ) {
 	return plan === PLAN_BUSINESS_MONTHLY || JETPACK_MONTHLY_PLANS.includes( plan );

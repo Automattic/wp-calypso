@@ -30,6 +30,22 @@ describe( 'isEligibleForDotcomChecklist()', () => {
 		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
 	} );
 
+	test( 'should return false for a WP for Teams site', () => {
+		const state = {
+			sites: {
+				items: {
+					99: {
+						options: {
+							is_wpforteams_site: true,
+						},
+					},
+				},
+			},
+		};
+
+		expect( isEligibleForDotcomChecklist( state, 99 ) ).toBe( false );
+	} );
+
 	test( 'should return true for recent simple sites', () => {
 		const state = {
 			sites: {

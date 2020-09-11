@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	JETPACK_CONNECTION_STATUS_RECEIVE,
 	JETPACK_CONNECTION_STATUS_REQUEST,
@@ -20,6 +19,7 @@ import {
 import wp from 'lib/wp';
 
 import 'state/data-layer/wpcom/jetpack/connection/owner';
+import 'state/jetpack/init';
 
 export const requestJetpackConnectionStatus = ( siteId ) => {
 	return ( dispatch ) => {
@@ -66,7 +66,7 @@ export const requestJetpackUserConnectionData = ( siteId ) => {
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
-					data: response.data.currentUser,
+					data: response.data,
 				} );
 				dispatch( {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,

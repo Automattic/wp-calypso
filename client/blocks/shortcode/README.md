@@ -37,4 +37,4 @@ The following props can be passed to the Shortcode component. Any additional pro
 
 ## Resources
 
-You may find it convenient to use the [`Shortcode` conversion library](https://github.com/Automattic/wp-calypso/tree/master/client/lib/shortcode) in conjunction with this component to help with generating shortcode strings.
+You may find it convenient to use the [`Shortcode` conversion library](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/shortcode) in conjunction with this component to help with generating shortcode strings.

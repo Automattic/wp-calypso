@@ -101,7 +101,7 @@ describe( 'middleware', () => {
 
 			const clientId = 123;
 			const getState = () => ( {
-				ui: { oauth2Clients: { currentClientId: clientId } },
+				oauth2Clients: { ui: { currentClientId: clientId } },
 			} );
 
 			thunk( dispatch, getState );
@@ -127,7 +127,7 @@ describe( 'middleware', () => {
 
 			const clientId = 123;
 			const getState = () => ( {
-				ui: { oauth2Clients: { currentClientId: clientId } },
+				oauth2Clients: { ui: { currentClientId: clientId } },
 			} );
 
 			thunk( dispatch, getState );

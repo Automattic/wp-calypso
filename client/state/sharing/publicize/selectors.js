@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { filter, get } from 'lodash';
 
 /**
@@ -11,6 +10,8 @@ import createSelector from 'lib/create-selector';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+
+import 'state/sharing/init';
 
 /**
  * Returns an array of known connections for the given site ID.

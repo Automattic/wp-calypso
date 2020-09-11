@@ -25,6 +25,7 @@ class DomainSuggestion extends React.Component {
 		buttonStyles: PropTypes.object,
 		extraClasses: PropTypes.string,
 		onButtonClick: PropTypes.func.isRequired,
+		premiumDomain: PropTypes.object,
 		priceRule: PropTypes.string,
 		price: PropTypes.string,
 		domain: PropTypes.string,
@@ -36,15 +37,40 @@ class DomainSuggestion extends React.Component {
 		showChevron: false,
 	};
 
+	renderPrice() {
+		const {
+			hidePrice,
+			premiumDomain,
+			price,
+			priceRule,
+			salePrice,
+			isEligibleVariantForDomainTest,
+		} = this.props;
+
+		if ( hidePrice ) {
+			return null;
+		}
+
+		if ( premiumDomain?.pending ) {
+			return <div className="domain-suggestion__price-placeholder" />;
+		}
+
+		return (
+			<DomainProductPrice
+				price={ price }
+				salePrice={ salePrice }
+				rule={ priceRule }
+				isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
+				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
+			/>
+		);
+	}
+
 	render() {
 		const {
 			children,
 			extraClasses,
-			hidePrice,
 			isAdded,
-			price,
-			priceRule,
-			salePrice,
 			isEligibleVariantForDomainTest,
 			isFeatured,
 		} = this.props;
@@ -75,14 +101,7 @@ class DomainSuggestion extends React.Component {
 			>
 				<div className={ contentClassName }>
 					{ children }
-					{ ! hidePrice && (
-						<DomainProductPrice
-							price={ price }
-							salePrice={ salePrice }
-							rule={ priceRule }
-							isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
-						/>
-					) }
+					{ this.renderPrice() }
 				</div>
 				<Button className="domain-suggestion__action" { ...this.props.buttonStyles }>
 					{ this.props.buttonContent }

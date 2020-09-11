@@ -42,10 +42,10 @@
 .podcasting-details__publish-notice {
 	position: relative;
 	background: var( --color-neutral-0 );
-	border-radius: 4px;
+	border-radius: 2px;
 	align-self: stretch;
 	padding: 6px;
-	font-size: 14px;
+	font-size: $font-body-small;
 	text-align: left;
 	// Center contents vertically
 	// Note this element contains a <span> container to ensure normal
@@ -85,7 +85,7 @@
 	}
 }
 
-@include breakpoint( '<800px' ) {
+@include breakpoint-deprecated( '<800px' ) {
 	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
 	.podcasting-details__publish-wrapper {
 		display: block;
@@ -115,7 +115,7 @@
 }
 
 .podcasting-details__title-subtitle-wrapper {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		float: left;
 		width: 75%;
 	}
@@ -128,7 +128,7 @@
 	}
 
 	.form-select {
-		@include breakpoint( '<480px' ) {
+		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 		}
 	}
@@ -147,6 +147,10 @@
 	&.is-disabled .form-textarea {
 		color: var( --color-neutral-20 );
 		border-color: var( --color-neutral-10 );
+	}
+
+	.podcasting-details__save-button {
+		float: right;
 	}
 }
 

@@ -140,13 +140,13 @@ class AnnualSiteStats extends Component {
 		const { translate } = this.props;
 		return {
 			year: translate( 'Year' ),
-			total_posts: translate( 'Total Posts' ),
-			total_comments: translate( 'Total Comments' ),
-			avg_comments: translate( 'Avg Comments per Post' ),
-			total_likes: translate( 'Total Likes' ),
-			avg_likes: translate( 'Avg Likes per Post' ),
-			total_words: translate( 'Total Words' ),
-			avg_words: translate( 'Avg Words per Post' ),
+			total_posts: translate( 'Total posts' ),
+			total_comments: translate( 'Total comments' ),
+			avg_comments: translate( 'Avg comments per post' ),
+			total_likes: translate( 'Total likes' ),
+			avg_likes: translate( 'Avg likes per post' ),
+			total_words: translate( 'Total words' ),
+			avg_words: translate( 'Avg words per post' ),
 		};
 	}
 
@@ -177,7 +177,7 @@ class AnnualSiteStats extends Component {
 				{ isWidget && (
 					<SectionHeader
 						href={ viewAllLink }
-						label={ translate( 'Annual Site Stats', { args: [ currentYear ] } ) }
+						label={ translate( 'Annual site stats', { args: [ currentYear ] } ) }
 					/>
 				) }
 				<Card className="stats-module">
@@ -190,7 +190,7 @@ class AnnualSiteStats extends Component {
 					{ isWidget && years && years.length !== 0 && (
 						<div className="module-expand">
 							<a href={ viewAllLink }>
-								{ translate( 'View All', { context: 'Stats: Button label to expand a panel' } ) }
+								{ translate( 'View all', { context: 'Stats: Button label to expand a panel' } ) }
 								<span className="right" />
 							</a>
 						</div>

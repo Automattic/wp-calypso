@@ -1,3 +1,77 @@
+# master
+
+# 6.3.0
+
+- Add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the
+  PostCSS loader, deprecating the less capable `postCssConfig` option
+- Updated terser-webpack-plugin to ^4.1.0
+- Added packages to the list of transpiled NPM dependencies:
+	- dom7
+	- query-string
+	- split-on-first
+	- strict-uri-encode
+	- swiper
+	- calypso
+- Removed packages to the list of transpiled NPM dependencies:
+	- wp-calypso-client
+
+# 6.2.0
+
+- Set `strictExportPresence` in webpack so missing exports error the build.
+  See [#43619](https://github.com/Automattic/wp-calypso/pull/43619).
+- Enable ES2017 syntax support in Terser output.
+- Change documentation to use `yarn` instead of `npm`
+- Lint files with wp-prettier:2.0.5
+- Use `cache-loader` for Sass (optional)
+- Updated a number of dependencies
+	- @automattic/mini-css-extract-plugin-with-rtl to ^0.8.0,
+	- @babel/cli to ^7.10.5,
+	- @babel/core to ^7.11.1,
+	- @babel/plugin-proposal-class-properties to ^7.10.4,
+	- @babel/plugin-transform-react-jsx to ^7.10.4,
+	- @babel/plugin-transform-runtime to ^7.11.0,
+	- @babel/preset-env to ^7.11.0,
+	- @babel/preset-react to ^7.10.4,
+	- @babel/preset-typescript to ^7.10.4,
+	- @types/webpack-env to ^1.15.2,
+	- @wordpress/babel-plugin-import-jsx-pragma to ^2.7.0,
+	- @wordpress/browserslist-config to ^2.7.0,
+	- @wordpress/dependency-extraction-webpack-plugin to ^2.8.0,
+	- autoprefixer to ^9.7.3,
+	- babel-jest to ^26.3.0,
+	- babel-loader to ^8.1.0,
+	- cache-loader to ^4.1.0,
+	- css-loader to ^3.4.2,
+	- duplicate-package-checker-webpack-plugin to ^3.0.0,
+	- enzyme-adapter-react-16 to ^1.15.1,
+	- enzyme-to-json to ^3.4.3,
+	- file-loader to ^4.3.0,
+	- jest-config to ^26.4.0,
+	- jest-enzyme to ^7.1.2,
+	- node-sass to ^4.13.0,
+	- postcss-custom-properties to ^9.1.1,
+	- postcss-loader to ^3.0.0,
+	- recursive-copy to ^2.0.10,
+	- sass-loader to ^8.0.0,
+	- terser-webpack-plugin to ^3.0.1,
+	- thread-loader to ^2.1.3,
+	- typescript to ^3.9.7,
+	- webpack to ^4.44.1,
+	- webpack-cli to ^3.3.11,
+	- webpack-rtl-plugin to ^2.0.0
+- Added new dependencies
+	- @babel/helpers (^7.10.4)
+	- cache-loader (^4.1.0)
+- Added peerDependencies
+	- enzyme (^3.11.0)
+	- jest (>=26.4.0)
+	- react (^16.0.0)
+	- react-dom (^16.0.0
+- Added packages to transpile:
+	- @automattic/lasagna
+	- gridicons
+	- wp-calypso-client
+
 # 6.1.0
 
 - Upgrade [mini-css-extract-plugin-with-rtl](https://github.com/Automattic/mini-css-extract-plugin-with-rtl) to 0.8.0, use an npm-published version instead of GitHub branch reference

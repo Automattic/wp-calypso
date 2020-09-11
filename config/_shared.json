@@ -22,7 +22,7 @@
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
-	"lasagna_url": "wss://horizon.lasagna.pub/socket",
+	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,
 	"mc_analytics_enabled": false,
@@ -133,11 +133,13 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
-		"scan": false,
-		"backups": false,
-		"jetpack-cloud-settings": false
+		"jetpack-cloud-settings": false,
+		"jetpack-cloud-auth": false,
+		"jetpack-cloud-pricing": false
 	},
 	"site_filter": [],
 	"theme": "default",
-	"site_name": "WordPress.com"
+	"site_name": "WordPress.com",
+	"restricted_me_access": true,
+	"theme_color": "#135e96"
 }

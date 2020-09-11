@@ -4,13 +4,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
 import FoldableCard from 'components/foldable-card';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -31,6 +28,8 @@ import {
 	withAnalytics,
 } from 'state/analytics/actions';
 import ActionBox from './action-box';
+import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
 
 /**
  * Image dependencies
@@ -58,6 +57,9 @@ export const QuickLinks = ( {
 	trackDesignLogoAction,
 	addEmailAction,
 	addDomainAction,
+	isExpanded,
+	expand,
+	collapse,
 } ) => {
 	const translate = useTranslate();
 
@@ -147,19 +149,14 @@ export const QuickLinks = ( {
 		</div>
 	);
 
-	if ( ! isMobile() ) {
-		return (
-			<Card className="quick-links">
-				<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
-				{ quickLinks }
-			</Card>
-		);
-	}
 	return (
 		<FoldableCard
-			className="quick-links card-heading-21"
-			header={ translate( 'Quick Links' ) }
-			expanded
+			className="quick-links"
+			header={ translate( 'Quick links' ) }
+			clickableHeader
+			expanded={ isExpanded }
+			onOpen={ expand }
+			onClose={ collapse }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -287,6 +284,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isExpanded: isHomeQuickLinksExpanded( state ),
 	};
 };
 
@@ -301,12 +299,15 @@ const mapDispatchToProps = {
 	trackDesignLogoAction,
 	addEmailAction,
 	addDomainAction,
+	expand: expandHomeQuickLinks,
+	collapse: collapseHomeQuickLinks,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
 	return {
 		...stateProps,
+		...dispatchProps,
 		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
 		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
 		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),

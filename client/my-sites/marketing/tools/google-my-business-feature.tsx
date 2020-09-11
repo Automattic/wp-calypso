@@ -10,9 +10,14 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { FEATURE_GOOGLE_MY_BUSINESS, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	FEATURE_GOOGLE_MY_BUSINESS,
+	PLAN_BUSINESS,
+	PLAN_JETPACK_BUSINESS,
+} from 'lib/plans/constants';
 import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite as getIsJetpackSite } from 'state/sites/selectors';
 import MarketingToolsFeature from './feature';
 import MarketingToolsFeatureButtonWithPlanGate from './feature-button-with-plan-gate';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
@@ -27,6 +32,7 @@ import * as T from 'types';
 
 interface Props {
 	connectedGoogleMyBusinessLocation?: null | any[];
+	isJetpackSite: boolean | null;
 	recordTracksEvent: typeof recordTracksEventAction;
 	selectedSiteId: T.SiteId | null;
 	selectedSiteSlug: T.SiteSlug | null;
@@ -34,6 +40,7 @@ interface Props {
 
 const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 	connectedGoogleMyBusinessLocation,
+	isJetpackSite,
 	recordTracksEvent,
 	selectedSiteId,
 	selectedSiteSlug,
@@ -54,7 +61,7 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 		recordTracksEvent(
 			'calypso_marketing_tools_google_my_business_upgrade_to_business_button_click',
 			{
-				plan_slug: PLAN_BUSINESS,
+				plan_slug: isJetpackSite ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS,
 				feature: FEATURE_GOOGLE_MY_BUSINESS,
 			}
 		);
@@ -77,11 +84,11 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 			>
 				{ ! connectedGoogleMyBusinessLocation ? (
 					<MarketingToolsFeatureButtonWithPlanGate
-						buttonText={ translate( 'Connect to Google My Business' ) }
+						buttonText={ translate( 'Connect to Google My Business' ).toString() }
 						feature={ FEATURE_GOOGLE_MY_BUSINESS }
 						onDefaultButtonClick={ handleConnectToGoogleMyBusinessClick }
 						onUpgradeButtonClick={ handleUpgradeToBusinessPlanClick }
-						planSlug={ PLAN_BUSINESS }
+						planSlug={ isJetpackSite ? PLAN_JETPACK_BUSINESS : PLAN_BUSINESS }
 					/>
 				) : (
 					<Button compact onClick={ handleGoToGoogleMyBusinessClick }>
@@ -102,6 +109,7 @@ export default connect(
 				state,
 				selectedSiteId
 			),
+			isJetpackSite: getIsJetpackSite( state, selectedSiteId ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			selectedSiteId,
 		};

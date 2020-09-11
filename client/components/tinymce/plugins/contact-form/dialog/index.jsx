@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -17,7 +16,8 @@ import FormSettings from './settings';
 import Navigation from './navigation';
 import FieldList from './field-list';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditorPostId } from 'state/editor/selectors';
+import { getEditorContactForm } from 'state/editor/contact-form/selectors';
 import { getEditedPost } from 'state/posts/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { validateFormFields, validateSettingsToEmail } from './validations';
@@ -131,6 +131,6 @@ export default connect( ( state ) => {
 	return {
 		post: getEditedPost( state, siteId, postId ),
 		currentUser: getCurrentUser( state ),
-		contactForm: state.ui.editor.contactForm,
+		contactForm: getEditorContactForm( state ),
 	};
 } )( localize( ContactFormDialog ) );

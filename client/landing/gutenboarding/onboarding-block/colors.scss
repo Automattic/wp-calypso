@@ -5,7 +5,11 @@
 	--highlightColor: var( --studio-blue-20 );
 
 	.design-selector,
-	.style-preview {
+	.style-preview,
+	.plans,
+	.domains,
+	.create-site,
+	.create-site-error {
 		--contrastColor: var( --studio-white );
 		// TODO: This should be Gutenberg's main color
 		--mainColor: var( --studio-gray-100 );

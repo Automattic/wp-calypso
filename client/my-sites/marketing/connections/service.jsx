@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classnames from 'classnames';
@@ -32,12 +31,12 @@ import {
 } from 'state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
-	getRemovableConnections,
 	getSiteUserConnectionsForService,
 	isFetchingConnections,
 } from 'state/sharing/publicize/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import getRemovableConnections from 'state/selectors/get-removable-connections';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
 import ServiceAction from './service-action';
@@ -45,7 +44,7 @@ import ServiceConnectedAccounts from './service-connected-accounts';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
-import requestExternalAccess from 'lib/sharing';
+import requestExternalAccess from '@automattic/request-external-access';
 import MailchimpSettings, { renderMailchimpLogo } from './mailchimp-settings';
 import config from 'config';
 import PicasaMigration from './picasa-migration';

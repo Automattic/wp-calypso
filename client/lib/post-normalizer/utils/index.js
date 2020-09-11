@@ -1,6 +1,6 @@
 export { deduceImageWidthAndHeight } from 'lib/post-normalizer/utils/deduce-image-width-and-height';
 export { domForHtml } from 'lib/post-normalizer/utils/dom-for-html';
-export { iframeIsWhitelisted } from 'lib/post-normalizer/utils/iframe-is-whitelisted';
+export { iframeIsAllowed } from 'lib/post-normalizer/utils/iframe-is-allowed';
 export { imageSizeFromAttachments } from 'lib/post-normalizer/utils/image-size-from-attachments';
 export { isCandidateForCanonicalImage } from 'lib/post-normalizer/utils/is-candidate-for-canonical-image';
 export { isFeaturedImageInContent } from 'lib/post-normalizer/utils/is-featured-image-in-content';

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import productsValues from 'lib/products-values';
+import { isJetpackPlan } from 'lib/products-values';
 import { costToUSD, isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'lib/analytics/utils';
 import {
 	debug,
@@ -168,15 +168,11 @@ export async function recordOrder( cart, orderId ) {
 
 function splitWpcomJetpackCartInfo( cart ) {
 	const jetpackCost = cart.products
-		.map( ( product ) => ( productsValues.isJetpackPlan( product ) ? product.cost : 0)  )
+		.map( ( product ) => ( isJetpackPlan( product ) ? product.cost : 0 ) )
 		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
 	const wpcomCost = cart.total_cost - jetpackCost;
-	const wpcomProducts = cart.products.filter(
-		( product ) => ! productsValues.isJetpackPlan( product )
-	);
-	const jetpackProducts = cart.products.filter( ( product ) =>
-		productsValues.isJetpackPlan( product )
-	);
+	const wpcomProducts = cart.products.filter( ( product ) => ! isJetpackPlan( product ) );
+	const jetpackProducts = cart.products.filter( ( product ) => isJetpackPlan( product ) );
 
 	return {
 		wpcomProducts: wpcomProducts,

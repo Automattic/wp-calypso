@@ -54,7 +54,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 		return (
 			<header className="plan-upgrade-upsell__small-header">
 				<h2 className="plan-upgrade-upsell__title">
-					{ translate( 'Hold tight, your site is being upgraded.' ) }
+					{ translate( 'This is a one time offer just for you' ) }
 				</h2>
 			</header>
 		);
@@ -62,22 +62,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 
 	body() {
 		const { translate, planRawPrice, planDiscountedRawPrice, currencyCode } = this.props;
-		const bundleValue = planRawPrice * 77;
-		const premiumThemePriceLow = planRawPrice * 0.73;
-		const premiumThemePriceHigh = planRawPrice * 1.045;
 		return (
 			<>
 				<h2 className="plan-upgrade-upsell__header">
 					{ translate(
-						'Add {{u}}%(bundleValue)s worth{{/u}} of Premium designs to your order {{br/}}{{u}}for just %(discountPrice)s more{{/u}}!',
+						'Upgrade your account to our most powerful plan ever {{br/}} with this special offer',
 						{
-							args: {
-								bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
-								discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-									precision: 0,
-								} ),
-							},
-							components: { u: <u />, br: <br /> },
+							components: { br: <br /> },
 						}
 					) }
 				</h2>
@@ -87,29 +78,106 @@ export class PlanUpgradeUpsell extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'According to Google, design is possibly the best investment you can make for your website.'
+									'Did you know that WordPress.com Business plan customers can now upload any WordPress plugins they want?'
 								) }
 							</b>
 						</p>
 						<p>
 							{ translate(
-								'Why? Based on their research, 50% of the people visiting your site decide to leave or stay within the first three seconds.'
+								'If you’re familiar with WordPress plugins, you know why that’s exciting. Installing plugins on your site is like downloading an app on your phone. Except, instead of getting a new game or productivity tool, you get new features and functionality for your site.'
 							) }
 						</p>
 						<p>
-							{ translate( '{{i}}Three seconds!{{/i}}', {
-								components: { i: <i /> },
-							} ) }
-						</p>
-						<p>
 							{ translate(
-								"Wouldn't you like to make a great first impression in those three seconds?"
+								'There are more than 50,000 WordPress plugins available to help turn your site into any powerful platform you imagine.'
 							) }
 						</p>
-						<p>{ translate( "Thankfully, there's a way." ) }</p>
+						<p>{ translate( 'With the power of plugins you can:' ) }</p>
+						<ul className="plan-upgrade-upsell__checklist">
+							<li className="plan-upgrade-upsell__checklist-item">
+								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
+								<span className="plan-upgrade-upsell__checklist-item-text">
+									{ translate(
+										'Transform your site into a mobile app, a job board, a wiki, or a coupon site.',
+										{
+											comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										}
+									) }
+								</span>
+							</li>
+							<li className="plan-upgrade-upsell__checklist-item">
+								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
+								<span className="plan-upgrade-upsell__checklist-item-text">
+									{ translate( 'Create a private, customer-only section.', {
+										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+									} ) }
+								</span>
+							</li>
+							<li className="plan-upgrade-upsell__checklist-item">
+								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
+								<span className="plan-upgrade-upsell__checklist-item-text">
+									{ translate( 'Let your customers book and pay for appointments by themselves.', {
+										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+									} ) }
+								</span>
+							</li>
+							<li className="plan-upgrade-upsell__checklist-item">
+								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
+								<span className="plan-upgrade-upsell__checklist-item-text">
+									{ translate(
+										'Fully optimize your site for search engines with advanced options.',
+										{
+											comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										}
+									) }
+								</span>
+							</li>
+							<li className="plan-upgrade-upsell__checklist-item">
+								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
+								<span className="plan-upgrade-upsell__checklist-item-text">
+									{ translate(
+										'Build a professional photography site with beautiful photo galleries.',
+										{
+											comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										}
+									) }
+								</span>
+							</li>
+							<li className="plan-upgrade-upsell__checklist-item">
+								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
+								<span className="plan-upgrade-upsell__checklist-item-text">
+									{ translate( 'Turn your site into a lead-generation powerhouse.', {
+										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+									} ) }
+								</span>
+							</li>
+							<li className="plan-upgrade-upsell__checklist-item">
+								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
+								<span className="plan-upgrade-upsell__checklist-item-text">
+									{ translate( 'Grow your email list with opt-in forms on your site.', {
+										comment: "This is a benefit listed on a 'Upgrade your plan' page",
+									} ) }
+								</span>
+							</li>
+						</ul>
 						<p>
 							{ translate(
-								'Great looking sites {{b}}always{{/b}} create great first impressions and leave people wanting to know more about you.',
+								'And access to the plugin library is just one of many benefits included with the Business plan.'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'With our Business plan you can upload any custom theme you want, have full access to your site with SFTP, and have full control of your data directly with phpMyAdmin.'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'You’ll also get automated backups and one-click rewind for your site. Those powerful tools mean you’ll never need to worry about losing data, or breaking your site during updates.'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'{{b}}But please note:{{/b}} you don’t currently have access to all these amazing features because they are only available to Business plan customers and you haven’t upgraded yet.',
 								{
 									components: { b: <b /> },
 								}
@@ -117,40 +185,22 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"That's exactly why we've partnered with some of the world's greatest designers to offer high-end designs that you can use to make your site look incredible."
-							) }
-						</p>
-						<p>
-							{ translate(
-								'These premium themes are beautiful and optimized for mobile and search engines. Most importantly, they are ready to use regardless of your goals.'
-							) }
-						</p>
-						<p>
-							{ translate(
-								"From small businesses to blogs, wedding sites to designer portfolios, you'll find the perfect theme for your needs."
-							) }
-						</p>
-						<p>
-							{ translate(
-								'Typically, this type of high-end WordPress theme {{b}}costs an average of %(premiumThemePriceLow)s, with some going as high as %(premiumThemePriceHigh)s and more{{/b}}.',
+								'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}30-day money-back guarantee{{/b}}.',
 								{
-									args: {
-										premiumThemePriceLow: formatCurrency( premiumThemePriceLow, currencyCode, {
-											precision: 0,
-										} ),
-										premiumThemePriceHigh: formatCurrency( premiumThemePriceHigh, currencyCode, {
-											precision: 0,
-										} ),
+									components: { b: <b /> },
+								}
+							) }
+						</p>
+						<p>
+							{ translate(
+								'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have 30 days to evaluate the plan and decide if it’s right for you.',
+								{
+									components: {
+										del: <del />,
+										b: <b />,
 									},
-									components: { b: <b /> },
-								}
-							) }
-						</p>
-						<p>
-							{ translate(
-								'But if you upgrade to a Premium plan with this special offer, you will get our full collection premium themes for just an additional %(discountPrice)s!',
-								{
 									args: {
+										fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
 										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 											stripZeros: true,
 										} ),
@@ -158,76 +208,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 								}
 							) }
 						</p>
-						<p>
-							{ translate(
-								"You'll also gain access to some of the most powerful features on WordPress.com:"
-							) }
-						</p>
-
-						<ul className="plan-upgrade-upsell__checklist">
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
-									{ translate(
-										'{{b}}More ways to monetize your site.{{/b}} You can sell stuff on your site without any hassle. Or earn through our special advertising program. Or why not both?',
-										{
-											components: { b: <b /> },
-											comment: "This is a benefit listed on a 'Upgrade your plan' page",
-										}
-									) }
-								</span>
-							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
-									{ translate(
-										'{{b}}Advanced tools to become a social media pro.{{/b}} Schedule posts in advance, resurface your older content, or share multiple social posts at a time.',
-										{
-											components: { b: <b /> },
-											comment: "This is a benefit listed on a 'Upgrade your plan' page",
-										}
-									) }
-								</span>
-							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
-									{ translate(
-										'{{b}}Customize your premium theme to your exact needs.{{/b}} With advanced design features, you can make your site stand out and never be the same as others.',
-										{
-											components: { b: <b /> },
-											comment: "This is a benefit listed on a 'Upgrade your plan' page",
-										}
-									) }
-								</span>
-							</li>
-						</ul>
-
-						<p>
-							{ translate(
-								'Give the Premium plan a risk-free test drive with our {{u}}30-day Money Back Guarantee{{/u}}.',
-								{
-									components: { u: <u /> },
-								}
-							) }
-						</p>
-						<p>
-							<b>
-								{ translate(
-									'Upgrade to the Premium plan and access our full collection of premium themes for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
-									{
-										components: { del: <del /> },
-										args: {
-											bundleValue: formatCurrency( bundleValue, currencyCode, { precision: 0 } ),
-											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-												stripZeros: true,
-											} ),
-										},
-									}
-								) }
-							</b>
-						</p>
+						<p>{ translate( 'So are you ready to explore our most powerful plan ever?' ) }</p>
 					</div>
 					<div className="plan-upgrade-upsell__column-doodle">
 						<img
@@ -249,14 +230,14 @@ export class PlanUpgradeUpsell extends PureComponent {
 					className="plan-upgrade-upsell__decline-offer-button"
 					onClick={ handleClickDecline }
 				>
-					{ translate( "No thanks, I'll stick with the free themes" ) }
+					{ translate( "No thanks, I don't need plugins" ) }
 				</Button>
 				<Button
 					primary
 					className="plan-upgrade-upsell__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( "Yes, I'd love to try those Premium designs!" ) }
+					{ translate( 'Yes, I need plugins for my site!' ) }
 				</Button>
 			</footer>
 		);

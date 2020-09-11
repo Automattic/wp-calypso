@@ -14,11 +14,9 @@ import PropTypes from 'prop-types';
 
 import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
 import RemoveButton from 'components/remove-button';
-import { requestMediaItem } from 'state/media/actions';
-import MediaActions from 'lib/media/actions';
+import { requestMediaItem, setMediaLibrarySelectedItems } from 'state/media/actions';
 
 class ProductImagePicker extends Component {
 	static propTypes = {
@@ -63,7 +61,7 @@ class ProductImagePicker extends Component {
 	onImageChange = ( imageId ) => {
 		this.props.input.onChange( imageId );
 		// the action cares only about the ID -- that allows us to construct a 'valid' item
-		MediaActions.setLibrarySelectedItems( this.props.siteId, [ { ID: imageId } ] );
+		this.props.setMediaLibrarySelectedItems( this.props.siteId, [ { ID: imageId } ] );
 	};
 
 	getImagePlaceholder() {
@@ -113,23 +111,21 @@ class ProductImagePicker extends Component {
 
 		return (
 			<div className="dialog__product-image-picker">
-				<MediaLibrarySelectedData siteId={ siteId }>
-					<AsyncLoad
-						require="post-editor/media-modal"
-						siteId={ siteId }
-						onClose={ this.setImage }
-						enabledFilters={ [ 'images' ] }
-						visible={ isSelecting }
-						isBackdropVisible={ false }
-						labels={ {
-							confirm: translate( 'Add' ),
-						} }
-						single
-						imageEditorProps={ { doneButtonText: translate( 'Update Payment Button' ) } }
-						onImageEditorDoneHook={ makeDirtyAfterImageEdit }
-						onRestoreMediaHook={ makeDirtyAfterImageEdit }
-					/>
-				</MediaLibrarySelectedData>
+				<AsyncLoad
+					require="post-editor/media-modal"
+					siteId={ siteId }
+					onClose={ this.setImage }
+					enabledFilters={ [ 'images' ] }
+					visible={ isSelecting }
+					isBackdropVisible={ false }
+					labels={ {
+						confirm: translate( 'Add' ),
+					} }
+					single
+					imageEditorProps={ { doneButtonText: translate( 'Update Payment Button' ) } }
+					onImageEditorDoneHook={ makeDirtyAfterImageEdit }
+					onRestoreMediaHook={ makeDirtyAfterImageEdit }
+				/>
 
 				<div className="dialog__product-image-container">
 					{ this.props.input.value && this.getCurrentImage() }
@@ -142,4 +138,5 @@ class ProductImagePicker extends Component {
 
 export default connect( ( state ) => ( { siteId: getSelectedSiteId( state ) } ), {
 	requestMediaItem,
+	setMediaLibrarySelectedItems,
 } )( localize( ProductImagePicker ) );

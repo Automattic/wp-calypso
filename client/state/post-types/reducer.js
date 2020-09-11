@@ -6,7 +6,7 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
 import { items as itemsSchema } from './schema';
 import taxonomies from './taxonomies/reducer';
 import { POST_TYPES_RECEIVE } from 'state/action-types';
@@ -32,7 +32,9 @@ export const items = withSchemaValidation(
 	} )
 );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	taxonomies,
 } );
+
+export default withStorageKey( 'postTypes', combinedReducer );

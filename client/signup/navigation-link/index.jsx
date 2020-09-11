@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { submitSignupStep } from 'state/signup/progress/actions';
 import { getSignupProgress } from 'state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
+import { getABTestVariation } from 'lib/abtest';
 
 /**
  * Style dependencies
@@ -37,6 +38,7 @@ export class NavigationLink extends Component {
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.
 		allowBackFirstStep: PropTypes.bool,
+		rel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -132,7 +134,13 @@ export class NavigationLink extends Component {
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;
-			text = labelText ? labelText : translate( 'Back' );
+			if ( labelText ) {
+				text = labelText;
+			} else if ( 'reskinned' === getABTestVariation( 'reskinSignupFlow' ) ) {
+				text = translate( 'Go Back' );
+			} else {
+				text = translate( 'Back' );
+			}
 		}
 
 		if ( this.props.direction === 'forward' ) {
@@ -152,6 +160,7 @@ export class NavigationLink extends Component {
 				className={ buttonClasses }
 				href={ this.getBackUrl() }
 				onClick={ this.handleClick }
+				rel={ this.props.rel }
 			>
 				{ backGridicon }
 				{ text }

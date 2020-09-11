@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	MEMBERSHIPS_PRODUCTS_LIST,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
@@ -13,9 +12,10 @@ import {
 	MEMBERSHIPS_PRODUCT_DELETE,
 	MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 } from 'state/action-types';
-
 import wpcom from 'lib/wp';
 import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/memberships';
+
+import 'state/memberships/init';
 
 export const requestProducts = ( siteId ) => ( {
 	siteId,

@@ -4,6 +4,8 @@
 import createSelector from 'lib/create-selector';
 import { isJetpackSite } from 'state/sites/selectors';
 
+import 'state/wordads/init';
+
 /**
  * Returns the WordAds settings on a certain site.
  * Returns null if the site is unknown, or settings have not been fetched yet.

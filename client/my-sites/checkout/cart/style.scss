@@ -33,7 +33,7 @@
 		.product-name {
 			color: var( --color-neutral-70 );
 			display: block;
-			font-size: 14px;
+			font-size: $font-body-small;
 			padding-right: 30px;
 		}
 
@@ -41,7 +41,7 @@
 		.product-domain-renewal-date {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 12px;
+			font-size: $font-body-extra-small;
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
@@ -53,7 +53,7 @@
 		.product-price {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 13px;
+			font-size: $font-body-small;
 		}
 
 		.cart__free-with-plan {
@@ -87,7 +87,7 @@
 		.product-monthly-price {
 			color: var( --color-text-subtle );
 			display: block;
-			font-size: 11px;
+			font-size: $font-body-extra-small;
 			font-style: italic;
 		}
 
@@ -129,7 +129,7 @@
 	.cart__total {
 		color: var( --color-text-subtle );
 		display: table;
-		font-size: 20px;
+		font-size: $font-title-small;
 
 		.cart__total-row.grand-total {
 			display: table-footer-group;
@@ -141,13 +141,15 @@
 
 		.cart__total-label {
 			display: table-cell;
-			width: auto;
+			width: 100%;
+			word-break: keep-all;
 		}
 
 		.cart__total-amount {
 			display: table-cell;
 			text-align: right;
-			width: 100%;
+			width: auto;
+			white-space: nowrap;
 		}
 
 		.cart__total-amount.last-cell {
@@ -168,9 +170,9 @@
 	}
 
 	.cart__coupon {
-		font-size: 11px;
+		font-size: $font-body-extra-small;
 
-		@include breakpoint( '<660px' ) {
+		@include breakpoint-deprecated( '<660px' ) {
 			display: none;
 		}
 
@@ -186,13 +188,13 @@
 			padding: 15px 15px 0;
 
 			input[type='text'] {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				margin: 0 4% 0 0;
 				width: 70%;
 			}
 
 			.button {
-				font-size: 12px;
+				font-size: $font-body-extra-small;
 				height: 34px;
 				padding: 4px;
 				width: 26%;
@@ -204,31 +206,31 @@
 .cart-items__expander {
 	color: var( --color-primary );
 	text-decoration: none;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 }
 
 .cart-empty {
 	padding: 30px;
 	text-align: center;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .cart__cart-ad {
 	background: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
-	border-radius: 4px;
+	border-radius: 2px;
 	color: var( --color-text );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	margin: 15px 15px 0;
 	padding: 10px;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 
 	.button.is-borderless {
 		color: var( --color-link );
-		font-weight: initial;
+		font-weight: 600;
 	}
 }
 
@@ -256,7 +258,7 @@
 		min-width: auto;
 		padding: 0 15px 0 10px;
 
-		@include breakpoint( '>480px' ) {
+		@include breakpoint-deprecated( '>480px' ) {
 			padding: 14px 20px 12px;
 		}
 	}
@@ -278,7 +280,7 @@
 	right: 2px;
 	animation: pulsing-badge 2s infinite;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		top: 5px;
 		right: 5px;
 	}
@@ -334,7 +336,7 @@ div.popover-cart__popover {
 
 	.cart__total {
 		border-top: 1px solid var( --color-border-subtle );
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 15px;
 	}
 
@@ -378,7 +380,7 @@ div.popover-cart__popover {
 
 	.cart__total {
 		border-top: 1px solid var( --color-border-subtle );
-		font-size: 16px;
+		font-size: $font-body;
 		padding: 15px;
 	}
 
@@ -420,7 +422,7 @@ div.popover-cart__popover {
 }
 
 .secondary-cart {
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		left: 0;
 		margin-left: 0;
 		margin-top: 10px;
@@ -429,6 +431,10 @@ div.popover-cart__popover {
 		max-height: 100%;
 		position: relative;
 		top: 0;
+	}
+
+	.cart__upsell-body {
+		padding: 16px;
 	}
 }
 
@@ -446,7 +452,7 @@ div.popover-cart__popover {
 	margin-top: 0;
 }
 
-@include breakpoint( '<660px' ) {
+@include breakpoint-deprecated( '<660px' ) {
 	.secondary-cart__hidden {
 		display: none;
 	}

@@ -1,10 +1,10 @@
 // View : theme successfully uploaded
 .theme-upload__theme-sheet {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .theme-upload__theme-name {
-	font-size: 24px;
+	font-size: $font-title-medium;
 	font-weight: 600;
 	clear: none;
 }
@@ -15,7 +15,7 @@
 	border: 1px solid var( --color-neutral-0 );
 	margin-left: 24px;
 
-	@include breakpoint( '<960px' ) {
+	@include breakpoint-deprecated( '<960px' ) {
 		float: none;
 		margin-left: 0;
 		margin-bottom: 24px;

@@ -2,31 +2,29 @@
  * External dependencies
  */
 import '@automattic/calypso-polyfills';
-import { setLocaleData } from '@wordpress/i18n';
-import { I18nProvider } from '@automattic/react-i18n';
-import { getLanguageSlugs } from '../../lib/i18n-utils';
-import {
-	getLanguageFile,
-	getLanguageManifestFile,
-	getTranslationChunkFile,
-	switchWebpackCSS,
-} from '../../lib/i18n-utils/switch-locale';
-import React from 'react';
+import * as React from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import config from '../../config';
-import { subscribe, select } from '@wordpress/data';
+import { subscribe, select, dispatch } from '@wordpress/data';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
+import type { Site as SiteStore } from '@automattic/data-stores';
+import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import GUTENBOARDING_BASE_NAME from './basename.json';
-import { Gutenboard } from './gutenboard';
+import Gutenboard from './gutenboard';
+import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
 import accessibleFocus from 'lib/accessible-focus';
-import { path } from './path';
-import { USER_STORE } from './stores/user';
+import availableDesigns from './available-designs';
+import { Step, path } from './path';
+import { SITE_STORE } from './stores/site';
+import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
+import { addHotJarScript } from 'lib/analytics/hotjar';
+import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
+import type { Design } from './stores/onboard/types';
 
 /**
  * Style dependencies
@@ -46,19 +44,10 @@ function generateGetSuperProps() {
 	} );
 }
 
-const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
-const USE_TRANSLATION_CHUNKS: string = config.isEnabled( 'use-translation-chunks' );
-
-type User = import('@automattic/data-stores').User.CurrentUser;
+type Site = SiteStore.SiteDetails;
 
 interface AppWindow extends Window {
-	currentUser?: User;
-	i18nLocaleStrings?: string;
-	installedChunks?: string[];
-	__requireChunkCallback__?: {
-		add( callback: Function ): void;
-		getInstalledChunks(): string[];
-	};
+	BUILD_TARGET?: string;
 }
 declare const window: AppWindow;
 
@@ -69,14 +58,9 @@ declare const window: AppWindow;
 const DEVELOPMENT_BASENAME = '/gutenboarding';
 
 window.AppBoot = async () => {
-	if ( ! config.isEnabled( 'gutenboarding' ) ) {
-		window.location.href = '/';
-		return;
-	}
-
 	if ( window.location.pathname.startsWith( DEVELOPMENT_BASENAME ) ) {
 		const url = new URL( window.location.href );
-		url.pathname = GUTENBOARDING_BASE_NAME + url.pathname.substring( DEVELOPMENT_BASENAME.length );
+		url.pathname = 'new' + url.pathname.substring( DEVELOPMENT_BASENAME.length );
 		window.location.replace( url.toString() );
 		return;
 	}
@@ -86,32 +70,21 @@ window.AppBoot = async () => {
 	// until after the user has completed the gutenboarding flow.
 	// This also saves us from having to pull in lib/user/user and it's dependencies.
 	initializeAnalytics( undefined, generateGetSuperProps() );
+	addHotJarScript();
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	let locale = DEFAULT_LOCALE_SLUG;
 	try {
-		const [ userLocale, { translatedChunks, ...localeData } ]: (
-			| string
-			| any
-		 )[] = await getLocale();
-		setLocaleData( localeData );
-
-		if ( USE_TRANSLATION_CHUNKS ) {
-			setupTranslationChunks( userLocale, translatedChunks );
-		}
-
-		locale = userLocale;
-
-		// FIXME: Use rtl detection tooling
-		if ( ( localeData as any )[ 'text direction\u0004ltr' ]?.[ 0 ] === 'rtl' ) {
-			switchWebpackCSS( true );
-		}
+		checkAndRedirectIfSiteWasCreatedRecently();
 	} catch {}
 
+	// Update list of randomized designs in the gutenboarding session store
+	ensureRandomizedDesignsAreUpToDate();
+
 	ReactDom.render(
-		<I18nProvider locale={ locale }>
-			<BrowserRouter basename={ GUTENBOARDING_BASE_NAME }>
+		<LocaleContext>
+			<WindowLocaleEffectManager />
+			<BrowserRouter basename="new">
 				<Switch>
 					<Route exact path={ path }>
 						<Gutenboard />
@@ -121,123 +94,84 @@ window.AppBoot = async () => {
 					</Route>
 				</Switch>
 			</BrowserRouter>
-		</I18nProvider>,
+		</LocaleContext>,
 		document.getElementById( 'wpcom' )
 	);
 };
 
-/**
- * Load the user's locale
- *
- * 1. If there's an explicit locale slug, use that locale.
- * 2. If i18nLocalStrings is present use those strings and data.
- * 3. If we have a currentUser object, use that locale to fetch data.
- * 4. Fetch the current user and use language to fetch data.
- * 5. TODO (#39312): If we have a URL locale slug, fetch and use data.
- * 6. Fallback to "en" locale without data.
- *
- * @returns Tuple of locale slug and locale data
- */
-async function getLocale(): Promise< [ string, object ] > {
-	// Explicit locale slug.
-	const pathname = new URL( window.location.href ).pathname;
-	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
-	if ( getLanguageSlugs().includes( lastPathSegment ) ) {
-		const data = await getLocaleData( lastPathSegment );
-		return [ lastPathSegment, data ];
-	}
-
-	// Bootstraped locale
-	if ( window.i18nLocaleStrings ) {
-		const bootstrappedLocaleData = JSON.parse( window.i18nLocaleStrings );
-		return [ bootstrappedLocaleData[ '' ].localeSlug, bootstrappedLocaleData ];
-	}
-
-	// User without bootstrapped locale
-	const user = window.currentUser || ( await waitForCurrentUser() );
-	if ( ! user ) {
-		return [ DEFAULT_LOCALE_SLUG, {} ];
-	}
-	const localeSlug: string = getLocaleFromUser( user );
-
-	const data = await getLocaleData( localeSlug );
-	return [ localeSlug, data ];
-}
-
-async function getLocaleData( locale: string ) {
-	if ( locale === DEFAULT_LOCALE_SLUG ) {
-		return {};
-	}
-
-	if ( USE_TRANSLATION_CHUNKS ) {
-		const manifest = await getLanguageManifestFile( locale );
-		const localeData = {
-			...manifest.locale,
-			translatedChunks: manifest.translatedChunks,
-		};
-		return localeData;
-	}
-
-	return getLanguageFile( locale );
-}
-
-function waitForCurrentUser(): Promise< User | undefined > {
-	let unsubscribe: () => void = () => undefined;
-	return new Promise< User | undefined >( ( resolve ) => {
-		unsubscribe = subscribe( () => {
-			const currentUser = select( USER_STORE ).getCurrentUser();
-			if ( currentUser ) {
-				resolve( currentUser );
+async function checkAndRedirectIfSiteWasCreatedRecently() {
+	const shouldPathCauseRedirectForSelectedSite = () => {
+		return [ Step.CreateSite, Step.Plans, Step.Style ].some( ( step ) => {
+			if ( window.location.pathname.startsWith( `/new/${ step }` ) ) {
+				return true;
 			}
-			if ( ! select( 'core/data' ).isResolving( USER_STORE, 'getCurrentUser' ) ) {
+		} );
+	};
+
+	if ( shouldPathCauseRedirectForSelectedSite() ) {
+		const selectedSiteDetails = await waitForSelectedSite();
+
+		if ( selectedSiteDetails ) {
+			const createdAtString = selectedSiteDetails?.options?.created_at;
+			// "2020-05-11T01:08:15+00:00"
+
+			if ( createdAtString ) {
+				const createdAt = new Date( createdAtString );
+				const diff = Date.now() - createdAt.getTime();
+				const diffMinutes = diff / 1000 / 60;
+				if ( diffMinutes < 10 && diffMinutes >= 0 ) {
+					window.location.replace( `/home/${ selectedSiteDetails.ID }` );
+					return;
+				}
+			}
+		}
+	}
+
+	dispatch( ONBOARD_STORE ).setSelectedSite( undefined );
+}
+
+function waitForSelectedSite(): Promise< Site | undefined > {
+	let unsubscribe: () => void = () => undefined;
+	return new Promise< Site | undefined >( ( resolve ) => {
+		const selectedSite = select( ONBOARD_STORE ).getSelectedSite();
+		if ( ! selectedSite ) {
+			return resolve( undefined );
+		}
+		unsubscribe = subscribe( () => {
+			const resolvedSelectedSite = select( SITE_STORE ).getSite( selectedSite );
+			if ( resolvedSelectedSite ) {
+				resolve( resolvedSelectedSite );
+			}
+
+			if ( ! select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ selectedSite ] ) ) {
 				resolve( undefined );
 			}
 		} );
-		select( USER_STORE ).getCurrentUser();
+		select( SITE_STORE ).getSite( selectedSite );
 	} ).finally( unsubscribe );
 }
-
-function getLocaleFromUser( user: User ): string {
-	return user.locale_variant || user.language;
+/**
+ * If available-designs-config.json has been updated, replace the cached list
+ * of designs with the updated designs
+ */
+function ensureRandomizedDesignsAreUpToDate() {
+	const designsInStore = select( ONBOARD_STORE ).getRandomizedDesigns();
+	if ( ! isDeepEqual( designsInStore.featured, availableDesigns.featured ) ) {
+		dispatch( ONBOARD_STORE ).setRandomizedDesigns( {
+			...availableDesigns,
+			featured: shuffle( availableDesigns.featured ),
+		} );
+	}
 }
 
-function setupTranslationChunks( localeSlug: string, translatedChunks: string[] = [] ) {
-	if ( ! window.__requireChunkCallback__ ) {
-		return;
-	}
-
-	interface TranslationChunksCache {
-		[ propName: string ]: undefined | boolean;
-	}
-	const loadedTranslationChunks: TranslationChunksCache = {};
-	const loadTranslationForChunkIfNeeded = ( chunkId: string ) => {
-		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
-			return;
-		}
-
-		return getTranslationChunkFile( chunkId, localeSlug ).then( ( translations ) => {
-			setLocaleData( translations );
-			loadedTranslationChunks[ chunkId ] = true;
-		} );
-	};
-	const installedChunks = new Set(
-		( window.installedChunks || [] ).concat( window.__requireChunkCallback__.getInstalledChunks() )
-	);
-
-	installedChunks.forEach( ( chunkId ) => {
-		loadTranslationForChunkIfNeeded( chunkId );
-	} );
-
-	interface RequireChunkCallbackParameters {
-		publicPath: string;
-		scriptSrc: string;
-	}
-
-	window.__requireChunkCallback__.add(
-		( { publicPath, scriptSrc }: RequireChunkCallbackParameters, promises: any[] ) => {
-			const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
-
-			promises.push( loadTranslationForChunkIfNeeded( chunkId ) );
-		}
-	);
+/**
+ *
+ * Compare cached designs in the ONBOARD_STORE to the source of designs in
+ * available-designs-config.json
+ *
+ * @param stored randomizedDesigns cached in WP_ONBOARD
+ * @param available designs sourced from available-designs-config.json
+ */
+function isDeepEqual( stored: Design[], available: Design[] ): boolean {
+	return isEmpty( xorWith( stored, available, isEqual ) );
 }

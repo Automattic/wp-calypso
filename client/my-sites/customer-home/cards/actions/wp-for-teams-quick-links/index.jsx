@@ -4,13 +4,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import { Card } from '@automattic/components';
-import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
 import FoldableCard from 'components/foldable-card';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -30,12 +27,14 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'state/analytics/actions';
-import ActionBox from 'my-sites/customer-home/cards/actions/quick-links/action-box';
+import ActionBox from '../quick-links/action-box';
+import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
 
 /**
  * Style dependencies
  */
-import 'my-sites/customer-home/cards/actions/quick-links/style.scss';
+import '../quick-links/style.scss';
 
 export const QuickLinks = ( {
 	customizeUrl,
@@ -48,12 +47,14 @@ export const QuickLinks = ( {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	isExpanded,
+	expand,
+	collapse,
 } ) => {
 	const translate = useTranslate();
 
 	const quickLinks = (
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		<div className="quick-links__boxes">
+		<div className="wp-for-teams-quick-links__boxes quick-links__boxes">
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ editHomepageAction }
@@ -111,20 +112,14 @@ export const QuickLinks = ( {
 			) }
 		</div>
 	);
-
-	if ( ! isMobile() ) {
-		return (
-			<Card className="quick-links">
-				<CardHeading>{ translate( 'Quick Links' ) }</CardHeading>
-				{ quickLinks }
-			</Card>
-		);
-	}
 	return (
 		<FoldableCard
-			className="quick-links card-heading-21"
+			className="wp-for-teams-quick-links quick-links"
 			header={ translate( 'Quick Links' ) }
-			expanded
+			clickableHeader
+			expanded={ isExpanded }
+			onOpen={ expand }
+			onClose={ collapse }
 		>
 			{ quickLinks }
 		</FoldableCard>
@@ -211,6 +206,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug,
 		isStaticHomePage,
 		editHomePageUrl,
+		isExpanded: isHomeQuickLinksExpanded( state ),
 	};
 };
 
@@ -221,12 +217,15 @@ const mapDispatchToProps = {
 	manageCommentsAction,
 	trackEditMenusAction,
 	trackCustomizeThemeAction,
+	expand: expandHomeQuickLinks,
+	collapse: collapseHomeQuickLinks,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
 	return {
 		...stateProps,
+		...dispatchProps,
 		editHomepageAction: () => dispatchProps.editHomepageAction( editHomePageUrl, isStaticHomePage ),
 		writePostAction: () => dispatchProps.writePostAction( siteSlug, isStaticHomePage ),
 		addPageAction: () => dispatchProps.addPageAction( siteSlug, isStaticHomePage ),

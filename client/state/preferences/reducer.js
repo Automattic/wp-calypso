@@ -14,7 +14,12 @@ import {
 	PREFERENCES_FETCH_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'state/utils';
 import { remoteValuesSchema } from './schema';
 
 /**
@@ -88,9 +93,11 @@ const lastFetchedTimestamp = withoutPersistence( ( state = false, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	localValues,
 	remoteValues,
 	fetching,
 	lastFetchedTimestamp,
 } );
+const preferencesReducer = withStorageKey( 'preferences', combinedReducer );
+export default preferencesReducer;

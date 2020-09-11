@@ -12,6 +12,7 @@ import { find, isString, noop } from 'lodash';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import LanguagePickerModal from './modal';
 import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
@@ -29,6 +30,9 @@ export class LanguagePicker extends PureComponent {
 		onChange: PropTypes.func,
 		onClick: PropTypes.func,
 		countryCode: PropTypes.string,
+		showEmpathyModeControl: PropTypes.bool,
+		empathyMode: PropTypes.bool,
+		getIncompleteLocaleNoticeMessage: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -37,6 +41,9 @@ export class LanguagePicker extends PureComponent {
 		onChange: noop,
 		onClick: noop,
 		countryCode: '',
+		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
+		empathyMode: false,
+		useFallbackForIncompleteLanguages: false,
 	};
 
 	constructor( props ) {
@@ -44,6 +51,8 @@ export class LanguagePicker extends PureComponent {
 
 		this.state = {
 			selectedLanguage: this.findLanguage( props.valueKey, props.value ),
+			empathyMode: props.empathyMode,
+			useFallbackForIncompleteLanguages: props.useFallbackForIncompleteLanguages,
 		};
 	}
 
@@ -51,6 +60,20 @@ export class LanguagePicker extends PureComponent {
 		if ( nextProps.value !== this.props.value || nextProps.valueKey !== this.props.valueKey ) {
 			this.setState( {
 				selectedLanguage: this.findLanguage( nextProps.valueKey, nextProps.value ),
+			} );
+		}
+
+		if ( nextProps.empathyMode !== this.props.empathyMode ) {
+			this.setState( {
+				empathyMode: nextProps.empathyMode,
+			} );
+		}
+
+		if (
+			nextProps.useFallbackForIncompleteLanguages !== this.props.useFallbackForIncompleteLanguages
+		) {
+			this.setState( {
+				useFallbackForIncompleteLanguages: nextProps.useFallbackForIncompleteLanguages,
 			} );
 		}
 	}
@@ -73,7 +96,7 @@ export class LanguagePicker extends PureComponent {
 		return language;
 	}
 
-	selectLanguage = ( languageSlug ) => {
+	selectLanguage = ( languageSlug, { empathyMode, useFallbackForIncompleteLanguages } ) => {
 		// Find the language by the slug
 		const language = this.findLanguage( 'langSlug', languageSlug );
 		if ( ! language ) {
@@ -82,10 +105,12 @@ export class LanguagePicker extends PureComponent {
 
 		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ] || language.langSlug;
-		const event = { target: { value } };
+		const event = { target: { value, empathyMode, useFallbackForIncompleteLanguages } };
 		this.props.onChange( event );
 		this.setState( {
 			selectedLanguage: language,
+			empathyMode,
+			useFallbackForIncompleteLanguages,
 		} );
 	};
 
@@ -121,7 +146,14 @@ export class LanguagePicker extends PureComponent {
 		if ( ! this.state.open ) {
 			return null;
 		}
-		const { countryCode, languages } = this.props;
+
+		const {
+			countryCode,
+			languages,
+			showEmpathyModeControl,
+			getIncompleteLocaleNoticeMessage,
+		} = this.props;
+
 		return (
 			<LanguagePickerModal
 				isVisible
@@ -130,6 +162,10 @@ export class LanguagePicker extends PureComponent {
 				onSelected={ this.selectLanguage }
 				selected={ selectedLanguageSlug }
 				countryCode={ countryCode }
+				showEmpathyModeControl={ showEmpathyModeControl }
+				empathyMode={ this.state.empathyMode }
+				useFallbackForIncompleteLanguages={ this.state.useFallbackForIncompleteLanguages }
+				getIncompleteLocaleNoticeMessage={ getIncompleteLocaleNoticeMessage }
 			/>
 		);
 	}
@@ -140,7 +176,7 @@ export class LanguagePicker extends PureComponent {
 			return this.renderPlaceholder();
 		}
 
-		const { disabled, translate } = this.props;
+		const { disabled } = this.props;
 		const langName = language.name;
 		const { langCode, langSubcode } = getLanguageCodeLabels( language.langSlug );
 
@@ -154,15 +190,12 @@ export class LanguagePicker extends PureComponent {
 				>
 					<div className="language-picker__icon">
 						<div className="language-picker__icon-inner">
-							{ langCode }
-							{ langSubcode && <br /> }
-							{ langSubcode }
+							{ langSubcode ? `${ langCode } ${ langSubcode }` : langCode }
 						</div>
 					</div>
 					<div className="language-picker__name">
 						<div className="language-picker__name-inner">
 							<div className="language-picker__name-label">{ langName }</div>
-							<div className="language-picker__name-change">{ translate( 'Change' ) }</div>
 						</div>
 					</div>
 				</button>

@@ -1,7 +1,6 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
-@import 'assets/stylesheets/shared/mixins/placeholder'; // Contains the placeholder mixin
-@import 'assets/stylesheets/shared/animation'; // Needed for the placeholder
 @import '../../variables.scss';
+@import '~@automattic/onboarding/styles/z-index';
 
 $margin-left--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;
@@ -11,10 +10,10 @@ $padding--gutenboarding__header: $grid-unit-10;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	border-bottom: 1px solid $light-gray-500;
-	height: $gutenboarding-header-height;
+	border-bottom: 1px solid $gray-200;
+	height: $onboarding-header-height;
 	background: $white;
-	z-index: z-index( '.block-editor-editor-skeleton__header' );
+	z-index: onboarding-z-index( '.onboarding__header' );
 	left: 0;
 	right: 0;
 	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
@@ -28,11 +27,23 @@ $padding--gutenboarding__header: $grid-unit-10;
 	}
 }
 
+.gutenboarding__header-language-section {
+	margin-right: 15px;
+}
+
+.gutenboarding__header-site-language-badge {
+	display: inline-block;
+	padding: 1px 8px;
+	margin: 0 4px;
+	border: 1px solid $gray-200;
+	text-transform: uppercase;
+}
+
 .gutenboarding__header-section {
 	display: flex;
 	width: 100%;
 	align-items: center;
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .gutenboarding__header-section-item {
@@ -50,12 +61,22 @@ $padding--gutenboarding__header: $grid-unit-10;
 	display: flex;
 }
 
-.gutenboarding__header-domain-picker-button {
-	padding: 0.3em 0.5em;
+.gutenboarding__header-site-title-section {
+	display: none;
+
+	@include break-mobile {
+		display: block;
+	}
 }
 
-.gutenboarding__header-domain-picker-button-domain {
-	&.placeholder {
-		@include placeholder();
-	}
+.gutenboarding__header-domain-section {
+	// Let this flex item take 100% of available width.
+	flex-grow: 1;
+	// Ensure flex item doesn't exceed 100% of th
+	// available width, allowing content to have ellipsis.
+	min-width: 0;
+}
+
+.gutenboarding__header-site-title-section {
+	white-space: nowrap;
 }

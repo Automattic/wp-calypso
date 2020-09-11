@@ -230,6 +230,17 @@ export class ProductSelector extends Component {
 			return optionDescriptions[ planProductSlug ];
 		}
 
+		// Plans landing page at /jetpack/connect/store
+		if ( ! this.props.selectedSiteSlug ) {
+			return (
+				description +
+				'\n' +
+				this.props.translate(
+					'The price of this subscription is based on the number of records you have on your site.'
+				)
+			);
+		}
+
 		// Default product description.
 		return description;
 	}
@@ -355,7 +366,7 @@ export class ProductSelector extends Component {
 		return (
 			<ProductCardAction
 				onClick={ this.handleCheckoutForProduct( productObject ) }
-				intro={ this.getIntervalDiscount( selectedProductSlug ) }
+				intro={ this.props.selectedSiteSlug && this.getIntervalDiscount( selectedProductSlug ) }
 				label={ translate( 'Get %(productName)s', {
 					args: {
 						productName: this.getActionButtonName( product, productObject.product_slug ),
@@ -499,6 +510,22 @@ export class ProductSelector extends Component {
 		return null;
 	}
 
+	renderPromo() {
+		return (
+			<ProductCardPromoNudge
+				badgeText={ this.props.translate( 'Up to %(discount)s off!', {
+					args: { discount: '70%' },
+				} ) }
+				text={ this.props.translate(
+					'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
+					{
+						components: { strong: <strong /> },
+					}
+				) }
+			/>
+		);
+	}
+
 	renderProducts() {
 		const {
 			fetchingPlans,
@@ -508,7 +535,6 @@ export class ProductSelector extends Component {
 			products,
 			selectedSiteSlug,
 			storeProducts,
-			translate,
 		} = this.props;
 
 		if ( isEmpty( storeProducts ) || fetchingSitePurchases || fetchingSitePlans || fetchingPlans ) {
@@ -579,36 +605,31 @@ export class ProductSelector extends Component {
 					purchase={ purchase }
 					subtitle={ this.getSubtitleByProduct( product ) }
 				>
-					{ hasProductPurchase && this.renderManageButton( product, purchase ) }
-					{ ! hasProductPurchase && ! isCurrent && (
+					{ selectedSiteSlug && hasProductPurchase && this.renderManageButton( product, purchase ) }
+					{ ! selectedSiteSlug && product.id === 'jetpack_search' && (
 						<Fragment>
-							{ product.hasPromo && (
-								<ProductCardPromoNudge
-									badgeText={ translate( 'Up to %(discount)s off!', {
-										args: { discount: '70%' },
-									} ) }
-									text={ translate(
-										'Hurry, these are {{strong}}Limited time introductory prices!{{/strong}}',
-										{
-											components: { strong: <strong /> },
-										}
-									) }
-								/>
-							) }
-
-							<ProductCardOptions
-								optionsLabel={ optionsLabel }
-								options={ this.getProductOptions( product ) }
-								selectedSlug={ selectedSlug }
-								handleSelect={ ( productSlug ) =>
-									this.handleProductOptionSelect( stateKey, productSlug, product.id )
-								}
-								forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
-							/>
-
+							{ product.hasPromo && this.renderPromo() }
 							{ this.renderCheckoutButton( product ) }
 						</Fragment>
 					) }
+					{ ( selectedSiteSlug || ( ! selectedSiteSlug && product.id !== 'jetpack_search' ) ) &&
+						! hasProductPurchase &&
+						! isCurrent && (
+							<Fragment>
+								{ product.hasPromo && this.renderPromo() }
+								<ProductCardOptions
+									optionsLabel={ optionsLabel }
+									options={ this.getProductOptions( product ) }
+									selectedSlug={ selectedSlug }
+									handleSelect={ ( productSlug ) =>
+										this.handleProductOptionSelect( stateKey, productSlug, product.id )
+									}
+									forceRadiosEvenIfOnlyOneOption={ !! product.forceRadios }
+								/>
+
+								{ this.renderCheckoutButton( product ) }
+							</Fragment>
+						) }
 				</ProductCard>
 			);
 		} );

@@ -126,8 +126,23 @@ class Search extends Component {
 				>
 					{ translate( 'Replace WordPress built-in search with an improved search experience' ) }
 				</CompactFormToggle>
-
 				{ this.renderSettingsContent( isSavingSettings, fields.jetpack_search_enabled ) }
+
+				<div className="site-settings__jetpack-instant-search-toggle">
+					<CompactFormToggle
+						checked={ !! fields.instant_search_enabled }
+						disabled={
+							isRequestingSettings ||
+							isSavingSettings ||
+							! fields.jetpack_search_enabled ||
+							! this.props.hasSearchProduct
+						}
+						onChange={ handleAutosavingToggle( 'instant_search_enabled' ) }
+					>
+						{ translate( 'Enable instant search experience (recommended)' ) }
+					</CompactFormToggle>
+					{ this.renderInstantSearchExplanation() }
+				</div>
 			</FormFieldset>
 		);
 	}

@@ -17,7 +17,7 @@
 .button.google-voucher__setup-google-adwords:not( .is-compact ) {
 	margin-top: 16px;
 
-	@include breakpoint( '>660px' ) {
+	@include breakpoint-deprecated( '>660px' ) {
 		text-align: center;
 	}
 }
@@ -25,14 +25,14 @@
 // dialog
 .dialog.card.google-voucher__dialog {
 	max-width: 530px;
-	font-size: 13px;
+	font-size: $font-body-small;
 	overflow: hidden;
 
 	ol {
 		list-style-position: inside;
 		margin: 0;
 
-		@include breakpoint( '>660px' ) {
+		@include breakpoint-deprecated( '>660px' ) {
 			list-style-position: outside;
 			margin: 0 3em 1.5em;
 		}
@@ -92,7 +92,7 @@ li.google-voucher__terms-and-conditions {
 	margin-top: 16px;
 	display: block;
 
-	@include breakpoint( '<660px' ) {
+	@include breakpoint-deprecated( '<660px' ) {
 		max-width: none;
 	}
 }

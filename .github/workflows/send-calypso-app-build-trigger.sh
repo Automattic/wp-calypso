@@ -1,29 +1,50 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-trigger_payload=`cat $GITHUB_EVENT_PATH`
-
-workflow_data="{
-	\"action\": \"$GITHUB_ACTION\",
-	\"actor\": \"$GITHUB_ACTOR\",
-	\"run_id\": \"$GITHUB_RUN_ID\",
-	\"run_num\": \"$GITHUB_RUN_NUMBER\",
-	\"repo\": \"$GITHUB_REPOSITORY\",
-	\"trigger_payload\": $trigger_payload
-}"
-
 # cd here so that the parent directories are not included in the zip file.
-cd apps/full-site-editing/full-site-editing-plugin
+cd apps/editing-toolkit/editing-toolkit-plugin
+
+echo -e "Creating archive file...\n"
 
 # Create a zip of the FSE plugin. Should include built files at this point.
 build_archive=plugin-archive.zip
-zip -r $build_archive ./*
+zip --quiet --recurse-paths $build_archive ./*
+
+echo -e "Creating JSON payload...\n"
+
+# Use node to process data into JSON file
+node -e '
+const fs = require("fs");
+const trigger_payload = JSON.parse( fs.readFileSync( process.env.GITHUB_EVENT_PATH, "utf8" ) );
+
+// Makes sure that the data we need exists.
+const getEnv = ( varName ) => {
+	const envVal = process.env[ varName ];
+	// Fail for any falsey value except 0 (including empty strings).
+	if ( ! envVal && envVal !== 0 ) {
+		throw new Error( `${ varName } env variable missing!` );
+	}
+	return envVal;
+}
+
+const output = JSON.stringify( {
+	action: getEnv( "GITHUB_ACTION" ),
+	actor: getEnv( "GITHUB_ACTOR" ),
+	run_id: getEnv( "GITHUB_RUN_ID" ),
+	run_num: getEnv( "GITHUB_RUN_NUMBER" ),
+	repo: getEnv( "GITHUB_REPOSITORY" ),
+	trigger_payload,
+} );
+fs.writeFileSync( "workflow_data.json", output, "utf8" );
+'
+
+echo -e "Sending data to MC...\n"
 
 # Send metadata and build zip file to the endpoint.
 response=`curl -s \
-	-w "HTTPSTATUS:%{http_code}" \
-	-F "meta=$workflow_data" \
-	-F "build_archive=@$build_archive;type=application/zip" \
+	--write-out "HTTPSTATUS:%{http_code}" \
+	--form "meta=<workflow_data.json" \
+	--form "build_archive=@$build_archive;type=application/zip" \
 	"$TRIGGER_CALYPSO_APP_BUILD_ENDPOINT?calypso_app=$CALYPSO_APP"`
 
 # Echo the output given by the server. (Like error messages.)

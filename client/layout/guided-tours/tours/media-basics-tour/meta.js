@@ -7,7 +7,7 @@ import { isDesktop } from '@automattic/viewport';
  * Internal dependencies
  */
 import { and } from 'layout/guided-tours/utils';
-import { isNewUser } from 'state/ui/guided-tours/contexts';
+import { isNewUser } from 'state/guided-tours/contexts';
 
 export default {
 	name: 'mediaBasicsTour',

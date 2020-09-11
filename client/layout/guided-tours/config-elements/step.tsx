@@ -22,7 +22,7 @@ import {
 } from '../positioning';
 import { contextTypes } from '../context-types';
 import { ArrowPosition, DialogPosition, Coordinate } from '../types';
-import { TimestampMS } from 'client/types';
+import { TimestampMS } from 'calypso/types';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -50,6 +50,7 @@ interface AcceptedProps {
 	style?: CSSProperties;
 	target?: string;
 	wait?: Function;
+	waitForTarget?: boolean;
 	when?: Function;
 }
 
@@ -59,6 +60,8 @@ interface DefaultProps {
 
 interface State {
 	initialized: boolean;
+	hasScrolled: boolean;
+	seenTarget: boolean;
 	stepPos?: Coordinate;
 }
 
@@ -77,13 +80,17 @@ export default class Step extends Component< Props, State > {
 
 	stepSection: string = null;
 
-	mounted: boolean = false;
+	mounted = false;
 
 	repositionInterval: ReturnType< typeof setInterval > | null = null;
 
 	scrollContainer: Element | null = null;
 
-	state: State = { initialized: false };
+	state: State = {
+		initialized: false,
+		hasScrolled: false,
+		seenTarget: false,
+	};
 
 	/**
 	 * A mutation observer to watch whether the target exists
@@ -94,7 +101,7 @@ export default class Step extends Component< Props, State > {
 	 * Flag to determine if we're repositioning the Step dialog
 	 * True if the Step dialog is being repositioned.
 	 */
-	isUpdatingPosition: boolean = false;
+	isUpdatingPosition = false;
 
 	UNSAFE_componentWillMount() {
 		this.wait( this.props, this.context ).then( () => {
@@ -103,6 +110,7 @@ export default class Step extends Component< Props, State > {
 			debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 			this.skipIfInvalidContext( this.props, this.context );
 			this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || window;
+			// Don't pass `shouldScrollTo` as argument since mounting hasn't occured at this point yet.
 			this.setStepPosition( this.props );
 			this.safeSetState( { initialized: true } );
 		} );
@@ -114,14 +122,14 @@ export default class Step extends Component< Props, State > {
 			window.addEventListener( 'resize', this.onScrollOrResize );
 			this.watchTarget();
 		} );
-		if ( this.props.keepRepositioning ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
-		}
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps: Props, nextContext ) {
-		const shouldScrollTo = nextProps.shouldScrollTo && this.props.name !== nextProps.name;
+		// Scrolling must happen only once
+		const shouldScrollTo = nextProps.shouldScrollTo && ! this.state.hasScrolled;
+
 		this.wait( nextProps, nextContext ).then( () => {
+			this.resetScrolledState( nextProps );
 			this.setStepSection( nextContext );
 			this.quitIfInvalidRoute( nextProps, nextContext );
 			this.skipIfInvalidContext( nextProps, nextContext );
@@ -133,11 +141,6 @@ export default class Step extends Component< Props, State > {
 			this.setStepPosition( nextProps, shouldScrollTo );
 			this.watchTarget();
 		} );
-		if ( ! nextProps.keepRepositioning ) {
-			clearInterval( this.repositionInterval );
-		} else if ( ! this.repositionInterval ) {
-			this.repositionInterval = setInterval( this.onScrollOrResize, 3000 );
-		}
 	}
 
 	componentWillUnmount() {
@@ -149,7 +152,6 @@ export default class Step extends Component< Props, State > {
 			this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		}
 		this.unwatchTarget();
-		clearInterval( this.repositionInterval );
 	}
 
 	/*
@@ -175,28 +177,44 @@ export default class Step extends Component< Props, State > {
 	}
 
 	watchTarget() {
+		const { target, onTargetDisappear, waitForTarget, keepRepositioning } = this.props;
 		if (
-			! this.props.target ||
-			! this.props.onTargetDisappear ||
-			typeof MutationObserver === 'undefined'
+			( ! keepRepositioning && ( ! target || ( ! onTargetDisappear && ! waitForTarget ) ) ) ||
+			typeof window === 'undefined' ||
+			typeof window.MutationObserver === 'undefined'
 		) {
 			return;
 		}
 
-		if ( ! this.observer ) {
-			this.observer = new MutationObserver( () => {
-				const { target, onTargetDisappear } = this.props;
+		this.safeSetState( { seenTarget: ! target || targetForSlug( target ) } );
 
-				if ( ! target || ! onTargetDisappear ) {
+		if ( ! this.observer ) {
+			this.observer = new window.MutationObserver( () => {
+				if ( keepRepositioning ) {
+					this.onScrollOrResize();
+				}
+
+				// This is checking that we have a target and that we
+				// either want to wait for it to appear, or invoke a callback
+				// when it disappears. If not, then there's nothing for us to do!
+				if ( ! target || ( ! waitForTarget && ! onTargetDisappear ) ) {
 					return;
 				}
 
-				const targetEl = document.querySelector( `[data-tip-target="${ target }"]` );
-				if ( ! targetEl ) {
+				const targetEl = targetForSlug( target );
+				// If the target isn't found and we want to invoke a callback when
+				// it disappears, then check that we've either previously seen the target
+				// or that we've not been waiting to see it. If so, invoke the callback.
+				// Otherwise, if the target is in the DOM update our state to show that
+				// it's been seen.
+				if ( ! targetEl && onTargetDisappear && ( ! waitForTarget || this.state.seenTarget ) ) {
+					debug( 'Step#watchTarget: Target has disappeared' );
 					onTargetDisappear( {
 						quit: () => this.context.quit( this.context ),
 						next: () => this.skipToNext( this.props, this.context ),
 					} );
+				} else if ( targetEl ) {
+					this.safeSetState( { seenTarget: true } );
 				}
 			} );
 			this.observer.observe( document.body, { childList: true, subtree: true } );
@@ -328,8 +346,8 @@ export default class Step extends Component< Props, State > {
 	}
 
 	onScrollOrResize = () => {
-		if ( ! this.isUpdatingPosition ) {
-			requestAnimationFrame( () => {
+		if ( this.mounted && ! this.isUpdatingPosition ) {
+			window.requestAnimationFrame( () => {
 				this.setStepPosition( this.props );
 				this.isUpdatingPosition = false;
 			} );
@@ -337,21 +355,34 @@ export default class Step extends Component< Props, State > {
 		}
 	};
 
+	resetScrolledState( nextProps: Props ) {
+		const { name } = this.props;
+		const { name: nextName } = nextProps;
+
+		// Reinitialize scrolling behaviour when step changes
+		if ( nextName !== name ) {
+			this.safeSetState( { hasScrolled: false } );
+		}
+	}
+
 	setStepPosition( props: Props, shouldScrollTo = false ) {
 		const { placement, target } = props;
-		const stepPos = getStepPosition( {
+		const { stepPos, scrollDiff } = getStepPosition( {
 			placement,
 			targetSlug: target,
 			shouldScrollTo,
 			scrollContainer: this.scrollContainer,
 		} );
-		this.setState( { stepPos } );
+		this.safeSetState( ( state ) => ( {
+			stepPos,
+			hasScrolled: ! state.hasScrolled && scrollDiff > 0,
+		} ) );
 	}
 
 	render() {
 		// `children` is a render prop where the value is not the usual JSX markup,
 		// but a React component to render, i.e., function or a class.
-		const { when, children: ContentComponent } = this.props;
+		const { when, children: ContentComponent, target, waitForTarget } = this.props;
 		const { isLastStep } = this.context;
 
 		if ( ! this.state.initialized ) {
@@ -365,6 +396,10 @@ export default class Step extends Component< Props, State > {
 		}
 
 		if ( when && ! this.context.isValid( when ) ) {
+			return null;
+		}
+
+		if ( target && waitForTarget && ! this.state.seenTarget ) {
 			return null;
 		}
 

@@ -1,6 +1,10 @@
 #### Unreleased
+
+#### v5.0.0 (2020-07-23)
+
 - Breaking: Removed rule [`import-no-redux-combine-reducers`](docs/rules/import-no-redux-combine-reducers.md)
 - Enhancement: `jsx-classname-namespace` understands Storybook `index.stories.js` files and treats them as root files
+- Enhancement: `import-docblock` now supports WordPress dependencies.
 
 #### v4.1.0 (2019-05-07)
 

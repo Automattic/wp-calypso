@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'state/posts/init';
+
+/**
  * Returns true if an error should be shown in the video editor.
  *
  *
@@ -7,5 +12,5 @@
  */
 
 export default function shouldShowVideoEditorError( state ) {
-	return state.ui.editor.videoEditor.showError;
+	return state.editor.videoEditor.showError;
 }

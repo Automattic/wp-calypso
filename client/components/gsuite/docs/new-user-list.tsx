@@ -43,7 +43,14 @@ const GSuiteNewUserListExample = () => {
 		error: ! error && value.includes( 'a' ) ? "No a's permitted!" : error,
 	} );
 
-	const extraValidation = ( { domain, mailBox, firstName, lastName }: GSuiteNewUser ) => ( {
+	const extraValidation = ( {
+		uuid,
+		domain,
+		mailBox,
+		firstName,
+		lastName,
+	}: GSuiteNewUser ): GSuiteNewUser => ( {
+		uuid,
 		firstName: noAs( firstName ),
 		lastName: noAs( lastName ),
 		domain,

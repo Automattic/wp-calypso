@@ -1,19 +1,20 @@
 .export-card__title,
 .export-media-card__title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	color: var( --color-neutral-70 );
 	margin-bottom: 16px;
 	clear: left;
 }
 
 .export-card .foldable-card__header,
-.export-media-card .foldable-card__header {
+.export-media-card .foldable-card__header,
+.export-card .foldable-card.is-expanded .foldable-card__content {
 	padding: 24px;
 }
 
 .export-card__subtitle,
 .export-media-card__subtitle {
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
 }
 
@@ -35,17 +36,17 @@
 }
 
 .export-card__advanced-settings-title {
-	font-size: 21px;
+	font-size: $font-title-small;
 	color: var( --color-neutral-70 );
 	margin-bottom: 16px;
 }
 
 .export-card__advanced-settings-description {
-	font-size: 14px;
+	font-size: $font-body-small;
 }
 
 .export-card__advanced-settings-row {
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
@@ -54,14 +55,14 @@
 .export-card__option-fieldset {
 	margin-top: 10px;
 
-	@include breakpoint( '>960px' ) {
+	@include breakpoint-deprecated( '>960px' ) {
 		margin-top: inherit;
 		flex: 1;
 	}
 }
 
 .export-card__option-fieldset-description {
-	font-size: 14px;
+	font-size: $font-body-small;
 	color: var( --color-text-subtle );
 	padding-left: 24px;
 	padding-right: 24px;

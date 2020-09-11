@@ -13,8 +13,8 @@ const POST_ID = 1234;
 
 describe( 'getCommentsPage()', () => {
 	const state = {
-		ui: {
-			comments: {
+		comments: {
+			ui: {
 				queries: {
 					[ SITE_ID ]: {
 						site: {

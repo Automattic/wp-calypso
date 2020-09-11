@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
@@ -12,6 +11,8 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import wp from 'lib/wp';
+
+import 'state/billing-transactions/init';
 
 export const requestBillingTransactions = () => {
 	return ( dispatch ) => {

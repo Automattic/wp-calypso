@@ -23,6 +23,7 @@ const SiteSettingsDiscussion = ( { site, translate } ) => (
 		<JetpackDevModeNotice />
 		<SidebarNavigation />
 		<FormattedHeader
+			brandFont
 			className="settings-discussion__page-heading"
 			headerText={ translate( 'Settings' ) }
 			align="left"

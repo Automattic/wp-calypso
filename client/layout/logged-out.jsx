@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { includes, get, startsWith } from 'lodash';
+import { get, startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,28 +16,19 @@ import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
-import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/ui/oauth2-clients/selectors';
+import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/oauth2-clients/ui/selectors';
 import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
 import { getSection, masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
-import GUTENBOARDING_BASE_NAME from 'landing/gutenboarding/basename.json';
+import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-// Returns true if given section should display sidebar for logged out users.
-const hasSidebar = ( section ) => {
-	if ( section.name === 'devdocs' ) {
-		// Devdocs should always display a sidebar, except for landing page.
-		return ! includes( section.paths, '/devdocs/start' );
-	}
-
-	return false;
-};
 
 const LayoutLoggedOut = ( {
 	currentRoute,
@@ -45,6 +36,7 @@ const LayoutLoggedOut = ( {
 	isGutenboardingLogin,
 	isPopup,
 	isJetpackWooCommerceFlow,
+	isJetpackWooDnaFlow,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -56,19 +48,21 @@ const LayoutLoggedOut = ( {
 } ) => {
 	const sectionGroup = get( section, 'group', null );
 	const sectionName = get( section, 'name', null );
+	const isCheckout = sectionName === 'checkout';
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
 		'is-add-site-page': currentRoute === '/jetpack/new',
 		'focus-content': true,
-		'has-no-sidebar': ! hasSidebar( section ),
+		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
 		'is-gutenboarding-login': isGutenboardingLogin,
 		'is-popup': isPopup,
 		'is-jetpack-woocommerce-flow':
 			config.isEnabled( 'jetpack/connect/woocommerce' ) && isJetpackWooCommerceFlow,
+		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow':
 			config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 			isWooOAuth2Client( oauth2Client ) &&
@@ -96,11 +90,14 @@ const LayoutLoggedOut = ( {
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 		}
+	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		masterbar = null;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
 				title={ section.title }
 				sectionName={ section.name }
+				isCheckout={ isCheckout }
 				redirectUri={ redirectUri }
 			/>
 		);
@@ -117,6 +114,7 @@ const LayoutLoggedOut = ( {
 					id="notices"
 					notices={ notices.list }
 				/>
+				{ isCheckout && <AsyncLoad require="blocks/inline-help" placeholder={ null } /> }
 				<div id="primary" className="layout__primary">
 					{ primary }
 				</div>
@@ -145,8 +143,9 @@ export default connect( ( state ) => {
 	const section = getSection( state );
 	const currentRoute = getCurrentRoute( state );
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-	const isGutenboardingLogin = startsWith( currentRoute, `/log-in/${ GUTENBOARDING_BASE_NAME }` );
-	const noMasterbarForRoute = isJetpackLogin || isGutenboardingLogin;
+	const isGutenboardingLogin = startsWith( currentRoute, '/log-in/new' );
+	const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
+	const noMasterbarForRoute = isJetpackLogin || isGutenboardingLogin || isJetpackWooDnaFlow;
 	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
 	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
 	const isJetpackWooCommerceFlow =
@@ -159,6 +158,7 @@ export default connect( ( state ) => {
 		isGutenboardingLogin,
 		isPopup,
 		isJetpackWooCommerceFlow,
+		isJetpackWooDnaFlow,
 		wccomFrom,
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,

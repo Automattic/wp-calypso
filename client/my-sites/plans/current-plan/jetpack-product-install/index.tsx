@@ -22,7 +22,7 @@ import {
 } from 'state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import { getPluginKeys, requestPluginKeys } from 'state/data-getters/wpcom/jetpack-blogs/keys';
-import { SiteId, TimeoutMS } from 'client/types';
+import { SiteId, TimeoutMS } from 'calypso/types';
 import { logToLogstash } from 'state/logstash/actions';
 
 type PluginStateDescriptor = string;
@@ -70,8 +70,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 		initiatedInstalls: new Set< PluginSlug >(),
 	};
 
-	retries: number = 0;
-	tracksEventSent: boolean = false;
+	retries = 0;
+	tracksEventSent = false;
 
 	componentDidMount() {
 		this.requestInstallationStatus();
@@ -317,7 +317,9 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 		return (
 			<Fragment>
-				<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
+				{ progressComplete !== 100 && (
+					<Interval period={ PLUGIN_KEY_REFETCH_INTERVAL } onTick={ this.fetchPluginKeys } />
+				) }
 				{ hasErrorInstalling && (
 					<Notice
 						status="is-error"

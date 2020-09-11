@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -20,6 +19,7 @@ import SectionHeader from 'components/section-header';
 import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { getAllSubscriptions } from 'state/memberships/subscriptions/selectors';
 
 /**
  * Style dependencies
@@ -31,13 +31,34 @@ import './main.scss';
  */
 import noMembershipsImage from 'assets/images/illustrations/no-memberships.svg';
 
+const getMembershipEndDate = ( translate, endDate, moment ) => {
+	if ( ! endDate ) {
+		return translate( 'Never Expires' );
+	}
+	return moment( endDate ).format( 'll' );
+};
+
+const getMembershipEndDateFromNow = ( translate, endDate, moment ) => {
+	if ( ! endDate ) {
+		return '-';
+	}
+	return translate( 'Renews %s', { args: moment( endDate ).fromNow() } );
+};
+
+const getMembershipRenewalInterval = ( translate, renewalInterval ) => {
+	if ( ! renewalInterval ) {
+		return '-';
+	}
+	return translate( 'Every %s', { args: renewalInterval } );
+};
+
 const MembershipItem = ( { translate, subscription, moment } ) => (
 	<CompactCard key={ subscription.ID } href={ '/me/purchases/other/' + subscription.ID }>
 		<div className="memberships__list-subscription">
 			<div className="memberships__list-date">
-				<div>{ moment( subscription.end_date ).format( 'll' ) }</div>
+				<div>{ getMembershipEndDate( translate, subscription.end_date, moment ) }</div>
 				<div className="memberships__list-sub">
-					{ translate( 'Renews %s', { args: moment( subscription.end_date ).fromNow() } ) }
+					{ getMembershipEndDateFromNow( translate, subscription.end_date, moment ) }
 				</div>
 			</div>
 			<div className="memberships__service-description">
@@ -51,7 +72,7 @@ const MembershipItem = ( { translate, subscription, moment } ) => (
 					{ formatCurrency( subscription.renewal_price, subscription.currency ) }
 				</div>
 				<div className="memberships__list-sub">
-					{ translate( 'Every %s', { args: subscription.renew_interval } ) }
+					{ getMembershipRenewalInterval( translate, subscription.renew_interval ) }
 				</div>
 			</div>
 		</div>
@@ -63,7 +84,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 	if ( subscriptions && subscriptions.length ) {
 		content = (
 			<>
-				<SectionHeader label={ translate( 'Active Recurring Payments plans' ) } />
+				<SectionHeader label={ translate( 'Active payments plans' ) } />
 				{ subscriptions.map(
 					( subscription ) => (
 						<MembershipItem
@@ -81,7 +102,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 		content = (
 			<CompactCard className="memberships__no-content">
 				<EmptyContent
-					title={ translate( 'No Recurring Payments found.' ) }
+					title={ translate( 'No payments found.' ) }
 					illustration={ noMembershipsImage }
 				/>
 			</CompactCard>
@@ -101,5 +122,5 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 };
 
 export default connect( ( state ) => ( {
-	subscriptions: get( state, 'memberships.subscriptions.items', [] ),
+	subscriptions: getAllSubscriptions( state ),
 } ) )( localize( withLocalizedMoment( MembershipsHistory ) ) );

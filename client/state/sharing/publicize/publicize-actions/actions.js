@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	PUBLICIZE_SHARE_ACTIONS_SCHEDULED_REQUEST,
@@ -20,6 +19,8 @@ import {
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_SUCCESS,
 	PUBLICIZE_SHARE_ACTION_SCHEDULE_FAILURE,
 } from 'state/action-types';
+
+import 'state/sharing/init';
 
 export function fetchPostShareActionsScheduled( siteId, postId ) {
 	return ( dispatch ) => {

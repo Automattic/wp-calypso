@@ -2,7 +2,7 @@
  * External dependencies
  *
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import path from 'path';
 
@@ -29,18 +29,16 @@ class Document extends React.Component {
 			chunkFiles,
 			commitSha,
 			buildTimestamp,
-			faviconURL,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
 			isRTL,
 			entrypoint,
-			manifest,
+			manifests,
 			lang,
 			languageRevisions,
 			renderedLayout,
 			user,
-			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
@@ -56,6 +54,7 @@ class Document extends React.Component {
 			inlineScriptNonce,
 			isSupportSession,
 			isWCComConnect,
+			isWooDna,
 			addEvergreenCheck,
 			requestFrom,
 			useTranslationChunks,
@@ -87,6 +86,8 @@ class Document extends React.Component {
 			'jetpack-connect' === sectionName &&
 			'woocommerce-onboarding' === requestFrom;
 
+		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
+
 		const theme = config( 'theme' );
 
 		const LoadingLogo = config.isEnabled( 'jetpack-cloud' ) ? JetpackLogo : WordPressLogo;
@@ -99,8 +100,6 @@ class Document extends React.Component {
 			>
 				<Head
 					title={ head.title }
-					faviconURL={ faviconURL }
-					cdn={ '//s1.wp.com' }
 					branchName={ branchName }
 					inlineScriptNonce={ inlineScriptNonce }
 				>
@@ -120,6 +119,7 @@ class Document extends React.Component {
 						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
+						'is-white-signup': sectionName === 'signup',
 					} ) }
 				>
 					{ /* eslint-disable wpcalypso/jsx-classname-namespace, react/no-danger */ }
@@ -127,6 +127,7 @@ class Document extends React.Component {
 						<div
 							id="wpcom"
 							className="wpcom-site"
+							data-calypso-ssr="true"
 							dangerouslySetInnerHTML={ {
 								__html: renderedLayout,
 							} }
@@ -138,23 +139,13 @@ class Document extends React.Component {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
 									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
+									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
 								<div className="masterbar" />
 								<div className="layout__content">
 									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
-									{ hasSecondary && (
-										<Fragment>
-											<div className="layout__secondary" />
-											<ul className="sidebar" />
-										</Fragment>
-									) }
-									{ sectionGroup === 'editor' && (
-										<div className="card editor-ground-control">
-											<div className="editor-ground-control__action-buttons" />
-										</div>
-									) }
 								</div>
 							</div>
 						</div>
@@ -210,15 +201,21 @@ class Document extends React.Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src={ `/calypso/${ target }/manifest.js` } /> }
-					{ env !== 'development' && (
-						<script
-							nonce={ inlineScriptNonce }
-							dangerouslySetInnerHTML={ {
-								__html: manifest,
-							} }
-						/>
+					{ env === 'development' && (
+						<>
+							<script src={ `/calypso/${ target }/manifest.js` } />
+							<script src={ `/calypso/${ target }/runtime.js` } />
+						</>
 					) }
+					{ env !== 'development' &&
+						manifests.map( ( manifest ) => (
+							<script
+								nonce={ inlineScriptNonce }
+								dangerouslySetInnerHTML={ {
+									__html: manifest,
+								} }
+							/>
+						) ) }
 
 					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
 

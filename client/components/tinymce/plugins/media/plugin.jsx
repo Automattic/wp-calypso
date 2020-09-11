@@ -14,23 +14,26 @@ import closest from 'component-closest';
  * Internal dependencies
  */
 import * as MediaConstants from 'lib/media/constants';
-import MediaActions from 'lib/media/actions';
 import { getThumbnailSizeDimensions } from 'lib/media/utils';
 import { deserialize } from 'lib/media-serialization';
 import MediaMarkup from 'post-editor/media-modal/markup';
-import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import notices from 'notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
 import config from 'config';
-import { getSelectedSite } from 'state/ui/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { unblockSave } from 'state/ui/editor/save-blockers/actions';
-import { getEditorRawContent, isEditorSaveBlocked } from 'state/ui/editor/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { setEditorMediaModalView } from 'state/editor/actions';
+import { unblockSave } from 'state/editor/save-blockers/actions';
+import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import Gridicon from 'components/gridicon';
+import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
+import { fetchMediaItem } from 'state/media/thunks';
+import getMediaItem from 'state/selectors/get-media-item';
+
+import getMedia from 'state/selectors/get-media';
 
 /**
  * Module variables
@@ -40,6 +43,27 @@ const SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
 let lastDirtyImage = null,
 	numOfImagesToUpdate = null;
+
+const createMediaChangesListener = ( store, callback ) => {
+	let previousMediaReference, currentMediaReference;
+
+	return () => {
+		const siteId = getSelectedSiteId( store.getState() );
+
+		if ( ! siteId ) {
+			return;
+		}
+
+		previousMediaReference = currentMediaReference;
+		currentMediaReference = getMedia( store.getState(), siteId );
+
+		if ( previousMediaReference === currentMediaReference ) {
+			return;
+		}
+
+		callback();
+	};
+};
 
 function mediaButton( editor ) {
 	const store = editor.getParam( 'redux_store' );
@@ -52,6 +76,7 @@ function mediaButton( editor ) {
 
 	let nodes = {};
 	let updateMedia; // eslint-disable-line
+	let unsubscribeFromReduxStore;
 
 	const getSelectedSiteFromState = () => getSelectedSite( getState() );
 
@@ -178,7 +203,7 @@ function mediaButton( editor ) {
 
 			// Let's get the media object counterpart of an image in post/page editor.
 			// This media object contains the latest changes to the media file.
-			const media = MediaStore.get( selectedSite.ID, current.media.ID );
+			const media = getMediaItem( getState(), selectedSite.ID, current.media.ID );
 
 			let mediaHasCaption = false;
 			let captionNode = null;
@@ -307,7 +332,7 @@ function mediaButton( editor ) {
 			// hasn't yet been loaded, we preload the image before rendering.
 			const imageUrl = event.resizedImageUrl || media.URL;
 			if ( ! loadedImages.isLoaded( imageUrl ) ) {
-				const preloadImage = new Image();
+				const preloadImage = new window.Image();
 				preloadImage.src = imageUrl;
 				preloadImage.onload = loadedImages.onLoad.bind( null, imageUrl );
 				preloadImage.onerror = preloadImage.onload;
@@ -385,8 +410,6 @@ function mediaButton( editor ) {
 		// After editing an image, we need to update them in a post/page. If we updated all instances
 		// of the edited image, we dispatch an action which marks the image media object not dirty.
 		if ( lastDirtyImage && lastDirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
-			MediaActions.edit( selectedSite.ID, { ...lastDirtyImage, isDirty: false } );
-
 			// We also need to reset the counter of post/page images to update so if another image is
 			// edited and marked dirty, we can set the counter to correct number.
 			numOfImagesToUpdate = null;
@@ -413,7 +436,7 @@ function mediaButton( editor ) {
 	function initMediaModal() {
 		const selectedSite = getSelectedSiteFromState();
 		if ( selectedSite ) {
-			MediaActions.clearValidationErrors( selectedSite.ID );
+			dispatch( clearMediaItemErrors( selectedSite.ID ) );
 		}
 	}
 
@@ -478,9 +501,9 @@ function mediaButton( editor ) {
 			if ( ! imageId ) {
 				return;
 			}
-			const image = MediaStore.get( siteId, imageId );
+			const image = getMediaItem( getState(), siteId, imageId );
 
-			MediaActions.clearValidationErrors( siteId );
+			dispatch( clearMediaItemErrors( siteId ) );
 			renderModal(
 				{
 					visible: true,
@@ -492,7 +515,7 @@ function mediaButton( editor ) {
 					view: ModalViews.DETAIL,
 				}
 			);
-			MediaActions.setLibrarySelectedItems( siteId, [ image ] );
+			dispatch( setMediaLibrarySelectedItems( siteId, [ image ] ) );
 		},
 	} );
 
@@ -527,8 +550,9 @@ function mediaButton( editor ) {
 				return;
 			}
 
-			// Attempt to find media in Flux store
-			const media = MediaStore.get( selectedSite.ID, parsed.media.ID );
+			// Attempt to find media in Redux store
+			const media = getMediaItem( getState(), selectedSite.ID, parsed.media.ID );
+
 			if ( media && media.caption ) {
 				content = media.caption;
 			} else {
@@ -595,8 +619,9 @@ function mediaButton( editor ) {
 			parsed.media.caption = editor.dom.$( '.wp-caption-dd', caption ).text();
 		}
 
-		// Attempt to find media in Flux store
-		let media = assign( {}, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
+		// Attempt to find media in Redux store
+		let media = assign( {}, getMediaItem( getState(), selectedSite.ID, parsed.media.ID ) );
+
 		delete media.caption;
 		media = assign( {}, parsed.media, media );
 
@@ -647,7 +672,7 @@ function mediaButton( editor ) {
 		const parsed = deserialize( event.element );
 		const media = assign(
 			{ width: Infinity, height: Infinity },
-			MediaStore.get( selectedSite.ID, parsed.media.ID )
+			getMediaItem( getState(), selectedSite.ID, parsed.media.ID )
 		);
 		const currentRatio = computeRatio( parsed.media, media );
 
@@ -715,9 +740,9 @@ function mediaButton( editor ) {
 		gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
 			id = parseInt( id, 10 );
 
-			const media = MediaStore.get( selectedSite.ID, id );
+			const media = getMediaItem( getState(), selectedSite.ID, id );
 			if ( ! media ) {
-				MediaActions.fetch( selectedSite.ID, id );
+				store.dispatch( fetchMediaItem( selectedSite.ID, id ) );
 			}
 
 			return assign( { ID: id }, media );
@@ -734,7 +759,7 @@ function mediaButton( editor ) {
 			delete gallery.orderby;
 		}
 
-		MediaActions.setLibrarySelectedItems( selectedSite.ID, gallery.items );
+		dispatch( setMediaLibrarySelectedItems( selectedSite.ID, gallery.items ) );
 
 		renderModal(
 			{
@@ -775,12 +800,12 @@ function mediaButton( editor ) {
 		( event.content.match( REGEXP_IMG ) || [] ).forEach( function ( img ) {
 			const parsed = deserialize( img );
 
-			if ( ! parsed.media.ID || MediaStore.get( selectedSite.ID, parsed.media.ID ) ) {
+			if ( ! parsed.media.ID || getMediaItem( getState(), selectedSite.ID, parsed.media.ID ) ) {
 				return;
 			}
 
 			setTimeout( function () {
-				MediaActions.fetch( selectedSite.ID, parsed.media.ID );
+				store.dispatch( fetchMediaItem( selectedSite.ID, parsed.media.ID ) );
 			}, 0 );
 		} );
 	}
@@ -876,7 +901,8 @@ function mediaButton( editor ) {
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
 	editor.on( 'init', function () {
-		MediaStore.on( 'change', updateMedia );
+		unsubscribeFromReduxStore = store.subscribe( createMediaChangesListener( store, updateMedia ) );
+
 		editor.getDoc().addEventListener( 'load', resizeOnImageLoad, true );
 		editor.dom.bind( editor.getDoc(), 'dragstart dragend', hideDropZoneOnDrag );
 		editor.selection.selectorChanged( '.wp-caption', removeEmptyCaptions );
@@ -895,7 +921,7 @@ function mediaButton( editor ) {
 		} );
 		nodes = {};
 
-		MediaStore.off( 'change', updateMedia );
+		unsubscribeFromReduxStore();
 		editor.getDoc().removeEventListener( 'load', resizeOnImageLoad );
 	} );
 

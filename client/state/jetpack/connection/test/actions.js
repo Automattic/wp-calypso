@@ -26,8 +26,8 @@ import {
 	JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 	JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
-import { useSandbox } from 'test/helpers/use-sinon';
+import useNock from 'test-helpers/use-nock';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	const siteId = 12345678;
@@ -143,18 +143,20 @@ describe( 'actions', () => {
 				} );
 			} );
 
-			test( 'should dispatch success and receive actions when request successfully completes', () => {
-				return requestJetpackUserConnectionData( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
-						siteId,
-						data,
-					} );
+			test( 'should dispatch success and receive actions when request successfully completes', async () => {
+				await requestJetpackUserConnectionData( siteId )( spy );
 
-					expect( spy ).to.have.been.calledWith( {
-						type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
-						siteId,
-					} );
+				expect( spy ).to.have.been.calledWith( {
+					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
+					siteId,
+					data: {
+						currentUser: data,
+					},
+				} );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
+					siteId,
 				} );
 			} );
 		} );

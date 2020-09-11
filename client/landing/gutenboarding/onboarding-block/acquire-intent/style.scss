@@ -7,140 +7,111 @@
 	background-color: var( --contrastColor );
 	color: var( --mainColor );
 	tab-size: 4;
-	position: fixed;
-	min-height: calc( 100% - #{$gutenboarding-header-height} );
+	min-height: calc( 100vh - 2 * #{$onboarding-header-height} );
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
 	margin: 0 -20px;
-	padding: 20px;
-	transition: color $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm,
-		background-color $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm;
-
-	&--mobile-vertical-step {
-		justify-content: center;
-	}
+	padding: 24px;
 
 	@include break-small {
+		@include onboarding-heading-text;
 		margin: 0 -44px; // override block margins
-		padding: 0 120px;
-		font-size: 64px;
-		line-height: 80px;
+		padding: 48px;
 		justify-content: center;
 	}
 
 	@include break-medium {
 		margin: 0 -88px; // override block margins
-		padding: 12px 170px 0;
-	}
-}
-
-.acquire-intent__footer {
-	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-
-	&--hidden {
-		// use this to fade-in the footer; since the buttons are disabled we don't need to hide them
-		opacity: 0;
-		visibility: hidden;
-	}
-
-	align-self: flex-end;
-
-	@include break-small {
-		align-self: flex-start;
-	}
-}
-
-.acquire-intent__mobile-back-arrow {
-	transform: rotate( 180deg );
-}
-
-.madlib__input {
-	@include onboarding-font-recoleta;
-	background: transparent;
-	border: none;
-	font-size: inherit;
-	line-height: 1em;
-	word-break: break-word;
-	height: 1.01em;
-	padding: 0;
-
-	color: var( --mainColor );
-	border-bottom: 2px solid var( --mainColor );
-
-	&:focus {
-		outline: none;
-	}
-
-	// TODO focus for accessibility?
-	// .accessible-focus &:focus {
-	// 	outline: 2px solid var( --highlightColor );
-	// }
-}
-
-.madlib__input:empty {
-	width: 100%;
-	display: inline-block;
-	border-bottom: 2px solid transparent;
-	position: relative;
-	z-index: 2;
-	vertical-align: middle;
-
-	@include break-small {
-		width: 400px;
-	}
-}
-
-/* hide the placeholder when input is not empty */
-.madlib__input:not( :empty ) ~ .vertical-select__placeholder {
-	visibility: hidden;
-}
-
-// Themed core button component
-.components-button.is-primary.acquire-intent__question-skip:not( :disabled ):not( [aria-disabled='true'] ) {
-	background: var( --mainColor );
-	border-color: var( --mainColor );
-	border-radius: 4px;
-	box-shadow: none;
-	color: var( --contrastColor );
-	font-size: 14px;
-	font-weight: 500;
-	letter-spacing: 0;
-	padding: 20px 32px;
-	// @TODO: work out hover-state animations
-	transition: background $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm,
-		border-color $acquire-intent-transition-duration
-			$acquire-intent-transition-algorithm,
-		color $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
-
-	&:active,
-	&:hover,
-	&:focus {
-		background: var( --highlightColor );
-		border-color: var( --highlightColor );
-		color: var( --contrastColor );
-		outline-color: transparent;
-		box-shadow: none;
+		padding: 64px;
+		font-size: 64px;
 	}
 }
 
 .site-title {
-	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	@include break-small {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+	}
 
-	&--hidden {
-		visibility: hidden;
-		opacity: 0;
+	.vertical-select + & {
+		@include break-medium {
+			margin-top: 20px;
+		}
+	}
+}
+
+.site-title__input-label {
+	line-height: 1.4em;
+
+	@include break-small {
+		// stylelint-disable-next-line unit-allowed-list
+		margin-right: 0.4ch;
 	}
 }
 
 .site-title__input-wrapper {
-	display: block;
+	position: relative;
+	flex: 1;
 
 	@include break-small {
-		display: inline;
+		min-width: 300px;
+		max-width: 400px;
 	}
+
+	@include break-medium {
+		max-width: 750px;
+	}
+}
+
+.site-title__input-hint {
+	display: flex;
+	color: var( --studio-gray-50 );
+	font-family: $default-font;
+	font-size: 14px;
+	line-height: 14px;
+	opacity: 0;
+	transition: opacity $acquire-intent-transition-duration $acquire-intent-transition-algorithm;
+	margin-top: 10px;
+
+	@include break-medium {
+		margin-top: 15px;
+	}
+
+	.site-title.is-touched & {
+		opacity: 1;
+		transition-delay: 3s;
+	}
+
+	svg {
+		fill: var( --studio-yellow-30 );
+		margin-right: $grid-unit-10;
+		margin-top: -2px;
+	}
+}
+
+.acquire-intent__footer {
+	margin-top: 20px;
+	display: flex;
+	justify-content: flex-end;
+
+	@include break-small {
+		margin-top: 40px;
+		justify-content: flex-start;
+	}
+}
+
+.acquire-intent__mobile-vertical-input {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.acquire-intent__mobile-next-arrow,
+.acquire-intent__mobile-back-arrow {
+	cursor: pointer;
+}
+
+.acquire-intent__mobile-back-arrow {
+	margin-bottom: 20px;
 }

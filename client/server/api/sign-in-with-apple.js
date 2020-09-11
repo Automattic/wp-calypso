@@ -72,11 +72,11 @@ function redirectToCalypso( request, response, next ) {
 	response.redirect( originalUrlPath + '#' + hashString );
 }
 
-module.exports = function ( app ) {
+export default function ( app ) {
 	return app.post(
 		[ '/log-in/apple/callback', '/start/user', '/me/security/social-login' ],
 		bodyParser.urlencoded(),
 		loginWithApple,
 		redirectToCalypso
 	);
-};
+}

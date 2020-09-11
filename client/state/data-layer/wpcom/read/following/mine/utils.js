@@ -26,6 +26,10 @@ export const subscriptionFromApi = ( subscription ) =>
 			date_subscribed: Date.parse( subscription.date_subscribed ),
 			delivery_methods: subscription.delivery_methods,
 			is_owner: subscription.is_owner,
+			organization_id: subscription.organization_id,
+			name: subscription.name,
+			unseen_count: subscription.unseen_count,
+			site_icon: subscription.site_icon,
 		},
 		isUndefined
 	);

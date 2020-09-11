@@ -1,12 +1,13 @@
 @import 'assets/stylesheets/gutenberg-base-styles';
 
-.plans-button.components-button {
-	&:disabled,
-	&[aria-disabled='true'] {
-		opacity: 1;
+.plans-button {
+	white-space: nowrap;
+
+	&.is-highlighted {
+		color: var( --studio-blue-40 );
 
 		&:hover {
-			color: var( --studio-black );
+		 	color: var( --studio-blue-40 );
 		}
 	}
 }

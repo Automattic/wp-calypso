@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import { localize } from 'i18n-calypso';
 import { isTwoFactorAuthTypeSupported } from 'state/login/selectors';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import { sendSmsCode } from 'state/login/actions';
-import { login } from 'lib/paths';
+import { isWebAuthnSupported } from 'lib/webauthn';
 
 /**
  * Style dependencies
@@ -27,11 +26,10 @@ class TwoFactorActions extends Component {
 	static propTypes = {
 		isAuthenticatorSupported: PropTypes.bool.isRequired,
 		isSecurityKeySupported: PropTypes.bool.isRequired,
-		isJetpack: PropTypes.bool,
-		isGutenboarding: PropTypes.bool,
 		isSmsSupported: PropTypes.bool.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		sendSmsCode: PropTypes.func.isRequired,
+		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string.isRequired,
 	};
@@ -41,14 +39,7 @@ class TwoFactorActions extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_sms_link_click' );
 
-		page(
-			login( {
-				isNative: true,
-				twoFactorAuthType: 'sms',
-				isJetpack: this.props.isJetpack,
-				isGutenboarding: this.props.isGutenboarding,
-			} )
-		);
+		this.props.switchTwoFactorAuthType( 'sms' );
 
 		this.props.sendSmsCode();
 	};
@@ -58,18 +49,11 @@ class TwoFactorActions extends Component {
 
 		this.props.recordTracksEvent( 'calypso_login_two_factor_switch_to_authenticator_link_click' );
 
-		page(
-			login( {
-				isNative: true,
-				twoFactorAuthType: 'authenticator',
-				isJetpack: this.props.isJetpack,
-				isGutenboarding: this.props.isGutenboarding,
-			} )
-		);
+		this.props.switchTwoFactorAuthType( 'authenticator' );
 	};
 	recordSecurityKey = ( event ) => {
 		event.preventDefault();
-		page( login( { isNative: true, twoFactorAuthType: 'webauthn' } ) );
+		this.props.switchTwoFactorAuthType( 'webauthn' );
 	};
 
 	render() {
@@ -84,7 +68,8 @@ class TwoFactorActions extends Component {
 		const isSmsAvailable = isSmsSupported && twoFactorAuthType !== 'sms';
 		const isAuthenticatorAvailable =
 			isAuthenticatorSupported && twoFactorAuthType !== 'authenticator';
-		const isSecurityKeyAvailable = isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
+		const isSecurityKeyAvailable =
+			isWebAuthnSupported() && isSecurityKeySupported && twoFactorAuthType !== 'webauthn';
 
 		if ( ! isSmsAvailable && ! isAuthenticatorAvailable && ! isSecurityKeyAvailable ) {
 			return null;

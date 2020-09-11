@@ -3,6 +3,8 @@
  */
 import { getUserPurchases } from 'state/purchases/selectors';
 
+import 'state/purchases/init';
+
 /**
  * Does the user have any current purchases that can be canceled (i.e. purchases other than premium themes)?
  *

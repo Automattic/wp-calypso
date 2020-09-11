@@ -23,6 +23,7 @@ import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
 import GSuitePrice from 'components/gsuite/gsuite-price';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QueryProductsList from 'components/data/query-products-list';
+import getCurrentRoute from 'state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -31,6 +32,7 @@ import './style.scss';
 
 export const GSuitePurchaseCta = ( {
 	currencyCode,
+	currentRoute,
 	domainName,
 	product,
 	recordTracksEvent: recordEvent,
@@ -40,7 +42,7 @@ export const GSuitePurchaseCta = ( {
 		recordEvent( 'calypso_email_gsuite_purchase_cta_view', {
 			domain_name: domainName,
 		} );
-	}, [ domainName ] );
+	}, [ domainName ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const goToAddGSuiteUsers = ( planType ) => {
 		recordEvent( 'calypso_email_gsuite_purchase_cta_get_gsuite_click', {
@@ -48,7 +50,7 @@ export const GSuitePurchaseCta = ( {
 			plan_type: planType,
 		} );
 
-		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domainName, planType ) );
+		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domainName, planType, currentRoute ) );
 	};
 
 	const handleLearnMoreClick = () => {
@@ -130,6 +132,7 @@ GSuitePurchaseCta.propTypes = {
 
 export default connect(
 	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		product: getProductBySlug( state, GSUITE_BASIC_SLUG ),
 		selectedSiteSlug: getSelectedSiteSlug( state ),

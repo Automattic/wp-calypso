@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -10,7 +10,7 @@ import page from 'page';
 import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderImportButton from 'blocks/reader-import-button';
 import ReaderExportButton from 'blocks/reader-export-button';
@@ -27,6 +27,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
 import { addQueryArgs } from 'lib/url';
 import { READER_SUBSCRIPTIONS } from 'reader/follow-sources';
+import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'blocks/reader-export-button/constants';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -93,7 +94,7 @@ class FollowingManageSubscriptions extends Component {
 				<SyncReaderFollows />
 				<div className="following-manage__subscriptions-controls">
 					<h1 className="following-manage__subscriptions-header">
-						{ translate( '%(num)s Followed Sites', {
+						{ translate( '%(num)s Followed sites', {
 							args: { num: followsCount },
 						} ) }
 					</h1>
@@ -121,7 +122,7 @@ class FollowingManageSubscriptions extends Component {
 								className="following-manage__subscriptions-import-export-menu-item"
 								itemComponent="div"
 							>
-								<ReaderExportButton />
+								<ReaderExportButton exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS } />
 							</PopoverMenuItem>
 						</EllipsisMenu>
 					</div>

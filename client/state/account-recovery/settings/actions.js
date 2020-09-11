@@ -25,6 +25,8 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
 } from 'state/action-types';
 
+import 'state/account-recovery/init';
+
 const TARGET_PHONE = 'phone';
 const TARGET_EMAIL = 'email';
 

@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, ExternalLink, TextControl, Modal, Notice } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@automattic/react-i18n';
@@ -16,10 +17,14 @@ import { useLangRouteParam, usePath, Step, useCurrentStep } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
-import GUTENBOARDING_BASE_NAME from '../../basename.json';
-import { recordOnboardingError } from '../../lib/analytics';
+import {
+	initGoogleRecaptcha,
+	recordGoogleRecaptchaAction,
+	recordOnboardingError,
+} from '../../lib/analytics';
 import { localizeUrl } from '../../../../lib/i18n-utils';
 import { useTrackModal } from '../../hooks/use-track-modal';
+import config from '../../../../config';
 
 interface Props {
 	onRequestClose: () => void;
@@ -29,6 +34,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const { __ } = useI18n();
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
+	const [ recaptchaClientId, setRecaptchaClientId ] = useState< number >();
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
 	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
 	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
@@ -36,6 +42,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
+	const isMobile = useViewportMatch( 'small', '<' );
 
 	const closeModal = () => {
 		clearErrors();
@@ -46,19 +53,48 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const lang = useLangRouteParam();
 
+	useEffect( () => {
+		initGoogleRecaptcha(
+			'g-recaptcha',
+			'calypso/signup/pageLoad',
+			config( 'google_recaptcha_site_key' )
+		).then( ( result ) => {
+			if ( ! result ) {
+				return;
+			}
+			setRecaptchaClientId( result.clientId );
+		} );
+	}, [ setRecaptchaClientId ] );
+
 	const handleSignUp = async ( event: React.FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		const username_hint = siteTitle || siteVertical?.label;
+		const username_hint = siteTitle || siteVertical?.label || null;
+
+		let recaptchaToken;
+		let recaptchaError;
+
+		if ( typeof recaptchaClientId === 'number' ) {
+			recaptchaToken = await recordGoogleRecaptchaAction(
+				recaptchaClientId,
+				'calypso/signup/formSubmit'
+			);
+
+			if ( ! recaptchaToken ) {
+				recaptchaError = 'recaptcha_failed';
+			}
+		} else {
+			recaptchaError = 'recaptcha_didnt_load';
+		}
 
 		const result = await createAccount( {
 			email: emailVal,
+			'g-recaptcha-error': recaptchaError,
+			'g-recaptcha-response': recaptchaToken || undefined,
 			password: passwordVal,
 			signup_flow_name: 'gutenboarding',
 			locale: langParam,
-			...( username_hint && {
-				extra: { username_hint },
-			} ),
+			extra: { username_hint },
 			is_passwordless: false,
 		} );
 
@@ -81,13 +117,34 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		}
 	);
 
+	// translators: English wording comes from Google: https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed
+	const recaptcha_text = __(
+		'This site is protected by reCAPTCHA and the Google <link_to_policy>Privacy Policy</link_to_policy> and <link_to_tos>Terms of Service</link_to_tos> apply.'
+	);
+	const recaptcha_tos = createInterpolateElement( recaptcha_text, {
+		link_to_policy: <ExternalLink href="https://policies.google.com/privacy" />,
+		link_to_tos: <ExternalLink href="https://policies.google.com/terms" />,
+	} );
+
 	let errorMessage: string | undefined;
 	if ( newUserError ) {
 		switch ( newUserError.error ) {
 			case 'already_taken':
 			case 'already_active':
 			case 'email_exists':
+			case 'email_reserved':
 				errorMessage = __( 'An account with this email address already exists.' );
+				break;
+			case 'email_invalid':
+				errorMessage = __( 'Please enter a valid email address.' );
+				break;
+			case 'email_cant_be_used_to_signup':
+				errorMessage = __(
+					'You cannot use that email address to signup. We are having problems with them blocking some of our email. Please use another email provider.'
+				);
+				break;
+			case 'email_not_allowed':
+				errorMessage = __( 'Sorry, that email address is not allowed!' );
 				break;
 			case 'password_invalid':
 				errorMessage = newUserError.message;
@@ -102,12 +159,10 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 
 	const langFragment = lang ? `/${ lang }` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }`
+		`${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
 	);
-	const signupUrl = encodeURIComponent(
-		`/${ GUTENBOARDING_BASE_NAME }${ makePath( Step[ currentStep ] ) }?signup`
-	);
-	const loginUrl = `/log-in/${ GUTENBOARDING_BASE_NAME }${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
+	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
+	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 
 	return (
 		<Modal
@@ -138,13 +193,14 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 							onChange={ setEmailVal }
 							placeholder={ __( 'Email address' ) }
 							required
-							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+							autoFocus={ ! isMobile } // eslint-disable-line jsx-a11y/no-autofocus
 						/>
 
 						<TextControl
 							value={ passwordVal }
 							disabled={ isFetchingNewUser }
 							type="password"
+							autoComplete="new-password"
 							onChange={ setPasswordVal }
 							placeholder={ __( 'Password' ) }
 							required
@@ -164,15 +220,21 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 								</Button>
 							</p>
 
+							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+
 							<ModalSubmitButton disabled={ isFetchingNewUser } isBusy={ isFetchingNewUser }>
 								{ __( 'Create account' ) }
 							</ModalSubmitButton>
 
-							<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+							<p className="signup-form__link signup-form__terms-of-service-link signup-form__recaptcha_tos">
+								{ recaptcha_tos }
+							</p>
 						</div>
 					</fieldset>
 				</form>
 			</div>
+
+			<div id="g-recaptcha"></div>
 		</Modal>
 	);
 };

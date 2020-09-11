@@ -21,7 +21,6 @@ import { isJetpackSite } from 'state/sites/selectors';
 import canCurrentUser from 'state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
-import { hideSidebar } from 'state/ui/actions';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -66,15 +65,13 @@ export function deleteSite( context, next ) {
 }
 
 export function disconnectSite( context, next ) {
-	context.store.dispatch( hideSidebar() );
-	context.primary = <DisconnectSite reason={ context.params.reason } />;
+	context.primary = <DisconnectSite reason={ context.params.reason } type={ context.query.type } />;
 	next();
 }
 
 export function disconnectSiteConfirm( context, next ) {
-	const { reason, text } = context.query;
-	context.store.dispatch( hideSidebar() );
-	context.primary = <ConfirmDisconnection reason={ reason } text={ text } />;
+	const { reason, type, text } = context.query;
+	context.primary = <ConfirmDisconnection reason={ reason } type={ type } text={ text } />;
 	next();
 }
 

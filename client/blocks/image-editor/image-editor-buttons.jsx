@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
@@ -12,10 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import {
-	getImageEditorFileInfo,
-	imageEditorHasChanges,
-} from 'state/ui/editor/image-editor/selectors';
+import { getImageEditorFileInfo, imageEditorHasChanges } from 'state/editor/image-editor/selectors';
 
 class ImageEditorButtons extends Component {
 	static propTypes = {

@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'state/signup/init';
+
+/**
  * Whether the signup site preview is visible
  *
  * @param   {object}  state The current client state

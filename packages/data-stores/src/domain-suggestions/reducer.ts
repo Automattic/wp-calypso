@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { stringifyDomainQueryObject } from './utils';
-import type { DomainAvailability, DomainSuggestion } from './types';
+import type { DomainSuggestion, DomainCategory, DomainAvailability } from './types';
 import type { Action } from './actions';
+import { stringifyDomainQueryObject } from './utils';
 
 const domainSuggestions: Reducer< Record< string, DomainSuggestion[] | undefined >, Action > = (
 	state = {},
@@ -20,6 +20,13 @@ const domainSuggestions: Reducer< Record< string, DomainSuggestion[] | undefined
 			...state,
 			[ stringifyDomainQueryObject( action.queryObject ) ]: action.suggestions,
 		};
+	}
+	return state;
+};
+
+const categories: Reducer< DomainCategory[], Action > = ( state = [], action ) => {
+	if ( action.type === 'RECEIVE_CATEGORIES' ) {
+		return action.categories;
 	}
 	return state;
 };
@@ -37,7 +44,7 @@ const availability: Reducer< Record< string, DomainAvailability | undefined >, A
 	return state;
 };
 
-const reducer = combineReducers( { availability, domainSuggestions } );
+const reducer = combineReducers( { categories, domainSuggestions, availability } );
 
 export type State = ReturnType< typeof reducer >;
 

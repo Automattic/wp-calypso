@@ -23,7 +23,7 @@ import { isSiteBlocked } from 'state/reader/site-blocks/selectors';
 import SiteBlocked from 'reader/site-blocked';
 
 // If the blog_ID of a reader feed is 0, that means no site exists for it.
-const getReaderSiteId = ( feed ) => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID) ;
+const getReaderSiteId = ( feed ) => ( feed && feed.blog_ID === 0 ? null : feed && feed.blog_ID );
 
 class FeedStream extends React.Component {
 	static propTypes = {
@@ -69,7 +69,12 @@ class FeedStream extends React.Component {
 						comment: '%s is the section name. For example: "My Likes"',
 					} ) }
 				/>
-				<ReaderFeedHeader feed={ feed } site={ site } showBack={ this.props.showBack } />
+				<ReaderFeedHeader
+					feed={ feed }
+					site={ site }
+					showBack={ this.props.showBack }
+					streamKey={ this.props.streamKey }
+				/>
 				{ ! feed && <QueryReaderFeed feedId={ this.props.feedId } /> }
 				{ siteId && <QueryReaderSite siteId={ siteId } /> }
 			</Stream>

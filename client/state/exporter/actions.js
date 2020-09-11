@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'lib/wp';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
@@ -22,6 +21,7 @@ import {
 import { prepareExportRequest } from './selectors';
 
 import 'state/data-layer/wpcom/sites/exports/media';
+import 'state/exporter/init';
 
 /**
  * Sets the post type to export.
@@ -50,7 +50,7 @@ export function setPostTypeFieldValue( siteId, postType, fieldName, value ) {
  * Fetches the available advanced settings for customizing export content
  *
  * @param {number} siteId The ID of the site to fetch
- * @returns {thunk}        An action thunk for fetching the advanced settings
+ * @returns {Function}        An action thunk for fetching the advanced settings
  */
 export function advancedSettingsFetch( siteId ) {
 	return ( dispatch, getState ) => {

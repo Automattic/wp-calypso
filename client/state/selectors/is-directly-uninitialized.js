@@ -13,6 +13,8 @@
  */
 import { STATUS_UNINITIALIZED } from 'state/help/directly/constants';
 
+import 'state/help/init';
+
 export default function isDirectlyUninitialized( state ) {
-	return state.help.directly.status === STATUS_UNINITIALIZED;
+	return state.help?.directly.status === STATUS_UNINITIALIZED;
 }

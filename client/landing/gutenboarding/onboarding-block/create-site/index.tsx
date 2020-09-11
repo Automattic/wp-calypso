@@ -4,17 +4,19 @@
 import * as React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
-import { Icon } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useInterval } from '../../../../lib/interval/use-interval';
 
 /**
  * Internal dependencies
  */
-import CreateAndRedirect from './create-and-redirect';
-import { useNewQueryParam } from '../../path';
+import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { STORE_KEY } from '../../stores/onboard';
+
+/**
+ * Style dependencies
+ */
 import './style.scss';
 
 // Total time to perform "loading"
@@ -23,14 +25,13 @@ const DURATION_IN_MS = 6000;
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const shouldTriggerCreate = useNewQueryParam();
-	const [ shouldCreateAndRedirect, setCreateAndRedirect ] = React.useState( false );
 	const hasPaidDomain = useSelect( ( select ) => select( STORE_KEY ).hasPaidDomain() );
+	const plan = useSelectedPlan();
 
 	const steps = React.useRef< string[] >(
 		[
 			__( 'Building your site' ),
-			hasPaidDomain && __( 'Getting your domain' ),
+			hasPaidDomain && ! plan?.isFree && __( 'Getting your domain' ),
 			__( 'Applying design' ),
 		].filter( Boolean ) as string[]
 	);
@@ -50,12 +51,6 @@ const CreateSite: React.FunctionComponent = () => {
 		isComplete ? null : DURATION_IN_MS / totalSteps
 	);
 
-	React.useEffect( () => {
-		if ( isComplete ) {
-			setCreateAndRedirect( true );
-		}
-	}, [ isComplete ] );
-
 	useTrackStep( 'CreateSite' );
 
 	// Force animated progress bar to start at 0
@@ -66,41 +61,25 @@ const CreateSite: React.FunctionComponent = () => {
 	}, [] );
 
 	return (
-		<div className="gutenboarding-page create-site__background">
-			{ shouldTriggerCreate && shouldCreateAndRedirect && <CreateAndRedirect /> }
-			<div className="create-site__layout">
-				<div className="create-site__header">
-					<div className="gutenboarding__header-wp-logo">
-						<Icon icon="wordpress-alt" size={ 24 } />
-					</div>
-				</div>
-				<div className="create-site__content">
-					<div className="create-site__progress">
-						<div className="create-site__progress-steps">
-							<div className="create-site__progress-step">{ steps.current[ currentStep ] }</div>
-						</div>
-					</div>
-					<div
-						className="create-site__progress-bar"
-						style={
-							{
-								'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-							} as React.CSSProperties
-						}
-					/>
-					<div className="create-site__progress-numbered-steps">
-						<p>
-							{
-								// translators: these are progress steps. Eg: step 1 of 4.
-								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-									currentStep: currentStep + 1,
-									totalSteps,
-								} )
-							}
-						</p>
-					</div>
-				</div>
-			</div>
+		<div className="create-site">
+			<h1 className="create-site__progress-step">{ steps.current[ currentStep ] }</h1>
+			<div
+				className="create-site__progress-bar"
+				style={
+					{
+						'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
+					} as React.CSSProperties
+				}
+			/>
+			<p className="create-site__progress-numbered-steps">
+				{
+					// translators: these are progress steps. Eg: step 1 of 4.
+					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+						currentStep: currentStep + 1,
+						totalSteps,
+					} )
+				}
+			</p>
 		</div>
 	);
 };

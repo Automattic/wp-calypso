@@ -11,7 +11,7 @@ import { MySitesSidebar } from '..';
 import config from 'config';
 import { abtest } from 'lib/abtest';
 
-jest.mock( 'lib/user', () => null );
+jest.mock( 'lib/user', () => () => null );
 jest.mock( 'lib/user/index', () => () => {} );
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view', () => ( {} ) );
@@ -94,20 +94,8 @@ describe( 'MySitesSidebar', () => {
 
 			const wrapper = shallow( <Store /> );
 			expect( wrapper.props().link ).toEqual(
-				'http://test.com/wp-admin/admin.php?page=wc-setup-checklist'
+				'http://test.com/wp-admin/admin.php?page=wc-admin&calypsoify=1'
 			);
-		} );
-
-		test( 'Should return null item if user can not use store on this site (nudge-a-palooza disabled)', () => {
-			config.isEnabled.mockImplementation( ( feature ) => feature !== 'upsell/nudge-a-palooza' );
-			const Sidebar = new MySitesSidebar( {
-				canUserUseStore: false,
-				...defaultProps,
-			} );
-			const Store = () => Sidebar.store();
-
-			const wrapper = shallow( <Store /> );
-			expect( wrapper.html() ).toEqual( null );
 		} );
 
 		test( 'Should return null item if user who can upgrade can not use store on this site (control a/b group)', () => {
@@ -194,6 +182,123 @@ describe( 'MySitesSidebar', () => {
 			const wrapper = shallow( <Earn /> );
 
 			expect( wrapper.html() ).not.toEqual( null );
+		} );
+	} );
+
+	describe( 'MySitesSidebar.wpAdmin()', () => {
+		test( 'Should return null if no site selected', () => {
+			const Sidebar = new MySitesSidebar( {
+				site: null,
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null if no admin_url is set', () => {
+			const Sidebar = new MySitesSidebar( {
+				site: {
+					options: {
+						admin_url: '',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should not return null for a simple site', () => {
+			const Sidebar = new MySitesSidebar( {
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should not return null for an Atomic site', () => {
+			const Sidebar = new MySitesSidebar( {
+				isJetpack: true,
+				isAtomicSite: true,
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should not return null for a VIP site', () => {
+			const Sidebar = new MySitesSidebar( {
+				isVip: true,
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should not return null for a Jetpack site', () => {
+			const Sidebar = new MySitesSidebar( {
+				isJetpack: true,
+				isAtomicSite: false,
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should return null for a Jetpack site with an invalid admin_url', () => {
+			const Sidebar = new MySitesSidebar( {
+				isJetpack: true,
+				isAtomicSite: false,
+				site: {
+					options: {
+						admin_url: 'example\\.com',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).toEqual( null );
 		} );
 	} );
 } );

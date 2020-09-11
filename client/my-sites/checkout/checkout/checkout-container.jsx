@@ -62,6 +62,14 @@ class CheckoutContainer extends React.Component {
 		);
 	}
 
+	handleBack = () => {
+		if ( this.props.isGutenboardingCreate ) {
+			window.history.go( -1 );
+		} else {
+			window.location.href = `/home/${ this.props.selectedSite.slug }`;
+		}
+	};
+
 	render() {
 		const {
 			product,
@@ -76,6 +84,9 @@ class CheckoutContainer extends React.Component {
 			shouldShowCart = true,
 			clearTransaction,
 			isComingFromGutenboarding,
+			isGutenboardingCreate,
+			isComingFromUpsell,
+			infoMessage,
 		} = this.props;
 
 		const TransactionData = clearTransaction ? CartData : CheckoutData;
@@ -86,7 +97,7 @@ class CheckoutContainer extends React.Component {
 					<Button
 						borderless
 						className="navigation-link back" // eslint-disable-line wpcalypso/jsx-classname-namespace
-						onClick={ () => window.history.go( this.props.isGutenboardingCreate ? -1 : -2 ) } // going back to signup flow and skipping '/launch' step
+						onClick={ this.handleBack }
 					>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ this.props.translate( 'Back' ) }
@@ -110,7 +121,10 @@ class CheckoutContainer extends React.Component {
 							reduxStore={ reduxStore }
 							redirectTo={ redirectTo }
 							upgradeIntent={ upgradeIntent }
-							hideNudge={ isComingFromGutenboarding }
+							hideNudge={ isComingFromGutenboarding || isComingFromUpsell }
+							returnToBlockEditor={ isGutenboardingCreate }
+							returnToHome={ isComingFromGutenboarding }
+							infoMessage={ infoMessage }
 						>
 							{ this.props.children }
 						</Checkout>

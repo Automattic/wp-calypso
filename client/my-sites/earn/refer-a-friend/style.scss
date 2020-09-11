@@ -3,7 +3,7 @@
 		.promo-card {
 			width: calc( 100% - 1em );
 
-			@include breakpoint( '>1280px' ) {
+			@include breakpoint-deprecated( '>1280px' ) {
 				width: calc( 100% - 1em );
 			}
 		}

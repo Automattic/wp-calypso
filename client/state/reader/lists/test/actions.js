@@ -13,23 +13,17 @@ import {
 	requestSubscribedLists,
 	followList,
 	unfollowList,
-	updateListDetails,
 	dismissListNotice,
-	updateTitle,
-	updateDescription,
 } from '../actions';
 import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
-	READER_LIST_UPDATE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LISTS_FOLLOW,
 	READER_LISTS_UNFOLLOW,
-	READER_LIST_UPDATE_TITLE,
-	READER_LIST_UPDATE_DESCRIPTION,
 } from 'state/reader/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -146,26 +140,6 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#updateListDetails()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.2/read/lists/restapitests/testlist/update' )
-				.reply( 200, {
-					following: false,
-				} );
-		} );
-
-		test( 'should dispatch fetch action when thunk triggered', () => {
-			const list = { owner: 'restapitests', slug: 'testlist', title: 'Banana' };
-			updateListDetails( list )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_UPDATE,
-				list,
-			} );
-		} );
-	} );
-
 	describe( '#dismissListNotice()', () => {
 		test( 'should dispatch the dismiss action', () => {
 			const listId = 123;
@@ -174,34 +148,6 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: READER_LIST_DISMISS_NOTICE,
 				listId: 123,
-			} );
-		} );
-	} );
-
-	describe( '#updateTitle()', () => {
-		test( 'should dispatch the right action', () => {
-			const listId = 123;
-			const newTitle = 'Banana';
-			updateTitle( listId, newTitle )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_UPDATE_TITLE,
-				listId: 123,
-				title: newTitle,
-			} );
-		} );
-	} );
-
-	describe( '#updateDescription()', () => {
-		test( 'should dispatch the right action', () => {
-			const listId = 123;
-			const newDescription = 'Yellow is a excellent fruit colour';
-			updateDescription( listId, newDescription )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: READER_LIST_UPDATE_DESCRIPTION,
-				listId: 123,
-				description: newDescription,
 			} );
 		} );
 	} );

@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import PrimaryHeader from './primary-header';
 import { recordTracksEvent } from 'state/analytics/actions';
+import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 
 class NoAvailableTimes extends Component {
 	componentDidMount() {
@@ -24,13 +25,26 @@ class NoAvailableTimes extends Component {
 				<PrimaryHeader />
 				<Card>
 					<h2 className="shared__no-available-times-heading">
-						{ translate( 'Sorry, there are no sessions available' ) }
+						{ translate( 'Sorry, all upcoming sessions are full.' ) }
 					</h2>
 					{ translate(
-						'We schedule Quick Start Sessions up to 24 hours in advance and all upcoming sessions are full. Please check back later or {{link}}contact us in Live Chat{{/link}}.',
+						'We add new sessions daily, so please check back soon for more options. In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink1}}View webinars{{/externalLink1}} or {{externalLink2}}contact us in Live Chat{{/externalLink2}}.',
 						{
 							components: {
-								link: <a href="https://wordpress.com/help/contact" />,
+								externalLink1: (
+									<ExternalLinkWithTracking
+										icon={ false }
+										href="/webinars"
+										tracksEventName="calypso_concierge_book_view_webinars"
+									/>
+								),
+								externalLink2: (
+									<ExternalLinkWithTracking
+										icon={ false }
+										href="/help/contact"
+										tracksEventName="calypso_concierge_book_contact_us"
+									/>
+								),
 							},
 						}
 					) }

@@ -12,6 +12,7 @@ export const SITE_REQUEST_FIELDS = [
 	'name',
 	'options',
 	'plan',
+	'products',
 	'single_user_site',
 	'visible',
 	'lang',
@@ -20,6 +21,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_fse_active',
 	'is_fse_eligible',
 	'is_core_site_editor_enabled',
+	'description',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -38,6 +40,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'gmt_offset',
 	'has_pending_automated_transfer',
 	'is_automated_transfer',
+	'is_cloud_eligible',
 	'is_domain_only',
 	'is_mapped_domain',
 	'is_redirect',

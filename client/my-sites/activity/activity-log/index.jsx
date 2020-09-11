@@ -33,6 +33,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Pagination from 'components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import RewindAlerts from './rewind-alerts';
+import QueryRewindBackups from 'components/data/query-rewind-backups';
 import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
@@ -64,6 +65,7 @@ import getBackupProgress from 'state/selectors/get-backup-progress';
 import getRequestedBackup from 'state/selectors/get-requested-backup';
 import getRequestedRewind from 'state/selectors/get-requested-rewind';
 import getRestoreProgress from 'state/selectors/get-restore-progress';
+import getRewindBackups from 'state/selectors/get-rewind-backups';
 import getRewindState from 'state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
@@ -360,6 +362,37 @@ class ActivityLog extends Component {
 		);
 	}
 
+	renderFirstBackupStatus() {
+		const mostRecentBackup = this.props.rewindBackups && this.props.rewindBackups[ 0 ];
+		const isFirstBackup = this.props.rewindBackups?.length === 1;
+		if ( ! isFirstBackup || mostRecentBackup?.status !== 'started' ) {
+			return;
+		}
+
+		const { supportsRealtimeBackup, translate } = this.props;
+
+		const firstBackupText = supportsRealtimeBackup
+			? translate(
+					"We're currently backing up your site for the first time, " +
+						"and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes in real time."
+			  )
+			: translate(
+					"We're currently backing up your site for the first time, " +
+						"and we'll let you know when we're finished. " +
+						"After this initial backup, we'll save future changes every day."
+			  );
+
+		return (
+			<Banner
+				icon="history"
+				disableHref
+				title={ translate( 'Your backup is underway' ) }
+				description={ firstBackupText }
+			/>
+		);
+	}
+
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -373,7 +406,6 @@ class ActivityLog extends Component {
 			isAtomic,
 			isJetpack,
 			isIntroDismissed,
-			supportsRealtimeBackup,
 		} = this.props;
 
 		const disableRestore =
@@ -410,16 +442,6 @@ class ActivityLog extends Component {
 			};
 		} )();
 
-		const provisioningText = supportsRealtimeBackup
-			? translate(
-					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-						"After this initial backup, we'll save future changes in real time."
-			  )
-			: translate(
-					"We're currently backing up your site for the first time, and we'll let you know when we're finished. " +
-						"After this initial backup, we'll save future changes every day."
-			  );
-
 		return (
 			<>
 				{ siteId && 'active' === rewindState.state && (
@@ -427,12 +449,14 @@ class ActivityLog extends Component {
 				) }
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
+				<QueryRewindBackups siteId={ siteId } />
 
 				<SidebarNavigation />
 
 				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
 
 				<FormattedHeader
+					brandFont
 					className="activity-log__page-heading"
 					headerText={ translate( 'Activity' ) }
 					subHeaderText={ translate(
@@ -446,14 +470,7 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				{ 'provisioning' === rewindState.state && (
-					<Banner
-						icon="history"
-						disableHref
-						title={ translate( 'Your backup is underway' ) }
-						description={ provisioningText }
-					/>
-				) }
+				{ this.renderFirstBackupStatus() }
 				<IntroBanner siteId={ siteId } />
 				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
@@ -543,7 +560,7 @@ class ActivityLog extends Component {
 	render() {
 		const { canViewActivityLog, siteId, translate } = this.props;
 
-		if ( false === canViewActivityLog ) {
+		if ( ! canViewActivityLog ) {
 			return (
 				<Main>
 					<QuerySitePurchases siteId={ siteId } />
@@ -588,6 +605,7 @@ export default connect(
 		const timezone = getSiteTimezoneValue( state, siteId );
 		const requestedRestoreId = getRequestedRewind( state, siteId );
 		const requestedBackupId = getRequestedBackup( state, siteId );
+		const rewindBackups = getRewindBackups( state, siteId );
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const filter = getActivityLogFilter( state, siteId );
@@ -615,6 +633,7 @@ export default connect(
 			requestedBackupId,
 			restoreProgress: getRestoreProgress( state, siteId ),
 			backupProgress: getBackupProgress( state, siteId ),
+			rewindBackups,
 			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),

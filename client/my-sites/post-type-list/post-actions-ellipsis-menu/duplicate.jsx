@@ -12,8 +12,8 @@ import { includes } from 'lodash';
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import { getPost } from 'state/posts/selectors';
-import canCurrentUserEditPost from 'state/selectors/can-current-user-edit-post';
-import { getEditorDuplicatePostPath } from 'state/ui/editor/selectors';
+import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
+import { getEditorDuplicatePostPath } from 'state/editor/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';

@@ -18,6 +18,7 @@ import QueryRecentPostViews from 'components/data/query-stats-recent-post-views'
 import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import isVipSite from 'state/selectors/is-vip-site';
+import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
@@ -251,7 +252,7 @@ class PostTypeList extends Component {
 	}
 
 	render() {
-		const { query, siteId, isRequestingPosts, translate, isVip } = this.props;
+		const { query, siteId, isRequestingPosts, translate, isVip, isJetpack } = this.props;
 		const { maxRequestedPage, recentViewIds } = this.state;
 		const posts = this.props.posts || [];
 		const postStatuses = query.status.split( ',' );
@@ -266,6 +267,7 @@ class PostTypeList extends Component {
 			siteId &&
 			posts.length > 10 &&
 			! isVip &&
+			! isJetpack &&
 			query &&
 			( query.type === 'post' || ! query.type ) &&
 			( postStatuses.includes( 'publish' ) || postStatuses.includes( 'private' ) );
@@ -316,6 +318,7 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		posts: getPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		isVip: isVipSite( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 		isRequestingPosts: isRequestingPostsForQueryIgnoringPage( state, siteId, ownProps.query ),
 		totalPostCount: getPostsFoundForQuery( state, siteId, ownProps.query ),
 		totalPageCount,

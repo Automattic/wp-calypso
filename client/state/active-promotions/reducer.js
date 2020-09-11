@@ -7,7 +7,7 @@ import {
 	ACTIVE_PROMOTIONS_REQUEST_SUCCESS,
 	ACTIVE_PROMOTIONS_REQUEST_FAILURE,
 } from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -69,8 +69,11 @@ export const error = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	requesting,
 	error,
 } );
+
+const activePromotionsReducer = withStorageKey( 'activePromotions', combinedReducer );
+export default activePromotionsReducer;

@@ -124,8 +124,7 @@ class EarningsMain extends Component {
 
 		switch ( this.props.section ) {
 			case 'payments':
-				return translate( 'Recurring Payments' );
-
+				return translate( 'Payments' );
 			case 'ads-earnings':
 			case 'ads-settings':
 				return translate( 'Ads' );
@@ -143,7 +142,7 @@ class EarningsMain extends Component {
 	 *
 	 * @returns {string} Path to Earn home. Has site slug append if it exists.
 	 */
-	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '') ;
+	goBack = () => ( this.props.siteSlug ? '/earn/' + this.props.siteSlug : '' );
 
 	getHeaderCake = () => {
 		const headerText = this.getHeaderText();
@@ -196,6 +195,7 @@ class EarningsMain extends Component {
 				<DocumentHead title={ layoutTitles[ section ] } />
 				<SidebarNavigation />
 				<FormattedHeader
+					brandFont
 					className="earn__page-header"
 					headerText={ translate( 'Earn' ) }
 					align="left"

@@ -17,6 +17,7 @@ import StartPage from '../lib/pages/signup/start-page.js';
 import JetpackAddNewSitePage from '../lib/pages/signup/jetpack-add-new-site-page';
 
 import AboutPage from '../lib/pages/signup/about-page.js';
+import CustomerHomePage from '../lib/pages/customer-home-page';
 import DomainFirstPage from '../lib/pages/signup/domain-first-page';
 import ReaderLandingPage from '../lib/pages/signup/reader-landing-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page.js';
@@ -30,7 +31,6 @@ import MagicLoginPage from '../lib/pages/magic-login-page';
 import ReaderPage from '../lib/pages/reader-page';
 import DomainOnlySettingsPage from '../lib/pages/domain-only-settings-page';
 import DomainDetailsPage from '../lib/pages/domain-details-page';
-import ManagePurchasePage from '../lib/pages/manage-purchase-page';
 import CancelPurchasePage from '../lib/pages/cancel-purchase-page';
 import CancelDomainPage from '../lib/pages/cancel-domain-page';
 import ThemesPage from '../lib/pages/themes-page';
@@ -51,10 +51,12 @@ import NewUserRegistrationUnavailableComponent from '../lib/components/new-user-
 import DeleteAccountFlow from '../lib/flows/delete-account-flow';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
+import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
+import ActivateAccountFlow from '../lib/flows/activate-account-flow';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 import AccountSettingsPage from '../lib/pages/account/account-settings-page';
-import ChecklistPage from '../lib/pages/checklist-page';
+import MyHomePage from '../lib/pages/my-home-page';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
@@ -176,7 +178,11 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await driver.get( magicLoginLink );
 			const magicLoginPage = await MagicLoginPage.Expect( driver );
 			await magicLoginPage.finishLogin();
-			return await ReaderPage.Expect( driver );
+			try {
+				await CustomerHomePage.Expect( driver );
+			} catch ( e ) {
+				await ReaderPage.Expect( driver );
+			}
 		} );
 
 		after( 'Can delete our newly created account', async function () {
@@ -358,7 +364,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency @parallel @canary', function () {
+	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -457,6 +463,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can enter and submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
@@ -465,8 +472,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		sharedSteps.canSeeTheOnboardingChecklist();
 
 		step( 'Can update the homepage', async function () {
-			const checklistPage = await ChecklistPage.Expect( this.driver );
-			await checklistPage.updateHomepage();
+			const myHomePage = await MyHomePage.Expect( this.driver );
+			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
 
@@ -488,6 +495,13 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		step( 'Can delete the plan', async function () {
 			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
+		} );
+
+		step( 'Can launch the site', async function () {
+			const navBarComponent = await NavBarComponent.Expect( driver );
+			await navBarComponent.clickMySites();
+			await new ActivateAccountFlow( driver, emailAddress ).activateAccount();
+			return await new LaunchSiteFlow( driver ).launchFreeSite();
 		} );
 
 		after( 'Can delete our newly created account', async function () {
@@ -585,6 +599,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
@@ -694,6 +709,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
@@ -784,7 +800,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 					return this.skip();
 				}
 			}
-			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
+			await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
 
@@ -830,20 +846,12 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			// No need to fill out contact details here as they already have been completed
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
-
-		step(
-			'Can see the domain is ready page and click "Manage Domain" button to see the domain only settings page',
-			async function () {
-				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
-				await domainOnlySettingsPage.manageDomain();
-				return await DomainDetailsPage.Expect( driver );
-			}
-		);
 
 		step( 'Can open the sidebar', async function () {
 			const navBarComponent = await NavBarComponent.Expect( driver );
@@ -872,16 +880,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 				const domainOnlySettingsPage = await DomainOnlySettingsPage.Expect( driver );
 				await domainOnlySettingsPage.manageDomain();
 				const domainDetailsPage = await DomainDetailsPage.Expect( driver );
-				await domainDetailsPage.viewPaymentSettings();
-
-				const managePurchasePage = await ManagePurchasePage.Expect( driver );
-				const domainDisplayed = await managePurchasePage.domainDisplayed();
-				assert.strictEqual(
-					domainDisplayed,
-					expectedDomainName,
-					'The domain displayed on the manage purchase page is unexpected'
-				);
-				await managePurchasePage.chooseCancelAndRefund();
+				await domainDetailsPage.cancelDomain();
 
 				const cancelPurchasePage = await CancelPurchasePage.Expect( driver );
 				await cancelPurchasePage.clickCancelPurchase();
@@ -968,7 +967,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 
 		step( 'Can see checkout page and enter registrar details', async function () {
 			const checkOutPage = await CheckOutPage.Expect( driver );
-			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
+			await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
 
@@ -1021,6 +1020,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can enter/submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			// No need to fill out contact details here as they already have been completed
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
@@ -1101,8 +1101,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			if ( dataHelper.getTargetType() === 'IE11' ) {
 				return this.skip();
 			}
-			const checklistPage = await ChecklistPage.Expect( this.driver );
-			await checklistPage.updateHomepage();
+			const myHomePage = await MyHomePage.Expect( this.driver );
+			await myHomePage.updateHomepageFromSiteSetup();
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.initEditor();
 
@@ -1127,7 +1127,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up while purchasing premium theme in AUD currency @signup @email', function () {
+	describe.skip( 'Sign up while purchasing premium theme in AUD currency @signup @email', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
@@ -1238,6 +1238,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		step( 'Can submit test payment details', async function () {
 			const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			await securePaymentComponent.submitPaymentDetails();
 			return await securePaymentComponent.waitForPageToDisappear();
@@ -1728,8 +1729,8 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 				return this.skip();
 			}
 			await driver.get( verificationLink );
-			const checklistPage = await ChecklistPage.Expect( this.driver );
-			return await checklistPage.isEmailverified();
+			const myHomePage = await MyHomePage.Expect( this.driver );
+			return await myHomePage.isEmailVerified();
 		} );
 
 		after( 'Can delete our newly created account', async function () {

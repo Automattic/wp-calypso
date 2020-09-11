@@ -47,7 +47,7 @@
 	margin: 0 auto;
 	// max-width: 90%;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		max-width: 300px;
 	}
 }
@@ -58,7 +58,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	@include breakpoint( '>480px' ) {
+	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 	}
 }
@@ -83,7 +83,7 @@
 	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
 	white-space: pre-wrap;
 
-	@include breakpoint( '<480px' ) {
+	@include breakpoint-deprecated( '<480px' ) {
 		margin-bottom: 0.5em;
 	}
 
@@ -92,8 +92,8 @@
 	&,
 	.button {
 		padding: 0;
-		font-size: 12px;
-    	font-weight: 500;
+		font-size: $font-body-extra-small;
+		font-weight: 600;
     	line-height: 18px;
 	}
 
@@ -124,7 +124,7 @@
 	}
 
 	.DayPicker-Caption {
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 	}
 }
 
@@ -175,13 +175,13 @@
 	flex: 1;
 
 	.form-label {
-		font-size: 10px;
+		font-size: $font-body-extra-small;
 		text-transform: uppercase;
 		margin-bottom: 0;
 	}
 
 	input {
-		font-size: 13px;
+		font-size: $font-body-small;
 		padding: 3px 10px;
 	}
 }

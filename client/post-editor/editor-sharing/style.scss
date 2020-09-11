@@ -9,7 +9,7 @@
 .editor-sharing__shortlink {
 	border-top: 1px solid var( --color-neutral-0 );
 	color: var( --color-neutral-light );
-	font-size: 11px;
+	font-size: $font-body-extra-small;
 	margin: 16px -16px 0;
 	padding: 8px 16px 0;
 	text-align: left;
@@ -31,7 +31,7 @@ input[type='text'].editor-sharing__shortlink-field {
 	background: var( --color-neutral-0 );
 	color: var( --color-neutral-70 );
 	flex-grow: 1;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	width: 100%;
 	line-height: 1;
 	vertical-align: bottom;
@@ -39,7 +39,7 @@ input[type='text'].editor-sharing__shortlink-field {
 
 .editor-sharing__publicize-connection {
 	display: block;
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	padding: 2px 0;
 
 	label input[disabled] + span {
@@ -54,7 +54,7 @@ input[type='text'].editor-sharing__shortlink-field {
 .editor-sharing__broken-publicize-connection-button {
 	cursor: pointer;
 	color: white;
-	font-weight: bold;
+	font-weight: 600;
 	text-decoration: underline;
 }
 

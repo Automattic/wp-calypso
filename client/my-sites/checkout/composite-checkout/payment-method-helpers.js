@@ -3,40 +3,66 @@
  */
 import React, { useReducer, useEffect, useState } from 'react';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
-import { prepareDomainContactDetails } from 'my-sites/checkout/composite-checkout/wpcom';
-import wp from 'lib/wp';
+import i18n, { useTranslate } from 'i18n-calypso';
+import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
+import wp from 'lib/wp';
+import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
+import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
 import {
-	createTransactionEndpointRequestPayloadFromLineItems,
-	createPayPalExpressEndpointRequestPayloadFromLineItems,
-} from './types';
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasOnlyRenewalItems,
+	hasTransferProduct,
+} from 'lib/cart-values/cart-items';
+import { createStripePaymentMethod } from 'lib/stripe';
+import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
+import { getSavedVariations } from 'lib/abtest';
+import { stringifyBody } from 'state/login/utils';
+import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
+const { select } = defaultRegistry;
 
-export function useStoredCards( getStoredCards ) {
+export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
 	const [ state, dispatch ] = useReducer( storedCardsReducer, {
 		storedCards: [],
 		isLoading: true,
 	} );
+
 	useEffect( () => {
+		if ( isLoggedOutCart ) {
+			return;
+		}
 		let isSubscribed = true;
 		async function fetchStoredCards() {
 			debug( 'fetching stored cards' );
 			return getStoredCards();
 		}
 
-		// TODO: handle errors
-		fetchStoredCards().then( ( cards ) => {
-			debug( 'stored cards fetched', cards );
-			isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
-		} );
+		fetchStoredCards()
+			.then( ( cards ) => {
+				debug( 'stored cards fetched', cards );
+				isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
+			} )
+			.catch( ( error ) => {
+				debug( 'stored cards failed to load', error );
+				onEvent( { type: 'STORED_CARD_ERROR', payload: error.message } );
+				isSubscribed && dispatch( { type: 'FETCH_END', payload: [] } );
+			} );
 
 		return () => ( isSubscribed = false );
-	}, [ getStoredCards ] );
+	}, [ getStoredCards, onEvent, isLoggedOutCart ] );
+
+	if ( isLoggedOutCart ) {
+		return { ...state, isLoading: false };
+	}
+
 	return state;
 }
 
@@ -49,17 +75,17 @@ function storedCardsReducer( state, action ) {
 	}
 }
 
-export async function submitExistingCardPayment( transactionData, submit ) {
+export async function submitExistingCardPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
-export async function submitApplePayPayment( transactionData, submit ) {
+export async function submitApplePayPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting apple-pay transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
@@ -67,27 +93,28 @@ export async function submitApplePayPayment( transactionData, submit ) {
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'submitting apple-pay transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
-export async function makePayPalExpressRequest( transactionData, submit ) {
+export async function submitPayPalExpressRequest( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
-export function getDomainDetails( select ) {
+export function getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) {
 	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
-	return prepareDomainContactDetails( managedContactDetails );
+	const domainDetails = prepareDomainContactDetailsForTransaction( managedContactDetails );
+	return includeDomainDetails || includeGSuiteDetails ? domainDetails : null;
 }
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
 	return wpcom.stripeConfiguration( requestArgs );
 }
 
-export async function sendStripeTransaction( transactionData, submit ) {
+export async function submitStripeCardTransaction( transactionData, submit, transactionOptions ) {
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodToken: transactionData.paymentMethodToken.id,
@@ -95,17 +122,42 @@ export async function sendStripeTransaction( transactionData, submit ) {
 		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
 	} );
 	debug( 'sending stripe transaction', formattedTransactionData );
+	return submit( formattedTransactionData, transactionOptions );
+}
+
+export async function submitEbanxCardTransaction( transactionData, submit ) {
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodToken: transactionData.paymentMethodToken.token,
+		paymentMethodType: 'WPCOM_Billing_Ebanx',
+	} );
+	debug( 'sending ebanx transaction', formattedTransactionData );
 	return submit( formattedTransactionData );
 }
 
-export function submitCreditsTransaction( transactionData, submit ) {
+export async function submitRedirectTransaction( paymentMethodId, transactionData, submit ) {
+	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
+		?.name;
+	if ( ! paymentMethodType ) {
+		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
+	}
+	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
+		...transactionData,
+		paymentMethodType,
+		paymentPartnerProcessorId: transactionData.stripeConfiguration?.processor_id,
+	} );
+	debug( `sending redirect transaction for type: ${ paymentMethodId }`, formattedTransactionData );
+	return submit( formattedTransactionData );
+}
+
+export function submitCreditsTransaction( transactionData, submit, transactionOptions ) {
 	debug( 'formatting full credits transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );
 	debug( 'submitting full credits transaction', formattedTransactionData );
-	return submit( formattedTransactionData );
+	return submit( formattedTransactionData, transactionOptions );
 }
 
 export function submitFreePurchaseTransaction( transactionData, submit ) {
@@ -148,8 +200,9 @@ export function WordPressCreditsLabel( { credits } ) {
 	return (
 		<React.Fragment>
 			<div>
-				{ translate( 'WordPress.com Credits: %(amount)s', {
-					args: { amount: credits.amount.displayValue },
+				{ translate( 'WordPress.com Credits: %(amount)s available', {
+					args: { amount: credits.wpcom_meta.credits_display },
+					comment: "The total value of credits on the user's account",
 				} ) }
 			</div>
 			<WordPressLogo />
@@ -173,11 +226,146 @@ function WordPressLogo() {
 	);
 }
 
-export async function wpcomTransaction( payload ) {
+async function createAccountCallback( response ) {
+	// Set siteId from response
+	const siteIdFromResponse = response?.blog_details?.blogid;
+	const siteSlugFromResponse = response?.blog_details?.site_slug;
+	const { dispatch } = defaultRegistry;
+	siteIdFromResponse && dispatch( 'wpcom' ).setSiteId( siteIdFromResponse );
+	siteSlugFromResponse && dispatch( 'wpcom' ).setSiteSlug( siteSlugFromResponse );
+
+	if ( ! response.bearer_token ) {
+		return;
+	}
+
+	// Log in the user
+	wp.loadToken( response.bearer_token );
+	const url = 'https://wordpress.com/wp-login.php';
+	const bodyObj = {
+		authorization: 'Bearer ' + response.bearer_token,
+		log: response.username,
+	};
+
+	return await globalThis.fetch( url, {
+		method: 'POST',
+		redirect: 'manual',
+		credentials: 'include',
+		headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: stringifyBody( bodyObj ),
+	} );
+}
+
+async function createAccount() {
+	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+
+	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
+	const siteId = select( 'wpcom' )?.getSiteId();
+	const emailValue = email.value;
+	const recaptchaClientId = select( 'wpcom' )?.getRecaptchaClientId();
+	const isRecaptchaLoaded = typeof recaptchaClientId === 'number';
+
+	let recaptchaToken = undefined;
+	let recaptchaError = undefined;
+
+	if ( isRecaptchaLoaded ) {
+		recaptchaToken = await recordGoogleRecaptchaAction(
+			recaptchaClientId,
+			'calypso/signup/formSubmit'
+		);
+
+		if ( ! recaptchaToken ) {
+			recaptchaError = 'recaptcha_failed';
+		}
+	} else {
+		recaptchaError = 'recaptcha_didnt_load';
+	}
+
+	const blogName = newSiteParams?.blog_name;
+
+	try {
+		const response = await wp.undocumented().createUserAndSite(
+			{
+				email: emailValue,
+				'g-recaptcha-error': recaptchaError,
+				'g-recaptcha-response': recaptchaToken || undefined,
+				is_passwordless: true,
+				extra: { username_hint: blogName },
+				signup_flow_name: 'onboarding-registrationless',
+				validate: false,
+				ab_test_variations: getSavedVariations(),
+				new_site_params: newSiteParams,
+				should_create_site: ! siteId,
+			},
+			null
+		);
+
+		createAccountCallback( response );
+		return response;
+	} catch ( error ) {
+		const errorMessage = error?.message ? getErrorMessage( error ) : error;
+		throw new Error( errorMessage );
+	}
+}
+
+function getErrorMessage( { error, message } ) {
+	switch ( error ) {
+		case 'already_taken':
+		case 'already_active':
+		case 'email_exists':
+			return i18n.translate( 'An account with this email address already exists.' );
+		default:
+			return message;
+	}
+}
+
+export async function wpcomTransaction( payload, transactionOptions ) {
+	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
+		return createAccount().then( ( response ) => {
+			const siteIdFromResponse = response?.blog_details?.blogid;
+
+			// If the account is already created(as happens when we are reprocessing after a transaction error), then
+			// the create account response will not have a site ID, so we fetch from state.
+			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
+			const newPayload = {
+				...payload,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+					create_new_blog: false,
+				},
+			};
+
+			return wp.undocumented().transactions( newPayload );
+		} );
+	}
+
 	return wp.undocumented().transactions( payload );
 }
 
-export async function wpcomPayPalExpress( payload ) {
+export async function wpcomPayPalExpress( payload, transactionOptions ) {
+	if ( transactionOptions && transactionOptions.createUserAndSiteBeforeTransaction ) {
+		return createAccount().then( ( response ) => {
+			const siteIdFromResponse = response?.blog_details?.blogid;
+
+			// If the account is already created(as happens when we are reprocessing after a transaction error), then
+			// the create account response will not have a site ID, so we fetch from state.
+			const siteId = siteIdFromResponse || select( 'wpcom' )?.getSiteId();
+			const newPayload = {
+				...payload,
+				siteId,
+				cart: {
+					...payload.cart,
+					blog_id: siteId || '0',
+					cart_key: siteId || 'no-site',
+					create_new_blog: false,
+				},
+			};
+
+			return wp.undocumented().paypalExpressUrl( newPayload );
+		} );
+	}
+
 	return wp.undocumented().paypalExpressUrl( payload );
 }
 
@@ -280,7 +468,19 @@ export function filterAppropriatePaymentMethods( {
 	serverAllowedPaymentMethods,
 } ) {
 	const isPurchaseFree = total.amount.value === 0;
-	debug( 'is purchase free?', isPurchaseFree );
+	const isFullCredits =
+		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
+	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
+	debug( 'filtering payment methods with this input', {
+		total,
+		credits,
+		subtotal,
+		allowedPaymentMethods,
+		serverAllowedPaymentMethods,
+		isPurchaseFree,
+		isFullCredits,
+		countryCode,
+	} );
 
 	return paymentMethodObjects
 		.filter( ( methodObject ) => {
@@ -291,14 +491,33 @@ export function filterAppropriatePaymentMethods( {
 			return isPurchaseFree ? false : true;
 		} )
 		.filter( ( methodObject ) => {
+			// If the purchase is full-credits, only display the full-credits method
 			if ( methodObject.id === 'full-credits' ) {
-				return credits.amount.value > 0 && credits.amount.value >= subtotal.amount.value;
+				return isFullCredits ? true : false;
 			}
+			return isFullCredits ? false : true;
+		} )
+		.filter( ( methodObject ) => {
+			// Some country-specific payment methods should only be available if that
+			// country is selected in the contact information.
+			if ( methodObject.id === 'netbanking' && countryCode !== 'IN' ) {
+				return false;
+			}
+			if ( methodObject.id === 'ebanx-tef' && countryCode !== 'BR' ) {
+				return false;
+			}
+			return true;
+		} )
+		.filter( ( methodObject ) => {
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 				return isPaymentMethodEnabled(
 					'card',
 					allowedPaymentMethods || serverAllowedPaymentMethods
 				);
+			}
+			if ( methodObject.id === 'full-credits' ) {
+				// If the full-credits payment method still exists here (see above filter), it's enabled
+				return true;
 			}
 			if ( methodObject.id === 'free-purchase' ) {
 				// If the free payment method still exists here (see above filter), it's enabled
@@ -309,4 +528,33 @@ export function filterAppropriatePaymentMethods( {
 				allowedPaymentMethods || serverAllowedPaymentMethods
 			);
 		} );
+}
+
+export function needsDomainDetails( cart ) {
+	if ( cart && hasOnlyRenewalItems( cart ) ) {
+		return false;
+	}
+	if (
+		cart &&
+		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
+	) {
+		return true;
+	}
+	return false;
+}
+
+export function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
+	return createStripePaymentMethod( stripe, {
+		name,
+		address: {
+			country,
+			postal_code: postalCode,
+		},
+	} );
+}
+
+export function getPostalCode() {
+	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
+	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
+	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
 }
