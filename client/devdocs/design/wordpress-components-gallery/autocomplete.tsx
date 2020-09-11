@@ -28,7 +28,7 @@ const Example = () => {
 			// Returns a label for an option like "🍊 Orange"
 			getOptionLabel: ( option ) => (
 				<span>
-					<span className="icon">{ option.visual }</span>
+					<span>{ option.visual }</span>
 					{ option.name }
 				</span>
 			),
@@ -45,8 +45,9 @@ const Example = () => {
 		<div>
 			<Autocomplete completers={ autocompleters }>
 				{ ( { isExpanded, listBoxId, activeId, onKeyDown } ) => (
+					/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/aria-activedescendant-has-tabindex */
 					<div
-						className="wordpress-components-gallery-autocomplete__editable"
+						className="wordpress-components-gallery__autocomplete-editable"
 						contentEditable
 						onKeyDown={ onKeyDown }
 						suppressContentEditableWarning
@@ -55,6 +56,7 @@ const Example = () => {
 						aria-owns={ listBoxId }
 						aria-activedescendant={ activeId }
 					></div>
+					/* eslint-enable */
 				) }
 			</Autocomplete>
 			<p>Type ~ for triggering the autocomplete.</p>

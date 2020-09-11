@@ -19,6 +19,7 @@ const Example = () => (
 		<hr />
 		<div>
 			Additional class names passed to VisuallyHidden extend the component class name.{ ' ' }
+			{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 			<VisuallyHidden as="label" className="test-input">
 				Check out my class!{ ' ' }
 			</VisuallyHidden>

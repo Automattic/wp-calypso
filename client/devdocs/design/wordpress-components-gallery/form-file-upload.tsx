@@ -12,7 +12,9 @@ const Example = () => (
 	<FormFileUpload
 		isPrimary
 		multiple
-		onChange={ ( event ) => alert( `${ event?.target?.files?.length ?? 0 } files uploaded!` ) }
+		onChange={ ( event ) =>
+			window.alert( `${ event?.target?.files?.length ?? 0 } files uploaded!` )
+		}
 	>
 		Click here to upload some files.
 	</FormFileUpload>
