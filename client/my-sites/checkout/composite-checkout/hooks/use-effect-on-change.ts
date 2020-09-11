@@ -6,9 +6,15 @@ import { useEffect, useRef } from 'react';
 /*
  * Run a callback function any time one of the dependencies changes
  *
- * Similar to useEffect but will not run its effects on the first call.
+ * This is similar to useEffect, but there are several differences:
  *
- * Also, there is no clean-up function (the return value of the callback has no effect).
+ * - This hook will not run its callback the first time it is called; it will
+ * only run when one of its dependencies has changed from its previous value.
+ *
+ * - This hook has no cleanup function. The return value of the callback has no
+ * effect.
+ *
+ * - The callback function will be passed the previous value as an argument.
  */
 export default function useEffectOnChange< T >(
 	handleChange: ( previous: T[] ) => void,
