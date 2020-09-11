@@ -13,7 +13,7 @@ import {
 	RequestCart,
 	convertRawResponseCartToResponseCart,
 } from '../../types/backend/shopping-cart-endpoint';
-import { CacheStatus, ShoppingCartAction, ReactStandardAction } from './types';
+import { CacheStatus, ShoppingCartAction } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cart-update-and-revalidate' );
 
@@ -21,8 +21,7 @@ export default function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
 	responseCart: ResponseCart,
 	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
-	hookDispatch: ( arg0: ShoppingCartAction ) => void,
-	onEvent?: ( arg0: ReactStandardAction ) => void
+	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
@@ -51,11 +50,6 @@ export default function useCartUpdateAndRevalidate(
 					error: 'GET_SERVER_CART_ERROR',
 					message: error.message,
 				} );
-				// TODO: log the request (at least the products) so we can see why it failed
-				onEvent?.( {
-					type: 'CART_ERROR',
-					payload: { type: 'SET_SERVER_CART_ERROR', message: error.message },
-				} );
 			} );
-	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
+	}, [ setServerCart, cacheStatus, responseCart, hookDispatch ] );
 }

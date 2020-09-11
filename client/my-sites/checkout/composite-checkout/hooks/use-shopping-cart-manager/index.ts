@@ -61,7 +61,7 @@ export default function useShoppingCartManager( {
 	);
 
 	// Asynchronously re-validate when the cache is dirty.
-	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
+	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
 
 	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
 		( requestCartProductToAdd ) => {
