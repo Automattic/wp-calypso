@@ -129,3 +129,21 @@ function coming_soon_page() {
 	die();
 }
 add_action( 'template_redirect', __NAMESPACE__ . '\coming_soon_page' );
+
+/**
+ * Add wpcom coming soon options to the list of options that should be sync'd
+ * between wpcom and an external site (e.g. atomic)
+ *
+ * @param array $list Existing options allowlist.
+ * @return array Updated options allowlist.
+ */
+function add_sync_options_allowlist( $list ) {
+	return array_merge(
+		$list,
+		array(
+			'wpcom_public_coming_soon',
+			'wpcom_public_coming_soon_page_id',
+		)
+	);
+}
+add_filter( 'jetpack_sync_options_whitelist', __NAMESPACE__ . '\add_sync_options_allowlist' );
