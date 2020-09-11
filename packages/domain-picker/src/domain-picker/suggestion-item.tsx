@@ -89,7 +89,13 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 			<div className="domain-picker__suggestion-item-name">
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span className="domain-picker__domain-name">{ domainName }</span>
-					<span className="domain-picker__domain-tld">{ domainTld }</span>
+					<span
+						className={ classnames( 'domain-picker__domain-tld', {
+							'with-margin': ! hstsRequired,
+						} ) }
+					>
+						{ domainTld }
+					</span>
 					{ hstsRequired && (
 						<InfoTooltip
 							position="middle right"

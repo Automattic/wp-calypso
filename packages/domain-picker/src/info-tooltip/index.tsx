@@ -3,8 +3,8 @@
  */
 import React, { FunctionComponent, useState } from 'react';
 import classnames from 'classnames';
-import { Popover } from '@wordpress/components';
-import { Icon, info } from '@wordpress/icons';
+import { Popover, Button } from '@wordpress/components';
+import { info } from '@wordpress/icons';
 
 /**
  * Style dependencies
@@ -44,30 +44,21 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<>
-			<button
-				type="button"
-				aria-haspopup
-				data-testid="info-tooltip"
-				onClick={ handleClick }
-				className={ classnames( 'info-tooltip', className, {
-					'is-active': showTooltip,
-				} ) }
-			>
-				<Icon icon={ info } />
-				{ showTooltip && (
-					<Popover
-						id={ id }
-						className={ classnames( 'info-tooltip__content', className ) }
-						onClose={ handleClose }
-						position={ position }
-						noArrow={ noArrow }
-					>
-						{ children }
-					</Popover>
-				) }
-			</button>
-		</>
+		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+		// @ts-ignore
+		<Button icon={ info } onClick={ handleClick } className="info-tooltip">
+			{ showTooltip && (
+				<Popover
+					id={ id }
+					className={ classnames( 'info-tooltip__content', className ) }
+					onClose={ handleClose }
+					position={ position }
+					noArrow={ noArrow }
+				>
+					{ children }
+				</Popover>
+			) }
+		</Button>
 	);
 };
 

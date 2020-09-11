@@ -1,4 +1,8 @@
 .info-tooltip {
+    &.components-button.has-icon.has-text svg {
+        margin-right: 0;
+    }
+
 	.components-popover__content > div {
         color: var( --color-neutral-50 );
         font-size: $font-body-small;
