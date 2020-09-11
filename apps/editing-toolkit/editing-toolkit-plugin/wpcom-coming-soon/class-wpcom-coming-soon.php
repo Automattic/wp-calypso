@@ -100,7 +100,6 @@ class WPCOM_Coming_Soon {
 
 		if ( ! empty( $id ) && $post->ID === $id ) {
 			$exclude = (bool) apply_filters( 'wpcom_sitemaps_exclude_post', true, get_post( $id ) );
-
 		}
 
 		return $exclude;
@@ -182,8 +181,13 @@ class WPCOM_Coming_Soon {
 		remove_action( 'wp_head', 'global_css', 5 );
 		remove_action( 'wp_footer', 'wpcom_subs_js' );
 		remove_action( 'wp_footer', 'stats_footer', 101 );
-		//phpcs:ignore
-		wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css' );
+
+		wp_enqueue_style(
+			'wpcom-coming-soon',
+			plugin_dir_url( __FILE__ ) . 'dist/wpcom-coming-soon.css',
+			array(),
+			filemtime( __DIR__ . '/dist/wpcom-coming-soon.css' )
+		);
 
 		if ( ! is_user_logged_in() ) {
 			//phpcs:ignore
