@@ -19,8 +19,6 @@ export const isAvailable = function* isAvailable(
 	) }/is-available?is_cart_pre_check=true`;
 
 	try {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-		// @ts-ignore
 		const { body } = yield fetchAndParse( url );
 		return receiveDomainAvailability( domainName, body );
 	} catch {}
