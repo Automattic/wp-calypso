@@ -170,6 +170,9 @@ const webpackConfig = {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			// The `formidable` package (used by `superagent`) contains conditional code that hijacks
+			// the `require` function. That breaks webpack.
+			'global.GENTLY': false,
 		} ),
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
