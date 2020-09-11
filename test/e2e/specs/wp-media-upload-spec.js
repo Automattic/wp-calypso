@@ -132,7 +132,7 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 				step( 'Can set Featured Image', async function () {
 					mediaPage = await MediaPage.Expect( driver );
 					await mediaPage.uploadFile( fileDetails.file );
-					await driver.sleep(1000);
+					await driver.sleep(2000);
 					await mediaPage.selectInsertImage();
 				} );
 
