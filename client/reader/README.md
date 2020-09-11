@@ -73,10 +73,13 @@ these last two files have the ability to render HTML.
 
 Reader Previews
 
-- All `https://public-api.wordpress.com/rest/v1.2/read/following?http_envelope=1&orderBy=date&meta=post%2Cdiscover_original_post&before=2020-08-11T15%3A00%3A00%2B00%3A00&number=7&content_width=675`
+- All
+`https://public-api.wordpress.com/rest/v1.2/read/following?http_envelope=1&orderBy=date&meta=post%2Cdiscover_original_post&before=2020-08-11T15%3A00%3A00%2B00%3A00&number=7&content_width=675`
 
-- Specific Site `https://public-api.wordpress.com/rest/v1.2/read/feed/108654568/posts?http_envelope=1&orderBy=date&meta=post%2Cdiscover_original_post&number=7&content_width=675`
+- Specific Site
+`https://public-api.wordpress.com/rest/v1.2/read/feed/108654568/posts?http_envelope=1&orderBy=date&meta=post%2Cdiscover_original_post&number=7&content_width=675`
 
 Reader Posts
 
-- Specific Post `https://public-api.wordpress.com/rest/v1.2/read/feed/108654568/posts/2904184411?http_envelope=1&content_width=656`
+- Specific Post
+`https://public-api.wordpress.com/rest/v1.2/read/feed/108654568/posts/2904184411?http_envelope=1&content_width=656`
