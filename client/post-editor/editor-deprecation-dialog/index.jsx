@@ -24,6 +24,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import InlineSupportLink from 'components/inline-support-link';
 import { localizeUrl } from 'lib/i18n-utils';
+import { preventWidows } from 'lib/formatting';
 import FormattedDate from 'components/formatted-date';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -77,29 +78,31 @@ class EditorDeprecationDialog extends Component {
 				<div className="editor-deprecation-dialog__illustration" />
 
 				<p className="editor-deprecation-dialog__subhead">
-					{ translate(
-						'Get a head start before we activate it for everyone in the near future. {{support}}Read more{{/support}}.',
-						{
-							components: {
-								date: (
-									<strong>
-										<FormattedDate date="2020-07-01" format={ dateFormat } />
-									</strong>
-								),
-								support: (
-									<InlineSupportLink
-										supportPostId={ 167510 }
-										supportLink={ localizeUrl(
-											'https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/'
-										) }
-										showIcon={ false }
-										tracksEvent="calypso_editor_deprecate_support_page_view"
-										statsGroup="calypso_editor"
-										statsName="editor_deprecate_learn_more"
-									/>
-								),
-							},
-						}
+					{ preventWidows(
+						translate(
+							'Get a head start before we activate it for everyone in the near future. {{support}}Read more{{/support}}.',
+							{
+								components: {
+									date: (
+										<strong>
+											<FormattedDate date="2020-07-01" format={ dateFormat } />
+										</strong>
+									),
+									support: (
+										<InlineSupportLink
+											supportPostId={ 167510 }
+											supportLink={ localizeUrl(
+												'https://wordpress.com/support/replacing-the-older-wordpress-com-editor-with-the-wordpress-block-editor/'
+											) }
+											showIcon={ false }
+											tracksEvent="calypso_editor_deprecate_support_page_view"
+											statsGroup="calypso_editor"
+											statsName="editor_deprecate_learn_more"
+										/>
+									),
+								},
+							}
+						)
 					) }
 				</p>
 				<Button onClick={ this.optInToGutenberg } isPrimary>
