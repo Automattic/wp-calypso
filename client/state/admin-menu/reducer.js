@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { withStorageKey, keyedReducer } from 'state/utils';
-import 'state/data-layer/wpcom/admin-menu';
+import 'state/data-layer/wpcom/sites/admin-menu';
 import { ADMIN_MENU_RECEIVE } from 'state/action-types';
 
 export const adminMenu = ( state = {}, action ) => {
