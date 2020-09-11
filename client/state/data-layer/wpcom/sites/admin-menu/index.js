@@ -17,10 +17,6 @@ export const requestFetchAdminMenu = ( action ) =>
 		action
 	);
 
-export const transformAPIData = ( data ) => {
-	return data;
-};
-
 export const handleSuccess = ( { siteId }, menuData ) => {
 	return receiveAdminMenu( siteId, menuData );
 };
@@ -33,7 +29,6 @@ registerHandlers( 'state/data-layer/wpcom/admin-menu/index.js', {
 	[ ADMIN_MENU_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestFetchAdminMenu,
-			fromApi: transformAPIData,
 			onSuccess: handleSuccess,
 			onError: handleError,
 		} ),
