@@ -91,7 +91,11 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					<span className="domain-picker__domain-name">{ domainName }</span>
 					<span className="domain-picker__domain-tld">{ domainTld }</span>
 					{ hstsRequired && (
-						<InfoTooltip position="middle right" noArrow={ false }>
+						<InfoTooltip
+							position="middle right"
+							noArrow={ false }
+							className="domain-picker__info-tooltip"
+						>
 							{ createInterpolateElement(
 								__(
 									'All domains ending with <tld /> require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. <learn_more_link>Learn more</learn_more_link>'
