@@ -181,15 +181,6 @@ export default {
 			'ZA',
 		],
 	},
-	showBusinessPlanBump: {
-		datestamp: '20300619',
-		variations: {
-			variantShowPlanBump: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	offerResetFlow: {
 		datestamp: '20200804',
 		variations: {
