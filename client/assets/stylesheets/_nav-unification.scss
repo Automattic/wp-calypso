@@ -1,0 +1,194 @@
+/* stylelint-disable selector-max-id */
+
+/**
+ * Nav unification styles
+ *
+ * This file contains all relevant styles for the nav unification prototype (see pbAPfg-O2).
+ * Using a single place to store these styles will allow us to easily (re)move them later.
+ * Depending on the outcome they'll either be deleted or moved to the relevant places.
+ * 
+ * IMPORTANT: When adding to this file please also add the source file in a comment.
+ */
+
+.is-nav-unification {
+	$nav-unification-primary: #23282d;
+	$nav-unification-secondary: #101517;
+	$nav-unification-masterbar-height: 32px;
+	$nav-unification-masterbar-height-mobile: 46px;
+	$nav-unification-masterbar-font-size: 13px;
+
+	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
+	--color-masterbar-background: #101517;
+	--color-masterbar-item-hover-background: #333;
+	--color-masterbar-item-active-background: #23282d;
+
+	// client/layout/style.scss
+	.layout__secondary {
+		top: $nav-unification-masterbar-height;
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar {
+		height: $nav-unification-masterbar-height;
+		border-bottom: none;
+		font-size: $nav-unification-masterbar-font-size;
+		-webkit-box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
+		-moz-box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
+		box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item {
+		height: $nav-unification-masterbar-height;
+		padding: 0 8px;
+		font-size: $nav-unification-masterbar-font-size;
+		line-height: $nav-unification-masterbar-height;
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item-bubble {
+		top: 2px;
+		left: -7px;
+	}
+
+	// client/layout/masterbar/style.scss
+
+	.masterbar__item-new,
+	.masterbar__toggle-drafts.button.is-borderless {
+		height: 24px;
+		margin: 4px 8px;
+		border-radius: 5px;
+	}
+
+	.masterbar__item-new {
+		padding: 0 10px;
+
+		&:hover {
+			background: #e9e9ea;
+			color: $nav-unification-primary;
+		}
+
+		.masterbar__item-content {
+			color: $nav-unification-primary;
+		}
+		.gridicon {
+			fill: $nav-unification-primary;
+			transform: translateX( 1px );
+
+			+ .masterbar__item-content {
+				padding: 0 1px 0 5px;
+			}
+		}
+	}
+
+	.masterbar__toggle-drafts.button.is-borderless {
+		margin-left: -20px;
+
+		&:hover {
+			background-color: #e9e9ea;
+
+			.count {
+				border-color: $nav-unification-primary;
+				color: $nav-unification-primary;
+			}
+		}
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item-me {
+		padding-right: 8px;
+		padding-left: 8px;
+
+		.gravatar {
+			top: 50%;
+			left: 50%;
+			transform: translate( -50%, -50% );
+		}
+	}
+
+	.masterbar__item-notifications {
+		padding-right: 5px;
+		padding-left: 5px;
+
+		.gridicon {
+			margin-top: 1px;
+		}
+	}
+
+	// apps/notifications/style.scss
+	#wpnc-panel {
+		top: $nav-unification-masterbar-height;
+	}
+
+	// client/layout/masterbar/style.scss
+	.masterbar__item-notifications .masterbar__notifications-bubble {
+		top: 3px;
+		transform: translateX( 1px );
+	}
+
+	// client/layout/masterbar/style.scss
+	@include breakpoint-deprecated( '>960px' ) {
+		.masterbar__toggle-drafts.button.is-borderless {
+			margin-left: -23px;
+		}
+	}
+
+	// breakpoint used in wp-admin
+	@media only screen and ( max-width: 782px ) {
+		// client/layout/style.scss
+		.layout__secondary {
+			top: $nav-unification-masterbar-height-mobile;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar {
+			height: $nav-unification-masterbar-height-mobile;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item {
+			height: $nav-unification-masterbar-height-mobile;
+			line-height: $nav-unification-masterbar-height-mobile;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-new,
+		.masterbar__toggle-drafts.button.is-borderless {
+			height: 36px;
+			margin-top: 5px;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-bubble {
+			top: 50%;
+			left: 50%;
+			margin: 0;
+			transform: translate( -39px, -14px );
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-me {
+			// fix for profile picture currently hidden in production
+			.masterbar__item-content {
+				display: block;
+			}
+		}
+
+		// apps/notifications/style.scss
+		#wpnc-panel {
+			top: $nav-unification-masterbar-height-mobile;
+		}
+
+		// client/layout/masterbar/style.scss
+		.masterbar__item-notifications .masterbar__notifications-bubble {
+			top: 10px;
+		}
+	}
+
+	// client/layout/masterbar/style.scss
+	@include breakpoint-deprecated( '<480px' ) {
+		.masterbar__item-bubble {
+			transform: translate( -14px, -14px );
+		}
+	}
+}

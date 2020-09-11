@@ -152,6 +152,7 @@ class Layout extends Component {
 					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 					isWooOAuth2Client( this.props.oauth2Client ) &&
 					this.props.wccomFrom,
+				'is-nav-unification': config.isEnabled( 'nav-unification' ),
 			}
 		);
 
