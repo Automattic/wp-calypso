@@ -86,7 +86,7 @@ const Invalid = () => (
 
 registerBlockType( 'a8c/github-issue-template', {
 	title: __( 'Github Issue Template', 'a8c' ),
-	icon: icon,
+	icon,
 	category: 'layout',
 	attributes: {
 		userOrOrg: {
