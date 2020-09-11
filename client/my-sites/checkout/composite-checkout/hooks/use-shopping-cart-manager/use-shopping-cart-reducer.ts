@@ -192,6 +192,7 @@ function shoppingCartReducer(
 						...state,
 						cacheStatus: 'error',
 						loadingError: action.message,
+						loadingErrorType: action.error,
 					};
 				default:
 					return state;
@@ -215,7 +216,6 @@ function shoppingCartReducer(
 function getInitialShoppingCartState(): ShoppingCartState {
 	return {
 		responseCart: emptyResponseCart,
-		loadingError: '',
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
 		variantRequestStatus: 'fresh',

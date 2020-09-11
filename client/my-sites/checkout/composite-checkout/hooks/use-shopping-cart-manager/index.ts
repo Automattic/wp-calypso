@@ -17,6 +17,7 @@ import {
 	CacheStatus,
 	CouponStatus,
 	VariantRequestStatus,
+	ShoppingCartError,
 } from './types';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
@@ -44,6 +45,7 @@ export default function useShoppingCartManager( {
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
+	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
 	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const variantSelectOverride = hookState.variantSelectOverride;
 
@@ -111,6 +113,7 @@ export default function useShoppingCartManager( {
 	return {
 		isLoading: cacheStatus === 'fresh',
 		loadingError: cacheStatus === 'error' ? loadingError : null,
+		loadingErrorType,
 		isPendingUpdate: cacheStatus !== 'valid',
 		addItem,
 		removeItem,

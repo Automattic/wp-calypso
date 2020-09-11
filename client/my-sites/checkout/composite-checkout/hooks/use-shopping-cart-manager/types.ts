@@ -121,6 +121,7 @@ export type ShoppingCartState = {
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	loadingError?: string;
+	loadingErrorType?: ShoppingCartError;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	queuedActions: ShoppingCartAction[];
