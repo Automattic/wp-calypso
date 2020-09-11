@@ -45,7 +45,13 @@ registerPlugin( 'a8c-full-site-editing-nav-sidebar', {
 
 		// Uses presence of data store to detect whether this is the experimental site editor.
 		const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
-		if ( isSiteEditor ) {
+
+		// Disable sidebar nav if the editor is not in fullscreen mode
+		const isFullscreenActive = useSelect( ( select ) =>
+			select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' )
+		);
+
+		if ( isSiteEditor || ! isFullscreenActive ) {
 			return null;
 		}
 
