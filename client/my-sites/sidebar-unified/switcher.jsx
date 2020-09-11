@@ -19,17 +19,9 @@ export const MySitesSidebarUnifiedSwitcher = ( props ) => {
 	return (
 		<>
 			<div
+				className="sidebar-unified__switcher"
 				role="link"
 				tabIndex={ 0 }
-				style={ {
-					position: 'absolute',
-					zIndex: 1000,
-					backgroundColor: '#633',
-					right: 0,
-					cursor: 'pointer',
-					textDecoration: 'underline',
-					fontSize: '11px',
-				} }
 				onClick={ () => setUnified( ! isUnified ) }
 				onKeyDown={ () => setUnified( ! isUnified ) }
 			>

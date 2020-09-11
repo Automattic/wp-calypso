@@ -1,0 +1,18 @@
+// Sidebar menu icons for main sections
+/*
+.sidebar-unified__menu-icon {
+	fill: var( --color-sidebar-gridicon-fill );
+	margin-right: 11px;
+	flex-shrink: 0;
+}
+*/
+
+.sidebar-unified__switcher {
+	position: absolute;
+	z-index: 1000;
+	background-color: #633;
+	right: 0;
+	cursor: pointer;
+	text-decoration: underline;
+	font-size: 0.75rem;
+}
