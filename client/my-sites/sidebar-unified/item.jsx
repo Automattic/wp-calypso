@@ -34,6 +34,10 @@ const removePrefix = ( str, prefix ) => {
 
 // selected={ itemLinkMatches( [ '/domains', '/email' ], path ) }
 
+const blankSvg =
+	"data:image/svg+xml;charset=utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E";
+const blankSvgStyle = { height: '24px', width: '24px' };
+
 export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const fixedUrl = removePrefix( url, 'https://wordpress.com' );
@@ -46,6 +50,14 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 		// branch
 		// eslint-disable-next-line
 		customIcon = <img src={ icon } className="sidebar__menu-icon" alt="" />;
+	} else {
+		// Demo workaround for items missing icons
+		// TODO: Change sidebar__menu-icon to sidebar-unified__menu-icon (See above)
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		customIcon = (
+			<img src={ blankSvg } style={ blankSvgStyle } className="sidebar__menu-icon" alt="" />
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	let children = null;
