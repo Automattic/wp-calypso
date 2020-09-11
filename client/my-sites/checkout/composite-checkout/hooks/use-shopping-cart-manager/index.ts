@@ -55,8 +55,7 @@ export default function useShoppingCartManager( {
 		couponToAddOnInitialize,
 		getServerCart,
 		setServerCart,
-		hookDispatch,
-		onEvent
+		hookDispatch
 	);
 
 	// Asynchronously re-validate when the cache is dirty.
