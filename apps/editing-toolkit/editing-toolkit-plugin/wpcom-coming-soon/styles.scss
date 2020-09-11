@@ -48,7 +48,7 @@ html {
 }
 .description,
 .copy {
-	font-family: Georgia, 'Times New Roman', Times, serif;
+	font-family: $serif;
 }
 .marketing {
 	padding-bottom: 8px;
@@ -97,7 +97,7 @@ html {
 @media screen and ( min-width: 660px ) {
 	.description,
 	.copy {
-		font-family: Recoleta, Georgia, 'Times New Roman', Times, serif;
+		font-family: $brand-serif;
 	}
 	.name {
 		font-size: 23px;
