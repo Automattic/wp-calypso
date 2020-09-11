@@ -75,8 +75,15 @@ export default function usePrepareProductsForCart( {
 
 	// Only one of these three should ever operate. The others should bail if
 	// they think another hook will handle the data.
-	useAddPlanFromSlug( { planSlug, dispatch, isJetpackNotAtomic, originalPurchaseId } );
+	useAddPlanFromSlug( {
+		isLoading: state.isLoading,
+		planSlug,
+		dispatch,
+		isJetpackNotAtomic,
+		originalPurchaseId,
+	} );
 	useAddProductFromSlug( {
+		isLoading: state.isLoading,
 		productAlias,
 		planSlug,
 		dispatch,
@@ -84,7 +91,12 @@ export default function usePrepareProductsForCart( {
 		isPrivate,
 		originalPurchaseId,
 	} );
-	useAddRenewalItems( { originalPurchaseId, productAlias, dispatch } );
+	useAddRenewalItems( {
+		isLoading: state.isLoading,
+		originalPurchaseId,
+		productAlias,
+		dispatch,
+	} );
 
 	return state;
 }
@@ -99,8 +111,14 @@ function preparedProductsReducer(
 ): PreparedProductsForCart {
 	switch ( action.type ) {
 		case 'PRODUCTS_ADD':
+			if ( ! state.isLoading ) {
+				return state;
+			}
 			return { ...state, productsForCart: action.products, isLoading: false };
 		case 'PRODUCTS_ADD_ERROR':
+			if ( ! state.isLoading ) {
+				return state;
+			}
 			return { ...state, isLoading: false, error: action.message };
 		default:
 			return state;
@@ -108,10 +126,12 @@ function preparedProductsReducer(
 }
 
 function useAddRenewalItems( {
+	isLoading,
 	originalPurchaseId,
 	productAlias,
 	dispatch,
 }: {
+	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -121,6 +141,10 @@ function useAddRenewalItems( {
 	const products = useSelector( ( state ) => getProductsList( state ) );
 
 	useEffect( () => {
+		if ( ! isLoading ) {
+			// No need to run if we have completed already
+			return;
+		}
 		if ( ! originalPurchaseId ) {
 			return;
 		}
@@ -173,6 +197,7 @@ function useAddRenewalItems( {
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
 	}, [
+		isLoading,
 		isFetchingProducts,
 		products,
 		originalPurchaseId,
@@ -183,11 +208,13 @@ function useAddRenewalItems( {
 }
 
 function useAddPlanFromSlug( {
+	isLoading,
 	planSlug,
 	dispatch,
 	isJetpackNotAtomic,
 	originalPurchaseId,
 }: {
+	isLoading: boolean;
 	planSlug: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
@@ -197,6 +224,10 @@ function useAddPlanFromSlug( {
 	const plans = useSelector( ( state ) => getPlans( state ) );
 	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
 	useEffect( () => {
+		if ( ! isLoading ) {
+			// No need to run if we have completed already
+			return;
+		}
 		if ( ! planSlug ) {
 			return;
 		}
@@ -235,10 +266,20 @@ function useAddPlanFromSlug( {
 			cartProduct
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
-	}, [ plans, originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, dispatch ] );
+	}, [
+		isLoading,
+		plans,
+		originalPurchaseId,
+		isFetchingPlans,
+		planSlug,
+		plan,
+		isJetpackNotAtomic,
+		dispatch,
+	] );
 }
 
 function useAddProductFromSlug( {
+	isLoading,
 	productAlias: productAliasFromUrl,
 	planSlug,
 	dispatch,
@@ -246,6 +287,7 @@ function useAddProductFromSlug( {
 	isPrivate,
 	originalPurchaseId,
 }: {
+	isLoading: boolean;
 	productAlias: string | undefined | null;
 	planSlug: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -282,6 +324,10 @@ function useAddProductFromSlug( {
 	);
 
 	useEffect( () => {
+		if ( ! isLoading ) {
+			// No need to run if we have completed already
+			return;
+		}
 		if ( ! productAliasFromUrl ) {
 			return;
 		}
@@ -343,6 +389,7 @@ function useAddProductFromSlug( {
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
+		isLoading,
 		isPrivate,
 		plans,
 		products,
