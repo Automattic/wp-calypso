@@ -32,9 +32,9 @@
 		height: $nav-unification-masterbar-height;
 		border-bottom: none;
 		font-size: $nav-unification-masterbar-font-size;
-		-webkit-box-shadow: inset 0 -1px 0 #333;
-		-moz-box-shadow: inset 0 -1px 0 #333;
-		box-shadow: inset 0 -1px 0 #333;
+		-webkit-box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
+		-moz-box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
+		box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
 	}
 
 	// client/layout/masterbar/style.scss
