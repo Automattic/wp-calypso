@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { includes, map, pick, zipObject } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -106,7 +107,12 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
 	switch ( action.type ) {
 		case INVITES_REQUEST_SUCCESS: {
 			let inviteLinks = {};
+			const currentDate = moment();
 			action.links.forEach( ( link ) => {
+				// Do not process expired links
+				if ( currentDate.isAfter( link.expiry * 1000 ) ) {
+					return;
+				}
 				const linkForState = {
 					key: link.invite_key,
 					link: link.link,
