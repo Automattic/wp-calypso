@@ -17,7 +17,7 @@ import { useSelector, useDispatch } from 'react-redux';
  * Internal dependencies
  */
 import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'my-sites/email/paths';
 import { requestAdminMenu } from '../../state/admin-menu/actions';
@@ -29,23 +29,18 @@ import SidebarSeparator from 'layout/sidebar/separator';
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const reduxDispatch = useDispatch();
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	useEffect( () => {
-		if ( selectedSite !== null && selectedSite.ID ) {
-			reduxDispatch( requestAdminMenu( selectedSite.ID ) );
+		if ( selectedSiteId !== null ) {
+			reduxDispatch( requestAdminMenu( selectedSiteId ) );
 		}
-	}, [ reduxDispatch, selectedSite ] );
+	}, [ reduxDispatch, selectedSiteId ] );
 
 	// Extract this?
 	const menuItems = useSelector( ( state ) => {
-		const thisSelectedSite = getSelectedSite( state );
-		if (
-			thisSelectedSite !== null &&
-			thisSelectedSite.ID &&
-			state.adminMenu != null &&
-			thisSelectedSite.ID in state.adminMenu
-		) {
-			return Object.values( state.adminMenu[ thisSelectedSite.ID ] );
+		const siteId = getSelectedSiteId( state );
+		if ( siteId != null && state.adminMenu != null && siteId in state.adminMenu ) {
+			return Object.values( state.adminMenu[ siteId ] );
 		}
 		return [];
 	} );
