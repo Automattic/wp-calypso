@@ -60,7 +60,9 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					return <SidebarSeparator key={ i } />;
 				}
 				if ( ! ( 'children' in item ) || item.children.length === 0 ) {
-					return <MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />;
+					return (
+						<MySitesSidebarUnifiedItem isTopLevel key={ item.slug } path={ path } { ...item } />
+					);
 				}
 				return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
 			} ) }
