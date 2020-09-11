@@ -7,11 +7,12 @@ import React from 'react';
  * Internal dependencies
  */
 import Main from 'components/main';
+import Subscriptions from './subscriptions';
 
 export default function Purchases() {
 	return (
-		<Main>
-			<h1>Hello, World!</h1>
+		<Main className="purchases">
+			<Subscriptions />
 		</Main>
 	);
 }
