@@ -18,6 +18,7 @@ if ( ! function_exists( 'fix_widows' ) ) {
 	 * @param  array  $args   Args.
 	 * @return string String.
 	 */
+	//phpcs:ignore
 	function fix_widows( $string, $args = array() ) {
 		return $string;
 	}
@@ -56,7 +57,7 @@ if ( ! function_exists( 'localized_wpcom_url' ) ) {
 			<div class="marketing">
 				<?php if ( ! is_user_logged_in() ) : ?>
 					<div class="marketing-copy">
-						<img src="/wp-content/themes/a8c/domain-landing-page/wpcom-wmark-white.svg" alt="WordPress.com" class="logo" />
+						<img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . 'wpcom-wmark.svg' ); ?>" alt="WordPress.com" class="logo" />
 						<p class="copy"><?php echo esc_html( fix_widows( __( 'Build a website. Sell your stuff. Write a blog. And so much more.', 'full-site-editing' ), array( 'mobile_enable' => true ) ) ); ?></p>
 					</div>
 					<div class="marketing-buttons">
