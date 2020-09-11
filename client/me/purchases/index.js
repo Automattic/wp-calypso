@@ -136,29 +136,6 @@ export default ( router ) => {
 		clientRender
 	);
 
-	// redirect legacy urls
-	router( '/purchases', () => page.redirect( paths.purchasesRoot ) );
-	router( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.managePurchase( siteName, purchaseId ) )
-	);
-	router( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.confirmCancelDomain( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/payment/add',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.addCardDetails( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
-		( { params: { siteName, purchaseId, cardId } } ) =>
-			page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
-	);
 	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
