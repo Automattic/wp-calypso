@@ -29,6 +29,7 @@ import Sidebar from 'layout/sidebar';
 import SidebarSeparator from 'layout/sidebar/separator';
 
 import 'layout/sidebar-unified/style.scss';
+import 'state/admin-menu/init';
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const reduxDispatch = useDispatch();
