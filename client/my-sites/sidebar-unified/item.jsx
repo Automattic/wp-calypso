@@ -22,17 +22,6 @@ import StatsSparkline from 'blocks/stats-sparkline';
 
 const onNav = () => null;
 
-const removePrefix = ( str, prefix ) => {
-	if ( str == null || typeof str !== 'string' ) {
-		return str;
-	}
-	const hasPrefix = str.indexOf( prefix ) === 0;
-	if ( ! hasPrefix ) {
-		return str;
-	}
-	return str.substr( prefix.length );
-};
-
 // selected={ itemLinkMatches( [ '/domains', '/email' ], path ) }
 
 const blankSvg =
@@ -41,8 +30,7 @@ const blankSvgStyle = { height: '24px', width: '24px' };
 
 export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug, isTopLevel } ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const fixedUrl = removePrefix( url, 'https://wordpress.com' );
-	const selected = path === fixedUrl;
+	const selected = path === url;
 	let customIcon = null;
 	if ( icon && typeof icon === 'string' && icon.match( /data:image/ ) ) {
 		customIcon = <SidebarCustomIcon src={ icon } />;
@@ -64,7 +52,7 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug, isTop
 	return (
 		<SidebarItem
 			label={ title }
-			link={ fixedUrl }
+			link={ url }
 			onNavigate={ onNav }
 			selected={ selected }
 			customIcon={ customIcon }
