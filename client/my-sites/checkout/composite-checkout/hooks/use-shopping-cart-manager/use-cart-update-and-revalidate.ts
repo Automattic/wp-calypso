@@ -44,10 +44,10 @@ export default function useCartUpdateAndRevalidate(
 				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
 			.catch( ( error ) => {
-				debug( 'error while fetching cart', error );
+				debug( 'error while setting cart', error );
 				hookDispatch( {
 					type: 'RAISE_ERROR',
-					error: 'GET_SERVER_CART_ERROR',
+					error: 'SET_SERVER_CART_ERROR',
 					message: error.message,
 				} );
 			} );
