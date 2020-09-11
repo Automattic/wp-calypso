@@ -10,11 +10,16 @@ import store from 'store';
 import Gridicon from 'components/gridicon';
 
 /**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { Button, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { fetchUserSettings } from 'state/user-settings/actions';
 import getUserSettings from 'state/selectors/get-user-settings';
 import { sendEmailLogin } from 'state/auth/actions';
@@ -130,7 +135,6 @@ export class AppPromo extends React.Component {
 		return (
 			<div className="app-promo">
 				<Button
-					borderless
 					tabIndex="0"
 					className="app-promo__dismiss"
 					onClick={ this.dismiss }
@@ -139,7 +143,6 @@ export class AppPromo extends React.Component {
 					<Gridicon icon="cross" size={ 24 } />
 				</Button>
 				<Button
-					borderless
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"
 					title="Try the desktop app!"
@@ -167,7 +170,6 @@ export class AppPromo extends React.Component {
 		return (
 			<div className="app-promo">
 				<Button
-					borderless
 					tabIndex="0"
 					className="app-promo__dismiss"
 					onClick={ this.dismiss }
@@ -176,7 +178,6 @@ export class AppPromo extends React.Component {
 					<Gridicon icon="cross" size={ 24 } />
 				</Button>
 				<Button
-					borderless
 					onClick={ this.sendMagicLink }
 					className="app-promo__link"
 					title="Try the mobile app!"
