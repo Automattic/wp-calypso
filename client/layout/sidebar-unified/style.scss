@@ -1,12 +1,3 @@
-// Sidebar menu icons for main sections
-/*
-.sidebar-unified__menu-icon {
-	fill: var( --color-sidebar-gridicon-fill );
-	margin-right: 11px;
-	flex-shrink: 0;
-}
-*/
-
 .sidebar-unified__switcher {
 	position: absolute;
 	z-index: 1000;
@@ -15,4 +6,22 @@
 	cursor: pointer;
 	text-decoration: underline;
 	font-size: 0.75rem;
+}
+
+.sidebar-unified__sparkline {
+	width: 80px;
+	height: 24px;
+}
+
+/*
+ * Because the sparkline is an image, there's an exception here
+ * where specific color schemes are targeted instead of using
+ * CSS variables. This ensures that the sparkline can still be
+ * seen (as white) on some of the darker color schemes.
+ */
+.is-classic-blue .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
+.is-powder-snow .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
+.is-nightfall .sidebar__menu li.stats.selected .sidebar-unified__sparkline {
+	filter: brightness( 100 );
+	-webkit-filter: brightness( 100 );
 }

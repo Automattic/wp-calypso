@@ -43,10 +43,7 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug, isTop
 	// "Stats" item has sparkline inside of it
 	const isStats = typeof slug === 'string' && slug.includes( '-comstats' );
 	if ( isStats && selectedSiteId ) {
-		// TODO: Change sidebar__menu-icon to sidebar-unified__menu-icon and
-		// copy the CSS rules
-		// eslint-disable-next-line
-		children = <StatsSparkline className="sidebar__sparkline" siteId={ selectedSiteId } />;
+		children = <StatsSparkline className="sidebar-unified__sparkline" siteId={ selectedSiteId } />;
 	}
 
 	return (
