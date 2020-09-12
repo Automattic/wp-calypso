@@ -66,8 +66,8 @@ Reader Posts
 4. `client/blocks/reader-full-post/index.jsx`
 5. `client/components/post-excerpt/index.jsx`
 
-- The last two files render the post data. It seems that the API endpoints simply return text, but
-these last two files have the ability to render HTML.
+- The last two files render the post data. It seems that the API endpoints simply return text (as a
+`excerpt` property), but also `content` which contains the rich HTML of the block. Those files also have the ability to render HTML.
 
 ### API Endpoints Example Requests
 
