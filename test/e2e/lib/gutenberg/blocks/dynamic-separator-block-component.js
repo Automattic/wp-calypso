@@ -20,29 +20,36 @@ class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {
 	 *
 	 * @param {number} pixels the amount of pixerls to expand the HR ruler by, horizontally.
 	 */
-	async resizeTo( pixels ) {
+	async resizeBy( pixels ) {
 		// We need to move focus away from the layout grid, or any subsequent blocks inserted will be part of it
-		const thisBlockResizeHandleSelector = await this.driver.findElement(
+		const resizeHandleSelector = await this.driver.findElement(
 			By.css(
-				`div[${ this.blockID.slice(
+				`div[id='${ this.blockID.slice(
 					1
-				) }] div.components-resizable-box__handle.components-resizable-box__side-handle.components-resizable-box__handle-bottom`
+				) }'] div.components-resizable-box__handle.components-resizable-box__side-handle.components-resizable-box__handle-bottom`
 			)
 		);
 
 		const bbox = await this.driver.executeScript(
 			'return arguments[0].getBoundingClientRect()',
-			thisBlockResizeHandleSelector
+			resizeHandleSelector
 		);
 
 		const actions = await this.driver.actions( { bridge: true } );
 
+		const resizeHandleX = bbox.x + bbox.width / 2;
+		const resizeHandleY = bbox.y + bbox.height / 2;
+
 		await actions
 			.move( {
-				x: bbox.x + bbox.width / 2,
-				y: bbox.y + bbox.height / 2,
+				x: resizeHandleX,
+				y: resizeHandleY,
 			} )
-			.click()
+			.press()
+			.move( {
+				y: resizeHandleY + pixels,
+			} )
+			.release()
 			.perform();
 	}
 }

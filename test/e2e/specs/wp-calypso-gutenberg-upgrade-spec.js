@@ -264,7 +264,10 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			} );
 
 			step( 'Insert and configure coblocks/dynamic-separator', async function () {
-				await gEditorComponent.insertBlock( DynamicSeparatorBlockComponent );
+				const dynamicSeparatorBlock = await gEditorComponent.insertBlock(
+					DynamicSeparatorBlockComponent
+				);
+				await dynamicSeparatorBlock.resizeBy( 150 );
 			} );
 
 			step( 'Insert and configure coblocks/gallery-masonry', async function () {
