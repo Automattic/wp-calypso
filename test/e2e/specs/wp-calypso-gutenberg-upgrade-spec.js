@@ -220,7 +220,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			// of the block into each block's class. This way, we could just loop through a list of block classes
 			// since the API would be the same.
 
-			step( 'Insert and configure jetpack/tiled-gallery', async function () {
+			/*step( 'Insert and configure jetpack/tiled-gallery', async function () {
 				const tiledGallery = await gEditorComponent.insertBlock( TiledGalleryBlockComponent );
 				await tiledGallery.uploadImages( sampleImages );
 			} );
@@ -275,10 +275,22 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					GalleryMasonryBlockComponent
 				);
 				await galleryMasonryBlock.uploadImages( sampleImages );
-			} );
+			} );*/
 
 			step( 'Insert and configure jetpack/contact-info', async function () {
-				await gEditorComponent.insertBlock( ContactInfoBlockComponent );
+				const contactInfoBlock = await gEditorComponent.insertBlock( ContactInfoBlockComponent );
+				await contactInfoBlock.fillUp( {
+					email: 'awesome@possum.ttt',
+					phoneNumber: '555-234-4323',
+					streetAddress: 'e2e street',
+					addressLine2: 'underground bunker 2',
+					addressLine3: '#1111',
+					city: 'GutenPolis',
+					state: 'Gutenfolia',
+					zipCode: '1337',
+					country: 'United Gutenberg States of Calypsoland',
+					linkToGmaps: true,
+				} );
 			} );
 
 			verifyBlocksInEditor( siteName );
