@@ -12,6 +12,11 @@ class SlideshowBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Slideshow';
 	static blockName = 'jetpack/slideshow';
 
+	/**
+	 * Uploads images to the slideshow.
+	 *
+	 * @param {{imageName: string, fileName: string, file: string}} filesDetails a list of fileDetails
+	 */
 	async uploadImages( filesDetails ) {
 		// TODO Simplify this selector, given the block ID, a simpler CSS selector will work here
 		const fileInputSelector = By.css( `div[id="${ this.blockID.slice( 1 ) }"] input[type=file]` );

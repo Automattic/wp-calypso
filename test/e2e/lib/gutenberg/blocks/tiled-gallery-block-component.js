@@ -13,6 +13,11 @@ class TiledGalleryBlockComponent extends GutenbergBlockComponent {
 	static blockName = 'jetpack/tiled-gallery';
 	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-tiled-gallery' );
 
+	/**
+	 * Uploads images to the gallery.
+	 *
+	 * @param {{imageName: string, fileName: string, file: string}} filesDetails a list of fileDetails
+	 */
 	async uploadImages( filesDetails ) {
 		// TODO Simplify this selector, given the block ID, a simpler CSS selector will work here
 		const fileInputSelector = By.xpath(

@@ -61,13 +61,13 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		const blockId = await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 
 		// We need to move focus away from the layout grid, or any subsequent blocks inserted will be part of it
-		const blockAppenderWrapper = await this.driver.findElement(
+		const blockAppenderWrapperSelector = await this.driver.findElement(
 			By.css( '.interface-interface-skeleton__content' )
 		);
 
 		const blockAppenderWrapperBox = await this.driver.executeScript(
 			'return arguments[0].getBoundingClientRect()',
-			blockAppenderWrapper
+			blockAppenderWrapperSelector
 		);
 
 		const actions = await this.driver.actions( { bridge: true } );
