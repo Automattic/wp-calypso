@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, Actions } from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -12,6 +12,7 @@ import * as driverHelper from '../../driver-helper';
 class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Layout Grid';
 	static blockName = 'jetpack/layout-grid';
+	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-layout-grid' );
 
 	async setupColumns( no ) {
 		const columnButtonSelector = By.css( `${ this.blockID } button[aria-label="${ no } columns"]` );

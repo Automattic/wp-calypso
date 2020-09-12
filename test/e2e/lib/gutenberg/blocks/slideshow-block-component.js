@@ -11,6 +11,7 @@ import GutenbergBlockComponent from './gutenberg-block-component';
 class SlideshowBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Slideshow';
 	static blockName = 'jetpack/slideshow';
+	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-slideshow' );
 
 	/**
 	 * Uploads images to the slideshow.

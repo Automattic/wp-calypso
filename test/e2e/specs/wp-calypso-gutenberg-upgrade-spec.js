@@ -181,18 +181,16 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		} );
 
 		step( 'Blocks are displayed in the published page', async function () {
-			// TODO Some blocks are commente-out because they are not being displayed on the fronted due to not being fed with sample data/assets in the editor
-			// I will uncomment as I set them up.
 			await Promise.all(
 				[
 					BlogPostsBlockComponent,
 					ContactFormBlockComponent,
-					// ContactInfoBlockComponent,
+					ContactInfoBlockComponent,
 					DynamicSeparatorBlockComponent,
 					GalleryMasonryBlockComponent,
-					// LayoutGridBlockComponent,
+					LayoutGridBlockComponent,
 					RatingStarBlockComponent,
-					// SlideshowBlockComponent,
+					SlideshowBlockComponent,
 					SubscriptionsBlockComponent,
 					TiledGalleryBlockComponent,
 					YoutubeBlockComponent,
@@ -220,7 +218,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			// of the block into each block's class. This way, we could just loop through a list of block classes
 			// since the API would be the same.
 
-			/*step( 'Insert and configure jetpack/tiled-gallery', async function () {
+			step( 'Insert and configure jetpack/tiled-gallery', async function () {
 				const tiledGallery = await gEditorComponent.insertBlock( TiledGalleryBlockComponent );
 				await tiledGallery.uploadImages( sampleImages );
 			} );
@@ -275,14 +273,14 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					GalleryMasonryBlockComponent
 				);
 				await galleryMasonryBlock.uploadImages( sampleImages );
-			} );*/
+			} );
 
 			step( 'Insert and configure jetpack/contact-info', async function () {
 				const contactInfoBlock = await gEditorComponent.insertBlock( ContactInfoBlockComponent );
 				await contactInfoBlock.fillUp( {
 					email: 'awesome@possum.ttt',
 					phoneNumber: '555-234-4323',
-					streetAddress: 'e2e street',
+					streetAddress: 'E2E street',
 					addressLine2: 'underground bunker 2',
 					addressLine3: '#1111',
 					city: 'GutenPolis',
