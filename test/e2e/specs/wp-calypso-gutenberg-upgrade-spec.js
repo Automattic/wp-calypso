@@ -271,7 +271,10 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			} );
 
 			step( 'Insert and configure coblocks/gallery-masonry', async function () {
-				await gEditorComponent.insertBlock( GalleryMasonryBlockComponent );
+				const galleryMasonryBlock = await gEditorComponent.insertBlock(
+					GalleryMasonryBlockComponent
+				);
+				await galleryMasonryBlock.uploadImages( sampleImages );
 			} );
 
 			step( 'Insert and configure jetpack/contact-info', async function () {

@@ -37,8 +37,9 @@ class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {
 
 		const actions = await this.driver.actions( { bridge: true } );
 
-		const resizeHandleX = bbox.x + bbox.width / 2;
-		const resizeHandleY = bbox.y + bbox.height / 2;
+		// The move function only accepts integers and will fail on floats
+		const resizeHandleX = Math.trunc( bbox.x + bbox.width / 2 );
+		const resizeHandleY = Math.trunc( bbox.y + bbox.height / 2 );
 
 		await actions
 			.move( {
