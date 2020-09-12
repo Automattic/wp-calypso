@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { times } from 'lodash';
+import { times, sample } from 'lodash';
 import { By } from 'selenium-webdriver';
 import { promises as fs } from 'fs';
 import { join } from 'path';
@@ -43,14 +43,14 @@ let driver;
 let loginFlow;
 let gEditorComponent;
 let currentGutenbergBlocksCode;
-let galleryImages;
+let sampleImages;
 
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
 
 	loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
-	galleryImages = times( 5, () => mediaHelper.createFile() );
+	sampleImages = times( 5, () => mediaHelper.createFile() );
 } );
 
 // Should we keep the @parallel tag here for this e2e test?
@@ -222,7 +222,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 
 			step( 'Insert and configure jetpack/tiled-gallery', async function () {
 				const tiledGallery = await gEditorComponent.insertBlock( TiledGalleryBlockComponent );
-				await tiledGallery.uploadImages( galleryImages );
+				await tiledGallery.uploadImages( sampleImages );
 			} );
 
 			step( 'Insert and configure jetpack/contact-form', async function () {
@@ -255,7 +255,8 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			} );
 
 			step( 'Insert and configure jetpack/slideshow', async function () {
-				await gEditorComponent.insertBlock( SlideshowBlockComponent );
+				const slideshowBlock = await gEditorComponent.insertBlock( SlideshowBlockComponent );
+				await slideshowBlock.uploadImages( sampleImages );
 			} );
 
 			step( 'Insert and configure jetpack/rating-star', async function () {
@@ -306,7 +307,5 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 } );
 
 after( async function () {
-	await Promise.all(
-		galleryImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
-	);
+	await Promise.all( sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) ) );
 } );

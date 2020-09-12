@@ -13,11 +13,6 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Layout Grid';
 	static blockName = 'jetpack/layout-grid';
 
-	// TODO Simplify this selector, given the block ID, a simpler CSS selector will work here
-	fileInputSelector = By.xpath(
-		`//*[@id="${ this.blockID.slice( 1 ) }"]/div/div/div[3]/div[2]/input`
-	);
-
 	async setupColumns( no ) {
 		const columnButtonSelector = By.css( `${ this.blockID } button[aria-label="${ no } columns"]` );
 		await driverHelper.clickWhenClickable( this.driver, columnButtonSelector );
