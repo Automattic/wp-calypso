@@ -12,4 +12,12 @@ import { purchases } from './controller';
 
 export default () => {
 	page( '/purchases/:site?', siteSelection, navigation, purchases, makeLayout, clientRender );
+	page(
+		'/purchases/subscriptions/:site?',
+		siteSelection,
+		navigation,
+		purchases,
+		makeLayout,
+		clientRender
+	);
 };
