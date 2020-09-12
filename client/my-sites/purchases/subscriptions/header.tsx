@@ -12,7 +12,7 @@ import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
  */
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import { billingHistory, paymentMethods, purchasesRoot } from '../paths';
+import { billingHistory, paymentMethods, subscriptions } from '../paths';
 import SectionNav from 'components/section-nav';
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
@@ -26,7 +26,7 @@ const PurchasesHeader = ( {
 	return (
 		<SectionNav selectedText={ getSelectedText( section, translate ) }>
 			<NavTabs>
-				<NavItem path={ purchasesRoot } selected={ section === 'subscriptions' }>
+				<NavItem path={ subscriptions } selected={ section === 'subscriptions' }>
 					{ translate( 'Subscriptions' ) }
 				</NavItem>
 
