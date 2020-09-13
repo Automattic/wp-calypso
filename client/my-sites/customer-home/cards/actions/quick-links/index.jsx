@@ -14,7 +14,6 @@ import {
 	getSiteFrontPage,
 	getCustomizerUrl,
 	getSiteOption,
-	getSiteUrl,
 	isNewSite,
 } from 'state/sites/selectors';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
@@ -30,12 +29,7 @@ import {
 } from 'state/analytics/actions';
 import ActionBox from './action-box';
 import isHomeQuickLinksExpanded from 'state/selectors/is-home-quick-links-expanded';
-import {
-	expandHomeQuickLinks,
-	collapseHomeQuickLinks,
-	skipCurrentViewHomeLayout,
-} from 'state/home/actions';
-import { getHomeLayout } from 'state/selectors/get-home-layout';
+import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'state/home/actions';
 
 /**
  * Image dependencies
@@ -66,22 +60,11 @@ export const QuickLinks = ( {
 	isExpanded,
 	expand,
 	collapse,
-	isUnfinishedStore,
-	storeUrl,
-	finishStoreSetup,
 } ) => {
 	const translate = useTranslate();
 
 	const quickLinks = (
 		<div className="quick-links__boxes">
-			{ isUnfinishedStore && (
-				<ActionBox
-					href={ storeUrl }
-					onClick={ finishStoreSetup }
-					label={ translate( 'Finish store setup' ) }
-					materialIcon="store"
-				/>
-			) }
 			{ isStaticHomePage ? (
 				<ActionBox
 					onClick={ editHomepageAction }
@@ -281,17 +264,6 @@ const addDomainAction = ( siteSlug, isStaticHomePage ) =>
 		navigate( `/domains/add/${ siteSlug }` )
 	);
 
-const finishStoreSetup = ( siteId, isStaticHomePage ) =>
-	withAnalytics(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_finish_store_setup_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_finish_store_setup' )
-		),
-		skipCurrentViewHomeLayout( siteId )
-	);
-
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isClassicEditor = getSelectedEditor( state, siteId ) === 'classic';
@@ -300,12 +272,8 @@ const mapStateToProps = ( state ) => {
 		! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' );
 	const siteSlug = getSelectedSiteSlug( state );
 	const staticHomePageId = getSiteFrontPage( state, siteId );
-	const { primary } = getHomeLayout( state, siteId );
-	const siteUrl = getSiteUrl( state, siteId );
 	const editHomePageUrl =
 		isStaticHomePage && `/block-editor/page/${ siteSlug }/${ staticHomePageId }`;
-	const isUnfinishedStore = primary.includes( 'home-task-site-setup-checklist-ecommerce' );
-	const storeUrl = `${ siteUrl }/wp-admin/admin.php?page=wc-admin&calypsoify=1`;
 
 	return {
 		customizeUrl: getCustomizerUrl( state, siteId ),
@@ -317,9 +285,6 @@ const mapStateToProps = ( state ) => {
 		isStaticHomePage,
 		editHomePageUrl,
 		isExpanded: isHomeQuickLinksExpanded( state ),
-		isUnfinishedStore,
-		siteId,
-		storeUrl,
 	};
 };
 
@@ -334,13 +299,12 @@ const mapDispatchToProps = {
 	trackDesignLogoAction,
 	addEmailAction,
 	addDomainAction,
-	finishStoreSetup,
 	expand: expandHomeQuickLinks,
 	collapse: collapseHomeQuickLinks,
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { editHomePageUrl, isStaticHomePage, siteId, siteSlug } = stateProps;
+	const { editHomePageUrl, isStaticHomePage, siteSlug } = stateProps;
 	return {
 		...stateProps,
 		...dispatchProps,
@@ -354,7 +318,6 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		trackDesignLogoAction: () => dispatchProps.trackDesignLogoAction( isStaticHomePage ),
 		addEmailAction: () => dispatchProps.addEmailAction( siteSlug, isStaticHomePage ),
 		addDomainAction: () => dispatchProps.addDomainAction( siteSlug, isStaticHomePage ),
-		finishStoreSetup: () => dispatchProps.finishStoreSetup( siteId, isStaticHomePage ),
 		...ownProps,
 	};
 };
