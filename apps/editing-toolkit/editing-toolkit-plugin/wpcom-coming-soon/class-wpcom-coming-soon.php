@@ -52,24 +52,18 @@ class WPCOM_Coming_Soon {
 		return self::$instance;
 	}
 
-
 	/**
 	 * Check whether we should show a coming soon page.
 	 *
 	 * @TODO how are we to override any default behaviour for free simple sites?
 	 * On free simple sites we want to show a default coming soon page.
+	 *
+	 * @return bool True if the coming soon feature is enabled. False otherwise.
 	 */
 	public static function should_show_coming_soon_page() {
-		global $post;
-
 		if ( is_user_logged_in() && current_user_can( 'read' ) ) {
 			return false;
 		}
-
-		// Handle the case where we are not rendering a post.
-		// if ( ! isset( $post ) ) {
-		// return false;
-		// }
 
 		// Allow anonymous previews.
 		//phpcs:ignore -- non-nonced check is intended
@@ -77,7 +71,31 @@ class WPCOM_Coming_Soon {
 			return false;
 		}
 
-		return ( (int) get_option( 'wpcom_public_coming_soon' ) === 1 );
+		return (int) get_option( 'wpcom_public_coming_soon' ) === 1;
+	}
+
+	/**
+	 * Get the coming soon page id.
+	 *
+	 * @return int The coming soon page id to use.
+	 */
+	public static function coming_soon_page_id() {
+		return (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
+	}
+
+	/**
+	 * Get the coming soon page.
+	 *
+	 * @return mixed The coming soon post or page as returned by get_post.
+	 */
+	public static function coming_soon_page() {
+		$id = self::coming_soon_page_id();
+
+		if ( ! empty( $id ) ) {
+			return get_post( $id );
+		}
+
+		return false;
 	}
 
 	/**
@@ -94,9 +112,8 @@ class WPCOM_Coming_Soon {
 	 */
 	public function exclude_from_sitemap( $exclude, $post ) {
 		$exclude = (bool) $exclude;
-		l( '$post<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<' );
-		l( $post );
-		$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
+
+		$id = self::coming_soon_page_id();
 
 		if ( ! empty( $id ) && $post->ID === $id ) {
 			$exclude = (bool) apply_filters( 'wpcom_sitemaps_exclude_post', true, get_post( $id ) );
@@ -111,7 +128,8 @@ class WPCOM_Coming_Soon {
 	 * @param \WP_Query $query The main query.
 	 */
 	public function exclude_from_public_queries( $query ) {
-		$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
+		$id = self::coming_soon_page_id();
+
 		if ( ! empty( $id ) && ! is_admin() && $query->is_main_query() ) {
 			$query->set( 'post__not_in', array( $id ) );
 		}
@@ -121,59 +139,54 @@ class WPCOM_Coming_Soon {
 	 * Display Coming Soon Page
 	 */
 	public static function display_coming_soon_page() {
-		global $post;
-
-		$should_show_display_fallback_coming_soon_page = false;
-
+		// Only show coming soon if feature is enabled.
 		if ( ! self::should_show_coming_soon_page() ) {
 			return;
-		}
-
-		$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
-
-		if ( empty( $id ) ) {
-			$should_show_display_fallback_coming_soon_page = true;
-		}
-
-		$page = get_post( $id );
-
-		if ( ! $page || ! isset( $post ) ) {
-			$should_show_display_fallback_coming_soon_page = true;
 		}
 
 		// Disable a few floating UI things.
 		add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 1, 999 );
 		add_filter( 'wpl_is_enabled_sitewide', '__return_false', 1, 999 );
-		// add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1, 999 );
 
-		if ( $should_show_display_fallback_coming_soon_page ) {
-			self::render_fallback_coming_soon_page();
+		$page = self::coming_soon_page();
+
+		if ( ! empty( $page ) && ! is_wp_error( $page ) ) {
+			self::render_coming_soon( $page );
 		} else {
-			?><!doctype html>
-			<html <?php language_attributes(); ?>>
-				<head>
-					<meta charset="<?php bloginfo( 'charset' ); ?>" />
-					<meta name="viewport" content="width=device-width, initial-scale=1" />
-					<?php wp_head(); ?>
-				</head>
-				<body>
-					<?php
-						//phpcs:ignore
-						echo apply_filters( 'the_content', $page->post_content );
-					?>
-					<?php wp_footer(); ?>
-				</body>
-			</html>
-			<?php
+			self::render_coming_soon_fallback();
 		}
 
 		die();
 	}
 
 	/**
+	 * Render coming soon page.
+	 *
+	 * @param \WP_Post $page The coming soon page to render.
+	 */
+	public static function render_coming_soon( $page ) {
+		?><!doctype html>
+		<html <?php language_attributes(); ?>>
+			<head>
+				<meta charset="<?php bloginfo( 'charset' ); ?>" />
+				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<?php wp_head(); ?>
+			</head>
+			<body>
+				<?php
+					//phpcs:ignore -- relying on the_content filters for escaping.
+					echo apply_filters( 'the_content', $page->post_content );
+				?>
+				<?php wp_footer(); ?>
+			</body>
+		</html>
+		<?php
+	}
+
+	/**
 	 * Render Fallback Coming Soon Page
 	 */
-	public static function render_fallback_coming_soon_page() {
+	public static function render_coming_soon_fallback() {
 		remove_action( 'wp_enqueue_scripts', 'wpcom_actionbar_enqueue_scripts', 101 );
 		remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 		remove_action( 'wp_print_styles', 'print_emoji_styles' );
