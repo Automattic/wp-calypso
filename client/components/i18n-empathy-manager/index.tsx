@@ -5,6 +5,12 @@ import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { createI18n } from '@wordpress/i18n';
 
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+import userFactory from 'lib/user';
+
 const placeholderOriginalString = "I don't understand";
 
 /**
@@ -28,48 +34,56 @@ function encodeUntranslatedString(
 }
 
 const I18nEmpathyManager: React.FunctionComponent = () => {
-	const { __, localeData, hasTranslation, addFilter, removeFilter } = useI18n();
 	const empathyModeI18n = React.useMemo( () => createI18n(), [] );
+	const { __, localeData, hasTranslation, addFilter, removeFilter } = useI18n();
+	const user = userFactory().get();
+	const isEnabled = config.isEnabled( 'i18n/empathy-mode' ) && user.i18n_empathy_mode;
 
 	React.useEffect( () => {
+		if ( ! isEnabled ) {
+			return;
+		}
+
 		const placeholder = __( "I don't understand" );
 
-		if ( addFilter && removeFilter ) {
-			addFilter(
-				'translation',
-				'i18n-empathy-mode',
-				(
-					translation: string,
-					originalArgs: ( string | number )[],
-					fnName: '__' | '_n' | '_nx' | '_x'
-				) => {
-					const [ singular ] = originalArgs;
-					let context;
-
-					if ( singular === placeholderOriginalString ) {
-						return translation;
-					}
-
-					if ( fnName === '_x' ) {
-						context = originalArgs[ 1 ];
-					} else if ( fnName === '_nx' ) {
-						context = originalArgs[ 3 ];
-					}
-
-					if ( hasTranslation( singular, context ) ) {
-						const originalString: string = empathyModeI18n[ fnName ].call(
-							empathyModeI18n,
-							...originalArgs
-						);
-						return originalString;
-					}
-
-					return `👉 ${ encodeUntranslatedString( translation, placeholder ) }`;
-				}
-			);
-
-			return () => removeFilter( 'translation', 'i18n-empathy-mode' );
+		if ( ! addFilter || ! removeFilter ) {
+			return;
 		}
+
+		addFilter(
+			'translation',
+			'i18n-empathy-mode',
+			(
+				translation: string,
+				originalArgs: ( string | number )[],
+				fnName: '__' | '_n' | '_nx' | '_x'
+			) => {
+				const [ singular ] = originalArgs;
+				let context;
+
+				if ( singular === placeholderOriginalString ) {
+					return translation;
+				}
+
+				if ( fnName === '_x' ) {
+					context = originalArgs[ 1 ];
+				} else if ( fnName === '_nx' ) {
+					context = originalArgs[ 3 ];
+				}
+
+				if ( hasTranslation( singular, context ) ) {
+					const originalString: string = empathyModeI18n[ fnName ].call(
+						empathyModeI18n,
+						...originalArgs
+					);
+					return originalString;
+				}
+
+				return `👉 ${ encodeUntranslatedString( translation, placeholder ) }`;
+			}
+		);
+
+		return () => removeFilter( 'translation', 'i18n-empathy-mode' );
 	}, [ localeData ] );
 
 	return null;
