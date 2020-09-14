@@ -94,6 +94,15 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
+	domainStepCopyUpdates: {
+		datestamp: '20191121',
+		variations: {
+			variantShowUpdates: 100,
+			control: 0,
+		},
+		defaultVariation: 'variantShowUpdates',
+		allowExistingUsers: true,
+	},
 	domainStepPlanStepSwap: {
 		datestamp: '20210513',
 		variations: {

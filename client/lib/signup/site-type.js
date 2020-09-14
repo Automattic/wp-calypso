@@ -32,8 +32,12 @@ const getSiteTypePropertyDefaults = ( propertyKey ) =>
 			),
 			siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
 			// Domains step
-			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your site a domain!" ),
-			signUpFlowDomainsStepSubheader: i18n.translate(
+			domainsStepHeader: i18n.translate( 'Give your site an address' ),
+			domainsStepSubheader: i18n.translate(
+				'Enter a keyword that describes your site to get started.'
+			),
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your site a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
 				"Tell us your site's name or a few keywords, and we'll come up with some suggestions."
 			),
 			// Site styles step
@@ -98,8 +102,12 @@ export function getAllSiteTypes() {
 				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
 			),
 			siteMockupTitleFallback: i18n.translate( 'Your New Blog' ),
-			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your blog a domain!" ),
-			signUpFlowDomainsStepSubheader: i18n.translate(
+			domainsStepHeader: i18n.translate( 'Give your blog an address' ),
+			domainsStepSubheader: i18n.translate(
+				"Enter your blog's name or some keywords that describe it to get started."
+			),
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your blog a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
 				"Tell us your blog's name or a few keywords, and we'll come up with some suggestions."
 			),
 		},
@@ -115,9 +123,11 @@ export function getAllSiteTypes() {
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
 			siteTopicHeader: i18n.translate( 'What does your business do?' ),
 			siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
-
-			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your business a domain!" ),
-			signUpFlowDomainsStepSubheader: i18n.translate(
+			domainsStepSubheader: i18n.translate(
+				"Enter your business's name or some keywords that describe it to get started."
+			),
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your business a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
 				"Tell us your business's name or a few keywords, and we'll come up with some suggestions."
 			),
 			customerType: 'business',
@@ -155,8 +165,11 @@ export function getAllSiteTypes() {
 			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: true,
-			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your store a domain!" ),
-			signUpFlowDomainsStepSubheader: i18n.translate(
+			domainsStepSubheader: i18n.translate(
+				"Enter your site's name or some keywords that describe it to get started."
+			),
+			domainsStepHeaderTestCopy: i18n.translate( "Let's get your store a domain!" ),
+			domainsStepSubheaderTestCopy: i18n.translate(
 				"Tell us your store's name or a few keywords, and we'll come up with some suggestions."
 			),
 		},
