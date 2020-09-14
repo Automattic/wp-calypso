@@ -38,7 +38,14 @@ class DomainSuggestion extends React.Component {
 	};
 
 	renderPrice() {
-		const { hidePrice, premiumDomain, price, priceRule, salePrice, isSignupStep } = this.props;
+		const {
+			hidePrice,
+			premiumDomain,
+			price,
+			priceRule,
+			salePrice,
+			isEligibleVariantForDomainTest,
+		} = this.props;
 
 		if ( hidePrice ) {
 			return null;
@@ -53,14 +60,20 @@ class DomainSuggestion extends React.Component {
 				price={ price }
 				salePrice={ salePrice }
 				rule={ priceRule }
-				isSignupStep={ isSignupStep }
+				isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
 				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 			/>
 		);
 	}
 
 	render() {
-		const { children, extraClasses, isAdded, isFeatured, isSignupStep } = this.props;
+		const {
+			children,
+			extraClasses,
+			isAdded,
+			isEligibleVariantForDomainTest,
+			isFeatured,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -73,7 +86,7 @@ class DomainSuggestion extends React.Component {
 		);
 
 		const contentClassName = classNames( 'domain-suggestion__content', {
-			'domain-suggestion__content-domain-copy-test': isSignupStep && ! isFeatured,
+			'domain-suggestion__content-domain-copy-test': isEligibleVariantForDomainTest && ! isFeatured,
 		} );
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events */

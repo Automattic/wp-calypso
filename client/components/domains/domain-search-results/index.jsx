@@ -264,6 +264,7 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
+					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 				/>
@@ -291,6 +292,7 @@ class DomainSearchResults extends React.Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
+						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
