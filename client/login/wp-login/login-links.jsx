@@ -176,7 +176,7 @@ export class LoginLinks extends React.Component {
 
 		return (
 			<Button
-				bare
+				plain
 				key="lost-phone-link"
 				data-e2e-link="lost-phone-link"
 				onClick={ this.handleLostPhoneLinkClick }
