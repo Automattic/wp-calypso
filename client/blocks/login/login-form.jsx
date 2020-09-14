@@ -444,12 +444,10 @@ export class LoginForm extends Component {
 				 */
 				signupUrl = currentQuery.redirect_to;
 			} else {
-				// TODO: should it be changed to '/start' or '/jetpack/connect'?
-				signupUrl = '/jetpack/new';
+				signupUrl = '/jetpack/connect';
 			}
 		} else if ( '/jetpack-connect' === pathname ) {
-			// TODO: should it be changed to '/start' or '/jetpack/connect'?
-			signupUrl = '/jetpack/new';
+			signupUrl = '/jetpack/connect';
 		} else if ( signupFlow ) {
 			signupUrl += '/' + signupFlow;
 		}
