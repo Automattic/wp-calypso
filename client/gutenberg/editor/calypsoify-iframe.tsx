@@ -4,14 +4,23 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+import {
+	endsWith,
+	get,
+	map,
+	partial,
+	pickBy,
+	startsWith,
+	isArray,
+	flowRight,
+	difference,
+} from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
@@ -33,6 +42,7 @@ import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { getSelectedEditor } from 'state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
+import getMedia from 'state/selectors/get-media';
 import wpcom from 'lib/wp';
 import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'state/posts/revisions/actions';
@@ -139,7 +149,6 @@ class CalypsoifyIframe extends Component<
 	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
-		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
 		const isDesktop = config.isEnabled( 'desktop' );
@@ -170,8 +179,24 @@ class CalypsoifyIframe extends Component<
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		const previousMedia = prevProps.media;
+		const currentMedia = this.props.media;
+
+		if ( previousMedia !== currentMedia ) {
+			const diff = difference( previousMedia, currentMedia );
+			diff.forEach( ( mediaItem ) => {
+				const status =
+					currentMedia.find( ( item ) => item.ID === mediaItem.ID ) !== undefined
+						? 'udpated'
+						: 'removed';
+
+				this.updateImageBlocks( mediaItem, status );
+			} );
+		}
+	}
+
 	componentWillUnmount() {
-		MediaStore.off( 'change', this.updateImageBlocks );
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
@@ -508,22 +533,21 @@ class CalypsoifyIframe extends Component<
 		} );
 	};
 
-	updateImageBlocks = ( action: { data: { mime_type: string; URL: string }; type: string } ) => {
+	updateImageBlocks = ( mediaItem, status ) => {
 		if (
 			! this.iframePort ||
-			! action ||
-			! startsWith( action.data.mime_type, 'image/' ) ||
-			startsWith( action.data.URL, 'blob:' )
+			! startsWith( mediaItem.mime_type, 'image/' ) ||
+			startsWith( mediaItem.URL, 'blob:' )
 		) {
 			return;
 		}
 		const payload = {
-			id: get( action, 'data.ID' ),
-			height: get( action, 'data.height' ),
-			status: 'REMOVE_MEDIA_ITEM' === action.type ? 'deleted' : 'updated',
-			transientId: get( action, 'id' ),
-			url: get( action, 'data.URL' ),
-			width: get( action, 'data.width' ),
+			id: get( mediaItem, 'ID' ),
+			height: get( mediaItem, 'height' ),
+			status,
+			transientId: get( mediaItem, 'ID' ),
+			url: get( mediaItem, 'URL' ),
+			width: get( mediaItem, 'width' ),
 		};
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
@@ -811,6 +835,7 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
+		media: getMedia( state, siteId ),
 	};
 };
 
