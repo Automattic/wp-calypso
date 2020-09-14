@@ -77,7 +77,7 @@ class AutoLoadingHomepageModal extends Component {
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
 			isVisible = false,
-			siteOptions,
+			siteOptions: { show_on_front },
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -108,15 +108,19 @@ class AutoLoadingHomepageModal extends Component {
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
-						label: translate( 'No, keep my current theme' ),
+						label:
+							show_on_front === 'posts'
+								? translate( 'Keep my current theme' )
+								: translate( 'No, keep my current theme' ),
 						isPrimary: false,
 						onClick: this.closeModalHandler( false ),
 					},
 					{
 						action: 'activeTheme',
-						label: translate( 'Yes, activate %(themeName)s', {
-							args: { themeName },
-						} ),
+						label:
+							show_on_front === 'posts'
+								? translate( 'Activate %(themeName)s', { args: { themeName } } )
+								: translate( 'Yes, activate %(themeName)s', { args: { themeName } } ),
 						isPrimary: true,
 						onClick: this.closeModalHandler( true ),
 					},
@@ -124,51 +128,54 @@ class AutoLoadingHomepageModal extends Component {
 				onClose={ this.closeModalHandler( false ) }
 			>
 				<div>
-					<h1 className="themes__auto-loading-homepage-modal-title">
-						{ siteOptions.show_on_front === 'posts'
-							? translate(
-									'Your homepage currently shows the latest posts. {{strong}}%(themeName)s{{/strong}} can replace your homepage layout.',
-									{
-										args: { themeName },
-										components: { strong: <strong /> },
-									}
-							  )
+					<h1>
+						{ show_on_front === 'posts'
+							? translate( "Activating %(themeName)s can change your existing homepage's content", {
+									args: { themeName },
+							  } )
 							: translate(
-									'Your already have an existing homepage. {{strong}}%(themeName)s{{/strong}} can replace your homepage layout.',
+									"Activating %(themeName)s will change your existing homepage's content",
 									{
 										args: { themeName },
-										components: { strong: <strong /> },
 									}
 							  ) }
 					</h1>
-					<h2>{ translate( 'How would you like to continue?' ) }</h2>
-					{ siteOptions.show_on_front === 'posts' ? (
-						<FormLabel>
-							<FormRadio
-								value="keep_latest_posts"
-								checked={ 'keep_latest_posts' === this.state.homepageAction }
-								onChange={ this.handleHomepageAction }
-							/>
-							<span>With latest post</span>
-						</FormLabel>
+					{ show_on_front === 'posts' ? (
+						<>
+							<h2 className="themes__auto-loading-homepage-modal-options-heading">
+								{ translate( 'How would you like to continue?' ) }
+							</h2>
+							<FormLabel>
+								<FormRadio
+									value="keep_latest_posts"
+									checked={ 'keep_latest_posts' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+								/>
+								<span>{ translate( 'Keep using my latest posts' ) }</span>
+							</FormLabel>
+							<FormLabel>
+								<FormRadio
+									value="use_new_homepage"
+									checked={ 'use_new_homepage' === this.state.homepageAction }
+									onChange={ this.handleHomepageAction }
+								/>
+								<span>
+									{ translate( "Use %(themeName)s's homepage and content", {
+										args: { themeName },
+									} ) }
+								</span>
+							</FormLabel>
+						</>
 					) : (
-						<FormLabel>
-							<FormRadio
-								value="keep_existing_homepage"
-								checked={ 'keep_existing_homepage' === this.state.homepageAction }
-								onChange={ this.handleHomepageAction }
-							/>
-							<span>Keep existing homepage</span>
-						</FormLabel>
+						<p>
+							{ translate(
+								'{{strong}}Your existing homepage will be set to draft.{{/strong}} Would you like to continue?',
+								{
+									components: { strong: <strong /> },
+								}
+							) }
+						</p>
 					) }
-					<FormLabel>
-						<FormRadio
-							value="use_new_homepage"
-							checked={ 'use_new_homepage' === this.state.homepageAction }
-							onChange={ this.handleHomepageAction }
-						/>
-						<span>Use new theme homepage</span>
-					</FormLabel>
 				</div>
 			</Dialog>
 		);
