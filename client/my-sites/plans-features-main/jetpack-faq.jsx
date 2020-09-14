@@ -11,8 +11,17 @@ import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 
 const JetpackFAQ = ( { translate } ) => {
+	// We want to allow Jetpack Free users to contact support, even when it isn't not available
+	// for them, because it could push them into purchasing a product. To make this possible, we
+	// add two query parameters that let's show the support form to Jetpack Free users:
+	// 1. rel=support is what shows the contact form
+	// 2. hpi=1 stands for has purchase intent
 	const helpLink = (
-		<a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" />
+		<a
+			href="https://jetpack.com/contact-support/?rel=support&hpi=1"
+			target="_blank"
+			rel="noopener noreferrer"
+		/>
 	);
 
 	return (
