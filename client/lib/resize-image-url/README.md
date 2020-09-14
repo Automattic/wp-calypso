@@ -18,7 +18,9 @@ which will convert it to a Photon URL automatically before applying the resize
 query arguments.
 
 ```js
-resizeImageUrl( 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=1000', { resize: '500,500' } );
+resizeImageUrl( 'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=1000', {
+	resize: '500,500',
+} );
 // https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?resize=500%2C500
 
 resizeImageUrl( 'https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60', 200 );

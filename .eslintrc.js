@@ -22,6 +22,24 @@ module.exports = {
 			},
 		},
 		{
+			// This lints the codeblocks marked as `javascritp`, `js`, `cjs` or `ejs`, all valid aliases
+			// See:
+			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
+			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
+			files: [ '*.md.js', '*.md.javascript', '*.md.cjs', '*.md.ejs' ],
+			rules: {
+				// These are ok for examples
+				'import/no-extraneous-dependencies': 'off',
+				'no-console': 'off',
+				'no-redeclare': 'off',
+				'no-undef': 'off',
+				'no-unused-vars': 'off',
+				'react/jsx-no-undef': 'off',
+				'react/react-in-jsx-scope': 'off',
+				'wpcalypso/import-docblock': 'off',
+			},
+		},
+		{
 			files: [ 'bin/**/*' ],
 			rules: {
 				'import/no-nodejs-modules': 'off',

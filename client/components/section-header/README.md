@@ -7,19 +7,17 @@ and optional actions buttons.
 
 ```js
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
 
 const MyHeader = ( { translate } ) => (
 	<SectionHeader label={ translate( 'Team' ) }>
-		<Button compact>
-			{ translate( 'Manage' ) }
-		</Button>
+		<Button compact>{ translate( 'Manage' ) }</Button>
 		<Button
 			compact
-			onClick={ function() {
+			onClick={ function () {
 				console.log( 'Clicked Add button' );
 			} }
 		>

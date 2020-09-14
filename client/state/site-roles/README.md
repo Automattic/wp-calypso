@@ -24,7 +24,7 @@ Data from the aforementioned actions is added to the global state tree, under `s
 state.siteRoles = {
 	requesting: {
 		12345678: false,
-		87654321: true
+		87654321: true,
 	},
 	items: {
 		12345678: [
@@ -34,19 +34,19 @@ state.siteRoles = {
 				capabilities: {
 					activate_plugins: true,
 					edit_users: true,
-					manage_options: true
-				}
+					manage_options: true,
+				},
 			},
 			{
 				name: 'customer',
 				display_name: 'Customer',
 				capabilities: {
-					read: true
-				}
-			}
-		]
-	}
-}
+					read: true,
+				},
+			},
+		],
+	},
+};
 ```
 
 ## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.

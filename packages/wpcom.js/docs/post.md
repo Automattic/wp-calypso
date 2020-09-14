@@ -19,7 +19,7 @@ var post = wpcom
 Create a new `Post` instance giving `id`, `site-id` and `WPCOM` instance.
 
 ```js
-var post = Post('<id>', '<site-id>', WPCOM);
+const post = Post( '<id>', '<site-id>', WPCOM );
 ```
 
 ### Post(data, site, WPCOM);
@@ -27,8 +27,8 @@ var post = Post('<id>', '<site-id>', WPCOM);
 Create a new `Post` instance giving `data` object, `site-id` and `WPCOM` instance.
 
 ```js
-var data = { id: '<id>', slug: '<slug>' };
-var post = Post(data, '<site-id>', WPCOM);
+const data = { id: '<id>', slug: '<slug>' };
+const post = Post( data, '<site-id>', WPCOM );
 ```
 
 ### Post.id(id)
@@ -45,9 +45,9 @@ Get post data by `id` or `slug` depending on which of these parameter is
 defined, giving priority to `id` over `slug`
 
 ```js
-post.get(function(err, data){
-  // post data object
-});
+post.get( function ( err, data ) {
+	// post data object
+} );
 ```
 
 ### Post#getBySlug(fn)
@@ -56,10 +56,10 @@ Get post data by `slug`. `slug` must have been previously defined through the
 constructor or using the `.slug()` method.
 
 ```js
-var post = Post({ slug: '<slug>' }, '<site-id>', WPCOM);
-post.getBySlug(function(err, data){
-  // post data object
-});
+const post = Post( { slug: '<slug>' }, '<site-id>', WPCOM );
+post.getBySlug( function ( err, data ) {
+	// post data object
+} );
 ```
 
 ### Post#add(data, fn)
@@ -78,11 +78,11 @@ Get post likes list
 
 ```js
 wpcom
-.site('blog.wordpress.com')
-.post(342)
-.likesList(function(err, list){
-  // like `list` object
-});
+	.site( 'blog.wordpress.com' )
+	.post( 342 )
+	.likesList( function ( err, list ) {
+		// like `list` object
+	} );
 ```
 
 ### Post#like()
@@ -91,7 +91,7 @@ Create and return a new `Like` instance.
 More info in [Like doc page](./like.md).
 
 ```js
-var like = wpcom.site('blog.wordpress.com').post(342).like();
+const like = wpcom.site( 'blog.wordpress.com' ).post( 342 ).like();
 ```
 
 ### Post#reblog()
@@ -100,7 +100,7 @@ Create and return a new `Reblog` instance.
 More info in [Reblog doc page](./reblog.md).
 
 ```js
-var reblog = wpcom.site('blog.wordpress.com').post(342).reblog();
+const reblog = wpcom.site( 'blog.wordpress.com' ).post( 342 ).reblog();
 ```
 
 ### Post#comment()
@@ -114,9 +114,9 @@ Recent recent comments
 
 ```js
 wpcom
-.site('blog.wordpress.com')
-.post(342)
-.comments(function(err, list){
-  // post comments list
-});
+	.site( 'blog.wordpress.com' )
+	.post( 342 )
+	.comments( function ( err, list ) {
+		// post comments list
+	} );
 ```

@@ -4,20 +4,19 @@ If you have components that utlize 'Follow' actions for users, the follow-list a
 
 ```js
 import FollowList from 'follow-list';
-var follow-list = FollowList();
+const followList = FollowList();
 ```
 
 ### add( { site_id: site.ID, is_following: true } )
 
-If the `site_id` being passed in does not yet exist in the array of `follow-list` data, a new `FollowListSite` object is created and added to the array. The method returns the instance of the `FollowListSite` so you can use that object to subscribe to change events:
+If the `site_id` being passed in does not yet exist in the array of `followList` data, a new `FollowListSite` object is created and added to the array. The method returns the instance of the `FollowListSite` so you can use that object to subscribe to change events:
 
 ```js
-var newFollowListSite = follow-list.add( { site_id: 1, is_following: false } );
+const newFollowListSite = followList.add( { site_id: 1, is_following: false } );
 
 // then in a jsx component
 
-mixins: [ observe( 'newFollowListSite' ) ]
-
+<Component mixins={ [ observe( 'newFollowListSite' ) ] } />;
 ```
 
 # FollowListSite

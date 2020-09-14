@@ -20,7 +20,7 @@ properties.
 When importing, you can do
 
 ```js
-import '@automattic/calypso-color-schemes'
+import '@automattic/calypso-color-schemes';
 ```
 
 And this will give you the CSS.
@@ -39,10 +39,10 @@ Or with `postcss-custom-properties`, and `postcss.config.js` can look like this:
 module.exports = () => ( {
 	plugins: {
 		'postcss-custom-properties': {
-            importFrom: [ require.resolve( '@automattic/calypso-color-schemes/js' ) ],
-        }
-    }
-});
+			importFrom: [ require.resolve( '@automattic/calypso-color-schemes/js' ) ],
+		},
+	},
+} );
 ```
 
 ### Note on using the JS output

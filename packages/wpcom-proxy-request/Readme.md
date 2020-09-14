@@ -25,12 +25,12 @@ npm install wpcom-proxy-request
 // Import wpcom-proxy-request handler
 import proxy from 'wpcom-proxy-request';
 
-proxy( { path: '/me' }, function( err, body, headers ) {
+proxy( { path: '/me' }, function ( err, body, headers ) {
 	if ( err ) {
 		throw err;
 	}
 
-	var div = document.createElement( 'div' );
+	const div = document.createElement( 'div' );
 	div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '</b>';
 	document.body.appendChild( div );
 } );

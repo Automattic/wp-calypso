@@ -24,7 +24,9 @@ If your block depends on another block, place them all in extensions folder:
 Blocks are registered by providing a `name` and `settings` like this:
 
 ```js
-registerBlockType( 'prefix/name', { /* settings */ } );
+registerBlockType( 'prefix/name', {
+	/* settings */
+} );
 ```
 
 ## Building

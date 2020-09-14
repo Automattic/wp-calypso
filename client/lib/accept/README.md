@@ -21,9 +21,9 @@ Accept is a stylized substitute to the browser `confirm` dialog.
 While `confirm` returns a value synchronously, Accept must be performed asynchronously. In addition to your message, you must pass a function which will be executed upon a user's selection with the result of the confirmation.
 
 ```js
-import accept from 'lib/accept'
+import accept from 'lib/accept';
 
-accept( 'Are you sure you want to perform this action?', function( accepted ) {
+accept( 'Are you sure you want to perform this action?', function ( accepted ) {
 	if ( accepted ) {
 		// User accepted the prompt
 	} else {
@@ -35,15 +35,21 @@ accept( 'Are you sure you want to perform this action?', function( accepted ) {
 This will make the confirmation button look scary:
 
 ```js
-import accept from 'lib/accept'
+import accept from 'lib/accept';
 
-accept( 'Are you sure you want to perform this action?', function( accepted ) {
-	if ( accepted ) {
-		// User accepted the prompt
-	} else {
-		// User cancelled or otherwise closed the prompt
+accept(
+	'Are you sure you want to perform this action?',
+	function ( accepted ) {
+		if ( accepted ) {
+			// User accepted the prompt
+		} else {
+			// User cancelled or otherwise closed the prompt
+		}
+	},
+	translate( 'Destroy Everything' ),
+	translate( 'Nevermind' ),
+	{
+		isScary: true,
 	}
-}, translate( 'Destroy Everything' ), translate( 'Nevermind' ), {
-	isScary: true
-} );
+);
 ```

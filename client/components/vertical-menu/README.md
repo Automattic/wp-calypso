@@ -14,14 +14,13 @@ The following predefined item types exist:
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
 
-const announceIt = service =>
-	console.log( `Clicked on ${ service }` );
+const announceIt = ( service ) => console.log( `Clicked on ${ service }` );
 
 <VerticalMenu onClick={ announceIt }>
 	<SocialItem service="google" />
 	<SocialItem service="facebook" />
 	<SocialItem service="twitter" />
-</VerticalMenu>
+</VerticalMenu>;
 ```
 
 ## Props

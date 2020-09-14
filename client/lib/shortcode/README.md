@@ -10,8 +10,8 @@ import { parse, stringify } from 'lib/shortcode';
 const value = stringify( {
 	tag: 'foo',
 	attrs: {
-		bar: 'baz'
-	}
+		bar: 'baz',
+	},
 } );
 
 // -> [foo bar="baz"][/foo]

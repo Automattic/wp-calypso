@@ -9,7 +9,8 @@ It will handle the data itself thus helping us to decouple concerns: i.e. fetchi
 <StoreConnection
 	component={ MyComponent }
 	stores={ stores }
-	getStateFromStores={ getStateFromStores } />
+	getStateFromStores={ getStateFromStores }
+/>;
 ```
 
 ### Loading placeholder

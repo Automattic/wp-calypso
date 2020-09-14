@@ -12,7 +12,7 @@ Whitespace can be appropriate in longer translatable content, for example a whol
 The following patterns are considered warnings:
 
 ```js
-translate( "A string\non two lines" );
+translate( 'A string\non two lines' );
 translate( 'A string\non two lines' );
 translate( `A string
 on two lines` );
@@ -25,7 +25,5 @@ The following patterns are not warnings:
 ```js
 translate( 'Hello World!' ) + '<br>' + translate( 'More text on another line' );
 translate( '<p>Hello' + ' World!</p>' );
-translate( `A long string ` +
-	`spread over ` +
-	`multiple lines.` );
+translate( `A long string ` + `spread over ` + `multiple lines.` );
 ```

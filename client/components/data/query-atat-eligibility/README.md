@@ -13,17 +13,17 @@ import { connect } from 'react-redux';
 import QueryEligibility from 'components/data/query-atat-eligibility';
 
 export function MyTransferView( { eligibility, siteId } ) {
-    return (
-        <div>
-            <QueryEligibility siteId={ siteId } />
-            <div>{ JSON.stringify( eligibility ) }</div>
-        </div>
-    );
+	return (
+		<div>
+			<QueryEligibility siteId={ siteId } />
+			<div>{ JSON.stringify( eligibility ) }</div>
+		</div>
+	);
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-  eligibility: getEligibilityData( state, siteId ),
-} )
+	eligibility: getEligibilityData( state, siteId ),
+} );
 
 export default connect( mapStateToProps )( MyTransferView );
 ```

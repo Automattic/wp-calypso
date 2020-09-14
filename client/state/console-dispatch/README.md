@@ -23,10 +23,10 @@ An alias to `getState()` has been provided for terseness in the console: `state`
 
 ```js
 // these two are equivalent from within the console
-getState().ui.selectedSiteId
-state.ui.selectedSiteId
+getState().ui.selectedSiteId;
+state.ui.selectedSiteId;
 
 // dispatch an action
 // actionTypes are available on the console
-dispatch( { type: actionTypes.USER_SETTINGS_REQUEST } )
+dispatch( { type: actionTypes.USER_SETTINGS_REQUEST } );
 ```

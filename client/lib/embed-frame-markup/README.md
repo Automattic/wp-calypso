@@ -13,16 +13,17 @@ const markup = generateEmbedFrameMarkup( {
 	body: 'Hello World',
 	styles: {
 		'jetpack-carousel': {
-			src: 'https://s1.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1458924076h&ver=20120629',
-			media: 'all'
-		}
+			src:
+				'https://s1.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1458924076h&ver=20120629',
+			media: 'all',
+		},
 	},
 	scripts: {
 		'jetpack-facebook-embed': {
 			src: 'https://s2.wp.com/wp-content/mu-plugins/shortcodes/js/facebook.js?ver',
-			extra: 'var jpfbembed = {"appid":"249643311490"};'
-		}
-	}
+			extra: 'var jpfbembed = {"appid":"249643311490"};',
+		},
+	},
 } );
 
 console.log( markup );

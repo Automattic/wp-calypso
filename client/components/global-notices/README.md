@@ -32,10 +32,10 @@ Rendering GlobalNotices is straightforward:
 import GlobalNotices from 'components/global-notices';
 
 function Layout() {
-  return (
-    <div>
-      <GlobalNotices />
-    </div>
-  );
+	return (
+		<div>
+			<GlobalNotices />
+		</div>
+	);
 }
 ```

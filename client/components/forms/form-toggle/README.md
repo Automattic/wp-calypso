@@ -18,7 +18,7 @@ export default function MyComponent() {
 				onKeyDown={ this.props.onKeyDown }
 				className={ this.props.className }
 				wrapperClassName={ this.props.wrapperClassName }
-				aria-label={ this.props['aria-label'] }
+				aria-label={ this.props[ 'aria-label' ] }
 				id="you-rock-uniquely"
 			>
 				My label or label-like children
