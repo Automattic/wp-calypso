@@ -1,5 +1,5 @@
-security-section-nav
-=======
+# security-section-nav
+
 This component is meant to render the `SectionNav` for the following routes within Me:
 
 - /me/security

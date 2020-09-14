@@ -6,6 +6,7 @@ import { isEnabled } from 'config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
+import PlansGrid from '@automattic/plans-grid';
 import type { Plans } from '@automattic/data-stores';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
@@ -19,7 +20,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { Step, usePath } from '../../path';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import AsyncLoad from 'components/async-load';
+import useRecommendedPlan from '../../hooks/use-recommended-plan';
 
 type PlanSlug = Plans.PlanSlug;
 
@@ -35,13 +36,12 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const plan = useSelectedPlan();
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
-	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {
 		! isModal && setHasUsedPlansStep( true );
-	}, [] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
 	const selectedPlanRef = React.useRef< string | undefined >();
@@ -54,6 +54,8 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	} ) );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
+
+	const recommendedPlan = useRecommendedPlan();
 
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handlePlanSelect = ( planSlug: PlanSlug ) => {
@@ -75,10 +77,10 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const header = (
 		<>
 			<div>
-				<Title>{ __( 'Choose a plan' ) }</Title>
+				<Title>{ __( 'Select a plan' ) }</Title>
 				<SubTitle>
 					{ __(
-						'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
+						'Pick a plan that’s right for you. There’s no risk, you can cancel for a full refund within 30 days.'
 					) }
 				</SubTitle>
 			</div>
@@ -90,14 +92,13 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	return (
 		<div className="gutenboarding-page plans">
-			<AsyncLoad
-				require="@automattic/plans-grid"
-				placeholder={ null }
+			<PlansGrid
 				header={ header }
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
-				singleColumn={ isExperimental && isEnabled( 'gutenboarding/feature-picker' ) }
+				isExperimental={ isEnabled( 'gutenboarding/feature-picker' ) }
+				recommendedPlan={ recommendedPlan }
 			/>
 		</div>
 	);

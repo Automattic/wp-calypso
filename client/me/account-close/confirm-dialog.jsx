@@ -10,6 +10,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
@@ -76,7 +77,7 @@ class AccountCloseConfirmDialog extends React.Component {
 			{
 				englishText: 'Start a new site',
 				text: translate( 'Start a new site' ),
-				href: '/jetpack/new',
+				href: config( 'signup_url' ),
 				supportLink:
 					'https://wordpress.com/support/create-a-blog/#adding-a-new-site-or-blog-to-an-existing-account',
 				supportPostId: 3991,

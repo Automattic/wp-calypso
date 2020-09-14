@@ -10,7 +10,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Image from 'components/image';
-import FormRadio from 'wp-calypso-client/components/forms/form-radio';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 /**
  * Style dependencies

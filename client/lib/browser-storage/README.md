@@ -1,5 +1,4 @@
-browser-storage
-===============
+# browser-storage
 
 This implements a simple promise-based key-value store using `IndexedDB`, if available, and falling
 back to `localStorage` otherwise.
@@ -15,7 +14,6 @@ clearStorage().then( () => console.log( 'Storage cleared' ) );
 ```
 
 `undefined` is returned as the value for missing keys.
-
 
 ## Bypassing persistent storage
 

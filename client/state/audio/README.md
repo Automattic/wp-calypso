@@ -19,6 +19,7 @@ For example, if a sound should be played when an action of type `SOME_ACTION_TYP
 following:
 
 #### `./middleware.js`
+
 ```js
 export const onSomeEvent = ( dispatch, action ) => {
 	playSound( '/calypso/audio/sound-to-play.wav' );

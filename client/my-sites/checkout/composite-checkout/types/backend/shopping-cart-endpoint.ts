@@ -61,6 +61,7 @@ export interface ResponseCart {
 	products: ( TempResponseCartProduct | ResponseCartProduct )[];
 	total_tax_integer: number;
 	total_tax_display: string;
+	total_cost: number; // Please try not to use this
 	total_cost_integer: number;
 	total_cost_display: string;
 	coupon_savings_total_integer: number;
@@ -106,6 +107,7 @@ export const emptyResponseCart = {
 	products: [],
 	total_tax_integer: 0,
 	total_tax_display: '0',
+	total_cost: 0,
 	total_cost_integer: 0,
 	total_cost_display: '0',
 	coupon_savings_total_integer: 0,

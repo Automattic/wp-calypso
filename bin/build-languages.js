@@ -8,116 +8,18 @@ const mkdirp = require( 'mkdirp' );
 const readline = require( 'readline' );
 const parse = require( 'gettext-parser' ).po.parse;
 
+const languagesMetaPath = fs.existsSync( '../client/languages/languages-meta.json' )
+	? '../client/languages/languages-meta.json'
+	: '../client/languages/fallback-languages-meta.json';
+const languages = require( languagesMetaPath );
+
 const LANGUAGES_BASE_URL = 'https://widgets.wp.com/languages/calypso';
 const LANGUAGES_REVISIONS_FILENAME = 'lang-revisions.json';
 const CALYPSO_STRINGS = './calypso-strings.pot';
 const CHUNKS_MAP_PATTERN = './chunks-map.*.json';
 const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 
-const languages = [
-	'am',
-	'ast',
-	'gu',
-	'hi',
-	'hr',
-	'hu',
-	'he',
-	'af',
-	'as',
-	'ar',
-	'da',
-	'gd',
-	'cy',
-	'cs',
-	'de_formal',
-	'de',
-	'bel',
-	'bo',
-	'br',
-	'es-cl',
-	'eo',
-	'dv',
-	'bn',
-	'sl',
-	'eu',
-	'az',
-	'bg',
-	'el',
-	'en-gb',
-	'snd',
-	'es',
-	'fi',
-	'skr',
-	'el-po',
-	'sk',
-	'id',
-	'fo',
-	'so',
-	'fr-be',
-	'gl',
-	'te',
-	'es-mx',
-	'ms',
-	'hy',
-	'et',
-	'fa',
-	'fr',
-	'ml',
-	'mr',
-	'si',
-	'mn',
-	'oci',
-	'ps',
-	'fr-ch',
-	'sq',
-	'bs',
-	'ca',
-	'zh-tw',
-	'ro',
-	'pa',
-	'fr-ca',
-	'su',
-	'sr',
-	'sv',
-	'mwl',
-	'ckb',
-	'kk',
-	'kn',
-	'ne',
-	'ka',
-	'km',
-	'tir',
-	'lo',
-	'no',
-	'kir',
-	'mk',
-	'sr_latin',
-	'ta',
-	'ko',
-	'nl',
-	'zh-cn',
-	'nn',
-	'lv',
-	'ga',
-	'lt',
-	'pl',
-	'pt',
-	'ru',
-	'rup',
-	'yi',
-	'pt-br',
-	'ug',
-	'uz',
-	'vi',
-	'is',
-	'ur',
-	'uk',
-	'it',
-	'ja',
-	'tl',
-	'th',
-	'tr',
-]; // todo: can we use `../client/languages`?
+const langSlugs = languages.map( ( { langSlug } ) => langSlug );
 
 const chunksMaps = glob.sync( CHUNKS_MAP_PATTERN );
 const languagesPaths = chunksMaps
@@ -179,7 +81,9 @@ function downloadLanguagesRevions() {
 			} );
 			response.on( 'end', () => {
 				if ( response.statusCode !== 200 ) {
-					log( 'failed' );
+					console.error( 'Failed to download language revisions file.' );
+					process.exit( 1 );
+
 					resolve( false );
 					return;
 				}
@@ -192,20 +96,20 @@ function downloadLanguagesRevions() {
 }
 
 // Request and write language files
-async function downloadLanguages() {
+async function downloadLanguages( languageRevisions ) {
 	let downloadedLanguagesCount = 0;
 
 	function log( status ) {
 		logUpdate(
 			`Downloading languages${ status ? ` ${ status }.` : '...' } ` +
-				`(${ downloadedLanguagesCount }/${ languages.length })`
+				`(${ downloadedLanguagesCount }/${ langSlugs.length })`
 		);
 	}
 
 	log();
 
 	const downloadedLanguages = await Promise.all(
-		languages.map(
+		langSlugs.map(
 			( langSlug ) =>
 				new Promise( ( resolve ) => {
 					const filename = `${ langSlug }-v1.1.json`;
@@ -221,14 +125,32 @@ async function downloadLanguages() {
 						files.forEach( ( file ) => response.pipe( file ) );
 						response.on( 'data', ( chunk ) => ( body += chunk ) );
 						response.on( 'end', () => {
+							// Script should exit with an error if any of the
+							// translation download jobs for a language included
+							// in language revisions file fails.
+							// Failed downloads for languages that are not
+							// included in language revisions file could be skipped
+							// without interrupting the script.
+							if ( response.statusCode !== 200 && langSlug in languageRevisions ) {
+								console.error( `Failed to download translations for "${ langSlug }".` );
+								process.exit( 1 );
+							}
+
 							if ( response.statusCode === 200 ) {
 								downloadedLanguagesCount++;
 								log();
+
+								resolve( {
+									langSlug,
+									languageTranslations: JSON.parse( body ),
+								} );
+
+								return;
 							}
 
 							resolve( {
 								langSlug,
-								languageTranslations: JSON.parse( body ),
+								failed: true,
 							} );
 						} );
 					} );
@@ -244,6 +166,9 @@ async function downloadLanguages() {
 // Split language translations into chunks
 function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 	logUpdate( 'Building language chunks...' );
+
+	const successfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => ! failed );
+	const unsuccessfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => failed );
 
 	if ( fs.existsSync( CALYPSO_STRINGS ) ) {
 		const { translations } = parse( fs.readFileSync( CALYPSO_STRINGS ) );
@@ -310,7 +235,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				return [ ...strings ];
 			} );
 
-			downloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
+			successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
 				const languageChunks = _.chain( chunks )
 					.mapValues( ( stringIds ) => _.pick( languageTranslations, stringIds ) )
 					.omitBy( _.isEmpty )
@@ -386,13 +311,17 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 		);
 	}
 
-	logUpdate( 'Building language chunks completed.\n' );
+	logUpdate(
+		`Building language chunks completed.\nSkipped due to failed translation downloads: ${ unsuccessfullyDownloadedLanguages
+			.map( ( { langSlug } ) => langSlug )
+			.join( ', ' ) }.`
+	);
 }
 
 async function run() {
 	createLanguagesDir();
 	const languageRevisions = await downloadLanguagesRevions();
-	const downloadedLanguages = await downloadLanguages();
+	const downloadedLanguages = await downloadLanguages( languageRevisions );
 	buildLanguageChunks( downloadedLanguages, languageRevisions );
 }
 

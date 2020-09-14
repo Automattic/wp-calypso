@@ -1,5 +1,4 @@
-HelpContact
-=======
+# HelpContact
 
 `HelpContact` renders a form enabling the customer to request help.
 The rendered form will be rendered dynamically based on the customer, showing one of a number of variations that is most relevant to that customer.

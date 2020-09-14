@@ -44,9 +44,14 @@ const InfoTooltip: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-		// @ts-ignore
-		<Button icon={ info } onClick={ handleClick } className="info-tooltip">
+		<Button
+			// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+			// @ts-ignore
+			icon={ info }
+			onClick={ handleClick }
+			className="info-tooltip"
+			data-testid="info-tooltip"
+		>
 			{ showTooltip && (
 				<Popover
 					id={ id }

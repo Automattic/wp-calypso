@@ -8,6 +8,7 @@ import { keyframes } from '@emotion/core';
 import {
 	CheckoutCheckIcon,
 	CheckoutSummaryCard,
+	FormStatus,
 	useEvents,
 	useFormStatus,
 	useLineItemsOfType,
@@ -44,7 +45,7 @@ export default function WPCheckoutOrderSummary() {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
 
-	const isCartUpdating = 'validating' === formStatus;
+	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
 	return (
 		<CheckoutSummaryCardUI

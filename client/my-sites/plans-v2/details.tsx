@@ -15,21 +15,15 @@ import {
 	PRODUCTS_WITH_OPTIONS,
 } from './constants';
 import ProductCard from './product-card';
-import {
-	slugToSelectorProduct,
-	getProductUpsell,
-	getPathToSelector,
-	getPathToUpsell,
-	checkout,
-} from './utils';
+import { slugToSelectorProduct, getPathToSelector, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
 import useIsLoading from './use-is-loading';
+import useHasProductUpsell from './use-has-product-upsell';
 import ProductCardPlaceholder from 'components/jetpack/card/product-card-placeholder';
 import FormattedHeader from 'components/formatted-header';
 import HeaderCake from 'components/header-cake';
 import Main from 'components/main';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getSiteProducts } from 'state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
 import withRedirectToSelector from './with-redirect-to-selector';
 
@@ -37,6 +31,7 @@ import withRedirectToSelector from './with-redirect-to-selector';
  * Type dependencies
  */
 import type { Duration, DetailsPageProps, PurchaseCallback, SelectorProduct } from './types';
+import type { ProductSlug } from 'lib/products-values/types';
 
 import './style.scss';
 
@@ -44,7 +39,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
-	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
+	const hasUpsell = useHasProductUpsell();
 	const translate = useTranslate();
 	const isLoading = useIsLoading( siteId );
 
@@ -65,16 +60,11 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 
 	// Go to a new page for upsells.
 	const selectProduct: PurchaseCallback = ( { productSlug: slug }: SelectorProduct ) => {
-		const upsellProduct = getProductUpsell( slug );
-		if (
-			upsellProduct &&
-			! siteProducts?.find(
-				( { productSlug: siteProductSlug } ) => siteProductSlug === upsellProduct
-			)
-		) {
+		if ( hasUpsell( slug as ProductSlug ) ) {
 			page( getPathToUpsell( rootUrl, slug, duration as Duration, siteSlug ) );
 			return;
 		}
+
 		checkout( siteSlug, slug );
 	};
 

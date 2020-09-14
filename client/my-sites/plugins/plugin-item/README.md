@@ -1,5 +1,4 @@
-Plugin Item
-===========
+# Plugin Item
 
 This component is used to display a plugin card in a list of plugins.
 
@@ -25,14 +24,14 @@ render() {
 
 #### Props
 
-* `plugin`: a plugin object.
-* `sites`: an array of site objects
-* `isSelected`: a boolean indicating if the plugin is selected.
-* `isSelectable`: a boolean if the plugin is selectable. If true it will show a checkbox.
-* `onClick`: onClick handler.
-* `pluginLink`: the url of the plugin.
-* `allowedActions`: an object of allowed plugin actions: `activation`, `autoupdate`. Used to display/hide plugin actions.
-* `isAutoManaged`: a boolean if the plugin is auto managed. If true it will dispaly an auto managed message. Defaults to false.
-* `progress`: an array of progress steps.
-* `notices`: an object of plugin notices: `completed`, `errors`, `inProgress`.
-* `hasUpdate`: a function to determine if a plugin has an update available. Defaults to a function returning false.
+- `plugin`: a plugin object.
+- `sites`: an array of site objects
+- `isSelected`: a boolean indicating if the plugin is selected.
+- `isSelectable`: a boolean if the plugin is selectable. If true it will show a checkbox.
+- `onClick`: onClick handler.
+- `pluginLink`: the url of the plugin.
+- `allowedActions`: an object of allowed plugin actions: `activation`, `autoupdate`. Used to display/hide plugin actions.
+- `isAutoManaged`: a boolean if the plugin is auto managed. If true it will dispaly an auto managed message. Defaults to false.
+- `progress`: an array of progress steps.
+- `notices`: an object of plugin notices: `completed`, `errors`, `inProgress`.
+- `hasUpdate`: a function to determine if a plugin has an update available. Defaults to a function returning false.

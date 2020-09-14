@@ -1,5 +1,4 @@
-PodcastIndicator
-====
+# PodcastIndicator
 
 ## Usage
 
@@ -11,8 +10,8 @@ import PodcastIndicator from 'components/podcast-indicator';
 
 ## Props
 
-* `size` **(Number) (optional)** Determines Gridicon size. Defaults to `18`.
-* `tooltipType` **(String) (optional)**
-   * Set to `'category'` to show a tooltip explaining the presence of this indicator in a list of categories (this is the default value).
-   * Set to `'episode'` to show a tooltip explaining the presence of this indicator for an individual post.
-   * Set to `null` to not show a tooltip at all.
+- `size` **(Number) (optional)** Determines Gridicon size. Defaults to `18`.
+- `tooltipType` **(String) (optional)**
+  - Set to `'category'` to show a tooltip explaining the presence of this indicator in a list of categories (this is the default value).
+  - Set to `'episode'` to show a tooltip explaining the presence of this indicator for an individual post.
+  - Set to `null` to not show a tooltip at all.

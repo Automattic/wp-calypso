@@ -72,7 +72,6 @@ export function genericRedirectProcessor(
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
@@ -96,7 +95,6 @@ export function applePayProcessor(
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
@@ -127,7 +125,6 @@ export async function stripeCardProcessor(
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
@@ -155,7 +152,6 @@ export async function ebanxCardProcessor(
 		wpcomTransaction
 	);
 	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
@@ -202,7 +198,6 @@ export async function existingCardProcessor(
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
@@ -249,7 +244,6 @@ export async function fullCreditsProcessor(
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;
@@ -293,7 +287,6 @@ export async function payPalProcessor(
 	);
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
 	pending.then( ( result ) => {
-		// TODO: do this automatically when calling setTransactionComplete
 		dispatch( 'wpcom' ).setTransactionResponse( result );
 	} );
 	return pending;

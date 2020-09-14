@@ -1,5 +1,4 @@
-OrderStatus
-===========
+# OrderStatus
 
 OrderStatus is a component that displays a badge with human-friendly text describing the payment and shipping status of an order. Payment and shipping statuses are considered separate for UI, so we can also individually show just payment or just shipping status.
 
@@ -31,14 +30,14 @@ Boolean. Determines whether the payment label should be shown. Defaults to true.
 
 Boolean. Determines whether the shipping label should be shown. Defaults to true.
 
-------------------------------
+---
 
-OrderStatusSelect
-=================
+# OrderStatusSelect
 
 OrderStatusSelect is a component that displays a dropdown of order statuses.
 
 ## Usage
+
 ```jsx
 render: function() {
     return (

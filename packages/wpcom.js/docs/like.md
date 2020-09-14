@@ -1,4 +1,3 @@
-
 # Like
 
 `Like` handler class.

@@ -1,5 +1,4 @@
-Masterbar
-=========
+# Masterbar
 
 The Masterbar used across all of WordPress.com is based on this component. If
 changes are made to the Masterbar here, they should probably also be reflected

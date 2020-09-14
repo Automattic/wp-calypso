@@ -10,8 +10,17 @@ module.exports = {
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
 		'prettier/react',
+		'plugin:md/prettier',
 	],
 	overrides: [
+		{
+			files: [ '*.md' ],
+			parser: 'markdown-eslint-parser',
+			rules: {
+				// Disable remark rules for now, as they are not auto-fixable.
+				'md/remark': [ 'off' ],
+			},
+		},
 		{
 			files: [ 'bin/**/*' ],
 			rules: {
@@ -204,9 +213,6 @@ module.exports = {
 					'comment_whitelist',
 					'blacklist_keys',
 
-					// We can update this stylelint rule name once https://github.com/stylelint/stylelint/pull/4845 is released
-					'unit-whitelist',
-
 					// For HotJar compatibility. HJ will reach out to @saramarcondes once a new
 					// and inclusive attribute name exists to be used: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
 					'data-hj-whitelist',
@@ -231,7 +237,7 @@ module.exports = {
 				mappings: [
 					{
 						dir: path.join( __dirname, 'client' ),
-						module: 'wp-calypso-client',
+						module: 'calypso',
 					},
 				],
 				warnOnNonLiteralImport: true,

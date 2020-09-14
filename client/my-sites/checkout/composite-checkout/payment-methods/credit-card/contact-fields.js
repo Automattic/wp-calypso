@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -17,7 +17,7 @@ export default function ContactFields( {
 	getErrorMessagesForField,
 } ) {
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
 
 	return (

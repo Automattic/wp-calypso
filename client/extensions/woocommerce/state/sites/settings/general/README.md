@@ -1,5 +1,4 @@
-General Settings
-================
+# General Settings
 
 This module is used to manage general settings for a site.
 

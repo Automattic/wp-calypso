@@ -1,5 +1,4 @@
-Query Backup Restore Status
-===========================
+# Query Backup Restore Status
 
 `QueryBackupRestoreStatus` is a React component which dispatches actions for querying the status of a Backup backup.
 

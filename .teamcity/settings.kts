@@ -8,8 +8,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
 /*
@@ -78,10 +78,6 @@ object BuildBaseImages : BuildType({
 		root(WpCalypso)
 
 		cleanCheckout = true
-		branchFilter = """
-			+:master
-		""".trimIndent()
-		excludeDefaultBranchChanges = true
 	}
 
 	steps {
@@ -111,7 +107,7 @@ object BuildBaseImages : BuildType({
 		}
 	}
 
-	triggers{
+	triggers {
 		schedule {
 			schedulingPolicy = daily {
 				hour = 0
@@ -170,7 +166,8 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Code hygiene"
+			name = "Prevent uncommited changes"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -e
 				set -x
@@ -188,6 +185,23 @@ object RunAllUnitTests : BuildType({
 					echo "You need to checkout the branch, run 'yarn' and commit those files."
 					exit 1
 				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run linters"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				set -x
+				export HOME="/calypso"
+				export NODE_ENV="test"
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh"
 
 				# Code style
 				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|server/|packages/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
@@ -195,6 +209,22 @@ object RunAllUnitTests : BuildType({
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
 					yarn run eslint --format junit --output-file "./test_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run type checks"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export NODE_ENV="test"
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh"
 
 				# Run type checks
 				yarn run tsc --project client/landing/gutenboarding
@@ -205,7 +235,8 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Run unit tests"
+			name = "Run unit tests for client"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -e
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
@@ -219,12 +250,69 @@ object RunAllUnitTests : BuildType({
 
 				# Run client tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run unit tests for server"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export HOME="/calypso"
 
-				# Run packages tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh"
 
 				# Run server tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run unit tests for packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export HOME="/calypso"
+
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh"
+
+				# Run packages tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run unit tests for Editing Toolkit"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export HOME="/calypso"
+
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh"
 
 				# Run Editing Toolkit tests
 				cd apps/editing-toolkit
@@ -237,6 +325,7 @@ object RunAllUnitTests : BuildType({
 		}
 		script {
 			name = "Build artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -e
 				export HOME="/calypso"

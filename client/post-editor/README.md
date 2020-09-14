@@ -1,5 +1,4 @@
-Editor
-======
+# Editor
 
 This section handles the rendering of the Calypso editor and all its individual components. It is responsible for the `/post` and `/page` routes.
 

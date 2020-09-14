@@ -1,5 +1,4 @@
-Products Settings
-================
+# Products Settings
 
 This module is used to manage settings for products for a site.
 

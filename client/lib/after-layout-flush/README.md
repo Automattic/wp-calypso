@@ -1,5 +1,4 @@
-`afterLayoutFlush`
-=================
+# `afterLayoutFlush`
 
 This module exports a function that creates a wrapper to invoke a function as soon as possible
 after the next layout flush.At that time, it is very unlikely that the DOM has been written to

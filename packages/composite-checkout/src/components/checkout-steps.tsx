@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React, {
-	useState,
+	Dispatch,
+	SetStateAction,
+	useCallback,
 	useContext,
 	useEffect,
-	useCallback,
-	SetStateAction,
-	Dispatch,
+	useState,
 } from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
@@ -29,11 +29,12 @@ import {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	usePaymentMethod,
 	useEvents,
+	usePaymentMethod,
 } from '../public-api';
 import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
+import { FormStatus } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -100,7 +101,7 @@ export function Checkout( {
 		...( isRTL() ? [ 'rtl' ] : [] ),
 	] );
 
-	if ( formStatus === 'loading' ) {
+	if ( formStatus === FormStatus.LOADING ) {
 		return (
 			<ContainerUI className={ classNames }>
 				<MainContentUI className={ joinClasses( [ className, 'checkout__content' ] ) }>
@@ -243,7 +244,9 @@ export function CheckoutStepArea( {
 					onError={ onSubmitButtonLoadError }
 				>
 					<CheckoutSubmitButton
-						disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' || disableSubmitButton }
+						disabled={
+							isThereAnotherNumberedStep || formStatus !== FormStatus.READY || disableSubmitButton
+						}
 					/>
 				</CheckoutErrorBoundary>
 			</SubmitButtonWrapperUI>
@@ -448,7 +451,7 @@ export function CheckoutStepBody( {
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
 					onEdit={
-						formStatus === 'ready' && isStepComplete && goToThisStep && ! isStepActive
+						formStatus === FormStatus.READY && isStepComplete && goToThisStep && ! isStepActive
 							? goToThisStep
 							: undefined
 					}
@@ -461,18 +464,18 @@ export function CheckoutStepBody( {
 						<CheckoutNextStepButton
 							onClick={ goToNextStep }
 							value={
-								formStatus === 'validating'
+								formStatus === FormStatus.VALIDATING
 									? validatingButtonText || __( 'Please wait…' )
 									: nextStepButtonText || __( 'Continue' )
 							}
 							ariaLabel={
-								formStatus === 'validating'
+								formStatus === FormStatus.VALIDATING
 									? validatingButtonAriaLabel || __( 'Please wait…' )
 									: nextStepButtonAriaLabel || __( 'Continue to next step' )
 							}
 							buttonType="primary"
-							disabled={ formStatus !== 'ready' }
-							isBusy={ formStatus === 'validating' }
+							disabled={ formStatus !== FormStatus.READY }
+							isBusy={ formStatus === FormStatus.VALIDATING }
 						/>
 					) }
 				</StepContentUI>
@@ -505,7 +508,7 @@ interface CheckoutStepBodyProps {
 	goToThisStep?: () => void;
 	goToNextStep?: () => void;
 	activeStepContent?: React.ReactNode;
-	formStatus?: string;
+	formStatus?: FormStatus;
 	completeStepContent?: React.ReactNode;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
@@ -573,7 +576,7 @@ const CheckoutSummaryUI = styled.div`
 
 		.rtl & {
 			margin-right: 24px;
-			margin-left; 0;
+			margin-left: 0;
 		}
 	}
 `;

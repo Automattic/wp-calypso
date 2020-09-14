@@ -11,31 +11,35 @@ Each request is run through the pipeline at these points.
 The initial entry into the HTTP system is through the outbound pipeline.
 The final exit from the HTTP system is through the inbound pipeline.
 
- - _**Outbound**_ denotes requests on their way _out_ of Calypso.
- - _**Inbound**_ denotes requests returning from remote servers back _into_ Calypso.
+- _**Outbound**_ denotes requests on their way _out_ of Calypso.
+- _**Inbound**_ denotes requests returning from remote servers back _into_ Calypso.
 
 ### Outbound
 
 Outbound requests run through the pipeline as if it were some kind of funnel or chain.
 At this stage we can perform the following kinds of operations on the requests:
- - filter out and drop unnecessary or redundant requests
- - transform them by manipulating their data
- - queue them for later if offline
- - persist them to storage
+
+- filter out and drop unnecessary or redundant requests
+- transform them by manipulating their data
+- queue them for later if offline
+- persist them to storage
 
 ### Inbound
 
 Inbound requests run through the pipeline to provide a way to follow-up with requests previously sent out.
 At this stage we can perform the following kinds of operations on the requests:
- - Clean up and close out operations started on inbound
- - Audit and perform accounting on requests as they come back (for example, track failed requests)
+
+- Clean up and close out operations started on inbound
+- Audit and perform accounting on requests as they come back (for example, track failed requests)
 
 ## Detailed Operation
 
 To understand how this layer works we should start by examining the normal flow of HTTP requests and then see how we can augment that flow by inserting optimizations or processes into the pipeline.
 
 ### The basic HTTP flow without the pipeline
+
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
+
 ![Basic HTTP flow](https://cldup.com/X4mRbNKSaC.svg)
 
 #### Step A: HTTP request actions are dispatched
@@ -74,6 +78,7 @@ The HTTP layer is given liberty to execute the requests fed into it in a way tha
 Because of this liberty it must also constrain itself to the language of HTTP to prevent accidentally introducing bugs or breaking assumptions that other code will be making.
 
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
+
 ![Pipelined HTTP flow](https://cldup.com/lpS7pC7Ksj.svg)
 
 #### Step F: Outbound pipeline

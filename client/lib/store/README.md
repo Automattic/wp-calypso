@@ -1,5 +1,4 @@
-lib/store
-=========
+# lib/store
 
 #### `createReducerStore`
 

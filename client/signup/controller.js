@@ -103,7 +103,8 @@ export default {
 			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||
-			context.params.flowName === 'pressable-nux'
+			context.params.flowName === 'pressable-nux' ||
+			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
 			next();
@@ -120,8 +121,13 @@ export default {
 
 			next();
 		} else {
+			const flowName = getFlowName( context.params );
 			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if ( userLoggedIn && 'gutenberg' === abtest( 'existingUsersGutenbergOnboard' ) ) {
+			if (
+				userLoggedIn &&
+				flowName === 'onboarding' &&
+				'gutenberg' === abtest( 'existingUsersGutenbergOnboard' )
+			) {
 				gutenbergRedirect( context.params.flowName );
 				return;
 			}

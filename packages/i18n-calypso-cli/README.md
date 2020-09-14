@@ -6,12 +6,10 @@ Scans your JavaScript sources/build files and generates a POT file or a PHP tran
 
 `yarn add i18n-calypso-cli`
 
-
 ## Using the CLI
 
 - `yarn global add i18n-calypso-cli`
 - `i18n-calypso -i <input_file> -o <output_file> -f <format:POT|PHP>`
-
 
 ## From your code
 

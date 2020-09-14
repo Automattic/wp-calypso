@@ -15,7 +15,7 @@ import classNames from 'classnames';
  */
 import { Card } from '@automattic/components';
 import { getAllTests, saveABTestVariation } from 'lib/abtest';
-import FormRadio from 'wp-calypso-client/components/forms/form-radio';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 /**
  * Style dependencies

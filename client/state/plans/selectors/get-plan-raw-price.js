@@ -12,7 +12,7 @@ import { getPlan } from './plan';
 import 'state/plans/init';
 
 /**
- * Returns a plan price
+ * Returns the full plan price if a discount is available and the raw price if a discount is not available
  *
  * @param  {object}  state     global state
  * @param  {number}  productId the plan productId
@@ -24,8 +24,7 @@ export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	if ( get( plan, 'raw_price', -1 ) < 0 ) {
 		return null;
 	}
+	const price = get( plan, 'orig_cost', 0 ) || plan.raw_price;
 
-	return isMonthly
-		? calculateMonthlyPriceForPlan( plan.product_slug, plan.raw_price )
-		: plan.raw_price;
+	return isMonthly ? calculateMonthlyPriceForPlan( plan.product_slug, price ) : price;
 }

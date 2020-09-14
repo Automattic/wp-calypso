@@ -1,5 +1,4 @@
-Order Notes
-===========
+# Order Notes
 
 This module is used to manage order notes on a site.
 
@@ -23,7 +22,7 @@ These parameters should be actions dispatched in the case of success or failure.
 
 ## Reducer
 
-This is saved on a per-site basis. 
+This is saved on a per-site basis.
 
 ```js
 {

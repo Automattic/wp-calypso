@@ -4,7 +4,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { CheckoutModal, useFormStatus, useEvents, Button } from '@automattic/composite-checkout';
+import {
+	CheckoutModal,
+	FormStatus,
+	useFormStatus,
+	useEvents,
+	Button,
+} from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -14,6 +20,8 @@ import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import { isGSuiteProductSlug } from 'lib/gsuite';
+import { planMatches } from 'lib/plans';
+import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY } from 'lib/plans/constants';
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
@@ -47,7 +55,7 @@ function WPLineItem( {
 		createUserAndSiteBeforeTransaction
 	);
 	const onEvent = useEvents();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
 	// Show the variation picker when this is not a renewal
@@ -70,13 +78,18 @@ function WPLineItem( {
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
-				<LineItemMeta>
-					<LineItemSublabelAndPrice item={ item } />
-					<DomainDiscountCallout item={ item } />
-				</LineItemMeta>
+				<>
+					<LineItemMeta>
+						<LineItemSublabelAndPrice item={ item } />
+						<DomainDiscountCallout item={ item } />
+					</LineItemMeta>
+					<LineItemMeta>
+						<DiscountForFirstYearOnly item={ item } />
+					</LineItemMeta>
+				</>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
-			{ hasDeleteButton && formStatus === 'ready' && (
+			{ hasDeleteButton && formStatus === FormStatus.READY && (
 				<>
 					<DeleteButton
 						className="checkout-line-item__remove-product"
@@ -513,5 +526,41 @@ function GSuiteDiscountCallout( { item } ) {
 	) {
 		return <DiscountCalloutUI>{ translate( 'Discount for first year' ) }</DiscountCalloutUI>;
 	}
+	return null;
+}
+function DiscountForFirstYearOnly( { item } ) {
+	const translate = useTranslate();
+	const origCost = item.wpcom_meta.item_original_cost_integer;
+	const cost = item.wpcom_meta.product_cost_integer;
+	if ( origCost <= cost ) {
+		return null;
+	}
+	const isWpcomOneYearPlan = planMatches( item.wpcom_meta.product_slug, {
+		term: TERM_ANNUALLY,
+		group: GROUP_WPCOM,
+	} );
+	if ( isWpcomOneYearPlan ) {
+		return (
+			<div>
+				{ translate(
+					'Promotional pricing is for the first year only. Your plan will renew at the regular price.'
+				) }
+			</div>
+		);
+	}
+	const isWpcomTwoYearPlan = planMatches( item.wpcom_meta.product_slug, {
+		term: TERM_BIENNIALLY,
+		group: GROUP_WPCOM,
+	} );
+	if ( isWpcomTwoYearPlan ) {
+		return (
+			<div>
+				{ translate(
+					'Promotional pricing is for the first 2 years only. Your plan will renew at the regular price.'
+				) }
+			</div>
+		);
+	}
+
 	return null;
 }

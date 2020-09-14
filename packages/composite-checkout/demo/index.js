@@ -20,6 +20,7 @@ import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	FormStatus,
 	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
@@ -264,7 +265,7 @@ function ContactForm( { summary } ) {
 				type="text"
 				value={ country }
 				onChange={ onChangeCountry }
-				disabled={ formStatus !== 'ready' }
+				disabled={ formStatus !== FormStatus.READY }
 			/>
 		</Form>
 	);

@@ -1,5 +1,4 @@
-TermTreeSelector
-============
+# TermTreeSelector
 
 The `TermTreeSelector` component renders a hierarchical list of terms from the currently selected site with corresponding form actions (radio or checkboxes) and a search box for filtering.
 

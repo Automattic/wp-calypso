@@ -18,4 +18,4 @@ render: function() {
 
 #### Props:
 
-* `plugin`: a plugin object.
+- `plugin`: a plugin object.

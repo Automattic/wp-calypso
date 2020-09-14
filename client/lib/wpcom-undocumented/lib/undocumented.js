@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase, set } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -902,23 +902,6 @@ Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 };
 
 /**
- * Return a list of third-party services that WordPress.com can integrate with
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-Undocumented.prototype.metaKeyring = function ( fn ) {
-	debug( '/meta/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/meta/external-services/',
-			apiVersion: '1.1',
-		},
-		fn
-	);
-};
-
-/**
  * Return a list of third-party services that WordPress.com can integrate with for a specific site
  *
  * @param {number|string} siteId The site ID or domain
@@ -1716,8 +1699,7 @@ Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function ( domain, records, fn ) {
-	const filtered = reject( records, 'isBeingDeleted' ),
-		body = { dns: JSON.stringify( filtered ) };
+	const body = { dns: JSON.stringify( records ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };

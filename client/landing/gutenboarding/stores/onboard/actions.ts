@@ -82,10 +82,6 @@ export function* createSite(
 	return success;
 }
 
-export const enableExperimental = () => ( {
-	type: 'SET_ENABLE_EXPERIMENTAL' as const,
-} );
-
 export const removeFeature = ( featureId: FeatureId ) => ( {
 	type: 'REMOVE_FEATURE' as const,
 	featureId,
@@ -189,9 +185,12 @@ export function* updatePlan( planSlug: Plans.PlanSlug ) {
 	yield setPlan( plan );
 }
 
+export const startOnboarding = () => ( {
+	type: 'ONBOARDING_START' as const,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
-	| typeof enableExperimental
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
@@ -212,4 +211,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteVertical
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
+	| typeof startOnboarding
 >;

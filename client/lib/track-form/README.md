@@ -1,10 +1,8 @@
-Track Form Higher Order Component
-=================================
+# Track Form Higher Order Component
 
 This HoC provides an alternative to `dirtyLinkedState` mixin for ES6 React component and functional components.
 
-Usage
------
+## Usage
 
 ```javascript
   const MyComponent = ( { fields, dirtyFields, updateFields, clearDirtyFields } ) => {
@@ -41,7 +39,6 @@ Usage
 ```
 
 This HoC exposes the following props:
-
 
 ### `fields`
 

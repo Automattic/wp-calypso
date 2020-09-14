@@ -68,6 +68,7 @@
 		"build:wpcom-block-editor-nav-sidebar": "NODE_ENV=production yarn run wpcom-block-editor-nav-sidebar",
 		"dev": "node bin/npm-run-build.js --dev",
 		"build": "node bin/npm-run-build.js --build",
+		"postbuild": "yarn validate-es5",
 		"test:js": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --colors",
 		"test:js:help": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --help --colors",
 		"test:js:watch": "npx wp-scripts test-unit-js --config='bin/js-unit-config.js' --watch --colors",
@@ -79,7 +80,8 @@
 		"prebuild": "yarn run clean",
 		"predev": "yarn run clean",
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
-		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
+		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore --no-inline-config ./editing-toolkit-plugin/*/dist/*.js"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
@@ -131,13 +133,12 @@
 		"jest": "^26.4.0",
 		"lodash": "*",
 		"moment": "*",
-		"newspack-blocks": "github:Automattic/newspack-blocks#v1.7.0",
+		"newspack-blocks": "github:Automattic/newspack-blocks#v1.8.0",
 		"npm-run-all": "^4.1.5",
 		"puppeteer": "^3.0.4",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
 		"redux": "^4.0.5",
-		"swiper": "^4.5.1",
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {

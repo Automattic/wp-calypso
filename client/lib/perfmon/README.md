@@ -1,5 +1,4 @@
-Performance Monitoring
-======
+# Performance Monitoring
 
 `perfmon` records how much time one or more loading indicators spend on the screen (currently timings are only sent to Google Analytics, but the goal is to get them into statsd or Kibana pronto). This includes those flashing grey divs, and the "pulsing dot", but could be extended to any component.
 

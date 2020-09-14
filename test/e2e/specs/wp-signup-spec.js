@@ -88,13 +88,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			return await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step(
-			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
-			async function () {
-				const jetpackAddNewSitePage = await JetpackAddNewSitePage.Visit( driver );
-				await jetpackAddNewSitePage.createNewWordPressDotComSite();
-			}
-		);
+		step( 'Can create a new WordPress site', async function () {
+			await StartPage.Visit( this.driver, StartPage.getStartURL() );
+		} );
 
 		step( 'Can see the account page and enter account details', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
@@ -364,7 +360,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
+	describe.skip( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );

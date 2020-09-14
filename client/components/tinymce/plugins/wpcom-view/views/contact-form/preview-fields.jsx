@@ -11,9 +11,9 @@ import PreviewFieldset from './preview-fieldset';
 import PreviewLegend from './preview-legend';
 import PreviewRequired from './preview-required';
 
-import FormInputCheckbox from 'wp-calypso-client/components/forms/form-checkbox';
-import FormLabel from 'wp-calypso-client/components/forms/form-label';
-import FormRadio from 'wp-calypso-client/components/forms/form-radio';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 const textField = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>

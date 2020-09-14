@@ -1,5 +1,4 @@
-getKeyboardHandler
-==================
+# getKeyboardHandler
 
 ## `getKeyboardHandler( callback: function )`
 

@@ -9,9 +9,14 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { PRODUCTS_TYPES, SELECTOR_PLANS } from '../constants';
-import { slugToSelectorProduct, getJetpackDescriptionWithOptions } from '../utils';
+import {
+	getAllOptionsFromSlug,
+	getJetpackDescriptionWithOptions,
+	slugToSelectorProduct,
+} from '../utils';
 import ProductCard from '../product-card';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
+import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'lib/plans';
+import { JETPACK_LEGACY_PLANS, PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import FormattedHeader from 'components/formatted-header';
@@ -33,6 +38,12 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
 
+	const optionsFromCurrentPlan = ( currentPlan && getAllOptionsFromSlug( currentPlan ) ) || [];
+
+	const currentPlanAllTerms = currentPlan
+		? [ getMonthlyPlanByYearly( currentPlan ), getYearlyPlanByMonthly( currentPlan ) ]
+		: [];
+
 	// This gets all plan objects for us to parse.
 	const planObjects: SelectorProduct[] = useMemo( () => {
 		// Map over all plan slugs and convert them to SelectorProduct types.
@@ -43,25 +54,30 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					!! product &&
 					duration === product.term &&
 					PRODUCTS_TYPES[ productType ].includes( product.productSlug ) &&
+					// Don't include a card of a plan the user already owns regardless of the term
+					! currentPlanAllTerms.includes( product.productSlug ) &&
 					// Don't include a generic/option card if the user already owns a subtype
-					! product.subtypes.includes( currentPlan || '' ) &&
-					// Don't include a card of a plan the user already owns
-					product.productSlug !== currentPlan
+					! optionsFromCurrentPlan.includes( product.productSlug )
 			)
 			.map( ( product: SelectorProduct ) => ( {
 				...product,
 				description: getJetpackDescriptionWithOptions( product ),
 			} ) );
 
-		// If the user does not own a current plan, get it and insert it on the top of the plan array.
-		if ( currentPlan && currentPlan !== PLAN_JETPACK_FREE ) {
+		// If the user owns a plan, get it and insert it on the top of the plan array.
+		if (
+			currentPlan &&
+			currentPlan !== PLAN_JETPACK_FREE &&
+			( JETPACK_LEGACY_PLANS.includes( currentPlan ) ||
+				PRODUCTS_TYPES[ productType ].includes( currentPlan ) )
+		) {
 			const item = slugToSelectorProduct( currentPlan );
 			if ( item ) {
 				plans.unshift( item );
 			}
 		}
 		return plans;
-	}, [ duration, productType, currentPlan ] );
+	}, [ duration, productType, currentPlan, currentPlanAllTerms, optionsFromCurrentPlan ] );
 
 	return (
 		<div className="plans-column">
@@ -74,6 +90,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					onClick={ onPlanClick }
 					currencyCode={ currencyCode }
 					highlight
+					selectedTerm={ duration }
 				/>
 			) ) }
 		</div>

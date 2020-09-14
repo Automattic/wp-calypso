@@ -1,5 +1,4 @@
-Editor Visibility
-=================
+# Editor Visibility
 
 Editor Visibility is a React component that allows the user to set a post's visibility (public, private, or password protected) inside the Editor.
 

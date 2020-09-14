@@ -9,8 +9,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormRadio from 'wp-calypso-client/components/forms/form-radio';
-import FormLabel from 'wp-calypso-client/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
 
 class RecommendationOption extends Component {
 	constructor( props ) {

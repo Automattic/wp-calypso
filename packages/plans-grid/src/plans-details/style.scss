@@ -73,3 +73,14 @@
 		text-align: center;
 	}
 }
+
+.plans-details__select-button.components-button {
+	height: 36px;
+	padding: 0 18px;
+	border-radius: 4px;
+
+	@include break-small {
+		height: 40px;
+		padding: 0 24px;
+	}
+}

@@ -16,14 +16,6 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import '../matchMedia.mock';
 import SuggestionItem from '../src/domain-picker/suggestion-item';
 
-/**
- * disabled the below test suite as these tests have been unmaintained whilst the codebase has moved on
- * and have now become stale. A separate task will be raised to fixed them.
- */
-
-/* eslint-disable */
-
-/*
 const testSuggestion = {
 	domain_name: 'example.com',
 	relevance: 0.9,
@@ -34,11 +26,17 @@ const testSuggestion = {
 	product_slug: '1234',
 };
 
+/**
+ * disabled the below test suite as these tests have been unmaintained whilst the codebase has moved on
+ * and have now become stale. A separate task will be raised to fixed them. See https://github.com/Automattic/wp-calypso/issues/45501
+ */
+
 beforeAll( () => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	( window as any ).configData = require( '../../../../../../config/test.json' );
+	// ( window as any ).configData = require( '../../../../../../config/test.json' );
 } );
 
+/* eslint-disable */
 describe.skip( 'traintracks events', () => {
 	describe( 'render event', () => {
 		it( 'sends render events when first rendered', async () => {
@@ -282,8 +280,6 @@ describe.skip( 'traintracks events', () => {
 		} );
 	} );
 } );
-*/
-
 /* eslint-enable */
 
 describe( 'check conditional elements render correctly', () => {

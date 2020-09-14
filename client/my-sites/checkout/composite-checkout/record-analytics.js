@@ -35,7 +35,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
 				case 'PAYMENT_COMPLETE': {
-					const total_cost = action.payload.total.amount.value / 100; // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
+					const total_cost = action.payload.responseCart.total_cost;
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_payment_success', {
 							coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
@@ -396,9 +396,24 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 			}
 		} catch ( err ) {
+			// This is a fallback to catch any errors caused by the analytics code
+			// (particularly for the error reporting analytics code). Anything in
+			// this block should remain very simple and extremely tolerant of any
+			// kind of data. It should make no assumptions about the data it uses.
+			// There's no fallback for the fallback!
 			debug( 'checkout event error', err.message );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_error', {
+					error_message: err.message,
+					action_type: String( action?.type ),
+					action_payload: String( action?.payload ),
+				} )
+			);
 			return reduxDispatch(
-				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message )
+				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
+					action_type: String( action?.type ),
+					action_payload: String( action?.payload ),
+				} )
 			);
 		}
 	};

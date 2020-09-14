@@ -1,5 +1,4 @@
-Reviews
-======
+# Reviews
 
 This module is used to track the current page, search term, or product being viewed for the reviews list.
 

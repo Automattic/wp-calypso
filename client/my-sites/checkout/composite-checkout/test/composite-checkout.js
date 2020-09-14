@@ -18,6 +18,14 @@ import { render, act, fireEvent } from '@testing-library/react'; // eslint-disab
 import CompositeCheckout from '../composite-checkout';
 import { StripeHookProvider } from 'lib/stripe';
 
+/**
+ * Mocked dependencies
+ */
+jest.mock( 'state/sites/selectors' );
+import { isJetpackSite } from 'state/sites/selectors';
+jest.mock( 'state/selectors/is-site-automated-transfer' );
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
@@ -114,7 +122,7 @@ describe( 'CompositeCheckout', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
-		page.redirect.mockReset();
+		jest.clearAllMocks();
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
@@ -204,6 +212,18 @@ describe( 'CompositeCheckout', () => {
 							product_id: 371,
 							product_name: 'Product',
 							product_slug: 'concierge-session',
+							prices: {},
+						},
+						jetpack_backup_daily: {
+							product_id: 2100,
+							product_name: 'Jetpack Backup (Daily)',
+							product_slug: 'jetpack_backup_daily',
+							prices: {},
+						},
+						jetpack_scan: {
+							product_id: 2106,
+							product_name: 'Jetpack Scan Daily',
+							product_slug: 'jetpack_scan',
 							prices: {},
 						},
 					},
@@ -501,6 +521,47 @@ describe( 'CompositeCheckout', () => {
 		const { getAllByLabelText } = renderResult;
 		getAllByLabelText( 'WordPress.com Personal' ).map( ( element ) =>
 			expect( element ).toHaveTextContent( 'R$144' )
+		);
+	} );
+
+	it( 'adds the product to the cart when the url has a jetpack product', async () => {
+		isJetpackSite.mockImplementation( () => true );
+		isAtomicSite.mockImplementation( () => false );
+
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'jetpack_scan' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$41' )
+		);
+	} );
+
+	it( 'adds two products to the cart when the url has two jetpack products', async () => {
+		isJetpackSite.mockImplementation( () => true );
+		isAtomicSite.mockImplementation( () => false );
+
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { product: 'jetpack_scan,jetpack_backup_daily' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$41' )
+		);
+		getAllByLabelText( 'Jetpack Backup (Daily)' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$42' )
 		);
 	} );
 
@@ -851,6 +912,40 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$49',
 					item_subtotal_integer: 49,
 					item_subtotal_display: 'R$49',
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 2106:
+				return {
+					product_id: 2106,
+					product_name: 'Jetpack Scan Daily',
+					product_slug: 'jetpack_scan',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 4100,
+					item_original_cost_display: 'R$41',
+					item_subtotal_integer: 4100,
+					item_subtotal_display: 'R$41',
+					months_per_bill_period: 12,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 2100:
+				return {
+					product_id: 2100,
+					product_name: 'Jetpack Backup (Daily)',
+					product_slug: 'jetpack_backup_daily',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 4200,
+					item_original_cost_display: 'R$42',
+					item_subtotal_integer: 4200,
+					item_subtotal_display: 'R$42',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,

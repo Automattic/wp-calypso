@@ -10,5 +10,6 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function () {
+	plansV2( `/:locale/pricing`, controller.jetpackPricingContext );
 	plansV2( `/pricing`, controller.jetpackPricingContext );
 }

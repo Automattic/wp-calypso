@@ -88,7 +88,6 @@ When dispatching through the store's `dispatch` function the action will start a
 Sometimes we need to bypass the data layer so that we don't create endless loops of action dispatches.
 In these cases we can import the `bypassDataLayer()` function which will cause the action to do just that: bypass the data layer.
 
-
 ```js
 const {
 	dispatch, // issues new action dispatches

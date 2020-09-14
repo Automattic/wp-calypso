@@ -3,18 +3,19 @@
  */
 import * as React from 'react';
 import classNames from 'classnames';
-import { createInterpolateElement } from '@wordpress/element';
-import { Button, Tip } from '@wordpress/components';
-import { Icon, check, close } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
+/**
+ * Internal dependencies
+ */
+import PlansFeatureList from '../plans-feature-list';
+
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
 
-const TickIcon = <Icon icon={ check } size={ 17 } />;
-const CrossIcon = <Icon icon={ close } size={ 17 } />;
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">
 		<path d="M0 0 L8 0 L4 4 L0 0" fill="currentColor" />
@@ -33,71 +34,6 @@ const SPACE_BAR_KEYCODE = 32;
  * @param __ translate function
  */
 
-function domainMessageStateMachine(
-	isFreePlan: boolean,
-	domain: DomainSuggestions.DomainSuggestion | undefined,
-	__: Function
-) {
-	const states = {
-		NO_DOMAIN: {
-			FREE_PLAN: null,
-			PAID_PLAN: {
-				className: 'plan-item__domain-summary is-cta',
-				icon: TickIcon,
-				// translators: %s is a domain name eg: example.com is included
-				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
-					</>
-				),
-			},
-		},
-		FREE_DOMAIN: {
-			FREE_PLAN: null,
-			PAID_PLAN: {
-				className: 'plan-item__domain-summary is-cta',
-				icon: TickIcon,
-				// translators: %s is a domain name eg: example.com is included
-				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
-					</>
-				),
-			},
-		},
-		PAID_DOMAIN: {
-			FREE_PLAN: {
-				className: 'plan-item__domain-summary is-free',
-				icon: CrossIcon,
-				// translators: <url /> is a domain name eg: example.com is not included
-				domainMessage: (
-					<span>
-						{ createInterpolateElement( __( '<url /> is not included' ), {
-							url: <span className="plan-item__url">{ domain?.domain_name }</span>,
-						} ) }
-					</span>
-				),
-			},
-			PAID_PLAN: {
-				className: 'plan-item__domain-summary is-picked',
-				icon: TickIcon,
-				// translators: <url /> is a domain name eg: example.com is included
-				domainMessage: (
-					<span>
-						{ createInterpolateElement( __( '<url /> is included' ), {
-							url: <span className="plan-item__url">{ domain?.domain_name }</span>,
-						} ) }
-					</span>
-				),
-			},
-		},
-	};
-	const domainKey = domain && ( domain.is_free ? 'FREE_DOMAIN' : 'PAID_DOMAIN' );
-	const planKey = isFreePlan ? 'FREE_PLAN' : 'PAID_PLAN';
-
-	return states[ domainKey || 'NO_DOMAIN' ][ planKey ];
-}
-
 export interface Props {
 	slug: string;
 	name: string;
@@ -113,6 +49,9 @@ export interface Props {
 	allPlansExpanded: boolean;
 	disabledLabel?: string;
 }
+
+// NOTE: this component is used by PlansAccordion and contains some duplicated code from plans-table/plans-item.tsx
+// TODO: keep only this component when it can support also being used in PlansTable
 
 const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
@@ -136,8 +75,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
-
-	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
 	React.useEffect( () => {
 		setIsOpenInternalState( allPlansExpanded );
@@ -186,33 +123,14 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								<span>{ __( 'Choose' ) }</span>
 							</Button>
 						</div>
-						<div className="plan-item__features">
-							<ul className="plan-item__feature-item-group">
-								<li className="plan-item__feature-item">
-									{ disabledLabel ? (
-										<span className="plan-item__disabled-message">
-											<Tip>{ disabledLabel }</Tip>
-										</span>
-									) : (
-										domainMessage && (
-											<Button
-												className={ domainMessage.className }
-												onClick={ onPickDomainClick }
-												isLink
-											>
-												{ domainMessage.icon }
-												{ domainMessage.domainMessage }
-											</Button>
-										)
-									) }
-								</li>
-								{ features.map( ( feature, i ) => (
-									<li key={ i } className="plan-item__feature-item">
-										{ TickIcon } { feature }
-									</li>
-								) ) }
-							</ul>
-						</div>
+						<PlansFeatureList
+							features={ features }
+							domain={ domain }
+							isFree={ isFree }
+							isOpen={ isOpen }
+							onPickDomain={ onPickDomainClick }
+							disabledLabel={ disabledLabel }
+						/>
 					</div>
 				</div>
 			</div>

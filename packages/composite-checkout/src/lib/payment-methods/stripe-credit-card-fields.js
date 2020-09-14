@@ -21,6 +21,8 @@ import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
 import { showStripeModalAuth } from '../stripe';
 import {
+	FormStatus,
+	TransactionStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useMessages,
@@ -406,7 +408,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	useEffect( () => {
 		let isSubscribed = true;
 
-		if ( transactionStatus === 'authorizing' ) {
+		if ( transactionStatus === TransactionStatus.AUTHORIZING ) {
 			debug( 'showing auth' );
 			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 			showStripeModalAuth( {
@@ -470,7 +472,7 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -480,10 +482,10 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

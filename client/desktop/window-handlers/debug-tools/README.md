@@ -1,5 +1,4 @@
-Debug Tools
-=========
+# Debug Tools
 
 Provides a way for the client to send debug back to the wrapper.
 

@@ -23,7 +23,13 @@ import SpinnerLine from 'components/spinner-line';
 import QueryActivePromotions from 'components/data/query-active-promotions';
 import { abtest } from 'lib/abtest';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
+import {
+	getPlan,
+	getPlanBySlug,
+	getPlanRawPrice,
+	getPlanSlug,
+	getDiscountedRawPrice,
+} from 'state/plans/selectors';
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -43,6 +49,7 @@ import {
 } from 'lib/plans';
 import {
 	getPlanDiscountedRawPrice,
+	getSitePlanRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
 } from 'state/sites/plans/selectors';
@@ -754,17 +761,13 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
-		.map( ( { planName, planConstantObj, availableForPurchase } ) => {
+		.map( ( { planName, availableForPurchase } ) => {
 			if ( ! availableForPurchase ) {
 				return 0;
 			}
-			const planProductId = planConstantObj.getProductId();
-			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName, {
-				isMonthly: false,
-			} );
-			const annualRawPrice = getPlanRawPrice( state, planProductId, false );
-
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number' ) {
+			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName );
+			const annualRawPrice = getSitePlanRawPrice( state, siteId, planName );
+			if ( typeof annualDiscountPrice !== 'number' || typeof annualRawPrice !== 'number' ) {
 				return 0;
 			}
 
@@ -877,6 +880,13 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
 				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
+				const isMonthlyObj = { isMonthly: showMonthlyPrice };
+				const rawPrice = siteId
+					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
+					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
+				const discountPrice = siteId
+					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
+					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
 				return {
 					availableForPurchase,
@@ -884,9 +894,7 @@ export default connect(
 					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
-						isMonthly: showMonthlyPrice,
-					} ),
+					discountPrice,
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
@@ -904,7 +912,7 @@ export default connect(
 						newPlan ||
 						bestValue ||
 						plans.length === 1,
-					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
+					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};

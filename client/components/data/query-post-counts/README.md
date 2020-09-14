@@ -1,5 +1,4 @@
-Query Post Counts
-================
+# Query Post Counts
 
 `<QueryPostCounts />` is a React component used in managing network requests for post counts.
 

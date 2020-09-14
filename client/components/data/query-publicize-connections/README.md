@@ -1,5 +1,4 @@
-Query Publicize Connections
-===========================
+# Query Publicize Connections
 
 `<QueryPublicizeConnections />` is a React component used in managing network requests for Publicize connections.
 

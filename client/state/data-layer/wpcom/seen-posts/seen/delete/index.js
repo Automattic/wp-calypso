@@ -45,7 +45,7 @@ export function onError() {
 	return [];
 }
 
-registerHandlers( 'state/data-layer/wpcom/unseen-posts/seen/new/index.js', {
+registerHandlers( 'state/data-layer/wpcom/unseen-posts/seen/delete/index.js', {
 	[ READER_SEEN_MARK_AS_UNSEEN_REQUEST ]: [
 		dispatchRequest( {
 			fetch,

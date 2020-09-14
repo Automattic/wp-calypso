@@ -76,6 +76,7 @@ import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 import { useTransactionStatus } from './lib/transaction-status';
 import { usePaymentProcessor } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
+import { FormStatus, TransactionStatus } from './types';
 
 // Re-export the public API
 export {
@@ -148,4 +149,6 @@ export {
 	MainContentUI,
 	CheckoutStepAreaUI,
 	SubmitButtonWrapperUI,
+	FormStatus,
+	TransactionStatus,
 };

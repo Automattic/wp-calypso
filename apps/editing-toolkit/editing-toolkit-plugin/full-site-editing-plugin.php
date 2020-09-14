@@ -271,7 +271,7 @@ function load_block_patterns() {
 
 	Block_Patterns::get_instance();
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_patterns' );
+add_action( 'init', __NAMESPACE__ . '\load_block_patterns', 20 );
 
 /**
  * Load Premium Content Block
@@ -315,3 +315,13 @@ function load_wpcom_block_editor_sidebar() {
 	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
+
+/**
+ * Coming soon
+ */
+function load_coming_soon() {
+	if ( defined( 'WPCOM_PUBLIC_COMING_SOON' ) && WPCOM_PUBLIC_COMING_SOON ) {
+		require_once __DIR__ . '/coming-soon/coming-soon.php';
+	}
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );

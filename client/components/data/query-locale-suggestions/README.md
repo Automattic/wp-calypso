@@ -1,5 +1,4 @@
-Query Locale Suggestions
-===========================
+# Query Locale Suggestions
 
 `<QueryLocaleSuggestions />` is a React component that manages requests to get locale suggestions for the user based on his or her IP/geo-location.
 

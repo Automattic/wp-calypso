@@ -1,5 +1,4 @@
-Action Log
-==========
+# Action Log
 
 **A Redux [store enhancer](https://github.com/reactjs/redux/blob/HEAD/docs/Glossary.md#store-enhancer)**
 
@@ -13,27 +12,27 @@ is useful to track and inspect actions flowing through the store.
 
 ### Methods
 
-* `actionLog.start()`
+- `actionLog.start()`
   Enable action recording to history. It is enabled by default.
 
-* `actionLog.stop()`
+- `actionLog.stop()`
   Disable action recording to history.
 
-* `actionLog.setSize( size )`
+- `actionLog.setSize( size )`
   Set the desired action history size. The history will be flushed periodically to prevent unbounded
   growth.
 
-* `actionLog.history`
+- `actionLog.history`
   Return the current history. The history is an array of action objects.
 
-* `actionLog.filter( query )`
+- `actionLog.filter( query )`
   Return a filtered history of actions matching the query. See [Query](#query).
 
-* `actionLog.watch( query )`
+- `actionLog.watch( query )`
   Watch flow of matching actions real-time in the console. Only the single, most recent watch will
   have effect. See [Query](#query).
 
-* `actionLog.unwatch()`
+- `actionLog.unwatch()`
   Disable action watching.
 
 ### Query
@@ -41,12 +40,12 @@ is useful to track and inspect actions flowing through the store.
 The `actionLog.filter( query )` and `actionLog.watch( query )` accept a `query`. The following types
 are valid queries which are useful for different situations:
 
-* `string`: `actionLog.filter( "COMMENTS_LIKE" )` - Match actions whose type exactly matches the
+- `string`: `actionLog.filter( "COMMENTS_LIKE" )` - Match actions whose type exactly matches the
   string.
 
-* `RexExp`: `actionLog.filter( /^comments_/i )` - Match actions whose type is matched by the RegExp.
+- `RexExp`: `actionLog.filter( /^comments_/i )` - Match actions whose type is matched by the RegExp.
 
-* `PredicateFunction :: action -> bool`:
+- `PredicateFunction :: action -> bool`:
   `actionLog.filter( action => action.siteId === interestingSiteId)` - A predicate function that
   accepts an action and returns `true` if the action matches.
 
@@ -70,4 +69,3 @@ actionLog.watch( /post/i )
 
 actionLog.watch( action => action.siteId === myFavoriteSiteId )
 ```
-

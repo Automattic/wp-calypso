@@ -1,5 +1,4 @@
-TermFormDialog
-==============
+# TermFormDialog
 
 The `TermFormDialog` component renders a dialog that allows to create/edit Terms.
 
@@ -12,7 +11,6 @@ import TermFormDialog from 'blocks/term-form-dialog';
 ```
 
 ## Props
-
 
 ### `postType`
 

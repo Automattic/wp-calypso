@@ -2,7 +2,6 @@
 
 Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Automattic/wp-calypso) client and WordPress.com in general.
 
-
 ## Table of contents
 
 - [Pre-requisites](#pre-requisites)
@@ -30,6 +29,7 @@ Automated end-to-end acceptance tests for the [wp-calypso](https://github.com/Au
   - [Launch Logged-In Window](docs/miscellaneous.md#launch-logged-in-window)
   - [User account requirements](docs/miscellaneous.md#user-account-requirements)
   - [List of wrapper repos & friends](docs/miscellaneous.md#list-of-wrapper-repos--friends)
+  - [How to fix the `chromedriver not found` error when running e2e tests locally](docs/miscellaneous.md#how-to-fix-the-chromedriver-not-found-error-when-running-e2e-tests-locally)
 
 ## Pre-requisites
 

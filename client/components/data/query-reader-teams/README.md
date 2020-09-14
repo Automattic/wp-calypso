@@ -1,5 +1,4 @@
-Query Reader Teams
-================
+# Query Reader Teams
 
 `<QueryReaderTeams />` is a React component used to fetch the logged in users teams.
 For more details on reader teams check out client/state/reader/teams.

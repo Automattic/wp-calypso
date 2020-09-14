@@ -1,5 +1,4 @@
-`create-selector`
-=================
+# `create-selector`
 
 This module exports a single function which creates a memoized state selector for use with the Redux global application state.
 

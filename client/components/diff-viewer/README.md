@@ -1,5 +1,4 @@
-Unified Diff Viewer
-===
+# Unified Diff Viewer
 
 This component renders the output of a unified diff (`git diff` or `diff -u`) in a
 visual format recognizable by someone who works with `diff` and comparing files.
@@ -20,9 +19,9 @@ export const CommitView = ( { commitHash, description, diff } ) => (
 
 ### Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`diff`* | `string` | `''` | Actual text output of the diff
+| Name     | Type     | Default | Description                    |
+| -------- | -------- | ------- | ------------------------------ |
+| `diff`\* | `string` | `''`    | Actual text output of the diff |
 
 ### Additional usage information
 

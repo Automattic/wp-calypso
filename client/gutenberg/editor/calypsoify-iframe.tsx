@@ -232,7 +232,14 @@ class CalypsoifyIframe extends Component<
 		// any other message is unknown and may indicate a bug
 	};
 
-	onIframePortMessage = ( { data, ports }: MessageEvent ) => {
+	onIframePortMessage = ( event: MessageEvent ) => {
+		const { data, ports: backCompatPorts } = event;
+
+		// in a previous release of wpcom-block-editor, ports array wasn't explicitly passed into the data object
+		// and the MessageEvent.ports prop was used instead. This gives support for both versions of wpcom-block-editor
+		// see: https://github.com/Automattic/wp-calypso/pull/45436
+		const ports = data.ports ?? backCompatPorts;
+
 		/* eslint-disable @typescript-eslint/no-explicit-any */
 		const { action, payload }: { action: EditorActions; payload: any } = data;
 
@@ -343,12 +350,14 @@ class CalypsoifyIframe extends Component<
 			const isGutenboarding =
 				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
 			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
-			const isGutenboardingNewLaunch = config.isEnabled( 'gutenboarding/new-launch' );
+			const isNewLaunch = config.isEnabled( 'gutenboarding/new-launch' );
+			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl,
-				isNewLaunch: isGutenboardingNewLaunch,
+				isNewLaunch,
+				isExperimental,
 			} );
 		}
 

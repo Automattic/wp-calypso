@@ -3,15 +3,17 @@
  */
 import { createContext } from 'react';
 import {
-	ReactStandardAction,
+	FormStatus,
 	PaymentMethod,
 	PaymentProcessorProp,
+	ReactStandardAction,
+	TransactionStatus,
 	TransactionStatusManager,
 } from '../types';
 
 const defaultTransactionStatusManager: TransactionStatusManager = {
-	transactionStatus: 'not-started',
-	previousTransactionStatus: 'not-started',
+	transactionStatus: TransactionStatus.NOT_STARTED,
+	previousTransactionStatus: TransactionStatus.NOT_STARTED,
 	transactionError: null,
 	transactionLastResponse: null,
 	transactionRedirectUrl: null,
@@ -31,8 +33,8 @@ interface CheckoutContext {
 	showInfoMessage: ( message: string ) => void;
 	showSuccessMessage: ( message: string ) => void;
 	onEvent: ( action: ReactStandardAction ) => void;
-	formStatus: string;
-	setFormStatus: ( newStatus: string ) => void;
+	formStatus: FormStatus;
+	setFormStatus: ( newStatus: FormStatus ) => void;
 	transactionStatusManager: TransactionStatusManager;
 	paymentProcessors: PaymentProcessorProp;
 }
@@ -45,7 +47,7 @@ const defaultCheckoutContext: CheckoutContext = {
 	showInfoMessage: noop,
 	showSuccessMessage: noop,
 	onEvent: noop,
-	formStatus: 'loading',
+	formStatus: FormStatus.LOADING,
 	setFormStatus: noop,
 	transactionStatusManager: defaultTransactionStatusManager,
 	paymentProcessors: {},

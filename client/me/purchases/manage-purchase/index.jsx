@@ -87,7 +87,6 @@ import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
 import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
-import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
 import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
 import CartStore from 'lib/cart/store';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
@@ -586,13 +585,9 @@ class ManagePurchase extends Component {
 				<Main className={ classes }>
 					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
 					{ showExpiryNotice ? (
-						<Notice
-							status="is-info"
-							text={ <PlanRenewalMessage purchase={ purchase } withoutLink /> }
-							showDismiss={ false }
-						>
-							<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>
-								{ translate( 'More info' ) }
+						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+							<NoticeAction href={ `/plans/${ site.slug || '' }` }>
+								{ translate( 'View plans' ) }
 							</NoticeAction>
 						</Notice>
 					) : (

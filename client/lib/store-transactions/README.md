@@ -1,5 +1,4 @@
-store-transactions
-==================
+# store-transactions
 
 This module contains functions for creating WordPress.com Store transactions using the `POST /transactions` endpoint.
 
@@ -53,6 +52,7 @@ var steps = submit({
 ## Transaction Flow Steps
 
 ### New Credit Card
+
 1. input-validation
 2. submitting-payment-key-request
 3. received-payment-key-response
@@ -60,6 +60,7 @@ var steps = submit({
 5. received-wpcom-response (also includes `step.data`)
 
 ### Stored Credit Card or Full Credits
+
 1. input-validation
 2. submitting-wpcom-request
 3. received-wpcom-response (also includes `step.data`)
