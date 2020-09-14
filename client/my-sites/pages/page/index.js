@@ -50,11 +50,10 @@ import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import canCurrentUser from 'state/selectors/can-current-user';
 import config from 'config';
 
-import 'state/data-layer/wpcom/sites/homepage';
-
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
 
 function preloadEditor() {
+	// preloading the post editor is also neccessary to set the homepage and coming soon page.
 	preload( 'post-editor' );
 }
 
@@ -221,11 +220,7 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem
-				onClick={ this.editPage }
-				onMouseOver={ preloadEditor }
-				onFocus={ preloadEditor }
-			>
+			<PopoverMenuItem onClick={ this.editPage }>
 				<Gridicon icon="pencil" size={ 18 } />
 				{ this.props.translate( 'Edit' ) }
 			</PopoverMenuItem>
@@ -747,6 +742,7 @@ class Page extends Component {
 
 	handleMenuToggle = ( isVisible ) => {
 		if ( isVisible ) {
+			preloadEditor();
 			// record a GA event when the menu is opened
 			this.props.recordMoreOptions();
 		}
