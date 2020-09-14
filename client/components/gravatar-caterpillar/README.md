@@ -4,7 +4,7 @@ This component is used to display a row of [gravatars](https://gravatar.com/) fo
 
 On smaller screens (<660px wide), the component will display half the maximum number of gravatars.
 
-## How to use:
+## How to use
 
 ```js
 import GravatarCaterpillar from 'components/gravatar-caterpillar';

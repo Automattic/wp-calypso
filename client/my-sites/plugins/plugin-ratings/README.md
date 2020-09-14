@@ -2,7 +2,7 @@
 
 This component is used to display the detail of how the ratings of a plugin are divided.
 
-## How to use:
+## How to use
 
 ```js
 import PluginRatings from 'my-sites/plugins/plugin-ratings';

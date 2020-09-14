@@ -2,7 +2,7 @@
 
 This component is used to display a button with an embedded number indicator.
 
-## How to use:
+## How to use
 
 ```js
 import CommentButton from 'blocks/comment-button';

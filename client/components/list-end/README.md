@@ -4,7 +4,7 @@ This component is used to display a WordPress logo in the centre of a line. It s
 
 ---
 
-## How to use:
+## How to use
 
 ```js
 import ListEnd from 'components/list-end';

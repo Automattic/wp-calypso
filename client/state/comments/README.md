@@ -1,6 +1,6 @@
 # Comments
 
-## This store has the following structure:
+## This store has the following structure
 
 ```
 comments = {
@@ -10,7 +10,7 @@ comments = {
 }>;
 ```
 
-## Types:
+## Types
 
     CommentTargetId: `${siteId}-${postId}`;
     RequestId: `${siteId}-${postId}-${stringify(query)}`; // query is the query to wpcom replies()
@@ -36,12 +36,12 @@ getPostCommentsTree - returns a memoized comments tree of the form:
 	}
 ```
 
-### Simple selectors:
+### Simple selectors
 
 getPostCommentItems - gets items of siteId, postId;
 getPostTotalCommentsCount - gets totalCommentsCount of siteId, postId
 
-### Compute selectors:
+### Compute selectors
 
 getPostMostRecentCommentDate - gets the date of most recent comment
 getPostOldestCommentDate - gets the date of the earliest comment

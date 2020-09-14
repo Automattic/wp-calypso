@@ -2,7 +2,7 @@
 
 This component is used to display a current or next plan, highlighting the features you choose.
 
-## Usage:
+## Usage
 
 ```javascript
 	<PlanCompareCard

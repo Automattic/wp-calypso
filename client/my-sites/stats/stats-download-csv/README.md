@@ -2,7 +2,7 @@
 
 The download csv component creates a download link that allows a stats-list to be exported as a csv file. [browser-filesaver](https://github.com/tmpvar/browser-filesaver) performs the HTML5 file saving operations behind the scenes
 
-## How to use:
+## How to use
 
 ```js
 import DownloadCsv from 'my-sites/stats/stats-download-csv';

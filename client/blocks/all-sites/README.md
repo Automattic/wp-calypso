@@ -2,7 +2,7 @@
 
 This component displays the All Sites item. It's used in the Sidebar as the current site selection and in the picker.
 
-## How to use:
+## How to use
 
 ```js
 import AllSites from 'blocks/all-sites';

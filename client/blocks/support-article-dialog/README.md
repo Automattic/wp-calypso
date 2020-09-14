@@ -4,7 +4,7 @@ The `SupportArticleDialog` component displays a support article right in Calypso
 
 The component is rendered from our main `<Layout />` component and so is available everywhere in Calypso.
 
-## Basic usage:
+## Basic usage
 
 To launch a support article call the corresponding redux action, like so:
 

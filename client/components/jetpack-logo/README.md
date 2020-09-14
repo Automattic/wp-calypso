@@ -4,7 +4,7 @@ This component is used to display a Jetpack logo
 
 ---
 
-## How to use:
+## How to use
 
 ```js
 import JetpackLogo from 'components/jetpack-logo';

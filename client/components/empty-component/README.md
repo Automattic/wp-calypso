@@ -2,7 +2,7 @@
 
 Useful for stubbing out components that will not build on the server when rendering server-side.
 
-## How to use:
+## How to use
 
 In the webpack server [config file](/webpack.config.node.js):
 

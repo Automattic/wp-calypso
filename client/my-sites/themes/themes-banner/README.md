@@ -2,7 +2,7 @@
 
 This component is used to implement a banner with image, text, and button.
 
-## How to use:
+## How to use
 
 Add the following code into the same directory of this README file. Each banner should be on its own file.
 

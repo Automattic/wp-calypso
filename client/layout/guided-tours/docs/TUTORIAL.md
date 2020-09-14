@@ -50,7 +50,7 @@ We only want our tour to show for users who have registered in the past 7 days. 
 
 Now we're ready to actually start writing our tour.
 
-### Scaffolding, etc.
+### Scaffolding, etc
 
 First we'll need to create a directory tour, under `tours`. In there, we create two files: `meta.js` and `index.js`.
 `meta.js` contains the metadata for a tour. Here's an empty boilerplate:

@@ -2,7 +2,7 @@
 
 This component is used to represent a list of `Plugin-Site`, with a `Section-Header` serving as a title for the whole bunch.
 
-## How to use:
+## How to use
 
 ```jsx
 import PluginSiteList from 'my-sites/plugins/plugin-site-list';

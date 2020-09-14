@@ -43,7 +43,7 @@ const obj = {
 
 The `appliesTo` object for a promotion is a complex object which describes what all the promotion can be applied to. At this point, excluded products or categories are not supported.
 
-#### Example: all products.
+#### Example: all products
 
 ```js
 const obj = {
@@ -53,7 +53,7 @@ const obj = {
 };
 ```
 
-#### Example: specific products.
+#### Example: specific products
 
 ```js
 const obj = {
@@ -63,7 +63,7 @@ const obj = {
 };
 ```
 
-### Example: products by category.
+### Example: products by category
 
 ```js
 const obj = {

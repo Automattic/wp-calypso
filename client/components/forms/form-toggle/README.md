@@ -2,7 +2,7 @@
 
 This component is used to implement toggle switches.
 
-## How to use:
+## How to use
 
 ```js
 import FormToggle from 'components/forms/form-toggle';

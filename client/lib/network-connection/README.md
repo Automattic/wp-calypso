@@ -2,7 +2,7 @@
 
 `Network connection` provides simple UI for the cases when the user lost connection to the internet or to our servers.
 
-## How to use:
+## How to use
 
 Public API can be used through main file:
 

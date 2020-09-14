@@ -2,7 +2,7 @@
 
 This component is used to display the meta information of a single plugin. Includes the plugin banner, plugin icon, description, author and plugin link.
 
-## How to use:
+## How to use
 
 ```js
 import PluginMeta 'my-sites/plugins/plugin-meta';

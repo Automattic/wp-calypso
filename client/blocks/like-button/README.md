@@ -4,7 +4,7 @@ This component is used to display a like button.
 It has two parts, the actual button and a container that works with the LikeStore.
 For most usage, the container is the easiest route.
 
-## How to use the container:
+## How to use the container
 
 ```js
 import LikeButtonContainer from 'blocks/like-button';
@@ -23,7 +23,7 @@ render: function() {
 - `siteId`: number, a site ID to fetch likes for
 - `postId`: number, a post ID to fetch likes for
 
-## How to use the button directly:
+## How to use the button directly
 
 ```js
 import LikeButton from 'blocks/like-button/button';

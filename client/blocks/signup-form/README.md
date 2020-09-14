@@ -2,7 +2,7 @@
 
 This block renders a Signup Form. It magically handles email, username, and password validation.
 
-## Usage:
+## Usage
 
 A Signup Form instance expects `save` and `submitForm` properties, `save` is called `onBlur` of each field. `submitForm` is called when the form is submitted.
 Optional:

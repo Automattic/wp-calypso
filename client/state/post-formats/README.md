@@ -38,7 +38,7 @@ state.postFormats = {
 };
 ```
 
-## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
+## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules
 
 ### `isRequestingPostFormats`
 

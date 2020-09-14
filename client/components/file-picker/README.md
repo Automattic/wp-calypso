@@ -4,7 +4,7 @@ This component opens a native file picker when its children are clicked on.
 It is a very thin wrapper around
 [`component/file-picker`](https://github.com/component/file-picker)
 
-## How to use:
+## How to use
 
 ```js
 import FilePicker from 'components/file-picker';

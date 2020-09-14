@@ -44,7 +44,7 @@ The data is stored in a private variable but can be accessed though the stores p
 
 Returns a plugin object or null
 
-### Example Component Code:
+### Example Component Code
 
 ```es6
 /**
@@ -92,7 +92,7 @@ export class YourComponent extends Component {
 
 Actions update the data stored in WPorg store.
 
-### Public methods.
+### Public methods
 
 #### PluginsDataActions.fetchPluginData( pluginSlug );
 
@@ -100,7 +100,7 @@ Triggers api call to fetch the plugin data and update the store.
 
 ---
 
-### Example Component Code:
+### Example Component Code
 
 ```jsx
 /**

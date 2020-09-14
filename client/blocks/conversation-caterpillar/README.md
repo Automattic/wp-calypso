@@ -2,7 +2,7 @@
 
 This component is used to show who's involved in a conversation, and how many comments have been made.
 
-## How to use:
+## How to use
 
 ```js
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';

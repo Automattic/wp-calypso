@@ -2,7 +2,7 @@
 
 This component renders a simple gauge to show a percentage visually.
 
-## How to use:
+## How to use
 
 ```js
 import Gauge from 'components/gauge';
