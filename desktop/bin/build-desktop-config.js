@@ -12,7 +12,11 @@ const base = JSON.parse( fs.readFileSync( BASE_CONFIG, 'utf-8' ) );
 let env;
 try {
 	env = JSON.parse( fs.readFileSync( TARGET_CONFIG, 'utf-8' ) );
-} catch {}
+} catch ( e ) {
+	if ( process.env.CI ) {
+		console.error( 'Error reading target config: ', e.message );
+	}
+}
 
 const config = JSON.stringify( Object.assign( base, env ), null, 2 );
 
