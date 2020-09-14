@@ -7,7 +7,6 @@ import React, { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import FormattedBlock from 'components/notes-formatted-block';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 
 // FUTURE WORK: move this to a shared location
 interface Activity {
@@ -31,16 +30,11 @@ const ActivityDescription: FunctionComponent< Props > = ( {
 } ) => (
 	<>
 		{ activityDescription.map( ( description, index ) => {
-			const { intent, section, type, url } = description;
-
-			const content =
-				isJetpackCloud() && type === 'link' && url?.startsWith( 'https://wordpress.com/' )
-					? { ...description, type: undefined, url: undefined }
-					: description;
+			const { intent, section } = description;
 
 			return (
 				<FormattedBlock
-					content={ content }
+					content={ description }
 					key={ index }
 					meta={ { activity: activityName, intent, section } }
 				/>
