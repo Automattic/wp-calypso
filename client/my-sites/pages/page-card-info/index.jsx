@@ -9,7 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import { isComingSoonPage, isFrontPage, isPostsPage } from 'state/pages/selectors';
+import { isFrontPage, isPostsPage } from 'state/pages/selectors';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getEditorUrl from 'state/selectors/get-editor-url';
@@ -42,7 +42,6 @@ function PageCardInfo( {
 	page,
 	showTimestamp,
 	showPublishedStatus,
-	isComingSoon,
 	isFront,
 	isPosts,
 	siteUrl,
@@ -66,12 +65,6 @@ function PageCardInfo( {
 						gridiconSize={ ICON_SIZE }
 						includeBasicStatus={ true }
 					/>
-				) }
-				{ isComingSoon && (
-					<span className="page-card-info__badge">
-						<Gridicon icon="time" size={ ICON_SIZE } className="page-card-info__badge-icon" />
-						<span className="page-card-info__badge-text">{ translate( 'Coming Soon' ) }</span>
-					</span>
 				) }
 				{ isFront && (
 					<span className="page-card-info__badge">
@@ -102,7 +95,6 @@ export default connect( ( state, props ) => {
 	const themeId = PostMetadata.homepageTemplate( props.page );
 
 	return {
-		isComingSoon: isComingSoonPage( state, props.page.site_ID, props.page.ID ),
 		isFront: isFrontPage( state, props.page.site_ID, props.page.ID ),
 		isPosts: isPostsPage( state, props.page.site_ID, props.page.ID ),
 		theme: themeId && getTheme( state, 'wpcom', themeId ),
