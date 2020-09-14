@@ -968,7 +968,7 @@ necessary.  Here is a sample; alter the names:
 That's all there is to it!
 ```
 
-### <ttps://github.com/slevithan/xregexp>
+### <https://github.com/slevithan/xregexp>
 
 #### client/state/embeds/utils.js
 
