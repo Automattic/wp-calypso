@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable wpcalypso/import-docblock */
 /* global fullSiteEditing */
 /**

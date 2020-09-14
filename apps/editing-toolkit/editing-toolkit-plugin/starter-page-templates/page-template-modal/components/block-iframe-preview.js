@@ -7,7 +7,6 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import {
 	createPortal,
 	useRef,
@@ -22,7 +21,6 @@ import { withSelect } from '@wordpress/data';
 import { compose, withSafeTimeout } from '@wordpress/compose';
 
 import { __ } from '@wordpress/i18n';
-/* eslint-enable import/no-extraneous-dependencies */
 
 import CustomBlockPreview from './block-preview';
 
