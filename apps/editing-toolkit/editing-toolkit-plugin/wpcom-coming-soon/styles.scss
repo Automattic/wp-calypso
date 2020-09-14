@@ -8,8 +8,7 @@ html {
 	background: #117ac9;
 	color: #fff;
 	display: grid;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
-		'Cantarell', 'Helvetica Neue', sans-serif;
+	font-family: $sans;
 	grid-gap: 24px;
 	-ms-grid-columns: ( 1fr ) [1];
 	grid-template-columns: repeat( 1, 1fr );
@@ -49,6 +48,7 @@ html {
 .description,
 .copy {
 	font-family: $serif;
+	font-weight: 400;
 }
 .marketing {
 	padding-bottom: 8px;
@@ -98,6 +98,7 @@ html {
 	.description,
 	.copy {
 		font-family: $brand-serif;
+		font-weight: 400;
 	}
 	.name {
 		font-size: 23px;
