@@ -9,7 +9,7 @@
 
 The module works by initiating polling when the data module has one or more objects listening for a `change` and stopping when there are no longer any `change` events bound. Polling is also paused when the visibility state of the page changes to hidden and resumed when the page is focused, unless the `pauseWhenHidden` option is set to `false`.
 
-# Usage
+## Usage
 
 ### Pollers#add( store, method, [options] )
 
@@ -26,7 +26,7 @@ Add a new poller that fetches updates
 
 - @param {int|object} `poller` - id or instance of the poller to remove
 
-# Example
+## Example
 
 ```js
 import PollerPool from 'lib/data-poller' );

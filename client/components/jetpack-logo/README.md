@@ -4,7 +4,7 @@ This component is used to display a Jetpack logo
 
 ---
 
-#### How to use:
+## How to use:
 
 ```js
 import JetpackLogo from 'components/jetpack-logo';
@@ -18,7 +18,7 @@ export default function JetpackLogoExample() {
 }
 ```
 
-#### Props
+## Props
 
 - `className` : (string) Custom class name to be added to the SVG element
 - `full` : (bool) Whether or not to show the Jetpack text alongside the icon

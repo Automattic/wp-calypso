@@ -2,7 +2,9 @@
 
 `Site` handler class.
 
-### Create a `Site` instance from WPCOM
+## Example
+
+Create a `Site` instance from WPCOM
 
 ```js
 var wpcom = require('wpcom')('<your-token>');

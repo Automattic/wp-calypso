@@ -49,9 +49,11 @@ state.siteRoles = {
 };
 ```
 
-## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
+## Selectors
 
-#### `isRequestingSiteRoles`
+Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
+
+### `isRequestingSiteRoles`
 
 Returns true if user roles are currently fetching for the given site ID.
 
@@ -61,7 +63,7 @@ import { isRequestingSiteRoles } from 'state/site-roles/selectors';
 const isRequesting = isRequestingSiteRoles( state, 12345678 );
 ```
 
-#### `getSiteRoles`
+### `getSiteRoles`
 
 Returns an array of all supported user roles for the given site ID.
 

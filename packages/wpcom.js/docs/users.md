@@ -2,7 +2,9 @@
 
 `Users` handler class.
 
-### Create a `Users` instance from WPCOM
+## Example
+
+Create a `Users` instance from WPCOM
 
 ```js
 var wpcom = require('wpcom')('<your-token>');

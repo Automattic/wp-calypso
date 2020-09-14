@@ -23,13 +23,14 @@ module.exports = {
 						plugins: [
 							// Plugins from https://www.npmjs.com/package/remark-preset-lint-markdown-style-guide
 							'lint-no-literal-urls',
+							'lint-heading-increment',
 						],
 					},
 				],
 			},
 		},
 		{
-			// This lints the codeblocks marked as `javascritp`, `js`, `cjs` or `ejs`, all valid aliases
+			// This lints the codeblocks marked as `javascript`, `js`, `cjs` or `ejs`, all valid aliases
 			// See:
 			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
 			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files

@@ -9,7 +9,7 @@ import Timezone from 'components/timezone';
 
 export default class extends React.Component {
 	// ...
-	
+
 	onTimezoneSelect = ( zone ) => {
 		console.log( `timezone selected: %s`, zone.value );
 	}
@@ -26,9 +26,7 @@ export default class extends React.Component {
 }
 ```
 
-## Timezone
-
-#### Props
+## Props
 
 `selectedZone` - **optional** String value to define the selected timezone.
 

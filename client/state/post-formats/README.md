@@ -40,7 +40,7 @@ state.postFormats = {
 
 ## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
 
-#### `isRequestingPostFormats`
+### `isRequestingPostFormats`
 
 Returns true if post formats are currently fetching for the given site ID.
 
@@ -50,7 +50,7 @@ import { isRequestingPostFormats } from 'state/post-formats/selectors';
 const isRequesting = isRequestingPostFormats( state, 12345678 );
 ```
 
-#### `getPostFormats`
+### `getPostFormats`
 
 Returns an array of all supported site formats for the given site ID.
 

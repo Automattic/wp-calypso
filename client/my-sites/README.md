@@ -4,7 +4,7 @@ This area handles the views and routing logic for the _My Sites_ section in Caly
 
 This organization approach allows us to encapsulate modules under sensible groupings, giving developers a clearer sense of place. Any UI component can be reused, like we use `my-sites/site` in many places.
 
-### Adding a new section
+## Adding a new section
 
 When creating a new section module it should typically look like this:
 
@@ -21,6 +21,6 @@ All primary routes should be expressed in `index.js` and the handlers for the va
 
 The first component that is rendered for any section in `#primary` should be called `section/main.jsx`. That component should make use of `components/main` for it's wrapper.
 
-### Shared modules
+## Shared modules
 
 If you are creating a shared individual component directly related to the My Sites area of Calypso, the root of `client/my-sites` may be appropiatte for placement — with its own self-documented README.md file of course!

@@ -2,7 +2,7 @@
 
 Integrate React Lifecyle methods with d3.js charts.
 
-### Base Component Responsibilities
+## Base Component Responsibilities
 
 - Create and manage mounting and unmounting parent `div` and `svg`
 - Handle resize events, resulting re-renders, and event listeners

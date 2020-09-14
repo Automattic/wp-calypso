@@ -5,7 +5,7 @@ The information in this state subtree tracks that process and provides the neces
 
 All Atomic transfer information is stored as a single possible transfer per site.
 
-### Actions
+## Actions
 
 |             action              | description                                              |
 | :-----------------------------: | -------------------------------------------------------- |

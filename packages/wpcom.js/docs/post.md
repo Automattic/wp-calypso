@@ -2,7 +2,9 @@
 
 `Post` handler class.
 
-### Create a `Post` instance from Site
+## Example
+
+Create a `Post` instance from Site
 
 ```js
 var wpcom = require('wpcom')('<your-token>');

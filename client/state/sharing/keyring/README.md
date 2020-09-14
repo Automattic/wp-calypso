@@ -52,7 +52,7 @@ state.sharing.keyring = {
 
 Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
 
-#### `getKeyringConnections( state: object )`
+### `getKeyringConnections( state: object )`
 
 Returns an array of keyring connection objects.
 
@@ -62,7 +62,7 @@ import { getKeyringConnections } from 'state/sharing/keyring/selectors';
 const connections = getKeyringConnections( state );
 ```
 
-#### `getKeyringConnectionById( state: object, keyringConnectionId: number )`
+### `getKeyringConnectionById( state: object, keyringConnectionId: number )`
 
 Returns a keyring connection object with a specified ID.
 
@@ -72,7 +72,7 @@ import { getKeyringConnectionById } from 'state/sharing/keyring/selectors';
 const connection = getKeyringConnectionById( state, 23353 );
 ```
 
-#### `getKeyringConnectionsByName( state: object, service: string )`
+### `getKeyringConnectionsByName( state: object, service: string )`
 
 Returns an array of keyring connection objects for a specified service.
 
@@ -82,7 +82,7 @@ import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 const twitterConnections = getKeyringConnectionsByName( state, 'twitter' );
 ```
 
-#### `getUserConnections( state: object, userId: number )`
+### `getUserConnections( state: object, userId: number )`
 
 Returns an array of keyring connection objects for a specific user.
 
@@ -92,7 +92,7 @@ import { getUserConnections } from 'state/sharing/keyring/selectors';
 const userConnections = getUserConnections( state, 344325 );
 ```
 
-#### `isKeyringConnectionsFetching( state: object )`
+### `isKeyringConnectionsFetching( state: object )`
 
 Returns true if keyring connections are currently being requested.
 

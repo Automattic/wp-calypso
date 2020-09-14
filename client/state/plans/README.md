@@ -6,25 +6,25 @@ A module for managing plans data.
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-### `fetchWordPressPlans()`
+## `fetchWordPressPlans()`
 
 Fetches plans
 
-## Action creators
+# Action creators
 
 > Action creators are exactly that—functions that create actions.
 
-### plansReceiveAction( plans )
+## plansReceiveAction( plans )
 
-### plansRequestSuccessAction()
+## plansRequestSuccessAction()
 
-### plansRequestFailureAction( error )
+## plansRequestFailureAction( error )
 
-### plansSerializeAction()
+## plansSerializeAction()
 
-### plansDeserializeAction()
+## plansDeserializeAction()
 
-### requestPlans()
+## requestPlans()
 
 ```es6
 import {

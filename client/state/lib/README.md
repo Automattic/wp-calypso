@@ -7,7 +7,7 @@ redux store data.
 
 When writing a library there are currently three ways around this:
 
-### Update the library interface to pass through data needs
+## Update the library interface to pass through data needs
 
 If we create a new library, or have a library with few usages, we can
 update the function interface to pass through this data. Calling components
@@ -19,7 +19,7 @@ For example a call like:
 Would turn into:
 `library.doSomething( currentSite )`
 
-### Use Redux Middleware to perform the library side-effect
+## Use Redux Middleware to perform the library side-effect
 
 Similarly for a library with few usages, if we don't expect a return value from
 calling a library function this can be abstracted into a dispatched redux action,
@@ -36,7 +36,7 @@ And in this middleware, we can create a handler:
 
 ```jsx
 import library from 'lib/example'
-//... 
+//...
 
 case MY_EXAMPLE_LIBRARY_ACTION:
 	const state = getState();
@@ -44,7 +44,7 @@ case MY_EXAMPLE_LIBRARY_ACTION:
 	library.doSomething( selectedSite );
 ```
 
-### Use Redux Middleware to setSelectedSite
+## Use Redux Middleware to setSelectedSite
 
 For libraries that are too large to port, or have too many usages,
 we can try working around this by setting the selectedSite when
@@ -60,7 +60,7 @@ Then add a handler in this middleware:
 
 ```jsx
 import library from 'lib/example'
-//... 
+//...
 
 //All relevant site update events
 case SELECTED_SITE_SET:

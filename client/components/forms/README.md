@@ -2,7 +2,7 @@
 
 This is a directory of shared form components.
 
-### Settings Form Fields
+## Settings Form Fields
 
 The following form components were created as an effort to minimize duplication between site settings and me settings.
 

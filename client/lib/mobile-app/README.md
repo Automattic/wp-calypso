@@ -2,7 +2,7 @@
 
 This module contains a function to identify whether requests are coming from the WordPress mobile apps.
 
-### Usage
+## Usage
 
 Simple usage:
 

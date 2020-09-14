@@ -2,7 +2,7 @@
 
 This section handles the rendering of the Calypso editor and all its individual components. It is responsible for the `/post` and `/page` routes.
 
-### Architecture
+## Architecture
 
 This module uses a
 [Flux](http://facebook.github.io/flux/docs/overview.html)-inspired architecture.
