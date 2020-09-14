@@ -19,13 +19,19 @@ import useSignup from './use-signup';
  * A React hook that returns callback to navigate to previous and next steps in Gutenboarding flow
  *
  * @typedef { object } Navigation
- * @property { string } goBack of the previous step
- * @property { string } goNext of the next step
+ * @property { string } goBack navigate to the previous step
+ * @property { string } goNext navigate to the next step
+ * @property { string } endFlow handle site creation
  *
  * @returns { Navigation } An object with callbacks to navigate to previous and next steps
  */
-export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
+export default function useStepNavigation(): {
+	goBack: () => void;
+	goNext: () => void;
+	endFlow: () => void;
+} {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	const makePath = usePath();
 	const history = useHistory();
@@ -61,6 +67,17 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 			  ];
 	}
 
+	if ( isExperimental ) {
+		steps = [
+			Step.Domains,
+			Step.PlansCompare,
+			Step.DesignSelection,
+			Step.Style,
+			Step.Features,
+			Step.Plans,
+		];
+	}
+
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { createSite } = useDispatch( ONBOARD_STORE );
@@ -83,13 +100,15 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	}
 
 	// Don't show the mandatory Plans step:
-	// - if the user landed from a marketing page after selecting a paid plan (in this case, hide also the Features step)
+	// - if the user landed from a marketing page after selecting a paid plan (in this case, hide also the Features step and PlansCompare if avaialble)
 	// - if a plan has been selected using the PlansModal but only if there is no Features step
 	if (
 		hasPaidPlanFromPath ||
 		( ! steps.includes( Step.Features ) && plan && ! hasUsedPlansStep )
 	) {
-		steps = steps.filter( ( step ) => step !== Step.Plans && step !== Step.Features );
+		steps = steps.filter(
+			( step ) => step !== Step.Plans && step !== Step.PlansCompare && step !== Step.Features
+		);
 	}
 
 	const currentStepIndex = steps.findIndex( ( step ) => step === Step[ currentStep ] );
@@ -105,5 +124,6 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	return {
 		goBack: handleBack,
 		goNext: handleNext,
+		endFlow: handleSiteCreation,
 	};
 }

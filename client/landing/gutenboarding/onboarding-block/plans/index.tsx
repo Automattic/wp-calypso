@@ -26,13 +26,14 @@ type PlanSlug = Plans.PlanSlug;
 
 interface Props {
 	isModal?: boolean;
+	isMultiColumn?: boolean;
 }
 
-const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
+const PlansStep: React.FunctionComponent< Props > = ( { isModal, isMultiColumn } ) => {
 	const { __ } = useI18n();
 	const history = useHistory();
 	const makePath = usePath();
-	const { goBack, goNext } = useStepNavigation();
+	const { goBack, goNext, endFlow } = useStepNavigation();
 
 	const plan = useSelectedPlan();
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
@@ -51,6 +52,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	useTrackStep( isModal ? 'PlansModal' : 'Plans', () => ( {
 		selected_plan: selectedPlanRef.current,
+		multi_column: isMultiColumn,
 	} ) );
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
@@ -65,6 +67,9 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		}
 
 		updatePlan( planSlug );
+		if ( isMultiColumn && ! isPlanFree( planSlug ) ) {
+			return endFlow();
+		}
 
 		if ( isModal ) {
 			history.goBack();
@@ -97,7 +102,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
-				isExperimental={ isEnabled( 'gutenboarding/feature-picker' ) }
+				isExperimental={ isEnabled( 'gutenboarding/feature-picker' ) && ! isMultiColumn }
 				recommendedPlan={ recommendedPlan }
 			/>
 		</div>

@@ -28,7 +28,9 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { selectedDesign, siteTitle, isExperimental } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
@@ -87,6 +89,13 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				/>
 			) }
 			<Switch>
+				<Route exact path="/">
+					<Redirect
+						push={ false }
+						to={ makePath( isExperimental ? Step.Domains : Step.IntentGathering ) }
+					/>
+				</Route>
+
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					<AcquireIntent />
 				</Route>
@@ -113,6 +122,10 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 
 				<Route path={ makePath( Step.Plans ) }>
 					{ canUseStyleStep() ? <Plans /> : redirectToLatestStep }
+				</Route>
+
+				<Route path={ makePath( Step.PlansCompare ) }>
+					<Plans isMultiColumn />
 				</Route>
 
 				<Route path={ makePath( Step.PlansModal ) }>
