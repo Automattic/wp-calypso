@@ -10,7 +10,7 @@ import { __experimentalBoxControl as BoxControl } from '@wordpress/components';
 
 const { __Visualizer: Visualizer } = BoxControl;
 
-const Example = () => {
+const BoxControlExample = () => {
 	const [ values, setValues ] = useState( {
 		top: '50px',
 		left: '10%',
@@ -26,4 +26,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default BoxControlExample;

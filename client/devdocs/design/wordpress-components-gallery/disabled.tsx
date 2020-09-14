@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  */
 import { Disabled, SelectControl, TextControl, TextareaControl } from '@wordpress/components';
 
-const Example = () => {
+const DisabledExample = () => {
 	return (
 		<Disabled>
 			<TextControl label="Text Control" value="" onChange={ noop } />
@@ -28,4 +28,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default DisabledExample;

@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { __experimentalText as Text } from '@wordpress/components';
 
-const Example = () => (
+const TextExample = () => (
 	<>
 		<Text variant="title.large" as="h1">
 			Title Large
@@ -29,4 +29,4 @@ const Example = () => (
 	</>
 );
 
-export default Example;
+export default TextExample;

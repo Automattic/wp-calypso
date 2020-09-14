@@ -90,10 +90,10 @@ const Rows = ( { items, level = 1 } ) => {
 	} );
 };
 
-const Example = () => (
+const TreeGridExample = () => (
 	<TreeGrid>
 		<Rows items={ groceries } />
 	</TreeGrid>
 );
 
-export default Example;
+export default TreeGridExample;

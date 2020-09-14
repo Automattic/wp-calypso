@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { Fill, Slot, SlotFillProvider } from '@wordpress/components';
 
-const Example = () => (
+const SlotFillExample = () => (
 	<SlotFillProvider>
 		<h2>Profile</h2>
 		<p>
@@ -22,4 +22,4 @@ const Example = () => (
 	</SlotFillProvider>
 );
 
-export default Example;
+export default SlotFillExample;

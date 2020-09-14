@@ -8,10 +8,10 @@ import React, { useState } from 'react';
  */
 import { __experimentalAlignmentMatrixControl as AlignmentMatrixControl } from '@wordpress/components';
 
-const Example = () => {
+const AlignmentMatrixControlExample = () => {
 	const [ alignment, setAlignment ] = useState( 'center center' );
 
 	return <AlignmentMatrixControl value={ alignment } onChange={ setAlignment } />;
 };
 
-export default Example;
+export default AlignmentMatrixControlExample;

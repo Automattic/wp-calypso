@@ -8,6 +8,8 @@ import React from 'react';
  */
 import { ExternalLink } from '@wordpress/components';
 
-const Example = () => <ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink>;
+const ExternalLinkExample = () => (
+	<ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink>
+);
 
-export default Example;
+export default ExternalLinkExample;

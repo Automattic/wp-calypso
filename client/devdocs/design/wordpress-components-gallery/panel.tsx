@@ -28,7 +28,7 @@ function Placeholder( { height = 200 } ) {
 	return <div style={ { background: '#ddd', height, width: '100%' } } />;
 }
 
-const Example = () => (
+const PanelExample = () => (
 	<ScrollableContainer>
 		<Panel header="My Panel">
 			<PanelBody title="First Settings">
@@ -55,4 +55,4 @@ const Example = () => (
 	</ScrollableContainer>
 );
 
-export default Example;
+export default PanelExample;

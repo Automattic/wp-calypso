@@ -24,7 +24,7 @@ const Box = ( props ) => {
 	);
 };
 
-const Example = () => {
+const DraggableExample = () => {
 	const [ isDragging, setDragging ] = useState( false );
 
 	return (
@@ -54,4 +54,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default DraggableExample;

@@ -9,7 +9,7 @@ import React from 'react';
 import { QueryControls } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 
-const Example = withState( {
+const QueryControlsExample = withState( {
 	orderBy: 'title',
 	order: 'asc',
 	category: 1,
@@ -45,4 +45,4 @@ const Example = withState( {
 	/>
 ) );
 
-export default Example;
+export default QueryControlsExample;

@@ -15,7 +15,7 @@ const Button = ( props: InnerButton.Props ) => (
 	</FlexItem>
 );
 
-const Example = () => {
+const ButtonExample = () => {
 	return (
 		<div style={ { padding: '20px' } }>
 			<h2>Small Buttons</h2>
@@ -57,4 +57,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default ButtonExample;

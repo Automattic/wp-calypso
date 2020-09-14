@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { Animate, Notice } from '@wordpress/components';
 
-const Example = () => (
+const AnimateExample = () => (
 	<Animate type="loading">
 		{ ( { className } ) => (
 			<Notice className={ className } status="success">
@@ -18,4 +18,4 @@ const Example = () => (
 	</Animate>
 );
 
-export default Example;
+export default AnimateExample;

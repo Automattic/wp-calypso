@@ -9,7 +9,7 @@ import React from 'react';
 import { Placeholder, Notice } from '@wordpress/components';
 import { more } from '@wordpress/icons';
 
-const Example = () => (
+const PlaceholderExample = () => (
 	<Placeholder
 		icon={ more }
 		label="Placeholder example"
@@ -23,4 +23,4 @@ const Example = () => (
 	/>
 );
 
-export default Example;
+export default PlaceholderExample;

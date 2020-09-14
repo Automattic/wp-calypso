@@ -8,9 +8,9 @@ import React, { useState } from 'react';
  */
 import { AnglePickerControl } from '@wordpress/components';
 
-const Example = () => {
+const AnglePickerControlExample = () => {
 	const [ angle, setAngle ] = useState();
 	return <AnglePickerControl value={ angle } onChange={ setAngle } />;
 };
 
-export default Example;
+export default AnglePickerControlExample;

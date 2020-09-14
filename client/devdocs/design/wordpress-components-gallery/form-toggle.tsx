@@ -13,7 +13,7 @@ import { FormToggle } from '@wordpress/components';
  */
 import FormLabel from 'components/forms/form-label';
 
-const Example = () => {
+const FormToggleExample = () => {
 	const [ isChecked, setChecked ] = useState( true );
 
 	return (
@@ -32,4 +32,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default FormToggleExample;

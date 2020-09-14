@@ -8,10 +8,6 @@ import React from 'react';
  */
 import { Tip } from '@wordpress/components';
 
-const Example = () => (
-	<Tip>
-		<p>An example Tip</p>
-	</Tip>
-);
+const TipExample = () => <Tip>An example Tip</Tip>;
 
-export default Example;
+export default TipExample;

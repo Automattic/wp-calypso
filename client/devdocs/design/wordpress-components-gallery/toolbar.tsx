@@ -36,7 +36,7 @@ function InlineImageIcon() {
 	);
 }
 
-const Example = () => (
+const ToolbarExample = () => (
 	// id is required for server side rendering
 	<Toolbar label="Options" id="options-toolbar">
 		<ToolbarGroup>
@@ -105,4 +105,4 @@ const Example = () => (
 	</Toolbar>
 );
 
-export default Example;
+export default ToolbarExample;

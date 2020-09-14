@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { TreeSelect } from '@wordpress/components';
 
-const Example = () => {
+const TreeSelectExample = () => {
 	const [ selection, setSelection ] = useState( '' );
 
 	return (
@@ -48,4 +48,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default TreeSelectExample;

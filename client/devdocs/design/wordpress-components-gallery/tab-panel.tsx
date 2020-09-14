@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { TabPanel } from '@wordpress/components';
 
-const Example = () => (
+const TabPanelExample = () => (
 	<TabPanel
 		tabs={ [
 			{
@@ -27,4 +27,4 @@ const Example = () => (
 	</TabPanel>
 );
 
-export default Example;
+export default TabPanelExample;

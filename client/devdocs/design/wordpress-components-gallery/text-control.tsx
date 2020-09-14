@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { TextControl } from '@wordpress/components';
 
-const Example = () => {
+const TextControlExample = () => {
 	const [ value, setValue ] = useState( '' );
 
 	return (
@@ -22,4 +22,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default TextControlExample;

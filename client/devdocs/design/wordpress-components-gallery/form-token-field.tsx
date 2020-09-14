@@ -9,7 +9,7 @@ import React from 'react';
 import { FormTokenField } from '@wordpress/components';
 import { withState } from '@wordpress/compose';
 
-const Example = withState( {
+const FormTokenFieldExample = withState( {
 	tokens: [],
 	suggestions: [
 		'Africa',
@@ -29,4 +29,4 @@ const Example = withState( {
 	/>
 ) );
 
-export default Example;
+export default FormTokenFieldExample;

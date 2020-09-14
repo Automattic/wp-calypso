@@ -10,7 +10,7 @@ import { Fragment } from '@wordpress/element';
 import { DropdownMenu, MenuGroup, MenuItem, MenuItemsChoice } from '@wordpress/components';
 import { more, arrowUp, arrowDown, trash } from '@wordpress/icons';
 
-const Example = () => {
+const DropdownMenuExample = () => {
 	const [ mode, setMode ] = useState( 'visual' );
 	return (
 		<DropdownMenu icon={ more } label="Select a direction">
@@ -51,4 +51,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default DropdownMenuExample;

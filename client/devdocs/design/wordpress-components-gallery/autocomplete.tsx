@@ -35,7 +35,7 @@ const autocompleters = [
 	},
 ];
 
-const Example = () => {
+const AutocompleteExample = () => {
 	const [ value, setValue ] = useState( '' );
 	return (
 		<div>
@@ -55,4 +55,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default AutocompleteExample;

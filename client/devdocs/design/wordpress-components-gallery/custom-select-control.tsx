@@ -32,6 +32,8 @@ const defaultOptions = [
 	},
 ];
 
-const Example = () => <CustomSelectControl label="Font size" options={ defaultOptions } />;
+const CustomSelectControlExample = () => (
+	<CustomSelectControl label="Font size" options={ defaultOptions } />
+);
 
-export default Example;
+export default CustomSelectControlExample;

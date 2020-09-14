@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { FocalPointPicker } from '@wordpress/components';
 
-const Example = () => {
+const FocalPointPickerExample = () => {
 	const url = 'https://interactive-examples.mdn.mozilla.net/media/examples/flower.webm';
 
 	const [ focalPoint, setFocalPoint ] = useState( {
@@ -19,4 +19,4 @@ const Example = () => {
 	return <FocalPointPicker value={ focalPoint } onChange={ setFocalPoint } url={ url } />;
 };
 
-export default Example;
+export default FocalPointPickerExample;

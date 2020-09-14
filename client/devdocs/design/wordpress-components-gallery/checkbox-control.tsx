@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { CheckboxControl } from '@wordpress/components';
 
-const Example = () => {
+const CheckboxControlExample = () => {
 	const [ isChecked, setChecked ] = useState( false );
 
 	return (
@@ -20,4 +20,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default CheckboxControlExample;

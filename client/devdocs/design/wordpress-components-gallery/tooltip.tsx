@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { Tooltip } from '@wordpress/components';
 
-const Example = () => (
+const TooltipExample = () => (
 	<Tooltip text="More information" position="top center">
 		<div
 			style={ {
@@ -24,4 +24,4 @@ const Example = () => (
 	</Tooltip>
 );
 
-export default Example;
+export default TooltipExample;

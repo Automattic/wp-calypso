@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { FormFileUpload } from '@wordpress/components';
 
-const Example = () => (
+const FormFileUploadExample = () => (
 	<FormFileUpload
 		isPrimary
 		multiple
@@ -20,4 +20,4 @@ const Example = () => (
 	</FormFileUpload>
 );
 
-export default Example;
+export default FormFileUploadExample;

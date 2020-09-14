@@ -8,6 +8,6 @@ import React from 'react';
  */
 import { Spinner } from '@wordpress/components';
 
-const Example = () => <Spinner />;
+const SpinnerExample = () => <Spinner />;
 
-export default Example;
+export default SpinnerExample;

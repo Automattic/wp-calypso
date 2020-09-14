@@ -9,7 +9,7 @@ import { times } from 'lodash';
  */
 import { Button, Guide } from '@wordpress/components';
 
-const Example = () => {
+const GuideExample = () => {
 	const numberOfPages = 5;
 	const [ isOpen, setOpen ] = useState( false );
 
@@ -45,4 +45,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default GuideExample;

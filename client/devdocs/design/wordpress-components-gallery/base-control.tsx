@@ -8,10 +8,10 @@ import React from 'react';
  */
 import { BaseControl } from '@wordpress/components';
 
-const Example = () => (
+const BaseControlExample = () => (
 	<BaseControl id="textarea-1" label="Text" help="Enter some text">
 		<textarea id="textarea-1" />
 	</BaseControl>
 );
 
-export default Example;
+export default BaseControlExample;

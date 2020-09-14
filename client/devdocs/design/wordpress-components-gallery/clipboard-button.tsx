@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { ClipboardButton } from '@wordpress/components';
 
-const Example = () => {
+const ClipboardButtonExample = () => {
 	const [ isCopied, setCopied ] = useState( false );
 
 	const text = 'Code is Poetry';
@@ -24,4 +24,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default ClipboardButtonExample;

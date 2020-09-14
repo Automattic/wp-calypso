@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { ColorPalette } from '@wordpress/components';
 
-const Example = () => {
+const ColorPaletteExample = () => {
 	const colors: ColorPalette.Color[] = [
 		{ name: 'red', color: '#f00' },
 		{ name: 'white', color: '#fff' },
@@ -26,4 +26,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default ColorPaletteExample;

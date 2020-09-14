@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { TextareaControl } from '@wordpress/components';
 
-const Example = () => {
+const TextareaControlExample = () => {
 	const [ value, setValue ] = useState( '' );
 
 	return (
@@ -22,4 +22,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default TextareaControlExample;

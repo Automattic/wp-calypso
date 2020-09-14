@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { VisuallyHidden } from '@wordpress/components';
 
-const Example = () => (
+const VisuallyHiddenExample = () => (
 	<>
 		<div>
 			<VisuallyHidden>This should not show.</VisuallyHidden>
@@ -28,4 +28,4 @@ const Example = () => (
 	</>
 );
 
-export default Example;
+export default VisuallyHiddenExample;

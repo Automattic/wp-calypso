@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { Snackbar } from '@wordpress/components';
 
-const Example = () => {
+const SnackbarExample = () => {
 	const content = 'Use Snackbars with an action link to an external page.';
 	const actions = [
 		{
@@ -20,4 +20,4 @@ const Example = () => {
 	return <Snackbar actions={ actions }>{ content }</Snackbar>;
 };
 
-export default Example;
+export default SnackbarExample;

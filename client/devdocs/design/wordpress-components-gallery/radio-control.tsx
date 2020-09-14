@@ -14,7 +14,7 @@ const options = [
 	{ label: 'Password Protected', value: 'password' },
 ];
 
-const Example = () => {
+const RadioExample = () => {
 	const [ option, setOption ] = useState( 'public' );
 
 	return (
@@ -28,4 +28,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default RadioExample;

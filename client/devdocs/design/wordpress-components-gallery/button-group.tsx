@@ -8,7 +8,7 @@ import React from 'react';
  */
 import { Button, ButtonGroup } from '@wordpress/components';
 
-const Example = () => {
+const ButtonGroupExample = () => {
 	const style = { margin: '0 4px' };
 	return (
 		<ButtonGroup>
@@ -22,4 +22,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default ButtonGroupExample;

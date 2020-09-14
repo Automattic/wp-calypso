@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { Flex, FlexItem, ResizableBox } from '@wordpress/components';
 
-const Example = () => {
+const ResizableBoxExample = () => {
 	const [ attributes, setAttributes ] = useState( {
 		height: 200,
 		width: 400,
@@ -58,4 +58,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default ResizableBoxExample;

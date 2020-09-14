@@ -8,7 +8,7 @@ import React, { useState } from 'react';
  */
 import { ToggleControl } from '@wordpress/components';
 
-const Example = () => {
+const ToggleControlExample = () => {
 	const [ hasFixedBackground, setHasFixedBackground ] = useState( true );
 	return (
 		<ToggleControl
@@ -20,4 +20,4 @@ const Example = () => {
 	);
 };
 
-export default Example;
+export default ToggleControlExample;

@@ -17,7 +17,7 @@ import {
 	FlexItem,
 } from '@wordpress/components';
 
-const Example = () => (
+const CardExample = () => (
 	<Card isElevated>
 		<CardHeader isShady={ false }>
 			<FlexBlock>Header: Code is Poetry</FlexBlock>
@@ -39,4 +39,4 @@ const Example = () => (
 	</Card>
 );
 
-export default Example;
+export default CardExample;

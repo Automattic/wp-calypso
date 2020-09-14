@@ -8,10 +8,10 @@ import React, { useState } from 'react';
  */
 import { DateTimePicker } from '@wordpress/components';
 
-const Example = () => {
+const DateTimePickerExample = () => {
 	const [ dateTime, setDateTime ] = useState( '' );
 
 	return <DateTimePicker currentDate={ dateTime } onChange={ setDateTime } />;
 };
 
-export default Example;
+export default DateTimePickerExample;
