@@ -968,7 +968,7 @@ necessary.  Here is a sample; alter the names:
 That's all there is to it!
 ```
 
-### <https://github.com/WordPress/WordPress>
+### <ttps://github.com/slevithan/xregexp>
 
 #### client/state/embeds/utils.js
 
