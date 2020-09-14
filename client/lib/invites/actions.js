@@ -78,14 +78,14 @@ export function createAccount( userData, invite, callback ) {
 	};
 }
 
-export function generateInviteLinks( siteId, linkParams = {} ) {
+export function generateInviteLinks( siteId ) {
 	debug( 'generateInviteLinks', siteId );
 
 	return ( dispatch ) => {
 		wpcom
 			.undocumented()
 			.site( siteId )
-			.generateInviteLinks( linkParams )
+			.generateInviteLinks()
 			.then( () => {
 				dispatch( requestSiteInvites( siteId ) );
 			} );

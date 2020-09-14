@@ -420,16 +420,15 @@ UndocumentedSite.prototype.deleteInvites = function ( inviteIds ) {
 /**
  * Generate invite links
  *
- * @param {object} query query parameters
- * @returns {Promise} A Promise to resolve when complete.
+ * @returns {Promise}             A Promise to resolve when complete.
  */
-UndocumentedSite.prototype.generateInviteLinks = function ( query = {} ) {
+UndocumentedSite.prototype.generateInviteLinks = function () {
 	return this.wpcom.req.post(
 		{
 			path: `/sites/${ this._id }/invites/links/generate`,
 			apiNamespace: 'wpcom/v2',
 		},
-		query
+		{}
 	);
 };
 

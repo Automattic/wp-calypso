@@ -481,14 +481,10 @@ class InvitePeople extends React.Component {
 		return roles.some( ( role ) => role === inviteLinkRole );
 	};
 
-	generateInviteLinks = ( role ) => {
+	generateInviteLinks = () => {
 		this.setState( {
 			isGeneratingInviteLinks: true,
 		} );
-
-		if ( role && this.isValidInviteLinkRole( role ) ) {
-			return this.props.generateInviteLinks( this.props.siteId, { role } );
-		}
 
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
@@ -515,9 +511,6 @@ class InvitePeople extends React.Component {
 	showInviteLinkForRole = ( event ) => {
 		const { inviteLinks } = this.props;
 		const role = event.target.value || 'administrator';
-		if ( ! inviteLinks[ role ] ) {
-			this.generateInviteLinks( { role } );
-		}
 		this.setState( { activeInviteLink: inviteLinks[ role ] } );
 		this.setState( { showCopyConfirmation: false } );
 	};
@@ -570,16 +563,21 @@ class InvitePeople extends React.Component {
 	};
 
 	renderInviteLinkRoleSelector = ( activeInviteLink ) => {
-		const { translate } = this.props;
+		const { translate, inviteLinks } = this.props;
 		const allRoles = this.getInviteLinkRoles();
 
 		const roleOptions =
 			allRoles &&
-			allRoles.map( ( role ) => (
-				<option value={ role.name } key={ role.name }>
-					{ role.display_name }
-				</option>
-			) );
+			allRoles.map( ( role ) => {
+				if ( inviteLinks[ role.name ] ) {
+					return (
+						<option value={ role.name } key={ role.name }>
+							{ role.display_name }
+						</option>
+					);
+				}
+			} );
+
 		const inviteUrlRef = React.createRef();
 
 		return (
