@@ -66,6 +66,20 @@ yarn build
 
 Then copy the built `dist` folder to your sandbox environment to test updated rendering behavior.
 
+### Automatic sandbox sync
+
+You can also use a syncing utility included as a `package.json` script in the notifications app to push changes to your sandbox site automatically.
+
+To prepare your sandbox for this purpose, follow the prerequisite setup instructions for adding an SSH alias for your sandbox described in PCYsg-ly5-p2 "Editing Toolkit plugin and your WP.com sandbox" (the process is exactly the same as that used for the FSE plugin). 
+
+Then, after making a change in the notification app, make sure you are `cd`'d into `/apps/notifications/` and run the command
+
+```
+yarn sync
+```
+
+This will automatically copy the local version of `/apps/notifications/` into `~/public_html/widgets.wp.com/notifications/` on your sandbox.
+
 ### Server rendering logic
 
 If a block is rendering incorrectly due to formatting information being lost before the data reaches Calypso, you may need to perform further troubleshooting on the server-side logic used to generate the list of a user's notifications.
