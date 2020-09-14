@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { decodeEntities } from 'lib/formatting';
 import { getSelectedSite } from 'state/ui/selectors';
 import SidebarItem from 'layout/sidebar/item';
 import StatsSparkline from 'blocks/stats-sparkline';
@@ -61,7 +62,7 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 
 	return (
 		<SidebarItem
-			label={ title }
+			label={ decodeEntities( title ) }
 			link={ fixedUrl }
 			onNavigate={ onNav }
 			selected={ selected }
