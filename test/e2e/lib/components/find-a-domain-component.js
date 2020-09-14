@@ -103,7 +103,7 @@ export default class FindADomainComponent extends AsyncBaseContainer {
 
 	async skipSuggestion() {
 		// currently used in 'launch-site' and 'new-launch' signup flows
-		const skipSuggestion = By.css( '.domain-skip-suggestion > .button.domain-suggestion__action' );
+		const skipSuggestion = By.css( '.domain-skip-suggestion .button.domain-suggestion__action' );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			skipSuggestion,
