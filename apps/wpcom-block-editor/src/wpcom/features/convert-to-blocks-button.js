@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * External dependencies
  */
@@ -15,7 +13,6 @@ import { __ } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { rawHandler, serialize } from '@wordpress/blocks';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
