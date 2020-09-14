@@ -28,8 +28,6 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: jest.fn( ( name ) => {
 		if ( 'conciergeUpsellDial' === name ) {
 			return 'offer';
-		} else if ( 'showBusinessPlanBump' === name ) {
-			return 'variantShowPlanBump';
 		}
 	} ),
 } ) );

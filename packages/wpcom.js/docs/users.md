@@ -1,4 +1,3 @@
-
 # Users
 
 `Users` handler class.
@@ -26,7 +25,7 @@ var users = Users(WPCOM);
 Get @mention suggestions for the given site
 
 ```js
-users.suggest({ site: 'mytestsite.wordpress.com', image_size: 32 }, function(err, info){
-  // `info` data object
-});
+users.suggest( { site: 'mytestsite.wordpress.com', image_size: 32 }, function ( err, info ) {
+	// `info` data object
+} );
 ```

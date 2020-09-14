@@ -1,5 +1,4 @@
-Query Plugin Keys
-=================
+# Query Plugin Keys
 
 `<QueryPluginKeys />` is a React component used in managing network requests for premium plugin registration keys.
 

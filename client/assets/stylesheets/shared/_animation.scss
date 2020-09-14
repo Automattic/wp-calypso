@@ -23,6 +23,21 @@
 	}
 }
 
+// Useful for the checked state of radio button fields
+@keyframes grow {
+	0% {
+		transform: scale( 0.3 );
+	}
+
+	60% {
+		transform: scale( 1.15 );
+	}
+
+	100% {
+		transform: scale( 1 );
+	}
+}
+
 // Pulsing background color for loading placeholders
 @keyframes pulse-light {
 	50% {

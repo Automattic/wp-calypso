@@ -43,4 +43,3 @@ Show a small version of the avatar. Used in post cards and streams.
 ### `onClick`
 
 Click handler to be executed when avatar is clicked.
-

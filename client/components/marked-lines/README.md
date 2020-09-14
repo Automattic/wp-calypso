@@ -1,5 +1,4 @@
-Marked Lines viewer
-===
+# Marked Lines viewer
 
 This component is designed to show contextualized lines from a file with
 optional highlighting or marks to point out specific parts of one or more lines.
@@ -31,9 +30,9 @@ return <MarkedLines
 
 ### Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`context`* | `object` | | Provides the line content and mark ranges
+| Name        | Type     | Default | Description                               |
+| ----------- | -------- | ------- | ----------------------------------------- |
+| `context`\* | `object` |         | Provides the line content and mark ranges |
 
 ### Additional usage information
 

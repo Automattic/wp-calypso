@@ -1,5 +1,4 @@
-Analytics: Page Views
-=====================
+# Analytics: Page Views
 
 We should record Page views every time the main content body completely changes. This includes both when the browser is refreshed and any time the URL is updated via the browser history API.
 

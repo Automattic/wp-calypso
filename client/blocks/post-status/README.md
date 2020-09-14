@@ -1,5 +1,4 @@
-Post Status
-===========
+# Post Status
 
 `<PostStatus />` is a React component for rendering relevant status details about a post (sticky, scheduled, pending review, trashed). Renders nothing if there is no relevant status for the post.
 

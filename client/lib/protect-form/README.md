@@ -1,5 +1,4 @@
-Protect-Form
-============
+# Protect-Form
 
 This component protects a user from navigating away from a form that has been edited without having been saved. When your form has been marked as changed, the browser will open a confirm dialog if you try to navigate away from the page without saving the changes.
 
@@ -10,8 +9,7 @@ that is used to wrap you form component.
 The other is a declarative component that is supposed to be rendered inside the form. It
 has an API that is more suitable for integration with Redux state.
 
-Usage (HOC)
------------
+## Usage (HOC)
 
 ```js
 import { protectForm } from 'lib/protect-form';
@@ -40,8 +38,7 @@ handleSubmit = ( event ) => {
 }
 ```
 
-Usage (declarative)
--------------------
+## Usage (declarative)
 
 ```js
 import { ProtectFormGuard } from 'lib/protect-form';

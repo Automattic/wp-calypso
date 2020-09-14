@@ -1,5 +1,4 @@
-Analytics: MC
-=============
+# Analytics: MC
 
 Automatticians may refer to internal documentation for more information about MC.
 

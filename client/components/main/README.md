@@ -1,5 +1,4 @@
-Main (jsx)
-==========
+# Main (jsx)
 
 Component used to declare the main area of any given section —- it's the main wrapper that gets rendered first inside `#primary`.
 
@@ -19,5 +18,5 @@ render() {
 
 #### Props
 
-* `className`: Add your own CSS class to the wrapper.
-* `wideLayout`: Use wide layout (larger `max-width`) for the section.
+- `className`: Add your own CSS class to the wrapper.
+- `wideLayout`: Use wide layout (larger `max-width`) for the section.

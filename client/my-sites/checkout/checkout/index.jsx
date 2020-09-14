@@ -481,15 +481,11 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
+	maybeShowPlanBumpOffer( receiptId, stepResult ) {
 		const { cart, selectedSiteSlug } = this.props;
 
 		if ( hasPremiumPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/business/${ receiptId }`;
-			}
-
-			return `/checkout/offer-quickstart-session/${ receiptId }/${ selectedSiteSlug }`;
+			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/business/${ receiptId }`;
 		}
 
 		return;
@@ -515,7 +511,7 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
-			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId, stepResult );
+			const upgradePath = this.maybeShowPlanBumpOffer( pendingOrReceiptId, stepResult );
 			if ( upgradePath ) {
 				return upgradePath;
 			}

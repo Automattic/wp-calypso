@@ -1,5 +1,4 @@
-Reviews
-======
+# Reviews
 
 This module is used to manage reviews for a site.
 
@@ -56,6 +55,7 @@ This is saved on a per-site basis. All reviews are collected in `items`, and the
 	}
 }
 ```
+
 ## Selectors
 
 ### `areReviewsLoaded( state, query, [siteId] )`

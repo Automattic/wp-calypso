@@ -1,5 +1,4 @@
-Desktop Analytics
-=========
+# Desktop Analytics
 
 Automatticians may refer to internal documentation for more information about MC.
 
@@ -44,4 +43,3 @@ Returns the analytics conform platform string for electrons `process.platform`
 const platform = process.platform; // darwin
 analytics.getPlatform( platform ); // osx
 ```
-

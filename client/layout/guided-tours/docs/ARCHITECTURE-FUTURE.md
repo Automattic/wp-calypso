@@ -2,7 +2,6 @@
 
 As Guided Tours as a framework is made available to parties interested in [writing their own tours](TUTORIAL.md), it seemed pertinent to gather some thoughts and make them available in this document in the hope of reducing any sort of [bus factor](https://en.wikipedia.org/wiki/Bus_factor).
 
-
 ## Lazy loading
 
 In the interest of keeping Calypso's main bundles small and free of pieces that users aren't likely to need, it becomes important that Guided Tours be lazily loaded. Right now, the obvious offenses are:
@@ -33,7 +32,6 @@ In my mind, there are two ways to achieve this:
 
 - Simply decouple the logic manually by going through every tour config and porting that tour's top-level attributes (`name, version, path, when`) into a common place. Pro: easy enough. Con: requires a change of GT's developer interface.
 - Have a Webpack loader programatically group the tours' triggering conditions in a module. Prior art can be found in `server/bundler`, notably [`loader`][bundlerloader], which rewrites `sections.js`. Pro: "magic", doesn't require tour authors to think about chunking and write their configs in separate places. Con: "magic", harder to implement, has the potential to generate confusion.
-
 
 ## State-aware steps
 
@@ -138,7 +136,6 @@ reduce( [ A, B, C ], f, initial ) === reduce(
 
 **A sad caveat.** JS collections are implemented with arrays and not [linked lists][linkedlists], meaning we have no built-in way to express a collection in terms of its _head_ (new item) + _tail_ (the rest, _i.e._ the "previous version" of the list). Implementing the above suite in a way that would allows us to benefit from caching (the whole point of this!) would require also implementing `actionLog` as a basic [doubly linked list][doublylinked], be it homemade or with a library. It shouldn't be hard, but it's disappointing.
 
-
 ### A deep map of actions
 
 The last potential approach would be to completely replace `actionLog` with a deep structure that condenses different kinds of data. The best way to explain myself is to provide examples:
@@ -190,7 +187,7 @@ This is a small potential enhancement to `actionLog` that, contrary to the other
 
 With this distinction, assuming we could keep `relevantTourEntryTypes` small, many more selector calls could be skipped when we know that no tour is ongoing.
 
-* * *
+---
 
 <a name="note-1"><sup>1</sup></a>: Having read and understood the [architecture] is a prerequisite.
 

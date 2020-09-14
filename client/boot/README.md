@@ -1,5 +1,4 @@
-Boot
-======
+# Boot
 
 This module is where all the client-side magic starts. The core set of application modules that contain the client-side application routes, any additional application bootstrapping occurs, and the page.js router is started triggering the initial route handler.
 

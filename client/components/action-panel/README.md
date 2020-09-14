@@ -1,5 +1,4 @@
-Action Panel
-============
+# Action Panel
 
 This is a larger [`Card` component](../../components/card) that has a title, description, right-aligned figure and call-to-action button.
 

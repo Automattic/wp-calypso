@@ -1,5 +1,4 @@
-StatsSparkline
-==============
+# StatsSparkline
 
 The `StatsSparkline` block renders an image of a chart representing hourly views for a given site.
 
@@ -12,7 +11,6 @@ import StatsSparkline from 'blocks/stats-sparkline';
 ```
 
 ## Props
-
 
 ### `siteId`
 

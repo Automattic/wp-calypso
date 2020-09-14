@@ -2,14 +2,14 @@
 
 This lib enables translations, exposing two public methods:
 
-* [.translate()](#translate-method)
-* [.numberFormat()](#numberformat-method)
+- [.translate()](#translate-method)
+- [.numberFormat()](#numberformat-method)
 
 It also provides a React higher-order component named [localize()](#localize) and a React hook name [useTranslate()](#react-hook). Wrapping your component in `localize()` will give it the aforementioned functions as props, and calling the `useTranslate()` hook will return the `translate()` function. This is the suggested way of using `i18n-calypso` methods with React components.
 
 Finally, this lib exposes a utility method for your React application:
 
-* [.hasTranslation()](#hastranslation-method)
+- [.hasTranslation()](#hastranslation-method)
 
 ## Translate Method
 
@@ -27,10 +27,10 @@ Finally, this lib exposes a utility method for your React application:
 
 The following attributes can be set in the options object to alter the translation type. The attributes can be combined as needed for a particular case.
 
-* **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](http://www.diveintojavascript.com/projects/javascript-sprintf)
-* **options.components** [object] markup must be added as React components and not with string substitution. See [mixing strings and markup](#mixing-strings-and-markup).
-* **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
-* **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
+- **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](http://www.diveintojavascript.com/projects/javascript-sprintf)
+- **options.components** [object] markup must be added as React components and not with string substitution. See [mixing strings and markup](#mixing-strings-and-markup).
+- **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
+- **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
 
 ## Usage
 
@@ -137,7 +137,6 @@ var example3 = i18n.translate( '{{a}}{{icon/}}click {{em}}here{{/em}}{{/a}} to s
 
 You must specify both the singular and plural variants of a string when it contains plurals. If the string uses placeholders that will be replaced with actual values, then both the plural and singular strings should include those placeholders. It might seem redundant, but it is necessary for languages where a singular version may be used for counts other than 1.
 
-
 ```js
 
 // An example where the translated string does not have
@@ -230,6 +229,7 @@ i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); 
 Using the method `hasTranslation` you can check whether a translation for a given string exists. As the `translate()` function will always return screen text that can be displayed (will supply the source text if no translation exists), it is unsuitable to determine whether text is translated. Other factors are optional [key hashing](#key-hashing) as well as purposeful translation to the source text.
 
 ### Usage
+
 ```js
 var i18n = require( 'i18n-calypso' );
 i18n.hasTranslation( 'This has been translated' ); // true
@@ -239,7 +239,6 @@ i18n.hasTranslation( 'Not translation exists' ); // false
 ## Mixin
 
 The mixin has been removed from this distribution. Please use version 1 of `i18n-calypso` if you need to use the mixin.
-
 
 ## Localize
 
@@ -292,9 +291,11 @@ resulting component is also reactive, i.e., it gets rerendered when the `i18n` l
 and the state emitter emits a `change` event.
 
 The `useTranslate` hook returns the `translate` function:
+
 ```jsx
 const translate = useTranslate();
 ```
+
 The function can be called to return a localized value of a string, and it also exposes a
 `localeSlug` property whose value is a string with the current locale slug.
 
@@ -384,13 +385,17 @@ In order to reduce file-size, i18n-calypso allows the usage of hashed keys for l
 #### Example
 
 Instead of providing the full English text, like here:
+
 ```json
 {"":{"localeSlug":"de"},"Please enter a valid email address.":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
 ```
+
 just the hash is used for lookup, resulting in a shorter file.
+
 ```json
 {"":{"localeSlug":"de","key-hash":"sha1-1"},"d":["","Bitte gib eine gültige E-Mail-Adresse ein."]}
 ```
+
 The generator of the jed file would usually try to choose the smallest hash length at which no hash collisions occur. In the above example a hash length of 1 (`d` short for `d2306dd8970ff616631a3501791297f31475e416`) is enough because there is only one string.
 
 Note that when generating the jed file, all possible strings need to be taken into consideration for the collision calculation, as otherwise an untranslated source string would be provided with the wrong translation.

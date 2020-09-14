@@ -9,6 +9,7 @@ export { getJetpackProductDisplayName } from './get-jetpack-product-display-name
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { getProductClass } from './get-product-class';
+export { getProductTermVariants } from './get-product-term-variants';
 export { getProductFromSlug } from './get-product-from-slug';
 export { getProductsSlugs } from './get-products-slugs';
 export { includesProduct } from './includes-product';

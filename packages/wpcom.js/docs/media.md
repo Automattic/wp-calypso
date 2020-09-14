@@ -1,4 +1,3 @@
-
 # Media
 
 `Media` handler class.

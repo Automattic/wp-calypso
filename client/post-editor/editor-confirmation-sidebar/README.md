@@ -1,5 +1,4 @@
-EditorConfirmationSidebar
-=========================
+# EditorConfirmationSidebar
 
 This displays a sidebar that contains a confirmation dialog shown before
 publishing.
@@ -19,4 +18,3 @@ been paid.
 The following diagram helps to illustrate the flow:
 
 ![component state diagram](https://user-images.githubusercontent.com/5431237/49047676-6ca56580-f195-11e8-88ea-9084eb454b53.png)
-

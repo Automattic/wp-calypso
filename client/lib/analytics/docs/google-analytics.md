@@ -1,5 +1,4 @@
-Analytics: Google Analytics
-===========================
+# Analytics: Google Analytics
 
 We should use Google Analytics to record all events the user performs on a page that _do not_ trigger a page view (this will allow us to determine bounce rate on pages).
 
@@ -33,7 +32,6 @@ gaRecordEvent( 'Reader', 'Loaded Next Page', 'page', 2 );
 ```
 
 For more information and examples about how and when to provide the optional `optionLabel` and `optionValue` parameters, refer to the [Google Analytics Event Tracking documentation](https://developers.google.com/analytics/devguides/collection/analyticsjs/events#overview).
-
 
 ### `gaRecordPageView( url, title )` (Deprecated)
 

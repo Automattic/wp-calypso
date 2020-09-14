@@ -1,5 +1,4 @@
-Range
-=====
+# Range
 
 Range is a React component used to render a range input field. It is essentially an enhanced version of `<input type="range" />`, enabling support for a value tooltip and content to be shown at the ends of the range field.
 

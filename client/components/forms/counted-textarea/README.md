@@ -1,5 +1,4 @@
-Counted Textarea
-===================
+# Counted Textarea
 
 Counted Textarea is a React form component which renders a `<textarea />` accompanied by a character count display.
 

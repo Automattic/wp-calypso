@@ -1,5 +1,4 @@
-Platform
-==========
+# Platform
 
 Provides a wrapper around platform-specific features.
 
@@ -15,6 +14,7 @@ For more specific platform features refer here:
 `setMainWindow( mainWindow )` - needs to be called once the main app window is ready
 
 Where:
+
 - `mainWindow` - the main `BrowserWindow` instance
 
 `isOSX()` - true if running on OS X, false otherwise

@@ -1,5 +1,4 @@
-PaymentLogo
-====
+# PaymentLogo
 
 ## Usage
 
@@ -46,21 +45,21 @@ import PaymentLogo from 'components/payment-logo';
 
 ## Required props
 
-* `type` – String that determines which type of logo is displayed. Currently accepts:
-   * `alipay`
-   * `amex`
-   * `apple-pay`
-   * `bancontact`
-   * `diners`
-   * `discover`
-   * `eps`
-   * `giropay`
-   * `ideal`
-   * `jcb`
-   * `mastercard`
-   * `p24`
-   * `paypal`
-   * `placeholder`
-   * `unionpay`
-   * `visa`
-* `isCompact` (optional) – Boolean that determines if the compact PayPal logo is rendered.
+- `type` – String that determines which type of logo is displayed. Currently accepts:
+  - `alipay`
+  - `amex`
+  - `apple-pay`
+  - `bancontact`
+  - `diners`
+  - `discover`
+  - `eps`
+  - `giropay`
+  - `ideal`
+  - `jcb`
+  - `mastercard`
+  - `p24`
+  - `paypal`
+  - `placeholder`
+  - `unionpay`
+  - `visa`
+- `isCompact` (optional) – Boolean that determines if the compact PayPal logo is rendered.

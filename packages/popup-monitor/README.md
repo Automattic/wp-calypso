@@ -1,5 +1,4 @@
-Popup Monitor
-=============
+# Popup Monitor
 
 Popup Monitor is a small utility to facilitate the monitoring of a popup window close action, which is especially useful for temporary popup windows (e.g. an authorization step).
 

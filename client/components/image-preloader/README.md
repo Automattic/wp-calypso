@@ -1,5 +1,4 @@
-Image Preloader
-===============
+# Image Preloader
 
 Image Preloader is a React component to display a placeholder element until the network request to retrieve the image has completed. This is particularly useful when changing the `src` attribute of an image, which can have a noticeable delay due to how React applies the minimal DOM diff. This is illustrated by the following CodePen, where progressing between images maintains the current image until the next is finished loading:
 
@@ -29,28 +28,28 @@ All props will be transferred to the rendered `<img />` element, with the except
 
 ### `placeholder`
 
-- __Type:__ React element
-- __Required:__ Yes
+- **Type:** React element
+- **Required:** Yes
 
 A React element to render while the image `src` is being loaded.
 
 ### `children`
 
-- __Type:__ React node
-- __Required:__ No
+- **Type:** React node
+- **Required:** No
 
 If a child is passed, it will be used as substitute content in the case that the image fails to load.
 
 ### `onLoad`
 
-- __Type:__ function
-- __Required:__ No
+- **Type:** function
+- **Required:** No
 
 A custom function to call when the image loading is complete.
 
 ### `onError`
 
-- __Type:__ function
-- __Required:__ No
+- **Type:** function
+- **Required:** No
 
 A custom function to call if the image loading fails.

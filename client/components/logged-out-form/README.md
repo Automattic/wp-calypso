@@ -1,5 +1,5 @@
-LoggedOutForm
-=============
+# LoggedOutForm
+
 This component is meant to be used when creating form for logged out users. You can find this component in use within the signup framework at `client/signup` and within the invite acceptance section within `client/my-sites/invite-accept`.
 
 ## Usage

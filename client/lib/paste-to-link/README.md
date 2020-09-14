@@ -1,5 +1,4 @@
-Paste-to-Link
-=============
+# Paste-to-Link
 
 Paste-to-Link is a higher-order component (HOC) that adds special paste behaviour to the wrapped component.
 

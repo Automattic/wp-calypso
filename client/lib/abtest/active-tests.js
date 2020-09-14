@@ -69,10 +69,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20200421',
+		datestamp: '20200910',
 		variations: {
-			offer: 50,
-			noOffer: 50,
+			offer: 75,
+			noOffer: 25,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
@@ -181,15 +181,6 @@ export default {
 			'ZA',
 		],
 	},
-	showBusinessPlanBump: {
-		datestamp: '20300619',
-		variations: {
-			variantShowPlanBump: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	offerResetFlow: {
 		datestamp: '20200804',
 		variations: {
@@ -221,7 +212,7 @@ export default {
 		localeExceptions: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200828',
+		datestamp: '20200911',
 		variations: {
 			gutenberg: 50,
 			control: 50,

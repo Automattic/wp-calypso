@@ -1,5 +1,4 @@
-viewport
-========
+# viewport
 
 This package contains functions to identify and track changes to the viewport. This can be used for displaying different components depending on a desktop or mobile view.
 
@@ -54,7 +53,6 @@ class MyComponent extends React.Component {
 ```
 
 Note: the above usage is more easily accomplished using the hooks and higher-order components in `@automattic/viewport-react`.
-
 
 ### Supported methods
 

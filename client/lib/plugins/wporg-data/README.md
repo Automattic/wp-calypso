@@ -1,8 +1,7 @@
-WPORG Data
-=======
-
+# WPORG Data
 
 ### Store
+
 The WPorg Store is responsible for storing the state of plugins from .org so that we don't have to fetch them each time.
 
 ####The Data
@@ -42,8 +41,7 @@ The data is stored in a private variable but can be accessed though the stores p
 
 **PluginsStore.get( pluginSlug );**
 
-Returns a plugin object or null
----
+## Returns a plugin object or null
 
 ####Example Component Code:
 

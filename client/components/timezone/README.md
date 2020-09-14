@@ -1,5 +1,4 @@
-Timezone
-========
+# Timezone
 
 Select timezone react component.
 
@@ -26,13 +25,14 @@ export default class extends React.Component {
 
 }
 ```
+
 ## Timezone
 
 #### Props
 
 `selectedZone` - **optional** String value to define the selected timezone.
 
-`includeManualOffsets` - **optional** Boolean value to include/exclude the manual offsets from the 
+`includeManualOffsets` - **optional** Boolean value to include/exclude the manual offsets from the
 list of timezones, the default value is `true`
 
 `onSelect` - **optional** Called when user selects a timezone from the

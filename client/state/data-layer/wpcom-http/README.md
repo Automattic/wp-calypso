@@ -19,6 +19,7 @@ Let's look at how this system works from a high-level perspective.
 ## Overview
 
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
+
 ![](https://cldup.com/unQOzvDkjtq/BpewKu.svg)
 
 Wow, that can look confusing!
@@ -101,9 +102,9 @@ Please see `state/data-layer/wpcom-http/actions.js` for more information.
 
 Specify one or more of the following properties in an HTTP request in order to respond to the different lifecycle events of the request.
 
- - `onSuccess` dispatched when the request returns with a `2xx` status code
- - `onFailure` dispatched when the request fails for any reason whether for an error status code, network timeout, or otherwise
- - `onProgress` _if_ issuing a `POST` request _and_ uploading a file then this is dispatched on progress events
+- `onSuccess` dispatched when the request returns with a `2xx` status code
+- `onFailure` dispatched when the request fails for any reason whether for an error status code, network timeout, or otherwise
+- `onProgress` _if_ issuing a `POST` request _and_ uploading a file then this is dispatched on progress events
 
 Please note that _these are not callback functions_ but rather normal Redux actions which can be serialized and deserialized, inspected and transformed, and monitored or logged.
 
@@ -204,9 +205,9 @@ That helper is the `dispatchRequest()` function and it handles all of the networ
 At its most basic form it implies three actions we need to provide: a function which generates descriptive HTTP requests; a function which handles successful responses; and a function which handles failing responses.
 Additionally there are other semantics of network requests it can manage.
 
- - A function to handle progress events during data uploads
- - A schema to validate the response data and fail invalid formats
- - A way to indicate data "freshness" or how new data must be to fetch it (coming soon!)
+- A function to handle progress events during data uploads
+- A schema to validate the response data and fail invalid formats
+- A way to indicate data "freshness" or how new data must be to fetch it (coming soon!)
 
 Each of these lifecycle functions is in fact an action creator. As arguments, it takes the original
 associated action and the data coming from the response. It returns the action we want to be dispatched
@@ -347,7 +348,6 @@ export default {
 Of course, not every response is very complicated or warrants a full-blown parser.
 Sometimes we just want to determine the failure or success based off of a simple value in the response.
 Let's put this together for a fictitious two-factor authentication process.
-
 
 ```js
 const fromApi = response => {

@@ -1,5 +1,4 @@
-Premium Plugins
-===============
+# Premium Plugins
 
 A module for managing the automatic install & configuration of premium plugins
 

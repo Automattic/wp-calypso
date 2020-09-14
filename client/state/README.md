@@ -1,5 +1,4 @@
-State
-=====
+# State
 
 This directory contains all of the behavior describing the global application state. Folders within this directory reflect sub-trees of the global state tree, each with their own reducer, actions, and selectors.
 
@@ -54,7 +53,7 @@ All the application information and data in Calypso should go through this data 
 
 Use `extendAction` to leverage the behavior of an existing action creator, extending any dispatched action via the original action creator with the provided data object. By using this helper, you avoid unnecessarily duplicating the original logic or tying the original action creator to your new (presumably optional) requirements. This is the equivalent of calling `Object.assign` on a plain-object action creator result, but also accepts an action thunk for which action objects should be extended.
 
-__Example:__
+**Example:**
 
 ```js
 function original() {

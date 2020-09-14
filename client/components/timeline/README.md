@@ -1,5 +1,4 @@
-Timeline
-========
+# Timeline
 
 `Timeline` and `TimelineEvent` are components used to render timelines.
 

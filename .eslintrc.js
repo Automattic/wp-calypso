@@ -10,8 +10,17 @@ module.exports = {
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
 		'prettier/react',
+		'plugin:md/prettier',
 	],
 	overrides: [
+		{
+			files: [ '*.md' ],
+			parser: 'markdown-eslint-parser',
+			rules: {
+				// Disable remark rules for now, as they are not auto-fixable.
+				'md/remark': [ 'off' ],
+			},
+		},
 		{
 			files: [ 'bin/**/*' ],
 			rules: {

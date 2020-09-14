@@ -1,5 +1,4 @@
-Shipping Zone Methods
-===============
+# Shipping Zone Methods
 
 This module is used to manage the locations configured inside of a Shipping Zone.
 
@@ -10,6 +9,7 @@ way to add/edit/remove locations from a zone outside of the "Edit Zone" screen.
 
 In this part of the state only will be stored the "differences" between what's on the server and what the user has configured.
 So, for example, the initial state would look like this:
+
 ```js
 {
 	locations: {
@@ -30,6 +30,7 @@ the whole Redux tree, will be able to play those actions back and compute the fi
 After the user opens the "Edit Locations" modal, a new sub-tree with the same format as the main one will be added, called
 "temporaryChanges". When the user closes the dialog, those changes will be merged with the "normal" changes, but if it
 "Cancels" the modal they will be discarded instead. So, for example:
+
 ```js
 {
 	locations: {

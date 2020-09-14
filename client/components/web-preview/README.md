@@ -1,5 +1,4 @@
-Web Preview
-=============
+# Web Preview
 
 This component facilitates the display of iframed content. See the `propTypes` for configurable options. Basic usage is:
 
@@ -11,10 +10,9 @@ This component facilitates the display of iframed content. See the `propTypes` f
 >
 ```
 
-* * *
+---
 
-WithPreviewProps
-----------------
+## WithPreviewProps
 
 This is a helper [function-as-children] component responsible for computing props to be used to create a _link_ to a given URL. The point, however, is that this will attempt to render that resource inside WebPreview if the right conditions (_cf._ below) are met. If they aren't met, the fallback is to treat the link as external and open it in a new window.
 

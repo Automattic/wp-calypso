@@ -1,5 +1,4 @@
-App Quit
-=========
+# App Quit
 
 Determines whether the app should quit and exit, or quit to background.
 

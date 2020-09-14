@@ -1,5 +1,4 @@
-Query Terms
-================
+# Query Terms
 
 `<QueryTerms />` is a React component used in managing network requests for terms for a given site and taxonomy pair.
 

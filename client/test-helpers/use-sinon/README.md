@@ -1,9 +1,11 @@
 # Sinon Test Helpers
+
 A set of helpers for folks using sinon to fake, mock, spy and bend time.
 
 ## Usage
 
 ### Full sandbox
+
 ```js
 import { useSandbox } from 'test-helpers/use-sinon';
 
@@ -22,6 +24,7 @@ describe( 'my tests that use a sandbox and arrow functions', function() {
 ```
 
 ### Fake Clock
+
 ```js
 import { useFakeTimers } from 'test-helpers/use-sinon';
 

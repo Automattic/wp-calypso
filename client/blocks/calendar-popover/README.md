@@ -1,10 +1,8 @@
-Calendar Popover
-================
+# Calendar Popover
 
 This component shows a Popover with a calendar inside.
 
 Beyond combining Popover and PostSchedule, this component connects with the state-tree, so in this way timezone data related to the site configuration is propagated automatically.
-
 
 ## Usage
 
@@ -44,7 +42,6 @@ The following props can be passed to the CalendarPopover component:
 	<tr><td>Required</td><td>No</td></tr>
 </table>
 
-
 #### Connect Props
 
 ### `gmtOffset`
@@ -65,19 +62,19 @@ The site's timezone value, in the format of 'America/Araguaina (see https://en.w
 
 #### Props propagated to the `<Popover />`
 
-* `autoPosition`
-* `closeOnEsc`
-* `ignoreContext`
-* `isVisible`
-* `position`
-* `showDelay`
-* `onClose`
-* `onShow`
+- `autoPosition`
+- `closeOnEsc`
+- `ignoreContext`
+- `isVisible`
+- `position`
+- `showDelay`
+- `onClose`
+- `onShow`
 
 #### Props propagated to the `<PostSchedule />`
 
- * `events`
- * `selectedDay`
- * `siteId`
- * `onDateChange`
- * `onMonthChange`
+- `events`
+- `selectedDay`
+- `siteId`
+- `onDateChange`
+- `onMonthChange`

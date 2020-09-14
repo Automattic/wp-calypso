@@ -1,5 +1,4 @@
-Dialog
-======
+# Dialog
 
 A React component that provides support for modal dialogs.
 
@@ -18,23 +17,27 @@ readable, with a minimal amount of boilerplate code required to show a dialog.
 ```js
 class MyComponent extends React.Component {
 	state = {
-		showDialog: false
-	}
+		showDialog: false,
+	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate } = this.props;
 
 		const buttons = [
 			{ action: 'cancel', label: translate( 'Cancel' ) },
 			{ action: 'delete', label: translate( 'Delete Everything' ), isPrimary: true },
-			<MyCustomButton />
+			<MyCustomButton />,
 		];
 
 		return (
 			<div>
 				<button onClick={ this.onShowDialog }>Show Dialog</button>
 
-				<Dialog isVisible={ this.state.showDialog } buttons={ buttons } onClose={ this.onCloseDialog }>
+				<Dialog
+					isVisible={ this.state.showDialog }
+					buttons={ buttons }
+					onClose={ this.onCloseDialog }
+				>
 					<h1>{ translate( 'Confirmation' ) }</h1>
 					<p>{ translate( 'Do you want to delete everything?' ) }</p>
 				</Dialog>
@@ -44,20 +47,17 @@ class MyComponent extends React.Component {
 
 	onShowDialog = () => {
 		this.setState( { showDialog: true } );
-	}
+	};
 
 	onCloseDialog = ( action ) => {
 		// action is the `action` property of the button clicked to close the dialog. If the dialog is closed
 		// by pressing ESC or clicking outside of the dialog, action will be `undefined`
 
 		this.setState( { showDialog: false } );
-	}
+	};
 }
 
-ReactDom.render(
-	<MyComponent />,
-	document.getElementById( 'content' )
-);
+ReactDom.render( <MyComponent />, document.getElementById( 'content' ) );
 ```
 
 ### `onClick` handlers for buttons
@@ -137,13 +137,15 @@ The dialog component renders the following DOM tree (simplified to only show str
 You can provide custom styling for a dialog by making use of the following properties:
 
 - `baseClassName`: if you specify this, you are responsible for providing all the following classes for the dialog (you
-can `@extend` the base `dialog` SCSS classes if you just want to tweak things a bit):
-    - _baseClassName_
-    - _baseClassName___backdrop
-    - _baseClassName___content
-    - _baseClassName___action-buttons
+  can `@extend` the base `dialog` SCSS classes if you just want to tweak things a bit):
+
+      - _baseClassName_
+      - _baseClassName___backdrop
+      - _baseClassName___content
+      - _baseClassName___action-buttons
+
 - `additionalClassNames`: if you specify this, these additional class names will be applied to the dialog element
-(not the backdrop)
+  (not the backdrop)
 
 ```js
 	render {

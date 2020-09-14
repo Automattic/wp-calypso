@@ -1,5 +1,4 @@
-local-storage-polyfill
-======================
+# local-storage-polyfill
 
 This is a very simple polyfill that implements the core methods of localStorage when the native API is either unavailable or not working correctly (e.g., safari in private mode).
 
