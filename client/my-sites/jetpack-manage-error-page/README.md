@@ -5,7 +5,6 @@ and render an appropriate error page before any management tools are rendered.
 
 This component is an extension of the [EmptyContent component][1], and it accepts
 the same properties.
-[1]: https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/empty-content
 
 Additionally, this component accepts a `template` property which will render some pre-defined
 templates. Here are acceptable values for `template` along with examples of how to use them.
@@ -46,3 +45,5 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
     illustration="/calypso/images/illustrations/illustration-jetpack.svg"
 />
 ```
+
+[1]: https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/empty-content
