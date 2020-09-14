@@ -150,7 +150,7 @@
 - Add jest babel transform to load calypso-build babel configuration.
 - Reorganize jest transforms under `@automattic/calypso-build/jest/transform/`.
 - Added transform-runtime versioning to babel/default.js
-  This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
+  This will need to be kept up to date while <https://github.com/babel/babel/issues/10261> is unresolved.
 
 # 3.0.0
 

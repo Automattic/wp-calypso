@@ -1,7 +1,7 @@
 # Material design icons
 
 This package currently only provides Material icon SVGs required by the Calypso
-nav drawer. The official `material-design-icons` package (https://github.com/google/material-design-icons)
+nav drawer. The official `material-design-icons` package (<https://github.com/google/material-design-icons>)
 is generally quite out-dated. It also includes many image formats that are not
 relevant to Calypso.
 
@@ -24,7 +24,7 @@ import { ReactComponent as SvgExample } from './test.svg';
 To add more Material Design icons, you'll have to download individual icons to appropriate directories
 then rebuild and checkin updated `material-icons.svg` file.
 
-Select and download individual icon's SVG file from https://material.io/tools/icons/,
+Select and download individual icon's SVG file from <https://material.io/tools/icons/>,
 minding the style (like `outline`) and size.
 
 Move the SVG files in the sub-folder matching the category used on material.io.

@@ -42,4 +42,4 @@ If you want to temporarily enable/disable some feature flags you can add a `?fla
 - `?flags=-bar` disables feature _bar_.
 - `?flags=foo,-bar` enables feature _foo_ and disables feature _bar_.
 
-E.g. http://calypso.localhost:3000/?flags=manage/plugins/compatibility-warning
+E.g. <http://calypso.localhost:3000/?flags=manage/plugins/compatibility-warning>

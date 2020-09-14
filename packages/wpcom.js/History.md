@@ -52,7 +52,7 @@
 
 # 4.9.13 / 2016-05-25
 
-- avoid https://github.com/webpack/webpack/issues/300 issue
+- avoid <https://github.com/webpack/webpack/issues/300> issue
 - marketing.survey. First approach
 - SiteAdCreditVouchers: first implementation
 
@@ -109,8 +109,8 @@
 
   # 4.9.0 / 2016-03-28
 
-- site: add domain methods (see https://github.com/Automattic/wpcom.js/pull/163)
-- version bump wpcom-xhr-request (see https://github.com/Automattic/wpcom-xhr-request/pull/17)
+- site: add domain methods (see <https://github.com/Automattic/wpcom.js/pull/163>)
+- version bump wpcom-xhr-request (see <https://github.com/Automattic/wpcom-xhr-request/pull/17>)
 
   # 4.8.6 / 2016-03-23
 

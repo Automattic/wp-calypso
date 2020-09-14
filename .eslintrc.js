@@ -17,8 +17,15 @@ module.exports = {
 			files: [ '*.md' ],
 			parser: 'markdown-eslint-parser',
 			rules: {
-				// Disable remark rules for now, as they are not auto-fixable.
-				'md/remark': [ 'off' ],
+				'md/remark': [
+					'error',
+					{
+						plugins: [
+							// Plugins from https://www.npmjs.com/package/remark-preset-lint-markdown-style-guide
+							'lint-no-literal-urls',
+						],
+					},
+				],
 			},
 		},
 		{
