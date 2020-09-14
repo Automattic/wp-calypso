@@ -8,10 +8,10 @@ This module supports a variety of routes that are described in each submodule.
 
 To start a plan checkout flow, use appropriate URLS:
 
-- https://wordpress.com/checkout/site.wordpress.com/premium
-- https://wordpress.com/checkout/site.wordpress.com/personal
-- https://wordpress.com/checkout/site.wordpress.com/business
-- https://wordpress.com/checkout/site.jetpack.me/premium
-- https://wordpress.com/checkout/site.jetpack.me/professional
+- <https://wordpress.com/checkout/site.wordpress.com/premium>
+- <https://wordpress.com/checkout/site.wordpress.com/personal>
+- <https://wordpress.com/checkout/site.wordpress.com/business>
+- <https://wordpress.com/checkout/site.jetpack.me/premium>
+- <https://wordpress.com/checkout/site.jetpack.me/professional>
 
 Plan routes are sourced from `lib/plans/constants.js`

@@ -27,7 +27,7 @@
 
 ---
 
-- Update Jed dependency to v1.1.1. This is a breaking change, since as of Jed v1.1, the format of Jed translation files has changed. Refer to https://github.com/messageformat/Jed/pull/33 for details.
+- Update Jed dependency to v1.1.1. This is a breaking change, since as of Jed v1.1, the format of Jed translation files has changed. Refer to <https://github.com/messageformat/Jed/pull/33> for details.
 
   2.0.2
 
@@ -40,9 +40,9 @@
 
 ---
 
-- Update parseOptions passed to xgettext to include more modern features https://github.com/Automattic/i18n-calypso/pull/68
-- Switch to hash.js from sha1 for hashing to cut size https://github.com/Automattic/i18n-calypso/pull/67
-- Remove async dependency, as it was unused https://github.com/Automattic/i18n-calypso/pull/66
+- Update parseOptions passed to xgettext to include more modern features <https://github.com/Automattic/i18n-calypso/pull/68>
+- Switch to hash.js from sha1 for hashing to cut size <https://github.com/Automattic/i18n-calypso/pull/67>
+- Remove async dependency, as it was unused <https://github.com/Automattic/i18n-calypso/pull/66>
 
   2.0.0
 

@@ -58,7 +58,7 @@ The site's UTC offset.
 	<tr><td>Type</td><td>String</td></tr>
 </table>
 
-The site's timezone value, in the format of 'America/Araguaina (see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+The site's timezone value, in the format of 'America/Araguaina (see <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>).
 
 #### Props propagated to the `<Popover />`
 
