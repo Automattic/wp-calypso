@@ -104,7 +104,7 @@ Note that here `apiRequestFunction` calls an API endpoint (`someRequest` in this
 The above example includes an inline function definition, but we should keep the `apiRequestFunction` values in `StepActions` (`signup/config/step-actions.js`) and include them like:
 
 ```js
-apiRequestFunction: stepActions.createSite
+stepActions.createSite;
 ```
 
 ## Hello World

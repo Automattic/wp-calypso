@@ -67,8 +67,8 @@ The `appliesTo` object for a promotion is a complex object which describes what 
 
 ```js
 {
-	appliesTo: {
-		productCategoryIds: [ 180, 181 ]
+	{
+		[ 180, 181 ];
 	}
 }
 ```

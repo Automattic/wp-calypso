@@ -12,10 +12,14 @@ import Emojify from 'components/emojify';
 
 const textToEmojify = 'This will be converted 🙈🙉🙊';
 
-	// more component stuff
-	// ...
-	render( <div><p>This text will be unaffected</p><Emojify>{ textToEmojify }</Emojify></div> );
-
+// more component stuff
+// ...
+render(
+	<div>
+		<p>This text will be unaffected</p>
+		<Emojify>{ textToEmojify }</Emojify>
+	</div>
+);
 ```
 
 ## Props

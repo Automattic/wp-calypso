@@ -24,7 +24,7 @@ updater.ping();
 Sets the new version for the updater dialog.
 
 ```js
-updater.setVersion('1.0.1');
+updater.setVersion( '1.0.1' );
 ```
 
 ### `Updater.notify()`
@@ -34,17 +34,17 @@ Prompts the user with the update dialog.
 
 ```js
 class MyUpdater extends Updater {
-  constructor( { options } ) {
-    super( options );
-  }
+	constructor( { options } ) {
+		super( options );
+	}
 
-  async ping() {
-    // check for update
-    if (true) {
-      this.setVersion('1.0.0');
-      this.notify();
-    }
-  }
+	async ping() {
+		// check for update
+		if ( true ) {
+			this.setVersion( '1.0.0' );
+			this.notify();
+		}
+	}
 }
 ```
 
@@ -59,7 +59,7 @@ Available macros are
 - **`newVersion`** = `this._version` (defined by `this.setVersion()`)
 
 ```js
-updater.expandMacros('{name} {newVersion} is now available'); // WordPress.com 1.0.1 is now available
+updater.expandMacros( '{name} {newVersion} is now available' ); // WordPress.com 1.0.1 is now available
 ```
 
 ### `Updater.onConfirm()`
@@ -68,12 +68,12 @@ Function that will be triggered when the user click the confirm button.
 
 ```js
 class MyUpdater extends Updater {
-  onConfirm() {
-    // Download Update
-    autoUpdater.quitAndInstall();
-    // or for e.g. manual updater
-    shell.openExternal('http://...');
-  }
+	onConfirm() {
+		// Download Update
+		autoUpdater.quitAndInstall();
+		// or for e.g. manual updater
+		shell.openExternal( 'http://...' );
+	}
 }
 ```
 

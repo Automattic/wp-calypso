@@ -47,9 +47,9 @@ Data from the aforementioned actions is added to the global state tree, under `a
 ```js
 state.activePromotions = {
 	items: [ 'spring_sale' ],
-	
+
 	requesting: false,
 
-	errors: false
-}
+	errors: false,
+};
 ```

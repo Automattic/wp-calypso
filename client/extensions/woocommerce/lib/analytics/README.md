@@ -10,7 +10,10 @@ all track event ids, and perhaps to add some common event properties automatical
 ```js
 import { recordTrack } from 'woocommerce/lib/analytics';
 
-recordTrack( 'calypso_woocommerce_event_to_be_tracked', { a_parameter: '1', another_parameter: '2' } );
+recordTrack( 'calypso_woocommerce_event_to_be_tracked', {
+	a_parameter: '1',
+	another_parameter: '2',
+} );
 ```
 
 ### Functions

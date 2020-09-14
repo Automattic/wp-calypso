@@ -17,7 +17,7 @@ var suggestions = wpcom.users().suggest('<site-id>');
 Create a new `Users` instance giving `WPCOM` instance.
 
 ```js
-var users = Users(WPCOM);
+const users = Users( WPCOM );
 ```
 
 ### Users#suggest(query, fn)

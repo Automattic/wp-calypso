@@ -20,7 +20,6 @@ class MyComponent {
 }
 
 export default withTrackingTool( 'HotJar' )( MyComponent );
-
 ```
 
 When combined with other wrappers (like `localize()`):
@@ -36,9 +35,5 @@ class MyComponent {
 	}
 }
 
-export default flowRight(
-	localize,
-	withTrackingTool( 'HotJar' ),
-)( MyComponent );
-
+export default flowRight( localize, withTrackingTool( 'HotJar' ) )( MyComponent );
 ```

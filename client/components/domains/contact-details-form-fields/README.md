@@ -93,13 +93,13 @@ Executed at render time providing the parent component with an opportunity to di
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-    // disables the firstName field when firstNameEditable === false
-	customFieldDisabledCheck = ( name ) => {
-		if ( name === 'firstName' && firstNameEditable === false ) {
-			return true;
-		}
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+// disables the firstName field when firstNameEditable === false
+customFieldDisabledCheck = ( name ) => {
+	if ( name === 'firstName' && firstNameEditable === false ) {
+		return true;
+	}
+};
 ```
 
 ### labelTexts {object} (optional)
@@ -144,10 +144,10 @@ Triggered whenever a form value changes.
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	onContactDetailsChange = ( newContactDetails ) => {
-		this.props.updateReduxStore( newContactDetails );
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+onContactDetailsChange = ( newContactDetails ) => {
+	this.props.updateReduxStore( newContactDetails );
+};
 ```
 
 ### onSubmit {Func} (optional)
@@ -161,10 +161,10 @@ Triggered onSubmit and when all fields are valid. If this prop is not present, d
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	onSubmit = ( newContactDetails ) => {
-		wp.updateSomething( newContactDetails );
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+onSubmit = ( newContactDetails ) => {
+	wp.updateSomething( newContactDetails );
+};
 ```
 
 ### onValidate {Func} (optional)
@@ -179,13 +179,13 @@ Runs a custom validation check after a field update
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	validate = ( fieldValues, onComplete ) => {
-	    checkValidity( fieldValues, ( error, data ) => {
-            const messages = ( data && data.messages ) || {};
-            onComplete( error, messages );
-        });
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+validate = ( fieldValues, onComplete ) => {
+	checkValidity( fieldValues, ( error, data ) => {
+		const messages = ( data && data.messages ) || {};
+		onComplete( error, messages );
+	} );
+};
 ```
 
 ### onSanitize {Func} (optional)
@@ -200,11 +200,11 @@ Runs a custom sanitize method after a field update
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	onSanitize = ( fieldValues, onComplete ) => {
-        const newValues = {
-            lastName: fieldValues.lastName === 'SHOUTYMAN' ? 'Shoutyman' : fieldValues.lastName,
-        };
-	    onComplete( Object.assign( {}, fieldValues, newValues ) );
+// the method to be passed as a prop to <ContactDetailsFormFields />
+onSanitize = ( fieldValues, onComplete ) => {
+	const newValues = {
+		lastName: fieldValues.lastName === 'SHOUTYMAN' ? 'Shoutyman' : fieldValues.lastName,
 	};
+	onComplete( Object.assign( {}, fieldValues, newValues ) );
+};
 ```

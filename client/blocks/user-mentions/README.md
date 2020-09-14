@@ -11,14 +11,10 @@ It also provides the components `UserMentionsSuggestionList` and `UserMentionsSu
 import withUserMentions from 'blocks/user-mentions';
 
 const ExampleInput = React.forwardRef( ( props, ref ) => (
-	<textarea
-		ref={ ref }
-		onKeyUp={ props.onKeyUp }
-		onKeyDown={ props.onKeyDown } />
+	<textarea ref={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />
 ) );
 
 export default withUserMentions( ExampleInput );
-
 ```
 
 Note: you'll need to wrap the child component with `React.forwardRef`, and pass along the `onKeyUp` and `onKeyDown` props.

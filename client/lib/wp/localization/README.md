@@ -9,7 +9,10 @@ The helper is already bound for the global instance of `wpcom.js` used in Calyps
 ```js
 import wpcom from 'lib/wp';
 
-wpcom.site( siteId ).postTypesList().then( ( data ) => {
-	// `data` is a localized response
-} );
+wpcom
+	.site( siteId )
+	.postTypesList()
+	.then( ( data ) => {
+		// `data` is a localized response
+	} );
 ```

@@ -62,9 +62,9 @@ When comments or posts inside of notifications are _liked_ or _unliked_ then tha
 We maintain these local likes in the Redux state.
 
 ```js
-store.dispatch( actions.notes.likeNote( noteId, isLiked ) )
+store.dispatch( actions.notes.likeNote( noteId, isLiked ) );
 
-getIsNoteLiked( store.getState(), note )
+getIsNoteLiked( store.getState(), note );
 ```
 
 This is maintained entirely within the `rest-client` and has no corresponding "undo" as with the hidden notes.

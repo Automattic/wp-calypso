@@ -22,13 +22,14 @@ class QueryKeyringServices extends Component {
 		}
 	}
 
-	render() { return null; }
+	render() {
+		return null;
+	}
 }
 
-export default connect(
-	( state ) => ( { isRequesting: isKeyringServicesFetching( state ) } ),
-	{ requestKeyringServices }
-)( QueryKeyringServices );
+export default connect( ( state ) => ( { isRequesting: isKeyringServicesFetching( state ) } ), {
+	requestKeyringServices,
+} )( QueryKeyringServices );
 ```
 
 ## Reducer
@@ -84,7 +85,11 @@ A service is eligible for a given site if
 import { getEligibleKeyringServices } from 'state/sharing/services/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const eligibleServices = getEligibleKeyringServices( state, getSelectedSiteId( site ), 'publicize' );
+const eligibleServices = getEligibleKeyringServices(
+	state,
+	getSelectedSiteId( site ),
+	'publicize'
+);
 ```
 
 #### `isKeyringServicesFetching( state: object )`

@@ -7,12 +7,13 @@
 ```js
 import QueryComment from 'components/query-comment';
 
-const CommentDetail = ( { comment, commentId, siteId } ) =>
+const CommentDetail = ( { comment, commentId, siteId } ) => (
 	<div>
 		<QueryComment commentId={ commentId } siteId={ siteId } />
 		<div>{ comment.date }</div>
 		<div>{ comment.content }</div>
-	</div>;
+	</div>
+);
 ```
 
 ## Props

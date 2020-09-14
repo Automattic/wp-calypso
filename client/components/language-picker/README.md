@@ -19,20 +19,20 @@ const languages = [
 		langSlug: 'en',
 		name: 'English',
 		wpLocale: 'en_US',
-		popular: 1
+		popular: 1,
 	},
 	{
 		value: 11,
 		langSlug: 'cs',
 		name: 'Čeština',
-		wpLocale: 'cs_CZ'
-	}
+		wpLocale: 'cs_CZ',
+	},
 ];
 
 class LanguagePickerDemo extends PureComponent {
 	onSelectLanguage = ( event ) => {
 		this.props.saveUserSettings( { language: event.target.value } );
-	}
+	};
 
 	render() {
 		return (
@@ -46,10 +46,9 @@ class LanguagePickerDemo extends PureComponent {
 	}
 }
 
-export default connect(
-	state => ( { language: getUserSetting( state, 'language' ) } ),
-	{ saveUserSettings }
-)( LanguagePickerDemo );
+export default connect( ( state ) => ( { language: getUserSetting( state, 'language' ) } ), {
+	saveUserSettings,
+} )( LanguagePickerDemo );
 ```
 
 ---

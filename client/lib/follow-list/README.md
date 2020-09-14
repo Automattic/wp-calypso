@@ -12,12 +12,11 @@ var follow-list = FollowList();
 If the `site_id` being passed in does not yet exist in the array of `follow-list` data, a new `FollowListSite` object is created and added to the array. The method returns the instance of the `FollowListSite` so you can use that object to subscribe to change events:
 
 ```js
-var newFollowListSite = follow-list.add( { site_id: 1, is_following: false } );
+const newFollowListSite = follow - list.add( { site_id: 1, is_following: false } );
 
 // then in a jsx component
 
-mixins: [ observe( 'newFollowListSite' ) ]
-
+[ observe( 'newFollowListSite' ) ];
 ```
 
 # FollowListSite

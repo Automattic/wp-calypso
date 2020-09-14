@@ -8,10 +8,14 @@ These are two components to display rows of links.
 // actual links items
 <VerticalNav>
 	<VerticalNavItem path="/stats">Stats</VerticalNavItem>
-	<VerticalNavItem path="https://google.com" external>Google</VerticalNavItem>
-	<VerticalNavItem path="/posts" onClick={ this.handleClickPosts }>Posts</VerticalNavItem>
+	<VerticalNavItem path="https://google.com" external>
+		Google
+	</VerticalNavItem>
+	<VerticalNavItem path="/posts" onClick={ this.handleClickPosts }>
+		Posts
+	</VerticalNavItem>
 	<VerticalNavItem isPlaceholder />
-</VerticalNav>
+</VerticalNav>;
 ```
 
 ## Props

@@ -13,7 +13,7 @@ Example Babel config file:
 
 ```js
 {
-	plugins: [
+	[
 		new ConfigFlagPlugin( {
 			flags: { flagName: config.isEnabled( flagName ) },
 		} ),

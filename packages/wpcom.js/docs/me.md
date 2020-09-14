@@ -17,7 +17,7 @@ var me = wpcom.me();
 Create a new `Me` giving a `WPCOM` instance.
 
 ```js
-var me = Me(WPCOM);
+const me = Me( WPCOM );
 ```
 
 ### Me#get([query, ]fn)
@@ -25,9 +25,9 @@ var me = Me(WPCOM);
 Get meta data about auth token's User
 
 ```js
-me.get(function(err, info){
-  // `me` info object
-});
+me.get( function ( err, info ) {
+	// `me` info object
+} );
 ```
 
 ### Me#sites([query, ]fn)
@@ -35,9 +35,9 @@ me.get(function(err, info){
 Get a list of the current user's sites
 
 ```js
-me.sites(function(err, list){
-  // posts list object
-});
+me.sites( function ( err, list ) {
+	// posts list object
+} );
 ```
 
 ### Me#likes([query, ]fn)
@@ -45,9 +45,9 @@ me.sites(function(err, list){
 Get a list the currently authorized user's likes
 
 ```js
-me.likes(function(err, data){
-  // likes data object
-});
+me.likes( function ( err, data ) {
+	// likes data object
+} );
 ```
 
 ### Me#groups([query, ]fn)
@@ -55,7 +55,7 @@ me.likes(function(err, data){
 Get a list of the current user's group
 
 ```js
-me.groups(function(err, list){
-  // groups list object
-});
+me.groups( function ( err, list ) {
+	// groups list object
+} );
 ```

@@ -9,7 +9,9 @@ This module contains functions to validate and mask checkout form fields such as
 Returns an object containing the errors for each field. For example the returned object might look like this:
 
 ```js
-{ number: [ 'Invalid credit card' ] }
+{
+	[ 'Invalid credit card' ];
+}
 ```
 
 If there are any missing fields, there are no errors for that field.

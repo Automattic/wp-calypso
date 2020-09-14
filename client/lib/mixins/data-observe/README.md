@@ -10,9 +10,9 @@ A React mixin that makes it easy to trigger re-rendering of a component when a `
 import observe from 'lib/mixins/data-observe';
 import createReactClass from 'create-react-class';
 
-const Component = createReactClass({
-	mixins: [ observe( 'sites', 'user' ) ]
-});
+const Component = createReactClass( {
+	mixins: [ observe( 'sites', 'user' ) ],
+} );
 ```
 
 ([Read more about React mixins](http://facebook.github.io/react/docs/reusable-components.html#mixins).)

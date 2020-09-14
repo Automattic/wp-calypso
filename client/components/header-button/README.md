@@ -14,12 +14,8 @@ import HeaderButton from 'components/header-button';
 function MyHeader() {
 	return (
 		<div>
-			<HeaderButton
-				icon="plus-small"
-				label="Add Plugin"
-				href="/plugins/manage"
-			/>
-	  </div>
+			<HeaderButton icon="plus-small" label="Add Plugin" href="/plugins/manage" />
+		</div>
 	);
 }
 ```

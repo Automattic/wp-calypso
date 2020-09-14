@@ -5,7 +5,7 @@
 ```js
 import PodcastIndicator from 'components/podcast-indicator';
 
-<PodcastIndicator size={ 24 } />
+<PodcastIndicator size={ 24 } />;
 ```
 
 ## Props

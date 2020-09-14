@@ -13,7 +13,7 @@ It is called `treeSelect` because it internally uses a tree of dependencies to a
 For example, imagine that our state contains post objects, each of which are assigned to a particular site. Retrieving an array of posts for a specific site would require us to filter over all of the known posts. While this would normally trigger a re-render in React, we can use `treeSelect` to create a cached version of the selector which can return a referentially equal object:
 
 ```js
-const getDependents = state => ( [ state.posts ] );
+const getDependents = ( state ) => [ state.posts ];
 const selector = ( [ posts ], siteId ) => filter( posts, { siteId } );
 
 const getSitePosts = treeSelect( selector, getDependents );

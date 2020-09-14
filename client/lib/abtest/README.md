@@ -16,10 +16,10 @@ module.exports = {
 		datestamp: '20150216',
 		variations: {
 			startFreeTrial: 50,
-			beginYourFreeTrial: 50
+			beginYourFreeTrial: 50,
 		},
-		defaultVariation: 'startFreeTrial'
-	}
+		defaultVariation: 'startFreeTrial',
+	},
 };
 ```
 

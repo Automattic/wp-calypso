@@ -20,21 +20,17 @@ class MyComponent extends React.Component {
 			<div>
 				<QuerySegments />
 				<ul>
-				{
-					segments.length && segments.map( segments => {
-						return ( <li>{ segments.id }</li> );
-					} )
-				}
+					{ segments.length &&
+						segments.map( ( segments ) => {
+							return <li>{ segments.id }</li>;
+						} ) }
 				</ul>
 			</div>
 		);
 	}
 }
 
-export default connect(
-	state => ( {
-		segments: getSegments( state ),
-	} ),
-)( MyComponent );
-
+export default connect( ( state ) => ( {
+	segments: getSegments( state ),
+} ) )( MyComponent );
 ```
