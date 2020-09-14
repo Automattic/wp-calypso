@@ -13,10 +13,8 @@ namespace A8C\FSE\Coming_soon;
  * @return boolean
  */
 function show_coming_soon_page() {
-	global $post;
-
-	// Handle the case where we are not rendering a post.
-	if ( ! isset( $post ) ) {
+	// Only show coming soon on these display page types
+	if ( ! is_singular() && ! is_archive() && ! is_404() && ! is_search() ) {
 		return false;
 	}
 
