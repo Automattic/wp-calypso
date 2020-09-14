@@ -470,6 +470,7 @@ class InvitePeople extends React.Component {
 		this.setState( {
 			isGeneratingInviteLinks: true,
 		} );
+
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
 
@@ -485,6 +486,7 @@ class InvitePeople extends React.Component {
 			( accepted ) => {
 				if ( accepted ) {
 					this.props.disableInviteLinks( this.props.siteId );
+					this.setState( this.resetState() );
 				}
 			},
 			this.props.translate( 'Disable' )
