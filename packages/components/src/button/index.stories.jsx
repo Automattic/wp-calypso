@@ -29,4 +29,4 @@ export const Scary = () => <ButtonVariations scary />;
 export const Borderless = () => <ButtonVariations borderless />;
 export const Disabled = () => <ButtonVariations disabled />;
 export const Link = () => <ButtonVariations href="https://www.google.com/" target="_blank" />;
-export const Bare = () => <ButtonVariations bare />;
+export const Plain = () => <ButtonVariations plain />;
