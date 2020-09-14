@@ -28,13 +28,13 @@ A shortcode object is comprised of the following properties:
 
 The name of the shortcode.
 
-See: https://codex.wordpress.org/Shortcode_API#Names
+See: <https://codex.wordpress.org/Shortcode_API#Names>
 
 ### `type`
 
 The type of shortcode, `closed`, `self-closing`, or `single`.
 
-See: https://codex.wordpress.org/Shortcode_API#Enclosing_vs_self-closing_shortcodes
+See: <https://codex.wordpress.org/Shortcode_API#Enclosing_vs_self-closing_shortcodes>
 
 ### `attrs`
 
