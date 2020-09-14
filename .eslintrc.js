@@ -22,6 +22,20 @@ module.exports = {
 			},
 		},
 		{
+			files: [ '*.md.js' ],
+			rules: {
+				// These are ok for examples
+				'import/no-extraneous-dependencies': 'off',
+				'no-console': 'off',
+				'no-redeclare': 'off',
+				'no-undef': 'off',
+				'no-unused-vars': 'off',
+				'react/jsx-no-undef': 'off',
+				'react/react-in-jsx-scope': 'off',
+				'wpcalypso/import-docblock': 'off',
+			},
+		},
+		{
 			files: [ 'bin/**/*' ],
 			rules: {
 				'import/no-nodejs-modules': 'off',
