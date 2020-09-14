@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { head, uniqueId } from 'lodash';
+import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
@@ -20,6 +20,7 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { userCan } from 'lib/site/utils';
+import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
 
 class FeaturedImageDropZone extends Component {
 	onFilesDrop = async ( files ) => {
@@ -38,7 +39,7 @@ class FeaturedImageDropZone extends Component {
 			return false;
 		}
 
-		const transientId = uniqueId( 'featured-image' );
+		const transientId = createTransientMediaId( 'featured-image' );
 
 		const file = {
 			ID: transientId,

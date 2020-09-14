@@ -6,11 +6,9 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import impureLodash from 'lib/impure-lodash';
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
-
-const { uniqueId } = impureLodash;
+import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
 
 /**
  * Returns an object describing a transient media item which can be used in
@@ -22,7 +20,7 @@ const { uniqueId } = impureLodash;
 export function createTransientMedia( file ) {
 	const transientMedia = {
 		transient: true,
-		ID: uniqueId( 'media-' ),
+		ID: createTransientMediaId(),
 	};
 
 	if ( 'string' === typeof file ) {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { head, isEqual, partial, uniqueId } from 'lodash';
+import { head, isEqual, partial } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -28,6 +28,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import resizeImageUrl from 'lib/resize-image-url';
 import { AspectRatios } from 'state/editor/image-editor/constants';
 import Spinner from 'components/spinner';
+import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
 
 /**
  * Debug
@@ -85,7 +86,7 @@ class PodcastCoverImageSetting extends PureComponent {
 	async uploadCoverImage( blob, fileName ) {
 		// Upload media using a manually generated ID so that we can continue
 		// to reference it within this function
-		const transientMediaId = uniqueId( 'podcast-cover-image' );
+		const transientMediaId = createTransientMediaId( 'podcast-cover-image' );
 
 		this.setState( { transientMediaId } );
 		this.onUploadStateChange( true );
