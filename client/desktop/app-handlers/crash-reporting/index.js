@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, crashReporter } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, crashReporter } = require( 'electron' );
 
 /**
  * Internal dependencies

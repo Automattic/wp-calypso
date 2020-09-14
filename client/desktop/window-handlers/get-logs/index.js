@@ -2,7 +2,7 @@
  * External dependencies
  */
 const path = require( 'path' );
-const { app, dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, dialog } = require( 'electron' );
 
 /**
  * Internal dependencies

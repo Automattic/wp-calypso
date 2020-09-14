@@ -2,7 +2,7 @@
  * External Dependencies
  */
 const path = require( 'path' );
-const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app } = require( 'electron' );
 const makeDir = require( 'make-dir' );
 
 /**
