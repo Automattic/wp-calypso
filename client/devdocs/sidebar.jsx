@@ -118,7 +118,7 @@ export default class DevdocsSidebar extends React.PureComponent {
 						<SidebarItem
 							className="devdocs__navigation-item"
 							icon="image-multiple"
-							label="WordPress Components Gallery"
+							label="WordPress Components"
 							link="/devdocs/wordpress-components-gallery"
 							selected={ this.isItemSelected( '/devdocs/wordpress-components-gallery', false ) }
 						/>
