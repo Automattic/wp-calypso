@@ -56,7 +56,7 @@ interface Cart {
  **/
 
 export default function useOnSiteCreation() {
-	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { domain, isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
@@ -109,10 +109,12 @@ export default function useOnSiteCreation() {
 						? `site-editor%2F${ newSite.site_slug }`
 						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
-					const redirectionUrl = shouldSiteBePublic
+					const gutenboardingRedirectionUrl = shouldSiteBePublic
 						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
 						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
-					window.location.href = redirectionUrl;
+					window.location.href = isExperimental
+						? `/checkout/${ newSite.site_slug }`
+						: gutenboardingRedirectionUrl;
 				};
 				recordOnboardingComplete( {
 					...flowCompleteTrackingParams,
@@ -144,5 +146,6 @@ export default function useOnSiteCreation() {
 		flowCompleteTrackingParams,
 		shouldSiteBePublic,
 		design,
+		isExperimental,
 	] );
 }
