@@ -24,6 +24,7 @@ module.exports = {
 							// Plugins from https://www.npmjs.com/package/remark-preset-lint-markdown-style-guide
 							'lint-no-literal-urls',
 							'lint-heading-increment',
+							'lint-no-heading-punctuation',
 						],
 					},
 				],
