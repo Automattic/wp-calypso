@@ -4,7 +4,7 @@ This component is used to display a "In partnership with WordPress.com" colophon
 
 ---
 
-#### How to use:
+## How to use:
 
 ```js
 import WpcomColophon from 'components/wpcom-colophon';

@@ -4,7 +4,7 @@ This component is used to display the Jetpack Plus WPCOM logo (a Jetpack logo, a
 
 ---
 
-#### How to use:
+## How to use:
 
 ```js
 import JetpackPlusWpComLogo from 'components/jetpack-plus-wpcom-logo';
@@ -18,7 +18,7 @@ export default function JetpackPlusWpComLogoExample() {
 }
 ```
 
-#### Props
+## Props
 
 - `className` : (string) Custom class name to be added to the SVG element
 - `size` : (number) The height of the SVG. Default is `32`

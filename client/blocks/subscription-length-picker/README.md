@@ -2,11 +2,11 @@
 
 Represents a term that user could pick when choosing his plan (monthly, yearly, biennially)
 
-### `index.jsx`
+## `index.jsx`
 
 Given basic information, this component creates a representation of given term.
 
-#### Props
+### Props
 
 - `checked`: bool - if this option should be checked (selected)
 - `onCheck`: function({value}) => void ( optional ) A callback called when this term is checked (selected)

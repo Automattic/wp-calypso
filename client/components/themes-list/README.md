@@ -2,7 +2,7 @@
 
 Themes list component: displays a list of Theme components.
 
-### `index.jsx`
+## `index.jsx`
 
 Given an array of themes, this component creates a corresponding list of theme components to display
 information about those themes.
@@ -10,7 +10,7 @@ information about those themes.
 Each item in the `themes` array prop must contain theme attributes that can be used by the `Theme` component.
 Other accepted props are two boolean flags and a callback, all of which are related to pagination.
 
-#### Props
+## Props
 
 - `emptyContent`: element ( optional ), element that will be displayed when the list is empty, if null or not provided default EmptyContent will be used.
 

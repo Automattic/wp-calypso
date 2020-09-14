@@ -5,7 +5,7 @@ This block provides a higher-order component `withUserMentions()`, which can be 
 It also provides the components `UserMentionsSuggestionList` and `UserMentionsSuggestion`, which are also used in the
 [Editor Mentions TinyMCE plugin](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/tinymce/plugins/mentions).
 
-#### How to use
+## How to use
 
 ```js
 import withUserMentions from 'blocks/user-mentions';
@@ -19,7 +19,7 @@ export default withUserMentions( ExampleInput );
 
 Note: you'll need to wrap the child component with `React.forwardRef`, and pass along the `onKeyUp` and `onKeyDown` props.
 
-#### Higher order components
+## Higher order components
 
 `addUserMentions` (add.jsx) provides the suggestion popup to the wrapped component. If you don't want suggestions from the API, you can just hand this component a `suggestions` prop. The Devdocs example uses this HOC.
 

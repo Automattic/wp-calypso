@@ -2,7 +2,7 @@
 
 `Me` handler class.
 
-### Create a `Me` instance from WPCOM
+## Create a `Me` instance from WPCOM
 
 ```js
 var wpcom = require('wpcom')('<your-token>');

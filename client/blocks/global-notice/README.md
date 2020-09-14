@@ -3,7 +3,7 @@
 These components are used to display global notices.
 They allow you to use a component for your notice instead of calling the notices redux actions directly.
 
-#### How to use the container:
+## How to use the container:
 
 ```js
 import { InfoNotice } from 'blocks/global-notice';
@@ -17,6 +17,6 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `text`: The text that will be displayed while the notice is visible

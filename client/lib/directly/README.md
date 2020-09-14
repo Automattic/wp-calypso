@@ -21,13 +21,13 @@ should be wrapped here rather than called using the `window.DirectlyRTM()` funct
 
 The following functions are provided:
 
-#### `initialize()`
+### `initialize()`
 
 Configures the RTM widget and loads all its third-party assets (about 200KB at the time of
 writing). If the user has recently interacted with the RTM widget, it will open up on
 initialization (an unavoidable part of the library's mount).
 
-#### `askQuestion( questionText, name, email )`
+### `askQuestion( questionText, name, email )`
 
 Asks a question with the given params and opens the "Alerting experts" view. All parameters
 are required strings. This also initializes the RTM widget if it hasn't already been done.

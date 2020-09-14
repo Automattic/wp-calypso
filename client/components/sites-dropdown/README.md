@@ -4,7 +4,7 @@ Renders a dropdown component for selecting a site. This is the canonical site pi
 
 It supports searching if you have many sites, handles sites with empty titles, sites with redirects, etc.
 
-#### How to use:
+## How to use:
 
 ```js
 import SitesDropdown from 'components/sites-dropdown';
@@ -16,7 +16,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 (All optional)
 

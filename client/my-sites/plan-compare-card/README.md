@@ -2,7 +2,7 @@
 
 This component is used to display a current or next plan, highlighting the features you choose.
 
-#### Usage:
+## Usage:
 
 ```javascript
 	<PlanCompareCard
@@ -29,7 +29,7 @@ This component is used to display a current or next plan, highlighting the featu
 }
 ```
 
-#### Props
+## Props
 
 - `title`: The plan name (required)
 - `line`: The plan tagline (required)

@@ -7,7 +7,7 @@ import FollowList from 'follow-list';
 const followList = FollowList();
 ```
 
-### add( { site_id: site.ID, is_following: true } )
+## add( { site_id: site.ID, is_following: true } )
 
 If the `site_id` being passed in does not yet exist in the array of `followList` data, a new `FollowListSite` object is created and added to the array. The method returns the instance of the `FollowListSite` so you can use that object to subscribe to change events:
 
@@ -23,11 +23,11 @@ const newFollowListSite = followList.add( { site_id: 1, is_following: false } );
 
 Instances of `FollowListSite` are created using the steps outlined above.
 
-### follow()
+## follow()
 
 If the `is_following === false` this method will call the api to start following the site. Once the api operation complets, a change event is fired.
 
-### unfollow()
+## unfollow()
 
 If the `is_following === true` this method will call the api to stop following the site. Once the api operation complets, a change event is fired.
 

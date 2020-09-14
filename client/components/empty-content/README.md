@@ -4,7 +4,7 @@ EmptyContent is used when a customer has no data to show. This is an opportunity
 
 ## Usage
 
-#### As a full view component
+### As a full view component
 
 ```jsx
 // import the component
@@ -19,7 +19,7 @@ function show( context, next ) {
 }
 ```
 
-#### As an inline component
+### As an inline component
 
 ```jsx
 import EmptyContent from 'components/empty-content';
@@ -34,7 +34,7 @@ render() {
 }
 ```
 
-### Props
+## Props
 
 | Name                    | Type            | Default                                  | Description                                                                                                                                   |
 | ----------------------- | --------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |

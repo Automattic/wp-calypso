@@ -2,7 +2,9 @@
 
 `Media` handler class.
 
-### Create a `Media` instance from Site
+## Example
+
+Create a `Media` instance from Site
 
 ```js
 var wpcom = require('wpcom')('<your-token>');

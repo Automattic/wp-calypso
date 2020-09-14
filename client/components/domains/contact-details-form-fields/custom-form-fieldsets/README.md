@@ -27,7 +27,7 @@ Usage:
     />
 ```
 
-#### Props
+## Props
 
 `getFieldProps` _{Function}_ _Required_
 
@@ -50,15 +50,3 @@ Default: `false`.
 Overrides the constants check. Informs the component whether the country code is associated with a list of states, and therefore must display the US-style address fields.
 
 Default: `false`.
-
-#### Props
-
-`getFieldProps` _{Function}_
-
-Returns an object of props expected by our form input components: `my-sites/domains/components/form`
-
-`countryCode` _{string}_ _Optional_
-
-The user's country code, for example: 'AU', 'GB', 'IT', 'US' and so on. Mainly used to determine the correct postcode label.
-
-Default: `'US'`.

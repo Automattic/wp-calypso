@@ -22,7 +22,7 @@ Network connection keeps current network connection status. To check it use:
 NetworkConnectionApp.isConnected();
 ```
 
-#### Sending events
+## Sending events
 
 There are to methods that can be used to emit connection status change.
 
@@ -38,7 +38,7 @@ When you want to notify that network connection has been lost use:
 NetworkConnectionApp.emitDisconnected();
 ```
 
-#### Responding to events
+## Responding to events
 
 It is possible to listen for network connection status change. Events will be fired only when connection changes status from connected to disconnected or other way around.
 
