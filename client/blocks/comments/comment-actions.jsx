@@ -24,7 +24,7 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
  */
 import './comment-actions.scss';
 
-const BareButton = ( props ) => <Button { ...props } bare />;
+const PlainButton = ( props ) => <Button { ...props } plain />;
 
 const CommentActions = ( {
 	post,
@@ -58,37 +58,37 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore && (
-				<BareButton className="comments__comment-actions-read-more" onClick={ onReadMore }>
+				<PlainButton className="comments__comment-actions-read-more" onClick={ onReadMore }>
 					<Gridicon
 						icon="chevron-down"
 						size={ 18 }
 						className="comments__comment-actions-read-more-icon"
 					/>
 					{ translate( 'Read More' ) }
-				</BareButton>
+				</PlainButton>
 			) }
 			{ showReplyButton && (
-				<BareButton className="comments__comment-actions-reply" onClick={ handleReply }>
+				<PlainButton className="comments__comment-actions-reply" onClick={ handleReply }>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-				</BareButton>
+				</PlainButton>
 			) }
 			{ showCancelReplyButton && (
-				<BareButton className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
+				<PlainButton className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
-				</BareButton>
+				</PlainButton>
 			) }
 			{ showCancelEditButton && (
-				<BareButton
+				<PlainButton
 					className="comments__comment-actions-cancel-reply"
 					onClick={ editCommentCancel }
 				>
 					{ translate( 'Cancel' ) }
-				</BareButton>
+				</PlainButton>
 			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
-				tagName={ BareButton }
+				tagName={ PlainButton }
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
@@ -96,18 +96,18 @@ const CommentActions = ( {
 			{ showModerationTools && (
 				<div className="comments__comment-actions-moderation-tools">
 					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
-					<BareButton className="comments__comment-actions-trash" onClick={ trashComment }>
+					<PlainButton className="comments__comment-actions-trash" onClick={ trashComment }>
 						<Gridicon icon="trash" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
-					</BareButton>
-					<BareButton className="comments__comment-actions-spam" onClick={ spamComment }>
+					</PlainButton>
+					<PlainButton className="comments__comment-actions-spam" onClick={ spamComment }>
 						<Gridicon icon="spam" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
-					</BareButton>
-					<BareButton className="comments__comment-actions-edit" onClick={ editComment }>
+					</PlainButton>
+					<PlainButton className="comments__comment-actions-edit" onClick={ editComment }>
 						<Gridicon icon="pencil" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
-					</BareButton>
+					</PlainButton>
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 						<PopoverMenuItem
 							className={ classnames( 'comments__comment-actions-approve', {

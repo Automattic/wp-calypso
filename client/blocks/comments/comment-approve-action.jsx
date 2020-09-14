@@ -27,7 +27,7 @@ const CommentApproveAction = ( { translate, status, approveComment, unapproveCom
 
 	return (
 		<Button
-			bare
+			plain
 			className={ buttonStyle }
 			onClick={ ! isApproved ? approveComment : unapproveComment }
 		>
