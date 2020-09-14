@@ -25,45 +25,39 @@ const JetpackFAQ = ( { isChatAvailable, translate } ) => {
 	return (
 		<FAQ>
 			<FAQItem
-				question={ translate( 'I signed up and paid. What’s next?' ) }
+				question={ translate( 'What is the cancellation policy?' ) }
 				answer={ translate(
-					'Our premium features are powered by a few of our other plugins. After purchasing you will' +
-						' need to install the Akismet and VaultPress plugins. Just follow the guide' +
-						' after you complete your purchase.'
-				) }
-			/>
-
-			<FAQItem
-				question={ translate( 'What are the hosting requirements?' ) }
-				answer={ translate(
-					'You should be running the latest version of WordPress and be using a web host that runs' +
-						' PHP 5 or higher. You will also need a WordPress.com account (you can register' +
-						' during the connection process) and a publicly-accessible site with XML-RPC enabled.'
-				) }
-			/>
-
-			<FAQItem
-				question={ translate( 'Does this work with a multisite network?' ) }
-				answer={ translate(
-					"Yes, Jetpack and all of it's paid features are compatible with WordPress Multisite" +
-						' networks, except for Jetpack Backup.'
+					'We want to make sure Jetpack is exactly what you need, so you can request a cancellation' +
+						' within 30 days of purchase and receive a full refund. If there’s something you’d like' +
+						' to see changed in Jetpack to better suit your needs, {{helpLink}}please let us know{{/helpLink}}!',
+					{
+						components: { helpLink },
+					}
 				) }
 			/>
 
 			<FAQItem
 				question={ translate( 'Why do I need a WordPress.com account?' ) }
 				answer={ translate(
-					"Many of Jetpack's core features make use of the WordPress.com cloud. In order to make sure" +
-						' everything works correctly, Jetpack requires you to connect a (free) WordPress.com' +
-						" account. If you don't already have an account you can easily create one during the" +
-						' connection process.'
+					"Many of Jetpack's core features make use of the WordPress.com cloud. In order to make sure everything" +
+						" works correctly, Jetpack requires you to connect a free WordPress.com account. If you don't already" +
+						' have an account you can easily create one during the connection process.'
 				) }
 			/>
 
 			<FAQItem
-				question={ translate( 'What is the cancellation policy?' ) }
+				question={ translate( 'What are the hosting requirements?' ) }
 				answer={ translate(
-					'You can request a cancellation within 30 days of purchase and receive a full refund.'
+					'You should be running the latest version of WordPress and a publicly-accessible site with XML-RPC enabled.'
+				) }
+			/>
+
+			<FAQItem
+				question={ translate( 'Does this work with a multisite network?' ) }
+				answer={ translate(
+					'Jetpack’s free features are compatible with WordPress Multisite networks. Paid features' +
+						' also work with Multisite networks, but each site requires its own subscription. Jetpack Backup' +
+						' and Jetpack Scan are not currently compatible with Multisite networks.'
 				) }
 			/>
 
