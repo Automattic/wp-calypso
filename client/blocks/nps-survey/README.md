@@ -5,10 +5,7 @@ This block is used to display a Net Promoter Score (NPS) survey to the user.
 ### Usage
 
 ```javascript
-	<NpsSurvey
-		name="some_screen_v1"
-		onClose={ this.handleSurveyClose }
-	/>
+<NpsSurvey name="some_screen_v1" onClose={ this.handleSurveyClose } />;
 ```
 
 ### Props

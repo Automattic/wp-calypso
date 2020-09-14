@@ -152,22 +152,21 @@ state.users ===
 
 ```javascript
 const deleteableUserReducer = ( state, action ) =>
-    DELETE === action.type
-        ? undefined
-        : userReducer( state, action );
+	DELETE === action.type ? undefined : userReducer( state, action );
 
 export default keyedReducer( 'username', deleteableUserReducer );
 
-state.users === {
-    hunter02: {
-        age: 1,
-        title: 'grunt',
-    }
-}
+state.users ===
+	{
+		hunter02: {
+			age: 1,
+			title: 'grunt',
+		},
+	};
 
 dispatch( { type: DELETE, username: 'hunter02' } );
 
-state.users === {}
+state.users === {};
 ```
 
 Finally, it's sometimes desirable to apply specific actions to all items in the collection.

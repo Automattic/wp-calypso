@@ -104,8 +104,8 @@ Note that here `apiRequestFunction` calls an API endpoint (`someRequest` in this
 The above example includes an inline function definition, but we should keep the `apiRequestFunction` values in `StepActions` (`signup/config/step-actions.js`) and include them like:
 
 ```javascript
-{
-	apiRequestFunction: stepActions.createSite
+const step = {
+	apiRequestFunction: stepActions.createSite;
 }
 ```
 
@@ -188,11 +188,11 @@ handleSubmit = ( event ) => {
 	event.preventDefault();
 
 	SignupActions.submitSignupStep( {
-		stepName: this.props.stepName
+		stepName: this.props.stepName,
 	} );
 
 	this.props.goToNextStep();
-}
+};
 ```
 
 9 - open https://calypso.localhost:3000/start/hello in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.
