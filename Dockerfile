@@ -39,4 +39,4 @@ ARG        workers
 RUN        WORKERS=$workers CALYPSO_ENV=production BUILD_TRANSLATION_CHUNKS=true yarn run build && rm -fr .cache
 
 USER       nobody
-CMD        NODE_ENV=production node build/bundle.js
+CMD        NODE_ENV=production node build/server.js
