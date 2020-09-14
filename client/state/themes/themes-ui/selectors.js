@@ -21,11 +21,6 @@ export function getBackPath( state ) {
 	return `/themes/${ siteSlug }`;
 }
 
-//  Returns true if the theme showcase banner is currently visible
-export function isThemesBannerVisible( state ) {
-	return state.themes.themesUI.themesBannerVisible;
-}
-
 // Returns the theme bookmark.
 export function getThemesBookmark( state ) {
 	return state.themes.themesUI.themesBookmark;
