@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-import { uniqueId } from 'lodash';
+import impureLodash from 'lib/impure-lodash';
+
+const { uniqueId } = impureLodash;
 
 /**
  * Returns an ID for transient media items. To be consistent in creating
