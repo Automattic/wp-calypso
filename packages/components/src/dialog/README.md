@@ -139,10 +139,10 @@ You can provide custom styling for a dialog by making use of the following prope
 - `baseClassName`: if you specify this, you are responsible for providing all the following classes for the dialog (you
   can `@extend` the base `dialog` SCSS classes if you just want to tweak things a bit):
 
-      - _baseClassName_
-      - _baseClassName___backdrop
-      - _baseClassName___content
-      - _baseClassName___action-buttons
+  - _baseClassName_
+  - \_baseClassName\_\_\_backdrop
+  - \_baseClassName\_\_\_content
+  - \_baseClassName\_\_\_action-buttons
 
 - `additionalClassNames`: if you specify this, these additional class names will be applied to the dialog element
   (not the backdrop)
