@@ -46,6 +46,36 @@ function render_fallback_coming_soon_page() {
 }
 
 /**
+ * This filter makes sure it's possible to fetch `wpcom_public_coming_soon` option via public-api.wordpress.com.
+ *
+ * @param object $options array Retrieved site options, ready to be returned as API respomnse.
+ *
+ * @return array current value of `wpcom_public_coming_soon`
+ */
+function add_public_coming_soon_to_settings_endpoint_get( $options ) {
+	$options['wpcom_public_coming_soon'] = (int) get_option( 'wpcom_public_coming_soon' );
+
+	return $options;
+}
+add_filter( 'site_settings_endpoint_get', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_get' );
+
+/**
+ * This filter makes sure it's possible to change `wpcom_public_coming_soon` option via public-api.wordpress.com.
+ *
+ * @param object $input Filtered POST input.
+ * @param object $unfiltered_input Raw and unfiltered POST input.
+ *
+ * @return mixed
+ */
+function add_public_coming_soon_to_settings_endpoint_post( $input, $unfiltered_input ) {
+	if ( array_key_exists( 'wpcom_public_coming_soon', $unfiltered_input ) ) {
+		$input['wpcom_public_coming_soon'] = (int) $unfiltered_input['wpcom_public_coming_soon'];
+	}
+	return $input;
+}
+add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_post', 10, 2 );
+
+/**
  * Decides whether to redirect to the site's coming soon page and performs
  * the redirect.
  */
