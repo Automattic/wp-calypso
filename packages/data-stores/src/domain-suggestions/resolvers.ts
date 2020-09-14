@@ -21,8 +21,16 @@ export const isAvailable = function* isAvailable(
 	try {
 		const { body } = yield fetchAndParse( url );
 		return receiveDomainAvailability( domainName, body );
-	} catch {}
-	return;
+	} catch {
+		// the API returns a status of 'unknown' if it can not accurately determine
+		// availability, we will return the same status if the API request fails.
+		return receiveDomainAvailability( domainName, {
+			domain_name: domainName,
+			mappable: 'unknown',
+			status: 'unknown',
+			supports_privacy: false,
+		} );
+	}
 };
 
 export function* getCategories() {
