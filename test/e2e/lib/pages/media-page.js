@@ -71,6 +71,10 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async selectInsertImage() {
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( '.media-library__list-item.is-selected' )
+		);
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.editor-media-modal button[data-e2e-button="confirm"]' )
