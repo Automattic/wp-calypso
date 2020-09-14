@@ -1,65 +1,63 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { defer, get, includes, isEmpty } from 'lodash';
-import { localize, getLocaleSlug } from 'i18n-calypso';
-import classNames from 'classnames';
-
+import CartData from 'calypso/components/data/cart';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 /**
  * Internal dependencies
  */
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
+import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
-import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import CartData from 'calypso/components/data/cart';
-import { getStepUrl } from 'calypso/signup/utils';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import Notice from 'calypso/components/notice';
+import { getABTestVariation } from 'calypso/lib/abtest';
 import {
-	domainRegistration,
-	themeItem,
-	domainMapping,
-	domainTransfer,
+	domainMapping, domainRegistration,
+	domainTransfer, themeItem
 } from 'calypso/lib/cart-values/cart-items';
+import { getDomainProductSlug } from 'calypso/lib/domains';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent
+} from 'calypso/state/analytics/actions';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
-	recordAddDomainButtonClickInUseYourDomain,
+	recordAddDomainButtonClickInUseYourDomain
 } from 'calypso/state/domains/actions';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
-import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import Notice from 'calypso/components/notice';
-import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
+import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getDomainProductSlug } from 'calypso/lib/domains';
-import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSite } from 'calypso/state/sites/selectors';
 import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { abtest, getABTestVariation } from 'calypso/lib/abtest';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
-
+import { getSite } from 'calypso/state/sites/selectors';
+import { getLocaleSlug, localize } from 'i18n-calypso';
+import { defer, get, includes, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { isPlanStepExistsAndSkipped } from 'state/signup/preview/selectors';
 /**
  * Style dependencies
  */
 import './style.scss';
+
+
 
 class DomainsStep extends React.Component {
 	static propTypes = {
@@ -125,22 +123,6 @@ class DomainsStep extends React.Component {
 
 			props.goToNextStep();
 		}
-
-		this.showTestCopy = false;
-
-		const isEligibleFlowForDomainTest = includes(
-			[ 'onboarding', 'onboarding-registrationless' ],
-			props.flowName
-		);
-
-		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
-		if (
-			false !== this.props.shouldShowDomainTestCopy &&
-			isEligibleFlowForDomainTest &&
-			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
-		) {
-			this.showTestCopy = true;
-		}
 	}
 
 	static getDerivedStateFromProps( nextProps ) {
@@ -148,6 +130,15 @@ class DomainsStep extends React.Component {
 			previousStepSectionName: nextProps.stepSectionName,
 		};
 	}
+
+	/**
+	 * Derive if the "plans" step actually will be visible to the customer in a given flow
+	 */
+	getIsPlanSelectionUnavailableInFlow = () => {
+		const { steps, isPlanStepSkipped } = this.props;
+		const isPlansStepExistsInFlow = steps?.some( ( planName ) => planName.includes( 'plans' ) );
+		return ! isPlansStepExistsInFlow || isPlanStepSkipped;
+	};
 
 	componentDidUpdate( prevProps ) {
 		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
@@ -160,10 +151,6 @@ class DomainsStep extends React.Component {
 				this.props.showSitePreview();
 			}
 		}
-	}
-
-	isEligibleVariantForDomainTest() {
-		return this.showTestCopy;
 	}
 
 	getMapDomainUrl = () => {
@@ -230,7 +217,7 @@ class DomainsStep extends React.Component {
 	}
 
 	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const hideFreePlanTracksProp = this.isEligibleVariantForDomainTest()
+		const hideFreePlanTracksProp = this.getIsPlanSelectionUnavailableInFlow()
 			? { should_hide_free_plan: shouldHideFreePlan }
 			: {};
 
@@ -258,7 +245,7 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest()
+		const shouldHideFreePlanItem = this.getIsPlanSelectionUnavailableInFlow()
 			? { shouldHideFreePlan }
 			: {};
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
@@ -460,6 +447,7 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
+		const isPlanSelectionUnavailableInFlow = this.getIsPlanSelectionUnavailableInFlow();
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
@@ -480,8 +468,8 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
+				isPlanSelectionUnavailableInFlow={ isPlanSelectionUnavailableInFlow }
 				showExampleSuggestions={ showExampleSuggestions }
-				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor( { isSignup: true, isDomainOnly: this.props.isDomainOnly } ) }
@@ -575,9 +563,7 @@ class DomainsStep extends React.Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		const subHeaderPropertyName = this.isEligibleVariantForDomainTest()
-			? 'domainsStepSubheaderTestCopy'
-			: 'domainsStepSubheader';
+		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
 			includes( [ 'onboarding', 'ecommerce-onboarding' ], flowName ) &&
@@ -599,9 +585,7 @@ class DomainsStep extends React.Component {
 			return translate( 'Your next big idea starts here' );
 		}
 
-		const headerPropertyName = this.isEligibleVariantForDomainTest()
-			? 'domainsStepHeaderTestCopy'
-			: 'domainsStepHeader';
+		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
 		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
 	}
@@ -640,12 +624,11 @@ class DomainsStep extends React.Component {
 			);
 		}
 
-		const stepContentClassName = classNames( 'domains__step-content', {
-			'domains__step-content-domain-step-test': this.isEligibleVariantForDomainTest(),
-		} );
-
 		return (
-			<div key={ this.props.step + this.props.stepSectionName } className={ stepContentClassName }>
+			<div
+				key={ this.props.step + this.props.stepSectionName }
+				className="domains__step-content domains__step-content-domain-step-test"
+			>
 				{ content }
 			</div>
 		);
@@ -779,6 +762,7 @@ export default connect(
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isReskinned,
+			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
 		};
 	},
 	{
