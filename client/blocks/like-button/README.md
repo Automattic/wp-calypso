@@ -1,5 +1,4 @@
-Like Button
-===========
+# Like Button
 
 This component is used to display a like button.
 It has two parts, the actual button and a container that works with the LikeStore.
@@ -21,11 +20,11 @@ render: function() {
 
 #### Props
 
-* `siteId`: number, a site ID to fetch likes for
-* `postId`: number, a post ID to fetch likes for
-
+- `siteId`: number, a site ID to fetch likes for
+- `postId`: number, a post ID to fetch likes for
 
 #### How to use the button directly:
+
 ```js
 import LikeButton from 'blocks/like-button/button';
 
@@ -44,9 +43,9 @@ handleLikeToggle: function( newState ) {
 
 #### Props
 
-* `likeCount`: the number of likes.
-* `showZeroCount`: (default: false) show the number of likes even if it's zero.
-* `liked`: (default: false ) a boolean indicating if the current user has liked whatever is being liked.
-* `tagName`: (default: 'li' ) string. The container tag to use for the button.
-* `onLikeToggle`: a callback that is invoked when the like button toggles. It is called with the new state.
-* `isMini`: show a smaller version of the button. Used on comment likes.
+- `likeCount`: the number of likes.
+- `showZeroCount`: (default: false) show the number of likes even if it's zero.
+- `liked`: (default: false ) a boolean indicating if the current user has liked whatever is being liked.
+- `tagName`: (default: 'li' ) string. The container tag to use for the button.
+- `onLikeToggle`: a callback that is invoked when the like button toggles. It is called with the new state.
+- `isMini`: show a smaller version of the button. Used on comment likes.

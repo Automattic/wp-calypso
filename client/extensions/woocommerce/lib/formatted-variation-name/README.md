@@ -1,12 +1,11 @@
-Formatted Variation Name
-==========
+# Formatted Variation Name
 
 WooCommerce variations do not have a proper 'name' field.
 
 This method will return a formatted variation name based on the attribute options that a variation contains.
 
-Example (1 Attribute)
-==========
+# Example (1 Attribute)
+
 ```javascript
 import formattedVariationName from 'lib/formatted-variation-name';
 
@@ -26,8 +25,8 @@ return formattedVariationName( variation );
 
 Returns `Red`.
 
-Example (Multiple Attributes)
-==========
+# Example (Multiple Attributes)
+
 ```javascript
 import formattedVariationName from 'lib/formatted-variation-name';
 
@@ -51,8 +50,8 @@ return formattedVariationName( variation );
 
 Returns `Red - Small`.
 
-Example (Fallback)
-==========
+# Example (Fallback)
+
 ```javascript
 import formattedVariationName from 'lib/formatted-variation-name';
 

@@ -1,5 +1,4 @@
-Plugin Remove Button
-====================
+# Plugin Remove Button
 
 This component is used to display a button that launch a remove action when clicked.
 
@@ -19,6 +18,6 @@ render() {
 
 #### Props
 
-* `plugin`: a plugin object.
-* `site`: a site object.
-* `notices` : (object) Object of errored, inProgress, and completed actions.
+- `plugin`: a plugin object.
+- `site`: a site object.
+- `notices` : (object) Object of errored, inProgress, and completed actions.

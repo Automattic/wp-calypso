@@ -58,8 +58,8 @@ import config from 'dirA'; //when `dirA` is not a directory or file in ./client/
 
 The rule accept a configuration object with:
 
-* `mappings`. An array of objects like `{dir: string, module: string}`. This defines which imports get replaced. It means: for every import of X, X being a subdirectory or file of `<dir>`, replace it with an import of `<module>/X`.
+- `mappings`. An array of objects like `{dir: string, module: string}`. This defines which imports get replaced. It means: for every import of X, X being a subdirectory or file of `<dir>`, replace it with an import of `<module>/X`.
 
-* `automaticExtensions`. An array with the list of extensions to try to import automatically. For example, `['.js', '.json', '.ts']`. This means that when the rule finds something like `import 'file'`, it will apply the mappings if `file.js`, `file.json`, or `file.ts` are files in `<dir>`
+- `automaticExtensions`. An array with the list of extensions to try to import automatically. For example, `['.js', '.json', '.ts']`. This means that when the rule finds something like `import 'file'`, it will apply the mappings if `file.js`, `file.json`, or `file.ts` are files in `<dir>`
 
-* `warnOnNonLiteralImport`. There are some cases where this rule can't figure out if an import should be replaced or not, namely non-literal imports (e.g.: `require(path+'/thing')`. If this property is `true`, it will print out a warning when those imports are found.
+- `warnOnNonLiteralImport`. There are some cases where this rule can't figure out if an import should be replaced or not, namely non-literal imports (e.g.: `require(path+'/thing')`. If this property is `true`, it will print out a warning when those imports are found.

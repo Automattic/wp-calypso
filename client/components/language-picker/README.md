@@ -1,5 +1,4 @@
-LanguagePicker
-==============
+# LanguagePicker
 
 React component used to display a Language Picker.
 

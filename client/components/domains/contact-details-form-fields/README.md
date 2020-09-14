@@ -1,13 +1,10 @@
-Domain Contact Details Form
-=============
+# Domain Contact Details Form
 
 This component renders a contact form with fields specific to purchasing a domain or editing a domain's WHOIS contact details.
 
 Its primary purpose for existing is to ensure consistency between the domain checkout form (`/checkout/some-domain.blog`) and the edit WHOIS contact form (`/domains/manage/some-domain.blog/edit-contact-info/some-domain.blog`).
 
-
 ## Usage
-
 
 ```jsx
     <ContactDetailsFormFields
@@ -79,7 +76,6 @@ Passed to child field components for tracking purposes.
 
 **Default value**: `'Domain contact details form'`
 
-
 ### disableSubmitButton {Bool} (optional)
 
 Disables the submit button, and therefore prevents form submission
@@ -139,7 +135,7 @@ Callback for cancel button. By default the cancel button will not show if no met
 
 ### onContactDetailsChange {Func} (optional)
 
-Triggered whenever a form value changes. 
+Triggered whenever a form value changes.
 
 #### Arguments
 
@@ -178,7 +174,7 @@ Runs a custom validation check after a field update
 #### Arguments
 
 1. {object} The full form object model containing the new values
-2. {Function} A callback to be triggered when validation is complete. See `form-state` ([this._validatorFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
+2. {Function} A callback to be triggered when validation is complete. See `form-state` ([this.\_validatorFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
 
 Usage:
 
@@ -199,7 +195,7 @@ Runs a custom sanitize method after a field update
 #### Arguments
 
 1. {object} The full form object model containing the new values
-2. {Function} A callback to be triggered when sanitization is complete. See `form-state` ([this._sanitizerFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
+2. {Function} A callback to be triggered when sanitization is complete. See `form-state` ([this.\_sanitizerFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
 
 Usage:
 
@@ -212,4 +208,3 @@ Usage:
 	    onComplete( Object.assign( {}, fieldValues, newValues ) );
 	};
 ```
-

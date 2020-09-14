@@ -1,5 +1,4 @@
-Review Replies
-======
+# Review Replies
 
 This module is used to get admin replies to reviews for a site.
 
@@ -20,6 +19,7 @@ This is saved on a per-site basis. All replies are collected in `reviewReplies`,
 	}
 }
 ```
+
 ## Selectors
 
 ### `getReviewReplies( state, reviewId, [siteId] )`

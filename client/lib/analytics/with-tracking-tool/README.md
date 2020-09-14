@@ -1,5 +1,4 @@
-withTrackingTool
-================
+# withTrackingTool
 
 This high-order component allows us to load a tracking tool when component gets mounted.
 

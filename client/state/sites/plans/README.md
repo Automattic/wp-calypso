@@ -1,5 +1,4 @@
-Site Plans
-==========
+# Site Plans
 
 A module for managing site plans data.
 
@@ -23,5 +22,6 @@ dispatch( fetchSitePlansCompleted( 555555555, { 1: { ... }, 1003: { ... }, 1008:
 ```
 
 ## Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `sites.plans`.
 Consult `assembler.js` for the details.

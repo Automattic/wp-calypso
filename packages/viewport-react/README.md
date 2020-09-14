@@ -1,5 +1,4 @@
-viewport
-========
+# viewport
 
 This package contains React helpers to identify and track changes to the viewport. This can be used for displaying different components depending on a desktop or mobile view.
 

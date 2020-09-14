@@ -1,5 +1,4 @@
-Exceptions
-=========
+# Exceptions
 
 Wraps exceptions in the app to provide a better experience.
 

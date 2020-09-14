@@ -1,5 +1,4 @@
-Query Site Connection Status
-================
+# Query Site Connection Status
 
 `<QuerySiteConnectionStatus />` is a React component used in managing network requests for retrieving WordPress.com connection status of a Jetpack site.
 

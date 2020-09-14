@@ -5,8 +5,8 @@
 The app is currently built by directly coupling the data from the WordPress.com API for notifications with the internal data structures.
 In addition to this it has a data augmentation system to handle the inherent race conditions existing with synchronizing local state with remote polling.
 
-
 ### Notes from the API
+
 ```
 const note =
 	{ id: [number]                  // note id as a number
@@ -29,6 +29,7 @@ Polling is always active in the background while the app is visible.
 This means that whenever we make changes in the app we create a race condition between our local changes and updates which started to transfer across the network before we made the change.
 
 <!-- the following diagram was generated in draw.io - it can be edited by pasting in the contents of the SVG itself -->
+
 ![network conversation exposing race when deleting a note](https://cldup.com/unQOzvDkjtq/UlbjwC.svg)
 
 In the diagram you can see where these conditions form and the challenge we have to work around in the app to make sure that the return of a previous request doesn't cause "flickering" in the app where, for example, a note may disappear, reappear, then suddenly disappear again.
@@ -51,9 +52,9 @@ The list of hidden ids is maintained in the `state/notes/reducers.js#hiddenNoteI
 
 Anything that uses the list of "visible notes" should filter out any note matching an id in this list:
 
- - List of actually rendered notes in the list
- - Determining where the "highlight" goes (keyboard navigation through the note list)
- - Finding the "next note"
+- List of actually rendered notes in the list
+- Determining where the "highlight" goes (keyboard navigation through the note list)
+- Finding the "next note"
 
 #### Liked notes
 

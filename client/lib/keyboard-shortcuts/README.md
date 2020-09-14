@@ -1,10 +1,8 @@
-Keyboard Shortcuts
-==================
+# Keyboard Shortcuts
 
 This module emits an event when a keyboard shortcut is used, indicating the keyboard shortcut that was triggered. It provides a layer of abstraction between the keys used to trigger shortcuts and the actions that a component should bind to these shortcuts.
 
-Usage
-=====
+# Usage
 
 This module can be used outside of React, but this is a typical use within React:
 
@@ -61,7 +59,6 @@ A full list of keyboard shortcut events is stored in `key-bindings.js`. New keyb
 }
 ```
 
-Internationalization
-====================
+# Internationalization
 
 The key-bindings module (`key-bindings.js`) uses the `i18n` mixin to provide translations of the descriptions for each keyboard shortcut. When the language changes, `KeyBindings` will emit a `language-change` event, after which any component displaying the textual descriptions of the keyboard shortcuts will need to reload the key-bindings and re-render. At this point, the only other module that should be requiring `key-bindings.js` directly is the keyboard shortcuts menu.

@@ -93,4 +93,4 @@ If however the user will continue to work and make more requests on the same pag
 
 The flag defaults to `true`.
 
-*Implementation detail:* under the hood, if `loadCookiesAfterLogin === true` then the store will reload the iframe used by `wpcom-proxy-request` to send requests to `public-api.wordpress.com`. Because it's only the iframe that reloads the user won't see a browser refresh happen.
+_Implementation detail:_ under the hood, if `loadCookiesAfterLogin === true` then the store will reload the iframe used by `wpcom-proxy-request` to send requests to `public-api.wordpress.com`. Because it's only the iframe that reloads the user won't see a browser refresh happen.

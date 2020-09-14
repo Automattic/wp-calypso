@@ -1,27 +1,26 @@
-Users
-=====
+# Users
 
 A [flux](https://facebook.github.io/flux/docs/overview.html#content) approach for managing a site's users in Calypso.
 
 ###The Data
 
 The Data is stored in a private variable but can be accessed though the stores public methods.
- 
+
 ####Public Methods
- 
+
 **UsersStore.getUsers( options );**
- 
+
 Returns an array of users that have been fetched with the given options describing the fetch query.
 
 ---
 
 **UsersStore.getPaginationData( options );**
- 
-Returns an object: ```{ totalUsers: int, fetchingUsers: bool, usersCurrentOffset: int, numUsersFetched: int }``
+
+Returns an object: ``{ totalUsers: int, fetchingUsers: bool, usersCurrentOffset: int, numUsersFetched: int }`
 This data will help with pagination and infinite scroll.
 
-###Actions 
-Actions get triggered by views and stores. 
+###Actions
+Actions get triggered by views and stores.
 
 ####Public methods.
 

@@ -1,4 +1,3 @@
-
 # Site
 
 `Site` handler class.
@@ -302,7 +301,7 @@ site.statsVideoPlays( function(err, data){
 Returns [visits](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/visits/) data.
 
 ```js
-site.statsVisits( function(err, data){
+site.statsVisits( function ( err, data ) {
 	// data visits response
-});
+} );
 ```

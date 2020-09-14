@@ -1,5 +1,4 @@
-Query Reader Thumbnails
-========================
+# Query Reader Thumbnails
 
 `<QueryReaderThumbnails />` is a React component used in managing network requests for Reader thumbnail urls.
 

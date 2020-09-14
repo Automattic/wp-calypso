@@ -1,5 +1,4 @@
-Section Navigation
-==================
+# Section Navigation
 
 React component used to display a particular section's navigation bar. Or more traditionally, the sub navigation most commonly seen near the top of a page.
 
@@ -56,7 +55,7 @@ export default class extends React.Component {
 }
 ```
 
-Keep in mind that every `prop` referenced in the example can and *should* be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [post types]((/client/my-sites/post-type-filter/index.jsx)) for more working examples.
+Keep in mind that every `prop` referenced in the example can and _should_ be dynamic. The parent component decides selection logic, text display, and hierarchy. Take a look at [pages](/client/my-sites/pages/pages.jsx) & [post types](<(/client/my-sites/post-type-filter/index.jsx)>) for more working examples.
 
 ---
 
@@ -74,8 +73,7 @@ Text displayed in the header of the panel when rendered on mobile.
 
 `selectedCount` - **optional** (Number)
 
-Count displayed in the header of the panel.
----
+## Count displayed in the header of the panel.
 
 ## Nav Tabs
 
@@ -95,12 +93,12 @@ Text displayed in the header when rendered as dropdown.
 
 Count displayed in the header when rendered as dropdown.
 
-`label` - *optional* (string)
+`label` - _optional_ (string)
 
 Text displayed above tabs group when:
 
-* Mobile (`<480px`)
-* `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
+- Mobile (`<480px`)
+- `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
 
 ![label example](https://cldup.com/OeWSPtifYY.png)
 
@@ -116,12 +114,12 @@ The segmented sub component utilizes [`SegmentedControl`](/client/components/seg
 
 #### Props
 
-`label` - *optional* (string)
+`label` - _optional_ (string)
 
 Text displayed above tabs group when:
 
-* Mobile (`<480px`)
-* `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
+- Mobile (`<480px`)
+- `SectionNav` contains sibling level controls groups (more than one `NavTabs` or `NavSegmented`)
 
 ![label example](https://cldup.com/OeWSPtifYY.png)
 
@@ -133,28 +131,28 @@ These are the sub components that make up the children of both `NavTabs` & `NavS
 
 #### Props
 
-`path` - *optional* (string)
+`path` - _optional_ (string)
 
 URL to navigate to when clicked.
 
-`selected` - *optional* (boolean)
+`selected` - _optional_ (boolean)
 
 Used for marking an item selected visually.
 
-`onClick` - *optional* (function)
+`onClick` - _optional_ (function)
 
 Additional function to be executed when item is clicked.
 
-> Note: if `SectionNav` needs to execute some additional functionality on click, this function will still be executed and *not* overridden.
+> Note: if `SectionNav` needs to execute some additional functionality on click, this function will still be executed and _not_ overridden.
 
-`tabIndex` - *optional* (number)
+`tabIndex` - _optional_ (number)
 
 Used for accessibility and places option in a different `tab-index`. Default is `0`.
 
-`disabled` - *optional* (boolean)
+`disabled` - _optional_ (boolean)
 
 Prevents the item from being selected. Default is `false`.
 
-`count` - *optional* (number)
+`count` - _optional_ (number)
 
 Add an extra `item-count` element into nav item.

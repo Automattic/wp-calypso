@@ -1,5 +1,4 @@
-Split Button
-=============
+# Split Button
 
 A React component for displaying a button with a labeled main action plus a secondary, identified by a chevron, that toggles the menu's visibility.
 

@@ -1,5 +1,4 @@
-Resizable Iframe
-================
+# Resizable Iframe
 
 Resizable Iframe is a React component for rendering an `<iframe>` element which can dynamically update its own dimensions using [`window.postMessage`](https://developer.mozilla.org/en-US/docs/Web/API/Window.postMessage). This is useful in cases where an inline frame of an unknown size is to be displayed on the page.
 

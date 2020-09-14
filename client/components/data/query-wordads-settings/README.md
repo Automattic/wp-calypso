@@ -1,5 +1,4 @@
-Query WordAds Settings
-================
+# Query WordAds Settings
 
 `<QueryWordadsSettings />` is a React component used in managing network requests for retrieving and storing WordAds settings.
 

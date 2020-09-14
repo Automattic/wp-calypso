@@ -1,5 +1,4 @@
-wpcom.js Localization
-=====================
+# wpcom.js Localization
 
 This module enables the extension of a `wpcom.js` instance to automatically mark wpcom queries for localization. Specifically, the modified instance will add a locale query parameter to wpcom queries so that api responses are properly localized for the user.
 

@@ -45,7 +45,8 @@ export default function() {
 ## Options
 
 This rule accepts an object as its first option:
-* `"rootFiles"` (default: `[ index.js, index.jsx ]`) array of filenames allowed to contain root component in each folder.
+
+- `"rootFiles"` (default: `[ index.js, index.jsx ]`) array of filenames allowed to contain root component in each folder.
 
 For example, you can allow `index.jsx` and `main.jsx`:
 

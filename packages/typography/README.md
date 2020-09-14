@@ -1,9 +1,10 @@
 # Typography
 
 @automattic/typography is a Sass file for shared typographic elements across WordPress.com products. This package contains
-*  the `@font-face` declaration for the WordPress.com brand font
-*  font-size sass variables
-*  font-family sass variables
+
+- the `@font-face` declaration for the WordPress.com brand font
+- font-size sass variables
+- font-family sass variables
 
 ## Installation
 
@@ -47,6 +48,5 @@ Or apply the class name `wp-brand-font` to any elements that should display with
 Note that the `fonts.scss` file imports the `variables.scss` file.
 
 <br>
-
 
 Please refer to the [Calypso Typography Docs](https://wpcalypso.wordpress.com/devdocs/typography) for more information.

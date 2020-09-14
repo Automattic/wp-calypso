@@ -1,12 +1,11 @@
-Promotions
-==========
+# Promotions
 
 Promotions are a synthetic state construct that are actually created from one of two API objects: coupons, or products (with sale prices). Due to this, a promotion can have one of the following types:
 
-* `product_sale` (for a product with a sale price)
-* `percent` (coupon, matches coupon type)
-* `fixed_cart` (coupon, matches coupon type)
-* `fixed_product` (coupon, matches coupon type)
+- `product_sale` (for a product with a sale price)
+- `percent` (coupon, matches coupon type)
+- `fixed_cart` (coupon, matches coupon type)
+- `fixed_product` (coupon, matches coupon type)
 
 ## Promotions Object
 
@@ -55,6 +54,7 @@ The `appliesTo` object for a promotion is a complex object which describes what 
 ```
 
 #### Example: specific products.
+
 ```js
 {
 	appliesTo: {
@@ -64,6 +64,7 @@ The `appliesTo` object for a promotion is a complex object which describes what 
 ```
 
 ### Example: products by category.
+
 ```js
 {
 	appliesTo: {
@@ -91,7 +92,6 @@ This updates a promotion, which actually translates to either a coupon update or
 ### `deletePromotion( siteId: number, promotion: object )
 
 This deletes a promotion, which actually translates to either a coupon delete or a product update, depending on the type of promotion.
-
 
 ## Reducer
 
@@ -142,4 +142,3 @@ Tests if a category explicitly selected, or implicitly via `all`.
 ### `isProductSelected( promotion: object, product: object )`
 
 Tests if a product explicitly selected, or implicitly via a category or `all`.
-

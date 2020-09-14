@@ -1,5 +1,4 @@
-Email Followers
-===============
+# Email Followers
 
 A [flux](https://facebook.github.io/flux/docs/overview.html#content) approach for managing a site's email followers in Calypso.
 

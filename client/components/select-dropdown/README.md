@@ -1,5 +1,4 @@
-Select Dropdown
-===============
+# Select Dropdown
 
 React component used to display a dropdown selector.
 

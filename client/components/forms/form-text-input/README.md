@@ -1,5 +1,4 @@
-Form Text Input
-===============
+# Form Text Input
 
 `<FormTextInput />` is a React component suited for rendering an `<input />` field enhanced with Calypso-specific styling and validity indicators.
 

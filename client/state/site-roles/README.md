@@ -1,5 +1,4 @@
-Site Roles
-===============
+# Site Roles
 
 A module for managing site roles.
 

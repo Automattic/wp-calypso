@@ -22,6 +22,7 @@ When importing, you can do
 ```js
 import '@automattic/calypso-color-schemes'
 ```
+
 And this will give you the CSS.
 
 ### Using the JS output

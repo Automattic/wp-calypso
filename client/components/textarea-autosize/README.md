@@ -1,5 +1,4 @@
-Textarea Autosize
-=================
+# Textarea Autosize
 
 `<TextareaAutosize />` is a drop-in replacement for a `<textarea />` element which automatically grows or shrinks to accommodate its content.
 

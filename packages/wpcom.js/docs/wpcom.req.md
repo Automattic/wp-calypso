@@ -1,4 +1,3 @@
-
 # WPCOM#Req
 
 ### WPCOM.Req.get(params, query, fn)
@@ -16,11 +15,9 @@ wpcom.req.get('/me/sites', function(err, data){
 
 Make a `POST` request directly to WordPress.com REST-API
 
-
 ### WPCOM.Req.put(params, query, body, fn)
 
 It's an alias of `WPCOM.Req.Post()`;
-
 
 ### WPCOM.Req.del(params, query, fn)
 

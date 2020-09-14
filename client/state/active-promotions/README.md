@@ -1,5 +1,4 @@
-ActivePromotions
-=====
+# ActivePromotions
 
 A module for managing activePromotions data.
 
@@ -42,6 +41,7 @@ wpcom
 ```
 
 # Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `activePromotions`, with the following structure:
 
 ```js

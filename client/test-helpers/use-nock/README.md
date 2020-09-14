@@ -9,6 +9,7 @@ Because it's possible to allow `nock` interceptions and modifiers to persist bey
 `nock` is re-exported as a convenience so you don't have to import both `nock` and this module.
 
 ## Format:
+
 ```js
 useNock();
 ```

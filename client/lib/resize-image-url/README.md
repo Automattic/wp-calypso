@@ -5,7 +5,7 @@ or host.
 
 ## Usage
 
-Pass a URL and either a numeric resize values (pixels width and optional 
+Pass a URL and either a numeric resize values (pixels width and optional
 height), or an object of resizing parameters to the function. The return value
 reflects the resized image URL. The function supports WordPress.com, Photon,
 and Gravatar image URLs.

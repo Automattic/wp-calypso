@@ -1,31 +1,29 @@
-TileGrid (jsx)
-==========
+# TileGrid (jsx)
 
 Component used to declare an area for displaying Tiles — it's the main wrapper that takes care of tile alignment and positioning.
 
 #### Props
 
-* `className`: Add your own class to the grid.
+- `className`: Add your own class to the grid.
 
-----------
+---
 
-Tile (jsx)
-==========
+# Tile (jsx)
 
 Component used to display a clickable tile with an image, call to action, and description.
 
 #### Props
 
-* `buttonClassName`: Add your own class to the tile button.
-* `buttonLabel`: Text of the button.
-* `className`: Add your own class to the tile.
-* `description`: Description text.
-* `highlighted`: Whether the tile should be highlighted.
-* `href`: URL that the item leads to upon click.
-* `image`: URL of the image.
-* `onClick`: Function, executed when the user clicks the tile.
+- `buttonClassName`: Add your own class to the tile button.
+- `buttonLabel`: Text of the button.
+- `className`: Add your own class to the tile.
+- `description`: Description text.
+- `highlighted`: Whether the tile should be highlighted.
+- `href`: URL that the item leads to upon click.
+- `image`: URL of the image.
+- `onClick`: Function, executed when the user clicks the tile.
 
-----------
+---
 
 #### How to use:
 

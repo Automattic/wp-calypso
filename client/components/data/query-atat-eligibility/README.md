@@ -30,6 +30,6 @@ export default connect( mapStateToProps )( MyTransferView );
 
 ### Props
 
-| Name | Type | Required? | Note |
-|---|---|---|---|
-| `siteId` | number | yes | References the intended site |
+| Name     | Type   | Required? | Note                         |
+| -------- | ------ | --------- | ---------------------------- |
+| `siteId` | number | yes       | References the intended site |

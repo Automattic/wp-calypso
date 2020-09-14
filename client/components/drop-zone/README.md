@@ -1,5 +1,4 @@
-Drop Zone
-=========
+# Drop Zone
 
 Drop Zone is a React component which can be used to illustrate areas on the page upon which a user can drop files.
 

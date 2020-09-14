@@ -1,5 +1,4 @@
-Orders
-======
+# Orders
 
 This module is used to manage orders for a site.
 

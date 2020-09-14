@@ -1,5 +1,4 @@
-LineChart
-===
+# LineChart
 
 This component encapsulates a D3 based line chart graph
 
@@ -60,21 +59,20 @@ This component encapsulates a D3 based line chart graph
 
 ### Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`aspectRatio` | `number` | 2 | Aspect ratio between width and height of the graph
-`data` | `array` | false | Graph data for line chart. List of lists of points, each point should be of the shape: `{ date, value }`
-`fillArea` | `bool` | false | Whether to fill the area under the curve
-`legendInfo` | `array` | false | Information to display for the legend of the graph, each item should be of the shape: `{ name, description }`
-`margin` | `object` | `{ top: 30, right: 30, bottom: 30, left: 30 }` | Margin
-`renderTooltipForDatanum` | `function` | `datum => datum.value` | Function that returns a tooltip content from a given point
+| Name                      | Type       | Default                                        | Description                                                                                                   |
+| ------------------------- | ---------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `aspectRatio`             | `number`   | 2                                              | Aspect ratio between width and height of the graph                                                            |
+| `data`                    | `array`    | false                                          | Graph data for line chart. List of lists of points, each point should be of the shape: `{ date, value }`      |
+| `fillArea`                | `bool`     | false                                          | Whether to fill the area under the curve                                                                      |
+| `legendInfo`              | `array`    | false                                          | Information to display for the legend of the graph, each item should be of the shape: `{ name, description }` |
+| `margin`                  | `object`   | `{ top: 30, right: 30, bottom: 30, left: 30 }` | Margin                                                                                                        |
+| `renderTooltipForDatanum` | `function` | `datum => datum.value`                         | Function that returns a tooltip content from a given point                                                    |
 
 ### General guidelines
 
-* In order for the component to re-render, the data prop should change ( the array itself, not just it's contents ), the component does shallow comparison.
-
+- In order for the component to re-render, the data prop should change ( the array itself, not just it's contents ), the component does shallow comparison.
 
 ## Related components
 
-* This component uses the [LineChartLegend](./legend) component for rendering the legend.
-* This component is similar to the [PieChart](./pie-chart) component.
+- This component uses the [LineChartLegend](./legend) component for rendering the legend.
+- This component is similar to the [PieChart](./pie-chart) component.
