@@ -5,7 +5,7 @@ This library is for adding analytics code to Store on WP.com
 It's designed to consolidate things like verifying we're using the same prefix on
 all track event ids, and perhaps to add some common event properties automatically.
 
-## How to use:
+## How to use
 
 ```js
 import { recordTrack } from 'woocommerce/lib/analytics';

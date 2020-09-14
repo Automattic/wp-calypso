@@ -2,7 +2,7 @@
 
 This component sets up some basic styling for dashboard widgets. It allows for full-, half-, and third-width widgets in a row, and has responsive styling for smaller screens. There is also support for adding images, and a per-widget settings panel.
 
-## How to use:
+## How to use
 
 ```js
 import DashboardWidget from 'woocommerce/components/dashboard-widget';

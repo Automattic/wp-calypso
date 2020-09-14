@@ -3,7 +3,7 @@
 This component is used to display a header with a label
 and optional actions buttons.
 
-## Example Usage:
+## Example Usage
 
 ```js
 import React from 'react';

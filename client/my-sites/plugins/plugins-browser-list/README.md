@@ -2,7 +2,7 @@
 
 This component is used to display a list with the a parametrizable number of plugins of a certain category of the wordpress.org public plugin directory.
 
-## How to use:
+## How to use
 
 ```js
 import React from 'react';

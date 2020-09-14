@@ -31,7 +31,7 @@ this.props.successNotice( 'Settings saved successfully!', {
 } );
 ```
 
-### The available methods are:
+### The available methods are
 
 - `successNotice()`
 - `errorNotice()`

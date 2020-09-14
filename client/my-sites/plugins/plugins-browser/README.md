@@ -2,7 +2,7 @@
 
 This component renders the main plugins browser page.
 
-## How to use:
+## How to use
 
 ```js
 import BrowserMainView from 'my-sites/plugins/plugins-browser';

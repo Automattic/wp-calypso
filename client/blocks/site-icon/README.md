@@ -2,7 +2,7 @@
 
 This component is used to display the icon for a site. It takes a Site object as a prop. The size is set at 120px, used at 60px for retina display. Using one size allows us to only request one image and cache it on the browser. Even if you are displaying it at smaller sizes you should not change the requested image.
 
-## How to use:
+## How to use
 
 ```js
 import SiteIcon from 'blocks/site-icon';

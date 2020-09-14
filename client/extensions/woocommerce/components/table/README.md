@@ -6,7 +6,7 @@ The `compact` prop applies styling for a more compact table. It also allows for 
 
 ![screen shot 2017-06-13 at 11 42 53 am](https://user-images.githubusercontent.com/1922453/27059946-c1ff77f6-502d-11e7-9af5-aaecd09bb335.png)
 
-## How to use:
+## How to use
 
 ```js
 import Table from 'woocommerce/components/table';

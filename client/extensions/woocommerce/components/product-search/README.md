@@ -2,7 +2,7 @@
 
 This component is used to search through the products on a given site.
 
-## How to use:
+## How to use
 
 To select multiple products:
 

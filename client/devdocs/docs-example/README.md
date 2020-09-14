@@ -2,7 +2,7 @@
 
 This component is used to implement a skeleton for components examples which are generally showcased in the devdocs.
 
-## How to use:
+## How to use
 
 ```es6
 import DocsExample from 'devdocs/design/docs-example';

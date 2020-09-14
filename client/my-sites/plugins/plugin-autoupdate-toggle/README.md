@@ -2,7 +2,7 @@
 
 This component is used to display a plugin autupdate toggle.
 
-## How to use:
+## How to use
 
 ```js
 import PluginAutoupdateToggle 'my-sites/plugins/plugin-autoupdate-toggle';

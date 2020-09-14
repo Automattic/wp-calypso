@@ -24,6 +24,10 @@ module.exports = {
 							// Plugins from https://www.npmjs.com/package/remark-preset-lint-markdown-style-guide
 							'lint-no-literal-urls',
 							'lint-heading-increment',
+							'lint-no-heading-punctuation',
+
+							// This special plugin is used to allow the syntax <!--eslint ignore <rule>-->. It has to come last
+							[ 'message-control', { name: 'eslint', source: 'remark-lint' } ],
 						],
 					},
 				],

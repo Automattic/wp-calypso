@@ -25,7 +25,7 @@ Component used to display a clickable tile with an image, call to action, and de
 
 ---
 
-## How to use:
+## How to use
 
 ```js
 import Tile from 'components/tile-grid/tile';

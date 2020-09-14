@@ -2,7 +2,7 @@
 
 This component is used to display a credit card form.
 
-## How to use:
+## How to use
 
 ```js
 import CreditCardForm from 'blocks/credit-card-form';

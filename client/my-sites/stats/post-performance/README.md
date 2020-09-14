@@ -2,7 +2,7 @@
 
 This component creates an insights card that displays stats about the last post published for a site.
 
-## How to use:
+## How to use
 
 ```js
 import PostPerformance from 'my-sites/stats/post-performance';

@@ -4,7 +4,7 @@ This component is used to display a Jetpack product card.
 
 ---
 
-## How to use:
+## How to use
 
 ```js
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';

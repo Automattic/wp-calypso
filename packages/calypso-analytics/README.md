@@ -1,4 +1,4 @@
-# Calypso Analytics.
+# Calypso Analytics
 
 Currently this package supports calls to Tracks only.
 

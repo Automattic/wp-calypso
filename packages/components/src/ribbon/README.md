@@ -7,7 +7,7 @@ place in our hearts.
 
 ---
 
-## How to use:
+## How to use
 
 ```js
 import { Card } from '@automattic/components';

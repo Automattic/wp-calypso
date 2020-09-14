@@ -3,7 +3,7 @@
 This is an upgrade nudge that targets users with a site that has a free plan
 and a paid domain.
 
-## How to use:
+## How to use
 
 ```js
 

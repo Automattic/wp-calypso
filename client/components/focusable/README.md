@@ -11,7 +11,7 @@ This component lets you wrap complex content in an accessible, clickable wrapper
 
 If you want to add an action to a larger element, for example the Language Picker, you can use this component. Be aware that a screen reader will read the entire contents of `Focusable` to the user, so _try_ to keep the contents short and actionable.
 
-## How to use:
+## How to use
 
 ```jsx
 import Focusable from 'components/focusable';

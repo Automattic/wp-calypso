@@ -4,7 +4,7 @@ This component is used to display a Jetpack bundle card.
 
 ---
 
-## How to use:
+## How to use
 
 ```js
 import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';

@@ -2,7 +2,7 @@
 
 This component is used to represent a list `PluginItem`s, with a `PluginsListHeader` serving as a title for the whole bunch.
 
-## How to use:
+## How to use
 
 ```jsx
 import PluginsList from 'my-sites/plugins/plugins-list';

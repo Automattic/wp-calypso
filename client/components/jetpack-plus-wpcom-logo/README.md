@@ -4,7 +4,7 @@ This component is used to display the Jetpack Plus WPCOM logo (a Jetpack logo, a
 
 ---
 
-## How to use:
+## How to use
 
 ```js
 import JetpackPlusWpComLogo from 'components/jetpack-plus-wpcom-logo';

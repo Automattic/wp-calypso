@@ -18,7 +18,7 @@ Destination site route passed to the HoC. The default redirect fallback is `/set
 `redirectRoute` can be custom created with a `siteSlug` of choice.
 If absent, it uses current `siteSlug` (if loaded).
 
-### How to use:
+### How to use
 
 The following code redirects to the `Plans` site for non-Jetpack and Atomic
 sites:

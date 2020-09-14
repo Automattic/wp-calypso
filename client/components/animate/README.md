@@ -2,7 +2,7 @@
 
 Simple interface to introduce animations to components on initial render. Used as a wrapper.
 
-## How to use:
+## How to use
 
 ```jsx
 import Animate from 'components/animate';

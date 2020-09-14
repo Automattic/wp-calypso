@@ -2,7 +2,7 @@
 
 Component used to declare the main area of any given section —- it's the main wrapper that gets rendered first inside `#primary`.
 
-## How to use:
+## How to use
 
 ```jsx
 import Main from 'components/main';

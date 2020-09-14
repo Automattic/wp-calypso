@@ -16,7 +16,7 @@ yarn add @automattic/typography
 
 Note that this package contains two sass files and there are use cases for `@import`ing either file.
 
-### Import the `variables.scss` file:
+### Import the `variables.scss` file
 
 `@import '~@automattic/typography/styles/variables';`
 
@@ -28,7 +28,7 @@ Apply font variables as needed:
 }
 ```
 
-### Import the `fonts.sccc` file:
+### Import the `fonts.sccc` file
 
 `@import '~@automattic/typography/styles/fonts';`
 

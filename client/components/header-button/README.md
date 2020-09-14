@@ -6,7 +6,7 @@ to elements like a `Search`. It takes an `icon` prop that is an ID of a
 the other properties are passed to the `Button` component that is used to
 implement this one.
 
-## How to use:
+## How to use
 
 ```js
 import HeaderButton from 'components/header-button';

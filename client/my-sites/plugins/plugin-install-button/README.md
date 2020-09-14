@@ -2,7 +2,7 @@
 
 This component is used to display a button that launch a install action when clicked.
 
-## How to use:
+## How to use
 
 ```js
 import PluginInstallButton 'my-sites/plugins/plugin-install-button';

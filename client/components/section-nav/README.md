@@ -73,7 +73,7 @@ Text displayed in the header of the panel when rendered on mobile.
 
 `selectedCount` - **optional** (Number)
 
-## Count displayed in the header of the panel.
+## Count displayed in the header of the panel
 
 ## Nav Tabs
 
