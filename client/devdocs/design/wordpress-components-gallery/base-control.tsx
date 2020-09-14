@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * WordPress dependencies
  */
-
 import { BaseControl } from '@wordpress/components';
 
 const Example = () => (
