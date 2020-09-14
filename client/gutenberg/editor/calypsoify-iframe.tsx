@@ -4,17 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import {
-	endsWith,
-	get,
-	map,
-	partial,
-	pickBy,
-	startsWith,
-	isArray,
-	flowRight,
-	difference,
-} from 'lodash';
+import { endsWith, map, partial, pickBy, startsWith, isArray, flowRight, difference } from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -542,12 +532,12 @@ class CalypsoifyIframe extends Component<
 			return;
 		}
 		const payload = {
-			id: get( mediaItem, 'ID' ),
-			height: get( mediaItem, 'height' ),
+			id: mediaItem?.ID,
+			transientId: mediaItem?.ID,
+			height: mediaItem?.height,
+			width: mediaItem?.width,
+			url: mediaItem?.URL,
 			status,
-			transientId: get( mediaItem, 'ID' ),
-			url: get( mediaItem, 'URL' ),
-			width: get( mediaItem, 'width' ),
 		};
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
