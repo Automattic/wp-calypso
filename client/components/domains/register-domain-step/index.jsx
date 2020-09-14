@@ -141,7 +141,6 @@ class RegisterDomainStep extends React.Component {
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
-		isEligibleVariantForDomainTest: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -398,9 +397,8 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	getPlaceholderText() {
-		const { isEligibleVariantForDomainTest, translate } = this.props;
-
-		return isEligibleVariantForDomainTest
+		const { isSignupStep, translate } = this.props;
+		return isSignupStep
 			? translate( 'Type the domain you want here' )
 			: translate( 'Enter a name or keyword' );
 	}
@@ -431,7 +429,7 @@ class RegisterDomainStep extends React.Component {
 			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step-test': this.props.isEligibleVariantForDomainTest,
+			'register-domain-step__search-domain-step-test': this.props.isSignupStep,
 		} );
 
 		return (
@@ -1164,7 +1162,6 @@ class RegisterDomainStep extends React.Component {
 						onButtonClick={ this.onAddDomain }
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 						isReskinned={ this.props.isReskinned }
 					/>
 				);
@@ -1306,7 +1303,8 @@ class RegisterDomainStep extends React.Component {
 			domainAvailability.MAPPED === lastDomainStatus
 				? this.goToTransferDomainStep
 				: this.goToUseYourDomainStep;
-
+		const { isPlanSelectionUnavailableInFlow = false } = this.props;
+		const shouldHideFreeDomainExplainer = isPlanSelectionUnavailableInFlow;
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1336,10 +1334,10 @@ class RegisterDomainStep extends React.Component {
 				cart={ this.props.cart }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
-				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 			>
-				{ this.props.isEligibleVariantForDomainTest &&
+				{ this.props.isSignupStep &&
 					hasResults &&
+					! shouldHideFreeDomainExplainer &&
 					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (

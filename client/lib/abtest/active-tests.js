@@ -94,15 +94,6 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	domainStepCopyUpdates: {
-		datestamp: '20191121',
-		variations: {
-			variantShowUpdates: 100,
-			control: 0,
-		},
-		defaultVariation: 'variantShowUpdates',
-		allowExistingUsers: true,
-	},
 	newSiteGutenbergOnboarding: {
 		datestamp: '20200818',
 		variations: {

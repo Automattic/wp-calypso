@@ -110,7 +110,7 @@ export function generateSteps( {
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
 				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
 			},
-			dependencies: [ 'siteSlug' ],
+			dependencies: [ 'siteSlug', 'shouldHideFreePlan' ],
 		},
 
 		'plans-site-selected': {
