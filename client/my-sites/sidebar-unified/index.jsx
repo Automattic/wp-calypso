@@ -25,6 +25,8 @@ import CurrentSite from 'my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import Sidebar from 'layout/sidebar';
+import SidebarSeparator from 'layout/sidebar/separator';
+import SidebarMenu from 'layout/sidebar/menu';
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const reduxDispatch = useDispatch();
@@ -61,10 +63,14 @@ export const MySitesSidebarUnified = ( { path } ) => {
 			<CurrentSite forceAllSitesView={ isAllDomainsView } />
 			{ menuItems.map( ( item, i ) => {
 				if ( 'type' in item && item.type === 'separator' ) {
-					return <hr key={ i } />;
+					return <SidebarSeparator key={ i } />;
 				}
 				if ( ! ( 'children' in item ) || item.children.length === 0 ) {
-					return <MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />;
+					return (
+						<SidebarMenu key={ item.slug }>
+							<MySitesSidebarUnifiedItem key={ `${ item.slug }-item` } path={ path } { ...item } />
+						</SidebarMenu>
+					);
 				}
 				return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
 			} ) }
