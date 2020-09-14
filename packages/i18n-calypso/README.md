@@ -37,8 +37,8 @@ The following attributes can be set in the options object to alter the translati
 If you pass a single string into `translate`, it will trigger a simple translation without any context, pluralization, sprintf arguments, or comments. You would call it like this.
 
 ```js
-var i18n = require( 'i18n-calypso' );
-var translation = i18n.translate( 'Some content to translate' );
+const i18n = require( 'i18n-calypso' );
+const translation = i18n.translate( 'Some content to translate' );
 ```
 
 ### Strings Only
@@ -60,14 +60,14 @@ var translation = i18n.translate( foo( 'bar' ) );
 /*----------------- Good Examples -----------------*/
 
 // do pass a string argument
-var example = i18n.translate( 'foo' );
+const example = i18n.translate( 'foo' );
 
 // do concatenate long strings with the + operator
 var translation = i18n.translate(
-    'I am the very model of a modern Major-General, ' +
-    'I\'ve information vegetable, animal, and mineral, ' +
-    'I know the kings of England, and I quote the fights historical ' +
-    'from Marathon to Waterloo, in order categorical.'
+	'I am the very model of a modern Major-General, ' +
+		"I've information vegetable, animal, and mineral, " +
+		'I know the kings of England, and I quote the fights historical ' +
+		'from Marathon to Waterloo, in order categorical.'
 );
 ```
 
@@ -78,22 +78,22 @@ The `translate()` method uses sprintf interpolation for string substitution ([se
 ```js
 // named arguments (preferred approach)
 i18n.translate( 'My %(thing)s has %(number)d corners', {
-    args: {
-        thing: 'hat',
-        number: 3
-    }
+	args: {
+		thing: 'hat',
+		number: 3,
+	},
 } );
 // 'My hat has 3 corners'
 
 // argument array
 i18n.translate( 'My %s has %d corners', {
-    args: [ 'hat', 3 ]
+	args: [ 'hat', 3 ],
 } );
 // 'My hat has 3 corners'
 
 // single substitution
 i18n.translate( 'My %s has 3 corners', {
-    args: 'hat'
+	args: 'hat',
 } );
 // 'My hat has 3 corners'
 ```
@@ -108,29 +108,27 @@ Instead we use the [interpolate-components module](https://github.com/Automattic
 
 ```js
 // self-closing component syntax
-var example = i18n.translate( 'My hat has {{hatInput/}} corners', {
-        components: {
-            hatInput: <input name="hatInput" type="text" />
-        }
-    } );
+const example = i18n.translate( 'My hat has {{hatInput/}} corners', {
+	components: {
+		hatInput: <input name="hatInput" type="text" />,
+	},
+} );
 
 // component that wraps part of the string
-var example2 = i18n.translate( 'I feel {{em}}very{{/em}} strongly about this.', {
-        components: {
-            em: <em />
-        }
-    } );
+const example2 = i18n.translate( 'I feel {{em}}very{{/em}} strongly about this.', {
+	components: {
+		em: <em />,
+	},
+} );
 
 // components can nest
-var example3 = i18n.translate( '{{a}}{{icon/}}click {{em}}here{{/em}}{{/a}} to see examples.', {
-        components: {
-            a: <a href="#" />,
-            em: <em />,
-            icon: <Icon size="huge" />
-        }
-    } );
-
-
+const example3 = i18n.translate( '{{a}}{{icon/}}click {{em}}here{{/em}}{{/a}} to see examples.', {
+	components: {
+		a: <a href="#" />,
+		em: <em />,
+		icon: <Icon size="huge" />,
+	},
+} );
 ```
 
 ### Pluralization
@@ -138,31 +136,25 @@ var example3 = i18n.translate( '{{a}}{{icon/}}click {{em}}here{{/em}}{{/a}} to s
 You must specify both the singular and plural variants of a string when it contains plurals. If the string uses placeholders that will be replaced with actual values, then both the plural and singular strings should include those placeholders. It might seem redundant, but it is necessary for languages where a singular version may be used for counts other than 1.
 
 ```js
-
 // An example where the translated string does not have
 // a number represented directly, but still depends on it
 var numHats = howManyHats(), // returns integer
-    content = i18n.translate(
-    	'My hat has three corners.',
-    	'My hats have three corners.',
-    	{
-            count: numHats
-        }
-    );
+	content = i18n.translate( 'My hat has three corners.', 'My hats have three corners.', {
+		count: numHats,
+	} );
 
 // An example where the translated string includes the actual number it depends on
 var numDays = daysUntilExpiration(), // returns integer
-    content = i18n.translate(
-        'Your subscription will expire in %(numberOfDays)d day.',
-        'Your subscription will expire in %(numberOfDays)d days.',
-        {
-            count: numDays,
-            args: {
-                numberOfDays: numDays
-            }
-        }
-    );
-
+	content = i18n.translate(
+		'Your subscription will expire in %(numberOfDays)d day.',
+		'Your subscription will expire in %(numberOfDays)d days.',
+		{
+			count: numDays,
+			args: {
+				numberOfDays: numDays,
+			},
+		}
+	);
 ```
 
 ### More translate() Examples
@@ -173,39 +165,38 @@ var content = i18n.translate( 'My hat has three corners.' );
 
 // sprintf-style string substitution
 var city = getCity(), // returns string
-    zip = getZip(), // returns string
-    content = i18n.translate( 'Your city is %(city)s, your zip is %(zip)s.', {
-        args: {
-            city: city,
-            zip: zip
-        }
-    } );
+	zip = getZip(), // returns string
+	content = i18n.translate( 'Your city is %(city)s, your zip is %(zip)s.', {
+		args: {
+			city: city,
+			zip: zip,
+		},
+	} );
 
 // Mixing strings and markup
 // NOTE: This will return a React component, not a string
 var component = i18n.translate( 'I bought my hat in {{country/}}.', {
-        components: {
-            country: <input name="someName" type="text" />
-        }
-    } );
+	components: {
+		country: <input name="someName" type="text" />,
+	},
+} );
 
 // Mixing strings with markup that has nested content
 var component = i18n.translate( 'My hat has {{link}}three{{/link}} corners', {
-        components: {
-            link: <a href="#three" />
-        }
-    } );
+	components: {
+		link: <a href="#three" />,
+	},
+} );
 
 // add a comment to the translator
 var content = i18n.translate( 'g:i:s a', {
-        comment: 'draft saved date format, see http://php.net/date'
-    } );
+	comment: 'draft saved date format, see http://php.net/date',
+} );
 
 // providing context
 var content = i18n.translate( 'post', {
-        context: 'verb'
-    } );
-
+	context: 'verb',
+} );
 ```
 
 See the [test cases](test/test.jsx) for more example usage.
@@ -221,7 +212,7 @@ The numberFormat method is also available to format numbers using the loaded loc
 // locale-formatted numbers
 i18n.numberFormat( 2500.25 ); // '2.500'
 i18n.numberFormat( 2500.1, 2 ); // '2.500,10'
-i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@'} ); // '2*500@330'
+i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@' } ); // '2*500@330'
 ```
 
 ## hasTranslation Method
@@ -231,7 +222,7 @@ Using the method `hasTranslation` you can check whether a translation for a give
 ### Usage
 
 ```js
-var i18n = require( 'i18n-calypso' );
+const i18n = require( 'i18n-calypso' );
 i18n.hasTranslation( 'This has been translated' ); // true
 i18n.hasTranslation( 'Not translation exists' ); // false
 ```

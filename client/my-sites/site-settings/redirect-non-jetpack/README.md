@@ -26,11 +26,7 @@ sites:
 ```js
 import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
 
-export default flowRight(
-	localize,
-	redirectNonJetpack( '/plans/' )
-)( WrappedComponent );
-
+export default flowRight( localize, redirectNonJetpack( '/plans/' ) )( WrappedComponent );
 ```
 
 For default behavior call `redirectNonJetpack()` with no parameters.

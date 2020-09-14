@@ -91,7 +91,7 @@ You probably saw this one coming. Calypso does not use [streams][rxjs], but, sho
 The following approach, leveraging persistent or linked data structures, could be a simple replacement for streams. It aims to replace standard array traversal functions with a suite of functions optimized for `actionLog`: `mapActionLog`, `filterActionLog`, etc. Since `actionLog` is a [monoid][monoids], any operation _f_ on `actionLog` can be decomposable to [divide and conquer][divideconquer]. Notably,
 
 ```js
-f( [ A, B, C ] ) === join( f( [ A, B ] ), f( [ C ] ) )
+f( [ A, B, C ] ) === join( f( [ A, B ] ), f( [ C ] ) );
 ```
 
 where `join` is a specific function for `f`.
@@ -99,7 +99,7 @@ where `join` is a specific function for `f`.
 Now, since selectors are run for each new version of `actionLog`, it is expected that, by the time we need to eval `f( [ A, B, C ] )`, we've already eval'd `f( [ A, B ] )`, meaning we can benefit from memoization:
 
 ```js
-f( [ A, B, C ] ) === join( cached, f( [ C ] ) )
+f( [ A, B, C ] ) === join( cached, f( [ C ] ) );
 ```
 
 thus avoiding a traversal of the entire `actionLog`.
@@ -107,31 +107,27 @@ thus avoiding a traversal of the entire `actionLog`.
 Let's look at the basic functions we use for traversal and how they can be decomposed, starting from the easiest:
 
 ```js
-get( [ A, B, C ] ) === join( get( [ A, B ] ), get( [ C ] ) )
-join = ( a, b ) => a.concat( b )
+get( [ A, B, C ] ) === join( get( [ A, B ] ), get( [ C ] ) );
+join = ( a, b ) => a.concat( b );
 ```
 
 ```js
-map( [ A, B, C ] ) === join( map( [ A, B ] ), map( [ C ] ) )
-join = ( a, b ) => a.concat( b )
+map( [ A, B, C ] ) === join( map( [ A, B ] ), map( [ C ] ) );
+join = ( a, b ) => a.concat( b );
 ```
 
 ```js
-filter( [ A, B, C ] ) === join( filter( [ A, B ] ), filter( [ C ] ) )
-join = ( a, b ) => a.concat( b )
+filter( [ A, B, C ] ) === join( filter( [ A, B ] ), filter( [ C ] ) );
+join = ( a, b ) => a.concat( b );
 ```
 
 ```js
-find( [ A, B, C ], f ) === join( find( [ A, B ], f ), find( [ C ], f ) )
-join = ( a, b ) => a || b
+find( [ A, B, C ], f ) === join( find( [ A, B ], f ), find( [ C ], f ) );
+join = ( a, b ) => a || b;
 ```
 
 ```js
-reduce( [ A, B, C ], f, initial ) === reduce(
-	[ C ],
-	f,
-	reduce( [ A, B ], f, initial )
-) // simpler to express without `join`, unless we had lazy eval
+reduce( [ A, B, C ], f, initial ) === reduce( [ C ], f, reduce( [ A, B ], f, initial ) ); // simpler to express without `join`, unless we had lazy eval
 ```
 
 **A sad caveat.** JS collections are implemented with arrays and not [linked lists][linkedlists], meaning we have no built-in way to express a collection in terms of its _head_ (new item) + _tail_ (the rest, _i.e._ the "previous version" of the list). Implementing the above suite in a way that would allows us to benefit from caching (the whole point of this!) would require also implementing `actionLog` as a basic [doubly linked list][doublylinked], be it homemade or with a library. It shouldn't be hard, but it's disappointing.

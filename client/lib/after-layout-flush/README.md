@@ -14,7 +14,7 @@ Very useful to read from up-to-date DOM after a React component is updated:
 ```js
 class NavTabs extends Component {
 	state = {
-		isDropdown: false
+		isDropdown: false,
 	};
 
 	setDropdown = () => {
@@ -23,7 +23,7 @@ class NavTabs extends Component {
 		if ( this.state.isDropdown !== isDropdown ) {
 			this.setState( { isDropDown } );
 		}
-	}
+	};
 
 	// postpone reading from DOM after all DOM writes are done and layout is flushed
 	setDropdownAfterLayout = afterLayoutFlush( this.setDropdown );
@@ -47,12 +47,12 @@ class NavTabs extends Component {
 	render() {
 		// render inner element with a className that depends on `state.isDropdown`
 		return (
-			<div ref={ el => this.containerEl = el }>
+			<div ref={ ( el ) => ( this.containerEl = el ) }>
 				<div
 					className={ this.state.isDropdown ? 'dropdown' : 'tabs' }
-					ref={ el => this.tabsEl = el }
+					ref={ ( el ) => ( this.tabsEl = el ) }
 				>
-				 { this.props.children }
+					{ this.props.children }
 				</div>
 			</div>
 		);

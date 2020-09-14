@@ -24,18 +24,18 @@ Data from the aforementioned actions is added to the global state tree, under `p
 state.postFormats = {
 	requesting: {
 		12345678: false,
-		87654321: true
+		87654321: true,
 	},
 	items: {
 		12345678: {
 			image: 'Image',
-			video: 'Video'
+			video: 'Video',
 		},
 		87654321: {
-			status: 'Status'
-		}
-	}
-}
+			status: 'Status',
+		},
+	},
+};
 ```
 
 ## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.

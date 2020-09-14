@@ -7,7 +7,7 @@ The "header cake" component should be used at the top of an item's detail page. 
 ```js
 import HeaderCake from 'components/header-cake';
 
-<HeaderCake onClick={ callback }>Item Details</HeaderCake>
+<HeaderCake onClick={ callback }>Item Details</HeaderCake>;
 ```
 
 ## Props

@@ -36,9 +36,8 @@ Registering to listen to changes, using vanilla methods:
 import { subscribeIsDesktop } from '@automattic/viewport';
 
 class MyComponent extends React.Component {
-	sizeChanged = matches => {
-		console.log(
-			`Screen changed to ${ matches ? 'desktop' : 'non-desktop' } size` );
+	sizeChanged = ( matches ) => {
+		console.log( `Screen changed to ${ matches ? 'desktop' : 'non-desktop' } size` );
 		this.forceUpdate();
 	};
 

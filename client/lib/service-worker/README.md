@@ -3,10 +3,7 @@
 #### How to use
 
 ```js
-import {
-	isServiceWorkerSupported,
-	registerServerWorker,
-} from 'lib/service-worker';
+import { isServiceWorkerSupported, registerServerWorker } from 'lib/service-worker';
 
 if ( isServiceWorkerSupported() ) {
 	registerServerWorker();

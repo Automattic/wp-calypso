@@ -56,16 +56,16 @@ are not snippets of bundled JavaScript from Calypso.
 
 ```js
 // return the list of recorded actions
-actionLog.history
+actionLog.history;
 
 // return a subset of the recorded actions filtering on the `action.type`
-actionLog.filter( 'COMMENTS_LIKE' )
+actionLog.filter( 'COMMENTS_LIKE' );
 
 // Watch actions in the console by string, RegExp or Predicate Function.
 // The same types of query arguments may be used with `actionLog.filter`.
-actionLog.watch( "SITE_RECEIVE" )
+actionLog.watch( 'SITE_RECEIVE' );
 
-actionLog.watch( /post/i )
+actionLog.watch( /post/i );
 
-actionLog.watch( action => action.siteId === myFavoriteSiteId )
+actionLog.watch( ( action ) => action.siteId === myFavoriteSiteId );
 ```

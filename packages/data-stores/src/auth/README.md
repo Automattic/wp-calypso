@@ -37,7 +37,7 @@ To restart the login flow dispatch the `reset` action.
 import { useSelect } from '@wordpress/data';
 
 function MyComponent() {
-	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
+	const loginFlowState = useSelect( ( select ) => select( AUTH_STORE ).getLoginFlowState() );
 	const { reset } = useDispatch( AUTH_STORE );
 
 	return (
@@ -57,13 +57,13 @@ The store will need to check whether a password is needed for a given user. Rath
 import { useDispatch, useSelect } from '@wordpress/data';
 
 function MyComponent() {
-	const loginFlowState = useSelect( select => select( AUTH_STORE ).getLoginFlowState() );
+	const loginFlowState = useSelect( ( select ) => select( AUTH_STORE ).getLoginFlowState() );
 	const { submitUsernameOrEmail, submitPassword } = useDispatch( AUTH_STORE );
 
 	switch ( loginFlowState ) {
 		case 'ENTER_USERNAME_OR_EMAIL':
 			return (
-				<form onSubmit={ e => submitUsernameOrEmail( e.target[ 'username' ].value ) }>
+				<form onSubmit={ ( e ) => submitUsernameOrEmail( e.target.username.value ) }>
 					<label htmlFor="username">Username or email</label>
 					<input id="username" name="username" required />
 				</form>
@@ -71,7 +71,7 @@ function MyComponent() {
 
 		case 'ENTER_PASSWORD':
 			return (
-				<form onSubmit={ e => submitPassword( e.target[ 'password' ].value ) }>
+				<form onSubmit={ ( e ) => submitPassword( e.target.password.value ) }>
 					<label htmlFor="password">Username or email</label>
 					<input id="password" name="password" type="password" required />
 				</form>

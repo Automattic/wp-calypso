@@ -11,7 +11,7 @@ If a locale is found, the component fetches the localized name of the language.
 #### Usage:
 
 ```javascript
-	<TranslatorInvite path={ path } />
+<TranslatorInvite path={ path } />;
 ```
 
 #### Props

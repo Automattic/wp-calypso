@@ -9,5 +9,5 @@ An [hr-like](https://developer.mozilla.org/en/docs/Web/HTML/Element/hr) line wit
 ```js
 import HrWithText from 'components/hr-with-text';
 
-<HrWithText>This is some text</HrWithText>
+<HrWithText>This is some text</HrWithText>;
 ```

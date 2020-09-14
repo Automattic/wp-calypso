@@ -18,11 +18,14 @@ For example, a page can trigger a resize using the following code snippet:
 
 ```javascript
 if ( window.parent ) {
-	window.parent.postMessage( JSON.stringify( {
-		action: 'resize',
-		width: document.body.clientWidth,
-		height: document.body.clientHeight
-	} ), '*' );
+	window.parent.postMessage(
+		JSON.stringify( {
+			action: 'resize',
+			width: document.body.clientWidth,
+			height: document.body.clientHeight,
+		} ),
+		'*'
+	);
 }
 ```
 

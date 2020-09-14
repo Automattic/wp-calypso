@@ -27,32 +27,32 @@ The sections module `client/sections.js` is transformed via a custom webpack loa
 **before**:
 
 ```js
-var sections = [
+const sections = [
 	{
 		name: 'me',
 		paths: [ '/me' ],
-		module: 'me'
-	}
+		module: 'me',
+	},
 ];
 ```
 
 **after**:
 
 ```js
-page( /^\/me(\/.*)?$/, function( context, next ) {
-	if ( _loadedSections[ 'me' ] ) {
+page( /^\/me(\/.*)?$/, function ( context, next ) {
+	if ( _loadedSections.me ) {
 		// section is already loaded so go ahead with things
 		return next();
 	}
 
-	require.ensure( 'me', function( require, error ) {
+	require.ensure( 'me', function ( require, error ) {
 		if ( error ) {
 			// error handling
 			return;
 		}
-		if ( !_loadedSections[ 'me' ] ) {
+		if ( ! _loadedSections.me ) {
 			require( 'me' )();
-			_loadedSections[ 'me' ] = true;
+			_loadedSections.me = true;
 		}
 
 		// continue working through all the route handlers looking for matches

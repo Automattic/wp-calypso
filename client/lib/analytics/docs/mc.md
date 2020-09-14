@@ -22,7 +22,7 @@ Bump multiple WP.com stats:
 import { bumpStat } from 'lib/analytics/mc';
 
 bumpStat( {
-	'stat_name1': 'stat_value1',
-	'statname2': 'stat_value2'
+	stat_name1: 'stat_value1',
+	statname2: 'stat_value2',
 } );
 ```

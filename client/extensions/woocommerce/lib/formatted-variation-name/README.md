@@ -17,8 +17,9 @@ const variation = {
 		{
 			name: 'Color',
 			option: 'Red',
-		}
-] };
+		},
+	],
+};
 
 return formattedVariationName( variation );
 ```
@@ -42,8 +43,9 @@ const variation = {
 		{
 			name: 'Size',
 			option: 'Small',
-		}
-] };
+		},
+	],
+};
 
 return formattedVariationName( variation );
 ```

@@ -10,10 +10,7 @@ Once you require the component you have access to .
 import notices from 'notices';
 
 // Success notice when saving settings
-notices.success(
-    'Settings saved successfully!',
-    { overlay: true }
-);
+notices.success( 'Settings saved successfully!', { overlay: true } );
 ```
 
 Notices are all dismissible by the user. The available methods are:

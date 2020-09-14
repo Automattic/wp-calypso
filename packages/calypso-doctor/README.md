@@ -30,17 +30,17 @@ module.exports = {
 	title: 'Valid username',
 	group: 'System',
 	description: 'Example evaluation',
-	test: async ( { pass, fail,ignored } ) => {
+	test: async ( { pass, fail, ignored } ) => {
 		if ( process.platform === 'win32' ) {
-			ignored( 'I do not know how to check usernames in Windows' )
-		} else if ( process.env.USER==="foo" ) {
-			pass ();
+			ignored( 'I do not know how to check usernames in Windows' );
+		} else if ( process.env.USER === 'foo' ) {
+			pass();
 		} else {
-			fail ( 'Invalid username found, only "foo" is allowed!' )
+			fail( 'Invalid username found, only "foo" is allowed!' );
 		}
 	},
 	fix: () => {
-		return `Run "usermod --login foo --move-home --home /home/foo ${process.env.USER}"`;
+		return `Run "usermod --login foo --move-home --home /home/foo ${ process.env.USER }"`;
 	},
 };
 ```
