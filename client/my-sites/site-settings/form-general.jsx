@@ -302,7 +302,7 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 		} = this.props;
 		const blogPublic = parseInt( fields.blog_public, 10 );
-		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
+		const wpcomComingSoon = parseInt( fields.wpcom_public_coming_soon, 10 );
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 		return (
 			<FormFieldset>
@@ -315,7 +315,7 @@ export class SiteSettingsFormGeneral extends Component {
 							onChange={ () =>
 								this.handleVisibilityOptionChange( {
 									blog_public: 1,
-									wpcom_coming_soon: 0,
+									wpcom_public_coming_soon: 0,
 								} )
 							}
 							disabled={ isRequestingSettings }
@@ -357,7 +357,7 @@ export class SiteSettingsFormGeneral extends Component {
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: -1,
-										wpcom_coming_soon: 0,
+										wpcom_public_coming_soon: 0,
 									} )
 								}
 								disabled={ isRequestingSettings }
@@ -391,7 +391,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			handleSubmitForm,
 		} = this.props;
-		const isWpcomComingSoonMode = parseInt( fields.wpcom_coming_soon, 10 );
+		const isWpcomComingSoonMode = parseInt( fields.wpcom_public_coming_soon, 10 );
 
 		return (
 			<>
@@ -412,7 +412,7 @@ export class SiteSettingsFormGeneral extends Component {
 									checked={ 1 === isWpcomComingSoonMode }
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
-											wpcom_coming_soon: isWpcomComingSoonMode === 0 ? 1 : 0,
+											wpcom_public_coming_soon: isWpcomComingSoonMode === 0 ? 1 : 0,
 											blog_public: 0, // Hidden, discourage search engines from indexing this site
 										} )
 									}
@@ -426,8 +426,8 @@ export class SiteSettingsFormGeneral extends Component {
 									'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
 								)
 									? translate(
-										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-									)
+											'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+									  )
 									: translate( "Your site is hidden from visitors until it's ready for viewing." ) }
 							</FormSettingExplanation>
 						</FormFieldset>
@@ -437,11 +437,11 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	handleVisibilityOptionChange = ( { blog_public, wpcom_coming_soon } ) => {
+	handleVisibilityOptionChange = ( { blog_public, wpcom_public_coming_soon } ) => {
 		const { trackEvent, updateFields } = this.props;
 		trackEvent( `Set blog_public to ${ blog_public }` );
-		trackEvent( `Set wpcom_coming_soon to ${ wpcom_coming_soon }` );
-		updateFields( { blog_public, wpcom_coming_soon } );
+		trackEvent( `Set wpcom_public_coming_soon to ${ wpcom_public_coming_soon }` );
+		updateFields( { blog_public, wpcom_public_coming_soon } );
 	};
 
 	Timezone() {
@@ -711,7 +711,7 @@ const getFormSettings = ( settings ) => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
-		wpcom_coming_soon: '',
+		wpcom_public_coming_soon: '',
 		admin_url: '',
 	};
 
@@ -728,7 +728,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 	};
 
-	formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
+	formSettings.wpcom_public_coming_soon = settings.wpcom_public_coming_soon;
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
