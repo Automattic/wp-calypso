@@ -7,7 +7,7 @@ It's meant to be used on `plans/my-plan` page to display plans and products that
 
 See p1HpG7-7ET-p2 for more details.
 
-### How to use the `<MyPlanCard />`
+## How to use the `<MyPlanCard />`
 
 ```jsx
 import React from 'react';
@@ -29,7 +29,7 @@ export default class extends React.Component {
 }
 ```
 
-### `<MyPlanCard />` props
+## `<MyPlanCard />` props
 
 The following props can be passed to the My Plan Card component:
 

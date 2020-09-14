@@ -16,15 +16,11 @@ export default class extends React.Component {
 
 	render() {
 		return <InputChrono onSet={ this.onSet }/>;
-	} 
+	}
 }
 ```
 
----
-
-## InputChrono
-
-#### Props
+### Props
 
 `value` - **optional** initial input value
 

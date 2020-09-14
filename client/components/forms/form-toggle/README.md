@@ -2,7 +2,7 @@
 
 This component is used to implement toggle switches.
 
-#### How to use:
+## How to use:
 
 ```js
 import FormToggle from 'components/forms/form-toggle';
@@ -28,7 +28,7 @@ export default function MyComponent() {
 }
 ```
 
-#### Props
+## Props
 
 - `checked`: (bool) the current status of the toggle.
 - `toggling`: (bool) whether the toggle is in the middle of being performed.

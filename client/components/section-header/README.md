@@ -33,13 +33,13 @@ export default localize( MyHeader );
 
 This is the base component and acts as a wrapper for a section's (a list of cards) title and any action buttons that act upon that list (like Bulk Edit or Add New Item).
 
-#### Props
+### Props
 
 - `className` - _optional_ (string|object) Classes to be added to the rendered component.
 - `label` - _optional_ (string) The text to be displayed in the header.
 - `popoverText` - _optional_ (string) If entered, a support popover will appear to the right with this text.
 
-### General guidelines
+## General guidelines
 
 - Use clear and accurate labels.
 - Use sentence-style capitalization except when referring to an official/branded feature or service name (e.g. Simple Payments).

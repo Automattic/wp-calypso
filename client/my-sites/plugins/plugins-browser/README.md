@@ -2,7 +2,7 @@
 
 This component renders the main plugins browser page.
 
-#### How to use:
+## How to use:
 
 ```js
 import BrowserMainView from 'my-sites/plugins/plugins-browser';
@@ -22,7 +22,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `site`: a string containing the slug of the selected site
 - `sites`: a sites-list object

@@ -1,6 +1,6 @@
 # Use Nock
 
-##### Ensure `nock` unloads properly after tests are finished
+## Ensure `nock` unloads properly after tests are finished
 
 `nock` allows you to intercept and mock network requests through a variety of filters and functions, providing such abilities as setting custom headers, HTTP response codes, and content.
 

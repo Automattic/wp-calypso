@@ -2,7 +2,7 @@
 
 A flux store to provide the data needed for the OAuth login page.
 
-#### Data
+## Data
 
 This module exposes four pieces of data and emits a `change` event when any of them are changed:
 
@@ -11,7 +11,7 @@ This module exposes four pieces of data and emits a `change` event when any of t
 - `errorLevel` - an error code associated with the last request
 - `errorMessage` - a user-visible error message associated with the last request
 
-#### Actions
+## Actions
 
 The action methods include:
 

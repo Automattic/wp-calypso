@@ -1,10 +1,11 @@
 # WPORG Data
 
-### Store
+## Store
 
 The WPorg Store is responsible for storing the state of plugins from .org so that we don't have to fetch them each time.
 
-####The Data
+### The Data
+
 The data that is stored in the store looks like this:
 
 ```js
@@ -37,13 +38,13 @@ The data that is stored in the store looks like this:
 
 The data is stored in a private variable but can be accessed though the stores public methods.
 
-####Public Methods
+### Public Methods
 
-**PluginsStore.get( pluginSlug );**
+#### PluginsStore.get( pluginSlug );
 
-## Returns a plugin object or null
+Returns a plugin object or null
 
-####Example Component Code:
+### Example Component Code:
 
 ```es6
 /**
@@ -87,18 +88,19 @@ export class YourComponent extends Component {
 
 ```
 
-###Actions
+## Actions
+
 Actions update the data stored in WPorg store.
 
-####Public methods.
+### Public methods.
+
+#### PluginsDataActions.fetchPluginData( pluginSlug );
 
 Triggers api call to fetch the plugin data and update the store.
 
-**PluginsDataActions.fetchPluginData( pluginSlug );**
-
 ---
 
-####Example Component Code:
+### Example Component Code:
 
 ```jsx
 /**

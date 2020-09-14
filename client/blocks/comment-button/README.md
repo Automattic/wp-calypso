@@ -2,7 +2,7 @@
 
 This component is used to display a button with an embedded number indicator.
 
-#### How to use:
+## How to use:
 
 ```js
 import CommentButton from 'blocks/comment-button';
@@ -14,7 +14,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `commentCount`: Number indicating the number of comments to be displayed next to the button.
 - `href`: String URL destination to be used with a `tagName` of `a`. Defaults to `null`.

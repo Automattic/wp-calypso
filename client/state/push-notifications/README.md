@@ -17,7 +17,7 @@ A module for managing push notification state & communicating with the service w
 
 - `toggleEnabled`: Turn push notifications on and off
 
-#### How to use
+### How to use
 
 ```js
 import React from 'react';

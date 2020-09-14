@@ -1,6 +1,6 @@
 # Service Worker
 
-#### How to use
+## How to use
 
 ```js
 import { isServiceWorkerSupported, registerServerWorker } from 'lib/service-worker';

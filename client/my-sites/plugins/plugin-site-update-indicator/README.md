@@ -2,7 +2,7 @@
 
 This component is used to display a update indicator which can be turned into a update button
 
-#### How to use:
+## How to use:
 
 ```js
 import PluginSiteUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
@@ -19,7 +19,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `site`: a site object with the site which would be associated to the component.
 - `notices`: a notices object.

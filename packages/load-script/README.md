@@ -2,7 +2,7 @@
 
 This utility function allows us to use a standardized method of loading remote scripts and injecting them into the `<head>` of our document to bring external functionality into the app.
 
-### Usage
+## Usage
 
 ```js
 import { loadScript, loadjQueryDependentScript } from '@automattic/load-script';
@@ -36,6 +36,6 @@ loadScript( REMOTE_SCRIPT_URL )
 	} );
 ```
 
-### Error handling
+## Error handling
 
 If using the callback, it should expect a single argument, which will be `null` on success or an object on failure. This error object contains the `src` property, which will contain the src url of the script that failed to load. If using the Promise form, the error object will be passed to the nearest `catch` handler as a rejection.

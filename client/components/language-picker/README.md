@@ -59,7 +59,7 @@ The `LanguagePicker` is a form component with API similar to a HTML `input` or `
 element - its value is specified in a `value` prop, and it calls an `onChange` handler
 when its value changes.
 
-#### Props
+### Props
 
 `languages` - **required** Array with information about languages, their names, language
 slugs, popularity etc. It's exported by `config` module under the `languages` key.

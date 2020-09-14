@@ -12,7 +12,7 @@ Supported routes:
 /plans/select/:site/:plan - deprecated, use /checkout/:site/:plan
 ```
 
-### plans.jsx
+## plans.jsx
 
 React component that renders a list of active WordPress.com plans
 

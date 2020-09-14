@@ -10,7 +10,7 @@ This component allows an administrator with sufficient privileges to edit the au
 
 The component will retrieve site users and render the child span as a clickable element to expand the `author-selector` UX. If selecting other authors is not appropriate (i.e., only one available author, Users not loaded, or insufficient permission), it will simply display the span.
 
-### Props
+## Props
 
 - siteId - The siteId for site from which to fetch authors
 - onSelect - Function to call when user is selected, selected `author` passed as parameter
