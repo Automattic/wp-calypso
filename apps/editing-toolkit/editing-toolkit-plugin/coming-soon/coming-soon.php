@@ -40,7 +40,12 @@ function render_fallback_coming_soon_page() {
 	remove_action( 'wp_head', 'global_css', 5 );
 	remove_action( 'wp_footer', 'wpcom_subs_js' );
 	remove_action( 'wp_footer', 'stats_footer', 101 );
-	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), PLUGIN_VERSION );
+	wp_enqueue_style(
+		'wpcom-coming-soon',
+		plugin_dir_url( __FILE__ ) . 'dist/coming-soon.css',
+		array(),
+		filemtime( __DIR__ . '/dist/coming-soon.css' )
+	);
 
 	include __DIR__ . '/fallback-coming-soon-page.php';
 }
