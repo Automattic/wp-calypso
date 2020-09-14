@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -10,17 +9,20 @@ import { localize } from 'i18n-calypso';
  */
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
-import HappychatButton from 'components/happychat/button';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import { isEnabled } from 'config';
 
-const JetpackFAQ = ( { isChatAvailable, translate } ) => {
-	const helpLink =
-		isEnabled( 'jetpack/happychat' ) && isChatAvailable ? (
-			<HappychatButton className="plans-features-main__happychat-button" />
-		) : (
-			<a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" />
-		);
+const JetpackFAQ = ( { translate } ) => {
+	// We want to allow Jetpack Free users to contact support, even when it isn't not available
+	// for them, because it could push them into purchasing a product. To make this possible, we
+	// add two query parameters that let's show the support form to Jetpack Free users:
+	// 1. rel=support is what shows the contact form
+	// 2. hpi=1 stands for has purchase intent
+	const helpLink = (
+		<a
+			href="https://jetpack.com/contact-support/?rel=support&hpi=1"
+			target="_blank"
+			rel="noopener noreferrer"
+		/>
+	);
 
 	return (
 		<FAQ>
@@ -74,6 +76,4 @@ const JetpackFAQ = ( { isChatAvailable, translate } ) => {
 	);
 };
 
-export default connect( ( state ) => ( {
-	isChatAvailable: isHappychatAvailable( state ),
-} ) )( localize( JetpackFAQ ) );
+export default localize( JetpackFAQ );
