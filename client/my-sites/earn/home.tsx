@@ -31,6 +31,7 @@ import {
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -99,11 +100,16 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		} );
 	};
 
-	const getPlanNames = () =>
+	const getPlanNames = () => {
+		const jetpackText = shouldShowOfferResetFlow()
+			? ''
+			: ' ' + translate( 'Available only with a Premium or Professional plan.' );
+
 		// Space isn't included in the translatable string to prevent it being easily missed.
-		isNonAtomicJetpack
-			? ' ' + translate( 'Available only with a Premium or Professional plan.' )
+		return isNonAtomicJetpack
+			? jetpackText
 			: ' ' + translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+	};
 
 	/**
 	 * Return the content to display in the Simple Payments card based on the current plan.
