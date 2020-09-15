@@ -10,6 +10,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { getPlan } from 'lib/plans';
+import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
+import { getJetpackProductShortName, getJetpackProductDescription } from 'lib/products-values';
+import { PRODUCTS_LIST } from 'lib/products-values/products-list';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { retrievePlan } from './persistence-utils';
 
@@ -82,6 +88,40 @@ class JetpackConnectMainHeader extends Component {
 						'instantly find the right content – right when they need it.'
 				),
 			};
+		}
+
+		if ( shouldShowOfferResetFlow() ) {
+			if ( JETPACK_RESET_PLANS.includes( type ) ) {
+				const plan = getPlan( type );
+
+				if ( plan ) {
+					return {
+						title: translate( 'Get {{name/}}', {
+							components: {
+								name: plan.getTitle(),
+							},
+							comment: '{{name/}} is the name of a plan',
+						} ),
+						subtitle: plan.getDescription(),
+					};
+				}
+			}
+
+			if ( JETPACK_PRODUCTS_LIST.includes( type ) ) {
+				const product = PRODUCTS_LIST[ type ];
+
+				if ( product ) {
+					return {
+						title: translate( 'Get {{name/}}', {
+							components: {
+								name: getJetpackProductShortName( product ),
+							},
+							comment: '{{name/}} is the name of a plan',
+						} ),
+						subtitle: getJetpackProductDescription( product ),
+					};
+				}
+			}
 		}
 
 		return {
