@@ -153,10 +153,11 @@ class Site extends React.Component {
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.site.is_private && (
+							<span className="site__badge site__badge-private">{ translate( 'Private' ) }</span>
+						) }
+						{ this.props.site.is_coming_soon && (
 							<span className="site__badge site__badge-private">
-								{ this.props.site.is_coming_soon
-									? translate( 'Coming Soon' )
-									: translate( 'Private' ) }
+								{ translate( 'Coming Soon' ) }
 							</span>
 						) }
 						{ site.options && site.options.is_redirect && (
