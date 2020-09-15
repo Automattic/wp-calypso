@@ -391,7 +391,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			handleSubmitForm,
 		} = this.props;
-		const isWpcomComingSoonMode = parseInt( fields.wpcom_coming_soon, 10 );
+		const isWpcomComingSoonMode = parseInt( fields.wpcom_public_coming_soon, 10 );
 
 		return (
 			<>
