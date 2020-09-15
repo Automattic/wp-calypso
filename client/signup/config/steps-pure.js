@@ -100,7 +100,7 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
-			providesDependencies: [ 'domainItem' ],
+			providesDependencies: [ 'domainItem', 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
@@ -110,7 +110,7 @@ export function generateSteps( {
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
 				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
 			},
-			dependencies: [ 'siteSlug', 'shouldHideFreePlan' ],
+			dependencies: [ 'siteSlug' ],
 		},
 
 		'plans-site-selected': {
