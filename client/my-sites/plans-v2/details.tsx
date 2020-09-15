@@ -40,7 +40,7 @@ import type { Duration, DetailsPageProps, PurchaseCallback, SelectorProduct } fr
 
 import './style.scss';
 
-const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: DetailsPageProps ) => {
+const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPageProps ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
@@ -89,7 +89,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 			<QueryProducts />
 			{ header }
 			<HeaderCake onClick={ backButton }>
-				{ isBundle ? translate( 'Bundle Options' ) : translate( 'Product Options' ) }
+				{ isBundle ? translate( 'Plan Options' ) : translate( 'Product Options' ) }
 			</HeaderCake>
 			<FormattedHeader
 				headerText={
@@ -130,7 +130,6 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header, footer }: Detail
 					} )
 				) }
 			</div>
-			{ footer }
 		</Main>
 	);
 };

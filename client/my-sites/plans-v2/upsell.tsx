@@ -177,7 +177,7 @@ const UpsellComponent = ( {
 	);
 };
 
-const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellPageProps ) => {
+const UpsellPage = ( { duration, productSlug, rootUrl, header }: UpsellPageProps ) => {
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isLoading = useIsLoading( siteId );
@@ -238,7 +238,6 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 				onBackButtonClick={ onBackButtonClick }
 				isLoading={ isLoading }
 			/>
-			{ footer }
 		</>
 	);
 };
