@@ -14,7 +14,7 @@ const plansPaths = Plans.plansPaths;
 // `undefined`, as that's what matching our `path` pattern against a route with no explicit
 // step fragment will return.
 export const Step = {
-	IntentGathering: undefined,
+	IntentGathering: 'site-name',
 	DesignSelection: 'design',
 	Style: 'style',
 	Features: 'features',
@@ -26,6 +26,7 @@ export const Step = {
 	DomainsModal: 'domains-modal',
 	PlansModal: 'plans-modal',
 	LanguageModal: 'language-modal',
+	PlansCompare: 'compare-plans',
 } as const;
 
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.

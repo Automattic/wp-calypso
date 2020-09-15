@@ -47,6 +47,8 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	// using the selector will get the explicit domain search query with site title and vertical as fallbacks
 	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
 
+	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+
 	const { setDomain, setDomainSearch, setHasUsedDomainsStep } = useDispatch( ONBOARD_STORE );
 
 	React.useEffect( () => {
@@ -86,7 +88,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				<SubTitle>{ __( 'Free for the first year with any paid plan.' ) }</SubTitle>
 			</div>
 			<ActionButtons>
-				<BackButton onClick={ handleBack } />
+				{ ( isModal || ! isExperimental ) && <BackButton onClick={ handleBack } /> }
 				{ domain ? <NextButton onClick={ handleNext } /> : <SkipButton onClick={ handleNext } /> }
 			</ActionButtons>
 		</div>

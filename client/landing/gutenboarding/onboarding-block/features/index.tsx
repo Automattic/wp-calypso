@@ -30,8 +30,9 @@ import './style.scss';
 
 const FeaturesStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { goBack, goNext } = useStepNavigation();
+	const { goBack, goNext, endFlow } = useStepNavigation();
 
+	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const { addFeature, removeFeature } = useDispatch( ONBOARD_STORE );
 
@@ -44,6 +45,12 @@ const FeaturesStep: React.FunctionComponent = () => {
 			addFeature( featureId );
 		}
 	};
+
+	const skipButton = isExperimental ? (
+		<SkipButton onClick={ endFlow }>{ __( 'Create a free site' ) }</SkipButton>
+	) : (
+		<SkipButton onClick={ goNext } />
+	);
 
 	return (
 		<div className="gutenboarding-page features">
@@ -58,11 +65,7 @@ const FeaturesStep: React.FunctionComponent = () => {
 				</div>
 				<ActionButtons>
 					<BackButton onClick={ goBack } />
-					{ hasSelectedFeatures ? (
-						<NextButton onClick={ goNext } />
-					) : (
-						<SkipButton onClick={ goNext } />
-					) }
+					{ hasSelectedFeatures ? <NextButton onClick={ goNext } /> : skipButton }
 				</ActionButtons>
 			</div>
 			<div className="features__body">

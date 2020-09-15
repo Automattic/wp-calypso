@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 import type { State } from './reducer';
+import { FEATURE_LIST } from '../../onboarding-block/features/data';
 
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlan = ( state: State ) => state.plan;
 export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
 export const getSelectedDomain = ( state: State ) => state.domain;
-export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
@@ -32,3 +32,8 @@ export const wasVerticalSkipped = ( state: State ): boolean => state.wasVertical
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state ) || getSelectedVertical( state )?.label;
+
+export const getSelectedFeatures = ( state: State ) => [
+	...state.selectedFeatures,
+	...( hasPaidDomain( state ) ? [ FEATURE_LIST.domain.id ] : [] ),
+];

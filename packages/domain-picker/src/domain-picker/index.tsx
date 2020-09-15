@@ -185,6 +185,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					onChange={ handleInputChange }
 					onBlur={ onDomainSearchBlurValue }
 					value={ domainSearch }
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 				/>
 			</div>
 			{ domainSearch.trim()?.length > 1 ? (
