@@ -1073,11 +1073,10 @@ export default connect(
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		// displayUsernameInput:
-		// 	[ 'onboarding', 'personal', 'premium', 'business', 'ecommerce' ].includes(
-		// 		ownProps.flowName
-		// 	) && 'control' === abtest( 'removeUsernameInSignup' ),
-		displayUsernameInput: true,
+		displayUsernameInput:
+			! [ 'onboarding', 'personal', 'premium', 'business', 'ecommerce' ].includes(
+				ownProps.flowName
+			) || 'control' === abtest( 'removeUsernameInSignup' ),
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
