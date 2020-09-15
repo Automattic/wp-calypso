@@ -24,6 +24,7 @@ import { managePurchase } from 'me/purchases/paths';
 import Main from 'components/main';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import QuerySites from 'components/data/query-sites';
+import QueryProductsList from 'components/data/query-products-list';
 import JetpackFreeCard from 'components/jetpack/card/jetpack-free-card';
 
 /**
@@ -162,6 +163,7 @@ const SelectorPage = ( {
 				</>
 			) }
 
+			<QueryProductsList />
 			<QueryProducts />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
