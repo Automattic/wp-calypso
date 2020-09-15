@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { startsWith } from 'lodash';
-
-/**
  * Check whether a given string is a transient media ID. Transient media IDs
  * are strings and start with 'media-'. Persisted media IDs are numbers.
  *
@@ -11,7 +6,7 @@ import { startsWith } from 'lodash';
  * @returns {boolean} true if given id is a transient media id, false otherwise
  */
 function isTransientMediaId( id ) {
-	return typeof id === 'string' && startsWith( id, 'media-' );
+	return typeof id === 'string' && id.startsWith( 'media-' );
 }
 
 export default isTransientMediaId;
