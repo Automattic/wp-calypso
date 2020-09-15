@@ -28,9 +28,15 @@ use \DateTime;
  */
 
 // define extra exceptions used
-class SignatureInvalidException extends \UnexpectedValueException { }
-class ExpiredException extends \UnexpectedValueException { }
-class BeforeValidException extends \UnexpectedValueException { }
+if ( ! class_exists( 'SignatureInvalidException' ) ) {
+	class SignatureInvalidException extends \UnexpectedValueException { }
+}
+if ( ! class_exists( 'ExpiredException' ) ) {
+	class ExpiredException extends \UnexpectedValueException { }
+}
+if ( ! class_exists( 'BeforeValidException' ) ) {
+	class BeforeValidException extends \UnexpectedValueException { }
+}
 
 class JWT {
 
