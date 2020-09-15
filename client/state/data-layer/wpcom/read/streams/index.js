@@ -16,6 +16,7 @@ import { keyForPost } from 'reader/post-key';
 import { recordTracksEvent } from 'state/analytics/actions';
 import XPostHelper from 'reader/xpost-helper';
 import { registerHandlers } from 'state/data-layer/handler-registry';
+import config from 'config';
 
 /**
  * Pull the suffix off of a stream key
@@ -164,6 +165,18 @@ const streamApis = {
 	},
 };
 
+if ( config.isEnabled( 'reader/v2-tag-streams' ) ) {
+	streamApis.tag = {
+		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
+		dateProperty: 'date',
+		apiNamespace: 'wpcom/v2',
+		apiVersion: null,
+		query: ( { query } ) => {
+			return { ...query, sort: 'date' };
+		},
+	};
+}
+
 /**
  * Request a page for the given stream
  *
@@ -182,6 +195,7 @@ export function requestPage( action ) {
 	}
 
 	const {
+		apiNamespace,
 		apiVersion = '1.2',
 		path,
 		query = defaultQueryFn,
@@ -198,6 +212,7 @@ export function requestPage( action ) {
 	return http( {
 		method: 'GET',
 		path: path( { ...action.payload } ),
+		apiNamespace,
 		apiVersion,
 		query: isPoll
 			? pollQuery( [], { ...algorithm } )
@@ -208,7 +223,8 @@ export function requestPage( action ) {
 }
 
 export function handlePage( action, data ) {
-	const { posts, date_range, meta, next_page } = data;
+	const { posts, date_range, meta, next_page, next_page_handle } = data;
+	console.log( data );
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
 	const { dateProperty } = streamApis[ streamType ];
 	let pageHandle = {};
@@ -219,13 +235,21 @@ export function handlePage( action, data ) {
 	} else if ( next_page || ( meta && meta.next_page ) ) {
 		// sites give page handles nested within the meta key
 		pageHandle = { page_handle: next_page || meta.next_page };
+	} else if ( next_page_handle ) {
+		// v2 tag streams
+		pageHandle = { page_handle: next_page_handle };
 	} else if ( date_range && date_range.after ) {
 		// feeds use date_range. no next_page handles here
 		// search api will give you a date_range but for relevance search it will have before/after=null
 		// and offsets must be used
 		const { after } = date_range;
-		pageHandle = { before: after };
+
+		if ( after ) {
+			pageHandle = { before: after };
+		}
 	}
+
+	console.log( pageHandle );
 
 	const actions = analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
 

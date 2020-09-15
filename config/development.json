@@ -159,6 +159,7 @@
 		"reader/list-management": true,
 		"reader/seen-posts": true,
 		"reader/user-mention-suggestions": true,
+		"reader/v2-tag-streams": true,
 		"recommend-plugins": true,
 		"republicize": true,
 		"rum-tracking/logstash": true,
