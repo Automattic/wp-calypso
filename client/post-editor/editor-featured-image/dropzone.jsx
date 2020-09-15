@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import DropZone from 'components/drop-zone';
-import { filterItemsByMimePrefix } from 'lib/media/utils';
+import { filterItemsByMimePrefix, createTransientMediaId } from 'lib/media/utils';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
 import { addMedia } from 'state/media/thunks';
@@ -20,7 +20,6 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/editor/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { userCan } from 'lib/site/utils';
-import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
 
 class FeaturedImageDropZone extends Component {
 	onFilesDrop = async ( files ) => {

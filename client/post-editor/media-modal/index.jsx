@@ -45,7 +45,6 @@ import VideoEditor from 'blocks/video-editor';
 import MediaModalDialog from './dialog';
 import MediaModalDetail from './detail';
 import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
-import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
 
 /**
  * Style dependencies
@@ -215,7 +214,7 @@ export class EditorMediaModal extends Component {
 
 		if ( selectedItems.length && this.state.source !== '' ) {
 			const itemsWithTransientId = selectedItems.map( ( item ) =>
-				Object.assign( {}, item, { ID: createTransientMediaId(), transient: true } )
+				Object.assign( {}, item, { ID: MediaUtils.createTransientMediaId(), transient: true } )
 			);
 			this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
 		} else {

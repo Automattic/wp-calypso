@@ -8,7 +8,7 @@ import path from 'path';
  */
 import { getFileExtension } from 'lib/media/utils/get-file-extension';
 import { getMimeType } from 'lib/media/utils/get-mime-type';
-import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
+import { createTransientMediaId } from 'lib/media/utils';
 
 /**
  * Returns an object describing a transient media item which can be used in

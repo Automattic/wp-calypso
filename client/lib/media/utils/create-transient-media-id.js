@@ -11,8 +11,6 @@ const { uniqueId } = impureLodash;
  *
  * @param {string} moreSpecificPrefix can be used to further specify the prefix
  */
-function createTransientMediaId( moreSpecificPrefix = '' ) {
+export function createTransientMediaId( moreSpecificPrefix = '' ) {
 	return uniqueId( `media-${ moreSpecificPrefix }` );
 }
-
-export default createTransientMediaId;

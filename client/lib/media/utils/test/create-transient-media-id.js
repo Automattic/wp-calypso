@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import createTransientMediaId from '../create-transient-media-id';
+import { createTransientMediaId } from '../create-transient-media-id';
 
 describe( 'createTransientMediaId()', () => {
 	test( `should return a string prefixed with 'media-'`, () => {

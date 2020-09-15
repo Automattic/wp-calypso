@@ -4,7 +4,7 @@
 import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
 import { errorNotice } from 'state/notices/actions';
 import { addMedia } from 'state/media/thunks/add-media';
-import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
+import { createTransientMediaId } from 'lib/media/utils';
 
 const updateSiteIcon = ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } );
 

@@ -28,7 +28,7 @@ import { ModalViews } from 'state/ui/media-modal/constants';
 import resizeImageUrl from 'lib/resize-image-url';
 import { AspectRatios } from 'state/editor/image-editor/constants';
 import Spinner from 'components/spinner';
-import createTransientMediaId from 'lib/media/utils/create-transient-media-id';
+import { createTransientMediaId } from 'lib/media/utils';
 
 /**
  * Debug
