@@ -84,8 +84,6 @@ $z-layers: (
 		'.comment-detail.card.is-collapsed:hover': 1,
 		'.comment-detail.card.accessible-focus:focus': 1,
 		'.web-preview__inner .spinner-line': 1,
-		'.google-my-business__close-icon': 1,
-		'.google-my-business__stats-nudge.dismissible-card__close-icon': 1,
 		'.is-section-purchases .search': 1,
 		'.checklist__task': 1,
 		'.editor-sidebar': 2,
@@ -185,7 +183,6 @@ $z-layers: (
 		'.webpack-build-monitor': 99999999,
 		'.image-selector__item.is-transient::after': 1,
 		'.image-selector__item .spinner': 2,
-		'.upwork-stats-nudge__close-icon': 1,
 		'.people-list-item.card.is-compact:focus': 1,
 	),
 	'.is-section-signup': (
