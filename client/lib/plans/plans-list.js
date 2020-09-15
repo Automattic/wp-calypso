@@ -447,6 +447,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		constants.FEATURE_JETPACK_SCAN_DAILY,
@@ -504,6 +505,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		constants.FEATURE_JETPACK_SCAN_DAILY,
