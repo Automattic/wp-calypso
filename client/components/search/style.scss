@@ -103,7 +103,7 @@
 	}
 }
 
-.search__input[type='search'] {
+.search__input.form-text-input[type='search'] {
 	flex: 1 1 auto;
 	display: none;
 	z-index: z-index( '.search', '.search__input' );
