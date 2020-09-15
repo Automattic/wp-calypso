@@ -77,7 +77,7 @@ class AutoLoadingHomepageModal extends Component {
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
 			isVisible = false,
-			siteOptions: { show_on_front },
+			postsOnFrontPage,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -108,19 +108,17 @@ class AutoLoadingHomepageModal extends Component {
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
-						label:
-							show_on_front === 'posts'
-								? translate( 'Keep my current theme' )
-								: translate( 'No, keep my current theme' ),
+						label: postsOnFrontPage
+							? translate( 'Keep my current theme' )
+							: translate( 'No, keep my current theme' ),
 						isPrimary: false,
 						onClick: this.closeModalHandler( false ),
 					},
 					{
 						action: 'activeTheme',
-						label:
-							show_on_front === 'posts'
-								? translate( 'Activate %(themeName)s', { args: { themeName } } )
-								: translate( 'Yes, activate %(themeName)s', { args: { themeName } } ),
+						label: postsOnFrontPage
+							? translate( 'Activate %(themeName)s', { args: { themeName } } )
+							: translate( 'Yes, activate %(themeName)s', { args: { themeName } } ),
 						isPrimary: true,
 						onClick: this.closeModalHandler( true ),
 					},
@@ -129,7 +127,7 @@ class AutoLoadingHomepageModal extends Component {
 			>
 				<div>
 					<h1>
-						{ show_on_front === 'posts'
+						{ postsOnFrontPage
 							? translate( "Activating %(themeName)s can change your existing homepage's content", {
 									args: { themeName },
 							  } )
@@ -140,7 +138,7 @@ class AutoLoadingHomepageModal extends Component {
 									}
 							  ) }
 					</h1>
-					{ show_on_front === 'posts' ? (
+					{ postsOnFrontPage ? (
 						<>
 							<h2 className="themes__auto-loading-homepage-modal-options-heading">
 								{ translate( 'How would you like to continue?' ) }
@@ -190,7 +188,6 @@ export default connect(
 
 		return {
 			siteId,
-			siteOptions,
 			installingThemeId,
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
@@ -198,6 +195,7 @@ export default connect(
 			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
 			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
+			postsOnFrontPage: siteOptions?.show_on_front === 'posts',
 		};
 	},
 	{
