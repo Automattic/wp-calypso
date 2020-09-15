@@ -2,29 +2,29 @@
 
 A module for managing site domains data.
 
-# Actions
+## Actions
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-## `fetchSiteDomains( siteId: Number )`
+### `fetchSiteDomains( siteId: Number )`
 
 Fetches domains for the site with the given site ID.
 
-## `refreshSiteDomains( siteID: Number )`
+### `refreshSiteDomains( siteID: Number )`
 
 Clears domains and fetches them for the given site.
 
-# Action creators
+## Action creators
 
 > Action creators are exactly that—functions that create actions.
 
-## domainsReceiveAction( siteId, response )
+### domainsReceiveAction( siteId, response )
 
-## domainsRequestAction( siteId )
+### domainsRequestAction( siteId )
 
-## domainsRequestSuccessAction( siteId )
+### domainsRequestSuccessAction( siteId )
 
-## domainsRequestFailureAction( siteId, error )
+### domainsRequestFailureAction( siteId, error )
 
 ```es6
 import {
@@ -49,7 +49,7 @@ wpcom
 	dispatch( domainsReceiveAction( site,id, response.domains ) );
 ```
 
-# Reducer
+## Reducer
 
 Data from the aforementioned actions is added to the global state tree, under `sites.domains`, with the following structure:
 

@@ -10,19 +10,19 @@ publicize, a new publicize connection is automatically created.
 Once the keyring connection exists, clicking on this button again will execute the `onConnect`
 action immediately.
 
-# Props
+## Props
 
-## serviceId (string)
+### serviceId (string)
 
 The ID of the external service this button will attempt to connect the user to.
 The list of available services is given by the `/meta/external-services` API endpoint
 but most service IDs are currently visible in the [ServiceExamples](../../my-sites/marketing/connections/service-examples.jsx)
 component.
 
-## onClick (Function)
+### onClick (Function)
 
 Function to execute on button click (often needed for analytics purposes).
 
-## onConnect (Function)
+### onConnect (Function)
 
 Function to execute once the keyring connection has been created.
