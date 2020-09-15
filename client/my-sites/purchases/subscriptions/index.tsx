@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import Main from 'components/main';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PurchasesHeader from './header';
+import PurchasesHeader from '../header';
 import PurchasesSite from 'me/purchases/purchases-site/index.jsx';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import {

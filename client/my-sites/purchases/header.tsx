@@ -12,7 +12,7 @@ import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
  */
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import { subscriptions } from '../paths';
+import { subscriptions } from './paths';
 import SectionNav from 'components/section-nav';
 import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
 
