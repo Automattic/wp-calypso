@@ -7,7 +7,7 @@ place in our hearts.
 
 ---
 
-#### How to use:
+## How to use
 
 ```js
 import { Card } from '@automattic/components';
@@ -25,6 +25,6 @@ function MyCard() {
 
 ---
 
-#### Props
+## Props
 
 - `color`: (string) The color of the ribbon. Currently only supports green.

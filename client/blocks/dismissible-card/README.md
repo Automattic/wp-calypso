@@ -3,7 +3,7 @@
 This is a card component that can be dismissed for a single page load or be hidden
 via user preference.
 
-#### How to use:
+## How to use
 
 ```js
 import DismissibleCard from 'blocks/dismissible-card';

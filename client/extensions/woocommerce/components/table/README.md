@@ -6,7 +6,7 @@ The `compact` prop applies styling for a more compact table. It also allows for 
 
 ![screen shot 2017-06-13 at 11 42 53 am](https://user-images.githubusercontent.com/1922453/27059946-c1ff77f6-502d-11e7-9af5-aaecd09bb335.png)
 
-#### How to use:
+## How to use
 
 ```js
 import Table from 'woocommerce/components/table';
@@ -38,19 +38,19 @@ render: function() {
 }
 ```
 
-#### Props `<Table/>`
+## Props `<Table/>`
 
 - `header`: A `<TableRow />` element used to define the table's head.
 - `className`: Classes added to top level element.
 - `compact`: Denotes a more compact table.
 
-#### Props `<TableRow/>`
+## Props `<TableRow/>`
 
 - `className`: Classes added to top level element.
 - `isHeader`: Establishes row as being used for table head.
 - `href`: Optional link, if set, the row becomes clickable/focusable.
 
-#### Props `<TableItem/>`
+## Props `<TableItem/>`
 
 - `alignRight`: Apply `text-align: right` on an item.
 - `className`: Classes added to top level element.

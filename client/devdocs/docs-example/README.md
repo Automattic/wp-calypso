@@ -2,7 +2,7 @@
 
 This component is used to implement a skeleton for components examples which are generally showcased in the devdocs.
 
-#### How to use:
+## How to use
 
 ```es6
 import DocsExample from 'devdocs/design/docs-example';
@@ -20,7 +20,7 @@ render: function() {
 }
 ```
 
-#### Props
+## Props
 
 - `usageStats`: (object) An object containing the usage stats e.g. `{ count: 10 }`.
 - `toggleHandler`: (func) A function to toggle the example state.

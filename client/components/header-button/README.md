@@ -6,7 +6,7 @@ to elements like a `Search`. It takes an `icon` prop that is an ID of a
 the other properties are passed to the `Button` component that is used to
 implement this one.
 
-#### How to use:
+## How to use
 
 ```js
 import HeaderButton from 'components/header-button';
@@ -14,17 +14,13 @@ import HeaderButton from 'components/header-button';
 function MyHeader() {
 	return (
 		<div>
-			<HeaderButton
-				icon="plus-small"
-				label="Add Plugin"
-				href="/plugins/manage"
-			/>
-	  </div>
+			<HeaderButton icon="plus-small" label="Add Plugin" href="/plugins/manage" />
+		</div>
 	);
 }
 ```
 
-#### Props
+## Props
 
 - `icon` : (string) ID of a `Gridicon` icon
 - `label` : The text label of the button

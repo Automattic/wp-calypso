@@ -4,7 +4,7 @@ The `SupportArticleDialog` component displays a support article right in Calypso
 
 The component is rendered from our main `<Layout />` component and so is available everywhere in Calypso.
 
-#### Basic usage:
+## Basic usage
 
 To launch a support article call the corresponding redux action, like so:
 
@@ -23,7 +23,7 @@ render: function() {
 You'll notice that two properties were passed in to the `openSupportArticleDialog` action.
 These two properties are then made available to `SupportArticleDialog` via redux, and are explained below.
 
-#### Props
+## Props
 
 - `postId`: (required) An id used to query the support article and get its contents.
 - `postUrl`: A user-friendly url to be used to render an external link to the article, at the bottom of the dialog.

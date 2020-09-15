@@ -4,7 +4,7 @@ This component displays a link and icon. If `props.supportPostId` is supplied, w
 
 The component's `children` prop will be used for the link text; if none is supplied, it will defaut to the text "Learn more". The `showText` property (default `true`) can be set to `false` in order to display no text.
 
-## Example Usage:
+## Example Usage
 
 ```js
 import InlineSupportLink from 'components/inline-support-link';

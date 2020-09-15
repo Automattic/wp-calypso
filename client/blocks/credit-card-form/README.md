@@ -2,7 +2,7 @@
 
 This component is used to display a credit card form.
 
-#### How to use:
+## How to use
 
 ```js
 import CreditCardForm from 'blocks/credit-card-form';
@@ -19,7 +19,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `createCardToken`: Function to be executed when a valid form is submitted. It is responsible for a credit card token creation which is the part of the flow.
 - `initialValues`: Optional object containing initial values for the form fields. At the moment only `name` is supported.

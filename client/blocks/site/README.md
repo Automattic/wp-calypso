@@ -2,7 +2,7 @@
 
 This component displays a Site item using site data retrieved from Redux store. See the documentation for the `siteId` and `site` props for more details about retrieving the site data.
 
-#### How to use:
+## How to use
 
 ```js
 import Site from 'blocks/site';
@@ -12,7 +12,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `siteId (number)` - A site ID. Required, unless a `site` object prop is provided (see below).
 - `site (object)` - A site object. Required, unless a `siteId` prop is provided. If both are provided, `siteId` takes precedence.

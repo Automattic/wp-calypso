@@ -2,7 +2,7 @@
 
 This component is used to represent a list `PluginItem`s, with a `PluginsListHeader` serving as a title for the whole bunch.
 
-#### How to use:
+## How to use
 
 ```jsx
 import PluginsList from 'my-sites/plugins/plugins-list';
@@ -15,7 +15,7 @@ return <PluginsList
 		isPlaceholder= { this.showPluginListPlaceholders( true ) } />;
 ```
 
-#### Props
+## Props
 
 - `plugins`: An array of plugins objects.
 - `header`: A string describing the plugin list.

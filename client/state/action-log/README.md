@@ -5,12 +5,12 @@
 The Action Log is a Redux store enhancer which records the most recently dispatched Redux action so
 they can be inspected in the development environment for debugging and interactive design.
 
-### Purpose
+## Purpose
 
 Like the [Redux DevTools](https://github.com/zalmoxisus/redux-devtools-extension), the action log
 is useful to track and inspect actions flowing through the store.
 
-### Methods
+## Methods
 
 - `actionLog.start()`
   Enable action recording to history. It is enabled by default.
@@ -35,7 +35,7 @@ is useful to track and inspect actions flowing through the store.
 - `actionLog.unwatch()`
   Disable action watching.
 
-### Query
+## Query
 
 The `actionLog.filter( query )` and `actionLog.watch( query )` accept a `query`. The following types
 are valid queries which are useful for different situations:
@@ -49,23 +49,23 @@ are valid queries which are useful for different situations:
   `actionLog.filter( action => action.siteId === interestingSiteId)` - A predicate function that
   accepts an action and returns `true` if the action matches.
 
-### Examples
+## Examples
 
 The following examples represent commands and code actually run inside the browser console. These
 are not snippets of bundled JavaScript from Calypso.
 
 ```js
 // return the list of recorded actions
-actionLog.history
+actionLog.history;
 
 // return a subset of the recorded actions filtering on the `action.type`
-actionLog.filter( 'COMMENTS_LIKE' )
+actionLog.filter( 'COMMENTS_LIKE' );
 
 // Watch actions in the console by string, RegExp or Predicate Function.
 // The same types of query arguments may be used with `actionLog.filter`.
-actionLog.watch( "SITE_RECEIVE" )
+actionLog.watch( 'SITE_RECEIVE' );
 
-actionLog.watch( /post/i )
+actionLog.watch( /post/i );
 
-actionLog.watch( action => action.siteId === myFavoriteSiteId )
+actionLog.watch( ( action ) => action.siteId === myFavoriteSiteId );
 ```

@@ -17,8 +17,38 @@ module.exports = {
 			files: [ '*.md' ],
 			parser: 'markdown-eslint-parser',
 			rules: {
-				// Disable remark rules for now, as they are not auto-fixable.
-				'md/remark': [ 'off' ],
+				'md/remark': [
+					'error',
+					{
+						plugins: [
+							// Plugins from https://www.npmjs.com/package/remark-preset-lint-markdown-style-guide
+							'lint-no-literal-urls',
+							'lint-heading-increment',
+							'lint-no-heading-punctuation',
+
+							// This special plugin is used to allow the syntax <!--eslint ignore <rule>-->. It has to come last
+							[ 'message-control', { name: 'eslint', source: 'remark-lint' } ],
+						],
+					},
+				],
+			},
+		},
+		{
+			// This lints the codeblocks marked as `javascript`, `js`, `cjs` or `ejs`, all valid aliases
+			// See:
+			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
+			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
+			files: [ '*.md.js', '*.md.javascript', '*.md.cjs', '*.md.ejs' ],
+			rules: {
+				// These are ok for examples
+				'import/no-extraneous-dependencies': 'off',
+				'no-console': 'off',
+				'no-redeclare': 'off',
+				'no-undef': 'off',
+				'no-unused-vars': 'off',
+				'react/jsx-no-undef': 'off',
+				'react/react-in-jsx-scope': 'off',
+				'wpcalypso/import-docblock': 'off',
 			},
 		},
 		{

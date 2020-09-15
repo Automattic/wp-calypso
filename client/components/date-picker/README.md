@@ -47,7 +47,7 @@ export default class extends React.Component {
 
 ## DatePicker
 
-#### Props
+### Props
 
 `initialMonth` - **optional** Date object that defines the month of the calendar. Default is `now`.
 

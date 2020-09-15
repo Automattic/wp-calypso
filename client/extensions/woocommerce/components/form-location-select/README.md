@@ -38,7 +38,7 @@ Required. The currently-selected state, as state code (e.g. NY, CT, QC, etc).
 
 The source site for the countries list request. Defaults to the currently-selected site.
 
-## How to use:
+## How to use
 
 ```jsx
 import FormFieldSet from 'components/forms/form-fieldset';

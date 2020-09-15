@@ -8,7 +8,7 @@ Render the component, passing the global ID of a post:
 
 ```js
 function MyPost() {
-	return <PostStatus globalId="e532356fdb689509a1a5149072e8aafc" />
+	return <PostStatus globalId="e532356fdb689509a1a5149072e8aafc" />;
 }
 ```
 

@@ -31,11 +31,11 @@ And then very important, you also need to to call the second prop `markSaved` wh
 
 ```js
 handleSubmit = ( event ) => {
-    event.preventDefault();
-    this.saveSettings( this.state ).then( () => {
-        this.props.markSaved();
-    } );
-}
+	event.preventDefault();
+	this.saveSettings( this.state ).then( () => {
+		this.props.markSaved();
+	} );
+};
 ```
 
 ## Usage (declarative)
@@ -58,13 +58,11 @@ Here are example `onChange` and `onSubmit` handlers that change the state:
 
 ```js
 handleChange = () => {
-    this.setState( { isChanged: true } );
-}
+	this.setState( { isChanged: true } );
+};
 
 handleSubmit = ( event ) => {
-    event.preventDefault();
-    this.saveSettings( this.state ).then(
-        () => this.setState( { isChanged: false } )
-    );
-}
+	event.preventDefault();
+	this.saveSettings( this.state ).then( () => this.setState( { isChanged: false } ) );
+};
 ```

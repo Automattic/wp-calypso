@@ -3,26 +3,22 @@
 This component displays a WordPress.com site preview, used by the signup journey to display site preview with mocked content.
 
 ```javascript
-
-	<SignupSitePreview
-		defaultViewportDevice="desktop"
-		fontUrl="http://path.to.css.font.file"
-		cssUrl="http://path.to.theme.css.file"
-		content={
-			{
-				title: 'Greetings',
-				tagline: 'Earthlings!',
-				body: '<strong>Take me to your pizza!</strong>',
-			}
-		}
-		langSlug="en"
-		isRtl={ false }
-		onPreviewClick={ this.handlePreviewClick }
-		resize={ true }
-		scrolling={ false }
-		className="sophisticated"
-	/>
-					
+<SignupSitePreview
+	defaultViewportDevice="desktop"
+	fontUrl="http://path.to.css.font.file"
+	cssUrl="http://path.to.theme.css.file"
+	content={ {
+		title: 'Greetings',
+		tagline: 'Earthlings!',
+		body: '<strong>Take me to your pizza!</strong>',
+	} }
+	langSlug="en"
+	isRtl={ false }
+	onPreviewClick={ this.handlePreviewClick }
+	resize={ true }
+	scrolling={ false }
+	className="sophisticated"
+/>;
 ```
 
 ## Props

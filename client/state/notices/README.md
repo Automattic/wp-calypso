@@ -26,15 +26,12 @@ export default connect(
 Now you can use notices like so:
 
 ```javascript
-
-this.props.successNotice(
-    'Settings saved successfully!', {
-    	duration: 4000
+this.props.successNotice( 'Settings saved successfully!', {
+	duration: 4000,
 } );
-
 ```
 
-### The available methods are:
+### The available methods are
 
 - `successNotice()`
 - `errorNotice()`

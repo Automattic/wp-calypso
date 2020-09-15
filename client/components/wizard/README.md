@@ -7,8 +7,8 @@ It keeps track of progress and enables navigating back or forward through the st
 
 ```js
 const components = {
-	'first': <First />,
-	'second': <Second />,
+	first: <First />,
+	second: <Second />,
 };
 const steps = [ 'first', 'second' ];
 
@@ -18,7 +18,8 @@ const steps = [ 'first', 'second' ];
 	components={ components }
 	forwardText="Next"
 	steps={ steps }
-	stepName="first" />
+	stepName="first"
+/>;
 ```
 
 ## Props

@@ -2,7 +2,7 @@
 
 Site Title Control component: Form input controls to set a site's title and tagline.
 
-### `index.jsx`
+## `index.jsx`
 
 Renders two `FormTextInput` components to set a site's title and tagline, respectively.
 
@@ -11,7 +11,7 @@ props, respectively, and pass an `onChange` function prop (accepting an object w
 
 For an example of how to use, have a look at [docs/example.jsx](docs/example.jsx).
 
-#### Props
+## Props
 
 - `autoFocusBlogname` - _optional_ (bool) Whether to auto-focus the site title input field (defaults to `false`).
 - `blogname` - _optional_ (string) Site title to be displayed in corresponding input field.

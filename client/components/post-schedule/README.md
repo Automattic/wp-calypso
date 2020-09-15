@@ -39,7 +39,7 @@ export default class extends React.Component {
 			/>
 		);
 	}
-	
+
 	// ...
 
 }
@@ -49,7 +49,7 @@ export default class extends React.Component {
 
 ## PostSchedule
 
-#### Props
+### Props
 
 `events` - **optional** Array - Events array to print into the calendar.
 

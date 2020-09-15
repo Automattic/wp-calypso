@@ -12,7 +12,7 @@ By controlling the dialog's visibility through the `isVisible` property, the dia
 providing any CSS transitions to animate the opening/closing of the dialog. This also keeps the parent's code clean and
 readable, with a minimal amount of boilerplate code required to show a dialog.
 
-### Basic Usage
+## Basic Usage
 
 ```js
 class MyComponent extends React.Component {
@@ -60,7 +60,7 @@ class MyComponent extends React.Component {
 ReactDom.render( <MyComponent />, document.getElementById( 'content' ) );
 ```
 
-### `onClick` handlers for buttons
+## `onClick` handlers for buttons
 
 You can attach `onClick` handlers for dialog buttons. The `onClick` handler will be passed a function that when
 called will close the dialog the dialog button is a member of.
@@ -89,7 +89,7 @@ called will close the dialog the dialog button is a member of.
 	}
 ```
 
-### Custom Buttons
+## Custom Buttons
 
 If you need more than can be provided by passing button props, you can also pass a ReactElement in the place of
 the button spec. The ReactElement cannot close the dialog directly, but you could close the dialog by routing back
@@ -117,7 +117,7 @@ through the Dialog's host.
 
 ```
 
-### Providing custom styling for a dialog
+## Providing custom styling for a dialog
 
 The dialog component renders the following DOM tree (simplified to only show structure and classes):
 

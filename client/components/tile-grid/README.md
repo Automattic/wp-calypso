@@ -2,7 +2,7 @@
 
 Component used to declare an area for displaying Tiles — it's the main wrapper that takes care of tile alignment and positioning.
 
-#### Props
+## Props
 
 - `className`: Add your own class to the grid.
 
@@ -12,7 +12,7 @@ Component used to declare an area for displaying Tiles — it's the main wrapper
 
 Component used to display a clickable tile with an image, call to action, and description.
 
-#### Props
+## Props
 
 - `buttonClassName`: Add your own class to the tile button.
 - `buttonLabel`: Text of the button.
@@ -25,7 +25,7 @@ Component used to display a clickable tile with an image, call to action, and de
 
 ---
 
-#### How to use:
+## How to use
 
 ```js
 import Tile from 'components/tile-grid/tile';

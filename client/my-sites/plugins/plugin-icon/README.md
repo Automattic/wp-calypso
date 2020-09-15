@@ -2,7 +2,7 @@
 
 This component is used to display the icon for a plugin. It takes a plugin image as a prop.
 
-#### How to use:
+## How to use
 
 ```js
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
@@ -16,7 +16,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `image` (`string`) - an image source.
 - `isPlaceholder` (`bool`) - `true` to display as a placeholder.

@@ -4,7 +4,7 @@ This package contains functions to identify and track changes to the viewport. T
 
 For React helpers, please check the `@automattic/viewport-react` package.
 
-### Usage
+## Usage
 
 Simple usage:
 
@@ -36,9 +36,8 @@ Registering to listen to changes, using vanilla methods:
 import { subscribeIsDesktop } from '@automattic/viewport';
 
 class MyComponent extends React.Component {
-	sizeChanged = matches => {
-		console.log(
-			`Screen changed to ${ matches ? 'desktop' : 'non-desktop' } size` );
+	sizeChanged = ( matches ) => {
+		console.log( `Screen changed to ${ matches ? 'desktop' : 'non-desktop' } size` );
 		this.forceUpdate();
 	};
 
@@ -54,7 +53,7 @@ class MyComponent extends React.Component {
 
 Note: the above usage is more easily accomplished using the hooks and higher-order components in `@automattic/viewport-react`.
 
-### Supported methods
+## Supported methods
 
 - `isWithinBreakpoint( breakpoint )`: Whether the current screen size matches the breakpoint.
 - `isMobile()`: Whether the current screen size matches a mobile breakpoint (equivalent to "<480px"). See note at end of document.
@@ -64,7 +63,7 @@ Note: the above usage is more easily accomplished using the hooks and higher-ord
 - `subscribeIsDesktop( listener )`: Register a listener for size changes that affect the desktop breakpoint (equivalent to ">960px"). Returns the unsubscribe function. See note at end of document.
 - `getWindowInnerWidth()`: Get the inner width for the browser window. **Warning**: This method triggers a layout recalc, potentially resulting in performance issues. Please use a breakpoint instead wherever possible.
 
-### Supported breakpoints
+## Supported breakpoints
 
 - '<480px'
 - '<660px'

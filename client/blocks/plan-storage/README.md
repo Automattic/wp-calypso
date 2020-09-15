@@ -3,14 +3,14 @@
 This component is used to display the remaining media storage limits. Using PlanStorage
 will query media storage limits for you.
 
-#### Usage:
+## Usage
 
 ```javascript
 	<PlanStorage siteId={ this.props.siteId } />
 }
 ```
 
-#### Props
+## Props
 
 - `siteId`: A site ID (required)
 - `className`: A string that adds additional class names to this component.
@@ -18,7 +18,7 @@ will query media storage limits for you.
 You can also use PlanStorageBar directly if you need more control over when
 media storage limits are fetched.
 
-#### Usage:
+## Usage
 
 ```javascript
 import PlanStorageBar from 'blocks/plan-storage/bar';
@@ -45,7 +45,7 @@ export default connect( ( state, ownProps ) => {
 } )( MyComponent );
 ```
 
-#### Props
+## Props
 
 - `sitePlanName`: A plan name ( Free or Premium ) (required)
 - `mediaStorage`: Media Storage limits for a given site. If this is not provided, the bar will not render.

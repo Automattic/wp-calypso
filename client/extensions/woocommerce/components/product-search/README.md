@@ -2,7 +2,7 @@
 
 This component is used to search through the products on a given site.
 
-#### How to use:
+## How to use
 
 To select multiple products:
 
@@ -42,7 +42,7 @@ render: function() {
 }
 ```
 
-#### Props
+## Props
 
 - `onChange`: Function called when a result is clicked, with product object as an argument.
 

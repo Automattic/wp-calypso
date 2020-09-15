@@ -2,7 +2,7 @@
 
 This component is used to display a plugin action in the form of a toggle or a disconnect Jetpack button.
 
-#### How to use:
+## How to use
 
 By default, the PluginAction component will attempt to render a FormToggle.
 
@@ -39,7 +39,7 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
 - `label` : The user friendly label that described the action.
 - `status`: The state of the progress indicator.

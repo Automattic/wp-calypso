@@ -103,8 +103,10 @@ Note that here `apiRequestFunction` calls an API endpoint (`someRequest` in this
 
 The above example includes an inline function definition, but we should keep the `apiRequestFunction` values in `StepActions` (`signup/config/step-actions.js`) and include them like:
 
-```js
-apiRequestFunction: stepActions.createSite
+```javascript
+const step = {
+	apiRequestFunction: stepActions.createSite;
+}
 ```
 
 ## Hello World
@@ -157,7 +159,7 @@ hello: { // This will be the slug for the flow, i.e.: wordpress.com/start/hello
 }
 ```
 
-7 - open https://calypso.localhost:3000/start/hello in an incognito window. You will be redirected to
+7 - open <https://calypso.localhost:3000/start/hello> in an incognito window. You will be redirected to
 the first step of the flow at `/start/hello/hello-world`, where you should see your new React component.
 
 8 - now we need a way for users to move to the next step of the flow. Let's add a button and a form to the step's `render` method:
@@ -186,11 +188,11 @@ handleSubmit = ( event ) => {
 	event.preventDefault();
 
 	SignupActions.submitSignupStep( {
-		stepName: this.props.stepName
+		stepName: this.props.stepName,
 	} );
 
 	this.props.goToNextStep();
-}
+};
 ```
 
-9 - open https://calypso.localhost:3000/start/hello in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.
+9 - open <https://calypso.localhost:3000/start/hello> in an incognito window. On opening you should be redirected to the first step showing your updated React component, and when you click the "Get started" button you should be taken to the next step.

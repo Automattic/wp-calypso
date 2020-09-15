@@ -4,7 +4,7 @@ ShareButton is a component which allows you to open a popup window to share cont
 
 ---
 
-#### How to use:
+## How to use
 
 ```js
 import ShareButton from 'components/share-button';
@@ -28,7 +28,7 @@ function MyButton() {
 
 ---
 
-#### Props
+## Props
 
 - `size`: (string) The size of the button
 - `url`: (string) The URL of the content to share

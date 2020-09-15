@@ -6,33 +6,33 @@ A module for managing site vouchers data.
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-### `requestSiteVouchers( siteId )`
+## `requestSiteVouchers( siteId )`
 
 Fetches vouchers for the site with the given site ID.
 
-### `assignSiteVoucher( siteId, serviceType )`
+## `assignSiteVoucher( siteId, serviceType )`
 
 Assign a `serviceType` voucher to the given site.
 
-## Action creators
+# Action creators
 
 > Action creators are exactly that—functions that create actions.
 
-### `vouchersReceiveAction( siteId, vouchers )`
+## `vouchersReceiveAction( siteId, vouchers )`
 
-### `vouchersRequestAction( siteId )`
+## `vouchersRequestAction( siteId )`
 
-### `vouchersRequestSuccessAction( siteId )`
+## `vouchersRequestSuccessAction( siteId )`
 
-### `vouchersRequestFailureAction( siteId, error )`
+## `vouchersRequestFailureAction( siteId, error )`
 
-### `vouchersAssignReceiveAction( siteId, serviceType, voucher )`
+## `vouchersAssignReceiveAction( siteId, serviceType, voucher )`
 
-### `vouchersAssignRequestAction( siteId, serviceType )`
+## `vouchersAssignRequestAction( siteId, serviceType )`
 
-### `vouchersAssignRequestSuccessAction( siteId, serviceType )`
+## `vouchersAssignRequestSuccessAction( siteId, serviceType )`
 
-### `vouchersAssignRequestFailureAction( siteId, serviceType, error )`
+## `vouchersAssignRequestFailureAction( siteId, serviceType, error )`
 
 ```es6
 import {
@@ -58,7 +58,7 @@ wpcom
 
 	// dispacth a success action ...
 	dispatch( vouchersRequestSuccessAction( siteId ) );
-	
+
 	// and populate the global tree dispatching a recieve action
 	dispatch( vouchersReceiveAction( site,id, response.vouchers ) );
 ```
@@ -81,7 +81,7 @@ state.sites.vouchers = {
 			]
 		}
 	},
-	
+
 	requesting: [
 		[ siteId ]: {
 			getAll: Boolean,

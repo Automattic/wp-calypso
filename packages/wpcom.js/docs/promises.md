@@ -30,16 +30,18 @@ wpcom.Promise( comment );
 ## Approving a comment
 
 ```js
-let comment = wpcom.site( siteId ).comment( commentId );
-wpcom.Promise( comment.update.bind( comment ), { status: 'approved' } )
-	.then( response => updateComment( commentId, response ) )
-	.catch( error => alert( error ) );
+const comment = wpcom.site( siteId ).comment( commentId );
+wpcom
+	.Promise( comment.update.bind( comment ), { status: 'approved' } )
+	.then( ( response ) => updateComment( commentId, response ) )
+	.catch( ( error ) => alert( error ) );
 ```
 
 ## Requesting the freshly-pressed list
 
 ```js
-wpcom.Promise( wpcom.freshlyPressed.bind( wpcom ) )
+wpcom
+	.Promise( wpcom.freshlyPressed.bind( wpcom ) )
 	.timeout( 4000 ) // give up if longer than 4s
 	.then( handleData )
 	.catch( notifyNetworkError );
@@ -48,8 +50,9 @@ wpcom.Promise( wpcom.freshlyPressed.bind( wpcom ) )
 ## Chaining promises
 
 ```js
-let post = wpcom.site( siteId ).post( postId );
-wpcom.Promise( post.get.bind( post ) )
+const post = wpcom.site( siteId ).post( postId );
+wpcom
+	.Promise( post.get.bind( post ) )
 	.then( wpcom.Promise( post.comments.bind( post ) ) )
 	.then( renderComments );
 ```

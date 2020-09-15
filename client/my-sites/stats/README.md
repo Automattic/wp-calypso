@@ -8,11 +8,11 @@ These components handle the `\stats` section of Calypso. The stats section suppo
 /stats/:time_period/:site_id
 ```
 
-### overview.jsx
+## overview.jsx
 
 This is the default view that is rendered at `\stats`. For users with more than 1 blog, a summary page of stats are shown for each site. Local storage is leveraged to make this experience load faster for the user when navigating between stat periods/sites.
 
-### site.jsx
+## site.jsx
 
 This is the detail view container for a specific sites stats data.
 
@@ -47,7 +47,7 @@ Logic that interfaces with the API, or acts as a collection and / or interface i
 
 We have spent quite a bit of time to create an extensive set of markup for stats lists that provide hooks for default actions, and action menus depending on screen size. Below is some example markup:
 
-### A Generic Stats List Item - No Action
+## A Generic Stats List Item - No Action
 
 ```html
 <li className="module-content-list-item module-content-list-item-normal">

@@ -24,23 +24,23 @@ Data from the aforementioned actions is added to the global state tree, under `p
 state.postFormats = {
 	requesting: {
 		12345678: false,
-		87654321: true
+		87654321: true,
 	},
 	items: {
 		12345678: {
 			image: 'Image',
-			video: 'Video'
+			video: 'Video',
 		},
 		87654321: {
-			status: 'Status'
-		}
-	}
-}
+			status: 'Status',
+		},
+	},
+};
 ```
 
-## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
+## Selectors are intended to assist in extracting data from the global state tree for consumption by other modules
 
-#### `isRequestingPostFormats`
+### `isRequestingPostFormats`
 
 Returns true if post formats are currently fetching for the given site ID.
 
@@ -50,7 +50,7 @@ import { isRequestingPostFormats } from 'state/post-formats/selectors';
 const isRequesting = isRequestingPostFormats( state, 12345678 );
 ```
 
-#### `getPostFormats`
+### `getPostFormats`
 
 Returns an array of all supported site formats for the given site ID.
 

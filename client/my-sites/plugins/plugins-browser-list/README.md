@@ -2,7 +2,7 @@
 
 This component is used to display a list with the a parametrizable number of plugins of a certain category of the wordpress.org public plugin directory.
 
-#### How to use:
+## How to use
 
 ```js
 import React from 'react';
@@ -25,7 +25,7 @@ const MyPluginsList = ( { pluginsData, translate } ) => (
 export default localize( MyPluginsList );
 ```
 
-#### Props
+## Props
 
 - `title`: a string
 - `plugins`: a PluginsData object

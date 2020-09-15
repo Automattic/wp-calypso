@@ -60,6 +60,6 @@ testing environment. The `config` module exports a helper function `isCalypsoLiv
 import { isCalypsoLive } from 'config';
 
 if ( isCalypsoLive() ) {
-  /* ... */
+	/* ... */
 }
 ```

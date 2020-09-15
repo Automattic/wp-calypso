@@ -2,7 +2,7 @@
 
 Component used to show an embedded URL in a dialog
 
-#### Props
+## Props
 
 - `embedUrl`: The URL of the content to show
 - `isVisible`: Whether or not the dialog is visible
@@ -11,7 +11,7 @@ Component used to show an embedded URL in a dialog
 
 ---
 
-#### How to use:
+## How to use
 
 ```js
 import EmbedDialog from 'components/tinymce/plugins/embed';

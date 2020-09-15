@@ -6,7 +6,7 @@ Up to one hundred suggestions that match what the user has typed so far will be 
 
 The `value` property is handled in a manner similar to controlled form components. See [Forms](https://facebook.github.io/react/docs/forms.html) in the React Documentation for more information.
 
-### Keyboard Accessibility
+## Keyboard Accessibility
 
 - `left arrow` - if input field is empty, move insertion point before previous token
 - `right arrow` - if input field is empty, move insertion point after next token
@@ -15,7 +15,7 @@ The `value` property is handled in a manner similar to controlled form component
 - `tab` / `enter` - if suggestion selected, insert suggestion as a new token; otherwise, insert value typed into input as new token
 - `comma` - insert value typed into input as new token
 
-### Properties
+## Properties
 
 - `value` - An array of strings or objects to display as tokens in the field. If objects are present in the array, they **must** have a property of `value`. Here is an example object that could be passed in as a value:
 
@@ -65,7 +65,7 @@ The `value` property is handled in a manner similar to controlled form component
 
 - `isExpanded` - If true, the `TokenField` input will always keep the suggestion list expanded.
 
-### Example
+## Example
 
 ```jsx
 class MyComponent extends React.Component {

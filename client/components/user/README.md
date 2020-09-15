@@ -8,9 +8,7 @@ a user object with a `name` property for the display name.
 ```js
 export default class extends React.Component {
 	render() {
-		return (
-			<UserItem user={ currentUser } />
-		);
+		return <UserItem user={ currentUser } />;
 	}
 }
 ```

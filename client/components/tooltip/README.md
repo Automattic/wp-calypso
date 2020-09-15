@@ -2,7 +2,7 @@
 
 A `Tooltip` allows you to add contextual and other information where needed. For example, `Tooltip` is used to display extra information, on hover, about icon-only buttons.
 
-### Properties
+## Properties
 
 - `status` - (string) Modifies the style of the `Tooltip`. Can be one of the following: `error`, `warning`, or `success`.
 - `showOnMobile` - (bool) When true, will show `Tooltip` on mobile screens. By default, `Tooltip` is not displayed for mobile devices.

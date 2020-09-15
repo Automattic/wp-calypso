@@ -17,7 +17,7 @@ To run them locally:
 - make sure you have decrypted config and dependencies installed e.g. you can run tests locally
 - run `sh specs-jetpack/runner.sh`
 
-It also possible to run these tests in CI. Visit https://circleci.com/gh/Automattic/wp-e2e-tests-jetpack-smoke/ and re-launch latest CI build.
+It also possible to run these tests in CI. Visit <https://circleci.com/gh/Automattic/wp-e2e-tests-jetpack-smoke/> and re-launch latest CI build.
 
-Wrapper repo: https://github.com/Automattic/wp-e2e-tests-jetpack-smoke
+Wrapper repo: <https://github.com/Automattic/wp-e2e-tests-jetpack-smoke>
 Internal ref: p9dueE-lw-p2

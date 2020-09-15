@@ -1,4 +1,4 @@
-# Calypso Analytics.
+# Calypso Analytics
 
 Currently this package supports calls to Tracks only.
 
@@ -14,7 +14,6 @@ Note: In most situations it is best to use the [Analytics Middleware](https://gi
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 recordTracksEvent( 'calypso_signup_step_start', { step: 'a_nice_step' } );
-
 ```
 
 _Note: Unless you have a strong reason to call `recordTracksEvent` directly, you should use the Analytics Middleware instead:_

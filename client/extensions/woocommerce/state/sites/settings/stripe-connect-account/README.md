@@ -6,7 +6,7 @@ This module works with WooCommerce Services to create Stripe Connect accounts.
 
 ### `createAccount( siteId: number, emailAddress: string, countryCode: string )`
 
-Attempts to create a Stripe Connect account using the deferred flow. See https://github.com/Automattic/woocommerce-services/pull/1137
+Attempts to create a Stripe Connect account using the deferred flow. See <https://github.com/Automattic/woocommerce-services/pull/1137>
 
 ## Reducer
 

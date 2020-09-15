@@ -21,13 +21,13 @@ should be wrapped here rather than called using the `window.DirectlyRTM()` funct
 
 The following functions are provided:
 
-#### `initialize()`
+### `initialize()`
 
 Configures the RTM widget and loads all its third-party assets (about 200KB at the time of
 writing). If the user has recently interacted with the RTM widget, it will open up on
 initialization (an unavoidable part of the library's mount).
 
-#### `askQuestion( questionText, name, email )`
+### `askQuestion( questionText, name, email )`
 
 Asks a question with the given params and opens the "Alerting experts" view. All parameters
 are required strings. This also initializes the RTM widget if it hasn't already been done.
@@ -45,13 +45,13 @@ script to our self-hosted file.
 
 There are two Directly accounts so we can separate development / staging from production for testing.
 
-- **Sandbox (dev/staging)**  
-  Login: https://automattic-sandbox.directly.com  
-  Apply to be an Expert: https://automattic-sandbox.directly.com/apply
+- **Sandbox (dev/staging)**
+  Login: <https://automattic-sandbox.directly.com>
+  Apply to be an Expert: <https://automattic-sandbox.directly.com/apply>
 
-- **Production**  
-  Login: https://automattic.directly.com  
-  Apply to be an Expert: https://automattic.directly.com/apply
+- **Production**
+  Login: <https://automattic.directly.com>
+  Apply to be an Expert: <https://automattic.directly.com/apply>
 
 To test user interactions with the RTM widget you'll want to apply for an Expert account
 (most likely on the Sandbox environment). Once you apply your account will be reviewed
@@ -76,7 +76,7 @@ as an "Official Expert" because user questions are routed more slowly to these a
   over it. There may be mitigation strategies if this becomes undesirable.
 
 - The widget checks if the user is signed in to Directly with a call to their API:
-  https://www.directly.com/chat/checkAuth. If you aren't signed in this request will
+  <https://www.directly.com/chat/checkAuth>. If you aren't signed in this request will
   return `401` and you'll see an error in the browser console. Directly's team has
   verified that this is expected and doesn't have negative side effects.
 

@@ -11,7 +11,7 @@ pointing to a special URL that proxies API requests on the host page's behalf.
 It is intended to be used in the browser (client-side) via a bundler like
 browserify or webpack.
 
-### Installation
+## Installation
 
 Install `wpcom-proxy-request` using `npm`:
 
@@ -19,24 +19,24 @@ Install `wpcom-proxy-request` using `npm`:
 npm install wpcom-proxy-request
 ```
 
-### Example
+## Example
 
 ```js
 // Import wpcom-proxy-request handler
 import proxy from 'wpcom-proxy-request';
 
-proxy( { path: '/me' }, function( err, body, headers ) {
+proxy( { path: '/me' }, function ( err, body, headers ) {
 	if ( err ) {
 		throw err;
 	}
 
-	var div = document.createElement( 'div' );
+	const div = document.createElement( 'div' );
 	div.innerHTML = 'Your WordPress.com "username" is: <b>@' + res.username + '</b>';
 	document.body.appendChild( div );
 } );
 ```
 
-### Running tests
+## Running tests
 
 Compile and `watch` client-test application
 
@@ -52,7 +52,7 @@ make run-test-app
 
 Open a tab pointing to `http://calypso.localhost:3001/`
 
-### License
+## License
 
 MIT – Copyright Automattic 2014
 

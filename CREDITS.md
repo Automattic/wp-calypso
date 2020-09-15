@@ -1,10 +1,10 @@
 # Credits
 
-This project makes use of Open Source components. Below is a list of these components included in this project's source code, and their license information. This project also uses js packages released by NPM, see [package.json](/package.json). Source code and license information for each of these packages is available at https://npmjs.org. Many thanks to all of the original authors!
+This project makes use of Open Source components. Below is a list of these components included in this project's source code, and their license information. This project also uses js packages released by NPM, see [package.json](/package.json). Source code and license information for each of these packages is available at <https://npmjs.org>. Many thanks to all of the original authors!
 
-### https://github.com/thoughtbot/bourbon
+## <https://github.com/thoughtbot/bourbon>
 
-#### assets/stylesheets/shared/\_functions.scss
+### assets/stylesheets/shared/\_functions.scss
 
 ```text
 The MIT License (MIT)
@@ -18,7 +18,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### https://github.com/facebook/react
+## <https://github.com/facebook/react>
 
 ```text
 BSD License
@@ -54,25 +54,25 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 ```
 
-### https://github.com/WordPress/WordPress
+## <https://github.com/WordPress/WordPress>
 
-#### client/components/tinymce/plugins/wpcom
+### client/components/tinymce/plugins/wpcom
 
-#### client/components/tinymce/plugins/wpcom-autoresize
+### client/components/tinymce/plugins/wpcom-autoresize
 
-#### client/components/tinymce/plugins/wpcom-view
+### client/components/tinymce/plugins/wpcom-view
 
-#### client/components/tinymce/plugins/wpeditimage
+### client/components/tinymce/plugins/wpeditimage
 
-#### client/components/tinymce/plugins/wplink
+### client/components/tinymce/plugins/wplink
 
-#### client/components/tinymce/plugins/wptextpattern
+### client/components/tinymce/plugins/wptextpattern
 
-#### client/lib/media/constants.js
+### client/lib/media/constants.js
 
-#### client/post-editor/media-modal/markup.js
+### client/post-editor/media-modal/markup.js
 
-#### client/lib/formatting/index.js
+### client/lib/formatting/index.js
 
 ```text
 WordPress - Web publishing software
@@ -968,9 +968,9 @@ necessary.  Here is a sample; alter the names:
 That's all there is to it!
 ```
 
-### https://github.com/slevithan/xregexp
+## <https://github.com/slevithan/xregexp>
 
-#### client/state/embeds/utils.js
+### client/state/embeds/utils.js
 
 ```text
 The MIT License
@@ -996,9 +996,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### https://github.com/kvz/phpjs/
+## <https://github.com/kvz/phpjs/>
 
-#### client/lib/version-compare
+### client/lib/version-compare
 
 ```text
 Copyright (c) 2013 Kevin van Zonneveld (http://kvz.io)
@@ -1023,9 +1023,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### https://github.com/Modernizr/Modernizr
+## <https://github.com/Modernizr/Modernizr>
 
-#### client/lib/touch-detect/index.js
+### client/lib/touch-detect/index.js
 
 ```text
 
@@ -1050,9 +1050,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### https://github.com/strongloop/express
+## <https://github.com/strongloop/express>
 
-#### server/devdocs/bin/generate-devdocs-index
+### server/devdocs/bin/generate-devdocs-index
 
 ```text
 
@@ -1082,9 +1082,9 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### https://github.com/SalesforceEng/secure-filters
+## <https://github.com/SalesforceEng/secure-filters>
 
-#### server/sanitize/index.js
+### server/sanitize/index.js
 
 ```text
 
@@ -1102,25 +1102,9 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
-### https://github.com/reactjs/redux/
+## <https://github.com/reactjs/redux/>
 
-#### client/state
-
-```text
-The MIT License (MIT)
-
-Copyright (c) 2015 Dan Abramov
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
-### https://github.com/gaearon/redux-thunk
-
-#### client/state
+### client/state
 
 ```text
 The MIT License (MIT)
@@ -1134,7 +1118,9 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### https://github.com/reactjs/react-redux
+## <https://github.com/gaearon/redux-thunk>
+
+### client/state
 
 ```text
 The MIT License (MIT)
@@ -1148,7 +1134,21 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### https://github.com/sindresorhus/srcset
+## <https://github.com/reactjs/react-redux>
+
+```text
+The MIT License (MIT)
+
+Copyright (c) 2015 Dan Abramov
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+## <https://github.com/sindresorhus/srcset>
 
 ```text
 The MIT License (MIT)
@@ -1174,7 +1174,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### https://github.com/kentor/react-click-outside
+## <https://github.com/kentor/react-click-outside>
 
 ```
 The MIT License (MIT)
@@ -1200,7 +1200,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-### https://github.com/guille/ms.js
+## <https://github.com/guille/ms.js>
 
 ```text
 (The MIT License)
@@ -1225,7 +1225,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### https://github.com/avoidwork/filesize.js
+## <https://github.com/avoidwork/filesize.js>
 
 ```text
 Copyright (c) 2015, Jason Mulligan
@@ -1257,7 +1257,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
-### https://github.com/ogt/valid-url
+## <https://github.com/ogt/valid-url>
 
 ```text
 Copyright (c) 2013 Odysseas Tsatalos and oDesk Corporation
@@ -1284,9 +1284,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <span id="facebook/node-haste"></span>
 
-### https://github.com/facebook/node-haste
+## <https://github.com/facebook/node-haste>
 
-#### server/devdocs/bin/generate-components-usage-counts
+### server/devdocs/bin/generate-components-usage-counts
 
 ```text
 BSD License
@@ -1321,7 +1321,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ```
 
-### https://github.com/mafintosh/is-my-json-valid
+## <https://github.com/mafintosh/is-my-json-valid>
 
 ```
 The MIT License (MIT)
@@ -1347,9 +1347,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### https://github.com/d3/d3
+## <https://github.com/d3/d3>
 
-#### client/extensions/woocommerce/components/sparkline/index.js
+### client/extensions/woocommerce/components/sparkline/index.js
 
 ```text
 Copyright 2010-2017 Mike Bostock
@@ -1383,7 +1383,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <span id="prism"></span>
 
-### https://github.com/PrismJS/prism/
+## <https://github.com/PrismJS/prism/>
 
 ```
 MIT LICENSE
@@ -1409,9 +1409,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-### https://classic.yarnpkg.com/en/
+## <https://classic.yarnpkg.com/en/>
 
-#### .yarn/releases
+### .yarn/releases
 
 ```text
 BSD 2-Clause License

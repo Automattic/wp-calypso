@@ -8,7 +8,7 @@ It's an express application that gets the blog posts making a server-side reques
 $ make example-server
 ```
 
-Finally open a browser and load the page pointing to http://localhost:3000.
+Finally open a browser and load the page pointing to <http://localhost:3000>.
 
 Keep in mind that this app gets the config data from test/data.json file.
 

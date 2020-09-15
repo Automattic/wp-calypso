@@ -84,11 +84,11 @@ const widgetCount = ( state = {}, action ) => {
 		return {
 			...state,
 			[ action.siteId ]: state[ action.siteId ] + 1,
-		}
+		};
 	}
 
 	return state;
-}
+};
 ```
 
 Notice that the reducer _wants_ to operate on a simple integer, but because it has to store a collection of these things, identified by which `siteId` it belongs to, we have a complicated initial state and confusing syntax on the return value.
@@ -102,7 +102,7 @@ const widgetCount = ( state = 0, action ) => {
 	}
 
 	return state;
-}
+};
 ```
 
 …and somehow it would know to assign this to the proper site?
@@ -124,31 +124,26 @@ We are provided the opportunity to make straightforward tests without complicate
 #### Example
 
 ```js
-const age = ( state = 0, action ) =>
-    GROW === action.type
-        ? state + 1
-        : state
+const age = ( state = 0, action ) => ( GROW === action.type ? state + 1 : state );
 
-const title = ( state = 'grunt', action ) =>
-    PROMOTION === action.type
-        ? action.title
-        : state
+const title = ( state = 'grunt', action ) => ( PROMOTION === action.type ? action.title : state );
 
 const userReducer = combineReducers( {
-    age,
-    title,
-} )
+	age,
+	title,
+} );
 
-export default keyedReducer( 'username', userReducer )
+export default keyedReducer( 'username', userReducer );
 
-dispatch( { type: GROW, username: 'hunter02' } )
+dispatch( { type: GROW, username: 'hunter02' } );
 
-state.users === {
-    hunter02: {
-        age: 1,
-        title: 'grunt',
-    }
-}
+state.users ===
+	{
+		hunter02: {
+			age: 1,
+			title: 'grunt',
+		},
+	};
 ```
 
 **NOTE:** There may be some cases where you wish to respond to an action by removing a key. In those cases, you may return `undefined` from the reducer to explicitly indicate there is no longer state associated with the key, and `keyedReducer` will omit that key from the state.
@@ -157,22 +152,21 @@ state.users === {
 
 ```javascript
 const deleteableUserReducer = ( state, action ) =>
-    DELETE === action.type
-        ? undefined
-        : userReducer( state, action );
+	DELETE === action.type ? undefined : userReducer( state, action );
 
 export default keyedReducer( 'username', deleteableUserReducer );
 
-state.users === {
-    hunter02: {
-        age: 1,
-        title: 'grunt',
-    }
-}
+state.users ===
+	{
+		hunter02: {
+			age: 1,
+			title: 'grunt',
+		},
+	};
 
 dispatch( { type: DELETE, username: 'hunter02' } );
 
-state.users === {}
+state.users === {};
 ```
 
 Finally, it's sometimes desirable to apply specific actions to all items in the collection.
@@ -200,7 +194,7 @@ const hexPersister = ( state = 0, { type } ) => {
 		default:
 			return state;
 	}
-}
+};
 
 const hexNumbers = keyedReducer( 'counterId', hexPersister, [ DESERIALIZE, SERIALIZE ] );
 hexNumbers.hasCustomPersistence = true;
@@ -218,16 +212,13 @@ The new reducer will automatically validate the persisted state when Calypso loa
 #### Example
 
 ```js
-const ageReducer = ( state = 0, action ) =>
-	GROW === action.type
-		? state + 1
-		: state
+const ageReducer = ( state = 0, action ) => ( GROW === action.type ? state + 1 : state );
 
-const schema = { type: 'number', minimum: 0 }
+const schema = { type: 'number', minimum: 0 };
 
-export const age = withSchemaValidation( schema, ageReducer )
+export const age = withSchemaValidation( schema, ageReducer );
 
-ageReducer( -5, { type: DESERIALIZE } ) === -5
-age( -5, { type: DESERIALIZE } ) === 0
-age( 23, { type: DESERIALIZE } ) === 23
+ageReducer( -5, { type: DESERIALIZE } ) === -5;
+age( -5, { type: DESERIALIZE } ) === 0;
+age( 23, { type: DESERIALIZE } ) === 23;
 ```

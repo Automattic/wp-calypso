@@ -15,7 +15,7 @@ import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
 
-export default class extends React.Component { 
+export default class extends React.Component {
 	// ...
 
 	render() {
@@ -63,7 +63,7 @@ Keep in mind that every `prop` referenced in the example can and _should_ be dyn
 
 The base component is `SectionNav` and acts as the wrapper for various control groups / other elements.
 
-#### Props
+### Props
 
 `selectedText` - **required** (node - anything that can be rendered)
 
@@ -73,7 +73,7 @@ Text displayed in the header of the panel when rendered on mobile.
 
 `selectedCount` - **optional** (Number)
 
-## Count displayed in the header of the panel.
+## Count displayed in the header of the panel
 
 ## Nav Tabs
 
@@ -81,7 +81,7 @@ The tabs sub component will render items inline when there is enough horizontal 
 
 ![Nav Tabs Example](https://cldup.com/SG0UuJKr3i.png)
 
-#### Props
+### Props
 
 `selectedText` - **required** (string)
 
@@ -112,7 +112,7 @@ The segmented sub component utilizes [`SegmentedControl`](/client/components/seg
 
 > Note: `SectionNav` relies on flex box techniques for sizing and that `NavSegmented` will not be allowed to overflow available horizontal space.
 
-#### Props
+### Props
 
 `label` - _optional_ (string)
 
@@ -129,7 +129,7 @@ Text displayed above tabs group when:
 
 These are the sub components that make up the children of both `NavTabs` & `NavSegmented`. They represent the options under each control group.
 
-#### Props
+### Props
 
 `path` - _optional_ (string)
 

@@ -6,7 +6,7 @@ This module is used to track the current page, search term, or product being vie
 
 ### `updateCurrentReviewsQuery( siteId: number, query: object)`
 
-Updates the current reviews list query. See https://github.com/woocommerce/wc-api-dev/pull/48.
+Updates the current reviews list query. See <https://github.com/woocommerce/wc-api-dev/pull/48>.
 
 ## Reducer
 

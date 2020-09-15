@@ -17,7 +17,7 @@ function myUpsell() {
 			showIcon={ true }
 			compact
 		/>
-	)
+	);
 }
 ```
 

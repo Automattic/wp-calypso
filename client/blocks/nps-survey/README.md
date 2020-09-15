@@ -2,16 +2,13 @@
 
 This block is used to display a Net Promoter Score (NPS) survey to the user.
 
-### Usage
+## Usage
 
 ```javascript
-	<NpsSurvey
-		name="some_screen_v1"
-		onClose={ this.handleSurveyClose }
-	/>
+<NpsSurvey name="some_screen_v1" onClose={ this.handleSurveyClose } />;
 ```
 
-### Props
+## Props
 
 - `name`: The name of the survey, used in reporting to segment by location survey
   was shown and version of survey. Each distinct location and version combo should
