@@ -95,9 +95,10 @@ export class ConciergeQuickstartSession extends PureComponent {
 						</p>
 						<p>
 							{ translate(
-								"{{em}}Quick Start{{/em}} sessions are 45-minute one-on-one conversations between you and one of our website building experts. They know WordPress inside out and will help you achieve your goals with a smile. That's why we call them Happiness Engineers.",
+								"{{em}}Quick Start{{/em}} sessions are %(durationInMinutes)d-minute one-on-one conversations between you and one of our website building experts. They know WordPress inside out and will help you achieve your goals with a smile. That's why we call them Happiness Engineers.",
 								{
 									components: { em: <em /> },
+									args: { durationInMinutes: 30 },
 								}
 							) }
 						</p>
