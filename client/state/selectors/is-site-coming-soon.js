@@ -14,7 +14,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
  * @returns {boolean} True if site is coming_soon
  */
 export default function isSiteComingSoon( state, siteId ) {
-	if ( ! isPrivateSite( state, siteId ) ) {
+	if ( isPrivateSite( state, siteId ) ) {
 		return false;
 	}
 
