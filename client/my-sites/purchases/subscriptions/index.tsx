@@ -15,6 +15,7 @@ import QueryUserPurchases from 'components/data/query-user-purchases';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import SubscriptionsContent from './subscriptions-content';
+import AccountLevelPurchaseLinks from './account-level-purchase-links';
 
 export default function Subscriptions() {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
@@ -26,6 +27,7 @@ export default function Subscriptions() {
 			<PurchasesHeader section="purchases" />
 			<SubscriptionsContent />
 			<QueryConciergeInitial />
+			<AccountLevelPurchaseLinks />
 		</Main>
 	);
 }
