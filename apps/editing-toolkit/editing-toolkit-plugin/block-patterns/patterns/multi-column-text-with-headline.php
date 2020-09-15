@@ -48,7 +48,7 @@ $markup = '
 
 <!-- wp:buttons -->
 <div class="wp-block-buttons"><!-- wp:button {"borderRadius":3} -->
-<div class="wp-block-button"><a class="wp-block-button__link" style="border-radius:3px">$12$s</a></div>
+<div class="wp-block-button"><a class="wp-block-button__link" style="border-radius:3px">%16$s</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons --></div>
 <!-- /wp:jetpack/layout-grid-column -->
@@ -103,7 +103,8 @@ return array(
 		esc_html__( 'Alyssa Jackson', 'full-site-editing' ),
 		esc_html__( 'Photographer at GTX', 'full-site-editing' ),
 		esc_html__( 'I&rsquo;m a natural light photographer specializing in portraits of non-models. I aim for my work to be uniquely beautiful without trying too hard. My passion is to explore my creativity while documenting significant moments in my clients&rsquo; lives.', 'full-site-editing' ),
-		esc_html__( 'I&rsquo;m based in New York and currently work at GTX Studio. I also shoot a lot of portraiture as well as assignments for agencies.', 'full-site-editing' )
+		esc_html__( 'I&rsquo;m based in New York and currently work at GTX Studio. I also shoot a lot of portraiture as well as assignments for agencies.', 'full-site-editing' ),
+		esc_html__( 'Register now', 'full-site-editing' )
 	),
 	'viewportWidth' => 1280,
 );
