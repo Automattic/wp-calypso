@@ -27,8 +27,8 @@ export default function isSiteComingSoon( state, siteId ) {
 	const settings = getSiteSettings( state, siteId );
 
 	if ( settings ) {
-		// Site settings returns a numerical value for wpcom_coming_soon.
-		return parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+		// Site settings returns a numerical value for wpcom_public_coming_soon.
+		return parseInt( settings.wpcom_public_coming_soon, 10 ) === 1;
 	}
 
 	return false;
