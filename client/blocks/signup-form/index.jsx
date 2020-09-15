@@ -1065,19 +1065,34 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		oauth2Client: getCurrentOAuth2Client( state ),
-		sectionName: getSectionName( state ),
-		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		displayUsernameInput:
-			! [ 'onboarding', 'personal', 'premium', 'business', 'ecommerce' ].includes(
-				ownProps.flowName
-			) || 'control' === abtest( 'removeUsernameInSignup' ),
-	} ),
+	( state, ownProps ) => {
+		const isDisplayUsernamePropSet = ownProps.hasOwnProperty( 'displayUsernameInput' );
+		const eligibleFlowsForRemoveUsernameTest = [
+			'onboarding',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+		];
+		let displayUsernameInput = true;
+
+		if ( eligibleFlowsForRemoveUsernameTest.includes( ownProps.flowName ) ) {
+			displayUsernameInput = 'control' === abtest( 'removeUsernameInSignup' );
+		} else if ( isDisplayUsernamePropSet ) {
+			displayUsernameInput = ownProps.displayUsernameInput;
+		}
+
+		return {
+			oauth2Client: getCurrentOAuth2Client( state ),
+			sectionName: getSectionName( state ),
+			isJetpackWooCommerceFlow:
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+			from: get( getCurrentQueryArguments( state ), 'from' ),
+			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			displayUsernameInput,
+		};
+	},
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
