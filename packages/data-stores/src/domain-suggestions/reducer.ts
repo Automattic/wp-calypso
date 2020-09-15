@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { DomainSuggestion, DomainCategory } from './types';
+import type { DomainSuggestion, DomainCategory, DomainAvailability } from './types';
 import type { Action } from './actions';
 import { stringifyDomainQueryObject } from './utils';
 
@@ -31,7 +31,20 @@ const categories: Reducer< DomainCategory[], Action > = ( state = [], action ) =
 	return state;
 };
 
-const reducer = combineReducers( { categories, domainSuggestions } );
+const availability: Reducer< Record< string, DomainAvailability | undefined >, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_DOMAIN_AVAILABILITY' ) {
+		return {
+			...state,
+			[ action.domainName ]: action.availability,
+		};
+	}
+	return state;
+};
+
+const reducer = combineReducers( { categories, domainSuggestions, availability } );
 
 export type State = ReturnType< typeof reducer >;
 

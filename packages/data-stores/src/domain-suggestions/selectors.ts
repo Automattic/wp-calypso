@@ -97,12 +97,17 @@ const createSelectors = ( vendor: string ) => {
 		return state.domainSuggestions[ stringifyDomainQueryObject( queryObject ) ];
 	}
 
+	function isAvailable( state: State, domainName: string ) {
+		return state.availability[ domainName ];
+	}
+
 	return {
 		getCategories,
 		getDomainSuggestions,
 		getDomainSuggestionVendor,
 		isLoadingDomainSuggestions,
 		__internalGetDomainSuggestions,
+		isAvailable,
 	};
 };
 
