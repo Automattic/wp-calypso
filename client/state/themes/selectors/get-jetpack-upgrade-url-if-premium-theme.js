@@ -2,7 +2,10 @@
  * Internal dependencies
  */
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_JETPACK_SECURITY_DAILY } from 'lib/plans/constants';
+import {
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	PLAN_JETPACK_SECURITY_REALTIME,
+} from 'lib/plans/constants';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
@@ -24,7 +27,7 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 		! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
 	) {
 		return `/checkout/${ getSiteSlug( state, siteId ) }/${
-			shouldShowOfferResetFlow() ? PLAN_JETPACK_SECURITY_DAILY : 'professional'
+			shouldShowOfferResetFlow() ? PLAN_JETPACK_SECURITY_REALTIME : 'professional'
 		}`;
 	}
 	return null;
