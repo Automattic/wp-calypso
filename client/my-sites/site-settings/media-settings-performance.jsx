@@ -16,6 +16,7 @@ import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import SupportInfo from 'components/support-info';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	PLAN_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS,
@@ -127,6 +128,7 @@ class MediaSettingsPerformance extends Component {
 		const { isVideoPressAvailable, translate } = this.props;
 
 		return (
+			! shouldShowOfferResetFlow() &&
 			! isVideoPressAvailable && (
 				<UpsellNudge
 					description={ translate(

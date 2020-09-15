@@ -35,6 +35,7 @@ import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	isBusiness,
 	isEnterprise,
@@ -50,6 +51,7 @@ import {
 	TYPE_BUSINESS,
 	TYPE_PREMIUM,
 	TERM_ANNUALLY,
+	JETPACK_RESET_PLANS,
 } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -365,7 +367,8 @@ export class SeoForm extends React.Component {
 
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature &&
-					selectedSite.plan && (
+					selectedSite.plan &&
+					! shouldShowOfferResetFlow() && (
 						<UpsellNudge
 							description={ translate(
 								'Get tools to optimize your site for improved performance in search engine results.'
@@ -483,7 +486,10 @@ export class SeoForm extends React.Component {
 const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
-	const isAdvancedSeoEligible = selectedSite.plan && hasSupportingPlan( selectedSite.plan );
+	const isAdvancedSeoEligible =
+		selectedSite.plan &&
+		( hasSupportingPlan( selectedSite.plan ) ||
+			JETPACK_RESET_PLANS.includes( selectedSite.plan.product_slug ) );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 

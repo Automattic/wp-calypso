@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	isWordadsInstantActivationEligible,
 	isWordadsInstantActivationEligibleButNotOwner,
@@ -228,6 +229,10 @@ class AdsWrapper extends Component {
 	}
 
 	renderjetpackUpsell() {
+		if ( shouldShowOfferResetFlow() ) {
+			return null;
+		}
+
 		const { siteSlug, translate } = this.props;
 		const bannerURL = `/checkout/${ siteSlug }/premium`;
 		return (

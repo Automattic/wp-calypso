@@ -400,6 +400,8 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
 		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		constants.FEATURE_JETPACK_SCAN_DAILY,
@@ -447,6 +449,9 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		constants.FEATURE_JETPACK_SCAN_DAILY,
@@ -504,6 +509,9 @@ const getPlanJetpackCompleteDetails = () => ( {
 	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		constants.FEATURE_JETPACK_SCAN_DAILY,
