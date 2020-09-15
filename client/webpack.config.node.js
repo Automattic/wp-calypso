@@ -63,7 +63,7 @@ function getExternals() {
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
-		// to the path of the `build/bundle.js` bundle.
+		// to the path of the `build/server.js` bundle.
 		{
 			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 			'webpack.config': {
@@ -91,7 +91,8 @@ const webpackConfig = {
 	target: 'node',
 	output: {
 		path: buildDir,
-		filename: 'bundle.js',
+		filename: 'server.js',
+		chunkFilename: 'server.[name].js',
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	optimization: {

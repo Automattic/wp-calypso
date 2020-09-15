@@ -118,7 +118,7 @@
 		"start-jetpack-cloud-p": "PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run build-server",
 		"poststart-jetpack-cloud-p": "PORT=3001 CALYPSO_ENV=jetpack-cloud-development yarn run start-build-web",
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
-		"start-build-do": "node ${NODE_ARGS:---max-old-space_size=8192} build/bundle.js",
+		"start-build-do": "node ${NODE_ARGS:---max-old-space_size=8192} build/server.js",
 		"start-build-fallback": "BROWSERSLIST_ENV=defaults yarn run start-build-do",
 		"start-build-evergreen": "BROWSERSLIST_ENV=evergreen yarn run start-build-do",
 		"start-build-if-desktop": "node -e \"(process.env.CALYPSO_ENV === 'desktop' || process.env.CALYPSO_ENV === 'desktop-development') && process.exit(1)\" || yarn run start-build-fallback",

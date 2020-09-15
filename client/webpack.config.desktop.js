@@ -13,6 +13,7 @@ module.exports = {
 	output: {
 		path: path.resolve( 'desktop/build' ),
 		filename: 'desktop.js',
+		chunkFilename: 'desktop.[name].js',
 		libraryTarget: 'commonjs2',
 	},
 	target: 'electron-main',
