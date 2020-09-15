@@ -116,6 +116,11 @@ export interface DomainSuggestion {
 	 * Whether the domain is free
 	 */
 	is_free?: true;
+
+	/**
+	 * Whether the domain requies HSTS
+	 */
+	hsts_required?: boolean;
 }
 
 export interface DomainCategory {

@@ -232,6 +232,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											key={ suggestion.domain_name }
 											domain={ suggestion.domain_name }
 											cost={ suggestion.cost }
+											hstsRequired={ suggestion.hsts_required }
 											isFree={ suggestion.is_free }
 											isRecommended={ isRecommended }
 											railcarId={ baseRailcarId ? `${ baseRailcarId }${ index }` : undefined }
