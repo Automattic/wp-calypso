@@ -13,6 +13,7 @@ import AsyncBaseContainer from '../async-base-container';
 import { ContactFormBlockComponent, GutenbergBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
+import { FileBlockComponent } from './blocks/file-block-component';
 
 export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	constructor( driver, url, editorType = 'iframe' ) {
@@ -395,7 +396,31 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const blockID = await this.addBlock( 'Image' );
 
 		const imageBlock = await ImageBlockComponent.Expect( this.driver, blockID );
-		return await imageBlock.uploadImage( fileDetails );
+		await imageBlock.uploadImage( fileDetails );
+
+		return blockID;
+	}
+
+	async addFile( fileDetails ) {
+		const blockID = await this.addBlock( 'File' );
+
+		const fileBlock = await FileBlockComponent.Expect( this.driver, blockID );
+		await fileBlock.uploadFile( fileDetails );
+
+		return blockID;
+	}
+
+	async removeBlock( blockID ) {
+		const blockSelector = By.css( `.wp-block[id="${blockID}"]`);
+		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, blockSelector, this.explicitWaitMS / 5 );
+		await this.driver.findElement( blockSelector ).click();
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.block-editor-block-settings-menu' ) );
+		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, By.css( '.components-menu-group' ), this.explicitWaitMS / 5 );
+		await this.driver.sleep( 1000 );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-menu-group:last-of-type button.components-menu-item__button:last-of-type' )
+		);
 	}
 
 	async addImageFromMediaModal( fileDetails ) {
