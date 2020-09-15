@@ -21,7 +21,7 @@
 		"jetpack/backups-date-picker": true,
 		"jetpack/backups-restore": true,
 		"jetpack/on-demand-scan": true,
-		"jetpack/pricing-page": false,
+		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
@@ -38,7 +38,7 @@
 		"activity": true,
 		"backup": true,
 		"jetpack-cloud-auth": true,
-		"jetpack-cloud-pricing": false,
+		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud": true,
 		"scan": true
