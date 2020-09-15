@@ -14,6 +14,7 @@ import 'state/signup/init';
 import { ProgressState } from './schema';
 
 const initialState: ProgressState = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getSignupProgress( state: any ): ProgressState {
 	return get( state, 'signup.progress', initialState );
 }
@@ -24,6 +25,7 @@ export function getSignupProgress( state: any ): ProgressState {
  * @param   {object}  state The current client state
  * @returns  {boolean} denoting whether the plans step existed AND it was skipped
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isPlanStepExistsAndSkipped = ( state: any ) => {
 	const { signup: { progress = {} } = {} } = state;
 	const planName =
