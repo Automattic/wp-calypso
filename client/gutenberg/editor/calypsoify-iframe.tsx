@@ -178,7 +178,7 @@ class CalypsoifyIframe extends Component<
 			diff.forEach( ( mediaItem ) => {
 				const status =
 					currentMedia.find( ( item ) => item.ID === mediaItem.ID ) !== undefined
-						? 'udpated'
+						? 'updated'
 						: 'removed';
 
 				this.updateImageBlocks( mediaItem, status );
