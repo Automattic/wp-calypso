@@ -125,6 +125,7 @@
 		"signup/wpcc": true,
 		"signup/wpforteams": true,
 		"site-indicator": true,
+		"site-level-billing": true,
 		"memberships": true,
 		"support-user": true,
 		"upgrades/checkout": true,
