@@ -36,26 +36,26 @@ import './style.scss';
 
 const getRandomPromo = () => {
 	const promoOptions = [
-		{
-			promoCode: 'a0001',
-			message: 'WordPress.com your way — desktop app now available for Mac, Windows, and Linux.',
-			type: 'desktop',
-		},
-		{
-			promoCode: 'a0002',
-			message: 'Get the WordPress.com app for your desktop.',
-			type: 'desktop',
-		},
-		{
-			promoCode: 'a0003',
-			message: 'WordPress.com app now available for desktop.',
-			type: 'desktop',
-		},
-		{
-			promoCode: 'a0005',
-			message: 'Fast, distraction-free WordPress.com — download the desktop app.',
-			type: 'desktop',
-		},
+		// {
+		// 	promoCode: 'a0001',
+		// 	message: 'WordPress.com your way — desktop app now available for Mac, Windows, and Linux.',
+		// 	type: 'desktop',
+		// },
+		// {
+		// 	promoCode: 'a0002',
+		// 	message: 'Get the WordPress.com app for your desktop.',
+		// 	type: 'desktop',
+		// },
+		// {
+		// 	promoCode: 'a0003',
+		// 	message: 'WordPress.com app now available for desktop.',
+		// 	type: 'desktop',
+		// },
+		// {
+		// 	promoCode: 'a0005',
+		// 	message: 'Fast, distraction-free WordPress.com — download the desktop app.',
+		// 	type: 'desktop',
+		// },
 		{
 			promoCode: 'a0006',
 			message: 'WordPress.com in the palm of your hands — download the mobile app.',
