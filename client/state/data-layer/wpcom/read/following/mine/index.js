@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
 import { forEach } from 'lodash';
 
 /**
@@ -15,9 +14,7 @@ import {
 import { receiveFollows, syncComplete } from 'state/reader/follows/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
 import { isValidApiResponse, subscriptionsFromApi } from './utils';
-
 import { registerHandlers } from 'state/data-layer/handler-registry';
 
 const ITEMS_PER_PAGE = 200;
@@ -96,7 +93,6 @@ export const receivePage = ( action, apiResponse ) => ( dispatch ) => {
 
 export function receiveError() {
 	syncingFollows = false;
-	return errorNotice( translate( 'Sorry, we had a problem fetching your Reader subscriptions.' ) );
 }
 
 const syncPage = dispatchRequest( {
