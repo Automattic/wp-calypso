@@ -12,7 +12,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
-import { useSelectedPlan, useShouldSiteBePublic } from './use-selected-plan';
+import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
 
 const wpcom = wp.undocumented();
@@ -62,7 +62,7 @@ export default function useOnSiteCreation() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const selectedPlan = useSelectedPlan();
-	const shouldSiteBePublic = useShouldSiteBePublic();
+	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
@@ -109,9 +109,9 @@ export default function useOnSiteCreation() {
 						? `site-editor%2F${ newSite.site_slug }`
 						: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 
-					const redirectionUrl = shouldSiteBePublic
-						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`
-						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
+					const redirectionUrl = shouldRedirectToEditorAfterCheckout
+						? `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`
+						: `/checkout/${ newSite.site_slug }?preLaunch=1&isGutenboardingCreate=1`;
 					window.location.href = redirectionUrl;
 				};
 				recordOnboardingComplete( {
@@ -142,7 +142,7 @@ export default function useOnSiteCreation() {
 		setIsRedirecting,
 		setSelectedSite,
 		flowCompleteTrackingParams,
-		shouldSiteBePublic,
+		shouldRedirectToEditorAfterCheckout,
 		design,
 	] );
 }

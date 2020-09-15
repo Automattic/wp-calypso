@@ -11,7 +11,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
-import { useShouldSiteBePublic } from './use-selected-plan';
+import { useNewSiteVisibility } from './use-selected-plan';
 import { useNewQueryParam } from '../path';
 
 /**
@@ -26,11 +26,11 @@ export default function useOnSignup() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 
 	const shouldTriggerCreate = useNewQueryParam();
-	const shouldSiteBePublic = useShouldSiteBePublic();
+	const visibility = useNewSiteVisibility();
 
 	React.useEffect( () => {
 		if ( ! isCreatingSite && ! newSite && currentUser && shouldTriggerCreate ) {
-			createSite( currentUser.username, i18nLocale, undefined, shouldSiteBePublic );
+			createSite( currentUser.username, i18nLocale, undefined, visibility );
 		}
 	}, [
 		createSite,
@@ -39,6 +39,6 @@ export default function useOnSignup() {
 		newSite,
 		i18nLocale,
 		shouldTriggerCreate,
-		shouldSiteBePublic,
+		visibility,
 	] );
 }

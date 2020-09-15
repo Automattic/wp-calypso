@@ -30,11 +30,17 @@ export type NewSiteResponse =
 	| NewSiteErrorResponse
 	| NewSiteErrorCreateBlog;
 
+export enum Visibility {
+	PublicIndexed = 1,
+	PublicNotIndexed = 0,
+	Private = -1,
+}
+
 export interface CreateSiteParams {
 	blog_name: string;
 	blog_title?: string;
 	authToken?: string;
-	public?: number;
+	public?: Visibility;
 	options?: {
 		site_vertical?: string;
 		site_vertical_name?: string;
@@ -52,6 +58,7 @@ export interface CreateSiteParams {
 		font_base?: string;
 		use_patterns?: boolean;
 		selected_features?: string[];
+		public_coming_soon?: boolean;
 	};
 }
 
