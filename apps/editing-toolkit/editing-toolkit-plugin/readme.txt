@@ -43,6 +43,8 @@ This plugin is experimental, so we don't provide any support for it outside of w
 = 2.4 =
 * Remove direct dependency on `swiper` (https://github.com/Automattic/wp-calypso/pull/45492)
 * Fix core patterns incorrectly appearing in block patterns inserter (https://github.com/Automattic/wp-calypso/pull/45499)
+* Fixed typo in "multi-column text with headline" block pattern (https://github.com/Automattic/wp-calypso/pull/45682)
+* Fix Fatal Error from Custom Exceptions (https://github.com/Automattic/wp-calypso/pull/45656)
 
 = 2.3 =
 * Bump NewsPack version to 1.8.0 (https://github.com/Automattic/wp-calypso/pull/45423)
