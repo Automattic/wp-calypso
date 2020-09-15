@@ -25,6 +25,11 @@ const requestOptions = {
 	},
 };
 
+// Comparison fn to sort Github releases by published date (descending)
+function compare( lhs, rhs ) {
+	return new Date( lhs.published_at ) - new Date( rhs.published_at );
+}
+
 class ManualUpdater extends Updater {
 	constructor( { apiUrl, downloadUrl, options = {} } ) {
 		super( options );
@@ -38,8 +43,7 @@ class ManualUpdater extends Updater {
 	async ping() {
 		try {
 			const url = this.apiUrl;
-			log.info( 'Checking for update. Fetching: ', url );
-			log.info( 'Checking for beta release:', this.beta );
+			log.info( `Checking for update. Channel: ${ this.beta }, Update URL: ${ url }` );
 
 			const releaseResp = await fetch( url, requestOptions );
 
@@ -47,13 +51,16 @@ class ManualUpdater extends Updater {
 				return;
 			}
 
-			const releases = await releaseResp.json();
+			let releases = await releaseResp.json();
+
+			// Only get wp-desktop releases, sort by published date (descending)
+			releases = releases.filter( ( r ) => r.author.login === 'wp-desktop' ).sort( compare );
 
 			const latestStableRelease = releases.find( ( d ) => ! d.prerelease );
 			const latestBetaRelease = releases.find( ( d ) => d.prerelease );
 
 			if ( ! latestStableRelease && ! this.beta ) {
-				log.info( 'No stable release found' );
+				log.info( 'No stable release found, skipping update.' );
 				return;
 			}
 
