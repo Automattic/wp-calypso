@@ -30,7 +30,6 @@ module.exports = {
 							[ 'lint-no-duplicate-headings', false ],
 
 							// Rules we would like to enable eventually. Violations needs to be fixed manually before enabling the rule.
-							[ 'lint-no-multiple-toplevel-headings', false ],
 							[ 'lint-fenced-code-flag', false ],
 
 							// This special plugin is used to allow the syntax <!--eslint ignore <rule>-->. It has to come last.
