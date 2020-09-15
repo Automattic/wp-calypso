@@ -16,6 +16,7 @@ import FormattedHeader from 'components/formatted-header';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
 import config from 'config';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { isPartnerPurchase } from 'lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
@@ -96,20 +97,24 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				align="left"
 			/>
 			<CurrentTheme siteId={ siteId } />
-			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
-				<UpsellNudge
-					forceDisplay
-					plan={ PLAN_JETPACK_BUSINESS }
-					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
-					description={ translate(
-						'In addition to our collection of premium themes, ' +
-							'get Elasticsearch-powered site search, real-time offsite backups, ' +
-							'and security scanning.'
-					) }
-					event="themes_plans_free_personal_premium"
-					showIcon={ true }
-				/>
-			) }
+			{ ! shouldShowOfferResetFlow() &&
+				! requestingSitePlans &&
+				currentPlan &&
+				! hasUnlimitedPremiumThemes &&
+				! isPartnerPlan && (
+					<UpsellNudge
+						forceDisplay
+						plan={ PLAN_JETPACK_BUSINESS }
+						title={ translate( 'Access all our premium themes with our Professional plan!' ) }
+						description={ translate(
+							'In addition to our collection of premium themes, ' +
+								'get Elasticsearch-powered site search, real-time offsite backups, ' +
+								'and security scanning.'
+						) }
+						event="themes_plans_free_personal_premium"
+						showIcon={ true }
+					/>
+				) }
 			<ThemeShowcase
 				{ ...props }
 				siteId={ siteId }
