@@ -80,16 +80,6 @@ class JetpackConnectMainHeader extends Component {
 			};
 		}
 
-		if ( type === 'jetpack_search' ) {
-			return {
-				title: translate( 'Get Jetpack Search' ),
-				subtitle: translate(
-					'Incredibly powerful and customizable, Jetpack Search helps your visitors ' +
-						'instantly find the right content – right when they need it.'
-				),
-			};
-		}
-
 		if ( shouldShowOfferResetFlow() ) {
 			if ( JETPACK_RESET_PLANS.includes( type ) ) {
 				const plan = getPlan( type );
@@ -98,7 +88,7 @@ class JetpackConnectMainHeader extends Component {
 					return {
 						title: translate( 'Get {{name/}}', {
 							components: {
-								name: plan.getTitle(),
+								name: <>{ plan.getTitle() }</>,
 							},
 							comment: '{{name/}} is the name of a plan',
 						} ),
@@ -114,7 +104,7 @@ class JetpackConnectMainHeader extends Component {
 					return {
 						title: translate( 'Get {{name/}}', {
 							components: {
-								name: getJetpackProductShortName( product ),
+								name: <>{ getJetpackProductShortName( product ) }</>,
 							},
 							comment: '{{name/}} is the name of a plan',
 						} ),
@@ -122,6 +112,14 @@ class JetpackConnectMainHeader extends Component {
 					};
 				}
 			}
+		} else if ( type === 'jetpack_search' ) {
+			return {
+				title: translate( 'Get Jetpack Search' ),
+				subtitle: translate(
+					'Incredibly powerful and customizable, Jetpack Search helps your visitors ' +
+						'instantly find the right content – right when they need it.'
+				),
+			};
 		}
 
 		return {
