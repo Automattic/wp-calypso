@@ -243,9 +243,6 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = this.getIsPlanSelectionUnavailableInFlow()
-			? { shouldHideFreePlan }
-			: {};
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -282,7 +279,7 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
+			Object.assign( { domainItem }, { shouldHideFreePlan }, useThemeHeadstartItem )
 		);
 
 		this.props.setDesignType( this.getDesignType() );
