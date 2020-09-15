@@ -158,13 +158,13 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 						case 'wpcom_public_coming_soon': {
 							const isComingSoon = parseInt( settings.wpcom_public_coming_soon, 10 ) === 1;
 
-							if ( site.wpcom_public_coming_soon === isComingSoon ) {
+							if ( site.is_coming_soon === isComingSoon ) {
 								return memo;
 							}
 
 							nextSite = {
 								...nextSite,
-								wpcom_public_coming_soon: isComingSoon,
+								is_coming_soon: isComingSoon,
 							};
 							break;
 						}
