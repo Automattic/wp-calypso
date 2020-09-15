@@ -247,6 +247,7 @@ class PostComment extends React.PureComponent {
 								activeEditCommentId={ this.props.activeEditCommentId }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
+								shouldHighlightNew={ this.props.shouldHighlightNew }
 							/>
 						) ) }
 					</ol>
