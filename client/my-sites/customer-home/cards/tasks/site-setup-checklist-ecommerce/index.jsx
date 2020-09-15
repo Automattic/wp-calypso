@@ -12,6 +12,7 @@ import Task from 'my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteUrl } from 'state/sites/selectors';
 import { TASK_SITE_SETUP_CHECKLIST_ECOMMERCE } from 'my-sites/customer-home/cards/constants';
+import earnSectionImage from 'assets/images/earn/earn-section.svg';
 
 export const SiteSetupListEcommerce = ( { siteUrl } ) => {
 	const translate = useTranslate();
@@ -25,6 +26,7 @@ export const SiteSetupListEcommerce = ( { siteUrl } ) => {
 			actionText={ translate( 'Finish store setup' ) }
 			actionUrl={ `${ siteUrl }/wp-admin/admin.php?page=wc-admin&calypsoify=1` }
 			completeOnStart={ true }
+			illustration={ earnSectionImage }
 			taskId={ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE }
 			timing={ 7 }
 		/>
