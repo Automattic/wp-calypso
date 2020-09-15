@@ -1076,7 +1076,7 @@ export default connect(
 		displayUsernameInput:
 			[ 'onboarding', 'personal', 'premium', 'business', 'ecommerce' ].includes(
 				ownProps.flowName
-			) && 'variantRemoveUsername' !== abtest( 'removeUsernameInSignup' ),
+			) && 'control' === abtest( 'removeUsernameInSignup' ),
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
