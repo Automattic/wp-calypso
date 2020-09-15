@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GSuiteUserItem renders user item finish setup button correctly 1`] = `
+<li>
+  <span
+    className="gsuite-user-item__email"
+  >
+    foo@bar.buzz
+  </span>
+  <button
+    className="button gsuite-user-item__fix is-compact"
+    onClick={[Function]}
+    type="button"
+  >
+    Finish Setup
+  </button>
+</li>
+`;
+
+exports[`GSuiteUserItem renders user item with manage correctly 1`] = `
+<li>
+  <span
+    className="gsuite-user-item__email"
+  >
+    foo@bar.buzz
+  </span>
+  <a
+    className="external-link gsuite-user-item has-icon"
+    href="https://accounts.google.com/AccountChooser?Email=foo@bar.buzz&service=CPanel&continue=https://admin.google.com/a/bar.buzz"
+    onClick={[Function]}
+    rel="external noopener noreferrer"
+    target="_blank"
+  >
+    Manage
+    <svg
+      className="gridicon gridicons-external needs-offset"
+      height={18}
+      viewBox="0 0 24 24"
+      width={18}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <use
+        xlinkHref="gridicons.svg#gridicons-external"
+      />
+    </svg>
+    <span
+      className="screen-reader-text"
+    >
+      (opens in a new tab)
+    </span>
+  </a>
+</li>
+`;
