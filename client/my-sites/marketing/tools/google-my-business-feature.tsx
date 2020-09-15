@@ -23,6 +23,7 @@ import MarketingToolsFeatureButtonWithPlanGate from './feature-button-with-plan-
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
 import QueryKeyringServices from 'components/data/query-keyring-services';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 
 /**
@@ -68,6 +69,10 @@ const MarketingToolsGoogleMyBusinessFeature: FunctionComponent< Props > = ( {
 	};
 
 	const translate = useTranslate();
+
+	if ( shouldShowOfferResetFlow() ) {
+		return null;
+	}
 
 	return (
 		<Fragment>
