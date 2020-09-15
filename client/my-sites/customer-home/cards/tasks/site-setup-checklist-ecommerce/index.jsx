@@ -26,6 +26,7 @@ export const SiteSetupListEcommerce = ( { siteUrl } ) => {
 			actionUrl={ `${ siteUrl }/wp-admin/admin.php?page=wc-admin&calypsoify=1` }
 			completeOnStart={ true }
 			taskId={ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE }
+			timing={ 7 }
 		/>
 	);
 };
