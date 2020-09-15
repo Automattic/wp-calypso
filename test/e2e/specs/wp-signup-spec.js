@@ -354,8 +354,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	// eslint-disable-next-line jest/no-disabled-tests
-	describe.skip( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
+	describe( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 		const emailAddress = dataHelper.getEmailAddress( blogName, signupInboxId );
