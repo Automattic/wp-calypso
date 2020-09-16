@@ -9,8 +9,15 @@ import page from 'page';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
 import { purchases, redirectToPurchases } from './controller';
+import config from 'config';
+import legacyRouter from 'me/purchases';
 
-export default () => {
+export default ( router ) => {
+	if ( ! config.isEnabled( 'site-level-billing' ) ) {
+		legacyRouter( router );
+		return;
+	}
+
 	page( '/purchases', siteSelection, navigation, sites, makeLayout, clientRender );
 	page( '/purchases/subscriptions', siteSelection, navigation, sites, makeLayout, clientRender );
 	page(
