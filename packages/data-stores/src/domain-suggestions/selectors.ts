@@ -101,6 +101,10 @@ const createSelectors = ( vendor: string ) => {
 		return state.availability[ domainName ];
 	}
 
+	function getDomainAvailabilities( state: State ) {
+		return state.availability;
+	}
+
 	return {
 		getCategories,
 		getDomainSuggestions,
@@ -108,6 +112,7 @@ const createSelectors = ( vendor: string ) => {
 		isLoadingDomainSuggestions,
 		__internalGetDomainSuggestions,
 		isAvailable,
+		getDomainAvailabilities,
 	};
 };
 
