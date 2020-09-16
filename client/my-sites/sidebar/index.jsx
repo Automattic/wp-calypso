@@ -613,6 +613,11 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
+		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
+		if ( isWpMobile ) {
+			return null;
+		}
+
 		let planLink = '/plans' + this.props.siteSuffix;
 
 		// Show plan details for upgraded sites
@@ -625,11 +630,6 @@ export class MySitesSidebar extends Component {
 		} );
 
 		const tipTarget = 'plan';
-
-		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
-		if ( isWpMobile ) {
-			return;
-		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
