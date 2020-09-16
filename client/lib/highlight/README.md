@@ -4,7 +4,7 @@ This module searches a given html string and wraps all matching strings with a `
 
 If you give a custom element as a wrapper, it will be cloned every time it is added via `cloneNode()`
 
-# How to use
+## How to use
 
 ```es6
 const html = '<div>hello world</div>';
@@ -22,7 +22,7 @@ Using a custom highlight wrapper:
 ```es6
 const customWrapper = document.createElement('span');
 customWrapper.setAttribute( 'class', 'my-wrapper' );
-	
+
 const customHighlighted = highlight( 'hello', html, customWrapper );
 ```
 

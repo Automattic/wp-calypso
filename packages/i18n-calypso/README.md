@@ -32,7 +32,7 @@ The following attributes can be set in the options object to alter the translati
 - **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
 - **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
 
-## Usage
+### Usage
 
 If you pass a single string into `translate`, it will trigger a simple translation without any context, pluralization, sprintf arguments, or comments. You would call it like this.
 
@@ -341,7 +341,7 @@ export default function Header() {
 }
 ```
 
-# `withRtl` Higher-Order Component
+### `withRtl` Higher-Order Component
 
 The same functionality is also exposed as a HOC that passes an `isRtl` prop to the wrapped component.
 

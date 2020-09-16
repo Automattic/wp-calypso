@@ -6,11 +6,6 @@ If you're a developer that has a plugin with one million or more active installa
 
 Before you get started we encourage you to get familiar with our [development values], [code-reviewing practice][prs], components and [data approach], and the [rest of the docs][docs] we have. Every folder in the project should have a README describing its purpose.
 
-[development values]: https://wpcalypso.wordpress.com/devdocs/docs/guide/0-values.md
-[data approach]: https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md
-[docs]: https://wpcalypso.wordpress.com/devdocs
-[prs]: https://wpcalypso.wordpress.com/devdocs/docs/CONTRIBUTING.md#pull-requests
-
 ## Defining a new section
 
 Create a new directory within `/client/extensions` with your plugin name. Add a `package.json` file at the root of your directory. Add a `section` field in the same format as those found in `client/sections.js`:
@@ -85,3 +80,8 @@ import myReducer from 'my-extension/state/reducer';
 ## State
 
 Calypso has almost transitioned to a single-state store provided by Redux. The end scenario is that your extension would have access to the entire state tree and would be allowed to add a sub-tree. This is a work in progress and we need to figure out what are the requirements and safeguards we need to put in place.
+
+[development values]: https://wpcalypso.wordpress.com/devdocs/docs/guide/0-values.md
+[data approach]: https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md
+[docs]: https://wpcalypso.wordpress.com/devdocs
+[prs]: https://wpcalypso.wordpress.com/devdocs/docs/CONTRIBUTING.md#pull-requests

@@ -2,12 +2,12 @@
 
 This module exports several utilities for handling new user's email verification flow.
 
-# `page.js` handler
+## `page.js` handler
 
 Check if the handled URL has an `verified=1` query param and shows an "Email confirmed" notice
 when it does.
 
-## Usage
+### Usage
 
 ```js
 import emailVerification from 'components/email-verification';
@@ -15,13 +15,13 @@ import emailVerification from 'components/email-verification';
 page( '*', emailVerification );
 ```
 
-# Email Verification Dialog
+## Email Verification Dialog
 
 Modal dialog you can use to implement parts of UI where a verified email is required. It
 will display a modal explaining what to do with the verification email and offers an option
 to resend the email.
 
-## Usage
+### Usage
 
 ```jsx
 import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
@@ -36,12 +36,12 @@ function UI( { showDialog, closeDialog } ) {
 }
 ```
 
-# Email Verification Gate Component
+## Email Verification Gate Component
 
 Wrapper around your content that will put a notice on top if user's email is unverified.
 The wrapped content will be disabled: grayed out and won't react to input events.
 
-## Usage
+### Usage
 
 ```jsx
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';

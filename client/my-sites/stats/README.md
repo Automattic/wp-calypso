@@ -1,4 +1,6 @@
-# Stats Components
+# Stats
+
+## Stats Components
 
 These components handle the `\stats` section of Calypso. The stats section supports a variety of routes:
 
@@ -8,19 +10,19 @@ These components handle the `\stats` section of Calypso. The stats section suppo
 /stats/:time_period/:site_id
 ```
 
-## overview.jsx
+### overview.jsx
 
 This is the default view that is rendered at `\stats`. For users with more than 1 blog, a summary page of stats are shown for each site. Local storage is leveraged to make this experience load faster for the user when navigating between stat periods/sites.
 
-## site.jsx
+### site.jsx
 
 This is the detail view container for a specific sites stats data.
 
-# Stats Controller
+## Stats Controller
 
 `controller.js` breaks the stats controller into its own individual component.
 
-# Site Stats Modules
+## Site Stats Modules
 
 Within this directory we have also prefixed 'sub' components (aka metaboxes) used on the `site.jsx` with `module_`
 
@@ -33,21 +35,21 @@ Within this directory we have also prefixed 'sub' components (aka metaboxes) use
 - `module-tags-categories.jsx`
 - `module-top-posts.jsx`
 
-# Stats Data Components
+## Stats Data Components
 
 Logic that interfaces with the API, or acts as a collection and / or interface into localStorage can be found within the `/client/stats` directory.
 
-# External Modules
+## External Modules
 
 `moment.js` is being used to perform graceful date transforms and calculations of period dates ( end of week/month/year etc )
 `store` is being used to persist metabox visibility state on the `site-stats` page
 `throttle` is being used to - debounce - window resize events for the responsive visualizations.
 
-# Stats List Markup
+## Stats List Markup
 
 We have spent quite a bit of time to create an extensive set of markup for stats lists that provide hooks for default actions, and action menus depending on screen size. Below is some example markup:
 
-## A Generic Stats List Item - No Action
+### A Generic Stats List Item - No Action
 
 ```html
 <li className="module-content-list-item module-content-list-item-normal">
@@ -60,7 +62,7 @@ We have spent quite a bit of time to create an extensive set of markup for stats
 </li>
 ```
 
-### Stats List Item - Link Row Action
+#### Stats List Item - Link Row Action
 
 ```html
 <li className="module-content-list-item module-content-list-item-link">
@@ -73,7 +75,7 @@ We have spent quite a bit of time to create an extensive set of markup for stats
 </li>
 ```
 
-### Stats List Item - With Additional Action Buttons
+#### Stats List Item - With Additional Action Buttons
 
 ```html
 <li className="module-content-list-item module-content-list-item-link">
@@ -90,7 +92,7 @@ We have spent quite a bit of time to create an extensive set of markup for stats
 </li>
 ```
 
-### Kitchen Sink Example - Avatars, icons in Labels, Nested Lists
+#### Kitchen Sink Example - Avatars, icons in Labels, Nested Lists
 
 ```html
 <li className="module-content-list-item module-content-list-item-link module-content-list-item-large module-content-list-item-toggle is-expanded">

@@ -25,9 +25,9 @@ comment = comment.del.bind( comment );
 wpcom.Promise( comment );
 ```
 
-# Examples
+## Examples
 
-## Approving a comment
+### Approving a comment
 
 ```js
 const comment = wpcom.site( siteId ).comment( commentId );
@@ -37,7 +37,7 @@ wpcom
 	.catch( ( error ) => alert( error ) );
 ```
 
-## Requesting the freshly-pressed list
+### Requesting the freshly-pressed list
 
 ```js
 wpcom
@@ -47,7 +47,7 @@ wpcom
 	.catch( notifyNetworkError );
 ```
 
-## Chaining promises
+### Chaining promises
 
 ```js
 const post = wpcom.site( siteId ).post( postId );

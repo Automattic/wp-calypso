@@ -3,7 +3,7 @@
 This store holds preferences specific to Calypso.
 They are persisted in `calypso_preferences` key of `/me/settings`.
 
-# Usage
+## Usage
 
 1. Render `QueryPreferences` from `components/data/query-preferences`
 2. Connect your component specifying proper option keys:

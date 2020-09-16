@@ -2,14 +2,14 @@
 
 This module provides support for using localized moment.js library inside React components.
 
-# `withLocalizedMoment`
+## `withLocalizedMoment`
 
 Is a higher-order component (HOC) that provides two props to the wrapped child:
 
 - `moment` is the moment.js instance that the component can use to parse and format dates
 - `momentLocale` is a string that contains the current locale slug (e.g., `en` or `de`).
 
-## Usage
+### Usage
 
 ```jsx
 import React from 'react';
@@ -29,13 +29,13 @@ The exported component will format the `date` string prop using the current loca
 The component is reactive, i.e., when the locale changes, all wrapped components will be
 automatically rerendered.
 
-# `useLocalizedMoment`
+## `useLocalizedMoment`
 
 Is a React hook that can be used inside stateless functional components. The function returns
 the moment.js instance that can be used to parse and format dates. Its meaning is the same as
 in `withLocalizedMoment`. It's just a different implementation of the same concept.
 
-## Usage
+### Usage
 
 ```jsx
 import React from 'react';
@@ -50,7 +50,7 @@ export default function Label( { date } ) {
 Once again, the exported `Label` component will format the `date` string prop and automatically
 rerender on locale change.
 
-# `MomentProvider`
+## `MomentProvider`
 
 All usages of `withLocalizedMoment` and `useLocalizedMoment` should be inside a React tree
 that has `MomentProvider` mounted on top. The provider provides a context with the current locale
@@ -59,7 +59,7 @@ and all the subcomponents that consume the context will react to changes.
 The `MomentProvider` component takes one prop: `currentLocale`. It is a string with the desired
 locale slug.
 
-## Usage
+### Usage
 
 ```jsx
 import React from 'react';

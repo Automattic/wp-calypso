@@ -38,7 +38,7 @@ For default behavior call `redirectNonJetpack()` with no parameters.
 Optionally, we can invoke the same behavior inside the component
 to be wrapped using the HoC. Namely, we can use the redirection action inside the component we pass to the HoC (see below).
 
-### Exemplary use:
+### Exemplary use
 
 ```js
 render() {
