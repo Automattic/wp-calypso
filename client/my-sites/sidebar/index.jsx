@@ -550,6 +550,47 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! this.props.isJetpack || this.props.isAtomicSite || this.props.isVip;
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<ExpandableSidebarMenu
+				onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
+				expanded={ this.props.isPlanSectionOpen }
+				title={
+					<>
+						<span className="menu-link-text" data-e2e-sidebar="Plan">
+							{ this.props.translate( 'Plan', { context: 'noun' } ) }
+						</span>
+						{ displayPlanName && (
+							<span className="sidebar__menu-link-secondary-text">
+								{ this.props.site?.plan.product_name_short }
+							</span>
+						) }
+					</>
+				}
+				customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
+			>
+				{ this.plans() }
+				<SidebarItem
+					label={ this.props.translate( 'Billing' ) }
+					tipTarget="purchases"
+					selected={ itemLinkMatches( '/purchases', this.props.path ) }
+					link={
+						this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
+					}
+					onNavigate={ this.trackPurchasesClick }
+					preloadSectionName="site-purchases"
+					forceInternalLink
+					expandSection={ this.expandPlanSection }
+				/>
+			</ExpandableSidebarMenu>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
+	plans() {
 		const {
 			canUserManageOptions,
 			hasPaidJetpackPlan,
@@ -887,10 +928,6 @@ export class MySitesSidebar extends Component {
 			!! this.earn() ||
 			!! this.activity();
 
-		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
-		const displayPlanName = ! this.props.isJetpack || this.props.isAtomicSite || this.props.isVip;
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="sidebar__menu-wrapper">
 				<QuerySitePurchases siteId={ this.props.siteId } />
@@ -899,39 +936,7 @@ export class MySitesSidebar extends Component {
 					<ul>
 						{ this.customerHome() }
 						{ this.stats() }
-						<ExpandableSidebarMenu
-							onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
-							expanded={ this.props.isPlanSectionOpen }
-							title={
-								<>
-									<span className="menu-link-text" data-e2e-sidebar="Plan">
-										{ this.props.translate( 'Plan', { context: 'noun' } ) }
-									</span>
-									{ displayPlanName && (
-										<span className="sidebar__menu-link-secondary-text">
-											{ this.props.site?.plan.product_name_short }
-										</span>
-									) }
-								</>
-							}
-							customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
-						>
-							{ this.plan() }
-							<SidebarItem
-								label={ this.props.translate( 'Billing' ) }
-								tipTarget="purchases"
-								selected={ itemLinkMatches( '/purchases', this.props.path ) }
-								link={
-									this.props.site
-										? '/purchases/subscriptions/' + this.props.site.slug
-										: '/me/purchases'
-								}
-								onNavigate={ this.trackPurchasesClick }
-								preloadSectionName="site-purchases"
-								forceInternalLink
-								expandSection={ this.expandPlanSection }
-							/>
-						</ExpandableSidebarMenu>
+						{ this.plan() }
 						{ this.store() }
 					</ul>
 				</SidebarMenu>
