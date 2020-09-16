@@ -30,8 +30,6 @@ module.exports = {
 							[ 'lint-no-duplicate-headings', false ],
 
 							// Rules we would like to enable eventually. Violations needs to be fixed manually before enabling the rule.
-							[ 'lint-no-emphasis-as-heading', false ],
-							[ 'lint-code-block-style', false ],
 							[ 'lint-no-multiple-toplevel-headings', false ],
 							[ 'lint-fenced-code-flag', false ],
 
