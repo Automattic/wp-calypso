@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -12,6 +13,9 @@ import CartData from 'components/data/cart';
 import FormattedHeader from 'components/formatted-header';
 import Notice from 'components/notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import getSitePlan from 'state/sites/selectors/get-site-plan';
+import getSiteProducts from 'state/sites/selectors/get-site-products';
+import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 
 const StandardPlansHeader = () => (
 	<>
@@ -38,8 +42,16 @@ const ConnectFlowPlansHeader = () => (
 );
 
 const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
+	//const state = context.store.getState();
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	// Site plan
+	const currentPlan =
+		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
+	// Site products from direct purchases
+	const purchasedProducts =
+		useSelector( ( state ) => getSiteProducts( state, siteId ) )
+			?.map( ( { productSlug } ) => productSlug )
+			.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) ) ?? [];
 
 	// When coming from in-connect flow, the url contains 'source=jetpack-plans' query param.
 	const isInConnectFlow = useMemo(
@@ -49,7 +61,8 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 
 	const [ showNotice, setShowNotice ] = useState( true );
 
-	return isInConnectFlow ? (
+	// Only show ConnectFlowPlansHeader if coming from in-connect flow and if no products or plans have been purchased.
+	return isInConnectFlow && currentPlan === 'jetpack_free' && ! purchasedProducts.length ? (
 		<>
 			{ showNotice && (
 				<Notice status="is-success" onDismissClick={ () => setShowNotice( false ) }>
