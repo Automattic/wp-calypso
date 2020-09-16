@@ -6,21 +6,11 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		box-sizing: border-box;
 		max-width: 100%;
-	}
 
-	+ .dialog__action-buttons {
-		text-align: center;
-
-		.button:first-child {
-			margin-left: 0;
-		}
-
-		@include breakpoint-deprecated( '<480px' ) {
-			.button {
-				display: block;
-				margin: 0 auto 10px;
-				width: 100%;
-			}
+		+ .dialog__action-buttons .button {
+			display: block;
+			margin: 0 auto 10px;
+			width: 100%;
 		}
 	}
 
