@@ -40,6 +40,7 @@ const Task = ( {
 	description,
 	illustration,
 	enableSkipOptions = true,
+	scary,
 	siteId,
 	taskId,
 	timing,
@@ -122,6 +123,7 @@ const Task = ( {
 						<Button
 							className="task__action"
 							primary
+							scary={ scary }
 							onClick={ startTask }
 							href={ actionUrl }
 							target={ actionTarget }
