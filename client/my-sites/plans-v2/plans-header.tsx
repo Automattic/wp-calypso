@@ -15,6 +15,7 @@ import Notice from 'components/notice';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import getSitePlan from 'state/sites/selectors/get-site-plan';
 import getSiteProducts from 'state/sites/selectors/get-site-products';
+import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 
 const StandardPlansHeader = () => (
@@ -62,7 +63,7 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 	const [ showNotice, setShowNotice ] = useState( true );
 
 	// Only show ConnectFlowPlansHeader if coming from in-connect flow and if no products or plans have been purchased.
-	return isInConnectFlow && currentPlan === 'jetpack_free' && ! purchasedProducts.length ? (
+	return isInConnectFlow && currentPlan === PLAN_JETPACK_FREE && ! purchasedProducts.length ? (
 		<>
 			{ showNotice && (
 				<Notice status="is-success" onDismissClick={ () => setShowNotice( false ) }>
