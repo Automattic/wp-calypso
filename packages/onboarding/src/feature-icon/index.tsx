@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import * as React from 'react';
 import { SVG, Path } from '@wordpress/components';
-import type { WPCOMFeatures } from '@automattic/data-stores';
 import { Icon } from '@wordpress/icons';
-import type { IconProps } from '@wordpress/icons/build-types/icon';
+import type { WPCOMFeatures } from '@automattic/data-stores';
 
 export const iconList: Record< WPCOMFeatures.FeatureId, React.ReactElement > = {
 	domain: (
@@ -86,15 +85,12 @@ export const iconList: Record< WPCOMFeatures.FeatureId, React.ReactElement > = {
 	),
 };
 
-interface Props extends Omit< IconProps, 'icon' > {
+interface Props {
 	featureId: WPCOMFeatures.FeatureId;
 }
 
-const FeatureIcon: React.FunctionComponent< Props > = function FeatureIcon( {
-	featureId,
-	...props
-} ) {
-	return <Icon icon={ iconList[ featureId ] } { ...props } />;
-};
+const FeatureIcon: React.FunctionComponent< Props > = ( { featureId } ) => (
+	<Icon icon={ iconList[ featureId ] } />
+);
 
 export default FeatureIcon;
