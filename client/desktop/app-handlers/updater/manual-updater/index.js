@@ -43,7 +43,11 @@ class ManualUpdater extends Updater {
 	async ping() {
 		try {
 			const url = this.apiUrl;
-			log.info( `Checking for update. Channel: ${ this.beta }, Update URL: ${ url }` );
+			log.info(
+				`Checking for update. Channel: ${
+					this.beta
+				}, Version: ${ app.getVersion() }, Update URL: ${ url }`
+			);
 
 			const releaseResp = await fetch( url, requestOptions );
 
@@ -58,10 +62,10 @@ class ManualUpdater extends Updater {
 
 			// Get latest release and pre-release from sorted releases
 			const latestStableRelease = releases.find(
-				( d ) => this.getConfigUrl( d.assets ) & ! d.prerelease
+				( d ) => ! d.prerelease && this.getConfigUrl( d.assets )
 			);
 			const latestBetaRelease = releases.find(
-				( d ) => this.getConfigUrl( d.assets ) && d.prerelease
+				( d ) => d.prerelease && this.getConfigUrl( d.assets )
 			);
 
 			if ( ! latestStableRelease && ! this.beta ) {
@@ -71,6 +75,9 @@ class ManualUpdater extends Updater {
 
 			let latestStableReleaseVersion;
 			if ( latestStableRelease ) {
+				log.info(
+					`Latest stable release: ${ latestStableRelease.name } (${ latestStableRelease.tag_name })`
+				);
 				const assetUrl = this.getConfigUrl( latestStableRelease.assets );
 				latestStableReleaseVersion = await this.getReleaseVersion( assetUrl );
 			}
@@ -78,6 +85,9 @@ class ManualUpdater extends Updater {
 			let latestReleaseVersion;
 
 			if ( this.beta && latestBetaRelease ) {
+				log.info(
+					`Latest beta release: ${ latestBetaRelease.name } (${ latestBetaRelease.tag_name })`
+				);
 				const assetUrl = this.getConfigUrl( latestBetaRelease.assets );
 				const latestBetaReleaseVersion = await this.getReleaseVersion( assetUrl );
 
@@ -143,7 +153,7 @@ class ManualUpdater extends Updater {
 			return null;
 		}
 		const asset = assets.find( ( file ) => file.name === 'latest.yml' );
-		return asset.browser_download_url || null;
+		return asset ? asset.browser_download_url || null : null;
 	}
 
 	async getReleaseVersion( url ) {
