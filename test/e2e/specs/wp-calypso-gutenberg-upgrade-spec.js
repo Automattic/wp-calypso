@@ -194,7 +194,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					SubscriptionsBlockComponent,
 					TiledGalleryBlockComponent,
 					YoutubeBlockComponent,
-				].map( async ( blockClass ) =>
+				].map( ( blockClass ) =>
 					driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector )
 				)
 			);
