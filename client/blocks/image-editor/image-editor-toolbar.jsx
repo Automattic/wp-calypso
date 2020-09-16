@@ -10,6 +10,11 @@ import Gridicon from 'components/gridicon';
 import classNames from 'classnames';
 
 /**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
 import PopoverMenu from 'components/popover/menu';
@@ -196,7 +201,7 @@ export class ImageEditorToolbar extends Component {
 				'is-disabled': button && button.disabled,
 			} );
 			return button ? (
-				<button
+				<Button
 					key={ 'image-editor-toolbar-' + button.tool }
 					ref={ button.ref }
 					className={ buttonClasses }
@@ -204,7 +209,7 @@ export class ImageEditorToolbar extends Component {
 				>
 					<Gridicon icon={ button.icon } />
 					<span>{ button.text }</span>
-				</button>
+				</Button>
 			) : null;
 		} );
 	}

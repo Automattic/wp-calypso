@@ -8,9 +8,13 @@ import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import { getImageEditorFileInfo, imageEditorHasChanges } from 'state/editor/image-editor/selectors';
 
 class ImageEditorButtons extends Component {
@@ -41,7 +45,7 @@ class ImageEditorButtons extends Component {
 			<div className="image-editor__buttons">
 				{ onCancel && (
 					<Button
-						className="image-editor__buttons-button"
+						className="image-editor__buttons-button button"
 						onClick={ onCancel }
 						data-e2e-button="cancel"
 					>
@@ -49,7 +53,7 @@ class ImageEditorButtons extends Component {
 					</Button>
 				) }
 				<Button
-					className="image-editor__buttons-button"
+					className="image-editor__buttons-button button"
 					disabled={ ! hasChanges }
 					onClick={ onReset }
 					data-e2e-button="reset"
@@ -57,9 +61,9 @@ class ImageEditorButtons extends Component {
 					{ translate( 'Reset' ) }
 				</Button>
 				<Button
-					className="image-editor__buttons-button"
+					className="image-editor__buttons-button button"
 					disabled={ ! src }
-					primary
+					isPrimary
 					onClick={ onDone }
 					data-e2e-button="done"
 					data-tip-target="image-editor-button-done"
