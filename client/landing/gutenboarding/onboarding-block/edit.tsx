@@ -100,7 +100,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Features ) }>
-					{ isEnabled( 'gutenboarding/feature-picker' ) ? <Features /> : redirectToLatestStep }
+					{ canUseStyleStep() && isEnabled( 'gutenboarding/feature-picker' ) ? (
+						<Features />
+					) : (
+						redirectToLatestStep
+					) }
 				</Route>
 
 				<Route path={ makePath( Step.Domains ) }>
