@@ -12,3 +12,5 @@ export const PAID_DOMAINS_TO_SHOW_EXPANDED = 10;
 export const DOMAIN_SEARCH_DEBOUNCE_INTERVAL = 300;
 
 export const DOMAIN_SUGGESTIONS_STORE = 'automattic/domains/suggestions';
+
+export const DOMAIN_UNAVAILABLE_STATUS = 'unavailable';
