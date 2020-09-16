@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import MySitesSidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import QueryConciergeInitial from 'components/data/query-concierge-initial';
@@ -26,7 +26,7 @@ export default function Subscriptions() {
 		<Main className="subscriptions">
 			<QueryUserPurchases userId={ userId } />
 			<PageViewTracker path="/purchases/subscriptions" title="Subscriptions" />
-			<MeSidebarNavigation />
+			<MySitesSidebarNavigation />
 			<SectionHeader label={ translate( 'Subscriptions' ) } />
 			<SubscriptionsContent />
 			<QueryConciergeInitial />
