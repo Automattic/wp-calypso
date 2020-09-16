@@ -1,6 +1,12 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
+/**
+ * Internal dependencies
+ */
 import Gridicon from '../templates/gridicons';
 import noticon2gridicon from '../utils/noticon2gridicon';
 
@@ -12,14 +18,14 @@ import noticon2gridicon from '../utils/noticon2gridicon';
  * @param {Array} new_sub_range Position/applicable ranges array
  * @param {object} range_info The origin range data for this render
  * @param {Array} range_data All range data
- * @param {object} options
- * @returns {DocumentFragment} Computed DOM nodes for all levels at or below passed range
+ * @param {object} options Options for rendering range
+ * @returns {object} Computed DOM nodes for all levels at or below passed range
  */
 function render_range( new_sub_text, new_sub_range, range_info, range_data, options ) {
 	// Its time to build the outer shell of the range we're recursing into.
 	let new_container = null,
-		new_classes = [],
 		type_mappings;
+	const new_classes = [];
 
 	let range_info_type = range_info.type;
 
@@ -67,6 +73,10 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		// All of the following are simple element types we want to create and then
 		// recurse into for their constituent blocks or texts
 		case 'blockquote':
+		case 'cite':
+		case 'hr':
+		case 'p':
+		case 'div':
 		case 'code':
 		case 'strong':
 		case 'em':
@@ -98,7 +108,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 				new_container = document.createElement( 'a' );
 
 				new_container.setAttribute( 'href', range_info.url );
-				if ( range_info_type == 'stat' ) {
+				if ( range_info_type === 'stat' ) {
 					// Stat links should change the whole window/tab
 					new_container.setAttribute( 'target', '_parent' );
 				} else {
@@ -140,8 +150,8 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
  * @param {string} sub_text  Plain-text upon which ranges act
  * @param {Array} sub_ranges Position/applicable ranges array
  * @param {Array} range_data All range data
- * @param {DocumentFragment} container Destination DOM fragment for output
- * @param {object} options
+ * @param {object} container Destination DOM fragment for output
+ * @param {object} options Options for building chunks
  */
 function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 	let text_start = null,
@@ -159,7 +169,7 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 	// We use sub_ranges and not sub_text because we *can* have an empty string with a range
 	// acting upon it. For example an a tag with just an alt-text-less image tag inside of it
 	for ( i = 0; i < sub_ranges.length; i++ ) {
-		if ( sub_ranges[ i ].index.length == 0 ) {
+		if ( sub_ranges[ i ].index.length === 0 ) {
 			// This is a simple text element without applicable ranges
 			if ( text_start == null ) {
 				// This is the beginning of the text element
@@ -292,7 +302,7 @@ function recurse_convert( text, ranges, options ) {
 	// to smallest gives us the proper order for descending recursively.
 	for ( i = 0; i < ranges_copy.length; i++ ) {
 		id = find_largest_range( ranges_copy );
-		if ( ranges[ id ].indices[ 1 ] == 0 && ranges[ id ].indices[ 1 ] == 0 ) {
+		if ( ranges[ id ].indices[ 1 ] === 0 && ranges[ id ].indices[ 1 ] === 0 ) {
 			// Indices covering 0,0 are special cases only. They always go at the very
 			// beginning of the document, are never nested, and are always "empty"
 			// If there are multiple zero-length ranges, they will return in the order
