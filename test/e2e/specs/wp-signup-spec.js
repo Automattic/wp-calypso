@@ -1652,13 +1652,10 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step(
-			'Can visit the Jetpack Add New Site page and choose "Create a shiny new WordPress.com site"',
-			async function () {
-				const startPage = await StartPage.Visit( this.driver, StartPage.getStartURL() );
-				await startPage.overrideABTestInLocalStorage( 'passwordlessSignup', 'passwordless' );
-			}
-		);
+		step( 'Can visit the Start page', async function () {
+			const startPage = await StartPage.Visit( this.driver, StartPage.getStartURL() );
+			await startPage.overrideABTestInLocalStorage( 'passwordlessSignup', 'passwordless' );
+		} );
 
 		step( 'Can see passwordless Start page and enter an email', async function () {
 			const createYourAccountPage = await CreateYourAccountPage.Expect( driver );
