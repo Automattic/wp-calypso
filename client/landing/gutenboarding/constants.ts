@@ -15,6 +15,12 @@ const fontTitles: Partial< Record< Font, string > > = {
 
 export const PAID_DOMAINS_TO_SHOW = 5;
 
+/**
+ * The status needed to proceed with a selected domain when performing an availability check
+ *
+ */
+export const DOMAIN_AVAILABLE_STATUS = 'available';
+
 export function getFontTitle( fontFamily: string ): string {
 	return fontTitles[ fontFamily as Font ] ?? fontFamily;
 }
