@@ -55,6 +55,7 @@ export default function SubscriptionsContent() {
 		// TODO: add concierge banner
 		return (
 			<PurchasesSite
+				showHeader={ false }
 				key={ selectedSite.ID }
 				siteId={ selectedSite.ID }
 				name={ selectedSite.name }
