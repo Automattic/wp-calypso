@@ -289,9 +289,8 @@ export default connect(
 	},
 	( dispatch ) => {
 		return {
-			trackEmailForwardingClick: dispatch(
-				recordTracksEvent( 'calypso_email_email_forwarding_click' )
-			),
+			trackEmailForwardingClick: () =>
+				dispatch( recordTracksEvent( 'calypso_email_email_forwarding_click' ) ),
 		};
 	}
 )( localize( EmailManagement ) );
