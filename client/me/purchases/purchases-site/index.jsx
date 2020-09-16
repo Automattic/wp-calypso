@@ -27,6 +27,7 @@ import PurchaseReconnectNotice from './reconnect-notice';
 import './style.scss';
 
 const PurchasesSite = ( {
+	showHeader = true,
 	hasLoadedSite,
 	isPlaceholder,
 	site,
@@ -58,12 +59,14 @@ const PurchasesSite = ( {
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
 
-			<PurchaseSiteHeader
-				siteId={ siteId }
-				name={ name }
-				domain={ domain }
-				isPlaceholder={ isPlaceholder }
-			/>
+			{ ( showHeader || isPlaceholder ) && (
+				<PurchaseSiteHeader
+					siteId={ siteId }
+					name={ name }
+					domain={ domain }
+					isPlaceholder={ isPlaceholder }
+				/>
+			) }
 
 			{ items }
 
@@ -83,6 +86,7 @@ const PurchasesSite = ( {
 };
 
 PurchasesSite.propTypes = {
+	showHeader: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	siteId: PropTypes.number,
 	purchases: PropTypes.array,
