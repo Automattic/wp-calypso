@@ -36,7 +36,7 @@ RUN yarn install --frozen-lockfile
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
-RUN yarn run build
+RUN yarn run build && rm -fr .cache
 
 ###################
 FROM node:12.18.0-alpine as app
