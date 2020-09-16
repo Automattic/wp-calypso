@@ -3,37 +3,24 @@ $left-margin: 36px;
 .purchase-modal {
 	--padding: -16px;
 
-	@media ( min-width: 480px ) {
-		--padding: -24px;
-	}
-
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	width: 450px;
 
 	@media ( max-width: 480px ) {
+		--padding: -24px;
 		width: unset;
-	}
-
-	> p {
-		margin: 1em 0;
 	}
 
 	> hr {
 		width: calc( 100% + var( --padding ) * -2 );
 		margin: 16px var( --padding );
 
-		// stylelint-disable-next-line unit-whitelist
+		// stylelint-disable-next-line unit-allowed-list
 		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 			height: 0.5px;
 		}
-	}
-
-	> .button.is-primary {
-		align-self: flex-end;
-		margin-top: 16px;
-		min-width: 35%;
 	}
 }
 
@@ -146,4 +133,13 @@ $left-margin: 36px;
 	font-weight: normal;
 	color: var( --color-neutral-40 );
 	font-size: $font-body-small;
+}
+
+/**
+ * Pay button
+ */
+.purchase-modal__pay-button {
+	align-self: flex-end;
+	margin-top: 16px;
+	min-width: 35%;
 }

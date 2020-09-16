@@ -112,7 +112,13 @@ function PayButton( { busy, totalCost, onClick } ) {
 	const processingText = translate( 'Processing…' );
 
 	return (
-		<Button primary={ ! busy } busy={ busy } disabled={ busy } onClick={ onClick }>
+		<Button
+			primary={ ! busy }
+			busy={ busy }
+			disabled={ busy }
+			onClick={ onClick }
+			className="purchase-modal__pay-button"
+		>
 			{ busy ? processingText : payText }
 		</Button>
 	);
@@ -127,6 +133,8 @@ export function PurchaseModal( { cart, cards, onComplete, onClose, siteSlug } ) 
 		storedCard: cards?.[ 0 ],
 		onComplete,
 		onClose,
+		errorMessage: translate( 'Something went wrong…' ),
+		successMessage: translate( 'Your purchase has been completed!' ),
 	} );
 
 	return (

@@ -216,12 +216,16 @@ export class UpsellNudge extends React.Component {
 		return 'test' === abtest( 'oneClickUpsell' );
 	};
 
+	handleOneClickUpsellComplete = () => {
+		page( `/home/${ this.props.siteSlug }` );
+	};
+
 	renderPurchaseModal = () => {
 		return (
 			<PurchaseModal
 				cart={ this.props.cart }
 				cards={ this.props.cards }
-				onComplete={ () => this.props.handleCheckoutCompleteRedirect( true ) }
+				onComplete={ this.handleOneClickUpsellComplete }
 				onClose={ () => this.setState( { showPurchaseModal: false } ) }
 				siteSlug={ this.props.siteSlug }
 			/>

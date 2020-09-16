@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 import { find, pick } from 'lodash';
 
 /**
@@ -12,7 +11,7 @@ import { RECEIVED_WPCOM_RESPONSE } from 'lib/store-transactions/step-types';
 import { preprocessCartForServer } from 'lib/cart-values';
 import { submit } from 'lib/store-transactions';
 import { recordTracksEvent } from 'lib/analytics/tracks';
-import { errorNotice } from 'state/notices/actions';
+import notices from 'notices';
 
 function extractStoredCardMetaValue( card, key ) {
 	return find( card.meta, [ 'meta_key', key ] )?.meta_value;
@@ -41,8 +40,15 @@ function generateTransactionData( cart, storedCard ) {
 	};
 }
 
-export function useSubmitTransaction( { cart, storedCard, setStep, onClose, onComplete } ) {
-	const dispatch = useDispatch();
+export function useSubmitTransaction( {
+	cart,
+	storedCard,
+	setStep,
+	onClose,
+	onComplete,
+	errorMessage,
+	successMessage,
+} ) {
 	return useCallback( () => {
 		const transactionData = generateTransactionData( cart, storedCard );
 		submit( transactionData, ( { name, data, error } ) => {
@@ -51,7 +57,7 @@ export function useSubmitTransaction( { cart, storedCard, setStep, onClose, onCo
 					error_code: error.code || error.error,
 					reason: error.message,
 				} );
-				dispatch( errorNotice( error.message ) );
+				notices.error( errorMessage );
 				onClose();
 				return;
 			}
@@ -59,11 +65,14 @@ export function useSubmitTransaction( { cart, storedCard, setStep, onClose, onCo
 			setStep( name );
 
 			if ( RECEIVED_WPCOM_RESPONSE === name && data && ! error ) {
+				notices.success( successMessage, {
+					persistent: true,
+				} );
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_success', {} );
 				onComplete?.();
 			}
 		} );
-	}, [ cart, storedCard, setStep ] );
+	}, [ cart, storedCard, setStep, onClose, onComplete ] );
 }
 
 export function formatDate( cardExpiry ) {
