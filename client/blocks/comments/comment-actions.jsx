@@ -9,9 +9,13 @@ import classnames from 'classnames';
 import { noop } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import { changeCommentStatus } from 'state/comments/actions';
 import CommentLikeButtonContainer from './comment-likes';
 import CommentApproveAction from './comment-approve-action';
@@ -23,8 +27,6 @@ import PopoverMenuSeparator from 'components/popover/menu-separator';
  * Style dependencies
  */
 import './comment-actions.scss';
-
-const PlainButton = ( props ) => <Button { ...props } plain />;
 
 const CommentActions = ( {
 	post,
@@ -58,37 +60,34 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore && (
-				<PlainButton className="comments__comment-actions-read-more" onClick={ onReadMore }>
+				<Button className="comments__comment-actions-read-more" onClick={ onReadMore }>
 					<Gridicon
 						icon="chevron-down"
 						size={ 18 }
 						className="comments__comment-actions-read-more-icon"
 					/>
 					{ translate( 'Read More' ) }
-				</PlainButton>
+				</Button>
 			) }
 			{ showReplyButton && (
-				<PlainButton className="comments__comment-actions-reply" onClick={ handleReply }>
+				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-				</PlainButton>
+				</Button>
 			) }
 			{ showCancelReplyButton && (
-				<PlainButton className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
+				<Button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
-				</PlainButton>
+				</Button>
 			) }
 			{ showCancelEditButton && (
-				<PlainButton
-					className="comments__comment-actions-cancel-reply"
-					onClick={ editCommentCancel }
-				>
+				<Button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
 					{ translate( 'Cancel' ) }
-				</PlainButton>
+				</Button>
 			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
-				tagName={ PlainButton }
+				tagName={ Button }
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
@@ -96,18 +95,18 @@ const CommentActions = ( {
 			{ showModerationTools && (
 				<div className="comments__comment-actions-moderation-tools">
 					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
-					<PlainButton className="comments__comment-actions-trash" onClick={ trashComment }>
+					<Button className="comments__comment-actions-trash" onClick={ trashComment }>
 						<Gridicon icon="trash" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
-					</PlainButton>
-					<PlainButton className="comments__comment-actions-spam" onClick={ spamComment }>
+					</Button>
+					<Button className="comments__comment-actions-spam" onClick={ spamComment }>
 						<Gridicon icon="spam" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
-					</PlainButton>
-					<PlainButton className="comments__comment-actions-edit" onClick={ editComment }>
+					</Button>
+					<Button className="comments__comment-actions-edit" onClick={ editComment }>
 						<Gridicon icon="pencil" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
-					</PlainButton>
+					</Button>
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 						<PopoverMenuItem
 							className={ classnames( 'comments__comment-actions-approve', {
