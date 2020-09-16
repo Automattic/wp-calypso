@@ -72,7 +72,7 @@ export function useSubmitTransaction( {
 				onComplete?.();
 			}
 		} );
-	}, [ cart, storedCard, setStep, onClose, onComplete ] );
+	}, [ cart, storedCard, setStep, onClose, onComplete, errorMessage, successMessage ] );
 }
 
 export function formatDate( cardExpiry ) {
