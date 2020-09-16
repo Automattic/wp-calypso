@@ -142,10 +142,39 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 		test( `Should have 4 visibility options`, () => {
 			const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
-			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
+			expect( container.querySelectorAll( '[name="blog_coming_soon_mode"]' ).length ).toBe( 1 );
 		} );
 
 		[
+			/*
+
+			Possible States:
+
+			Public
+			Public + Noindex
+			Public + Noindex + Coming Soon (v2)
+			Private
+			Private + Coming Soon (v1)
+
+			Possible Transitions
+
+			Public 								> Noindex					= Public + Noindex
+			Public 								> Private					= Private
+			Public 								> Coming Soon (v2)			= Public + Noindex + Coming Soon (v2)
+			Public + Noindex					> Remove Noindex			= Public
+			Public + Noindex					> Private					= Private
+			Public + Noindex					> Coming soon (v2)			= Public + Noindex + Coming Soon (v2)
+			Public + Noindex + Coming Soon (v2) > Remove Coming Soon (v2)	= Public
+			Public + Noindex + Coming Soon (v2) > Remove Noindex			= Public
+			Public + Noindex + Coming Soon (v2) > Private					= Private
+			Private								> Public					= Public
+			Private								> Public + Noindex			= Public + Noindex
+			Private								> Coming Soon (v2)			= Public + Noindex + Coming Soon (v2)
+			Private + Coming Soon (v1)			> Public					= Public + Noindex + Coming Soon (v2)
+			Private + Coming Soon (v1)			> Remove Coming Soon (v1)	= Private
+
+			*/
 			[
 				'Coming soon',
 				'Coming Soon',
