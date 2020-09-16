@@ -9,7 +9,7 @@
 
 	&--text {
 		max-width: 320px;
-		font-size: 0.9em;
+		font-size: $font-body-small;
 		margin: 10px 0;
 		color: $dark-gray-500;
 	}
@@ -19,13 +19,13 @@
 		align-items: center;
 
 		&--text {
-			margin: 15px 0;
+			margin: 15px 10px;
 		}
 	}
 }
 
 .domain-picker__show-more {
-	padding: 10px;
+	margin-top: 20px;
 	text-align: center;
 }
 
@@ -70,7 +70,7 @@
 	margin-bottom: 0.5em;
 	text-transform: uppercase;
 	color: var( --studio-gray-40 );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	letter-spacing: 1px;
 	font-weight: bold;
 }
@@ -229,7 +229,8 @@
 	line-height: 20px;
 	height: 20px;
 	align-items: center;
-	font-size: 10px;
+	// stylelint-disable-next-line scales/font-size
+	font-size: 10px; //typography-exception smaller size needed
 	text-transform: uppercase;
 	vertical-align: middle;
 	background-color: var( --studio-blue-50 );
