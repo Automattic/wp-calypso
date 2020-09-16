@@ -182,7 +182,7 @@ export default {
 		],
 	},
 	offerResetFlow: {
-		datestamp: '20200804',
+		datestamp: '20200916',
 		variations: {
 			showOfferResetFlow: 100,
 			control: 0,
