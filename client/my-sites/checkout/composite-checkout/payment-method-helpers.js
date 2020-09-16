@@ -527,7 +527,8 @@ export function filterAppropriatePaymentMethods( {
 				methodObject.id,
 				allowedPaymentMethods || serverAllowedPaymentMethods
 			);
-		} );
+		} )
+		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
 }
 
 export function needsDomainDetails( cart ) {
@@ -557,4 +558,12 @@ export function getPostalCode() {
 	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
 	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
 	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
+}
+
+function isPaymentMethodLegallyRestricted( paymentMethodId ) {
+	const restrictedPaymentMethods = [
+		'wechat', // whitehouse.gov/presidential-actions/executive-order-addressing-threat-posed-wechat/
+	];
+
+	return restrictedPaymentMethods.includes( paymentMethodId );
 }
