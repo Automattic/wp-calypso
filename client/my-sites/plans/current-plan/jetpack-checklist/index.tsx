@@ -21,13 +21,19 @@ import QueryRewindState from 'components/data/query-rewind-state';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 // eslint-disable-next-line no-restricted-imports
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, getCustomizerUrl, getSiteProducts } from 'state/sites/selectors';
+import {
+	getSiteSlug,
+	getCustomizerUrl,
+	getSiteProducts,
+	isJetpackMinimumVersion,
+} from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/guided-tours/actions';
 import { URL } from 'types';
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
+import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
 import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
-import { isBusinessPlan, isPremiumPlan } from 'lib/plans';
+import { isBusinessPlan, isPremiumPlan, isJetpackOfferResetPlan } from 'lib/plans';
+import { FEATURE_VIDEO_UPLOADS_JETPACK_PRO } from 'lib/plans/constants';
 import { isJetpackAntiSpam } from 'lib/products-values';
 import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import { Button, Card } from '@automattic/components';
@@ -42,8 +48,7 @@ import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js
 import './style.scss';
 
 interface Props {
-	isPremium: boolean;
-	isProfessional: boolean;
+	hasVideoHosting: boolean;
 	isPaidPlan: boolean;
 	taskStatuses:
 		| {
@@ -124,8 +129,6 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 		const {
 			akismetFinished,
 			isPaidPlan,
-			isPremium,
-			isProfessional,
 			hasAntiSpam,
 			productInstallStatus,
 			rewindState,
@@ -134,6 +137,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 			taskStatuses,
 			translate,
 			vaultpressFinished,
+			hasVideoHosting,
 		} = this.props;
 
 		const isRewindActive = rewindState === 'active' || rewindState === 'provisioning';
@@ -311,7 +315,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						title={ translate( 'Lazy Load Images' ) }
 					/>
 
-					{ ( isPremium || isProfessional ) && (
+					{ hasVideoHosting && (
 						<Task
 							id={ CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING }
 							title={ translate( 'Video Hosting' ) }
@@ -342,9 +346,13 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 }
 
 function mapStateToProps( state ) {
+	const OFFER_RESET_VIDEO_MINIMUM_JETPACK_VERSION = '8.9.2';
+
 	const siteId = getSelectedSiteId( state );
 	const productInstallStatus = getJetpackProductInstallStatus( state, siteId );
 	const rewindState = get( getRewindState( state, siteId ), 'state', 'uninitialized' );
+	const isMinimumVersion =
+		siteId && isJetpackMinimumVersion( state, siteId, OFFER_RESET_VIDEO_MINIMUM_JETPACK_VERSION );
 
 	// Link to "My Plan" page in Jetpack
 	const wpAdminUrl = getJetpackWpAdminUrl( state );
@@ -364,8 +372,6 @@ function mapStateToProps( state ) {
 			productInstallStatus &&
 			includes( [ 'installed', 'skipped' ], productInstallStatus.vaultpress_status ),
 		widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
-		isPremium,
-		isProfessional,
 		isPaidPlan,
 		hasAntiSpam,
 		rewindState,
@@ -374,6 +380,10 @@ function mapStateToProps( state ) {
 		siteSlug: getSiteSlug( state, siteId ),
 		taskStatuses: get( getSiteChecklist( state, siteId ), 'tasks' ),
 		wpAdminUrl,
+		hasVideoHosting:
+			siteId &&
+			hasFeature( state, siteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) &&
+			( ! isJetpackOfferResetPlan( planSlug ) || isMinimumVersion ),
 	};
 }
 
