@@ -161,6 +161,10 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 		return [ ...state, action.featureId ];
 	}
 
+	if ( action.type === 'SET_DOMAIN' && action.domain && ! action.domain?.is_free ) {
+		return [ ...state, 'domain' ];
+	}
+
 	if ( action.type === 'REMOVE_FEATURE' ) {
 		return state.filter( ( id ) => id !== action.featureId );
 	}
