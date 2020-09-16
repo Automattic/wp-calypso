@@ -921,7 +921,11 @@ export class MySitesSidebar extends Component {
 								label={ this.props.translate( 'Billing' ) }
 								tipTarget="purchases"
 								selected={ itemLinkMatches( '/purchases', this.props.path ) }
-								link={ this.props.site ? '/purchases/' + this.props.site.slug : '/me/purchases' }
+								link={
+									this.props.site
+										? '/purchases/subscriptions/' + this.props.site.slug
+										: '/me/purchases'
+								}
 								onNavigate={ this.trackPurchasesClick }
 								preloadSectionName="site-purchases"
 								forceInternalLink
