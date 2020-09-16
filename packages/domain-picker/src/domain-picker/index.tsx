@@ -65,7 +65,7 @@ export interface Props {
 
 	currentDomain?: string;
 
-	checkingDomainAvailability?: boolean;
+	isCheckingDomainAvailability?: boolean;
 
 	existingSubdomain?: string;
 
@@ -98,7 +98,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	initialDomainSearch = '',
 	onSetDomainSearch,
 	currentDomain,
-	checkingDomainAvailability,
+	isCheckingDomainAvailability,
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 } ) => {
@@ -240,7 +240,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											domain={ suggestion.domain_name }
 											cost={ suggestion.cost }
 											isLoading={
-												currentDomain === suggestion.domain_name && checkingDomainAvailability
+												currentDomain === suggestion.domain_name && isCheckingDomainAvailability
 											}
 											hstsRequired={ suggestion.hsts_required }
 											isFree={ suggestion.is_free }
