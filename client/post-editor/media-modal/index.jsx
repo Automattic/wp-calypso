@@ -16,7 +16,6 @@ import {
 	noop,
 	partial,
 	some,
-	uniqueId,
 	values,
 } from 'lodash';
 
@@ -215,7 +214,7 @@ export class EditorMediaModal extends Component {
 
 		if ( selectedItems.length && this.state.source !== '' ) {
 			const itemsWithTransientId = selectedItems.map( ( item ) =>
-				Object.assign( {}, item, { ID: uniqueId( 'media-' ), transient: true } )
+				Object.assign( {}, item, { ID: MediaUtils.createTransientMediaId(), transient: true } )
 			);
 			this.copyExternalAfterLoadingWordPressLibrary( itemsWithTransientId, this.state.source );
 		} else {
