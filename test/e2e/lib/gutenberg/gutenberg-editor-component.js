@@ -152,8 +152,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleMoreToolsAndOptions() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='More tools & options']" )
+			By.xpath( "//button[@aria-label='More tools & options' or @aria-label='Options']" )
 		);
+
 		await this.driver.sleep( 1000 );
 	}
 
@@ -162,7 +163,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[2]" )
+			By.xpath(
+				"//div[@aria-label='More tools & options' or @aria-label='Options']/div[2]/div[2]/button[2]"
+			)
 		);
 
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
@@ -179,7 +182,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[1]" )
+			By.xpath(
+				"//div[@aria-label='More tools & options' or @aria-label='Options']/div[2]/div[2]/button[1]"
+			)
 		);
 
 		// close the menu
@@ -410,15 +415,28 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async removeBlock( blockID ) {
-		const blockSelector = By.css( `.wp-block[id="${blockID}"]`);
-		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, blockSelector, this.explicitWaitMS / 5 );
+		const blockSelector = By.css( `.wp-block[id="${ blockID }"]` );
+		await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			blockSelector,
+			this.explicitWaitMS / 5
+		);
 		await this.driver.findElement( blockSelector ).click();
-		await driverHelper.clickWhenClickable( this.driver, By.css( '.block-editor-block-settings-menu' ) );
-		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, By.css( '.components-menu-group' ), this.explicitWaitMS / 5 );
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.block-editor-block-settings-menu' )
+		);
+		await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '.components-menu-group' ),
+			this.explicitWaitMS / 5
+		);
 		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.components-menu-group:last-of-type button.components-menu-item__button:last-of-type' )
+			By.css(
+				'.components-menu-group:last-of-type button.components-menu-item__button:last-of-type'
+			)
 		);
 	}
 

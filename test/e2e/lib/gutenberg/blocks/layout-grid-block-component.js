@@ -22,9 +22,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	/**
 	 * Inserts a block into the specified grid column using the Quick Inserter.
 	 *
-	 * I'm not sure if this belongs here or extracted into a method in the GutenbergEditorComponent or maybe
-	 * its own QuickInserter class. I'll figure out later.
-	 * Also, the block wrapper div changes after you setup the number of columns you want. This makes it tricky
+	 * The block wrapper div changes after you setup the number of columns you want. This makes it tricky
 	 * to scope the elements to the original block. I'm for now brute-forcing the selection by using a more
 	 * general selector.
 	 *
@@ -44,6 +42,12 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		await allButtons[ column ].click();
 
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
+
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css( 'div.block-editor-inserter__quick-inserter.has-search.has-expand' ),
+			3000
+		);
 
 		await driverHelper.setWhenSettable(
 			this.driver,
@@ -75,8 +79,8 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 
 		await actions
 			.move( {
-				x: blockAppenderWrapperBox.x + blockAppenderWrapperBox.width / 2,
-				y: blockAppenderWrapperBox.bottom - 50,
+				x: Math.trunc( blockAppenderWrapperBox.x + blockAppenderWrapperBox.width / 2 ),
+				y: Math.trunc( blockAppenderWrapperBox.bottom - 50 ),
 			} )
 			.click()
 			.perform();
