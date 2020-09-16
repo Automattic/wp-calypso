@@ -43,6 +43,8 @@ import {
  * Internal dependencies
  */
 import { SiteSettingsFormGeneral } from '../form-general';
+import { Site } from '@automattic/data-stores';
+const { Visibility } = Site;
 
 import moment from 'moment';
 
@@ -129,10 +131,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				siteIsJetpack: false,
 				site: { plan: PLAN_PERSONAL },
 				fields: {
-					blog_public: 1,
-					wpcom_coming_soon: 0,
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
 				},
-				withComingSoonOption: true,
 				updateFields: jest.fn( ( fields ) => {
 					testProps.fields = fields;
 				} ),
@@ -145,18 +146,33 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		[
-			[ 'Coming soon', 'Coming Soon', 1, { blog_public: -1, wpcom_coming_soon: 1 } ],
-			[ 'Public', 'Public', -1, { blog_public: 1, wpcom_coming_soon: 0 } ],
+			[
+				'Coming soon',
+				'Coming Soon',
+				Visibility.PublicIndexed,
+				{ blog_public: Visibility.Private, wpcom_public_coming_soon: 1 },
+			],
+			[
+				'Public',
+				'Public',
+				Visibility.Private,
+				{ blog_public: Visibility.PublicIndexed, wpcom_public_coming_soon: 0 },
+			],
 			[
 				'Hidden',
 				'Discourage search engines from indexing this site',
-				-1,
-				{ blog_public: 0, wpcom_coming_soon: 0 },
+				Visibility.Private,
+				{ blog_public: Visibility.PublicNotIndexed, wpcom_public_coming_soon: 0 },
 			],
-			[ 'Private', 'Private', 1, { blog_public: -1, wpcom_coming_soon: 0 } ],
-		].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
+			[
+				'Private',
+				'Private',
+				Visibility.PublicIndexed,
+				{ blog_public: Visibility.Private, wpcom_public_coming_soon: 0 },
+			],
+		].forEach( ( [ name, text, blogPublic, updatedFields ] ) => {
 			test( `${ name } option should be selectable`, () => {
-				testProps.fields.blog_public = initialBlogPublic;
+				testProps.fields.blog_public = blogPublic;
 				const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
 				const radioButton = getByLabelText( text, { exact: false } );
@@ -180,13 +196,13 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 			fireEvent.click( hiddenCheckbox );
 			expect( testProps.updateFields ).toBeCalledWith( {
-				blog_public: 0,
-				wpcom_coming_soon: 0,
+				blog_public: Visibility.PublicNotIndexed,
+				wpcom_public_coming_soon: 0,
 			} );
 		} );
 
 		test( `Hidden checkbox should be possible to unselect`, () => {
-			testProps.fields.blog_public = 0;
+			testProps.fields.blog_public = Visibility.PublicNotIndexed;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
 			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing this site', {
@@ -199,8 +215,8 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 			fireEvent.click( hiddenCheckbox );
 			expect( testProps.updateFields ).toBeCalledWith( {
-				blog_public: 1,
-				wpcom_coming_soon: 0,
+				blog_public: Visibility.PublicIndexed,
+				wpcom_public_coming_soon: 0,
 			} );
 		} );
 	} );

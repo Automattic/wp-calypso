@@ -45,6 +45,8 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import { hasLocalizedText } from 'blocks/eligibility-warnings/has-localized-text';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import { Site } from '@automattic/data-stores';
+const { Visibility } = Site;
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -302,7 +304,7 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 		} = this.props;
 		const blogPublic = parseInt( fields.blog_public, 10 );
-		const wpcomComingSoon = parseInt( fields.wpcom_public_coming_soon, 10 );
+		const wpcomPublicComingSoon = parseInt( fields.wpcom_public_coming_soon, 10 );
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 		return (
 			<FormFieldset>
@@ -311,10 +313,14 @@ export class SiteSettingsFormGeneral extends Component {
 						<FormRadio
 							name="blog_public"
 							value="1"
-							checked={ blogPublic === 0 || blogPublic === 1 || wpcomComingSoon === 1 }
+							checked={
+								blogPublic === Visibility.PublicNotIndexed ||
+								blogPublic === Visibility.PublicIndexed ||
+								wpcomPublicComingSoon === 1
+							}
 							onChange={ () =>
 								this.handleVisibilityOptionChange( {
-									blog_public: 1,
+									blog_public: Visibility.PublicIndexed,
 									wpcom_public_coming_soon: 0,
 								} )
 							}
@@ -330,11 +336,14 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 					<FormInputCheckbox
 						name="blog_public"
-						value="0"
-						checked={ 0 === blogPublic || wpcomComingSoon === 1 }
+						value={ Visibility.PublicNotIndexed }
+						checked={ Visibility.PublicNotIndexed === blogPublic || wpcomPublicComingSoon === 1 }
 						onChange={ () =>
 							this.handleVisibilityOptionChange( {
-								blog_public: blogPublic === 0 ? 1 : 0,
+								blog_public:
+									blogPublic === Visibility.PublicNotIndexed
+										? Visibility.PublicIndexed
+										: Visibility.PublicNotIndexed,
 							} )
 						}
 						disabled={ isRequestingSettings }
@@ -352,11 +361,11 @@ export class SiteSettingsFormGeneral extends Component {
 						<FormLabel className="site-settings__visibility-label is-private">
 							<FormRadio
 								name="blog_public"
-								value="-1"
-								checked={ -1 === blogPublic }
+								value={ Visibility.Private }
+								checked={ Visibility.Private === blogPublic }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
-										blog_public: -1,
+										blog_public: Visibility.Private,
 										wpcom_public_coming_soon: 0,
 									} )
 								}
@@ -391,7 +400,7 @@ export class SiteSettingsFormGeneral extends Component {
 			isSavingSettings,
 			handleSubmitForm,
 		} = this.props;
-		const isWpcomComingSoonMode = parseInt( fields.wpcom_public_coming_soon, 10 );
+		const isWpcomPublicComingSoonMode = parseInt( fields.wpcom_public_coming_soon, 10 );
 
 		return (
 			<>
@@ -409,11 +418,11 @@ export class SiteSettingsFormGeneral extends Component {
 								<FormInputCheckbox
 									name="blog_coming_soon_mode"
 									value="0"
-									checked={ 1 === isWpcomComingSoonMode }
+									checked={ 1 === isWpcomPublicComingSoonMode }
 									onChange={ () =>
 										this.handleVisibilityOptionChange( {
-											wpcom_public_coming_soon: isWpcomComingSoonMode === 0 ? 1 : 0,
-											blog_public: 0, // Hidden, discourage search engines from indexing this site
+											wpcom_public_coming_soon: isWpcomPublicComingSoonMode === 0 ? 1 : 0,
+											blog_public: Visibility.PublicNotIndexed, // Hidden, discourage search engines from indexing this site
 										} )
 									}
 									disabled={ isRequestingSettings }
