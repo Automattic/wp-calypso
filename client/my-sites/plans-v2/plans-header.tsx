@@ -42,7 +42,6 @@ const ConnectFlowPlansHeader = () => (
 );
 
 const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
-	//const state = context.store.getState();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	// Site plan
 	const currentPlan =
@@ -59,6 +58,7 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 		[ siteId ]
 	);
 
+	// TODO: Maybe make Notice dismissal persistent?
 	const [ showNotice, setShowNotice ] = useState( true );
 
 	// Only show ConnectFlowPlansHeader if coming from in-connect flow and if no products or plans have been purchased.
