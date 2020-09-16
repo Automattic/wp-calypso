@@ -9,6 +9,7 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
+import FormSelect from 'components/forms/form-select';
 import { requestSettingsUpdate } from 'state/mailchimp/settings/actions';
 import QueryMailchimpLists from 'components/data/query-mailchimp-lists';
 import QueryMailchimpSettings from 'components/data/query-mailchimp-settings';
@@ -117,7 +118,7 @@ const MailchimpSettings = ( {
 					showDismiss={ false }
 				/>
 			) }
-			<select value={ mailchimpListId } onChange={ chooseMailchimpList }>
+			<FormSelect value={ mailchimpListId } onChange={ chooseMailchimpList }>
 				<option key="none" value={ 0 }>
 					{ translate( 'Do not save subscribers to Mailchimp for this site' ) }
 				</option>
@@ -127,7 +128,7 @@ const MailchimpSettings = ( {
 							{ list.name }
 						</option>
 					) ) }
-			</select>
+			</FormSelect>
 			{ common }
 		</div>
 	);

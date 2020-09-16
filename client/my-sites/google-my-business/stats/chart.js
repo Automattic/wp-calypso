@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import CardHeading from 'components/card-heading';
+import FormSelect from 'components/forms/form-select';
 import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
 import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
 import LineChart from 'components/line-chart';
@@ -293,7 +294,7 @@ class GoogleMyBusinessStatsChart extends Component {
 							</CardHeading>
 						</div>
 					) }
-					<select
+					<FormSelect
 						className="gmb-stats__chart-interval"
 						onChange={ this.handleIntervalChange }
 						value={ interval }
@@ -301,7 +302,7 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="week">{ translate( 'Week' ) }</option>
 						<option value="month">{ translate( 'Month' ) }</option>
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
-					</select>
+					</FormSelect>
 
 					<div className="gmb-stats__chart">{ this.renderChart() }</div>
 				</Card>

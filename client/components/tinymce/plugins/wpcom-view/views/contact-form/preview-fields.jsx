@@ -14,6 +14,7 @@ import PreviewRequired from './preview-required';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
 
 const textField = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
@@ -42,11 +43,11 @@ const checkbox = ( field, index ) => (
 const select = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
-		<select>
+		<FormSelect>
 			{ [].concat( field.options.split( ',' ) ).map( ( option, optionIndex ) => (
 				<option key={ 'contact-form-select-option-' + optionIndex }>{ option }</option>
 			) ) }
-		</select>
+		</FormSelect>
 	</PreviewFieldset>
 );
 
