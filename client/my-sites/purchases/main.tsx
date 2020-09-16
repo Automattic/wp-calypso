@@ -11,7 +11,7 @@ import Subscriptions from './subscriptions';
 
 export default function Purchases() {
 	return (
-		<Main className="purchases">
+		<Main className="purchases is-wide-layout">
 			<Subscriptions />
 		</Main>
 	);

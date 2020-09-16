@@ -23,7 +23,7 @@ export default function Subscriptions() {
 	const translate = useTranslate();
 
 	return (
-		<Main className="subscriptions">
+		<Main className="subscriptions is-wide-layout">
 			<QueryUserPurchases userId={ userId } />
 			<PageViewTracker path="/purchases/subscriptions" title="Subscriptions" />
 			<MySitesSidebarNavigation />
