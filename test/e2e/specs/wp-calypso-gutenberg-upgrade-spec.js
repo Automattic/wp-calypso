@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
-import { times, sample } from 'lodash';
+import { times } from 'lodash';
 import { By } from 'selenium-webdriver';
 import { promises as fs } from 'fs';
 import { join } from 'path';
@@ -54,7 +54,7 @@ before( async function () {
 } );
 
 // Should we keep the @parallel tag here for this e2e test?
-describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
+describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
