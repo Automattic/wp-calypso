@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-nodejs-modules */
 
+import 'source-map-support/register';
 import '@automattic/calypso-polyfills';
 
 /**
