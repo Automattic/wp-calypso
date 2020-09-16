@@ -1,11 +1,16 @@
 FROM node:12.18.0 as builder
-LABEL maintainer="Automattic"
 
-WORKDIR /calypso
-
-
+ARG commit_sha="(unknown)"
+ARG workers
 ENV CONTAINER 'docker'
-ENV PROGRESS=true
+ENV PROGRESS true
+ENV COMMIT_SHA $commit_sha
+ENV CALYPSO_ENV production
+ENV WORKERS $workers
+ENV BUILD_TRANSLATION_CHUNKS true
+ENV CHROMEDRIVER_SKIP_DOWNLOAD true
+ENV PUPPETEER_SKIP_DOWNLOAD true
+WORKDIR /calypso
 
 # Build a "base" layer
 #
@@ -27,34 +32,22 @@ RUN bash /tmp/env-config.sh
 COPY . /calypso/
 RUN yarn install --frozen-lockfile
 
-
 # Build the final layer
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
-ARG commit_sha="(unknown)"
-ENV COMMIT_SHA $commit_sha
+RUN yarn run build
 
-ARG workers
-RUN WORKERS=$workers CALYPSO_ENV=production BUILD_TRANSLATION_CHUNKS=true yarn run build
-
-
+###################
 FROM node:12.18.0-alpine as app
 
 ARG commit_sha="(unknown)"
-ENV COMMIT_SHA=$commit_sha
-ENV NODE_ENV=production
+ENV COMMIT_SHA $commit_sha
+ENV NODE_ENV production
 WORKDIR /calypso
+
 RUN apk add --no-cache tini
-COPY --from=builder --chown=nobody:nobody /calypso/node_modules /calypso/node_modules/
-COPY --from=builder --chown=nobody:nobody /calypso/packages /calypso/packages/
-COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config/
-COPY --from=builder --chown=nobody:nobody /calypso/client/node_modules /calypso/client/node_modules/
-COPY --from=builder --chown=nobody:nobody /calypso/client/server/devdocs/search-index.js /calypso/client/server/devdocs/
-COPY --from=builder --chown=nobody:nobody /calypso/client/server/bundler/*.json /calypso/client/server/bundler/
-COPY --from=builder --chown=nobody:nobody /calypso/client/webpack.config.js /calypso/client/
-COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build/
-COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public/
+COPY --from=builder --chown=nobody:nobody /calypso/ /calypso/
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
