@@ -136,12 +136,13 @@ export default ( router ) => {
 		clientRender
 	);
 
+	// redirect legacy urls
 	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
 
-	// redirect legacy urls
+	// more redirect legacy urls
 	// Note: these routes are being replaced by the /my-sites/purchases section.
 	// They will remain here for now because that section is currently behind a
 	// feature flag (`site-level-billing`), but when that flag is removed, these
