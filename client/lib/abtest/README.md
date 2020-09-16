@@ -6,7 +6,7 @@ Turn on debugging in the JavaScript developer console to view details about what
 
 `localStorage.setItem('debug', 'calypso:abtests');`
 
-# Usage
+## Usage
 
 In `active-tests.js`, add your test info to the exported object:
 
@@ -82,7 +82,7 @@ if ( abtest( 'freeTrialButtonWordingForIndia', userCountryCode ) === 'startFreeT
 <Button text={ buttonWording } />
 ```
 
-## Determining whether the user is a participant in an A/B test
+### Determining whether the user is a participant in an A/B test
 
 If you want to determine whether the user is a participant in a specific A/B test, you can import the `abtest` module's `getABTestVariation` method:
 
@@ -97,7 +97,7 @@ const currentVariation = getABTestVariation( 'freeTrialButtonWording' );
 
 This is useful when your A/B test affects multiple pages and you just want to check on one page whether the user is a participant without assigning them to the test.
 
-## Testing A Variation
+### Testing A Variation
 
 If you would like to manually add yourself to a variant group to test it out visually, you can do so by modifying the `localStorage` setting for the test. For the example above, to add yourself to the `beginYourFreeTrial` group you would execute:
 
@@ -110,13 +110,13 @@ localStorage.setItem( 'ABTests', '{"freeTrialButtonWording_20150216":"beginYourF
 
 The key used in the `ABTests` object above is comprised object key name from the test config object ( In our example `freeTrialButtonWording` ), followed by the `datestamp` of the test start date ( `20150216` in the example ).
 
-## Measuring the impact of an A/B test
+### Measuring the impact of an A/B test
 
 When you set up an A/B test, think about what you want to measure its impact on. For example, if you run a test within the NUX flow you might want to measure its impact on how many people successfully sign up for an account. We call this the _conversion event_.
 
 You should make sure that the conversion event is being record in Tracks prior to deploying your A/B test. To create a new event, see the Tracks API section in the [Analytics README](../analytics/README.md).
 
-## Ensuring users don't participate in future tests
+### Ensuring users don't participate in future tests
 
 After a test ends, you'll often want to run a follow up test to test new variations that affect the same thing. To do this, you can keep the `freeTrialButtonWording` name and simply update the datestamp and variations as appropriate.
 
@@ -124,7 +124,7 @@ We've found that if a user has already participated in a test for a specific thi
 
 To account for this, the A/B test module is smart enough to know that if the user has already participated in a test with the same name (ie `freeTrialButtonWording`), then not to count them in the results of the new test.
 
-## Dealing with ineligible users
+### Dealing with ineligible users
 
 By default, users are only included in the test if their locale is set to English (`en`), the current date is on or after the datestamp you set, they have not participated in a test with the same name in the past, and they registered on or after the date that the test started.
 
@@ -132,19 +132,19 @@ In cases where the user is ineligible, the `abtest` function will return the val
 
 No `calypso_abtest_start` Tracks event is triggered for these users so they don't impact the results of the test.
 
-## Updating our end-to-end tests to avoid inconsistencies with A/B tests
+### Updating our end-to-end tests to avoid inconsistencies with A/B tests
 
 Our WordPress.com end-to-end (e2e) tests need to know which A/B test group to use otherwise this can lead to non-deterministic and inconsistent behaviour and test results.
 
-### Updating A/B tests in the e2e tests
+#### Updating A/B tests in the e2e tests
 
 The e2e tests now read directly from `active-tests.js` and will use the default variation for test runs.
 
-### Changing a known A/B test
+#### Changing a known A/B test
 
 If you're making an update to an A/B test - changing the date for example - you should update the e2e tests in the same way as above to reflect the new date.
 
-### Removing a known A/B test
+#### Removing a known A/B test
 
 When your A/B test is complete and removed from `wp-calypso` you should also remove it from the e2e test config. This doesn't have to happen _immediately_ (it doesn't matter to override an A/B test that doesn't exist) but you should do it as soon as possible to keep things neat and tidy.
 

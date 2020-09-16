@@ -9,18 +9,18 @@ These routes are served by the module:
 - /recommendations (redirects to /read/search)
 - /tag/\*
 
-# Block Rendering Development
+## Block Rendering Development
 
-## Testing
+### Testing
 
-### Follow a site
+#### Follow a site
 
 1. Go to `https://wordpress.com/following/manage`
 2. In the "Search or enter URL to follow..." input box, enter the website where you'll be publishing
    a block
 3. When your site appears in the search results, click the "Follow" button
 
-### Publish a post
+#### Publish a post
 
 1. Go to `https://wordpress.com/home/{your_url}`
 2. Go to "Posts" on the menu to the left
@@ -28,7 +28,7 @@ These routes are served by the module:
 4. Populate your post with some content, and use the block that you're testing
 5. Click on "Publish" to publish your post or "Update" if the post already exists
 
-### Test that your block renders correctly in the Reader
+#### Test that your block renders correctly in the Reader
 
 There's two places where your block may render.
 
@@ -42,9 +42,9 @@ There's two places where your block may render.
    `https://wordpress.com/read/feeds/{site_id}/posts/{post_id}`. Let's call these "Reader Posts". This
    is the second place your block may render.
 
-## Data Flow
+### Data Flow
 
-### Relevant files (and order of data flow)
+#### Relevant files (and order of data flow)
 
 Reader Previews
 
@@ -68,7 +68,7 @@ Reader Posts
 - The last two files render the post data. It seems that the API endpoints simply return text (as a
   `excerpt` property), but also `content` which contains the rich HTML of the block. Those files also have the ability to render HTML.
 
-### API Endpoints Example Requests
+#### API Endpoints Example Requests
 
 Reader Previews
 

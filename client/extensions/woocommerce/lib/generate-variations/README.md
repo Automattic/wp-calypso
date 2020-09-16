@@ -2,7 +2,7 @@
 
 Given a WooCommerce product object, this library will generate new WooCommerce variation objects based on the available product attributes.
 
-# Example
+## Example
 
 ```javascript
 import generateVariations from 'lib/generate-variations';

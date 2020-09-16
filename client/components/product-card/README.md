@@ -1,5 +1,7 @@
 # Product Card
 
+## `ProductCard`
+
 Product Card is a React component for rendering a box with product name, price, short description and additional
 information.
 
@@ -17,7 +19,7 @@ plan).
 
 See p1HpG7-7ET-p2 for more details.
 
-## How to use the `<ProductCard />`
+### How to use the `<ProductCard />`
 
 ```jsx
 import React, { Fragment } from 'react';
@@ -42,7 +44,7 @@ export default class extends React.Component {
 }
 ```
 
-## <a name="how-purchase-prop-works"></a>How `purchase` prop works
+### How `purchase` prop works
 
 The component can be in two visual and functional states:
 
@@ -50,7 +52,7 @@ The component can be in two visual and functional states:
   has purchase options, they will be listed below the description.
 - `purchase` prop is set - the content area will not contain product options (if they exist).
 
-## `<ProductCard />` props
+### `<ProductCard />` props
 
 The following props can be passed to the Product Card component:
 
@@ -69,12 +71,12 @@ The following props can be passed to the Product Card component:
   used also in other use-cases. It can be a string, a node or a React element (e.g. `<Fragment>`)
 - `title`: ( string | element ) Product title. It can be a string or a React element (e.g. `<Fragment>`)
 
-# <a name="product-card-promo-nudge"></a>Product Card Promo Nudge
+## `ProductCardPromoNudge`
 
 Product Card Promo Nudge is a Product Card's sub-component for rendering a promotion nudge. It consists of a badge label
 (a green star sticker to the left) and a promo text. Both props are optional.
 
-## How to use the `<ProductCardPromoNudge />`
+### How to use the `<ProductCardPromoNudge />`
 
 ```jsx
 import React, { Fragment } from 'react';
@@ -103,7 +105,7 @@ export default class extends React.Component {
 }
 ```
 
-## `<ProductCardPromoNudge />` Props
+### `<ProductCardPromoNudge />` Props
 
 The following props can be passed to the Product Card Promo Nudge component:
 
@@ -111,12 +113,12 @@ The following props can be passed to the Product Card Promo Nudge component:
 - `text`: ( string | element | node ) Promo text. Looks best if a `<strong>` element is used inside. It can be a string,
   a node or a React element (e.g. `<Fragment>`)
 
-# <a name="product-card-options"></a>Product Card Options
+## `ProductCardOptions`
 
 Product Card Options is a Product Card's sub-component for rendering purchase options inside the card. It's meant to
 be passed to the Product Card as a child component.
 
-## How to use the `<ProductCardOptions />`
+### How to use the `<ProductCardOptions />`
 
 ```jsx
 import React, { useState } from 'react';
@@ -161,7 +163,7 @@ export default class extends React.Component {
 }
 ```
 
-## `<ProductCardOptions />` Props
+### `<ProductCardOptions />` Props
 
 The following props can be passed to the Product Card Options component:
 
@@ -183,12 +185,12 @@ The following props can be passed to the Product Card Options component:
 - `forceRadiosEvenIfOnlyOneOption`: (bool) Normally if there is only one option the display is simplified, but
   setting this to `true` overrides that and uses the full display with radio buttons
 
-# <a name="product-card-action"></a>Product Card Action
+## `ProductCardAction`
 
 Product Card Action is a Product Card's sub-component for rendering action section. It consists of an intro
 text (optional) and a button.
 
-## How to use the `<ProductCardAction />`
+### How to use the `<ProductCardAction />`
 
 ```jsx
 import React from 'react';
@@ -213,7 +215,7 @@ export default class extends React.Component {
 }
 ```
 
-## `<ProductCardAction />` Props
+### `<ProductCardAction />` Props
 
 The following props can be passed to the Product Card Action component:
 
