@@ -21,6 +21,7 @@ export default function RockOnButton() {
 
 | Name         | Type     | Default | Description                                                                        |
 | ------------ | -------- | ------- | ---------------------------------------------------------------------------------- |
+| `plain`    | `bool`   | false   | Renders a button with no user-agent styles                                                   |
 | `compact`    | `bool`   | false   | Decreases the size of the button                                                   |
 | `primary`    | `bool`   | false   | Provides extra visual weight and identifies the primary action in a set of buttons |
 | `borderless` | `bool`   | false   | Renders a button without borders                                                   |
@@ -36,7 +37,7 @@ export default function RockOnButton() {
 - **Scary**: Use when the action will delete customer data or be otherwise difficult to recover from. Destructive buttons should trigger a confirmation dialog before the action is completed. Be thoughtful about using destructive buttons because they can feel stressful for customers.
 - **Borderless**: Use for less important or less commonly used actions since they’re less prominent.
 - **Busy**: Use when a button has been pressed and the associated action is in progress.
-- **Bare**: Use when you need a "button-as-div", to reset all styles from a button that will then be augmented by a consumer. For example, if you need something to _behave_ as a button but not _appear_ as a button, this is a good option.
+- **Plain**: Use when you need a "button-as-div", to reset all styles from a button that will then be augmented by a consumer. For example, if you need something to _behave_ as a button but not _appear_ as a button, this is a good option.
 
 #### Icon buttons
 

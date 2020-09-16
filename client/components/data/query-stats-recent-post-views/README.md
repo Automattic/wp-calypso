@@ -1,5 +1,4 @@
-Query Recent Post Views
-===========
+# Query Recent Post Views
 
 `<QueryRecentPostViews />` is a React component used to request views of a set of posts across a given time period.
 
@@ -31,7 +30,6 @@ export default function ViewCount( { viewCount } ) {
 </table>
 
 The site ID.
-
 
 ### `postIds`
 

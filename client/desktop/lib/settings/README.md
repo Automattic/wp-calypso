@@ -1,5 +1,4 @@
-Settings
-==========
+# Settings
 
 Provides user configurable settings which are saved to `app.getPath( 'userData' )` (as defined by Electron).
 
@@ -14,6 +13,7 @@ Defaults to config `debug.enabled_by_default`
 `getSettingGroup( existing, group, values )` - extend the existing values with values from the named settings group
 
 Where:
+
 - `existing` - default values to use
 - `group` - a settings group name
 - `values` - optional array of values to override
@@ -21,6 +21,7 @@ Where:
 `saveSetting( group, groupData )` - save `groupData` to the `group` named group
 
 Where:
+
 - `group` - a group name
 - `groupData` - a JS object or value to save under the group. Overwrites any existing values
 

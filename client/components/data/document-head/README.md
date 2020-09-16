@@ -1,5 +1,4 @@
-DocumentHead
-====
+# DocumentHead
 
 `<DocumentHead />` is a React component used in assigning a title, unread count, link, or meta to the global application state. It also sets `document.title` on the client, based on those parameters.
 

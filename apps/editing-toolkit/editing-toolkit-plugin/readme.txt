@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.2
+Stable tag: 2.4
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,19 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.4 =
+* Remove direct dependency on `swiper` (https://github.com/Automattic/wp-calypso/pull/45492)
+* Fix core patterns incorrectly appearing in block patterns inserter (https://github.com/Automattic/wp-calypso/pull/45499)
+* Fixed typo in "multi-column text with headline" block pattern (https://github.com/Automattic/wp-calypso/pull/45682)
+* Fix Fatal Error from Custom Exceptions (https://github.com/Automattic/wp-calypso/pull/45656)
+
+= 2.3 =
+* Bump NewsPack version to 1.8.0 (https://github.com/Automattic/wp-calypso/pull/45423)
+* Starter Page Templates: Add Current layout to page layout picker when editing a homepage (https://github.com/Automattic/wp-calypso/pull/43980)
+* Add tracks events for the block editor sidebar (https://github.com/Automattic/wp-calypso/pull/45429)
+* Site setup: add PlansGrid accordion (https://github.com/Automattic/wp-calypso/pull/45054)
+* Disable the sidebar if the editor is not in fullscreen mode (https://github.com/Automattic/wp-calypso/pull/45561)
 
 = 2.2 =
 * Improve experience of opening and closing the sidebar with assistive technology (https://github.com/Automattic/wp-calypso/pull/45349)

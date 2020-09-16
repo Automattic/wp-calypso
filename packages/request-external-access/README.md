@@ -1,8 +1,6 @@
-Request External Access
-=======================
+# Request External Access
 
 Utility for requesting authorization of sharing services.
-
 
 ## Usage
 

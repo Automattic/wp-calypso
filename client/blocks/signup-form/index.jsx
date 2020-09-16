@@ -460,14 +460,18 @@ class SignupForm extends Component {
 	}
 
 	getUserData() {
-		return {
-			username: formState.getFieldValue( this.state.form, 'username' ),
-			password: formState.getFieldValue( this.state.form, 'password' ),
-			email: formState.getFieldValue( this.state.form, 'email' ),
+		const extraFields = {
 			extra: {
 				first_name: formState.getFieldValue( this.state.form, 'firstName' ),
 				last_name: formState.getFieldValue( this.state.form, 'lastName' ),
 			},
+		};
+
+		return {
+			username: formState.getFieldValue( this.state.form, 'username' ),
+			password: formState.getFieldValue( this.state.form, 'password' ),
+			email: formState.getFieldValue( this.state.form, 'email' ),
+			...( this.props.displayNameInput && extraFields ),
 		};
 	}
 
@@ -1061,15 +1065,34 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	( state ) => ( {
-		oauth2Client: getCurrentOAuth2Client( state ),
-		sectionName: getSectionName( state ),
-		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-	} ),
+	( state, ownProps ) => {
+		const isDisplayUsernamePropSet = ownProps.hasOwnProperty( 'displayUsernameInput' );
+		const eligibleFlowsForRemoveUsernameTest = [
+			'onboarding',
+			'personal',
+			'premium',
+			'business',
+			'ecommerce',
+		];
+		let displayUsernameInput = true;
+
+		if ( eligibleFlowsForRemoveUsernameTest.includes( ownProps.flowName ) ) {
+			displayUsernameInput = 'control' === abtest( 'removeUsernameInSignup' );
+		} else if ( isDisplayUsernamePropSet ) {
+			displayUsernameInput = ownProps.displayUsernameInput;
+		}
+
+		return {
+			oauth2Client: getCurrentOAuth2Client( state ),
+			sectionName: getSectionName( state ),
+			isJetpackWooCommerceFlow:
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+			from: get( getCurrentQueryArguments( state ), 'from' ),
+			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			displayUsernameInput,
+		};
+	},
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,

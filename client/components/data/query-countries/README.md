@@ -1,5 +1,4 @@
-Query Countries
-===============
+# Query Countries
 
 `QueryDomainCountries`, `QueryPaymentCountries`, and `QuerySmsCountries` are React components used in managing network requests for lists of countries.
 

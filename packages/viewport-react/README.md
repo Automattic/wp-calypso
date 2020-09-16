@@ -1,11 +1,10 @@
-viewport
-========
+# viewport
 
 This package contains React helpers to identify and track changes to the viewport. This can be used for displaying different components depending on a desktop or mobile view.
 
 For vanilla methods, please check the `@automattic/viewport` package.
 
-### Usage
+## Usage
 
 Using a hook:
 
@@ -33,19 +32,19 @@ class MyComponent extends React.Component {
 export default withMobileBreakpoint( MyComponent );
 ```
 
-### Supported hooks
+## Supported hooks
 
 - `useBreakpoint( breakpoint )`: Returns the current status for a breakpoint, and keeps it updated.
 - `useMobileBreakpoint()`: Returns the current status for the mobile breakpoint, and keeps it updated.
 - `useDesktopBreakpoint()`: Returns the current status for the desktop breakpoint, and keeps it updated.
 
-### Supported higher-order components
+## Supported higher-order components
 
 - `withBreakpoint( breakpoint )( WrappedComponent )`: Returns a wrapped component with the current status for a breakpoint as the `isBreakpointActive` prop.
 - `withMobileBreakpoint( WrappedComponent )`: Returns a wrapped component with the current status for the mobile breakpoint as the `isBreakpointActive` prop.
 - `withDesktopBreakpoint( WrappedComponent )`: Returns a wrapped component with the current status for the desktop breakpoint as the `isBreakpointActive` prop.
 
-### Supported breakpoints
+## Supported breakpoints
 
 - '<480px'
 - '<660px'

@@ -24,7 +24,13 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { FEATURE_SPAM_AKISMET_PLUS, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import {
+	FEATURE_SPAM_AKISMET_PLUS,
+	FEATURE_JETPACK_ANTI_SPAM,
+	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+} from 'lib/plans/constants';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,
@@ -32,6 +38,7 @@ const SpamFilteringSettings = ( {
 	fields,
 	hasAkismetFeature,
 	hasAkismetKeyError,
+	hasAntiSpam,
 	isRequestingSettings,
 	isSavingSettings,
 	onChangeField,
@@ -52,7 +59,12 @@ const SpamFilteringSettings = ( {
 		className,
 		header = null;
 
-	if ( ! inTransition && ! hasAkismetFeature && ! isValidKey ) {
+	if (
+		! shouldShowOfferResetFlow() &&
+		! inTransition &&
+		! ( hasAkismetFeature || hasAntiSpam ) &&
+		! isValidKey
+	) {
 		return (
 			<UpsellNudge
 				description={ translate( 'Automatically remove spam from comments and contact forms.' ) }
@@ -146,9 +158,13 @@ export default connect( ( state, { dirtyFields, fields } ) => {
 		isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
 		includes( dirtyFields, 'wordpress_api_key' );
 	const hasAkismetFeature = hasFeature( state, selectedSiteId, FEATURE_SPAM_AKISMET_PLUS );
+	const hasAntiSpam =
+		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM ) ||
+		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM_MONTHLY );
 
 	return {
 		hasAkismetFeature,
 		hasAkismetKeyError,
+		hasAntiSpam,
 	};
 } )( localize( SpamFilteringSettings ) );

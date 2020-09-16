@@ -54,9 +54,14 @@
 		line-height: 24px;
 	}
 
+	input[type='password'] {
+		appearance: none;
+	}
+
 	input[type='text']:focus, input[type='email']:focus, input[type='password']:focus {
 		box-shadow: none;
 		border: 0;
+		outline: 0;
 	}
 
 	&.active {

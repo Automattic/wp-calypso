@@ -1,9 +1,9 @@
-Form Components
-===============
+# Form Components
 
 This is a directory of shared form components.
 
-### Settings Form Fields
+## Settings Form Fields
+
 The following form components were created as an effort to minimize duplication between site settings and me settings.
 
 - clipboard-button
@@ -38,9 +38,11 @@ The following form components were created as an effort to minimize duplication 
 The component jsx files are wrappers that ensure our classes are added to each form field. Each form field component also contains a `style.scss` file in its directory for styling. These stylesheets are included in `/assets/stylesheets/_components.scss`.
 
 ### FormSectionHeading
+
 The `FormSectionHeading` component allows you to add a section header to your settings form.
 
 ### FormInputValidation
+
 The `FormInputValidation` component is used to display a validation notice to the user. You can use it like this:
 
 ```jsx
@@ -53,6 +55,7 @@ The `FormInputValidation` component is used to display a validation notice to th
 [See README.md for MultiCheckbox](./multi-checkbox/README.md)
 
 ### SelectOptGroups
+
 `SelectOptGroups` allows you to pass structured data to render a select element with `<option>` elements nested inside `<optgroup>` separators. You can use it like this:
 
 ```jsx

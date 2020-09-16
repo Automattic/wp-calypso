@@ -1,5 +1,4 @@
-MultiCheckbox
-=============
+# MultiCheckbox
 
 MultiCheckbox is a React component that can be used in forms to simplify the creation of checkbox inputs where multiple values are possible.
 

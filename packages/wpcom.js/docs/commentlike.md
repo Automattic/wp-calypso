@@ -1,4 +1,3 @@
-
 # CommentLike
 
 `CommentLike` handler class.
@@ -10,7 +9,7 @@
 Create a new `CommentLike` instance.
 
 ```js
-var commentLike = CommentLike('<comment-id>', '<site-id>', WPCOM);
+const commentLike = CommentLike( '<comment-id>', '<site-id>', WPCOM );
 ```
 
 ### CommentLike#state(fn)
@@ -23,12 +22,12 @@ Get your like status for a comment
 
 ```js
 wpcom
-.site('blog.wordpress.com')
-.comment(342)
-.like()
-.mine(function(err, data) {
-  // use CommentLike `data` object
-});
+	.site( 'blog.wordpress.com' )
+	.comment( 342 )
+	.like()
+	.mine( function ( err, data ) {
+		// use CommentLike `data` object
+	} );
 ```
 
 ### CommentLike#add(fn)
@@ -37,12 +36,12 @@ Like a comment
 
 ```js
 wpcom
-.site('blog.wordpress.com')
-.comment(342)
-.like()
-.add(function(err, data) {
-  // I like this 342 comment
-});
+	.site( 'blog.wordpress.com' )
+	.comment( 342 )
+	.like()
+	.add( function ( err, data ) {
+		// I like this 342 comment
+	} );
 ```
 
 ### CommentLike#del(fn)
@@ -51,10 +50,10 @@ Remove your existing like from a comment
 
 ```js
 wpcom
-.site('blog.wordpress.com')
-.comment(342)
-.like()
-.del(function(err, data) {
-  // I don't like this 342 comment any more
-});
+	.site( 'blog.wordpress.com' )
+	.comment( 342 )
+	.like()
+	.del( function ( err, data ) {
+		// I don't like this 342 comment any more
+	} );
 ```

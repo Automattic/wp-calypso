@@ -1,9 +1,8 @@
-Animate
-=======
+# Animate
 
 Simple interface to introduce animations to components on initial render. Used as a wrapper.
 
-#### How to use:
+## How to use
 
 ```jsx
 import Animate from 'components/animate';
@@ -17,6 +16,6 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
-* `type`: (string) a string matching one of the approved transition effects (`appear` or `fade-in`).
+- `type`: (string) a string matching one of the approved transition effects (`appear` or `fade-in`).

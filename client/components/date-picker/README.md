@@ -1,5 +1,4 @@
-DatePicker
-==========
+# DatePicker
 
 React component used to display a Date Picker.
 
@@ -48,7 +47,7 @@ export default class extends React.Component {
 
 ## DatePicker
 
-#### Props
+### Props
 
 `initialMonth` - **optional** Date object that defines the month of the calendar. Default is `now`.
 
@@ -69,4 +68,4 @@ is selected.
 
 `localeUtils` - **optional** Object of [locale utility _overides_](http://react-day-picker.js.org/api/LocaleUtils) which are merged with the default utilities passed into the `react-day-picker` library. Previously this prop was named `locale`, but was moved to its own dedicated prop for API consistency with the React Day Picker library.
 
-------------
+---

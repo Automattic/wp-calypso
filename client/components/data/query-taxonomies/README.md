@@ -1,5 +1,4 @@
-Query Taxonomies
-================
+# Query Taxonomies
 
 `<QueryTaxonomies />` is a React component used in managing network requests for post type taxonomies.
 

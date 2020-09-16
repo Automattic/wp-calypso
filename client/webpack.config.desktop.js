@@ -13,6 +13,7 @@ module.exports = {
 	output: {
 		path: path.resolve( 'desktop/build' ),
 		filename: 'desktop.js',
+		chunkFilename: 'desktop.[name].js',
 		libraryTarget: 'commonjs2',
 	},
 	target: 'electron-main',
@@ -78,12 +79,17 @@ module.exports = {
 		// These are Calypso server modules we don't need, so let's not bundle them
 		'webpack.config',
 		'server/devdocs/search-index',
+		'calypso/server/devdocs/search-index',
 	],
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: {
 			config: 'server/config',
+			'calypso/config': 'server/config',
+			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
+			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
+			calypso: __dirname,
 		},
 	},
 	plugins: [
@@ -92,6 +98,10 @@ module.exports = {
 		new webpack.DefinePlugin( { 'global.GENTLY': false } ),
 		new webpack.NormalModuleReplacementPlugin(
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
+			'components/empty-component'
+		), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
 	],

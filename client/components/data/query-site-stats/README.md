@@ -1,5 +1,4 @@
-Query Site Stats
-================
+# Query Site Stats
 
 `<QuerySiteStats />` is a React component used in managing network requests for site stats for a given site and stat type.
 

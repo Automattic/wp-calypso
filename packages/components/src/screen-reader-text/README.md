@@ -6,7 +6,7 @@ This idea was pulled from WordPress core, for more background & technical detail
 
 ---
 
-#### How to use:
+## How to use
 
 ```js
 import { Button } from '@automattic/components';

@@ -1,9 +1,8 @@
-Plugin Action
-=========
+# Plugin Action
 
 This component is used to display a plugin action in the form of a toggle or a disconnect Jetpack button.
 
-#### How to use:
+## How to use
 
 By default, the PluginAction component will attempt to render a FormToggle.
 
@@ -40,12 +39,12 @@ render() {
 }
 ```
 
-#### Props
+## Props
 
-* `label` : The user friendly label that described the action.
-* `status`: The state of the progress indicator.
-* `action`: (callback) what should be executed once the user fires the action.
-* `inProgress`: (bool) whether the action is in the middle of being performed.
-* `htmlFor`: (string) htmlFor is used for creating the for attribute on the label.
-* `disabledInfo`: ( string ) text that gets displayed in a infoPopover explaining why the action is disabled.
-* `disabled`: ( bool ) whether the toggle is disabled (grayed out and non interactive) or not
+- `label` : The user friendly label that described the action.
+- `status`: The state of the progress indicator.
+- `action`: (callback) what should be executed once the user fires the action.
+- `inProgress`: (bool) whether the action is in the middle of being performed.
+- `htmlFor`: (string) htmlFor is used for creating the for attribute on the label.
+- `disabledInfo`: ( string ) text that gets displayed in a infoPopover explaining why the action is disabled.
+- `disabled`: ( bool ) whether the toggle is disabled (grayed out and non interactive) or not

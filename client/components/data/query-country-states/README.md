@@ -1,5 +1,4 @@
-Query Country States
-====================
+# Query Country States
 
 `<QueryCountryStates />` is a React component used in managing network requests for states of a specific country.
 

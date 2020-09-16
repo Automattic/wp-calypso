@@ -1,5 +1,4 @@
-FormCountrySelectFromApi
-========================
+# FormCountrySelectFromApi
 
 Display a list of the supported countries for a given WooCommerce site.
 
@@ -17,8 +16,7 @@ Required. The currently-selected country, as ISO3166 alpha-2 country code (e.g. 
 
 The source site for the countries list request. Defaults to the currently-selected site.
 
-FormStateSelectFromApi
-======================
+# FormStateSelectFromApi
 
 Display a list of the supported states in a country for a given WooCommerce site. If the country does not have states, the component renders a disabled dropdown, with 'N/A'.
 
@@ -40,7 +38,7 @@ Required. The currently-selected state, as state code (e.g. NY, CT, QC, etc).
 
 The source site for the countries list request. Defaults to the currently-selected site.
 
-## How to use:
+## How to use
 
 ```jsx
 import FormFieldSet from 'components/forms/form-fieldset';

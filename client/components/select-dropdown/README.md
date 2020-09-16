@@ -1,5 +1,4 @@
-Select Dropdown
-===============
+# Select Dropdown
 
 React component used to display a dropdown selector.
 
@@ -23,13 +22,15 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SelectDropdown selectedText="Published">
-				<SelectDropdown.Item selected path="/published">Published</SelectDropdown.Item>
+				<SelectDropdown.Item selected path="/published">
+					Published
+				</SelectDropdown.Item>
 				<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
 				<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
 				<SelectDropdown.Item path="/trashed">Trashed</SelectDropdown.Item>
 			</SelectDropdown>
 		);
-	} 
+	}
 }
 ```
 
@@ -204,13 +205,13 @@ Optional callback that will be run after the dropdown is opened or closed. An ev
 Adding `isLabel` key set to `true` into the item object will create a `SelectDropdown.Label` component.
 
 ```js
-var options = [
+const options = [
 	{ label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
 	null,
-	{ value: 'trashed', label: 'Trashed' }
+	{ value: 'trashed', label: 'Trashed' },
 ];
 ```
 
@@ -221,11 +222,11 @@ Using a `null` or `false` item in the `options` will render an item "separator" 
 ![separator example screenshot](https://cldup.com/CWEH2K9PUf.png)
 
 ```js
-var options = [
+const options = [
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
 	null,
-	{ value: 'trashed', label: 'Trashed' }
+	{ value: 'trashed', label: 'Trashed' },
 ];
 ```

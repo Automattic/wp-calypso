@@ -1,9 +1,9 @@
-Domain to Plan Nudge
-=========
+# Domain to Plan Nudge
+
 This is an upgrade nudge that targets users with a site that has a free plan
 and a paid domain.
 
-#### How to use:
+## How to use
 
 ```js
 
@@ -30,5 +30,5 @@ Below is a list of supported props.
 	<tr><td>Default</td><td><code>selected site</code></td></tr>
 </table>
 
-Check for the requirements above using this siteId, 
+Check for the requirements above using this siteId,
 otherwise we default to the currently selected site.

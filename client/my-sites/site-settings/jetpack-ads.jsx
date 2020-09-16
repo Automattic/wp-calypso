@@ -20,6 +20,7 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -50,6 +51,10 @@ class JetpackAds extends Component {
 	}
 
 	renderUpgradeBanner() {
+		if ( shouldShowOfferResetFlow() ) {
+			return null;
+		}
+
 		const { translate } = this.props;
 
 		return (

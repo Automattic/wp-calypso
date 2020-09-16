@@ -1,5 +1,4 @@
-Currency
-================
+# Currency
 
 This module is used to manage currency setting related UI.
 

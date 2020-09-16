@@ -1,9 +1,8 @@
-Route
-=======
+# Route
 
 A few utilities that help when dealing with changing routes.
 
-### normalize
+## normalize
 
 Sometimes you want to enforce a canonical URL to a resource. You can use `normalize`
 as middleware to redirect any pathname ending in `/` to the same path minus the `/`.
@@ -15,6 +14,7 @@ page('/foo/?', normalize, displayFoo );
 ```
 
 Alternatively, to normalize all routes:
+
 ```es6
 import { normalize } from 'lib/route';
 page( '*', normalize );
@@ -23,15 +23,17 @@ page( '*', normalize );
 If you want a different behavior, or more control over the redirect, `untrailingslashit` and
 `redirect` are provided.
 
-### addQueryArgs
+## addQueryArgs
+
 This module is meant to simplify the work of adding query arguments to a URL.
 
-#### Parameters
+### Parameters
+
 - `args` (object)(Required) – The first parameter is an object of query arguments to be added to the URL.
-- `url` (string)(Required) – The second parameter is the original URL to add `args` to.
+- `url` (string)(Required) – The second parameter is the original URL to add `args` to.
 
+### Example
 
-#### Example
 ```es6
 import { addQueryArgs } from 'lib/route';
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
+import { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'lib/i18n-utils';
@@ -34,12 +34,18 @@ export function* createSite(
 	username: string,
 	languageSlug: string,
 	bearerToken?: string,
-	isPublicSite = false
+	visibility: number = isEnabled( 'gutenboarding/public-coming-soon' )
+		? Site.Visibility.PublicNotIndexed
+		: Site.Visibility.Private
 ) {
-	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
-		ONBOARD_STORE,
-		'getState'
-	);
+	const {
+		domain,
+		selectedDesign,
+		selectedFonts,
+		siteTitle,
+		siteVertical,
+		selectedFeatures,
+	}: State = yield select( ONBOARD_STORE, 'getState' );
 
 	const shouldEnableFse = !! selectedDesign?.is_fse;
 
@@ -51,7 +57,7 @@ export function* createSite(
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
 		blog_title: siteTitle,
-		public: isPublicSite ? 1 : -1,
+		public: visibility,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,
@@ -74,6 +80,11 @@ export function* createSite(
 				font_headings: selectedFonts.headings,
 			} ),
 			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
+			selected_features: selectedFeatures,
+			...( isEnabled( 'gutenboarding/public-coming-soon' ) &&
+				visibility === Site.Visibility.PublicNotIndexed && {
+					public_coming_soon: true,
+				} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};

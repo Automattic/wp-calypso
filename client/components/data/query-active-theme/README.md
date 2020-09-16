@@ -1,5 +1,4 @@
-Query Active Theme
-==================
+# Query Active Theme
 
 Query Active Theme is a React component used in managing fetching of a given site's active theme ID.
 

@@ -51,15 +51,8 @@ import { navigation, siteSelection } from 'my-sites/controller';
 import { helloWorld } from './controller';
 
 export default () => {
-	page(
-		'/hello-world',
-		siteSelection,
-		navigation,
-		helloWorld,
-		makeLayout,
-		clientRender
-	);
-}
+	page( '/hello-world', siteSelection, navigation, helloWorld, makeLayout, clientRender );
+};
 ```
 
 At the moment we use a simple routing interface with `page.js`. There are a few useful middleware functions you can leverage from the My Sites controller module, like `siteSelection`, `navigation`, or `sites`. It’s important to note Calypso is designed to be multi-site from the start. Our URLs in general look like `/:section/:filter/:site`, with the site usually being the last piece of the URL. If you remove the site fragment you get what we call the "all-sites URL". How a section handles the all-sites URL is up to itself. Some areas, like Stats, Posts, Pages, Plugins, will show resources from across all your sites. Other sections, like Settings for example, would display a site picker if you try to access them without a site in the URL bar. That is what `sitesController.sites` does: it forces the user to pick a site to access a section.
@@ -73,10 +66,12 @@ export const helloWorld = ( context, next ) => {
 };
 ```
 
-*Note:* you have access to all the components and blocks that Calypso offers (check out `/devdocs/design` and `/devdocs/blocks` to browse them). With those you can build an entirely new section that is consistent with the experience of the whole app. We encourage you to use them as much as possible, and to contribute back to the core project if you find issues or have suggestions for new ones.
+_Note:_ you have access to all the components and blocks that Calypso offers (check out `/devdocs/design` and `/devdocs/blocks` to browse them). With those you can build an entirely new section that is consistent with the experience of the whole app. We encourage you to use them as much as possible, and to contribute back to the core project if you find issues or have suggestions for new ones.
 
 ## Imports
+
 Importing from other javascript modules can be done from one of three root contexts:
+
 - / (root of the Calypso repository)
 - /client (the client subdirectory)
 - /client/extensions (the extensions subdirectory)

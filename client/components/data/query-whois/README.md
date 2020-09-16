@@ -1,5 +1,4 @@
-Query Whois
-===========
+# Query Whois
 
 `<QueryWhois />` is a React component used to perform a WHOIS lookup via WP.com server-side. The queried domain must be owned by the user.
 

@@ -9,7 +9,7 @@
 
 	&--text {
 		max-width: 320px;
-		font-size: 0.9em;
+		font-size: $font-body-small;
 		margin: 10px 0;
 		color: $dark-gray-500;
 	}
@@ -19,13 +19,13 @@
 		align-items: center;
 
 		&--text {
-			margin: 15px 0;
+			margin: 15px 10px;
 		}
 	}
 }
 
 .domain-picker__show-more {
-	padding: 10px;
+	margin-top: 20px;
 	text-align: center;
 }
 
@@ -70,7 +70,7 @@
 	margin-bottom: 0.5em;
 	text-transform: uppercase;
 	color: var( --studio-gray-40 );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	letter-spacing: 1px;
 	font-weight: bold;
 }
@@ -87,7 +87,6 @@
 	padding: 10px 14px;
 	margin: 0;
 	position: relative;
-	z-index: 1;
 	text-align: left;
 	cursor: pointer;
 
@@ -177,6 +176,13 @@
 	flex-grow: 1;
 	letter-spacing: 0.4px;
 
+	.domain-picker__suggestion-item-name-inner {
+		// vertically align elements within, needed for items showing information icon.
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
 	.domain-picker__suggestion-item:not( .is-free ) & {
 		margin-right: 0;
 
@@ -198,10 +204,22 @@
 
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
-	// margin for recommended badge. this margin shouldn't
-	// be placed on the badge because if the badge falls
-	// on a newline, it will have whitespace on the left.
+
+
+	&.with-margin {
+		// margin for recommended badge. this margin shouldn't
+		// be placed on the badge because if the badge falls
+		// on a newline, it will have whitespace on the left.
+		// margin isnt applied if hstsRequired is truthy as InfoTooltip component
+		// provides equal spacing between this and the recommended badge.
+		margin-right: 10px;
+	}
+}
+
+.domain-picker__info-tooltip {
 	margin-right: 10px;
+	cursor: pointer;
+	z-index: 1;
 }
 
 .domain-picker__badge {
@@ -211,7 +229,8 @@
 	line-height: 20px;
 	height: 20px;
 	align-items: center;
-	font-size: 10px;
+	// stylelint-disable-next-line scales/font-size
+	font-size: 10px; //typography-exception smaller size needed
 	text-transform: uppercase;
 	vertical-align: middle;
 	background-color: var( --studio-blue-50 );

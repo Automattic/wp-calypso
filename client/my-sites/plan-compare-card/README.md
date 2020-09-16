@@ -1,9 +1,8 @@
-Plan Compare Card
-==============
+# Plan Compare Card
 
 This component is used to display a current or next plan, highlighting the features you choose.
 
-#### Usage:
+## Usage
 
 ```javascript
 	<PlanCompareCard
@@ -30,12 +29,12 @@ This component is used to display a current or next plan, highlighting the featu
 }
 ```
 
-#### Props
+## Props
 
-* `title`: The plan name (required)
-* `line`: The plan tagline (required)
-* `buttonName`: Button text (required)
-* `currentPlan`: If the plan is current
-* `onClick`: An on click handler that is fired when the plan button is clicked.
-* `popularRibbon`: Displays the popular ribbon
-* `className`: A string that adds additional class names to this component.
+- `title`: The plan name (required)
+- `line`: The plan tagline (required)
+- `buttonName`: Button text (required)
+- `currentPlan`: If the plan is current
+- `onClick`: An on click handler that is fired when the plan button is clicked.
+- `popularRibbon`: Displays the popular ribbon
+- `className`: A string that adds additional class names to this component.

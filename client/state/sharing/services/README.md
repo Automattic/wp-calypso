@@ -1,5 +1,4 @@
-Keyring Services
-================
+# Keyring Services
 
 A module for managing services that offer keyring connections.
 
@@ -23,13 +22,14 @@ class QueryKeyringServices extends Component {
 		}
 	}
 
-	render() { return null; }
+	render() {
+		return null;
+	}
 }
 
-export default connect(
-	( state ) => ( { isRequesting: isKeyringServicesFetching( state ) } ),
-	{ requestKeyringServices }
-)( QueryKeyringServices );
+export default connect( ( state ) => ( { isRequesting: isKeyringServicesFetching( state ) } ), {
+	requestKeyringServices,
+} )( QueryKeyringServices );
 ```
 
 ## Reducer
@@ -51,7 +51,7 @@ state.sharing.services = {
 
 Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
 
-#### `getKeyringServices( state: object )`
+### `getKeyringServices( state: object )`
 
 Returns an array of keyring services.
 
@@ -61,7 +61,7 @@ import { getKeyringServices } from 'state/sharing/services/selectors';
 const services = getKeyringServices( state );
 ```
 
-#### `getKeyringServicesByType( state: object, type: string )`
+### `getKeyringServicesByType( state: object, type: string )`
 
 Returns an array of keyring services with the specified type.
 
@@ -71,11 +71,12 @@ import { getKeyringServicesByType } from 'state/sharing/services/selectors';
 const publiciseServices = getKeyringServicesByType( state, 'publicize' );
 ```
 
-#### `getEligibleKeyringServices( state: object,  siteId: number, type: string  )`
+### `getEligibleKeyringServices( state: object, siteId: number, type: string )`
 
 Returns an array of eligible keyring services with the specified type.
 
 A service is eligible for a given site if
+
 1. it's a Jetpack site and the service supports Jetpack,
 2. the service requires an active Jetpack module and that module is active on that site,
 3. the current user can publish posts in case of all publicize services.
@@ -84,10 +85,14 @@ A service is eligible for a given site if
 import { getEligibleKeyringServices } from 'state/sharing/services/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
-const eligibleServices = getEligibleKeyringServices( state, getSelectedSiteId( site ), 'publicize' );
+const eligibleServices = getEligibleKeyringServices(
+	state,
+	getSelectedSiteId( site ),
+	'publicize'
+);
 ```
 
-#### `isKeyringServicesFetching( state: object )`
+### `isKeyringServicesFetching( state: object )`
 
 Returns true if keyring services are currently being requested.
 

@@ -6,9 +6,32 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { receiveCategories, receiveDomainSuggestions } from './actions';
+import { receiveCategories, receiveDomainSuggestions, receiveDomainAvailability } from './actions';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 import type { Selectors } from './selectors';
+import type { TailParameters } from '../mapped-types';
+
+export const isAvailable = function* isAvailable(
+	domainName: TailParameters< Selectors[ 'isAvailable' ] >[ 0 ]
+) {
+	const url = `https://public-api.wordpress.com/rest/v1.3/domains/${ encodeURIComponent(
+		domainName
+	) }/is-available?is_cart_pre_check=true`;
+
+	try {
+		const { body } = yield fetchAndParse( url );
+		return receiveDomainAvailability( domainName, body );
+	} catch {
+		// the API returns a status of 'unknown' if it can not accurately determine
+		// availability, we will return the same status if the API request fails.
+		return receiveDomainAvailability( domainName, {
+			domain_name: domainName,
+			mappable: 'unknown',
+			status: 'unknown',
+			supports_privacy: false,
+		} );
+	}
+};
 
 export function* getCategories() {
 	const categories = yield fetchAndParse(

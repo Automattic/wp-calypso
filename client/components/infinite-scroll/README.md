@@ -1,13 +1,13 @@
-Infinite Scroll
-===============
+# Infinite Scroll
 
 An infinite scroll component to power list views.
 
 There is an alternative implementation called [InfiniteList](../infinite-list), which doesn't render invisible items. However, it is more complex to implement, so use it only if your list contains lot of images or other media and you expect that users will scroll a lot.
 
-### How to use
+## How to use
 
 First, require the component with
+
 ```js
 import InfiniteScroll from 'components/infinite-scroll';
 ```
@@ -20,7 +20,7 @@ This component does not add any analytics tracking - that is also responsibility
 
 The method accepts an object as an argument, with one key `triggeredByScroll`. It signals if fetching page is a response to user action, or if the component is trying to automatically fill available space. This is to prevent tracking analytics event for cases where more than one page fits to screen.
 
-### Example implementation
+## Example implementation
 
 ```jsx
 class List extends Component {

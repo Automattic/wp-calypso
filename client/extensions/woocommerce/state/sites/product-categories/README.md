@@ -1,5 +1,4 @@
-Product Categories
-==================
+# Product Categories
 
 This module is used to manage product categories for a site.
 
@@ -8,7 +7,7 @@ This module is used to manage product categories for a site.
 ### `fetchProductCategories( siteId: number, query: object )`
 
 Get the list of product categories from the remote site.
-An optional query can be provided. See https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-categories for available fields.
+An optional query can be provided. See <https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-categories> for available fields.
 
 ## Reducer
 

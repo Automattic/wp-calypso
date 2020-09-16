@@ -7,12 +7,12 @@ In this document we'll go through the existing API:
 - [Introduction](#introduction)
 - [Literal Data Points](#literal-data-points)
 - [Option Data Points](#option-data-points)
-	- [Fallback Values](#fallback-values)
-	- [Working with option's properties](#working-with-options-properties)
-	- [Updatable Options](#updatable-options)
-	- [Filters to prepare and sanitize data](#filters-to-prepare-and-sanitize-data)
+  - [Fallback Values](#fallback-values)
+  - [Working with option's properties](#working-with-options-properties)
+  - [Updatable Options](#updatable-options)
+  - [Filters to prepare and sanitize data](#filters-to-prepare-and-sanitize-data)
 - [Theme Data Points](#theme-data-points)
-	- [Fallback Values](#fallback-values-1)
+  - [Fallback Values](#fallback-values-1)
 - [Working with theme's properties](#working-with-themes-properties)
 
 ## Introduction
@@ -52,7 +52,7 @@ $data_set->save_data( $new_data ); // Updates data.
 
 ## Literal Data Points
 
-Data points are considered to be of the *literal* kind if their `type` property value is `literal`. Their output is the literal PHP value in the `default` property, or `null` if none is provided.
+Data points are considered to be of the _literal_ kind if their `type` property value is `literal`. Their output is the literal PHP value in the `default` property, or `null` if none is provided.
 
 For this **input**:
 
@@ -115,7 +115,7 @@ The **output** of `$data_set->get_data()` will be:
 
 ## Option Data Points
 
-Data points are considered to be of the *option* kind if the value of the `type` property is `option`. These are the only data points that can be updated.
+Data points are considered to be of the _option_ kind if the value of the `type` property is `option`. These are the only data points that can be updated.
 
 The simplest use case is to operate with the contents of an option without further processing. This **input** can be expressed as:
 
@@ -174,6 +174,7 @@ For example, let's say that there is an option called `jetpack_global_styles` wh
 ```
 
 For this **input**:
+
 ```php
 $data_set = new \Automattic\Jetpack\Global_Styles\Data_Set( [
 	'font_base' => [
@@ -258,7 +259,7 @@ The result will be that the `jetpack_global_styles` option will have its `font_b
 
 ## Theme Data Points
 
-Data points are considered to be of the *theme* kind if the property `type`'s value is `theme`.
+Data points are considered to be of the _theme_ kind if the property `type`'s value is `theme`.
 
 **Input** being:
 

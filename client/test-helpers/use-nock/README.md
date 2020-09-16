@@ -1,6 +1,6 @@
 # Use Nock
 
-##### Ensure `nock` unloads properly after tests are finished
+## Ensure `nock` unloads properly after tests are finished
 
 `nock` allows you to intercept and mock network requests through a variety of filters and functions, providing such abilities as setting custom headers, HTTP response codes, and content.
 
@@ -8,7 +8,8 @@ Because it's possible to allow `nock` interceptions and modifiers to persist bey
 
 `nock` is re-exported as a convenience so you don't have to import both `nock` and this module.
 
-## Format:
+## Format
+
 ```js
 useNock();
 ```

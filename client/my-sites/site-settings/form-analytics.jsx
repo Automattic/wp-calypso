@@ -27,6 +27,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -118,6 +119,22 @@ export class GoogleAnalyticsForm extends Component {
 			  )
 			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
 
+		const nudge = shouldShowOfferResetFlow() ? null : (
+			<UpsellNudge
+				description={ translate(
+					"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+				) }
+				event={ 'google_analytics_settings' }
+				feature={ FEATURE_GOOGLE_ANALYTICS }
+				plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
+					type: TYPE_PREMIUM,
+					...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
+				} ) }
+				showIcon={ true }
+				title={ nudgeTitle }
+			/>
+		);
+
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
@@ -131,19 +148,7 @@ export class GoogleAnalyticsForm extends Component {
 				/>
 
 				{ showUpgradeNudge && site && site.plan ? (
-					<UpsellNudge
-						description={ translate(
-							"Add your unique tracking ID to monitor your site's performance in Google Analytics."
-						) }
-						event={ 'google_analytics_settings' }
-						feature={ FEATURE_GOOGLE_ANALYTICS }
-						plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-							type: TYPE_PREMIUM,
-							...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
-						} ) }
-						showIcon={ true }
-						title={ nudgeTitle }
-					/>
+					nudge
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">
 						{ siteIsJetpack && (

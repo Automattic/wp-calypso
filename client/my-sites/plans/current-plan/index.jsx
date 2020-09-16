@@ -163,13 +163,13 @@ class CurrentPlan extends Component {
 			translate,
 		} = this.props;
 
-		const currentPlanSlug = selectedSite.plan.product_slug,
-			isLoading = this.isLoading();
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const isLoading = this.isLoading();
+		const planTitle = getPlan( currentPlanSlug ).getTitle();
 
-		const planConstObj = getPlan( currentPlanSlug ),
-			planFeaturesHeader = translate( '%(planName)s plan features', {
-				args: { planName: planConstObj.getTitle() },
-			} );
+		const planFeaturesHeader = translate( '{{planName/}} plan features', {
+			components: { planName: <>{ planTitle }</> },
+		} );
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;

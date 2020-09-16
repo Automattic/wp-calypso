@@ -1,5 +1,4 @@
-Query Jetpack Connection
-================
+# Query Jetpack Connection
 
 `<QueryJetpackConnection />` is a React component used in managing network requests for Jetpack site connection status.
 

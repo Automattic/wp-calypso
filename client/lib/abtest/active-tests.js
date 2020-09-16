@@ -184,10 +184,10 @@ export default {
 	offerResetFlow: {
 		datestamp: '20200804',
 		variations: {
-			showOfferResetFlow: 0,
-			control: 100,
+			showOfferResetFlow: 100,
+			control: 0,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'showOfferResetFlow',
 		allowExistingUsers: true,
 	},
 	userlessCheckout: {
@@ -220,5 +220,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
+	},
+	removeUsernameInSignup: {
+		datestamp: '20200914',
+		variations: {
+			variantRemoveUsername: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
 	},
 };

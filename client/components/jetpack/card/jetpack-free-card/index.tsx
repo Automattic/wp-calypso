@@ -10,6 +10,7 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 
 /**
@@ -20,6 +21,10 @@ import './style.scss';
 const JetpackFreeCard: FunctionComponent = () => {
 	const translate = useTranslate();
 	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
+
+	const startHref = isJetpackCloud()
+		? `https://wordpress.com${ JPC_PATH_REMOTE_INSTALL }`
+		: wpAdminUrl || JPC_PATH_REMOTE_INSTALL;
 
 	return (
 		<div className="jetpack-free-card">
@@ -37,10 +42,7 @@ const JetpackFreeCard: FunctionComponent = () => {
 						}
 					) }
 				</p>
-				<Button
-					className="jetpack-free-card__button"
-					href={ wpAdminUrl || JPC_PATH_REMOTE_INSTALL }
-				>
+				<Button className="jetpack-free-card__button" href={ startHref }>
 					{ translate( 'Start for free' ) }
 				</Button>
 			</div>

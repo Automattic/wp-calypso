@@ -1,5 +1,4 @@
-PostSelector
-============
+# PostSelector
 
 The `PostSelector` component renders a list of Posts with corresponding form actions (radio or checkboxes) and a search box for filtering.
 

@@ -7,9 +7,9 @@ used in new code until Promises are the native way of
 returning from async code instead of callbacks.
 
 > WARNING: If you extract a method from its parent class
-that method will lose its own `this` context and it will
-break. To ensure compliance, bind the method to its
-parent's context when sending it into the Promise
+> that method will lose its own `this` context and it will
+> break. To ensure compliance, bind the method to its
+> parent's context when sending it into the Promise
 
 ```js
 let comment = wpcom.site( siteId ).comment( commentId );
@@ -28,25 +28,31 @@ wpcom.Promise( comment );
 # Examples
 
 ## Approving a comment
+
 ```js
-let comment = wpcom.site( siteId ).comment( commentId );
-wpcom.Promise( comment.update.bind( comment ), { status: 'approved' } )
-	.then( response => updateComment( commentId, response ) )
-	.catch( error => alert( error ) );
+const comment = wpcom.site( siteId ).comment( commentId );
+wpcom
+	.Promise( comment.update.bind( comment ), { status: 'approved' } )
+	.then( ( response ) => updateComment( commentId, response ) )
+	.catch( ( error ) => alert( error ) );
 ```
 
 ## Requesting the freshly-pressed list
+
 ```js
-wpcom.Promise( wpcom.freshlyPressed.bind( wpcom ) )
+wpcom
+	.Promise( wpcom.freshlyPressed.bind( wpcom ) )
 	.timeout( 4000 ) // give up if longer than 4s
 	.then( handleData )
 	.catch( notifyNetworkError );
 ```
 
 ## Chaining promises
+
 ```js
-let post = wpcom.site( siteId ).post( postId );
-wpcom.Promise( post.get.bind( post ) )
+const post = wpcom.site( siteId ).post( postId );
+wpcom
+	.Promise( post.get.bind( post ) )
 	.then( wpcom.Promise( post.comments.bind( post ) ) )
 	.then( renderComments );
 ```

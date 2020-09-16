@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.2.0",
+	"version": "2.4.0",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -81,7 +81,7 @@
 		"predev": "yarn run clean",
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
-		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore --no-inline-config ./editing-toolkit-plugin/*/dist/*.js"
+		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./editing-toolkit-plugin/*/dist/*.js"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",

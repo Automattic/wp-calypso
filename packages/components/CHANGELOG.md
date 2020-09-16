@@ -1,3 +1,6 @@
+## 1.0.0-alpha.3
+
+- Add `plain` prop to `Button`
 
 ## 1.0.0-alpha.2
 

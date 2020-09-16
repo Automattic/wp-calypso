@@ -1,13 +1,10 @@
-Domain Contact Details Form
-=============
+# Domain Contact Details Form
 
 This component renders a contact form with fields specific to purchasing a domain or editing a domain's WHOIS contact details.
 
 Its primary purpose for existing is to ensure consistency between the domain checkout form (`/checkout/some-domain.blog`) and the edit WHOIS contact form (`/domains/manage/some-domain.blog/edit-contact-info/some-domain.blog`).
 
-
 ## Usage
-
 
 ```jsx
     <ContactDetailsFormFields
@@ -79,7 +76,6 @@ Passed to child field components for tracking purposes.
 
 **Default value**: `'Domain contact details form'`
 
-
 ### disableSubmitButton {Bool} (optional)
 
 Disables the submit button, and therefore prevents form submission
@@ -97,13 +93,13 @@ Executed at render time providing the parent component with an opportunity to di
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-    // disables the firstName field when firstNameEditable === false
-	customFieldDisabledCheck = ( name ) => {
-		if ( name === 'firstName' && firstNameEditable === false ) {
-			return true;
-		}
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+// disables the firstName field when firstNameEditable === false
+customFieldDisabledCheck = ( name ) => {
+	if ( name === 'firstName' && firstNameEditable === false ) {
+		return true;
+	}
+};
 ```
 
 ### labelTexts {object} (optional)
@@ -139,7 +135,7 @@ Callback for cancel button. By default the cancel button will not show if no met
 
 ### onContactDetailsChange {Func} (optional)
 
-Triggered whenever a form value changes. 
+Triggered whenever a form value changes.
 
 #### Arguments
 
@@ -148,10 +144,10 @@ Triggered whenever a form value changes.
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	onContactDetailsChange = ( newContactDetails ) => {
-		this.props.updateReduxStore( newContactDetails );
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+onContactDetailsChange = ( newContactDetails ) => {
+	this.props.updateReduxStore( newContactDetails );
+};
 ```
 
 ### onSubmit {Func} (optional)
@@ -165,10 +161,10 @@ Triggered onSubmit and when all fields are valid. If this prop is not present, d
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	onSubmit = ( newContactDetails ) => {
-		wp.updateSomething( newContactDetails );
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+onSubmit = ( newContactDetails ) => {
+	wp.updateSomething( newContactDetails );
+};
 ```
 
 ### onValidate {Func} (optional)
@@ -178,18 +174,18 @@ Runs a custom validation check after a field update
 #### Arguments
 
 1. {object} The full form object model containing the new values
-2. {Function} A callback to be triggered when validation is complete. See `form-state` ([this._validatorFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
+2. {Function} A callback to be triggered when validation is complete. See `form-state` ([this.\_validatorFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
 
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	validate = ( fieldValues, onComplete ) => {
-	    checkValidity( fieldValues, ( error, data ) => {
-            const messages = ( data && data.messages ) || {};
-            onComplete( error, messages );
-        });
-	};
+// the method to be passed as a prop to <ContactDetailsFormFields />
+validate = ( fieldValues, onComplete ) => {
+	checkValidity( fieldValues, ( error, data ) => {
+		const messages = ( data && data.messages ) || {};
+		onComplete( error, messages );
+	} );
+};
 ```
 
 ### onSanitize {Func} (optional)
@@ -199,17 +195,16 @@ Runs a custom sanitize method after a field update
 #### Arguments
 
 1. {object} The full form object model containing the new values
-2. {Function} A callback to be triggered when sanitization is complete. See `form-state` ([this._sanitizerFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
+2. {Function} A callback to be triggered when sanitization is complete. See `form-state` ([this.\_sanitizerFunction](https://github.com/Automattic/wp-calypso/blob/HEAD/client/lib/form-state/index.js)) for details.
 
 Usage:
 
 ```js
-    // the method to be passed as a prop to <ContactDetailsFormFields />
-	onSanitize = ( fieldValues, onComplete ) => {
-        const newValues = {
-            lastName: fieldValues.lastName === 'SHOUTYMAN' ? 'Shoutyman' : fieldValues.lastName,
-        };
-	    onComplete( Object.assign( {}, fieldValues, newValues ) );
+// the method to be passed as a prop to <ContactDetailsFormFields />
+onSanitize = ( fieldValues, onComplete ) => {
+	const newValues = {
+		lastName: fieldValues.lastName === 'SHOUTYMAN' ? 'Shoutyman' : fieldValues.lastName,
 	};
+	onComplete( Object.assign( {}, fieldValues, newValues ) );
+};
 ```
-

@@ -1,8 +1,6 @@
-Query Language Names
-===========================
+# Query Language Names
 
 `<QueryLanguageNames />` is a React component that manages requests to get an object of localized language names and their autonym/English equivalents.
-
 
 ## Usage
 

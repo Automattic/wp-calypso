@@ -1,5 +1,4 @@
-Upload Drop Zone
-================
+# Upload Drop Zone
 
 A combined drop-zone and filepicker for uploading zip files. Click to open a file browser, or drop a single zip file onto it. Accepts a function that will be called with the selected file.
 

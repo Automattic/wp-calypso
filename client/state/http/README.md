@@ -4,12 +4,12 @@
 
 It follows the same API as `wpcom-http`, the only difference from the user's perspective being the action dispatched.
 
-### Usage
+## Usage
 
-So, let's say you would like to do a `POST` request to https://api.example.com when the action `GET_EXAMPLE_DATA` is dispatched, later continuing with `EXAMPLE_DATA_ADD` for the data or `NOTICE_CREATE` for the error. You'll be able to do that with the following code (that could be located under `third-party`):
+So, let's say you would like to do a `POST` request to <https://api.example.com> when the action `GET_EXAMPLE_DATA` is dispatched, later continuing with `EXAMPLE_DATA_ADD` for the data or `NOTICE_CREATE` for the error. You'll be able to do that with the following code (that could be located under `third-party`):
 
 ```js
-import { 
+import {
 	GET_EXAMPLE_DATA,
 	EXAMPLE_DATA_ADD,
 	NOTICE_CREATE,

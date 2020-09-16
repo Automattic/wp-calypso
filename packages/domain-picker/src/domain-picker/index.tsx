@@ -232,6 +232,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											key={ suggestion.domain_name }
 											domain={ suggestion.domain_name }
 											cost={ suggestion.cost }
+											hstsRequired={ suggestion.hsts_required }
 											isFree={ suggestion.is_free }
 											isRecommended={ isRecommended }
 											railcarId={ baseRailcarId ? `${ baseRailcarId }${ index }` : undefined }
@@ -257,7 +258,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							allDomainSuggestions?.length &&
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">
-									<Button onClick={ () => setIsExpanded( true ) }>
+									<Button onClick={ () => setIsExpanded( true ) } isLink>
 										{ __( 'View more results' ) }
 									</Button>
 								</div>

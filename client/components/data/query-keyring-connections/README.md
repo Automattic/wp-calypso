@@ -1,11 +1,10 @@
-Query Keyring Connections
-=========================
+# Query Keyring Connections
 
 `<QueryKeyringConnections />` is a React component used in managing network requests for keyring connections.
 
 ## Usage
 
-Render the component without props. It does not accept any children, nor does it render any elements to the page. 
+Render the component without props. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
 import React from 'react';

@@ -36,6 +36,7 @@
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/components": "^10.0.5",
+		"@wordpress/compose": "^3.19.3",
 		"@wordpress/icons": "^2.4.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",

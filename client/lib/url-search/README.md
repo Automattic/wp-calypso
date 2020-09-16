@@ -1,11 +1,10 @@
-url-search
-=============
+# url-search
 
-`url-search` ties a search component to an `s` querystring parameter, like `wordpress.com/posts?s=example`. This is useful to persist search result pages in the browser history[*](#history) and to make search result pages shareable.
+`url-search` ties a search component to an `s` querystring parameter, like `wordpress.com/posts?s=example`. This is useful to persist search result pages in the browser history[\*](#history) and to make search result pages shareable.
 
 The `url-search` higher-order component takes the approach of only using state to track whether the search field should be open, and otherwise communicating the value of new searches by updating the URL, where the controller can read the value and use it to call whatever data is necessary, and then also pass it back into the Search component as initialValue.
 
-### Usage
+## Usage
 
 To use this higher-order component, take any component that _contains_ the search component, e.g., `/my-sites/posts/posts.jsx` and enhance it with urlSearch.
 
@@ -63,4 +62,5 @@ render() {
 ```
 
 ## History
+
 `url-search` adds the first search result page to the browser history, and then uses push-state to update the page on subsequent searches. So only the most-recent search is persisted in the browser's history.

@@ -1,5 +1,4 @@
-scroll-to
-=========
+# scroll-to
 
 A utility module to smoothly scroll to a window position.
 

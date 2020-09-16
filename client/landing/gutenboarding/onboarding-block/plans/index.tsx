@@ -55,24 +55,36 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
+	const [ planUpdated, setPlanUpdated ] = React.useState( false );
+
 	const recommendedPlan = useRecommendedPlan();
 
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
-	const handlePlanSelect = ( planSlug: PlanSlug ) => {
+	const handlePlanSelect = async ( planSlug: PlanSlug ) => {
 		// When picking a free plan, if there is a paid domain selected, it's changed automatically to a free domain
 		if ( isPlanFree( planSlug ) && ! domain?.is_free ) {
 			setDomain( freeDomainSuggestion );
 		}
 
-		updatePlan( planSlug );
+		await updatePlan( planSlug );
 
-		if ( isModal ) {
-			history.goBack();
-		} else {
-			goNext();
-		}
+		// We need all hooks to have updated before calling the `goNext()` function,
+		// so we defer by setting a flag and waiting for it to update.
+		setPlanUpdated( true );
 	};
 	const handlePickDomain = () => history.push( makePath( Step.DomainsModal ) );
+
+	React.useEffect( () => {
+		if ( planUpdated ) {
+			if ( isModal ) {
+				history.goBack();
+			} else {
+				goNext();
+			}
+
+			setPlanUpdated( false );
+		}
+	}, [ goNext, history, isModal, planUpdated ] );
 
 	const header = (
 		<>

@@ -62,6 +62,7 @@ import {
 	authorize as authorizeAction,
 	retryAuth as retryAuthAction,
 } from 'state/jetpack-connect/actions';
+import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
 import {
 	getAuthAttempts,
 	getAuthorizationData,
@@ -616,10 +617,11 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		// If the redirect is part of the Jetpack Search purchase flow
-		const isSearch = this.props.selectedPlanSlug === 'jetpack_search';
-
-		if ( isSearch ) {
+		// If the redirect is part of a Jetpack plan or product go to the checkout page
+		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
+			productSlug.includes( 'jetpack' )
+		);
+		if ( jetpackCheckoutSlugs.includes( this.props.selectedPlanSlug ) ) {
 			return '/checkout/' + urlToSlug( homeUrl ) + '/' + this.props.selectedPlanSlug;
 		}
 

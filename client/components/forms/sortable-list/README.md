@@ -1,13 +1,12 @@
-SortableList
-===============
+# SortableList
 
 SortableList is a React component to enable device-friendly item rearranging. For non-touch devices, child elements of SortableList can be rearranged by drag-and-drop. On touch devices, the user must tap an item to activate it before rearranging via one of two directional button controls.
 
-*Desktop*
+_Desktop_
 
 ![Desktop](https://cldup.com/kcSdY87WOC.gif)
 
-*Touch*
+_Touch_
 
 ![Touch](https://cldup.com/G6xOcADYAl.gif)
 

@@ -1,9 +1,8 @@
-Plugin Site List
-================
+# Plugin Site List
 
 This component is used to represent a list of `Plugin-Site`, with a `Section-Header` serving as a title for the whole bunch.
 
-#### How to use:
+## How to use
 
 ```jsx
 import PluginSiteList from 'my-sites/plugins/plugin-site-list';
@@ -16,9 +15,9 @@ return <PluginSiteList
 		/>;
 ```
 
-#### Props
+## Props
 
-* `sites`: (array) a site object array with the sites to show in the list
-* `plugin`: a plugin data object.
-* `notices`: a notices object
-* `title` (string) the title to appear in the header
+- `sites`: (array) a site object array with the sites to show in the list
+- `plugin`: a plugin data object.
+- `notices`: a notices object
+- `title` (string) the title to appear in the header

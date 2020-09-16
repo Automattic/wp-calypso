@@ -1,5 +1,4 @@
-Close on Escape
-============
+# Close on Escape
 
 Allows for an ordered stack of components that carry out an action when the <kbd>esc</kbd> key is pressed. Each instance will carry out their `onEscape` action before being removed from the stack on a first-in-last-out basis.
 

@@ -7,13 +7,13 @@ It is called `treeSelect` because it internally uses a tree of dependencies to a
 
 `treeSelect` accepts the following arguments:
 
-* **getDependents**: A function which maps over `state` and returns all of the relevant parts of state the selector needs. You should be creating an array whose elements are all return values of other selectors -- no computations allowed here.
-* **selector**: A function which takes in the same args as `getDependents` with one catch. Instead of being passed state as its first arg, it is given the results of getDependents. This forces you to declare all of your state-dependencies.
+- **getDependents**: A function which maps over `state` and returns all of the relevant parts of state the selector needs. You should be creating an array whose elements are all return values of other selectors -- no computations allowed here.
+- **selector**: A function which takes in the same args as `getDependents` with one catch. Instead of being passed state as its first arg, it is given the results of getDependents. This forces you to declare all of your state-dependencies.
 
 For example, imagine that our state contains post objects, each of which are assigned to a particular site. Retrieving an array of posts for a specific site would require us to filter over all of the known posts. While this would normally trigger a re-render in React, we can use `treeSelect` to create a cached version of the selector which can return a referentially equal object:
 
 ```js
-const getDependents = state => ( [ state.posts ] );
+const getDependents = ( state ) => [ state.posts ];
 const selector = ( [ posts ], siteId ) => filter( posts, { siteId } );
 
 const getSitePosts = treeSelect( selector, getDependents );
@@ -61,10 +61,10 @@ internally, the selector will store a dependency tree of dependents where the la
           site1                site2
             +                    +
       +------                   ...
-      v           
-  "siteId1"     
-      +          
-      |         
+      v
+  "siteId1"
+      +
+      |
       v
     "Site...."
 ```

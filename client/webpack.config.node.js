@@ -21,12 +21,16 @@ const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const nodeExternals = require( 'webpack-node-externals' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 
 /**
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
 const devTarget = process.env.DEV_TARGET || 'evergreen';
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
+const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 
 const fileLoader = FileConfig.loader( {
 	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
@@ -59,7 +63,7 @@ function getExternals() {
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
-		// to the path of the `build/bundle.js` bundle.
+		// to the path of the `build/server.js` bundle.
 		{
 			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 			'webpack.config': {
@@ -87,10 +91,14 @@ const webpackConfig = {
 	target: 'node',
 	output: {
 		path: buildDir,
-		filename: 'bundle.js',
+		filename: 'server.js',
+		chunkFilename: 'server.[name].js',
 	},
 	mode: isDevelopment ? 'development' : 'production',
-	optimization: { minimize: false },
+	optimization: {
+		concatenateModules: shouldConcatenateModules,
+		minimize: false,
+	},
 	module: {
 		rules: [
 			{
@@ -129,6 +137,19 @@ const webpackConfig = {
 		__dirname: true,
 	},
 	plugins: [
+		shouldEmitStats &&
+			new BundleAnalyzerPlugin( {
+				analyzerMode: 'disabled', // just write the stats.json file
+				generateStatsFile: true,
+				statsFilename: path.join( __dirname, 'stats-server.json' ),
+				statsOptions: {
+					source: false,
+					reasons: shouldEmitStatsWithReasons,
+					optimizationBailout: false,
+					chunkOrigins: false,
+					chunkGroups: true,
+				},
+			} ),
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( {
 			banner: 'require( "source-map-support" ).install();',
