@@ -26,8 +26,8 @@ const requestOptions = {
 };
 
 // Comparison fn to sort Github releases by published date (descending)
-function compare( lhs, rhs ) {
-	return new Date( lhs.published_at ) - new Date( rhs.published_at );
+function compareByPublishedDate( lhs, rhs ) {
+	return new Date( lhs.published_at ) > new Date( rhs.published_at ) ? -1 : 1;
 }
 
 class ManualUpdater extends Updater {
@@ -51,13 +51,18 @@ class ManualUpdater extends Updater {
 				return;
 			}
 
-			let releases = await releaseResp.json();
+			const releases = await releaseResp.json();
 
-			// Only get wp-desktop releases, sort by published date (descending)
-			releases = releases.filter( ( r ) => r.author.login === 'wp-desktop' ).sort( compare );
+			// Sort by published date (descending)
+			releases.sort( compareByPublishedDate );
 
-			const latestStableRelease = releases.find( ( d ) => ! d.prerelease );
-			const latestBetaRelease = releases.find( ( d ) => d.prerelease );
+			// Get latest release and pre-release from sorted releases
+			const latestStableRelease = releases.find(
+				( d ) => this.getConfigUrl( d.assets ) & ! d.prerelease
+			);
+			const latestBetaRelease = releases.find(
+				( d ) => this.getConfigUrl( d.assets ) && d.prerelease
+			);
 
 			if ( ! latestStableRelease && ! this.beta ) {
 				log.info( 'No stable release found, skipping update.' );
@@ -131,8 +136,13 @@ class ManualUpdater extends Updater {
 	}
 
 	getConfigUrl( assets ) {
+		if ( ! assets ) {
+			return null;
+		}
+		if ( ! Array.isArray( assets ) ) {
+			return null;
+		}
 		const asset = assets.find( ( file ) => file.name === 'latest.yml' );
-
 		return asset.browser_download_url || null;
 	}
 
