@@ -240,7 +240,7 @@ export default {
 		allowExistingUsers: false,
 	},
 	oneClickUpsell: {
-		datestamp: '20200909',
+		datestamp: '20200922',
 		variations: {
 			test: 50,
 			control: 50,
