@@ -1,7 +1,13 @@
 /**
  * External dependencies
  */
-import { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
+import {
+	DomainSuggestions,
+	Site,
+	VerticalsTemplates,
+	Plans,
+	WPCOMFeatures,
+} from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'lib/i18n-utils';
@@ -15,7 +21,6 @@ import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import type { FeatureId } from '../../onboarding-block/features/data';
 import { isEnabled } from 'config';
 
 type CreateSiteParams = Site.CreateSiteParams;
@@ -24,6 +29,7 @@ type Template = VerticalsTemplates.Template;
 type Language = {
 	value: number;
 };
+type FeatureId = WPCOMFeatures.FeatureId;
 
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
