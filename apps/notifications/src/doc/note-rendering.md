@@ -56,7 +56,7 @@ The result of this function (a string enhanced with HTML tag information) is the
 
 Local development of Calypso logic for rendering notifications can take place making use of the Calypso dev server, as any changes made to `src/apps/notifications` will be reflected in the Calypso local development environment automatically.
 
-However, as notifications can also be viewed in an iframe on non-Calypso sites using the masterbar (see https://github.com/Automattic/wp-calypso/edit/master/apps/notifications/README.md), any changes to the notifications sub-application should also be tested on a sandboxed WP.com site. To do this, run the following commands:
+However, as notifications can also be viewed in an iframe on non-Calypso sites using the masterbar (see <https://github.com/Automattic/wp-calypso/edit/master/apps/notifications/README.md>), any changes to the notifications sub-application should also be tested on a sandboxed WP.com site. To do this, run the following commands:
 
 ```bash
 # Builds files and places them in `apps/notifications/dist`
@@ -70,7 +70,7 @@ Then copy the built `dist` folder to your sandbox environment to test updated re
 
 You can also use a syncing utility included as a `package.json` script in the notifications app to push changes to your sandbox site automatically.
 
-To prepare your sandbox for this purpose, follow the prerequisite setup instructions for adding an SSH alias for your sandbox described in PCYsg-ly5-p2 "Editing Toolkit plugin and your WP.com sandbox" (the process is exactly the same as that used for the FSE plugin). 
+To prepare your sandbox for this purpose, follow the prerequisite setup instructions for adding an SSH alias for your sandbox described in PCYsg-ly5-p2 "Editing Toolkit plugin and your WP.com sandbox" (the process is exactly the same as that used for the FSE plugin).
 
 Then, after making a change in the notification app, make sure you are `cd`'d into `/apps/notifications/` and run the command
 
@@ -92,7 +92,7 @@ To test notification rendering of Gutenberg posts, the easiest way is to follow 
 
 ![follow button](https://cdn-std.droplr.net/files/acc_1037067/sEftC1)
 
-Then navigate to https://wordpress.com/following/manage and enable "Notify me of new posts" for the blog in question:
+Then navigate to <https://wordpress.com/following/manage> and enable "Notify me of new posts" for the blog in question:
 
 ![enable notifications](https://user-images.githubusercontent.com/1233880/92739752-81101d80-f37d-11ea-955f-640b3e5f9092.png).
 

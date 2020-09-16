@@ -21,7 +21,7 @@ export default function RockOnButton() {
 
 | Name         | Type     | Default | Description                                                                        |
 | ------------ | -------- | ------- | ---------------------------------------------------------------------------------- |
-| `plain`    | `bool`   | false   | Renders a button with no user-agent styles                                                   |
+| `plain`      | `bool`   | false   | Renders a button with no user-agent styles                                         |
 | `compact`    | `bool`   | false   | Decreases the size of the button                                                   |
 | `primary`    | `bool`   | false   | Provides extra visual weight and identifies the primary action in a set of buttons |
 | `borderless` | `bool`   | false   | Renders a button without borders                                                   |

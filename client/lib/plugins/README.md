@@ -55,7 +55,7 @@ Note: pluginFilter can be any of the following string: 'none' , 'all', 'active',
 
 ---
 
-** PluginsStore.getSitePlugins( site ); **
+**PluginsStore.getSitePlugins( site );**
 
 Returns an array of plugin objects for a particular site.
 
@@ -97,7 +97,7 @@ export default class extends React.Component {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 	}
 
-	getPlugins = () => { 
+	getPlugins = () => {
 		let sites = this.props.sites.getSelectedOrAllWithPlugins();
 
 		return {
@@ -111,7 +111,7 @@ export default class extends React.Component {
 
 	render() {
 
-	} 
+	}
 } );
 
 ```
@@ -191,7 +191,7 @@ export default class extends React.Component {
 		return (
 			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
 		)
-	} 
+	}
 } );
 
 ```

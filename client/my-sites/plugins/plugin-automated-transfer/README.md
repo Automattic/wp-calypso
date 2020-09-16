@@ -16,6 +16,6 @@ render: function() {
 }
 ```
 
-#### Props:
+#### Props
 
 - `plugin`: a plugin object.
