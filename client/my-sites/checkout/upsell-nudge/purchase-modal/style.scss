@@ -1,18 +1,149 @@
+$left-margin: 36px;
+
 .purchase-modal {
+	--padding: -16px;
+
+	@media ( min-width: 480px ) {
+		--padding: -24px;
+	}
+
 	display: flex;
 	flex-direction: column;
-	align-items: center;
+	align-items: flex-start;
 	width: 450px;
-	max-width: 90%;
+
+	@media ( max-width: 480px ) {
+		width: unset;
+	}
 
 	> p {
 		margin: 1em 0;
 	}
+
+	> hr {
+		width: calc( 100% + var( --padding ) * -2 );
+		margin: 16px var( --padding );
+
+		// stylelint-disable-next-line unit-whitelist
+		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+			height: 0.5px;
+		}
+	}
+
+	> .button.is-primary {
+		align-self: flex-end;
+		margin-top: 16px;
+		min-width: 35%;
+	}
 }
 
-.purchase-modal__success {
-	fill: var( --color-success );
-	width: 48px;
-	height: 48px;
+/**
+ * Close button
+ */
+.purchase-modal__close {
+	position: absolute;
+	top: 0;
+	right: 4px;
+	padding: 4px;
 }
 
+/**
+ * Order steps
+ */
+.purchase-modal__step {
+	position: relative;
+	margin: 0 0 24px $left-margin;
+	align-self: stretch;
+
+	&-icon {
+		position: absolute;
+		width: 27px;
+		height: 27px;
+		top: 0;
+		left: -$left-margin;
+		border-radius: 50%;
+		background: #008a20;
+		text-align: center;
+
+		> svg {
+			margin-top: 4px;
+		}
+	}
+}
+
+.purchase-modal__step-title {
+	> a {
+		display: inline-block;
+		margin-left: 0.5em;
+		text-decoration: underline;
+	}
+}
+
+.purchase-modal__step-content {
+	color: var( --color-neutral-40 );
+	font-size: $font-body-small;
+}
+
+.purchase-modal__product {
+	display: flex;
+	justify-content: space-between;
+	color: var( --color-neutral-60 );
+}
+
+.purchase-modal__card-number {
+	display: inline-block;
+	margin: 0 0.5em;
+}
+
+/**
+ * Terms of Service
+ */
+.purchase-modal__tos {
+	margin: $font-body-extra-small 0 0 $left-margin;
+	font-size: $font-body-extra-small;
+}
+
+.purchase-modal .checkout__terms {
+	margin: 4px 0;
+	padding-left: $left-margin;
+	position: relative;
+
+	svg {
+		position: absolute;
+		top: 0;
+		left: ( $left-margin - 24px );
+		width: 16px;
+		height: 16px;
+	}
+
+	p {
+		font-size: $font-body-extra-small;
+		margin: 0;
+		word-break: break-word;
+	}
+}
+
+/**
+ * Taxes and cost
+ */
+.purchase-modal__review {
+	display: flex;
+	align-self: stretch;
+	justify-content: space-between;
+	flex-wrap: wrap;
+
+	> dt {
+		width: 60%;
+		margin-left: $left-margin;
+	}
+
+	> dd {
+		margin: 0;
+	}
+}
+
+.purchase-modal__tax {
+	font-weight: normal;
+	color: var( --color-neutral-40 );
+	font-size: $font-body-small;
+}

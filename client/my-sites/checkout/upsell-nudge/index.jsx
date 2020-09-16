@@ -223,6 +223,7 @@ export class UpsellNudge extends React.Component {
 				cards={ this.props.cards }
 				onComplete={ () => this.props.handleCheckoutCompleteRedirect( true ) }
 				onClose={ () => this.setState( { showPurchaseModal: false } ) }
+				siteSlug={ this.props.siteSlug }
 			/>
 		);
 	};
