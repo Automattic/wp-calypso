@@ -3,8 +3,9 @@
 .site-redirect-step {
 	padding: 0;
 
-	fieldset {
+	.form-fieldset {
 		clear: left;
+		margin-bottom: 0;
 	}
 
 	form.map-domain-step__form {

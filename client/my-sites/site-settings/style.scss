@@ -1,7 +1,7 @@
 .site-settings {
 	font-size: $font-body-small;
 
-	fieldset {
+	fieldset.form-fieldset {
 		clear: both;
 		margin-bottom: 24px;
 
@@ -181,7 +181,7 @@
 		margin-bottom: 1.5em;
 	}
 
-	fieldset.site-icon-setting {
+	fieldset.form-fieldset.site-icon-setting {
 		padding-bottom: 16px;
 
 		@include breakpoint-deprecated( '>660px' ) {
@@ -375,7 +375,9 @@
 
 // @TODO: Remove has-divider once all instances have been replaced with .site-settings__has-divider
 .has-divider,
-.site-settings__has-divider {
+.site-settings__has-divider,
+.form-fieldset.has-divider,
+.form-fieldset.site-settings__has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px;
 	border: 1px var( --color-neutral-0 ) solid;

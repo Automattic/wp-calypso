@@ -68,6 +68,10 @@
 	margin-top: 10px;
 	position: relative;
 
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+
 	input[type='text'] {
 		padding-right: 38px;
 

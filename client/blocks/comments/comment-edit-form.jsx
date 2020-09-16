@@ -14,6 +14,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import FormFieldset from 'components/forms/form-fieldset';
 import Notice from 'components/notice';
 import { editComment } from 'state/comments/actions';
 import { recordAction, recordGaEvent } from 'reader/stats';
@@ -150,7 +151,7 @@ class PostCommentForm extends Component {
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__edit-form">
-				<fieldset>
+				<FormFieldset>
 					<div className={ expandingAreaClasses }>
 						<pre>
 							<span>{ this.state.commentText }</span>
@@ -176,7 +177,7 @@ class PostCommentForm extends Component {
 						{ translate( 'Send' ) }
 					</button>
 					{ this.renderError() }
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	}

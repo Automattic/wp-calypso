@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import MultiCheckbox from 'components/forms/multi-checkbox';
@@ -163,7 +164,7 @@ class SharingButtonsOptions extends Component {
 		const option = isJetpack ? 'jetpack-twitter-cards-site-tag' : 'twitter_via';
 
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Twitter username' ) }
 				</legend>
@@ -181,7 +182,7 @@ class SharingButtonsOptions extends Component {
 						'This will be included in tweets when people share using the Twitter button.'
 					) }
 				</p>
-			</fieldset>
+			</FormFieldset>
 		);
 	}
 
@@ -195,7 +196,7 @@ class SharingButtonsOptions extends Component {
 		const checked = get( settings, 'jetpack_comment_likes_enabled', false );
 
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
 				</legend>
@@ -218,7 +219,7 @@ class SharingButtonsOptions extends Component {
 						position={ 'bottom left' }
 					/>
 				</FormLabel>
-			</fieldset>
+			</FormFieldset>
 		);
 	}
 
@@ -227,7 +228,7 @@ class SharingButtonsOptions extends Component {
 
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Show like and sharing buttons on', {
 						context: 'Sharing options: Header',
@@ -242,7 +243,7 @@ class SharingButtonsOptions extends Component {
 					onChange={ changeSharingPostTypes }
 					disabled={ ! initialized }
 				/>
-			</fieldset>
+			</FormFieldset>
 		);
 	};
 

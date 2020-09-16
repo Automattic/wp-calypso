@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { Dialog, Button } from '@automattic/components';
+import FormFieldset from 'components/forms/form-fieldset';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
@@ -231,9 +232,9 @@ export class Translatable extends Component {
 					</nav>
 				</header>
 				<section className="community-translator__dialog-body">
-					<fieldset>
+					<FormFieldset>
 						{ this.hasDataLoaded() ? this.renderTranslatableContent() : this.renderPlaceholder() }
-					</fieldset>
+					</FormFieldset>
 				</section>
 			</div>
 		);
