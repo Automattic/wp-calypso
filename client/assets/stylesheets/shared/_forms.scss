@@ -8,7 +8,6 @@ form {
 }
 input[type='text'],
 input[type='email'],
-input[type='number'],
 textarea {
 	@extend %form-field;
 }
@@ -20,7 +19,6 @@ textarea {
 fieldset,
 input[type='text'],
 input[type='email'],
-input[type='number'],
 textarea,
 select,
 label {
