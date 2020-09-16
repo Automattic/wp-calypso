@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
-import type { WPCOMFeatures } from '@automattic/data-stores'
+import type { WPCOMFeatures } from '@automattic/data-stores';
 import {
 	FeatureIcon,
 	Title,
