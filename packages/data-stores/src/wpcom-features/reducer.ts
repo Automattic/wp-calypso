@@ -1,25 +1,18 @@
 /**
+ * External dependencies
+ */
+import type { AnyAction, Reducer } from 'redux';
+
+/**
  * Internal dependencies
  */
-import type { FeatureId } from './types';
-import type { FeatureAction } from './actions';
-import type { Reducer } from 'redux';
+import type { Feature, FeatureId } from './types';
+import { featuresList } from './features-data';
 
-const reducer: Reducer< FeatureId[], FeatureAction > = (
-	state: FeatureId[] = [],
-	action: FeatureAction
-) => {
-	if ( action.type === 'ADD_FEATURE' ) {
-		return [ ...state, action.featureId ];
-	}
+export type State = Record< FeatureId, Feature >;
 
-	if ( action.type === 'REMOVE_FEATURE' ) {
-		return state.filter( ( id ) => id !== action.featureId );
-	}
-
+const reducer: Reducer< State, AnyAction > = ( state = featuresList ) => {
 	return state;
 };
-
-export type State = FeatureId[];
 
 export default reducer;

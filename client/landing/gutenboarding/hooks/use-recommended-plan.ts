@@ -9,6 +9,7 @@ import { Plans } from '@automattic/data-stores';
  */
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
+import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 
 const order = [
 	Plans.PLAN_PERSONAL,
@@ -19,9 +20,7 @@ const order = [
 
 export function useRecommendedPlanSlug() {
 	const allFeatures = useSelect( ( select ) => select( WPCOM_FEATURES_STORE ).getAllFeatures() );
-	const selectedFeatures = useSelect( ( select ) =>
-		select( WPCOM_FEATURES_STORE ).getSelectedFeatures()
-	);
+	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 
 	if ( ! selectedFeatures.length ) return;
 

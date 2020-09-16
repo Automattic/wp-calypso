@@ -3,7 +3,7 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -11,6 +11,8 @@ import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
+
+type FeatureId = WPCOMFeatures.FeatureId;
 
 // Returns true if the url has a `?latest`, which is used to enable experimental features
 export function hasExperimentalQueryParam() {
@@ -152,6 +154,25 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	return state;
 };
 
+const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
+	state: FeatureId[] = [],
+	action
+) => {
+	if ( action.type === 'ADD_FEATURE' ) {
+		return [ ...state, action.featureId ];
+	}
+
+	if ( action.type === 'REMOVE_FEATURE' ) {
+		return state.filter( ( id ) => id !== action.featureId );
+	}
+
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+
+	return state;
+};
+
 const selectedSite: Reducer< number | undefined, OnboardAction > = (
 	state = undefined,
 	action
@@ -223,6 +244,7 @@ const reducer = combineReducers( {
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	pageLayouts,
+	selectedFeatures,
 	selectedFonts,
 	selectedDesign,
 	selectedSite,

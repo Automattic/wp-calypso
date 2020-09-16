@@ -20,6 +20,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
 import useStepNavigation from '../../hooks/use-step-navigation';
 
@@ -36,10 +37,8 @@ const FeaturesStep: React.FunctionComponent = () => {
 
 	const allFeatures = useSelect( ( select ) => select( WPCOM_FEATURES_STORE ).getAllFeatures() );
 
-	const selectedFeatures = useSelect( ( select ) =>
-		select( WPCOM_FEATURES_STORE ).getSelectedFeatures()
-	);
-	const { addFeature, removeFeature } = useDispatch( WPCOM_FEATURES_STORE );
+	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
+	const { addFeature, removeFeature } = useDispatch( ONBOARD_STORE );
 
 	const hasSelectedFeatures = selectedFeatures.length > 0;
 

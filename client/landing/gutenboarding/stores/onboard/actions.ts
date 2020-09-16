@@ -1,7 +1,13 @@
 /**
  * External dependencies
  */
-import { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
+import {
+	DomainSuggestions,
+	Site,
+	VerticalsTemplates,
+	Plans,
+	WPCOMFeatures,
+} from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'lib/i18n-utils';
@@ -23,6 +29,12 @@ type Template = VerticalsTemplates.Template;
 type Language = {
 	value: number;
 };
+type FeatureId = WPCOMFeatures.FeatureId;
+
+export const addFeature = ( featureId: FeatureId ) => ( {
+	type: 'ADD_FEATURE' as const,
+	featureId,
+} );
 
 export function* createSite(
 	username: string,
@@ -87,8 +99,9 @@ export function* createSite(
 	return success;
 }
 
-export const enableExperimental = () => ( {
-	type: 'SET_ENABLE_EXPERIMENTAL' as const,
+export const removeFeature = ( featureId: FeatureId ) => ( {
+	type: 'REMOVE_FEATURE' as const,
+	featureId,
 } );
 
 export const resetFonts = () => ( {
@@ -194,7 +207,8 @@ export const startOnboarding = () => ( {
 } );
 
 export type OnboardAction = ReturnType<
-	| typeof enableExperimental
+	| typeof addFeature
+	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
 	| typeof resetSiteVertical
