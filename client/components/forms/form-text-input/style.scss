@@ -1,17 +1,22 @@
 .form-text-input {
 	@at-root {
 		input[type='url']#{&},
+		input[type='password']#{&},
 		input[type='tel']#{&},
 		input[type='search']#{&} {
 			@extend %form-field;
 		}
 
 		input[type='url']#{&},
+		input[type='password']#{&},
 		input[type='search']#{&} {
-			appearance: none;
-
 			/*!rtl:ignore*/
 			direction: ltr;
+		}
+
+		input[type='url']#{&},
+		input[type='search']#{&} {
+			appearance: none;
 		}
 
 		input[type='search']#{&}::-webkit-search-decoration {

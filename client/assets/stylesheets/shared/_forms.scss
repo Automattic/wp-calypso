@@ -9,7 +9,6 @@ form {
 input[type='text'],
 input[type='email'],
 input[type='number'],
-input[type='password'],
 textarea {
 	@extend %form-field;
 }
@@ -22,14 +21,12 @@ fieldset,
 input[type='text'],
 input[type='email'],
 input[type='number'],
-input[type='password'],
 textarea,
 select,
 label {
 	box-sizing: border-box;
 }
 
-input[type='password'],
 input[type='email'] {
 	/*!rtl:ignore*/
 	direction: ltr;
