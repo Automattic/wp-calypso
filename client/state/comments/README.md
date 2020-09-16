@@ -12,8 +12,10 @@ comments = {
 
 ## Types
 
+```text
     CommentTargetId: `${siteId}-${postId}`;
     RequestId: `${siteId}-${postId}-${stringify(query)}`; // query is the query to wpcom replies()
+```
 
 ## Selectors
 
