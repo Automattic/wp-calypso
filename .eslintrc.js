@@ -14,6 +14,10 @@ module.exports = {
 	],
 	overrides: [
 		{
+			// Nothing to override for these files. This is here so eslint also checks for `.jsx` files by default
+			files: [ '**/*.jsx' ],
+		},
+		{
 			files: [ '*.md' ],
 			parser: 'markdown-eslint-parser',
 			rules: {
