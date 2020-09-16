@@ -550,6 +550,11 @@ export class MySitesSidebar extends Component {
 	}
 
 	plan() {
+		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
+		if ( this.props.isWpMobile ) {
+			return null;
+		}
+
 		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
 		const displayPlanName = ! this.props.isJetpack || this.props.isAtomicSite || this.props.isVip;
 
@@ -598,7 +603,6 @@ export class MySitesSidebar extends Component {
 			path,
 			site,
 			translate,
-			isWpMobile,
 		} = this.props;
 
 		if ( ! site ) {
@@ -610,11 +614,6 @@ export class MySitesSidebar extends Component {
 		}
 
 		if ( ! canUserManageOptions ) {
-			return null;
-		}
-
-		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
-		if ( isWpMobile ) {
 			return null;
 		}
 
