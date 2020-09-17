@@ -61,6 +61,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		const now = Date.now() / 1000;
 
 		const siteSshotDir = join( mediaHelper.screenShotsDir(), siteName );
+		console.debug( '*** ABOUT TO CREATE THE siteSshotDir =', siteSshotDir );
 		await fs.access( siteSshotDir ).catch( () => fs.mkdir( siteSshotDir ) );
 
 		for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {

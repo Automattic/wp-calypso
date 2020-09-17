@@ -85,6 +85,7 @@ export function writeScreenshot( data, filenameCallback, metadata ) {
 	if ( ! fs.existsSync( screenShotDir ) ) {
 		fs.mkdirSync( screenShotDir );
 	}
+	console.debug( '**** writeScreenshot.screenshotDir =', screenShotDir );
 
 	if ( typeof filenameCallback === 'function' ) {
 		filename = filenameCallback();
@@ -92,6 +93,8 @@ export function writeScreenshot( data, filenameCallback, metadata ) {
 		filename = new Date().getTime().toString();
 	}
 	const screenshotPath = `${ screenShotDir }/${ filename }.png`;
+
+	console.debug( '**** writeScreenshot.screenshotPath =', screenshotPath );
 	if ( typeof metadata === 'object' ) {
 		for ( const i in metadata ) {
 			pt = pt.pipe( pngitxt.set( i, metadata[ i ] ) );
