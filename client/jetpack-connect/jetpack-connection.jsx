@@ -28,7 +28,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
 import {
 	ALREADY_CONNECTED,
-	ALREADY_OWNED,
 	IS_DOT_COM,
 	NOT_ACTIVE_JETPACK,
 	NOT_CONNECTED_JETPACK,
@@ -81,13 +80,6 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! this.state.redirecting
 			) {
 				this.redirect( 'remote_auth', this.props.siteHomeUrl );
-			}
-
-			if ( status === ALREADY_OWNED && ! this.state.redirecting ) {
-				if ( isMobileAppFlow ) {
-					this.redirectToMobileApp( 'already-connected' );
-				}
-				this.redirect( 'plans_selection', url );
 			}
 
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
@@ -252,21 +244,12 @@ const jetpackConnection = ( WrappedComponent ) => {
 			if ( ! this.checkProperty( 'isJetpackActive' ) ) {
 				return NOT_ACTIVE_JETPACK;
 			}
-			if (
-				! this.checkProperty( 'isJetpackConnected' ) ||
-				( this.checkProperty( 'isJetpackConnected' ) && ! this.checkProperty( 'userOwnsSite' ) )
-			) {
+
+			if ( ! this.checkProperty( 'isJetpackConnected' ) ) {
 				return NOT_CONNECTED_JETPACK;
 			}
-			if ( this.checkProperty( 'isJetpackConnected' ) && this.checkProperty( 'userOwnsSite' ) ) {
-				return ALREADY_CONNECTED;
-			}
 
-			if ( this.checkProperty( 'userOwnsSite' ) ) {
-				return ALREADY_OWNED;
-			}
-
-			return false;
+			return ALREADY_CONNECTED;
 		};
 
 		handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
