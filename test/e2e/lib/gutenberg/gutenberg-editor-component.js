@@ -354,6 +354,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
+
+		// NOTE This could be a helper method in the block class? (start moving this knowledge over to blocks and not here...)
+		// alongisde the logic in the switch above, this method could be greatly simplified if the data needed here could be queried
+		// from the block class or a helper method that can get it from the block class (see the existing statics there for reference).
 		const insertedBlockSelector = By.css(
 			`.block-editor-block-list__block.${
 				hasChildBlocks ? 'has-child-selected' : 'is-selected'

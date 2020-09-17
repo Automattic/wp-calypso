@@ -17,17 +17,15 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	async setupColumns( no ) {
 		const columnButtonSelector = By.css( `${ this.blockID } button[aria-label="${ no } columns"]` );
 		await driverHelper.clickWhenClickable( this.driver, columnButtonSelector );
+
+		// Updates the blockId, since the block is replaced by another one upon the selection of the columns.
+		this.blockID = await this.driver
+			.findElement( By.css( 'div.block-editor-block-list__block.is-selected' ) )
+			.getAttribute( 'id' );
 	}
 
 	/**
 	 * Inserts a block into the specified grid column using the Quick Inserter.
-	 *
-	 * The block wrapper div changes after you setup the number of columns you want. This makes it tricky
-	 * to scope the elements to the original block. I'm for now brute-forcing the selection by using a more
-	 * general selector.
-	 *
-	 * This probably won't support multiple instances of the same block. It hasn't been tested
-	 * with multiple layout grids on the page either, but it works fine for simple scenarios.
 	 *
 	 * @param { typeof GutenbergBlockComponent } blockClass A block class that responds to blockTitle and blockName
 	 * @param { number } column number to insert it into, from left to right, starts with 0.
@@ -35,7 +33,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	 **/
 	async insertBlock( blockClass, column ) {
 		const addColumnButtonsSelector = By.css(
-			`.wp-block-jetpack-layout-grid button[aria-label="Add block"]`
+			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid button[aria-label="Add block"]`
 		);
 		const allButtons = await this.driver.findElements( addColumnButtonsSelector );
 
@@ -61,7 +59,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		);
 
 		const insertedBlockSelector = By.css(
-			`.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`
+			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`
 		);
 		const blockId = await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 
