@@ -73,6 +73,7 @@ $autobar-height: 20px;
 	border: solid 2px var( --color-masterbar-background );
 	border-radius: 50%;
 	display: none;
+	// stylelint-disable-next-line scales/font-size
 	font-size: 8px;
 	height: 8px;
 	letter-spacing: 0;
@@ -344,8 +345,9 @@ $autobar-height: 20px;
 .masterbar__item-me {
 	.gravatar {
 		position: absolute;
-		left: 16px;
-		top: 12px;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
 		width: 18px;
 		height: 18px;
 
@@ -353,6 +355,7 @@ $autobar-height: 20px;
 	}
 
 	.gridicon + .masterbar__item-content {
+		display: block;
 		padding: 0;
 	}
 
@@ -388,6 +391,7 @@ $autobar-height: 20px;
 		border: solid 2px var( --color-masterbar-background );
 		border-radius: 50%;
 		display: none;
+		// stylelint-disable-next-line scales/font-size
 		font-size: 8px;
 		height: 8px;
 		letter-spacing: 0;
