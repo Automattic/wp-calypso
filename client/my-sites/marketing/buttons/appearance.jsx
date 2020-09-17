@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
 import SupportInfo from 'components/support-info';
@@ -132,7 +133,7 @@ class SharingButtonsAppearance extends Component {
 		const { isJetpack, translate } = this.props;
 
 		return (
-			<fieldset className="buttons__fieldset sharing-buttons__fieldset">
+			<FormFieldset className="buttons__fieldset sharing-buttons__fieldset">
 				<legend className="buttons__fieldset-heading sharing-buttons__fieldset-heading">
 					{ isJetpack
 						? translate( 'Like', { context: 'Sharing options: Header' } )
@@ -158,7 +159,7 @@ class SharingButtonsAppearance extends Component {
 						position={ 'bottom left' }
 					/>
 				</FormLabel>
-			</fieldset>
+			</FormFieldset>
 		);
 	}
 

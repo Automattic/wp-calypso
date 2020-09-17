@@ -71,8 +71,6 @@ Similar to how `isVisible` indicates a notion of being able to be seen, `isShowi
 
 Used to force a manual refresh of the notes from the server.
 
-[visibility]: https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilityState
-
 ## Signals from App
 
 ### `iFrameReady` - `onReady() : {}`
@@ -94,3 +92,5 @@ Indicates a request to close the notifications panel.
 ### `widescreen` - `onLayoutChange() : { layout: 'narrow' | 'widescreen' }`
 
 Indicates that the app is toggling from narrow to widescreen layouts. Passes along the boolean `widescreen` to indicate which layout is active.
+
+[visibility]: https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilityState

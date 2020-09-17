@@ -40,6 +40,13 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	// Directly and indirectly owned products
 	const ownedProducts = [ ...purchasedProducts, ...includedInPlanProducts ];
 
+	// If Jetpack Search is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
+	}
+
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying
 	// the option cards.
 	if (
@@ -64,13 +71,6 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_ANTI_SPAM_PRODUCTS.includes( ownedProduct ) )
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_ANTI_SPAM_PRODUCTS ];
-	}
-
-	// If Jetpack Search is directly or indirectly owned, continue, otherwise make it available.
-	if (
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
-	) {
-		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
 	}
 
 	return {

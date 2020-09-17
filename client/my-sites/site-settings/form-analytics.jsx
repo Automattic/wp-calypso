@@ -15,6 +15,7 @@ import SupportInfo from 'components/support-info';
 import UpsellNudge from 'blocks/upsell-nudge';
 import CompactFormToggle from 'components/forms/form-toggle/compact';
 import { getPlugins } from 'state/plugins/installed/selectors';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
@@ -152,7 +153,7 @@ export class GoogleAnalyticsForm extends Component {
 				) : (
 					<Card className="analytics-settings site-settings__analytics-settings">
 						{ siteIsJetpack && (
-							<fieldset>
+							<FormFieldset>
 								<SupportInfo
 									text={ translate(
 										'Reports help you track the path visitors take' +
@@ -169,10 +170,10 @@ export class GoogleAnalyticsForm extends Component {
 									) }
 									disabled={ isRequestingSettings || isSavingSettings }
 								/>
-							</fieldset>
+							</FormFieldset>
 						) }
 
-						<fieldset>
+						<FormFieldset>
 							<FormLabel htmlFor="wgaCode">
 								{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
 							</FormLabel>
@@ -210,9 +211,9 @@ export class GoogleAnalyticsForm extends Component {
 							>
 								{ translate( 'Where can I find my Tracking ID?' ) }
 							</ExternalLink>
-						</fieldset>
+						</FormFieldset>
 						{ siteIsJetpack && (
-							<fieldset>
+							<FormFieldset>
 								<CompactFormToggle
 									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
 									disabled={ isRequestingSettings || ! enableForm }
@@ -234,7 +235,7 @@ export class GoogleAnalyticsForm extends Component {
 										{ translate( 'Learn more' ) }
 									</ExternalLink>
 								</FormSettingExplanation>
-							</fieldset>
+							</FormFieldset>
 						) }
 						{ siteIsJetpack && wooCommerceActive && (
 							<FormAnalyticsStores

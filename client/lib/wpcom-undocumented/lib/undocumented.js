@@ -546,22 +546,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 };
 
 /**
- * Initiates a resend of the inbound transfer verification email.
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.resendInboundTransferEmail = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/resend-inbound-transfer-email`,
-		},
-		fn
-	);
-};
-
-/**
  * Fetches a list of available top-level domain names ordered by popularity.
  *
  * @param {object} query Optional query parameters

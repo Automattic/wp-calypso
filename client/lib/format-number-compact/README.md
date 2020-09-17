@@ -2,7 +2,7 @@
 
 Given a language code, this library will take in a number and display it in a compact format.
 
-# Usage
+## Usage
 
 ```javascript
 import formatNumberCompact from 'lib/format-number-compact';

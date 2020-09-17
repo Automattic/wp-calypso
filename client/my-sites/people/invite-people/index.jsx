@@ -53,7 +53,7 @@ import withTrackingTool from 'lib/analytics/with-tracking-tool';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 import QuerySiteInvites from 'components/data/query-site-invites';
 import { getInviteLinksForSite } from 'state/invites/selectors';
-import { getSiteRoles } from 'state/site-roles/selectors';
+import { getSiteRoles, getWpcomFollowerRole } from 'state/site-roles/selectors';
 import FormSelect from 'components/forms/form-select';
 import FormTextInput from 'components/forms/form-text-input';
 import ClipboardButton from 'components/forms/clipboard-button';
@@ -466,6 +466,21 @@ class InvitePeople extends React.Component {
 		return inviteForm;
 	};
 
+	getInviteLinkRoles = () => {
+		const { siteRoles, wpcomFollowerRole } = this.props;
+
+		if ( ! siteRoles || ! wpcomFollowerRole ) {
+			return [];
+		}
+
+		return siteRoles.concat( wpcomFollowerRole );
+	};
+
+	isValidInviteLinkRole = ( inviteLinkRole ) => {
+		const roles = this.getInviteLinkRoles();
+		return roles.some( ( role ) => role === inviteLinkRole );
+	};
+
 	generateInviteLinks = () => {
 		this.setState( {
 			isGeneratingInviteLinks: true,
@@ -548,15 +563,21 @@ class InvitePeople extends React.Component {
 	};
 
 	renderInviteLinkRoleSelector = ( activeInviteLink ) => {
-		const { siteRoles, translate } = this.props;
+		const { translate, inviteLinks } = this.props;
+		const allRoles = this.getInviteLinkRoles();
 
 		const roleOptions =
-			siteRoles &&
-			siteRoles.map( ( role ) => (
-				<option value={ role.name } key={ role.name }>
-					{ role.display_name }
-				</option>
-			) );
+			allRoles &&
+			allRoles.map( ( role ) => {
+				if ( inviteLinks[ role.name ] ) {
+					return (
+						<option value={ role.name } key={ role.name }>
+							{ role.display_name }
+						</option>
+					);
+				}
+			} );
+
 		const inviteUrlRef = React.createRef();
 
 		return (
@@ -623,15 +644,12 @@ class InvitePeople extends React.Component {
 				<EmailVerificationGate>
 					<div className="invite-people__link-instructions">
 						{ translate(
-							'Use this link to onboard your team members without having to invite them one by one. '
-						) }
-						<strong>
-							{ translate(
-								'Anybody visiting this URL will be able to sign up to your organization, '
-							) }
-						</strong>
-						{ translate(
-							'even if they received the link from somebody else, so make sure that you share it with trusted people.'
+							'Use this link to onboard your team members without having to invite them one by one. {{strong}}Anybody visiting this URL will be able to sign up to your organization,{{/strong}} even if they received the link from somebody else, so make sure that you share it with trusted people.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
 						) }
 					</div>
 
@@ -699,6 +717,7 @@ const connectComponent = connect(
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			inviteLinks: getInviteLinksForSite( state, siteId ),
 			siteRoles: getSiteRoles( state, siteId ),
+			wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {

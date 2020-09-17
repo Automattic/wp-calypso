@@ -6,7 +6,7 @@ The `withTrackingTool` is called with a `trackingTool` parameter. Currently, onl
 
 The return is a wrapper function that takes your component and loads the specified tracking tool on top of it.
 
-# Usage
+## Usage
 
 When directly wrapping a component:
 

@@ -7,6 +7,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
 import TooltipComponent from 'components/tooltip';
 
 class Tooltip extends PureComponent {
@@ -40,9 +42,9 @@ class Tooltip extends PureComponent {
 
 		return (
 			<div>
-				<label>
+				<FormLabel>
 					Position
-					<select value={ this.state.position } onChange={ this.changePosition }>
+					<FormSelect value={ this.state.position } onChange={ this.changePosition }>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>
@@ -51,8 +53,8 @@ class Tooltip extends PureComponent {
 						<option value="bottom">bottom</option>
 						<option value="bottom left">bottom left</option>
 						<option value="bottom right">bottom right</option>
-					</select>
-				</label>
+					</FormSelect>
+				</FormLabel>
 
 				<hr />
 

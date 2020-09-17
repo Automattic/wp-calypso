@@ -25,6 +25,7 @@ import {
 	TYPE_PREMIUM,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	JETPACK_RESET_PLANS,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
 
@@ -299,6 +300,10 @@ export function isJetpackPersonalPlan( planSlug ) {
 
 export function isJetpackFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
+}
+
+export function isJetpackOfferResetPlan( planSlug ) {
+	return JETPACK_RESET_PLANS.includes( planSlug );
 }
 
 /**

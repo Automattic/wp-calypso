@@ -86,6 +86,7 @@ class PostComment extends React.PureComponent {
 
 		// connect()ed props:
 		currentUser: PropTypes.object.isRequired,
+		shouldHighlightNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -98,6 +99,7 @@ class PostComment extends React.PureComponent {
 		showNestingReplyArrow: false,
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
+		shouldHighlightNew: false,
 	};
 
 	state = {
@@ -245,6 +247,7 @@ class PostComment extends React.PureComponent {
 								activeEditCommentId={ this.props.activeEditCommentId }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
+								shouldHighlightNew={ this.props.shouldHighlightNew }
 							/>
 						) ) }
 					</ol>
@@ -336,6 +339,7 @@ class PostComment extends React.PureComponent {
 			overflowY,
 			showReadMoreInActions,
 			hidePingbacksAndTrackbacks,
+			shouldHighlightNew,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -386,8 +390,13 @@ class PostComment extends React.PureComponent {
 			commentAuthorName: parentAuthorName,
 		} = this.getAuthorDetails( parentCommentId );
 
+		// highlight comments not older than 10s
+		const isHighlighted =
+			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
+
 		const postCommentClassnames = classnames( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
+			'is-highlighted': isHighlighted,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */

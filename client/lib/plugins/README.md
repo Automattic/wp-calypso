@@ -2,10 +2,12 @@
 
 Plugins uses a [flux](https://facebook.github.io/flux/docs/overview.html#content) approach to managing plugins data in calypso.
 
-###Plugins Store
+## Plugins Store
+
 The Plugins Store is responsible for keeping each site's plugin list up to date. Initially it loads the data and request it as it gets updated. This store also listens to any actions relevant to keep the data up to date such as the plugin update/activate/deactivate etc.
 
-####The Data
+### The Data
+
 The Data that is stored in the sites plugin store looks like this:
 
 ```js
@@ -39,15 +41,15 @@ The Data that is stored in the sites plugin store looks like this:
 
 The Data is stored in a private variable but can be accessed though the stores public methods.
 
-####Public Methods
+### Public Methods
 
-**PluginsStore.getPlugin( sites, pluginSlug );**
+#### PluginsStore.getPlugin( sites, pluginSlug );
 
 Returns a plugin object that has a sites attribute which stores an array of sites objects that have that particular plugin.
 
 ---
 
-**PluginsStore.getPlugins( sites, pluginFilter );**
+#### PluginsStore.getPlugins( sites, pluginFilter );
 
 Returns an array of plugin object that has a sites attribute which stores an array of sites objects that have that particular plugin.
 
@@ -55,23 +57,23 @@ Note: pluginFilter can be any of the following string: 'none' , 'all', 'active',
 
 ---
 
-** PluginsStore.getSitePlugins( site ); **
+#### PluginsStore.getSitePlugins( site );
 
 Returns an array of plugin objects for a particular site.
 
 ---
 
-**PluginsStore.getSitePlugin( site, pluginSlug );**
+#### PluginsStore.getSitePlugin( site, pluginSlug );
 
 Returns a plugin objects for a particular site.
 
 ---
 
-**PluginsStore.getSites( sites, pluginSlug );**
+#### PluginsStore.getSites( sites, pluginSlug );
 
 Returns an array of sites that have a particular plugin.
 
-####Example Component Code:
+### Example Component Code:
 
 ```es6
 /**
@@ -97,7 +99,7 @@ export default class extends React.Component {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 	}
 
-	getPlugins = () => { 
+	getPlugins = () => {
 		let sites = this.props.sites.getSelectedOrAllWithPlugins();
 
 		return {
@@ -111,63 +113,64 @@ export default class extends React.Component {
 
 	render() {
 
-	} 
+	}
 } );
 
 ```
 
-###Actions
+## Actions
+
 Actions get triggered by views and stores.
 
-####Public methods.
+### Public methods.
 
 Triggers api call to fetch the site data.
 
-**PluginsActions.fetchSitePlugins( site );**
+#### PluginsActions.fetchSitePlugins( site );
 
 ---
 
 Update a plugin on a site.
 
-**PluginsActions.updatePlugin( site, plugin );**
+#### PluginsActions.updatePlugin( site, plugin );
 
 ---
 
 Toggle a plugin active state on a site.
 
-**PluginsActions.togglePluginActivation( site, plugin );**
+#### PluginsActions.togglePluginActivation( site, plugin );
 
 ---
 
 Activate a plugin on a site.
 
-**PluginsActions.activatePlugin( site, plugin );**
+#### PluginsActions.activatePlugin( site, plugin );
 
 ---
 
 Deactivate a plugin on a site.
 
-**PluginsActions.deactivatePlugin( site, plugin );**
+#### PluginsActions.deactivatePlugin( site, plugin );
 
 ---
 
 Enable AutoUpdates for a plugin on a site.
 
-**PluginsActions.enableAutoUpdatesPlugin( site, plugin );**
+#### PluginsActions.enableAutoUpdatesPlugin( site, plugin );
 
 ---
 
 Disable AutoUpdates for a plugin on a site.
 
-**PluginsActions.disableAutoUpdatesPlugin( site, plugin );**
+#### PluginsActions.disableAutoUpdatesPlugin( site, plugin );
 
 ---
 
 Toggle AutoUpdates for a plugin on a site.
 
-**PluginsActions.togglePluginAutoUpdate( site, plugin );**
+#### PluginsActions.togglePluginAutoUpdate( site, plugin );
 
-####Example Component Code:
+## Example Component Code:
 
 ```jsx
 /**
@@ -191,7 +194,7 @@ export default class extends React.Component {
 		return (
 			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
 		)
-	} 
+	}
 } );
 
 ```

@@ -13,6 +13,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { gaRecordEvent } from 'lib/analytics/ga';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 
@@ -84,14 +85,14 @@ class SharingButtonsStyle extends React.Component {
 
 	render() {
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ this.props.translate( 'Button style', {
 						context: 'Sharing: Sharing button option heading',
 					} ) }
 				</legend>
 				{ this.getOptions() }
-			</fieldset>
+			</FormFieldset>
 		);
 	}
 }

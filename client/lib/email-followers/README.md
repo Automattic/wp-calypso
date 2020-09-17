@@ -2,28 +2,31 @@
 
 A [flux](https://facebook.github.io/flux/docs/overview.html#content) approach for managing a site's email followers in Calypso.
 
-####Public Methods
+## Email Followers Store
 
-**EmailFollowersStore.getFollowers( fetchOptions );**
+### Public Methods
+
+#### EmailFollowersStore.getFollowers( fetchOptions );
 
 Returns an array of all followers that have been fetched for the given fetch options
 
 ---
 
-**EmailFollowersStore.getPaginationData( fetchOptions );**
+#### EmailFollowersStore.getPaginationData( fetchOptions );
 
 This data will help with pagination and infinite scroll.
 
-###Actions
+## Actions
+
 Actions get triggered by views and stores.
 
-####Public methods.
+### Public methods
 
-**EmailFollowersActions.fetchFollowers( fetchOptions );**
+#### EmailFollowersActions.fetchFollowers( fetchOptions );
 
 Fetches followers in batches of 100 starting from the given page, which defaults to 1.
 
-###Example Component Code
+## Example Component Code
 
 ```es6
 /**
@@ -33,7 +36,7 @@ import React from 'react';
 
 /**
  * Internal dependencies
- */ 
+ */
 import EmailFollowersStore from 'lib/followers/wpcom-followers-store';
 import EmailFollowersActions from 'lib/followers/actions';
 
@@ -67,7 +70,7 @@ export default class extends React.Component {
 
 	render() {
 
-	} 
+	}
 } );
 
 ```

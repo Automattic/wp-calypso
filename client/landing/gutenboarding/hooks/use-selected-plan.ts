@@ -10,6 +10,7 @@ import { useSelect } from '@wordpress/data';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { usePlanRouteParam } from '../path';
+import useRecommendedPlan from './use-recommended-plan';
 import { isEnabled } from 'config';
 
 export function usePlanFromPath() {
@@ -20,6 +21,7 @@ export function usePlanFromPath() {
 export function useSelectedPlan() {
 	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
+	const recommendedPlan = useRecommendedPlan();
 	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
@@ -29,19 +31,20 @@ export function useSelectedPlan() {
 
 	const planFromPath = usePlanFromPath();
 
-	// If the selected plan is not a paid plan and the user selects a premium domain
-	// return the default paid plan.
-	if ( isPlanFree( selectedPlan?.storeSlug ) && hasPaidDomain ) {
-		return defaultPaidPlan;
-	}
+	// Use recommendedPlan with priority over the plan derived from domain and design selection
+	const defaultPlan =
+		recommendedPlan || ( ( hasPaidDomain || hasPaidDesign ) && defaultPaidPlan ) || undefined;
 
-	const defaultPlan = hasPaidDomain || hasPaidDesign ? defaultPaidPlan : undefined;
+	// If the selected plan is free and the user selection determines a paid plan, return the paid plan
+	if ( isPlanFree( selectedPlan?.storeSlug ) && defaultPlan ) {
+		return defaultPlan;
+	}
 
 	/**
 	 * Plan is decided in this order
 	 * 1. selected from PlansGrid (by dispatching setPlan)
 	 * 2. having the plan slug in the URL
-	 * 3. selecting a paid domain or design
+	 * 3. selecting features, a paid domain or design
 	 */
 	return selectedPlan || planFromPath || defaultPlan;
 }
