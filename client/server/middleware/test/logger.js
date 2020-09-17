@@ -15,17 +15,12 @@ jest.mock( 'server/lib/logger', () => ( {
 	getLogger: () => mockLogger,
 } ) );
 
-const withRequest = ( { method, url, ip, user, httpVersionMajor, httpVersionMinor, headers } ) => {
+const withRequest = ( { method, url, ip, httpVersionMajor, httpVersionMinor, headers } ) => {
 	const req = new EventEmitter();
 	req.method = method;
-	req.url = url;
+	req.originalUrl = url;
 	req.ip = ip;
-	req.headers = {
-		...headers,
-	};
-	if ( user ) {
-		req.headers.authorization = 'Basic ' + new Buffer( user + ':pass' ).toString( 'base64' );
-	}
+	req.get = ( header ) => headers[ header.toLowerCase() ];
 
 	req.httpVersionMajor = httpVersionMajor;
 	req.httpVersionMinor = httpVersionMinor;
@@ -35,10 +30,7 @@ const withRequest = ( { method, url, ip, user, httpVersionMajor, httpVersionMino
 const withResponse = ( { statusCode, headers } ) => {
 	const res = new EventEmitter();
 	res.headersSent = true;
-	res.headers = {
-		...headers,
-	};
-	res.getHeader = ( header ) => res.headers[ header.toLowerCase() ];
+	res.get = ( header ) => headers[ header.toLowerCase() ];
 	res.statusCode = statusCode;
 	return res;
 };
@@ -58,6 +50,7 @@ beforeEach( () => {
 
 afterEach( () => {
 	jest.useRealTimers();
+	jest.resetAllMocks();
 } );
 
 it( 'Adds a `logger` property to the request', () => {
@@ -106,7 +99,7 @@ it( 'When the response ends, it logs info about the request in production mode',
 		httpVersionMajor: 2,
 		httpVersionMinor: 0,
 		headers: {
-			referrer: 'http://wordpress.com',
+			referer: 'http://wordpress.com',
 			'user-agent': 'Chrome',
 		},
 	} );
@@ -128,7 +121,6 @@ it( 'When the response ends, it logs info about the request in production mode',
 		method: 'GET',
 		url: '/example.html',
 		remoteAddr: '127.0.0.1',
-		remoteUser: 'foo',
 		httpVersion: '2.0',
 		referrer: 'http://wordpress.com',
 		userAgent: 'Chrome',

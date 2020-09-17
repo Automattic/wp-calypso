@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import morgan from 'morgan';
-
-/**
  * Internal dependencies
  */
 import { getLogger } from 'server/lib/logger';
@@ -13,27 +8,24 @@ const NS_TO_MS = 1e-6;
 const logRequest = ( req, res, options ) => {
 	const { requestStart } = options;
 
-	// Equivalent to morgan's `dev` format
 	let fields = {
-		method: morgan.method( req ),
-		status: morgan.status( req, res ),
-		length: res.getHeader( 'Content-Length' ),
-		url: morgan.url( req ),
+		method: req.method,
+		status: res.statusCode,
+		length: res.get( 'content-length' ),
+		url: req.originalUrl,
 		duration: Number(
 			( Number( process.hrtime.bigint() - requestStart ) * NS_TO_MS ).toFixed( 3 )
 		),
 	};
 
 	if ( process.env.NODE_ENV === 'production' ) {
-		// Standard Apache combined log output.
-		// Equivalent to morgan's `combined` format
+		// Standard Apache combined log output minus the remote-user
 		fields = {
 			...fields,
-			remoteAddr: morgan[ 'remote-addr' ]( req ),
-			remoteUser: morgan[ 'remote-user' ]( req ),
-			httpVersion: morgan[ 'http-version' ]( req ),
-			referrer: morgan.referrer( req ),
-			userAgent: morgan[ 'user-agent' ]( req ),
+			remoteAddr: req.ip,
+			httpVersion: req.httpVersionMajor + '.' + req.httpVersionMinor,
+			referrer: req.get( 'referer' ),
+			userAgent: req.get( 'user-agent' ),
 		};
 	}
 
