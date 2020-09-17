@@ -1,4 +1,4 @@
-const stepNameToModuleName = {
+export const stepNameToModuleName = {
 	about: 'about',
 	'clone-start': 'clone-start',
 	'clone-destination': 'clone-destination',
