@@ -28,7 +28,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, TYPE_SECURITY_DAILY, TERM_ANNUALLY } from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, TYPE_BUSINESS, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -127,7 +127,7 @@ export class GoogleAnalyticsForm extends Component {
 				event={ 'google_analytics_settings' }
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-					type: TYPE_SECURITY_DAILY,
+					type: TYPE_BUSINESS,
 					...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 				} ) }
 				showIcon={ true }
