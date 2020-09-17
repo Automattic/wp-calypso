@@ -48,7 +48,7 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	TYPE_SECURITY_DAILY,
+	TYPE_PREMIUM,
 	TERM_ANNUALLY,
 	JETPACK_RESET_PLANS,
 } from 'lib/plans/constants';
@@ -374,7 +374,7 @@ export class SeoForm extends React.Component {
 							event={ 'calypso_seo_settings_upgrade_nudge' }
 							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
 							plan={ findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: siteIsJetpack ? TYPE_SECURITY_DAILY : TYPE_BUSINESS,
+								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
 								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 							} ) }
 							showIcon={ true }
