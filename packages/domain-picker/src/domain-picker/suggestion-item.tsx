@@ -17,10 +17,9 @@ import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import InfoTooltip from '../info-tooltip';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
-import { DOMAIN_UNAVAILABLE_STATUS } from '../constants';
 
 interface Props {
-	availabilityStatus?: string;
+	isUnavailable?: boolean;
 	domain: string;
 	isLoading?: boolean;
 	cost: string;
@@ -35,7 +34,7 @@ interface Props {
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
-	availabilityStatus,
+	isUnavailable,
 	domain,
 	isLoading,
 	cost,
@@ -54,7 +53,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const dotPos = domain.indexOf( '.' );
 	const domainName = domain.slice( 0, dotPos );
 	const domainTld = domain.slice( dotPos );
-	const isUnavailable = availabilityStatus === DOMAIN_UNAVAILABLE_STATUS;
 
 	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();

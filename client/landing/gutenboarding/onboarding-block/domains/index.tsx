@@ -24,7 +24,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { trackEventWithFlow } from '../../lib/analytics';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
-import { FLOW_ID, DOMAIN_AVAILABLE_STATUS } from '../../constants';
+import { FLOW_ID, domainIsAvailableStatus } from '../../constants';
 import waitForDomainAvailability from './wait-for-domain-availability';
 
 /**
@@ -84,16 +84,20 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	};
 	const handleDomainAvailabilityCheck = async () => {
 		if ( domain ) {
+			if ( domain?.is_free ) {
+				// is this a reliable way to check for .wordpress.com subdomains?
+				handleNext();
+			}
 			try {
 				const availability: DomainAvailability | undefined = await waitForDomainAvailability(
 					domain?.domain_name
 				);
-				if ( availability?.status === DOMAIN_AVAILABLE_STATUS ) {
+				if ( domainIsAvailableStatus.includes( availability?.status ) ) {
 					// If the selected domain is available, proceed to next step.
 					handleNext();
 				}
 			} catch {
-				// if there is an error checking the domain availability, lets continue as normal
+				// if there is an error checking the domain availability, do we continue as normal?
 				handleNext();
 			}
 		}

@@ -21,6 +21,7 @@ import {
 	PAID_DOMAINS_TO_SHOW,
 	PAID_DOMAINS_TO_SHOW_EXPANDED,
 	DOMAIN_SUGGESTIONS_STORE,
+	domainIsAvailableStatus,
 } from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
 
@@ -233,10 +234,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								{ domainSuggestions?.map( ( suggestion, i ) => {
 									const index = existingSubdomain ? i + 1 : i;
 									const isRecommended = index === 1;
+									const availabilityStatus =
+										domainAvailabilities[ suggestion?.domain_name ]?.status;
+									// should availabilityStatus be falsy then we assume it is available as we have not checked yet.
+									const isAvailable = availabilityStatus
+										? domainIsAvailableStatus?.includes( availabilityStatus )
+										: true;
 									return (
 										<SuggestionItem
 											key={ suggestion.domain_name }
-											availabilityStatus={ domainAvailabilities[ suggestion.domain_name ]?.status }
+											isUnavailable={ ! isAvailable }
 											domain={ suggestion.domain_name }
 											cost={ suggestion.cost }
 											isLoading={
