@@ -328,7 +328,7 @@ export const OPTIONS_SLUG_MAP: Record< SelectorProductSlug, SelectorProduct > = 
 };
 
 // List of products showcased in the Plans grid but not sold through Calypso
-export const EXTERNAL_PRODUCTS_LIST = [ EXTERNAL_JETPACK_CRM ];
+export const EXTERNAL_PRODUCTS_LIST = [ EXTERNAL_JETPACK_CRM, EXTERNAL_JETPACK_CRM_MONTHLY ];
 
 // External Product slugs to SelectorProduct.
 export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, SelectorProduct > = {
@@ -363,7 +363,7 @@ const PRODUCTS_TYPE_PERFORMANCE = [
 export const PRODUCTS_TYPES: Record< ProductType, string[] > = {
 	[ SECURITY ]: PRODUCTS_TYPE_SECURITY,
 	[ PERFORMANCE ]: PRODUCTS_TYPE_PERFORMANCE,
-	[ ALL ]: [ ...PRODUCTS_TYPE_SECURITY, ...PRODUCTS_TYPE_PERFORMANCE, EXTERNAL_JETPACK_CRM ],
+	[ ALL ]: [ ...PRODUCTS_TYPE_SECURITY, ...PRODUCTS_TYPE_PERFORMANCE, ...EXTERNAL_PRODUCTS_LIST ],
 };
 
 /**
