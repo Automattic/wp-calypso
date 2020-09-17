@@ -73,6 +73,7 @@ $autobar-height: 20px;
 	border: solid 2px var( --color-masterbar-background );
 	border-radius: 50%;
 	display: none;
+	// stylelint-disable-next-line scales/font-size
 	font-size: 8px;
 	height: 8px;
 	letter-spacing: 0;
@@ -88,6 +89,13 @@ $autobar-height: 20px;
 	// Animation
 	animation: bubble-unread-indication 0.5s linear both;
 	transition: all 150ms ease-in;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		top: 50%;
+		left: 50%;
+		margin: 0;
+		transform: translate( -14px, -14px );
+	}
 }
 
 .masterbar__item {
@@ -388,6 +396,7 @@ $autobar-height: 20px;
 		border: solid 2px var( --color-masterbar-background );
 		border-radius: 50%;
 		display: none;
+		// stylelint-disable-next-line scales/font-size
 		font-size: 8px;
 		height: 8px;
 		letter-spacing: 0;
@@ -533,6 +542,7 @@ $autobar-height: 20px;
 	right: 0;
 	bottom: 0;
 	left: 0;
+	// stylelint-disable-next-line scales/radii
 	border-radius: 0 0 3px 3px;
 
 	.count {
