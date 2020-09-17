@@ -52,11 +52,11 @@ const withNodeEnv = ( env ) => {
 	} );
 };
 
-beforeAll( () => {
+beforeEach( () => {
 	jest.useFakeTimers( 'modern' );
 } );
 
-afterAll( () => {
+afterEach( () => {
 	jest.useRealTimers();
 } );
 
