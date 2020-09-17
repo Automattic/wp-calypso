@@ -1,11 +1,16 @@
-FROM node:12.18.0
-LABEL maintainer="Automattic"
+FROM node:12.18.0 as builder
 
-WORKDIR    /calypso
-
-
-ENV        CONTAINER 'docker'
-ENV        PROGRESS=true
+ARG commit_sha="(unknown)"
+ARG workers
+ENV CONTAINER 'docker'
+ENV PROGRESS true
+ENV COMMIT_SHA $commit_sha
+ENV CALYPSO_ENV production
+ENV WORKERS $workers
+ENV BUILD_TRANSLATION_CHUNKS true
+ENV CHROMEDRIVER_SKIP_DOWNLOAD true
+ENV PUPPETEER_SKIP_DOWNLOAD true
+WORKDIR /calypso
 
 # Build a "base" layer
 #
@@ -17,26 +22,33 @@ ENV        PROGRESS=true
 # env-config.sh
 #   used by systems to overwrite some defaults
 #   such as the apt and npm mirrors
-COPY       ./env-config.sh /tmp/env-config.sh
-RUN        bash /tmp/env-config.sh
+COPY ./env-config.sh /tmp/env-config.sh
+RUN bash /tmp/env-config.sh
 
 # Build a "source" layer
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --frozen-lockfile && yarn cache clean
-
+RUN yarn install --frozen-lockfile
 
 # Build the final layer
 #
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
-ARG        commit_sha="(unknown)"
-ENV        COMMIT_SHA $commit_sha
+RUN yarn run build && rm -fr .cache
 
-ARG        workers
-RUN        WORKERS=$workers CALYPSO_ENV=production BUILD_TRANSLATION_CHUNKS=true yarn run build && rm -fr .cache
+###################
+FROM node:12.18.0-alpine as app
 
-USER       nobody
-CMD        NODE_ENV=production node build/server.js
+ARG commit_sha="(unknown)"
+ENV COMMIT_SHA $commit_sha
+ENV NODE_ENV production
+WORKDIR /calypso
+
+RUN apk add --no-cache tini
+COPY --from=builder --chown=nobody:nobody /calypso/ /calypso/
+
+USER nobody
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "build/server.js"]
