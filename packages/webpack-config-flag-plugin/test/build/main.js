@@ -1,12 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["main"],{
 
-exports[`webpack-config-flag-plugin should produce expected output: Output bundle should match snapshot 1`] = `
-"(window[\\"webpackJsonp\\"] = window[\\"webpackJsonp\\"] || []).push([[\\"main\\"],{
-
-/***/ \\"./main.js\\":
+/***/ "./main.js":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-\\"use strict\\";
+"use strict";
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
@@ -51,7 +48,7 @@ if ( true ) {
 
 
 // Should NOT be replaced with true
-if ( /* Cannot get final name for export \\"default\\" in \\"./default-import/config/index.js\\" (known exports: , known reexports: ) */ undefined.isEnabled( 'foo' ) ) {
+if ( /* Cannot get final name for export "default" in "./default-import/config/index.js" (known exports: , known reexports: ) */ undefined.isEnabled( 'foo' ) ) {
 }
 
 // CONCATENATED MODULE: ./default-import/config/shadowed-by-param.js
@@ -177,7 +174,7 @@ if ( true ) {
 
 
 // Should NOT be replaced with true
-if ( /* Cannot get final name for export \\"isEnabled\\" in \\"./named-import/config/index.js\\" (known exports: , known reexports: ) */ undefined( 'foo' ) ) {
+if ( /* Cannot get final name for export "isEnabled" in "./named-import/config/index.js" (known exports: , known reexports: ) */ undefined( 'foo' ) ) {
 }
 
 // CONCATENATED MODULE: ./named-import/config/shadowed-by-param.js
@@ -303,7 +300,7 @@ if ( true ) {
 
 
 // Should NOT be replaced with true
-if ( /* Cannot get final name for export \\"isEnabled\\" in \\"./namespace-import/config/index.js\\" (known exports: , known reexports: ) */ undefined( 'foo' ) ) {
+if ( /* Cannot get final name for export "isEnabled" in "./namespace-import/config/index.js" (known exports: , known reexports: ) */ undefined( 'foo' ) ) {
 }
 
 // CONCATENATED MODULE: ./namespace-import/config/shadowed-by-param.js
@@ -403,5 +400,4 @@ if ( isEnabled( 'bar' ) ) {
 
 /***/ })
 
-},[[\\"./main.js\\",\\"runtime~main\\"]]]);"
-`;
+},[["./main.js","runtime~main"]]]);
