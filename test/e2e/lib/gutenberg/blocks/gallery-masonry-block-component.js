@@ -21,7 +21,6 @@ class GalleryMasonryBlockComponent extends GutenbergBlockComponent {
 	 * @param {{imageName: string, fileName: string, file: string}} filesDetails a list of fileDetails
 	 */
 	async uploadImages( filesDetails ) {
-		// TODO Simplify this selector, given the block ID, a simpler CSS selector will work here
 		const fileInputSelector = By.css( `div[id="${ this.blockID.slice( 1 ) }"] input[type=file]` );
 
 		const fileInput = this.driver.findElement( fileInputSelector );
