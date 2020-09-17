@@ -35,7 +35,6 @@ import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import {
 	isBusiness,
 	isEnterprise,
@@ -49,7 +48,7 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	TYPE_PREMIUM,
+	TYPE_SECURITY_DAILY,
 	TERM_ANNUALLY,
 	JETPACK_RESET_PLANS,
 } from 'lib/plans/constants';
@@ -315,7 +314,7 @@ export class SeoForm extends React.Component {
 
 		const nudgeTitle = siteIsJetpack
 			? translate(
-					'Boost your search engine ranking with the powerful SEO tools in Jetpack Premium'
+					'Boost your search engine ranking with the powerful SEO tools with the Jetpack Security plans'
 			  )
 			: translate(
 					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
@@ -367,8 +366,7 @@ export class SeoForm extends React.Component {
 
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature &&
-					selectedSite.plan &&
-					! shouldShowOfferResetFlow() && (
+					selectedSite.plan && (
 						<UpsellNudge
 							description={ translate(
 								'Get tools to optimize your site for improved performance in search engine results.'
@@ -376,7 +374,7 @@ export class SeoForm extends React.Component {
 							event={ 'calypso_seo_settings_upgrade_nudge' }
 							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
 							plan={ findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
+								type: siteIsJetpack ? TYPE_SECURITY_DAILY : TYPE_BUSINESS,
 								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 							} ) }
 							showIcon={ true }
