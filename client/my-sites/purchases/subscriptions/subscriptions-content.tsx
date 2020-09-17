@@ -18,6 +18,7 @@ import { getSelectedSite } from 'state/ui/selectors';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
+import './style.scss';
 
 export default function SubscriptionsContent() {
 	const isFetchingPurchases = useSelector( ( state ) => isFetchingUserPurchases( state ) );
