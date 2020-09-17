@@ -72,7 +72,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					.then( ( url ) =>
 						mediaHelper.writeScreenshot(
 							data,
-							() => join( siteName, `${ siteName }-${ i }-${ now }.png` ),
+							() => join( siteName, `${ siteName }-${ i }-${ now }` ),
 							{ url }
 						)
 					);
