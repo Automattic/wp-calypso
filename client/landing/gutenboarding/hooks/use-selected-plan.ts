@@ -9,8 +9,8 @@ import { useSelect } from '@wordpress/data';
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
+import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
-import useRecommendedPlan from './use-recommended-plan';
 import { isEnabled } from 'config';
 
 export function usePlanFromPath() {
@@ -19,9 +19,15 @@ export function usePlanFromPath() {
 }
 
 export function useSelectedPlan() {
+	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
-	const recommendedPlan = useRecommendedPlan();
+	const recommendedPlanSlug = useSelect( ( select ) =>
+		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
+	);
+	const recommendedPlan = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
+	);
 
 	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
 	const hasPaidDesign = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDesign() );

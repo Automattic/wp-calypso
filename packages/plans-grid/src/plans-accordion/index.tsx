@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 import { Button, SVG, Path } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 
@@ -12,12 +12,14 @@ import { Icon } from '@wordpress/icons';
  * Internal dependencies
  */
 import PlanItem from '../plans-accordion-item';
-import { PLANS_STORE } from '../constants';
+import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+type FeatureId = WPCOMFeatures.FeatureId;
 
 const tip = (
 	<SVG viewBox="0 0 24 24">
@@ -26,7 +28,7 @@ const tip = (
 );
 
 export interface Props {
-	recommendedPlanSlug?: Plans.PlanSlug;
+	selectedFeatures?: FeatureId[];
 	selectedPlanSlug: Plans.PlanSlug;
 	onPlanSelect: ( planSlug: string ) => void;
 	onPickDomainClick?: () => void;
@@ -35,7 +37,7 @@ export interface Props {
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
-	recommendedPlanSlug,
+	selectedFeatures = [],
 	selectedPlanSlug,
 	onPlanSelect,
 	onPickDomainClick,
@@ -49,8 +51,12 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 
 	// Primary plan
 	const popularPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
+	const recommendedPlanSlug = useSelect( ( select ) =>
+		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
+	);
+
 	const recommendedPlan = useSelect( ( select ) =>
-		recommendedPlanSlug ? select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug ) : undefined
+		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
 	);
 	const primaryPlan = recommendedPlan || popularPlan;
 	const badge = recommendedPlan ? __( 'Recommended for you' ) : __( 'Popular' );

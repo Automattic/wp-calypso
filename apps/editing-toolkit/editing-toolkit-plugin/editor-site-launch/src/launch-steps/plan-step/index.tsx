@@ -12,15 +12,17 @@ import { Title, SubTitle } from '@automattic/onboarding';
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
+import { LAUNCH_STORE } from '../../stores';
+import { useSite } from '../../hooks';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const { isExperimental } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const defaultPaidPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
 
 	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
+
+	const { selectedFeatures } = useSite();
 
 	const hasPaidDomain = domain && ! domain.is_free;
 
@@ -62,10 +64,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 							: undefined
 					}
 					isExperimental={ isExperimental }
-					recommendedPlan={
-						/* @TODO: use selected features to recommend a plan here */
-						hasPaidDomain ? defaultPaidPlan : undefined
-					}
+					selectedFeatures={ selectedFeatures }
 				/>
 			</div>
 		</LaunchStepContainer>
