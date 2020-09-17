@@ -401,6 +401,7 @@
 		}
 	},
 	"devDependencies": {
+		"bunyan": "^1.8.14",
 		"eslint-nibble": "^5.1.0"
 	}
 }
