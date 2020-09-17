@@ -9,23 +9,40 @@
 
 @mixin onboarding-heading-text {
 	@include onboarding-font-recoleta;
+	/* stylelint-disable-line */
 	font-size: 42px;
 	line-height: 57px;
 }
 
 @mixin onboarding-heading-text-tablet {
 	@include onboarding-font-recoleta;
+	/* stylelint-disable-line */
 	font-size: 36px;
 	line-height: 40px;
 }
 
 @mixin onboarding-heading-text-mobile {
 	@include onboarding-font-recoleta;
+	/* stylelint-disable-line */
 	font-size: 32px;
 	line-height: 40px;
 }
 
+@mixin onboarding-heading-title {
+	@include onboarding-heading-text-mobile;
+	color: var( --mainColor );
+
+	@include break-mobile {
+		@include onboarding-heading-text-tablet;
+	}
+
+	@include break-xlarge {
+		@include onboarding-heading-text;
+	}
+}
+
 @mixin onboarding-large-text {
+	/* stylelint-disable-line */
 	font-size: 16px;
 	line-height: 24px;
 }

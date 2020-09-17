@@ -16,7 +16,9 @@
 	align-items: center;
 	z-index: onboarding-z-index( '.onboarding__footer' );
 
-	@include break-small {
+	// TODO: This introduces duplication (and only limited to small & medium). Determine breakpoint via JS and use a class to toggle sticky mode.
+
+	@mixin not-sticky {
 		padding: 0;
 		margin-left: 20px;
 		position: static;
@@ -28,6 +30,18 @@
 			&:first-child {
 				margin-left: 0;
 			}
+		}
+	}
+
+	&.stick-small {
+		@include break-small {
+			@include not-sticky;
+		}
+	}
+
+	&.stick-medium {
+		@include break-medium {
+			@include not-sticky;
 		}
 	}
 }

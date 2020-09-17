@@ -764,6 +764,18 @@ function getGutenboardingStatus( calypsoPort ) {
 	};
 }
 
+function handleLaunchModal( calypsoPort ) {
+	subscribe( () => {
+		const { isSidebarOpen } = select( 'automattic/launch' ).getState();
+
+		// Hide inline help when launch modal is open
+		calypsoPort.postMessage( {
+			action: 'toggleInlineHelp',
+			payload: { hidden: isSidebarOpen },
+		} );
+	} );
+}
+
 /**
  * Hooks the nav sidebar to change some of its button labels and behaviour.
  *
@@ -1034,6 +1046,8 @@ function initPort( message ) {
 		getCloseButtonUrl( calypsoPort );
 
 		getGutenboardingStatus( calypsoPort );
+
+		handleLaunchModal( calypsoPort );
 
 		getNavSidebarLabels( calypsoPort );
 

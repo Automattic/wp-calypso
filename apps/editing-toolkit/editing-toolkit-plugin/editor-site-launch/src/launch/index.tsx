@@ -27,7 +27,7 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		select( LAUNCH_STORE ).getFirstIncompleteStep()
 	);
 
-	const { setStep } = useDispatch( LAUNCH_STORE );
+	const { setStep, setSidebarFullscreen, unsetSidebarFullscreen } = useDispatch( LAUNCH_STORE );
 
 	const LaunchStepComponents = {
 		[ LaunchStep.Name ]: NameStep,
@@ -42,6 +42,7 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		let prevSequence = currentSequence - 1;
 		if ( prevSequence < 0 ) {
 			prevSequence = 0;
+			setSidebarFullscreen();
 		}
 		setStep( LaunchSequence[ prevSequence ] );
 	};
@@ -52,6 +53,7 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		if ( nextSequence > maxSequence ) {
 			onSubmit?.();
 		}
+		unsetSidebarFullscreen();
 		setStep( LaunchSequence[ nextSequence ] );
 	};
 

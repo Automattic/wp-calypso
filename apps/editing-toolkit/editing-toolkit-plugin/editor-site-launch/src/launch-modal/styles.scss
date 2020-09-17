@@ -1,7 +1,10 @@
 @import '~@wordpress/base-styles/mixins';
 @import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/z-index';
 @import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
 
 body.has-nux-launch-modal {
 	overflow: hidden;
@@ -31,13 +34,39 @@ body.has-nux-launch-modal {
 }
 
 .nux-launch-modal-header {
-	position: fixed;
+	display: flex;
+	position: sticky;
 	top: 0;
 	left: 0;
 	z-index: z-index( '.components-modal__header' );
 	width: 100%;
-	height: 0;
-	overflow: visible;
+	height: $onboarding-header-height;
+	background: var( --studio-white );
+	border-bottom: 1px solid $gray-200;
+
+	@include break-medium {
+		height: 0;
+		margin-right: $sidebar-width;
+		background: transparent;
+		border-bottom: none;
+		overflow: visible;
+	}
+
+	.nux-launch-progress {
+		display: flex;
+		align-items: center;
+		height: $onboarding-header-height;
+
+		@include break-medium {
+			display: none;
+		}
+	}
+
+	@media ( max-width: $break-medium ) {
+		.is-sidebar-fullscreen & {
+			opacity: 0; // Using visibility: hidden or display: none closes modal
+		}
+	}
 }
 
 .nux-launch-modal-header__wp-logo {
@@ -49,9 +78,19 @@ body.has-nux-launch-modal {
 }
 
 .nux-launch-modal-body {
-	padding-top: $header-height;
-	margin-right: $sidebar-width;
+	padding-bottom: $onboarding-footer-height;
 	position: relative;
+
+	@include break-medium {
+		padding-top: $header-height;
+		margin-right: $sidebar-width;
+	}
+
+	@media ( max-width: $break-medium ) {
+		.is-sidebar-fullscreen & {
+			opacity: 0; // Using visibility: hidden or display: none closes modal
+		}
+	}
 }
 
 .nux-launch-modal-aside {
@@ -64,8 +103,27 @@ body.has-nux-launch-modal {
 	min-height: 100vh;
 	border-left: 1px solid var( --studio-gray-5 );
 	padding-top: $header-height;
+	padding-bottom: $onboarding-footer-height;
 	background: var( --studio-white );
 	z-index: z-index( '.components-modal__header' ) + 1;
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+
+	@media ( max-width: $break-medium ) {
+		.is-sidebar-fullscreen & {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			max-width: none;
+			border: none;
+			display: block;
+		}
+	}
 }
 
 .nux-launch-modal__close-button.components-button.is-link {

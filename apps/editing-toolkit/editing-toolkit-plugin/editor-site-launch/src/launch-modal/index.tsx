@@ -15,6 +15,7 @@ import classnames from 'classnames';
 import { LAUNCH_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
+import LaunchProgress from '../launch-progress';
 import { useSite } from '../hooks';
 
 import './styles.scss';
@@ -23,8 +24,24 @@ interface Props {
 	onClose: () => void;
 }
 
+const CloseButton = ( { onClick } ) => {
+	return (
+		<Button
+			isLink
+			className="nux-launch-modal__close-button"
+			onClick={ onClick }
+			aria-label={ __( 'Close dialog', 'full-site-editing' ) }
+			disabled={ ! onClick }
+		>
+			<Icon icon={ close } size={ 24 } />
+		</Button>
+	);
+};
+
 const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
-	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { step: currentStep, isSidebarFullscreen } = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).getState()
+	);
 	const { launchSite } = useDispatch( LAUNCH_STORE );
 
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
@@ -43,7 +60,11 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	return (
 		<Modal
 			open={ true }
-			className={ classnames( 'nux-launch-modal', `step-${ currentStep }` ) }
+			className={ classnames(
+				'nux-launch-modal',
+				`step-${ currentStep }`,
+				isSidebarFullscreen ? 'is-sidebar-fullscreen' : ''
+			) }
 			overlayClassName="nux-launch-modal-overlay"
 			bodyOpenClassName="has-nux-launch-modal"
 			onRequestClose={ onClose }
@@ -59,6 +80,8 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 						<div className="nux-launch-modal-header__wp-logo">
 							<Icon icon={ wordpress } size={ 36 } />
 						</div>
+						<LaunchProgress />
+						<CloseButton onClick={ onClose } />
 					</div>
 					<div className="nux-launch-modal-body">
 						<EntityProvider kind="root" type="site">
@@ -66,15 +89,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 						</EntityProvider>
 					</div>
 					<div className="nux-launch-modal-aside">
-						<Button
-							isLink
-							className="nux-launch-modal__close-button"
-							onClick={ onClose }
-							aria-label={ __( 'Close dialog', 'full-site-editing' ) }
-							disabled={ ! onClose }
-						>
-							<Icon icon={ close } size={ 24 } />
-						</Button>
+						<CloseButton onClick={ onClose } />
 						<LaunchSidebar />
 					</div>
 				</>

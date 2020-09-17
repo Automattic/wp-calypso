@@ -15,4 +15,18 @@
 		line-height: 1.5;
 		color: var( --studio-gray-60 );
 	}
+
+	.action-buttons {
+		justify-content: flex-end;
+	}
+
+	// When fullscreen, inherit onboarding styling.
+	.is-sidebar-fullscreen & {
+		padding: 0;
+		@include onboarding-block-margin;
+
+		h2 {
+			@include onboarding-heading-title;
+		}
+	}
 }

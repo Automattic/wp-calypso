@@ -67,6 +67,16 @@ const isSidebarOpen: Reducer< boolean, LaunchAction > = ( state = false, action 
 	return state;
 };
 
+const isSidebarFullscreen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_SIDEBAR_FULLSCREEN' ) {
+		return true;
+	}
+	if ( action.type === 'UNSET_SIDEBAR_FULLSCREEN' ) {
+		return false;
+	}
+	return state;
+};
+
 const isExperimental: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'ENABLE_EXPERIMENTAL' ) {
 		return true;
@@ -82,6 +92,7 @@ const reducer = combineReducers( {
 	domainSearch,
 	plan,
 	isSidebarOpen,
+	isSidebarFullscreen,
 	isExperimental,
 } );
 

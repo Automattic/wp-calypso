@@ -1,9 +1,20 @@
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
 @import '~@automattic/typography/styles/fonts';
 @import '~@automattic/onboarding/styles/mixins';
 
 .nux-launch-step {
 	@include onboarding-block-margin;
 	background: var( --studio-white );
+
+	// Only show back button when sticky
+	.action-buttons__back {
+		display: inline-flex;
+
+		@include break-medium {
+			display: none;
+		}
+	}
 }
 
 .nux-launch-step__header {

@@ -6,7 +6,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
-import { Title, SubTitle } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -15,7 +15,7 @@ import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step
 import { LAUNCH_STORE } from '../../stores';
 import { useSite } from '../../hooks';
 
-const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
+const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const { isExperimental } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
@@ -29,6 +29,10 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
 		updatePlan( planSlug );
 		onNextStep?.();
+	};
+
+	const handlePrev = () => {
+		onPrevStep?.();
 	};
 
 	const handlePickDomain = () => {
@@ -47,6 +51,9 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) 
 						) }
 					</SubTitle>
 				</div>
+				<ActionButtons stickyBreakpoint="medium">
+					<BackButton onClick={ handlePrev } />
+				</ActionButtons>
 			</div>
 			<div className="nux-launch-step__body">
 				<PlansGrid

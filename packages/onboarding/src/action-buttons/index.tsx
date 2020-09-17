@@ -11,14 +11,21 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import './style.scss';
 
+// TODO: I would rather if this is sticky: true/false/null. When null, it sticks when breakpoint is small.
 interface ActionButtonsProps {
 	className?: string;
+	stickyBreakpoint?: string;
 }
 
 const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
 	className,
 	children,
-} ) => <div className={ classnames( 'action-buttons', className ) }>{ children }</div>;
+	stickyBreakpoint = 'small',
+} ) => (
+	<div className={ classnames( 'action-buttons', className, `stick-${ stickyBreakpoint }` ) }>
+		{ children }
+	</div>
+);
 
 export default ActionButtons;
 

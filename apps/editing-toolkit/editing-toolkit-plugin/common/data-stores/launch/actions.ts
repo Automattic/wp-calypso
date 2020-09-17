@@ -10,6 +10,14 @@ import { dispatch, select } from '@wordpress/data-controls';
 import { SITE_ID, SITE_STORE, PLANS_STORE } from './constants';
 import type { LaunchStepType } from './types';
 
+export const setSidebarFullscreen = () => ( {
+	type: 'SET_SIDEBAR_FULLSCREEN' as const,
+} );
+
+export const unsetSidebarFullscreen = () => ( {
+	type: 'UNSET_SIDEBAR_FULLSCREEN' as const,
+} );
+
 export const setStep = ( step: LaunchStepType ) => ( {
 	type: 'SET_STEP' as const,
 	step,
