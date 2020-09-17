@@ -440,7 +440,6 @@ export class SeoForm extends React.Component {
 									</FormLabel>
 									<CountedTextarea
 										name="advanced_seo_front_page_description"
-										type="text"
 										id="advanced_seo_front_page_description"
 										value={ frontPageMetaDescription || '' }
 										disabled={ isSeoDisabled }

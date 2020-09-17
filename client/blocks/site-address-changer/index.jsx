@@ -345,7 +345,6 @@ export class SiteAddressChanger extends Component {
 						<FormTextInputWithAffixes
 							id="site-address-changer__text-input"
 							className="site-address-changer__input"
-							type="text"
 							value={ domainFieldValue }
 							suffix={ this.renderDomainSuffix() }
 							onChange={ this.onFieldChange }

@@ -157,7 +157,6 @@ class RequestLoginEmailForm extends React.Component {
 							disabled={ isFetching || emailRequested }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
-							type="text"
 							ref={ this.saveUsernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 						/>
