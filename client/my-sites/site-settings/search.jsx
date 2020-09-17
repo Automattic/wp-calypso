@@ -34,7 +34,12 @@ import {
 	isJetpackBusiness,
 	isEcommerce,
 } from 'lib/products-values';
-import { FEATURE_SEARCH, PLAN_BUSINESS } from 'lib/plans/constants';
+import {
+	FEATURE_SEARCH,
+	PLAN_BUSINESS,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+} from 'lib/plans/constants';
 import { PRODUCT_JETPACK_SEARCH, isJetpackSearch } from 'lib/products-values/constants';
 
 class Search extends Component {
@@ -262,7 +267,10 @@ class Search extends Component {
 
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
 const checkForSearchProduct = ( purchase ) =>
-	purchase.active && isJetpackSearch( purchase.productSlug );
+	purchase.active &&
+	( isJetpackSearch( purchase.productSlug ) ||
+		purchase.productSlug === PLAN_JETPACK_COMPLETE ||
+		purchase.productSlug === PLAN_JETPACK_COMPLETE_MONTHLY );
 export default connect( ( state, { isRequestingSettings } ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
