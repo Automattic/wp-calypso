@@ -101,6 +101,10 @@ function EmailSummary( {
 		return null;
 	}
 
+	if ( isGSuiteInCart && ! areThereDomainProductsInCart ) {
+		return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+	}
+
 	if ( isGSuiteInCart && contactInfo.alternateEmail.value ) {
 		return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
 	}
