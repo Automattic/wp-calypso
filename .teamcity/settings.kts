@@ -295,7 +295,8 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run packages tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
