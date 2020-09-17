@@ -5,7 +5,7 @@
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray, noop } from 'lodash';
+import { castArray, noop, isPlainObject } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -114,12 +114,21 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
  * Track block insertion.
  *
  * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Array} args additional insertBlocks data e.g. metadata containing pattern name.
  * @returns {void}
  */
-const trackBlockInsertion = ( blocks ) => {
+const trackBlockInsertion = ( blocks, ...args ) => {
+	const patternName =
+		4 === args.length && isPlainObject( args[ 3 ] ) ? args[ 3 ].patternName : undefined;
+
+	if ( patternName ) {
+		tracksRecordEvent( 'wpcom_pattern_inserted', { pattern_name: patternName } );
+	}
+
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: false,
+		pattern_name: patternName,
 	} ) );
 };
 
