@@ -67,7 +67,7 @@ it( 'Adds a `logger` property to the request', () => {
 
 	loggerMiddleware()( req, res, next );
 
-	expect( req.logger ).toEqual( mockLogger );
+	expect( req.logger ).toBe( mockLogger );
 } );
 
 it( 'When the response ends, it logs info about the request in dev mode', () => {
