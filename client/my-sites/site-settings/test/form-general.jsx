@@ -146,8 +146,8 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			expect( container.querySelectorAll( '[name="blog_coming_soon_mode"]' ).length ).toBe( 1 );
 		} );
 
-		[
-			/*
+		/*
+			V2 Cover all the states
 
 			Possible States:
 
@@ -159,90 +159,148 @@ describe( 'SiteSettingsFormGeneral ', () => {
 
 			Possible Transitions
 
-			Public 								> Noindex					= Public + Noindex
-			Public 								> Private					= Private
-			Public 								> Coming Soon (v2)			= Public + Noindex + Coming Soon (v2)
+			Public 								> Add Noindex				= Public + Noindex
+			Public 								> Set Private				= Private
+			Public 								> Add Coming Soon (v2)		= Public + Noindex + Coming Soon (v2)
 			Public + Noindex					> Remove Noindex			= Public
-			Public + Noindex					> Private					= Private
-			Public + Noindex					> Coming soon (v2)			= Public + Noindex + Coming Soon (v2)
+			Public + Noindex					> Set Private				= Private
+			Public + Noindex					> Add Coming soon (v2)		= Public + Noindex + Coming Soon (v2)
 			Public + Noindex + Coming Soon (v2) > Remove Coming Soon (v2)	= Public
 			Public + Noindex + Coming Soon (v2) > Remove Noindex			= Public
-			Public + Noindex + Coming Soon (v2) > Private					= Private
-			Private								> Public					= Public
-			Private								> Public + Noindex			= Public + Noindex
+			Public + Noindex + Coming Soon (v2) > Set Private				= Private
+			Private								> Set Public				= Public
+			Private								> Add Noindex				= Public + Noindex
 			Private								> Coming Soon (v2)			= Public + Noindex + Coming Soon (v2)
-			Private + Coming Soon (v1)			> Public					= Public + Noindex + Coming Soon (v2)
-			Private + Coming Soon (v1)			> Remove Coming Soon (v1)	= Private
+			Private + Coming Soon (v1)			> Public					= Public + Noindex + Coming Soon (v2) - scratch that just: Public
+			Private + Coming Soon (v1)			> Remove Coming Soon (v1)	= Private - scratch that just: Public
+		*/
+		[
+			{
+				testName: 'Public > Add Noindex = Public + Noindex',
+				initialProps: {
+					blog_public: Visibility.Public,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Discourage search engines from indexing this site', // Noindex
+				expectedUpdates: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+		].forEach( ( { testName, initialProps, labelToClick, expectedUpdates } ) => {
+			test( `"${ testName }`, () => {
+				testProps.fields.blog_public = initialProps.blog_public;
+				testProps.fields.wpcom_public_coming_soon = initialProps.wpcom_public_coming_soon;
 
-			*/
+				const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+				const radioButton = getByLabelText( labelToClick, { exact: false } );
+				expect( radioButton ).not.toBeChecked();
+				fireEvent.click( radioButton );
+				expect( testProps.updateFields ).toBeCalledWith( expectedUpdates );
+			} );
+		} );
+
+		// V1
+		// [
+		// 	[
+		// 		'Coming soon',
+		// 		Visibility.PublicIndexed,
+		// 		{ blog_public: Visibility.Private, wpcom_public_coming_soon: 1 },
+		// 	],
+		// 	[
+		// 		'Public',
+		// 		Visibility.Private,
+		// 		{ blog_public: Visibility.PublicIndexed, wpcom_public_coming_soon: 0 },
+		// 	],
+		// 	[
+		// 		'Discourage search engines from indexing this site',
+		// 		Visibility.Private,
+		// 		{ blog_public: Visibility.PublicNotIndexed, wpcom_public_coming_soon: 0 },
+		// 	],
+		// 	[
+		// 		'Private',
+		// 		Visibility.PublicIndexed,
+		// 		{ blog_public: Visibility.Private, wpcom_public_coming_soon: 0 },
+		// 	],
+		// ].forEach( ( [ text, blogPublic, updatedFields ] ) => {
+		// 	test( `"${ text }" option should be selectable`, () => {
+		// 		testProps.fields.blog_public = blogPublic;
+		// 		const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral {...testProps} /> );
+
+		// 		const radioButton = getByLabelText( text, { exact: false } );
+		// 		expect( radioButton ).not.toBeChecked();
+		// 		fireEvent.click( radioButton );
+		// 		expect( testProps.updateFields ).toBeCalledWith( updatedFields );
+		// 	} );
+		// } );
+
+		// V2 Update
+		[
 			[
-				'Coming soon',
-				'Coming Soon',
 				Visibility.PublicIndexed,
-				{ blog_public: Visibility.Private, wpcom_public_coming_soon: 1 },
+				'Coming soon',
+				{ blog_public: Visibility.PublicNotIndexed, wpcom_public_coming_soon: 1 },
 			],
 			[
-				'Public',
-				'Public',
 				Visibility.Private,
+				'Public',
 				{ blog_public: Visibility.PublicIndexed, wpcom_public_coming_soon: 0 },
 			],
 			[
-				'Hidden',
-				'Discourage search engines from indexing this site',
 				Visibility.Private,
+				'Discourage search engines from indexing this site',
 				{ blog_public: Visibility.PublicNotIndexed, wpcom_public_coming_soon: 0 },
 			],
 			[
-				'Private',
-				'Private',
 				Visibility.PublicIndexed,
+				'Private',
 				{ blog_public: Visibility.Private, wpcom_public_coming_soon: 0 },
 			],
-		].forEach( ( [ name, text, blogPublic, updatedFields ] ) => {
-			test( `${ name } option should be selectable`, () => {
-				testProps.fields.blog_public = blogPublic;
+		].forEach( ( [ initialBlogPublic, label, updatedFields ] ) => {
+			test( `"${ label }" option should be selectable`, () => {
+				testProps.fields.blog_public = initialBlogPublic;
 				const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-				const radioButton = getByLabelText( text, { exact: false } );
+				const radioButton = getByLabelText( label, { exact: false } );
 				expect( radioButton ).not.toBeChecked();
 				fireEvent.click( radioButton );
 				expect( testProps.updateFields ).toBeCalledWith( updatedFields );
 			} );
 		} );
 
-		test( `Selecting Hidden should switch radio to Public`, () => {
+		test( `Selecting NoIndex should switch radio to Public`, () => {
 			testProps.fields.blog_public = -1;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing this site', {
+			const noIndexCheckBox = getByLabelText( 'Discourage search engines from indexing this site', {
 				exact: false,
 			} );
-			expect( hiddenCheckbox ).not.toBeChecked();
+			expect( noIndexCheckBox ).not.toBeChecked();
 
 			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio ).not.toBeChecked();
 
-			fireEvent.click( hiddenCheckbox );
+			fireEvent.click( noIndexCheckBox );
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: Visibility.PublicNotIndexed,
 				wpcom_public_coming_soon: 0,
 			} );
 		} );
 
-		test( `Hidden checkbox should be possible to unselect`, () => {
+		test( `NoIndex checkbox should be possible to unselect`, () => {
 			testProps.fields.blog_public = Visibility.PublicNotIndexed;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
-			const hiddenCheckbox = getByLabelText( 'Discourage search engines from indexing this site', {
+			const noIndexCheckBox = getByLabelText( 'Discourage search engines from indexing this site', {
 				exact: false,
 			} );
-			expect( hiddenCheckbox ).toBeChecked();
+			expect( noIndexCheckBox ).toBeChecked();
 
 			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio ).toBeChecked();
 
-			fireEvent.click( hiddenCheckbox );
+			fireEvent.click( noIndexCheckBox );
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: Visibility.PublicIndexed,
 				wpcom_public_coming_soon: 0,

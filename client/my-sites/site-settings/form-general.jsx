@@ -340,10 +340,19 @@ export class SiteSettingsFormGeneral extends Component {
 						checked={ Visibility.PublicNotIndexed === blogPublic || wpcomPublicComingSoon === 1 }
 						onChange={ () =>
 							this.handleVisibilityOptionChange( {
+								// Toggle blog_public
 								blog_public:
 									blogPublic === Visibility.PublicNotIndexed
 										? Visibility.PublicIndexed
 										: Visibility.PublicNotIndexed,
+								// Toggle Coming soon off if noindexed is being removed, but leave coming soon off if its already off
+								wpcom_public_coming_soon:
+									// ComingSoon + PublicIndexed > PublicNotIndexed = 1,
+									// ComingSoon + PublicNotIndexed > PublicIndexed = 0,
+									// Not Coming Soon > Any = 0
+									// aka
+									// Not Coming Soon || PublicNotIndexed = 0, else 1
+									wpcomPublicComingSoon !== 1 || blogPublic === Visibility.PublicNotIndexed ? 0 : 1,
 							} )
 						}
 						disabled={ isRequestingSettings }
