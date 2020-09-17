@@ -170,15 +170,15 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 			await assertNoInvalidBlocksInEditor();
 		} );*/
 
-		step( 'Take screenshots of all the blocks in the editor', async function () {
+		/*step( 'Take screenshots of all the blocks in the editor', async function () {
 			await takeBlockScreenshots( siteName );
-		} );
+		} );*/
 	}
 
 	function verifyBlocksInPublishedPage( siteName ) {
-		step( 'Take screenshots of the published page', async function () {
+		/*step( 'Take screenshots of the published page', async function () {
 			await takePublishedScreenshots( siteName );
-		} );
+		} );*/
 
 		step( 'Blocks are displayed in the published page', async function () {
 			await Promise.all(
@@ -322,6 +322,6 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 	} );
 } );
 
-after( async function () {
+/*after( async function () {
 	await Promise.all( sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) ) );
-} );
+} );*/
