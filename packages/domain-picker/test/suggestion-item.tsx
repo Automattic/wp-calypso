@@ -409,7 +409,7 @@ describe( 'test that suggested items are rendered correctly based on availabilit
 			cost: '€12.00',
 			railcarId: 'id',
 			isRecommended: true,
-			availabilityStatus: 'unavailable',
+			isUnavailable: true,
 		};
 
 		render(
@@ -431,7 +431,7 @@ describe( 'test that suggested items are rendered correctly based on availabilit
 			cost: '€12.00',
 			railcarId: 'id',
 			isRecommended: true,
-			availabilityStatus: 'available',
+			isUnavailable: false,
 		};
 
 		render(
