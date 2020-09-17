@@ -16,6 +16,8 @@ import {
 	JETPACK_PRODUCTS_LIST,
 } from 'lib/products-values/constants';
 import {
+	EXTERNAL_JETPACK_CRM,
+	EXTERNAL_JETPACK_CRM_MONTHLY,
 	OPTIONS_JETPACK_BACKUP,
 	OPTIONS_JETPACK_BACKUP_MONTHLY,
 } from 'my-sites/plans-v2/constants';
@@ -46,6 +48,9 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
 	}
+
+	// Include Jetpack CRM
+	availableProducts = [ ...availableProducts, EXTERNAL_JETPACK_CRM, EXTERNAL_JETPACK_CRM_MONTHLY ];
 
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying
 	// the option cards.
