@@ -39,10 +39,11 @@ export const membershipProductFromApi = ( product ) => ( {
 
 export const handleMembershipProductsList = dispatchRequest( {
 	fetch: ( action ) =>
+		//this is where you add more query params if necessary
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/memberships/products`,
+				path: `/sites/${ action.siteId }/memberships/products?page=${ action.page }`,
 			},
 			action
 		),

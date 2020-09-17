@@ -84,7 +84,13 @@ class EarningsMain extends Component {
 			case 'payments':
 				return <MembershipsSection section={ this.props.section } query={ this.props.query } />;
 			case 'payments-plans':
-				return <MembershipsProductsSection section={ this.props.section } />;
+				return (
+					<MembershipsProductsSection
+						path={ this.props.path }
+						query={ this.props.query }
+						section={ this.props.section }
+					/>
+				);
 
 			case 'refer-a-friend':
 				return <ReferAFriendSection />;

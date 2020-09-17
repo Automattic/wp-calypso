@@ -26,7 +26,7 @@ class QueryMemberships extends Component {
 			return;
 		}
 
-		this.props.requestProducts( this.props.siteId );
+		this.props.requestProducts( this.props.siteId, this.props.page );
 	}
 
 	componentDidMount() {
@@ -34,7 +34,7 @@ class QueryMemberships extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.siteId !== prevProps.siteId ) {
+		if ( this.props.siteId !== prevProps.siteId || this.props.page !== prevProps.page ) {
 			this.request();
 		}
 	}

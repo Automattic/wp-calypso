@@ -17,8 +17,9 @@ import { membershipProductFromApi } from 'state/data-layer/wpcom/sites/membershi
 
 import 'state/memberships/init';
 
-export const requestProducts = ( siteId ) => ( {
+export const requestProducts = ( siteId, page ) => ( {
 	siteId,
+	page,
 	type: MEMBERSHIPS_PRODUCTS_LIST,
 } );
 

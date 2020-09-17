@@ -223,6 +223,10 @@
 	}
 }
 
+.memberships__products .pagination {
+	margin-top: 16px;
+}
+
 .memberships__subscriber-subscribed {
 	color: var( --color-text-subtle );
 	font-size: $font-body-extra-small;
