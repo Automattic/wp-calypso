@@ -1,4 +1,4 @@
-FROM node:12.18.0 as builder
+FROM node:12.18.4 as builder
 
 ARG commit_sha="(unknown)"
 ARG workers
@@ -39,7 +39,7 @@ RUN yarn install --frozen-lockfile
 RUN yarn run build && rm -fr .cache
 
 ###################
-FROM node:12.18.0-alpine as app
+FROM node:12.18.4-alpine as app
 
 ARG commit_sha="(unknown)"
 ENV COMMIT_SHA $commit_sha
