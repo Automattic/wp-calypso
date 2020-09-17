@@ -91,10 +91,9 @@ $autobar-height: 20px;
 	transition: all 150ms ease-in;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		top: 50%;
-		left: 50%;
+		top: calc( 50% - 14px );
+		left: calc( 50% - 14px );
 		margin: 0;
-		transform: translate( -14px, -14px );
 	}
 }
 
