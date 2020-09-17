@@ -97,13 +97,22 @@ export const PRODUCT_TYPE_OPTIONS = {
  */
 Object.defineProperties( PRODUCT_TYPE_OPTIONS, {
 	[ SECURITY ]: {
-		get: () => translate( 'Security' ),
+		get: () => ( {
+			id: SECURITY,
+			label: translate( 'Security' ),
+		} ),
 	},
 	[ PERFORMANCE ]: {
-		get: () => translate( 'Performance' ),
+		get: () => ( {
+			id: PERFORMANCE,
+			label: translate( 'Performance' ),
+		} ),
 	},
 	[ ALL ]: {
-		get: () => translate( 'All' ),
+		get: () => ( {
+			id: ALL,
+			label: translate( 'All' ),
+		} ),
 	},
 } );
 
