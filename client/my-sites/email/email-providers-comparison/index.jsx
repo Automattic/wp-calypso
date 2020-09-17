@@ -122,7 +122,7 @@ class EmailProvidersComparison extends React.Component {
 				) }
 				image={ { path: gSuiteLogo } }
 				features={ [
-					translate( 'Monthly billing' ),
+					translate( 'Annual billing' ),
 					translate( 'Send and receive from your custom domain' ),
 					translate( '30GB storage' ),
 					translate( 'Email, calendars, and contacts' ),
