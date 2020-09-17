@@ -154,8 +154,9 @@ object RunAllUnitTests : BuildType({
 				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --install
-				nvm use
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+				nvm alias default $(cat .nvmrc)
 
 				# Install modules
 				yarn install
