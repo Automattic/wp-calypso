@@ -28,11 +28,12 @@ import './style.scss';
 
 class EmailProvidersComparison extends React.Component {
 	static propTypes = {
-		domainName: PropTypes.string.isRequired,
+		domain: PropTypes.object.isRequired,
+		isGSuiteSupported: PropTypes.bool.isRequired,
 	};
 
 	renderHeaderSection() {
-		const { domainName, translate } = this.props;
+		const { domain, translate } = this.props;
 		const image = {
 			path: emailIllustration,
 			align: 'right',
@@ -40,7 +41,7 @@ class EmailProvidersComparison extends React.Component {
 
 		const translateArgs = {
 			args: {
-				domainName: domainName,
+				domainName: domain.name,
 			},
 			comment: '%(domainName)s is the domain name, e.g example.com',
 		};
@@ -63,78 +64,99 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
-	render() {
+	renderForwardingDetails() {
+		const { translate } = this.props;
+		return (
+			<EmailProviderDetails
+				title={ translate( 'Email Forwarding' ) }
+				description={ translate(
+					'Use your custom domain in your email address and forward all your mail to another address.'
+				) }
+				image={ { path: forwardingIcon } }
+				features={ [
+					translate( 'No billing' ),
+					translate( 'Receive emails sent to your custom domain' ),
+				] }
+				buttonLabel={ translate( 'Add email forwarding' ) }
+			/>
+		);
+	}
+
+	renderTitanDetails() {
+		const { translate } = this.props;
+
+		return (
+			<EmailProviderDetails
+				title={ translate( 'Titan Mail' ) }
+				badge={ translate( 'Recommended' ) }
+				description={ translate(
+					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
+				) }
+				image={ { path: titanLogo } }
+				features={ [
+					translate( 'Monthly billing' ),
+					translate( 'Send and receive from your custom domain' ),
+					translate( '10GB storage' ),
+					translate( 'Email, calendars, and contacts' ),
+				] }
+				formattedPrice={ translate( '{{price/}} /user /month', {
+					components: {
+						price: <span>$4</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+				} ) }
+				buttonLabel={ translate( 'Add Titan Mail' ) }
+				hasPrimaryButton={ true }
+			/>
+		);
+	}
+
+	renderGSuiteDetails() {
 		const { currencyCode, gSuiteProduct, translate } = this.props;
 
+		return (
+			<EmailProviderDetails
+				title={ translate( 'G Suite by Google' ) }
+				description={ translate(
+					"We've partnered with Google to offer you email, storage, docs, calendars, and more."
+				) }
+				image={ { path: gSuiteLogo } }
+				features={ [
+					translate( 'Monthly billing' ),
+					translate( 'Send and receive from your custom domain' ),
+					translate( '30GB storage' ),
+					translate( 'Email, calendars, and contacts' ),
+					translate( 'Video calls, Docs, spreadsheets, and more' ),
+				] }
+				formattedPrice={ translate( '{{price/}} /user /year', {
+					components: {
+						price: <span>{ getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
+					},
+					comment: '{{price/}} is the formatted price, e.g. $20',
+				} ) }
+				discount={
+					hasDiscount( gSuiteProduct )
+						? translate( 'First year %(discountedPrice)s', {
+								args: {
+									discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
+								},
+								comment: '%(discountedPrice)s is a formatted price, e.g. $75',
+						  } )
+						: null
+				}
+				buttonLabel={ translate( 'Add G Suite' ) }
+			/>
+		);
+	}
+
+	render() {
 		return (
 			<>
 				{ this.renderHeaderSection() }
 				<div className="email-providers-comparison__providers">
-					<EmailProviderDetails
-						title={ translate( 'Email Forwarding' ) }
-						description={ translate(
-							'Use your custom domain in your email address and forward all your mail to another address.'
-						) }
-						image={ { path: forwardingIcon } }
-						features={ [
-							translate( 'No billing' ),
-							translate( 'Receive emails sent to your custom domain' ),
-						] }
-						buttonLabel={ translate( 'Add email forwarding' ) }
-					/>
-					<EmailProviderDetails
-						title={ translate( 'Titan Mail' ) }
-						badge={ translate( 'Recommended' ) }
-						description={ translate(
-							'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
-						) }
-						image={ { path: titanLogo } }
-						features={ [
-							translate( 'Monthly billing' ),
-							translate( 'Send and receive from your custom domain' ),
-							translate( '10GB storage' ),
-							translate( 'Email, calendars, and contacts' ),
-						] }
-						formattedPrice={ translate( '{{price/}} /user /month', {
-							components: {
-								price: <span>$4</span>,
-							},
-							comment: '{{price/}} is the formatted price, e.g. $20',
-						} ) }
-						buttonLabel={ translate( 'Add Titan Mail' ) }
-						hasPrimaryButton={ true }
-					/>
-					<EmailProviderDetails
-						title={ translate( 'G Suite by Google' ) }
-						description={ translate(
-							"We've partnered with Google to offer you email, storage, docs, calendars, and more."
-						) }
-						image={ { path: gSuiteLogo } }
-						features={ [
-							translate( 'Monthly billing' ),
-							translate( 'Send and receive from your custom domain' ),
-							translate( '30GB storage' ),
-							translate( 'Email, calendars, and contacts' ),
-							translate( 'Video calls, Docs, spreadsheets, and more' ),
-						] }
-						formattedPrice={ translate( '{{price/}} /user /year', {
-							components: {
-								price: <span>{ getAnnualPrice( gSuiteProduct?.cost ?? null, currencyCode ) }</span>,
-							},
-							comment: '{{price/}} is the formatted price, e.g. $20',
-						} ) }
-						discount={
-							hasDiscount( gSuiteProduct )
-								? translate( 'First year %(discountedPrice)s', {
-										args: {
-											discountedPrice: getAnnualPrice( gSuiteProduct.sale_cost, currencyCode ),
-										},
-										comment: '%(discountedPrice)s is a formatted price, e.g. $75',
-								  } )
-								: null
-						}
-						buttonLabel={ translate( 'Add G Suite' ) }
-					/>
+					{ this.renderForwardingDetails() }
+					{ this.renderTitanDetails() }
+					{ this.renderGSuiteDetails() }
 				</div>
 			</>
 		);
