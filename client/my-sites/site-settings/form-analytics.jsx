@@ -28,8 +28,11 @@ import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'lib/plans';
+import {
+	FEATURE_GOOGLE_ANALYTICS,
+	PLAN_JETPACK_SECURITY_DAILY,
+	JETPACK_RESET_PLANS,
+} from 'lib/plans/constants';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'lib/i18n-utils';
@@ -126,10 +129,7 @@ export class GoogleAnalyticsForm extends Component {
 				) }
 				event={ 'google_analytics_settings' }
 				feature={ FEATURE_GOOGLE_ANALYTICS }
-				plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-					type: TYPE_PREMIUM,
-					...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
-				} ) }
+				plan={ PLAN_JETPACK_SECURITY_DAILY }
 				showIcon={ true }
 				title={ nudgeTitle }
 			/>
@@ -291,7 +291,10 @@ export class GoogleAnalyticsForm extends Component {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = site && site.plan && hasPlanWithAnalytics( site.plan );
+	const isGoogleAnalyticsEligible =
+		site &&
+		site.plan &&
+		( hasPlanWithAnalytics( site.plan ) || JETPACK_RESET_PLANS.includes( site.plan.product_slug ) );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
