@@ -29,24 +29,15 @@ export function useSelectedPlan() {
 		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
 	);
 
-	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
-	const hasPaidDesign = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDesign() );
-
-	const defaultPaidPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
-
 	const planFromPath = usePlanFromPath();
-
-	// Use recommendedPlan with priority over the plan derived from domain and design selection
-	const defaultPlan =
-		recommendedPlan || ( ( hasPaidDomain || hasPaidDesign ) && defaultPaidPlan ) || undefined;
 
 	/**
 	 * Plan is decided in this order
 	 * 1. selected from PlansGrid (by dispatching setPlan)
 	 * 2. having the plan slug in the URL
-	 * 3. selecting features, a paid domain or design
+	 * 3. selecting paid features
 	 */
-	return selectedPlan || planFromPath || defaultPlan;
+	return selectedPlan || planFromPath || recommendedPlan;
 }
 
 export function useHasPaidPlanFromPath() {
