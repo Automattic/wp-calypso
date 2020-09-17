@@ -62,9 +62,10 @@ class AutoLoadingHomepageModal extends Component {
 
 	closeModalHandler = ( activate = false ) => () => {
 		if ( activate ) {
-			const { installingThemeId, siteId, source } = this.props;
+			const { installingThemeId, postsOnFrontPage, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-			return this.props.activateTheme( installingThemeId, siteId, source );
+			const keepLatestPosts = postsOnFrontPage && this.state.homepageAction === 'keep_latest_posts';
+			return this.props.activateTheme( installingThemeId, siteId, source, false, keepLatestPosts );
 		}
 		this.props.hideAutoLoadingHomepageWarning();
 	};

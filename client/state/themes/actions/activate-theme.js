@@ -10,13 +10,20 @@ import 'state/themes/init';
 /**
  * Triggers a network request to activate a specific theme on a given site.
  *
- * @param  {string}   themeId   Theme ID
- * @param  {number}   siteId    Site ID
- * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
- * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
+ * @param {string} themeId   Theme ID
+ * @param {number} siteId    Site ID
+ * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'
+ * @param {boolean} purchased Whether the theme has been purchased prior to activation
+ * @param {boolean} keepLatestPosts Has user asked to keep their latest posts on front
  * @returns {Function}           Action thunk
  */
-export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
+export function activateTheme(
+	themeId,
+	siteId,
+	source = 'unknown',
+	purchased = false,
+	keepLatestPosts = false
+) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_ACTIVATE,
@@ -26,7 +33,7 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 
 		return wpcom
 			.undocumented()
-			.activateTheme( themeId, siteId )
+			.activateTheme( themeId, siteId, keepLatestPosts )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;
