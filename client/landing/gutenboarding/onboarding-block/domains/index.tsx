@@ -87,18 +87,19 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 			if ( domain?.is_free ) {
 				// is this a reliable way to check for .wordpress.com subdomains?
 				handleNext();
-			}
-			try {
-				const availability: DomainAvailability | undefined = await waitForDomainAvailability(
-					domain?.domain_name
-				);
-				if ( domainIsAvailableStatus.includes( availability?.status ) ) {
-					// If the selected domain is available, proceed to next step.
+			} else {
+				try {
+					const availability: DomainAvailability | undefined = await waitForDomainAvailability(
+						domain?.domain_name
+					);
+					if ( domainIsAvailableStatus.includes( availability?.status ) ) {
+						// If the selected domain is available, proceed to next step.
+						handleNext();
+					}
+				} catch {
+					// if there is an error checking the domain availability, do we continue as normal?
 					handleNext();
 				}
-			} catch {
-				// if there is an error checking the domain availability, do we continue as normal?
-				handleNext();
 			}
 		}
 	};
