@@ -141,7 +141,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const body = (
 			<>
 				{ translate(
-					'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
+					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
 				) }
 				{ ! hasSimplePayments && <em>{ getPlanNames() }</em> }
 			</>
@@ -189,7 +189,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
 		);
 		const noConnectionBody = translate(
-			'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
+			'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
 			{
 				components: {
 					em: <em />,
