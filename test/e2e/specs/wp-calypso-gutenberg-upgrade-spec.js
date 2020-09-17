@@ -5,8 +5,8 @@ import assert from 'assert';
 import config from 'config';
 import { times } from 'lodash';
 import { By } from 'selenium-webdriver';
-import { promises as fs } from 'fs';
 import { join } from 'path';
+import { promises as fs } from 'fs';
 
 /**
  * Internal dependencies
@@ -60,9 +60,9 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 	async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
 		const now = Date.now() / 1000;
 
-		const siteSshotDir = join( mediaHelper.screenShotsDir(), siteName );
-		console.debug( '*** ABOUT TO CREATE THE siteSshotDir =', siteSshotDir );
-		await fs.access( siteSshotDir ).catch( () => fs.mkdir( siteSshotDir ) );
+		const siteScreenshotsDir = join( mediaHelper.screenshotsDir, siteName );
+		console.debug( '*** ABOUT TO CREATE THE siteSshotDir =', siteScreenshotsDir );
+		await fs.access( siteScreenshotsDir ).catch( () => fs.mkdir( siteScreenshotsDir ) );
 
 		for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
 			await scrollCb( i );

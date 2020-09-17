@@ -69,30 +69,28 @@ export function deleteFile( fileDetails ) {
 	return fs.deleteSync( fileDetails.file );
 }
 
+export const screenshotsDir = path.resolve(
+	process.env.TEMP_ASSET_PATH || __dirname + '/..',
+	process.env.SCREENSHOTDIR || 'screenshots'
+);
+
 export function writeScreenshot( data, filenameCallback, metadata ) {
 	const buffer = Buffer.from( data, 'base64' );
 	let filename;
 	let pt = new PassThrough();
 
-	let screenShotBase = __dirname + '/..';
-	if ( process.env.TEMP_ASSET_PATH ) {
-		screenShotBase = process.env.TEMP_ASSET_PATH;
+	if ( ! fs.existsSync( screenshotsDir ) ) {
+		fs.mkdirSync( screenshotsDir );
 	}
 
-	const directoryName = screenShotsDir();
-
-	const screenShotDir = path.resolve( screenShotBase, directoryName );
-	if ( ! fs.existsSync( screenShotDir ) ) {
-		fs.mkdirSync( screenShotDir );
-	}
-	console.debug( '**** writeScreenshot.screenshotDir =', screenShotDir );
+	console.debug( '**** writeScreenshot.screenshotDir =', screenshotsDir );
 
 	if ( typeof filenameCallback === 'function' ) {
 		filename = filenameCallback();
 	} else {
 		filename = new Date().getTime().toString();
 	}
-	const screenshotPath = `${ screenShotDir }/${ filename }.png`;
+	const screenshotPath = `${ screenshotsDir }/${ filename }.png`;
 
 	console.debug( '**** writeScreenshot.screenshotPath =', screenshotPath );
 	if ( typeof metadata === 'object' ) {
@@ -119,8 +117,4 @@ export function writeTextLogFile( textContent, prefix, pathOverride ) {
 	fs.writeFileSync( logPath, textContent );
 
 	return logPath;
-}
-
-export function screenShotsDir() {
-	return process.env.SCREENSHOTDIR || 'screenshots';
 }
