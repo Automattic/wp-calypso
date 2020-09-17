@@ -173,22 +173,185 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			Private								> Coming Soon (v2)			= Public + Noindex + Coming Soon (v2)
 			Private + Coming Soon (v1)			> Public					= Public + Noindex + Coming Soon (v2) - scratch that just: Public
 			Private + Coming Soon (v1)			> Remove Coming Soon (v1)	= Private - scratch that just: Public
+
+			// To check
+			Private + Coming Soon (v1) (implicit: NoIndex, from v1 transition, this should probably just remove noindex)
 		*/
 		[
 			{
-				testName: 'Public > Add Noindex = Public + Noindex',
+				scenario: 'Public > Add Noindex = Public + Noindex',
 				initialProps: {
-					blog_public: Visibility.Public,
+					blog_public: Visibility.PublicIndexed,
 					wpcom_public_coming_soon: 0,
 				},
 				labelToClick: 'Discourage search engines from indexing this site', // Noindex
-				expectedUpdates: {
+				expectState: {
 					blog_public: Visibility.PublicNotIndexed,
 					wpcom_public_coming_soon: 0,
 				},
 			},
-		].forEach( ( { testName, initialProps, labelToClick, expectedUpdates } ) => {
-			test( `"${ testName }`, () => {
+			{
+				scenario: 'Public > Set Private = Private',
+				initialProps: {
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Private',
+				expectState: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario: 'Public > Add Coming Soon (v2) = Public + Noindex + Coming Soon (v2)',
+				initialProps: {
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Coming Soon',
+				expectState: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 1,
+				},
+			},
+			{
+				scenario: 'Public + Noindex > Set Private = Private',
+				initialProps: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Private',
+				expectState: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario: 'Public + Noindex > Add Coming soon (v2) = Public + Noindex + Coming Soon (v2)',
+				initialProps: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Coming Soon',
+				expectState: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 1,
+				},
+			},
+			{
+				scenario: 'Public + Noindex + Coming Soon (v2) > Remove Coming Soon (v2) = Public',
+				initialProps: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 1,
+				},
+				labelToClick: 'Coming Soon',
+				expectState: {
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario: 'Public + Noindex + Coming Soon (v2) > Remove Noindex = Public',
+				initialProps: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 1,
+				},
+				labelToClick: 'Discourage search engines from indexing this site',
+				expectState: {
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario: 'Public + Noindex + Coming Soon (v2) > Set Private = Private',
+				initialProps: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 1,
+				},
+				labelToClick: 'Private',
+				expectState: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario: 'Private > Set Public = Public',
+				initialProps: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Public',
+				expectState: {
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario: 'Private > Add Noindex = Public + Noindex',
+				initialProps: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Discourage search engines from indexing this site',
+				expectState: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario: 'Private > Coming Soon (v2) = Public + Noindex + Coming Soon (v2)',
+				initialProps: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 0,
+				},
+				labelToClick: 'Coming Soon',
+				expectState: {
+					blog_public: Visibility.PublicNotIndexed,
+					wpcom_public_coming_soon: 1,
+				},
+			},
+			{
+				scenario:
+					'Private + Coming Soon (v1) > Public = Public + Noindex + Coming Soon (v2) - scratch that just: Public',
+				initialProps: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 1,
+				},
+				labelToClick: 'Public',
+				expectState: {
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			{
+				scenario:
+					'Private + Coming Soon (v1) > Remove Coming Soon (v1) = Private - scratch that just: Public',
+				initialProps: {
+					blog_public: Visibility.Private,
+					wpcom_public_coming_soon: 1,
+				},
+				labelToClick: 'Coming Soon',
+				expectState: {
+					blog_public: Visibility.PublicIndexed,
+					wpcom_public_coming_soon: 0,
+				},
+			},
+			// Todo: check this, might need its own test or to update this to check the form state instead of `udpateFields`
+			// {
+			// 	scenario:
+			// 		'Private + Coming Soon (v1) (implicit: NoIndex, from v1 transition, this should probably just remove noindex)',
+			// 	initialProps: {
+			// 		blog_public: Visibility.Private,
+			// 		wpcom_public_coming_soon: 1,
+			// 	},
+			// 	labelToClick: 'Coming Soon',
+			// 	expectState: {
+			// 		blog_public: Visibility.PublicIndexed,
+			// 		wpcom_public_coming_soon: 0,
+			// 	},
+			// },
+		].forEach( ( { scenario, initialProps, labelToClick, expectState } ) => {
+			test( `"${ scenario }`, () => {
 				testProps.fields.blog_public = initialProps.blog_public;
 				testProps.fields.wpcom_public_coming_soon = initialProps.wpcom_public_coming_soon;
 
@@ -197,7 +360,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				const radioButton = getByLabelText( labelToClick, { exact: false } );
 				expect( radioButton ).not.toBeChecked();
 				fireEvent.click( radioButton );
-				expect( testProps.updateFields ).toBeCalledWith( expectedUpdates );
+				expect( testProps.updateFields ).toBeCalledWith( expectState );
 			} );
 		} );
 
