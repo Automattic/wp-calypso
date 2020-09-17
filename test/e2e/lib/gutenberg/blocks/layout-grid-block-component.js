@@ -14,6 +14,13 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockName = 'jetpack/layout-grid';
 	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-layout-grid' );
 
+	/**
+	 * Setups the number of columns for the layout grid block.
+	 *
+	 * This needs to be called before you call @see {@link insertBlock}.
+	 *
+	 * @param {number} no number of columns, 1 to 4 (based on the default buttons in the block).
+	 */
 	async setupColumns( no ) {
 		const columnButtonSelector = By.css( `${ this.blockID } button[aria-label="${ no } columns"]` );
 		await driverHelper.clickWhenClickable( this.driver, columnButtonSelector );
@@ -22,22 +29,25 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		this.blockID = await this.driver
 			.findElement( By.css( 'div.block-editor-block-list__block.is-selected' ) )
 			.getAttribute( 'id' );
+
+		const addColumnButtonsSelector = By.css(
+			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid button[aria-label="Add block"]`
+		);
+
+		this.addBlockButtons = await this.driver.findElements( addColumnButtonsSelector );
 	}
 
 	/**
 	 * Inserts a block into the specified grid column using the Quick Inserter.
+	 *
+	 * You must call @see {@link setupColumns} before inserting an inner block using this method.
 	 *
 	 * @param { typeof GutenbergBlockComponent } blockClass A block class that responds to blockTitle and blockName
 	 * @param { number } column number to insert it into, from left to right, starts with 0.
 	 * @returns { GutenbergBlockComponent } instance of the added block
 	 **/
 	async insertBlock( blockClass, column ) {
-		const addColumnButtonsSelector = By.css(
-			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid button[aria-label="Add block"]`
-		);
-		const allButtons = await this.driver.findElements( addColumnButtonsSelector );
-
-		await allButtons[ column ].click();
+		await this.addBlockButtons[ column ].click();
 
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
 
