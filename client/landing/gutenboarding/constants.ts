@@ -13,7 +13,7 @@ const fontTitles: Partial< Record< Font, string > > = {
 	'Playfair Display': 'Playfair',
 };
 
-export const PAID_DOMAINS_TO_SHOW = 5;
+export const domainIsAvailableStatus = [ 'available', 'available_premium' ];
 
 /**
  * The status needed to proceed with a selected domain when performing an availability check
