@@ -149,20 +149,25 @@ class AutoLoadingHomepageModal extends Component {
 									checked={ 'keep_latest_posts' === this.state.homepageAction }
 									onChange={ this.handleHomepageAction }
 								/>
-								<span>{ translate( 'Keep using my latest posts' ) }</span>
+								{ translate( 'Keep using my latest posts' ) }
 							</FormLabel>
 							<FormLabel>
 								<FormRadio
 									value="use_new_homepage"
 									checked={ 'use_new_homepage' === this.state.homepageAction }
 									onChange={ this.handleHomepageAction }
+									aria-describedby="themes__auto-loading-homepage-modal-homepage-hint"
 								/>
-								<span>
-									{ translate( "Use %(themeName)s's homepage and content", {
-										args: { themeName },
-									} ) }
-								</span>
+								{ translate( "Use %(themeName)s's homepage and content", {
+									args: { themeName },
+								} ) }
 							</FormLabel>
+							<div
+								className="themes__auto-loading-homepage-modal-homepage-hint"
+								id="themes__auto-loading-homepage-modal-homepage-hint"
+							>
+								{ translate( '(This will set your existing homepage to draft)' ) }
+							</div>
 						</>
 					) : (
 						<p>
