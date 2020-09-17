@@ -4,6 +4,11 @@
 import React from 'react';
 import { startsWith } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+
 const blocksByType = {};
 export function getBlockByType( type ) {
 	return blocksByType[ type ];
@@ -23,14 +28,21 @@ export const Preformatted = ( { children } ) => <pre>{ children }</pre>;
 assignBlockType( 'pre', Preformatted );
 
 export const Link = ( { content, onClick, children } ) => {
-	const { activity, section, intent } = content;
+	const { url: originalUrl, activity, section, intent } = content;
 
-	const url = startsWith( content.url, 'https://wordpress.com/' )
-		? content.url.substr( 21 )
-		: content.url;
+	const isWordPressLink = startsWith( originalUrl, 'https://wordpress.com' );
+
+	// Don't render links to WordPress.com inside Jetpack Cloud
+	if ( isWordPressLink && isJetpackCloud() ) {
+		return children;
+	}
+
+	// On Calypso, relativize links to WordPress.com;
+	// for other destinations, render a link with the URL as-is
+	const linkUrl = isWordPressLink ? originalUrl.substr( 21 ) : originalUrl;
 	return (
 		<a
-			href={ url }
+			href={ linkUrl }
 			onClick={ onClick }
 			data-activity={ activity }
 			data-section={ section }
@@ -51,6 +63,11 @@ export const FilePath = ( { children } ) => (
 assignBlockType( 'filepath', FilePath );
 
 export const Post = ( { content, children } ) => {
+	// Don't render links to WordPress.com inside Jetpack Cloud
+	if ( isJetpackCloud() ) {
+		return content.isTrashed ? children : <em>{ children }</em>;
+	}
+
 	if ( content.isTrashed ) {
 		return <a href={ `/posts/${ content.siteId }/trash` }>{ children }</a>;
 	}
@@ -63,39 +80,60 @@ export const Post = ( { content, children } ) => {
 };
 assignBlockType( 'post', Post );
 
-export const Comment = ( { content, children } ) => (
-	<a
-		href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }#comment-${ content.commentId }` }
-	>
-		{ children }
-	</a>
-);
+export const Comment = ( { content, children } ) => {
+	// Don't render links to WordPress.com inside Jetpack Cloud
+	if ( isJetpackCloud() ) {
+		return children;
+	}
+
+	return (
+		<a
+			href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }#comment-${ content.commentId }` }
+		>
+			{ children }
+		</a>
+	);
+};
 assignBlockType( 'comment', Comment );
 
-export const Person = ( { content, onClick, meta, children } ) => (
-	<a
-		href={ `/people/edit/${ content.siteId }/${ content.name }` }
-		onClick={ onClick }
-		data-activity={ meta.activity }
-		data-section="users"
-		data-intent="edit"
-	>
-		<strong>{ children }</strong>
-	</a>
-);
+export const Person = ( { content, onClick, meta, children } ) => {
+	// Don't render links to WordPress.com inside Jetpack Cloud
+	if ( isJetpackCloud() ) {
+		return <strong>{ children }</strong>;
+	}
+
+	return (
+		<a
+			href={ `/people/edit/${ content.siteId }/${ content.name }` }
+			onClick={ onClick }
+			data-activity={ meta.activity }
+			data-section="users"
+			data-intent="edit"
+		>
+			<strong>{ children }</strong>
+		</a>
+	);
+};
 assignBlockType( 'person', Person );
 
-export const Plugin = ( { content, onClick, meta, children } ) => (
-	<a
-		href={ `/plugins/${ content.pluginSlug }/${ content.siteSlug }` }
-		onClick={ onClick }
-		data-activity={ meta.activity }
-		data-section="plugins"
-		data-intent="view"
-	>
-		{ children }
-	</a>
-);
+export const Plugin = ( { content, onClick, meta, children } ) => {
+	// Don't render links to WordPress.com inside Jetpack Cloud
+	if ( isJetpackCloud() ) {
+		return children;
+	}
+
+	return (
+		<a
+			href={ `/plugins/${ content.pluginSlug }/${ content.siteSlug }` }
+			onClick={ onClick }
+			data-activity={ meta.activity }
+			data-section="plugins"
+			data-intent="view"
+		>
+			{ children }
+		</a>
+	);
+};
 assignBlockType( 'plugin', Plugin );
 
 export const Theme = ( { content, onClick, meta, children } ) => {
@@ -105,7 +143,10 @@ export const Theme = ( { content, onClick, meta, children } ) => {
 	}
 
 	if ( /wordpress\.com/.test( themeUri ) ) {
-		return (
+		// Don't render links to WordPress.com inside Jetpack Cloud
+		return isJetpackCloud() ? (
+			children
+		) : (
 			<a
 				href={ `/theme/${ themeSlug }/${ siteSlug }` }
 				onClick={ onClick }
