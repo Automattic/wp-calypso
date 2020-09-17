@@ -409,6 +409,8 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_SIMPLE_PAYMENTS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
@@ -460,6 +462,8 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_SIMPLE_PAYMENTS,
 	],
 	getInferiorHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -523,6 +527,8 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_JETPACK_SEARCH,
 		constants.FEATURE_JETPACK_SEARCH_MONTHLY,
 		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_SIMPLE_PAYMENTS,
 	],
 	getInferiorHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,

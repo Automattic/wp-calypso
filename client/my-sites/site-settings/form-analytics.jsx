@@ -28,8 +28,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
-import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
+import { FEATURE_GOOGLE_ANALYTICS, TYPE_SECURITY_DAILY, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
@@ -116,11 +115,11 @@ export class GoogleAnalyticsForm extends Component {
 
 		const nudgeTitle = siteIsJetpack
 			? translate(
-					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
+					'Connect your site to Google Analytics in seconds with a Jetpack Security or Complete plan'
 			  )
 			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
 
-		const nudge = shouldShowOfferResetFlow() ? null : (
+		const nudge = (
 			<UpsellNudge
 				description={ translate(
 					"Add your unique tracking ID to monitor your site's performance in Google Analytics."
@@ -128,7 +127,7 @@ export class GoogleAnalyticsForm extends Component {
 				event={ 'google_analytics_settings' }
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
-					type: TYPE_PREMIUM,
+					type: TYPE_SECURITY_DAILY,
 					...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 				} ) }
 				showIcon={ true }
