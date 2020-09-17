@@ -314,7 +314,7 @@ export class SeoForm extends React.Component {
 
 		const nudgeTitle = siteIsJetpack
 			? translate(
-					'Boost your search engine ranking with the powerful SEO tools with the Jetpack Security plans'
+					'Boost your search engine ranking with the powerful SEO tools in a Jetpack Security or Complete plan'
 			  )
 			: translate(
 					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
