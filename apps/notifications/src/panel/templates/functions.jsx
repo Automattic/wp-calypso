@@ -34,7 +34,7 @@ const toBlocks = ( text ) =>
 		( { out, inFence, inList }, raw ) => {
 			if ( ! raw ) {
 				return {
-					out,
+					out: out + '<br />',
 					inFence,
 					inList,
 				};
