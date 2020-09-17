@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import type { Plans, DomainSuggestions } from '@automattic/data-stores';
+import type { Plans, DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import debugFactory from 'debug';
 
@@ -20,12 +20,13 @@ import PlansDetails from '../plans-details';
 import './style.scss';
 
 type PlansSlug = Plans.PlanSlug;
+type FeatureId = WPCOMFeatures.FeatureId;
 
 const debug = debugFactory( 'plans-grid' );
 
 export interface Props {
 	header?: React.ReactElement;
-	recommendedPlan?: Plans.Plan;
+	selectedFeatures?: FeatureId[];
 	currentPlan?: Plans.Plan;
 	onPlanSelect: ( plan: PlansSlug ) => void;
 	onPickDomainClick?: () => void;
@@ -36,7 +37,7 @@ export interface Props {
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
 	header,
-	recommendedPlan,
+	selectedFeatures,
 	currentPlan,
 	currentDomain,
 	onPlanSelect,
@@ -58,7 +59,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 				<div className="plans-grid__table-container">
 					{ isExperimental ? (
 						<PlansAccordion
-							recommendedPlanSlug={ recommendedPlan?.storeSlug ?? '' }
+							selectedFeatures={ selectedFeatures }
 							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 							onPlanSelect={ onPlanSelect }
 							currentDomain={ currentDomain }
