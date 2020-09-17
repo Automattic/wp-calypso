@@ -12,7 +12,7 @@ import {
 	CheckoutStepArea,
 	CheckoutStep,
 	CheckoutStepBody,
-	CheckoutSteps,
+	CheckoutStepGroup,
 	CheckoutSummaryArea,
 	CheckoutProvider,
 	createApplePayMethod,
@@ -403,7 +403,7 @@ function MyCheckoutBody() {
 					stepNumber={ 1 }
 					stepId={ 'order-summary' }
 				/>
-				<CheckoutSteps>
+				<CheckoutStepGroup>
 					<CheckoutStep
 						stepId="review-order-step"
 						isCompleteCallback={ () => true }
@@ -435,7 +435,7 @@ function MyCheckoutBody() {
 						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }
 					/>
-				</CheckoutSteps>
+				</CheckoutStepGroup>
 			</CheckoutStepArea>
 		</Checkout>
 	);

@@ -21,7 +21,7 @@ import {
 	CheckoutStep,
 	CheckoutStepArea,
 	CheckoutStepBody,
-	CheckoutSteps,
+	CheckoutStepGroup,
 	useSelect,
 	useDispatch,
 	createRegistry,
@@ -659,7 +659,7 @@ function createStepsFromStepObjects( stepObjects, paymentData ) {
 		<React.Fragment>
 			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 			<CheckoutStepArea>
-				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
+				<CheckoutStepGroup>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutStepGroup>
 			</CheckoutStepArea>
 		</React.Fragment>
 	);

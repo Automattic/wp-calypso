@@ -8,7 +8,7 @@ import {
 	Checkout,
 	CheckoutStep,
 	CheckoutStepArea,
-	CheckoutSteps,
+	CheckoutStepGroup,
 	CheckoutStepBody,
 	CheckoutSummaryArea,
 	getDefaultPaymentMethodStep,
@@ -343,7 +343,7 @@ export default function WPCheckout( {
 					}
 					formStatus={ formStatus }
 				/>
-				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
+				<CheckoutStepGroup areStepsActive={ ! isOrderReviewActive }>
 					{ shouldShowContactStep && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
@@ -409,7 +409,7 @@ export default function WPCheckout( {
 							isCartPendingUpdate ? translate( 'Updating cart…' ) : translate( 'Please wait…' )
 						}
 					/>
-				</CheckoutSteps>
+				</CheckoutStepGroup>
 			</CheckoutStepArea>
 		</Checkout>
 	);

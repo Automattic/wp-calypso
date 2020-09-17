@@ -93,7 +93,7 @@ export function Checkout( {
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( setActiveStepNumber );
 
-	const getDefaultCheckoutSteps = () => <DefaultCheckoutSteps />;
+	const getDefaultCheckoutStepGroup = () => <DefaultCheckoutStepGroup />;
 
 	const classNames = joinClasses( [
 		'composite-checkout',
@@ -124,14 +124,14 @@ export function Checkout( {
 						setTotalSteps,
 					} }
 				>
-					{ children || getDefaultCheckoutSteps() }
+					{ children || getDefaultCheckoutStepGroup() }
 				</CheckoutStepDataContext.Provider>
 			</MainContentUI>
 		</ContainerUI>
 	);
 }
 
-function DefaultCheckoutSteps() {
+function DefaultCheckoutStepGroup() {
 	const orderSummary = getDefaultOrderSummary();
 	const orderSummaryStep = getDefaultOrderSummaryStep();
 	const paymentMethodStep = getDefaultPaymentMethodStep();
@@ -152,7 +152,7 @@ function DefaultCheckoutSteps() {
 					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }
 				/>
-				<CheckoutSteps>
+				<CheckoutStepGroup>
 					<CheckoutStep
 						stepId="review-order-step"
 						isCompleteCallback={ () => true }
@@ -169,7 +169,7 @@ function DefaultCheckoutSteps() {
 						titleContent={ paymentMethodStep.titleContent }
 						className={ paymentMethodStep.className }
 					/>
-				</CheckoutSteps>
+				</CheckoutStepGroup>
 			</CheckoutStepArea>
 		</React.Fragment>
 	);
@@ -254,10 +254,10 @@ export function CheckoutStepArea( {
 	);
 }
 
-export const CheckoutSteps: Function = ( {
+export const CheckoutStepGroup: Function = ( {
 	children,
 	areStepsActive = true,
-}: CheckoutStepsProps ): JSX.Element[] => {
+}: CheckoutStepGroupProps ): JSX.Element[] => {
 	let stepNumber = 0;
 	let nextStepNumber: number | null = 1;
 
@@ -302,7 +302,7 @@ export const CheckoutSteps: Function = ( {
 	} );
 };
 
-interface CheckoutStepsProps {
+interface CheckoutStepGroupProps {
 	children?: React.ReactNode;
 	areStepsActive?: boolean;
 }
