@@ -139,6 +139,8 @@ export const PRODUCTS_WITH_OPTIONS = [
 // Jetpack Security
 export const OPTION_PLAN_SECURITY: SelectorProduct = {
 	productSlug: OPTIONS_JETPACK_SECURITY,
+	annualOptionSlug: OPTIONS_JETPACK_SECURITY,
+	monthlyOptionSlug: OPTIONS_JETPACK_SECURITY_MONTHLY,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_BUNDLE,
 	subtypes: [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_REALTIME ],
@@ -209,6 +211,8 @@ export const OPTION_PLAN_SECURITY_MONTHLY: SelectorProduct = {
 // Jetpack Backup
 export const OPTION_PRODUCT_BACKUP: SelectorProduct = {
 	productSlug: OPTIONS_JETPACK_BACKUP,
+	annualOptionSlug: OPTIONS_JETPACK_BACKUP,
+	monthlyOptionSlug: OPTIONS_JETPACK_BACKUP_MONTHLY,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
 	subtypes: [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_REALTIME ],

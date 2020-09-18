@@ -81,6 +81,8 @@ export type SelectorProductFeatures = {
 
 export interface SelectorProduct extends SelectorProductCost {
 	productSlug: string;
+	annualOptionSlug?: string;
+	monthlyOptionSlug?: string;
 	iconSlug: string;
 	type: ItemType;
 	costProductSlug?: string;
