@@ -10,6 +10,8 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import FormattedDate from '../';
 import { setLocale } from 'state/ui/language/actions';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
@@ -17,11 +19,16 @@ import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 class FormattedDateExample extends PureComponent {
 	static displayName = 'FormattedDateExample';
 
-	state = {
-		currentDate: new Date(),
-		currentDateString: new Date().toISOString(),
-		format: 'lll',
-	};
+	constructor( props ) {
+		super( props );
+
+		this.state = {
+			currentDate: new Date(),
+			currentDateString: new Date().toISOString(),
+			currentLocale: props.currentLocale,
+			format: 'lll',
+		};
+	}
 
 	handleDateChange = ( evt ) => {
 		const val = moment( evt.target.value );
@@ -35,8 +42,13 @@ class FormattedDateExample extends PureComponent {
 
 	handleLocaleChange = ( evt ) => {
 		const val = evt.target.value;
+
+		this.setState( {
+			currentLocale: val,
+		} );
+
 		if ( val.length === 2 || val.length === 5 ) {
-			this.props.setLocale( evt.target.value );
+			this.props.setLocale( val );
 		}
 	};
 
@@ -50,36 +62,24 @@ class FormattedDateExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				<label>
+				<FormLabel>
 					Date
 					<br />
-					<input
-						type="text"
-						name="theDate"
+					<FormTextInput
 						onChange={ this.handleDateChange }
-						defaultValue={ this.state.currentDateString }
+						value={ this.state.currentDateString }
 					/>
-				</label>
-				<label>
+				</FormLabel>
+				<FormLabel>
 					locale
 					<br />
-					<input
-						type="text"
-						name="locale"
-						onChange={ this.handleLocaleChange }
-						defaultValue={ this.props.currentLocale }
-					/>
-				</label>
-				<label>
+					<FormTextInput onChange={ this.handleLocaleChange } value={ this.state.currentLocale } />
+				</FormLabel>
+				<FormLabel>
 					format
 					<br />
-					<input
-						type="text"
-						name="format"
-						onChange={ this.handleFormatChange }
-						defaultValue={ this.state.format }
-					/>
-				</label>
+					<FormTextInput onChange={ this.handleFormatChange } value={ this.state.format } />
+				</FormLabel>
 				<FormattedDate date={ this.state.currentDate } format={ this.state.format } />
 			</div>
 		);
