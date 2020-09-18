@@ -142,7 +142,7 @@ function checkForUpdates() {
 	log.info( `User clicked 'Check For Updates'` );
 	const updater = getUpdater();
 	if ( updater ) {
-		updater.ping();
+		updater.ping( true );
 	} else {
 		log.error( 'Updater not set' );
 	}
