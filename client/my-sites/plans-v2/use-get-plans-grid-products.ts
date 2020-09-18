@@ -14,8 +14,6 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'lib/products-values/constants';
 import {
 	OPTIONS_JETPACK_BACKUP,
@@ -47,15 +45,6 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_SEARCH_PRODUCTS.includes( ownedProduct ) )
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_SEARCH_PRODUCTS ];
-	}
-
-	// Include Jetpack CRM
-	if (
-		! ownedProducts.some( ( ownedProduct ) =>
-			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
-		)
-	) {
-		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 	}
 
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying
