@@ -50,7 +50,17 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	}
 
 	// Include Jetpack CRM
-	availableProducts = [ ...availableProducts, EXTERNAL_JETPACK_CRM, EXTERNAL_JETPACK_CRM_MONTHLY ];
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			[ EXTERNAL_JETPACK_CRM, EXTERNAL_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
+		)
+	) {
+		availableProducts = [
+			...availableProducts,
+			EXTERNAL_JETPACK_CRM,
+			EXTERNAL_JETPACK_CRM_MONTHLY,
+		];
+	}
 
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying
 	// the option cards.
