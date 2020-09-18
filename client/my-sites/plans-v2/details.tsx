@@ -4,18 +4,27 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { TERM_MONTHLY } from 'lib/plans/constants';
+import { recordTracksEvent } from 'state/analytics/actions/record';
 import {
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 	PRODUCTS_WITH_OPTIONS,
 } from './constants';
+import PlansFilterBar from './plans-filter-bar';
 import ProductCard from './product-card';
-import { slugToSelectorProduct, getPathToSelector, getPathToUpsell, checkout } from './utils';
+import {
+	slugToSelectorProduct,
+	getPathToSelector,
+	getPathToUpsell,
+	getPathToDetails,
+	checkout,
+} from './utils';
 import QueryProducts from './query-products';
 import useIsLoading from './use-is-loading';
 import useHasProductUpsell from './use-has-product-upsell';
@@ -36,6 +45,7 @@ import type { ProductSlug } from 'lib/products-values/types';
 import './style.scss';
 
 const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPageProps ) => {
+	const dispatch = useDispatch();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
@@ -68,6 +78,24 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPagePro
 		checkout( siteSlug, slug );
 	};
 
+	const onDurationChange = ( newDuration: Duration ) => {
+		if ( newDuration === duration ) {
+			return;
+		}
+
+		const newProductSlug =
+			newDuration === TERM_MONTHLY ? product.monthlyOptionSlug : product.annualOptionSlug;
+
+		dispatch(
+			recordTracksEvent( 'calypso_product_duration_change', {
+				site_id: siteId || undefined,
+				product_slug: newProductSlug,
+				duration: newDuration,
+			} )
+		);
+		page( getPathToDetails( rootUrl, newProductSlug as string, newDuration, siteSlug ) );
+	};
+
 	const { shortName } = product;
 	const isBundle = [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ].includes(
 		productSlug
@@ -86,7 +114,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPagePro
 					shortName
 						? translate( 'Great choice! Now select a {{name/}} option:', {
 								components: {
-									name: <> { shortName }</>,
+									name: <>{ shortName }</>,
 								},
 								comment: 'Short name of the selected generic plan or product',
 						  } )
@@ -94,6 +122,7 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPagePro
 				}
 				brandFont
 			/>
+			<PlansFilterBar showDurations duration={ duration } onDurationChange={ onDurationChange } />
 			<div className="plans-v2__columns">
 				{ isLoading ? (
 					<>
