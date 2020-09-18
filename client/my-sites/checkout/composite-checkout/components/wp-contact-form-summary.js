@@ -83,6 +83,7 @@ function joinNonEmptyValues( joinString, ...values ) {
 	return values.filter( ( value ) => value?.length > 0 ).join( joinString );
 }
 
+// The point of this component is to make sure we show at most one email address in the summary, and that the one we show is editable.
 function EmailSummary( {
 	isRenewal,
 	contactInfo,
@@ -102,11 +103,9 @@ function EmailSummary( {
 	}
 
 	if ( isGSuiteInCart && ! areThereDomainProductsInCart ) {
-		return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
-	}
-
-	if ( isGSuiteInCart && contactInfo.alternateEmail.value ) {
-		return <SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>;
+		return contactInfo.alternateEmail.value ? (
+			<SummaryLine>{ contactInfo.alternateEmail.value }</SummaryLine>
+		) : null;
 	}
 
 	if ( ! contactInfo.email.value ) {
