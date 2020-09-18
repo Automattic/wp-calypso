@@ -29,26 +29,25 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		this.blockID = await this.driver
 			.findElement( By.css( 'div.block-editor-block-list__block.is-selected' ) )
 			.getAttribute( 'id' );
-
-		const addColumnButtonsSelector = By.css(
-			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid button[aria-label="Add block"]`
-		);
-
-		this.addBlockButtons = await this.driver.findElements( addColumnButtonsSelector );
 	}
 
 	/**
-	 * Inserts a block into the specified grid column using the Quick Inserter.
+	 * Inserts a block in the last available grid for the layout grid.
 	 *
 	 * You must call @see {@link setupColumns} before inserting an inner block using this method.
 	 *
+	 * This will add to each column in sequence, from left to right.
+	 *
 	 * @param { typeof GutenbergBlockComponent } blockClass A block class that responds to blockTitle and blockName
-	 * @param { number } column number to insert it into, from left to right, starts with 1 (to make it more natural based on the
-	 * input for the `setupColumns` method).
 	 * @returns { GutenbergBlockComponent } instance of the added block
 	 **/
-	async insertBlock( blockClass, column ) {
-		await this.addBlockButtons[ column - 1 ].click();
+	async insertBlock( blockClass ) {
+		const addColumnButtonsSelector = By.css(
+			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid button[aria-label="Add block"]`
+		);
+		const buttons = await this.driver.findElements( addColumnButtonsSelector );
+
+		await buttons[ 0 ].click();
 
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
 

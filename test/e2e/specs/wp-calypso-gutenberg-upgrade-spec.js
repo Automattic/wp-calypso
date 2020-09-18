@@ -61,7 +61,6 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		const now = Date.now() / 1000;
 
 		const siteScreenshotsDir = join( mediaHelper.screenshotsDir, siteName );
-		console.debug( '*** ABOUT TO CREATE THE siteSshotDir =', siteScreenshotsDir );
 		await fs
 			.access( siteScreenshotsDir )
 			.catch( () => fs.mkdir( siteScreenshotsDir, { recursive: true } ) );
@@ -236,8 +235,8 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				const layoutBlock = await gEditorComponent.insertBlock( LayoutGridBlockComponent );
 
 				await layoutBlock.setupColumns( 2 );
-				await layoutBlock.insertBlock( RatingStarBlockComponent, 1 );
-				await layoutBlock.insertBlock( DynamicSeparatorBlockComponent, 2 );
+				await layoutBlock.insertBlock( RatingStarBlockComponent );
+				await layoutBlock.insertBlock( DynamicSeparatorBlockComponent );
 			} );
 
 			step( 'Insert and configure core-embed/youtube', async function () {

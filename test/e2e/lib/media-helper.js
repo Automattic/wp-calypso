@@ -83,8 +83,6 @@ export function writeScreenshot( data, filenameCallback, metadata ) {
 		fs.mkdirSync( screenshotsDir );
 	}
 
-	console.debug( '**** writeScreenshot.screenshotDir =', screenshotsDir );
-
 	if ( typeof filenameCallback === 'function' ) {
 		filename = filenameCallback();
 	} else {
@@ -92,7 +90,6 @@ export function writeScreenshot( data, filenameCallback, metadata ) {
 	}
 	const screenshotPath = `${ screenshotsDir }/${ filename }.png`;
 
-	console.debug( '**** writeScreenshot.screenshotPath =', screenshotPath );
 	if ( typeof metadata === 'object' ) {
 		for ( const i in metadata ) {
 			pt = pt.pipe( pngitxt.set( i, metadata[ i ] ) );
