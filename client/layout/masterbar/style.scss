@@ -89,6 +89,12 @@ $autobar-height: 20px;
 	// Animation
 	animation: bubble-unread-indication 0.5s linear both;
 	transition: all 150ms ease-in;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		top: calc( 50% - 14px );
+		left: calc( 50% - 14px );
+		margin: 0;
+	}
 }
 
 .masterbar__item {
@@ -537,6 +543,7 @@ $autobar-height: 20px;
 	right: 0;
 	bottom: 0;
 	left: 0;
+	// stylelint-disable-next-line scales/radii
 	border-radius: 0 0 3px 3px;
 
 	.count {
