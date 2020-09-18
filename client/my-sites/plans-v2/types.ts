@@ -96,7 +96,6 @@ export interface SelectorProduct extends SelectorProductCost {
 	subtypes: string[];
 	legacy?: boolean;
 	hidePrice?: boolean;
-	externalUrl?: string;
 }
 
 export interface AvailableProductData {
