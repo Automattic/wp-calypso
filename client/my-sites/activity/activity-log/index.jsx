@@ -26,7 +26,6 @@ import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
-import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -452,8 +451,6 @@ class ActivityLog extends Component {
 				<QueryRewindBackups siteId={ siteId } />
 
 				<SidebarNavigation />
-
-				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
 
 				<FormattedHeader
 					brandFont
