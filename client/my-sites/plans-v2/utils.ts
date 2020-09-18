@@ -12,6 +12,8 @@ import React, { createElement, Fragment } from 'react';
 import {
 	DAILY_PLAN_TO_REALTIME_PLAN,
 	DAILY_PRODUCTS,
+	EXTERNAL_PRODUCTS_LIST,
+	EXTERNAL_PRODUCTS_SLUG_MAP,
 	FEATURED_PRODUCTS,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
@@ -185,6 +187,8 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
 export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null {
 	if ( slugIsSelectorProductSlug( slug ) ) {
 		return OPTIONS_SLUG_MAP[ slug ];
+	} else if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
+		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ];
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
 		return JETPACK_PRODUCTS_LIST[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {

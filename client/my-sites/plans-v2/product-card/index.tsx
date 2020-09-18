@@ -8,7 +8,12 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 /**
  * Internal dependencies
  */
-import { ITEM_TYPE_PLAN, ITEM_TYPE_BUNDLE, ITEM_TYPE_PRODUCT } from '../constants';
+import {
+	EXTERNAL_PRODUCTS_LIST,
+	ITEM_TYPE_PLAN,
+	ITEM_TYPE_BUNDLE,
+	ITEM_TYPE_PRODUCT,
+} from '../constants';
 import {
 	durationToText,
 	productButtonLabel,
@@ -148,6 +153,13 @@ const ProductCardWrapper = ( {
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
 
+	// Don't hide price if siteId is not defined, since it most likely won't be shown
+	// in other parts of the card (e.g. Jetpack Search)
+	// Jetpack CRM is an external product and we don't have access to its price, therefore,
+	// we hide it.
+	const hidePrice =
+		EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) || ( !! siteId && item.hidePrice );
+
 	const UpgradeNudge = isOwned ? (
 		<UpgradeNudgeWrapper
 			siteId={ siteId }
@@ -183,11 +195,7 @@ const ProductCardWrapper = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={
-				// Don't hide price if siteId is not defined, since it most likely won't be shown
-				// in other parts of the card (e.g. Jetpack Search)
-				!! siteId && item.hidePrice
-			}
+			hidePrice={ hidePrice }
 		/>
 	);
 };
