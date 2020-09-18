@@ -54,6 +54,30 @@
 	margin-right: 10px;
 }
 
+.cancel__placeholders {
+	.is-placeholder {
+        animation: pulse-light 800ms ease-in-out infinite;
+        background: var( --color-neutral-10 );
+	}
+	
+	.cancel__placeholder-button-container {
+		display: flex;
+		justify-content: center;
+	}
+
+	.cancel__placeholder-button {
+		height: 50px;
+		width: 100%;
+		margin-right: 10px;
+	
+		@include breakpoint-deprecated( '>480px' ) {
+			width: 80px;
+			height: 40px;
+		}
+	}
+	
+}
+
 .book__info-step-phone-input {
 	display: block;
 

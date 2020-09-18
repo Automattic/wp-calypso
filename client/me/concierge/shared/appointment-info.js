@@ -35,8 +35,7 @@ class AppointmentInfo extends Component {
 
 		const conferenceLink = meta.conference_link || '';
 		const guessedTimezone = moment.tz.guess();
-		const secondsUntilSessionBegins = beginTimestamp / 1000 - moment().unix();
-		const isEligibleToReschedule = secondsUntilSessionBegins > 3600;
+		const isAllowedToChangeAppointment = meta.canChangeAppointment;
 
 		return (
 			<>
@@ -90,7 +89,7 @@ class AppointmentInfo extends Component {
 						<FormSettingExplanation>{ meta.message }</FormSettingExplanation>
 					</FormFieldset>
 
-					{ isEligibleToReschedule && (
+					{ isAllowedToChangeAppointment && (
 						<FormFieldset>
 							<a href={ `/me/concierge/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
 								<FormButton isPrimary={ false } type="button">
