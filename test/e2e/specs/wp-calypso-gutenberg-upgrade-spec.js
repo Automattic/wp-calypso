@@ -60,8 +60,14 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 	async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
 		const now = Date.now() / 1000;
 
-		const siteScreenshotsDir = join( mediaHelper.screenshotsDir, siteName );
+		// NOTE The gsub below is a hack to get rid of the **** wildcard and replace with "test" as `mkdir` doesn't seem to support it.
+		// Keep this until I better understand why this happens and or find a better way to solve this.
+		const siteScreenshotsDir = join( mediaHelper.screenshotsDir, siteName ).replace(
+			'****',
+			'test'
+		);
 		console.debug( '*** ABOUT TO CREATE THE siteSshotDir =', siteScreenshotsDir );
+
 		await fs.access( siteScreenshotsDir ).catch( () => fs.mkdir( siteScreenshotsDir ) );
 
 		for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
