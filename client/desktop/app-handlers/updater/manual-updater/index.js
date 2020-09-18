@@ -153,7 +153,7 @@ class ManualUpdater extends Updater {
 			return null;
 		}
 		const asset = assets.find( ( file ) => file.name === 'latest.yml' );
-		return asset ? asset.browser_download_url || null : null;
+		return asset ? asset.browser_download_url : null;
 	}
 
 	async getReleaseVersion( url ) {
