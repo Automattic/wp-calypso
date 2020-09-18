@@ -64,7 +64,7 @@ class EmailProvidersComparison extends React.Component {
 		);
 	}
 
-	renderForwardingDetails() {
+	renderForwardingDetails( className ) {
 		const { translate } = this.props;
 		return (
 			<EmailProviderDetails
@@ -78,11 +78,12 @@ class EmailProvidersComparison extends React.Component {
 					translate( 'Receive emails sent to your custom domain' ),
 				] }
 				buttonLabel={ translate( 'Add email forwarding' ) }
+				className={ className }
 			/>
 		);
 	}
 
-	renderTitanDetails() {
+	renderTitanDetails( className ) {
 		const { translate } = this.props;
 
 		return (
@@ -107,6 +108,7 @@ class EmailProvidersComparison extends React.Component {
 				} ) }
 				buttonLabel={ translate( 'Add Titan Mail' ) }
 				hasPrimaryButton={ true }
+				className={ className }
 			/>
 		);
 	}
@@ -150,13 +152,15 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	render() {
+		const { isGSuiteSupported } = this.props;
+		const cardClassName = isGSuiteSupported ? null : 'no-gsuite';
 		return (
 			<>
 				{ this.renderHeaderSection() }
 				<div className="email-providers-comparison__providers">
-					{ this.renderForwardingDetails() }
-					{ this.renderTitanDetails() }
-					{ this.renderGSuiteDetails() }
+					{ this.renderForwardingDetails( cardClassName ) }
+					{ this.renderTitanDetails( cardClassName ) }
+					{ isGSuiteSupported && this.renderGSuiteDetails() }
 				</div>
 			</>
 		);
