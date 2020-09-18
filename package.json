@@ -185,7 +185,7 @@
 		"@automattic/webpack-inline-constant-exports-plugin": "^0.0.1",
 		"@automattic/wp-babel-makepot": "^1.0.0",
 		"@automattic/wpcom-block-editor": "^1.0.0-alpha.0",
-		"@automattic/wpcom-editing-toolkit": "^2.4.0",
+		"@automattic/wpcom-editing-toolkit": "^2.5.0",
 		"@babel/cli": "^7.10.5",
 		"@babel/core": "^7.11.1",
 		"@babel/register": "^7.10.5",
