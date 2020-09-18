@@ -89,7 +89,6 @@ class SimplePaymentsView extends Component {
 							<div className="wpview-type-simple-payments__pay-quantity">
 								<FormTextInput
 									className="wpview-type-simple-payments__pay-quantity-input"
-									type="text"
 									value="1"
 									readOnly
 								/>
