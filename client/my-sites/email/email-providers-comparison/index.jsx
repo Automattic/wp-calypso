@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -16,6 +17,9 @@ import { getProductBySlug } from 'state/products-list/selectors';
 import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
 import { getAnnualPrice } from 'lib/gsuite';
 import { hasDiscount } from 'components/gsuite/gsuite-price';
+import getCurrentRoute from 'state/selectors/get-current-route';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { emailManagementForwarding } from 'my-sites/email/paths';
 import emailIllustration from 'assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'assets/images/email-providers/titan.svg';
 import gSuiteLogo from 'assets/images/email-providers/gsuite.svg';
@@ -30,6 +34,11 @@ class EmailProvidersComparison extends React.Component {
 	static propTypes = {
 		domain: PropTypes.object.isRequired,
 		isGSuiteSupported: PropTypes.bool.isRequired,
+	};
+
+	goToEmailForwarding = () => {
+		const { domain, currentRoute, selectedSiteSlug } = this.props;
+		page( emailManagementForwarding( selectedSiteSlug, domain.name, currentRoute ) );
 	};
 
 	renderHeaderSection() {
@@ -65,7 +74,13 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderForwardingDetails( className ) {
-		const { translate } = this.props;
+		const { domain, translate } = this.props;
+
+		const buttonLabel =
+			domain.emailForwardsCount > 0
+				? translate( 'Manage email forwarding' )
+				: translate( 'Add email forwarding' );
+
 		return (
 			<EmailProviderDetails
 				title={ translate( 'Email Forwarding' ) }
@@ -77,7 +92,8 @@ class EmailProvidersComparison extends React.Component {
 					translate( 'No billing' ),
 					translate( 'Receive emails sent to your custom domain' ),
 				] }
-				buttonLabel={ translate( 'Add email forwarding' ) }
+				buttonLabel={ buttonLabel }
+				onButtonClick={ this.goToEmailForwarding }
 				className={ className }
 			/>
 		);
@@ -171,5 +187,7 @@ export default connect( ( state ) => {
 	return {
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		gSuiteProduct: getProductBySlug( state, GSUITE_BASIC_SLUG ),
+		currentRoute: getCurrentRoute( state ),
+		selectedSiteSlug: getSelectedSiteSlug( state ),
 	};
 } )( localize( EmailProvidersComparison ) );
