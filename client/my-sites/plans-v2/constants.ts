@@ -16,6 +16,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 } from 'lib/products-values/constants';
 import {
@@ -128,13 +130,6 @@ export const OPTIONS_JETPACK_SECURITY = 'jetpack_security';
 export const OPTIONS_JETPACK_SECURITY_MONTHLY = 'jetpack_security_monthly';
 export const OPTIONS_JETPACK_BACKUP = 'jetpack_backup';
 export const OPTIONS_JETPACK_BACKUP_MONTHLY = 'jetpack_backup_monthly';
-
-/**
- * Plans and products that are not being sold through Calypso but we still want to showcase
- * them in our different Plans pages.
- */
-export const EXTERNAL_JETPACK_CRM = 'jetpack_crm';
-export const EXTERNAL_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 
 // Types of items. This determines the card UI.
 export const ITEM_TYPE_PLAN = 'item-type-plan';
@@ -280,12 +275,12 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 
 // Jetpack CRM
 export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
-	productSlug: EXTERNAL_JETPACK_CRM,
+	productSlug: PRODUCT_JETPACK_CRM,
 	term: TERM_ANNUALLY,
 	type: ITEM_TYPE_PRODUCT,
 	subtypes: [],
-	costProductSlug: EXTERNAL_JETPACK_CRM,
-	monthlyProductSlug: EXTERNAL_JETPACK_CRM,
+	costProductSlug: PRODUCT_JETPACK_CRM,
+	monthlyProductSlug: PRODUCT_JETPACK_CRM,
 	iconSlug: 'jetpack_crm',
 	displayName: translate( 'Jetpack CRM' ),
 	shortName: translate( 'CRM', {
@@ -314,10 +309,10 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 
 export const EXTERNAL_PRODUCT_CRM_MONTHLY: SelectorProduct = {
 	...EXTERNAL_PRODUCT_CRM,
-	productSlug: EXTERNAL_JETPACK_CRM_MONTHLY,
+	productSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 	term: TERM_MONTHLY,
 	subtypes: [],
-	costProductSlug: EXTERNAL_JETPACK_CRM_MONTHLY,
+	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 };
 
 // Map slug to objects.
@@ -329,11 +324,11 @@ export const OPTIONS_SLUG_MAP: Record< SelectorProductSlug, SelectorProduct > = 
 };
 
 // List of products showcased in the Plans grid but not sold through Calypso
-export const EXTERNAL_PRODUCTS_LIST = [ EXTERNAL_JETPACK_CRM, EXTERNAL_JETPACK_CRM_MONTHLY ];
+export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 
 // External Product slugs to SelectorProduct.
 export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, SelectorProduct > = {
-	[ EXTERNAL_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
+	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 };
 
 /**

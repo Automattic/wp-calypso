@@ -14,10 +14,10 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'lib/products-values/constants';
 import {
-	EXTERNAL_JETPACK_CRM,
-	EXTERNAL_JETPACK_CRM_MONTHLY,
 	OPTIONS_JETPACK_BACKUP,
 	OPTIONS_JETPACK_BACKUP_MONTHLY,
 } from 'my-sites/plans-v2/constants';
@@ -52,14 +52,10 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	// Include Jetpack CRM
 	if (
 		! ownedProducts.some( ( ownedProduct ) =>
-			[ EXTERNAL_JETPACK_CRM, EXTERNAL_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
+			[ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( ownedProduct )
 		)
 	) {
-		availableProducts = [
-			...availableProducts,
-			EXTERNAL_JETPACK_CRM,
-			EXTERNAL_JETPACK_CRM_MONTHLY,
-		];
+		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 	}
 
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying
