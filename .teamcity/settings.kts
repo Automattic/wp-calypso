@@ -8,6 +8,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.DockerCommandStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
@@ -363,6 +365,28 @@ object RunAllUnitTests : BuildType({
 			dockerPull = true
 			dockerImage = "%docker_image%"
 			dockerRunParameters = "-u %env.UID%"
+		}
+		dockerCommand {
+			name = "Build docker image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+				commandArgs = "--pull --build-arg use_cache=true"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/app:build-%build.number%
+					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
+				""".trimIndent()
+			}
 		}
 	}
 
