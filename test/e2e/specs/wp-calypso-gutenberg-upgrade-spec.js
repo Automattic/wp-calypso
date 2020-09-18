@@ -82,11 +82,8 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 	}
 
 	async function assertNoErrorInEditor() {
-		assert.strictEqual(
-			await gEditorComponent.errorDisplayed(),
-			false,
-			'There is an error shown on the editor page!'
-		);
+		const errorDisplayed = await gEditorComponent.errorDisplayed();
+		assert.strictEqual( errorDisplayed, false, 'There is an error shown on the editor page!' );
 	}
 
 	async function assertNoInvalidBlocksInEditor() {
@@ -152,13 +149,14 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 					SubscriptionsBlockComponent,
 					TiledGalleryBlockComponent,
 					YoutubeBlockComponent,
-				].map( async ( blockClass ) =>
+				].map( async ( blockClass ) => {
+					const displayed = await gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
 					assert.strictEqual(
-						await gEditorComponent.blockDisplayedInEditor( blockClass.blockName ),
+						displayed,
 						true,
 						`The block "${ blockClass.blockName }" was not found in the editor`
-					)
-				)
+					);
+				} )
 			);
 		} );
 
@@ -236,8 +234,8 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 				const layoutBlock = await gEditorComponent.insertBlock( LayoutGridBlockComponent );
 
 				await layoutBlock.setupColumns( 2 );
-				await layoutBlock.insertBlock( RatingStarBlockComponent, 0 );
-				await layoutBlock.insertBlock( DynamicSeparatorBlockComponent, 1 );
+				await layoutBlock.insertBlock( RatingStarBlockComponent, 1 );
+				await layoutBlock.insertBlock( DynamicSeparatorBlockComponent, 2 );
 			} );
 
 			step( 'Insert and configure core-embed/youtube', async function () {

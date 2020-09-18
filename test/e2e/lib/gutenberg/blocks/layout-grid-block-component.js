@@ -43,11 +43,12 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	 * You must call @see {@link setupColumns} before inserting an inner block using this method.
 	 *
 	 * @param { typeof GutenbergBlockComponent } blockClass A block class that responds to blockTitle and blockName
-	 * @param { number } column number to insert it into, from left to right, starts with 0.
+	 * @param { number } column number to insert it into, from left to right, starts with 1 (to make it more natural based on the
+	 * input for the `setupColumns` method).
 	 * @returns { GutenbergBlockComponent } instance of the added block
 	 **/
 	async insertBlock( blockClass, column ) {
-		await this.addBlockButtons[ column ].click();
+		await this.addBlockButtons[ column - 1 ].click();
 
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
 
