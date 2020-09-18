@@ -30,6 +30,7 @@ class EmailProviderDetails extends React.Component {
 		hasPrimaryButton: PropTypes.bool,
 		className: PropTypes.string,
 		onButtonClick: PropTypes.func,
+		isButtonBusy: PropTypes.bool,
 	};
 
 	renderFeatures() {
@@ -56,6 +57,7 @@ class EmailProviderDetails extends React.Component {
 			buttonLabel,
 			hasPrimaryButton,
 			className,
+			isButtonBusy,
 		} = this.props;
 
 		return (
@@ -66,6 +68,7 @@ class EmailProviderDetails extends React.Component {
 					className="email-provider-details__cta"
 					primary={ hasPrimaryButton }
 					onClick={ this.onButtonClick }
+					busy={ isButtonBusy }
 				>
 					{ buttonLabel }
 				</Button>
