@@ -66,7 +66,7 @@ const SelectorPage = ( {
 		purchase
 	) => {
 		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			window.location.href = 'https://jetpackcrm.com/pricing/';
+			window.location.href = product.externalUrl || '';
 			return;
 		}
 

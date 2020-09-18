@@ -309,6 +309,7 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 		),
 	},
 	hidePrice: true,
+	externalUrl: 'https://jetpackcrm.com/pricing/',
 };
 
 export const EXTERNAL_PRODUCT_CRM_MONTHLY: SelectorProduct = {
