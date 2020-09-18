@@ -12,6 +12,7 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
 import { next } from 'lib/shortcode';
 import { deserialize } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
 import getMediaItem from 'state/selectors/get-media-item';
@@ -86,7 +87,7 @@ class SimplePaymentsView extends Component {
 					<div className="wpview-type-simple-payments__pay-part">
 						{ multiple && (
 							<div className="wpview-type-simple-payments__pay-quantity">
-								<input
+								<FormTextInput
 									className="wpview-type-simple-payments__pay-quantity-input"
 									type="text"
 									value="1"
