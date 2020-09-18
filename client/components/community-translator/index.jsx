@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React from 'react';
 import i18n, { localize } from 'i18n-calypso';
+import { useI18n } from '@automattic/react-i18n';
 import debugModule from 'debug';
-import { find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
 import Translatable from './translatable';
-import { languages } from 'calypso/languages';
+import { getLanguage } from 'calypso/lib/i18n-utils';
 import userSettings from 'calypso/lib/user-settings';
 import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
 
@@ -23,44 +24,26 @@ import './style.scss';
  */
 const debug = debugModule( 'calypso:community-translator' );
 
-class CommunityTranslator extends Component {
-	languageJson = null;
-	currentLocale = null;
-	initialized = false;
+function useLocaleData() {
+	const [ localeData, setLocaleData ] = React.useState( i18n.getLocale() || { '': {} } );
+	const { localeSlug, localeVariant } = localeData[ '' ];
+	const localeCode = localeVariant || localeSlug;
+	const currentLocale = getLanguage( localeCode );
 
-	componentDidMount() {
-		this.setLanguage();
+	return {
+		localeData,
+		localeCode,
+		currentLocale,
+		setLocaleData: () => setLocaleData( Object.assign( {}, i18n.getLocale() ) || { '': {} } ),
+	};
+}
 
-		// wrap translations from i18n
-		i18n.registerTranslateHook( ( translation, options ) =>
-			this.wrapTranslation( options.original, translation, options )
-		);
-
-		// callback when translated component changes.
-		// the callback is overwritten by the translator on load/unload, so we're returning it within an anonymous function.
-		i18n.registerComponentUpdateHook( () => {} );
-		i18n.on( 'change', this.refresh );
-		userSettings.on( 'change', this.refresh );
-	}
-
-	componentWillUnmount() {
-		i18n.off( 'change', this.refresh );
-		userSettings.removeListener( 'change', this.refresh );
-	}
-
-	setLanguage() {
-		this.languageJson = i18n.getLocale() || { '': {} };
-		// The '' here is a Jed convention used for storing configuration data
-		// alongside translations in the same dictionary (because '' will never
-		// be a legitimately translatable string)
-		// See https://messageformat.github.io/Jed/
-		const { localeSlug, localeVariant } = this.languageJson[ '' ];
-		this.localeCode = localeVariant || localeSlug;
-		this.currentLocale = find( languages, ( lang ) => lang.langSlug === this.localeCode );
-	}
-
-	refresh = () => {
-		if ( this.initialized ) {
+function CommunityTranslator() {
+	const [ initialized, setInitialized ] = React.useState( false );
+	const reactI18n = useI18n();
+	const { localeData, localeCode, currentLocale, setLocaleData } = useLocaleData();
+	const refresh = React.useCallback( () => {
+		if ( initialized ) {
 			return;
 		}
 
@@ -74,25 +57,26 @@ class CommunityTranslator extends Component {
 			return;
 		}
 
-		this.setLanguage();
+		setLocaleData();
 
-		if ( ! this.localeCode || ! this.languageJson ) {
+		if ( ! localeCode || ! localeData ) {
 			debug( 'trying to initialize translator without loaded language' );
 			return;
 		}
 
 		debug( 'Successfully initialized' );
-		this.initialized = true;
-	};
+		setInitialized( true );
+	}, [ setInitialized ] );
 
 	/**
 	 * Wraps translation in a DOM object and attaches `toString()` method in case in can't be rendered
-	 * @param { String } originalFromPage - original string
-	 * @param { String } displayedTranslationFromPage - translated string
-	 * @param  { Object } optionsFromPage - i18n.translate options
+	 *
+	 * @param {string} originalFromPage - original string
+	 * @param {string} displayedTranslationFromPage - translated string
+	 * @param  {object} optionsFromPage - i18n.translate options
 	 * @returns {object} DOM object
 	 */
-	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
+	function wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! isCommunityTranslatorEnabled() ) {
 			return displayedTranslationFromPage;
 		}
@@ -113,7 +97,7 @@ class CommunityTranslator extends Component {
 
 		const props = {
 			singular: originalFromPage,
-			locale: this.currentLocale,
+			locale: currentLocale,
 		};
 
 		let key = originalFromPage;
@@ -133,7 +117,7 @@ class CommunityTranslator extends Component {
 
 		// Has no translation in current locale
 		// Must be a string to be a valid DOM attribute value
-		if ( isEmpty( this.languageJson[ key ] ) ) {
+		if ( isEmpty( localeData[ key ] ) ) {
 			props.untranslated = 'true';
 		}
 
@@ -155,9 +139,43 @@ class CommunityTranslator extends Component {
 		return translatableElement;
 	}
 
-	render() {
-		return null;
-	}
+	React.useEffect( () => {
+		// wrap translations from i18n-calypso
+		const translateHook = ( translation, options ) =>
+			wrapTranslation( options.original, translation, options );
+		i18n.registerTranslateHook( translateHook );
+
+		// wrap translations from @automattic/react-i18n
+		reactI18n.addFilter( 'translation', 'community-translator', ( translation, args, fnName ) => {
+			const options = {
+				original: args[ 0 ],
+			};
+
+			if ( fnName === '_n' || fnName === '_nx' ) {
+				options.plural = args[ 1 ];
+			}
+
+			if ( fnName === '_x' ) {
+				options.context = args[ 1 ];
+			} else if ( fnName === '_nx' ) {
+				options.context = args[ 3 ];
+			}
+
+			return wrapTranslation( options.original, translation, options );
+		} );
+
+		i18n.on( 'change', refresh );
+		userSettings.on( 'change', refresh );
+
+		return () => {
+			i18n.translateHooks = i18n.translateHooks.filter( ( hook ) => hook !== translateHook );
+			reactI18n.removeFilter( 'translation', 'community-translator' );
+			i18n.off( 'change', refresh );
+			userSettings.removeListener( 'change', refresh );
+		};
+	}, [ localeData, initialized ] );
+
+	return null;
 }
 
 export default localize( CommunityTranslator );
