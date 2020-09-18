@@ -5,6 +5,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -55,41 +56,62 @@ class IntroBanner extends Component {
 			<Fragment>
 				<p>
 					{ translate(
-						'Activity tracks the events that occur on your site so that you don’t have to.'
+						'We’ll keep track of all the events that take place on your site to help manage things easier.'
 					) }
-				</p>
-				<p>
 					{ ! siteHasBackup
 						? translate(
-								'With your free plan, you can monitor the 20 most recent ' +
-									'events. A paid plan unlocks more powerful features. ' +
-									'You can access all site activity for the last 30 days ' +
-									'and filter events by type and date range to quickly find ' +
-									'the information you need. '
+							' With your free plan, you can monitor the 20 most recent events on your site.'
 						  )
 						: translate(
-								'Explore the list below or filter events by type and ' +
-									'date range to quickly find the information you need. '
+							' Looking for something specific? You can filter the events by type and date.'
 						  ) }
-					<ExternalLink
-						href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
-						icon
-						onClick={ this.recordLearnMore }
-						target="_blank"
-					>
-						{ translate( 'Learn more' ) }
-					</ExternalLink>
 				</p>
+				{ ! siteHasBackup &&
+				<Fragment>
+					<p>
+						
+							{ translate(
+									'Upgrade to a paid plan to unlock powerful features:'
+							  ) }
+					</p>
+					<ul className="activity-log-banner__intro-list">
+						<li>
+							<Gridicon icon="checkmark" size={ 16 } />
+							{ translate(
+								'Access full activity for the past 30 days.'
+							  ) }
+						</li>
+						<li>
+							<Gridicon icon="checkmark" size={ 16 } />
+							{ translate(
+								'Filter events by type and date.'
+							  ) }
+						</li>
+					</ul>
 
-				{ ! siteHasBackup && (
-					<Button
-						className="activity-log-banner__intro-button"
-						href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
-						onClick={ this.recordUpgrade }
-					>
-						{ translate( 'Upgrade now' ) }
-					</Button>
-				) }
+					<div className="activity-log-banner__intro-actions">
+						{ ! siteHasBackup && (
+							<Button
+								primary
+								className="activity-log-banner__intro-button"
+								href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
+								onClick={ this.recordUpgrade }
+							>
+								{ translate( 'Upgrade now' ) }
+							</Button>
+						) }
+						<ExternalLink
+							href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
+							icon
+							onClick={ this.recordLearnMore }
+							target="_blank"
+						>
+							{ translate( 'Learn more' ) }
+						</ExternalLink>
+					</div>
+				</Fragment>
+				}
+
 			</Fragment>
 		);
 	}
@@ -106,17 +128,19 @@ class IntroBanner extends Component {
 					className="activity-log-banner__intro"
 					onClick={ this.recordDismiss }
 				>
+					<div className="activity-log-banner__intro-description">
+						<span className="wp-brand-font">
+							<CardHeading tagName="h1" size={ 24 }>
+								{ translate( 'Welcome to your site’s activity' ) }
+							</CardHeading>
+						</span>
+						{ this.renderCardContent() }
+					</div>
 					<img
 						className="activity-log-banner__intro-image"
 						src={ activityImage }
-						alt={ translate( 'Activity' ) }
+						alt={ translate( 'A site’s activity listed on a vertical timeline.' ) }
 					/>
-					<div className="activity-log-banner__intro-description">
-						<CardHeading tagName="h1" size={ 24 }>
-							{ translate( 'Welcome to your site’s activity' ) }
-						</CardHeading>
-						{ this.renderCardContent() }
-					</div>
 				</DismissibleCard>
 			</Fragment>
 		);
