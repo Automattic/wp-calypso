@@ -53,7 +53,7 @@ function getUpdater() {
 	return updater;
 }
 
-// Syntax: intermediary module const is REQUIRED
-// to support both unnamed (default) and named exports.
+// !! Syntax: assignment via intermediary module const is
+// necessary to support both unnamed (default) and named exports !!
 const main = ( module.exports = init );
 main.getUpdater = getUpdater;
