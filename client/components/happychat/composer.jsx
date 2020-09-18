@@ -85,7 +85,6 @@ export const Composer = createReactClass( {
 						aria-label="Enter your support request"
 						ref={ this.setScrollbleedTarget }
 						onFocus={ onFocus }
-						type="text"
 						placeholder={ translate( 'Type a message…' ) }
 						onChange={ this.onChange }
 						onKeyDown={ this.onKeyDown }
