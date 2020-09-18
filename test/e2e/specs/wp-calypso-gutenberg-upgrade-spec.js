@@ -62,7 +62,9 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 
 		const siteScreenshotsDir = join( mediaHelper.screenshotsDir, siteName );
 		console.debug( '*** ABOUT TO CREATE THE siteSshotDir =', siteScreenshotsDir );
-		await fs.access( siteScreenshotsDir ).catch( () => fs.mkdir( siteScreenshotsDir ) );
+		await fs
+			.access( siteScreenshotsDir )
+			.catch( () => fs.mkdir( siteScreenshotsDir, { recursive: true } ) );
 
 		for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
 			await scrollCb( i );
