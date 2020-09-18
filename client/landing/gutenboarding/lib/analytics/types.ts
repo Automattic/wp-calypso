@@ -93,9 +93,17 @@ type TracksPlanSelectEventProperties = {
 	selected_plan: string | undefined;
 };
 
+type TracksFeaturesSelectEventProperties = {
+	/**
+	 * The selected features
+	 */
+	has_selected_features: boolean | undefined;
+};
+
 export type TracksEventProperties =
 	| TracksAcquireIntentEventProperties
 	| TracksStyleSelectEventProperties
 	| TracksDesignSelectEventProperties
 	| TracksDomainSelectEventProperties
-	| TracksPlanSelectEventProperties;
+	| TracksPlanSelectEventProperties
+	| TracksFeaturesSelectEventProperties;

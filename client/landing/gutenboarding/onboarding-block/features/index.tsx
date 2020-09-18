@@ -23,6 +23,7 @@ import classnames from 'classnames';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
 import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
 
 /**
  * Style dependencies
@@ -49,6 +50,16 @@ const FeaturesStep: React.FunctionComponent = () => {
 			addFeature( featureId );
 		}
 	};
+
+	// Keep a copy of the selected domain locally so it's available when the component is unmounting
+	const hasSelectedFeaturesRef = React.useRef< boolean >();
+	React.useEffect( () => {
+		hasSelectedFeaturesRef.current = hasSelectedFeatures;
+	}, [ hasSelectedFeatures ] );
+
+	useTrackStep( 'Features', () => ( {
+		has_selected_features: hasSelectedFeaturesRef.current,
+	} ) );
 
 	return (
 		<div className="gutenboarding-page features">
