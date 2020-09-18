@@ -13,6 +13,8 @@ const WindowManager = require( 'desktop/lib/window-manager' );
 const platform = require( 'desktop/lib/platform' );
 const AppQuit = require( 'desktop/lib/app-quit' );
 const debugMenu = require( './debug-menu' );
+const { getUpdater } = require( 'desktop/app-handlers/updater' );
+const log = require( 'desktop/lib/logger' )( 'desktop:menu' );
 
 /**
  * Module variables
@@ -120,9 +122,28 @@ module.exports = function ( app, mainWindow ) {
 			},
 			{
 				type: 'separator',
+			},
+			{
+				label: 'Check For Updates',
+				click: function () {
+					checkForUpdates();
+				},
+			},
+			{
+				type: 'separator',
 			}
 		);
 	}
 
 	return menuItems;
 };
+
+function checkForUpdates() {
+	log.info( `User clicked 'Check For Updates'` );
+	const updater = getUpdater();
+	if ( updater ) {
+		updater.ping();
+	} else {
+		log.error( 'Updater not set' );
+	}
+}

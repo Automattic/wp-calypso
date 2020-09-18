@@ -15,19 +15,19 @@ const log = require( 'desktop/lib/logger' )( 'desktop:updater' );
 
 let updater = false;
 
-module.exports = function () {
+function init() {
 	log.info( 'Updater config: ', Config.updater );
 	if ( Config.updater ) {
 		app.on( 'will-finish-launching', function () {
 			const beta = settings.getSetting( 'release-channel' ) === 'beta';
 			log.info( `Update channel: '${ settings.getSetting( 'release-channel' ) }'` );
 			if ( platform.isOSX() || platform.isWindows() || process.env.APPIMAGE ) {
-				log.info( 'Auto Update' );
+				log.info( 'Initializing auto updater...' );
 				updater = new AutoUpdater( {
 					beta,
 				} );
 			} else {
-				log.info( 'Manual Update' );
+				log.info( 'Initializing manual updater...' );
 				updater = new ManualUpdater( {
 					downloadUrl: Config.updater.downloadUrl,
 					apiUrl: Config.updater.apiUrl,
@@ -47,4 +47,13 @@ module.exports = function () {
 	} else {
 		log.info( 'Skipping Update – no configuration' );
 	}
-};
+}
+
+function getUpdater() {
+	return updater;
+}
+
+// Syntax: intermediary module const is REQUIRED
+// to support both unnamed (default) and named exports.
+const main = ( module.exports = init );
+main.getUpdater = getUpdater;
