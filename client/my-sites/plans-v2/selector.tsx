@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'state/analytics/actions/record';
 import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
-import { EXTERNAL_PRODUCTS_LIST, SECURITY } from './constants';
+import { SECURITY } from './constants';
 import { getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
 import useHasProductUpsell from './use-has-product-upsell';
@@ -65,11 +65,6 @@ const SelectorPage = ( {
 		isUpgradeableToYearly = false,
 		purchase
 	) => {
-		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
-			window.location.href = product.externalUrl || '';
-			return;
-		}
-
 		if ( purchase && isUpgradeableToYearly ) {
 			checkout( siteSlug, getYearlyPlanByMonthly( product.productSlug ) );
 			return;
