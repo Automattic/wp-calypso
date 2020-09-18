@@ -8,7 +8,7 @@
 $markup = '
 <!-- wp:columns {"align":"wide"} -->
 <div class="wp-block-columns alignwide"><!-- wp:column {"verticalAlignment":"top","width":40} -->
-<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:40%"><!-- wp:heading {"level":3,"className":"margin-top-none"} -->
+<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:40%%"><!-- wp:heading {"level":3,"className":"margin-top-none"} -->
 <h3 class="margin-top-none"><strong>%1$s</strong></h3>
 <!-- /wp:heading --></div>
 <!-- /wp:column -->
