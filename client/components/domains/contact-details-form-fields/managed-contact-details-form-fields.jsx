@@ -478,13 +478,6 @@ function GSuiteFields( {
 } ) {
 	return (
 		<div className="contact-details-form-fields__row g-apps-fieldset">
-			<Input
-				label={ translate( 'Email' ) }
-				{ ...getFieldProps( 'alternate-email', {
-					customErrorMessage: contactDetailsErrors?.alternateEmail,
-				} ) }
-			/>
-
 			<CountrySelect
 				label={ translate( 'Country' ) }
 				countriesList={ countriesList }
