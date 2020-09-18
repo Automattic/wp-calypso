@@ -60,7 +60,7 @@
 		"slack-notify": "^0.1.7",
 		"speakeasy": "^2.0.0",
 		"spec-xunit-reporter": "^0.0.1",
-		"testarmada-magellan": "^11.0.1",
+		"testarmada-magellan": "^11.0.15",
 		"testarmada-magellan-local-executor": "^2.0.0",
 		"testarmada-magellan-mocha-plugin": "github:Automattic/magellan-mocha-plugin#b731cdf6f27a6fa6e45ddcba0b8741370b2df523",
 		"xml2json-command": "^0.0.3",
