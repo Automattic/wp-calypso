@@ -10,6 +10,7 @@ import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
 import jetpackProfessional from './images/jetpack-professional.svg';
 import jetpackCompleteV2 from './images/jetpack-complete-v2.svg';
+import jetpackCrmV2 from './images/jetpack-crm-v2.svg';
 import jetpackSearch from './images/jetpack-search.svg';
 import jetpackSearchV2 from './images/jetpack-search-v2.svg';
 import jetpackSecurityV2 from './images/jetpack-security-v2.svg';
@@ -33,6 +34,7 @@ export const paths = {
 	'jetpack-premium': jetpackPremium,
 	'jetpack-professional': jetpackProfessional,
 	'jetpack-complete-v2': jetpackCompleteV2,
+	'jetpack-crm-v2': jetpackCrmV2,
 	'jetpack-search': jetpackSearch,
 	'jetpack-search-v2': jetpackSearchV2,
 	'jetpack-security-v2': jetpackSecurityV2,
@@ -65,6 +67,7 @@ export const iconToProductSlugMap = {
 		'jetpack_complete_v2',
 		'jetpack_complete_monthly_v2',
 	],
+	'jetpack-crm-v2': [ 'jetpack_crm' ],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-backup-v2': [

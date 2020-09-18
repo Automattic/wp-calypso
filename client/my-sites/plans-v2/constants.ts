@@ -286,7 +286,7 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	subtypes: [],
 	costProductSlug: EXTERNAL_JETPACK_CRM,
 	monthlyProductSlug: EXTERNAL_JETPACK_CRM,
-	iconSlug: 'jetpack_complete',
+	iconSlug: 'jetpack_crm',
 	displayName: translate( 'Jetpack CRM' ),
 	shortName: translate( 'CRM', {
 		comment: 'Short name of the Jetpack CRM',
