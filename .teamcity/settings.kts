@@ -177,6 +177,19 @@ object BuildDockerImage : BuildType({
 			}
 		}
 	}
+
+	features {
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				serverUrl = ""
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
+			}
+		}
+	}
 })
 
 
