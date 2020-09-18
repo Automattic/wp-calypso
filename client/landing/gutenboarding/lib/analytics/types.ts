@@ -88,7 +88,7 @@ type TracksDomainSelectEventProperties = {
 
 type TracksPlanSelectEventProperties = {
 	/**
-	 * The selected level domain name
+	 * The selected plan slug
 	 */
 	selected_plan: string | undefined;
 };
