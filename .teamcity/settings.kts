@@ -154,6 +154,10 @@ object RunAllUnitTests : BuildType({
 		cleanCheckout = true
 	}
 
+	params {
+		param("env.DOCKER_BUILDKIT", "1")
+	}
+
 	steps {
 		script {
 			name = "Prepare environment"
