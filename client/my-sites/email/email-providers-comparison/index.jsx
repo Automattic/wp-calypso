@@ -20,6 +20,8 @@ import { hasDiscount } from 'components/gsuite/gsuite-price';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { emailManagementForwarding, emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
+import wpcom from 'lib/wp';
+import { errorNotice } from 'state/notices/actions';
 import emailIllustration from 'assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'assets/images/email-providers/titan.svg';
 import gSuiteLogo from 'assets/images/email-providers/gsuite.svg';
@@ -36,6 +38,10 @@ class EmailProvidersComparison extends React.Component {
 		isGSuiteSupported: PropTypes.bool.isRequired,
 	};
 
+	state = {
+		isFetchingProvisioningURL: false,
+	};
+
 	goToEmailForwarding = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
 		page( emailManagementForwarding( selectedSiteSlug, domain.name, currentRoute ) );
@@ -44,6 +50,30 @@ class EmailProvidersComparison extends React.Component {
 	goToAddGSuite = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
 		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domain.name, 'basic', currentRoute ) );
+	};
+
+	onAddTitanClick = () => {
+		const { domain, translate } = this.props;
+		this.setState( { isFetchingProvisioningURL: true } );
+		this.fetchTitanOrderProvisioningURL( domain.name ).then( ( { error, provisioningURL } ) => {
+			this.setState( { isFetchingProvisioningURL: false } );
+			if ( error ) {
+				this.props.errorNotice( translate( 'An unknown error occurred. Please try again later.' ) );
+			} else {
+				window.location.href = provisioningURL;
+			}
+		} );
+	};
+
+	fetchTitanOrderProvisioningURL = ( domain ) => {
+		return new Promise( ( resolve ) => {
+			wpcom.undocumented().getTitanOrderProvisioningURL( domain, ( serverError, result ) => {
+				resolve( {
+					error: serverError,
+					provisioningURL: serverError ? null : result.provisioning_url,
+				} );
+			} );
+		} );
 	};
 
 	renderHeaderSection() {
@@ -129,6 +159,8 @@ class EmailProvidersComparison extends React.Component {
 				} ) }
 				buttonLabel={ translate( 'Add Titan Mail' ) }
 				hasPrimaryButton={ true }
+				isButtonBusy={ this.state.isFetchingProvisioningURL }
+				onButtonClick={ this.onAddTitanClick }
 				className={ className }
 			/>
 		);
@@ -189,11 +221,18 @@ class EmailProvidersComparison extends React.Component {
 	}
 }
 
-export default connect( ( state ) => {
-	return {
-		currencyCode: getCurrentUserCurrencyCode( state ),
-		gSuiteProduct: getProductBySlug( state, GSUITE_BASIC_SLUG ),
-		currentRoute: getCurrentRoute( state ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	};
-} )( localize( EmailProvidersComparison ) );
+export default connect(
+	( state ) => {
+		return {
+			currencyCode: getCurrentUserCurrencyCode( state ),
+			gSuiteProduct: getProductBySlug( state, GSUITE_BASIC_SLUG ),
+			currentRoute: getCurrentRoute( state ),
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	( dispatch ) => {
+		return {
+			errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+		};
+	}
+)( localize( EmailProvidersComparison ) );
