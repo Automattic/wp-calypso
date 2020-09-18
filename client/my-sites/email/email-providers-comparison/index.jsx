@@ -19,7 +19,7 @@ import { getAnnualPrice } from 'lib/gsuite';
 import { hasDiscount } from 'components/gsuite/gsuite-price';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { emailManagementForwarding } from 'my-sites/email/paths';
+import { emailManagementForwarding, emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import emailIllustration from 'assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'assets/images/email-providers/titan.svg';
 import gSuiteLogo from 'assets/images/email-providers/gsuite.svg';
@@ -39,6 +39,11 @@ class EmailProvidersComparison extends React.Component {
 	goToEmailForwarding = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
 		page( emailManagementForwarding( selectedSiteSlug, domain.name, currentRoute ) );
+	};
+
+	goToAddGSuite = () => {
+		const { domain, currentRoute, selectedSiteSlug } = this.props;
+		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domain.name, 'basic', currentRoute ) );
 	};
 
 	renderHeaderSection() {
@@ -163,6 +168,7 @@ class EmailProvidersComparison extends React.Component {
 						: null
 				}
 				buttonLabel={ translate( 'Add G Suite' ) }
+				onButtonClick={ this.goToAddGSuite }
 			/>
 		);
 	}
