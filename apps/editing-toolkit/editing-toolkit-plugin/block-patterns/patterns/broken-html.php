@@ -7,7 +7,7 @@
 
 $markup = '
 <!-- wp:heading -->
-Totally not valid html </html></div></dove>
+<ham>Totally not valid html</ham> </html></div></dove>
 <!-- /wp:heading --></div>
 ';
 
