@@ -31,7 +31,6 @@ import {
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -101,13 +100,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	const getPlanNames = () => {
-		const jetpackText = shouldShowOfferResetFlow()
-			? ''
-			: ' ' + translate( 'Available only with a Premium or Professional plan.' );
+		const jetpackText = translate( 'Available with Jetpack Security and Jetpack Complete.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack
-			? jetpackText
+			? ' ' + jetpackText
 			: ' ' + translate( 'Available only with a Premium, Business, or eCommerce plan.' );
 	};
 
