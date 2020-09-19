@@ -55,37 +55,25 @@ class IntroBanner extends Component {
 		return (
 			<Fragment>
 				<p>
-					{ translate(
-						'We’ll keep track of all the events that take place on your site to help manage things easier.'
-					) }
+					{ translate( 'We’ll keep track of all the events that take place on your site to help manage things easier. ' ) }
 					{ ! siteHasBackup
-						? translate(
-							' With your free plan, you can monitor the 20 most recent events on your site.'
-						  )
-						: translate(
-							' Looking for something specific? You can filter the events by type and date.'
-						  ) }
+						? translate( 'With your free plan, you can monitor the 20 most recent events on your site.' )
+						: translate( 'Looking for something specific? You can filter the events by type and date.' )
+					}
 				</p>
 				{ ! siteHasBackup &&
 				<Fragment>
 					<p>
-						
-							{ translate(
-									'Upgrade to a paid plan to unlock powerful features:'
-							  ) }
+						{ translate( 'Upgrade to a paid plan to unlock powerful features:' ) }
 					</p>
 					<ul className="activity-log-banner__intro-list">
 						<li>
 							<Gridicon icon="checkmark" size={ 16 } />
-							{ translate(
-								'Access full activity for the past 30 days.'
-							  ) }
+							{ translate( 'Access full activity for the past 30 days.' ) }
 						</li>
 						<li>
 							<Gridicon icon="checkmark" size={ 16 } />
-							{ translate(
-								'Filter events by type and date.'
-							  ) }
+							{ translate( 'Filter events by type and date.' ) }
 						</li>
 					</ul>
 
