@@ -1,6 +1,5 @@
 {
 	"mocha_tests": [ "specs-i18n/" ],
-	"mocha_opts": "test/mocha.opts",
 	"mocha_args": "-R spec-xunit-reporter",
 	"max_test_attempts": 1,
 	"max_workers": 1,

@@ -1,6 +1,5 @@
 {
 	"mocha_tests": [ "specs", "specs-jetpack-calypso", "specs-blocks" ],
-	"mocha_opts": "test/mocha.opts",
 	"mocha_args": "-R spec-xunit-reporter",
 	"max_test_attempts": 3,
 	"max_workers": 3,
