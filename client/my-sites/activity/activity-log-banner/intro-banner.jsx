@@ -109,8 +109,6 @@ class IntroBanner extends Component {
 	render() {
 		const { siteId, translate } = this.props;
 
-		const wpBrandFont = 'wp-brand-font';
-
 		return (
 			<Fragment>
 				<QuerySitePurchases siteId={ siteId } />
@@ -121,11 +119,9 @@ class IntroBanner extends Component {
 					onClick={ this.recordDismiss }
 				>
 					<div className="activity-log-banner__intro-description">
-						<span className={ wpBrandFont }>
-							<CardHeading tagName="h1" size={ 24 }>
-								{ translate( 'Welcome to your site’s activity' ) }
-							</CardHeading>
-						</span>
+						<CardHeading tagName="h1" size={ 24 }>
+							{ translate( 'Welcome to your site’s activity' ) }
+						</CardHeading>
 						{ this.renderCardContent() }
 					</div>
 					<img
