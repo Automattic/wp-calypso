@@ -132,6 +132,16 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 	],
+	home: [
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
+	],
 	me: [
 		{
 			link: localizeUrl( 'https://wordpress.com/support/manage-my-profile/' ),
@@ -1469,5 +1479,13 @@ export function getContextResults( section ) {
 	const video = first( get( videosForSection, section ) );
 	const tour = first( get( toursForSection, section ) );
 	const links = get( contextLinksForSection, section, fallbackLinks );
+
+	// If true, still display fallback links in addition (as opposed to instead
+	// of) the other context links.
+	if ( section === 'home' ) {
+		const links = get( contextLinksForSection, section, fallbackLinks );
+		return compact( [ tour, video, ...getFallbackLinks(), ...links ] );
+	}
+
 	return compact( [ tour, video, ...links ] );
 }
