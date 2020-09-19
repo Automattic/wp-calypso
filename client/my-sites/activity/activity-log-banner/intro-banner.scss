@@ -23,6 +23,9 @@
 }
 
 .activity-log-banner__intro-description {
+	h1 {
+		@extend .wp-brand-font;
+	}
 	p {
 		font-size: $font-body-small;
 	}
