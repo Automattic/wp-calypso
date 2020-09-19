@@ -20,13 +20,12 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SupportInfo from 'components/support-info';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
+import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_SECURITY_DAILY } from 'lib/plans/constants';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { getCustomizerUrl } from 'state/sites/selectors';
 
@@ -51,10 +50,6 @@ class JetpackAds extends Component {
 	}
 
 	renderUpgradeBanner() {
-		if ( shouldShowOfferResetFlow() ) {
-			return null;
-		}
-
 		const { translate } = this.props;
 
 		return (
@@ -64,8 +59,8 @@ class JetpackAds extends Component {
 				) }
 				event={ 'calypso_wordads_settings_upgrade_nudge' }
 				feature={ FEATURE_WORDADS_INSTANT }
-				plan={ PLAN_JETPACK_PREMIUM }
-				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
+				plan={ PLAN_JETPACK_SECURITY_DAILY }
+				title={ translate( 'Enable WordAds by upgrading to a Jetpack Security or Complete plan' ) }
 				showIcon={ true }
 			/>
 		);
