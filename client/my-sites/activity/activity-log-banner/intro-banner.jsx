@@ -55,57 +55,61 @@ class IntroBanner extends Component {
 		return (
 			<Fragment>
 				<p>
-					{ translate( 'We’ll keep track of all the events that take place on your site to help manage things easier. ' ) }
+					{ translate(
+						'We’ll keep track of all the events that take place on your site to help manage things easier. '
+					) }
 					{ ! siteHasBackup
-						? translate( 'With your free plan, you can monitor the 20 most recent events on your site.' )
-						: translate( 'Looking for something specific? You can filter the events by type and date.' )
-					}
+						? translate(
+								'With your free plan, you can monitor the 20 most recent events on your site.'
+						  )
+						: translate(
+								'Looking for something specific? You can filter the events by type and date.'
+						  ) }
 				</p>
-				{ ! siteHasBackup &&
-				<Fragment>
-					<p>
-						{ translate( 'Upgrade to a paid plan to unlock powerful features:' ) }
-					</p>
-					<ul className="activity-log-banner__intro-list">
-						<li>
-							<Gridicon icon="checkmark" size={ 16 } />
-							{ translate( 'Access full activity for the past 30 days.' ) }
-						</li>
-						<li>
-							<Gridicon icon="checkmark" size={ 16 } />
-							{ translate( 'Filter events by type and date.' ) }
-						</li>
-					</ul>
+				{ ! siteHasBackup && (
+					<Fragment>
+						<p>{ translate( 'Upgrade to a paid plan to unlock powerful features:' ) }</p>
+						<ul className="activity-log-banner__intro-list">
+							<li>
+								<Gridicon icon="checkmark" size={ 18 } />
+								{ translate( 'Access full activity for the past 30 days.' ) }
+							</li>
+							<li>
+								<Gridicon icon="checkmark" size={ 18 } />
+								{ translate( 'Filter events by type and date.' ) }
+							</li>
+						</ul>
 
-					<div className="activity-log-banner__intro-actions">
-						{ ! siteHasBackup && (
-							<Button
-								primary
-								className="activity-log-banner__intro-button"
-								href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
-								onClick={ this.recordUpgrade }
+						<div className="activity-log-banner__intro-actions">
+							{ ! siteHasBackup && (
+								<Button
+									primary
+									className="activity-log-banner__intro-button"
+									href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
+									onClick={ this.recordUpgrade }
+								>
+									{ translate( 'Upgrade now' ) }
+								</Button>
+							) }
+							<ExternalLink
+								href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
+								icon
+								onClick={ this.recordLearnMore }
+								target="_blank"
 							>
-								{ translate( 'Upgrade now' ) }
-							</Button>
-						) }
-						<ExternalLink
-							href="https://en.blog.wordpress.com/2018/10/30/introducing-activity/"
-							icon
-							onClick={ this.recordLearnMore }
-							target="_blank"
-						>
-							{ translate( 'Learn more' ) }
-						</ExternalLink>
-					</div>
-				</Fragment>
-				}
-
+								{ translate( 'Learn more' ) }
+							</ExternalLink>
+						</div>
+					</Fragment>
+				) }
 			</Fragment>
 		);
 	}
 
 	render() {
 		const { siteId, translate } = this.props;
+
+		const wpBrandFont = 'wp-brand-font';
 
 		return (
 			<Fragment>
@@ -117,7 +121,7 @@ class IntroBanner extends Component {
 					onClick={ this.recordDismiss }
 				>
 					<div className="activity-log-banner__intro-description">
-						<span className="wp-brand-font">
+						<span className={ wpBrandFont }>
 							<CardHeading tagName="h1" size={ 24 }>
 								{ translate( 'Welcome to your site’s activity' ) }
 							</CardHeading>
