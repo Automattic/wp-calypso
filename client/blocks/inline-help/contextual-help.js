@@ -1042,6 +1042,14 @@ const getContextLinksForSection = () => ( {
 				'A domain name is an address people use to visit your site. It tells the web browser where to look for your site. Just like a street address, a domain is how people visit your website online. And, like having a sign in front of your store, a custom domain name helps give your site a professional look.'
 			),
 		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
 	],
 } );
 let contextLinksForSection = getContextLinksForSection();
