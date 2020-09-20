@@ -197,8 +197,12 @@ namespace A8C\FSE\Coming_soon;
 						<p class="copy"><?php echo esc_html( fix_widows( __( 'Build a website. Sell your stuff. Write a blog. And so much more.', 'full-site-editing' ), array( 'mobile_enable' => true ) ) ); ?></p>
 					</div>
 					<div class="marketing-buttons">
-						<p><a class="button button-secondary" href="<?php echo esc_url( $login_url ); ?>"><?php esc_html_e( 'Log in', 'full-site-editing' ); ?></a></p>
-						<p><a class="button button-primary " href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/?ref=coming_soon' ) ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
+						<p>
+							<a class="button button-secondary" href="<?php echo esc_url( $login_url ); ?>"><?php esc_html_e( 'Log in', 'full-site-editing' ); ?></a>
+						</p>
+						<p>
+							<a class="button button-primary " href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/?ref=coming_soon' ) ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a>
+						</p>
 					</div>
 				<?php endif; ?>
 			</div>
