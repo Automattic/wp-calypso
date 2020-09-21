@@ -32,10 +32,13 @@ class FormattedDateExample extends PureComponent {
 
 	handleDateChange = ( evt ) => {
 		const val = moment( evt.target.value );
+		this.setState( {
+			currentDateString: evt.target.value,
+		} );
+
 		if ( val.isValid() ) {
 			this.setState( {
 				currentDate: val.toDate(),
-				currentDateString: evt.target.value,
 			} );
 		}
 	};
