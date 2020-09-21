@@ -1,0 +1,6 @@
+{
+	"post_title": "Coming soon",
+	"post_slug": "coming-soon",
+	"category": "coming-soon",
+	"post_content": "<!-- wp:coblocks/hero {\"fullscreen\":true,\"backgroundColor\":\"secondary\",\"height\":900,\"textColor\":\"background\",\"coblocks\":{\"id\":\"821161314397\"}} --><div class=\"wp-block-coblocks-hero alignfull coblocks-hero-821161314397\"><div class=\"wp-block-coblocks-hero__inner has-secondary-background-color has-background hero-center-left-align has-padding has-huge-padding has-secondary-background-color is-fullscreen\"><div class=\"wp-block-coblocks-hero__content-wrapper\"><div class=\"wp-block-coblocks-hero__content\" style=\"max-width:560px\"><!-- wp:heading {\"placeholder\":\"Add hero heading…\",\"style\":{\"typography\":{\"fontSize\":55}}} --><h2 style=\"font-size:55px\">Coming Soon</h2><!-- /wp:heading --><!-- wp:paragraph {\"placeholder\":\"Add hero content, which is typically an introductory area of a page accompanied by call to action or two.\"} --><p>This site is coming soon</p><!-- /wp:paragraph --></div></div></div></div><!-- /wp:coblocks/hero -->"
+}
