@@ -101,12 +101,19 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		} );
 	};
 
-	const getPlanNames = () => {
+	const getAnyPlanNames = () => {
 		const jetpackText = translate( 'Available with Jetpack Security and Jetpack Complete.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack
 			? ' ' + jetpackText
+			: ' ' + translate( 'Available with any paid plan.' );
+	};
+
+	const getPremiumPlanNames = () => {
+		// Space isn't included in the translatable string to prevent it being easily missed.
+		return isNonAtomicJetpack
+			? getAnyPlanNames()
 			: ' ' + translate( 'Available only with a Premium, Business, or eCommerce plan.' );
 	};
 
@@ -145,7 +152,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
 				) }
-				{ ! hasSimplePayments && <em>{ getPlanNames() }</em> }
+				{ ! hasSimplePayments && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -190,15 +197,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const hasConnectionBody = translate(
 			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
 		);
-		const noConnectionBody = translate(
-			'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
-			{
-				components: {
-					em: <em />,
-				},
-			}
+		const noConnectionBody = (
+			<>
+				{ translate(
+					'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations.'
+				) }
+				{ <em>{ getAnyPlanNames() }</em> }
+			</>
 		);
-
 		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
 		const learnMoreLink = isFreePlan
@@ -249,7 +255,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
 				) }
-				{ isFreePlan && <em>{ ' ' + translate( 'Available with any paid plan' ) }.</em> }
+				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
 			</>
 		);
 
@@ -296,30 +302,29 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const title = hasConnectedAccount
 			? translate( 'Manage your premium content' )
 			: translate( 'Collect payments for content' );
-		const body = hasConnectedAccount
-			? translate(
-					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
-					{
-						components: {
-							a: (
-								<a
-									href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-			  )
-			: translate(
-					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. {{em}}Available with any paid plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  );
-
+		const body = hasConnectedAccount ? (
+			translate(
+				'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
+				{
+					components: {
+						a: (
+							<a
+								href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			)
+		) : (
+			<>
+				{ translate(
+					'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
+				) }
+				{ <em>{ getAnyPlanNames() }</em> }
+			</>
+		);
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
@@ -366,16 +371,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  };
 		const title = translate( 'Send paid email newsletters' );
-		const body = isFreePlan
-			? translate(
-					'Share premium content with paying subscribers automatically through email. {{em}}Available with any paid plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  )
-			: translate( 'Share premium content with paying subscribers automatically through email.' );
+		const body = isFreePlan ? (
+			<>
+				{ ' ' }
+				{ translate(
+					'Share premium content with paying subscribers automatically through email.'
+				) }
+				{ <em>{ getAnyPlanNames() }</em> }
+			</>
+		) : (
+			translate( 'Share premium content with paying subscribers automatically through email.' )
+		);
 
 		return {
 			title,
@@ -477,7 +483,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
-				{ <em>{ getPlanNames() }</em> }
+				{ <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
