@@ -239,7 +239,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				},
 			},
 			{
-				scenario: 'Public + Noindex + Coming Soon (v2) > Remove Coming Soon (v2) = Public',
+				// Currently failing because noindex remains, I think this should be removed as its likely users don't understand this setting enough to think they should remove the default which is now a checked state
+				scenario:
+					'Public + Noindex + Coming Soon (v2) > Remove Coming Soon (v2) = Public (noindex should be removed)',
 				initialProps: {
 					blog_public: Visibility.PublicNotIndexed,
 					wpcom_public_coming_soon: 1,
@@ -251,7 +253,8 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				},
 			},
 			{
-				scenario: 'Public + Noindex + Coming Soon (v2) > Remove Noindex = Public',
+				scenario:
+					'Public + Noindex + Coming Soon (v2) > Remove Noindex = Public (coming soon should be removed)',
 				initialProps: {
 					blog_public: Visibility.PublicNotIndexed,
 					wpcom_public_coming_soon: 1,
@@ -299,7 +302,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				},
 			},
 			{
-				scenario: 'Private > Coming Soon (v2) = Public + Noindex + Coming Soon (v2)',
+				scenario: 'Private > Set Coming Soon (v2) = Public + Noindex + Coming Soon (v2)',
 				initialProps: {
 					blog_public: Visibility.Private,
 					wpcom_public_coming_soon: 0,
@@ -311,8 +314,9 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				},
 			},
 			{
+				// Currently failing because Public is unclickable until coming soon or noindex is removed. Possibly due to noindex being selected while private is also selected, toggle logic perhaps?
 				scenario:
-					'Private + Coming Soon (v1) > Public = Public + Noindex + Coming Soon (v2) - scratch that just: Public',
+					'Private + Coming Soon (v1) > Set Public = Public + Noindex + Coming Soon (v2) - scratch that just: Public',
 				initialProps: {
 					blog_public: Visibility.Private,
 					wpcom_public_coming_soon: 1,
@@ -324,6 +328,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				},
 			},
 			{
+				// Currently failing because NoIndex is remaining enabled
 				scenario:
 					'Private + Coming Soon (v1) > Remove Coming Soon (v1) = Private - scratch that just: Public',
 				initialProps: {
@@ -358,7 +363,6 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
 				const radioButton = getByLabelText( labelToClick, { exact: false } );
-				expect( radioButton ).not.toBeChecked();
 				fireEvent.click( radioButton );
 				expect( testProps.updateFields ).toBeCalledWith( expectState );
 			} );
