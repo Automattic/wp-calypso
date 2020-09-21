@@ -81,6 +81,7 @@ import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
+import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -624,32 +625,6 @@ CompositeCheckout.propTypes = {
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
-
-function useRedirectIfCartEmpty(
-	items,
-	redirectUrl,
-	isLoading,
-	errors,
-	createUserAndSiteBeforeTransaction
-) {
-	useEffect( () => {
-		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
-			debug( 'cart is empty and not still loading; redirecting...' );
-			if ( createUserAndSiteBeforeTransaction ) {
-				window.localStorage.removeItem( 'shoppingCart' );
-				window.localStorage.removeItem( 'siteParams' );
-
-				// We use window.location instead of page.redirect() so that if the user already has an account and site at
-				// this point, then window.location will reload with the cookies applied and takes to the /plans page.
-				// (page.redirect() will take to the log in page instead).
-				window.location = redirectUrl;
-				return;
-			}
-			page.redirect( redirectUrl );
-			return;
-		}
-	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
-}
 
 function useRecordCheckoutLoaded(
 	recordEvent,
