@@ -34,8 +34,7 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 					<Title>{ __( 'Name your site', 'full-site-editing' ) }</Title>
 					<SubTitle>{ __( 'Pick a name for your site.', 'full-site-editing' ) }</SubTitle>
 				</div>
-				<ActionButtons stickyBreakpoint="medium">
-					<BackButton onClick={ handlePrev } />
+				<ActionButtons sticky={ false }>
 					<NextButton onClick={ handleNext } disabled={ ! title?.trim() } />
 				</ActionButtons>
 			</div>
@@ -59,6 +58,12 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 						<span>{ __( "Don't worry, you can change it later.", 'full-site-editing' ) }</span>
 					</div>
 				</form>
+			</div>
+			<div className="nux-launch-step__footer">
+				<ActionButtons sticky={ true }>
+					<BackButton onClick={ handlePrev } />
+					<NextButton onClick={ handleNext } disabled={ ! title?.trim() } />
+				</ActionButtons>
 			</div>
 		</LaunchStepContainer>
 	);

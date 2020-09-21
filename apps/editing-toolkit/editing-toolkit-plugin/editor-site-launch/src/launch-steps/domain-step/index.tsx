@@ -69,8 +69,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 						{ __( 'Free for the first year with any paid plan.', 'full-site-editing' ) }
 					</SubTitle>
 				</div>
-				<ActionButtons stickyBreakpoint="medium">
-					<BackButton onClick={ handlePrev } />
+				<ActionButtons sticky={ false }>
 					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />
 				</ActionButtons>
 			</div>
@@ -87,6 +86,12 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
 				/>
+			</div>
+			<div className="nux-launch-step__footer">
+				<ActionButtons sticky={ true }>
+					<BackButton onClick={ handlePrev } />
+					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />
+				</ActionButtons>
 			</div>
 		</LaunchStepContainer>
 	);

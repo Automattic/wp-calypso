@@ -10,7 +10,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import { useEntityProp } from '@wordpress/core-data';
-import { Title, SubTitle } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
 	checkoutTheme,
@@ -33,7 +33,7 @@ import './styles.scss';
 
 const TickIcon = <Icon icon={ check } size={ 17 } />;
 
-const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
+const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
@@ -127,6 +127,10 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 		</div>
 	);
 
+	const handlePrev = () => {
+		onPrevStep?.();
+	};
+
 	return (
 		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
@@ -206,6 +210,11 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 						</CheckoutStepAreaWrapper>
 					</MainContentWrapper>
 				</ThemeProvider>
+			</div>
+			<div className="nux-launch-step__footer">
+				<ActionButtons sticky={ true }>
+					<BackButton onClick={ handlePrev } />
+				</ActionButtons>
 			</div>
 		</LaunchStepContainer>
 	);

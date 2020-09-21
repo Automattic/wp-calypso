@@ -24,4 +24,18 @@
 	@include onboarding-body-margin;
 }
 
+.nux-launch-step__footer {
+	// On mobile & tablet, show step footer, sticky at bottom.
+	@include onboarding-block-edge2edge;
+	position: sticky;
+	bottom: 0;
+
+	.action-buttons {
+		position: relative;
+	}
+
+	// On desktop, hide step footer.
+	@include break-medium {
+		display: none;
+	}
 }
