@@ -32,7 +32,7 @@ import QueryScanState from 'components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
 import isCurrentPlanPaid from 'state/sites/selectors/is-current-plan-paid';
 import { siteHasJetpackProductPurchase } from 'state/purchases/selectors';
-import { isEcommerce } from 'lib/products-values';
+import { isFreeTrial, isEcommerce } from 'lib/products-values';
 import { isWpMobileApp } from 'lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -549,7 +549,7 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
-	plan() {
+	planMenu() {
 		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
 		if ( this.props.isWpMobile ) {
 			return null;
@@ -637,6 +637,90 @@ export class MySitesSidebar extends Component {
 					<span className="menu-link-text" data-e2e-sidebar="Plan">
 						{ translate( 'Plans', { context: 'noun' } ) }
 					</span>
+				</a>
+			</li>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+	}
+
+	plan() {
+		const {
+			canUserManageOptions,
+			hasPaidJetpackPlan,
+			hasPurchasedJetpackProduct,
+			isAtomicSite,
+			isJetpack,
+			isVip,
+			shouldRenderJetpackSection,
+			path,
+			site,
+			translate,
+			isWpMobile,
+		} = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
+		if ( ! canUserManageOptions ) {
+			return null;
+		}
+
+		let planLink = '/plans' + this.props.siteSuffix;
+
+		// Show plan details for upgraded sites
+		if ( hasPaidJetpackPlan || hasPurchasedJetpackProduct ) {
+			planLink = '/plans/my-plan' + this.props.siteSuffix;
+		}
+
+		const linkClass = classNames( {
+			selected: itemLinkMatches( [ '/plans' ], path ),
+		} );
+
+		const tipTarget = 'plan';
+
+		let planName = site && site.plan.product_name_short;
+
+		if ( site && isFreeTrial( site.plan ) ) {
+			planName = translate( 'Trial', {
+				context: 'Label in the sidebar indicating that the user is on the free trial for a plan.',
+			} );
+		}
+
+		// Hide the plan name only for Jetpack sites that are not Atomic or VIP.
+		const displayPlanName = ! isJetpack || isAtomicSite || isVip;
+
+		let icon = <JetpackLogo size={ 24 } className="sidebar__menu-icon" />;
+		if ( shouldRenderJetpackSection ) {
+			icon = (
+				<Gridicon
+					icon={ hasPaidJetpackPlan || hasPurchasedJetpackProduct ? 'star' : 'star-outline' }
+					className="sidebar__menu-icon"
+					size={ 24 }
+				/>
+			);
+		}
+
+		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
+		if ( isWpMobile ) {
+			return;
+		}
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		return (
+			<li className={ linkClass } data-tip-target={ tipTarget }>
+				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
+					{ icon }
+					<span className="menu-link-text" data-e2e-sidebar="Plan">
+						{ translate( 'Plan', { context: 'noun' } ) }
+					</span>
+					{ displayPlanName && (
+						<span className="sidebar__menu-link-secondary-text">{ planName }</span>
+					) }
 				</a>
 			</li>
 		);
@@ -935,7 +1019,7 @@ export class MySitesSidebar extends Component {
 					<ul>
 						{ this.customerHome() }
 						{ this.stats() }
-						{ this.plan() }
+						{ config.isEnabled( 'site-level-billing' ) ? this.planMenu() : this.plan() }
 						{ this.store() }
 					</ul>
 				</SidebarMenu>
