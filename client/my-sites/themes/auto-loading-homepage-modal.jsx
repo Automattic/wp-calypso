@@ -143,37 +143,32 @@ class AutoLoadingHomepageModal extends Component {
 			>
 				<div>
 					<h1>
-						{ translate( 'Homepage Content', {
-							args: { themeName },
-						} ) }
-					</h1>
-					<h2 className="themes__auto-loading-homepage-modal-options-heading">
 						{ translate( 'How would you like to use %(themeName)s on your site?', {
 							args: { themeName },
 						} ) }
-					</h2>
+					</h1>
 					<FormLabel>
 						<FormRadio
 							value="keep_current_homepage"
 							checked={ 'keep_current_homepage' === this.state.homepageAction }
 							onChange={ this.handleHomepageAction }
+							label={ translate( 'Use %(themeName)s without changing my homepage content', {
+								args: { themeName },
+							} ) }
 						/>
-						{ translate( 'Use %(themeName)s without changing my homepage content', {
-							args: { themeName },
-						} ) }
 					</FormLabel>
 					<FormLabel>
 						<FormRadio
 							value="use_new_homepage"
 							checked={ 'use_new_homepage' === this.state.homepageAction }
 							onChange={ this.handleHomepageAction }
+							label={ translate(
+								"Use %(themeName)s's homepage content and make my existing homepage a draft",
+								{
+									args: { themeName },
+								}
+							) }
 						/>
-						{ translate(
-							"Use %(themeName)s's homepage content and make my existing homepage a draft",
-							{
-								args: { themeName },
-							}
-						) }
 					</FormLabel>
 				</div>
 			</Dialog>
