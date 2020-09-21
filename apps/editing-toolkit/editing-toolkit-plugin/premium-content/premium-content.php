@@ -299,19 +299,16 @@ function premium_content_block_subscriber_view_render( $attributes, $content, $b
  *
  * @param array  $attributes Block attributes.
  * @param string $content Block content.
- * @param object $block Block object.
  *
  * @return string Final content to render.
  */
-function premium_content_render_login_button_block( $attributes, $content, $block = null ) {
+function premium_content_render_login_button_block( $attributes, $content ) {
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
 	}
 
-	$visitor_has_access = premium_content_current_visitor_can_access( $attributes, $block );
-
-	if ( $visitor_has_access ) {
-		// The viewer has access, so they shouldn't see the login button.
+	if ( is_user_logged_in() ) {
+		// The viewer is logged it, so they shouldn't see the login button.
 		return '';
 	}
 
