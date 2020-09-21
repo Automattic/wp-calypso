@@ -252,8 +252,9 @@ function setUpLocalLanguageRevisions( req ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
+	// We should change that back to SAMEORIGIN before merging to master
 	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
+		'X-Frame-Options': 'allow',
 	} );
 
 	const setupRequests = [];
@@ -269,9 +270,9 @@ function setUpLoggedOutRoute( req, res, next ) {
 
 function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl, start;
-
+	// We should change that back to SAMEORIGIN before merging to master
 	res.set( {
-		'X-Frame-Options': 'SAMEORIGIN',
+		'X-Frame-Options': 'allow',
 	} );
 
 	const setupRequests = [];

@@ -461,6 +461,12 @@ const sections = [
 			},
 		],
 	},
+	{
+		name: 'site-card',
+		paths: [ '/site-card' ],
+		module: 'calypso/my-sites/site-card',
+		group: 'sites',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {

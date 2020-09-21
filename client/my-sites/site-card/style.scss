@@ -1,0 +1,23 @@
+.masterbar,
+.layout__primary,
+.global-notices,
+.inline-help,
+.sidebar__menu-wrapper {
+	display: none;
+}
+
+.layout__content {
+	padding: 0;
+	margin: 0;
+}
+
+.layout__secondary {
+	top: 0;
+	width: 100%;
+}
+
+@media ( max-width: 660px ) {
+	.layout.focus-content .layout__secondary {
+		transform: translateX( 0 );
+	}
+}
