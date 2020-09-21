@@ -3,13 +3,13 @@
  */
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useEffect, useMemo } from 'react';
 
 /**
  * Internal dependencies
  */
 
-import { featuredProviders, getProviderNameFromId } from '../utils';
+import { getProviderNameFromId, hosts } from '../utils';
 import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
@@ -42,6 +42,19 @@ const HostSelection: FunctionComponent = () => {
 
 	const providerGuessName = getProviderNameFromId( guess );
 
+	const hostsToShow = useMemo( () => {
+		const list = [];
+		for ( const hostId in hosts ) {
+			if ( hosts[ hostId ].top || hostId === guess ) {
+				list.push( {
+					...hosts[ hostId ],
+					id: hostId,
+				} );
+			}
+		}
+		return list;
+	}, [ guess ] );
+
 	useEffect( () => {
 		requestHosingProviderGuess( siteId );
 	}, [ siteId ] );
@@ -72,7 +85,7 @@ const HostSelection: FunctionComponent = () => {
 			) }
 
 			<VerticalNav>
-				{ featuredProviders.map( ( { id, name } ) => (
+				{ hostsToShow.map( ( { id, name } ) => (
 					<VerticalNavItem
 						isPlaceholder={ loadingProviderGuess }
 						key={ id }

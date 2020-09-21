@@ -18,7 +18,8 @@
 .top__connection-status-failed,
 .top__connection-status-connected,
 .top__connection-status-connecting,
-.top__connection-status-disconnected {
+.top__connection-status-disconnected,
+.top__connection-status-loading {
 	display: flex;
 	*:not( first-child ) {
 		margin-left: 8px;
@@ -44,4 +45,14 @@
 .top__connection-status-connected {
 	color: var( --color-primary-50 );
 	fill: var( --color-primary-50 );
+}
+
+.top__connection-status-loading {
+	circle {
+		@include placeholder();
+		fill: var( --color-neutral-5 );
+	}
+	span {
+		color: var( --color-neutral-5 );
+	}
 }
