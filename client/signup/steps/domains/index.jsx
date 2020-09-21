@@ -51,6 +51,7 @@ import { isPlanStepExistsAndSkipped } from 'state/signup/progress/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 import { getABTestVariation } from 'lib/abtest';
 import getSitesItems from 'state/selectors/get-sites-items';
+import { getStepModuleName } from 'calypso/signup/config/step-components';
 
 /**
  * Style dependencies
@@ -134,7 +135,9 @@ class DomainsStep extends React.Component {
 	 */
 	getIsPlanSelectionUnavailableInFlow = () => {
 		const { steps, isPlanStepSkipped } = this.props;
-		const isPlansStepExistsInFlow = steps?.some( ( planName ) => planName.includes( 'plans' ) );
+		const isPlansStepExistsInFlow = steps?.some(
+			( stepName ) => getStepModuleName( stepName ) === 'plans'
+		);
 		return ! isPlansStepExistsInFlow || isPlanStepSkipped;
 	};
 
