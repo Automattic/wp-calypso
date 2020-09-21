@@ -51,9 +51,24 @@ class AutoLoadingHomepageModal extends Component {
 		installingThemeId: PropTypes.string,
 	};
 
-	state = {
-		homepageAction: 'keep_current_homepage',
-	};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			homepageAction: 'keep_current_homepage',
+
+			// Used to reset state when dialog re-opens
+			wasVisible: props.isVisible,
+		};
+	}
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		if ( nextProps.isVisible && ! prevState.wasVisible ) {
+			return { homepageAction: 'keep_current_homepage', wasVisible: true };
+		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
+			return { wasVisible: false };
+		}
+		return null;
+	}
 
 	handleHomepageAction = ( event ) => {
 		this.setState( { homepageAction: event.currentTarget.value } );
