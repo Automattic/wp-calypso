@@ -18,7 +18,7 @@ jest.mock( 'my-sites/controller', () => ( {
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-jest.mock( 'lib/abtest/getters', () => ( {
+jest.mock( 'lib/plans/config', () => ( {
 	shouldShowOfferResetFlow: jest.fn( () => false ),
 } ) );
 jest.mock( 'my-sites/plans-v2', () => jest.fn() );
