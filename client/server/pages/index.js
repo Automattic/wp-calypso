@@ -253,8 +253,8 @@ function setUpLocalLanguageRevisions( req ) {
 
 function setUpLoggedOutRoute( req, res, next ) {
 	let allowedOrigin;
-	if ( req.url.indexOf( 'site-card/' ) !== -1 ) {
-		allowedOrigin = req.url.split( 'site-card/' )[ 1 ];
+	if ( req.path.indexOf( 'site-card/' ) !== -1 ) {
+		allowedOrigin = req.path.split( 'site-card/' )[ 1 ];
 	}
 
 	res.set( {
@@ -275,8 +275,8 @@ function setUpLoggedOutRoute( req, res, next ) {
 function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl, start;
 	let allowedOrigin;
-	if ( req.url.indexOf( 'site-card/' ) !== -1 ) {
-		allowedOrigin = req.url.split( 'site-card/' )[ 1 ];
+	if ( req.path.indexOf( 'site-card/' ) !== -1 ) {
+		allowedOrigin = req.path.split( 'site-card/' )[ 1 ];
 	}
 
 	res.set( {
