@@ -31,7 +31,7 @@ const settings = {
 	keywords: [ __( 'link', 'full-site-editing' ) ],
 	edit,
 	save,
-	context: [ 'premium-content/planId' ],
+	usesContext: [ 'premium-content/planId' ],
 };
 
 export { name, category, settings };
