@@ -317,7 +317,28 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_professsional' }
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_security' }
+				/>
+			</Fragment>
+		);
+	}
+
+	getJetpackCompleteFeatures() {
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
+		return (
+			<Fragment>
+				<SiteActivity />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<JetpackPublicize selectedSite={ selectedSite } />
+				<SellOnlinePaypal isJetpack />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_complete' }
 				/>
 			</Fragment>
 		);
@@ -346,7 +367,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_FREE ]: () => this.getJetpackFreeFeatures(),
 				[ TYPE_SECURITY_DAILY ]: () => this.getJetpackSecurityFeatures(),
 				[ TYPE_SECURITY_REALTIME ]: () => this.getJetpackSecurityFeatures(),
-				[ TYPE_ALL ]: () => this.getJetpackSecurityFeatures(),
+				[ TYPE_ALL ]: () => this.getJetpackCompleteFeatures(),
 			},
 		};
 
