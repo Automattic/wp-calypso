@@ -252,9 +252,13 @@ function setUpLocalLanguageRevisions( req ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
-	// We should change that back to SAMEORIGIN before merging to master
+	let allowedOrigin;
+	if ( req.url.indexOf( 'site-card/' ) !== -1 ) {
+		allowedOrigin = req.url.split( 'site-card/' )[ 1 ];
+	}
+
 	res.set( {
-		'X-Frame-Options': 'allow',
+		'X-Frame-Options': allowedOrigin ? allowedOrigin : 'SAMEORIGIN',
 	} );
 
 	const setupRequests = [];
@@ -270,9 +274,13 @@ function setUpLoggedOutRoute( req, res, next ) {
 
 function setUpLoggedInRoute( req, res, next ) {
 	let redirectUrl, start;
-	// We should change that back to SAMEORIGIN before merging to master
+	let allowedOrigin;
+	if ( req.url.indexOf( 'site-card/' ) !== -1 ) {
+		allowedOrigin = req.url.split( 'site-card/' )[ 1 ];
+	}
+
 	res.set( {
-		'X-Frame-Options': 'allow',
+		'X-Frame-Options': allowedOrigin ? allowedOrigin : 'SAMEORIGIN',
 	} );
 
 	const setupRequests = [];
