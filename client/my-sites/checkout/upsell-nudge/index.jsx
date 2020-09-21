@@ -40,6 +40,7 @@ import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-fr
 import { PurchaseModal } from './purchase-modal';
 import { abtest } from 'lib/abtest';
 import { replaceCartWithItems } from 'lib/cart/actions';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies
@@ -66,6 +67,7 @@ export class UpsellNudge extends React.Component {
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
+				{ this.preloadIconsForPurchaseModal() }
 			</Main>
 		);
 	}
@@ -229,6 +231,14 @@ export class UpsellNudge extends React.Component {
 				onClose={ () => this.setState( { showPurchaseModal: false } ) }
 				siteSlug={ this.props.siteSlug }
 			/>
+		);
+	};
+
+	preloadIconsForPurchaseModal = () => {
+		return (
+			<div className="upsell-nudge__hidden">
+				<Gridicon icon="cross-small" />
+			</div>
 		);
 	};
 }

@@ -138,7 +138,7 @@ export function PurchaseModal( { cart, cards, onComplete, onClose, siteSlug } ) 
 	} );
 
 	return (
-		<Dialog isVisible={ true } className="purchase-modal">
+		<Dialog isVisible={ true } baseClassName="purchase-modal dialog" onClose={ onClose }>
 			<Button
 				borderless
 				className="purchase-modal__close"
