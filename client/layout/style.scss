@@ -24,7 +24,7 @@
 	@include clear-fix;
 	position: relative;
 	margin: 0;
-	padding: 79px 32px 32px ( var( --sidebar-width-max ) + 32px + 1px );
+	padding: 79px 32px 32px calc( var( --sidebar-width-max ) + 32px + 1px );
 	box-sizing: border-box;
 	overflow: hidden;
 
@@ -44,12 +44,12 @@
 	// displays at full height.
 	.is-section-preview & {
 		height: 100%;
-		padding: 47px 0 0 ( var( --sidebar-width-max ) + 1px );
+		padding: 47px 0 0 calc( var( --sidebar-width-max ) + 1px );
 	}
 
 	// Tablets
 	@include breakpoint-deprecated( '<960px' ) {
-		padding: 71px 24px 24px ( var( --sidebar-width-min ) + 24px + 1px );
+		padding: 71px 24px 24px calc( var( --sidebar-width-min ) + 24px + 1px );
 
 		.has-no-sidebar & {
 			padding-left: 24px;

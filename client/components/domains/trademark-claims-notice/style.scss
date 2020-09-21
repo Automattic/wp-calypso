@@ -56,12 +56,12 @@
 		left: 0;
 		right: 0;
 		margin: 0;
-		padding: 1px 31px 0 ( var( --sidebar-width-max ) + 32px );
+		padding: 1px 31px 0 calc( var( --sidebar-width-max ) + 32px );
 		box-sizing: border-box;
 		overflow: hidden;
 
 		@include breakpoint-deprecated( '<960px' ) {
-			padding: 1px 23px 0 ( var( --sidebar-width-min ) + 24px );
+			padding: 1px 23px 0 calc( var( --sidebar-width-min ) + 24px );
 		}
 
 		body.is-section-signup & {
