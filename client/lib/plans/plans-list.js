@@ -8,8 +8,8 @@ import i18n, { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import * as constants from './constants';
+import { isEnabled } from 'config';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
@@ -530,6 +530,8 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		constants.FEATURE_JETPACK_SEARCH,
 		constants.FEATURE_JETPACK_SEARCH_MONTHLY,
+		constants.FEATURE_JETPACK_CRM,
+		constants.FEATURE_JETPACK_CRM_MONTHLY,
 		constants.FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		constants.FEATURE_REPUBLICIZE,
