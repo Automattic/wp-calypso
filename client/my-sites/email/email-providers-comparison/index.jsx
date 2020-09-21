@@ -53,6 +53,10 @@ class EmailProvidersComparison extends React.Component {
 	};
 
 	onAddTitanClick = () => {
+		if ( this.state.isFetchingProvisioningURL ) {
+			return;
+		}
+
 		const { domain, translate } = this.props;
 		this.setState( { isFetchingProvisioningURL: true } );
 		this.fetchTitanOrderProvisioningURL( domain.name ).then( ( { error, provisioningURL } ) => {
