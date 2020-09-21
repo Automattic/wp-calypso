@@ -20,6 +20,7 @@ import { getDomainProductSlug } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
@@ -56,6 +57,9 @@ import { isPlanStepExistsAndSkipped } from 'state/signup/preview/selectors';
  * Style dependencies
  */
 import './style.scss';
+
+
+
 
 
 
@@ -138,7 +142,9 @@ class DomainsStep extends React.Component {
 	 */
 	getIsPlanSelectionUnavailableInFlow = () => {
 		const { steps, isPlanStepSkipped } = this.props;
-		const isPlansStepExistsInFlow = steps?.some( ( planName ) => planName.includes( 'plans' ) );
+		const isPlansStepExistsInFlow = steps?.some(
+			( stepName ) => getStepModuleName( stepName ) === 'plans'
+		);
 		return ! isPlansStepExistsInFlow || isPlanStepSkipped;
 	};
 
