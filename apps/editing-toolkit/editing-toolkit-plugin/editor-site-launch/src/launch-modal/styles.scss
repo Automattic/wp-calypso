@@ -77,43 +77,46 @@ body.has-nux-launch-modal {
 		flex-grow: 1;
 	}
 
-	@media ( max-width: $break-medium ) {
-		.is-sidebar-fullscreen & {
-			opacity: 0; // Using visibility: hidden or display: none closes modal
-		}
+	.is-sidebar-fullscreen & {
+		// Instead of display: none, this clips the modal body when
+		// fullscreen sidebar is showing, this is to prevents "Go Back" button
+		// from disappearing when clicked, causing the modal to blur
+		// itself out and abruptly closes the modal.
+		overflow: hidden;
 	}
 }
 
 .nux-launch-modal-aside {
-	position: fixed;
+	// Instead of display: none, the sidebar hides off-screen
+	// on mobile view, this is to prevents "Get Started" button
+	// from disappearing when clicked, causing the modal to blur
+	// itself out and abruptly closes the modal.
+	position: absolute;
 	top: 0;
-	right: 18px;
-	width: $sidebar-width;
-	max-width: $sidebar-width;
-	max-width: $sidebar-width;
-	min-height: 100vh;
-	border-left: 1px solid var( --studio-gray-5 );
-	padding-top: $header-height;
-	padding-bottom: $onboarding-footer-height;
+	left: -200%;
+	width: 100%;
+	height: 100%;
 	background: var( --studio-white );
-	z-index: z-index( '.components-modal__header' ) + 1;
-	display: none;
-
-	@include break-medium {
-		display: block;
-	}
+	z-index: z-index( '.components-modal__header' ) + 2;
 
 	@media ( max-width: $break-medium ) {
+		// This brings the sidebar that is hiding offscreen into view.
 		.is-sidebar-fullscreen & {
-			position: absolute;
-			top: 0;
 			left: 0;
-			width: 100%;
-			height: 100%;
-			max-width: none;
-			border: none;
-			display: block;
 		}
+	}
+
+	@include break-medium {
+		// Use sticky or relative positioning because fixed or absolute
+		// positioning causes the vertical scrollbar from the parent element
+		// to overlap the content on the sidebar.
+		position: sticky;
+		top: 0;
+		left: auto;
+		width: $sidebar-width;
+		min-width: $sidebar-width;
+		max-width: $sidebar-width;
+		border-left: 1px solid var( --studio-gray-5 );
 	}
 }
 
