@@ -135,11 +135,11 @@ class EmailManagement extends React.Component {
 		}
 
 		if ( config.isEnabled( 'email/titan-mvp' ) ) {
-			const chosenDomain = domainList[ 0 ];
+			const selectedDomain = domainList[ 0 ];
 			return (
 				<EmailProvidersComparison
-					domain={ chosenDomain }
-					isGSuiteSupported={ hasGSuiteSupportedDomain( [ chosenDomain ] ) }
+					domain={ selectedDomain }
+					isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
 				/>
 			);
 		}
