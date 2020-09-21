@@ -72,13 +72,6 @@ function getExternals() {
 			'calypso/webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
-			// Exclude the devdocs search-index, as it's huge.
-			'server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
-			},
-			'calypso/server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
-			},
 		},
 	];
 }
