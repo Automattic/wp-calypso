@@ -154,6 +154,11 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		if ( premiumDomain?.pending ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
+		} else if ( premiumDomain?.is_price_limit_exceeded ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
+			buttonContent = translate( 'Limited', {
+				context: 'Premium domain is not available for registration',
+			} );
 		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 			buttonContent = translate( 'Unavailable', {
