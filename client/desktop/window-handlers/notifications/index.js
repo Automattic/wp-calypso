@@ -25,14 +25,18 @@ function updateNotificationBadge( count ) {
 	}
 }
 
-module.exports = function () {
+module.exports = function ( mainWindow ) {
 	ipc.on( 'unread-notices-count', function ( _, count ) {
 		log.info( 'Notification count received: ' + count );
 
 		updateNotificationBadge( count );
 	} );
 
-	ipc.on( 'preferences-changed-notification-badge', function ( event, arg ) {
-		updateNotificationBadge( arg );
+	ipc.on( 'preferences-changed-notification-badge', function ( _, enabled ) {
+		if ( enabled ) {
+			mainWindow.webContents.send( 'enable-notification-badge' );
+		} else {
+			updateNotificationBadge( 0 );
+		}
 	} );
 };
