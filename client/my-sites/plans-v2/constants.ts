@@ -16,6 +16,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 } from 'lib/products-values/constants';
 import {
@@ -41,6 +43,11 @@ import {
 	FEATURE_PRIORITY_SUPPORT_V2,
 	FEATURE_ONE_CLICK_RESTORE_V2,
 	FEATURE_SECURE_STORAGE_V2,
+	FEATURE_CRM_LEADS_AND_FUNNEL,
+	FEATURE_CRM_PROPOSALS_AND_INVOICES,
+	FEATURE_CRM_TRACK_TRANSACTIONS,
+	FEATURE_CRM_NO_CONTACT_LIMITS,
+	FEATURE_CRM_PRIORITY_SUPPORT,
 } from 'lib/plans/constants';
 import { buildCardFeaturesFromItem } from './utils';
 
@@ -266,12 +273,62 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 	} );
 } );
 
+// Jetpack CRM
+export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
+	productSlug: PRODUCT_JETPACK_CRM,
+	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_PRODUCT,
+	subtypes: [],
+	costProductSlug: PRODUCT_JETPACK_CRM,
+	monthlyProductSlug: PRODUCT_JETPACK_CRM,
+	iconSlug: 'jetpack_crm',
+	displayName: translate( 'Jetpack CRM' ),
+	shortName: translate( 'CRM', {
+		comment: 'Short name of the Jetpack CRM',
+	} ),
+	tagline: translate( 'Manage contacts effortlessly' ),
+	description: translate(
+		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
+	),
+	buttonLabel: translate( 'Get CRM' ),
+	features: {
+		items: buildCardFeaturesFromItem(
+			[
+				FEATURE_CRM_LEADS_AND_FUNNEL,
+				FEATURE_CRM_PROPOSALS_AND_INVOICES,
+				FEATURE_CRM_TRACK_TRANSACTIONS,
+				FEATURE_CRM_NO_CONTACT_LIMITS,
+				FEATURE_CRM_PRIORITY_SUPPORT,
+			],
+			{ withoutDescription: true, withoutIcon: true }
+		),
+	},
+	hidePrice: true,
+	externalUrl: 'https://jetpackcrm.com/pricing/',
+};
+
+export const EXTERNAL_PRODUCT_CRM_MONTHLY: SelectorProduct = {
+	...EXTERNAL_PRODUCT_CRM,
+	productSlug: PRODUCT_JETPACK_CRM_MONTHLY,
+	term: TERM_MONTHLY,
+	subtypes: [],
+	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
+};
+
 // Map slug to objects.
 export const OPTIONS_SLUG_MAP: Record< SelectorProductSlug, SelectorProduct > = {
 	[ OPTIONS_JETPACK_SECURITY ]: OPTION_PLAN_SECURITY,
 	[ OPTIONS_JETPACK_SECURITY_MONTHLY ]: OPTION_PLAN_SECURITY_MONTHLY,
 	[ OPTIONS_JETPACK_BACKUP ]: OPTION_PRODUCT_BACKUP,
 	[ OPTIONS_JETPACK_BACKUP_MONTHLY ]: OPTION_PRODUCT_BACKUP_MONTHLY,
+};
+
+// List of products showcased in the Plans grid but not sold through Calypso
+export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
+
+// External Product slugs to SelectorProduct.
+export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, SelectorProduct > = {
+	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 };
 
 /**
@@ -302,7 +359,7 @@ const PRODUCTS_TYPE_PERFORMANCE = [
 export const PRODUCTS_TYPES: Record< ProductType, string[] > = {
 	[ SECURITY ]: PRODUCTS_TYPE_SECURITY,
 	[ PERFORMANCE ]: PRODUCTS_TYPE_PERFORMANCE,
-	[ ALL ]: [ ...PRODUCTS_TYPE_SECURITY, ...PRODUCTS_TYPE_PERFORMANCE ],
+	[ ALL ]: [ ...PRODUCTS_TYPE_SECURITY, ...PRODUCTS_TYPE_PERFORMANCE, ...EXTERNAL_PRODUCTS_LIST ],
 };
 
 /**
