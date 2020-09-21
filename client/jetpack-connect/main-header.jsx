@@ -16,7 +16,7 @@ import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
 import { getJetpackProductShortName, getJetpackProductDescription } from 'lib/products-values';
 import { PRODUCTS_LIST } from 'lib/products-values/products-list';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { FLOW_TYPES } from 'jetpack-connect/constants';
+import { FLOW_TYPES } from 'jetpack-connect/flow-types';
 import { retrievePlan } from './persistence-utils';
 
 class JetpackConnectMainHeader extends Component {

@@ -32,7 +32,8 @@ import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
-import { FLOW_TYPES, IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from './constants';
+import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from './constants';
+import { FLOW_TYPES } from './flow-types';
 import { ALREADY_CONNECTED } from './connection-notice-types';
 
 export class SearchPurchase extends Component {

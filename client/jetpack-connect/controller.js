@@ -30,11 +30,8 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import { hideMasterbar, showMasterbar } from 'state/ui/actions';
-import {
-	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
-	JPC_PATH_PLANS,
-	OFFER_RESET_FLOW_TYPES,
-} from './constants';
+import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, JPC_PATH_PLANS } from './constants';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';

@@ -31,12 +31,8 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from '../../jetpack-connect/jetpack-connection';
-
-import {
-	FLOW_TYPES,
-	IS_DOT_COM_GET_SEARCH,
-	JPC_PATH_REMOTE_INSTALL,
-} from '../../jetpack-connect/constants';
+import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';
+import { FLOW_TYPES } from 'jetpack-connect/flow-types';
 import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
 
 export class SearchPurchase extends Component {
