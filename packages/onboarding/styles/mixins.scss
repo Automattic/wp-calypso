@@ -63,14 +63,17 @@
 }
 
 @mixin onboarding-block-margin {
-	margin: 0 $onboarding-block-margin-mobile;
+	margin-left: $onboarding-block-margin-mobile;
+	margin-right: $onboarding-block-margin-mobile;
 
 	@include break-small {
-		margin: 0 $onboarding-block-margin-small;
+		margin-left: $onboarding-block-margin-small;
+		margin-right: $onboarding-block-margin-small;
 	}
 
 	@include break-medium {
-		margin: 0 $onboarding-block-margin-medium;
+		margin-left: $onboarding-block-margin-medium;
+		margin-right: $onboarding-block-margin-medium;
 	}
 }
 
