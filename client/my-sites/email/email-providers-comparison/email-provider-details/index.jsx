@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,18 +34,15 @@ class EmailProviderDetails extends React.Component {
 		isButtonBusy: PropTypes.bool,
 	};
 
+	static defaultProps = {
+		onButtonClick: noop,
+	};
+
 	renderFeatures() {
 		return this.props.features.map( ( feature, index ) => (
 			<EmailProviderFeature key={ `feature-${ index }` } title={ feature } />
 		) );
 	}
-
-	onButtonClick = ( e ) => {
-		const { onButtonClick } = this.props;
-		if ( onButtonClick ) {
-			onButtonClick( e );
-		}
-	};
 
 	render() {
 		const {
@@ -67,7 +65,7 @@ class EmailProviderDetails extends React.Component {
 				<Button
 					className="email-provider-details__cta"
 					primary={ hasPrimaryButton }
-					onClick={ this.onButtonClick }
+					onClick={ this.props.onButtonClick }
 					busy={ isButtonBusy }
 				>
 					{ buttonLabel }
