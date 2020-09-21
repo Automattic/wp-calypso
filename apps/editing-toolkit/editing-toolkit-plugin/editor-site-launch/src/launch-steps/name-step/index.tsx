@@ -28,7 +28,7 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 	const handleBlur = () => saveTitle();
 
 	return (
-		<LaunchStepContainer className="nux-launch-name-step">
+		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Name your site', 'full-site-editing' ) }</Title>

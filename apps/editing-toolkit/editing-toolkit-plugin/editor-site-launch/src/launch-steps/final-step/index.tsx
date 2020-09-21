@@ -128,7 +128,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 	);
 
 	return (
-		<LaunchStepContainer className="nux-launch-final-step">
+		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Launch your site', 'full-site-editing' ) }</Title>

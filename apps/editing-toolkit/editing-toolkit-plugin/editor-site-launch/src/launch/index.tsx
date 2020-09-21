@@ -65,11 +65,7 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		}
 	}, [] );
 
-	return (
-		<div className="nux-launch">
-			<CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />
-		</div>
-	);
+	return <CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />;
 };
 
 export default Launch;

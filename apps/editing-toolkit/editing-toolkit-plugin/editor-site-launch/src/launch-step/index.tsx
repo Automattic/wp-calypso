@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -10,13 +9,12 @@ import classnames from 'classnames';
 import './styles.scss';
 
 export interface Props {
-	className?: string;
 	onPrevStep?: () => void;
 	onNextStep?: () => void;
 }
 
-const LaunchStep: React.FunctionComponent< Props > = ( { className, children } ) => {
-	return <div className={ classnames( 'nux-launch-step', className ) }>{ children }</div>;
+const LaunchStep: React.FunctionComponent< Props > = ( { children } ) => {
+	return <>{ children }</>;
 };
 
 export default LaunchStep;

@@ -61,7 +61,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 	};
 
 	return (
-		<LaunchStepContainer className="nux-launch-domain-step">
+		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Choose a domain', 'full-site-editing' ) }</Title>

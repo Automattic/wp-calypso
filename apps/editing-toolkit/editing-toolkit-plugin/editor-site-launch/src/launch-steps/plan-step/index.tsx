@@ -40,7 +40,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 	};
 
 	return (
-		<LaunchStepContainer className="nux-launch-plan-step">
+		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Select a plan', 'full-site-editing' ) }</Title>
