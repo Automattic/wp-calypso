@@ -31,7 +31,6 @@ import wooDnaConfig from 'jetpack-connect/woo-dna-config';
 import './style.scss';
 
 const LayoutLoggedOut = ( {
-	currentRoute,
 	isJetpackLogin,
 	isGutenboardingLogin,
 	isPopup,
@@ -53,7 +52,6 @@ const LayoutLoggedOut = ( {
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
-		'is-add-site-page': currentRoute === '/jetpack/new',
 		'focus-content': true,
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
