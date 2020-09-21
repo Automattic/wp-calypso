@@ -10,11 +10,11 @@ import type { TimestampMS } from 'wp-calypso-client/types';
  */
 import type { DomainSuggestion, DomainCategory, DomainAvailability } from './types';
 import type { Action } from './actions';
-import { DataState } from './constants';
+import { DataStatus } from './constants';
 import { stringifyDomainQueryObject } from './utils';
 
 export interface DomainSuggestionState {
-	state: DataState;
+	state: DataStatus;
 	data: Record< string, DomainSuggestion[] | undefined >;
 	errorMessage: string | null;
 	lastUpdated: TimestampMS;
@@ -22,7 +22,7 @@ export interface DomainSuggestionState {
 }
 
 const initialDomainSuggestionState: DomainSuggestionState = {
-	state: DataState.Uninitialized,
+	state: DataStatus.Uninitialized,
 	data: {},
 	errorMessage: null,
 	lastUpdated: -Infinity,
@@ -38,7 +38,7 @@ const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 	if ( action.type === 'FETCH_DOMAIN_SUGGESTIONS' ) {
 		return {
 			...state,
-			state: DataState.Pending,
+			state: DataStatus.Pending,
 			errorMessage: null,
 			pendingSince: timeNow,
 		};
@@ -47,7 +47,7 @@ const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS_DATA' ) {
 		return {
 			...state,
-			state: DataState.Success,
+			state: DataStatus.Success,
 			data: {
 				...state.data,
 				[ stringifyDomainQueryObject( action.queryObject ) ]: action.suggestions,
@@ -61,7 +61,7 @@ const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS_ERROR' ) {
 		return {
 			...state,
-			state: DataState.Failure,
+			state: DataStatus.Failure,
 			errorMessage: action.errorMessage,
 			lastUpdated: timeNow,
 			pendingSince: undefined,

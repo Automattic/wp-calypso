@@ -1,6 +1,6 @@
 export const STORE_KEY = 'automattic/domains/suggestions';
 
-export enum DataState {
+export enum DataStatus {
 	Failure = 'failure',
 	Pending = 'pending',
 	Success = 'success',
