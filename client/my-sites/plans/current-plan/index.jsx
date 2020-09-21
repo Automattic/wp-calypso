@@ -25,7 +25,7 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import PurchasesListing from './purchases-listing';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { getPlan } from 'lib/plans';
 import {
 	JETPACK_LEGACY_PLANS,

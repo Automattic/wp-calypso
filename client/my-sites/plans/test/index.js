@@ -41,7 +41,7 @@ import {
 import { currentPlan } from '../current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import plansV2 from 'my-sites/plans-v2';
 
 import router from '../index';
