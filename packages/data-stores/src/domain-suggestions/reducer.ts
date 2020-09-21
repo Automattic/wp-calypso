@@ -42,7 +42,7 @@ const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 		};
 	}
 
-	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS_DATA' ) {
+	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS_SUCCESS' ) {
 		return {
 			...state,
 			state: DataStatus.Success,
