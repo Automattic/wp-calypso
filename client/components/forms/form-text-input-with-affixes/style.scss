@@ -11,11 +11,11 @@
 		flex-direction: row;
 	}
 
-	input[type='email'],
-	input[type='password'],
-	input[type='url'],
-	input[type='text'],
-	input[type='number'] {
+	input[type='email'].form-text-input,
+	input[type='password'].form-text-input,
+	input[type='url'].form-text-input,
+	input[type='text'].form-text-input,
+	input[type='number'].form-text-input {
 		flex-grow: 1;
 		border-radius: 0;
 
@@ -79,11 +79,11 @@
 		@include no-prefix-wrap();
 	}
 
-	& + input[type='email'],
-	& + input[type='password'],
-	& + input[type='url'],
-	& + input[type='text'],
-	& + input[type='number'] {
+	& + input[type='email'].form-text-input,
+	& + input[type='password'].form-text-input,
+	& + input[type='url'].form-text-input,
+	& + input[type='text'].form-text-input,
+	& + input[type='number'].form-text-input {
 		&:disabled {
 			border-left-color: var( --color-neutral-10 );
 			border-right-width: 1px;
