@@ -78,10 +78,16 @@
 }
 
 @mixin onboarding-heading-padding {
-	margin: $onboarding-heading-padding-mobile;
+	margin: $onboarding-heading-margin-mobile;
 
-	@include break-mobile {
-		margin: $onboarding-heading-padding-desktop;
+	@include break-small {
+		margin: $onboarding-heading-margin-small;
+	}
+
+	@include break-medium {
+		margin: $onboarding-heading-margin-medium;
+	}
+}
 	}
 }
 
