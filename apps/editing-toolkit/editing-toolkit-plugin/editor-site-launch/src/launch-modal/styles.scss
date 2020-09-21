@@ -121,17 +121,40 @@ body.has-nux-launch-modal {
 }
 
 .nux-launch-modal__close-button.components-button.is-link {
-	position: absolute;
+	// This keeps the button on the top right corner even when scrolled down
+	position: sticky;
 	top: 0;
-	right: 0;
-	z-index: z-index( '.components-modal__header' ) + 2;
-	width: 60px;
-	height: 60px;
-	justify-content: center;
-	color: var( --studio-gray-50 );
+	z-index: z-index( '.components-modal__header' ) + 3;
 
+	// Give it no dimension so it doesn't take any flex space
+	// but overflow it so the close button is visible
+	width: 0;
+	height: 0;
+	overflow: visible;
+
+	// Anchor the inline content to the top right (instead of middle).
+	display: flex;
+	align-items: flex-start;
+
+	// Close button icon color
+	color: var( --studio-gray-50 );
 	&:hover {
 		color: var( --studio-gray-40 );
+	}
+
+	> span {
+		// Push the icon back out from the right side
+		position: relative;
+		right: $onboarding-header-height;
+
+		// Use padding to create width
+		// (18px left padding + 24px icon width + 18px right padding = 60px width)
+		padding: 0 #{( $onboarding-header-height - 24px ) / 2};
+		height: $onboarding-header-height;
+
+		// Vertically align icon
+		display: flex;
+		align-items: center;
 	}
 }
 

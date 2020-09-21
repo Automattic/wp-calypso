@@ -24,20 +24,6 @@ interface Props {
 	onClose: () => void;
 }
 
-const CloseButton = ( { onClick } ) => {
-	return (
-		<Button
-			isLink
-			className="nux-launch-modal__close-button"
-			onClick={ onClick }
-			aria-label={ __( 'Close dialog', 'full-site-editing' ) }
-			disabled={ ! onClick }
-		>
-			<Icon icon={ close } size={ 24 } />
-		</Button>
-	);
-};
-
 const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	const { step: currentStep, isSidebarFullscreen } = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getState()
@@ -88,9 +74,19 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 						</EntityProvider>
 					</div>
 					<div className="nux-launch-modal-aside">
-						<CloseButton onClick={ onClose } />
 						<LaunchSidebar />
 					</div>
+					<Button
+						isLink
+						className="nux-launch-modal__close-button"
+						onClick={ onClose }
+						aria-label={ __( 'Close dialog', 'full-site-editing' ) }
+						disabled={ ! onClose }
+					>
+						<span>
+							<Icon icon={ close } size={ 24 } />
+						</span>
+					</Button>
 				</>
 			) }
 		</Modal>
