@@ -282,7 +282,17 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, { shouldHideFreePlan }, useThemeHeadstartItem )
+
+			Object.assign(
+				{ domainItem },
+				/*
+				 * This is done to avoid enforcing a shouldHideFreePlan dependency
+				 * for steps depending on the domains component.
+				 * A falsy param is not provided and shouldHideFreePlan should always be provided as an optional dependency.
+				 */
+				shouldHideFreePlan ? { shouldHideFreePlan } : {},
+				useThemeHeadstartItem
+			)
 		);
 
 		this.props.setDesignType( this.getDesignType() );
