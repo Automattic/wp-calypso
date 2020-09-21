@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { CANNOT_USE_EDITOR, EDITOR_VIEW_POST_CLICKED, SEND_TO_PRINTER } from 'state/action-types';
+import {
+	CANNOT_USE_EDITOR,
+	EDITOR_VIEW_POST_CLICKED,
+	SEND_TO_PRINTER,
+	NOTIFICATIONS_PANEL_NEW_NOTE,
+} from 'state/action-types';
 
 /**
  * Notify the desktop that the editor cannot be opened.
@@ -49,5 +54,19 @@ export const notifyDesktopSendToPrinter = ( title, contents ) => {
 		type: SEND_TO_PRINTER,
 		title,
 		contents,
+	};
+};
+
+/**
+ * Notify the desktop of new notifications.
+ *
+ * @param note
+ * @param isApproved
+ */
+export const notifyDesktopNewNote = ( note, isApproved ) => {
+	return {
+		type: NOTIFICATIONS_PANEL_NEW_NOTE,
+		note,
+		isApproved,
 	};
 };

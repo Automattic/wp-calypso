@@ -34,6 +34,18 @@ repliesCache.cleanup();
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
 
+/**
+ * Force a manual update of a note's read status
+ * (used by the Desktop application)
+ *
+ * @param noteId
+ * @param isRead
+ * @param callback
+ */
+export const markNoteAsRead = ( noteId, isRead, callback ) => {
+	client && client.markNoteAsRead.call( client, noteId, isRead, callback );
+};
+
 export class Notifications extends PureComponent {
 	static propTypes = {
 		customEnhancer: PropTypes.func,
