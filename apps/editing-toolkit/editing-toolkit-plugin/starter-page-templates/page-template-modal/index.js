@@ -309,6 +309,7 @@ class PageTemplateModal extends Component {
 			servicesTemplates: filter( this.props.templates, { category: 'services' } ),
 			teamTemplates: filter( this.props.templates, { category: 'team' } ),
 			homepageTemplates: sortBy( filter( this.props.templates, { category: 'home' } ), 'title' ),
+			comingSoonTemplates: filter( this.props.templates, { category: 'coming-soon' } ),
 		};
 	};
 
@@ -398,6 +399,7 @@ class PageTemplateModal extends Component {
 			servicesTemplates,
 			teamTemplates,
 			homepageTemplates,
+			comingSoonTemplates,
 		} = this.getTemplateGroups();
 
 		return (
@@ -485,6 +487,11 @@ class PageTemplateModal extends Component {
 									this.renderTemplatesList(
 										homepageTemplates,
 										__( 'Home Pages', 'full-site-editing' )
+									) }
+								{ comingSoonTemplates &&
+									this.renderTemplatesList(
+										comingSoonTemplates,
+										__( 'Coming Soon Pages', 'full-site-editing' )
 									) }
 							</form>
 							<TemplateSelectorPreview
