@@ -136,6 +136,8 @@ const SelectorPage = ( {
 		<Main className="selector__main" wideLayout>
 			{ header }
 			<PlansFilterBar
+				showDurations
+				showProductTypes
 				onProductTypeChange={ trackProductTypeChange }
 				productType={ productType }
 				onDurationChange={ trackDurationChange }

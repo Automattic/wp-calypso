@@ -28,16 +28,20 @@ import type { Duration, ProductType } from '../types';
 import './style.scss';
 
 interface Props {
-	duration: Duration;
-	productType: ProductType;
-	onDurationChange: Function;
-	onProductTypeChange: Function;
+	showDurations?: boolean;
+	showProductTypes?: boolean;
+	duration?: Duration;
+	productType?: ProductType;
+	onDurationChange?: Function;
+	onProductTypeChange?: Function;
 }
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 94;
 
 const PlansFilterBar = ( {
+	showDurations,
+	showProductTypes,
 	duration,
 	productType,
 	onDurationChange,
@@ -57,32 +61,36 @@ const PlansFilterBar = ( {
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
-			<SelectDropdown selectedText={ PRODUCT_TYPE_OPTIONS[ productType ].label }>
-				{ Object.values( PRODUCT_TYPE_OPTIONS ).map( ( option ) => (
-					<SelectDropdown.Item
-						key={ option.id }
-						selected={ productType === option.id }
-						onClick={ () => onProductTypeChange( option.id ) }
+			{ showProductTypes && (
+				<SelectDropdown selectedText={ productType && PRODUCT_TYPE_OPTIONS[ productType ].label }>
+					{ Object.values( PRODUCT_TYPE_OPTIONS ).map( ( option ) => (
+						<SelectDropdown.Item
+							key={ option.id }
+							selected={ productType === option.id }
+							onClick={ () => onProductTypeChange?.( option.id ) }
+						>
+							{ option.label }
+						</SelectDropdown.Item>
+					) ) }
+				</SelectDropdown>
+			) }
+			{ showDurations && (
+				<SegmentedControl primary={ true }>
+					<SegmentedControl.Item
+						onClick={ () => onDurationChange?.( TERM_MONTHLY ) }
+						selected={ duration === TERM_MONTHLY }
 					>
-						{ option.label }
-					</SelectDropdown.Item>
-				) ) }
-			</SelectDropdown>
-			<SegmentedControl primary={ true }>
-				<SegmentedControl.Item
-					onClick={ () => onDurationChange( TERM_MONTHLY ) }
-					selected={ duration === TERM_MONTHLY }
-				>
-					{ translate( 'Monthly' ) }
-				</SegmentedControl.Item>
+						{ translate( 'Monthly' ) }
+					</SegmentedControl.Item>
 
-				<SegmentedControl.Item
-					onClick={ () => onDurationChange( TERM_ANNUALLY ) }
-					selected={ duration === TERM_ANNUALLY }
-				>
-					{ translate( 'Yearly' ) }
-				</SegmentedControl.Item>
-			</SegmentedControl>
+					<SegmentedControl.Item
+						onClick={ () => onDurationChange?.( TERM_ANNUALLY ) }
+						selected={ duration === TERM_ANNUALLY }
+					>
+						{ translate( 'Yearly' ) }
+					</SegmentedControl.Item>
+				</SegmentedControl>
+			) }
 		</div>
 	);
 };
