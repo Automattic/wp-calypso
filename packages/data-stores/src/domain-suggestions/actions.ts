@@ -17,6 +17,7 @@ export const receiveCategories = ( categories: DomainCategory[] ) =>
 export const fetchDomainSuggestions = () =>
 	( {
 		type: 'FETCH_DOMAIN_SUGGESTIONS',
+		timeStamp: Date.now(),
 	} as const );
 
 export const receiveDomainAvailability = ( domainName: string, availability: DomainAvailability ) =>
@@ -41,6 +42,7 @@ export const receiveDomainSuggestionsError = ( errorMessage: string ) =>
 	( {
 		type: 'RECEIVE_DOMAIN_SUGGESTIONS_ERROR',
 		errorMessage,
+		timeStamp: Date.now(),
 	} as const );
 
 export type Action = ReturnType<

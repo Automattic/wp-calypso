@@ -33,14 +33,12 @@ const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 	state = initialDomainSuggestionState,
 	action
 ) => {
-	const timeNow = Date.now();
-
 	if ( action.type === 'FETCH_DOMAIN_SUGGESTIONS' ) {
 		return {
 			...state,
 			state: DataStatus.Pending,
 			errorMessage: null,
-			pendingSince: timeNow,
+			pendingSince: action.timeStamp,
 		};
 	}
 
@@ -53,7 +51,7 @@ const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 				[ stringifyDomainQueryObject( action.queryObject ) ]: action.suggestions,
 			},
 			errorMessage: null,
-			lastUpdated: timeNow,
+			lastUpdated: action.timeStamp,
 			pendingSince: undefined,
 		};
 	}
@@ -63,7 +61,7 @@ const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 			...state,
 			state: DataStatus.Failure,
 			errorMessage: action.errorMessage,
-			lastUpdated: timeNow,
+			lastUpdated: action.timeStamp,
 			pendingSince: undefined,
 		};
 	}
