@@ -9,6 +9,7 @@ A suggestion whose `label` property matches the `query` prop will be highlighted
 
 ```jsx
 import React, { useCallback, useMemo, useState } from 'react';
+import FormTextInput from 'components/forms/form-text-input';
 import { Suggestions } from '@automattic/components';
 
 export default function SuggestionsExample() {
@@ -26,8 +27,7 @@ export default function SuggestionsExample() {
 
 	return (
 		<div className="docs__suggestions-container">
-			<input
-				type="text"
+			<FormTextInput
 				value={ query }
 				onChange={ updateInput }
 				autoComplete="off"

@@ -11,6 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import { Button } from '@automattic/components';
 import { hasProduct, siteRedirect } from 'lib/cart-values/cart-items';
@@ -55,9 +56,8 @@ class SiteRedirectStep extends React.Component {
 					<DomainProductPrice price={ price } requiresPlan={ false } />
 
 					<FormFieldset>
-						<input
+						<FormTextInput
 							className="site-redirect-step__external-domain"
-							type="text"
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'Enter a domain', { textOnly: true } ) }
 							onChange={ this.setSearchQuery }
