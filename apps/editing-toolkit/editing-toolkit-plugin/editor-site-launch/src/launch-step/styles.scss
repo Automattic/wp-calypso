@@ -3,27 +3,25 @@
 @import '~@automattic/typography/styles/fonts';
 @import '~@automattic/onboarding/styles/mixins';
 
-.nux-launch-step {
-	@include onboarding-block-margin;
-	background: var( --studio-white );
+.nux-launch-step__header {
+	@include onboarding-heading-padding;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 
-	// Only show back button when sticky
-	.action-buttons__back {
-		display: inline-flex;
+	// On mobile, show header action buttons.
+	// On desktop, hide header action buttons.
+	.action-buttons {
+		display: none;
 
 		@include break-medium {
-			display: none;
+			display: block;
 		}
 	}
 }
 
-.nux-launch-step__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	@include onboarding-heading-padding;
+.nux-launch-step__body {
+	@include onboarding-body-margin;
 }
 
-.nux-launch-step__heading {
-	flex-grow: 1;
 }

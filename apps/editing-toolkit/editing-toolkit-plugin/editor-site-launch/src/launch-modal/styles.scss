@@ -23,48 +23,36 @@ body.has-nux-launch-modal {
 		position: fixed;
 		top: 0;
 		left: 0;
-		display: block;
+		display: flex;
 		background: var( --studio-white );
 		width: 100%;
 		height: 100%;
 		padding: 0;
-		overflow-y: scroll;
-		overflow-x: auto;
+		overflow: auto;
 	}
 }
 
 .nux-launch-modal-header {
+	@include onboarding-block-edge2edge;
 	display: flex;
 	position: sticky;
 	top: 0;
-	left: 0;
-	z-index: z-index( '.components-modal__header' );
-	width: 100%;
 	height: $onboarding-header-height;
-	background: var( --studio-white );
 	border-bottom: 1px solid $gray-200;
+	background: var( --studio-white );
+	z-index: z-index( '.components-modal__header' );
 
+	// On desktop, do not show bottom border.
 	@include break-medium {
-		height: 0;
-		margin-right: $sidebar-width;
-		background: transparent;
+		position: relative;
 		border-bottom: none;
-		overflow: visible;
 	}
 
 	.nux-launch-progress {
-		display: flex;
-		align-items: center;
 		height: $onboarding-header-height;
 
 		@include break-medium {
 			display: none;
-		}
-	}
-
-	@media ( max-width: $break-medium ) {
-		.is-sidebar-fullscreen & {
-			opacity: 0; // Using visibility: hidden or display: none closes modal
 		}
 	}
 }
@@ -78,12 +66,15 @@ body.has-nux-launch-modal {
 }
 
 .nux-launch-modal-body {
-	padding-bottom: $onboarding-footer-height;
 	position: relative;
+	flex-grow: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	@include onboarding-block-margin;
 
-	@include break-medium {
-		padding-top: $header-height;
-		margin-right: $sidebar-width;
+	.nux-launch-step__body {
+		flex-grow: 1;
 	}
 
 	@media ( max-width: $break-medium ) {
