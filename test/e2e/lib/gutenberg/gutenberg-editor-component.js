@@ -217,8 +217,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async errorDisplayed() {
-		await this.driver.sleep( 1000 );
-		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-error-boundary' ) );
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '.editor-error-boundary' )
+		);
 	}
 
 	async hasInvalidBlocks() {

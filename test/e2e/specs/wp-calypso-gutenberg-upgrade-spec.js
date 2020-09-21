@@ -164,7 +164,6 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		step( 'Blocks do not error in the editor', async function () {
 			await assertNoErrorInEditor();
 		} );
-
 		// Commented-out for now because of https://github.com/Automattic/jetpack/issues/16514
 		/*step( 'Blocks do not invalidate', async function () {
 			await assertNoInvalidBlocksInEditor();
@@ -208,7 +207,7 @@ describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites 
 		'e2egbupgradeexford',
 		'e2egbupgrademayland',
 	].forEach( ( siteName ) => {
-		describe( 'Can add most popular blocks to the editor without errors', function () {
+		describe( `[${ siteName }] Can add most popular blocks to the editor without errors`, function () {
 			step( `Login to ${ siteName }`, async function () {
 				await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
 				gEditorComponent = await GutenbergEditorComponent.Expect( driver );
