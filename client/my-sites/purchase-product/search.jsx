@@ -22,7 +22,6 @@ import page from 'page';
 import SiteUrlInput from '../../jetpack-connect/site-url-input';
 import { cleanUrl } from '../../jetpack-connect/utils';
 import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
 import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import getSites from 'state/selectors/get-sites';
@@ -33,7 +32,11 @@ import { urlToSlug } from 'lib/url';
 import searchSites from 'components/search-sites';
 import jetpackConnection from '../../jetpack-connect/jetpack-connection';
 
-import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from '../../jetpack-connect/constants';
+import {
+	FLOW_TYPES,
+	IS_DOT_COM_GET_SEARCH,
+	JPC_PATH_REMOTE_INSTALL,
+} from '../../jetpack-connect/constants';
 import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
 
 export class SearchPurchase extends Component {

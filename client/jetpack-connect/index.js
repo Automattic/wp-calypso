@@ -15,7 +15,7 @@ import { makeLayout, render as clientRender } from 'controller';
 import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
 import plansV2 from 'my-sites/plans-v2';
-import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
+import { OFFER_RESET_FLOW_TYPES } from 'jetpack-connect/constants';
 
 /**
  * Style dependencies
