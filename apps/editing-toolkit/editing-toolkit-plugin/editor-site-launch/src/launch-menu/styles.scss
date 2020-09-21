@@ -37,12 +37,15 @@
 		left: -1px;
 	}
 
-	&.is-current {
-		background: var( --studio-blue-0 );
-		color: initial;
-
-		svg {
+	// This is only highlighted when sidebar is not fullscreen
+	@include break-medium {
+		&.is-current {
+			background: var( --studio-blue-0 );
 			color: initial;
+
+			svg {
+				color: initial;
+			}
 		}
 	}
 
