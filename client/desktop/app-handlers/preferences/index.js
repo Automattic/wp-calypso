@@ -24,7 +24,7 @@ function promptForRestart( title, message ) {
 
 module.exports = function () {
 	ipc.on( 'preferences-changed', function ( event, { name, value } ) {
-		log.info( `Changed setting '${ name }': `, value );
+		log.info( `Changed setting '${ name }': `, value ? value : 'none' );
 		if ( 'proxy-type' === name ) {
 			promptForRestart( 'Proxy changed', 'You have changed the proxy settings.' );
 		} else if ( 'spellcheck-enabled' === name ) {
