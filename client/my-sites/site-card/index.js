@@ -16,5 +16,5 @@ import { makeLayout, render as clientRender } from 'controller';
 import './style.scss';
 
 export default function () {
-	page( '/site-card/:domain?', siteSelection, navigation, navigation, makeLayout, clientRender ); // 4th arguement should be null (context.primary), but null is not a function
+	page( '/site-card/:domain?', siteSelection, navigation, null, makeLayout, clientRender );
 }
