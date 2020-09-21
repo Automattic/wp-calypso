@@ -1651,14 +1651,14 @@ Undocumented.prototype.activeTheme = function ( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
 };
 
-Undocumented.prototype.activateTheme = function ( themeId, siteId, dontChangeShowOnFront, fn ) {
+Undocumented.prototype.activateTheme = function ( themeId, siteId, dontChangeHomepage, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.post(
 		{
 			path: '/sites/' + siteId + '/themes/mine',
 			body: {
 				theme: themeId,
-				...( dontChangeShowOnFront && { dont_change_show_on_front: true } ),
+				...( dontChangeHomepage && { dont_change_homepage: true } ),
 			},
 		},
 		fn

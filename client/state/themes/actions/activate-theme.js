@@ -14,7 +14,7 @@ import 'state/themes/init';
  * @param {number} siteId    Site ID
  * @param {string} source    The source that is requesting theme activation, e.g. 'showcase'
  * @param {boolean} purchased Whether the theme has been purchased prior to activation
- * @param {boolean} keepLatestPosts Has user asked to keep their latest posts on front
+ * @param {boolean} keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}           Action thunk
  */
 export function activateTheme(
@@ -22,7 +22,7 @@ export function activateTheme(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepLatestPosts = false
+	keepCurrentHomepage = false
 ) {
 	return ( dispatch ) => {
 		dispatch( {
@@ -33,7 +33,7 @@ export function activateTheme(
 
 		return wpcom
 			.undocumented()
-			.activateTheme( themeId, siteId, keepLatestPosts )
+			.activateTheme( themeId, siteId, keepCurrentHomepage )
 			.then( ( theme ) => {
 				// Fall back to ID for Jetpack sites which don't return a stylesheet attr.
 				const themeStylesheet = theme.stylesheet || themeId;

@@ -23,7 +23,7 @@ import 'state/themes/init';
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @param  {boolean}  keepLatestPosts Has user asked to keep their latest posts on front
+ * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}          Action thunk
  */
 export function activate(
@@ -31,7 +31,7 @@ export function activate(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepLatestPosts = false
+	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
 		/**
@@ -53,10 +53,10 @@ export function activate(
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
 			return dispatch(
-				installAndActivateTheme( installId, siteId, source, purchased, keepLatestPosts )
+				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
 			);
 		}
 
-		return dispatch( activateTheme( themeId, siteId, source, purchased, keepLatestPosts ) );
+		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 	};
 }

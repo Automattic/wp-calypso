@@ -22,7 +22,6 @@ import {
 	getPreActivateThemeId,
 } from 'state/themes/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import getSiteOptions from 'state/selectors/get-site-options';
 import {
 	acceptAutoLoadingHomepageWarning,
 	hideAutoLoadingHomepageWarning,
@@ -53,7 +52,7 @@ class AutoLoadingHomepageModal extends Component {
 	};
 
 	state = {
-		homepageAction: 'keep_latest_posts',
+		homepageAction: 'keep_current_homepage',
 	};
 
 	handleHomepageAction = ( event ) => {
@@ -62,10 +61,16 @@ class AutoLoadingHomepageModal extends Component {
 
 	closeModalHandler = ( activate = false ) => () => {
 		if ( activate ) {
-			const { installingThemeId, postsOnFrontPage, siteId, source } = this.props;
+			const { installingThemeId, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-			const keepLatestPosts = postsOnFrontPage && this.state.homepageAction === 'keep_latest_posts';
-			return this.props.activateTheme( installingThemeId, siteId, source, false, keepLatestPosts );
+			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+			return this.props.activateTheme(
+				installingThemeId,
+				siteId,
+				source,
+				false,
+				keepCurrentHomepage
+			);
 		}
 		this.props.hideAutoLoadingHomepageWarning();
 	};
@@ -78,7 +83,6 @@ class AutoLoadingHomepageModal extends Component {
 			hasAutoLoadingHomepage,
 			isCurrentTheme,
 			isVisible = false,
-			postsOnFrontPage,
 		} = this.props;
 
 		// Nothing to do when it's the current theme.
@@ -109,17 +113,13 @@ class AutoLoadingHomepageModal extends Component {
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
-						label: postsOnFrontPage
-							? translate( 'Keep my current theme' )
-							: translate( 'No, keep my current theme' ),
+						label: translate( 'Keep my current theme' ),
 						isPrimary: false,
 						onClick: this.closeModalHandler( false ),
 					},
 					{
 						action: 'activeTheme',
-						label: postsOnFrontPage
-							? translate( 'Activate %(themeName)s', { args: { themeName } } )
-							: translate( 'Yes, activate %(themeName)s', { args: { themeName } } ),
+						label: translate( 'Activate %(themeName)s', { args: { themeName } } ),
 						isPrimary: true,
 						onClick: this.closeModalHandler( true ),
 					},
@@ -128,58 +128,38 @@ class AutoLoadingHomepageModal extends Component {
 			>
 				<div>
 					<h1>
-						{ postsOnFrontPage
-							? translate( "Activating %(themeName)s can change your existing homepage's content", {
-									args: { themeName },
-							  } )
-							: translate(
-									"Activating %(themeName)s will change your existing homepage's content",
-									{
-										args: { themeName },
-									}
-							  ) }
+						{ translate( 'Homepage Content', {
+							args: { themeName },
+						} ) }
 					</h1>
-					{ postsOnFrontPage ? (
-						<>
-							<h2 className="themes__auto-loading-homepage-modal-options-heading">
-								{ translate( 'How would you like to continue?' ) }
-							</h2>
-							<FormLabel>
-								<FormRadio
-									value="keep_latest_posts"
-									checked={ 'keep_latest_posts' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-								/>
-								{ translate( 'Keep using my latest posts' ) }
-							</FormLabel>
-							<FormLabel>
-								<FormRadio
-									value="use_new_homepage"
-									checked={ 'use_new_homepage' === this.state.homepageAction }
-									onChange={ this.handleHomepageAction }
-									aria-describedby="themes__auto-loading-homepage-modal-homepage-hint"
-								/>
-								{ translate( "Use %(themeName)s's homepage and content", {
-									args: { themeName },
-								} ) }
-							</FormLabel>
-							<div
-								className="themes__auto-loading-homepage-modal-homepage-hint"
-								id="themes__auto-loading-homepage-modal-homepage-hint"
-							>
-								{ translate( '(This will set your existing homepage to draft)' ) }
-							</div>
-						</>
-					) : (
-						<p>
-							{ translate(
-								'{{strong}}Your existing homepage will be set to draft.{{/strong}} Would you like to continue?',
-								{
-									components: { strong: <strong /> },
-								}
-							) }
-						</p>
-					) }
+					<h2 className="themes__auto-loading-homepage-modal-options-heading">
+						{ translate( 'How would you like to use %(themeName)s on your site?', {
+							args: { themeName },
+						} ) }
+					</h2>
+					<FormLabel>
+						<FormRadio
+							value="keep_current_homepage"
+							checked={ 'keep_current_homepage' === this.state.homepageAction }
+							onChange={ this.handleHomepageAction }
+						/>
+						{ translate( 'Use %(themeName)s without changing my homepage content', {
+							args: { themeName },
+						} ) }
+					</FormLabel>
+					<FormLabel>
+						<FormRadio
+							value="use_new_homepage"
+							checked={ 'use_new_homepage' === this.state.homepageAction }
+							onChange={ this.handleHomepageAction }
+						/>
+						{ translate(
+							"Use %(themeName)s's homepage content and make my existing homepage a draft",
+							{
+								args: { themeName },
+							}
+						) }
+					</FormLabel>
 				</div>
 			</Dialog>
 		);
@@ -190,7 +170,6 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const installingThemeId = getPreActivateThemeId( state );
-		const siteOptions = getSiteOptions( state, siteId );
 
 		return {
 			siteId,
@@ -201,7 +180,6 @@ export default connect(
 			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
 			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
-			postsOnFrontPage: siteOptions?.show_on_front === 'posts',
 		};
 	},
 	{
