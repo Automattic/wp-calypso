@@ -51,8 +51,6 @@ module.exports = function ( mainWindow ) {
 
 		log.info( `Received ${ note.type } notification for site ${ siteTitle }` );
 
-		// TODO: Switch from "unseen count" in Preferences, check if enabled
-		// https://www.electronjs.org/docs/api/notification
 		if ( Notification.isSupported() ) {
 			const title = siteTitle;
 			const subtitle = note.subject.length > 1 ? note.subject[ 0 ].text : '';
