@@ -76,14 +76,13 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 				</div>
 			) : (
 				<>
-					<div className="nux-launch-modal-header">
-						<div className="nux-launch-modal-header__wp-logo">
-							<Icon icon={ wordpress } size={ 36 } />
-						</div>
-						<LaunchProgress />
-						<CloseButton onClick={ onClose } />
-					</div>
 					<div className="nux-launch-modal-body">
+						<div className="nux-launch-modal-header">
+							<div className="nux-launch-modal-header__wp-logo">
+								<Icon icon={ wordpress } size={ 36 } />
+							</div>
+							<LaunchProgress />
+						</div>
 						<EntityProvider kind="root" type="site">
 							<Launch onSubmit={ handleLaunch } />
 						</EntityProvider>
