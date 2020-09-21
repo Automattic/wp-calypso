@@ -147,7 +147,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		/*
-			V2 Cover all the states
+			V2 Cover all the states including v2 handling of v1 states
 
 			Possible States:
 
