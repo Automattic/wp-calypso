@@ -27,11 +27,13 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PREMIUM,
+	PLAN_JETPACK_SECURITY_DAILY,
 } from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
 import { localizeUrl } from 'lib/i18n-utils';
+import { addQueryArgs } from '@wordpress/url';
 
 /**
  * Image dependencies
@@ -127,7 +129,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
 						page(
-							`/plans/${ selectedSiteSlug }?feature=${ FEATURE_SIMPLE_PAYMENTS }&plan=${ PLAN_PREMIUM }`
+							addQueryArgs( `/plans/${ selectedSiteSlug }`, {
+								feature: FEATURE_SIMPLE_PAYMENTS,
+								plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+							} )
 						);
 					},
 			  };
