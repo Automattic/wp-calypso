@@ -19,37 +19,41 @@ describe( 'webpack-config-flag-plugin', () => {
 		rimraf.sync( buildDirectory );
 	} );
 
-	test( 'should produce expected output', ( done ) => {
-		const config = {
-			context: fixturesDirectory,
-			entry: path.join( fixturesDirectory, 'main.js' ),
-			mode: 'production',
-			devtool: false,
-			optimization: {
-				runtimeChunk: true,
-				moduleIds: 'named',
-				chunkIds: 'named',
-				minimize: false,
-			},
-			output: {
-				path: buildDirectory,
-				pathinfo: false,
-			},
-			resolve: {
-				extensions: [ '.js' ],
-				modules: [ fixturesDirectory ],
-			},
-			plugins: [ new ConfigFlagPlugin( { flags: { foo: true } } ) ],
-		};
+	test( 'should produce expected output', () =>
+		new Promise( ( done ) => {
+			const config = {
+				context: fixturesDirectory,
+				entry: path.join( fixturesDirectory, 'main.js' ),
+				mode: 'production',
+				devtool: false,
+				optimization: {
+					runtimeChunk: true,
+					moduleIds: 'named',
+					chunkIds: 'named',
+					minimize: false,
+				},
+				output: {
+					path: buildDirectory,
+					pathinfo: false,
+				},
+				resolve: {
+					extensions: [ '.js' ],
+					modules: [ fixturesDirectory ],
+					alias: {
+						'calypso/config': 'config',
+					},
+				},
+				plugins: [ new ConfigFlagPlugin( { flags: { foo: true } } ) ],
+			};
 
-		webpack( config, ( err ) => {
-			expect( err ).toBeNull();
+			webpack( config, ( err ) => {
+				expect( err ).toBeNull();
 
-			const outputFile = path.join( buildDirectory, 'main.js' );
-			const outputFileContent = fs.readFileSync( outputFile, 'utf8' );
-			expect( outputFileContent ).toMatchSnapshot( 'Output bundle should match snapshot' );
+				const outputFile = path.join( buildDirectory, 'main.js' );
+				const outputFileContent = fs.readFileSync( outputFile, 'utf8' );
+				expect( outputFileContent ).toMatchSnapshot( 'Output bundle should match snapshot' );
 
-			done();
-		} );
-	} );
+				done();
+			} );
+		} ) );
 } );
