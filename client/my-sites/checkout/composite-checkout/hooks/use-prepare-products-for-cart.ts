@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -223,6 +224,8 @@ function useAddPlanFromSlug( {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
 	const plans = useSelector( ( state ) => getPlans( state ) );
 	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
+	const translate = useTranslate();
+
 	useEffect( () => {
 		if ( ! isLoading ) {
 			// No need to run if we have completed already
@@ -243,7 +246,9 @@ function useAddPlanFromSlug( {
 			debug( 'there is a request to add a plan but no plan was found', planSlug );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Could not find plan matching '${ planSlug }'`,
+				message: String(
+					translate( "Could not find plan matching '%(planSlug)s'", { args: { planSlug } } )
+				),
 			} );
 			return;
 		}
@@ -256,7 +261,9 @@ function useAddPlanFromSlug( {
 			debug( 'there is a request to add a plan but creating an item failed', planSlug );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Creating a plan failed for '${ planSlug }'`,
+				message: String(
+					translate( "Creating a plan failed for '%(planSlug)s'", { args: { planSlug } } )
+				),
 			} );
 			return;
 		}
@@ -267,6 +274,7 @@ function useAddPlanFromSlug( {
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
 	}, [
+		translate,
 		isLoading,
 		plans,
 		originalPurchaseId,
@@ -299,6 +307,7 @@ function useAddProductFromSlug( {
 	const plans = useSelector( ( state ) => getPlans( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
+	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
 	// referencing more than one product. Because of this, the rest of this function will
@@ -355,7 +364,11 @@ function useAddProductFromSlug( {
 			);
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Could not find any products matching '${ productAliasFromUrl }'`,
+				message: String(
+					translate( "Could not find any products matching '%(productAliasFromUrl)s'", {
+						args: { productAliasFromUrl },
+					} )
+				),
 			} );
 			return;
 		}
@@ -378,7 +391,11 @@ function useAddProductFromSlug( {
 			);
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Creating products failed for '${ productAliasFromUrl }'`,
+				message: String(
+					translate( "Creating products failed for '%(productAliasFromUrl)s'", {
+						args: { productAliasFromUrl },
+					} )
+				),
 			} );
 			return;
 		}
@@ -389,6 +406,7 @@ function useAddProductFromSlug( {
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
+		translate,
 		isLoading,
 		isPrivate,
 		plans,
