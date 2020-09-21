@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,10 +25,17 @@ class EmailProviderDetails extends React.Component {
 		image: PropTypes.object.isRequired,
 		features: PropTypes.arrayOf( PropTypes.string ).isRequired,
 		badge: PropTypes.string,
-		formattedPrice: PropTypes.string,
+		formattedPrice: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
 		discount: PropTypes.string,
 		buttonLabel: PropTypes.string,
 		hasPrimaryButton: PropTypes.bool,
+		className: PropTypes.string,
+		onButtonClick: PropTypes.func,
+		isButtonBusy: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		onButtonClick: noop,
 	};
 
 	renderFeatures() {
@@ -46,13 +54,20 @@ class EmailProviderDetails extends React.Component {
 			discount,
 			buttonLabel,
 			hasPrimaryButton,
+			className,
+			isButtonBusy,
 		} = this.props;
 
 		return (
-			<PromoCard { ...{ title, image, badge } }>
+			<PromoCard { ...{ className, title, image, badge } }>
 				<p className="email-provider-details__description">{ description }</p>
 				<PromoCardPrice { ...{ formattedPrice, discount } } />
-				<Button className="email-provider-details__cta" primary={ hasPrimaryButton }>
+				<Button
+					className="email-provider-details__cta"
+					primary={ hasPrimaryButton }
+					onClick={ this.props.onButtonClick }
+					busy={ isButtonBusy }
+				>
 					{ buttonLabel }
 				</Button>
 				<div>{ this.renderFeatures() }</div>
