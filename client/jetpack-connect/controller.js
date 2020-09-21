@@ -15,7 +15,6 @@ import config from 'config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
-import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
@@ -126,12 +125,6 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 		return page.redirect( urlWithoutLocale );
 	}
 
-	next();
-}
-
-export function newSite( context, next ) {
-	recordPageView( '/jetpack/new', 'Add a new site (Jetpack)' );
-	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
 }
 

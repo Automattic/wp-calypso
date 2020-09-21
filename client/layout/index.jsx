@@ -109,7 +109,7 @@ class Layout extends Component {
 		}
 
 		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
-		const exemptedRoutes = [ '/jetpack/new', '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
 
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
@@ -137,7 +137,6 @@ class Layout extends Component {
 			`is-section-${ this.props.sectionName }`,
 			`focus-${ this.props.currentLayoutFocus }`,
 			{
-				'is-add-site-page': this.props.currentRoute === '/jetpack/new',
 				'is-support-session': this.props.isSupportSession,
 				'has-no-sidebar': ! this.props.secondary,
 				'has-chat': this.props.chatIsOpen,

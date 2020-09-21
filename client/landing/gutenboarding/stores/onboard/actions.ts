@@ -11,6 +11,7 @@ import {
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'lib/i18n-utils';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -54,15 +55,14 @@ export function* createSite(
 	}: State = yield select( ONBOARD_STORE, 'getState' );
 
 	const shouldEnableFse = !! selectedDesign?.is_fse;
-
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-
 	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-		blog_title: siteTitle,
+		blog_title: blogTitle,
 		public: visibility,
 		options: {
 			site_vertical: siteVertical?.id,
@@ -73,7 +73,7 @@ export function* createSite(
 			// TODO: determine default vertical should user input match no official vertical
 			site_vertical_slug: siteVertical?.slug || 'football',
 			site_information: {
-				title: siteTitle,
+				title: blogTitle,
 			},
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',

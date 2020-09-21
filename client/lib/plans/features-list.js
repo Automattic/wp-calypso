@@ -1284,31 +1284,6 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ constants.FEATURE_CRM_LEADS_AND_FUNNEL ]: {
-		getSlug: () => constants.FEATURE_CRM_LEADS_AND_FUNNEL,
-		getTitle: () => i18n.translate( 'Easily view leads and sales funnel' ),
-	},
-
-	[ constants.FEATURE_CRM_PROPOSALS_AND_INVOICES ]: {
-		getSlug: () => constants.FEATURE_CRM_PROPOSALS_AND_INVOICES,
-		getTitle: () => i18n.translate( 'Create proposals and invoices' ),
-	},
-
-	[ constants.FEATURE_CRM_TRACK_TRANSACTIONS ]: {
-		getSlug: () => constants.FEATURE_CRM_TRACK_TRANSACTIONS,
-		getTitle: () => i18n.translate( 'Track transactions' ),
-	},
-
-	[ constants.FEATURE_CRM_NO_CONTACT_LIMITS ]: {
-		getSlug: () => constants.FEATURE_CRM_NO_CONTACT_LIMITS,
-		getTitle: () => i18n.translate( 'No contact limits' ),
-	},
-
-	[ constants.FEATURE_CRM_PRIORITY_SUPPORT ]: {
-		getSlug: () => constants.FEATURE_CRM_PRIORITY_SUPPORT,
-		getTitle: () => i18n.translate( 'Priority support' ),
-	},
-
 	[ constants.FEATURE_SOCIAL_MEDIA_POSTING_V2 ]: {
 		getSlug: () => constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
 		getTitle: () => i18n.translate( 'Scheduled social media posting' ),
