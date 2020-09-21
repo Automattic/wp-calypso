@@ -155,7 +155,6 @@ function register_blocks() {
 		array(
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_render_login_button_block',
 			'style'           => 'premium-content-frontend',
-			$uses             => array( 'premium-content/planId' ),
 		)
 	);
 }
