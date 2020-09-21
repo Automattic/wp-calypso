@@ -88,6 +88,16 @@
 		margin: $onboarding-heading-margin-medium;
 	}
 }
+
+@mixin onboarding-body-margin {
+	margin: $onboarding-body-margin-mobile;
+
+	@include break-small {
+		margin: $onboarding-body-margin-small;
+	}
+
+	@include break-medium {
+		margin: $onboarding-body-margin-medium;
 	}
 }
 
