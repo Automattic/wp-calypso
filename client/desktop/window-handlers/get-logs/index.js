@@ -8,6 +8,7 @@ const { app, dialog } = require( 'electron' ); // eslint-disable-line import/no-
  * Internal dependencies
  */
 const state = require( 'desktop/lib/state' );
+const config = require( 'desktop/lib/config' );
 const system = require( 'desktop/lib/system' );
 const { zipContents } = require( 'desktop/lib/archiver' );
 const log = require( 'desktop/lib/logger' )( 'desktop:get-logs' );
@@ -16,6 +17,7 @@ const log = require( 'desktop/lib/logger' )( 'desktop:get-logs' );
  * Module variables
  */
 const logPath = state.getLogPath();
+const settingsPath = path.join( app.getPath( 'appData' ), config.appPathName, 'settings.json' );
 
 const pad = ( n ) => `${ n }`.padStart( 2, '0' );
 
@@ -70,7 +72,7 @@ module.exports = async function ( window ) {
 		const desktop = app.getPath( 'desktop' );
 		const dst = path.join( desktop, `wpdesktop-${ timestamp }.zip` );
 
-		zipContents( [ logPath ], dst, onZipped( dst ) );
+		zipContents( [ logPath, settingsPath ], dst, onZipped( dst ) );
 	} catch ( error ) {
 		log.error( 'Failed to zip logs: ', error );
 		onError( error );
