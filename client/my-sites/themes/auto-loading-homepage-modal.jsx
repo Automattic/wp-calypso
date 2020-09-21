@@ -152,7 +152,7 @@ class AutoLoadingHomepageModal extends Component {
 							value="keep_current_homepage"
 							checked={ 'keep_current_homepage' === this.state.homepageAction }
 							onChange={ this.handleHomepageAction }
-							label={ translate( 'Use %(themeName)s without changing my homepage content', {
+							label={ translate( 'Use %(themeName)s without changing my homepage content.', {
 								args: { themeName },
 							} ) }
 						/>
@@ -163,7 +163,7 @@ class AutoLoadingHomepageModal extends Component {
 							checked={ 'use_new_homepage' === this.state.homepageAction }
 							onChange={ this.handleHomepageAction }
 							label={ translate(
-								"Use %(themeName)s's homepage content and make my existing homepage a draft",
+								"Use %(themeName)s's homepage content and make my existing homepage a draft.",
 								{
 									args: { themeName },
 								}
