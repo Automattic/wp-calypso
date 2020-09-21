@@ -14,7 +14,7 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'state/purchases/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
@@ -23,15 +23,24 @@ import './style.scss';
 export default function SubscriptionsContent() {
 	const isFetchingPurchases = useSelector( ( state ) => isFetchingUserPurchases( state ) );
 	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedUserPurchasesFromServer( state ) );
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const translate = useTranslate();
 
 	if ( isFetchingPurchases && ! hasLoadedPurchases ) {
 		return <PurchasesSite isPlaceholder />;
 	}
 
-	if ( hasLoadedPurchases && ! purchases.length && ! selectedSite?.ID ) {
+	if ( ! selectedSiteId ) {
+		return <NoSitesMessage />;
+	}
+
+	if ( ! selectedSite?.ID ) {
+		return <PurchasesSite isPlaceholder />;
+	}
+
+	if ( hasLoadedPurchases && ! purchases.length ) {
 		return <NoSitesMessage />;
 	}
 
