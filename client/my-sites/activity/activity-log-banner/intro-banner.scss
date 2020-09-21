@@ -14,10 +14,6 @@
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		max-width: 64px;
-	}
-
-	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }
