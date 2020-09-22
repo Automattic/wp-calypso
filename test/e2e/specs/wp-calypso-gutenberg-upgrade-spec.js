@@ -61,7 +61,21 @@ const blockInits = new Map()
 		await block.setupColumns( 2 );
 		await block.insertBlock( RatingStarBlockComponent );
 		await block.insertBlock( DynamicSeparatorBlockComponent );
-	} );
+	} )
+	.set( ContactInfoBlockComponent, ( block ) =>
+		block.fillUp( {
+			email: 'awesome@possum.ttt',
+			phoneNumber: '555-234-4323',
+			streetAddress: 'E2E street',
+			addressLine2: 'underground bunker 2',
+			addressLine3: '#1111',
+			city: 'GutenPolis',
+			state: 'Gutenfolia',
+			zipCode: '1337',
+			country: 'United Gutenberg States of Calypsoland',
+			linkToGmaps: true,
+		} )
+	);
 
 /**
  * Wrapper that provides an uniform API for creating blocks on the page. It uses the `inits`
