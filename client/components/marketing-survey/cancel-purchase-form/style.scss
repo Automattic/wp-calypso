@@ -1,4 +1,4 @@
-.dialog__content .cancel-purchase-form__reason-input {
+.dialog__content input[type='text'].cancel-purchase-form__reason-input.form-text-input {
 	margin: 4px 0 0 24px;
 	width: calc( 100% - 24px );
 }
