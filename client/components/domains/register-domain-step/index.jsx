@@ -1303,8 +1303,13 @@ class RegisterDomainStep extends React.Component {
 			domainAvailability.MAPPED === lastDomainStatus
 				? this.goToTransferDomainStep
 				: this.goToUseYourDomainStep;
-		const { isPlanSelectionUnavailableInFlow = false } = this.props;
-		const shouldHideFreeDomainExplainer = isPlanSelectionUnavailableInFlow;
+
+		const {
+			isPlanSelectionUnavailableInFlow = false,
+			forceHideFreeDomainExplainer = false,
+		} = this.props;
+		const shouldHideFreeDomainExplainer =
+			forceHideFreeDomainExplainer || isPlanSelectionUnavailableInFlow;
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/

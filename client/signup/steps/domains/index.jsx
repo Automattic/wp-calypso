@@ -135,6 +135,11 @@ class DomainsStep extends React.Component {
 	 */
 	getIsPlanSelectionUnavailableInFlow = () => {
 		const { steps, isPlanStepSkipped } = this.props;
+
+		/**
+		 * Caveat here even though "plans" step maybe available in a flow it might not be active
+		 * i.e. Check flow "domain"
+		 */
 		const isPlansStepExistsInFlow = steps?.some(
 			( stepName ) => getStepModuleName( stepName ) === 'plans'
 		);
@@ -217,18 +222,21 @@ class DomainsStep extends React.Component {
 		return this.getThemeSlug() ? true : false;
 	}
 
-	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const hideFreePlanTracksProp = this.getIsPlanSelectionUnavailableInFlow()
-			? { should_hide_free_plan: shouldHideFreePlan }
-			: {};
-
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
 				flow: this.props.flowName,
 				step: this.props.stepName,
 			},
-			hideFreePlanTracksProp
+			/*
+			 * This is done to avoid tracking a shouldHideFreePlan flag
+			 * for steps that do not have a future dependency on this parameter.
+			 * If shouldHideFreePlan is undefined or there is no plans step in this flow it will not be tracked
+			 */
+			shouldHideFreePlan !== undefined && ! this.getIsPlanSelectionUnavailableInFlow()
+				? { should_hide_free_plan: shouldHideFreePlan }
+				: {}
 		);
 
 		this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
@@ -245,7 +253,7 @@ class DomainsStep extends React.Component {
 		} );
 	};
 
-	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
+	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan ) => {
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -288,9 +296,9 @@ class DomainsStep extends React.Component {
 				/*
 				 * This is done to avoid enforcing a shouldHideFreePlan dependency
 				 * for steps depending on the domains component.
-				 * A falsy param is not provided and shouldHideFreePlan should always be provided as an optional dependency.
+				 * If shouldHideFreePlan is nundefined it will not be propegated as a dependency
 				 */
-				shouldHideFreePlan ? { shouldHideFreePlan } : {},
+				shouldHideFreePlan !== undefined ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem
 			)
 		);
@@ -487,6 +495,7 @@ class DomainsStep extends React.Component {
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
+				forceHideFreeDomainExplainer={ this.props.forceHideFreeDomainExplainer }
 				isReskinned={ this.props.isReskinned }
 			/>
 		);
