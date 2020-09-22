@@ -13,7 +13,10 @@ import adminReducer from '../reducer';
 describe( 'reducer', () => {
 	describe( 'adminReducer', () => {
 		test( 'returns default state when no arguments provided', () => {
-			const defaultState = deepFreeze( {} );
+			const defaultState = deepFreeze( {
+				menus: {},
+				requesting: {},
+			} );
 			expect( adminReducer( undefined, {} ) ).toEqual( defaultState );
 		} );
 
@@ -23,10 +26,18 @@ describe( 'reducer', () => {
 				siteId: 123456,
 				menu: menuFixture,
 			};
-			const initalState = deepFreeze( {} );
+			const initalState = deepFreeze( {
+				menus: {},
+				requesting: {},
+			} );
 
 			expect( adminReducer( initalState, action ) ).toEqual( {
-				123456: menuFixture,
+				menus: {
+					123456: menuFixture,
+				},
+				requesting: {
+					isRequesting: false,
+				},
 			} );
 		} );
 	} );
