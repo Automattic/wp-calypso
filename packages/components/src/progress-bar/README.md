@@ -10,13 +10,8 @@ Once this component is mounted, it will always progress forward, never backward:
 ```js
 import { ProgressBar } from '@automattic/components';
 
-render() {
-	return <ProgressBar
-		value={ amount }
-		total={ total }
-		color={ color }
-		title={ title }
-	/>;
+function render() {
+	return <ProgressBar value={ amount } total={ total } color={ color } title={ title } />;
 }
 ```
 
