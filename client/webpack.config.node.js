@@ -150,12 +150,6 @@ const webpackConfig = {
 					chunkGroups: true,
 				},
 			} ),
-		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( {
-			banner: 'require( "source-map-support" ).install();',
-			raw: true,
-			entryOnly: false,
-		} ),
 		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
