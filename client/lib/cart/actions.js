@@ -120,8 +120,11 @@ export function removeCoupon() {
 
 export function getRememberedCoupon() {
 	// read coupon list from localStorage, return early if it's not there
-	const couponsJson = window.localStorage.getItem( MARKETING_COUPONS_KEY );
-	const coupons = JSON.parse( couponsJson );
+	let coupons = null;
+	try {
+		const couponsJson = window.localStorage.getItem( MARKETING_COUPONS_KEY );
+		coupons = JSON.parse( couponsJson );
+	} catch ( err ) {}
 	if ( ! coupons ) {
 		debug( 'No coupons found in localStorage: ', coupons );
 		return null;
@@ -157,8 +160,11 @@ export function getRememberedCoupon() {
 	} );
 
 	// write remembered coupons back to localStorage
-	debug( 'Storing coupons in localStorage: ', coupons );
-	window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	try {
+		debug( 'Storing coupons in localStorage: ', coupons );
+		window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
+	} catch ( err ) {}
+
 	if (
 		ALLOWED_COUPON_CODE_LIST.includes(
 			mostRecentCouponCode?.includes( '_' )
