@@ -7,10 +7,8 @@ This component is used to implement a checkbox which you can use to bulk select 
 ```jsx
 import BulkSelect from 'components/bulk-select';
 
-render: function() {
-	return (
-		<BulkSelect selectedElements={ 3 } totalElements={ 6 } onToggle={ callback } />
-	);
+function render() {
+	return <BulkSelect selectedElements={ 3 } totalElements={ 6 } onToggle={ callback } />;
 }
 ```
 

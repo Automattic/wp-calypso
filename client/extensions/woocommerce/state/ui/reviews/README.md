@@ -13,24 +13,24 @@ Updates the current reviews list query. See <https://github.com/woocommerce/wc-a
 This is saved on a per-site basis. `currentPage` returns the current page being viewed by the user. `currentSearch` returns the current search term being viewed by the user. `currentProduct` returns the current product being viewed, if reviews are filtered down to a specific product.
 
 ```js
-{
+const object = {
 	reviews: {
 		123: {
 			list: {
 				currentPage: 2,
 				currentSearch: 'example',
 				currentProduct: null,
-			}
+			},
 		},
 		234: {
 			list: {
 				currentPage: 5,
 				currentSearch: 'test',
 				currentProduct: 50,
-			}
+			},
 		},
 	},
-}
+};
 ```
 
 ## Selectors

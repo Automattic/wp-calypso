@@ -9,7 +9,7 @@ Render the component without props. It does not accept any children or render an
 ```jsx
 import QueryLanguageNames from 'components/data/query-language-names';
 
-export default function() {
+export default function () {
 	return (
 		<div>
 			<QueryLanguageNames />

@@ -7,12 +7,9 @@ This component displays a heading for a `<Card>`
 ```js
 import CardHeading from 'components/card-heading';
 
-render() {
+function render() {
 	return (
-		<CardHeading
-			tagName="h1"
-			size={ 21 }
-		>
+		<CardHeading tagName="h1" size={ 21 }>
 			Put your heading text here
 		</CardHeading>
 	);

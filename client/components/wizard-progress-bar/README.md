@@ -11,14 +11,13 @@ import PropTypes from 'prop-types';
 import WizardProgressBar from 'components/wizard-progress-bar';
 
 export default class WizardProgressBarExample extends Component {
-
 	static defaultProps = {
 		numberOfSteps: PropTypes.number.isRequired,
 	};
 
 	state = {
-		currentStep: 1
-	}
+		currentStep: 1,
+	};
 
 	handleNextButtonClick = () => {
 		this.setState( {

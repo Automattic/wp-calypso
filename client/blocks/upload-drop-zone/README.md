@@ -5,12 +5,10 @@ A combined drop-zone and filepicker for uploading zip files. Click to open a fil
 ## Usage
 
 ```jsx
-render() {
+function render() {
 	const doUpload = this.props.uploadTheme;
-	
-	return (
-		<UploadDropZone doUpload={ doUpload } />
-	);
+
+	return <UploadDropZone doUpload={ doUpload } />;
 }
 ```
 

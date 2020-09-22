@@ -12,12 +12,11 @@ For hard-to-debug cases, `log` function is being exported to log unusual events.
 
 ### Example
 
-```JavaScript
+```javascript
 import log from 'lib/catch-js-errors/log';
 
 // Something unusual happened
 log( 'This is unexpected', { additionalData: 'data' } );
-
 ```
 
 ### Use cases

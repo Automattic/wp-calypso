@@ -7,7 +7,7 @@ This component is used to display a update indicator which can be turned into a 
 ```js
 import PluginSiteUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
 
-render() {
+function render() {
 	return (
 		<PluginSiteUpdateIndicator
 			site={ this.props.site }

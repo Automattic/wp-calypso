@@ -30,7 +30,9 @@ Then in the component file, enhance with `urlSearch`:
  */
 import urlSearch from 'lib/url-search';
 
-class SomeComponentWithSearch extends Component { ... }
+class SomeComponentWithSearch extends Component {
+	/*...*/
+}
 
 export default urlSearch( SomeComponentWithSearch );
 ```
@@ -38,23 +40,21 @@ export default urlSearch( SomeComponentWithSearch );
 Then within your render method, apply the following properties to the `Search` component; `onSearch` and `initialValue`.
 
 ```jsx
-render() {
-	return (
-		<Search onSearch={ this.props.doSearch } initialValue={ this.props.search } delaySearch />
-	);
+function render() {
+	return <Search onSearch={ this.props.doSearch } initialValue={ this.props.search } delaySearch />;
 }
 ```
 
 _If_ your search component should only be displayed dynamically, you can use `this.getSearchOpen()` to determine whether the search should be open or closed, like so:
 
 ```jsx
-render() {
+function render() {
 	const containerClass = classNames( {
-		'search-open': this.props.getSearchOpen()
+		'search-open': this.props.getSearchOpen(),
 	} );
 
 	return (
-		<div classNames={ containerClass } >
+		<div classNames={ containerClass }>
 			<Search onSearch={ this.props.doSearch } initialValue={ this.props.search } delaySearch />
 		</div>
 	);

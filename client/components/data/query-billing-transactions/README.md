@@ -16,10 +16,8 @@ export default function MyBillingTransactions( { billingTransactions } ) {
 		<div>
 			<QueryBillingTransactions />
 			{ billingTransactions.map( ( billingEntries, billingEntryType ) => {
-				return (
-					<MyBillingTransactionsList items={ billingEntries } />
-				);
-			} }
+				return <MyBillingTransactionsList items={ billingEntries } />;
+			} ) }
 		</div>
 	);
 }

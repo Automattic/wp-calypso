@@ -12,6 +12,6 @@ localStorage.length;
 
 Just require and call this once into the page (prior to any calls to these methods) and it will either create or augment the `window.localStorage` object as necessary.
 
-```es6
+```js
 import localStorePolyfill from 'lib/local-storage-polyfill';
 ```

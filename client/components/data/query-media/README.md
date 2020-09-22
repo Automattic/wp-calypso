@@ -14,16 +14,10 @@ import MyMediaListItem from './list-item';
 export default function MyMediaList( { media } ) {
 	return (
 		<div>
-			<QueryMedia
-				siteId={ 3584907 }
-				query={ { search: 'Themes' } } />
+			<QueryMedia siteId={ 3584907 } query={ { search: 'Themes' } } />
 			{ media.map( ( medium ) => {
-				return (
-					<MyMediaListItem
-						key={ item.ID }
-						item={ item } />
-				);
-			} }
+				return <MyMediaListItem key={ item.ID } item={ item } />;
+			} ) }
 		</div>
 	);
 }

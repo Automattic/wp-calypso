@@ -7,15 +7,10 @@ This component is used to display small infobox with the data of a plugin.
 ```js
 import PluginListItem from 'my-sites/plugins-browser-item';
 
-render() {
+function render() {
 	return (
 		<div>
-			<PluginListItem
-				key={ slug }
-				plugin={ plugin }
-				isPlaceholder
-				site={ site }
-			/>
+			<PluginListItem key={ slug } plugin={ plugin } isPlaceholder site={ site } />
 		</div>
 	);
 }

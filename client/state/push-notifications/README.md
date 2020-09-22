@@ -23,28 +23,24 @@ A module for managing push notification state & communicating with the service w
 import React from 'react';
 import { connect } from 'react-redux';
 
-function mapStateToProps( state ) => {
+function mapStateToProps( state ) {
 	return {
 		getStatus: getStatus( state ),
 		isBlocked: isBlocked( state ),
 		isEnabled: isEnabled( state ),
-		isNoticeDismissed: isNoticeDismissed( state )
+		isNoticeDismissed: isNoticeDismissed( state ),
 		// etc.
 	};
 }
 const mapDispatchToProps = {
-	toggleEnabled
+	toggleEnabled,
 };
 
 class YourReactClass extends React.Component {
 	toggleEnabled = () => {
 		this.props.toggleEnabled();
-	}
+	};
 }
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( YourReactClass );
-
+export default connect( mapStateToProps, mapDispatchToProps )( YourReactClass );
 ```

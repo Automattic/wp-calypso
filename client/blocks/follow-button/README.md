@@ -9,10 +9,10 @@ For most uses, the container is the easiest route.
 ```js
 import FollowButtonContainer from 'blocks/follow-button';
 
-render() {
+function render() {
 	return (
 		<div className="your-stuff">
-			  <FollowButtonContainer siteUrl="http://trailnose.com" />
+			<FollowButtonContainer siteUrl="http://trailnose.com" />
 		</div>
 	);
 }
@@ -27,10 +27,10 @@ render() {
 ```js
 import FollowButton from 'blocks/follow-button/button';
 
-render() {
+function render() {
 	return (
 		<div className="your-stuff">
-			  <FollowButton following={ false } />
+			<FollowButton following={ false } />
 		</div>
 	);
 }

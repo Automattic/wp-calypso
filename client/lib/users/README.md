@@ -32,15 +32,15 @@ Actions get triggered by views and stores.
 `options` is an object that describes any custom query params you want to pass into the `wpcom.js` [usersList method](https://github.com/Automattic/wpcom.js/blob/HEAD/docs/site.md#siteuserslistquery-fn) which passes parameters into the REST API [`/site/$site/users` endpoint](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/users/). The only required attribute is siteId. Current default values include:
 
 ```js
-{
+const object = {
 	number: 100,
-	offset: 0
-}
+	offset: 0,
+};
 ```
 
 ## Example Component Code
 
-```es6
+```js
 /**
  * External dependencies
  */
@@ -65,14 +65,12 @@ export default class extends React.Component {
 
 	getUsers = () => {
 		return {
-			users: UsersStore.fetch( { siteId: this.props.site.ID } )
+			users: UsersStore.fetch( { siteId: this.props.site.ID } ),
 		};
-	},
+	};
 
 	refreshUsers = () => this.setState( this.getUsers() );
 
-	render() {
-
-	}
+	render() {}
 }
 ```

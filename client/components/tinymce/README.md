@@ -33,9 +33,7 @@ outside of a TinyMCE upgrade.
 ```jsx
 class MyComponent extends React.Component {
 	render() {
-		return (
-			<TinyMCE mode="tinymce" />
-		);
+		return <TinyMCE mode="tinymce" />;
 	}
 }
 ```

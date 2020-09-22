@@ -12,10 +12,10 @@ export default class extends React.Component {
 
 	onSet( date ) {
 		console.log( `date %s`, date );
-	},
+	}
 
 	render() {
-		return <InputChrono onSet={ this.onSet }/>;
+		return <InputChrono onSet={ this.onSet } />;
 	}
 }
 ```

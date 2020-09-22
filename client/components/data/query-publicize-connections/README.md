@@ -16,9 +16,7 @@ export default function MyConnectionsList( { connections } ) {
 		<div>
 			<QueryPublicizeConnections siteId={ 3584907 } />
 			{ connections.map( ( connection ) => (
-				<MyConnectionsListItem
-					key={ connection.ID }
-					connection={ connection } />
+				<MyConnectionsListItem key={ connection.ID } connection={ connection } />
 			) ) }
 		</div>
 	);

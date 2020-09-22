@@ -7,7 +7,7 @@ The `StatsSparkline` block renders an image of a chart representing hourly views
 ```jsx
 import StatsSparkline from 'blocks/stats-sparkline';
 
-<StatsSparkline className="my-awesome-component__sparkline" siteId="777" />
+<StatsSparkline className="my-awesome-component__sparkline" siteId="777" />;
 ```
 
 ## Props

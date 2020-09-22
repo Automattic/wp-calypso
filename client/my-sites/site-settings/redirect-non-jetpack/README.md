@@ -41,14 +41,9 @@ to be wrapped using the HoC. Namely, we can use the redirection action inside th
 ### Exemplary use
 
 ```js
-render() {
-	const {
-		redirect,
-		translate
-	} = this.props;
+function render() {
+	const { redirect, translate } = this.props;
 
-	<HeaderCake onClick={ redirect }>
-		{ translate( 'Manage Connection' ) }
-	</HeaderCake>
+	<HeaderCake onClick={ redirect }>{ translate( 'Manage Connection' ) }</HeaderCake>;
 }
 ```

@@ -13,7 +13,7 @@ submitting={ this.isSubmitting() }
 ```js
 import SignupForm from 'blocks/signup-form';
 
-render() {
+function render() {
 	return (
 		<SignupForm
 			{ ...this.props }

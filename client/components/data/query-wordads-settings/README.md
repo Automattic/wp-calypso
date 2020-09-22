@@ -14,8 +14,8 @@ export default function MySettings( { settings } ) {
 	return (
 		<div>
 			<QueryWordadsSettings siteId={ 3584907 } />
-			
-			{ settings.map( setting => (
+
+			{ settings.map( ( setting ) => (
 				<div key={ setting.key }>
 					{ setting.key }: { setting.value }
 				</div>

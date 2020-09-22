@@ -8,7 +8,7 @@ They allow you to use a component for your notice instead of calling the notices
 ```js
 import { InfoNotice } from 'blocks/global-notice';
 
-render() {
+function render() {
 	return (
 		<div>
 			{ this.state.processing && <InfoNotice text={ this.props.translate( 'Proccessing…' ) } /> }

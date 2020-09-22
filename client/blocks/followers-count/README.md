@@ -7,9 +7,7 @@
 ```js
 import FollowersCount from 'blocks/followers-count';
 
-render() {
-	return (
-		<FollowersCount />
-	);
+function render() {
+	return <FollowersCount />;
 }
 ```

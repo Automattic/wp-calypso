@@ -45,7 +45,7 @@ It is possible to listen for network connection status change. Events will be fi
 This will handle the case when user gets reconnected:
 
 ```js
-NetworkConnectionApp.on( 'connected' function() {
+NetworkConnectionApp.on( 'connected', function () {
 	console.log( 'Connection restored!' );
 } );
 ```
@@ -53,7 +53,7 @@ NetworkConnectionApp.on( 'connected' function() {
 This will handle the case when user gets disconnected:
 
 ```js
-NetworkConnectionApp.on( 'disconnected' function() {
+NetworkConnectionApp.on( 'disconnected', function () {
 	console.log( 'Connection lost!' );
 } );
 ```

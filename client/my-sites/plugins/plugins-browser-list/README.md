@@ -6,15 +6,15 @@ This component is used to display a list with the a parametrizable number of plu
 
 ```js
 import React from 'react';
-import { localize } from 'i18n-calypso'
+import { localize } from 'i18n-calypso';
 
 import PluginsList from 'my-sites/plugins/plugins-browser-list';
 
-const MyPluginsList = ( { pluginsData, translate } ) => (
+const MyPluginsList = ( { pluginsData, translate } ) => (
 	<div>
 		<PluginsList
 			plugins={ pluginsData }
-			title={ translate( category name ) }
+			title={ translate( 'category name' ) }
 			size={ 6 }
 			site={ site }
 			addPlaceHolders

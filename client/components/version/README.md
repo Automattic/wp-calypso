@@ -5,7 +5,6 @@ Version is a React component for rendering a version number
 ## Usage
 
 ```jsx
-
 import React from 'react';
 import Version from 'components/version';
 

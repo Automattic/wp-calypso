@@ -13,9 +13,7 @@ export default function MyComponent() {
 		setPostDate: setPostDate,
 	};
 
-	return (
-		<EditorPublishDate { ...props } />
-	);
+	return <EditorPublishDate { ...props } />;
 }
 ```
 

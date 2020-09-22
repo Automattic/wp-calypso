@@ -15,38 +15,38 @@ Updates state in the stripeConnectAccount node under extensions.woocommerce.site
 When requesting:
 
 ```js
-{
-	"stripeConnectAccount": {
-		connectedUserID: "",
-		email: "",
+const object = {
+	stripeConnectAccount: {
+		connectedUserID: '',
+		email: '',
 		isActivated: false,
 		isRequesting: true,
-	}
-}
+	},
+};
 ```
 
 On success:
 
 ```js
-{
-	"stripeConnectAccount": {
-		connectedUserID: "acct_14qyt6Alijdnw0EA",
-		email: "user@domain.com",
+const object = {
+	stripeConnectAccount: {
+		connectedUserID: 'acct_14qyt6Alijdnw0EA',
+		email: 'user@domain.com',
 		isActivated: false,
 		isRequesting: false,
-	}
-}
+	},
+};
 ```
 
 On failure:
 
 ```js
-{
-	"stripeConnectAccount": {
-		connectedUserID: "",
-		email: "",
+const object = {
+	stripeConnectAccount: {
+		connectedUserID: '',
+		email: '',
 		isActivated: false,
 		isRequesting: false,
-	}
-}
+	},
+};
 ```

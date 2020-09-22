@@ -26,27 +26,26 @@ Clears domains and fetches them for the given site.
 
 ### domainsRequestFailureAction( siteId, error )
 
-```es6
+```js
 import {
 	domainsReceiveAction,
 	domainsRequestAction,
 	domainsRequestSuccessAction,
-	domainsRequestFailureAction
+	domainsRequestFailureAction,
 } from 'state/sites/domains/actions';
 
 const siteId = 2916284;
 
 dispatch( domainsRequestAction( siteId ) );
 
-wpcom
-.site( siteId )
-.domainsList( ( error, response ) => {
+wpcom.site( siteId ).domainsList( ( error, response ) => {
 	if ( error ) {
-		return dispatch( domainsRequestFailureAction( siteId, error.message );
+		return dispatch( domainsRequestFailureAction( siteId, error.message ) );
 	}
 
 	dispatch( domainsRequestSuccessAction( siteId ) );
-	dispatch( domainsReceiveAction( site,id, response.domains ) );
+	dispatch( domainsReceiveAction( site, id, response.domains ) );
+} );
 ```
 
 ## Reducer
@@ -77,19 +76,19 @@ state.sites.domains = {
 				pendingRegistration: Boolean,
 				pendingRegistrationTime: String,
 				isPrimary: Boolean,
-				registrationDate: String.
+				registrationDate: String,
 				type: String,
-				wpcomDomain: Boolean
-			}
-		]
+				wpcomDomain: Boolean,
+			},
+		],
 	},
 
-	requesting: [
-		[ siteId ]: Boolean
-	],
+	requesting: {
+		[ siteId ]: Boolean,
+	},
 
-	errors: [
-		[ siteId ]: Boolean
-	]
-}
+	errors: {
+		[ siteId ]: Boolean,
+	},
+};
 ```

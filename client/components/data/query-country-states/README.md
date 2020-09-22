@@ -14,7 +14,9 @@ export default function MyStatesList( { countryStates } ) {
 	return (
 		<ul>
 			<QueryCountryStates countryCode="us" />
-			{ countryStates.map( ( state ) => <li>{ state.name }</li> ) }
+			{ countryStates.map( ( state ) => (
+				<li>{ state.name }</li>
+			) ) }
 		</ul>
 	);
 }

@@ -33,47 +33,44 @@ If you need to track when user scrolls to another page, do it in `fetchNextPage`
 ## Example Usage
 
 ```jsx
-
 class Listing extends React.Component {
-	...
-	fetchNextPage: ( options ) => {
+	fetchNextPage( options ) {
 		if ( options.triggeredByScroll ) {
 			// track analytics events
 		}
 		actions.fetchNextPage();
 	}
 
-	getItemRef: ( item ) => {
+	getItemRef( item ) {
 		return 'item-' + item.id;
 	}
 
-	renderItem: ( item ) => {
-		var itemKey = this.getItemRef( item );
-		return (
-			<Item ref={ itemKey } key={ itemKey } ... />
-		);
+	renderItem( item ) {
+		const itemKey = this.getItemRef( item );
+		return <Item ref={ itemKey } key={ itemKey } />;
 	}
 
-	renderLoadingPlaceholders: () => {
-		var count = this.props.list.get().length ? 2 : this.props.list.perPage,
+	renderLoadingPlaceholders() {
+		const count = this.props.list.get().length ? 2 : this.props.list.perPage,
 			placeholders = [];
-		times( count, function( i ) {
-			placeholders.push( <PostPlaceholder key={ "placeholder-" + i } /> );
-		});
+		times( count, function ( i ) {
+			placeholders.push( <PostPlaceholder key={ 'placeholder-' + i } /> );
+		} );
 
 		return placeholders;
 	}
 
 	render() {
 		return (
-			<InfiniteList className="main main-column reader__content" role="main"
+			<InfiniteList
+				className="main main-column reader__content"
+				role="main"
 				items={ this.state.items }
 				lastPage={ this.state.lastPage }
 				fetchingNextPage={ this.state.loading }
 				guessedItemHeight="200"
-
 				fetchNextPage={ this.fetchNextPage }
-				getItemRef= { this.getItemRef }
+				getItemRef={ this.getItemRef }
 				renderItem={ this.renderPost }
 				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 			/>

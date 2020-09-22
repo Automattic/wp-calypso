@@ -13,16 +13,10 @@ import QueryTaxonomies from 'components/data/query-taxonomies';
 export default function MyTaxonomiesList( { taxonomies } ) {
 	return (
 		<ul>
-			<QueryTaxonomies
-				siteId={ 3584907 }
-				postType="post" />
+			<QueryTaxonomies siteId={ 3584907 } postType="post" />
 			{ taxonomies.map( ( taxonomy ) => {
-				return (
-					<li key={ taxonomy.name }>
-						{ taxonomy.label }
-					</li>
-				);
-			} }
+				return <li key={ taxonomy.name }>{ taxonomy.label }</li>;
+			} ) }
 		</ul>
 	);
 }

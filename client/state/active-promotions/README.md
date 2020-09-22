@@ -18,7 +18,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 
 #### requestActivePromotions()
 
-```es6
+```js
 import {
 	activePromotionsReceiveAction,
 	activePromotionsRequestSuccessAction,
@@ -29,15 +29,15 @@ import {
 dispatch( requestActivePromotions() );
 
 wpcom
-.activePromotions()
-.list()
-	.then( response => {
+	.activePromotions()
+	.list()
+	.then( ( response ) => {
 		dispatch( activePromotionsRequestSuccessAction() );
 		dispatch( activePromotionsReceiveAction( response ) );
 	} )
-	.catch( error => {
-		dispatch( activePromotionsRequestFailureAction( error.message );
-	}
+	.catch( ( error ) => {
+		dispatch( activePromotionsRequestFailureAction( error.message ) );
+	} );
 ```
 
 ## Reducer

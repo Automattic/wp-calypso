@@ -80,7 +80,9 @@ The type of a handler follows:
 
 ```js
 // middlewareHandler :: ReduxStore -> ReduxAction -> Any
-const myHandler = ( store, action ) => { … }
+const myHandler = ( store, action ) => {
+	/*...*/
+};
 ```
 
 Note that the Redux store incorporates four methods, two of which are likely to be used here.
@@ -124,13 +126,17 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 
 /**
  * Transform the API response into consumble data
+ *
+ * @param data the data
  */
-const apiTransformer = data => data.splines;
+const apiTransformer = ( data ) => data.splines;
 
 /**
  * Issue the HTTP request to fetch the splines
+ *
+ * @param action the action
  */
-const fetchSplines = action =>
+const fetchSplines = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -139,23 +145,24 @@ const fetchSplines = action =>
 			query: {
 				site_id: action.siteId,
 			},
-		}, action
+		},
+		action
 	);
-};
 
 /**
  * Take spline data from API request and inject into state
+ *
+ * @param action the action
+ * @param splines the splines
  */
-const handleSuccess = ( action, splines ) =>
-	addSplines( action.siteId, splines );
+const handleSuccess = ( action, splines ) => addSplines( action.siteId, splines );
 
 /**
  * Notify customer that we failed to get splines for site
  *
- * @TODO: Explain why and provide better alternatives
+ * TODO: Explain why and provide better alternatives
  */
-const announceFailure = () =>
-	errorNotice( `Could not retrieve the splines. Please try again.` );
+const announceFailure = () => errorNotice( `Could not retrieve the splines. Please try again.` );
 
 export default {
 	[ SPLINES_REQUEST ]: [
@@ -166,14 +173,10 @@ export default {
 			fromApi: apiTransformer,
 		} ),
 	],
-}
+};
 
 // middlware.js
-const handlers = mergeHandlers(
-	postsEndpoint,
-	sitesEndpoint,
-	splineEndpoint,
-);
+const handlers = mergeHandlers( postsEndpoint, sitesEndpoint, splineEndpoint );
 ```
 
 Note that **these middlewares are not restricted to making HTTP requests**.

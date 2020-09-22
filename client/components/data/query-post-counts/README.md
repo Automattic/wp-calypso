@@ -13,9 +13,7 @@ import QueryPostCounts from 'components/data/query-post-counts';
 export default function PostCount( { count } ) {
 	return (
 		<div>
-			<QueryPostCounts
-				siteId={ 3584907 }
-				type="post" />
+			<QueryPostCounts siteId={ 3584907 } type="post" />
 			<div>{ count }</div>
 		</div>
 	);

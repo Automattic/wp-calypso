@@ -11,9 +11,9 @@ Adds currency edit to ui state
 ## Reducer
 
 ```js
-{
-	"currency": 'three letter currency key',
-}
+const object = {
+	currency: 'three letter currency key',
+};
 ```
 
 ## Selectors

@@ -16,7 +16,7 @@ Component used to show an embedded URL in a dialog
 ```js
 import EmbedDialog from 'components/tinymce/plugins/embed';
 
-render() {
+function render() {
 	return (
 		<EmbedDialog
 			embedUrl={ this.props.embedUrl }
