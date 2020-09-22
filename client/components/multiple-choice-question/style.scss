@@ -3,7 +3,7 @@
 	width: calc( 100% - 24px );
 }
 
-.form-text-input.multiple-choice-question__answer-item-text-input::placeholder {
+input[type='text'].form-text-input.multiple-choice-question__answer-item-text-input::placeholder {
 	color: var( --color-text-inverted );
 	@include breakpoint-deprecated( '>480px' ) {
 		color: var( --color-neutral );
