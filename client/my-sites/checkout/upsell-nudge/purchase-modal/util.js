@@ -46,7 +46,6 @@ export function useSubmitTransaction( {
 	setStep,
 	onClose,
 	onComplete,
-	errorMessage,
 	successMessage,
 } ) {
 	return useCallback( () => {
@@ -57,7 +56,7 @@ export function useSubmitTransaction( {
 					error_code: error.code || error.error,
 					reason: error.message,
 				} );
-				notices.error( errorMessage );
+				notices.error( error.message );
 				onClose();
 				return;
 			}
@@ -72,7 +71,7 @@ export function useSubmitTransaction( {
 				onComplete?.();
 			}
 		} );
-	}, [ cart, storedCard, setStep, onClose, onComplete, errorMessage, successMessage ] );
+	}, [ cart, storedCard, setStep, onClose, onComplete, successMessage ] );
 }
 
 export function formatDate( cardExpiry ) {

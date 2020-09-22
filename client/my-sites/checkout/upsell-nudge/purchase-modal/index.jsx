@@ -27,7 +27,6 @@ export function PurchaseModal( { cart, cards, isCartUpdating, onComplete, onClos
 		storedCard: cards?.[ 0 ],
 		onComplete,
 		onClose,
-		errorMessage: translate( 'Something went wrong…' ),
 		successMessage: translate( 'Your purchase has been completed!' ),
 	} );
 	const contentProps = {
