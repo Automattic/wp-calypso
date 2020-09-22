@@ -55,6 +55,7 @@ import { setStore } from 'state/redux-store';
 import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
+import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso' );
 
@@ -129,6 +130,7 @@ const oauthTokenMiddleware = () => {
 
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
 			loggedOutRoutes.push( '/pricing' );
+			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
 		}
 
 		// Forces OAuth users to the /login page if no token is present
