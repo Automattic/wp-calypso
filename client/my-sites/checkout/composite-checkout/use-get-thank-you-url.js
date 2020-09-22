@@ -32,7 +32,7 @@ import { managePurchase } from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
-import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
+import { persistSignupDestination, retrieveSignupDestination } from 'signup/storageUtils';
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import { abtest } from 'lib/abtest';

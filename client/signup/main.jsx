@@ -80,7 +80,7 @@ import {
 	retrieveSignupDestination,
 	retrieveSignupSiteCreated,
 	clearSignupDestinationCookie,
-} from './cookieUtils';
+} from './storageUtils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';

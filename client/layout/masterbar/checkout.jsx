@@ -13,7 +13,7 @@ import Item from './item';
 import WordPressWordmark from 'components/wordpress-wordmark';
 import { recordTracksEvent } from 'state/analytics/actions';
 import JetpackLogo from 'components/jetpack-logo';
-import { clearSignupDestinationCookie } from 'signup/utils';
+import { clearSignupDestinationCookie } from 'signup/storageUtils';
 
 class CheckoutMasterbar extends React.Component {
 	clickClose = () => {

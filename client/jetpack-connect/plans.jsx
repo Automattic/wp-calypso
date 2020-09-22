@@ -43,7 +43,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { persistSignupDestination } from 'signup/utils';
+import { persistSignupDestination } from 'signup/storageUtils';
 import { isJetpackProductSlug as getJetpackProductSlug } from 'lib/products-values';
 
 class Plans extends Component {
