@@ -60,8 +60,8 @@ export const notifyDesktopSendToPrinter = ( title, contents ) => {
 /**
  * Notify the desktop of new notifications.
  *
- * @param note
- * @param isApproved
+ * @param {object} note The new note
+ * @param {boolean} isApproved Whether or not the note requires admin approval
  */
 export const notifyDesktopNewNote = ( note, isApproved ) => {
 	return {
