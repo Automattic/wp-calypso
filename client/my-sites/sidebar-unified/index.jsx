@@ -52,7 +52,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 		return isUnderDomainManagementAll( currentRoute ) || isUnderEmailManagementAll( currentRoute );
 	} );
 
-	//console.log( { menuItems } );
 	return (
 		<Sidebar>
 			<CurrentSite forceAllSitesView={ isAllDomainsView } />
@@ -60,12 +59,12 @@ export const MySitesSidebarUnified = ( { path } ) => {
 				if ( 'type' in item && item.type === 'separator' ) {
 					return <SidebarSeparator key={ i } />;
 				}
-				if ( ! ( 'children' in item ) || item.children.length === 0 ) {
-					return (
-						<MySitesSidebarUnifiedItem isTopLevel key={ item.slug } path={ path } { ...item } />
-					);
+
+				if ( item.children && Object.keys( item.children ).length ) {
+					return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
 				}
-				return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
+
+				return <MySitesSidebarUnifiedItem isTopLevel key={ item.slug } path={ path } { ...item } />;
 			} ) }
 		</Sidebar>
 	);
