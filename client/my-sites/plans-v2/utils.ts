@@ -482,6 +482,7 @@ export function getAllOptionsFromSlug( slug: string ): string[] | null {
  *
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
+ * @param {string} queryString (optional) Additional query params appended to url (ie. for affiliate tracking)
  */
 export function checkout( siteSlug: string, products: string | string[] ): void {
 	const productsArray = isArray( products ) ? products : [ products ];
@@ -509,6 +510,7 @@ export function checkout( siteSlug: string, products: string | string[] ): void 
  * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
  * @param {Duration} duration Monthly or annual
  * @param {string} siteSlug (optional) The slug of the selected site
+ * @param {string} queryString (optional) Additional query params appended to url (ie. for affiliate tracking)
  *
  * @returns {string} The path to the Selector page
  */
@@ -526,6 +528,7 @@ export function getPathToSelector( rootUrl: string, duration?: Duration, siteSlu
  * @param {string} productSlug Slug of the product
  * @param {Duration} duration Monthly or annual
  * @param {string} siteSlug (optional) The slug of the selected site
+ * @param {string} queryString (optional) Additional query params appended to url (ie. for affiliate tracking)
  *
  * @returns {string} The path to the Details page
  */
@@ -550,6 +553,7 @@ export function getPathToDetails(
  * @param {string} productSlug Slug of the product
  * @param {Duration} duration Monthly or annual
  * @param {string} siteSlug (optional) The slug of the selected site
+ * @param {string} queryString (optional) Additional query params appended to url (ie. for affiliate tracking)
  *
  * @returns {string} The path to the Upsell page
  */
