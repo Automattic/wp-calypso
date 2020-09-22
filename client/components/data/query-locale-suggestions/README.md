@@ -9,7 +9,7 @@ Render the component without props. It does not accept any children or render an
 ```jsx
 import QueryLocaleSuggestions from 'components/data/query-locale-suggestions';
 
-export default function() {
+export default function () {
 	return (
 		<div>
 			<QueryLocaleSuggestions />

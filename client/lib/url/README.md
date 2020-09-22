@@ -59,19 +59,19 @@ getUrlParts( 'https://user:password@www.example.com:8000/path?param=value#anchor
 The above returns:
 
 ```js
-{
-  protocol: 'https:',
-  host: 'www.example.com:8000',
-  hostname: 'www.example.com',
-  port: '8000',
-  origin: 'https://www.example.com:8000',
-  pathname: '/path',
-  hash: '#anchor',
-  search: '?param=value',
-  searchParams: // A URLSearchParams object containing the search parameters
-  username: 'user',
-  password: 'password'
-}
+const object = {
+	protocol: 'https:',
+	host: 'www.example.com:8000',
+	hostname: 'www.example.com',
+	port: '8000',
+	origin: 'https://www.example.com:8000',
+	pathname: '/path',
+	hash: '#anchor',
+	search: '?param=value',
+	searchParams: searchParams, // A URLSearchParams object containing the search parameters
+	username: 'user',
+	password: 'password',
+};
 ```
 
 **IMPORTANT NOTE**: URL part names are different between Node's `url` and `lib/url`. This is because

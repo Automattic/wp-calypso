@@ -9,7 +9,7 @@ Under the hood, it uses [`<QueryTerms />`](../../components/data/query-terms) to
 ```jsx
 import TermSelector from 'blocks/term-tree-selector';
 
-<TermTreeSelector taxonomy="category" />
+<TermTreeSelector taxonomy="category" />;
 ```
 
 ## Props

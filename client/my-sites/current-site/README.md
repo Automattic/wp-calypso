@@ -8,9 +8,7 @@ Redux state and the component receives no props. It's used in the My Sites Sideb
 ```js
 import CurrentSite from 'my-sites/current-site';
 
-render() {
-	return (
-		<CurrentSite />
-	);
+function render() {
+	return <CurrentSite />;
 }
 ```

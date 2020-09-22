@@ -24,14 +24,15 @@ Each action takes a `step` object with the following properties:
 - `apiRequestFunction` (optional) — Used to submit the step to the API. Its presence determines of the `status` of the step is `pending` or `completed`.
 
 ```js
-{
+const object = {
 	stepName: 'theme-selection', // required
-	apiRequestFunction: function( callback ) { // optional
-		wpcom.undocumented().someRequest( function( errors, response ) {
+	apiRequestFunction: function ( callback ) {
+		// optional
+		wpcom.undocumented().someRequest( function ( errors, response ) {
 			callback( errors, { userId: response.userId } );
 		} );
-	}
-}
+	},
+};
 ```
 
 #### Actions
@@ -46,12 +47,12 @@ If `errors` has a non-zero length, it will be attached to the step and the step'
 Actions which provide a `providedDependencies` object will have this information added to the dependency store.
 
 ```js
-import SignupDependencyStore from 'lib/signup/dependency-store' );
+import SignupDependencyStore from 'lib/signup/dependency-store';
 import SignupActions from 'lib/signup/actions';
 
 SignupActions.completeSignupStep( { stepName: 'example' }, [], { userId: 1337 } );
 
-SignupDependencyStore.get() // => { userId: 1337 }
+SignupDependencyStore.get(); // => { userId: 1337 }
 ```
 
 ### `SignupFlowController`
@@ -68,18 +69,20 @@ import SignupFlowController from 'lib/signup/flow-controller';
 // this is the component that renders the signup flow
 class SignupComponent extends React.Component {
 	constructor() {
+		super();
 		this.signupFlowController = new SignupFlowController( {
 			flowName: 'default', // the name of the flow to begin, from flows.json
-			onComplete: function() { // optional callback, called when the flow is completed
+			onComplete: function () {
+				// optional callback, called when the flow is completed
 				console.log( 'The user completed the flow. Redirect or log them in here.' );
-			}
+			},
 		} );
 	}
 
 	render() {
-		let CurrentStepComponent = this.signupFlowController.currentStep().component; // the component from steps.js
+		const CurrentStepComponent = this.signupFlowController.currentStep().component; // the component from steps.js
 
 		return <CurrentStepComponent />;
 	}
-} );
+}
 ```

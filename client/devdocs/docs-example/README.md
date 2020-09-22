@@ -4,19 +4,19 @@ This component is used to implement a skeleton for components examples which are
 
 ## How to use
 
-```es6
+```jsx
 import DocsExample from 'devdocs/design/docs-example';
 
-render: function() {
-  return (
-    <DocsExample
-      usageStats={ this.props.usageStats }
-      toggleHandler={ this.toggleMyComponent }
-      toggleText={ toggleText }
-    >
-      { this.renderExamples() }
-    </DocsExample>
-  );
+function render() {
+	return (
+		<DocsExample
+			usageStats={ this.props.usageStats }
+			toggleHandler={ this.toggleMyComponent }
+			toggleText={ toggleText }
+		>
+			{ this.renderExamples() }
+		</DocsExample>
+	);
 }
 ```
 

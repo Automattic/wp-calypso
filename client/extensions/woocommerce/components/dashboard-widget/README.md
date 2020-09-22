@@ -8,13 +8,13 @@ This component sets up some basic styling for dashboard widgets. It allows for f
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 
-render: function() {
+function render() {
 	return (
 		<DashboardWidgetRow>
 			<DashboardWidget title="This is a widget title" image="calypso/images/example.svg">
 				This content shows up in the widget body.
 			</DashboardWidget>
-		</DashboardWidget>
+		</DashboardWidgetRow>
 	);
 }
 ```

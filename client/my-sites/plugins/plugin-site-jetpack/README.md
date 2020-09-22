@@ -7,14 +7,8 @@ This component is used to display a single instance of a plugin within a jetpack
 ```js
 import PluginSiteJetpack from 'my-sites/plugins/plugin-site/plugin-site-jetpack';
 
-render() {
-    return (
-        <PluginSiteJetpack
-            site={ site }
-            plugin={ plugin }
-            notices={ notices }
-            />
-    );
+function render() {
+	return <PluginSiteJetpack site={ site } plugin={ plugin } notices={ notices } />;
 }
 ```
 

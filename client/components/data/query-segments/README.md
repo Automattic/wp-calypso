@@ -21,8 +21,8 @@ class MyComponent extends React.Component {
 				<QuerySegments />
 				<ul>
 					{ segments.length &&
-						segments.map( ( segments ) => {
-							return <li>{ segments.id }</li>;
+						segments.map( ( segment ) => {
+							return <li>{ segment.id }</li>;
 						} ) }
 				</ul>
 			</div>

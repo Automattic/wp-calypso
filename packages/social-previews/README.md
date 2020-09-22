@@ -59,7 +59,7 @@ const tweetTemplate = {
 	name: 'My Account Name',
 	profileImage: 'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png',
 	screenName: '@myAccount',
-}
+};
 
 <TwitterPreview
 	tweets={ [
@@ -72,20 +72,17 @@ const tweetTemplate = {
 			text: 'The second tweet has some images attached, too!',
 			media: [
 				{
-					{
-						alt: 'The alt text for the first image.',
-						url: 'https://url.for.the/first/image.png',
-						type: 'image/png',
-					},
-					{
-						alt: 'The alt text for the second image.',
-						url: 'https://url.for.the/second/image.png',
-						type: 'image/png',
-					},
-
-				}
-			]
-		}
+					alt: 'The alt text for the first image.',
+					url: 'https://url.for.the/first/image.png',
+					type: 'image/png',
+				},
+				{
+					alt: 'The alt text for the second image.',
+					url: 'https://url.for.the/second/image.png',
+					type: 'image/png',
+				},
+			],
+		},
 	] }
 />;
 ```

@@ -7,10 +7,8 @@ This component is used to show who's involved in a conversation, and how many co
 ```js
 import ConversationCaterpillar from 'blocks/conversation-caterpillar';
 
-render() {
-	return (
-		<ConversationCaterpillar blogId={ blogId } postId={ postId } />
-	);
+function render() {
+	return <ConversationCaterpillar blogId={ blogId } postId={ postId } />;
 }
 ```
 

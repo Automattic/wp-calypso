@@ -9,29 +9,22 @@ This `detailView` prop further causes the `Note` component to render (among othe
 The notification object returned from the server contains, among other things, a `body` array of one or more `block` objects which contain a type, the text of the notification, and an array of `ranges`:
 
 ```js
-"ranges": [
-	{
-		"url": "https://www.example.com/",
-		"indices": [
-			397,
-			416
-		]
-	},
-	{
-		"type": "match",
-		"indices": [
-			598,
-			616
-		]
-	},
-	{
-		"type": "match",
-		"indices": [
-			682,
-			700
-		]
-	}
-]
+const object = {
+	ranges: [
+		{
+			url: 'https://www.example.com/',
+			indices: [ 397, 416 ],
+		},
+		{
+			type: 'match',
+			indices: [ 598, 616 ],
+		},
+		{
+			type: 'match',
+			indices: [ 682, 700 ],
+		},
+	],
+};
 ```
 
 The indices of these ranges indicate locations in the body's text string where special formatting is needed.

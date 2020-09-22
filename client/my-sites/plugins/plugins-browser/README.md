@@ -7,7 +7,7 @@ This component renders the main plugins browser page.
 ```js
 import BrowserMainView from 'my-sites/plugins/plugins-browser';
 
-render() {
+function render() {
 	return (
 		<div>
 			<BrowserMainView

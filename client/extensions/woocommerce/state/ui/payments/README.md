@@ -6,9 +6,9 @@ READMEs for more details.
 ## Reducer
 
 ```js
-{
-	"currency": "three letter key"
-}
+const object = {
+	currency: 'three letter key',
+};
 ```
 
 - [methods](methods/README.md)

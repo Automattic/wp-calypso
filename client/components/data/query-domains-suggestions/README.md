@@ -16,7 +16,8 @@ export default function defaultSuggestions() {
 				query="mycoolname"
 				quantity={ 2 }
 				vendor="domainsbot"
-				includeSubdomain={ false } />
+				includeSubdomain={ false }
+			/>
 		</div>
 	);
 }

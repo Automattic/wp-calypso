@@ -10,16 +10,12 @@ Put the component in your `Main` component, and wrap it around any components yo
 import SidebarNavigation from 'components/sidebar-navigation';
 import Gridicon from 'components/gridicons';
 
-
-render() {
+function render() {
 	return (
 		<Main>
-		<SidebarNavigation
-			title="Themes"
-			sectionName="site"
-			sectionTitle="My Sites">
-			<Gridicon icon="my-sites" size={ 30 } />
-		</SidebarNavigation>
+			<SidebarNavigation title="Themes" sectionName="site" sectionTitle="My Sites">
+				<Gridicon icon="my-sites" size={ 36 } />
+			</SidebarNavigation>
 		</Main>
 	);
 }

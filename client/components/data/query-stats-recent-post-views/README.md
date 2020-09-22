@@ -13,7 +13,7 @@ import QueryRecentPostViews from 'components/data/query-stats-recent-post-views'
 export default function ViewCount( { viewCount } ) {
 	return (
 		<div>
-			<QueryPostsViews siteId={ 12345678 } postIds={ [ 1,2,3,4 ] } num={ 30 } />
+			<QueryPostsViews siteId={ 12345678 } postIds={ [ 1, 2, 3, 4 ] } num={ 30 } />
 			<div>{ viewCount }</div>
 		</div>
 	);

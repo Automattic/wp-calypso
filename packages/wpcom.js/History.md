@@ -88,7 +88,7 @@
 - site.plugin updates
 - various test cleanup
 
-# 4.9.4 / 2016-04-04
+## 4.9.4 / 2016-04-04
 
 - add site.post.del back which was removed in 4.9.3
 

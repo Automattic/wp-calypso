@@ -9,6 +9,12 @@ module.exports = {
 	},
 	overrides: [
 		{
+			files: [ '*.md.jsx', '*.md.js' ],
+			rules: {
+				'import/no-extraneous-dependencies': 'off',
+			},
+		},
+		{
 			files: [ '**/test/**/*' ],
 			rules: {
 				'import/no-extraneous-dependencies': [

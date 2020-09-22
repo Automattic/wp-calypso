@@ -39,13 +39,13 @@ Data from the aforementioned actions is added to the global state tree, under `s
 ```js
 state.sharing.keyring = {
 	items: {
-		1: { ID: 1, ... },
-		2: { ID: 2, ... },
-		3: { ID: 3, ... },
-		...
+		1: { ID: 1 /*...*/ },
+		2: { ID: 2 /*...*/ },
+		3: { ID: 3 /*...*/ },
+		/*...*/
 	},
-	isFetching: true
-}
+	isFetching: true,
+};
 ```
 
 ## Selectors

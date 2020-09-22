@@ -13,7 +13,7 @@ export default function listAllDomains( { domains } ) {
 	return (
 		<div>
 			<QueryAllDomains />
-			{ domains.map( domain => (
+			{ domains.map( ( domain ) => (
 				<li>{ domain.domain }</li>
 			) ) }
 		</div>

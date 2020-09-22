@@ -7,14 +7,15 @@ This component is used to display a credit card form.
 ```js
 import CreditCardForm from 'blocks/credit-card-form';
 
-render() {
+function render() {
 	return (
 		<CreditCardForm
 			createCardToken={ createCardToken }
 			initialValues={ initialValues }
 			recordFormSubmitEvent={ noop }
 			saveStoredCard={ saveStoredCard }
-			successCallback={ noop } />
+			successCallback={ noop }
+		/>
 	);
 }
 ```

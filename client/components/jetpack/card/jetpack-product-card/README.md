@@ -11,16 +11,18 @@ import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 
 export default function JetpackProductCardExample() {
 	return (
-        <JetpackProductCard
-            iconSlug="jetpack_backup_v2"
-            productName="Jetpack Backup"
-            currencyCode="USD"
-            originalPrice={10}
-            billingTimeFrame="per month, billed monthly"
-            buttonLabel="Get Backup"
-            onButtonClick={ () => /* do something */ }
-            features={ [ { text: 'Automated WordPress backups' } ] }
-        />
+		<JetpackProductCard
+			iconSlug="jetpack_backup_v2"
+			productName="Jetpack Backup"
+			currencyCode="USD"
+			originalPrice={ 10 }
+			billingTimeFrame="per month, billed monthly"
+			buttonLabel="Get Backup"
+			onButtonClick={ () => {
+				/* do something */
+			} }
+			features={ [ { text: 'Automated WordPress backups' } ] }
+		/>
 	);
 }
 ```

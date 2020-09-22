@@ -16,10 +16,8 @@ export default function MySiteRolesList( { siteRoles } ) {
 		<div>
 			<QuerySiteRoles siteId={ 12345678 } />
 			{ siteRoles.map( ( role ) => {
-				return (
-					<MySiteRolesListItem role={ role } />
-				);
-			} }
+				return <MySiteRolesListItem role={ role } />;
+			} ) }
 		</div>
 	);
 }

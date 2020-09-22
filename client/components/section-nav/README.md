@@ -9,7 +9,7 @@ React component used to display a particular section's navigation bar. Or more t
 ## Example Usage
 
 ```js
-import SectionNav from 'components/section-nav' );
+import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
@@ -19,7 +19,7 @@ export default class extends React.Component {
 	// ...
 
 	render() {
-		var sectionNavSelectedText = (
+		const sectionNavSelectedText = (
 			<span>
 				<span>Published</span>
 				<small>Everyone</small>
@@ -29,15 +29,27 @@ export default class extends React.Component {
 		return (
 			<SectionNav selectedText={ sectionNavSelectedText }>
 				<NavTabs label="Status" selectedText="Published">
-					<NavItem path="/posts" selected={ true }>Published</NavItem>
-					<NavItem path="/posts/drafts" selected={ false }>Drafts</NavItem>
-					<NavItem path="/posts/scheduled" selected={ false }>Scheduled</NavItem>
-					<NavItem path="/posts/trashed" selected={ false }>Trashed</NavItem>
+					<NavItem path="/posts" selected>
+						Published
+					</NavItem>
+					<NavItem path="/posts/drafts" selected={ false }>
+						Drafts
+					</NavItem>
+					<NavItem path="/posts/scheduled" selected={ false }>
+						Scheduled
+					</NavItem>
+					<NavItem path="/posts/trashed" selected={ false }>
+						Trashed
+					</NavItem>
 				</NavTabs>
 
 				<NavSegmented label="Author">
-					<NavItem path="/posts/my" selected={ false }>Only Me</NavItem>
-					<NavItem path="/posts" selected={ true }>Everyone</NavItem>
+					<NavItem path="/posts/my" selected={ false }>
+						Only Me
+					</NavItem>
+					<NavItem path="/posts" selected>
+						Everyone
+					</NavItem>
 				</NavSegmented>
 
 				<Search
@@ -47,7 +59,7 @@ export default class extends React.Component {
 					initialValue={ this.props.search }
 					placeholder="Search Published..."
 					analyticsGroup="Pages"
-					delaySearch={ true }
+					delaySearch
 				/>
 			</SectionNav>
 		);

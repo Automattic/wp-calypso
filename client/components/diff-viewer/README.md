@@ -10,7 +10,9 @@ import DiffViewer from 'components/diff-viewer';
 
 export const CommitView = ( { commitHash, description, diff } ) => (
 	<div>
-		<div><a>{ commitHash }</a></div>
+		<div>
+			<a href="https://wordpress.com">{ commitHash }</a>
+		</div>
 		<p>{ description }</p>
 		<DiffViewer diff={ diff } />
 	</div>

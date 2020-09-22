@@ -5,19 +5,13 @@ This component renders a simple sparkline, using D3 microlibraries, as an SVG pa
 ## Usage
 
 ```jsx
-
 // import the component
 import Sparkline from '../../components/sparkline'; //
 
 // And use it inline inside the render method of another component
-render: function() {
-	return(
-		<Sparkline
-			data={ [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 4, 6, 8, 1, 9, 3, 7, 5 ] }
-		/>
-	);
+function render() {
+	return <Sparkline data={ [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 4, 6, 8, 1, 9, 3, 7, 5 ] } />;
 }
-
 ```
 
 ## Required Props
@@ -50,5 +44,5 @@ The width of the sparkline's container `<div />` can be overridden by passing a 
 <Sparkline
 	className="something__fifty-per"
 	data={ [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 2, 4, 6, 8, 1, 9, 3, 7, 5 ] }
-/>
+/>;
 ```

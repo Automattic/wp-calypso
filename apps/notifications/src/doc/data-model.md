@@ -43,9 +43,9 @@ We maintain a "hidden notes" list of note ids which shouldn't be rendered.
 When undoing a _trash_ or _spam_ action we should remove the id from this list.
 
 ```js
-state.notes.hiddenNoteIds = [ id1, id2, id3, … ]
+state.notes.hiddenNoteIds = [ id1, id2, id3 /*...*/ ];
 
-getIsNoteHidden( store.getState(), noteId )
+getIsNoteHidden( store.getState(), noteId );
 ```
 
 The list of hidden ids is maintained in the `state/notes/reducers.js#hiddenNoteIds` reducer.
@@ -77,7 +77,7 @@ See the description for liking and unliking above.
 This works the same way except that the function is different.
 
 ```js
-store.dispatch( actions.notes.approveNote( noteId, isApproved )
+store.dispatch( actions.notes.approveNote( noteId, isApproved ) );
 
-getIsNoteApproved( store.getState(), note )
+getIsNoteApproved( store.getState(), note );
 ```

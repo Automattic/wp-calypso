@@ -18,17 +18,17 @@ This is saved on a per-zone basis, either as "LOADING" (when requesting the loca
 - `continent`: List of postcodes or postcode ranges the zone is configured to represent.
 
 ```js
-{
-	"shippingZoneLocations": {
-		7: "LOADING", // "7" is the Shipping Zone ID
-		9, {
+const object = {
+	shippingZoneLocations: {
+		7: 'LOADING', // "7" is the Shipping Zone ID
+		9: {
 			continent: [ 'EU' ],
 			country: [ 'US', 'CA' ],
 			state: [ 'US:CA', 'US:UT' ],
 			postcode: [ '123*', '68000...68999' ],
 		},
-	}
-}
+	},
+};
 ```
 
 In this example, the shipping zone "9" would match all the orders from Europe, United States, Canada, California, and Utah

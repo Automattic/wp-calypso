@@ -5,15 +5,15 @@ This module is used to manage ui data
 ## Reducer structure
 
 ```js
-{
-	[siteId]: {
+const object = {
+	[ siteId ]: {
 		payments: {
-			methods: []
+			methods: [],
 		},
 		products: {},
 		shipping: {},
-	}
-}
+	},
+};
 ```
 
 - [payments](payments/README.md)

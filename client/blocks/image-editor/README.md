@@ -128,12 +128,7 @@ Already-translated string which will be used on the 'Done' button. If not used, 
 ```js
 import ImageEditor from 'blocks/image-editor';
 
-render() {
-	return (
-		<ImageEditor
-			siteId={ siteId }
-			media={ { URL: 'http://example.com/image.jpg' } }
-		/>
-	);
+function render() {
+	return <ImageEditor siteId={ siteId } media={ { URL: 'http://example.com/image.jpg' } } />;
 }
 ```

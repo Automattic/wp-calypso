@@ -10,8 +10,8 @@ To select multiple products:
 import { Card } from '@automattic/components';
 import ProductSearch from 'woocommerce/components/product-search';
 
-render: function() {
-	const updateProducts = productIds => {
+function render() {
+	const updateProducts = ( productIds ) => {
 		this.setState( { list: productIds } );
 	};
 
@@ -29,8 +29,8 @@ To select a single product:
 import { Card } from '@automattic/components';
 import ProductSearch from 'woocommerce/components/product-search';
 
-render: function() {
-	const updateProduct = productId => {
+function render() {
+	const updateProduct = ( productId ) => {
 		this.setState( { selected: productId } );
 	};
 

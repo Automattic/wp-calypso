@@ -15,7 +15,7 @@ function AllProducts() {
 }
 
 function SingleProduct() {
-	return <QuerySimplePayments siteId={ 12345 } productId={ 141 } />
+	return <QuerySimplePayments siteId={ 12345 } productId={ 141 } />;
 }
 ```
 

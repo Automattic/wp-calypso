@@ -5,12 +5,10 @@ This component is used to display an install bar for automated transfers.
 ```js
 import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
 
-render: function() {
+function render() {
 	return (
 		<div className="plugin-meta">
-			<PluginAutomatedTransfer
-				plugin={ plugin }
-			/>
+			<PluginAutomatedTransfer plugin={ plugin } />
 		</div>
 	);
 }

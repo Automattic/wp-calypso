@@ -5,9 +5,8 @@
 ## Create a `Me` instance from WPCOM
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
-var me = wpcom.me();
-});
+const wpcom = require( 'wpcom' )( '<your-token>' );
+const me = wpcom.me();
 ```
 
 ## API

@@ -11,9 +11,9 @@ import React from 'react';
 import DocumentHead from 'components/data/document-head';
 
 export default function HomeSection() {
-	let count = 123;
-	let metas = [ { rel: 'some-rel', content: 'some-content' } ];
-	let links = [ { href: 'https://automattic.com', 'rel': 'some-rel' } ];
+	const count = 123;
+	const metas = [ { rel: 'some-rel', content: 'some-content' } ];
+	const links = [ { href: 'https://automattic.com', rel: 'some-rel' } ];
 
 	return (
 		<main>

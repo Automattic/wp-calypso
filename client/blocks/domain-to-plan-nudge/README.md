@@ -6,15 +6,14 @@ and a paid domain.
 ## How to use
 
 ```js
-
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 
-render: function() {
-  return (
-    <div className="your-stuff">
-      <DomainToPlanNudge />
-    </div>
-  );
+function render() {
+	return (
+		<div className="your-stuff">
+			<DomainToPlanNudge />
+		</div>
+	);
 }
 ```
 

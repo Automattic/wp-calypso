@@ -4,7 +4,7 @@ This is a larger [`Card` component](../../components/card) that has a title, des
 
 ## Usage
 
-```es6
+```jsx
 import ActionPanel from 'components/action-panel';
 import ActionPanelTitle from 'components/action-panel/title';
 import ActionPanelBody from 'components/action-panel/body';
@@ -13,7 +13,7 @@ import ActionPanelCta from 'components/action-panel/cta';
 import ActionPanelFooter from 'components/action-panel/footer';
 import { Button } from '@automattic/components';
 
-const ActionPanelExample = ( { translate }) => {
+const ActionPanelExample = ( { translate } ) => {
 	return (
 		<div>
 			<ActionPanel>
@@ -62,5 +62,5 @@ const ActionPanelExample = ( { translate }) => {
 			</ActionPanel>
 		</div>
 	);
-}
+};
 ```

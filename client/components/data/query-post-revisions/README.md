@@ -13,10 +13,7 @@ import QueryPostRevisions from 'components/data/query-post-revisions';
 export default function PostRevisions( { revisions } ) {
 	return (
 		<div>
-			<QueryPostRevisions
-				siteId={ 12345678 }
-				postId={ 10 }
-			/>
+			<QueryPostRevisions siteId={ 12345678 } postId={ 10 } />
 			<div>{ revisions }</div>
 		</div>
 	);

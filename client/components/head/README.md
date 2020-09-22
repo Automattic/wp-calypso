@@ -8,9 +8,9 @@ Provides an HTML `<head>` prefilled with boilerplate (such as `meta`s and `links
 import Head from 'components/head';
 
 <Head title="Calypso">
-  <meta property="myCustomMeta" content="foobar" />
-  <link rel="stylesheet" href="/dev/null" />
-</Head>
+	<meta property="myCustomMeta" content="foobar" />
+	<link rel="stylesheet" href="/dev/null" />
+</Head>;
 ```
 
 ## Props

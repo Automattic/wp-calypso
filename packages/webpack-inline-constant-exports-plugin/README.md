@@ -38,11 +38,7 @@ _webpack.config.js_
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 
 module.exports = {
-  ...,
-  plugins: [
-    new InlineConstantExportsPlugin( [ /\/constants.js/ ] ),
-    ...
-  ]
+	plugins: [ new InlineConstantExportsPlugin( [ /\/constants.js/ ] ) ],
 };
 ```
 

@@ -39,12 +39,16 @@ Data from the aforementioned actions is added to the global state tree, under `s
 ```js
 state.sharing.services = {
 	items: {
-		facebook: { ... },
-		twitter: { ... },
-		...
+		facebook: {
+			/*...*/
+		},
+		twitter: {
+			/*...*/
+		},
+		/*...*/
 	},
-	isFetching: true
-}
+	isFetching: true,
+};
 ```
 
 ## Selectors

@@ -14,10 +14,13 @@ import DropZone from 'components/drop-zone';
 
 class MyComponent extends Component {
 	onFilesDrop( files ) {
-        console.log( 'You dropped some files: %s', Array.from( files ).map(
-            ( file ) => ( file.name )
-        ).join( ', ' ) );
-    }
+		console.log(
+			'You dropped some files: %s',
+			Array.from( files )
+				.map( ( file ) => file.name )
+				.join( ', ' )
+		);
+	}
 
 	render() {
 		return (
@@ -26,7 +29,7 @@ class MyComponent extends Component {
 			</div>
 		);
 	}
-};
+}
 
 export default MyComponent;
 ```

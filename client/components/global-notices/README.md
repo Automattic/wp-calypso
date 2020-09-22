@@ -14,9 +14,7 @@ Dispatching a notice from a component might look like this:
 import { successNotices } from 'state/notices/actions';
 
 function MyComponent() {
-  return (
-    <button onClick={ this.props.successNotice( 'Objective achieved!' ) } />Click me!</button>
-  );
+	return <button onClick={ this.props.successNotice( 'Objective achieved!' ) }>Click me!</button>;
 }
 
 export default connect( null, { successNotice } )( MyComponent );

@@ -12,9 +12,7 @@ Changes to the selection of images will be passed back in various props for sett
 import ImageSelector from 'blocks/image-selector';
 
 export default function MyFeaturedImages() {
-	return (
-		<ImageSelector imageIds={ [ 34, 105 ] } multiple />
-	);
+	return <ImageSelector imageIds={ [ 34, 105 ] } multiple />;
 }
 ```
 
@@ -54,8 +52,8 @@ setImage = ( media ) => {
 	if ( ! media || ! media.items.length ) {
 		return;
 	}
-	const itemIds = media.items.map( item => item.ID );
+	const itemIds = media.items.map( ( item ) => item.ID );
 	this.setState( { imageIds: itemIds } );
-	editProduct( siteId, product, { media.items } );
-}
+	editProduct( siteId, product, media.items );
+};
 ```

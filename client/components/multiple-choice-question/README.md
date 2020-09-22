@@ -4,7 +4,7 @@ This is a component for presenting a question and a list of answers to a user. T
 
 ## Usage
 
-```es6
+```jsx
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
 
 function MultipleChoiceQuestionExamples( { translate } ) {

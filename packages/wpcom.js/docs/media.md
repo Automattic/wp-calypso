@@ -7,9 +7,8 @@
 Create a `Media` instance from Site
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
-var media = wpcom.site('<site-id>').media('<media-id>');
-});
+const wpcom = require( 'wpcom' )( '<your-token>' );
+const media = wpcom.site( '<site-id>' ).media( '<media-id>' );
 ```
 
 ## API

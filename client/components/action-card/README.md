@@ -4,15 +4,15 @@ This is a [`Card` component](../../components/card) that has a call-to-action bu
 
 ## Usage
 
-```es6
+```jsx
 import ActionCard from 'components/action-card';
 
-render() {
+function render() {
 	return (
 		<ActionCard
 			headerText={ 'Header' }
 			mainText={ 'Some text' }
-			classNames={ 'my-classname-1', 'my-classname-2' }
+			className={ classnames( 'my-classname-1', 'my-classname-2' ) }
 			buttonText={ 'Call to action!' }
 			buttonIcon="external"
 			buttonPrimary={ true }
@@ -20,7 +20,7 @@ render() {
 			buttonTarget="_blank"
 			buttonOnClick={ noop }
 			buttonDisabled={ false }
-		/>;
+		/>
 	);
 }
 ```

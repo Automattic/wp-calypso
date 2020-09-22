@@ -11,12 +11,12 @@ To launch a support article call the corresponding redux action, like so:
 ```jsx
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 
-onSupportLinkClick: () => {
+function onSupportLinkClick() {
 	const { postId, postUrl } = this.props;
-	this.props.openSupportArticleDialog( { postId, postUrl } )
+	this.props.openSupportArticleDialog( { postId, postUrl } );
 }
-render: function() {
-	return <Button onClick={ this.onSupportLinkClick } >Read More...</Button>;
+function render() {
+	return <Button onClick={ this.onSupportLinkClick }>Read More...</Button>;
 }
 ```
 
