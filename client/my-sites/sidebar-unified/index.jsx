@@ -25,6 +25,7 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import CurrentSite from 'my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
+import useSiteMenuItems from './use-site-menu-items';
 import Sidebar from 'layout/sidebar';
 import SidebarSeparator from 'layout/sidebar/separator';
 
@@ -32,18 +33,7 @@ import 'layout/sidebar-unified/style.scss';
 import 'state/admin-menu/init';
 
 export const MySitesSidebarUnified = ( { path } ) => {
-	const reduxDispatch = useDispatch();
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	useEffect( () => {
-		if ( selectedSiteId !== null ) {
-			reduxDispatch( requestAdminMenu( selectedSiteId ) );
-		}
-	}, [ reduxDispatch, selectedSiteId ] );
-
-	const menuItems = useSelector( ( state ) => {
-		const menu = getAdminMenu( state, getSelectedSiteId( state ) );
-		return menu ? Object.values( menu ) : [];
-	} );
+	const menuItems = useSiteMenuItems();
 
 	const isAllDomainsView = useSelector( ( state ) => {
 		const currentRoute = getCurrentRoute( state );
