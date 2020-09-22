@@ -49,7 +49,8 @@ input[type='text'].form-text-input.token-field__input {
 	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
 
-	&:focus {
+	&:focus,
+	&:focus:hover {
 		box-shadow: none;
 	}
 }
