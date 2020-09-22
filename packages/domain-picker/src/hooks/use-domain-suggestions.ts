@@ -11,7 +11,7 @@ import { useDebounce } from 'use-debounce';
  */
 import { DOMAIN_SUGGESTIONS_STORE, DOMAIN_SEARCH_DEBOUNCE_INTERVAL } from '../constants';
 
-type ReturnType = {
+type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestion[] | undefined;
 	errorMessage: string | null;
 	state: DataStatus;
@@ -23,7 +23,7 @@ export function useDomainSuggestions(
 	quantity: number,
 	domainCategory?: string,
 	locale = 'en'
-): ReturnType | undefined {
+): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
 
 	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
