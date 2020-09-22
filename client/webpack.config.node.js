@@ -65,7 +65,7 @@ function getExternals() {
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
 
-				/[^/]?calypso\//,
+				/^calypso\//,
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
