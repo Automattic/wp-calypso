@@ -2,6 +2,7 @@
  * External dependencies
  */
 import config from 'config';
+import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -16,6 +17,13 @@ import * as videoRecorder from '../lib/video-recorder';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 let allPassed = true; // For SauceLabs status
+
+before( function() {
+	if( process.env.LIVEBRANCHES ){
+		const isCalyspsoLiveURL =  config.get( 'calypsoBaseURL').includes( 'calypso.live' );
+		assert.strictEqual( isCalyspsoLiveURL, true );
+	}
+} );
 
 // Start xvfb display and recording
 before( async function () {
