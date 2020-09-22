@@ -34,6 +34,7 @@ $left-margin: 36px;
 	> hr {
 		width: calc( 100% + var( --padding ) * -2 );
 		margin: 16px var( --padding );
+		background: var( --color-neutral-5 );
 
 		// stylelint-disable-next-line unit-allowed-list
 		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
@@ -185,7 +186,7 @@ $left-margin: 36px;
  */
 .purchase-modal__pay-button {
 	align-self: flex-end;
-	margin-top: 32px;
+	margin-top: 24px;
 	min-width: 35%;
 	font-size: 1rem;
 
