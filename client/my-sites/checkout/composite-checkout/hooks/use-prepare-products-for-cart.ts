@@ -140,6 +140,7 @@ function useAddRenewalItems( {
 	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( ! isLoading ) {
@@ -174,7 +175,11 @@ function useAddRenewalItems( {
 					debug( 'no renewal product found with slug', productSlug );
 					dispatch( {
 						type: 'PRODUCTS_ADD_ERROR',
-						message: `Could not find renewal product matching '${ productSlug }'`,
+						message: String(
+							translate( "Could not find renewal product matching '%(productSlug)s'", {
+								args: { productSlug },
+							} )
+						),
 					} );
 					return null;
 				}
@@ -191,13 +196,18 @@ function useAddRenewalItems( {
 			debug( 'creating renewal products failed', productAlias );
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
-				message: `Creating renewal products failed for '${ productAlias }'`,
+				message: String(
+					translate( "Creating renewal products failed for '%(productAlias)s'", {
+						args: { productAlias },
+					} )
+				),
 			} );
 			return;
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
 	}, [
+		translate,
 		isLoading,
 		isFetchingProducts,
 		products,
