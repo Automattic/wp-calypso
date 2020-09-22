@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { stringify } from 'qs';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -66,12 +67,16 @@ export function* __internalGetDomainSuggestions(
 		} );
 	} catch ( e ) {
 		// e.g. no connection, or JSON parsing error
-		return receiveDomainSuggestionsError( e.message || 'Error while fetching server response' );
+		return receiveDomainSuggestionsError(
+			e.message || ( translate( 'Error while fetching server response' ) as string )
+		);
 	}
 
 	if ( ! suggestions || suggestions === '' ) {
 		// Other internal server errors
-		return receiveDomainSuggestionsError( 'Invalid response from the server' );
+		return receiveDomainSuggestionsError(
+			translate( 'Invalid response from the server' ) as string
+		);
 	}
 
 	return receiveDomainSuggestionsSuccess( queryObject, suggestions );
