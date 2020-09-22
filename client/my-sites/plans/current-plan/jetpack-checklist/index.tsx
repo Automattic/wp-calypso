@@ -182,7 +182,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 		const isRewindUnavailable = rewindState === 'unavailable';
 
 		const hasJetpackProductInstallation = isPaidPlan || hasAntiSpam;
-		const hasRecentJetpackBackupPurchase = this.hasRecentJetpackBackupPurchase();
+		const forceShowJetpackBackupTask = isRewindUnavailable && this.hasRecentJetpackBackupPurchase();
 
 		return (
 			<Fragment>
@@ -213,7 +213,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 						onClick={ this.handleTaskStart( { taskId: 'jetpack_protect' } ) }
 					/>
 
-					{ ( ( isPaidPlan && isRewindAvailable ) || hasRecentJetpackBackupPurchase ) && (
+					{ ( ( isPaidPlan && isRewindAvailable ) || forceShowJetpackBackupTask ) && (
 						<Task
 							id="jetpack_rewind"
 							title={ translate( 'Backup and Scan' ) }
@@ -235,7 +235,7 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 					{ isPaidPlan &&
 						isRewindUnavailable &&
 						productInstallStatus &&
-						! hasRecentJetpackBackupPurchase && (
+						! forceShowJetpackBackupTask && (
 							<Task
 								id="jetpack_vaultpress"
 								title={ translate( "We're automatically turning on VaultPress." ) }
