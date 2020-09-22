@@ -76,9 +76,8 @@ import {
 } from './utils';
 import {
 	persistSignupDestination,
-	persistSignupSiteCreated,
+	setSessionStorage,
 	retrieveSignupDestination,
-	retrieveSignupSiteCreated,
 	clearSignupDestinationCookie,
 	getFromSessionStorage,
 } from './storageUtils';
@@ -177,12 +176,12 @@ class Signup extends React.Component {
 
 		const wasSignupCheckoutUnnloaded = getFromSessionStorage( 'signupCheckoutPageUnloaded' );
 		const signupDestinationCookieExists = retrieveSignupDestination();
-		const siteSlugFromCookie = retrieveSignupSiteCreated();
+		const siteSlugFromSession = getFromSessionStorage( 'wpcom_signup_complete_site_slug' );
 		this.enableManageSiteFlow =
 			wasSignupCheckoutUnnloaded && signupDestinationCookieExists && ! isAddNewSiteFlow;
 
 		if ( this.enableManageSiteFlow ) {
-			providedDependencies = { siteSlug: siteSlugFromCookie, isManageSiteFlow: true };
+			providedDependencies = { siteSlug: siteSlugFromSession, isManageSiteFlow: true };
 		}
 
 		// Caution: any signup Flux actions should happen after this initialization.
@@ -312,7 +311,7 @@ class Signup extends React.Component {
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
 			persistSignupDestination( destination );
-			persistSignupSiteCreated( dependencies.siteSlug );
+			setSessionStorage( 'wpcom_signup_complete_site_slug', dependencies.siteSlug );
 		}
 
 		return this.handleFlowComplete( dependencies, filteredDestination );
