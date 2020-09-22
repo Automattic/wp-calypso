@@ -31,7 +31,7 @@ describe( 'selectors', () => {
 			expect( getAdminMenu( state ) ).toEqual( null );
 		} );
 
-		test( 'returns null when requested siteId key is not present', () => {
+		test( 'returns null data  when requested siteId key is not present', () => {
 			const state = {
 				adminMenu: {
 					menus: {
