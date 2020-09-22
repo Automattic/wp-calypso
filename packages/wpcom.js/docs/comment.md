@@ -66,10 +66,9 @@ Create a Comment as a reply to another Comment
 
 ```js
 wpcom
-.site('blog.wordpress.com')
-.comment(123)
-.reply('Im sorry, I've edited the previous comment', function(err, data){
-});
+	.site( 'blog.wordpress.com' )
+	.comment( 123 )
+	.reply( "Im sorry, I've edited the previous comment", function ( err, data ) {} );
 ```
 
 ### Comment#del(body, fn)

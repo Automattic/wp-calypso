@@ -7,9 +7,8 @@
 Create a `Site` instance from WPCOM
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
-var post = wpcom.site('<site-id>').post('<post-id>');
-});
+const wpcom = require( 'wpcom' )( '<your-token>' );
+const suggestions = wpcom.users().suggest( '<site-id>' );
 ```
 
 ## API
@@ -180,9 +179,9 @@ site.statsFollowers( function ( err, data ) {
 Returns stats for a certain [post](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/post/%24post_id/).
 
 ```js
-site.statsPostViews( <postId>, function(err, data){
+site.statsPostViews( postId, function ( err, data ) {
 	// data post views response
-});
+} );
 ```
 
 ### Site#statsPublicize([query, ]fn)
@@ -210,9 +209,9 @@ site.statsReferrers( function ( err, data ) {
 Marks a certain domain referrer as [spam](https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/stats/referrers/spam/new/).
 
 ```js
-site.statsRefferersSpamNew( <domain>, function(err, response){
+site.statsRefferersSpamNew( domain, function ( err, response ) {
 	// response returned from procedure
-});
+} );
 ```
 
 ### Site#statsRefferersSpamDelete(domain, fn)
@@ -220,9 +219,9 @@ site.statsRefferersSpamNew( <domain>, function(err, response){
 Removes a domain from referrer [spam](https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/stats/referrers/spam/delete/) list.
 
 ```js
-site.statsRefferersSpamDelete( <domain>, function(err, response){
+site.statsRefferersSpamDelete( domain, function ( err, response ) {
 	// response returned from procedure
-});
+} );
 ```
 
 ### Site#statsSearchTerms([query, ]fn)
@@ -280,9 +279,9 @@ site.statsTopAuthors( function ( err, data ) {
 Returns stats about a particular VideoPress [video](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/video/%24post_id/).
 
 ```js
-site.statsVideo( <videoId>, function(err, data){
+site.statsVideo( videoId, function ( err, data ) {
 	// data about the video
-});
+} );
 ```
 
 ### Site#statsVideoPlays([query, ]fn)
