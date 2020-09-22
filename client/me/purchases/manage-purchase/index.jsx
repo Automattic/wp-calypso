@@ -17,7 +17,7 @@ import { recordTracksEvent } from 'lib/analytics/tracks';
 import { applyTestFiltersToPlansList } from 'lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from 'config';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,

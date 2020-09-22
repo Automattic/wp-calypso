@@ -16,7 +16,7 @@ import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import SupportInfo from 'components/support-info';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import {
 	PLAN_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS,

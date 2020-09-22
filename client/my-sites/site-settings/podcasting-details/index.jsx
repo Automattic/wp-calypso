@@ -135,7 +135,6 @@ class PodcastingDetails extends Component {
 				<FormComponent
 					id={ key }
 					name={ key }
-					type="text"
 					value={ decodeEntities( fields[ key ] ) || '' }
 					onChange={ onChangeField( key ) }
 					disabled={ isRequestingSettings || ! isPodcastingEnabled }

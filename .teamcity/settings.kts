@@ -154,8 +154,8 @@ object RunAllUnitTests : BuildType({
 				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --install
-				nvm use
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Install modules
 				yarn install
@@ -175,7 +175,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Prevent uncommited changes
 				DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
@@ -201,7 +202,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Code style
 				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|server/|packages/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
@@ -224,7 +226,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run type checks
 				yarn run tsc --project client/landing/gutenboarding
@@ -246,7 +249,8 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run client tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -268,7 +272,8 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run server tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -290,7 +295,8 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run packages tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -312,7 +318,8 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run Editing Toolkit tests
 				cd apps/editing-toolkit
@@ -332,7 +339,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Build o2-blocks
 				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")

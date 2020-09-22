@@ -3,7 +3,7 @@
 /**
  * This script generates a Lunr.js index and document array suitable for server-side
  * documentation search. It finds all .md files that are part of the Calypso repository
- * and writes the index to server/devdocs/search-index.js .
+ * and writes the index to build/search-index.json.
  *
  * The design is currently limited by available RAM, both during indexing and serving the
  * content. A more scalable solution would need to use a separate indexing service like Sphinx.
@@ -12,6 +12,7 @@
 const fs = require( 'fs' );
 const lunr = require( 'lunr' );
 const globby = require( 'globby' );
+const mkdirp = require( 'mkdirp' );
 
 function main() {
 	// Build a list of all .md files in allowed subdirectories...
@@ -35,15 +36,16 @@ function main() {
 		.map( documentFromFile )
 		.filter( ( doc ) => doc.title && doc.body /* skip empty/invalid files */ );
 
-	writeSearchIndex( documents, 'client/server/devdocs/search-index.js' );
+	mkdirp.sync( 'build' );
+	writeSearchIndex( documents, 'build/devdocs-search-index.json' );
 }
 
 function writeSearchIndex( documents, searchIndexPath ) {
-	const idx = lunr( function () {
+	const index = lunr( function () {
 		this.field( 'title', { boost: 10 } );
 		this.field( 'body' );
 
-		documents.forEach( ( doc, index ) => {
+		documents.forEach( ( doc, i ) => {
 			/*
 			 * we use the array index as the document id
 			 * so that we can look the preprocessed contents
@@ -51,7 +53,7 @@ function writeSearchIndex( documents, searchIndexPath ) {
 			 */
 
 			const indexDoc = {};
-			indexDoc.id = index;
+			indexDoc.id = i;
 			indexDoc.title = doc.title;
 
 			//preprocess body to remove non-word characters, e.g. <optgroup> becomes optgroup
@@ -61,21 +63,8 @@ function writeSearchIndex( documents, searchIndexPath ) {
 		} );
 	} );
 
-	const searchIndexJS =
-		'module.exports.index = ' +
-		jsFromJSON( JSON.stringify( idx ) ) +
-		';' +
-		'module.exports.documents = ' +
-		jsFromJSON( JSON.stringify( documents ) ) +
-		';';
-
-	fs.writeFileSync( searchIndexPath, searchIndexJS );
-}
-
-// Some characters in JSON are invalid in JS. Replace them with valid ones.
-// See: https://stackoverflow.com/questions/16686687/json-stringify-and-u2028-u2029-check
-function jsFromJSON( json ) {
-	return json.replace( /\u2028/g, '\\u2028' ).replace( /\u2029/g, '\\u2029' );
+	const searchIndexJSON = JSON.stringify( { index, documents } );
+	fs.writeFileSync( searchIndexPath, searchIndexJSON );
 }
 
 /**

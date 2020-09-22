@@ -1,6 +1,5 @@
 {
 	"mocha_tests": [ "specs-woocommerce" ],
-	"mocha_opts": "test/mocha.opts",
 	"mocha_args": "-R spec-xunit-reporter",
 	"max_test_attempts": 2,
 	"max_workers": 6,

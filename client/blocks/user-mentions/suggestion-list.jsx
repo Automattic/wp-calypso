@@ -31,6 +31,7 @@ const UserMentionsSuggestionList = ( {
 		className="user-mentions__suggestions"
 		context={ popoverContext }
 		isVisible={ true }
+		isFocusEnabled={ false }
 		autoPosition={ false }
 		position="bottom right"
 		onClose={ onClose }

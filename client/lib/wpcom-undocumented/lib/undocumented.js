@@ -760,6 +760,19 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 };
 
 /**
+ * Retrieves the Titan order provisioning URL for a domain.
+ *
+ * @param domain the domain name
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
+	return this.wpcom.req.get(
+		{ path: `/domains/${ encodeURIComponent( domain ) }/titan/order-provisioning-url` },
+		fn
+	);
+};
+
+/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function

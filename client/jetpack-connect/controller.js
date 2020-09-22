@@ -15,7 +15,6 @@ import config from 'config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
-import JetpackNewSite from './jetpack-new-site/index';
 import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
@@ -30,12 +29,12 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import { hideMasterbar, showMasterbar } from 'state/ui/actions';
-import { JPC_PATH_PLANS, ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from './constants';
+import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, JPC_PATH_PLANS } from './constants';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
-import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -126,12 +125,6 @@ export function redirectWithoutLocaleIfLoggedIn( context, next ) {
 		return page.redirect( urlWithoutLocale );
 	}
 
-	next();
-}
-
-export function newSite( context, next ) {
-	recordPageView( '/jetpack/new', 'Add a new site (Jetpack)' );
-	context.primary = <JetpackNewSite locale={ context.params.locale } path={ context.path } />;
 	next();
 }
 

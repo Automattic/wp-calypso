@@ -8,6 +8,7 @@ module.exports = {
 			files: [ '**/fixtures/**/*' ],
 			rules: {
 				'wpcalypso/no-relative-imports': 'off',
+				'import/no-extraneous-dependencies': 'off',
 			},
 		},
 	],

@@ -70,6 +70,7 @@ export interface SiteDetails {
 	launch_status: string;
 	options: {
 		created_at: string;
+		selected_features?: string[];
 	};
 	plan?: {
 		is_free: boolean;

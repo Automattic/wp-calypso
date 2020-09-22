@@ -31,7 +31,7 @@ import {
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { localizeUrl } from 'lib/i18n-utils';
 
 /**
@@ -141,7 +141,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const body = (
 			<>
 				{ translate(
-					'Accept credit card payments via PayPal for physical products, digital goods, services, donations, or support of your creative work.'
+					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
 				) }
 				{ ! hasSimplePayments && <em>{ getPlanNames() }</em> }
 			</>
@@ -189,7 +189,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
 		);
 		const noConnectionBody = translate(
-			'Accept one-time and recurring credit card payments for digital goods, physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
+			'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
 			{
 				components: {
 					em: <em />,

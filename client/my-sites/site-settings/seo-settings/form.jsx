@@ -35,7 +35,7 @@ import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import {
 	isBusiness,
 	isEnterprise,
@@ -440,7 +440,6 @@ export class SeoForm extends React.Component {
 									</FormLabel>
 									<CountedTextarea
 										name="advanced_seo_front_page_description"
-										type="text"
 										id="advanced_seo_front_page_description"
 										value={ frontPageMetaDescription || '' }
 										disabled={ isSeoDisabled }

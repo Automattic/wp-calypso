@@ -104,7 +104,6 @@ export class SiteSettingsFormGeneral extends Component {
 							name="blogname"
 							id="blogname"
 							data-tip-target="site-title-input"
-							type="text"
 							value={ fields.blogname || '' }
 							onChange={ onChangeField( 'blogname' ) }
 							disabled={ isRequestingSettings }
@@ -116,7 +115,6 @@ export class SiteSettingsFormGeneral extends Component {
 						<FormLabel htmlFor="blogdescription">{ translate( 'Site tagline' ) }</FormLabel>
 						<FormInput
 							name="blogdescription"
-							type="text"
 							id="blogdescription"
 							data-tip-target="site-tagline-input"
 							value={ fields.blogdescription || '' }
@@ -201,7 +199,6 @@ export class SiteSettingsFormGeneral extends Component {
 				<div className="site-settings__blogaddress-settings">
 					<FormInput
 						name="blogaddress"
-						type="text"
 						id="blogaddress"
 						value={ site.domain }
 						disabled="disabled"

@@ -56,7 +56,6 @@ class CommentDisplaySettings extends Component {
 					</FormLabel>
 					<FormTextInput
 						name="highlander_comment_form_prompt"
-						type="text"
 						id="highlander_comment_form_prompt"
 						value={ fields.highlander_comment_form_prompt || '' }
 						onChange={ onChangeField( 'highlander_comment_form_prompt' ) }

@@ -1,0 +1,135 @@
+$wp-story-background-color: #0e1112;
+
+.wp-story-container {
+	height: 320px;
+	width: 180px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 24px;
+	position: relative;
+	list-style: none;
+	padding: 0;
+	z-index: 1;
+	border-radius: 15px;
+	overflow: hidden;
+	-webkit-tap-highlight-color: transparent;
+	box-shadow: 0 2px 12px rgba( 0, 0, 0, 0.25 );
+	transition: box-shadow 0.3s ease-in-out, transform 0.3s cubic-bezier( 0.18, 0.14, 0.25, 1 );
+
+	figure {
+		transition: transform 0.3s cubic-bezier( 0.18, 0.14, 0.25, 1 );
+	}
+
+	&:hover {
+		box-shadow: 0 4px 12px rgba( 0, 0, 0, 0.3 );
+		transform: scale( 1.03, 1.03 );
+		figure {
+			transform: scale( 1.07, 1.07 );
+		}
+	}
+
+	.wp-story-wrapper,
+	.wp-story-slide {
+		padding: 0;
+		margin: 0;
+		line-height: normal;
+		list-style-type: none;
+	}
+
+	.wp-story-wrapper {
+		display: block;
+		position: absolute;
+		height: auto;
+		bottom: 0;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: -1;
+		border-radius: 15px;
+		background-color: $wp-story-background-color;
+	}
+
+	.wp-story-slide {
+		display: flex;
+		height: 100%;
+		width: 100%;
+
+		figure {
+			align-items: center;
+			display: flex;
+			height: 100%;
+			width: 100%;
+			justify-content: center;
+			margin: 0;
+			position: relative;
+			overflow: hidden;
+			object-fit: contain;
+		}
+	}
+
+	.wp-story-image, .wp-story-video {
+		display: block;
+		height: auto;
+		width: auto;
+		max-height: 100%;
+		max-width: 100%;
+		margin: 0;
+		border: 0;
+
+		&.wp-story-crop-wide {
+			max-width: revert;
+		}
+
+		&.wp-story-crop-narrow {
+			max-height: revert;
+		}
+	}
+
+	.wp-story-meta, .wp-story-pagination {
+		display: none;
+	}
+
+	.wp-story-overlay {
+		width: 100%;
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+
+		.wp-story-embed-icon,
+		.wp-story-embed-icon-expand {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: 15px;
+			padding: 5px 3px;
+			display: flex;
+			align-items: center;
+			background-color: rgba( 0, 0, 0, 0.5 );
+			border-radius: 5px;
+
+			* {
+				margin: 0 2px;
+			}
+
+			svg {
+				fill: #fff;
+				width: 20px;
+				height: 20px;
+			}
+		}
+
+		.wp-story-embed-icon-expand {
+			background-color: transparent;
+
+			svg {
+				filter: drop-shadow( 0 0 2px rgba( 0, 0, 0, 0.6 ) );
+			}
+		}
+	}
+}

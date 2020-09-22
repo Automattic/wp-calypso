@@ -28,6 +28,7 @@ import { deleteSite } from 'state/sites/actions';
 import { setSelectedSiteId } from 'state/ui/actions';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
 
 /**
@@ -355,10 +356,9 @@ class DeleteSite extends Component {
 							) }
 						</FormLabel>
 
-						<input
+						<FormTextInput
 							autoCapitalize="off"
 							className="delete-site__confirm-input"
-							type="text"
 							onChange={ this.onConfirmDomainChange }
 							value={ this.state.confirmDomain }
 							aria-required="true"

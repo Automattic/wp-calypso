@@ -365,7 +365,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Google' ) }
 								name="verification_code_google"
-								type="text"
 								value={ googleCode }
 								id="verification_code_google"
 								spellCheck="false"
@@ -380,7 +379,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Bing' ) }
 								name="verification_code_bing"
-								type="text"
 								value={ bingCode }
 								id="verification_code_bing"
 								spellCheck="false"
@@ -395,7 +393,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Pinterest' ) }
 								name="verification_code_pinterest"
-								type="text"
 								value={ pinterestCode }
 								id="verification_code_pinterest"
 								spellCheck="false"
@@ -410,7 +407,6 @@ class SiteVerification extends Component {
 							<FormInput
 								prefix={ translate( 'Yandex' ) }
 								name="verification_code_yandex"
-								type="text"
 								value={ yandexCode }
 								id="verification_code_yandex"
 								spellCheck="false"

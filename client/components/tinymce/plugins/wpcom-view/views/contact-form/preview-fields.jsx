@@ -15,11 +15,12 @@ import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
 
 const textField = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
-		<input type="text" />
+		<FormTextInput />
 	</PreviewFieldset>
 );
 

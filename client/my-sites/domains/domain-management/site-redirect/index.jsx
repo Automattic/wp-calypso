@@ -143,7 +143,6 @@ class SiteRedirect extends React.Component {
 									onChange={ this.handleChange }
 									onFocus={ this.handleFocus }
 									prefix="http://"
-									type="text"
 									value={ this.state.redirectUrl }
 									id="site-redirect__input"
 								/>

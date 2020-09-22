@@ -31,7 +31,6 @@ import { withLocalizedMoment } from 'components/localized-moment';
 /**
  * Style dependencies
  */
-import '@wordpress/components/build-style/style.css';
 import './style.scss';
 
 class EditorDeprecationDialog extends Component {

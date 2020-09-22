@@ -14,6 +14,7 @@ import config from 'config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button } from '@automattic/components';
 import Gridicon from 'components/gridicon';
+import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import InlineSupportLink from 'components/inline-support-link';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -156,10 +157,9 @@ class AccountCloseConfirmDialog extends React.Component {
 								}
 							) }
 						</FormLabel>
-						<input
+						<FormTextInput
 							autoCapitalize="off"
 							className="account-close__confirm-dialog-confirm-input"
-							type="text"
 							onChange={ this.handleInputChange }
 							value={ this.state.inputValue }
 							aria-required="true"

@@ -20,7 +20,6 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
 import { Step, usePath } from '../../path';
 import { useFreeDomainSuggestion } from '../../hooks/use-free-domain-suggestion';
-import useRecommendedPlan from '../../hooks/use-recommended-plan';
 
 type PlanSlug = Plans.PlanSlug;
 
@@ -36,6 +35,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const plan = useSelectedPlan();
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
@@ -56,8 +56,6 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
 	const [ planUpdated, setPlanUpdated ] = React.useState( false );
-
-	const recommendedPlan = useRecommendedPlan();
 
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
 	const handlePlanSelect = async ( planSlug: PlanSlug ) => {
@@ -110,7 +108,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
 				isExperimental={ isEnabled( 'gutenboarding/feature-picker' ) }
-				recommendedPlan={ recommendedPlan }
+				selectedFeatures={ selectedFeatures }
 			/>
 		</div>
 	);
