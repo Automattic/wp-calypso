@@ -897,9 +897,9 @@ jobs:
           command: |
             tar -zcf desktop/release/win-unpacked-x64.tar.gz desktop/release/win-unpacked
 
-            # Check if win-ia32 build is present before archiving: if this isn't a full
-            # artifact build, the win-ia32-unpacked executable will not be generated.
-            If ( $(Test-Path -Path release\win-ia32-unpacked) ) {
+            # Check if win-ia32 build is present before archiving. If this is a full
+            # artifact build, the win-ia32-unpacked executable will be generated and we can archive it.
+            If ( $(Test-Path -Path desktop\release\win-ia32-unpacked) ) {
               tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
             } else {
               echo "Skipping tar archive for 'desktop\release\win-ia32-unpacked' (not built)"
