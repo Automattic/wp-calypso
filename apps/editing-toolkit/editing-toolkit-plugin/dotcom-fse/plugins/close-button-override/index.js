@@ -3,13 +3,11 @@
 /**
  * External dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import domReady from '@wordpress/dom-ready';
 import ReactDOM from 'react-dom';
 import { __ } from '@wordpress/i18n';
 import { Button, Dashicon } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-/* eslint-disable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies

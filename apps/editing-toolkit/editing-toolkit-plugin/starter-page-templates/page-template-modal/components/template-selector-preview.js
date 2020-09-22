@@ -1,9 +1,7 @@
 /**
  * WordPress dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { __ } from '@wordpress/i18n';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies
