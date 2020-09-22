@@ -3,12 +3,11 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-import type { TimestampMS } from 'wp-calypso-client/types';
 
 /**
  * Internal dependencies
  */
-import type { DomainSuggestion, DomainCategory, DomainAvailability } from './types';
+import type { DomainSuggestion, DomainCategory, DomainAvailability, TimestampMS } from './types';
 import type { Action } from './actions';
 import { DataStatus } from './constants';
 import { stringifyDomainQueryObject } from './utils';

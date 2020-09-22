@@ -183,3 +183,5 @@ export interface DomainAvailability {
 	 */
 	vendor?: string;
 }
+
+export type TimestampMS = ReturnType< typeof Date.now >;
