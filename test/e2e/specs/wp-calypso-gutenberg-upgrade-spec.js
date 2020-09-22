@@ -56,6 +56,11 @@ const blockInits = new Map()
 		await block.openEditSettings();
 		await block.insertEmail( 'testing@automattic.com' );
 		await block.insertSubject( "Let's work together" );
+	} )
+	.set( LayoutGridBlockComponent, async ( block ) => {
+		await block.setupColumns( 2 );
+		await block.insertBlock( RatingStarBlockComponent );
+		await block.insertBlock( DynamicSeparatorBlockComponent );
 	} );
 
 /**
