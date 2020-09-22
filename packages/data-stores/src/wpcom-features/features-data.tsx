@@ -7,7 +7,7 @@ import type { FeatureId, Feature } from './types';
 /**
  * Internal dependencies
  */
-const { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS } = Plans;
+const { PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } = Plans;
 
 export const featuresList: Record< FeatureId, Feature > = {
 	domain: {
@@ -22,9 +22,9 @@ export const featuresList: Record< FeatureId, Feature > = {
 		id: 'store',
 		name: translate( 'Store' ) as string,
 		description: translate(
-			'Sell products, digital subscriptions, and receive payments.'
+			'Sell unlimited products or services with a powerful, flexible online store.'
 		) as string,
-		minSupportedPlan: PLAN_PREMIUM,
+		minSupportedPlan: PLAN_ECOMMERCE,
 	},
 	seo: {
 		id: 'seo',
