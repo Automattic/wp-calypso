@@ -10,7 +10,7 @@ import FoldableCard from 'components/foldable-card';
 function render() {
 	return (
 		<div>
-			<FoldableCard header={ 'title' }>{ content }</FoldableCard>
+			<FoldableCard header="title">{ content }</FoldableCard>
 		</div>
 	);
 }

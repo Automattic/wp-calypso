@@ -60,8 +60,8 @@ export default function SomeComponent() {
 			context={ context /* Element to render the Popover next to */ }
 			onClose={ onClose /* Callback for Esc keypresses, click-outside */ }
 			position={ 'bottom' /* optional, and/or any other Popover props */ }
-			siteId={ 1 /* Numeric site ID */ }
-			postId={ 1 /* Numeric post ID */ }
+			siteId={ 1234 /* Numeric site ID */ }
+			postId={ 1234 /* Numeric post ID */ }
 		/>
 	);
 }

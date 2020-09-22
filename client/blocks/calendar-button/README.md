@@ -105,7 +105,7 @@ import CalendarButton from 'blocks/calendar-button';
 function render() {
 	return (
 		<CalendarButton onDateChange={ this.setDate }>
-			<a class="custom-content" href="http://wordpress.com">
+			<a class="custom-content" href="https://wordpress.com">
 				Open Me!
 			</a>
 		</CalendarButton>

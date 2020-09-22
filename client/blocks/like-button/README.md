@@ -33,7 +33,7 @@ function render() {
 		<div className="your-stuff">
 			<LikeButton
 				likeCount={ 5 }
-				showCount={ true }
+				showCount
 				liked={ false }
 				onLikeToggle={ this.handleLikeToggle }
 			/>

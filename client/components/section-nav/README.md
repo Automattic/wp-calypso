@@ -29,7 +29,7 @@ export default class extends React.Component {
 		return (
 			<SectionNav selectedText={ sectionNavSelectedText }>
 				<NavTabs label="Status" selectedText="Published">
-					<NavItem path="/posts" selected={ true }>
+					<NavItem path="/posts" selected>
 						Published
 					</NavItem>
 					<NavItem path="/posts/drafts" selected={ false }>
@@ -47,7 +47,7 @@ export default class extends React.Component {
 					<NavItem path="/posts/my" selected={ false }>
 						Only Me
 					</NavItem>
-					<NavItem path="/posts" selected={ true }>
+					<NavItem path="/posts" selected>
 						Everyone
 					</NavItem>
 				</NavSegmented>
@@ -59,7 +59,7 @@ export default class extends React.Component {
 					initialValue={ this.props.search }
 					placeholder="Search Published..."
 					analyticsGroup="Pages"
-					delaySearch={ true }
+					delaySearch
 				/>
 			</SectionNav>
 		);

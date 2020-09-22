@@ -12,7 +12,7 @@ import FilePicker from 'components/file-picker';
 function render() {
 	return (
 		<FilePicker multiple accept="image/*" onPick={ console.log.bind( console ) }>
-			<a href="http://wordpress.com">Select a few images!</a>
+			<a href="https://wordpress.com">Select a few images!</a>
 		</FilePicker>
 	);
 }

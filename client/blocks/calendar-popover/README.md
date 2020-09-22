@@ -11,12 +11,12 @@ import { Button } from '@automattic/components';
 import CalendarPopover from 'blocks/calendar-popover';
 
 const toggle = () => this.setState( { show: ! this.state.show } );
-let buttonRef;
+const buttonRef = React.createRef();
 
 function render() {
 	return (
 		<div>
-			<Button ref={ ( ref ) => ( buttonRef = ref ) } onClick={ this.toggle }>
+			<Button ref={ buttonRef } onClick={ this.toggle }>
 				Show Popover
 			</Button>
 

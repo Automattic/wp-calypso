@@ -15,7 +15,7 @@ Refer to the following code snippet for a typical usage example:
 	max="100"
 	value={ this.state.rangeValue }
 	onChange={ this.onChange }
-	showValueLabel={ true }
+	showValueLabel
 />;
 ```
 

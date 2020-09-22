@@ -44,7 +44,7 @@ import {
 
 const siteId = 2916284;
 
-// dispacth a request action
+// dispatch a request action
 dispatch( vouchersRequestAction( siteId ) );
 
 wpcom
@@ -52,11 +52,11 @@ wpcom
 	.vouchers()
 	.get( ( error, response ) => {
 		if ( error ) {
-			// dispacth a failure action
+			// dispatch a failure action
 			return dispatch( vouchersRequestFailureAction( siteId, error.message ) );
 		}
 
-		// dispacth a success action ...
+		// dispatch a success action ...
 		dispatch( vouchersRequestSuccessAction( siteId ) );
 
 		// and populate the global tree dispatching a recieve action
