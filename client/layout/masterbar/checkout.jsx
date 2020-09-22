@@ -24,6 +24,7 @@ class CheckoutMasterbar extends React.Component {
 		searchParams.has( 'signup' ) && clearSignupDestinationCookie();
 
 		if (
+			previousPath &&
 			'' !== previousPath &&
 			previousPath !== window.location.href &&
 			! previousPath.includes( '/checkout/no-site' )
