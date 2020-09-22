@@ -7,12 +7,8 @@ This component is used to display the sections for a plugin as returned from the
 ```js
 import PluginSections from 'my-sites/plugins/plugin-sections';
 
-render() {
-	return
-		<PluginSections
-			plugin={ plugin }
-		/>
-	);
+function render() {
+	return <PluginSections plugin={ plugin } />;
 }
 ```
 

@@ -9,11 +9,11 @@ Put the component in your `Main` component. It handles detecting the selected si
 ```js
 import SidebarNavigation from './sidebar-navigation';
 
-render() {
-    return (
-        <Main>
-		<SidebarNavigation />
-        </Main>
-    );
+function render() {
+	return (
+		<Main>
+			<SidebarNavigation />
+		</Main>
+	);
 }
 ```

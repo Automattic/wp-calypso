@@ -16,12 +16,8 @@ export default function MyReaderLists( { subscribedLists } ) {
 		<div>
 			<QueryReaderLists />
 			{ subscribedLists.map( ( subscribedList ) => {
-				return (
-					<MyListItem
-						key={ subscribedList.slug }
-						list={ subscribedList } />
-				);
-			} }
+				return <MyListItem key={ subscribedList.slug } list={ subscribedList } />;
+			} ) }
 		</div>
 	);
 }

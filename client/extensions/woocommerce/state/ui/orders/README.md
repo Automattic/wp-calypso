@@ -21,22 +21,22 @@ Clear the current order edit-tracking.
 This is saved on a per-site basis.
 
 ```js
-{
-	"orders": {
-		[ siteId ] : {
+const object = {
+	orders: {
+		[ siteId ]: {
 			edits: {
 				currentlyEditingId: {},
 				changes: {
-					... order data ...
+					/*... order data ...*/
 				},
 			},
 			list: {
 				currentPage: 1,
-				currentSearch: "Smith",
+				currentSearch: 'Smith',
 			},
-		}
-	}
-}
+		},
+	},
+};
 ```
 
 ## Selectors

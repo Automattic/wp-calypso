@@ -9,13 +9,8 @@ When the `compactOnMobile` flag is set, the header renders in a compact way on s
 ```js
 import FormattedHeader from 'components/formatted-header';
 
-render() {
-	return (
-		<FormattedHeader
-			headerText="A main title"
-			subHeaderText="A main title"
-		/>
-	);
+function render() {
+	return <FormattedHeader headerText="A main title" subHeaderText="A main title" />;
 }
 ```
 

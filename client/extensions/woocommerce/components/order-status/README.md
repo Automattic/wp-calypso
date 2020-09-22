@@ -9,12 +9,12 @@ Some statuses don't have a shipping status: `cancelled`, `refunded`, and `failed
 ### Usage
 
 ```jsx
-render: function() {
-    return (
-        <SectionHeader label="Order details">
-            <OrderStatus order={ { status: 'pending' } } />
-        </SectionHeader>
-    );
+function render() {
+	return (
+		<SectionHeader label="Order details">
+			<OrderStatus order={ { status: 'pending' } } />
+		</SectionHeader>
+	);
 }
 ```
 
@@ -41,12 +41,12 @@ OrderStatusSelect is a component that displays a dropdown of order statuses.
 ### Usage
 
 ```jsx
-render: function() {
-    return (
-        <SectionHeader label="Order details">
-            <OrderStatusSelect value={ this.state.status } onChange={ this.updateStatus } />
-        </SectionHeader>
-    );
+function render() {
+	return (
+		<SectionHeader label="Order details">
+			<OrderStatusSelect value={ this.state.status } onChange={ this.updateStatus } />
+		</SectionHeader>
+	);
 }
 ```
 

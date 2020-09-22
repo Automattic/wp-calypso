@@ -26,13 +26,13 @@ import { translate } from 'i18n-calypso';
 import PieChart from 'components/pie-chart';
 import PieChartLegend from 'components/pie-chart/legend';
 
-const titleFunc = ( translate, dataTotal ) => {
-	return translate( '%(dataTotal)d Total Searches', {
+const titleFunc = ( translateFn, dataTotal ) => {
+	return translateFn( '%(dataTotal)d Total Searches', {
 		args: {
 			dataTotal,
 		},
 	} );
-}
+};
 
 export default class Example extends Component {
 	render() {
@@ -40,35 +40,29 @@ export default class Example extends Component {
 			{
 				value: 189,
 				name: translate( 'Direct' ),
-				description:
-					translate(
-						'Customers who find your listing searching for your business or address'
-					),
+				description: translate(
+					'Customers who find your listing searching for your business or address'
+				),
 			},
 			{
 				value: 362,
 				name: translate( 'Discovery' ),
-				description:
-					translate(
-						'Customers who find your listing searching for a category, product, or service'
-					),
+				description: translate(
+					'Customers who find your listing searching for a category, product, or service'
+				),
 			},
 			{
 				value: 122,
 				name: translate( 'Referral' ),
-				description:
-					translate(
-						'Customers who find your listing by being referred from another type of search'
-					),
-			}
+				description: translate(
+					'Customers who find your listing by being referred from another type of search'
+				),
+			},
 		];
 
 		return (
 			<div>
-				<PieChart
-					data={ data }
-					title={ titleFunc }
-				/>
+				<PieChart data={ data } title={ titleFunc } />
 				<PieChartLegend data={ data } />
 			</div>
 		);

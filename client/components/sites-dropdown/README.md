@@ -9,10 +9,8 @@ It supports searching if you have many sites, handles sites with empty titles, s
 ```js
 import SitesDropdown from 'components/sites-dropdown';
 
-render() {
-	return (
-		<SitesDropdown />
-	);
+function render() {
+	return <SitesDropdown />;
 }
 ```
 

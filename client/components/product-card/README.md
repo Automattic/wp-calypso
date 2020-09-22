@@ -125,41 +125,41 @@ import React, { useState } from 'react';
 import ProductCard from 'components/product-card';
 import ProductCardOptions from 'components/product-card/options';
 
-export default class extends React.Component {
-	const [ selectedProductOption, selectProductOption ] = useState( 'jetpack_backup_realtime_monthly' );
+export default function () {
+	const [ selectedProductOption, selectProductOption ] = useState(
+		'jetpack_backup_realtime_monthly'
+	);
 
-	render() {
-		return (
-			<ProductCard
-				title="Jetpack Backup"
-				billingTimeFrame="per month"
-				fullPrice={ [ 16, 25 ] }
-				discountedPrice={ [ 12, 16 ] }
-				description="Always-on backups ensure you never lose your site. Choose from real-time or daily backups."
-			>
-				<ProductCardOptions
-					optionsLabel="Backup options:"
-					options={ [
-						{
-							billingTimeFrame={ 'per month' }
-							discountedPrice: 12,
-							fullPrice: 14,
-							slug: 'jetpack_backup_daily_monthly',
-							title: 'Daily Backups',
-						},
-						{
-							billingTimeFrame={ 'per month' }
-							fullPrice: 25,
-							slug: 'jetpack_backup_realtime_monthly',
-							title: 'Real-Time Backups',
-						},
-					] }
-					selectedSlug={ selectedProductOption }
-					handleSelect={ slug => selectProductOption( slug ) }
-				/>
-			</ProductCard>
-		);
-	}
+	return (
+		<ProductCard
+			title="Jetpack Backup"
+			billingTimeFrame="per month"
+			fullPrice={ [ 16, 25 ] }
+			discountedPrice={ [ 12, 16 ] }
+			description="Always-on backups ensure you never lose your site. Choose from real-time or daily backups."
+		>
+			<ProductCardOptions
+				optionsLabel="Backup options:"
+				options={ [
+					{
+						billingTimeFrame: 'per month',
+						discountedPrice: 12,
+						fullPrice: 14,
+						slug: 'jetpack_backup_daily_monthly',
+						title: 'Daily Backups',
+					},
+					{
+						billingTimeFrame: 'per month',
+						fullPrice: 25,
+						slug: 'jetpack_backup_realtime_monthly',
+						title: 'Real-Time Backups',
+					},
+				] }
+				selectedSlug={ selectedProductOption }
+				handleSelect={ ( slug ) => selectProductOption( slug ) }
+			/>
+		</ProductCard>
+	);
 }
 ```
 

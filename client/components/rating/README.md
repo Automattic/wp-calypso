@@ -8,13 +8,8 @@ that represents a rating in a scale between 0 and 5.
 ```js
 import Rating from 'components/rating';
 
-render() {
-	return (
-		<Rating
-			rating={ 65 }
-			size={ 48 }
-		/>
-	);
+function render() {
+	return <Rating rating={ 65 } size={ 48 } />;
 }
 ```
 

@@ -7,10 +7,8 @@ This component displays the All Sites item. It's used in the Sidebar as the curr
 ```js
 import AllSites from 'blocks/all-sites';
 
-render() {
-	return (
-		<AllSites sites={ sitesArray } />
-	);
+function render() {
+	return <AllSites sites={ sitesArray } />;
 }
 ```
 

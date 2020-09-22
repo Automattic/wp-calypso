@@ -13,16 +13,10 @@ import QueryTerms from 'components/data/query-terms';
 export default function AmazingListOfTerms( { terms } ) {
 	return (
 		<ul>
-			<QueryTerms
-				siteId={ 3584907 }
-				taxonomy="category" />
+			<QueryTerms siteId={ 3584907 } taxonomy="category" />
 			{ terms.map( ( term ) => {
-				return (
-					<li key={ term.ID }>
-						{ term.name }
-					</li>
-				);
-			} }
+				return <li key={ term.ID }>{ term.name }</li>;
+			} ) }
 		</ul>
 	);
 }

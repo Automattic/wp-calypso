@@ -57,11 +57,11 @@ import PostLikesPopover from 'blocks/post-likes/popover';
 export default function SomeComponent() {
 	return (
 		<PostLikesPopover
-			context={ /* Element to render the Popover next to */ }
-			onClose={ /* Callback for Esc keypresses, click-outside */ }
+			context={ context /* Element to render the Popover next to */ }
+			onClose={ onClose /* Callback for Esc keypresses, click-outside */ }
 			position={ 'bottom' /* optional, and/or any other Popover props */ }
-			siteId={ /* Numeric site ID */ }
-			postId={ /* Numeric post ID */ }
+			siteId={ 1 /* Numeric site ID */ }
+			postId={ 1 /* Numeric post ID */ }
 		/>
 	);
 }

@@ -11,7 +11,7 @@ import DateRange from 'components/date-range';
 
 export default class extends React.Component {
 	render() {
-		return <DateRange />
+		return <DateRange />;
 	}
 }
 ```

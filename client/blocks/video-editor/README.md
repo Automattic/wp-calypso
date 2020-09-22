@@ -59,12 +59,8 @@ It receives one argument:
 ```js
 import VideoEditor from 'blocks/video-editor';
 
-render() {
-	return (
-		<VideoEditor
-			media={ { videopress_guid: 'kUJmAcSf' } }
-		/>
-	);
+function render() {
+	return <VideoEditor media={ { videopress_guid: 'kUJmAcSf' } } />;
 }
-``
+``;
 ```

@@ -7,10 +7,8 @@ This component renders a simple gauge to show a percentage visually.
 ```js
 import Gauge from 'components/gauge';
 
-render() {
-    return (
-  		<Gauge percentage={ 40 } metric={ 'Visits' } />
-    );
+function render() {
+	return <Gauge percentage={ 40 } metric={ 'Visits' } />;
 }
 ```
 

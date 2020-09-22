@@ -14,7 +14,9 @@ export default function CountriesList( { countries } ) {
 	return (
 		<ul>
 			<QueryDomainCountries />
-			{ countries.map( ( country ) => <li>{ country.label }</li> ) }
+			{ countries.map( ( country ) => (
+				<li>{ country.label }</li>
+			) ) }
 		</ul>
 	);
 }

@@ -6,26 +6,21 @@ Beyond combining Popover and PostSchedule, this component connects with the stat
 
 ## Usage
 
-```es6
+```jsx
 import { Button } from '@automattic/components';
 import CalendarPopover from 'blocks/calendar-popover';
 
-toggle = () => this.setState( { show: ! this.state.show } );
+const toggle = () => this.setState( { show: ! this.state.show } );
+let buttonRef;
 
-render() {
+function render() {
 	return (
 		<div>
-			<Button
-				ref="button"
-				onClick={ this.toggle }
-			>
+			<Button ref={ ( ref ) => ( buttonRef = ref ) } onClick={ this.toggle }>
 				Show Popover
 			</Button>
 
-			<CalendarPopover
-				context={ this.refs && this.refs.button }
-				isVisible={ this.state.show }
-			/>
+			<CalendarPopover context={ buttonRef } isVisible={ this.state.show } />
 		</div>
 	);
 }

@@ -240,7 +240,7 @@ import { QUEUE_REQUEST } from 'state/data-layer/wpcom-http/constants';
 
 /**
  * @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/posts/%24post_ID/likes/new/ API description
- * @param action
+ * @param action the action
  */
 const likePost = ( action ) =>
 	// dispatch intent to issue HTTP request by not supplying onSuccess, onError,
@@ -270,6 +270,7 @@ const likePost = ( action ) =>
 const verifyLike = ( { siteId, postId }, data ) => {
 	if ( ! data.hasOwnProperty( 'i_like' ) ) {
 		// something went wrong, so failover
+		// eslint-disable-next-line no-use-before-define
 		return undoLike( { siteId, postId }, 'Invalid data' );
 	}
 

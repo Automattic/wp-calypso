@@ -13,14 +13,10 @@ import QuerySiteStats from 'components/data/query-site-stats';
 export default function AmazingVisualizationOfStats( { stats } ) {
 	return (
 		<ul>
-			<QuerySiteStats
-				siteId={ 3584907 }
-				statType="statsStreak" />
+			<QuerySiteStats siteId={ 3584907 } statType="statsStreak" />
 			{ stats.map( ( stat ) => {
-				return (
-					<span>A span o { stat }</span>
-				);
-			} }
+				return <span>A span o { stat }</span>;
+			} ) }
 		</ul>
 	);
 }

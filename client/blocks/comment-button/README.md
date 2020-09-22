@@ -7,10 +7,8 @@ This component is used to display a button with an embedded number indicator.
 ```js
 import CommentButton from 'blocks/comment-button';
 
-render() {
-	return (
-		<CommentButton commentCount={ 123 } />
-	);
+function render() {
+	return <CommentButton commentCount={ 123 } />;
 }
 ```
 

@@ -7,14 +7,10 @@ This component is used to display a plugin activation toggle.
 ```js
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 
-render: function() {
+function render() {
 	return (
 		<div className="your-plugins-list">
-			<PluginActivateToggle
-				plugin={ plugin }
-				site={ site }
-				notices={ notices }
-			/>
+			<PluginActivateToggle plugin={ plugin } site={ site } notices={ notices } />
 		</div>
 	);
 }

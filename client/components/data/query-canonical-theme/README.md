@@ -16,20 +16,15 @@ import { getCanonicalTheme } from 'state/themes/selectors';
 function MyTheme( { theme } ) {
 	return (
 		<div>
-			<QueryCanonicalTheme
-				siteId={ 3584907 }
-				themeId={ 'twentysixteen' } />
-				<Theme theme={ theme } />
-			} }
+			<QueryCanonicalTheme siteId={ 3584907 } themeId={ 'twentysixteen' } />
+			<Theme theme={ theme } />} }
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		theme: getCanonicalTheme( state, 3584907, 'twentysixteen' )
-	} )
-)( MyTheme );
+export default connect( ( state ) => ( {
+	theme: getCanonicalTheme( state, 3584907, 'twentysixteen' ),
+} ) )( MyTheme );
 ```
 
 ## Props

@@ -13,10 +13,14 @@ import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
 
-render: function() {
+function render() {
 	const titles = (
 		<TableRow isHeader>
-			{ [ 'One', 'Two', 'Three' ].map( ( item, i ) => <TableItem isHeader key={ i } isTitle={ 0 === i }>{ item }</TableItem> ) }
+			{ [ 'One', 'Two', 'Three' ].map( ( item, i ) => (
+				<TableItem isHeader key={ i } isTitle={ 0 === i }>
+					{ item }
+				</TableItem>
+			) ) }
 		</TableRow>
 	);
 	const values = [
@@ -25,15 +29,17 @@ render: function() {
 		[ 7, 8, 9 ],
 	];
 	return (
-	<Table header={ titles } compact={ true }>
-		{ values.map( ( row, i ) => (
-			<TableRow key={ i }>
-				{ row.map( ( item, j ) => (
-					<TableItem key={ j } isTitle={ 0 == j }>{ item }</TableItem>
-				) ) }
-			</TableRow>
-		) ) }
-	</Table>
+		<Table header={ titles } compact={ true }>
+			{ values.map( ( row, i ) => (
+				<TableRow key={ i }>
+					{ row.map( ( item, j ) => (
+						<TableItem key={ j } isTitle={ 0 === j }>
+							{ item }
+						</TableItem>
+					) ) }
+				</TableRow>
+			) ) }
+		</Table>
 	);
 }
 ```

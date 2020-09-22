@@ -60,11 +60,11 @@ The function to call when the action button is clicked.
 
 ```jsx
 import Timeline from 'components/timeline';
-import TimelineEvent from "components/timeline/timeline-item";
+import TimelineEvent from 'components/timeline/timeline-item';
 
 export default class extends React.Component {
 	// ...
-	
+
 	render() {
 		return (
 			<Timeline>
@@ -123,6 +123,5 @@ export default class extends React.Component {
 			</Timeline>
 		);
 	}
-
 }
 ```

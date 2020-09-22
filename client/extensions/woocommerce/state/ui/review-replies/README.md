@@ -17,19 +17,19 @@ Clear the current review reply edit-tracking.
 This is saved on a per-site basis.
 
 ```js
-{
-	"reviewReplies": {
-		[ siteId ] : {
+const object = {
+	reviewReplies: {
+		[ siteId ]: {
 			edits: {
 				currentlyEditingId: 12,
-				reviewId: 10
+				reviewId: 10,
 				changes: {
-					...data ...
+					/*...data ...*/
 				},
 			},
-		}
-	}
-}
+		},
+	},
+};
 ```
 
 ## Selectors

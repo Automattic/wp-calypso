@@ -16,10 +16,8 @@ export default function MyJetpackModulesList( { jetpackModules } ) {
 		<div>
 			<QueryJetpackModules siteId={ 12345678 } />
 			{ jetpackModules.map( ( module ) => {
-				return (
-					<MyJetpackModulesListItem module={ module } />
-				);
-			} }
+				return <MyJetpackModulesListItem module={ module } />;
+			} ) }
 		</div>
 	);
 }

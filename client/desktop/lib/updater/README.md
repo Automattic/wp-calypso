@@ -40,7 +40,7 @@ class MyUpdater extends Updater {
 
 	async ping() {
 		// check for update
-		if ( true ) {
+		if ( shouldUpdate ) {
 			this.setVersion( '1.0.0' );
 			this.notify();
 		}

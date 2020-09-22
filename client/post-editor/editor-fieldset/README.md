@@ -27,7 +27,6 @@ class MyComponent extends React.Component {
 			</EditorFieldset>
 		);
 	}
-
 }
 ```
 

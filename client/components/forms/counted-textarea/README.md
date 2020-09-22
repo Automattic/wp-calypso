@@ -14,17 +14,17 @@ import CountedTextarea from 'components/forms/counted-textarea';
 
 class MyComponent extends Component {
 	state = {
-		value: ''
-	}
+		value: '',
+	};
 
 	onChange = ( event ) => {
 		this.setState( { value: event.target.value } );
-	}
+	};
 
 	render() {
-		return <CountedTextarea value={ this.state.value } onChange={ this.onChange } />
+		return <CountedTextarea value={ this.state.value } onChange={ this.onChange } />;
 	}
-};
+}
 
 export default MyComponent;
 ```

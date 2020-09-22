@@ -9,14 +9,12 @@ The component's `children` prop will be used for the link text; if none is suppl
 ```js
 import InlineSupportLink from 'components/inline-support-link';
 
-render() {
+function render() {
 	const inlineSupportProps = {
 		supportLink: 'https://wordpress.com/support/audio/podcasting/',
 		supportPostId: 38147,
 	};
-	return (
-		<InlineSupportLink { ...inlineSupportProps }>Link Text</InlineSupportLink>
-	);
+	return <InlineSupportLink { ...inlineSupportProps }>Link Text</InlineSupportLink>;
 }
 ```
 

@@ -8,14 +8,14 @@ via user preference.
 ```js
 import DismissibleCard from 'blocks/dismissible-card';
 
-render: function() {
-  return (
-    <div className="your-stuff">
-      <DismissibleCard preferenceName="my-unique-preference-name">
-        <span>Your stuff in a Card</span>
-      </DismissibleCard>
-    </div>
-  );
+function render() {
+	return (
+		<div className="your-stuff">
+			<DismissibleCard preferenceName="my-unique-preference-name">
+				<span>Your stuff in a Card</span>
+			</DismissibleCard>
+		</div>
+	);
 }
 ```
 

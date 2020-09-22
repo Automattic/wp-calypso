@@ -34,12 +34,12 @@ Assign a `serviceType` voucher to the given site.
 
 ### `vouchersAssignRequestFailureAction( siteId, serviceType, error )`
 
-```es6
+```js
 import {
 	vouchersReceiveAction,
 	vouchersRequestAction,
 	vouchersRequestSuccessAction,
-	vouchersRequestFailureAction
+	vouchersRequestFailureAction,
 } from 'state/sites/vouchers/actions';
 
 const siteId = 2916284;
@@ -48,19 +48,20 @@ const siteId = 2916284;
 dispatch( vouchersRequestAction( siteId ) );
 
 wpcom
-.site( siteId )
-.vouchers()
-.get( error, response ) => {
-	if ( error ) {
-		// dispacth a failure action
-		return dispatch( vouchersRequestFailureAction( siteId, error.message );
-	}
+	.site( siteId )
+	.vouchers()
+	.get( ( error, response ) => {
+		if ( error ) {
+			// dispacth a failure action
+			return dispatch( vouchersRequestFailureAction( siteId, error.message ) );
+		}
 
-	// dispacth a success action ...
-	dispatch( vouchersRequestSuccessAction( siteId ) );
+		// dispacth a success action ...
+		dispatch( vouchersRequestSuccessAction( siteId ) );
 
-	// and populate the global tree dispatching a recieve action
-	dispatch( vouchersReceiveAction( site,id, response.vouchers ) );
+		// and populate the global tree dispatching a recieve action
+		dispatch( vouchersReceiveAction( site, id, response.vouchers ) );
+	} );
 ```
 
 ## Reducer
@@ -71,29 +72,29 @@ Data from the aforementioned actions is added to the global state tree, under `s
 state.sites.vouchers = {
 	items: {
 		[ siteId ]: {
-			[ serviceType ] = [
+			[ serviceType ]: [
 				{
 					assigned: Date,
 					assigned_by: Number,
 					code: String,
-					status: String
-				}
-			]
-		}
+					status: String,
+				},
+			],
+		},
 	},
 
-	requesting: [
+	requesting: {
 		[ siteId ]: {
 			getAll: Boolean,
-			assign: Boolean
-		}
-	],
+			assign: Boolean,
+		},
+	},
 
-	errors: [
+	errors: {
 		[ siteId ]: {
 			getAll: Boolean,
-			assign: Boolean
-		}
-	]
-}
+			assign: Boolean,
+		},
+	},
+};
 ```

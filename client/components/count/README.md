@@ -9,12 +9,12 @@ Count is a React component that shows positive and negative integer numbers, by 
 If you want to display a count of some sort -- number of posts, drafts, team members, etc. -- use this component to keep the style consistent across components and to not worry about i18n.
 
 ```jsx
-render: function() {
-    return (
-        <p>
-            <Count count={ this.props.postCount } /> Posts
-        </p>
-    );
+function render() {
+	return (
+		<p>
+			<Count count={ this.props.postCount } /> Posts
+		</p>
+	);
 }
 ```
 

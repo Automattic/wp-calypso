@@ -9,8 +9,6 @@ Dispatching a `NAVIGATE` action and providing a `path` will trigger a redirect, 
 ```js
 import { navigate } from 'state/ui/actions';
 
-...
-
 dispatch( navigate( '/your/path/here' ) );
 ```
 

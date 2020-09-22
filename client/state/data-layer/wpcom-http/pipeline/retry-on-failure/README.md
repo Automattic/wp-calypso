@@ -40,26 +40,37 @@ These are added with the `retryPolicy` override in the HTTP request description.
 
 ```js
 // stop retry attempts
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import {
+	noRetry,
+	exponentialBackoff,
+} from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
-dispatch( http( {
-	path: '/sites',
-	method: 'GET',
-	onSuccess,
-	onFailure,
-	retryPolicy: noRetry(),
-}, action );
+dispatch(
+	http(
+		{
+			path: '/sites',
+			method: 'GET',
+			onSuccess,
+			onFailure,
+			retryPolicy: noRetry(),
+		},
+		action
+	)
+);
 
 // moar attempts for a notoriously slow and buggy server
-import { exponentialBackoff } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
-
-dispatch( http( {
-	path: '/sites',
-	method: 'GET',
-	onSuccess,
-	onFailure,
-	retryPolicy: exponentialBackoff( { delay: 4000, maxAttempts: 5 } ),
-}, action );
+dispatch(
+	http(
+		{
+			path: '/sites',
+			method: 'GET',
+			onSuccess,
+			onFailure,
+			retryPolicy: exponentialBackoff( { delay: 4000, maxAttempts: 5 } ),
+		},
+		action
+	)
+);
 ```
 
 ## Delay calculation

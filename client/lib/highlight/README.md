@@ -6,7 +6,7 @@ If you give a custom element as a wrapper, it will be cloned every time it is ad
 
 ## How to use
 
-```es6
+```js
 const html = '<div>hello world</div>';
 const highlighted = highlight( 'hello', html );
 ```
@@ -19,8 +19,8 @@ Will produce:
 
 Using a custom highlight wrapper:
 
-```es6
-const customWrapper = document.createElement('span');
+```js
+const customWrapper = document.createElement( 'span' );
 customWrapper.setAttribute( 'class', 'my-wrapper' );
 
 const customHighlighted = highlight( 'hello', html, customWrapper );

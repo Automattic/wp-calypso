@@ -9,10 +9,10 @@ It is a very thin wrapper around
 ```js
 import FilePicker from 'components/file-picker';
 
-render() {
+function render() {
 	return (
-		<FilePicker multiple accept="image/*" onPick={ console.log.bind(console) } >
-			<a href="#">Select a few images!</a>
+		<FilePicker multiple accept="image/*" onPick={ console.log.bind( console ) }>
+			<a href="http://wordpress.com">Select a few images!</a>
 		</FilePicker>
 	);
 }

@@ -57,24 +57,29 @@ that can trigger the opening and closing of the InfoPopover then you need to pas
 ```
 
 ```js
-handleAction( event ) {
-	this.refs && this.refs.infoPop._onClick( event );
-},
+const refs = {};
 
-render() {
+function handleAction( event ) {
+	refs.infoPop._onClick( event );
+}
+
+function render() {
 	return (
 		<div>
-			<label onClick={ this.handleAction } ref="moreInfoLabel">More Info</label>
+			<label onClick={ this.handleAction } ref={ ( ref ) => ( refs.moreInfoLabel = ref ) }>
+				More Info
+			</label>
 			<InfoPopover
 				position="bottom left"
-				ref="infoPop"
+				ref={ ( ref ) => ( refs.infoPop = ref ) }
 				className="more-info"
 				gaEventCategory="Reader"
 				popoverName="More info in the reader"
-				ignoreContext={ this.refs && this.refs.moreInfoLabel } >
+				ignoreContext={ refs.moreInfoLabel }
+			>
 				This is some informational text
 			</InfoPopover>
 		</div>
-	)
+	);
 }
 ```

@@ -18,24 +18,26 @@ class MyLoggedOutForm extends React.Component {
 		event.preventDefault();
 
 		// Handle form submit
-	}
+	};
 
 	render() {
 		return (
-			<LoggedOutForm onSubmit={ this.handleSubmit }>
-				<FormTextInput placeholder="I am an input"/>
+			<>
+				<LoggedOutForm onSubmit={ this.handleSubmit }>
+					<FormTextInput placeholder="I am an input" />
 
-				<LoggedOutFormFooter>
-					<Button primary>Submit</Button>
-				</LoggedOutFormFooter>
-			</LoggedOutForm>
+					<LoggedOutFormFooter>
+						<Button primary>Submit</Button>
+					</LoggedOutFormFooter>
+				</LoggedOutForm>
 
-			<LoggedOutFormLinks>
-				<LoggedOutFormLinkItem href={ config( 'login_url' ) }>
-					Sign in as a different user
-				</LoggedOutFormLinkItem>
-			</LoggedOutFormLinks>
+				<LoggedOutFormLinks>
+					<LoggedOutFormLinkItem href={ config( 'login_url' ) }>
+						Sign in as a different user
+					</LoggedOutFormLinkItem>
+				</LoggedOutFormLinks>
+			</>
 		);
 	}
-} 
+}
 ```

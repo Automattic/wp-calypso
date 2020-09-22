@@ -29,16 +29,14 @@ Add a new poller that fetches updates
 ## Example
 
 ```js
-import PollerPool from 'lib/data-poller' );
+import PollerPool from 'lib/data-poller';
 import SitesList from 'lib/sites-list/list';
 
 const sites = new SitesList();
-let poller;
 
 // 'interval' is the time between polling requests and 'leading' is a flag that controls whether the `fetch` method
 // is called when the poller is started when it is added
-var poller =  PollerPool.add( sites, 'fetch', { interval: 60000, leading: true } );
-
+const poller = PollerPool.add( sites, 'fetch', { interval: 60000, leading: true } );
 
 // remove instance from pool
 PollerPool.remove( poller );

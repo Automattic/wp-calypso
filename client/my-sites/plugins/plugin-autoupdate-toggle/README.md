@@ -5,17 +5,12 @@ This component is used to display a plugin autupdate toggle.
 ## How to use
 
 ```js
-import PluginAutoupdateToggle 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 
-render() {
+function render() {
 	return (
 		<div className="your-plugins-list">
-			<PluginAutoupdateToggle
-				plugin={ plugin }
-				site={ site }
-				notices={ notices }
-				wporg={ true }
-			/>
+			<PluginAutoupdateToggle plugin={ plugin } site={ site } notices={ notices } wporg={ true } />
 		</div>
 	);
 }

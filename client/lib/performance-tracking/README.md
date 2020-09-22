@@ -20,7 +20,7 @@ It provides a middleware expected to be used with Page router.
 Example:
 
 ```jsx
-page('/my-page/*', performanceTrackerStart('my-page'), /*...*/);
+page( '/my-page/*', performanceTrackerStart( 'my-page' ) /*...*/ );
 ```
 
 The id provided to `performanceTrackerStart` must match the id provided by the hook `usePerformanceTrackerStop`, which equals to the name of the section
@@ -41,9 +41,7 @@ Example:
 ```jsx
 function MyComponent() {
 	usePerformanceTrackerStop();
-	return (
-		<div>Content</div>
-	);
+	return <div>Content</div>;
 }
 ```
 
@@ -60,13 +58,13 @@ Example:
 
 ```jsx
 function MyComponent( { isLoading } ) {
-	if ( isLoading ) return <Loading/>;
+	if ( isLoading ) return <Loading />;
 
 	return (
 		<>
 			<div>Content</div>
-			<PerformanceTrackerStop/>
-		<>
+			<PerformanceTrackerStop />
+		</>
 	);
 }
 ```
@@ -83,7 +81,7 @@ Example:
 class MyComponent extends React.Component {
 	//...
 }
-export default withPerformanceTrackerStop(MyComponent);
+export default withPerformanceTrackerStop( MyComponent );
 ```
 
 This is the recommended approach when using class components. Similar to `usePerformanceTrackerStop` hook, it assumes that the wrapped component only renders the content of the page we want to

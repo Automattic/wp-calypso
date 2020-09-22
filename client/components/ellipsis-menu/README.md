@@ -13,9 +13,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 export default function MyComponent( { onMenuItemClick } ) {
 	return (
 		<EllipsisMenu>
-			<PopoverMenuItem onClick={ onMenuItemClick }>
-				Click Me!
-			</PopoverMenuItem>
+			<PopoverMenuItem onClick={ onMenuItemClick }>Click Me!</PopoverMenuItem>
 		</EllipsisMenu>
 	);
 }

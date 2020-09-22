@@ -4,7 +4,7 @@ A [`Card` component](../../components/card) based on [`ActionPanel'](../../compo
 
 ## Usage
 
-```es6
+```jsx
 import PromoCard from 'my-sites/promo-section/promo-card';
 import referralImage from 'assets/images/earn/referral.svg';
 
@@ -30,5 +30,5 @@ const PromoCardExample = () => {
 			/>
 		</PromoCard>
 	);
-}
+};
 ```

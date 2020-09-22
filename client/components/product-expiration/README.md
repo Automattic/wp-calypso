@@ -35,5 +35,5 @@ const renewDateMoment = moment( product.renewDate );
 	expiryDateMoment={ expiryDateMoment }
 	renewDateMoment={ renewDateMoment }
 	isRefundable={ product.isRefundable }
-/>
+/>;
 ```
