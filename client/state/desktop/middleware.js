@@ -110,8 +110,7 @@ export const desktopMiddleware = () => {
 			}
 
 			case NOTIFICATIONS_PANEL_NEW_NOTE: {
-				// debug( 'Dispatching window event for action type: ', action.type );
-				debug( 'Dispatching window event for action type: ', action );
+				debug( 'Dispatching window event for action type: ', action.type );
 				const { note, isApproved } = action;
 				window.dispatchEvent(
 					new window.CustomEvent( NOTIFY_DESKTOP_NEW_NOTIFICATION, {
