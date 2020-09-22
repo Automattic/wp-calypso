@@ -11,7 +11,7 @@
 
 // Turn off number spinners
 .registrant-extra-info__form {
-	input[type=number] {
+	input[type=number].form-text-input {
 		-moz-appearance: textfield;
 
 		&::-webkit-inner-spin-button,
