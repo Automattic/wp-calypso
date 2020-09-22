@@ -19,8 +19,9 @@ const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const nodeExternals = require( 'webpack-node-externals' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
+const nodeExternals = require( 'webpack-node-externals' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 
 /**
@@ -54,6 +55,11 @@ function getExternals() {
 				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
 				// non-JS asset imports that couldn't be processed by Node.js at runtime.
 				'@automattic/components',
+
+				// The polyfills module is transpiled by Babel and only the `core-js` modules that are
+				// needed by current Node.js are included instead of the whole package.
+				'@automattic/calypso-polyfills',
+				/^core-js\//,
 
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
@@ -107,6 +113,13 @@ const webpackConfig = {
 				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
 				cacheIdentifier,
 				exclude: /node_modules\//,
+			} ),
+			TranspileConfig.loader( {
+				workerCount,
+				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
+				cacheIdentifier,
+				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
 			{
