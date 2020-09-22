@@ -63,16 +63,6 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-const gutenbergRedirect = function ( flowName ) {
-	const url = new URL( window.location );
-	if ( [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
-		url.pathname = `/new/${ flowName }`;
-	} else {
-		url.pathname = '/new';
-	}
-	window.location.replace( url.toString() );
-};
-
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -121,17 +111,6 @@ export default {
 
 			next();
 		} else {
-			const flowName = getFlowName( context.params );
-			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if (
-				userLoggedIn &&
-				flowName === 'onboarding' &&
-				'gutenberg' === abtest( 'existingUsersGutenbergOnboard' )
-			) {
-				gutenbergRedirect( context.params.flowName );
-				return;
-			}
-
 			waitForData( {
 				geo: () => requestGeoLocation(),
 			} )
