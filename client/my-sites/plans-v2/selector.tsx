@@ -45,6 +45,7 @@ const SelectorPage = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
 	rootUrl,
+	queryString,
 	header,
 	footer,
 }: SelectorPageProps ) => {
@@ -73,12 +74,12 @@ const SelectorPage = ( {
 		}
 
 		if ( purchase && isUpgradeableToYearly ) {
-			checkout( siteSlug, getYearlyPlanByMonthly( product.productSlug ) );
+			checkout( siteSlug, getYearlyPlanByMonthly( product.productSlug ), queryString );
 			return;
 		}
 
 		if ( purchase ) {
-			page( managePurchase( siteSlug, purchase.id ) );
+			page( managePurchase( siteSlug, purchase.id, queryString ) );
 			return;
 		}
 
@@ -90,16 +91,19 @@ const SelectorPage = ( {
 					duration: currentDuration,
 				} )
 			);
-			page( getPathToDetails( rootUrl, product.productSlug, currentDuration, siteSlug ) );
+			page(
+				getPathToDetails( rootUrl, product.productSlug, currentDuration, siteSlug, queryString )
+			);
 			return;
 		}
 
 		if ( hasUpsell( product.productSlug as ProductSlug ) ) {
-			page( getPathToUpsell( rootUrl, product.productSlug, currentDuration, siteSlug ) );
+			page(
+				getPathToUpsell( rootUrl, product.productSlug, currentDuration, siteSlug, queryString )
+			);
 			return;
 		}
-
-		checkout( siteSlug, product.productSlug );
+		checkout( siteSlug, product.productSlug, queryString );
 	};
 
 	const trackProductTypeChange = ( selectedType: ProductType ) => {

@@ -19,11 +19,14 @@ export function billingHistoryReceipt( receiptId ) {
 	return billingHistory + `/${ receiptId }`;
 }
 
-export function managePurchase( siteName, purchaseId ) {
+export function managePurchase( siteName, purchaseId, queryString ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof siteName || 'undefined' === typeof purchaseId ) {
 			throw new Error( 'siteName and purchaseId must be provided' );
 		}
+	}
+	if ( queryString ) {
+		return purchasesRoot + `/${ siteName }/${ purchaseId }?${ queryString }`;
 	}
 	return purchasesRoot + `/${ siteName }/${ purchaseId }`;
 }

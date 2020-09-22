@@ -13,11 +13,14 @@ import JetpackComFooter from './jpcom-footer';
 import { setLocale } from 'state/ui/language/actions';
 
 export function jetpackPricingContext( context, next ) {
+	const { querystring } = context;
 	const { locale } = context.params;
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
-		page.redirect( '/pricing' );
+		const pricingUrl = querystring ? `/pricing?${ querystring }` : '/pricing';
+		page.redirect( pricingUrl );
+		//page.redirect( '/pricing' );
 	}
 
 	context.store.dispatch( hideMasterbar() );

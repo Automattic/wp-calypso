@@ -25,7 +25,6 @@ export const productSelect = ( rootUrl: string ) => ( context: PageJS.Context, n
 	const siteId = getSelectedSiteId( state );
 	const duration =
 		( siteId && ( getCurrentPlanTerm( state, siteId ) as Duration ) ) || TERM_ANNUALLY;
-
 	context.primary = (
 		<SelectorPage
 			defaultDuration={ duration }
@@ -43,7 +42,7 @@ export const productDetails = ( rootUrl: string ) => (
 	next: Function
 ) => {
 	const productType: string = context.params.product;
-	const duration = stringToDuration( context.params.duration );
+	const duration = stringToDuration( context.params.duration ) || TERM_ANNUALLY;
 	context.primary = (
 		<DetailsPage
 			productSlug={ productType }
@@ -58,7 +57,7 @@ export const productDetails = ( rootUrl: string ) => (
 
 export const productUpsell = ( rootUrl: string ) => ( context: PageJS.Context, next: Function ) => {
 	const productSlug: string = context.params.product;
-	const duration = stringToDuration( context.params.duration );
+	const duration = stringToDuration( context.params.duration ) || TERM_ANNUALLY;
 	context.primary = (
 		<UpsellPage
 			productSlug={ productSlug }

@@ -514,7 +514,8 @@ export function checkout( siteSlug: string, products: string | string[] ): void 
  */
 export function getPathToSelector( rootUrl: string, duration?: Duration, siteSlug?: string ) {
 	const strDuration = duration ? durationToString( duration ) : null;
-	return [ rootUrl, strDuration, siteSlug ].filter( Boolean ).join( '/' );
+	const path = [ rootUrl, strDuration, siteSlug ].filter( Boolean ).join( '/' );
+	return path;
 }
 
 /**
@@ -535,7 +536,10 @@ export function getPathToDetails(
 	siteSlug?: string
 ) {
 	const strDuration = durationToString( duration );
-	return [ rootUrl, productSlug, strDuration, 'details', siteSlug ].filter( Boolean ).join( '/' );
+	const path = [ rootUrl, productSlug, strDuration, 'details', siteSlug ]
+		.filter( Boolean )
+		.join( '/' );
+	return path;
 }
 
 /**
@@ -556,7 +560,10 @@ export function getPathToUpsell(
 	siteSlug?: string
 ) {
 	const strDuration = durationToString( duration );
-	return [ rootUrl, productSlug, strDuration, 'additions', siteSlug ].filter( Boolean ).join( '/' );
+	const path = [ rootUrl, productSlug, strDuration, 'additions', siteSlug ]
+		.filter( Boolean )
+		.join( '/' );
+	return path;
 }
 
 /**
