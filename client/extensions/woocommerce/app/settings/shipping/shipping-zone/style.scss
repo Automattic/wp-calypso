@@ -253,7 +253,7 @@
 		padding: 4px 8px;
 	}
 
-	input:disabled {
+	input.form-text-input:disabled {
 		border-color: var( --color-neutral-10 );
 	}
 }
