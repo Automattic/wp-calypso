@@ -6,7 +6,7 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { STORE_KEY, DataState } from './constants';
+import { STORE_KEY, DataStatus } from './constants';
 import type { DomainSuggestionQuery } from './types';
 import type { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
@@ -41,7 +41,7 @@ const createSelectors = ( vendor: string ) => {
 		return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
 	}
 
-	function getDomainState( state: State ): DataState {
+	function getDomainState( state: State ): DataStatus {
 		return state.domainSuggestions.state;
 	}
 

@@ -9,7 +9,7 @@ import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
-import { DataState } from '@automattic/data-stores/src/domain-suggestions/constants';
+import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 
 /**
  * Internal dependencies
@@ -184,7 +184,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		onSetDomainSearch( searchQuery );
 	};
 
-	const showErrorMessage = domainSuggestionState === DataState.Failure;
+	const showErrorMessage = domainSuggestionState === DataStatus.Failure;
 	const isDomainSearchEmpty = domainSearch.trim?.().length <= 1;
 	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
 	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
