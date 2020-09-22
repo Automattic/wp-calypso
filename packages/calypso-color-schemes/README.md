@@ -30,7 +30,7 @@ And this will give you the CSS.
 Sometimes, `calypso-color-schemes` properties are consumed in JavaScript. To avoid parsing CSS syntax on your own, or to help `postcss-custom-properties` use them without parsing the CSS (much faster), use the JS output as follows:
 
 ```js
-import { customProperties } import '@automattic/calypso-color-schemes/js' // mind the js suffix
+import { customProperties } from '@automattic/calypso-color-schemes/js'; // mind the js suffix
 ```
 
 Or with `postcss-custom-properties`, and `postcss.config.js` can look like this:
