@@ -1,11 +1,21 @@
 .sidebar-unified__switcher {
 	position: absolute;
 	z-index: 1000;
-	background-color: #633;
+	background-color:red;
 	right: 0;
+	bottom: 0;
 	cursor: pointer;
 	text-decoration: underline;
 	font-size: 0.75rem;
+	padding: 5px 10px;
+}
+
+.sidebar-unified__menu-loading {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
 }
 
 .sidebar-unified__sparkline {

@@ -34,7 +34,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 
 	if ( isRequestingMenu ) {
-		return <Spinner />;
+		return <Spinner className="sidebar-unified__menu-loading" />;
 	}
 
 	return (
