@@ -20,7 +20,7 @@ class PremiumBadge extends React.Component {
 			return {
 				text: translate( 'Restricted premium' ),
 				description: translate(
-					"This premium domain tier is currently not available at WordPress.com. Please contact our support if you're interested."
+					"This premium domain is currently not available at WordPress.com. Please contact support if you're interested in this domain."
 				),
 			};
 		}
