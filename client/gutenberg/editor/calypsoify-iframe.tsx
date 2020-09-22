@@ -368,12 +368,14 @@ class CalypsoifyIframe extends Component<
 				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
 			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
 			const isNewLaunch = config.isEnabled( 'gutenboarding/new-launch' );
+			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl,
 				isNewLaunch,
+				isNewLaunchMobile,
 				isExperimental,
 			} );
 		}

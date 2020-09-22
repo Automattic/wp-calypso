@@ -50,13 +50,18 @@ function updateEditor() {
 		}
 		clearInterval( awaitSettingsBar );
 
+		const isMobile = window.innerWidth < 768;
 		const isNewLaunch = window?.calypsoifyGutenberg?.isNewLaunch;
+		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
 		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
 		const launchHref = window?.calypsoifyGutenberg?.frankenflowUrl as string;
 
-		const launchLabel = __( 'Complete setup', 'full-site-editing' );
+		// On mobile there is not enough space to display "Complete setup" label.
+		const launchLabel = isMobile
+			? __( 'Launch', 'full-site-editing' )
+			: __( 'Complete setup', 'full-site-editing' );
 
 		const saveAndNavigate = async () => {
 			await dispatch( 'core/editor' ).savePost();
@@ -68,7 +73,7 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 
-			const shouldOpenNewFlow = isNewLaunch;
+			const shouldOpenNewFlow = isNewLaunch && ( ! isMobile || ( isMobile && isNewLaunchMobile ) );
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_flow: shouldOpenNewFlow,
