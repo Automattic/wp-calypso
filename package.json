@@ -66,6 +66,7 @@
 		"build-desktop": "run-s build-desktop:source build-desktop:install-app-deps build-desktop:app",
 		"build-desktop:source": "run-s build-desktop:config build-desktop:server build-desktop:client build-desktop:static",
 		"build-desktop:config": "node desktop/bin/build-desktop-config.js",
+		"build-desktop:secrets": "node desktop/bin/build-desktop-secrets.js",
 		"build-desktop:server": "BROWSERSLIST_ENV=server CALYPSO_ENV=desktop webpack --config client/webpack.config.desktop.js --display errors-only",
 		"build-desktop:client": "CALYPSO_ENV=desktop DESKTOP_MONOREPO=true yarn run build-client-fallback",
 		"build-desktop:static": "npx --no-install ncp static desktop/public",
