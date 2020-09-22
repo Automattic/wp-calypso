@@ -25,7 +25,7 @@ import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
 import userFactory from 'lib/user';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { retrieveSignupDestination } from 'signup/cookieUtils';
+import { retrieveSignupDestination } from 'signup/utils';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
