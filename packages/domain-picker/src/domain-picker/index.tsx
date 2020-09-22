@@ -185,7 +185,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	};
 
 	const showErrorMessage = domainSuggestionState === DataState.Failure;
-	const isDomainSearchEmpty = domainSearch.trim()?.length <= 1;
+	const isDomainSearchEmpty = domainSearch.trim?.().length <= 1;
 	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
 	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
 
