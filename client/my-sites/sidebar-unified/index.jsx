@@ -40,13 +40,11 @@ export const MySitesSidebarUnified = ( { path } ) => {
 		}
 	}, [ reduxDispatch, selectedSiteId ] );
 
-	// Extract this?
 	const menuItems = useSelector( ( state ) => {
 		const menu = getAdminMenu( state, getSelectedSiteId( state ) );
 		return menu ? Object.values( menu ) : [];
 	} );
 
-	// Extract this?
 	const isAllDomainsView = useSelector( ( state ) => {
 		const currentRoute = getCurrentRoute( state );
 		return isUnderDomainManagementAll( currentRoute ) || isUnderEmailManagementAll( currentRoute );
@@ -56,11 +54,11 @@ export const MySitesSidebarUnified = ( { path } ) => {
 		<Sidebar>
 			<CurrentSite forceAllSitesView={ isAllDomainsView } />
 			{ menuItems.map( ( item, i ) => {
-				if ( 'type' in item && item.type === 'separator' ) {
+				if ( 'separator' === item?.type ) {
 					return <SidebarSeparator key={ i } />;
 				}
 
-				if ( item.children && Object.keys( item.children ).length ) {
+				if ( item?.children && Object.keys( item.children ).length ) {
 					return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
 				}
 
