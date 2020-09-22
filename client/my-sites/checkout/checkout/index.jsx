@@ -105,7 +105,7 @@ import {
 	persistSignupDestination,
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
-} from 'signup/utils';
+} from 'signup/cookieUtils';
 import { isExternal, addQueryArgs } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { abtest } from 'lib/abtest';

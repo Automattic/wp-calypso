@@ -73,12 +73,14 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
+} from './utils';
+import {
 	persistSignupDestination,
 	persistSignupSiteCreated,
 	retrieveSignupDestination,
 	retrieveSignupSiteCreated,
 	clearSignupDestinationCookie,
-} from './utils';
+} from './cookieUtils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';
