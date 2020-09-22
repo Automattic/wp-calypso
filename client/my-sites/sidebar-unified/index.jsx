@@ -43,7 +43,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	// Extract this?
 	const menuItems = useSelector( ( state ) => {
 		const menu = getAdminMenu( state, getSelectedSiteId( state ) );
-		return menu != null ? Object.values( menu ) : [];
+		return menu ? Object.values( menu ) : [];
 	} );
 
 	// Extract this?
