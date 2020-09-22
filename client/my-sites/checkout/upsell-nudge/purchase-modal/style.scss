@@ -59,20 +59,24 @@ $left-margin: 36px;
 	position: relative;
 	margin: 0 0 24px $left-margin;
 	align-self: stretch;
+}
 
-	&-icon {
-		position: absolute;
-		width: 27px;
-		height: 27px;
-		top: 0;
-		left: -$left-margin;
-		border-radius: 50%;
-		background: #008a20;
-		text-align: center;
+.purchase-modal__step-icon {
+	position: absolute;
+	width: 27px;
+	height: 27px;
+	top: 0;
+	left: -$left-margin;
+	border-radius: 50%;
+	background: #008a20;
+	text-align: center;
 
-		> svg {
-			margin-top: 4px;
-		}
+	> svg {
+		margin-top: 4px;
+	}
+
+	&.is-placeholder {
+		@include placeholder();
 	}
 }
 
@@ -82,11 +86,22 @@ $left-margin: 36px;
 		margin-left: 0.5em;
 		text-decoration: underline;
 	}
+
+	&.is-placeholder {
+		@include placeholder();
+		width: 20em;
+	}
 }
 
 .purchase-modal__step-content {
 	color: var( --color-neutral-40 );
 	font-size: $font-body-small;
+
+	&.is-placeholder {
+		@include placeholder();
+		margin-top: 2px;
+		width: 15em;
+	}
 }
 
 .purchase-modal__product {
@@ -145,6 +160,18 @@ $left-margin: 36px;
 	> dd {
 		margin: 0;
 	}
+
+	&.is-placeholder {
+		> dt {
+			@include placeholder();
+			width: 8em;
+		}
+
+		> dd {
+			@include placeholder();
+			width: 5em;
+		}
+	}
 }
 
 .purchase-modal__tax {
@@ -161,4 +188,9 @@ $left-margin: 36px;
 	margin-top: 32px;
 	min-width: 35%;
 	font-size: 1rem;
+
+	&.is-placeholder {
+		@include placeholder();
+		height: 2rem;
+	}
 }

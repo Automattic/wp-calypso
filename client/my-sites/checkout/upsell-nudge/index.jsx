@@ -193,8 +193,11 @@ export class UpsellNudge extends React.Component {
 		);
 
 		if ( this.isEligibleForOneClickUpsellABTest( buttonAction ) ) {
+			this.setState( {
+				showPurchaseModal: true,
+				cartLastServerResponseDate: this.getCartUpdatedTime(),
+			} );
 			replaceCartWithItems( [ this.props.product ] );
-			this.setState( { showPurchaseModal: true } );
 			return;
 		}
 
@@ -223,6 +226,8 @@ export class UpsellNudge extends React.Component {
 	};
 
 	renderPurchaseModal = () => {
+		const isCartUpdating = this.state.cartLastServerResponseDate === this.getCartUpdatedTime();
+
 		return (
 			<PurchaseModal
 				cart={ this.props.cart }
@@ -230,6 +235,7 @@ export class UpsellNudge extends React.Component {
 				onComplete={ this.handleOneClickUpsellComplete }
 				onClose={ () => this.setState( { showPurchaseModal: false } ) }
 				siteSlug={ this.props.siteSlug }
+				isCartUpdating={ isCartUpdating }
 			/>
 		);
 	};
@@ -240,6 +246,10 @@ export class UpsellNudge extends React.Component {
 				<Gridicon icon="cross-small" />
 			</div>
 		);
+	};
+
+	getCartUpdatedTime = () => {
+		return this.props.cart?.client_metadata?.last_server_response_date;
 	};
 }
 
