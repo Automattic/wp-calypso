@@ -1,9 +1,11 @@
-// The following changes should be merged before nav unification goes to production
+// The following changes should be merged in their respective files before nav unification goes to production
 
 // Override Global Vars
 .is-nav-unification {
+	// client/assets/stylesheets/shared/_variables.scss
 	--sidebar-width-max: 200px;
 	--sidebar-width-min: 200px;
+
 	--color-sidebar-background: #23282d;
 	--color-sidebar-background-rgb: 35, 40, 45;
 	--color-sidebar-border: var( --color-surface-backdrop );
@@ -16,6 +18,7 @@ $sidebar-item-padding: 8px 0;
 $font-size: rem( 14px );
 
 .is-nav-unification {
+	// client/layout/sidebar/style.scss
 	.sidebar {
 		background-color: var( --color-sidebar-background );
 
