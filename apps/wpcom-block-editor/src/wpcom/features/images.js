@@ -1,9 +1,7 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-/* eslint-enable import/no-extraneous-dependencies */
 
 export const ClassicBlockImage = ( props ) => (
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
