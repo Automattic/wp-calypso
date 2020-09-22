@@ -30,10 +30,10 @@ import * as stats from 'reader/stats';
 import { localizeUrl } from 'lib/i18n-utils';
 export { default as ActionCard } from 'components/action-card/docs/example';
 export * from 'components/AppBar';
-const config1 = require('config');
-const config2 = asyncRequire('config');
+const config1 = require( 'config' );
+const config2 = asyncRequire( 'config' );
 
-const component = <AsyncLoad require="config"/>
+const component = <AsyncLoad require="config" />;
 ```
 
 The following patterns are correct
@@ -44,14 +44,14 @@ import * as stats from 'calypso/reader/stats';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 export { default as ActionCard } from 'calypso/components/action-card/docs/example';
 export * from 'calypso/components/AppBar';
-const config1 = require('calypso/config');
-const config2 = asyncRequire('calypso/config');
+const config1 = require( 'calypso/config' );
+const config2 = asyncRequire( 'calypso/config' );
 
-const component = <AsyncLoad require="calypso/config"/>
+const component = <AsyncLoad require="calypso/config" />;
 
-import config from './config';
-import config from '../../../config';
-import config from 'dirA'; //when `dirA` is not a directory or file in ./client/
+import config3 from './config';
+import config4 from '../../../config';
+import config5 from 'dirA'; //when `dirA` is not a directory or file in ./client/
 ```
 
 ## Configuration
