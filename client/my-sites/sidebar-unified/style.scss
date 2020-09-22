@@ -11,6 +11,7 @@
 	--color-sidebar-border: var( --color-surface-backdrop );
 	--color-sidebar-text: #eee;
 	--color-sidebar-gridicon-fill: var( --color-sidebar-text );
+	--color-sidebar-text-alternative: #a2aab2;
 }
 
 // Local Vars
@@ -22,7 +23,7 @@ $font-size: rem( 14px );
 	.sidebar {
 		background-color: var( --color-sidebar-background );
 
-		hr {
+		.sidebar__separator {
 			margin: 0 0 11px;
 		}
 
@@ -91,9 +92,10 @@ $font-size: rem( 14px );
 
 			.sidebar__menu-link {
 				padding: 5px 12px;
-				// font-size: rem( 13px );
+				/* stylelint-disable-next-line scales/font-size */
+				font-size: rem( 13px );
 				line-height: 1.4;
-				font-weight: 600;
+				font-weight: 400;
 				color: #b4b9be;
 
 				&:hover {
