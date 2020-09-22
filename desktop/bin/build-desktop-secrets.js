@@ -9,7 +9,7 @@ const { execSync } = require( 'child_process' );
 
 const CALYPSO_SECRETS_ENCRYPTION_KEY = process.env.CALYPSO_SECRETS_ENCRYPTION_KEY;
 if ( ! CALYPSO_SECRETS_ENCRYPTION_KEY ) {
-	console.error( 'Failed to make decrypt: CALYPSO_SECRETS_ENCRYPTION_KEY is not set.' );
+	console.error( 'Failed to decrypt: CALYPSO_SECRETS_ENCRYPTION_KEY is not set.' );
 	process.exit( 1 );
 }
 
