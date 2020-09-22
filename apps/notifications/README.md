@@ -28,11 +28,11 @@ When running in an iframe communication with the parent frame occurs through a `
 Messages we handle from the notifications iframe have the form:
 
 ```js
-{
-	type: "notesIframeMessage",
-	action: < varies >,
+const obj = {
+	type: 'notesIframeMessage',
+	action: action,
 	//... other properties depending on action ...
-}
+};
 ```
 
 - `togglePanel`: This is a message from the client that the panel open state
