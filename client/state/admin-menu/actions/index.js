@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/inline-help/init';
+import 'state/admin-menu/init';
 import 'state/data-layer/wpcom/sites/admin-menu';
 import { ADMIN_MENU_REQUEST, ADMIN_MENU_RECEIVE } from 'state/action-types';
 
