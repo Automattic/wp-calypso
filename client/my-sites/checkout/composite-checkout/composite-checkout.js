@@ -347,17 +347,24 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
+	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( Boolean ), ( messages ) => {
 		messages.forEach( ( message ) =>
 			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
 		);
 	} );
-	useActOnceOnStrings(
-		[ cartLoadingError, stripeLoadingError?.message, cartProductPrepError ].filter( Boolean ),
-		( messages ) => {
-			notices.error( messages.map( ( message ) => <p key={ message }>{ message }</p> ) );
-		}
-	);
+
+	// Display errors. Note that we display all errors if any of them change,
+	// because notices.error() otherwise will remove the previously displayed
+	// errors.
+	const errorsToDisplay = [
+		cartLoadingError,
+		stripeLoadingError?.message,
+		cartProductPrepError,
+	].filter( Boolean );
+	useActOnceOnStrings( errorsToDisplay, () => {
+		notices.error( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) );
+	} );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
