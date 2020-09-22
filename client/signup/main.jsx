@@ -80,6 +80,7 @@ import {
 	retrieveSignupDestination,
 	retrieveSignupSiteCreated,
 	clearSignupDestinationCookie,
+	getFromSessionStorage,
 } from './storageUtils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
@@ -174,7 +175,7 @@ class Signup extends React.Component {
 			clearSignupDestinationCookie();
 		}
 
-		const wasSignupCheckoutUnnloaded = sessionStorage.getItem( 'signupCheckoutPageUnloaded' ); // eslint-disable-line no-undef
+		const wasSignupCheckoutUnnloaded = getFromSessionStorage( 'signupCheckoutPageUnloaded' );
 		const signupDestinationCookieExists = retrieveSignupDestination();
 		const siteSlugFromCookie = retrieveSignupSiteCreated();
 		this.enableManageSiteFlow =

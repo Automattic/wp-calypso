@@ -38,3 +38,7 @@ export const clearSignupDestinationCookie = () => {
 
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
+
+export const setSessionStorage = ( key, value ) => sessionStorage.setItem( key, value ); // eslint-disable-line no-undef
+
+export const getFromSessionStorage = ( key ) => sessionStorage.getItem( key ); // eslint-disable-line no-undef

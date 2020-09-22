@@ -25,7 +25,7 @@ import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
 import userFactory from 'lib/user';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { retrieveSignupDestination } from 'signup/storageUtils';
+import { retrieveSignupDestination, setSessionStorage } from 'signup/storageUtils';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -79,7 +79,7 @@ export function checkout( context, next ) {
 			const signupDestinationCookieExists = retrieveSignupDestination();
 
 			if ( signupDestinationCookieExists ) {
-				sessionStorage.setItem( 'signupCheckoutPageUnloaded', true ); // eslint-disable-line no-undef
+				setSessionStorage( 'signupCheckoutPageUnloaded', true );
 			}
 		} );
 	}
