@@ -156,7 +156,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		} else if ( premiumDomain?.is_price_limit_exceeded ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
-			buttonContent = translate( 'Limited', {
+			buttonContent = translate( 'Restricted', {
 				context: 'Premium domain is not available for registration',
 			} );
 		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
@@ -229,6 +229,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			isFeatured,
 			showHstsNotice,
 			productSaleCost,
+			premiumDomain,
 			suggestion: { domain_name: domain, is_premium: isPremium },
 			translate,
 			isReskinned,
@@ -259,7 +260,9 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
-				{ isPremium && <PremiumBadge /> }
+				{ isPremium && (
+					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
+				) }
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
 					<InfoPopover

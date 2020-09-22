@@ -11,4 +11,8 @@ div.premium-badge {
 			color: var( --color-text-inverted );
 		}
 	}
+
+	&.restricted-premium {
+		background-color: var( --color-warning-30 );
+	}
 }
