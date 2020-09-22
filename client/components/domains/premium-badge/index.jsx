@@ -19,7 +19,9 @@ class PremiumBadge extends React.Component {
 			<Badge className="premium-badge">
 				{ translate( 'Premium domain' ) }
 				<InfoPopover iconSize={ 16 }>
-					Premium domain names are short and easy to remember
+					{ translate(
+						'Premium domain names are usually short, easy to remember, contain popular keywords, or some combination of these factors. Premium domain names are not eligible for purchase using the free plan domain credit.'
+					) }
 				</InfoPopover>
 			</Badge>
 		);
