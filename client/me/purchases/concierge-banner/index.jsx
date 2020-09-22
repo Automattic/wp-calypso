@@ -89,10 +89,11 @@ class ConciergeBanner extends Component {
 			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
 				headerText = translate( 'Our experts are waiting to help you' );
 				mainText = translate(
-					'Schedule your 45-minute 1-1 Quick Start Session with a Happiness Engineer!',
+					'Schedule your %(durationInMinutes)d-minute 1-1 Quick Start Session with a Happiness Engineer!',
 					{
 						comment:
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
+						args: { durationInMinutes: 30 },
 					}
 				);
 				buttonText = translate( 'Schedule now' );
