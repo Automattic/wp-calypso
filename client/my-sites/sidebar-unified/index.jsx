@@ -52,7 +52,6 @@ export const MySitesSidebarUnified = ( { path } ) => {
 		return isUnderDomainManagementAll( currentRoute ) || isUnderEmailManagementAll( currentRoute );
 	} );
 
-	//console.log( { menuItems } );
 	return (
 		<Sidebar>
 			<CurrentSite forceAllSitesView={ isAllDomainsView } />
