@@ -270,11 +270,11 @@ export async function ensureNotLoggedIn( driver ) {
 
 	// Set cookie to prevent GDPR banner from appearing
 	if ( dataHelper.isRunningOnLiveBranch() ) {
-		await driver.executeScript( 'window.document.cookie = "sensitive_pixel_option=no;";' );
+		await driver.executeScript( 'window.document.cookie = "sensitive_pixel_option=no;Secure;SameSite=None";' );
 	}
 
 	await driver.executeScript(
-		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com";'
+		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;Secure;SameSite=None";'
 	);
 	return driver.sleep( 500 );
 }
