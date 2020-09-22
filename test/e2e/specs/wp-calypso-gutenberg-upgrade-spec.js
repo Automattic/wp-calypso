@@ -78,7 +78,8 @@ const blockInits = new Map()
 	)
 	.set( YoutubeBlockComponent, ( block ) =>
 		block.embed( 'https://www.youtube.com/watch?v=FhMO5QnRNvo' )
-	);
+	)
+	.set( DynamicSeparatorBlockComponent, ( block ) => block.resizeBy( 150 ) );
 
 /**
  * Wrapper that provides an uniform API for creating blocks on the page. It uses the `inits`
