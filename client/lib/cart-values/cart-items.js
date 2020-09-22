@@ -68,7 +68,7 @@ import {
 	isWpComBloggerPlan,
 } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue

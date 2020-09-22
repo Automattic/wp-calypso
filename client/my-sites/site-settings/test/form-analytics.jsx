@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
+jest.mock( 'lib/plans/config', () => ( {
+	shouldShowOfferResetFlow: () => false,
 } ) );
 
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
