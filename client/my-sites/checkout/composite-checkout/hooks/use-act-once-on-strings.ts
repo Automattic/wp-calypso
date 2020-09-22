@@ -38,5 +38,5 @@ export default function useActOnceOnStrings(
 			handleMessages( newMessages );
 		}
 		previousMessages.current = messages;
-	}, [ messages ] );
+	}, [ messages ] ); // eslint-disable-line react-hooks/exhaustive-deps
 }
