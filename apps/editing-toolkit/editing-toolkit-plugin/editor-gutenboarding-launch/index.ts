@@ -50,7 +50,7 @@ function updateEditor() {
 		}
 		clearInterval( awaitSettingsBar );
 
-		const isMobile = window.innerWidth < 768;
+		const isMobile = window.innerWidth < 782;
 		const isNewLaunch = window?.calypsoifyGutenberg?.isNewLaunch;
 		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
