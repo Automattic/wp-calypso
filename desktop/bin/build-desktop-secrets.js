@@ -13,13 +13,13 @@ if ( ! CALYPSO_SECRETS_ENCRYPTION_KEY ) {
 	process.exit( 1 );
 }
 
-const PROJECT_DIR = path.join( __dirname, '../' );
-const REPO_DIR = path.join( PROJECT_DIR, '../' );
+const PROJECT_DIR = path.resolve( __dirname, '../' );
+const REPO_DIR = path.resolve( PROJECT_DIR, '../' );
 
 const secrets = [
-	path.resolve( PROJECT_DIR, 'resource/calypso/secrets.json' ),
-	path.resolve( PROJECT_DIR, 'resource/certificates/mac.p12' ),
-	path.resolve( PROJECT_DIR, 'resource/certificates/win.p12' ),
+	path.resolve( PROJECT_DIR, 'resource', 'calypso', 'secrets.json' ),
+	path.resolve( PROJECT_DIR, 'resource', 'certificates', 'mac.p12' ),
+	path.resolve( PROJECT_DIR, 'resource', 'certificates', 'win.p12' ),
 ];
 
 for ( let i = 0; i < secrets.length; i++ ) {
