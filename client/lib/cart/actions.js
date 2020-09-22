@@ -161,7 +161,7 @@ export function getRememberedCoupon() {
 	window.localStorage.setItem( MARKETING_COUPONS_KEY, JSON.stringify( coupons ) );
 	if (
 		ALLOWED_COUPON_CODE_LIST.includes(
-			-1 !== mostRecentCouponCode.indexOf( '_' )
+			mostRecentCouponCode?.includes( '_' )
 				? mostRecentCouponCode.substring( 0, mostRecentCouponCode.indexOf( '_' ) )
 				: mostRecentCouponCode
 		)
