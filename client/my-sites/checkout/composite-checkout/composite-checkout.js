@@ -79,8 +79,9 @@ import { colors } from '@automattic/color-studio';
 import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
-import useDisplayErrors from './hooks/use-display-errors';
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
+import useActOnceOnStrings from './hooks/use-act-once-on-strings';
+import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -169,7 +170,11 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const { productsForCart, canInitializeCart } = usePrepareProductsForCart( {
+	const {
+		productsForCart,
+		isLoading: areCartProductsPreparing,
+		error: cartProductPrepError,
+	} = usePrepareProductsForCart( {
 		siteId,
 		product,
 		purchaseId,
@@ -195,7 +200,8 @@ export default function CompositeCheckout( {
 		variantSelectOverride,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
+		canInitializeCart:
+			! areCartProductsPreparing && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsToAddOnInitialize: productsForCart,
 		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
@@ -341,7 +347,24 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ cartLoadingError, stripeLoadingError?.message ].filter( Boolean ) );
+	// Record errors adding products to the cart
+	useActOnceOnStrings( [ cartProductPrepError ].filter( Boolean ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
+		);
+	} );
+
+	// Display errors. Note that we display all errors if any of them change,
+	// because notices.error() otherwise will remove the previously displayed
+	// errors.
+	const errorsToDisplay = [
+		cartLoadingError,
+		stripeLoadingError?.message,
+		cartProductPrepError,
+	].filter( Boolean );
+	useActOnceOnStrings( errorsToDisplay, () => {
+		notices.error( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) );
+	} );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -362,7 +385,7 @@ export default function CompositeCheckout( {
 		items,
 		cartEmptyRedirectUrl,
 		isLoadingCart,
-		[ ...errors, cartLoadingError ].filter( Boolean ),
+		[ ...errors, cartLoadingError, cartProductPrepError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
 
@@ -609,32 +632,6 @@ CompositeCheckout.propTypes = {
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
-
-function useRedirectIfCartEmpty(
-	items,
-	redirectUrl,
-	isLoading,
-	errors,
-	createUserAndSiteBeforeTransaction
-) {
-	useEffect( () => {
-		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
-			debug( 'cart is empty and not still loading; redirecting...' );
-			if ( createUserAndSiteBeforeTransaction ) {
-				window.localStorage.removeItem( 'shoppingCart' );
-				window.localStorage.removeItem( 'siteParams' );
-
-				// We use window.location instead of page.redirect() so that if the user already has an account and site at
-				// this point, then window.location will reload with the cookies applied and takes to the /plans page.
-				// (page.redirect() will take to the log in page instead).
-				window.location = redirectUrl;
-				return;
-			}
-			page.redirect( redirectUrl );
-			return;
-		}
-	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
-}
 
 function useRecordCheckoutLoaded(
 	recordEvent,
