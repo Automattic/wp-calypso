@@ -31,8 +31,11 @@ import { html as toHtml } from '../indices-to-html';
  */
 const toBlocks = ( text ) =>
 	text.split( '\n' ).reduce(
-		( { out, inFence, inList }, raw ) => {
+		( { out, inFence, inList }, raw, index, src ) => {
 			if ( ! raw ) {
+				if ( ! src[ index + 1 ] ) {
+					return { out, inFence, inList };
+				}
 				return {
 					out: out + '<br />',
 					inFence,
