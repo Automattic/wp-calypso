@@ -15,7 +15,7 @@ This helper can be used to transform all those imports to a module that returns
 the asset file's basename as a string:
 
 ```js
-const conig = {
+const config = {
 	transform: {
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
 			'@automattic/calypso-build/jest/transform/asset.js'
@@ -29,7 +29,7 @@ const conig = {
 A babel transform for Jest so it can correctly process JSX, TypeScript, etc.
 
 ```js
-const conig = {
+const config = {
 	transform: {
 		'\\.[jt]sx?$': require.resolve( '@automattic/calypso-build/jest/transform/babel.js' ),
 	},
