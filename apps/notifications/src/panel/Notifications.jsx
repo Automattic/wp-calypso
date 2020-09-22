@@ -38,9 +38,9 @@ export const refreshNotes = () => client && client.refreshNotes.call( client );
  * Force a manual update of a note's read status
  * (used by the Desktop application)
  *
- * @param noteId
- * @param isRead
- * @param callback
+ * @param {number} noteId Unique identifier of the note
+ * @param {boolean} isRead Whether to mark the note as read (true) or unread (false)
+ * @param {Function} callback Function to be executed after the API call is made
  */
 export const markNoteAsRead = ( noteId, isRead, callback ) => {
 	client && client.markNoteAsRead.call( client, noteId, isRead, callback );

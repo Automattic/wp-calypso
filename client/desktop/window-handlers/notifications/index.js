@@ -64,7 +64,6 @@ module.exports = function ( mainWindow ) {
 			} );
 
 			notification.on( 'click', function () {
-				// TODO: revise and decrement badge count
 				if ( ! mainWindow.isVisible() ) {
 					mainWindow.show();
 					delay( 3000 );

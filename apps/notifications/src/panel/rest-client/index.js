@@ -458,7 +458,7 @@ function refreshNotes() {
 	if ( this.subscribed ) {
 		return;
 	}
-	debug( `Refreshing notes...` );
+	debug( 'Refreshing notes...' );
 
 	getNotesList.call( this );
 }
