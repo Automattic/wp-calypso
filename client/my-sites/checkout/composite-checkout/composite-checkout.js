@@ -225,25 +225,6 @@ export default function CompositeCheckout( {
 		[ productsForCart ]
 	);
 
-	// This will record cart items being added after the page loads
-	useEffectOnChange(
-		( previous ) => {
-			if (
-				! isLoadingCart &&
-				isCartPendingUpdate &&
-				responseCart.products.length > previous.length
-			) {
-				responseCart.products.forEach( ( productToAdd ) => {
-					recordEvent( {
-						type: 'CART_ADD_ITEM',
-						payload: productToAdd,
-					} );
-				} );
-			}
-		},
-		[ responseCart.products ]
-	);
-
 	useEffectOnChange( () => {
 		recordEvent( {
 			type: 'CART_INIT_COMPLETE',
@@ -503,8 +484,15 @@ export default function CompositeCheckout( {
 	// Often products are added using just the product_slug but missing the
 	// product_id; this adds it.
 	const addItemWithEssentialProperties = useCallback(
-		( cartItem ) => addItem( fillInSingleCartItemAttributes( cartItem, products ) ),
-		[ addItem, products ]
+		( cartItem ) => {
+			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
+			recordEvent( {
+				type: 'CART_ADD_ITEM',
+				payload: adjustedItem,
+			} );
+			addItem( adjustedItem );
+		},
+		[ addItem, products, recordEvent ]
 	);
 
 	const includeDomainDetails = needsDomainDetails( responseCart );
