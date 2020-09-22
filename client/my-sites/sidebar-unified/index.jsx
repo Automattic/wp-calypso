@@ -10,35 +10,25 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getAdminMenu } from 'state/admin-menu/selectors';
-import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
-import { isUnderEmailManagementAll } from 'my-sites/email/paths';
-import { requestAdminMenu } from '../../state/admin-menu/actions';
 import CurrentSite from 'my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useSiteMenuItems from './use-site-menu-items';
 import Sidebar from 'layout/sidebar';
 import SidebarSeparator from 'layout/sidebar/separator';
-
+import { getIsAllDomainsView } from 'state/admin-menu/selectors';
 import 'layout/sidebar-unified/style.scss';
 import 'state/admin-menu/init';
 
 export const MySitesSidebarUnified = ( { path } ) => {
+	const isAllDomainsView = useSelector( getIsAllDomainsView );
 	const menuItems = useSiteMenuItems();
-
-	const isAllDomainsView = useSelector( ( state ) => {
-		const currentRoute = getCurrentRoute( state );
-		return isUnderDomainManagementAll( currentRoute ) || isUnderEmailManagementAll( currentRoute );
-	} );
 
 	return (
 		<Sidebar>
