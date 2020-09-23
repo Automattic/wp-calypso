@@ -58,42 +58,116 @@ export default class Illustrations extends React.PureComponent {
 
 				<div className="design__illustrations-content devdocs__doc-content">
 					<h1>Illustrations</h1>
-					<img src={ adwordsGoogle } alt="" />
-					<img src={ appBannerEditor } alt="" />
-					<img src={ appBannerNotifications } alt="" />
-					<img src={ appBannerReader } alt="" />
-					<img src={ appBannerStats } alt="" />
-					<img src={ apps } alt="" />
-					<img src={ blockEditorFade } alt="" />
-					<img src={ builderReferral } alt="" />
-					<img src={ checkEmail } alt="" />
-					<img src={ customDomain } alt="" />
-					<img src={ customDomainBlogger } alt="" />
-					<img src={ dashboard } alt="" />
-					<img src={ dotcomSupport } alt="" />
-					<img src={ dotcomWordAds } alt="" />
-					<img src={ fireworks } alt="" />
-					<img src={ getAppsBanner } alt="" />
-					<img src={ googleAnalytics } alt="" />
-					<img src={ googleMyBusinessFeature } alt="" />
-					<img src={ jetpackBackup } alt="" />
-					<img src={ jetpackConcierge } alt="" />
-					<img src={ jetpackScan } alt="" />
-					<img src={ jetpackSearch } alt="" />
-					<img src={ logoJpc } alt="" />
-					<img src={ marketing } alt="" />
-					<img src={ media } alt="" />
-					<img src={ migratingHostDiy } alt="" />
-					<img src={ noMemberships } alt="" />
-					<img src={ payments } alt="" />
-					<img src={ privacy } alt="" />
-					<img src={ removedAds } alt="" />
-					<img src={ seoPageTitle } alt="" />
-					<img src={ siteActivity } alt="" />
-					<img src={ themes } alt="" />
-					<img src={ updates } alt="" />
-					<img src={ videoHosting } alt="" />
-					<img src={ whoops } alt="" />
+					<div className="design__illustrations-illustrations">
+						<div className="design__illustrations-illustration">
+							<img src={ adwordsGoogle } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ appBannerEditor } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ appBannerNotifications } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ appBannerReader } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ appBannerStats } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ apps } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ blockEditorFade } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ builderReferral } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ checkEmail } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customDomain } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customDomainBlogger } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ dashboard } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ dotcomSupport } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ dotcomWordAds } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ fireworks } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ getAppsBanner } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ googleAnalytics } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ googleMyBusinessFeature } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackBackup } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackConcierge } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackScan } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackSearch } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ logoJpc } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ marketing } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ media } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ migratingHostDiy } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ noMemberships } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ payments } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ privacy } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ removedAds } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ seoPageTitle } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ siteActivity } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ themes } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ updates } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ videoHosting } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ whoops } alt="" />
+						</div>
+					</div>
 				</div>
 			</Main>
 		);
