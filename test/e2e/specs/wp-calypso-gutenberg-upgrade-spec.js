@@ -114,7 +114,7 @@ async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb )
  *
  * @param { string } siteName the name of the WP test site (it will prepended to .wordpress.com)
  */
-async function takeBlockScreenshots( siteName ) {
+async function takeEditorScreenshots( siteName ) {
 	const editorViewport = await driver.findElement(
 		By.css( 'div.interface-interface-skeleton__content' )
 	);
@@ -167,7 +167,7 @@ function verifyBlockInEditor( blockClass, siteName ) {
 	*/
 
 	step( 'Take screenshots of the block in the editor', async function () {
-		await takeBlockScreenshots( siteName );
+		await takeEditorScreenshots( siteName );
 	} );
 }
 
@@ -187,6 +187,10 @@ async function assertNoInvalidBlocksInEditor() {
  * @param { string } siteName the name of the WP test site (it will prepended to .wordpress.com)
  */
 function verifyBlockInPublishedPage( blockClass, siteName ) {
+	step( 'Publish page', async function () {
+		await gEditorComponent.publish( { visit: true } );
+	} );
+
 	step( 'Take screenshots of the published page', async function () {
 		await takePublishedScreenshots( siteName );
 	} );
@@ -203,8 +207,6 @@ function verifyBlockInPublishedPage( blockClass, siteName ) {
  * @param { string } siteName the name of the WP test site (it will prepended to .wordpress.com)
  */
 async function takePublishedScreenshots( siteName ) {
-	await gEditorComponent.publish( { visit: true } );
-
 	// Give blocks a chance to render and load assets before taking the screenshots
 	await driver.sleep( 2000 );
 
