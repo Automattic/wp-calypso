@@ -20,15 +20,15 @@ import CurrentSite from 'my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useSiteMenuItems from './use-site-menu-items';
+import useDomainsViewStatus from './use-domains-view-status';
 import Sidebar from 'layout/sidebar';
 import SidebarSeparator from 'layout/sidebar/separator';
-import { getIsAllDomainsView } from 'state/admin-menu/selectors';
 import 'layout/sidebar-unified/style.scss';
 import 'state/admin-menu/init';
 
 export const MySitesSidebarUnified = ( { path } ) => {
-	const isAllDomainsView = useSelector( getIsAllDomainsView );
 	const menuItems = useSiteMenuItems();
+	const isAllDomainsView = useDomainsViewStatus();
 
 	return (
 		<Sidebar>
