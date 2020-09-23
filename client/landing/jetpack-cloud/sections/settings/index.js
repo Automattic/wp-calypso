@@ -14,7 +14,7 @@ import {
 	credentials,
 	withTop,
 	settingsToHostSelection,
-} from 'jetpack-cloud/sections/settings/controller';
+} from 'landing/jetpack-cloud/sections/settings/controller';
 import {
 	settingsPath,
 	settingsHostSelectionPath,
