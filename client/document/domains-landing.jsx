@@ -34,9 +34,7 @@ function DomainsLanding( {
 					<meta { ...props } key={ index } />
 				) ) }
 				{ head.links.map( ( props, index ) => (
-					<>
-						<link { ...props } key={ index } />
-					</>
+					<link { ...props } key={ index } />
 				) ) }
 				{ chunkCssLinks( entrypoint, isRTL ) }
 			</Head>
