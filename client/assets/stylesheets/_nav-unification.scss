@@ -6,7 +6,7 @@
  * This file contains all relevant styles for the nav unification prototype (see pbAPfg-O2).
  * Using a single place to store these styles will allow us to easily (re)move them later.
  * Depending on the outcome they'll either be deleted or moved to the relevant places.
- * 
+ *
  * IMPORTANT: When adding to this file please also add the source file in a comment.
  */
 
@@ -136,8 +136,18 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		// client/layout/style.scss
+		&.layout.focus-content .layout__secondary {
+			transform: translateX( -100% );
+			padding: 71px 24px 24px;
+		}
+
 		.layout__secondary {
 			top: $nav-unification-masterbar-height-mobile;
+		}
+
+		.layout.focus-sites:not( .is-section-post-editor ) .layout__primary .main,
+		.layout.focus-sidebar:not( .is-section-post-editor ) .layout__primary .main {
+			transform: translateX( 100% );
 		}
 
 		// client/layout/masterbar/style.scss
