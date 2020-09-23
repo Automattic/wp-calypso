@@ -15,10 +15,7 @@ const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const menuItems = useSelector( ( state ) => {
-		const menu = getAdminMenu( state, selectedSiteId );
-		return menu ? Object.values( menu ) : [];
-	} );
+	const menuItems = useSelector( ( state ) => getAdminMenu( state, selectedSiteId ) );
 
 	useEffect( () => {
 		if ( selectedSiteId !== null ) {
@@ -26,7 +23,8 @@ const useSiteMenuItems = () => {
 		}
 	}, [ dispatch, selectedSiteId ] );
 
-	return menuItems;
+	// Selector may return `null` so add sensible default
+	return menuItems ?? [];
 };
 
 export default useSiteMenuItems;
