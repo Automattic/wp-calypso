@@ -238,8 +238,6 @@ before( async function () {
 	YoutubeBlockComponent,
 ].forEach( ( blockClass ) => {
 	describe( `[${ host }] Test ${ blockClass.blockName } in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
-		this.timeout( mochaTimeOut );
-
 		[
 			'e2egbupgradehever',
 			'e2egbupgradeshawburn',
