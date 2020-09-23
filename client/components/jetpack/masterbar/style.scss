@@ -8,11 +8,11 @@
 		width: auto;
 
 		@include breakpoint-deprecated( '>660px' ) {
-			min-width: $sidebar-width-min;
+			min-width: var( --sidebar-width-min );
 		}
 
 		@include breakpoint-deprecated( '>960px' ) {
-			min-width: $sidebar-width-max;
+			min-width: var( --sidebar-width-max );
 		}
 
 		.masterbar__item-content {
