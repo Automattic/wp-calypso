@@ -264,7 +264,8 @@ jobs:
   setup:
     <<: *defaults
     steps:
-      # install chromedriver
+      # install chrome
+      - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       # repo
       - restore_cache: *restore-git-cache
