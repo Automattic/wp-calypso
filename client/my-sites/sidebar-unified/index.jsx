@@ -11,7 +11,6 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
