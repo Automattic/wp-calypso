@@ -224,20 +224,21 @@ before( async function () {
 	sampleImages = times( 5, () => mediaHelper.createFile() );
 } );
 
-[
-	BlogPostsBlockComponent,
-	ContactFormBlockComponent,
-	ContactInfoBlockComponent,
-	DynamicSeparatorBlockComponent,
-	GalleryMasonryBlockComponent,
-	LayoutGridBlockComponent,
-	RatingStarBlockComponent,
-	SlideshowBlockComponent,
-	SubscriptionsBlockComponent,
-	TiledGalleryBlockComponent,
-	YoutubeBlockComponent,
-].forEach( ( blockClass ) => {
-	describe( `[${ host }] Test ${ blockClass.blockName } in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
+describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most popular themes (${ screenSize })`, function () {
+	this.timeout( mochaTimeOut );
+	[
+		BlogPostsBlockComponent,
+		ContactFormBlockComponent,
+		ContactInfoBlockComponent,
+		DynamicSeparatorBlockComponent,
+		GalleryMasonryBlockComponent,
+		LayoutGridBlockComponent,
+		RatingStarBlockComponent,
+		SlideshowBlockComponent,
+		SubscriptionsBlockComponent,
+		TiledGalleryBlockComponent,
+		YoutubeBlockComponent,
+	].forEach( ( blockClass ) => {
 		[
 			'e2egbupgradehever',
 			'e2egbupgradeshawburn',
@@ -245,7 +246,7 @@ before( async function () {
 			'e2egbupgradeexford',
 			'e2egbupgrademayland',
 		].forEach( ( siteName ) => {
-			describe( `${ siteName } @parallel`, function () {
+			describe( `Test the ${ blockClass.blockName } block on ${ siteName } @parallel`, function () {
 				const edgeSiteName = siteName + 'edge';
 				describe( `Test the block in the non-edge site (${ siteName })`, function () {
 					step( `Login to ${ siteName }`, async function () {
