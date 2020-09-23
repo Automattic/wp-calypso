@@ -47,12 +47,10 @@ let currentGutenbergBlocksCode;
 let sampleImages;
 
 const blockInits = new Map()
-	.set( TiledGalleryBlockComponent, async ( block ) => {
-		await block.uploadImages( sampleImages );
-	} )
-	.set( ContactFormBlockComponent, async () => {
-		await gEditorComponent.insertContactForm( 'testing@automattic.com', "Let's work together" );
-	} );
+	.set( TiledGalleryBlockComponent, ( block ) => block.uploadImages( sampleImages ) )
+	.set( ContactFormBlockComponent, () =>
+		gEditorComponent.insertContactForm( 'testing@automattic.com', "Let's work together" )
+	);
 
 /**
  * Wrapper that provides an uniform API for creating blocks on the page. It uses
