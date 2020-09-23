@@ -81,7 +81,7 @@ class ThemeMoreButton extends Component {
 								const url = option.getUrl( this.props.themeId );
 								return (
 									<PopoverMenuItem
-										key={ option.label }
+										key={ `${ option.label }-geturl` }
 										action={ this.popoverAction( option.action, option.label ) }
 										href={ url }
 										target={ isOutsideCalypso( url ) ? '_blank' : null }
@@ -93,7 +93,7 @@ class ThemeMoreButton extends Component {
 							if ( option.action ) {
 								return (
 									<PopoverMenuItem
-										key={ option.label }
+										key={ `${ option.label }-action` }
 										action={ this.popoverAction( option.action, option.label ) }
 									>
 										{ option.label }
