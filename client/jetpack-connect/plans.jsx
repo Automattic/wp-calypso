@@ -30,7 +30,13 @@ import { getPlanBySlug } from 'state/plans/selectors';
 import { getProductBySlug } from 'state/products-list/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
-import { JPC_PATH_PLANS } from './constants';
+import {
+	CALYPSO_MY_PLAN_PAGE,
+	CALYPSO_PLANS_PAGE,
+	CALYPSO_REDIRECTION_PAGE,
+	JETPACK_ADMIN_PATH,
+	JPC_PATH_PLANS,
+} from './constants';
 import { bumpStat } from 'lib/analytics/mc';
 import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -39,11 +45,6 @@ import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { persistSignupDestination } from 'signup/utils';
 import { isJetpackProductSlug as getJetpackProductSlug } from 'lib/products-values';
-
-const CALYPSO_PLANS_PAGE = '/plans/';
-const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
-const CALYPSO_REDIRECTION_PAGE = '/posts/';
-const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 
 class Plans extends Component {
 	static propTypes = {
