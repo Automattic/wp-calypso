@@ -1,7 +1,7 @@
 const { app, session } = require( 'electron' );
 
 const filter = {
-	urls: [ 'https://public-api.wordpress.com/pinghub/wpcom/me/newest-note-data' ],
+	urls: [ 'wss://public-api.wordpress.com/pinghub/wpcom/me/newest-note-data*' ],
 };
 
 module.exports = function () {
