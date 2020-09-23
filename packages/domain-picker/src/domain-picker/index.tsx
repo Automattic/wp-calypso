@@ -205,7 +205,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					onChange={ handleInputChange }
 					onBlur={ onDomainSearchBlurValue }
 					value={ domainSearch }
-					disabled={ showErrorMessage }
 				/>
 			</div>
 			{ showErrorMessage && (
