@@ -9,10 +9,10 @@ For most usage, the container is the easiest route.
 ```js
 import LikeButtonContainer from 'blocks/like-button';
 
-render: function() {
+function render() {
 	return (
 		<div className="your-stuff">
-			  <LikeButtonContainer siteId={ 66775168 } postId={ 643 } />
+			<LikeButtonContainer siteId={ 66775168 } postId={ 643 } />
 		</div>
 	);
 }
@@ -28,15 +28,20 @@ render: function() {
 ```js
 import LikeButton from 'blocks/like-button/button';
 
-render: function() {
+function render() {
 	return (
 		<div className="your-stuff">
-			  <LikeButton likeCount={ 5 } showCount={ true } liked={ false } onLikeToggle={ this.handleLikeToggle } />
+			<LikeButton
+				likeCount={ 5 }
+				showCount
+				liked={ false }
+				onLikeToggle={ this.handleLikeToggle }
+			/>
 		</div>
 	);
-},
+}
 
-handleLikeToggle: function( newState ) {
+function handleLikeToggle( newState ) {
 	// save the state somehow
 }
 ```

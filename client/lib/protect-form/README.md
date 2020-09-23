@@ -24,7 +24,7 @@ export default protectForm( MyComponent );
 The `protectForm` HoC provides a `markChanged` prop you can call on the `onChange` event of your form like this:
 
 ```jsx
-<form onChange={ this.props.markChanged } onSubmit={ this.handleSubmit }>
+<form onChange={ this.props.markChanged } onSubmit={ this.handleSubmit } />;
 ```
 
 And then very important, you also need to to call the second prop `markSaved` when your form has been successfully submitted. Here is an example onSubmit callback handler.
@@ -49,9 +49,9 @@ component state instead of calling functions:
 
 ```jsx
 <form onChange={ this.handleChange } onSubmit={ this.handleSubmit }>
-    <ProtectFormGuard isChanged={ this.state.isChanged } />
-    ...
-</form>
+	<ProtectFormGuard isChanged={ this.state.isChanged } />
+	...
+</form>;
 ```
 
 Here are example `onChange` and `onSubmit` handlers that change the state:

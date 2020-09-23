@@ -444,10 +444,10 @@ export class LoginForm extends Component {
 				 */
 				signupUrl = currentQuery.redirect_to;
 			} else {
-				signupUrl = '/jetpack/new';
+				signupUrl = '/jetpack/connect';
 			}
 		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/new';
+			signupUrl = '/jetpack/connect';
 		} else if ( signupFlow ) {
 			signupUrl += '/' + signupFlow;
 		}

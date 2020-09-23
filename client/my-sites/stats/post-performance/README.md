@@ -7,10 +7,8 @@ This component creates an insights card that displays stats about the last post 
 ```js
 import PostPerformance from 'my-sites/stats/post-performance';
 
-render() {
-	return (
-		<PostPerformance site={ <Object> } />
-	);
+function render() {
+	return <PostPerformance site={ site /*object*/ } />;
 }
 ```
 

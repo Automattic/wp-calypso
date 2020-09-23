@@ -6,8 +6,8 @@ For example, `Paygate` is a library by WordPress.com we can use to send Credit c
 This class, `PaymentGatewayLoader`, takes care of the details of loading the remote payment gateway JS script (i.e. `paygate.js`) asynchronously.
 You can access the `Paygate` class from within the callback of `PaygateLoader.ready` like so:
 
-```es6
-import paymentGatewayLoader 'lib/payment-gateway-loader';
+```js
+import paymentGatewayLoader from 'lib/payment-gateway-loader';
 
 function onSuccess( token ) {
 	// Do something with the Paygate token
@@ -17,13 +17,13 @@ function onError( error ) {
 	// Uhoh! We couldn't get a token for some reason
 }
 
-paymentGatewayLoader.ready( url, 'Paygate', function( Paygate ) {
-	var card = {
-		'name': 'WordPress User',
-		'number': '4111111111111111',
-		'cvc': '111',
-		'exp_month': '02',
-		'exp_year': '2017',
+paymentGatewayLoader.ready( url, 'Paygate', function ( Paygate ) {
+	const card = {
+		name: 'WordPress User',
+		number: '4111111111111111',
+		cvc: '111',
+		exp_month: '02',
+		exp_year: '2017',
 	};
 
 	Paygate.create_token( card, onSuccess, onError );

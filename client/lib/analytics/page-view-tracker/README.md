@@ -20,7 +20,7 @@ This component is aware of the selected site and, if the current URL contains a 
 ```js
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-render() {
+function render() {
 	return (
 		<Main>
 			<PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
@@ -29,7 +29,7 @@ render() {
 			</MyCoolComponent>
 		</Main>
 	);
-);
+}
 ```
 
 ### Delayed Page View Tracking
@@ -37,23 +37,19 @@ render() {
 ```js
 import PageViewTracker from 'analytics/page-view-tracker';
 
-render() {
+function render() {
 	// consider a view for less than 500ms as an
 	// accidental view and thus don't track
 
 	return (
 		<Main>
-			<PageViewTracker 
-				delay={ 500 } 
-				path="/section/page"
-				title="My Cool Section > My Cool Page"
-			/>
+			<PageViewTracker delay={ 500 } path="/section/page" title="My Cool Section > My Cool Page" />
 			<MyCoolComponent>
 				<MyCoolChildren />
 			</MyCoolComponent>
 		</Main>
 	);
-);
+}
 ```
 
 ### Reporting Variables
@@ -61,7 +57,7 @@ render() {
 ```js
 import PageViewTracker from 'analytics/page-view-tracker';
 
-render() {
+function render() {
 	const { postId, postTitle } = this.props;
 
 	return (

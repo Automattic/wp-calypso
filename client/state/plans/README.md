@@ -26,7 +26,7 @@ Fetches plans
 
 ### requestPlans()
 
-```es6
+```js
 import {
 	plansReceiveAction,
 	plansRequestSuccessAction,
@@ -37,15 +37,15 @@ import {
 dispatch( requestPlans() );
 
 wpcom
-.plans()
-.list()
-	.then( response => {
+	.plans()
+	.list()
+	.then( ( response ) => {
 		dispatch( plansRequestSuccessAction() );
 		dispatch( plansReceiveAction( response ) );
 	} )
-	.catch( error => {
-		dispatch( plansRequestFailureAction( error.message );
-	}
+	.catch( ( error ) => {
+		dispatch( plansRequestFailureAction( error.message ) );
+	} );
 ```
 
 ## Reducer

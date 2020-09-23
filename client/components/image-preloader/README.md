@@ -13,10 +13,7 @@ import ImagePreloader from 'components/image-preloader';
 export default class extends React.Component {
 	render() {
 		return (
-			<ImagePreloader
-				placeholder={ <div>Loading...</div> }
-				src="http://lorempixel.com/200/200"
-			/>
+			<ImagePreloader placeholder={ <div>Loading...</div> } src="http://lorempixel.com/200/200" />
 		);
 	}
 }

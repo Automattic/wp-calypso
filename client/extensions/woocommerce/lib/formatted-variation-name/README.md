@@ -62,8 +62,8 @@ import formattedVariationName from 'lib/formatted-variation-name';
 const variation = {
 	id: 1,
 	visible: true,
-	attributes: []
-] };
+	attributes: [],
+};
 
 return formattedVariationName( variation, 'All Variations' );
 ```

@@ -12,10 +12,10 @@ import * as controller from './controller';
 import { login } from 'lib/paths';
 import { siteSelection } from 'my-sites/controller';
 import { makeLayout, render as clientRender } from 'controller';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
 import plansV2 from 'my-sites/plans-v2';
-import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
+import { OFFER_RESET_FLOW_TYPES } from 'jetpack-connect/flow-types';
 
 /**
  * Style dependencies
@@ -131,7 +131,12 @@ export default function () {
 	}
 
 	if ( shouldShowOfferResetFlow() ) {
-		plansV2( `/jetpack/connect/plans`, siteSelection, controller.offerResetContext );
+		plansV2(
+			`/jetpack/connect/plans`,
+			siteSelection,
+			controller.offerResetRedirects,
+			controller.offerResetContext
+		);
 	} else {
 		page(
 			'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',

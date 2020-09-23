@@ -1,11 +1,10 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray, noop } from 'lodash';
+import { castArray, noop, find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -13,7 +12,6 @@ import debugFactory from 'debug';
  */
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
-/* eslint-enable import/no-extraneous-dependencies */
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -111,15 +109,41 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
 };
 
 /**
+ * Determines whether a block pattern has been inserted and if so, records
+ * a track event for it. The recorded event will also reflect whether the
+ * inserted pattern replaced blocks.
+ *
+ * @param {Array} args Data supplied to block insertion or replacement tracking functions.
+ * @returns {string} Pattern name being inserted if available.
+ */
+const trackPatternInsertion = ( args ) => {
+	const meta = find( args, ( arg ) => arg?.patternName );
+	const patternName = meta?.patternName;
+
+	if ( patternName ) {
+		tracksRecordEvent( 'wpcom_pattern_inserted', {
+			pattern_name: patternName,
+			blocks_replaced: args.blocks_replaced,
+		} );
+	}
+
+	return patternName;
+};
+
+/**
  * Track block insertion.
  *
  * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Array} args additional insertBlocks data e.g. metadata containing pattern name.
  * @returns {void}
  */
-const trackBlockInsertion = ( blocks ) => {
+const trackBlockInsertion = ( blocks, ...args ) => {
+	const patternName = trackPatternInsertion( { ...args, blocks_replaced: false } );
+
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: false,
+		pattern_name: patternName,
 	} ) );
 };
 
@@ -140,12 +164,16 @@ const trackBlockRemoval = ( blocks ) => {
  *
  * @param {Array} originalBlockIds ids or blocks that are being replaced
  * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Array} args Additional data supplied to replaceBlocks action
  * @returns {void}
  */
-const trackBlockReplacement = ( originalBlockIds, blocks ) => {
+const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
+	const patternName = trackPatternInsertion( { ...args, blocks_replaced: true } );
+
 	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: true,
+		pattern_name: patternName,
 	} ) );
 };
 

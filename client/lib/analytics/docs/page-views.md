@@ -11,7 +11,7 @@ These tools will automatically record page views to both Google Analytics and Tr
 ```js
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-render() {
+function render() {
 	return (
 		<Main>
 			<PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
@@ -20,7 +20,7 @@ render() {
 			</MyCoolComponent>
 		</Main>
 	);
-);
+}
 ```
 
 For more information about `PageViewTracker`, refer to [its own documentation](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/analytics/page-view-tracker).

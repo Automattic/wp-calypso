@@ -25,10 +25,8 @@ There are three ways a tour can get triggered:
 ```jsx
 // tour with a single step
 <Tour path="/me" name="exampleTour" when={ isNewUser }>
-  <Step>
-    …
-  </Step>
-</Tour>
+	<Step>…</Step>
+</Tour>;
 ```
 
 Note that you can use e.g. `lodash`'s `overEvery` as an `and` function to connect different `when` conditions. When you do so, consider your conditions' order: the function stops evaluating its argument functions as soon as one condition is false. This will affect you if you're assigning users to an A/B test, for example. Also think about how computing-intensive the functions are -- ideally order them so that you can bail with the least amount of resources as possible.
@@ -67,19 +65,19 @@ Here is the code used:
 <Step name="example" placement="below" target="my-sites" arrow="top-left">
 	{ ( { translate } ) => (
 		<Fragment>
-  <p>Plain text description.</p>
-  <p>Multiple lines.</p>
-  <Continue step="next-step" click target="my-sites" icon="my-sites" />
-  <ButtonRow>
-    <Next step="next-step" />
-    <Quit />
-  </ButtonRow>
-  <Link href="https://learn.wordpress.com">
-    { translate( 'Learn more about WordPress.com' ) }
-  </Link>
+			<p>Plain text description.</p>
+			<p>Multiple lines.</p>
+			<Continue step="next-step" click target="my-sites" icon="my-sites" />
+			<ButtonRow>
+				<Next step="next-step" />
+				<Quit />
+			</ButtonRow>
+			<Link href="https://learn.wordpress.com">
+				{ translate( 'Learn more about WordPress.com' ) }
+			</Link>
 		</Fragment>
 	) }
-</Step>
+</Step>;
 ```
 
 ## ButtonRow
@@ -92,14 +90,14 @@ ButtonRow is a React component to display button controls in Step and takes care
 <Step>
 	{ () => (
 		<Fragment>
-  <p>ButtonRow Example</p>
-  <ButtonRow>
-    <Next step="next-step" />
-    <Quit />
-  </ButtonRow>
+			<p>ButtonRow Example</p>
+			<ButtonRow>
+				<Next step="next-step" />
+				<Quit />
+			</ButtonRow>
 		</Fragment>
 	) }
-</Step>
+</Step>;
 ```
 
 ## Continue
@@ -133,10 +131,12 @@ There are currently two ways to declare the condition to continue the tour with 
 
 ```jsx
 // continue when user clicks DOM element with html attribute `data-tip-target="my-sites"`
-<Continue step="next-step" click target="my-sites" />
+<Continue step="next-step" click target="my-sites" />;
+```
 
+```jsx
 // continue when Redux selector evaluates to true (in this case after the user opens a preview)
-<Continue step="next-step" when={ isPreviewShowing } />
+<Continue step="next-step" when={ isPreviewShowing } />;
 ```
 
 ## Next
@@ -155,10 +155,12 @@ Default label is "Next". To override, place your label as a child.
 
 ```jsx
 // with default label
-<Next step="next-step" />
+<Next step="next-step" />;
+```
 
+```jsx
 // or with a custom one
-<Next step="next-step">{ translate( 'Custom Label' ) }</Next>`
+<Next step="next-step">{ translate( 'Custom Label' ) }</Next>;
 ```
 
 ## Quit
@@ -177,13 +179,17 @@ Default label is "Quit". To override, place your label a child.
 
 ```jsx
 // with a default label ("Quit")
-<Quit />
+<Quit />;
+```
 
+```jsx
 // with a custom label
-<Quit>{ translate( 'Custom Label' ) }</Quit>
+<Quit>{ translate( 'Custom Label' ) }</Quit>;
+```
 
+```jsx
 // custom label + primary styling
-<Quit primary>{ translate( 'Custom Label' ) }</Quit>
+<Quit primary>{ translate( 'Custom Label' ) }</Quit>;
 ```
 
 ## Link
@@ -199,16 +205,16 @@ Place Link after ButtonRow (if present) for correct styling.
 <Step>
 	{ ( { translate } ) => (
 		<Fragment>
-  <p>This is the last step!</p>
-  <ButtonRow>
-    <Quit />
-  </ButtonRow>
-  <Link href="https://learn.wordpress.com">
-    { translate( 'Learn more about WordPress.com' ) }
-  </Link>
+			<p>This is the last step!</p>
+			<ButtonRow>
+				<Quit />
+			</ButtonRow>
+			<Link href="https://learn.wordpress.com">
+				{ translate( 'Learn more about WordPress.com' ) }
+			</Link>
 		</Fragment>
 	) }
-</Step>
+</Step>;
 ```
 
 ## makeTour
@@ -220,11 +226,7 @@ This is a higher-order component that makes sure your `Tour` gets all the requir
 In the file where the tour is defined, wrap the `Tour` declaration with `makeTour` and export the result.
 
 ```jsx
-export const MyTour = makeTour(
-  <Tour name="my" …>
-    …
-  </Tour>
-);
+export const MyTour = makeTour( <Tour name="my">…</Tour> );
 ```
 
 ## combineTours
@@ -235,9 +237,9 @@ This is a factory for the top-level component of Guided Tours. You shouldn't be 
 
 ```jsx
 combineTours( {
-  main: MainTour,
-  anotherTour: AnotherTour,
-  thirdTour: ThirdTour,
+	main: MainTour,
+	anotherTour: AnotherTour,
+	thirdTour: ThirdTour,
 } );
 ```
 
@@ -259,11 +261,15 @@ Using this method over CSS classes has several benefits, some of them are more e
 Example: you want to position a step of your tour to point to some input element.
 
 ```jsx
-// code somewhere in Calypso
-<input type="text" name="example" value={ … } data-tip-target="my-example-input" />
+<>
+	{ /* code somewhere in Calypso */ }
+	<input type="text" name="example" value={ value } data-tip-target="my-example-input" />
 
-// in your tour
-<Step name="example-step" target="my-example-input">…</Step>
+	{ /* in your tour */ }
+	<Step name="example-step" target="my-example-input">
+		…
+	</Step>
+</>;
 ```
 
 ### CSS selector
@@ -276,23 +282,29 @@ We treat the `target` prop as a CSS selector if it contains `.`, `#`, or a space
 
 ```jsx
 // select by class
-<Step target=".sidebar-activity__likes">
+<Step target=".sidebar-activity__likes" />;
+```
 
+```jsx
 // use a combo of classes to determine state - this selects the active item from masterbar
-<Step target=".masterbar__item.is-active">
+<Step target=".masterbar__item.is-active" />;
+```
 
+```jsx
 // detect state (has-thumbnail) and select a child (featured image)
-<Step target=".reader-post-card.has-thumbnail .reader-post-card__featured-image">
+<Step target=".reader-post-card.has-thumbnail .reader-post-card__featured-image" />;
+```
 
+```jsx
 // target id
-<Step target="#header">
+<Step target="#header" />;
 ```
 
 #### One special case
 
 ```jsx
 // target element
-<Step target=" body">
+<Step target=" body" />;
 ```
 
 Notice the space before "body" in the last example. **This is a hack** that forces the framework to use the value directly as a CSS selector and not as `[data-tip-target="body"]`. Please consider using any other way (CSS class, ID, custom attribute…) before settling with this one.

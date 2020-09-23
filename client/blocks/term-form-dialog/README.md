@@ -7,7 +7,7 @@ The `TermFormDialog` component renders a dialog that allows to create/edit Terms
 ```jsx
 import TermFormDialog from 'blocks/term-form-dialog';
 
-<TermFormDialog showDialog={ true } taxonomy="category" onClose={callback} postType="post" />
+<TermFormDialog showDialog={ true } taxonomy="category" onClose={ callback } postType="post" />;
 ```
 
 ## Props

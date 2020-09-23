@@ -1,12 +1,8 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * WordPress dependencies
  */
 
 import { registerPlugin } from '@wordpress/plugins';
-
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies

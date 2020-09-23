@@ -14,9 +14,7 @@ import { JETPACK_PLANS } from 'lib/plans/constants';
 
 export default class extends React.Component {
 	render() {
-		return (
-			<ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_PRODUCTS_LIST } />
-		);
+		return <ProductPlanOverlapNotices plans={ JETPACK_PLANS } products={ JETPACK_PRODUCTS_LIST } />;
 	}
 }
 ```

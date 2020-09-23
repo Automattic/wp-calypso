@@ -8,7 +8,7 @@ Render the component. The component does not accept any children, nor does it re
 
 ```jsx
 function MyComponent() {
-	return <QueryContactDetailsCache />
+	return <QueryContactDetailsCache />;
 }
 ```
 

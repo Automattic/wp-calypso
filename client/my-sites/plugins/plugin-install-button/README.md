@@ -5,15 +5,17 @@ This component is used to display a button that launch a install action when cli
 ## How to use
 
 ```js
-import PluginInstallButton 'my-sites/plugins/plugin-install-button';
+import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 
-render() {
-    return <PluginInstallButton
-            plugin={ plugin }
-            selectedSite={ site }
-            isInstalling={ false }
-            isEmbed={ false }
-        />;
+function render() {
+	return (
+		<PluginInstallButton
+			plugin={ plugin }
+			selectedSite={ site }
+			isInstalling={ false }
+			isEmbed={ false }
+		/>
+	);
 }
 ```
 

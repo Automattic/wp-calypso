@@ -69,7 +69,7 @@ The `value` property is handled in a manner similar to controlled form component
 
 ```jsx
 class MyComponent extends React.Component {
-	onTokensChange: ( event ) => {
+	onTokensChange( event ) {
 		this.setState( { tokens: event.value } );
 	}
 
@@ -78,7 +78,8 @@ class MyComponent extends React.Component {
 			<TokenField
 				value={ this.state.tokens }
 				onChange={ this.onTokensChange }
-				suggestions={ this.state.suggestions } />
+				suggestions={ this.state.suggestions }
+			/>
 		);
 	}
 }

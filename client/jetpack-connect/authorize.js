@@ -38,6 +38,7 @@ import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -62,7 +63,6 @@ import {
 	authorize as authorizeAction,
 	retryAuth as retryAuthAction,
 } from 'state/jetpack-connect/actions';
-import { OFFER_RESET_FLOW_TYPES } from 'state/jetpack-connect/constants';
 import {
 	getAuthAttempts,
 	getAuthorizationData,

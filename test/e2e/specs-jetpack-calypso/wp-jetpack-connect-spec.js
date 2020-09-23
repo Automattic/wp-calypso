@@ -10,7 +10,6 @@ import config from 'config';
 import LoginFlow from '../lib/flows/login-flow';
 import SignUpFlow from '../lib/flows/sign-up-flow';
 
-import AddNewSitePage from '../lib/pages/add-new-site-page';
 import JetpackAuthorizePage from '../lib/pages/jetpack-authorize-page';
 import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page.js';
@@ -18,11 +17,8 @@ import WPAdminDashboardPage from '../lib/pages/wp-admin/wp-admin-dashboard-page'
 import WPAdminNewUserPage from '../lib/pages/wp-admin/wp-admin-new-user-page';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar.js';
-import SidebarComponent from '../lib/components/sidebar-component';
 import JetpackConnectFlow from '../lib/flows/jetpack-connect-flow';
 import JetpackConnectPage from '../lib/pages/jetpack/jetpack-connect-page';
-import JetpackConnectAddCredentialsPage from '../lib/pages/jetpack/jetpack-connect-add-credentials-page';
-import PlansPage from '../lib/pages/plans-page';
 import LoginPage from '../lib/pages/login-page';
 import JetpackComPage from '../lib/pages/external/jetpackcom-page';
 import JetpackComFeaturesDesignPage from '../lib/pages/external/jetpackcom-features-design-page';
@@ -76,52 +72,6 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 
 		step( 'Can disconnect any expired sites', async function () {
 			return await new JetpackConnectFlow( driver, 'jetpackConnectUser' ).removeSites( timeout );
-		} );
-	} );
-
-	describe( 'Connect From Calypso: @parallel @jetpack @canary', function () {
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can create wporg site', async function () {
-			this.timeout( mochaTimeOut * 12 );
-
-			this.jnFlow = new JetpackConnectFlow( driver, null );
-			return await this.jnFlow.createJNSite();
-		} );
-
-		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
-			await loginFlow.loginAndSelectMySite();
-		} );
-
-		step( 'Can add new site', async function () {
-			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.addNewSite( driver );
-			const addNewSitePage = await AddNewSitePage.Expect( driver );
-			await addNewSitePage.addSiteUrl( this.jnFlow.url );
-			const connectPage = await JetpackConnectPage.Expect( driver );
-			return await connectPage.waitToDisappear();
-		} );
-
-		step( 'Can wait for connection on the authorization page', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			return await jetpackAuthorizePage.waitToDisappear();
-		} );
-
-		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlanJetpack();
-		} );
-
-		step( 'Has site URL in route', async function ( done ) {
-			const siteSlug = this.jnFlow.url.replace( /^https?:\/\//, '' );
-			const url = await driver.getCurrentUrl();
-			if ( url.includes( siteSlug ) ) {
-				return done();
-			}
-			return done( `Route ${ url } does not include site slug ${ siteSlug }` );
 		} );
 	} );
 
@@ -411,61 +361,5 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		// 	return await WooWizardReadyPage.Expect( driver );
 		// } );
 		// */
-	} );
-
-	describe( 'Remote Installation Connect From Calypso, when Jetpack not installed: @parallel @jetpack', function () {
-		let jnFlow;
-
-		before( async function () {
-			// This test relies on Jetpack plugin remote installation, which is possible only for Jetpack stable
-			if ( dataHelper.getJetpackHost() === 'PRESSABLEBLEEDINGEDGE' ) {
-				this.skip();
-			}
-
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can create wporg site', async function () {
-			this.timeout( mochaTimeOut * 12 );
-
-			jnFlow = new JetpackConnectFlow( driver, null, 'noJetpack' );
-			return await jnFlow.createJNSite();
-		} );
-
-		step( 'Can log in', async function () {
-			return await new LoginFlow( driver, 'jetpackConnectUser' ).loginAndSelectMySite();
-		} );
-
-		step( 'Can add new site', async function () {
-			const sideBarComponent = await SidebarComponent.Expect( driver );
-			await sideBarComponent.addNewSite();
-			const addNewSitePage = await AddNewSitePage.Expect( driver );
-			return await addNewSitePage.addSiteUrl( jnFlow.url );
-		} );
-
-		step( 'Can enter the Jetpack credentials and install Jetpack', async function () {
-			const jetpackConnectAddCredentialsPage = await JetpackConnectAddCredentialsPage.Expect(
-				driver
-			);
-			await jetpackConnectAddCredentialsPage.enterDetailsAndConnect(
-				jnFlow.username,
-				jnFlow.password
-			);
-			await jetpackConnectAddCredentialsPage.waitToDisappear();
-		} );
-
-		step( 'Can wait for Jetpack get connected', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			return await jetpackAuthorizePage.waitToDisappear();
-		} );
-
-		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlanJetpack();
-		} );
-
-		step( 'Can then see the Jetpack plan page in Calypso', async function () {
-			return await PlansPage.Expect( driver );
-		} );
 	} );
 } );

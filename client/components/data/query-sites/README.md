@@ -20,11 +20,11 @@ function AllSites() {
 }
 
 function SingleSite() {
-	return <QuerySites siteId={ 2916284 } />
+	return <QuerySites siteId={ 2916284 } />;
 }
 
 function PrimaryAndRecentSites() {
-	return <QuerySites primaryAndRecent />
+	return <QuerySites primaryAndRecent />;
 }
 ```
 

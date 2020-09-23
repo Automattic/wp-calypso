@@ -7,12 +7,8 @@ Component used to declare the main area of any given section —- it's the main 
 ```jsx
 import Main from 'components/main';
 
-render() {
-	return (
-		<Main className="your-component">
-			Your section content...
-		</Main>
-	);
+function render() {
+	return <Main className="your-component">Your section content...</Main>;
 }
 ```
 

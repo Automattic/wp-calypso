@@ -8,10 +8,8 @@ This component creates Stats Overview which is what renders each site section on
 import StatsOverview from 'my-sites/stats/overview';
 
 const MyComponent = () => {
-    return (
-  		<StatsOverview site={ <Object> } path={ <String> } } />
-    );
-}
+	return <StatsOverview site={ site /*object*/ } path={ path /*string*/ } />;
+};
 ```
 
 ## Required Props

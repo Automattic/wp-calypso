@@ -20,14 +20,20 @@ each option is `group_id` and that value is different for each object in respons
 have have the same `id` like for example `enabled` or `recipient` but as mentioned before it is for
 different group.
 
-```j
-{
-	"settings": {
-		"email": "LOADING",
-	}
-	// or
-	"settings": {
-		"email": [
+```js
+const object = {
+	settings: {
+		email: 'LOADING',
+	},
+};
+```
+
+Or
+
+```js
+const object = {
+	settings: {
+		email: [
 			{
 				group_id: 'email',
 				id: 'woocommerce_email_from_name',
@@ -93,9 +99,10 @@ different group.
 				id: 'enabled',
 				value: 'yes',
 			},
-		];
-	}, { … } ],
-}
+		],
+	},
+	/*...*/
+};
 ```
 
 ## Selectors

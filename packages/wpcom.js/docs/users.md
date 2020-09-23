@@ -7,9 +7,8 @@
 Create a `Users` instance from WPCOM
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
-var suggestions = wpcom.users().suggest('<site-id>');
-});
+const wpcom = require( 'wpcom' )( '<your-token>' );
+const suggestions = wpcom.users().suggest( '<site-id>' );
 ```
 
 ## API

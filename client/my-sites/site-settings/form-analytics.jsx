@@ -28,7 +28,7 @@ import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';

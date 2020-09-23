@@ -35,6 +35,7 @@ class AppointmentInfo extends Component {
 
 		const conferenceLink = meta.conference_link || '';
 		const guessedTimezone = moment.tz.guess();
+		const isAllowedToChangeAppointment = meta.canChangeAppointment;
 
 		return (
 			<>
@@ -88,13 +89,15 @@ class AppointmentInfo extends Component {
 						<FormSettingExplanation>{ meta.message }</FormSettingExplanation>
 					</FormFieldset>
 
-					<FormFieldset>
-						<a href={ `/me/concierge/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
-							<FormButton isPrimary={ false } type="button">
-								{ translate( 'Reschedule or cancel' ) }
-							</FormButton>
-						</a>
-					</FormFieldset>
+					{ isAllowedToChangeAppointment && (
+						<FormFieldset>
+							<a href={ `/me/concierge/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
+								<FormButton isPrimary={ false } type="button">
+									{ translate( 'Reschedule or cancel' ) }
+								</FormButton>
+							</a>
+						</FormFieldset>
+					) }
 
 					{ scheduleId === 1 ? (
 						<>

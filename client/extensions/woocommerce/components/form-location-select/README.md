@@ -47,7 +47,7 @@ import FormFieldSet from 'components/forms/form-fieldset';
 import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
 import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
 
-render() {
+function render() {
 	return (
 		<FormFieldSet className="address-view__country">
 			<FormCountrySelectFromApi value={ country } onChange={ onChange } />

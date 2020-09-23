@@ -28,7 +28,7 @@ Fetches followers in batches of 100 starting from the given page, which defaults
 
 ## Example Component Code
 
-```es6
+```js
 /**
  * External dependencies
  */
@@ -46,8 +46,8 @@ export default class extends React.Component {
 
 	fetchOptions = {
 		siteId: this.props.siteId,
-		type: 'email'
-	}
+		type: 'email',
+	};
 
 	componentDidMount() {
 		EmailFollowersActions.fetchFollowers( this.fetchOptions );
@@ -60,17 +60,14 @@ export default class extends React.Component {
 
 	getFollowers = () => {
 		return {
-			followers: EmailFollowersStore.getFollowers( this.props.fetchOptions )
+			followers: EmailFollowersStore.getFollowers( this.props.fetchOptions ),
 		};
-	}
+	};
 
 	refreshFollowers = () => {
 		this.setState( this.getFollowers() );
-	}
+	};
 
-	render() {
-
-	}
-} );
-
+	render() {}
+}
 ```

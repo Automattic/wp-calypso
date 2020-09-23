@@ -78,8 +78,6 @@ module.exports = {
 
 		// These are Calypso server modules we don't need, so let's not bundle them
 		'webpack.config',
-		'server/devdocs/search-index',
-		'calypso/server/devdocs/search-index',
 	],
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],

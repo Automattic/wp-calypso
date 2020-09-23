@@ -12,7 +12,7 @@ Example credit card selection list:
 import CreditCard from 'components/credit-card';
 
 export default ( { cards, selectedId, onSelectCard } ) => {
-	return cards.map( card => (
+	return cards.map( ( card ) => (
 		<CreditCard
 			key={ card.id }
 			card={ card }

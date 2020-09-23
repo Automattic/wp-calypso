@@ -13,34 +13,36 @@ Search for a given email in the customer list.
 This is saved on a per-site basis.
 
 ```js
-{
-	"customers": {
+const object = {
+	customers: {
 		// Keyed by search query
-		"isSearching": {
+		isSearching: {
 			'lane@example.test': false,
-			'person@site.local': true
+			'person@site.local': true,
 		},
 		// Keyed by customer ID
-		"items": {
+		items: {
 			2: {
-				"id": 2,
-				"email": "lane@example.test",
-				"first_name": "Lane",
-				"last_name": "Chase",
-				"role": "customer",
-				"username": "chase6xe",
-				"billing": {},
-				"shipping": {},
-				…
+				id: 2,
+				email: 'lane@example.test',
+				first_name: 'Lane',
+				last_name: 'Chase',
+				role: 'customer',
+				username: 'chase6xe',
+				billing: {},
+				shipping: {},
+				/*...*/
 			},
-			3: { … } 
+			3: {
+				/*...*/
+			},
 		},
 		// Keyed by search query (a list of customer IDs)
-		"queries": {
+		queries: {
 			'lane@example.test': [ 2 ],
 		},
-	}
-}
+	},
+};
 ```
 
 ## Selectors

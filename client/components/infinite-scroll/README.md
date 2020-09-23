@@ -24,7 +24,7 @@ The method accepts an object as an argument, with one key `triggeredByScroll`. I
 
 ```jsx
 class List extends Component {
-	fetchNextPage = options => {
+	fetchNextPage = ( options ) => {
 		if ( this.state.loading || this.state.lastPage ) {
 			return;
 		}

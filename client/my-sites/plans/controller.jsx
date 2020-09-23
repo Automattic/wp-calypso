@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import Plans from './plans';
 import { isValidFeatureKey } from 'lib/plans/features-list';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import isSiteWpcom from 'state/selectors/is-site-wpcom';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import { productSelect } from 'my-sites/plans-v2/controller';

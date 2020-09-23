@@ -72,13 +72,6 @@ function getExternals() {
 			'calypso/webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
-			// Exclude the devdocs search-index, as it's huge.
-			'server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
-			},
-			'calypso/server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
-			},
 		},
 	];
 }
@@ -150,12 +143,6 @@ const webpackConfig = {
 					chunkGroups: true,
 				},
 			} ),
-		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( {
-			banner: 'require( "source-map-support" ).install();',
-			raw: true,
-			entryOnly: false,
-		} ),
 		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),

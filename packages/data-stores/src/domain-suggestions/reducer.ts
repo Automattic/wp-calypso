@@ -7,20 +7,56 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { DomainSuggestion, DomainCategory, DomainAvailability } from './types';
+import type { DomainCategory, DomainAvailability, DomainSuggestionState } from './types';
+import { DataStatus } from './constants';
 import type { Action } from './actions';
 import { stringifyDomainQueryObject } from './utils';
 
-const domainSuggestions: Reducer< Record< string, DomainSuggestion[] | undefined >, Action > = (
-	state = {},
+const initialDomainSuggestionState: DomainSuggestionState = {
+	state: DataStatus.Uninitialized,
+	data: {},
+	errorMessage: null,
+	lastUpdated: -Infinity,
+	pendingSince: undefined,
+};
+
+export const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
+	state = initialDomainSuggestionState,
 	action
 ) => {
-	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS' ) {
+	if ( action.type === 'FETCH_DOMAIN_SUGGESTIONS' ) {
 		return {
 			...state,
-			[ stringifyDomainQueryObject( action.queryObject ) ]: action.suggestions,
+			state: DataStatus.Pending,
+			errorMessage: null,
+			pendingSince: action.timeStamp,
 		};
 	}
+
+	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS_SUCCESS' ) {
+		return {
+			...state,
+			state: DataStatus.Success,
+			data: {
+				...state.data,
+				[ stringifyDomainQueryObject( action.queryObject ) ]: action.suggestions,
+			},
+			errorMessage: null,
+			lastUpdated: action.timeStamp,
+			pendingSince: undefined,
+		};
+	}
+
+	if ( action.type === 'RECEIVE_DOMAIN_SUGGESTIONS_ERROR' ) {
+		return {
+			...state,
+			state: DataStatus.Failure,
+			errorMessage: action.errorMessage,
+			lastUpdated: action.timeStamp,
+			pendingSince: undefined,
+		};
+	}
+
 	return state;
 };
 

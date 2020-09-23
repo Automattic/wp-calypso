@@ -134,10 +134,17 @@ class EmailManagement extends React.Component {
 			return this.googleAppsUsersCard();
 		}
 
+		if ( config.isEnabled( 'email/titan-mvp' ) ) {
+			const selectedDomain = domainList[ 0 ];
+			return (
+				<EmailProvidersComparison
+					domain={ selectedDomain }
+					isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
+				/>
+			);
+		}
+
 		if ( hasGSuiteSupportedDomain( domainList ) ) {
-			if ( config.isEnabled( 'email/titan-mvp' ) ) {
-				return <EmailProvidersComparison domainName={ domainList[ 0 ].name } />;
-			}
 			return this.addGSuiteCta();
 		}
 

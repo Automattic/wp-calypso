@@ -9,6 +9,7 @@ enum StatusState {
 	Connected,
 	Connecting,
 	Failed,
+	Loading,
 }
 
 interface Props {
@@ -28,6 +29,8 @@ const ConnectionStatus: FunctionComponent< Props > = ( { state } ) => {
 				return 'top__connection-status-connecting';
 			case StatusState.Disconnected:
 				return 'top__connection-status-disconnected';
+			case StatusState.Loading:
+				return 'top__connection-status-loading';
 		}
 	};
 
@@ -41,12 +44,14 @@ const ConnectionStatus: FunctionComponent< Props > = ( { state } ) => {
 				return translate( 'Connecting' );
 			case StatusState.Disconnected:
 				return translate( 'Disconnected' );
+			case StatusState.Loading:
+				return translate( 'Loading' );
 		}
 	};
 
 	return (
 		<div className={ getClass() }>
-			{ getText() }
+			<span>{ getText() }</span>
 			<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 				<circle cx="50" cy="50" r="50" />
 			</svg>

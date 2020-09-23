@@ -9,25 +9,25 @@ A suggestion whose `label` property matches the `query` prop will be highlighted
 
 ```jsx
 import React, { useCallback, useMemo, useState } from 'react';
+import FormTextInput from 'components/forms/form-text-input';
 import { Suggestions } from '@automattic/components';
 
 export default function SuggestionsExample() {
 	const [ query, setQuery ] = useState( '' );
-	const updateInput = useCallback( e => setQuery( e.target.value ), [ setQuery ] );
+	const updateInput = useCallback( ( e ) => setQuery( e.target.value ), [ setQuery ] );
 
 	const suggestions = useMemo( () => {
 		if ( ! query ) {
 			return [];
 		}
-		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( s => ( { label: s, value: s } ) );
+		const allSuggestions = [ 'Foo', 'Bar', 'Baz' ].map( ( s ) => ( { label: s, value: s } ) );
 		const r = new RegExp( query, 'i' );
 		return allSuggestions.filter( ( { label } ) => r.test( label ) );
 	}, [ query ] );
 
 	return (
 		<div className="docs__suggestions-container">
-			<input
-				type="text"
+			<FormTextInput
 				value={ query }
 				onChange={ updateInput }
 				autoComplete="off"

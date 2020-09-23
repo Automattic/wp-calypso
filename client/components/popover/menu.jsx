@@ -46,6 +46,7 @@ class PopoverMenu extends Component {
 			context,
 			customPosition,
 			isVisible,
+			isFocusEnabled,
 			popoverTitle,
 			position,
 		} = this.props;
@@ -59,6 +60,7 @@ class PopoverMenu extends Component {
 				context={ context }
 				customPosition={ customPosition }
 				isVisible={ isVisible }
+				isFocusEnabled={ isFocusEnabled }
 				popoverTitle={ popoverTitle }
 				position={ position }
 			>

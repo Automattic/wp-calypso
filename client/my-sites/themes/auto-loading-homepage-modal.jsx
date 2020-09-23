@@ -46,7 +46,7 @@ class AutoLoadingHomepageModal extends Component {
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
-		installingThemeId: PropTypes.string.isRequired,
+		installingThemeId: PropTypes.string,
 	};
 
 	closeModalHandler = ( activate = false ) => () => {

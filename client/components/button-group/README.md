@@ -8,7 +8,7 @@ Button group displays multiple related actions in a row to help with the display
 import ButtonGroup from 'components/button-group';
 import { Button } from '@automattic/components';
 
-render: function() {
+function render() {
 	return (
 		<ButtonGroup>
 			<Button compact>Approve</Button>

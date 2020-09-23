@@ -323,18 +323,7 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	renderAlternateEmailFieldForGSuite() {
-		let customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
-		// We also show 'email' field errors because this field will only be shown
-		// if email is invalid (and email will not be shown) so we should show
-		// those errors somewhere. However, only show them if the `alternateEmail`
-		// has not been entered.
-		if (
-			! customErrorMessage &&
-			this.props.contactDetailsErrors?.email &&
-			! this.props.contactDetails?.alternateEmail?.length > 0
-		) {
-			customErrorMessage = this.props.contactDetailsErrors.email;
-		}
+		const customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input

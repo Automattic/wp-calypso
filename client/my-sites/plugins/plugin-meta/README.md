@@ -5,14 +5,10 @@ This component is used to display the meta information of a single plugin. Inclu
 ## How to use
 
 ```js
-import PluginMeta 'my-sites/plugins/plugin-meta';
+import PluginMeta from 'my-sites/plugins/plugin-meta';
 
-render() {
-	return
-		<PluginMeta
-		    plugin={ plugin }
-		/>
-	);
+function render() {
+	return <PluginMeta plugin={ plugin } />;
 }
 ```
 

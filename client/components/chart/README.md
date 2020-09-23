@@ -5,19 +5,22 @@ This module renders a dataset as an HTML-based chart representing the data.
 ## Usage
 
 ```jsx
-
 // import the component
 import ElementChart from 'my-sites/chart';
 
 // And use it inline inside the render method of another component
-render: function() {
-	return(
-		<ElementChart loading={ <Bool> } data={ <Array> } barClick={ <Function> } />
+function render() {
+	return (
+		<ElementChart
+			loading={ loading /*boolean*/ }
+			data={ data /*array*/ }
+			barClick={ barClick /*function*/ }
+		/>
 	);
 }
 
 // Example Data Array
-
+/*
 [ {
 	'label': 		<String>, // x-axis label
 	'value': 		<Number>, // bar value
@@ -34,8 +37,7 @@ render: function() {
 		}
 	]
 } ]
-
-
+*/
 ```
 
 ## Required Props

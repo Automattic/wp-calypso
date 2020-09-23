@@ -72,7 +72,7 @@
 		margin-bottom: 0;
 	}
 
-	input[type='text'] {
+	.form-text-input {
 		padding-right: 38px;
 
 		@include breakpoint-deprecated( '<480px' ) {

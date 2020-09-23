@@ -7,12 +7,8 @@ Simple interface to introduce animations to components on initial render. Used a
 ```jsx
 import Animate from 'components/animate';
 
-render() {
-	return (
-		<Animate type="appear">
-			Will animate
-		</Animate>
-	);
+function render() {
+	return <Animate type="appear">Will animate</Animate>;
 }
 ```
 

@@ -44,7 +44,7 @@
 	}
 }
 
-input.site-redirect-step__external-domain {
+.form-text-input.site-redirect-step__external-domain {
 	@include breakpoint-deprecated( '>660px' ) {
 		float: left;
 		width: calc( 100% - 90px );

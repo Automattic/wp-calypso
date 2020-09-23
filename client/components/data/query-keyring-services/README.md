@@ -14,7 +14,9 @@ export default function MyServicesList( { services } ) {
 	return (
 		<ul>
 			<QueryKeyringServices />
-			{ services.map( ( service ) => <li>{ service.label }</li> ) }
+			{ services.map( ( service ) => (
+				<li>{ service.label }</li>
+			) ) }
 		</ul>
 	);
 }

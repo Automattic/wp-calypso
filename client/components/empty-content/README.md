@@ -12,9 +12,7 @@ import EmptyContentComponent from 'components/empty-content';
 
 // Render the component
 function show( context, next ) {
-	context.primary = (
-		<EmptyContentComponent title="Your title" line="Some text" />
-	);
+	context.primary = <EmptyContentComponent title="Your title" line="Some text" />;
 	next();
 }
 ```
@@ -25,8 +23,8 @@ function show( context, next ) {
 import EmptyContent from 'components/empty-content';
 
 // Use it inline inside the render method of another component
-render() {
-	return(
+function render() {
+	return (
 		<div>
 			<EmptyContent title="Your title" line="Some text" />
 		</div>

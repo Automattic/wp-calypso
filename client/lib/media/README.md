@@ -33,10 +33,10 @@ MediaActions.fetchNextPage( siteId );
 You should monitor the store for changes in case another module interacts with the store:
 
 ```js
-import MediaStore 'lib/media/store';
-const mediaScale = MediaStore.get( 'media-scale' );
+import MediaStore from 'lib/media/store';
+let mediaScale = MediaStore.get( 'media-scale' );
 
-MediaStore.on( 'change', function() {
+MediaStore.on( 'change', function () {
 	mediaScale = MediaStore.get( 'media-scale' );
 } );
 ```

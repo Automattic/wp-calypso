@@ -21,7 +21,13 @@ An `I18nProvider` should be mounted above any localized components:
 ```js
 import { I18nProvider } from '@automattic/react-i18n';
 
-<I18nProvider localeData={ /* Localed data object */ }>
+<I18nProvider
+	localeData={
+		{
+			/* Localed data object */
+		}
+	}
+>
 	<MyLocalizedApp />
 </I18nProvider>;
 ```

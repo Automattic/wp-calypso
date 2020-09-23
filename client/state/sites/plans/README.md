@@ -18,7 +18,19 @@ Adds the plans fetched from the API to the set of plans for the given site ID.
 import { fetchSitePlans, fetchSitePlansCompleted } from 'state/sites/plans/actions';
 
 dispatch( fetchSitePlans( 555555555 ) );
-dispatch( fetchSitePlansCompleted( 555555555, { 1: { ... }, 1003: { ... }, 1008: { ... } } ) );
+dispatch(
+	fetchSitePlansCompleted( 555555555, {
+		1: {
+			/*...*/
+		},
+		1003: {
+			/*...*/
+		},
+		1008: {
+			/*...*/
+		},
+	} )
+);
 ```
 
 ## Reducer

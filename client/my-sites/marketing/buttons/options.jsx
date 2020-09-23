@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
@@ -168,9 +169,8 @@ class SharingButtonsOptions extends Component {
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Twitter username' ) }
 				</legend>
-				<input
+				<FormTextInput
 					name={ option }
-					type="text"
 					placeholder={ '@' + translate( 'username' ) }
 					value={ this.getSanitizedTwitterUsername( settings[ option ] ) }
 					onChange={ this.handleTwitterViaChange }

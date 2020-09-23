@@ -7,13 +7,16 @@ This component is used to represent the state of a single instance of a plugin i
 ```js
 import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
 
-render() {
-    return <PluginSite
-            site={ site }
-            secondarySites={ this.getSecondaryPluginSites( site ) }
-            plugin={ this.state.plugin }
-            wporg={ this.state.plugin.wporg }
-            notices={ this.state.notices } />;
+function render() {
+	return (
+		<PluginSite
+			site={ site }
+			secondarySites={ this.getSecondaryPluginSites( site ) }
+			plugin={ this.state.plugin }
+			wporg={ this.state.plugin.wporg }
+			notices={ this.state.notices }
+		/>
+	);
 }
 ```
 

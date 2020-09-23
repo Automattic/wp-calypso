@@ -7,7 +7,7 @@ This component displays a Site item using site data retrieved from Redux store. 
 ```js
 import Site from 'blocks/site';
 
-render() {
+function render() {
 	return <Site siteId={ siteId } indicator={ true } />;
 }
 ```

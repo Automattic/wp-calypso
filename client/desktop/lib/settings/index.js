@@ -39,15 +39,11 @@ Settings.prototype.getSetting = function ( setting ) {
 
 	if ( typeof value === 'undefined' ) {
 		if ( typeof Config.default_settings[ setting ] !== 'undefined' ) {
-			log.info( 'Get default setting for ' + setting + ' = ' + Config.default_settings[ setting ] );
 			return Config.default_settings[ setting ];
 		}
-
-		log.info( 'Get setting with no defaults for ' + setting );
 		return false;
 	}
 
-	log.info( 'Get setting for ' + setting + ' = ' + value );
 	return value;
 };
 
@@ -67,10 +63,7 @@ Settings.prototype.getSettingGroup = function ( existing, group, values ) {
 				existing[ value ] = settingsGroup[ value ];
 				updated[ value ] = settingsGroup[ value ];
 			}
-
-			log.info( `Updated settings for group '${ group }': `, updated );
 		} else {
-			log.info( `Get settings for group '${ group }': `, settingsGroup );
 			return settingsGroup;
 		}
 	}

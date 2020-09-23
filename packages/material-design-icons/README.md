@@ -16,7 +16,7 @@ We use svgr to load SVG files and convert them to React components.
 ```jsx
 import { ReactComponent as SvgExample } from './test.svg';
 
-<SvgExample />
+<SvgExample />;
 ```
 
 ## Adding icons

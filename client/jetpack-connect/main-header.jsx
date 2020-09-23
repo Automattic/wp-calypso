@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'components/formatted-header';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { getPlan } from 'lib/plans';
 import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
 import { getJetpackProductShortName, getJetpackProductDescription } from 'lib/products-values';
 import { PRODUCTS_LIST } from 'lib/products-values/products-list';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
+import { FLOW_TYPES } from 'jetpack-connect/flow-types';
 import { retrievePlan } from './persistence-utils';
 
 class JetpackConnectMainHeader extends Component {

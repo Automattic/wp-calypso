@@ -7,11 +7,8 @@ This component is used to display the detail of how the ratings of a plugin are 
 ```js
 import PluginRatings from 'my-sites/plugins/plugin-ratings';
 
-render() {
-	return <PluginRatings
-			plugin={ this.props.plugin }
-			barWidth={ 100 }
-		/>;
+function render() {
+	return <PluginRatings plugin={ this.props.plugin } barWidth={ 100 } />;
 }
 ```
 

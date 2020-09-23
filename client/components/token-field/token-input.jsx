@@ -5,6 +5,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { omit, noop } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import FormTextInput from 'components/forms/form-text-input';
+
 class TokenInput extends React.PureComponent {
 	static propTypes = {
 		disabled: PropTypes.bool,
@@ -36,12 +41,11 @@ class TokenInput extends React.PureComponent {
 			( ( value.length === 0 && placeholder && placeholder.length ) || value.length ) + 1;
 
 		return (
-			<input
+			<FormTextInput
 				className="token-field__input"
 				onChange={ this.onChange }
-				ref={ this.setTextInput }
+				inputRef={ this.setTextInput }
 				size={ size }
-				type="text"
 				{ ...omit( this.props, [ 'hasFocus', 'onChange' ] ) }
 			/>
 		);

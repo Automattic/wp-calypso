@@ -17,20 +17,16 @@ function ExampleSiteComponent( { siteMonitorSettings, translate } ) {
 	return (
 		<div>
 			<QuerySiteMonitorSettings siteId={ 12345678 } />
-			{
-				siteMonitorSettings && siteMonitorSettings.monitor_active
-					? translate( 'Monitor is enabled' )
-					: translate( 'Monitor is disabled' )
-			}
+			{ siteMonitorSettings && siteMonitorSettings.monitor_active
+				? translate( 'Monitor is enabled' )
+				: translate( 'Monitor is disabled' ) }
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		siteMonitorSettings: getSiteMonitorSettings( state, 12345678 )
-	} )
-)( localize( ExampleSiteComponent ) );
+export default connect( ( state ) => ( {
+	siteMonitorSettings: getSiteMonitorSettings( state, 12345678 ),
+} ) )( localize( ExampleSiteComponent ) );
 ```
 
 ## Props

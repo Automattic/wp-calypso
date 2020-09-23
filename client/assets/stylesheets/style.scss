@@ -18,3 +18,6 @@
 // Styles for the nav unification prototype (see pbAPfg-O2)
 // TODO: depending on project outcome move or delete styles
 @import './_nav-unification';
+
+// @wordpress/components stylesheet
+@import '~@wordpress/components/build-style/style.css';

@@ -11,15 +11,13 @@ import React from 'react';
 import QueryPostLikes from 'components/data/query-post-likes';
 import MyPostLikesListItem from './list-item';
 
-export default function MyPostLikesListItem( { likes } ) {
+export default function Component( { likes } ) {
 	return (
 		<div>
 			<QueryPostLikes siteId={ 12345678 } postId={ 50 } />
-			{ likes.map( like => {
-				return (
-					<MyPostLikesListItem likeId={ like.ID } />
-				);
-			} }
+			{ likes.map( ( like ) => {
+				return <MyPostLikesListItem likeId={ like.ID } />;
+			} ) }
 		</div>
 	);
 }

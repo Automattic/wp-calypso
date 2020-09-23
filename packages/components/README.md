@@ -21,10 +21,11 @@ import { Button } from '@automattic/components';
 
 const CallToAction = () => (
 	<>
-		<Button primary onClick={() => alert('Thank you for taking action!')}>Take action now!</Button>
+		<Button primary onClick={ () => alert( 'Thank you for taking action!' ) }>
+			Take action now!
+		</Button>
 	</>
 );
-
 ```
 
 ## Development Workflow

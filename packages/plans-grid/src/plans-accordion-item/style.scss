@@ -7,7 +7,7 @@ $plans-accordion-item-border-radius: 5px;
 $plans-accordion-item-border-color: var( --studio-gray-5 );
 
 .plans-accordion-item {
-	display: inline-flex;
+	display: block;
 	flex-grow: 1;
 	flex-basis: 0;
 	flex-direction: column;

@@ -6,7 +6,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line import/no-extraneous-dependencies
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );

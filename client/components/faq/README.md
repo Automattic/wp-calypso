@@ -33,7 +33,6 @@ export default class MyFaq extends React.Component {
 		);
 	}
 }
-
 ```
 
 ## Props

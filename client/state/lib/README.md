@@ -35,13 +35,16 @@ dispatch( { type: 'MY_EXAMPLE_LIBRARY_ACTION' } );
 And in this middleware, we can create a handler:
 
 ```jsx
-import library from 'lib/example'
-//...
+/* eslint-disable no-case-declarations */
+import library from 'lib/example';
 
-case MY_EXAMPLE_LIBRARY_ACTION:
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	library.doSomething( selectedSite );
+switch ( action ) {
+	case MY_EXAMPLE_LIBRARY_ACTION:
+		const state = getState();
+		const selectedSite = getSelectedSite( state );
+		library.doSomething( selectedSite );
+		break;
+}
 ```
 
 ## Use Redux Middleware to setSelectedSite
@@ -59,14 +62,17 @@ library.setSelectedSite( selectedSite );
 Then add a handler in this middleware:
 
 ```jsx
-import library from 'lib/example'
-//...
+/* eslint-disable no-case-declarations */
+import library from 'lib/example';
 
-//All relevant site update events
-case SELECTED_SITE_SET:
-case SITE_RECEIVE:
-case SITES_RECEIVE:
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	library.setSelectedSite( selectedSite );
+switch ( action ) {
+	//All relevant site update events
+	case SELECTED_SITE_SET:
+	case SITE_RECEIVE:
+	case SITES_RECEIVE:
+		const state = getState();
+		const selectedSite = getSelectedSite( state );
+		library.setSelectedSite( selectedSite );
+		break;
+}
 ```

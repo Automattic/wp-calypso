@@ -8,7 +8,7 @@ Render as you would an `<input />` element. Any props passed not included in the
 
 ```jsx
 export default function MyForm() {
-	return <FormTextInput isValid initialValue="Hello World!" />;	
+	return <FormTextInput isValid initialValue="Hello World!" />;
 }
 ```
 

@@ -6,7 +6,7 @@
 
 Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page.
 
-```es6
+```jsx
 import QuerySiteDomains from 'components/data/query-site-domains';
 
 class MyComponent extends React.Component {
@@ -17,11 +17,9 @@ class MyComponent extends React.Component {
 			<div>
 				<QuerySiteDomains siteId={ site.ID } />
 				<ul>
-				{
-					domains.map( domain => {
-						return ( <li>{ domain.domain }</li> );
-					} )
-				}
+					{ domains.map( ( domain ) => {
+						return <li>{ domain.domain }</li>;
+					} ) }
 				</ul>
 			</div>
 		);

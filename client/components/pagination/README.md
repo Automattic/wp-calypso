@@ -7,10 +7,8 @@ Use pagination to allow navigation between pages that represent an ordered colle
 ```js
 import Pagination from 'components/pagination';
 
-render: function() {
-	return (
-		<Pagination compact={ <Boolean> } page={ <Number> } perPage={ <Number> } total={ <Number> } pageClick={ <Function> } />;
-	);
+function render() {
+	return <Pagination />;
 }
 ```
 

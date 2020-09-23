@@ -4,7 +4,7 @@ module.exports = {
 	},
 	overrides: [
 		{
-			files: [ '*.stories.jsx' ],
+			files: [ '*.stories.jsx', '*.md.jsx' ],
 			rules: {
 				'import/no-extraneous-dependencies': 'off',
 			},

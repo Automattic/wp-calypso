@@ -16,17 +16,21 @@ by promotion type.
 For each promotion type, a model is returned in the following format:
 
 ```js
-{
+const model = {
 	cardModel1: {
 		labelText: translate( 'Card 1' ),
 		fields: {
 			fieldModel1: {
 				component: <TextField />,
-				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+				validate: ( fieldName, promotion, currency, showEmpty ) => {
+					/*...*/
+				},
 			},
 			fieldModel2: {
 				component: <CurrencyField />,
-				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+				validate: ( fieldName, promotion, currency, showEmpty ) => {
+					/*...*/
+				},
 			},
 		},
 	},
@@ -35,15 +39,19 @@ For each promotion type, a model is returned in the following format:
 		fields: {
 			fieldModel3: {
 				component: <NumberField />,
-				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+				validate: ( fieldName, promotion, currency, showEmpty ) => {
+					/*...*/
+				},
 			},
 			fieldModel4: {
 				component: <CheckboxField />,
-				validate: ( fieldName, promotion, currency, showEmpty ) => { … }
+				validate: ( fieldName, promotion, currency, showEmpty ) => {
+					/*...*/
+				},
 			},
 		},
 	},
-}
+};
 ```
 
 ### Promotion Field
@@ -57,14 +65,14 @@ In addition to whatever props are already set on the component from the model,
 the following props will be added at runtime:
 
 ```js
-{
-	key: (the field name, for react iteration indexing),
-	value: (the current value of the field),
-	promotion: (the promotion the field belongs to),
-	fieldName: (the field name used),
-	edit: (edit function used to modify upon change, in the form of: function( fieldName, newValue ) ),
-	currency: (the current currency to be used),
-}
+const obj = {
+	key, //the field name, for react iteration indexing)
+	value, //the current value of the field)
+	promotion, //the promotion the field belongs to)
+	fieldName, //the field name used)
+	edit, //edit function used to modify upon change, in the form of: function( fieldName, newValue ) )
+	currency, //the current currency to be used)
+};
 ```
 
 #### Validate

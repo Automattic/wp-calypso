@@ -6,8 +6,7 @@ will query media storage limits for you.
 ## Usage
 
 ```javascript
-	<PlanStorage siteId={ this.props.siteId } />
-}
+<PlanStorage siteId={ this.props.siteId } />;
 ```
 
 ## Props
@@ -25,22 +24,19 @@ import PlanStorageBar from 'blocks/plan-storage/bar';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import { getMediaStorage } from 'state/sites/media-storage/selectors';
 
-render() {
+function render() {
 	const planName = this.props.site.plan.product_name_short;
 	return (
 		<div>
 			<QueryMediaStorage siteId={ this.props.siteId } />
-			<PlanStorageBar
-				sitePlanName={ planName }
-				mediaStorage={ this.props.mediaStorage }
-			/>
+			<PlanStorageBar sitePlanName={ planName } mediaStorage={ this.props.mediaStorage } />
 		</div>
 	);
 }
 //...
 export default connect( ( state, ownProps ) => {
 	return {
-		mediaStorage: getMediaStorage( state, ownProps.siteId )
+		mediaStorage: getMediaStorage( state, ownProps.siteId ),
 	};
 } )( MyComponent );
 ```

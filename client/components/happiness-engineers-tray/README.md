@@ -7,9 +7,7 @@ Renders a row of Happiness Engineers' Gravatars.
 ```jsx
 import HappinessEngineersTray from 'components/happiness-engineers-tray';
 
-render() {
-    return (
-        <HappinessEngineersTray />
-    );
+function render() {
+	return <HappinessEngineersTray />;
 }
 ```

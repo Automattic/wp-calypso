@@ -5,10 +5,10 @@ This folder contains sub-trees for all settings for a site. See the individual R
 ## Reducer
 
 ```js
-{
-	"settings": {
-		"general": [],
-		"products": [],
-	}
-}
+const object = {
+	settings: {
+		general: [],
+		products: [],
+	},
+};
 ```

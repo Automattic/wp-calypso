@@ -14,14 +14,10 @@ export const receiveCategories = ( categories: DomainCategory[] ) =>
 		categories,
 	} as const );
 
-export const receiveDomainSuggestions = (
-	queryObject: DomainSuggestionQuery,
-	suggestions: DomainSuggestion[] | undefined
-) =>
+export const fetchDomainSuggestions = () =>
 	( {
-		type: 'RECEIVE_DOMAIN_SUGGESTIONS',
-		queryObject,
-		suggestions,
+		type: 'FETCH_DOMAIN_SUGGESTIONS',
+		timeStamp: Date.now(),
 	} as const );
 
 export const receiveDomainAvailability = ( domainName: string, availability: DomainAvailability ) =>
@@ -31,6 +27,28 @@ export const receiveDomainAvailability = ( domainName: string, availability: Dom
 		availability,
 	} as const );
 
+export const receiveDomainSuggestionsSuccess = (
+	queryObject: DomainSuggestionQuery,
+	suggestions: DomainSuggestion[] | undefined
+) =>
+	( {
+		type: 'RECEIVE_DOMAIN_SUGGESTIONS_SUCCESS',
+		queryObject,
+		suggestions,
+		timeStamp: Date.now(),
+	} as const );
+
+export const receiveDomainSuggestionsError = ( errorMessage: string ) =>
+	( {
+		type: 'RECEIVE_DOMAIN_SUGGESTIONS_ERROR',
+		errorMessage,
+		timeStamp: Date.now(),
+	} as const );
+
 export type Action = ReturnType<
-	typeof receiveCategories | typeof receiveDomainSuggestions | typeof receiveDomainAvailability
+	| typeof receiveCategories
+	| typeof fetchDomainSuggestions
+	| typeof receiveDomainSuggestionsSuccess
+	| typeof receiveDomainSuggestionsError
+	| typeof receiveDomainAvailability
 >;

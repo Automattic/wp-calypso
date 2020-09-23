@@ -16,12 +16,8 @@ export default function MyReaderTagImages( { images } ) {
 		<div>
 			<QueryReaderTagImages tag={ 'bananas' } />
 			{ images.map( ( image ) => {
-				return (
-					<MyListItem
-						key={ image.url }
-						image={ image } />
-				);
-			} }
+				return <MyListItem key={ image.url } image={ image } />;
+			} ) }
 		</div>
 	);
 }

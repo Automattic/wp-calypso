@@ -7,18 +7,13 @@ External Link is a React component for rendering an external link.
 ### Usage
 
 ```jsx
-
 import React from 'react';
 import ExternalLink from 'components/external-link';
 
 class MyComponent extends React.Component {
 	render() {
 		return (
-			<ExternalLink
-				icon
-				href="https://wordpress.org"
-				onClick={ () => {} }
-			>
+			<ExternalLink icon href="https://wordpress.org" onClick={ () => {} }>
 				WordPress.org
 			</ExternalLink>
 		);
@@ -47,7 +42,6 @@ and is capable of recording Tracks events.
 ### Usage
 
 ```jsx
-
 import React from 'react';
 import ExternalLinkWithTracking from 'components/external-link/with-tracking';
 

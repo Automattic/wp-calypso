@@ -5,14 +5,14 @@
 ## Usage
 
 ```js
-import QuerySiteCommentsList from 'components/data/query-site-comments-list'
+import QuerySiteCommentsList from 'components/data/query-site-comments-list';
 
 const CommentList = ( { comments, siteId } ) => (
 	<div>
 		<QuerySiteCommentsList siteId={ siteId } />
-		{ comments.map( … ) }
+		{ comments.map(/*...*/) }
 	</div>
-)
+);
 ```
 
 ## Props

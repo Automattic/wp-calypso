@@ -4,23 +4,23 @@ As a wrapper for `<SuggestionSearch />`, SiteVerticalsSuggestionSearch fetches s
 
 ## Usage
 
-```es6
+```jsx
 import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
 
-onChange( { vertical_name, vertical_slug, vertical_id } ) {
+function onChange( { vertical_name, vertical_slug, vertical_id } ) {
 	console.log( 'New vertical values: ', vertical_name, vertical_slug, vertical_id );
 }
 
-render() {
+function render() {
 	return (
 		<SiteVerticalsSuggestionSearch
+			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ true }
 			onChange={ onChange }
 			searchValue={ stateValue }
 		/>
 	);
 }
-
 ```
 
 ## Props

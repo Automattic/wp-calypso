@@ -11,7 +11,7 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import {
 	getName,
 	isExpired,

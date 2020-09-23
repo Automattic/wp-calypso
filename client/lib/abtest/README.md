@@ -40,7 +40,7 @@ There are also several optional configuration settings available:
 
 Next, in your code, import the `abtest` method from the `abtest` module:
 
-```es6
+```js
 import { abtest } from 'lib/abtest';
 ```
 
@@ -52,13 +52,13 @@ Here's how you would use it to vary the text attribute of a button:
 let buttonWording;
 
 if ( abtest( 'freeTrialButtonWording' ) === 'startFreeTrial' ) {
-    buttonWording = translate( 'Start Free Trial' );
+	buttonWording = translate( 'Start Free Trial' );
 } else {
-    // Note: Don't make this translatable because it's only visible to English-language users
-    buttonWording = 'Begin Your Free Trial';
+	// Note: Don't make this translatable because it's only visible to English-language users
+	buttonWording = 'Begin Your Free Trial';
 }
 
-<Button text={ buttonWording } />
+<Button text={ buttonWording } />;
 ```
 
 You should keep the translation comment to make it clear to people reading the code why the string is not translated.
@@ -74,19 +74,19 @@ const userCountryCode = requestGeoLocation().data;
 let buttonWording;
 
 if ( abtest( 'freeTrialButtonWordingForIndia', userCountryCode ) === 'startFreeTrial' ) {
-    buttonWording = translate( 'India Special: Start Free Trial' );
+	buttonWording = translate( 'India Special: Start Free Trial' );
 } else {
-   buttonWording = translate( 'Start Free Trial' );
+	buttonWording = translate( 'Start Free Trial' );
 }
 
-<Button text={ buttonWording } />
+<Button text={ buttonWording } />;
 ```
 
 ### Determining whether the user is a participant in an A/B test
 
 If you want to determine whether the user is a participant in a specific A/B test, you can import the `abtest` module's `getABTestVariation` method:
 
-```es6
+```js
 import { getABTestVariation } from 'lib/abtest';
 
 // ...
@@ -101,7 +101,7 @@ This is useful when your A/B test affects multiple pages and you just want to ch
 
 If you would like to manually add yourself to a variant group to test it out visually, you can do so by modifying the `localStorage` setting for the test. For the example above, to add yourself to the `beginYourFreeTrial` group you would execute:
 
-```es6
+```js
 // localStorage values are comprised of:
 // localStorage.setItem( 'ABTests', '{"<testObjectKey>_<datestamp>":"<variationName>"}' );
 

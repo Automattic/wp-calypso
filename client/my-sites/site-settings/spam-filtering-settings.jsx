@@ -24,7 +24,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import { hasFeature } from 'state/sites/plans/selectors';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
