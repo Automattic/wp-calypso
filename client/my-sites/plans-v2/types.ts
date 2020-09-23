@@ -20,15 +20,16 @@ export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
 export type DurationString = 'annual' | 'monthly';
 export type ProductType = typeof ALL | typeof PERFORMANCE | typeof SECURITY;
 export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_BUNDLE | typeof ITEM_TYPE_PRODUCT;
-export type PurchaseCallback = (
-	arg0: SelectorProduct,
-	arg1?: boolean,
-	arg2?: Purchase,
-	arg3?: string
-) => void;
+
+export interface QueryArgs {
+	[ key: string ]: string;
+}
+
+export type PurchaseCallback = ( arg0: SelectorProduct, arg1?: boolean, arg2?: Purchase ) => void;
 
 interface BasePageProps {
 	rootUrl: string;
+	urlQueryArgs: QueryArgs;
 	header: ReactNode;
 	footer?: ReactNode;
 }

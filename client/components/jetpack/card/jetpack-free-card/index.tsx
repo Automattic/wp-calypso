@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
@@ -12,18 +12,24 @@ import { Button } from '@automattic/components';
 import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
+import { addQueryArgs } from 'lib/route';
+import { QueryArgs } from 'my-sites/plans-v2/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const JetpackFreeCard: FunctionComponent = () => {
+type JetpackFreeProps = {
+	urlQueryArgs: QueryArgs;
+};
+
+const JetpackFreeCard = ( { urlQueryArgs }: JetpackFreeProps ) => {
 	const translate = useTranslate();
 	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
 
 	const startHref = isJetpackCloud()
-		? `https://wordpress.com${ JPC_PATH_REMOTE_INSTALL }`
+		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ JPC_PATH_REMOTE_INSTALL }` )
 		: wpAdminUrl || JPC_PATH_REMOTE_INSTALL;
 
 	return (

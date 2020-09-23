@@ -45,10 +45,11 @@ import type { ProductSlug } from 'lib/products-values/types';
 import './style.scss';
 
 const DetailsPage = ( {
-	duration,
+	rootUrl,
+	urlQueryArgs,
 	siteSlug: siteSlugProp,
 	productSlug,
-	rootUrl,
+	duration,
 	header,
 }: DetailsPageProps ) => {
 	const dispatch = useDispatch();
@@ -66,11 +67,13 @@ const DetailsPage = ( {
 
 	// If the product slug isn't one that has options, proceed to the upsell.
 	if ( ! ( PRODUCTS_WITH_OPTIONS as readonly string[] ).includes( productSlug ) ) {
-		page.redirect( getPathToUpsell( rootUrl, productSlug, duration as Duration, siteSlug ) );
+		page.redirect(
+			getPathToUpsell( rootUrl, urlQueryArgs, productSlug, duration as Duration, siteSlug )
+		);
 		return null;
 	}
 
-	const selectorPageUrl = getPathToSelector( rootUrl, duration, siteSlug );
+	const selectorPageUrl = getPathToSelector( rootUrl, urlQueryArgs, duration, siteSlug );
 
 	// If the product is not valid, send the user to the selector page.
 	const product = slugToSelectorProduct( productSlug );
@@ -82,11 +85,11 @@ const DetailsPage = ( {
 	// Go to a new page for upsells.
 	const selectProduct: PurchaseCallback = ( { productSlug: slug }: SelectorProduct ) => {
 		if ( hasUpsell( slug as ProductSlug ) ) {
-			page( getPathToUpsell( rootUrl, slug, duration as Duration, siteSlug ) );
+			page( getPathToUpsell( rootUrl, urlQueryArgs, slug, duration as Duration, siteSlug ) );
 			return;
 		}
 
-		checkout( siteSlug, slug );
+		checkout( siteSlug, slug, urlQueryArgs );
 	};
 
 	const onDurationChange = ( newDuration: Duration ) => {
