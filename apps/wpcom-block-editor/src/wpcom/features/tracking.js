@@ -90,8 +90,8 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 		block = ensureBlockObject( block );
 
 		const eventProperties = {
-			...propertiesHandler( block, parentBlock ),
 			...globalEventPropsHandler( block, parentBlock ),
+			...propertiesHandler( block, parentBlock ),
 			inner_block: !! parentBlock,
 		};
 
