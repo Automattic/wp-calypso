@@ -66,11 +66,11 @@ abstract class Token_Subscription_Service implements Subscription_Service {
 		if ( empty( $token ) ) {
 			// no token, no access.
 			$is_valid_token = false;
-		}
-
-		$payload = $this->decode_token( $token );
-		if ( empty( $payload ) ) {
-			$is_valid_token = false;
+		} else {
+			$payload = $this->decode_token( $token );
+			if ( empty( $payload ) ) {
+				$is_valid_token = false;
+			}
 		}
 
 		if ( $is_valid_token ) {
