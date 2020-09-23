@@ -314,3 +314,15 @@
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-40 );
 }
+
+.domain-picker__error {
+	margin-top: 24px;
+
+	#{&}-message {
+		@include onboarding-medium-text;
+	}
+
+	#{&}-retry-btn {
+		margin-top: 16px;
+	}
+}
