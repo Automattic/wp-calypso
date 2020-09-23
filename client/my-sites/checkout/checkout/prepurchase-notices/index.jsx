@@ -12,10 +12,16 @@ import {
 	getProductFromSlug,
 	isJetpackBackup,
 	isJetpackBackupSlug,
+	isJetpackScanSlug,
 	isJetpackPlanSlug,
 } from 'lib/products-values';
 import getSelectedSite from 'state/ui/selectors/get-selected-site';
-import { getSitePlan, getSiteProducts, isJetpackMinimumVersion } from 'state/sites/selectors';
+import {
+	getSitePlan,
+	getSiteProducts,
+	isJetpackMinimumVersion,
+	isJetpackSiteMultiSite,
+} from 'state/sites/selectors';
 import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
@@ -24,6 +30,7 @@ import Notice from 'components/notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
 import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
+import MultisitesIncompatibleCartProductNotice from './multisites-incompatible-cart-product-notice';
 
 import './style.scss';
 
@@ -39,6 +46,7 @@ const PrePurchaseNotices = () => {
 	// but for some reason, cart items take ~20 seconds to populate in some cases,
 	// whereas line items are immediately available on page load.
 	const [ lineItems ] = useLineItems();
+
 	const cartItemSlugs = lineItems
 		.map( ( item ) => item.wpcom_meta?.product_slug )
 		.filter( ( item ) => item );
@@ -77,6 +85,13 @@ const PrePurchaseNotices = () => {
 		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
 	);
 
+	const scanSlugInCart = cartItemSlugs.find( isJetpackScanSlug );
+	const multisitesIncompatibleProducts = useSelector( ( state ) => {
+		return isJetpackSiteMultiSite( state, siteId )
+			? [ backupSlugInCart, scanSlugInCart ].filter( ( item ) => item ).map( getProductFromSlug )
+			: [];
+	} );
+
 	// All these notices (and the selectors that drive them)
 	// require a site ID to work. We should *conceptually* always
 	// have a site ID handy; consider this a guard, or an
@@ -84,6 +99,13 @@ const PrePurchaseNotices = () => {
 	// safely assume a site ID has been defined.
 	if ( ! siteId ) {
 		return null;
+	}
+
+	// The site is part of a multi-sites network and the cart contains either
+	// Jetpack Backup or Jetpack Scan (both incompatible products with this type
+	// of configuration)
+	if ( multisitesIncompatibleProducts.length > 0 ) {
+		return <MultisitesIncompatibleCartProductNotice products={ multisitesIncompatibleProducts } />;
 	}
 
 	// This site has an active Jetpack Backup product purchase,

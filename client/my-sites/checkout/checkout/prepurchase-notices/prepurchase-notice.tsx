@@ -4,11 +4,22 @@
 import React from 'react';
 
 /**
- * Internal dependencies
+ * Type dependencies
+ */
+import { TranslateResult } from 'i18n-calypso';
+
+/**
+ * Style dependencies
  */
 import './style.scss';
 
-const PrePurchaseNotice = ( { message, linkUrl, linkText } ) => (
+type Props = {
+	message: TranslateResult;
+	linkUrl?: string;
+	linkText?: TranslateResult;
+};
+
+const PrePurchaseNotice = ( { message, linkUrl, linkText }: Props ) => (
 	<div className="prepurchase-notice">
 		<p className="prepurchase-notice__message">{ message }</p>
 		{ linkUrl && linkText && (
