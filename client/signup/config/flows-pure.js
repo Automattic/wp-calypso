@@ -115,7 +115,7 @@ export function generateFlows( {
 		},
 
 		onboarding: {
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-03-03',
