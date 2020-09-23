@@ -27,6 +27,7 @@ export interface VariantSelectOverride {
 export interface ShoppingCartManager {
 	isLoading: boolean;
 	loadingError: string | null | undefined;
+	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
 	addItem: ( arg0: RequestCartProduct ) => void;
 	removeItem: ( arg0: string ) => void;

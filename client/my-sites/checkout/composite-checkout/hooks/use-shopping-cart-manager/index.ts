@@ -120,5 +120,5 @@ export default function useShoppingCartManager( {
 		variantSelectOverride,
 		changeItemVariant,
 		responseCart,
-	} as ShoppingCartManager;
+	};
 }
