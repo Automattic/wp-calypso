@@ -4,6 +4,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { createInterpolateElement } from '@wordpress/element';
+import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
@@ -18,7 +19,9 @@ import InfoTooltip from '../info-tooltip';
 /*#__PURE__*/ import '../types-patch';
 
 interface Props {
+	isUnavailable?: boolean;
 	domain: string;
+	isLoading?: boolean;
 	cost: string;
 	hstsRequired?: boolean;
 	isFree?: boolean;
@@ -31,7 +34,9 @@ interface Props {
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
+	isUnavailable,
 	domain,
+	isLoading,
 	cost,
 	railcarId,
 	hstsRequired = false,
@@ -80,16 +85,22 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 			className={ classnames( 'domain-picker__suggestion-item', {
 				'is-free': isFree,
 				'is-selected': selected,
+				'is-unavailable': isUnavailable,
 			} ) }
 		>
-			<input
-				aria-labelledby={ labelId }
-				className="domain-picker__suggestion-radio-button"
-				type="radio"
-				name="domain-picker-suggestion-option"
-				onChange={ onDomainSelect }
-				checked={ selected }
-			/>
+			{ isLoading ? (
+				<Spinner />
+			) : (
+				<input
+					aria-labelledby={ labelId }
+					className="domain-picker__suggestion-radio-button"
+					type="radio"
+					disabled={ isUnavailable }
+					name="domain-picker-suggestion-option"
+					onChange={ onDomainSelect }
+					checked={ selected && ! isUnavailable }
+				/>
+			) }
 			<div className="domain-picker__suggestion-item-name">
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span className="domain-picker__domain-name">{ domainName }</span>
@@ -123,7 +134,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 							) }
 						</InfoTooltip>
 					) }
-					{ isRecommended && (
+					{ isRecommended && ! isUnavailable && (
 						<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
 					) }
 				</div>
@@ -138,9 +149,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-paid': ! isFree,
 				} ) }
 			>
-				{ isFree ? (
-					__( 'Free' )
-				) : (
+				{ isUnavailable && __( 'Unavailable' ) }
+				{ isFree && ! isUnavailable && __( 'Free' ) }
+				{ ! isFree && ! isUnavailable && (
 					<>
 						<span className="domain-picker__price-inclusive"> { __( 'Included in plans' ) } </span>
 						<span className="domain-picker__price-cost">

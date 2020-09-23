@@ -337,4 +337,114 @@ describe( 'check conditional elements render correctly', () => {
 		// use `queryBy` to avoid throwing an error with `getBy`
 		expect( screen.queryByTestId( 'info-tooltip' ) ).toBeFalsy();
 	} );
+
+	it( 'renders recommendation badge if given prop isRecommended true', async () => {
+		const testRequiredProps = {
+			domain: 'testdomain.com',
+			cost: '€12.00',
+			railcarId: 'id',
+			isRecommended: true,
+		};
+
+		render(
+			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
+		);
+
+		expect( screen.getByText( /Recommended/i ) ).toBeTruthy();
+	} );
+
+	it( 'renders the cost if given prop of cost with a value', async () => {
+		const testRequiredProps = {
+			domain: 'testdomain.com',
+			cost: '€12.00',
+			railcarId: 'id',
+			isRecommended: true,
+		};
+
+		render(
+			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
+		);
+
+		expect( screen.queryByText( /€12.00/i ) ).toBeTruthy();
+	} );
+
+	it( 'renders the cost as free if given prop of isFree even though it has a cost prop', async () => {
+		const testRequiredProps = {
+			domain: 'testdomain.com',
+			cost: '€12.00',
+			railcarId: 'id',
+			isFree: true,
+			isRecommended: true,
+		};
+
+		render(
+			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
+		);
+
+		expect( screen.queryByText( /€12.00/i ) ).toBeFalsy();
+		expect( screen.queryByText( /Free/i ) ).toBeTruthy();
+	} );
+
+	it( 'does not render recommendation badge if is given prop isRecommended false', async () => {
+		const testRequiredProps = {
+			domain: 'testdomain.com',
+			cost: '€12.00',
+			railcarId: 'id',
+			isRecommended: false,
+		};
+
+		render(
+			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
+		);
+
+		// use `queryBy` to avoid throwing an error with `getBy`
+		expect( screen.queryByText( /Recommended/i ) ).toBeFalsy();
+	} );
+} );
+
+describe( 'test that suggested items are rendered correctly based on availability', () => {
+	it( 'should have the disabled UI state when provided an availabilityStatus of unavailable', () => {
+		const testRequiredProps = {
+			domain: 'testdomain.com',
+			cost: '€12.00',
+			railcarId: 'id',
+			isRecommended: true,
+			isUnavailable: true,
+		};
+
+		render(
+			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
+		);
+
+		// we have to test for the domain and the TLD separately because they get split in the component
+		expect( screen.queryByText( /testdomain/i ) ).toBeTruthy();
+		expect( screen.queryAllByText( /.com/i ) ).toBeTruthy();
+
+		expect( screen.queryByText( /Unavailable/i ) ).toBeTruthy();
+		expect( screen.queryByText( /Recommended/i ) ).toBeFalsy();
+		expect( screen.queryByRole( 'radio' ).getAttribute( 'disabled' ) ).not.toBe( null );
+	} );
+
+	it( 'should have the enabled UI state when provided an availabilityStatus that is available', () => {
+		const testRequiredProps = {
+			domain: 'testdomain.com',
+			cost: '€12.00',
+			railcarId: 'id',
+			isRecommended: true,
+			isUnavailable: false,
+		};
+
+		render(
+			<SuggestionItem { ...testRequiredProps } onSelect={ jest.fn() } onRender={ jest.fn() } />
+		);
+
+		// we have to test for the domain and the TLD separately because they get split in the component
+		expect( screen.queryByText( /testdomain/i ) ).toBeTruthy();
+		expect( screen.queryAllByText( /.com/i ) ).toBeTruthy();
+
+		expect( screen.queryByText( /Unavailable/i ) ).toBeFalsy();
+		expect( screen.queryByText( /€12.00/i ) ).toBeTruthy();
+		expect( screen.queryByText( /Recommended/i ) ).toBeTruthy();
+		expect( screen.queryByRole( 'radio' ).getAttribute( 'disabled' ) ).toBe( null );
+	} );
 } );
