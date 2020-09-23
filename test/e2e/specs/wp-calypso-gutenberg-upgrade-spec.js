@@ -237,7 +237,7 @@ before( async function () {
 	TiledGalleryBlockComponent,
 	YoutubeBlockComponent,
 ].forEach( ( blockClass ) => {
-	describe( `[${ host }] Test ${ blockClass.blockName } in edge and non-edge sites across most popular themes (${ screenSize }) @parallel`, function () {
+	describe( `[${ host }] Test ${ blockClass.blockName } in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
 		this.timeout( mochaTimeOut );
 
 		[
@@ -247,41 +247,43 @@ before( async function () {
 			'e2egbupgradeexford',
 			'e2egbupgrademayland',
 		].forEach( ( siteName ) => {
-			const edgeSiteName = siteName + 'edge';
-			describe( `Test the block in the non-edge site (${ siteName })`, function () {
-				step( `Login to ${ siteName }`, async function () {
-					await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
-					gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			describe( `${ siteName } @parallel`, function () {
+				const edgeSiteName = siteName + 'edge';
+				describe( `Test the block in the non-edge site (${ siteName })`, function () {
+					step( `Login to ${ siteName }`, async function () {
+						await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
+						gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+					} );
+
+					step( `Insert and configure ${ blockClass.blockName }`, async function () {
+						await createBlock( blockClass );
+					} );
+
+					verifyBlockInEditor( blockClass, siteName );
+
+					step(
+						'Switch to the code editor and copy the code markup for the block',
+						async function () {
+							currentGutenbergBlocksCode = await gEditorComponent.copyBlocksCode();
+						}
+					);
+
+					verifyBlockInPublishedPage( blockClass, siteName );
 				} );
+				describe( `Test the same blocks in the corresponding edge site (${ edgeSiteName })`, function () {
+					step( `Switches to edge site (${ edgeSiteName })`, async function () {
+						// Re-use the same session created earlier but change the site
+						await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
 
-				step( `Insert and configure ${ blockClass.blockName }`, async function () {
-					await createBlock( blockClass );
+						// Loads the same blocks from the non-edge site by pasting the code markup code in the code editor
+						// and then switching to the block editor
+						await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
+						await gEditorComponent.switchToBlockEditor();
+					} );
+
+					verifyBlockInEditor( blockClass, edgeSiteName );
+					verifyBlockInPublishedPage( blockClass, edgeSiteName );
 				} );
-
-				verifyBlockInEditor( blockClass, siteName );
-
-				step(
-					'Switch to the code editor and copy the code markup for the block',
-					async function () {
-						currentGutenbergBlocksCode = await gEditorComponent.copyBlocksCode();
-					}
-				);
-
-				verifyBlockInPublishedPage( blockClass, siteName );
-			} );
-			describe( `Test the same blocks in the corresponding edge site (${ edgeSiteName })`, function () {
-				step( `Switches to edge site (${ edgeSiteName })`, async function () {
-					// Re-use the same session created earlier but change the site
-					await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
-
-					// Loads the same blocks from the non-edge site by pasting the code markup code in the code editor
-					// and then switching to the block editor
-					await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
-					await gEditorComponent.switchToBlockEditor();
-				} );
-
-				verifyBlockInEditor( blockClass, edgeSiteName );
-				verifyBlockInPublishedPage( blockClass, edgeSiteName );
 			} );
 		} );
 	} );
