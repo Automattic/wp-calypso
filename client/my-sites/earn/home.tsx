@@ -4,11 +4,12 @@
 import { connect } from 'react-redux';
 import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import page from 'page';
-import { compact } from 'lodash';
+import { compact, overSome } from 'lodash';
 
 /**
  * Internal dependencies
  */
+
 import wp from 'lib/wp';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
@@ -27,12 +28,23 @@ import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PREMIUM,
+	PLAN_JETPACK_SECURITY_DAILY,
 } from 'lib/plans/constants';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { localizeUrl } from 'lib/i18n-utils';
+import { addQueryArgs } from '@wordpress/url';
+import {
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+	isJetpackPremiumPlan,
+	isJetpackBusinessPlan,
+	isSecurityDailyPlan,
+	isSecurityRealTimePlan,
+	isCompletePlan,
+} from 'lib/plans';
 
 /**
  * Image dependencies
@@ -72,6 +84,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
+	isPremiumOrBetterPlan,
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
@@ -100,14 +113,19 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		} );
 	};
 
-	const getPlanNames = () => {
-		const jetpackText = shouldShowOfferResetFlow()
-			? ''
-			: ' ' + translate( 'Available only with a Premium or Professional plan.' );
+	const getAnyPlanNames = () => {
+		const jetpackText = translate( 'Available with Jetpack Security and Jetpack Complete.' );
 
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack
-			? jetpackText
+			? ' ' + jetpackText
+			: ' ' + translate( 'Available with any paid plan.' );
+	};
+
+	const getPremiumPlanNames = () => {
+		// Space isn't included in the translatable string to prevent it being easily missed.
+		return isNonAtomicJetpack
+			? getAnyPlanNames()
 			: ' ' + translate( 'Available only with a Premium, Business, or eCommerce plan.' );
 	};
 
@@ -130,7 +148,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					action: () => {
 						trackUpgrade( 'plans', 'simple-payments' );
 						page(
-							`/plans/${ selectedSiteSlug }?feature=${ FEATURE_SIMPLE_PAYMENTS }&plan=${ PLAN_PREMIUM }`
+							addQueryArgs( `/plans/${ selectedSiteSlug }`, {
+								feature: FEATURE_SIMPLE_PAYMENTS,
+								plan: isNonAtomicJetpack ? PLAN_JETPACK_SECURITY_DAILY : PLAN_PREMIUM,
+							} )
 						);
 					},
 			  };
@@ -143,7 +164,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Accept credit card payments via PayPal for physical products, services, donations, or support of your creative work.'
 				) }
-				{ ! hasSimplePayments && <em>{ getPlanNames() }</em> }
+				{ ! hasSimplePayments && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -188,15 +209,14 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const hasConnectionBody = translate(
 			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
 		);
-		const noConnectionBody = translate(
-			'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations. {{em}}Available with any paid plan{{/em}}.',
-			{
-				components: {
-					em: <em />,
-				},
-			}
+		const noConnectionBody = (
+			<>
+				{ translate(
+					'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations.'
+				) }
+				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+			</>
 		);
-
 		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
 		const learnMoreLink = isFreePlan
@@ -247,7 +267,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
 				) }
-				{ isFreePlan && <em>{ ' ' + translate( 'Available with any paid plan' ) }.</em> }
+				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
 			</>
 		);
 
@@ -294,30 +314,29 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const title = hasConnectedAccount
 			? translate( 'Manage your premium content' )
 			: translate( 'Collect payments for content' );
-		const body = hasConnectedAccount
-			? translate(
-					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
-					{
-						components: {
-							a: (
-								<a
-									href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-					}
-			  )
-			: translate(
-					'Create paid subscription options to share premium content like text, images, video, and any other content on your website. {{em}}Available with any paid plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  );
-
+		const body = hasConnectedAccount ? (
+			translate(
+				'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
+				{
+					components: {
+						a: (
+							<a
+								href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			)
+		) : (
+			<>
+				{ translate(
+					'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
+				) }
+				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+			</>
+		);
 		const learnMoreLink = isFreePlan
 			? {
 					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
@@ -364,16 +383,17 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  };
 		const title = translate( 'Send paid email newsletters' );
-		const body = isFreePlan
-			? translate(
-					'Share premium content with paying subscribers automatically through email. {{em}}Available with any paid plan{{/em}}.',
-					{
-						components: {
-							em: <em />,
-						},
-					}
-			  )
-			: translate( 'Share premium content with paying subscribers automatically through email.' );
+		const body = isFreePlan ? (
+			<>
+				{ ' ' }
+				{ translate(
+					'Share premium content with paying subscribers automatically through email.'
+				) }
+				{ <em>{ getAnyPlanNames() }</em> }
+			</>
+		) : (
+			translate( 'Share premium content with paying subscribers automatically through email.' )
+		);
 
 		return {
 			title,
@@ -475,7 +495,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
-				{ <em>{ getPlanNames() }</em> }
+				{ ! isPremiumOrBetterPlan && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -556,14 +576,28 @@ export default connect< ConnectedProps, {}, {} >(
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		const isFreePlan = ! isCurrentPlanPaid( state, siteId );
+
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
+		const isPremiumOrBetterPlan =
+			sitePlanSlug &&
+			overSome(
+				isPremiumPlan,
+				isBusinessPlan,
+				isEcommercePlan,
+				isJetpackPremiumPlan,
+				isJetpackBusinessPlan,
+				isSecurityDailyPlan,
+				isSecurityRealTimePlan,
+				isCompletePlan
+			)( sitePlanSlug );
 		return {
 			siteId,
 			selectedSiteSlug,
 			isFreePlan,
+			isPremiumOrBetterPlan,
 			isNonAtomicJetpack:
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),

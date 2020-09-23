@@ -23,6 +23,9 @@ import {
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_SECURITY_DAILY,
+	TYPE_SECURITY_REALTIME,
+	TYPE_ALL,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	JETPACK_RESET_PLANS,
@@ -88,6 +91,18 @@ export function getPlanClass( planKey ) {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isSecurityDailyPlan( planKey ) ) {
+		return 'is-daily-security-plan';
+	}
+
+	if ( isSecurityRealTimePlan( planKey ) ) {
+		return 'is-realtime-security-plan';
+	}
+
+	if ( isCompletePlan( planKey ) ) {
+		return 'is-complete-plan';
 	}
 
 	return '';
@@ -260,6 +275,18 @@ export function isBloggerPlan( planSlug ) {
 
 export function isFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+export function isSecurityDailyPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_DAILY } );
+}
+
+export function isSecurityRealTimePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
+}
+
+export function isCompletePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ALL } );
 }
 
 export function isWpComBusinessPlan( planSlug ) {
