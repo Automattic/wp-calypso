@@ -4,11 +4,12 @@
 import { connect } from 'react-redux';
 import React, { FunctionComponent, Fragment, useState, useEffect } from 'react';
 import page from 'page';
-import { compact } from 'lodash';
+import { compact, overSome } from 'lodash';
 
 /**
  * Internal dependencies
  */
+
 import wp from 'lib/wp';
 import { useTranslate } from 'i18n-calypso';
 import { SiteSlug } from 'types';
@@ -34,6 +35,16 @@ import ClipboardButtonInput from 'components/clipboard-button-input';
 import { CtaButton } from 'components/promo-section/promo-card/cta';
 import { localizeUrl } from 'lib/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
+import {
+	isPremiumPlan,
+	isBusinessPlan,
+	isEcommercePlan,
+	isJetpackPremiumPlan,
+	isJetpackBusinessPlan,
+	isSecurityDailyPlan,
+	isSecurityRealTimePlan,
+	isCompletePlan,
+} from 'lib/plans';
 
 /**
  * Image dependencies
@@ -73,6 +84,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
+	isPremiumOrBetterPlan,
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
@@ -202,7 +214,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations.'
 				) }
-				{ <em>{ getAnyPlanNames() }</em> }
+				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
 			</>
 		);
 		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
@@ -322,7 +334,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
 				) }
-				{ <em>{ getAnyPlanNames() }</em> }
+				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
 			</>
 		);
 		const learnMoreLink = isFreePlan
@@ -483,7 +495,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
-				{ <em>{ getPremiumPlanNames() }</em> }
+				{ ! isPremiumOrBetterPlan && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -564,14 +576,28 @@ export default connect< ConnectedProps, {}, {} >(
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
 		const isFreePlan = ! isCurrentPlanPaid( state, siteId );
+
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
+		const isPremiumOrBetterPlan =
+			sitePlanSlug &&
+			overSome(
+				isPremiumPlan,
+				isBusinessPlan,
+				isEcommercePlan,
+				isJetpackPremiumPlan,
+				isJetpackBusinessPlan,
+				isSecurityDailyPlan,
+				isSecurityRealTimePlan,
+				isCompletePlan
+			)( sitePlanSlug );
 		return {
 			siteId,
 			selectedSiteSlug,
 			isFreePlan,
+			isPremiumOrBetterPlan,
 			isNonAtomicJetpack:
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
