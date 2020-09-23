@@ -136,7 +136,12 @@ class MasterbarLoggedIn extends React.Component {
 			homeUrl = isCustomerHomeEnabled
 				? `/home/${ siteSlug }`
 				: getStatsPathForTab( 'day', siteSlug ),
-			mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
+			// eslint-disable-next-line no-nested-ternary
+			mySitesUrl = config.isEnabled( 'nav-unification' )
+				? ''
+				: domainOnlySite
+				? domainManagementList( siteSlug )
+				: homeUrl;
 
 		return (
 			<Item
