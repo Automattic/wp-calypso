@@ -132,6 +132,10 @@ $font-size: rem( 14px );
 @media screen and ( max-width: 782px ) {
 	// client/layout/sidebar/style.scss
 	.is-nav-unification {
+		&.focus-content .layout__content {
+			padding: 71px 24px 24px;
+		}
+
 		.sidebar {
 			.sidebar__separator {
 				margin: 0 0 11px;
@@ -161,8 +165,13 @@ $font-size: rem( 14px );
 
 			.sidebar__expandable-content {
 				.sidebar__menu-link {
-					padding: 5px 16px;
+					font-size: 1rem;
+					padding: 7px 16px 7px 48px;
 				}
+			}
+
+			.sidebar__menu.is-toggle-open .sidebar__heading::after {
+				display: none;
 			}
 		}
 	}
