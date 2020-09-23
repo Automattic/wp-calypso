@@ -20,5 +20,5 @@ export function getIsRequestingAdminMenu( state ) {
 		return null;
 	}
 
-	return state.adminMenu.requesting.isRequesting;
+	return state.adminMenu.requesting;
 }
