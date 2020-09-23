@@ -49,6 +49,19 @@ import themes from 'assets/images/illustrations/themes.svg';
 import updates from 'assets/images/illustrations/updates.svg';
 import videoHosting from 'assets/images/illustrations/video-hosting.svg';
 import whoops from 'assets/images/illustrations/whoops.svg';
+import customerHomeIllustrationBusiness from 'assets/images/customer-home/illustration--business.svg';
+import customerHomeIllustrationChecklistComplete from 'assets/images/customer-home/illustration--checklist-complete.svg';
+import customerHomeIllustrationFireworks from 'assets/images/customer-home/illustration--fireworks-v2.svg';
+import customerHomeIllustrationGrowthSummit from 'assets/images/customer-home/illustration--growth-summit.svg';
+import customerHomeIllustrationImportComplete from 'assets/images/customer-home/illustration--import-complete.svg';
+import customerHomeIllustrationRocket from 'assets/images/customer-home/illustration--rocket.svg';
+import customerHomeIllustrationSecondaryEarn from 'assets/images/customer-home/illustration--secondary-earn.svg';
+import customerHomeIllustrationSecondaryFreePhoto from 'assets/images/customer-home/illustration--secondary-free-photo-library.svg';
+import customerHomeIllustrationSecondaryGutenberg from 'assets/images/customer-home/illustration--secondary-gutenberg.svg';
+import customerHomeIllustrationTaskConnect from 'assets/images/customer-home/illustration--task-connect-social-accounts.svg';
+import customerHomeIllustrationTaskEarn from 'assets/images/customer-home/illustration--task-earn.svg';
+import customerHomeIllustrationTaskFindDomain from 'assets/images/customer-home/illustration--task-find-domain.svg';
+import customerHomeIllustrationWebinars from 'assets/images/customer-home/illustration-webinars.svg';
 
 export default class Illustrations extends React.PureComponent {
 	render() {
@@ -166,6 +179,49 @@ export default class Illustrations extends React.PureComponent {
 						</div>
 						<div className="design__illustrations-illustration">
 							<img src={ whoops } alt="" />
+						</div>
+					</div>
+
+					<h2>Customer Home</h2>
+					<div className="design__illustrations-illustrations">
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationBusiness } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationChecklistComplete } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationFireworks } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationGrowthSummit } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationImportComplete } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationRocket } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationSecondaryEarn } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationSecondaryFreePhoto } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationSecondaryGutenberg } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationTaskConnect } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationTaskEarn } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationTaskFindDomain } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ customerHomeIllustrationWebinars } alt="" />
 						</div>
 					</div>
 				</div>
