@@ -145,10 +145,7 @@ class Site extends React.Component {
 					<div className="site__info">
 						<div className="site__title">{ site.title }</div>
 						<div className="site__domain">
-							{ /* eslint-disable-next-line no-nested-ternary */ }
-							{ isEnabled( 'nav-unification' )
-								? site.domain
-								: this.props.homeLink
+							{ this.props.homeLink
 								? translate( 'View %(domain)s', {
 										args: { domain: site.domain },
 								  } )

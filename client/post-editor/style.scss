@@ -1,3 +1,4 @@
+
 @import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
 
 .is-group-editor.layout {
@@ -66,8 +67,8 @@
 
 	.focus-sidebar &,
 	.focus-editor-confirmation-sidebar & {
-		left: calc( var( --sidebar-width-max ) / -2 );
-		width: calc( 100% - var( --sidebar-width-max ) ); // subtract sidebar width
+		left: ( $sidebar-width-max / -2 );
+		width: calc( 100% - ( #{$sidebar-width-max} ) ); // subtract sidebar width
 	}
 }
 
