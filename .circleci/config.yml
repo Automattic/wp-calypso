@@ -264,8 +264,8 @@ jobs:
   setup:
     <<: *defaults
     steps:
-      # install browser tools
-      - browser-tools/install-browser-tools
+      # install chromedriver
+      - browser-tools/install-chromedriver
       # repo
       - restore_cache: *restore-git-cache
       - checkout
@@ -558,6 +558,8 @@ jobs:
     parallelism: 2
     steps:
       - prepare
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - run: *set-e2e-variables
       - run: *save-chrome-version
       - run: yarn run decryptconfig
@@ -586,6 +588,8 @@ jobs:
         default: $SLACK_E2E
     steps:
       - prepare
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - run: *set-e2e-variables
       - run: *save-chrome-version
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
