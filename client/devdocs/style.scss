@@ -95,7 +95,7 @@ $devdocs-max-width: 720px;
 
 .design__illustrations-illustrations {
 	display: grid;
-	grid-template-columns: 50% 50%;
+	grid-template-columns: 1fr 1fr 1fr;
 	grid-gap: 24px;
 
 	.design__illustrations-illustration {
