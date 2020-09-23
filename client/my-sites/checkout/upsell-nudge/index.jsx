@@ -207,9 +207,13 @@ export class UpsellNudge extends React.Component {
 	};
 
 	isEligibleForOneClickUpsellABTest = ( buttonAction ) => {
-		const { cards, upsellType } = this.props;
+		const { cards, siteSlug, upsellType } = this.props;
 
 		if ( 'accept' !== buttonAction || 'concierge-quickstart-session' !== upsellType ) {
+			return false;
+		}
+
+		if ( ! siteSlug ) {
 			return false;
 		}
 
