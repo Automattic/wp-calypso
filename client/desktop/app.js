@@ -8,6 +8,7 @@ module.exports = function ( finished_cb ) {
 	log.info( 'Starting app handlers' );
 
 	// Stuff that can run before the main window
+	require( './app-handlers/web-requests' )();
 	require( './app-handlers/logging' )();
 	require( './app-handlers/crash-reporting' )();
 	require( './app-handlers/updater' )();
