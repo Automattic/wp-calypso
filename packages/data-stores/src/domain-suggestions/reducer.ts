@@ -7,18 +7,10 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { DomainSuggestion, DomainCategory, DomainAvailability, TimestampMS } from './types';
-import type { Action } from './actions';
+import type { DomainCategory, DomainAvailability, DomainSuggestionState } from './types';
 import { DataStatus } from './constants';
+import type { Action } from './actions';
 import { stringifyDomainQueryObject } from './utils';
-
-export interface DomainSuggestionState {
-	state: DataStatus;
-	data: Record< string, DomainSuggestion[] | undefined >;
-	errorMessage: string | null;
-	lastUpdated: TimestampMS;
-	pendingSince: TimestampMS | undefined;
-}
 
 const initialDomainSuggestionState: DomainSuggestionState = {
 	state: DataStatus.Uninitialized,
@@ -28,7 +20,7 @@ const initialDomainSuggestionState: DomainSuggestionState = {
 	pendingSince: undefined,
 };
 
-const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
+export const domainSuggestions: Reducer< DomainSuggestionState, Action > = (
 	state = initialDomainSuggestionState,
 	action
 ) => {
