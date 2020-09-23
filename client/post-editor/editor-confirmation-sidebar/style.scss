@@ -29,7 +29,7 @@
 .editor-confirmation-sidebar__sidebar {
 	display: flex;
 	flex-direction: column;
-	width: var( --sidebar-width-max );
+	width: $sidebar-width-max;
 	background: var( --color-neutral-0 );
 	border-left: 1px solid var( --color-neutral-5 );
 	border-right: none;
@@ -38,12 +38,12 @@
 	top: 0;
 	bottom: 0;
 	left: auto;
-	right: -var( --sidebar-width-max );
+	right: -$sidebar-width-max;
 	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
 	transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
 
 	&.is-active {
-		transform: translateX( -var( --sidebar-width-max ) );
+		transform: translateX( -$sidebar-width-max );
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -75,7 +75,8 @@
 	padding: 0 24px;
 	box-sizing: border-box;
 	background: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+	box-shadow:
+		0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
 		0 1px 2px var( --color-neutral-0 );
 }
 

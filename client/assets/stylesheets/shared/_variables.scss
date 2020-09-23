@@ -1,12 +1,12 @@
+
 // =======================
 // Layout
 // =======================
 
 // Sidebar size limits
-:root {
-	--sidebar-width-max: 272px;
-	--sidebar-width-min: 228px;
-}
+$sidebar-width-max: 272px;
+$sidebar-width-min: 228px;
+
 
 // =======================
 // Components
