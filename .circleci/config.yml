@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:12.18.4-browsers
+      - image: cimg/node:12.18.4
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
