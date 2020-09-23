@@ -67,7 +67,7 @@
 	.focus-sidebar &,
 	.focus-editor-confirmation-sidebar & {
 		left: calc( var( --sidebar-width-max ) / -2 );
-		width: calc( 100% - ( #{var( --sidebar-width-max )} ) ); // subtract sidebar width
+		width: calc( 100% - var( --sidebar-width-max ) ); // subtract sidebar width
 	}
 }
 
