@@ -460,6 +460,21 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'can route images with known size parameters through photon if a size is specified', () => {
+			const post = {
+				content:
+					'<img src="http://example.com/example.jpg?w=10"><img src="http://example.com/example2.jpg?h=10">' +
+					'<img src="http://example.com/example3.jpg?fit=full"><img src="http://example.com/example4.jpg?resize=min">',
+			};
+			const normalized = withContentDOM( [ makeImagesSafe( 400 ) ] )( post );
+			expect( normalized.content ).toBe(
+				'<img src="http://example.com/example.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
+					'<img src="http://example.com/example2.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
+					'<img src="http://example.com/example3.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">' +
+					'<img src="http://example.com/example4.jpg-SAFE?quality=80&amp;strip=info&amp;w=400">'
+			);
+		} );
+
 		test( 'can remove images that cannot be made safe', () => {
 			safeImageUrlFake.setReturns( null );
 			const post = {

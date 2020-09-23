@@ -30,11 +30,6 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		urlParts.hostname.match( SERVICE_HOSTNAME_PATTERNS[ key ] )
 	);
 
-	if ( ! service ) {
-		// This is not Photon.
-		return imageURL;
-	}
-
 	// From this point on, we should only have absolute and scheme-relative URLs.
 	delete urlParts.search;
 	// strip other sizing params

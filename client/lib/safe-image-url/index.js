@@ -59,13 +59,11 @@ export default function safeImageUrl( url ) {
 	}
 
 	const parsedUrl = getUrlParts( url );
-	if ( ! parsedUrl.protocol ) {
-		return url;
-	}
 
 	if ( REGEXP_A8C_HOST.test( parsedUrl.hostname ) ) {
 		// Safely promote Automattic domains to HTTPS
-		return ( parsedUrl.protocol = 'https:' );
+		parsedUrl.protocol = 'https';
+		return getUrlFromParts( parsedUrl ).toString();
 	}
 
 	// If there's a query string, bail out because Photon doesn't support them on external URLs
@@ -80,6 +78,7 @@ export default function safeImageUrl( url ) {
 
 		// Ensure we're creating a new URL without the size parameters
 		delete parsedUrl.search;
+		url = getUrlFromParts( parsedUrl ).toString();
 	}
 
 	// Photon doesn't support SVGs
@@ -87,5 +86,5 @@ export default function safeImageUrl( url ) {
 		return null;
 	}
 
-	return photon( getUrlFromParts( parsedUrl ) );
+	return photon( url );
 }
