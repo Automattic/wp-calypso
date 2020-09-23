@@ -14,5 +14,11 @@ div.premium-badge {
 
 	&.restricted-premium {
 		background-color: var( --color-warning-30 );
+		color: var( --color-text );
+		.info-popover {
+			.gridicon {
+				color: var( --color-text );
+			}
+		}
 	}
 }
