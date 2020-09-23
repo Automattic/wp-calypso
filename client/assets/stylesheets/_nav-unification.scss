@@ -47,7 +47,7 @@
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item-bubble {
-		top: 2px;
+		top: calc( 50% - 14px );
 		left: -7px;
 	}
 
@@ -169,14 +169,6 @@
 		}
 
 		// client/layout/masterbar/style.scss
-		.masterbar__item-bubble {
-			top: 50%;
-			left: 50%;
-			margin: 0;
-			transform: translate( -39px, -14px );
-		}
-
-		// client/layout/masterbar/style.scss
 		.masterbar__item-me {
 			// fix for profile picture currently hidden in production
 			.masterbar__item-content {
@@ -198,7 +190,7 @@
 	// client/layout/masterbar/style.scss
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-bubble {
-			transform: translate( -14px, -14px );
+			left: calc( 50% - 14px );
 		}
 	}
 }
