@@ -284,6 +284,7 @@ const webpackConfig = {
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
+			'process.env.TEXT_DOMAIN': 'undefined',
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),

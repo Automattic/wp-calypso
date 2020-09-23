@@ -7,7 +7,8 @@ import { times } from 'lodash';
 import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
+
 import type { DomainSuggestions } from '@automattic/data-stores';
 /**
  * Internal dependencies
@@ -103,7 +104,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 } ) => {
-	const { __ } = useI18n();
 	const label = __( 'Search for a domain' );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
@@ -120,7 +120,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		domainSearch.trim(),
 		quantityExpanded,
 		domainCategory,
-		useI18n().i18nLocale
+		'en'
 	) as DomainSuggestion[] | undefined;
 
 	const domainSuggestions = allDomainSuggestions?.slice(
@@ -204,7 +204,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__suggestion-sections">
 						<>
 							{ segregateFreeAndPaid && (
-								<p className="domain-picker__suggestion-group-label">{ __( 'Keep sub-domain' ) }</p>
+								<p className="domain-picker__suggestion-group-label">
+									{ __( 'Keep sub-domain', process.env.TEXT_DOMAIN ) }
+								</p>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
 								{ existingSubdomain && (
