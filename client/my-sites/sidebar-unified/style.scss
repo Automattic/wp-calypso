@@ -131,29 +131,39 @@ $font-size: rem( 14px );
 
 @media screen and ( max-width: 782px ) {
 	// client/layout/sidebar/style.scss
-	hr,
-	.sidebar__separator {
-		margin: 0 0 11px;
-	}
+	.is-nav-unification {
+		.sidebar {
+			.sidebar__separator {
+				margin: 0 0 11px;
+			}
 
-	.sidebar__heading,
-	.sidebar__menu-link {
-		padding: 0 0 0 16px;
-	}
+			.sidebar__heading,
+			.sidebar__menu-link {
+				padding: 0 0 0 16px;
+				font-size: 1rem;
+			}
 
-	.sidebar__menu.is-togglable {
-		.sidebar__heading {
-			padding: 0 0 0 16px;
+			.sidebar__menu.is-togglable {
+				.sidebar__heading {
+					padding: 0 0 0 16px;
+					font-size: 1rem;
+				}
+			}
+
+			.sidebar__menu-icon {
+				margin-right: 13px;
+			}
+
+			.sidebar__expandable-title,
+			.sidebar__menu-link-text {
+				padding: 12px 0;
+			}
+
+			.sidebar__expandable-content {
+				.sidebar__menu-link {
+					padding: 5px 16px;
+				}
+			}
 		}
-	}
-
-	.sidebar__expandable-content {
-		.sidebar__menu-link {
-			padding: 5px 16px;
-		}
-	}
-
-	.sidebar__menu-icon {
-		margin-right: 13px;
 	}
 }
