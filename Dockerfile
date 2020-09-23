@@ -29,6 +29,7 @@ ENV BUILD_TRANSLATION_CHUNKS true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD true
 ENV PUPPETEER_SKIP_DOWNLOAD true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
+ENV SOURCEMAP=cheap-source-map
 WORKDIR /calypso
 
 # Build a "base" layer
