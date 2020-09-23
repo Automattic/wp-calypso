@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { uniqWith, isEqual } from 'lodash';
+import { uniqWith, isEqual, isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,8 +53,16 @@ export const meta = withSchemaValidation( metaSchema, ( state = DEFAULT_META_STA
 export const link = withSchemaValidation( linkSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case DOCUMENT_HEAD_LINK_SET:
-			// Prevent duplicate objects
-			return uniqWith( [ ...state, action.link ], isEqual );
+			if ( ! action.link ) {
+				return state;
+			}
+
+			// Append action.link to the state array and prevent duplicate objects.
+			// Works with action.link being a single link object or an array of link objects.
+			return uniqWith(
+				[ ...state, ...( isArray( action.link ) ? action.link : [ action.link ] ) ],
+				isEqual
+			);
 	}
 
 	return state;
