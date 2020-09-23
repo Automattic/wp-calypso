@@ -11,7 +11,7 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getAdminMenu } from 'state/admin-menu/selectors';
 
-function useSiteMenuItems() {
+const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
@@ -27,6 +27,6 @@ function useSiteMenuItems() {
 	}, [ dispatch, selectedSiteId ] );
 
 	return menuItems;
-}
+};
 
 export default useSiteMenuItems;
