@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   slack: circleci/slack@3.4.2
   win: circleci/windows@2.2.0
+  browser-tools: circleci/browser-tools@1.0.1
 
 references:
   defaults: &defaults
@@ -263,6 +264,8 @@ jobs:
   setup:
     <<: *defaults
     steps:
+      # install browser tools
+      - browser-tools/install-browser-tools
       # repo
       - restore_cache: *restore-git-cache
       - checkout
