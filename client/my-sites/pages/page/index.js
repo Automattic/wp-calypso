@@ -35,7 +35,7 @@ import {
 	isSitePreviewable,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'state/pages/selectors';
+import { isComingSoonPage, isFrontPage, isPostsPage } from 'state/pages/selectors';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -342,10 +342,51 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.exportPage }>
-				<Gridicon icon="cloud-download" size={ 18 } />
-				{ this.props.translate( 'Export page' ) }
-			</PopoverMenuItem>
+			<>
+				<MenuSeparator key="separator" />
+				<PopoverMenuItem onClick={ this.exportPage }>
+					<Gridicon icon="cloud-download" size={ 18 } />
+					{ this.props.translate( 'Export page' ) }
+				</PopoverMenuItem>
+			</>
+		);
+	}
+
+	setComingSoonPage = () => {
+		this.props.updateSiteFrontPage( this.props.siteId, {
+			wpcom_public_coming_soon_page_id: this.props.isComingSoonPage ? 0 : this.props.page.ID,
+		} );
+	};
+
+	getComingSoonPageItem() {
+		const { canManageOptions, translate } = this.props;
+
+		if (
+			! config.isEnabled( 'editing-toolkit/coming-soon' ) ||
+			! canManageOptions ||
+			'publish' !== this.props.page.status ||
+			this.props.isFrontPage ||
+			this.props.isPostsPage
+		) {
+			return null;
+		}
+
+		return (
+			<>
+				<MenuSeparator key="separator" />
+				{ this.props.isComingSoonPage && (
+					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage }>
+						<Gridicon icon="undo" size={ 18 } />
+						{ translate( 'Set as Regular Page' ) }
+					</PopoverMenuItem>
+				) }
+				{ ! this.props.isComingSoonPage && (
+					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage }>
+						<Gridicon icon="time" size={ 18 } />
+						{ translate( 'Set as Coming Soon' ) }
+					</PopoverMenuItem>
+				) }
+			</>
 		);
 	}
 
@@ -452,14 +493,15 @@ class Page extends Component {
 			siteId,
 			translate,
 			isPostsPage: latestPostsPage,
+			isComingSoonPage: comingSoonPage,
 		} = this.props;
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
-
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
+		const comingSoonPageItem = this.getComingSoonPageItem();
 		const frontPageItem = this.getFrontPageItem();
 		const postsPageItem = this.getPostsPageItem();
 		const restoreItem = this.getRestoreItem();
@@ -495,6 +537,7 @@ class Page extends Component {
 				{ restoreItem }
 				{ frontPageItem }
 				{ postsPageItem }
+				{ comingSoonPageItem }
 				{ exportItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
@@ -536,6 +579,11 @@ class Page extends Component {
 						{ translate(
 							'The content of your latest posts page is automatically generated and cannot be edited.'
 						) }
+					</InfoPopover>
+				) }
+				{ ! isTrashed && comingSoonPage && (
+					<InfoPopover position="right">
+						{ translate( 'Visitors will see this page until you launch your site.' ) }
 					</InfoPopover>
 				) }
 			</>
@@ -758,6 +806,7 @@ const mapState = ( state, props ) => {
 
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
+		isComingSoonPage: isComingSoonPage( state, pageSiteId, props.page.ID ),
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
