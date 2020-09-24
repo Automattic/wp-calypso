@@ -85,7 +85,7 @@ export function* createSite(
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
 			} ),
-			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
+			use_patterns: true,
 			selected_features: selectedFeatures,
 			...( isEnabled( 'gutenboarding/public-coming-soon' ) &&
 				visibility === Site.Visibility.PublicNotIndexed && {
