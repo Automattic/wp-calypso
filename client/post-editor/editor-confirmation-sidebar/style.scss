@@ -38,12 +38,12 @@
 	top: 0;
 	bottom: 0;
 	left: auto;
-	right: -var( --sidebar-width-max );
+	right: calc( -1 * var( --sidebar-width-max ) );
 	z-index: z-index( 'root', '.editor-confirmation-sidebar__sidebar' );
 	transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
 
 	&.is-active {
-		transform: translateX( -var( --sidebar-width-max ) );
+		transform: translateX( calc( - 1 * var( --sidebar-width-max ) ) );
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {

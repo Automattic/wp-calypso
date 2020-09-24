@@ -1,7 +1,7 @@
 .editor-sidebar {
 	position: fixed;
 	top: 46px;
-	right: -var( --sidebar-width-max );
+	right: calc( -1 * var( --sidebar-width-max ) );
 	bottom: 0;
 	display: flex;
 	flex-direction: column;
@@ -16,7 +16,7 @@
 	overflow-x: hidden;
 
 	.focus-sidebar & {
-		transform: translateX( -var( --sidebar-width-max ) );
+		transform: translateX( calc( -1 * var( --sidebar-width-max ) ) );
 	}
 
 	.focus-sidebar .is-loading & {

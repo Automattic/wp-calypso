@@ -133,7 +133,7 @@
 	bottom: 0;
 	left: 0;
 	pointer-events: none;
-	transform: translateX( -var( --sidebar-width-max ) );
+	transform: translateX( calc( -1 * var( --sidebar-width-max ) ) );
 
 	.site,
 	.all-sites {
