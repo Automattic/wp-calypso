@@ -25,7 +25,7 @@ import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
 import userFactory from 'lib/user';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { retrieveSignupDestination, setSessionStorage } from 'signup/storageUtils';
+import { retrieveSignupDestination, setSignupCheckoutPageUnloaded } from 'signup/storageUtils';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -77,10 +77,7 @@ export function checkout( context, next ) {
 	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
 		window.addEventListener( 'beforeunload', function () {
 			const signupDestinationCookieExists = retrieveSignupDestination();
-
-			if ( signupDestinationCookieExists ) {
-				setSessionStorage( 'signupCheckoutPageUnloaded', true );
-			}
+			signupDestinationCookieExists && setSignupCheckoutPageUnloaded( true );
 		} );
 	}
 

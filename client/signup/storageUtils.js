@@ -27,6 +27,9 @@ export const clearSignupDestinationCookie = () => {
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
 
-export const setSessionStorage = ( key, value ) => sessionStorage.setItem( key, value ); // eslint-disable-line no-undef
-
-export const getFromSessionStorage = ( key ) => sessionStorage.getItem( key ); // eslint-disable-line no-undef
+export const getSignupCompleteSlug = sessionStorage.getItem( 'wpcom_signup_complete_site_slug' ); // eslint-disable-line no-undef
+export const setSignupCompleteSlug = ( value ) =>
+	sessionStorage.setItem( 'wpcom_signup_complete_site_slug', value ); // eslint-disable-line no-undef
+export const wasSignupCheckoutPageUnloaded = sessionStorage.getItem( 'signupCheckoutPageUnloaded' ); // eslint-disable-line no-undef
+export const setSignupCheckoutPageUnloaded = ( value ) =>
+	sessionStorage.setItem( 'signupCheckoutPageUnloaded', value ); // eslint-disable-line no-undef
