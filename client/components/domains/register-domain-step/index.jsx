@@ -1305,11 +1305,11 @@ class RegisterDomainStep extends React.Component {
 				: this.goToUseYourDomainStep;
 
 		const {
-			isPlanSelectionUnavailableInFlow = false,
+			isPlanSelectionAvailableInFlow = true,
 			forceHideFreeDomainExplainer = false,
 		} = this.props;
 		const shouldHideFreeDomainExplainer =
-			forceHideFreeDomainExplainer || isPlanSelectionUnavailableInFlow;
+			forceHideFreeDomainExplainer || isPlanSelectionAvailableInFlow;
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/

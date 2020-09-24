@@ -1,3 +1,4 @@
+import { getStepModuleName } from 'calypso/signup/config/step-components';
 /**
  * External dependencies
  */
@@ -29,8 +30,8 @@ export function getSignupProgress( state: any ): ProgressState {
 export const isPlanStepExistsAndSkipped = ( state: any ) => {
 	const { signup: { progress = {} } = {} } = state;
 	const planName =
-		Object.keys( progress ).find( ( stepName ) => stepName.includes( 'plans' ) ) ?? '';
-	const plan = progress[ planName ] ?? {};
-	const { wasSkipped = false } = plan;
+		Object.keys( progress ).find( ( stepName ) => getStepModuleName( stepName ) === 'plans' ) ?? '';
+	const plansStepProgress = progress[ planName ] ?? {};
+	const { wasSkipped = false } = plansStepProgress;
 	return wasSkipped;
 };
