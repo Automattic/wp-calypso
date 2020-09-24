@@ -13,6 +13,7 @@ import { localize, LocalizeProps } from 'i18n-calypso';
  */
 import MediaStore from 'lib/media/store';
 import EditorMediaModal from 'post-editor/editor-media-modal';
+import EditorCheckout from 'post-editor/editor-checkout';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getCustomizerUrl,
@@ -85,6 +86,7 @@ interface State {
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isPreviewVisible: boolean;
+	isCheckoutSidebarVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
@@ -115,6 +117,7 @@ enum EditorActions {
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
+	OpenCheckoutSidebar = 'openCheckoutSidebar',
 }
 
 class CalypsoifyIframe extends Component<
@@ -125,6 +128,7 @@ class CalypsoifyIframe extends Component<
 		isMediaModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
+		isCheckoutSidebarVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
 	};
@@ -147,6 +151,7 @@ class CalypsoifyIframe extends Component<
 		// provides a redirect to wpadmin for web users - this should now be a rare occurance with
 		// a 3rd party cookie auth issue fix in place https://github.com/Automattic/jetpack/pull/16167
 		this.waitForIframeToInit = setInterval( () => {
+			return; // ignore this one. just for debugging.
 			if ( this.props.shouldLoadIframe ) {
 				clearInterval( this.waitForIframeToInit );
 				this.waitForIframeToLoad = setTimeout( () => {
@@ -410,6 +415,10 @@ class CalypsoifyIframe extends Component<
 				} );
 			}
 		}
+
+		if ( EditorActions.OpenCheckoutSidebar === action ) {
+			this.setState( { isCheckoutSidebarVisible: true } );
+		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -578,6 +587,10 @@ class CalypsoifyIframe extends Component<
 		this.navigate( customizerUrl, unsavedChanges );
 	};
 
+	closeCheckoutSidebar = () => {
+		this.setState( { isCheckoutSidebarVisible: false } );
+	};
+
 	getTemplateEditorUrl = ( templateId: T.PostId ) => {
 		const { getTemplateEditorUrl, editedPostId } = this.props;
 
@@ -669,6 +682,7 @@ class CalypsoifyIframe extends Component<
 			postUrl,
 			editedPost,
 			currentIFrameUrl,
+			isCheckoutSidebarVisible,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
@@ -718,6 +732,7 @@ class CalypsoifyIframe extends Component<
 					showEditHeaderLink={ true }
 					showPreview={ isPreviewVisible }
 				/>
+				<EditorCheckout onClose={ this.closeCheckoutSidebar } isOpen={ isCheckoutSidebarVisible } />
 			</Fragment>
 		);
 	}

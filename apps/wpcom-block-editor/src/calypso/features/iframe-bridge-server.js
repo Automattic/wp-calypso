@@ -854,6 +854,22 @@ function getCalypsoUrlInfo( calypsoPort ) {
 	);
 }
 
+function handleUpgradePlan( calypsoPort ) {
+	// When the upgrade button is clicked
+	document.addEventListener( 'click', function ( event ) {
+		if ( event.target.matches( '.jetpack-upgrade-plan-banner__wrapper a' ) ) {
+			// stop it from redirecting to the checkout page
+			event.preventDefault();
+
+			// call parent iframe and show checkout in sidebar
+			calypsoPort.postMessage( {
+				action: 'openCheckoutSidebar',
+				payload: {},
+			} );
+		}
+	} );
+}
+
 /**
  * Passes uncaught errors in window.onerror to Calypso for logging.
  *
@@ -1014,6 +1030,8 @@ function initPort( message ) {
 		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
+
+		handleUpgradePlan( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

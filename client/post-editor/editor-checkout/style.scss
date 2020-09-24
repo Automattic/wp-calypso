@@ -1,0 +1,24 @@
+.editor-checkout {
+	position: fixed;
+	top: 0;
+	right: -100%;
+	z-index: 999999;
+	width: 50%;
+	height: 100%;
+	overflow: auto;
+	padding: 30px;
+	border-left: 1px solid black;
+	background: white;
+	transition: all 0.5s ease-in-out;
+
+	&.is-open {
+		right: 0;
+	}
+}
+
+.editor-checkout__close-button {
+	padding: 15px;
+	border: 1px solid #ccc;
+	margin-bottom: 10px;
+	cursor: pointer;
+}
