@@ -5,12 +5,12 @@
 
 		"baseUrl": ".",
 		"module": "esnext",
-		"allowJs": false,
+		"allowJs": true,
 		"jsx": "react",
 		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src",
+		// "rootDir": "src",
 
 		"strict": true,
 		"noUnusedLocals": true,
