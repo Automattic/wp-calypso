@@ -62,9 +62,8 @@ const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 
-const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
+const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
@@ -116,9 +115,7 @@ let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
 
 // we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 // also we don't minify so dont name them .min.js
-//
-// Desktop: no chunks or dll here, just one big file for the desktop app
-if ( isDevelopment || isDesktop ) {
+if ( isDevelopment ) {
 	outputFilename = '[name].js';
 	outputChunkFilename = '[name].js';
 }
@@ -126,7 +123,7 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
-const outputDir = path.resolve( isDesktopMonorepo ? './desktop' : '.' );
+const outputDir = path.resolve( isDesktop ? './desktop' : '.' );
 
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
