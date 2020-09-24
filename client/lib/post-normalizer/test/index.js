@@ -22,7 +22,6 @@ import safeImageProperties from '../rule-safe-image-properties';
 import makeLinksSafe from '../rule-make-links-safe';
 import keepValidImages from '../rule-keep-valid-images';
 import createBetterExcerpt from '../rule-create-better-excerpt';
-import waitForImagesToLoad from '../rule-wait-for-images-to-load';
 import withContentDOM from '../rule-with-content-dom';
 import detectMedia from '../rule-content-detect-media';
 import detectPolls from '../rule-content-detect-polls';
@@ -524,63 +523,6 @@ describe( 'index', () => {
 		} );
 	} );
 
-	describe( 'waitForImagesToLoad', () => {
-		test.skip( 'should fire when all images have loaded or errored', () => {
-			// these need to be objects that mimic the Image object
-			const completeImage = {
-					complete: true,
-					src: 'http://example.com/one',
-				},
-				loadingImage = {
-					complete: false,
-					src: 'http://example.com/two',
-					load: function () {
-						this.onload();
-					},
-				},
-				erroringImage = {
-					complete: false,
-					src: 'http://example.com/three',
-					error: function () {
-						this.onerror();
-					},
-				};
-
-			loadingImage.load = loadingImage.load.bind( loadingImage );
-			erroringImage.error = erroringImage.error.bind( erroringImage );
-
-			const post = {
-				content_images: [ completeImage, loadingImage, erroringImage ],
-			};
-
-			setTimeout( loadingImage.load, 1 );
-			setTimeout( erroringImage.error, 2 );
-
-			return waitForImagesToLoad( post );
-		} );
-
-		test.skip( 'should dedupe the images to check', async () => {
-			const first = {
-					complete: true,
-					src: 'http://example.com/one',
-				},
-				firstDupe = {
-					complete: true,
-					src: 'http://example.com/one',
-				},
-				second = {
-					complete: true,
-					src: 'http://example.com/three',
-				},
-				post = {
-					content_images: [ first, second, firstDupe ],
-				};
-
-			const normalized = await waitForImagesToLoad( post );
-			expect( normalized.images ).toHaveLength( 2 );
-		} );
-	} );
-
 	describe( 'canonical image picker', () => {
 		test( 'can pick the canonical image from images', () => {
 			const postRunThroughWaitForImagesToLoad = {
@@ -902,60 +844,59 @@ describe( 'index', () => {
 	} );
 
 	describe( 'The fancy excerpt creator', () => {
-		function assertExcerptBecomes( source, expected ) {
-			const normalized = createBetterExcerpt( { content: source } );
-			expect( normalized.better_excerpt ).toBe( expected );
-		}
-
 		test( 'strips empty elements, leading brs, and styling attributes', () => {
-			assertExcerptBecomes(
-				`<br>
+			expect(
+				createBetterExcerpt( {
+					content: `<br>
                 <p>&nbsp;</p>
                 <p class="wp-caption">caption</p>
                 <p><img src="http://example.com/image.jpg"></p>
                 <p align="left" style="text-align:right"><a href="http://wikipedia.org">Giraffes</a> are <br>great</p>
                 <p></p>`,
-				'<p>Giraffes are <br>great</p>'
-			);
+				} ).better_excerpt
+			).toBe( '<p>Giraffes are <br>great</p>' );
 		} );
 
 		test( 'strips leading brs even if they are nested', () => {
-			assertExcerptBecomes(
-				'<p><br>deep meaning lies within</p>',
-				'<p>deep meaning lies within</p>'
-			);
+			expect(
+				createBetterExcerpt( { content: '<p><br>deep meaning lies within</p>' } ).better_excerpt
+			).toBe( '<p>deep meaning lies within</p>' );
 		} );
 
 		test( 'strips multiple leading brs even if nested', () => {
-			assertExcerptBecomes(
-				'<p><br><br><br></p><br><p><br></p>deep meaning lies within',
-				'deep meaning lies within'
-			);
+			expect(
+				createBetterExcerpt( {
+					content: '<p><br><br><br></p><br><p><br></p>deep meaning lies within',
+				} ).better_excerpt
+			).toBe( 'deep meaning lies within' );
 		} );
 
 		test( 'only trims break if there is no preceding text', () => {
-			assertExcerptBecomes( '<p>one<br>two</p>', '<p>one<br>two</p>' );
+			expect( createBetterExcerpt( { content: '<p>one<br>two</p>' } ).better_excerpt ).toBe(
+				'<p>one<br>two</p>'
+			);
 		} );
 
 		test( 'limits the excerpt to 3 elements', () => {
-			assertExcerptBecomes(
-				'<p>one</p><p>two</p><p>three</p><p>four</p>',
-				'<p>one</p><p>two</p><p>three</p>'
-			);
+			expect(
+				createBetterExcerpt( { content: '<p>one</p><p>two</p><p>three</p><p>four</p>' } )
+					.better_excerpt
+			).toBe( '<p>one</p><p>two</p><p>three</p>' );
 		} );
 
 		test( 'limits the excerpt to 3 elements after trimming', () => {
-			assertExcerptBecomes(
-				'<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>',
-				'<p>one</p><p>two</p><br>'
-			);
+			expect(
+				createBetterExcerpt( {
+					content: '<br /><p></p><p>one</p><p>two</p><p></p><br><p>three</p><p>four</p><br><p></p>',
+				} ).better_excerpt
+			).toBe( '<p>one</p><p>two</p><br>' );
 		} );
 
 		test( 'removes style tags', () => {
-			assertExcerptBecomes(
-				'<style>#foo{ color: blue; }</style><p>hi there</p>',
-				'<p>hi there</p>'
-			);
+			expect(
+				createBetterExcerpt( { content: '<style>#foo{ color: blue; }</style><p>hi there</p>' } )
+					.better_excerpt
+			).toBe( '<p>hi there</p>' );
 		} );
 
 		test( 'builds the content without html', () => {
