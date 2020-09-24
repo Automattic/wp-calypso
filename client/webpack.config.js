@@ -55,6 +55,7 @@ const shouldMinify =
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
+const shouldCheckForDuplicatePackages = process.env.CHECK_DUPLICATE_PACKAGES === 'true';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
@@ -298,7 +299,7 @@ const webpackConfig = {
 			path: path.join( outputDir, 'client', 'server', 'bundler' ),
 			assetExtraPath: extraPath,
 		} ),
-		new DuplicatePackageCheckerPlugin(),
+		shouldCheckForDuplicatePackages && new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
 				exclude: /node_modules/,
