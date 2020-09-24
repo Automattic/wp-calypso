@@ -5,17 +5,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { flow, overSome } from 'lodash';
+import { flow } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { hasSiteSeoFeature } from './utils';
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import QueryPostTypes from 'components/data/query-post-types';
 import QuerySiteSettings from 'components/data/query-site-settings';
@@ -39,11 +39,6 @@ import { getFirstConflictingPlugin } from 'lib/seo';
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Constants
- */
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
 
 /**
  * A mapping of post type to hard-coded post types support. These values are
@@ -216,7 +211,7 @@ class EditorDrawer extends Component {
 			}
 		}
 
-		if ( ! hasSupportingPlan( site.plan ) ) {
+		if ( ! hasSiteSeoFeature( site ) ) {
 			return;
 		}
 

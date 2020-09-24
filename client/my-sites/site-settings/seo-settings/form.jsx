@@ -3,13 +3,14 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isArray, isEqual, mapValues, omit, overSome, pickBy, partial } from 'lodash';
+import { get, isArray, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
+import { hasSiteSeoFeature } from './utils';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
@@ -36,13 +37,6 @@ import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mapping
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
 import { shouldShowOfferResetFlow } from 'lib/plans/config';
-import {
-	isBusiness,
-	isEnterprise,
-	isJetpackBusiness,
-	isJetpackPremium,
-	isEcommerce,
-} from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import {
@@ -74,14 +68,6 @@ import pageTitleImage from 'assets/images/illustrations/seo-page-title.svg';
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
-
-const hasSupportingPlan = overSome(
-	isBusiness,
-	isEnterprise,
-	isJetpackBusiness,
-	isJetpackPremium,
-	isEcommerce
-);
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -326,7 +312,7 @@ export class SeoForm extends React.Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden ) && hasSupportingPlan( selectedSite.plan ) && (
+				{ ( isSitePrivate || isSiteHidden ) && hasSiteSeoFeature( selectedSite ) && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -487,7 +473,7 @@ const mapStateToProps = ( state ) => {
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
 	const isAdvancedSeoEligible =
 		selectedSite.plan &&
-		( hasSupportingPlan( selectedSite.plan ) ||
+		( hasSiteSeoFeature( selectedSite ) ||
 			JETPACK_RESET_PLANS.includes( selectedSite.plan.product_slug ) );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
