@@ -436,7 +436,7 @@ function setUpCSP( req, res, next ) {
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
-		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
+		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com', '*.calypso.live' ],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
 		'img-src': [
@@ -468,7 +468,6 @@ function setUpCSP( req, res, next ) {
 			'https://*.wordpress.com/',
 			'https://*.wp.com',
 			'https://wordpress.com',
-			'https://*.calypso.live',
 		],
 		'report-uri': [ '/cspreport' ],
 	};
