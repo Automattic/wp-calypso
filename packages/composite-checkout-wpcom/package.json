@@ -29,7 +29,9 @@
 		"prepublish": "yarn run clean",
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"lodash": "^4.17.15"
+	},
 	"peerDependencies": {
 		"react": "^16.8"
 	},
