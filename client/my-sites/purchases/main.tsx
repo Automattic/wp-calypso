@@ -12,7 +12,7 @@ import Subscriptions from './subscriptions';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 
-export default function Purchases() {
+export function Purchases() {
 	const translate = useTranslate();
 
 	return (
