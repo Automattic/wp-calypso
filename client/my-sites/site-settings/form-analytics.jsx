@@ -3,11 +3,12 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { find, flowRight, partialRight, pick, overSome } from 'lodash';
+import { find, flowRight, partialRight, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { hasSiteAnalyticsFeature } from './utils';
 import wrapSettingsForm from './wrap-settings-form';
 import { Card } from '@automattic/components';
 import ExternalLink from 'components/external-link';
@@ -22,7 +23,6 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormTextValidation from 'components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import { isPremium, isBusiness, isEnterprise, isVipPlan, isEcommerce } from 'lib/products-values';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
@@ -36,13 +36,6 @@ import SettingsSectionHeader from 'my-sites/site-settings/settings-section-heade
 import { localizeUrl } from 'lib/i18n-utils';
 
 const validateGoogleAnalyticsCode = ( code ) => ! code || code.match( /^UA-\d+-\d+$/i );
-const hasPlanWithAnalytics = overSome(
-	isPremium,
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
-	isVipPlan
-);
 
 export class GoogleAnalyticsForm extends Component {
 	state = {
@@ -292,7 +285,7 @@ export class GoogleAnalyticsForm extends Component {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const isGoogleAnalyticsEligible = site && site.plan && hasPlanWithAnalytics( site.plan );
+	const isGoogleAnalyticsEligible = hasSiteAnalyticsFeature( site );
 	const jetpackModuleActive = isJetpackModuleActive( state, siteId, 'google-analytics' );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 	const googleAnalyticsEnabled = site && ( ! siteIsJetpack || jetpackModuleActive );
