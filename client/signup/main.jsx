@@ -80,6 +80,8 @@ import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
+	getSignupCompleteFlowName,
+	setSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
 } from './storageUtils';
 import WpcomLoginForm from './wpcom-login-form';
@@ -176,8 +178,12 @@ class Signup extends React.Component {
 		}
 
 		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === this.props.flowName;
 		this.enableManageSiteFlow =
-			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && ! isAddNewSiteFlow;
+			wasSignupCheckoutPageUnloaded() &&
+			signupDestinationCookieExists &&
+			! isAddNewSiteFlow &&
+			isReEnteringFlow;
 
 		if ( this.enableManageSiteFlow ) {
 			providedDependencies = { siteSlug: getSignupCompleteSlug(), isManageSiteFlow: true };
@@ -311,6 +317,7 @@ class Signup extends React.Component {
 		if ( destination !== filteredDestination ) {
 			persistSignupDestination( destination );
 			setSignupCompleteSlug( dependencies.siteSlug );
+			setSignupCompleteFlowName( this.props.flowName );
 		}
 
 		return this.handleFlowComplete( dependencies, filteredDestination );
