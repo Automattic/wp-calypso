@@ -67,6 +67,7 @@
 	color: var( --p2-color-text );
 	border-color: var( --p2-color-border );
 
+	&:focus,
 	&:hover {
 		border-color: var( --p2-color-link );
 	}
