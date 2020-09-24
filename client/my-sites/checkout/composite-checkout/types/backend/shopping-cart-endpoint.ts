@@ -317,6 +317,19 @@ export function convertRawResponseCartToResponseCart(
 	} as ResponseCart;
 }
 
+export function addItemsToResponseCart(
+	responseCart: ResponseCart,
+	products: RequestCartProduct[]
+): ResponseCart {
+	const responseCartProducts: TempResponseCartProduct[] = products.map(
+		convertRequestCartProductToResponseCartProduct
+	);
+	return {
+		...responseCart,
+		products: [ ...responseCart.products, ...responseCartProducts ],
+	};
+}
+
 export function addItemToResponseCart(
 	responseCart: ResponseCart,
 	product: RequestCartProduct

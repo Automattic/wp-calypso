@@ -62,14 +62,14 @@ export default function useShoppingCartManager( {
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
 
-	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
-		( requestCartProductToAdd ) => {
-			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
+	const addProductsToCart: ( products: RequestCartProduct[] ) => void = useCallback(
+		( products ) => {
+			hookDispatch( { type: 'CART_PRODUCTS_ADD', products } );
 		},
 		[ hookDispatch ]
 	);
 
-	const removeItem: ( arg0: string ) => void = useCallback(
+	const removeItem: ( uuidToRemove: string ) => void = useCallback(
 		( uuidToRemove ) => {
 			hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 		},
@@ -110,7 +110,7 @@ export default function useShoppingCartManager( {
 		loadingError: cacheStatus === 'error' ? loadingError : null,
 		loadingErrorType,
 		isPendingUpdate: cacheStatus !== 'valid',
-		addItem,
+		addProductsToCart,
 		removeItem,
 		applyCoupon,
 		removeCoupon,
