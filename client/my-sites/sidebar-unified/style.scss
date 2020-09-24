@@ -1,4 +1,5 @@
 // The following changes should be merged in their respective files before nav unification goes to production
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
 
 // Override Global Vars
 .is-nav-unification {
@@ -10,7 +11,7 @@
 	--color-sidebar-background-rgb: 35, 40, 45;
 	--color-sidebar-border: var( --color-surface-backdrop );
 	--color-sidebar-text: #eee;
-	--color-sidebar-gridicon-fill: var( --color-sidebar-text );
+	--color-sidebar-gridicon-fill: #a0a5aa;
 	--color-sidebar-text-alternative: #a2aab2;
 }
 
@@ -107,6 +108,10 @@ $font-size: rem( 14px );
 			.sidebar__menu-link-text {
 				padding: 0;
 			}
+		}
+
+		.sidebar__menu-icon {
+			color: var( --color-sidebar-gridicon-fill );
 		}
 	}
 
