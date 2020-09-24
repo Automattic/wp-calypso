@@ -13,8 +13,6 @@ export type ReactStandardAction = { type: string; payload?: any }; // eslint-dis
 export interface ShoppingCartManagerArguments {
 	cartKey: string | number | null;
 	canInitializeCart: boolean;
-	productsToAddOnInitialize: RequestCartProduct[] | null;
-	couponToAddOnInitialize: string | null;
 	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 }

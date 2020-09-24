@@ -332,17 +332,6 @@ export function addItemsToResponseCart(
 	};
 }
 
-export function addItemToResponseCart(
-	responseCart: ResponseCart,
-	product: RequestCartProduct
-): ResponseCart {
-	const convertedProduct = convertRequestCartProductToResponseCartProduct( product );
-	return {
-		...responseCart,
-		products: [ ...responseCart.products, convertedProduct ],
-	};
-}
-
 export function replaceItemInResponseCart(
 	cart: ResponseCart,
 	uuidToReplace: string,
