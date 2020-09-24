@@ -43,7 +43,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
 				}
 
-				return <MySitesSidebarUnifiedItem isTopLevel key={ item.slug } path={ path } { ...item } />;
+				return <MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />;
 			} ) }
 		</Sidebar>
 	);

@@ -19,19 +19,21 @@ import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
 import { toggleMySitesSidebarSection as toggleSection } from 'state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
+import SidebarCustomIcon from 'layout/sidebar/custom-icon';
 
 export const MySitesSidebarUnifiedMenu = ( { slug, title, icon, children, path } ) => {
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
+
 	return (
 		<ExpandableSidebarMenu
 			onClick={ () => reduxDispatch( toggleSection( sectionId ) ) }
 			expanded={ isExpanded }
 			title={ title }
-			materialIcon={ icon }
+			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 		>
-			{ Object.values( children ).map( ( item ) => (
+			{ children.map( ( item ) => (
 				<MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />
 			) ) }
 		</ExpandableSidebarMenu>
