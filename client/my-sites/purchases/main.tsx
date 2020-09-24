@@ -29,3 +29,7 @@ export default function Purchases() {
 		</Main>
 	);
 }
+
+export function PurchaseSettings() {
+	return <Main></Main>;
+}
