@@ -35,7 +35,6 @@ import jetpackBackup from 'assets/images/illustrations/jetpack-backup.svg';
 import jetpackConcierge from 'assets/images/illustrations/jetpack-concierge.svg';
 import jetpackScan from 'assets/images/illustrations/jetpack-scan.svg';
 import jetpackSearch from 'assets/images/illustrations/jetpack-search.svg';
-import logoJpc from 'assets/images/illustrations/logo-jpc.svg';
 import marketing from 'assets/images/illustrations/marketing.svg';
 import media from 'assets/images/illustrations/media.svg';
 import migratingHostDiy from 'assets/images/illustrations/migrating-host-diy.svg';
@@ -52,7 +51,6 @@ import whoops from 'assets/images/illustrations/whoops.svg';
 import customerHomeIllustrationBusiness from 'assets/images/customer-home/illustration--business.svg';
 import customerHomeIllustrationChecklistComplete from 'assets/images/customer-home/illustration--checklist-complete.svg';
 import customerHomeIllustrationFireworks from 'assets/images/customer-home/illustration--fireworks-v2.svg';
-import customerHomeIllustrationGrowthSummit from 'assets/images/customer-home/illustration--growth-summit.svg';
 import customerHomeIllustrationImportComplete from 'assets/images/customer-home/illustration--import-complete.svg';
 import customerHomeIllustrationRocket from 'assets/images/customer-home/illustration--rocket.svg';
 import customerHomeIllustrationSecondaryEarn from 'assets/images/customer-home/illustration--secondary-earn.svg';
@@ -70,6 +68,7 @@ export default class Illustrations extends React.PureComponent {
 				<DocumentHead title="Illustrations" />
 				<div className="design__illustrations-content devdocs__doc-content">
 					<h1>Illustrations</h1>
+					<p></p>
 					<h2>General</h2>
 					<div className="design__illustrations-illustrations">
 						<div className="design__illustrations-illustration">
@@ -127,21 +126,6 @@ export default class Illustrations extends React.PureComponent {
 							<img src={ googleMyBusinessFeature } alt="" />
 						</div>
 						<div className="design__illustrations-illustration">
-							<img src={ jetpackBackup } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ jetpackConcierge } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ jetpackScan } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ jetpackSearch } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ logoJpc } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
 							<img src={ marketing } alt="" />
 						</div>
 						<div className="design__illustrations-illustration">
@@ -194,9 +178,6 @@ export default class Illustrations extends React.PureComponent {
 							<img src={ customerHomeIllustrationFireworks } alt="" />
 						</div>
 						<div className="design__illustrations-illustration">
-							<img src={ customerHomeIllustrationGrowthSummit } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
 							<img src={ customerHomeIllustrationImportComplete } alt="" />
 						</div>
 						<div className="design__illustrations-illustration">
@@ -222,6 +203,21 @@ export default class Illustrations extends React.PureComponent {
 						</div>
 						<div className="design__illustrations-illustration">
 							<img src={ customerHomeIllustrationWebinars } alt="" />
+						</div>
+					</div>
+					<h2>Jetpack</h2>
+					<div className="design__illustrations-illustrations">
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackBackup } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackConcierge } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackScan } alt="" />
+						</div>
+						<div className="design__illustrations-illustration">
+							<img src={ jetpackSearch } alt="" />
 						</div>
 					</div>
 				</div>
