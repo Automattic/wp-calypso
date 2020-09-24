@@ -7,7 +7,7 @@ import { tryToGuessPostalCodeFormat } from '@automattic/postal-code';
 /**
  * Internal dependencies
  */
-import {
+import type {
 	DomainContactDetails,
 	PossiblyCompleteDomainContactDetails,
 	DomainContactDetailsErrors,
@@ -18,13 +18,13 @@ import {
 	FrDomainContactExtraDetails,
 	FrDomainContactExtraDetailsErrors,
 } from './backend/domain-contact-details-components';
-import {
+import type {
 	DomainContactValidationRequest,
 	GSuiteContactValidationRequest,
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
-import { SignupValidationResponse } from './backend/signup-validation-endpoint';
+import type { SignupValidationResponse } from './backend/signup-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
 	firstName?: T;
