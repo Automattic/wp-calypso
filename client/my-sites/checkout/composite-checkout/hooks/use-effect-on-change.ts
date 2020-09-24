@@ -11,8 +11,8 @@ import { useEffect, useRef } from 'react';
  * - This hook will not run its callback the first time it is called; it will
  * only run when one of its dependencies has changed from its previous value.
  *
- * - This hook has no cleanup function. The return value of the callback has no
- * effect.
+ * - This hook has no cleanup function. The return value of the callback is
+ * unused, unlike the cleanup functionality of the `useEffect` return value.
  *
  * - The callback function will be passed the previous value as an argument.
  */
