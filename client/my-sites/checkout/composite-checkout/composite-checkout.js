@@ -83,6 +83,7 @@ import CartMessages from 'my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
 import useEffectOnChange from './hooks/use-effect-on-change';
+import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -691,37 +692,6 @@ CompositeCheckout.propTypes = {
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
-
-function useRecordCheckoutLoaded(
-	recordEvent,
-	isLoadingCart,
-	isApplePayAvailable,
-	isApplePayLoading,
-	responseCart,
-	storedCards,
-	isLoadingStoredCards,
-	product
-) {
-	const hasRecordedCheckoutLoad = useRef( false );
-	if (
-		! isLoadingCart &&
-		! isLoadingStoredCards &&
-		! isApplePayLoading &&
-		! hasRecordedCheckoutLoad.current
-	) {
-		debug( 'composite checkout has loaded' );
-		recordEvent( {
-			type: 'CHECKOUT_LOADED',
-			payload: {
-				saved_cards: storedCards.length,
-				apple_pay_available: isApplePayAvailable,
-				product_slug: product,
-				is_renewal: hasRenewalItem( responseCart ),
-			},
-		} );
-		hasRecordedCheckoutLoad.current = true;
-	}
-}
 
 function useDetectedCountryCode() {
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
