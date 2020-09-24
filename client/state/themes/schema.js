@@ -92,27 +92,19 @@ export const themeFiltersSchema = {
 	patternProperties: {
 		// Taxonomy ID
 		'^[\\w-]+$': {
-			anyOf: [
-				{
-					title: 'Taxonomy',
+			title: 'Taxonomy',
+			type: 'object',
+			patternProperties: {
+				// Term (i.e. filter) ID
+				'^\\w+$': {
+					title: 'Term',
 					type: 'object',
-					patternProperties: {
-						// Term (i.e. filter) ID
-						'^\\w+$': {
-							title: 'Term',
-							type: 'object',
-							properties: {
-								name: { type: 'string' },
-								description: { type: 'string' },
-							},
-						},
+					properties: {
+						name: { type: 'string' },
+						description: { type: 'string' },
 					},
 				},
-				// Certain properties (like "skill-levels") can be an empty array
-				{
-					type: 'array',
-				},
-			],
+			},
 		},
 	},
 	additionalProperties: false,
