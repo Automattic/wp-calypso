@@ -140,7 +140,7 @@ class DomainsStep extends React.Component {
 	/**
 	 * Derive if the "plans" step actually will be visible to the customer in a given flow
 	 */
-	getIsPlanSelectionUnavailableInFlow = () => {
+	getIsPlanSelectionAvailableInFlow = () => {
 		const { steps, isPlanStepSkipped } = this.props;
 
 		/**
@@ -150,7 +150,7 @@ class DomainsStep extends React.Component {
 		const isPlansStepExistsInFlow = steps?.some(
 			( stepName ) => getStepModuleName( stepName ) === 'plans'
 		);
-		return ! isPlansStepExistsInFlow || isPlanStepSkipped;
+		return isPlansStepExistsInFlow && ! isPlanStepSkipped;
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -241,7 +241,7 @@ class DomainsStep extends React.Component {
 			 * for steps that do not have a future dependency on this parameter.
 			 * If shouldHideFreePlan is undefined or there is no plans step in this flow it will not be tracked
 			 */
-			shouldHideFreePlan !== undefined && ! this.getIsPlanSelectionUnavailableInFlow()
+			shouldHideFreePlan !== undefined && this.getIsPlanSelectionAvailableInFlow()
 				? { should_hide_free_plan: shouldHideFreePlan }
 				: {}
 		);
@@ -303,7 +303,7 @@ class DomainsStep extends React.Component {
 				/*
 				 * This is done to avoid enforcing a shouldHideFreePlan dependency
 				 * for steps depending on the domains component.
-				 * If shouldHideFreePlan is nundefined it will not be propegated as a dependency
+				 * If shouldHideFreePlan is undefined it will not be propagated as a dependency
 				 */
 				shouldHideFreePlan !== undefined ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem
@@ -470,7 +470,7 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const isPlanSelectionUnavailableInFlow = this.getIsPlanSelectionUnavailableInFlow();
+		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableInFlow();
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
@@ -491,7 +491,7 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
-				isPlanSelectionUnavailableInFlow={ isPlanSelectionUnavailableInFlow }
+				isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
 				showExampleSuggestions={ showExampleSuggestions }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
