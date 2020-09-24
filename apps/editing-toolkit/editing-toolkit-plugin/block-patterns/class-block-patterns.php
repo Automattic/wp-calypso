@@ -24,14 +24,14 @@ class Block_Patterns {
 	/**
 	 * Cache key for patterns array.
 	 *
-	 * @var int
+	 * @var string
 	 */
 	private $patterns_cache_key;
 
 	/**
 	 * Patterns source site ID.
 	 *
-	 * @var string
+	 * @var int
 	 */
 	private $source_site_id = 174455321;
 
