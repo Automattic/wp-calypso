@@ -87,7 +87,7 @@ const paymentMethodStep = getDefaultPaymentMethodStep();
 export default function WPCheckout( {
 	removeItem,
 	updateLocation,
-	submitCoupon,
+	applyCoupon,
 	removeCoupon,
 	couponStatus,
 	changePlanLength,
@@ -108,7 +108,7 @@ export default function WPCheckout( {
 	createUserAndSiteBeforeTransaction,
 } ) {
 	const translate = useTranslate();
-	const couponFieldStateProps = useCouponFieldState( submitCoupon );
+	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
 	const onEvent = useEvents();

@@ -14,7 +14,7 @@ export type CouponFieldStateProps = {
 };
 
 export default function useCouponFieldState(
-	submitCoupon: ( arg0: string ) => void
+	applyCoupon: ( couponId: string ) => void
 ): CouponFieldStateProps {
 	const onEvent = useEvents();
 	const [ couponFieldValue, setCouponFieldValue ] = useState< string >( '' );
@@ -42,7 +42,7 @@ export default function useCouponFieldState(
 				payload: { coupon: trimmedValue },
 			} );
 
-			submitCoupon( trimmedValue );
+			applyCoupon( trimmedValue );
 
 			return;
 		}
@@ -51,7 +51,7 @@ export default function useCouponFieldState(
 			type: 'a8c_checkout_add_coupon_error',
 			payload: { type: 'Invalid code' },
 		} );
-	}, [ couponFieldValue, onEvent, submitCoupon ] );
+	}, [ couponFieldValue, onEvent, applyCoupon ] );
 
 	return {
 		couponFieldValue,

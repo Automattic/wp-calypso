@@ -94,7 +94,7 @@ export default function useShoppingCartManager( {
 		[ hookDispatch ]
 	);
 
-	const submitCoupon: ( arg0: string ) => void = useCallback(
+	const applyCoupon: ( arg0: string ) => void = useCallback(
 		( newCoupon ) => {
 			hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
 		},
@@ -112,7 +112,7 @@ export default function useShoppingCartManager( {
 		isPendingUpdate: cacheStatus !== 'valid',
 		addItem,
 		removeItem,
-		submitCoupon,
+		applyCoupon,
 		removeCoupon,
 		couponStatus,
 		updateLocation,
