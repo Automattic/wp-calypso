@@ -25,12 +25,17 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { setUnseenCount } from 'calypso/state/notifications';
-import { notifyDesktopNewNote } from 'calypso/state/desktop/actions';
+import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
+import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:notifications' );
 
 /**
  * Internal dependencies
  */
-import NotificationsPanel, { refreshNotes, markNoteAsRead } from './src/panel/Notifications';
+import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
 
 /**
  * Style dependencies
@@ -82,12 +87,6 @@ export class Notifications extends Component {
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
-
-		window.addEventListener(
-			'desktop-notification-mark-as-read',
-			this.handleDesktopNotificationMarkAsRead,
-			false
-		);
 	}
 
 	componentWillUnmount() {
@@ -137,11 +136,6 @@ export class Notifications extends Component {
 	// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
 	handleVisibilityChange = () => this.setState( { isVisible: isDesktop ? true : getIsVisible() } );
 
-	handleDesktopNotificationMarkAsRead = ( event ) => {
-		const { noteId } = event.detail;
-		markNoteAsRead( noteId, true, refreshNotes );
-	};
-
 	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker
 		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
@@ -184,6 +178,12 @@ export class Notifications extends Component {
 
 	render() {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
+
+		if ( this.props.forceRefresh ) {
+			debug( 'Refreshing Notes Panel...' );
+			this.props.refreshNotes();
+			this.props.didForceRefresh();
+		}
 
 		const customMiddleware = {
 			APP_RENDER_NOTES: [
@@ -249,11 +249,6 @@ export class Notifications extends Component {
 					page( `/comment/${ siteId }/${ commentId }?action=edit` );
 				},
 			],
-			NOTIFY_DESKTOP_NEW_NOTE: [
-				( store, { note, isApproved } ) => {
-					this.props.notifyDesktopNewNote( note, isApproved );
-				},
-			],
 		};
 
 		return (
@@ -279,10 +274,11 @@ export class Notifications extends Component {
 export default connect(
 	( state ) => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
+		forceRefresh: shouldForceRefresh( state ),
 	} ),
 	{
 		recordTracksEventAction,
 		setUnseenCount,
-		notifyDesktopNewNote,
+		didForceRefresh,
 	}
 )( Notifications );

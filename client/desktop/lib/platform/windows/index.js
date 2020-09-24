@@ -45,7 +45,7 @@ WindowsPlatform.prototype.onClosed = function ( ev ) {
 		ev.preventDefault();
 
 		this.window.hide();
-		this.window.webContents.send( 'close-notifications-panel' );
+		this.window.webContents.send( 'notifications-panel-show', false );
 		this.showBackgroundBubble();
 
 		return;

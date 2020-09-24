@@ -9,6 +9,8 @@ const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs
  */
 const Settings = require( 'desktop/lib/settings' );
 const Platform = require( 'desktop/lib/platform' );
+const debounce = require( 'desktop/lib/debounce' );
+const ViewModel = require( 'desktop/lib/notifications/viewmodel' );
 const log = require( 'desktop/lib/logger' )( 'desktop:notifications' );
 
 /**
@@ -47,19 +49,24 @@ module.exports = function ( mainWindow ) {
 		}
 	} );
 
-	ipc.on( 'received-notification', function ( _, noteWithMeta ) {
+	ViewModel.on( 'notification', function ( notification ) {
+		log.info( 'Received notification: ', notification );
+
+		debounce( () => {
+			mainWindow.webContents.send( 'notifications-panel-refresh' );
+		}, 100 );
+
 		if ( ! Settings.getSetting( 'notifications' ) ) {
+			log.info( 'Notifications disabled!' );
+
 			return;
 		}
-		const { note, siteTitle } = noteWithMeta;
+		const { id, type, title, subtitle, body, navigate } = notification;
 
-		log.info( `Received ${ note.type } notification for site ${ siteTitle }` );
+		log.info( `Received ${ type } notification for site ${ title }` );
 
 		if ( Notification.isSupported() ) {
-			const title = siteTitle;
-			const subtitle = note.subject.length > 1 ? note.subject[ 0 ].text : '';
-			const body = note.subject.length > 1 ? note.subject[ 1 ].text : note.subject[ 0 ].text;
-			const notification = new Notification( {
+			const desktopNotification = new Notification( {
 				title: title,
 				subtitle: subtitle,
 				body: body,
@@ -67,16 +74,33 @@ module.exports = function ( mainWindow ) {
 				hasReply: false,
 			} );
 
-			notification.on( 'click', function () {
+			desktopNotification.on( 'click', async function () {
+				ViewModel.didClickNotification( id );
+
 				if ( ! mainWindow.isVisible() ) {
 					mainWindow.show();
 					delay( 300 );
 				}
+
 				mainWindow.focus();
-				mainWindow.webContents.send( 'notification-clicked', noteWithMeta );
+
+				if ( navigate ) {
+					// if we have a specific URL, then navigate Calypso there
+					mainWindow.webContents.send( 'navigate', navigate );
+				} else {
+					// else just display the notifications panel
+					mainWindow.webContents.send( 'navigate', '/' );
+
+					await delay( 300 );
+
+					mainWindow.webContents.send( 'notifications-panel-show', true );
+				}
+
+				// Tracks API call
+				mainWindow.webContents.send( 'notification-clicked', notification );
 			} );
 
-			notification.show();
+			desktopNotification.show();
 		}
 	} );
 };
