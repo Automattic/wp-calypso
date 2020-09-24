@@ -14,7 +14,7 @@ import {
 	jpSecurityDailyPlan,
 	jpSecurityRealtimePlan,
 	jpCompletePlan,
-} from './fixture';
+} from '../fixture';
 import { hasSiteSeoFeature } from '../utils';
 
 describe( 'hasSiteSeoFeature', () => {
