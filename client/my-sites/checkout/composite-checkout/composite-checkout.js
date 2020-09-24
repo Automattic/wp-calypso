@@ -68,7 +68,7 @@ import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
 import { AUTO_RENEWAL } from 'lib/url/support';
 import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
+import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/storageUtils';
 import { useProductVariants } from './hooks/product-variants';
 import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
