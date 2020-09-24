@@ -57,6 +57,7 @@ export interface RequestCartProduct {
  * Response schema for the shopping cart endpoint
  */
 export interface ResponseCart {
+	blog_id: number | string;
 	cart_key: string;
 	products: ( TempResponseCartProduct | ResponseCartProduct )[];
 	total_tax_integer: number;
@@ -101,7 +102,8 @@ export interface ResponseCartMessage {
 	message: string;
 }
 
-export const emptyResponseCart = {
+export const emptyResponseCart: ResponseCart = {
+	blog_id: '',
 	cart_generated_at_timestamp: 0,
 	cart_key: '',
 	products: [],
@@ -126,7 +128,7 @@ export const emptyResponseCart = {
 	locale: 'en-us',
 	tax: { location: {}, display_taxes: false },
 	is_signup: false,
-} as ResponseCart;
+};
 
 /**
  * Product item schema for the shopping cart endpoint (response)
@@ -205,7 +207,7 @@ export function convertResponseCartProductToRequestCartProduct(
 		meta,
 		product_id,
 		extra,
-	} as RequestCartProduct;
+	};
 }
 
 export function convertResponseCartToRequestCart( {
@@ -237,7 +239,7 @@ export function removeItemFromResponseCart(
 		products: cart.products.filter( ( product ) => {
 			return product.uuid !== uuidToRemove;
 		} ),
-	} as ResponseCart;
+	};
 }
 
 export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
@@ -245,7 +247,7 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 		...cart,
 		coupon: couponToAdd,
 		is_coupon_applied: false,
-	} as ResponseCart;
+	};
 }
 
 export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart {
@@ -253,7 +255,7 @@ export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart
 		...cart,
 		coupon: '',
 		is_coupon_applied: false,
-	} as ResponseCart;
+	};
 }
 
 export function addLocationToResponseCart(
@@ -270,7 +272,7 @@ export function addLocationToResponseCart(
 				subdivision_code: location.subdivisionCode || undefined,
 			},
 		},
-	} as ResponseCart;
+	};
 }
 
 export function doesCartLocationDifferFromResponseCartLocation(
@@ -314,7 +316,7 @@ export function convertRawResponseCartToResponseCart(
 				uuid: product.product_slug + lastUUID++,
 			};
 		} ),
-	} as ResponseCart;
+	};
 }
 
 export function addItemsToResponseCart(
@@ -338,7 +340,7 @@ export function addItemToResponseCart(
 	return {
 		...responseCart,
 		products: [ ...responseCart.products, convertedProduct ],
-	} as ResponseCart;
+	};
 }
 
 export function replaceItemInResponseCart(
@@ -355,7 +357,7 @@ export function replaceItemInResponseCart(
 			}
 			return item;
 		} ),
-	} as ResponseCart;
+	};
 }
 
 function convertRequestCartProductToResponseCartProduct(
