@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CountrySpecificPaymentFields /> should render 1`] = `
+<div
+  className="checkout__country-payment-fields checkout__country-br"
+>
+  <span
+    className="checkout__form-info-text"
+    key="country-required-fields"
+  >
+    The following fields are also required for payments in %(countryName)s
+  </span>
+  <Input
+    additionalClasses="checkout__checkout-field country-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    disabled={false}
+    isError={false}
+    label="Taxpayer Identification Number"
+    labelClass="checkout__form-label"
+    name="document"
+    onBlur={[Function]}
+    onChange={[Function]}
+    value=""
+  />
+  <FormPhoneMediaInput
+    additionalClasses="checkout__checkout-field country-brazil"
+    autoComplete="off"
+    countriesList={
+      Array [
+        Object {
+          "code": "BR",
+          "name": "Brazil",
+        },
+      ]
+    }
+    countryCode="BR"
+    disabled={false}
+    isError={false}
+    label="Phone"
+    labelClass="checkout__form-label"
+    name="phone-number"
+    onBlur={[Function]}
+    onChange={[Function]}
+    value=""
+  />
+  <Input
+    additionalClasses="checkout__checkout-field country-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    disabled={false}
+    isError={false}
+    label="Address"
+    labelClass="checkout__form-label"
+    maxLength={40}
+    name="address-1"
+    onBlur={[Function]}
+    onChange={[Function]}
+    value=""
+  />
+  <Input
+    additionalClasses="checkout__checkout-field country-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    disabled={false}
+    inputMode="numeric"
+    isError={false}
+    label="Street Number"
+    labelClass="checkout__form-label"
+    name="street-number"
+    onBlur={[Function]}
+    onChange={[Function]}
+    value=""
+  />
+  <HiddenInput
+    additionalClasses="checkout__checkout-field country-brazil"
+    autoComplete="off"
+    disabled={false}
+    isError={false}
+    label="Address Line 2"
+    labelClass="checkout__form-label"
+    maxLength={40}
+    name="address-2"
+    onBlur={[Function]}
+    onChange={[Function]}
+    text="+ Add Address Line 2"
+    value=""
+  />
+  <Input
+    additionalClasses="checkout__checkout-field country-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    disabled={false}
+    isError={false}
+    label="City"
+    labelClass="checkout__form-label"
+    name="city"
+    onBlur={[Function]}
+    onChange={[Function]}
+    value=""
+  />
+  <div
+    className="checkout__form-state-field"
+  >
+    <Connect(Localized(StateSelect))
+      additionalClasses="checkout__checkout-field country-brazil"
+      autoComplete="off"
+      countryCode="BR"
+      disabled={false}
+      isError={false}
+      label="State"
+      labelClass="checkout__form-label"
+      name="state"
+      onBlur={[Function]}
+      onChange={[Function]}
+      value=""
+    />
+  </div>
+  <Input
+    additionalClasses="checkout__checkout-field country-brazil"
+    autoComplete="off"
+    autoFocus={false}
+    disabled={false}
+    isError={false}
+    label="Postal Code"
+    labelClass="checkout__form-label"
+    name="postal-code"
+    onBlur={[Function]}
+    onChange={[Function]}
+    value=""
+  />
+</div>
+`;
