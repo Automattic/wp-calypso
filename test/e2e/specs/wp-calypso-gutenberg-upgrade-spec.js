@@ -276,7 +276,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 					step(
 						'Switch to the code editor and copy the code markup for the block',
 						async function () {
-							currentGutenbergBlocksCode = await gEditorComponent.copyBlocksCode();
+							currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
 						}
 					);
 
@@ -289,7 +289,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 						// Loads the same blocks from the non-edge site by pasting the code markup code in the code editor
 						// and then switching to the block editor
-						await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
+						await gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
 						await gEditorComponent.switchToBlockEditor();
 					} );
 

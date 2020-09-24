@@ -195,18 +195,18 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.toggleMoreToolsAndOptions();
 	}
 
-	async copyBlocksCode() {
-		const codeEditor = await this.switchToCodeView();
-		return this.driver.executeScript(
-			'arguments[0].select(); document.execCommand("copy");',
-			codeEditor
-		);
+	async getBlocksCode() {
+		await this.switchToCodeView();
+		const blocksCode = await this.driver
+			.findElement( By.id( 'post-content-0' ) )
+			.getAttribute( 'value' );
+
+		return blocksCode;
 	}
 
-	async pasteBlocksCode() {
-		const codeEditor = await this.switchToCodeView();
-		// Might not work in a Mac?
-		return codeEditor.sendKeys( Key.CONTROL + 'v' );
+	async setBlocksCode( blocksCode ) {
+		await this.switchToCodeView();
+		await driverHelper.setWhenSettable( this.driver, By.id( 'post-content-0' ), blocksCode );
 	}
 
 	blockDisplayedInEditor( dataTypeSelectorVal ) {
