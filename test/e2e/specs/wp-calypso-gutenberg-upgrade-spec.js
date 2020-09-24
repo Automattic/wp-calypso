@@ -164,9 +164,11 @@ function verifyBlockInEditor( blockClass, siteName ) {
 	} );
 	*/
 
+	/* Commented out for now because of ENOMEM erros on CI
 	step( 'Take screenshots of the block in the editor', async function () {
 		await takeEditorScreenshots( siteName );
 	} );
+	*/
 }
 
 async function assertNoErrorInEditor() {
@@ -189,9 +191,11 @@ function verifyBlockInPublishedPage( blockClass, siteName ) {
 		await gEditorComponent.publish( { visit: true } );
 	} );
 
+	/* Commented out for now because of ENOMEM errors on CI
 	step( 'Take screenshots of the published page', async function () {
 		await takePublishedScreenshots( siteName );
 	} );
+	*/
 
 	/**
 	 * This is a temporary hack for this changeset to skip checking some blocks in the frontend until
