@@ -21,7 +21,6 @@ import {
 	DOMAIN_EXPIRATION_REDEMPTION,
 	DOMAIN_RECENTLY_REGISTERED,
 } from 'lib/url/support';
-import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -303,8 +302,6 @@ class RegisteredDomainType extends React.Component {
 			isDomainOnlySite,
 		} );
 
-		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
-
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -344,18 +341,7 @@ class RegisteredDomainType extends React.Component {
 				<Card compact={ true } className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
-					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
-						<WrapDomainStatusButtons>
-							<SubscriptionSettings
-								type={ domain.type }
-								compact={ true }
-								subscriptionId={ domain.subscriptionId }
-								siteSlug={ this.props.selectedSite.slug }
-								onClick={ this.handlePaymentSettingsClick }
-							/>
-						</WrapDomainStatusButtons>
-					) }
-					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
+					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
 				<DomainManagementNavigationEnhanced
 					domain={ domain }
