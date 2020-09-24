@@ -429,7 +429,7 @@ class RegisterDomainStep extends React.Component {
 			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step-test': this.props.isSignupStep,
+			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
 		return (

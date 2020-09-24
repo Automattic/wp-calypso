@@ -644,7 +644,7 @@ class DomainsStep extends React.Component {
 		return (
 			<div
 				key={ this.props.step + this.props.stepSectionName }
-				className="domains__step-content domains__step-content-domain-step-test"
+				className="domains__step-content domains__step-content-domain-step"
 			>
 				{ content }
 			</div>
