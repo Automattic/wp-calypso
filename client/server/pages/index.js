@@ -468,6 +468,7 @@ function setUpCSP( req, res, next ) {
 			'https://*.wordpress.com/',
 			'https://*.wp.com',
 			'https://wordpress.com',
+			'https://*.calypso.live',
 		],
 		'report-uri': [ '/cspreport' ],
 	};
