@@ -1,5 +1,5 @@
 /**
- * Exernal dependencies
+ * External dependencies
  */
 import cookie from 'cookie';
 import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
