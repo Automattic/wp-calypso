@@ -13,16 +13,16 @@ import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 import { addQueryArgs } from 'lib/route';
-import { QueryArgs } from 'my-sites/plans-v2/types';
+
+/**
+ * Type dependencies
+ */
+import type { JetpackFreeProps } from 'my-sites/plans-v2/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-type JetpackFreeProps = {
-	urlQueryArgs: QueryArgs;
-};
 
 const JetpackFreeCard = ( { urlQueryArgs }: JetpackFreeProps ) => {
 	const translate = useTranslate();
