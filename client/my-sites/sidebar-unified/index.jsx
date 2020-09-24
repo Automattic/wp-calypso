@@ -11,6 +11,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -20,16 +21,23 @@ import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useSiteMenuItems from './use-site-menu-items';
 import useDomainsViewStatus from './use-domains-view-status';
+import { getIsRequestingAdminMenu } from 'state/admin-menu/selectors';
 import Sidebar from 'layout/sidebar';
 import SidebarSeparator from 'layout/sidebar/separator';
 import 'layout/sidebar-unified/style.scss';
 import 'state/admin-menu/init';
+import Spinner from 'components/spinner';
 
 import './style.scss';
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
+	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
+
+	if ( isRequestingMenu ) {
+		return <Spinner className="sidebar-unified__menu-loading" />;
+	}
 
 	return (
 		<Sidebar>

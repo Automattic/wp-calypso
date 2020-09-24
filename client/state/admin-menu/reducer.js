@@ -1,17 +1,32 @@
 /**
  * Internal dependencies
  */
-import { withStorageKey, keyedReducer } from 'state/utils';
+import { withStorageKey, keyedReducer, combineReducers } from 'state/utils';
 import 'state/data-layer/wpcom/sites/admin-menu';
-import { ADMIN_MENU_RECEIVE } from 'state/action-types';
+import { ADMIN_MENU_RECEIVE, ADMIN_MENU_REQUEST } from 'state/action-types';
 
-export const adminMenu = ( state = [], action ) => {
+export const menus = keyedReducer( 'siteId', ( state = [], action ) => {
 	switch ( action.type ) {
 		case ADMIN_MENU_RECEIVE:
 			return [ ...state, ...action.menu ];
 		default:
 			return state;
 	}
-};
+} );
 
-export default withStorageKey( 'adminMenu', keyedReducer( 'siteId', adminMenu ) );
+export function requesting( state = false, action ) {
+	switch ( action.type ) {
+		case ADMIN_MENU_REQUEST:
+		case ADMIN_MENU_RECEIVE:
+			return action.type === ADMIN_MENU_REQUEST;
+	}
+
+	return state;
+}
+
+const reducer = combineReducers( {
+	menus,
+	requesting,
+} );
+
+export default withStorageKey( 'adminMenu', reducer );

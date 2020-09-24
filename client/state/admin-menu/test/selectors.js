@@ -20,7 +20,13 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'returns null when siteId is not provided', () => {
-			const state = {};
+			const state = {
+				adminMenu: {
+					menus: {
+						56789: frozenFixture,
+					},
+				},
+			};
 
 			expect( getAdminMenu( state ) ).toEqual( null );
 		} );
@@ -28,7 +34,9 @@ describe( 'selectors', () => {
 		test( 'returns null when requested siteId key is not present', () => {
 			const state = {
 				adminMenu: {
-					56789: frozenFixture,
+					menus: {
+						56789: frozenFixture,
+					},
 				},
 			};
 
@@ -38,10 +46,12 @@ describe( 'selectors', () => {
 		test( 'returns menu data when siteId is present', () => {
 			const state = {
 				adminMenu: {
-					56789: {},
-					12345: frozenFixture,
-					84649: {},
-					95538: {},
+					menus: {
+						56789: {},
+						12345: frozenFixture,
+						84649: {},
+						95538: {},
+					},
 				},
 			};
 
