@@ -372,7 +372,6 @@ export default function CompositeCheckout( {
 
 	useWpcomStore(
 		registerStore,
-		recordEvent,
 		applyContactDetailsRequiredMask(
 			emptyManagedContactDetails,
 			areDomainsInLineItems( items ) ? domainRequiredContactDetails : taxRequiredContactDetails
