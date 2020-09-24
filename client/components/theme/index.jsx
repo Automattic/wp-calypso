@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { get, isEmpty, isEqual, noop, some } from 'lodash';
+import { get, isEmpty, isEqual, noop } from 'lodash';
 import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 import photon from 'photon';
@@ -112,8 +112,8 @@ export class Theme extends Component {
 
 	isBeginnerTheme() {
 		const { theme } = this.props;
-		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
-		return some( skillLevels, { slug: 'beginner' } );
+		const skillLevel = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
+		return skillLevel && skillLevel.slug === 'beginner';
 	}
 
 	renderPlaceholder() {
