@@ -24,7 +24,7 @@ class Block_Patterns {
 	/**
 	 * Cache key for patterns array.
 	 *
-	 * @var string
+	 * @var int
 	 */
 	private $patterns_cache_key;
 
