@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Purchases from 'my-sites/purchases/main.tsx';
+import { Purchases, PurchaseSettings } from 'my-sites/purchases/main.tsx';
 
 export const purchases = ( context, next ) => {
 	context.primary = <Purchases />;
@@ -23,3 +23,10 @@ export function redirectToPurchases( context ) {
 
 	return page.redirect( '/purchases' );
 }
+
+export const purchaseSettings = ( context, next ) => {
+	context.primary = (
+		<PurchaseSettings siteId={ context.params.site } receiptId={ context.params.receiptId } />
+	);
+	next();
+};
