@@ -256,7 +256,12 @@ async function createAccountCallback( response ) {
 }
 
 async function createAccount() {
-	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+	let newSiteParams = null;
+	try {
+		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+	} catch ( err ) {
+		newSiteParams = {};
+	}
 
 	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
 	const siteId = select( 'wpcom' )?.getSiteId();

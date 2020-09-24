@@ -27,8 +27,10 @@ export default function useRedirectIfCartEmpty< T >(
 			clearSignupDestinationCookie();
 
 			if ( createUserAndSiteBeforeTransaction ) {
-				window.localStorage.removeItem( 'shoppingCart' );
-				window.localStorage.removeItem( 'siteParams' );
+				try {
+					window.localStorage.removeItem( 'shoppingCart' );
+					window.localStorage.removeItem( 'siteParams' );
+				} catch ( err ) {}
 
 				// We use window.location instead of page.redirect() so that if the user already has an account and site at
 				// this point, then window.location will reload with the cookies applied and takes to the /plans page.

@@ -307,8 +307,10 @@ export default function CompositeCheckout( {
 			debug( 'just redirecting to', url );
 
 			if ( createUserAndSiteBeforeTransaction ) {
-				window.localStorage.removeItem( 'shoppingCart' );
-				window.localStorage.removeItem( 'siteParams' );
+				try {
+					window.localStorage.removeItem( 'shoppingCart' );
+					window.localStorage.removeItem( 'siteParams' );
+				} catch ( err ) {}
 
 				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
 				// Using page.redirect() will take to the log in page which we don't want.

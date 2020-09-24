@@ -225,9 +225,12 @@ function getInitialShoppingCartState(): ShoppingCartState {
 }
 
 function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
-	const cartItemsFromLocalStorage = JSON.parse(
-		window.localStorage.getItem( 'shoppingCart' ) || '[]'
-	);
+	let cartItemsFromLocalStorage = null;
+	try {
+		cartItemsFromLocalStorage = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) || '[]' );
+	} catch ( err ) {
+		return;
+	}
 
 	if ( ! Array.isArray( cartItemsFromLocalStorage ) ) {
 		return;
@@ -239,8 +242,8 @@ function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
 
 	try {
 		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItems ) );
-	} catch ( e ) {
-		throw new Error( 'An unexpected error occured while saving your cart' );
+	} catch ( err ) {
+		return;
 	}
 }
 
