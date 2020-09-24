@@ -170,7 +170,7 @@ export class PlanFeaturesHeader extends Component {
 		if ( ! planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) ) {
 			return null;
 		}
-		if ( ! isFreePlan( currentSitePlan.productSlug ) ) {
+		if ( ! currentSitePlan || ! isFreePlan( currentSitePlan.productSlug ) ) {
 			return null;
 		}
 		const discountPercent = Math.round( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );
