@@ -84,6 +84,7 @@ import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
 import useEffectOnChange from './hooks/use-effect-on-change';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
+import useAddProductsFromUrl from './hooks/use-add-products-from-url';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -209,13 +210,18 @@ export default function CompositeCheckout( {
 		getCart: getCart || wpcomGetCart,
 	} );
 
-	// Load products and coupons from url
-	useEffect( () => {
-		if ( isLoadingCart ) {
-			return;
-		}
-		if ( productsForCart.length > 0 ) {
-			addProductsToCart( productsForCart );
+	const isInitialCartLoading = useAddProductsFromUrl( {
+		isLoadingCart,
+		isCartPendingUpdate,
+		productsForCart,
+		couponCodeFromUrl,
+		applyCoupon,
+		recordEvent,
+		addProductsToCart,
+	} );
+
+	useEffectOnChange( () => {
+		if ( ! isInitialCartLoading ) {
 			productsForCart.forEach( ( productToAdd ) => {
 				recordEvent( {
 					type: 'CART_ADD_ITEM',
@@ -223,26 +229,16 @@ export default function CompositeCheckout( {
 				} );
 			} );
 		}
-		if ( couponCodeFromUrl ) {
-			applyCoupon( couponCodeFromUrl );
-		}
-	}, [
-		recordEvent,
-		isLoadingCart,
-		couponCodeFromUrl,
-		applyCoupon,
-		productsForCart,
-		addProductsToCart,
-	] );
+	}, [ isInitialCartLoading ] );
 
 	useEffectOnChange( () => {
-		if ( ! isLoadingCart ) {
+		if ( ! isInitialCartLoading ) {
 			recordEvent( {
 				type: 'CART_INIT_COMPLETE',
 				payload: responseCart,
 			} );
 		}
-	}, [ isLoadingCart ] );
+	}, [ isInitialCartLoading ] );
 
 	const {
 		items,
@@ -426,7 +422,7 @@ export default function CompositeCheckout( {
 	useRedirectIfCartEmpty(
 		items,
 		cartEmptyRedirectUrl,
-		isLoadingCart,
+		isInitialCartLoading,
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
@@ -461,7 +457,7 @@ export default function CompositeCheckout( {
 	// them to be all finished loading before we pass them along.
 	const arePaymentMethodsLoading =
 		items.length < 1 ||
-		isLoadingCart ||
+		isInitialCartLoading ||
 		isLoadingStoredCards ||
 		( onlyLoadPaymentMethods
 			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
@@ -585,7 +581,7 @@ export default function CompositeCheckout( {
 
 	useRecordCheckoutLoaded(
 		recordEvent,
-		isLoadingCart,
+		isInitialCartLoading,
 		isApplePayAvailable,
 		isApplePayLoading,
 		responseCart,
@@ -609,10 +605,10 @@ export default function CompositeCheckout( {
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
 	const isLoading =
-		isLoadingCart || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1;
+		isInitialCartLoading || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
-			isLoadingCart,
+			isInitialCartLoading,
 			isLoadingStoredCards,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
@@ -631,7 +627,7 @@ export default function CompositeCheckout( {
 			<CartMessages
 				cart={ responseCart }
 				selectedSite={ { slug: siteSlug } }
-				isLoadingCart={ isLoadingCart }
+				isLoadingCart={ isInitialCartLoading }
 			/>
 			<CartProvider cart={ responseCart }>
 				<CheckoutProvider
