@@ -107,7 +107,6 @@ export const themeFiltersSchema = {
 							},
 						},
 					},
-					uniqueItems: true,
 				},
 				// Certain properties (like "skill-levels") can be an empty array
 				{
