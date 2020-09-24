@@ -65,7 +65,7 @@ const blockInits = new Map()
  * @param { typeof GutenbergBlockComponent } blockClass A block class.
  * @returns { Function } the init function to be called.
  */
-async function createBlock( blockClass ) {
+async function insertBlock( blockClass ) {
 	const blockInit = blockInits.get( blockClass );
 	const block = await gEditorComponent.insertBlock( blockClass );
 
@@ -260,6 +260,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 		].forEach( ( siteName ) => {
 			describe( `Test the ${ blockClass.blockName } block on ${ siteName } @parallel`, function () {
 				const edgeSiteName = siteName + 'edge';
+
 				describe( `Test the block in the non-edge site (${ siteName })`, function () {
 					step( `Login to ${ siteName }`, async function () {
 						await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
@@ -267,7 +268,11 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 					} );
 
 					step( `Insert and configure ${ blockClass.blockName }`, async function () {
-						await createBlock( blockClass );
+						// For some reason, after the first run, the code editor is shown by
+						// default, this breaks the insertBlock call, so we force-switch to the
+						// editor before the insert.
+						await gEditorComponent.switchToBlockEditor();
+						await insertBlock( blockClass );
 					} );
 
 					verifyBlockInEditor( blockClass, siteName );
@@ -281,7 +286,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 					verifyBlockInPublishedPage( blockClass, siteName );
 				} );
-				describe( `Test the same blocks in the corresponding edge site (${ edgeSiteName })`, function () {
+				describe( `Test the same block in the corresponding edge site (${ edgeSiteName })`, function () {
 					step( `Switches to edge site (${ edgeSiteName })`, async function () {
 						// Re-use the same session created earlier but change the site
 						await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
