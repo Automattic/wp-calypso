@@ -1,12 +1,10 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { stringify } from 'qs';
 import { debounce } from 'lodash';
 import page from 'page';
-import url from 'url';
 
 /**
  * Internal dependencies
@@ -137,7 +135,7 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function ( context, next ) {
-		const currentUrl = url.parse( window.location.href );
+		const currentUrl = new URL( window.location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 		if ( ! getCurrentUserId( context.store.getState() ) ) {
 			context.primary = React.createElement( EmptyContent, {
