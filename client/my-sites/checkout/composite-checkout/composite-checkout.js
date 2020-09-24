@@ -198,38 +198,49 @@ export default function CompositeCheckout( {
 		responseCart,
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
-		addItem,
+		addProductsToCart,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart:
 			! areCartProductsPreparing && ! isLoadingCartSynchronizer && ! isFetchingProducts,
-		productsToAddOnInitialize: productsForCart,
-		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
 	} );
 
-	// This will record cart items being added when the page loads
-	useEffectOnChange(
-		( previous ) => {
-			if ( productsForCart.length > 0 && productsForCart !== previous ) {
-				productsForCart.forEach( ( productToAdd ) => {
-					recordEvent( {
-						type: 'CART_ADD_ITEM',
-						payload: productToAdd,
-					} );
+	// Load products and coupons from url
+	useEffect( () => {
+		if ( isLoadingCart ) {
+			return;
+		}
+		if ( productsForCart.length > 0 ) {
+			addProductsToCart( productsForCart );
+			productsForCart.forEach( ( productToAdd ) => {
+				recordEvent( {
+					type: 'CART_ADD_ITEM',
+					payload: productToAdd,
 				} );
-			}
-		},
-		[ productsForCart ]
-	);
+			} );
+		}
+		if ( couponCodeFromUrl ) {
+			applyCoupon( couponCodeFromUrl );
+		}
+	}, [
+		recordEvent,
+		isLoadingCart,
+		couponCodeFromUrl,
+		applyCoupon,
+		productsForCart,
+		addProductsToCart,
+	] );
 
 	useEffectOnChange( () => {
-		recordEvent( {
-			type: 'CART_INIT_COMPLETE',
-			payload: responseCart,
-		} );
+		if ( ! isLoadingCart ) {
+			recordEvent( {
+				type: 'CART_INIT_COMPLETE',
+				payload: responseCart,
+			} );
+		}
 	}, [ isLoadingCart ] );
 
 	const {
@@ -503,9 +514,9 @@ export default function CompositeCheckout( {
 				type: 'CART_ADD_ITEM',
 				payload: adjustedItem,
 			} );
-			addItem( adjustedItem );
+			addProductsToCart( [ adjustedItem ] );
 		},
-		[ addItem, products, recordEvent ]
+		[ addProductsToCart, products, recordEvent ]
 	);
 
 	const includeDomainDetails = needsDomainDetails( responseCart );
