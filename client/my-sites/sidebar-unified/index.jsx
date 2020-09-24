@@ -25,6 +25,8 @@ import SidebarSeparator from 'layout/sidebar/separator';
 import 'layout/sidebar-unified/style.scss';
 import 'state/admin-menu/init';
 
+import './style.scss';
+
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
