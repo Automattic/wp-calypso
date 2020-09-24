@@ -13,7 +13,7 @@ import { Button } from '@automattic/components';
 import { CheckoutCheckIcon } from '@automattic/composite-checkout';
 import PaymentLogo from '@automattic/composite-checkout/src/lib/payment-methods/payment-logo';
 import Gridicon from 'components/gridicon';
-import TermsOfService from 'my-sites/checkout/checkout/terms-of-service';
+import CheckoutTerms from 'my-sites/checkout/checkout/checkout-terms';
 import { formatDate } from './util';
 import { BEFORE_SUBMIT } from './constants';
 
@@ -75,18 +75,6 @@ function PaymentMethodStep( { siteSlug, card } ) {
 	);
 }
 
-function TermsOfServiceSection() {
-	const translate = useTranslate();
-	return (
-		<>
-			<div className="purchase-modal__tos">
-				<strong>{ translate( 'By checking out:' ) }</strong>
-			</div>
-			<TermsOfService hasRenewableSubscription={ true } />
-		</>
-	);
-}
-
 function OrderReview( { shouldDisplayTax, tax, total } ) {
 	const translate = useTranslate();
 	return (
@@ -140,7 +128,7 @@ export default function PurchaseModalContent( {
 			</Button>
 			<OrderStep siteSlug={ siteSlug } product={ cart.products?.[ 0 ] } />
 			<PaymentMethodStep siteSlug={ siteSlug } card={ cards?.[ 0 ] } />
-			<TermsOfServiceSection />
+			<CheckoutTerms cart={ cart } />
 			<hr />
 			<OrderReview
 				total={ cart.total_cost_display }

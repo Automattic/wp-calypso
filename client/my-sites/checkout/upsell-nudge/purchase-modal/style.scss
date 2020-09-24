@@ -117,19 +117,21 @@ $left-margin: 36px;
 }
 
 /**
- * Terms of Service
+ * Checkout Terms
  */
-.purchase-modal__tos {
-	margin: $font-body-extra-small 0 0 $left-margin;
-	font-size: $font-body-extra-small;
-}
-
-.purchase-modal .checkout__terms {
+.checkout__terms,
+.checkout__concierge-refund-policy,
+.checkout__bundled-domain-notice {
 	margin: 4px 0;
 	padding-left: $left-margin;
 	position: relative;
+	font-size: $font-body-extra-small;
 
-	svg {
+	.purchase-modal__step + & {
+		margin-top: 1em;
+	}
+
+	> svg {
 		position: absolute;
 		top: 0;
 		left: ( $left-margin - 24px );
