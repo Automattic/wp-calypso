@@ -16,7 +16,7 @@ import {
 	convertRawResponseCartToResponseCart,
 	addCouponToResponseCart,
 } from '../../types/backend/shopping-cart-endpoint';
-import { CacheStatus, ShoppingCartAction, ReactStandardAction } from './types';
+import { CacheStatus, ShoppingCartAction } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-initialize-cart-from-server' );
 
@@ -27,8 +27,7 @@ export default function useInitializeCartFromServer(
 	couponToAddOnInitialize: string | null,
 	getCart: () => Promise< ResponseCart >,
 	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
-	hookDispatch: ( arg0: ShoppingCartAction ) => void,
-	onEvent?: ( arg0: ReactStandardAction ) => void
+	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
 	const isInitialized = useRef( false );
 	const initializedProducts = useRef< RequestCartProduct[] | null >( null );
@@ -86,13 +85,10 @@ export default function useInitializeCartFromServer(
 					);
 					let responseCart = convertRawResponseCartToResponseCart( response );
 					if ( productsToAddOnInitialize?.length ) {
-						responseCart = productsToAddOnInitialize.reduce( ( updatedCart, productToAdd ) => {
-							onEvent?.( {
-								type: 'CART_ADD_ITEM',
-								payload: productToAdd,
-							} );
-							return addItemToResponseCart( updatedCart, productToAdd );
-						}, responseCart );
+						responseCart = productsToAddOnInitialize.reduce(
+							( updatedCart, productToAdd ) => addItemToResponseCart( updatedCart, productToAdd ),
+							responseCart
+						);
 					}
 					if ( couponToAddOnInitialize ) {
 						responseCart = addCouponToResponseCart( responseCart, couponToAddOnInitialize );
@@ -108,10 +104,6 @@ export default function useInitializeCartFromServer(
 					type: 'RECEIVE_INITIAL_RESPONSE_CART',
 					initialResponseCart,
 				} );
-				onEvent?.( {
-					type: 'CART_INIT_COMPLETE',
-					payload: initialResponseCart,
-				} );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while initializing cart', error );
@@ -120,16 +112,11 @@ export default function useInitializeCartFromServer(
 					error: 'GET_SERVER_CART_ERROR',
 					message: error.message,
 				} );
-				onEvent?.( {
-					type: 'CART_ERROR',
-					payload: { type: 'GET_SERVER_CART_ERROR', message: error.message },
-				} );
 			} );
 	}, [
 		cacheStatus,
 		canInitializeCart,
 		hookDispatch,
-		onEvent,
 		getCart,
 		productsToAddOnInitialize,
 		couponToAddOnInitialize,

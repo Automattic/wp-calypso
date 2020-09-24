@@ -82,6 +82,7 @@ import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-det
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
+import useEffectOnChange from './hooks/use-effect-on-change';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -196,6 +197,7 @@ export default function CompositeCheckout( {
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
 		loadingError: cartLoadingError,
+		loadingErrorType: cartLoadingErrorType,
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
@@ -206,8 +208,29 @@ export default function CompositeCheckout( {
 		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
-		onEvent: recordEvent,
 	} );
+
+	// This will record cart items being added when the page loads
+	useEffectOnChange(
+		( previous ) => {
+			if ( productsForCart.length > 0 && productsForCart !== previous ) {
+				productsForCart.forEach( ( productToAdd ) => {
+					recordEvent( {
+						type: 'CART_ADD_ITEM',
+						payload: productToAdd,
+					} );
+				} );
+			}
+		},
+		[ productsForCart ]
+	);
+
+	useEffectOnChange( () => {
+		recordEvent( {
+			type: 'CART_INIT_COMPLETE',
+			payload: responseCart,
+		} );
+	}, [ isLoadingCart ] );
 
 	const {
 		items,
@@ -356,6 +379,12 @@ export default function CompositeCheckout( {
 		);
 	} );
 
+	useActOnceOnStrings( [ cartLoadingError ].filter( Boolean ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
+		);
+	} );
+
 	// Display errors. Note that we display all errors if any of them change,
 	// because notices.error() otherwise will remove the previously displayed
 	// errors.
@@ -457,8 +486,15 @@ export default function CompositeCheckout( {
 	// Often products are added using just the product_slug but missing the
 	// product_id; this adds it.
 	const addItemWithEssentialProperties = useCallback(
-		( cartItem ) => addItem( fillInSingleCartItemAttributes( cartItem, products ) ),
-		[ addItem, products ]
+		( cartItem ) => {
+			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
+			recordEvent( {
+				type: 'CART_ADD_ITEM',
+				payload: adjustedItem,
+			} );
+			addItem( adjustedItem );
+		},
+		[ addItem, products, recordEvent ]
 	);
 
 	const includeDomainDetails = needsDomainDetails( responseCart );
