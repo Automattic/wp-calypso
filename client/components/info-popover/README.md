@@ -67,9 +67,9 @@ function handleAction( event ) {
 function render() {
 	return (
 		<div>
-			<label onClick={ handleAction } ref={ moreInfoLabelRef }>
+			<button onClick={ handleAction } onKeyPress={ handleAction } ref={ moreInfoLabelRef }>
 				More Info
-			</label>
+			</button>
 			<InfoPopover
 				position="bottom left"
 				ref={ infoPopRef }
