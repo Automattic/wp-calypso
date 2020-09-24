@@ -9,6 +9,7 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { isComingSoonPage, isFrontPage, isPostsPage } from 'state/pages/selectors';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 import canCurrentUser from 'state/selectors/can-current-user';
@@ -102,7 +103,9 @@ export default connect( ( state, props ) => {
 	const themeId = PostMetadata.homepageTemplate( props.page );
 
 	return {
-		isComingSoon: isComingSoonPage( state, props.page.site_ID, props.page.ID ),
+		isComingSoon:
+			isComingSoonPage( state, props.page.site_ID, props.page.ID ) &&
+			!! config.isEnabled( 'editing-toolkit/coming-soon' ),
 		isFront: isFrontPage( state, props.page.site_ID, props.page.ID ),
 		isPosts: isPostsPage( state, props.page.site_ID, props.page.ID ),
 		theme: themeId && getTheme( state, 'wpcom', themeId ),
