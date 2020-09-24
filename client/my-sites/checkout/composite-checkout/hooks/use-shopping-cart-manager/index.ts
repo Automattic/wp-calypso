@@ -26,8 +26,6 @@ import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 export default function useShoppingCartManager( {
 	cartKey,
 	canInitializeCart,
-	productsToAddOnInitialize,
-	couponToAddOnInitialize,
 	setCart,
 	getCart,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
@@ -52,8 +50,6 @@ export default function useShoppingCartManager( {
 	useInitializeCartFromServer(
 		cacheStatus,
 		canInitializeCart,
-		productsToAddOnInitialize,
-		couponToAddOnInitialize,
 		getServerCart,
 		setServerCart,
 		hookDispatch
