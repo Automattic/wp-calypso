@@ -74,6 +74,8 @@ export function checkout( context, next ) {
 	const searchParams = new URLSearchParams( window.location.search );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
 
+	// Tracks if checkout page was unloaded before purchase completion,
+	// to prevent browser back duplicate sites. Check pau2Xa-1Io-p2#comment-6759.
 	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
 		window.addEventListener( 'beforeunload', function () {
 			const signupDestinationCookieExists = retrieveSignupDestination();

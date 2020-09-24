@@ -177,15 +177,9 @@ class Signup extends React.Component {
 			clearSignupDestinationCookie();
 		}
 
-		const signupDestinationCookieExists = retrieveSignupDestination();
-		const isReEnteringFlow = getSignupCompleteFlowName() === this.props.flowName;
-		this.enableManageSiteFlow =
-			wasSignupCheckoutPageUnloaded() &&
-			signupDestinationCookieExists &&
-			! isAddNewSiteFlow &&
-			isReEnteringFlow;
-
-		if ( this.enableManageSiteFlow ) {
+		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
+		if ( ! isAddNewSiteFlow && this.isReEnteringSignupViaBrowserBack() ) {
+			this.enableManageSiteFlow = true;
 			providedDependencies = { siteSlug: getSignupCompleteSlug(), isManageSiteFlow: true };
 		}
 
@@ -279,6 +273,20 @@ class Signup extends React.Component {
 			this.maybeShowSitePreview();
 			this.preloadNextStep();
 		}
+	}
+
+	/**
+	 * Checks if the user entered the signup flow via browser back from checkout page,
+	 * and if they did we will show a modified domain step to prevent creating duplicate sites.
+	 * Check pau2Xa-1Io-p2#comment-6759 for more context.
+	 */
+	isReEnteringSignupViaBrowserBack() {
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === this.props.flowName;
+		const isReEnteringSignupViaBrowserBack =
+			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
+
+		return isReEnteringSignupViaBrowserBack;
 	}
 
 	completeP2FlowAfterLoggingIn() {
