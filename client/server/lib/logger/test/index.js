@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-import { mockProcessStdout, mockProcessStderr } from 'jest-mock-process';
+import { mockProcessStdout } from 'jest-mock-process';
 import mockFs from 'mock-fs';
 import fs from 'fs';
 
 let mockStdout;
-let mockStderr;
 let getLogger;
 
 beforeEach( () => {
 	( { getLogger } = require( '../index' ) );
-	mockStderr = mockProcessStderr();
 	mockStdout = mockProcessStdout();
 	mockFs( {
 		'/tmp': {},
@@ -21,7 +19,6 @@ beforeEach( () => {
 afterEach( () => {
 	jest.resetModules();
 	mockStdout.mockRestore();
-	mockStderr.mockRestore();
 	delete process.env.CALYPSO_LOGFILE;
 	mockFs.restore();
 } );
@@ -50,23 +47,6 @@ it( 'Logs info and above levels to stdout', () => {
 	expect( loggedMessages ).toEqual( [
 		expect.objectContaining( { msg: 'info', level: 30 } ),
 		expect.objectContaining( { msg: 'warn', level: 40 } ),
-		expect.objectContaining( { msg: 'error', level: 50 } ),
-		expect.objectContaining( { msg: 'fatal', level: 60 } ),
-	] );
-} );
-
-it( 'Logs error and above levels to stderr', () => {
-	const logger = getLogger();
-
-	logger.trace( 'trace' ); // not logged
-	logger.debug( 'debug' ); // not logged
-	logger.info( 'info' ); // not logged
-	logger.warn( 'warn' ); // not logged
-	logger.error( 'error' );
-	logger.fatal( 'fatal' );
-
-	const loggedMessages = mockStderr.mock.calls.map( ( args ) => JSON.parse( args[ 0 ] ) );
-	expect( loggedMessages ).toEqual( [
 		expect.objectContaining( { msg: 'error', level: 50 } ),
 		expect.objectContaining( { msg: 'fatal', level: 60 } ),
 	] );

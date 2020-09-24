@@ -13,15 +13,12 @@ const createLogger = () => {
 				stream: process.stdout,
 				level: 'info',
 			},
-			{
-				stream: process.stderr,
-				level: 'error',
-			},
 		],
 	} );
 	if ( process.env.CALYPSO_LOGFILE ) {
 		logger.addStream( {
 			path: process.env.CALYPSO_LOGFILE,
+			level: 'info',
 		} );
 	}
 };
