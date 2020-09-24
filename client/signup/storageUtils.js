@@ -1,5 +1,5 @@
 /**
- * Exernal dependencies
+ * External dependencies
  */
 import cookie from 'cookie';
 
