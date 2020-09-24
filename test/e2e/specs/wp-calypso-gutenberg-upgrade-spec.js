@@ -96,17 +96,13 @@ async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb )
 	for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
 		await scrollCb( i );
 
-		await driver.takeScreenshot().then( ( data ) => {
-			return driver
-				.getCurrentUrl()
-				.then( ( url ) =>
-					mediaHelper.writeScreenshot(
-						data,
-						() => join( siteName, `${ siteName }-${ i }-${ now }` ),
-						{ url }
-					)
-				);
-		} );
+		const screenshotData = await driver.takeScreenshot();
+		const url = await driver.getCurrentUrl();
+		await mediaHelper.writeScreenshot(
+			screenshotData,
+			() => join( siteName, `${ siteName }-${ i }-${ now }` ),
+			{ url }
+		);
 	}
 }
 
