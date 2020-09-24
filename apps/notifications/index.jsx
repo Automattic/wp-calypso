@@ -25,11 +25,12 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { setUnseenCount } from 'calypso/state/notifications';
+import { notifyDesktopNewNote } from 'calypso/state/desktop/actions';
 
 /**
  * Internal dependencies
  */
-import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
+import NotificationsPanel, { refreshNotes, markNoteAsRead } from './src/panel/Notifications';
 
 /**
  * Style dependencies
@@ -81,6 +82,12 @@ export class Notifications extends Component {
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
+
+		window.addEventListener(
+			'desktop-notification-mark-as-read',
+			this.handleDesktopNotificationMarkAsRead,
+			false
+		);
 	}
 
 	componentWillUnmount() {
@@ -101,6 +108,8 @@ export class Notifications extends Component {
 				this.receiveServiceWorkerMessage
 			);
 		}
+
+		window.removeEventListener( 'message', this.handleDesktopNotificationMarkAsRead );
 	}
 
 	handleKeyPress = ( event ) => {
@@ -127,6 +136,11 @@ export class Notifications extends Component {
 
 	// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
 	handleVisibilityChange = () => this.setState( { isVisible: isDesktop ? true : getIsVisible() } );
+
+	handleDesktopNotificationMarkAsRead = ( event ) => {
+		const { noteId } = event.detail;
+		markNoteAsRead( noteId, true, refreshNotes );
+	};
 
 	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker
@@ -235,6 +249,11 @@ export class Notifications extends Component {
 					page( `/comment/${ siteId }/${ commentId }?action=edit` );
 				},
 			],
+			NOTIFY_DESKTOP_NEW_NOTE: [
+				( store, { note, isApproved } ) => {
+					this.props.notifyDesktopNewNote( note, isApproved );
+				},
+			],
 		};
 
 		return (
@@ -264,5 +283,6 @@ export default connect(
 	{
 		recordTracksEventAction,
 		setUnseenCount,
+		notifyDesktopNewNote,
 	}
 )( Notifications );

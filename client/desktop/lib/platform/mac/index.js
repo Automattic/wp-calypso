@@ -60,7 +60,8 @@ MacPlatform.prototype.showNotificationsBadge = function ( count, bounce ) {
 
 	app.setBadgeCount( count );
 
-	if ( bounce ) {
+	const shouldBounce = bounce && count > badgeCount;
+	if ( shouldBounce ) {
 		app.dock.bounce();
 	}
 };

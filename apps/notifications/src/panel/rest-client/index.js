@@ -7,10 +7,17 @@ import { store } from '../state';
 import actions from '../state/actions';
 
 import getAllNotes from '../state/selectors/get-all-notes';
+import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 
 import repliesCache from '../comment-replies-cache';
 
-import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
+import {
+	fetchNote,
+	listNotes,
+	markReadStatus,
+	sendLastSeenTime,
+	subscribeToNoteStream,
+} from './wpcom';
 
 const debug = require( 'debug' )( 'notifications:rest-client' );
 
@@ -313,18 +320,29 @@ function getNotesList() {
 function ready() {
 	const notes = getAllNotes( store.getState() );
 
-	const timestamps = notes
-		.map( property( 'timestamp' ) )
-		.map( ( timestamp ) => Date.parse( timestamp ) / 1000 );
+	let newNotes = notes.filter(
+		( note ) => Date.parse( note.timestamp ) / 1000 > this.lastSeenTime
+	);
 
-	let newNoteCount = timestamps.filter( ( time ) => time > this.lastSeenTime ).length;
+	let newNoteCount = newNotes.length;
 
 	if ( ! this.firstRender && this.lastSeenTime === 0 ) {
 		newNoteCount = 0;
+		newNotes = [];
 	}
 
 	const latestType = get( notes.slice( -1 )[ 0 ], 'type', null );
 	store.dispatch( { type: 'APP_RENDER_NOTES', newNoteCount, latestType } );
+
+	for ( let i = 0; i < newNotes.length; i++ ) {
+		const note = newNotes[ i ];
+		if ( setlatestTimestampSeen( note.timestamp ) ) {
+			debug( 'Dispatching note to Desktop app: ', note );
+
+			const isApproved = getIsNoteApproved( store.getState(), note );
+			store.dispatch( { type: 'NOTIFY_DESKTOP_NEW_NOTE', note, isApproved } );
+		}
+	}
 
 	this.hasNewNoteData = false;
 	this.firstRender = false;
@@ -440,8 +458,14 @@ function refreshNotes() {
 	if ( this.subscribed ) {
 		return;
 	}
+	debug( 'Refreshing notes...' );
 
 	getNotesList.call( this );
+}
+
+function markNoteAsRead( noteId, isRead, callback ) {
+	debug( `Marking note with id ${ noteId } as read...` );
+	markReadStatus( noteId, isRead, callback );
 }
 
 function handleStorageEvent( event ) {
@@ -500,6 +524,24 @@ function setVisibility( { isShowing, isVisible } ) {
 	}
 }
 
+// Persists the latest note timestamp sent to the Desktop app.
+function setlatestTimestampSeen( timestamp ) {
+	const parsedTimestamp = Date.parse( timestamp );
+	const latestTimestamp = localStorage.getItem( 'desktop_latest_timestamp_seen' ) || 0;
+
+	if ( parsedTimestamp > latestTimestamp ) {
+		debug( 'Update desktop_latest_timestamp_seen: ', parsedTimestamp );
+
+		try {
+			localStorage.setItem( 'desktop_latest_timestamp_seen', parsedTimestamp );
+			return true;
+		} catch ( e ) {
+			debug( 'Failed to set desktop_latest_timestamp_seen: ', e.message );
+		}
+	}
+	return false;
+}
+
 Client.prototype.main = main;
 Client.prototype.reschedule = reschedule;
 Client.prototype.getNote = getNote;
@@ -509,5 +551,6 @@ Client.prototype.updateLastSeenTime = updateLastSeenTime;
 Client.prototype.loadMore = loadMore;
 Client.prototype.refreshNotes = refreshNotes;
 Client.prototype.setVisibility = setVisibility;
+Client.prototype.markNoteAsRead = markNoteAsRead;
 
 export default Client;
