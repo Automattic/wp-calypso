@@ -68,9 +68,9 @@ export default class Illustrations extends React.PureComponent {
 		return (
 			<Main className="devdocs design__illustrations devdocs__illustrations">
 				<DocumentHead title="Illustrations" />
-
 				<div className="design__illustrations-content devdocs__doc-content">
 					<h1>Illustrations</h1>
+					<h2>General</h2>
 					<div className="design__illustrations-illustrations">
 						<div className="design__illustrations-illustration">
 							<img src={ adwordsGoogle } alt="" />
