@@ -29,6 +29,21 @@ describe( 'reducer', () => {
 				123456: menuFixture,
 			} );
 		} );
+
+		test( 'updates menu when there already is a menu', () => {
+			const action = {
+				type: ADMIN_MENU_RECEIVE,
+				siteId: 123456,
+				menu: menuFixture,
+			};
+			const initialState = deepFreeze( {
+				123456: menuFixture,
+			} );
+
+			expect( menusReducer( initialState, action ) ).toEqual( {
+				123456: menuFixture,
+			} );
+		} );
 	} );
 
 	describe( 'requesting reducer', () => {

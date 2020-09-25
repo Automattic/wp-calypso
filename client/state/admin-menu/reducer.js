@@ -8,7 +8,7 @@ import { ADMIN_MENU_RECEIVE, ADMIN_MENU_REQUEST } from 'state/action-types';
 export const menus = keyedReducer( 'siteId', ( state = [], action ) => {
 	switch ( action.type ) {
 		case ADMIN_MENU_RECEIVE:
-			return [ ...state, ...action.menu ];
+			return action.menu;
 		default:
 			return state;
 	}
