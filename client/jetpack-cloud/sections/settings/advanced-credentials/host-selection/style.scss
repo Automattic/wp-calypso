@@ -4,6 +4,12 @@
 		margin-right: -24px;
 		//bring the final space in the card to the same height as the vertical nav items
 		margin-bottom: 32px;
+
+		.vertical-nav-item {
+			display: flex;
+			flex-direction: row-reverse;
+			justify-content: space-between;
+		}
 	}
 }
 

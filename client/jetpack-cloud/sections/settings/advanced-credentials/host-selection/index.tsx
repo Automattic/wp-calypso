@@ -3,28 +3,27 @@
  */
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useEffect, useMemo } from 'react';
+import React, { FunctionComponent, useEffect, useMemo, SetStateAction } from 'react';
 
 /**
  * Internal dependencies
  */
-
-import { getProviderNameFromId, hosts } from '../utils';
 import { getHttpData, DataState } from 'state/data-layer/http-data';
+import { getProviderNameFromId, hosts } from '../../utils';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { settingsCredentialsPath } from 'lib/jetpack/paths';
 import Badge from 'components/badge';
 
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-
 /**
- * Internal dependencies
+ * Style dependencies
  */
 import './style.scss';
 
-const HostSelection: FunctionComponent = () => {
+interface Props {
+	onHostChange: ( newHost: string | null ) => void;
+}
+
+const HostSelection: FunctionComponent< Props > = ( { onHostChange } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -84,31 +83,39 @@ const HostSelection: FunctionComponent = () => {
 				</p>
 			) }
 
-			<VerticalNav>
+			<div className="host-selection__list">
 				{ hostsToShow.map( ( { id, name } ) => (
-					<VerticalNavItem
-						isPlaceholder={ loadingProviderGuess }
+					<div
+						className={
+							loadingProviderGuess
+								? 'host-selection__list-item'
+								: 'host-selection__list-item-placeholder'
+						}
 						key={ id }
-						path={ settingsCredentialsPath( siteSlug, id ) }
+						onClick={ () => onHostChange( id ) }
 					>
-						<div className="host-selection__host-guess-badge">
-							{ name }
-							{ guess === id && (
-								<Badge>{ translate( 'If we had to guess your host, this would be it' ) }</Badge>
-							) }
-						</div>
-					</VerticalNavItem>
+						{ /* <div className="host-selection__host-guess-badge"> */ }
+						{ name }
+						{ guess === id && (
+							<Badge>{ translate( 'If we had to guess your host, this would be it' ) }</Badge>
+						) }
+						{ /* </div> */ }
+					</div>
 				) ) }
-				<VerticalNavItem
-					isPlaceholder={ loadingProviderGuess }
+				<div
+					className={
+						loadingProviderGuess
+							? 'host-selection__list-item'
+							: 'host-selection__list-item-placeholder'
+					}
 					key={ 'unknown' }
-					path={ settingsCredentialsPath( siteSlug, 'unknown' ) }
+					onClick={ () => onHostChange( 'unknown' ) }
 				>
 					{ translate(
 						'I don’t know / my host is not listed here / I have my server credentials'
 					) }
-				</VerticalNavItem>
-			</VerticalNav>
+				</div>
+			</div>
 		</div>
 	);
 };
