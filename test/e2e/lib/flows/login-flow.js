@@ -89,6 +89,7 @@ export default class LoginFlow {
 			return await loginPage.logonSSO();
 		}
 		loginPage = await LoginPage.Visit( this.driver );
+		driverManager.enableDebugMode( this.driver );
 
 		if ( emailSSO ) {
 			return await loginPage.login(
