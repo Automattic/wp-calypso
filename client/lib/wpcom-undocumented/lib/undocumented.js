@@ -767,7 +767,10 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
  */
 Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 	return this.wpcom.req.get(
-		{ path: `/domains/${ encodeURIComponent( domain ) }/titan/order-provisioning-url` },
+		{
+			path: `/emails/titan/${ encodeURIComponent( domain ) }/order-provisioning-url`,
+			apiNamespace: 'wpcom/v2',
+		},
 		fn
 	);
 };
