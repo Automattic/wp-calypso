@@ -23,6 +23,7 @@ $font-size: rem( 14px );
 	// client/layout/sidebar/style.scss
 	.sidebar {
 		background-color: var( --color-sidebar-background );
+		padding-bottom: 12px;
 
 		.sidebar__separator {
 			margin: 0 0 11px;
@@ -113,6 +114,11 @@ $font-size: rem( 14px );
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
 		}
+	}
+
+	&.is-sidebar-collapsed {
+		--sidebar-width-max: 36px;
+		--sidebar-width-min: 36px;
 	}
 
 	//client/my-sites/current-site/style.scss

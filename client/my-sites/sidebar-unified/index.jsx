@@ -11,7 +11,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -27,13 +27,17 @@ import SidebarSeparator from 'layout/sidebar/separator';
 import 'layout/sidebar-unified/style.scss';
 import 'state/admin-menu/init';
 import Spinner from 'components/spinner';
+import CollapseSidebar from './collapse-sidebar';
+import { expandSidebar, collapseSidebar } from 'state/ui/actions';
+import { getSidebarIsCollapsed } from 'state/ui/selectors';
 
 import './style.scss';
 
-export const MySitesSidebarUnified = ( { path } ) => {
+export const MySitesSidebarUnified = ( { path, dispatch } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
+	const sidebarCollapsed = useSelector( getSidebarIsCollapsed );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -59,7 +63,16 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 				return <MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />;
 			} ) }
+			<CollapseSidebar
+				key="collapse"
+				title="Collapse menu"
+				icon="dashicons-admin-collapse"
+				onClick={ () =>
+					sidebarCollapsed ? dispatch( expandSidebar ) : dispatch( collapseSidebar )
+				}
+			/>
 		</Sidebar>
 	);
 };
-export default MySitesSidebarUnified;
+
+export default connect()( MySitesSidebarUnified );

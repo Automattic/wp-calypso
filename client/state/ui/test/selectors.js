@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	getSidebarIsCollapsed,
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
@@ -266,6 +267,28 @@ describe( 'selectors', () => {
 
 			const selected = isSectionIsomorphic( {
 				ui: { section },
+			} );
+
+			expect( selected ).to.be.true;
+		} );
+	} );
+
+	describe( '#getSidebarIsCollapsed()', () => {
+		test( 'should return false', () => {
+			const selected = getSidebarIsCollapsed( {
+				ui: {
+					sidebarIsCollapsed: false,
+				},
+			} );
+
+			expect( selected ).to.be.false;
+		} );
+
+		test( 'should return true', () => {
+			const selected = getSidebarIsCollapsed( {
+				ui: {
+					sidebarIsCollapsed: true,
+				},
 			} );
 
 			expect( selected ).to.be.true;

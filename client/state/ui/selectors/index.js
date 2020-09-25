@@ -12,3 +12,4 @@ export { default as isSectionLoading } from './is-section-loading';
 export { default as isSectionIsomorphic } from './is-section-isomorphic';
 export { default as isPreviewShowing } from './is-preview-showing';
 export { default as masterbarIsVisible } from './masterbar-is-visible';
+export { default as getSidebarIsCollapsed } from './sidebar-visibility';
