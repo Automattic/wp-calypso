@@ -551,6 +551,8 @@ jobs:
 
   test-e2e:
     <<: *defaults
+    docker:
+      - image: circleci/node:12.18.3-browsers
     working_directory: ~/wp-calypso/test/e2e
     parallelism: 2
     steps:
@@ -569,7 +571,7 @@ jobs:
   test-e2e-canary:
     <<: *defaults
     docker:
-    - image: circleci/node:12.18.0-browsers
+      - image: circleci/node:12.18.3-browsers
     working_directory: ~/wp-calypso/test/e2e
     parameters:
       test-flags:
