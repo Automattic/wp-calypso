@@ -559,17 +559,9 @@ jobs:
       - prepare
       - run: *set-e2e-variables
       - run: *save-chrome-version
-      - run: *update-node
-      - run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use
-          yarn add chromedriver --force
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
-      - run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use
-          ./scripts/run-wrapper.sh
+      - run: ./scripts/run-wrapper.sh
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
@@ -578,7 +570,7 @@ jobs:
   test-e2e-canary:
     <<: *defaults
     docker:
-      - image: circleci/node:12.18.0-browsers
+      - image: circleci/node:12.18.4-browsers
     working_directory: ~/wp-calypso/test/e2e
     parameters:
       test-flags:
@@ -597,11 +589,6 @@ jobs:
       - prepare
       - run: *set-e2e-variables
       - run: *save-chrome-version
-      - run: *update-node
-      - run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use
-          yarn add chromedriver --force
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
@@ -643,8 +630,6 @@ jobs:
       - run:
           name: Run Canary Tests
           command: |
-            source $HOME/.nvm/nvm.sh
-            nvm use
             env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
