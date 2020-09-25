@@ -1,0 +1,37 @@
+{
+	"name": "@automattic/postal-code",
+	"version": "1.0.0-alpha.1",
+	"description": "Automattic Postal Code",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/postal-code"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"autocomplete.gif",
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "yarn run clean",
+		"watch": "tsc --project ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"lodash": "^4.17.15"
+	}
+}
