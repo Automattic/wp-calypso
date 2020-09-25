@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { Subscriptions } from './subscriptions';
+import Subscriptions from './subscriptions';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import ManagePurchase from 'me/purchases/manage-purchase';
