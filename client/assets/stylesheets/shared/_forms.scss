@@ -3,7 +3,6 @@
 // Global form elements
 // ==========================================================================
 input[type='text'],
-input[type='email'],
 textarea {
 	@extend %form-field;
 }
@@ -13,13 +12,7 @@ textarea {
 }
 
 input[type='text'],
-input[type='email'],
 textarea,
 label {
 	box-sizing: border-box;
-}
-
-input[type='email'] {
-	/*!rtl:ignore*/
-	direction: ltr;
 }
