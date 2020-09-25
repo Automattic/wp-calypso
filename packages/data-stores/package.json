@@ -48,10 +48,8 @@
 		"react": "^16.12.0"
 	},
 	"devDependencies": {
-		"@testing-library/react": "^10.0.5",
 		"jest-fetch-mock": "^2.1.2",
 		"nock": "^12.0.3",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0"
+		"wait-for-expect": "^3.0.2"
 	}
 }
