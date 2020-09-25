@@ -6,7 +6,6 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
-import { toNumber } from 'lodash';
 
 /**
  * Internal dependencies
@@ -83,7 +82,7 @@ class MembershipsProductsSection extends Component {
 
 	render() {
 		const { query, siteId, siteSlug, products, plansCount, translate } = this.props;
-		const validPage = this.isRequestedPageValid() ? toNumber( query.page ) : 1;
+		const validPage = this.isRequestedPageValid() ? parseInt( query.page ) : 1;
 		return (
 			<div className="memberships__products">
 				<QueryPostCounts siteId={ siteId } type="jp_mem_plan" />
