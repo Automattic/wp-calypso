@@ -7,15 +7,48 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import wpcom from 'lib/wp';
+import { errorNotice } from 'state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
 import SectionHeader from 'components/section-header';
+import { connect } from 'react-redux';
 
 class TitanControlPanelLoginCard extends React.Component {
 	state = {
 		isFetchingAutoLoginLink: false,
 	};
 
-	onLogInClick = () => {};
+	fetchTitanAutoLoginURL = ( orderId ) => {
+		return new Promise( ( resolve ) => {
+			wpcom.undocumented().getTitanControlPanelAutoLoginURL( orderId, ( serverError, result ) => {
+				resolve( {
+					error: serverError?.message,
+					loginURL: serverError ? null : result.auto_login_url,
+				} );
+			} );
+		} );
+	};
+
+	onLogInClick = () => {
+		if ( this.state.isFetchingAutoLoginLink ) {
+			return;
+		}
+
+		const { translate } = this.props;
+		this.setState( { isFetchingAutoLoginLink: true } );
+
+		// TODO: use actual orderID
+		this.fetchTitanAutoLoginURL( 12345 ).then( ( { error, loginURL } ) => {
+			this.setState( { isFetchingAutoLoginLink: false } );
+			if ( error ) {
+				this.props.errorNotice(
+					error ?? translate( 'An unknown error occurred. Please try again later.' )
+				);
+			} else {
+				window.location.href = loginURL;
+			}
+		} );
+	};
 
 	render() {
 		const { domain, translate } = this.props;
@@ -49,4 +82,8 @@ class TitanControlPanelLoginCard extends React.Component {
 	}
 }
 
-export default localize( TitanControlPanelLoginCard );
+export default connect( null, ( dispatch ) => {
+	return {
+		errorNotice: ( text, options ) => dispatch( errorNotice( text, options ) ),
+	};
+} )( localize( TitanControlPanelLoginCard ) );
