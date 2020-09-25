@@ -42,11 +42,15 @@ export default function SubscriptionsContent() {
 		return <PurchasesSite isPlaceholder />;
 	}
 
+	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
+		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
+
 	// If there are purchases, show them
 	if ( hasLoadedPurchases && purchases.length ) {
 		return (
 			<PurchasesSite
 				showHeader={ false }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				key={ selectedSite.ID }
 				siteId={ selectedSite.ID }
 				name={ selectedSite.name }
