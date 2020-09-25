@@ -68,7 +68,7 @@ export const MySitesSidebarUnified = ( { path, dispatch } ) => {
 				title="Collapse menu"
 				icon="dashicons-admin-collapse"
 				onClick={ () =>
-					sidebarCollapsed ? dispatch( expandSidebar ) : dispatch( collapseSidebar )
+					sidebarCollapsed ? dispatch( expandSidebar() ) : dispatch( collapseSidebar() )
 				}
 			/>
 		</Sidebar>
