@@ -14,7 +14,7 @@ import { flowRight, isEqual, size, without } from 'lodash';
 import ListEnd from 'components/list-end';
 import QueryPosts from 'components/data/query-posts';
 import Page from './page';
-import { preload } from 'sections-helper';
+import { preloadEditor } from 'sections-preloaders';
 import InfiniteScroll from 'components/infinite-scroll';
 import EmptyContent from 'components/empty-content';
 import NoResults from 'my-sites/no-results';
@@ -33,10 +33,6 @@ import SectionHeader from 'components/section-header';
 import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import config from 'config';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
 
 export default class PageList extends Component {
 	static propTypes = {

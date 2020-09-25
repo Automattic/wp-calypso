@@ -15,11 +15,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import QueryPostTypes from 'components/data/query-post-types';
 import EmptyContent from 'components/empty-content';
-import { preload } from 'sections-helper';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
+import { preloadEditor } from 'sections-preloaders';
 
 function PostTypeListEmptyContent( {
 	siteId,
