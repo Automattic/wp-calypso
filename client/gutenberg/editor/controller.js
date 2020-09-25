@@ -2,21 +2,15 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import { get, has, isInteger, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 import { EDITOR_START, POST_EDIT } from 'state/action-types';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'lib/route';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { requestSelectedEditor } from 'state/selected-editor/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
@@ -28,8 +22,6 @@ import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'config';
 import { Placeholder } from './placeholder';
 import { makeLayout, render } from 'controller';
-import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
-import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/window-events';
 import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
 import { requestSite } from 'state/sites/actions';
@@ -60,28 +52,6 @@ function getPostID( context ) {
 
 	// both post and site are in the path
 	return parseInt( context.params.post, 10 );
-}
-
-function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			if ( ! siteId ) {
-				return;
-			}
-			const selectedEditor = getSelectedEditor( state, siteId );
-			if ( ! selectedEditor ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch(
-			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
-		);
-	} );
 }
 
 /**
@@ -162,38 +132,6 @@ export const authenticate = ( context, next ) => {
 	} else {
 		window.location.replace( wpAdminLoginUrl );
 	}
-};
-
-export const redirect = async ( context, next ) => {
-	const {
-		store: { getState },
-	} = context;
-	const tmpState = getState();
-	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
-	if ( ! selectedEditor ) {
-		await waitForSiteIdAndSelectedEditor( context );
-	}
-
-	const state = getState();
-	const siteId = getSelectedSiteId( state );
-
-	if ( shouldRedirectGutenberg( state, siteId ) ) {
-		const postType = determinePostType( context );
-		const postId = getPostID( context );
-
-		const url =
-			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
-				? getGutenbergEditorUrl( state, siteId, postId, postType )
-				: getSiteEditorUrl( state, siteId );
-		// pass along parameters, for example press-this
-		return window.location.replace( addQueryArgs( context.query, url ) );
-	}
-
-	if ( shouldLoadGutenberg( state, siteId ) ) {
-		return next();
-	}
-
-	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
 };
 
 function getPressThisData( query ) {
