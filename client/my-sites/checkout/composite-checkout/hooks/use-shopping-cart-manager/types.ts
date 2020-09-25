@@ -121,6 +121,6 @@ export type ShoppingCartState = {
 	loadingError?: string;
 	loadingErrorType?: ShoppingCartError;
 	variantRequestStatus: VariantRequestStatus;
-	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
+	variantSelectOverride: VariantSelectOverride[];
 	queuedActions: ShoppingCartAction[];
 };
