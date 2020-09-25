@@ -20,6 +20,7 @@ import QuerySites from 'components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
+import { managePurchase } from '../paths';
 
 /**
  * Style dependencies
@@ -28,6 +29,7 @@ import './style.scss';
 
 const PurchasesSite = ( {
 	showHeader = true,
+	getManagePurchaseUrlFor = managePurchase,
 	hasLoadedSite,
 	isPlaceholder,
 	site,
@@ -46,6 +48,7 @@ const PurchasesSite = ( {
 	} else {
 		items = purchases.map( ( purchase ) => (
 			<PurchaseItem
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				key={ purchase.id }
 				slug={ slug }
 				isDisconnectedSite={ ! site }
@@ -87,6 +90,7 @@ const PurchasesSite = ( {
 
 PurchasesSite.propTypes = {
 	showHeader: PropTypes.bool,
+	getManagePurchaseUrlFor: PropTypes.func,
 	isPlaceholder: PropTypes.bool,
 	siteId: PropTypes.number,
 	purchases: PropTypes.array,
