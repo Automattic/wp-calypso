@@ -101,6 +101,7 @@ import './style.scss';
 
 class ManagePurchase extends Component {
 	static propTypes = {
+		showHeader: PropTypes.bool,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
@@ -113,6 +114,10 @@ class ManagePurchase extends Component {
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		userId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		showHeader: true,
 	};
 
 	state = {
@@ -496,7 +501,9 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
-				<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+				{ this.props.showHeader && (
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
