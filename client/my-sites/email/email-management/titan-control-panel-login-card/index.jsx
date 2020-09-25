@@ -3,6 +3,7 @@
  */
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -81,6 +82,10 @@ class TitanControlPanelLoginCard extends React.Component {
 		);
 	}
 }
+
+TitanControlPanelLoginCard.propTypes = {
+	domain: PropTypes.object.isRequired,
+};
 
 export default connect( null, ( dispatch ) => {
 	return {
