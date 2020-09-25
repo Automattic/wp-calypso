@@ -373,11 +373,14 @@ export function checkForConsoleErrors( driver ) {
 }
 
 export function printConsole( driver ) {
+	console.log( 5 );
 	driver
 		.manage()
 		.logs()
 		.get( 'browser' )
 		.then( ( logs ) => {
+			console.log( typeof logs );
+			console.log( logs.length );
 			logs.forEach( ( log ) => console.log( log ) );
 		} );
 }

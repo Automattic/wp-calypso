@@ -18,9 +18,9 @@ import * as videoRecorder from '../lib/video-recorder';
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 let allPassed = true; // For SauceLabs status
 
-before( function() {
-	if( process.env.LIVEBRANCHES ){
-		const isCalyspsoLiveURL =  config.get( 'calypsoBaseURL').includes( 'calypso.live' );
+before( function () {
+	if ( process.env.LIVEBRANCHES ) {
+		const isCalyspsoLiveURL = config.get( 'calypsoBaseURL' ).includes( 'calypso.live' );
 		assert.strictEqual( isCalyspsoLiveURL, true );
 	}
 } );
@@ -129,8 +129,11 @@ afterEach( async function () {
 } );
 
 afterEach( async function () {
+	console.log( 1 );
 	this.timeout( afterHookTimeoutMS );
+	console.log( 2 );
 	const driver = global.__BROWSER__;
+	console.log( 3 );
 	await driverHelper.printConsole( driver );
 } );
 
