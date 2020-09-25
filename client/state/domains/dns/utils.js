@@ -67,6 +67,7 @@ function isValidData( data, type ) {
 		case 'AAAA':
 			return data.match( /^[a-f0-9:]+$/i );
 		case 'CNAME':
+		case 'NS':
 		case 'MX':
 			return isValidDomain( data );
 		case 'TXT':
