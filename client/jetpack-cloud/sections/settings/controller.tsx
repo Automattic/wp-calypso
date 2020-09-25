@@ -8,6 +8,7 @@ import page from 'page';
  * Internal dependencies
  */
 import Credentials from './credentials';
+import AdvancedCredentials from './advanced-credentials';
 import HostSelection from './host-selection';
 import SettingsPage from './main';
 import Top from './top';
@@ -30,6 +31,11 @@ export const settings: PageJS.Callback = ( context, next ) => {
 
 export const hostSelection: PageJS.Callback = ( context, next ) => {
 	context.primary = <HostSelection />;
+	next();
+};
+
+export const advancedCredentials: PageJS.Callback = ( context, next ) => {
+	context.primary = <AdvancedCredentials />;
 	next();
 };
 
