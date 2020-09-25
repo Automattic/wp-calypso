@@ -3,13 +3,12 @@ version: 2.1
 orbs:
   slack: circleci/slack@3.4.2
   win: circleci/windows@2.2.0
-  browser-tools: circleci/browser-tools@1.0.1
 
 references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:12.18.4
+      - image: circleci/node-browsers:12.18.4
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -559,11 +558,9 @@ jobs:
     parallelism: 2
     steps:
       - prepare
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
       - run: *set-e2e-variables
       - run: *save-chrome-version
-      - run: sudo apt-get install -y xvfb
+      - run: *update-node
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
@@ -574,6 +571,8 @@ jobs:
 
   test-e2e-canary:
     <<: *defaults
+    docker:
+    - image: circleci/node-browsers:12.18.0
     working_directory: ~/wp-calypso/test/e2e
     parameters:
       test-flags:
@@ -590,11 +589,10 @@ jobs:
         default: $SLACK_E2E
     steps:
       - prepare
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
       - run: *set-e2e-variables
       - run: *save-chrome-version
-      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei xvfb
+      - run: *update-node
+      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
           command: |
