@@ -11,8 +11,8 @@
  * External dependencies
  */
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { isWithinBreakpoint } from '@automattic/viewport';
+import { connect, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -30,9 +30,11 @@ import 'calypso/layout/sidebar-unified/style.scss';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
+import { expandSidebar, collapseSidebar } from 'calypso/state/ui/actions';
+import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-export const MySitesSidebarUnified = ( { path } ) => {
+export const MySitesSidebarUnified = ( { path, dispatch } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
@@ -54,7 +56,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 			return () => clearTimeout( timer );
 		}
 	}, [ collapsed ] );
-
+	const sidebarCollapsed = useSelector( getSidebarIsCollapsed );
 	/**
 	 * If there are no menu items and we are currently requesting some,
 	 * then show a spinner. The check for menuItems is necessary because
@@ -101,9 +103,14 @@ export const MySitesSidebarUnified = ( { path } ) => {
 				key="collapse"
 				title="Collapse menu"
 				icon="dashicons-admin-collapse"
-				onClick={ () => setCollapsed( ! collapsed ) }
+				onClick={ () =>
+					sidebarCollapsed
+						? dispatch( expandSidebar ) && setCollapsed( ! collapsed )
+						: dispatch( collapseSidebar ) && setCollapsed( collapsed )
+				}
 			/>
 		</Sidebar>
 	);
 };
-export default MySitesSidebarUnified;
+
+export default connect()( MySitesSidebarUnified );

@@ -5,6 +5,7 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
 	PREVIEW_IS_SHOWING,
+	SIDEBAR_TOGGLE_VISIBILITY,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'calypso/state/action-types';
 import { combineReducers, withoutPersistence } from 'calypso/state/utils';
@@ -77,6 +78,22 @@ export const isNotificationsOpen = function ( state = false, { type } ) {
 	return state;
 };
 
+/**
+ * Tracks if the sidebar is collapsed
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+
+export const sidebarVisibility = ( state = false, { type, sidebarIsCollapsed } ) => {
+	switch ( type ) {
+		case SIDEBAR_TOGGLE_VISIBILITY:
+			return sidebarIsCollapsed;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	actionLog,
 	checkout,
@@ -86,6 +103,7 @@ const reducer = combineReducers( {
 	language,
 	layoutFocus,
 	masterbarVisibility,
+	sidebarVisibility,
 	mediaModal,
 	postTypeList,
 	preview,

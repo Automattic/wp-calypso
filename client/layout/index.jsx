@@ -25,6 +25,7 @@ import { isOffline } from 'state/application/selectors';
 import {
 	getSelectedSiteId,
 	masterbarIsVisible,
+	getSidebarIsCollapsed,
 	getSectionGroup,
 	getSectionName,
 	getSelectedSite,
@@ -72,6 +73,7 @@ class Layout extends Component {
 		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
 		shouldShowAppBanner: PropTypes.bool,
+		sidebarCollapsed: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -152,6 +154,7 @@ class Layout extends Component {
 					isWooOAuth2Client( this.props.oauth2Client ) &&
 					this.props.wccomFrom,
 				'is-nav-unification': config.isEnabled( 'nav-unification' ),
+				'is-sidebar-collapsed': this.props.sidebarCollapsed,
 			}
 		);
 
@@ -275,10 +278,12 @@ export default connect( ( state ) => {
 	const isEligibleForJITM =
 		[ 'stats', 'plans', 'themes', 'plugins', 'comments' ].indexOf( sectionName ) >= 0;
 	const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
+	const sidebarCollapsed = getSidebarIsCollapsed( state );
 
 	return {
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+		sidebarCollapsed,
 		isJetpack,
 		isJetpackLogin,
 		isJetpackWooCommerceFlow,

@@ -6,8 +6,17 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isNotificationsOpen, selectedSiteId, siteSelectionInitialized } from '../reducer';
-import { SELECTED_SITE_SET, NOTIFICATIONS_PANEL_TOGGLE } from 'state/action-types';
+import {
+	isNotificationsOpen,
+	selectedSiteId,
+	sidebarVisibility,
+	siteSelectionInitialized,
+} from '../reducer';
+import {
+	SELECTED_SITE_SET,
+	NOTIFICATIONS_PANEL_TOGGLE,
+	SIDEBAR_TOGGLE_VISIBILITY,
+} from 'state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#selectedSiteId()', () => {
@@ -89,6 +98,32 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.true;
+		} );
+	} );
+
+	describe( '#getSidebarIsCollapsed()', () => {
+		test( 'should default to false', () => {
+			const state = sidebarVisibility( undefined, {} );
+
+			expect( state ).to.be.false;
+		} );
+
+		test( 'should be true when collapsed', () => {
+			const state = sidebarVisibility( null, {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				sidebarIsCollapsed: true,
+			} );
+
+			expect( state ).to.be.true;
+		} );
+
+		test( 'should be false when expanded', () => {
+			const state = sidebarVisibility( null, {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				sidebarIsCollapsed: false,
+			} );
+
+			expect( state ).to.be.false;
 		} );
 	} );
 } );
