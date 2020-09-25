@@ -490,7 +490,7 @@ export function checkout( siteSlug: string, products: string | string[] ): void 
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
 	const path = siteSlug
-		? `/checkout/${ siteSlug }`
+		? `/checkout/${ siteSlug }/${ isJetpackCloud() ? productsArray.join( ',' ) : '' }`
 		: `/jetpack/connect/${ productsArray.join( ',' ) }`;
 
 	if ( isJetpackCloud() ) {

@@ -30,16 +30,19 @@ interface BasePageProps {
 
 export interface SelectorPageProps extends BasePageProps {
 	defaultDuration?: Duration;
+	siteSlug?: string;
 }
 
 export interface DetailsPageProps extends BasePageProps {
 	duration?: Duration;
 	productSlug: string;
+	siteSlug?: string;
 }
 
 export interface UpsellPageProps extends BasePageProps {
 	duration?: Duration;
 	productSlug: string;
+	siteSlug?: string;
 }
 
 export interface WithRedirectToSelectorProps extends BasePageProps {

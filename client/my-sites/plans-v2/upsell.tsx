@@ -180,8 +180,15 @@ const UpsellComponent = ( {
 	);
 };
 
-const UpsellPage = ( { duration, productSlug, rootUrl, header }: UpsellPageProps ) => {
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+const UpsellPage = ( {
+	duration,
+	siteSlug: siteSlugProp,
+	productSlug,
+	rootUrl,
+	header,
+}: UpsellPageProps ) => {
+	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlug = siteSlugProp || siteSlugState;
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isLoading = useIsLoading( siteId );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
