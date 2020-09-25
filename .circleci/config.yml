@@ -239,6 +239,22 @@ references:
     fail_only: true
     mentions: '$CIRCLE_USERNAME'
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
+  downgrade-chrome-browser: &downgrade-chrome-browser
+    name: Downgrade Chrome
+    command: |
+      cd /tmp
+      wget --no-check-certificate https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb
+      sudo dpkg -i google-chrome-stable_${CHROME_VERSION}_amd64.deb || sudo apt -y -f install
+      rm google-chrome-stable_${CHROME_VERSION}_amd64.deb;
+      sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' "/opt/google/chrome/google-chrome"
+      CHROME_VERSION="$(google-chrome --version)"
+      CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')"
+      CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*}
+      CHROMEDRIVER_VERSION=$(curl --silent --show-error --location --fail --retry 4 --retry-delay 5 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_RELEASE})
+      curl --silent --show-error --location --fail --retry 4 --retry-delay 5 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+      cd /tmp && unzip chromedriver_linux64.zip && rm -rf chromedriver_linux64.zip && sudo mv chromedriver /usr/local/bin/chromedriver && sudo chmod +x /usr/local/bin/chromedriver
+      google-chrome --version
+      chromedriver --version
 
 commands:
   prepare:
@@ -551,22 +567,16 @@ jobs:
 
   test-e2e:
     <<: *defaults
-    docker:
-      - image: circleci/node:12.18.0-browsers
     working_directory: ~/wp-calypso/test/e2e
     parallelism: 2
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *downgrade-chrome-browser
       - run: *save-chrome-version
-      - run: *update-node
-      - run: cp $CHROMEDRIVER_FILEPATH ./node_modules/.bin/
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
-      - run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use
-          ./scripts/run-wrapper.sh
+      - run: ./scripts/run-wrapper.sh
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
@@ -574,8 +584,6 @@ jobs:
 
   test-e2e-canary:
     <<: *defaults
-    docker:
-      - image: circleci/node:12.18.0-browsers
     working_directory: ~/wp-calypso/test/e2e
     parameters:
       test-flags:
@@ -593,9 +601,8 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *downgrade-chrome-browser
       - run: *save-chrome-version
-      - run: *update-node
-      - run: cp $CHROMEDRIVER_FILEPATH ./node_modules/.bin/
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
@@ -637,8 +644,6 @@ jobs:
       - run:
           name: Run Canary Tests
           command: |
-            source $HOME/.nvm/nvm.sh
-            nvm use
             env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
