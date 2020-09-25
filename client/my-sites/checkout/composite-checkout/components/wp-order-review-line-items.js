@@ -23,7 +23,7 @@ import { ItemVariationPicker } from './item-variation-picker';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import { planMatches } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY } from 'lib/plans/constants';
-import { currentUserHasFlag } from 'state/current-user/selectors';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
 
 export function WPOrderReviewSection( { children, className } ) {
@@ -51,8 +51,9 @@ function WPLineItem( {
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	const deleteButtonId = `checkout-delete-button-${ item.id }`;
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const isPwpoUser = useSelector( ( state ) =>
-		currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	const isPwpoUser = useSelector(
+		( state ) =>
+			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
 	const modalCopy = returnModalCopy(
 		item.type,
