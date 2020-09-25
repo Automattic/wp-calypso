@@ -7,14 +7,14 @@ import i18n from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
 import { isWebUri as isValidUrl } from 'valid-url';
-import { get, has, startsWith } from 'lodash';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { recordPlaceholdersTiming } from 'lib/perfmon';
 import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
-import { addQueryArgs, addSiteFragment } from 'lib/route';
+import { addSiteFragment } from 'lib/route';
 import PostEditor from './post-editor';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { startEditingNewPost, stopEditingPost } from 'state/editor/actions';
@@ -22,11 +22,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import { getEditorNewPostPath } from 'state/editor/selectors';
 import { getEditURL } from 'state/posts/utils';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
-import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
-import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -136,78 +131,6 @@ const getAnalyticsPathAndTitle = ( postType, postId, postToCopyId ) => {
 		return [ `/edit/${ postType }/:site/:post_id`, 'Custom Post Type > Edit' ];
 	}
 };
-
-function waitForSiteIdAndSelectedEditor( context ) {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const siteId = getSelectedSiteId( state );
-			if ( ! siteId ) {
-				return;
-			}
-			const selectedEditor = getSelectedEditor( state, siteId );
-			if ( ! selectedEditor ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch(
-			requestSelectedEditor( getSelectedSiteId( context.store.getState() ) )
-		);
-	} );
-}
-
-function waitForEditorSelection( context, siteId, newEditor ) {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			const state = context.store.getState();
-			const editor = getSelectedEditor( state, siteId );
-			if ( editor.indexOf( newEditor ) === -1 ) {
-				return;
-			}
-			unsubscribe();
-			resolve();
-		} );
-		context.store.dispatch( setSelectedEditor( siteId, newEditor ) );
-	} );
-}
-
-async function redirectIfBlockEditor( context, next ) {
-	const tmpState = context.store.getState();
-	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
-	if ( ! selectedEditor ) {
-		await waitForSiteIdAndSelectedEditor( context );
-	}
-
-	let state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-
-	// URLs with a set-editor=<editorName> param are used for indicating that the user wants to use always the given
-	// editor, so we update the selected editor for the current user/site pair.
-	const newEditorChoice = get( context.query, 'set-editor' );
-	const allowedEditors = [ 'classic', 'gutenberg' ];
-
-	if ( allowedEditors.indexOf( newEditorChoice ) > -1 ) {
-		await waitForEditorSelection( context, siteId, newEditorChoice );
-		state = context.store.getState();
-	}
-
-	if ( ! shouldLoadGutenberg( state, siteId ) ) {
-		return next();
-	}
-
-	const postType = determinePostType( context );
-	const postId = getPostID( context );
-	// pass along parameters, for example press-this
-	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
-	const url = addQueryArgs( context.query, gutenbergUrl );
-	if ( shouldRedirectGutenberg( state, siteId ) ) {
-		return window.location.replace( url );
-	}
-	return page.redirect( url );
-}
 
 export default {
 	post: function ( context, next ) {
@@ -326,13 +249,5 @@ export default {
 
 		page.redirect( redirectWithParams );
 		return false;
-	},
-
-	gutenberg: ( context, next ) => {
-		if ( ! has( window, 'location.replace' ) ) {
-			next();
-		}
-
-		redirectIfBlockEditor( context, next );
 	},
 };
