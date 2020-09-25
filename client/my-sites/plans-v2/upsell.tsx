@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -86,6 +86,10 @@ const UpsellComponent = ( {
 		() => JETPACK_BACKUP_PRODUCTS.some( ( slug ) => slug === upsellSlug ),
 		[ upsellSlug ]
 	);
+
+	useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [] );
 
 	return (
 		<Main className="upsell" wideLayout>

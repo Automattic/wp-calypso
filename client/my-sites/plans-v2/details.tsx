@@ -3,7 +3,7 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -52,6 +52,10 @@ const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPagePro
 	const hasUpsell = useHasProductUpsell();
 	const translate = useTranslate();
 	const isLoading = useIsLoading( siteId );
+
+	useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [] );
 
 	// If the product slug isn't one that has options, proceed to the upsell.
 	if ( ! ( PRODUCTS_WITH_OPTIONS as readonly string[] ).includes( productSlug ) ) {
