@@ -156,10 +156,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleMoreToolsAndOptions() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='More tools & options' or @aria-label='Options']" )
+			By.xpath( "//button[@aria-label='Options']" )
 		);
 
-		await this.driver.sleep( 1000 );
+		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
+		// but it doesn't seem to work consistently, but this is pending improvement as this adds up on total time.
+		await this.driver.sleep( 2000 );
 	}
 
 	async switchToCodeView() {
@@ -167,9 +169,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath(
-				"//div[@aria-label='More tools & options' or @aria-label='Options']/div[2]/div[2]/button[2]"
-			)
+			By.xpath( "//div[@aria-label='Options']/div[2]/div[2]/button[2]" )
 		);
 
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
@@ -186,9 +186,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath(
-				"//div[@aria-label='More tools & options' or @aria-label='Options']/div[2]/div[2]/button[1]"
-			)
+			By.xpath( "//div[@aria-label='Options']/div[2]/div[2]/button[1]" )
 		);
 
 		// close the menu
