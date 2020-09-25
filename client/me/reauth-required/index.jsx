@@ -250,7 +250,7 @@ const ReauthRequired = createReactClass( {
 		const shouldEnableSmsButton =
 			this.state.smsRequestsAllowed || ( method === 'sms' && twoFactorAuthType === 'webauthn' );
 
-		const hasSmsRecoveryNumber = !! this.props.twoStepAuthorization.data.two_step_sms_last_four
+		const hasSmsRecoveryNumber = !! this.props?.twoStepAuthorization?.data?.two_step_sms_last_four
 			?.length;
 
 		return (

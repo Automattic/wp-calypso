@@ -192,7 +192,7 @@ class Security2faCodePrompt extends React.Component {
 
 	render() {
 		const method = twoStepAuthorization.isTwoStepSMSEnabled() ? 'sms' : 'app';
-		const hasSmsRecoveryNumber = !! twoStepAuthorization.data.two_step_sms_last_four?.length;
+		const hasSmsRecoveryNumber = !! twoStepAuthorization?.data?.two_step_sms_last_four?.length;
 
 		return (
 			<form className="security-2fa-code-prompt" onSubmit={ this.onSubmit }>
