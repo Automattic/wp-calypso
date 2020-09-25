@@ -29,7 +29,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		this.prePublishButtonSelector = By.css( '.editor-post-publish-panel__toggle' );
 		this.publishHeaderSelector = By.css( '.editor-post-publish-panel__header' );
 		this.editoriFrameSelector = By.css( '.calypsoify.is-iframe iframe' );
-		this.optionsPopupSelector = By.css( 'div[role="menu"][aria-label="Options"]' );
 	}
 
 	static async Expect( driver, editorType ) {
@@ -157,18 +156,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async toggleMoreToolsAndOptions() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//button[@aria-label='Options']" )
+			By.xpath( "//button[@aria-label='More tools & options' or @aria-label='Options']" )
 		);
+
+		await this.driver.sleep( 1000 );
 	}
 
 	async switchToCodeView() {
 		await this.toggleMoreToolsAndOptions();
 
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.optionsPopupSelector );
-
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='Options']/div[2]/div[2]/button[2]" )
+			By.xpath(
+				"//div[@aria-label='More tools & options' or @aria-label='Options']/div[2]/div[2]/button[2]"
+			)
 		);
 
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
@@ -182,8 +183,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 	async switchToBlockEditor() {
 		await this.toggleMoreToolsAndOptions();
-
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.optionsPopupSelector );
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
