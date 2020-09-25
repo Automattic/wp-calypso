@@ -277,12 +277,9 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 					verifyBlockInEditor( blockClass, siteName );
 
-					step(
-						'Switch to the code editor and copy the code markup for the block',
-						async function () {
-							currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
-						}
-					);
+					step( 'Copy the markup for the block', async function () {
+						currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
+					} );
 
 					verifyBlockInPublishedPage( blockClass, siteName );
 				} );
@@ -290,9 +287,9 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 					step( `Switches to edge site (${ edgeSiteName })`, async function () {
 						// Re-use the same session created earlier but change the site
 						await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
+					} );
 
-						// Loads the same blocks from the non-edge site by pasting the code markup code in the code editor
-						// and then switching to the block editor
+					step( 'Load block via markup copied from non-edge site', async function () {
 						await gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
 						await gEditorComponent.switchToBlockEditor();
 					} );

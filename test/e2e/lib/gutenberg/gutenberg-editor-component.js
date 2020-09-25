@@ -169,7 +169,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='Options']/div[2]/div[2]/button[2]" )
+			By.xpath( "//div[@aria-label='Options']/div[2]/div[2]/button[text()='Code editor']" )
 		);
 
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
@@ -178,7 +178,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// close the menu
 		await this.toggleMoreToolsAndOptions();
 
-		return this.driver.findElement( textAreaSelector );
+		return textAreaSelector;
 	}
 
 	async switchToBlockEditor() {
@@ -194,17 +194,13 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async getBlocksCode() {
-		await this.switchToCodeView();
-		const blocksCode = await this.driver
-			.findElement( By.id( 'post-content-0' ) )
-			.getAttribute( 'value' );
-
-		return blocksCode;
+		const textAreaSelector = await this.switchToCodeView();
+		return this.driver.findElement( textAreaSelector ).getAttribute( 'value' );
 	}
 
 	async setBlocksCode( blocksCode ) {
-		await this.switchToCodeView();
-		await driverHelper.setWhenSettable( this.driver, By.id( 'post-content-0' ), blocksCode );
+		const textAreaSelector = await this.switchToCodeView();
+		await driverHelper.setWhenSettable( this.driver, textAreaSelector, blocksCode );
 	}
 
 	blockDisplayedInEditor( dataTypeSelectorVal ) {
