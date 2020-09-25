@@ -16,20 +16,15 @@ import { getTheme } from 'state/themes/selectors';
 function MyTheme( { theme } ) {
 	return (
 		<div>
-			<QueryTheme
-				siteId={ 3584907 }
-				themeId={ 'twentysixteen' } />
-				<Theme theme={ theme } />
-			} }
+			<QueryTheme siteId={ 3584907 } themeId={ 'twentysixteen' } />
+			<Theme theme={ theme } />} }
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		theme: getTheme( state, 3584907, 'twentysixteen' )
-	} )
-)( MyTheme );
+export default connect( ( state ) => ( {
+	theme: getTheme( state, 3584907, 'twentysixteen' ),
+} ) )( MyTheme );
 ```
 
 ## Props

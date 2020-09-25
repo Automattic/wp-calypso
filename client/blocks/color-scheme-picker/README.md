@@ -10,14 +10,12 @@ When the props `temporarySelection` and `onSelection` are provided, a selection 
 ```jsx
 import ColorSchemePicker from 'blocks/color-scheme-picker';
 
-handleColorSchemeSelection = event => {
+handleColorSchemeSelection = ( event ) => {
 	console.log( event.currentTarget.value );
 };
 
-render() {
-	return (
-		<ColorSchemePicker temporarySelection onSelection={ this.handleColorSchemeSelection } />
-	);
+function render() {
+	return <ColorSchemePicker temporarySelection onSelection={ this.handleColorSchemeSelection } />;
 }
 ```
 

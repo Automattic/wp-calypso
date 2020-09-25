@@ -96,6 +96,21 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( 'https://example.com/foo.png?width=90' ) ).toBeNull();
 		} );
 
+		test( 'should remove known resize parameters from urls', () => {
+			expect( safeImageUrl( 'https://example.com/foo.jpg?w=123' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?h=123' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?resize=width' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?fit=min' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+		} );
+
 		test( 'should return null for SVG images', () => {
 			expect( safeImageUrl( 'https://example.com/foo.svg' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.svg?ssl=1' ) ).toBeNull();

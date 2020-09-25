@@ -11,10 +11,8 @@ import React from 'react';
 import ClipboardButtonInput from 'components/clipboard-button-input';
 
 export default function MyComponent() {
-	return (
-		<ClipboardButtonInput value="https://example.wordpress.com/" />
-	);
-};
+	return <ClipboardButtonInput value="https://example.wordpress.com/" />;
+}
 ```
 
 ## Props

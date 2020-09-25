@@ -13,9 +13,9 @@ The component already provides a few helpers which are used for Calypso e.g. _Pr
 ```jsx
 import EnvironmentBadge, { PreferencesHelper } from 'components/environment-badge';
 
-<EnvironmentBdage badge="development" feedbackURL="http://feedback">
-  <PreferencesHelper />
-</EnvironmentBadge>
+<EnvironmentBadge badge="development" feedbackURL="http://feedback">
+	<PreferencesHelper />
+</EnvironmentBadge>;
 ```
 
 ## Props

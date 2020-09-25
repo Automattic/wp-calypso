@@ -1,19 +1,15 @@
 /**
  * External dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { isEmpty, isArray, noop, map } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { withInstanceId, compose } from '@wordpress/compose';
 import { BaseControl } from '@wordpress/components';
 import { memo } from '@wordpress/element';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies

@@ -12,17 +12,11 @@ export default class extends React.Component {
 
 	onTimezoneSelect = ( zone ) => {
 		console.log( `timezone selected: %s`, zone.value );
-	}
+	};
 
 	render() {
-		return (
-			<Timezone
-				selectedZone="Indian/Mahe"
-				onSelect={ this.onTimezoneSelect }
-			/>
-		);
+		return <Timezone selectedZone="Indian/Mahe" onSelect={ this.onTimezoneSelect } />;
 	}
-
 }
 ```
 

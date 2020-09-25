@@ -22,11 +22,9 @@ function MyJetpackConnectionData( { jetpackConnection } ) {
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		jetpackConnection: getJetpackUserConnection( state, 12345678 )
-	} )
-)( MyJetpackConnectionData );
+export default connect( ( state ) => ( {
+	jetpackConnection: getJetpackUserConnection( state, 12345678 ),
+} ) )( MyJetpackConnectionData );
 ```
 
 ## Props

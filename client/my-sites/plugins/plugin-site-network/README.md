@@ -7,8 +7,8 @@ This component is used to display a single instance of a plugin within a multisi
 ```js
 import PluginSiteNetwork from 'my-sites/plugins/plugin-site/plugin-site-network';
 
-render() {
-    return (
+function render() {
+	return (
 		<PluginSiteNetwork
 			site={ site }
 			plugin={ plugin }

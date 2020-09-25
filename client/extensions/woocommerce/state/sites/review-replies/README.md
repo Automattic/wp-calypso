@@ -13,11 +13,13 @@ Pulls admin replies to a specific review from the remote site.
 This is saved on a per-site basis. All replies are collected in `reviewReplies`, under its corresponding `reviewId`.
 
 ```js
-{
-	"reviewReplies": {
-		555: [ ... ]
-	}
-}
+const object = {
+	reviewReplies: {
+		555: [
+			/*...*/
+		],
+	},
+};
 ```
 
 ## Selectors

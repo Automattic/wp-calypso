@@ -7,12 +7,12 @@ This component is used to display the icon for a plugin. It takes a plugin image
 ```js
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 
-render() {
-    return (
-        <div className="your-stuff">
-              <PluginIcon image={ plugin.icon } />
-        </div>
-    );
+function render() {
+	return (
+		<div className="your-stuff">
+			<PluginIcon image={ plugin.icon } />
+		</div>
+	);
 }
 ```
 

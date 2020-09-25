@@ -31,7 +31,6 @@ import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
 import { getStatsPathForTab } from 'lib/route';
 import { domainManagementList } from 'my-sites/domains/paths';
-import WordPressWordmark from 'components/wordpress-wordmark';
 import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
 import { updateSiteMigrationMeta } from 'state/sites/actions';
 import { requestHttpData } from 'state/data-layer/http-data';
@@ -39,7 +38,6 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { hasUnseen } from 'state/reader-ui/seen-posts/selectors';
 import getPreviousPath from 'state/selectors/get-previous-path.js';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import JetpackLogo from 'components/jetpack-logo';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -100,10 +98,6 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
-	};
-
-	clickClose = () => {
-		this.props.recordTracksEvent( 'calypso_masterbar_close_clicked' );
 	};
 
 	preloadMySites = () => {
@@ -170,36 +164,19 @@ class MasterbarLoggedIn extends React.Component {
 			previousPath,
 			siteSlug,
 			isJetpackNotAtomic,
+			title,
 		} = this.props;
 
-		if ( isCheckout === true ) {
-			let closeUrl = siteSlug ? '/plans/' + siteSlug : '/plans';
-			if (
-				'' !== previousPath &&
-				previousPath !== window.location.href &&
-				! previousPath.includes( '/checkout/no-site' )
-			) {
-				closeUrl = previousPath;
-			}
-
+		if ( isCheckout ) {
 			return (
-				<Masterbar>
-					<div className="masterbar__secure-checkout">
-						<Item
-							url={ closeUrl }
-							icon="cross"
-							className="masterbar__close-button"
-							onClick={ this.clickClose }
-							tooltip={ translate( 'Close Checkout' ) }
-							tipTarget="close"
-						/>
-						{ ! isJetpackNotAtomic && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
-						{ isJetpackNotAtomic && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
-						<span className="masterbar__secure-checkout-text">
-							{ translate( 'Secure checkout' ) }
-						</span>
-					</div>
-				</Masterbar>
+				<AsyncLoad
+					require="layout/masterbar/checkout"
+					placeholder={ null }
+					title={ title }
+					isJetpackNotAtomic={ isJetpackNotAtomic }
+					previousPath={ previousPath }
+					siteSlug={ siteSlug }
+				/>
 			);
 		}
 

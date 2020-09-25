@@ -48,6 +48,7 @@ import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
 import getNewSiteComingSoonSetting from 'state/selectors/get-new-site-coming-soon-setting';
+import getSiteId from 'state/selectors/get-site-id';
 
 // Current directory dependencies
 import { isValidLandingPageVertical } from 'lib/signup/verticals';
@@ -272,6 +273,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	const state = reduxStore.getState();
 	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
+	const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
+
+	if ( isManageSiteFlow ) {
+		const siteSlug = get( getSignupDependencyStore( state ), 'siteSlug', undefined );
+		const siteId = getSiteId( state, siteSlug );
+		const providedDependencies = { domainItem, siteId, siteSlug, themeItem };
+		addDomainToCart( callback, dependencies, stepData, reduxStore, siteSlug, providedDependencies );
+		return;
+	}
+
 	const newSiteParams = getNewSiteParams( {
 		dependencies,
 		flowToCheck,
@@ -346,14 +357,21 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
 
-export function addDomainToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
-	const { siteSlug } = dependencies;
+export function addDomainToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const slug = siteSlug || dependencies.siteSlug;
 	const { domainItem, googleAppsCartItem } = stepProvidedItems;
-	const providedDependencies = { domainItem };
+	const providedDependencies = stepProvidedDependencies || { domainItem };
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
 function processItemCart(
@@ -387,7 +405,7 @@ function processItemCart(
 			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
 			reduxStore
 		);
-	} else if ( user().get() ) {
+	} else if ( user().get() && siteSlug ) {
 		fetchSitesAndUser( siteSlug, addToCartAndProceed, reduxStore );
 	} else {
 		addToCartAndProceed();

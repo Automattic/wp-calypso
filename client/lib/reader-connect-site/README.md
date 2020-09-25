@@ -14,14 +14,15 @@ const SiteInfo = () => {
 	}
 	const { title, url, description } = this.props.site;
 	return (
-		<h1> Site Info! </h1>
-		<p> title: { title }</p>
-		<p> url: { url }</p>
-		<p> title: { description }</p>
-	)
-}
+		<>
+			<h1> Site Info! </h1>
+			<p> title: { title }</p>
+			<p> url: { url }</p>
+			<p> title: { description }</p>
+		</>
+	);
+};
 
 const ConnectedSiteInfo = connectSite( SiteInfo );
-...
-<ConnectedSiteInfo siteId='12345' /> 
+<ConnectedSiteInfo siteId="12345" />;
 ```

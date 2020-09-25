@@ -13,23 +13,22 @@ import ProductSelector from 'blocks/product-selector';
 const products = [
 	{
 		title: 'Jetpack Backup',
-		description: 'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives',
+		description:
+			'Always-on backups ensure you never lose your site. Your changes are saved as you edit and you have unlimited backup archives',
 		id: 'jetpack_backup',
 		options: {
 			yearly: [ 'jetpack_backup_daily', 'jetpack_backup_realtime' ],
 			monthly: [ 'jetpack_backup_daily_monthly', 'jetpack_backup_realtime_monthly' ],
 		},
 		optionsLabel: 'Backup options',
-	}
+	},
 ];
 
 const interval = 'yearly';
 
 export default class extends React.Component {
 	render() {
-		return (
-			<ProductSelector products={ products } intervalType={ interval } />
-		);
+		return <ProductSelector products={ products } intervalType={ interval } />;
 	}
 }
 ```

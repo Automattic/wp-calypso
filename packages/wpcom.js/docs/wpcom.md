@@ -12,9 +12,8 @@ make admin actions or to access to protected resources.
 Create a `Me` object. More info in [Me doc page](./me.md).
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
-var me = wpcom.me();
-});
+const wpcom = require( 'wpcom' )( '<your-token>' );
+const me = wpcom.me();
 ```
 
 ## WPCOM#site('site-id')

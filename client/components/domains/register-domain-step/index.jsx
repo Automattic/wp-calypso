@@ -777,6 +777,7 @@ class RegisterDomainStep extends React.Component {
 					pending: false,
 					is_premium: result.is_premium,
 					cost: result.cost,
+					is_price_limit_exceeded: result?.is_price_limit_exceeded,
 				} );
 			} );
 		} );
@@ -1226,6 +1227,11 @@ class RegisterDomainStep extends React.Component {
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
+			return;
+		}
+
+		// also don't allow premium domain purchases over certain price point
+		if ( premiumDomains?.[ domain ]?.is_price_limit_exceeded ) {
 			return;
 		}
 

@@ -14,7 +14,9 @@ export default function MyConnectionsList( { connections } ) {
 	return (
 		<ul>
 			<QueryKeyringConnections />
-			{ connections.map( ( connection ) => <li>{ connection.label }</li> ) }
+			{ connections.map( ( connection ) => (
+				<li>{ connection.label }</li>
+			) ) }
 		</ul>
 	);
 }

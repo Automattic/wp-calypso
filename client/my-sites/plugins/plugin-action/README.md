@@ -9,9 +9,9 @@ By default, the PluginAction component will attempt to render a FormToggle.
 ```js
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 
-render() {
+function render() {
 	return (
-	  <div className="plugin-actions">
+		<div className="plugin-actions">
 			<PluginAction
 				label={ this.props.translate( 'Active', { context: 'plugin status' } ) }
 				status={ this.isActive() }
@@ -19,7 +19,7 @@ render() {
 				inProgress={ this.props.activateInProgress }
 				htmlFor={ 'html-for-attribute-on-label' }
 			/>
-	  </div>
+		</div>
 	);
 }
 ```
@@ -30,9 +30,11 @@ This behavior can be overridden by passing a child to the PluginAction component
 import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
 import { Button } from '@automattic/components';
 
-render() {
+function render() {
 	return (
-		<PluginAction label={ this.props.translate( 'Active and Connected', { context: 'plugin status' } ) }>
+		<PluginAction
+			label={ this.props.translate( 'Active and Connected', { context: 'plugin status' } ) }
+		>
 			<Button href="/plugins/jetpack" />
 		</PluginAction>
 	);

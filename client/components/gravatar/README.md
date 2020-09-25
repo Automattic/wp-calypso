@@ -11,10 +11,8 @@ The images size is set at 96px, used at smaller sizes for retina display. Using 
 ```js
 import Gravatar from 'components/gravatar';
 
-render() {
-    return (
-        <Gravatar user={ post.author } />
-    );
+function render() {
+	return <Gravatar user={ post.author } />;
 }
 ```
 

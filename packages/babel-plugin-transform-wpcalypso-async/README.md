@@ -40,13 +40,17 @@ asyncRequire( 'components/accordion', ( Accordion ) => {
 ```js
 // Before:
 
-<AsyncLoad require="components/accordion" />
+<AsyncLoad require="components/accordion" />;
+```
 
+```js
 // After:
 
-<AsyncLoad require={ function( callback ) {
-	asyncRequire( 'components/accordion', callback );
-} } />
+<AsyncLoad
+	require={ function ( callback ) {
+		asyncRequire( 'components/accordion', callback );
+	} }
+/>;
 ```
 
 ## Options

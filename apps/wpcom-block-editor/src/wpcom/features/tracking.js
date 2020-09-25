@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -13,7 +12,6 @@ import debugFactory from 'debug';
  */
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
-/* eslint-enable import/no-extraneous-dependencies */
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );

@@ -7,18 +7,18 @@ This component is used to display a plugin card in a list of plugins.
 ```js
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 
-render() {
-    return (
-        <div className="your-plugins-list">
-            <PluginItem
-                plugin={ plugin }
-                isSelected={ !! this.state.checkedPlugins[ plugin.slug ] }
-                isSelectable={ this.state.bulkManagement }
-                onClick={ this.pluginChecked.bind( this, plugin.slug ) }
-                pluginLink={ this.props.path + '/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
-            />
-        </div>
-    );
+function render() {
+	return (
+		<div className="your-plugins-list">
+			<PluginItem
+				plugin={ plugin }
+				isSelected={ !! this.state.checkedPlugins[ plugin.slug ] }
+				isSelectable={ this.state.bulkManagement }
+				onClick={ this.pluginChecked.bind( this, plugin.slug ) }
+				pluginLink={ this.props.path + '/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
+			/>
+		</div>
+	);
 }
 ```
 

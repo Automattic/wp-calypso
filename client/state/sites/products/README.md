@@ -18,7 +18,16 @@ Adds the products fetched from the API to the set of products for the given site
 import { fetchSiteProducts, fetchSiteProductsCompleted } from 'state/sites/products/actions';
 
 dispatch( fetchSiteProducts( 555555555 ) );
-dispatch( fetchSiteProductsCompleted( 555555555, { jetpack_search: { ... }, jetpack_search_monthly: { ... } } ) );
+dispatch(
+	fetchSiteProductsCompleted( 555555555, {
+		jetpack_search: {
+			/*...*/
+		},
+		jetpack_search_monthly: {
+			/*...*/
+		},
+	} )
+);
 ```
 
 ## Reducer

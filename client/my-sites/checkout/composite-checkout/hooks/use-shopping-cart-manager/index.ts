@@ -17,6 +17,7 @@ import {
 	CacheStatus,
 	CouponStatus,
 	VariantRequestStatus,
+	ShoppingCartError,
 } from './types';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
@@ -29,7 +30,6 @@ export default function useShoppingCartManager( {
 	couponToAddOnInitialize,
 	setCart,
 	getCart,
-	onEvent,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
 	const cartKeyString = String( cartKey || 'no-site' );
 	const setServerCart = useCallback( ( cartParam ) => setCart( cartKeyString, cartParam ), [
@@ -44,6 +44,7 @@ export default function useShoppingCartManager( {
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
+	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
 	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const variantSelectOverride = hookState.variantSelectOverride;
 
@@ -55,22 +56,17 @@ export default function useShoppingCartManager( {
 		couponToAddOnInitialize,
 		getServerCart,
 		setServerCart,
-		hookDispatch,
-		onEvent
+		hookDispatch
 	);
 
 	// Asynchronously re-validate when the cache is dirty.
-	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
+	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
 
 	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
 		( requestCartProductToAdd ) => {
 			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
-			onEvent?.( {
-				type: 'CART_ADD_ITEM',
-				payload: requestCartProductToAdd,
-			} );
 		},
-		[ hookDispatch, onEvent ]
+		[ hookDispatch ]
 	);
 
 	const removeItem: ( arg0: string ) => void = useCallback(
@@ -112,6 +108,7 @@ export default function useShoppingCartManager( {
 	return {
 		isLoading: cacheStatus === 'fresh',
 		loadingError: cacheStatus === 'error' ? loadingError : null,
+		loadingErrorType,
 		isPendingUpdate: cacheStatus !== 'valid',
 		addItem,
 		removeItem,
@@ -123,5 +120,5 @@ export default function useShoppingCartManager( {
 		variantSelectOverride,
 		changeItemVariant,
 		responseCart,
-	} as ShoppingCartManager;
+	};
 }

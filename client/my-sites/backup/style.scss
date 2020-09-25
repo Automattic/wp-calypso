@@ -90,8 +90,16 @@
 	.button {
 		color: var( --color-neutral-70 );
 
+		&.is-borderless {
+			color: var( --color-text-subtle );
+		}
+
 		&.is-primary {
 			color: var( --color-text-inverted );
+		}
+
+		&.is-primary.is-borderless {
+			color: var( --color-accent );
 		}
 
 		&[disabled] {

@@ -21,7 +21,7 @@ import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
 import PlanPill from 'components/plans/plan-pill';
 import { TYPE_FREE, GROUP_WPCOM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
-import { getYearlyPlanByMonthly, planMatches, getPlanClass } from 'lib/plans';
+import { getYearlyPlanByMonthly, planMatches, getPlanClass, isFreePlan } from 'lib/plans';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -163,11 +163,14 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	getPerMonthDescription() {
-		const { discountPrice, rawPrice, translate, planType } = this.props;
+		const { discountPrice, rawPrice, translate, planType, currentSitePlan } = this.props;
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
 			return null;
 		}
 		if ( ! planMatches( planType, { group: GROUP_WPCOM, term: TERM_ANNUALLY } ) ) {
+			return null;
+		}
+		if ( ! currentSitePlan || ! isFreePlan( currentSitePlan.productSlug ) ) {
 			return null;
 		}
 		const discountPercent = Math.round( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );

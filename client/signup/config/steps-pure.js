@@ -314,8 +314,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'isManageSiteFlow',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},

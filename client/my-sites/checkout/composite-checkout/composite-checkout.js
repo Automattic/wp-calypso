@@ -68,7 +68,7 @@ import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
 import { AUTO_RENEWAL } from 'lib/url/support';
 import { useLocalizedMoment } from 'components/localized-moment';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/utils';
+import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/storageUtils';
 import { useProductVariants } from './hooks/product-variants';
 import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
@@ -79,8 +79,10 @@ import { colors } from '@automattic/color-studio';
 import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
-import useDisplayErrors from './hooks/use-display-errors';
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
+import useActOnceOnStrings from './hooks/use-act-once-on-strings';
+import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
+import useEffectOnChange from './hooks/use-effect-on-change';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -169,7 +171,11 @@ export default function CompositeCheckout( {
 
 	const countriesList = useCountryList( overrideCountryList || [] );
 
-	const { productsForCart, canInitializeCart } = usePrepareProductsForCart( {
+	const {
+		productsForCart,
+		isLoading: areCartProductsPreparing,
+		error: cartProductPrepError,
+	} = usePrepareProductsForCart( {
 		siteId,
 		product,
 		purchaseId,
@@ -191,17 +197,40 @@ export default function CompositeCheckout( {
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
 		loadingError: cartLoadingError,
+		loadingErrorType: cartLoadingErrorType,
 		addItem,
 		variantSelectOverride,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart: canInitializeCart && ! isLoadingCartSynchronizer && ! isFetchingProducts,
+		canInitializeCart:
+			! areCartProductsPreparing && ! isLoadingCartSynchronizer && ! isFetchingProducts,
 		productsToAddOnInitialize: productsForCart,
 		couponToAddOnInitialize: couponCodeFromUrl,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
-		onEvent: recordEvent,
 	} );
+
+	// This will record cart items being added when the page loads
+	useEffectOnChange(
+		( previous ) => {
+			if ( productsForCart.length > 0 && productsForCart !== previous ) {
+				productsForCart.forEach( ( productToAdd ) => {
+					recordEvent( {
+						type: 'CART_ADD_ITEM',
+						payload: productToAdd,
+					} );
+				} );
+			}
+		},
+		[ productsForCart ]
+	);
+
+	useEffectOnChange( () => {
+		recordEvent( {
+			type: 'CART_INIT_COMPLETE',
+			payload: responseCart,
+		} );
+	}, [ isLoadingCart ] );
 
 	const {
 		items,
@@ -301,8 +330,10 @@ export default function CompositeCheckout( {
 			debug( 'just redirecting to', url );
 
 			if ( createUserAndSiteBeforeTransaction ) {
-				window.localStorage.removeItem( 'shoppingCart' );
-				window.localStorage.removeItem( 'siteParams' );
+				try {
+					window.localStorage.removeItem( 'shoppingCart' );
+					window.localStorage.removeItem( 'siteParams' );
+				} catch ( err ) {}
 
 				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
 				// Using page.redirect() will take to the log in page which we don't want.
@@ -341,7 +372,30 @@ export default function CompositeCheckout( {
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( updateLocation );
 
-	useDisplayErrors( [ cartLoadingError, stripeLoadingError?.message ].filter( Boolean ) );
+	// Record errors adding products to the cart
+	useActOnceOnStrings( [ cartProductPrepError ].filter( Boolean ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'PRODUCTS_ADD_ERROR', payload: message } )
+		);
+	} );
+
+	useActOnceOnStrings( [ cartLoadingError ].filter( Boolean ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'CART_ERROR', payload: { type: cartLoadingErrorType, message } } )
+		);
+	} );
+
+	// Display errors. Note that we display all errors if any of them change,
+	// because notices.error() otherwise will remove the previously displayed
+	// errors.
+	const errorsToDisplay = [
+		cartLoadingError,
+		stripeLoadingError?.message,
+		cartProductPrepError,
+	].filter( Boolean );
+	useActOnceOnStrings( errorsToDisplay, () => {
+		notices.error( errorsToDisplay.map( ( message ) => <p key={ message }>{ message }</p> ) );
+	} );
 
 	const isFullCredits = credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
 	const itemsForCheckout = ( items.length
@@ -362,7 +416,7 @@ export default function CompositeCheckout( {
 		items,
 		cartEmptyRedirectUrl,
 		isLoadingCart,
-		[ ...errors, cartLoadingError ].filter( Boolean ),
+		[ ...errors, cartLoadingError, cartProductPrepError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
 
@@ -432,8 +486,15 @@ export default function CompositeCheckout( {
 	// Often products are added using just the product_slug but missing the
 	// product_id; this adds it.
 	const addItemWithEssentialProperties = useCallback(
-		( cartItem ) => addItem( fillInSingleCartItemAttributes( cartItem, products ) ),
-		[ addItem, products ]
+		( cartItem ) => {
+			const adjustedItem = fillInSingleCartItemAttributes( cartItem, products );
+			recordEvent( {
+				type: 'CART_ADD_ITEM',
+				payload: adjustedItem,
+			} );
+			addItem( adjustedItem );
+		},
+		[ addItem, products, recordEvent ]
 	);
 
 	const includeDomainDetails = needsDomainDetails( responseCart );
@@ -609,32 +670,6 @@ CompositeCheckout.propTypes = {
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
-
-function useRedirectIfCartEmpty(
-	items,
-	redirectUrl,
-	isLoading,
-	errors,
-	createUserAndSiteBeforeTransaction
-) {
-	useEffect( () => {
-		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
-			debug( 'cart is empty and not still loading; redirecting...' );
-			if ( createUserAndSiteBeforeTransaction ) {
-				window.localStorage.removeItem( 'shoppingCart' );
-				window.localStorage.removeItem( 'siteParams' );
-
-				// We use window.location instead of page.redirect() so that if the user already has an account and site at
-				// this point, then window.location will reload with the cookies applied and takes to the /plans page.
-				// (page.redirect() will take to the log in page instead).
-				window.location = redirectUrl;
-				return;
-			}
-			page.redirect( redirectUrl );
-			return;
-		}
-	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
-}
 
 function useRecordCheckoutLoaded(
 	recordEvent,

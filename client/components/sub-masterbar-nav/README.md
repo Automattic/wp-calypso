@@ -15,24 +15,20 @@ If no `icon` is provided, `star` will be used by default.
 import SubMasterbarNav from 'components/sub-masterbar-nav';
 
 const options = [
-    {
-        label: 'Home',
-        uri: '/',
-        icon: 'house'
-    },
-    ...
+	{
+		label: 'Home',
+		uri: '/',
+		icon: 'house',
+	},
 ];
 
 export default class extends React.Component {
 	render() {
-		return {
+		return (
 			<Main>
-				<SubMasterbarNav
-					options={ options }
-					fallback={ options[ 0 ] }
-					uri={ '/foo/bar' } />
+				<SubMasterbarNav options={ options } fallback={ options[ 0 ] } uri={ '/foo/bar' } />
 			</Main>
-		};
+		);
 	}
 }
 ```

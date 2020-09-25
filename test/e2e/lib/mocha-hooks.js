@@ -128,6 +128,12 @@ afterEach( async function () {
 	return await driverHelper.checkForConsoleErrors( driver );
 } );
 
+afterEach( async function () {
+	this.timeout( afterHookTimeoutMS );
+	const driver = global.__BROWSER__;
+	await driverHelper.printConsole( driver );
+} );
+
 // Update Sauce Job Status locally
 afterEach( function () {
 	const driver = global.__BROWSER__;

@@ -12,12 +12,8 @@ import PopoverMenuItem from 'components/popover/menu-item';
 
 export default function MyComponent( { onMenuItemClick } ) {
 	return (
-		<SplitButton
-			mainFace="Split Button"
-		>
-			<PopoverMenuItem onClick={ onMenuItemClick }>
-				Click Me!
-			</PopoverMenuItem>
+		<SplitButton mainFace="Split Button">
+			<PopoverMenuItem onClick={ onMenuItemClick }>Click Me!</PopoverMenuItem>
 		</SplitButton>
 	);
 }

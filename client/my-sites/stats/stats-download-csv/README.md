@@ -8,9 +8,14 @@ The download csv component creates a download link that allows a stats-list to b
 import DownloadCsv from 'my-sites/stats/stats-download-csv';
 
 const MyComponent = () => {
-    return (
-			<DownloadCsv statType={ <statType String> } query={ <query Object> } path={ <path String> } period={ <period Object> } />;
-    );
+	return (
+		<DownloadCsv
+			statType={ statType /*string*/ }
+			query={ query /*object*/ }
+			path={ path /*string*/ }
+			period={ period /*object*/ }
+		/>
+	);
 };
 ```
 

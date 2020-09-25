@@ -7,10 +7,8 @@ Simple back button, usually used in a HeaderCake to go back to the previous scre
 ```jsx
 import BackButton from 'components/back-button';
 
-render() {
-	return (
-		<BackButton onClick={ myClickHandler } />
-	);
+function render() {
+	return <BackButton onClick={ myClickHandler } />;
 }
 ```
 

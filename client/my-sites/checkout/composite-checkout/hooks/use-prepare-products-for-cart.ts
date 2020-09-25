@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -28,8 +29,15 @@ const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for
 
 interface PreparedProductsForCart {
 	productsForCart: RequestCartProduct[];
-	canInitializeCart: boolean;
+	isLoading: boolean;
+	error: string | null;
 }
+
+const initialPreparedProductsState = {
+	isLoading: true,
+	productsForCart: [],
+	error: null,
+};
 
 function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined > {
 	return !! value;
@@ -51,43 +59,94 @@ export default function usePrepareProductsForCart( {
 	const planSlug = useSelector( ( state ) =>
 		productAlias ? getUpgradePlanSlugFromPath( state, siteId, productAlias ) : null
 	);
-	const [ { canInitializeCart, productsForCart }, setState ] = useState< PreparedProductsForCart >(
-		{
-			canInitializeCart: ! planSlug && ! productAlias,
-			productsForCart: [],
-		}
+
+	const initializePreparedProductsState = (
+		initialState: PreparedProductsForCart
+	): PreparedProductsForCart => ( {
+		...initialState,
+		isLoading: !! ( planSlug || productAlias ),
+	} );
+	const [ state, dispatch ] = useReducer(
+		preparedProductsReducer,
+		initialPreparedProductsState,
+		initializePreparedProductsState
 	);
 
 	useFetchPlansIfNotLoaded();
 
-	useAddPlanFromSlug( { planSlug, setState, isJetpackNotAtomic, originalPurchaseId } );
+	// Only one of these three should ever operate. The others should bail if
+	// they think another hook will handle the data.
+	useAddPlanFromSlug( {
+		isLoading: state.isLoading,
+		planSlug,
+		dispatch,
+		isJetpackNotAtomic,
+		originalPurchaseId,
+	} );
 	useAddProductFromSlug( {
+		isLoading: state.isLoading,
 		productAlias,
 		planSlug,
-		setState,
+		dispatch,
 		isJetpackNotAtomic,
 		isPrivate,
 		originalPurchaseId,
 	} );
-	useAddRenewalItems( { originalPurchaseId, productAlias, setState } );
+	useAddRenewalItems( {
+		isLoading: state.isLoading,
+		originalPurchaseId,
+		productAlias,
+		dispatch,
+	} );
 
-	return { productsForCart, canInitializeCart };
+	return state;
+}
+
+type PreparedProductsAction =
+	| { type: 'PRODUCTS_ADD'; products: RequestCartProduct[] }
+	| { type: 'PRODUCTS_ADD_ERROR'; message: string };
+
+function preparedProductsReducer(
+	state: PreparedProductsForCart,
+	action: PreparedProductsAction
+): PreparedProductsForCart {
+	switch ( action.type ) {
+		case 'PRODUCTS_ADD':
+			if ( ! state.isLoading ) {
+				return state;
+			}
+			return { ...state, productsForCart: action.products, isLoading: false };
+		case 'PRODUCTS_ADD_ERROR':
+			if ( ! state.isLoading ) {
+				return state;
+			}
+			return { ...state, isLoading: false, error: action.message };
+		default:
+			return state;
+	}
 }
 
 function useAddRenewalItems( {
+	isLoading,
 	originalPurchaseId,
 	productAlias,
-	setState,
+	dispatch,
 }: {
+	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
-	setState: ( state: PreparedProductsForCart ) => void;
+	dispatch: ( action: PreparedProductsAction ) => void;
 } ) {
 	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
+	const translate = useTranslate();
 
 	useEffect( () => {
+		if ( ! isLoading ) {
+			// No need to run if we have completed already
+			return;
+		}
 		if ( ! originalPurchaseId ) {
 			return;
 		}
@@ -113,8 +172,15 @@ function useAddRenewalItems( {
 
 				const product = products[ slug ];
 				if ( ! product ) {
-					debug( 'no product found with slug', productSlug );
-					// TODO: show and record an error
+					debug( 'no renewal product found with slug', productSlug );
+					dispatch( {
+						type: 'PRODUCTS_ADD_ERROR',
+						message: String(
+							translate( "Could not find renewal product matching '%(productSlug)s'", {
+								args: { productSlug },
+							} )
+						),
+					} );
 					return null;
 				}
 				return createRenewalItemToAddToCart(
@@ -125,33 +191,56 @@ function useAddRenewalItems( {
 				);
 			} )
 			.filter( doesValueExist );
+
+		if ( productsForCart.length < 1 ) {
+			debug( 'creating renewal products failed', productAlias );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: String(
+					translate( "Creating renewal products failed for '%(productAlias)s'", {
+						args: { productAlias },
+					} )
+				),
+			} );
+			return;
+		}
 		debug( 'preparing renewals requested in url', productsForCart );
-		setState( { productsForCart, canInitializeCart: true } );
+		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
 	}, [
+		translate,
+		isLoading,
 		isFetchingProducts,
 		products,
 		originalPurchaseId,
 		productAlias,
-		setState,
+		dispatch,
 		selectedSiteSlug,
 	] );
 }
 
 function useAddPlanFromSlug( {
+	isLoading,
 	planSlug,
-	setState,
+	dispatch,
 	isJetpackNotAtomic,
 	originalPurchaseId,
 }: {
+	isLoading: boolean;
 	planSlug: string | null | undefined;
-	setState: ( state: PreparedProductsForCart ) => void;
+	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	originalPurchaseId: string | number | null | undefined;
 } ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
 	const plans = useSelector( ( state ) => getPlans( state ) );
 	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
+	const translate = useTranslate();
+
 	useEffect( () => {
+		if ( ! isLoading ) {
+			// No need to run if we have completed already
+			return;
+		}
 		if ( ! planSlug ) {
 			return;
 		}
@@ -165,8 +254,12 @@ function useAddPlanFromSlug( {
 		}
 		if ( ! plan ) {
 			debug( 'there is a request to add a plan but no plan was found', planSlug );
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: String(
+					translate( "Could not find plan matching '%(planSlug)s'", { args: { planSlug } } )
+				),
+			} );
 			return;
 		}
 		const cartProduct = createItemToAddToCart( {
@@ -176,8 +269,12 @@ function useAddPlanFromSlug( {
 		} );
 		if ( ! cartProduct ) {
 			debug( 'there is a request to add a plan but creating an item failed', planSlug );
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: String(
+					translate( "Creating a plan failed for '%(planSlug)s'", { args: { planSlug } } )
+				),
+			} );
 			return;
 		}
 		debug(
@@ -185,21 +282,33 @@ function useAddPlanFromSlug( {
 			{ planSlug, plan, isJetpackNotAtomic },
 			cartProduct
 		);
-		setState( { productsForCart: [ cartProduct ], canInitializeCart: true } );
-	}, [ plans, originalPurchaseId, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, setState ] );
+		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
+	}, [
+		translate,
+		isLoading,
+		plans,
+		originalPurchaseId,
+		isFetchingPlans,
+		planSlug,
+		plan,
+		isJetpackNotAtomic,
+		dispatch,
+	] );
 }
 
 function useAddProductFromSlug( {
+	isLoading,
 	productAlias: productAliasFromUrl,
 	planSlug,
-	setState,
+	dispatch,
 	isJetpackNotAtomic,
 	isPrivate,
 	originalPurchaseId,
 }: {
+	isLoading: boolean;
 	productAlias: string | undefined | null;
 	planSlug: string | undefined | null;
-	setState: ( state: PreparedProductsForCart ) => void;
+	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 	originalPurchaseId: string | number | undefined | null;
@@ -208,6 +317,7 @@ function useAddProductFromSlug( {
 	const plans = useSelector( ( state ) => getPlans( state ) );
 	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
 	const products = useSelector( ( state ) => getProductsList( state ) );
+	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
 	// referencing more than one product. Because of this, the rest of this function will
@@ -233,6 +343,10 @@ function useAddProductFromSlug( {
 	);
 
 	useEffect( () => {
+		if ( ! isLoading ) {
+			// No need to run if we have completed already
+			return;
+		}
 		if ( ! productAliasFromUrl ) {
 			return;
 		}
@@ -258,8 +372,14 @@ function useAddProductFromSlug( {
 				'there is a request to add one or more products but no product was found',
 				productAliasFromUrl
 			);
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: String(
+					translate( "Could not find any products matching '%(productAliasFromUrl)s'", {
+						args: { productAliasFromUrl },
+					} )
+				),
+			} );
 			return;
 		}
 
@@ -279,8 +399,14 @@ function useAddProductFromSlug( {
 				'there is a request to add a one or more products but creating them failed',
 				productAliasFromUrl
 			);
-			// TODO: show and record an error
-			setState( { productsForCart: [], canInitializeCart: true } );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: String(
+					translate( "Creating products failed for '%(productAliasFromUrl)s'", {
+						args: { productAliasFromUrl },
+					} )
+				),
+			} );
 			return;
 		}
 		debug(
@@ -288,8 +414,10 @@ function useAddProductFromSlug( {
 			{ productAliasFromUrl, isJetpackNotAtomic },
 			cartProducts
 		);
-		setState( { productsForCart: cartProducts, canInitializeCart: true } );
+		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
+		translate,
+		isLoading,
 		isPrivate,
 		plans,
 		products,
@@ -300,7 +428,7 @@ function useAddProductFromSlug( {
 		productAliasFromUrl,
 		validProducts,
 		isFetchingProducts,
-		setState,
+		dispatch,
 	] );
 }
 

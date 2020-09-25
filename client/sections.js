@@ -62,9 +62,15 @@ const sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/me/purchases', '/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
+		paths: [ '/me/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
 		module: 'calypso/me/purchases',
 		group: 'me',
+	},
+	{
+		name: 'site-purchases',
+		paths: [ '/purchases' ],
+		module: 'calypso/my-sites/purchases',
+		group: 'sites',
 	},
 	{
 		name: 'notification-settings',
@@ -430,27 +436,27 @@ const sections = [
 	{
 		name: 'jetpack-cloud',
 		paths: [ '/', '/landing', '/settings', '/oauth-override' ],
-		module: 'calypso/landing/jetpack-cloud',
+		module: 'calypso/jetpack-cloud',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
 	},
 	{
 		name: 'jetpack-cloud-settings',
 		paths: [ '/settings' ],
-		module: 'calypso/landing/jetpack-cloud/sections/settings',
+		module: 'calypso/jetpack-cloud/sections/settings',
 		group: 'jetpack-cloud',
 	},
 	{
 		name: 'jetpack-cloud-auth',
 		paths: [ '/connect', '/connect/oauth/token' ],
-		module: 'calypso/landing/jetpack-cloud/sections/auth',
+		module: 'calypso/jetpack-cloud/sections/auth',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
 	},
 	{
 		name: 'jetpack-cloud-pricing',
 		paths: [ '/pricing', '/[^\\/]+/pricing' ],
-		module: 'calypso/landing/jetpack-cloud/sections/pricing',
+		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
 		links: [

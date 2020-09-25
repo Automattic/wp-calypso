@@ -7,15 +7,13 @@ This component is used to display a support info icon. When clicked, it displays
 ```js
 import SupportInfo from 'components/support-info';
 
-render() {
+function render() {
 	const support = {
 		text: 'About this.',
 		link: 'https://example.com/',
 		privacyLink: 'https://example.com/#privacy',
 	};
-	return (
-		<SupportInfo { ...support } />
-	);
+	return <SupportInfo { ...support } />;
 }
 ```
 

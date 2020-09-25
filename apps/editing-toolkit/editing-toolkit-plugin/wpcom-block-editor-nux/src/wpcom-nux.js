@@ -1,7 +1,6 @@
 /*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
 import './public-path';
 
-/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies

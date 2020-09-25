@@ -73,8 +73,17 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
-	persistSignupDestination,
 } from './utils';
+import {
+	persistSignupDestination,
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+	setSignupCompleteSlug,
+	getSignupCompleteSlug,
+	getSignupCompleteFlowName,
+	setSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+} from './storageUtils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
 import P2SignupProcessingScreen from 'signup/p2-processing-screen';
@@ -159,6 +168,19 @@ class Signup extends React.Component {
 
 		if ( flow.providesDependenciesInQuery ) {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
+		}
+
+		const searchParams = new URLSearchParams( window.location.search );
+		const isAddNewSiteFlow = searchParams.has( 'ref' );
+
+		if ( isAddNewSiteFlow ) {
+			clearSignupDestinationCookie();
+		}
+
+		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
+		if ( ! isAddNewSiteFlow && this.isReEnteringSignupViaBrowserBack() ) {
+			this.enableManageSiteFlow = true;
+			providedDependencies = { siteSlug: getSignupCompleteSlug(), isManageSiteFlow: true };
 		}
 
 		// Caution: any signup Flux actions should happen after this initialization.
@@ -253,6 +275,20 @@ class Signup extends React.Component {
 		}
 	}
 
+	/**
+	 * Checks if the user entered the signup flow via browser back from checkout page,
+	 * and if they did we will show a modified domain step to prevent creating duplicate sites.
+	 * Check pau2Xa-1Io-p2#comment-6759 for more context.
+	 */
+	isReEnteringSignupViaBrowserBack() {
+		const signupDestinationCookieExists = retrieveSignupDestination();
+		const isReEnteringFlow = getSignupCompleteFlowName() === this.props.flowName;
+		const isReEnteringSignupViaBrowserBack =
+			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
+
+		return isReEnteringSignupViaBrowserBack;
+	}
+
 	completeP2FlowAfterLoggingIn() {
 		if ( ! this.props.progress ) {
 			return;
@@ -288,6 +324,8 @@ class Signup extends React.Component {
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
 			persistSignupDestination( destination );
+			setSignupCompleteSlug( dependencies.siteSlug );
+			setSignupCompleteFlowName( this.props.flowName );
 		}
 
 		return this.handleFlowComplete( dependencies, filteredDestination );
@@ -585,6 +623,15 @@ class Signup extends React.Component {
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
+		let propsForCurrentStep = propsFromConfig;
+		if ( this.enableManageSiteFlow ) {
+			propsForCurrentStep = assign( {}, propsFromConfig, {
+				showExampleSuggestions: false,
+				showSkipButton: true,
+				includeWordPressDotCom: false,
+			} );
+		}
+
 		return (
 			<div className="signup__step" key={ stepKey }>
 				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
@@ -609,7 +656,7 @@ class Signup extends React.Component {
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
-							{ ...propsFromConfig }
+							{ ...propsForCurrentStep }
 						/>
 					) }
 				</div>

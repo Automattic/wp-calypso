@@ -4,11 +4,11 @@ This component is a wrapper module for interacting with the wpcom.js `/me` endpo
 
 ## User
 
-```es6
+```js
 import user from 'lib/user';
 
 function clearUser() {
-  user().clear();
+	user().clear();
 }
 ```
 
@@ -30,7 +30,7 @@ Clears user stored data and handles relevant redirects based on type of authenti
 
 ## UserUtilities
 
-```es6
+```js
 import user from 'lib/user/utilities';
 ```
 

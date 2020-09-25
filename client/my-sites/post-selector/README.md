@@ -9,7 +9,7 @@ Under the hood, it uses [`<QueryPosts />`](../../components/data/query-posts) to
 ```jsx
 import PostSelector from 'my-sites/post-selector';
 
-<PostSelector siteId={ this.props.siteId } />
+<PostSelector siteId={ this.props.siteId } />;
 ```
 
 ## Props

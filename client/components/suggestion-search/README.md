@@ -7,11 +7,11 @@ SuggestionSearch is a bundled component of FormTextInput and Suggestions which e
 ```jsx
 import SuggestionSearch from 'components/suggestion-search';
 
-onChange( newValue, isNavigating ) {
+function onChange( newValue, isNavigating ) {
 	console.log( 'New value: ', newValue, 'isNavigating:', isNavigating );
 }
 
-render() {
+function render() {
 	return (
 		<SuggestionSearch
 			placeholder={ 'Type here to search' }

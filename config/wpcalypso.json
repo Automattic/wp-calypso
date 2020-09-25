@@ -56,7 +56,6 @@
 		"gutenboarding/language-picker": false,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch": true,
-		"gutenboarding/use-patterns": true,
 		"happychat": true,
 		"help": true,
 		"help/courses": true,

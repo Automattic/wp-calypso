@@ -9,31 +9,34 @@ The WPorg Store is responsible for storing the state of plugins from .org so tha
 The data that is stored in the store looks like this:
 
 ```js
-{
-	akismet : { // plugin.slug
-		author: "Automattic",
-		author_url: "http://automattic.com/wordpress-plugins/",
+const object = {
+	akismet: {
+		// plugin.slug
+		author: 'Automattic',
+		author_url: 'http://automattic.com/wordpress-plugins/',
 		banners: undefined,
-		description: "Akismet checks your comments against the Akismet Web service to see if they look like spam or not.",
+		description:
+			'Akismet checks your comments against the Akismet Web service to see if they look like spam or not.',
 		detailsFetched: 1431631567269,
-		icon: "//ps.w.org/akismet/assets/icon-256x256.png?rev=969272",
-		last_updated: "2015-04-28 2:50pm GMT",
-		name: "Akismet",
-		num_ratings: "216",
+		icon: '//ps.w.org/akismet/assets/icon-256x256.png?rev=969272',
+		last_updated: '2015-04-28 2:50pm GMT',
+		name: 'Akismet',
+		num_ratings: '216',
 		rating: 92,
 		ratings: undefined,
 		section: {
-			changelog: "stuff",
-			description: "<p>Akismet checks your comments against the Akismet Web service to see if they look like spam or not and lets you review the spam it catches under your blog's \"Comments\" admin screen.</p>↵↵<p>Major features in Akismet include:</p>↵↵<ul>↵<li>Automatically checks all comments and filters out the ones that look like spam.</li>↵<li>Each comment has a status history, so you can easily see which comments were caught or cleared by Akismet and which were spammed or unspammed by a moderator.</li>↵<li>URLs are shown in the comment body to reveal hidden or misleading links.</li>↵<li>Moderators can see the number of approved comments for each user.</li>↵<li>A discard feature that outright blocks the worst spam, saving you disk space and speeding up your site.</li>↵</ul>↵↵<p>PS: You'll need an <a href=\"http://akismet.com/get/\">Akismet.com API key</a> to use it.  Keys are free for personal blogs; paid subscriptions are available for businesses and commercial sites.</p>",
-			installation: "<p>Upload the Akismet plugin to your blog, Activate it, then enter your <a href=\"http://akismet.com/get/\">Akismet.com API key</a>.</p>↵↵<p>1, 2, 3: You're done!</p>"
+			changelog: 'stuff',
+			description:
+				'<p>Akismet checks your comments against the Akismet Web service to see if they look like spam or not and lets you review the spam it catches under your blog\'s "Comments" admin screen.</p>↵↵<p>Major features in Akismet include:</p>↵↵<ul>↵<li>Automatically checks all comments and filters out the ones that look like spam.</li>↵<li>Each comment has a status history, so you can easily see which comments were caught or cleared by Akismet and which were spammed or unspammed by a moderator.</li>↵<li>URLs are shown in the comment body to reveal hidden or misleading links.</li>↵<li>Moderators can see the number of approved comments for each user.</li>↵<li>A discard feature that outright blocks the worst spam, saving you disk space and speeding up your site.</li>↵</ul>↵↵<p>PS: You\'ll need an <a href="http://akismet.com/get/">Akismet.com API key</a> to use it.  Keys are free for personal blogs; paid subscriptions are available for businesses and commercial sites.</p>',
+			installation:
+				'<p>Upload the Akismet plugin to your blog, Activate it, then enter your <a href="http://akismet.com/get/">Akismet.com API key</a>.</p>↵↵<p>1, 2, 3: You\'re done!</p>',
 		},
-		slug: "akismet",
-		version: "3.1.1"
+		slug: 'akismet',
+		version: '3.1.1',
 	},
-	nokismet: null // this plugin doesn't exist in on .org
-	},
+	nokismet: null, // this plugin doesn't exist in on .org
 	// etc.
-}
+};
 ```
 
 The data is stored in a private variable but can be accessed though the stores public methods.
@@ -46,7 +49,7 @@ Returns a plugin object or null
 
 ### Example Component Code
 
-```es6
+```js
 /**
  * External dependencies
  */
@@ -73,7 +76,7 @@ export class YourComponent extends Component {
 
 	getWPorgPlugins() {
 		return {
-			akismet: PluginsDataStore.get( 'akismet' )
+			akismet: PluginsDataStore.get( 'akismet' ),
 		};
 	}
 
@@ -85,7 +88,6 @@ export class YourComponent extends Component {
 		// ...
 	}
 }
-
 ```
 
 ## Actions
@@ -119,12 +121,7 @@ export class YourComponent extends Component {
 	}
 
 	render() {
-		return (
-			<button onClick={ this.updatePlugin }>
-				Update { this.props.plugin.name }
-			</button>
-		);
+		return <button onClick={ this.updatePlugin }>Update { this.props.plugin.name }</button>;
 	}
 }
-
 ```

@@ -7,11 +7,8 @@
 Create a `Post` instance from Site
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
-var post = wpcom
-           .site('blog.wordpress.com')
-           .post(342);
-});
+const wpcom = require( 'wpcom' )( '<your-token>' );
+const post = wpcom.site( 'blog.wordpress.com' ).post( 342 );
 ```
 
 ## API

@@ -16,16 +16,14 @@ function MyActiveTheme( { activeTheme } ) {
 	return (
 		<div>
 			<QueryActiveTheme siteId={ 3584907 } />
-			<div>My site active theme ID: {activeTheme}.</div>
+			<div>My site active theme ID: { activeTheme }.</div>
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		activeTheme: getActiveTheme( state, 3584907 )
-	} )
-)( MyActiveTheme );
+export default connect( ( state ) => ( {
+	activeTheme: getActiveTheme( state, 3584907 ),
+} ) )( MyActiveTheme );
 ```
 
 ## Props

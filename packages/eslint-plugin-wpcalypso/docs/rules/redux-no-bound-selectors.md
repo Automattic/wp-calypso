@@ -29,17 +29,15 @@ const getFavoriteSites = ( state ) =>
 ```
 
 ```js
-class extends Component {
-  setFoo( foo ) {
-    this.setState( { foo }, ( state ) => {
-      this.markDone( state.bar );
-    } );
-  }
+class MyComponent extends Component {
+	setFoo( foo ) {
+		this.setState( { foo }, ( state ) => {
+			this.markDone( state.bar );
+		} );
+	}
 }
 ```
 
 ```js
-export default connect(
-  partialRight( mapState, 'foo' )
-)( MyComponent );
+export default connect( partialRight( mapState, 'foo' ) )( MyComponent );
 ```

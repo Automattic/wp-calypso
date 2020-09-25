@@ -29,12 +29,27 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
 import switchLocale from 'lib/i18n-utils/switch-locale';
 import { hideMasterbar, showMasterbar } from 'state/ui/actions';
-import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST, JPC_PATH_PLANS } from './constants';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import {
+	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
+	CALYPSO_PLANS_PAGE,
+	CALYPSO_REDIRECTION_PAGE,
+	JETPACK_ADMIN_PATH,
+	JPC_PATH_PLANS,
+} from './constants';
 import { login } from 'lib/paths';
 import { parseAuthorizationQuery } from './utils';
-import { persistMobileRedirect, retrieveMobileRedirect, storePlan } from './persistence-utils';
+import {
+	isCalypsoStartedConnection,
+	persistMobileRedirect,
+	retrieveMobileRedirect,
+	storePlan,
+} from './persistence-utils';
 import { startAuthorizeStep } from 'state/jetpack-connect/actions';
+import canCurrentUser from 'state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getSelectedSite } from 'state/ui/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -59,6 +74,7 @@ import {
 } from 'lib/products-values/constants';
 import { getProductFromSlug } from 'lib/products-values/get-product-from-slug';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
+import { externalRedirect } from 'lib/route/path';
 
 /**
  * Module variables
@@ -75,6 +91,55 @@ const analyticsPageTitleByType = {
 	scan: 'Jetpack Scan Daily',
 	antispam: 'Jetpack Anti-spam',
 };
+
+export function offerResetRedirects( context, next ) {
+	debug( 'controller: offerResetRedirects', context.params );
+
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	// Redirect AT sites back to wp-admin
+	const isAutomatedTransfer = selectedSite
+		? isSiteAutomatedTransfer( state, selectedSite.ID )
+		: null;
+	if ( isAutomatedTransfer ) {
+		debug( 'controller: offerResetRedirects -> redirecting WoA back to wp-admin', context.params );
+		return externalRedirect( selectedSite.URL + JETPACK_ADMIN_PATH );
+	}
+
+	// If site has a paid plan or is not a Jetpack site, redirect to Calypso's Plans page
+	const hasPlan = selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null;
+	const isNotJetpack = selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null;
+	if ( hasPlan || isNotJetpack ) {
+		debug(
+			'controller: offerResetRedirects -> redirecting to /plans since site has a plan or is not a Jetpack site',
+			context.params
+		);
+		return page.redirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+	}
+
+	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
+	// the connection was started within Calypso, otherwise redirect the user to wp-admin
+	const canPurchasePlans = selectedSite
+		? canCurrentUser( state, selectedSite.ID, 'manage_options' )
+		: true;
+	const calypsoStartedConnection = isCalypsoStartedConnection( selectedSite.slug );
+	if ( ! canPurchasePlans ) {
+		if ( calypsoStartedConnection ) {
+			return page.redirect( CALYPSO_REDIRECTION_PAGE );
+		}
+
+		const queryRedirect = context.query.redirect;
+		if ( queryRedirect ) {
+			externalRedirect( queryRedirect );
+		} else if ( selectedSite ) {
+			externalRedirect( selectedSite.URL + JETPACK_ADMIN_PATH );
+		}
+	}
+
+	// Display the Jetpack Connect Plans grid
+	next();
+}
 
 export function offerResetContext( context, next ) {
 	debug( 'controller: offerResetContext', context.params );

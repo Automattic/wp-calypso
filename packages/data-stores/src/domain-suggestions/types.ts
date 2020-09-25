@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import type { DataStatus } from './constants';
+
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions
@@ -182,4 +187,33 @@ export interface DomainAvailability {
 	 * Vendor
 	 */
 	vendor?: string;
+}
+
+export type TimestampMS = ReturnType< typeof Date.now >;
+
+export interface DomainSuggestionState {
+	/**
+	 * The state of the DomainSuggestions e.g. pending, failure etc
+	 */
+	state: DataStatus;
+
+	/**
+	 * Domain suggestion data typically returned from the API
+	 */
+	data: Record< string, DomainSuggestion[] | undefined >;
+
+	/**
+	 * Error message
+	 */
+	errorMessage: string | null;
+
+	/**
+	 * Timestamp from last updated attempt
+	 */
+	lastUpdated: TimestampMS;
+
+	/**
+	 * Pending timestamp
+	 */
+	pendingSince: TimestampMS | undefined;
 }

@@ -5,12 +5,7 @@ Creates a `div` element that can be dragged around using a mouse
 ## Usage
 
 ```jsx
-<Draggable
-    onDrag={ this.onBottomLeftDrag }
-    onStop={ this.onDragStop }
-    y={ bottom }
-    x={ left } />
-}
+<Draggable onDrag={ this.onBottomLeftDrag } onStop={ this.onDragStop } y={ bottom } x={ left } />;
 ```
 
 ## Props

@@ -39,16 +39,14 @@ When the day comes that we decide we need proper dynamic, state-aware steps for 
 
 ```js
 // default behavior would be unaffected
-<Step name="…" when={ isSomethingSomething } …>
-  <p>Welcome!</p>
-  …
-</Step>
+<Step name="…" when={ isSomethingSomething }>
+	<p>Welcome!</p>…
+</Step>;
+```
 
+```js
 // new "realtime" state-based behavior
-<Step name="…" …>
-  { ( state ) => isSomethingSomething( state ) &&
-    <p>Welcome!</p> }
-</Step>
+<Step name="…">{ ( state ) => isSomethingSomething( state ) && <p>Welcome!</p> }}</Step>;
 ```
 
 ## On the nature of `actionLog`
@@ -139,30 +137,42 @@ The last potential approach would be to completely replace `actionLog` with a de
 - Instead of collecting `ROUTE_SET`, a branch of the structure would look like:
 
 ```js
-navigation: {
-	lastSection: 'theme',
-	lastPath: '/theme/twentysixteen',
-	history: [ … ]
-}
+const object = {
+	navigation: {
+		lastSection: 'theme',
+		lastPath: '/theme/twentysixteen',
+		history: [
+			/*...*/
+		],
+	},
+};
 ```
 
 - Instead of collecting `THEMES_RECEIVE` or `SITE_SETTINGS_RECEIVE`, a branch of the structure would look like:
 
 ```js
-requests: {
-	themes: {
-		timestamp: 123456789 // last update
+const object = {
+	requests: {
+		themes: {
+			timestamp: 123456789, // last update
+		},
+		sites: {
+			/*...*/
+		},
 	},
-	sites: { … }
-}
+};
 ```
 
 - Instead of collecting `GUIDED_TOUR_UPDATE`, a branch of the structure would look like:
 
 ```js
-guidedTours: {
-	lastState: { … }
-}
+const object = {
+	guidedTours: {
+		lastState: {
+			/*...*/
+		},
+	},
+};
 ```
 
 The major benefits of this approach are:

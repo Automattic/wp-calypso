@@ -10,11 +10,7 @@ Since it is a drop-in replacement, use as you would a regular `<textarea />` ele
 import TextareaAutosize from 'components/textarea-autosize';
 
 export default function MyForm( { onTextareaChange } ) {
-	return (
-		<TextareaAutosize
-			onChange={ onTextareaChange }
-			rows="1" />
-	);
+	return <TextareaAutosize onChange={ onTextareaChange } rows="1" />;
 }
 ```
 

@@ -18,11 +18,7 @@ You can optionally declare `version` to display what version is necessary (defau
 ```jsx
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
-<JetpackManageErrorPage
-    template="updateJetpack"
-    siteId={ jetpackSiteId }
-    version="3.4"
-/>
+<JetpackManageErrorPage template="updateJetpack" siteId={ jetpackSiteId } version="3.4" />;
 ```
 
 ## default
@@ -38,12 +34,12 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 
 // create the component using properties accepted by EmptyContent
 <JetpackManageErrorPage
-    action={ this.props.translate( 'Manage general settings' ) }
-    actionURL="../../settings/general/"
-    title={ this.props.translate( 'No security configuration is required.' ) }
-    line={ this.props.translate( 'Security management is automatic for WordPress.com sites.' ) }
-    illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-/>
+	action={ this.props.translate( 'Manage general settings' ) }
+	actionURL="../../settings/general/"
+	title={ this.props.translate( 'No security configuration is required.' ) }
+	line={ this.props.translate( 'Security management is automatic for WordPress.com sites.' ) }
+	illustration="/calypso/images/illustrations/illustration-jetpack.svg"
+/>;
 ```
 
 [1]: https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/empty-content

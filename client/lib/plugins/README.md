@@ -11,32 +11,35 @@ The Plugins Store is responsible for keeping each site's plugin list up to date.
 The Data that is stored in the sites plugin store looks like this:
 
 ```js
-{
-	123456 : { // site.ID
-		akismet : { // plugin.slug
+const object = {
+	123456: {
+		// site.ID
+		akismet: {
+			// plugin.slug
 			active: true,
-			author: "Automattic",
-			author_url: "http://automattic.com/wordpress-plugins/",
+			author: 'Automattic',
+			author_url: 'http://automattic.com/wordpress-plugins/',
 			autoupdate: false,
-			description: "Used by millions, Akismet is quite possibly the best way in the world to <strong>protect your blog from comment and trackback spam</strong>. It keeps your site protected from spam even while you sleep. To get started: 1) Click the \"Activate\" link to the left of this description, 2) <a href=\"http://akismet.com/get/\">Sign up for an Akismet API key</a>, and 3) Go to your Akismet configuration page, and save your API key.",
-			id: "akismet/akismet",
-			name: "Akismet",
+			description:
+				'Used by millions, Akismet is quite possibly the best way in the world to <strong>protect your blog from comment and trackback spam</strong>. It keeps your site protected from spam even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) <a href="http://akismet.com/get/">Sign up for an Akismet API key</a>, and 3) Go to your Akismet configuration page, and save your API key.',
+			id: 'akismet/akismet',
+			name: 'Akismet',
 			network: false,
-			plugin_url: "http://akismet.com/",
-			slug: "akismet",
-			version: "3.1.1",
+			plugin_url: 'http://akismet.com/',
+			slug: 'akismet',
+			version: '3.1.1',
 			update: {
-				id: "1232",
-				new_version: "3.1.2",
-				package: "https://downloads.wordpress.org/plugin/akismet.1.6.zip",
-				plugin: "akismet/akismet",
-				slug: "akismet",
-				url: "https://wordpress.org/plugins/akismet/",
-			}
-			selected: true
-		}, etc.
-	}, etc.
-}
+				id: '1232',
+				new_version: '3.1.2',
+				package: 'https://downloads.wordpress.org/plugin/akismet.1.6.zip',
+				plugin: 'akismet/akismet',
+				slug: 'akismet',
+				url: 'https://wordpress.org/plugins/akismet/',
+			},
+			selected: true,
+		}, //, etc.
+	}, //, etc.
+};
 ```
 
 The Data is stored in a private variable but can be accessed though the stores public methods.
@@ -73,9 +76,9 @@ Returns a plugin objects for a particular site.
 
 Returns an array of sites that have a particular plugin.
 
-### Example Component Code:
+### Example Component Code
 
-```es6
+```js
 /**
  * External dependencies
  */
@@ -84,7 +87,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PluginsStore 'lib/plugins/store';
+import PluginsStore from 'lib/plugins/store';
 
 export default class extends React.Component {
 	static displayName = 'yourComponent';
@@ -100,29 +103,26 @@ export default class extends React.Component {
 	}
 
 	getPlugins = () => {
-		let sites = this.props.sites.getSelectedOrAllWithPlugins();
+		const sites = this.props.sites.getSelectedOrAllWithPlugins();
 
 		return {
-			plugins: PluginsStore.getPlugins( sites )
+			plugins: PluginsStore.getPlugins( sites ),
 		};
-	},
+	};
 
 	refreshSitesAndPlugins = () => {
 		this.setState( this.getPlugins() );
-	},
+	};
 
-	render() {
-
-	}
-} );
-
+	render() {}
+}
 ```
 
 ## Actions
 
 Actions get triggered by views and stores.
 
-### Public methods.
+### Public methods
 
 Triggers api call to fetch the site data.
 
@@ -170,7 +170,7 @@ Toggle AutoUpdates for a plugin on a site.
 
 #### PluginsActions.togglePluginAutoUpdate( site, plugin );
 
-## Example Component Code:
+## Example Component Code
 
 ```jsx
 /**
@@ -188,13 +188,10 @@ export default class extends React.Component {
 
 	updatePlugin = () => {
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
-	}
+	};
 
 	render() {
-		return (
-			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
-		)
+		return <button onClick={ this.updatePlugin }>Update { this.props.plugin.name }</button>;
 	}
-} );
-
+}
 ```

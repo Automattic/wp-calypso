@@ -17,11 +17,11 @@
 	}
 
 	.select-dropdown__header {
-		max-width: ( $sidebar-width-max - $accordion-padding * 2 );
+		max-width: calc( var( --sidebar-width-max ) - ( #{$accordion-padding} * 2 ) );
 
 		@include breakpoint-deprecated( '<660px' ) {
 			max-width: 100%;
-			min-width: ( $sidebar-width-max - $accordion-padding * 2 );
+			min-width: calc( var( --sidebar-width-max ) - ( #{$accordion-padding} * 2 ) );
 		}
 	}
 

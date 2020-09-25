@@ -2,11 +2,18 @@
  * External dependencies
  */
 import { stringify } from 'qs';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { receiveCategories, receiveDomainSuggestions, receiveDomainAvailability } from './actions';
+import {
+	receiveCategories,
+	receiveDomainSuggestionsSuccess,
+	receiveDomainSuggestionsError,
+	fetchDomainSuggestions,
+	receiveDomainAvailability,
+} from './actions';
 import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 import type { Selectors } from './selectors';
 import type { TailParameters } from '../mapped-types';
@@ -46,14 +53,31 @@ export function* __internalGetDomainSuggestions(
 ) {
 	// If normalized search string (`query`) contains no alphanumerics, endpoint 404s
 	if ( ! queryObject.query ) {
-		return receiveDomainSuggestions( queryObject, [] );
+		return receiveDomainSuggestionsError( 'Empty query' );
 	}
 
-	const suggestions = yield wpcomRequest( {
-		apiVersion: '1.1',
-		path: '/domains/suggestions',
-		query: stringify( queryObject ),
-	} );
+	yield fetchDomainSuggestions();
 
-	return receiveDomainSuggestions( queryObject, suggestions );
+	let suggestions;
+	try {
+		suggestions = yield wpcomRequest( {
+			apiVersion: '1.1',
+			path: '/domains/suggestions',
+			query: stringify( queryObject ),
+		} );
+	} catch ( e ) {
+		// e.g. no connection, or JSON parsing error
+		return receiveDomainSuggestionsError(
+			e.message || ( translate( 'Error while fetching server response' ) as string )
+		);
+	}
+
+	if ( ! suggestions || suggestions === '' ) {
+		// Other internal server errors
+		return receiveDomainSuggestionsError(
+			translate( 'Invalid response from the server' ) as string
+		);
+	}
+
+	return receiveDomainSuggestionsSuccess( queryObject, suggestions );
 }

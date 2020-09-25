@@ -9,17 +9,21 @@ import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+
 /**
  * Internal dependencies
  */
 import SuggestionItem from './suggestion-item';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
 import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
+import { useDomainAvailabilities } from '../hooks/use-domain-availabilities';
 import DomainCategories from '../domain-categories';
 import {
 	PAID_DOMAINS_TO_SHOW,
 	PAID_DOMAINS_TO_SHOW_EXPANDED,
 	DOMAIN_SUGGESTIONS_STORE,
+	domainIsAvailableStatus,
 } from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
 
@@ -64,6 +68,8 @@ export interface Props {
 
 	currentDomain?: string;
 
+	isCheckingDomainAvailability?: boolean;
+
 	existingSubdomain?: string;
 
 	/** The flow where the Domain Picker is used. Eg: Gutenboarding */
@@ -95,6 +101,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	initialDomainSearch = '',
 	onSetDomainSearch,
 	currentDomain,
+	isCheckingDomainAvailability,
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 } ) => {
@@ -111,17 +118,25 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestionVendor()
 	);
 
-	const allDomainSuggestions = useDomainSuggestions(
-		domainSearch.trim(),
-		quantityExpanded,
-		domainCategory,
-		useI18n().i18nLocale
-	) as DomainSuggestion[] | undefined;
+	const {
+		allDomainSuggestions,
+		errorMessage: domainSuggestionErrorMessage,
+		state: domainSuggestionState,
+		retryRequest: retryDomainSuggestionRequest,
+	} =
+		useDomainSuggestions(
+			domainSearch.trim(),
+			quantityExpanded,
+			domainCategory,
+			useI18n().i18nLocale
+		) || {};
 
 	const domainSuggestions = allDomainSuggestions?.slice(
 		existingSubdomain ? 1 : 0,
 		isExpanded ? quantityExpanded : quantity
 	);
+
+	const domainAvailabilities = useDomainAvailabilities();
 
 	const onDomainSearchBlurValue = ( event: React.FormEvent< HTMLInputElement > ) => {
 		if ( onDomainSearchBlur ) {
@@ -169,6 +184,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		onSetDomainSearch( searchQuery );
 	};
 
+	const showErrorMessage = domainSuggestionState === DataStatus.Failure;
+	const isDomainSearchEmpty = domainSearch.trim?.().length <= 1;
+	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
+	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
+
 	return (
 		<div className="domain-picker">
 			{ header && header }
@@ -187,7 +207,22 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					value={ domainSearch }
 				/>
 			</div>
-			{ domainSearch.trim()?.length > 1 ? (
+			{ showErrorMessage && (
+				<div className="domain-picker__error">
+					<p className="domain-picker__error-message">
+						{ __( 'An error has occurred, please check your connection and retry.' ) }
+						{ domainSuggestionErrorMessage && ` ${ domainSuggestionErrorMessage }` }
+					</p>
+					<Button
+						isPrimary
+						className="domain-picker__error-retry-btn"
+						onClick={ retryDomainSuggestionRequest }
+					>
+						Retry
+					</Button>
+				</div>
+			) }
+			{ showDomainSuggestionsResults && (
 				<div className="domain-picker__body">
 					{ showDomainCategories && (
 						<div className="domain-picker__aside">
@@ -227,11 +262,21 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								{ domainSuggestions?.map( ( suggestion, i ) => {
 									const index = existingSubdomain ? i + 1 : i;
 									const isRecommended = index === 1;
+									const availabilityStatus =
+										domainAvailabilities[ suggestion?.domain_name ]?.status;
+									// should availabilityStatus be falsy then we assume it is available as we have not checked yet.
+									const isAvailable = availabilityStatus
+										? domainIsAvailableStatus?.includes( availabilityStatus )
+										: true;
 									return (
 										<SuggestionItem
 											key={ suggestion.domain_name }
+											isUnavailable={ ! isAvailable }
 											domain={ suggestion.domain_name }
 											cost={ suggestion.cost }
+											isLoading={
+												currentDomain === suggestion.domain_name && isCheckingDomainAvailability
+											}
 											hstsRequired={ suggestion.hsts_required }
 											isFree={ suggestion.is_free }
 											isRecommended={ isRecommended }
@@ -265,7 +310,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							) }
 					</div>
 				</div>
-			) : (
+			) }
+			{ showDomainSuggestionsEmpty && (
 				<div className="domain-picker__empty-state">
 					<p className="domain-picker__empty-state--text">
 						{ __(

@@ -9,10 +9,8 @@ On smaller screens (<660px wide), the component will display half the maximum nu
 ```js
 import GravatarCaterpillar from 'components/gravatar-caterpillar';
 
-render() {
-    return (
-        <GravatarCaterpillar users={ users } />
-    );
+function render() {
+	return <GravatarCaterpillar users={ users } />;
 }
 ```
 

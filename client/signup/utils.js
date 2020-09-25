@@ -1,5 +1,5 @@
 /**
- * Exernal dependencies
+ * External dependencies
  */
 import cookie from 'cookie';
 import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
@@ -226,26 +226,6 @@ export function canResumeFlow( flowName, progress ) {
 	} );
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
-
-export const persistSignupDestination = ( url ) => {
-	const WEEK_IN_SECONDS = 3600 * 24 * 7;
-	const expirationDate = new Date( new Date().getTime() + WEEK_IN_SECONDS * 1000 );
-	const options = { path: '/', expires: expirationDate, sameSite: 'strict' };
-	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', url, options );
-};
-
-export const retrieveSignupDestination = () => {
-	const cookies = cookie.parse( document.cookie );
-	return cookies.wpcom_signup_complete_destination;
-};
-
-export const clearSignupDestinationCookie = () => {
-	// Set expiration to a random time in the past so that the cookie gets removed.
-	const expirationDate = new Date( new Date().getTime() - 1000 );
-	const options = { path: '/', expires: expirationDate };
-
-	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
-};
 
 export const shouldForceLogin = ( flowName ) => {
 	const flow = flows.getFlow( flowName );

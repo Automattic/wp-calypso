@@ -24,7 +24,7 @@ There are also three optional properties:
 Example:
 
 ```javascript
-account: { steps: [ 'site', 'user' ], destination: '/' }
+const account = { steps: [ 'site', 'user' ], destination: '/' };
 ```
 
 Once you've added the flow to `flows-pure.js`, it'll be available for users at `/start/flow-name` where `flow-name` is the key of your flow in `flows`.
@@ -62,11 +62,11 @@ In addition to `submitSignupStep`, make sure to also call `this.props.goToNextSt
 Example:
 
 ```javascript
-handleSubmit: function( event ) {
+function handleSubmit( event ) {
 	event.preventDefault();
 
 	SignupActions.submitSignupStep( {
-		stepName: this.props.stepName
+		stepName: this.props.stepName,
 	} );
 
 	this.props.goToNextStep();
@@ -86,15 +86,15 @@ Some background on `providedDependencies` and the Dependency Store: submitted st
 If your step requires certain data from other steps before it can submit to the API, you can configure its `apiRequestFunction` in `signup/config/steps-pure.js`. This is a function that is called once the data the step requires is available.
 
 ```javascript
-{
+const object = {
 	stepName: 'theme-selection',
 	dependencies: [ 'siteSlug' ],
-	apiRequestFunction: function( callback, dependencies ) {
-		wpcom.undocumented().someRequest( dependencies.siteSlug, function( errors, response ) {
+	apiRequestFunction: function ( callback, dependencies ) {
+		wpcom.undocumented().someRequest( dependencies.siteSlug, function ( errors, response ) {
 			callback( errors, { userId: response.userId } );
 		} );
-	}
-}
+	},
+};
 ```
 
 Note that here `apiRequestFunction` calls an API endpoint (`someRequest` in this example), from which they expect to get `userId`. If the API request is successful, `response.userId` is added to the Dependency Store via the callback. This is why you don't need to specify dependencies provided by API requests in `providedDependencies`.
@@ -105,8 +105,8 @@ The above example includes an inline function definition, but we should keep the
 
 ```javascript
 const step = {
-	apiRequestFunction: stepActions.createSite;
-}
+	apiRequestFunction: stepActions.createSite,
+};
 ```
 
 ## Hello World
@@ -128,35 +128,37 @@ export default class extends React.Component {
 	render() {
 		return <span>Hello world</span>;
 	}
-} );
+}
 ```
 
 4 - add the new step to `/client/signup/config/step-components.js`. Include a reference to the component module:
 
 ```javascript
 const stepNameToModuleName = {
-	...
-	'hello-world' : 'hello-world-module-name'; // Referencing signup/steps/hello-world-module-name/index.js
+	'hello-world': 'hello-world-module-name', // Referencing signup/steps/hello-world-module-name/index.js
 };
-
-...
 ```
 
 5 - add the new step to `/client/signup/config/steps-pure.js`. Include the component in the object returned from `generateSteps`:
 
 ```javascript
-'hello-world': {
-	stepName: 'hello-world' // has to match the property name
-},
+const steps = {
+	'hello-world': {
+		stepName: 'hello-world', // has to match the property name
+	},
+};
 ```
 
 6 - add a new flow to `/client/signup/config/flow.js`:
 
 ```javascript
-hello: { // This will be the slug for the flow, i.e.: wordpress.com/start/hello
-	steps: [ 'hello-world', 'user' ], // These are the steps that the user will be shown
-	destination: '/' // This is where the user will be taken once the flow is complete
-}
+const flow = {
+	hello: {
+		// This will be the slug for the flow, i.e.: wordpress.com/start/hello
+		steps: [ 'hello-world', 'user' ], // These are the steps that the user will be shown
+		destination: '/', // This is where the user will be taken once the flow is complete
+	},
+};
 ```
 
 7 - open <https://calypso.localhost:3000/start/hello> in an incognito window. You will be redirected to
@@ -165,11 +167,13 @@ the first step of the flow at `/start/hello/hello-world`, where you should see y
 8 - now we need a way for users to move to the next step of the flow. Let's add a button and a form to the step's `render` method:
 
 ```javascript
-render() {
+function render() {
 	return (
 		<form onSubmit={ this.handleSubmit }>
 			<p>This is the step named { this.props.stepName }</p>
-			<button className="button" type="submit">Get started</button>
+			<button className="button" type="submit">
+				Get started
+			</button>
 		</form>
 	);
 }

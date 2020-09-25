@@ -17,7 +17,6 @@ export interface ShoppingCartManagerArguments {
 	couponToAddOnInitialize: string | null;
 	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
-	onEvent?: ( action: ReactStandardAction ) => void;
 }
 
 export interface VariantSelectOverride {
@@ -28,6 +27,7 @@ export interface VariantSelectOverride {
 export interface ShoppingCartManager {
 	isLoading: boolean;
 	loadingError: string | null | undefined;
+	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
 	addItem: ( arg0: RequestCartProduct ) => void;
 	removeItem: ( arg0: string ) => void;
@@ -121,6 +121,7 @@ export type ShoppingCartState = {
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	loadingError?: string;
+	loadingErrorType?: ShoppingCartError;
 	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
 	queuedActions: ShoppingCartAction[];

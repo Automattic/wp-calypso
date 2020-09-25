@@ -7,10 +7,8 @@ This component is used to display a round badge next to a site with information 
 ```js
 import SiteIndicator from 'my-sites/site-indicator';
 
-render() {
-	return(
-		<SiteIndicator site={ siteObject } />
-	);
+function render() {
+	return <SiteIndicator site={ siteObject } />;
 }
 ```
 

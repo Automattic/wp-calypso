@@ -49,13 +49,13 @@ Translation strings are extracted from our codebase through a process of [static
 /*----------------- Bad Examples -----------------*/
 
 // don't pass a logical expression argument
-var translation = i18n.translate( condition ? 'foo' : 'bar' );
+const translation1 = i18n.translate( condition ? 'foo' : 'bar' );
 
 // don't pass a variable argument
-var translation = i18n.translate( foo );
+const translation2 = i18n.translate( foo );
 
 // don't pass a function call argument
-var translation = i18n.translate( foo( 'bar' ) );
+const translation3 = i18n.translate( foo( 'bar' ) );
 
 /*----------------- Good Examples -----------------*/
 
@@ -63,7 +63,7 @@ var translation = i18n.translate( foo( 'bar' ) );
 const example = i18n.translate( 'foo' );
 
 // do concatenate long strings with the + operator
-var translation = i18n.translate(
+const translation4 = i18n.translate(
 	'I am the very model of a modern Major-General, ' +
 		"I've information vegetable, animal, and mineral, " +
 		'I know the kings of England, and I quote the fights historical ' +
@@ -124,7 +124,7 @@ const example2 = i18n.translate( 'I feel {{em}}very{{/em}} strongly about this.'
 // components can nest
 const example3 = i18n.translate( '{{a}}{{icon/}}click {{em}}here{{/em}}{{/a}} to see examples.', {
 	components: {
-		a: <a href="#" />,
+		a: <a href="http://example.com" />,
 		em: <em />,
 		icon: <Icon size="huge" />,
 	},
@@ -138,33 +138,33 @@ You must specify both the singular and plural variants of a string when it conta
 ```js
 // An example where the translated string does not have
 // a number represented directly, but still depends on it
-var numHats = howManyHats(), // returns integer
-	content = i18n.translate( 'My hat has three corners.', 'My hats have three corners.', {
-		count: numHats,
-	} );
+const numHats = howManyHats(); // returns integer
+const contentHats = i18n.translate( 'My hat has three corners.', 'My hats have three corners.', {
+	count: numHats,
+} );
 
 // An example where the translated string includes the actual number it depends on
-var numDays = daysUntilExpiration(), // returns integer
-	content = i18n.translate(
-		'Your subscription will expire in %(numberOfDays)d day.',
-		'Your subscription will expire in %(numberOfDays)d days.',
-		{
-			count: numDays,
-			args: {
-				numberOfDays: numDays,
-			},
-		}
-	);
+const numDays = daysUntilExpiration(); // returns integer
+const contentDays = i18n.translate(
+	'Your subscription will expire in %(numberOfDays)d day.',
+	'Your subscription will expire in %(numberOfDays)d days.',
+	{
+		count: numDays,
+		args: {
+			numberOfDays: numDays,
+		},
+	}
+);
 ```
 
 ### More translate() Examples
 
 ```js
 // simplest case... just a translation, no special options
-var content = i18n.translate( 'My hat has three corners.' );
+const content1 = i18n.translate( 'My hat has three corners.' );
 
 // sprintf-style string substitution
-var city = getCity(), // returns string
+const city = getCity(), // returns string
 	zip = getZip(), // returns string
 	content = i18n.translate( 'Your city is %(city)s, your zip is %(zip)s.', {
 		args: {
@@ -175,26 +175,26 @@ var city = getCity(), // returns string
 
 // Mixing strings and markup
 // NOTE: This will return a React component, not a string
-var component = i18n.translate( 'I bought my hat in {{country/}}.', {
+const component1 = i18n.translate( 'I bought my hat in {{country/}}.', {
 	components: {
 		country: <input name="someName" type="text" />,
 	},
 } );
 
 // Mixing strings with markup that has nested content
-var component = i18n.translate( 'My hat has {{link}}three{{/link}} corners', {
+const component2 = i18n.translate( 'My hat has {{link}}three{{/link}} corners', {
 	components: {
 		link: <a href="#three" />,
 	},
 } );
 
 // add a comment to the translator
-var content = i18n.translate( 'g:i:s a', {
+const content2 = i18n.translate( 'g:i:s a', {
 	comment: 'draft saved date format, see http://php.net/date',
 } );
 
 // providing context
-var content = i18n.translate( 'post', {
+const content3 = i18n.translate( 'post', {
 	context: 'verb',
 } );
 ```
@@ -250,11 +250,7 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 
 function Greeting( { translate, className } ) {
-	return (
-		<h1 className={ className }>
-			{ translate( 'Hello!' ) }
-		</h1>
-	);
+	return <h1 className={ className }>{ translate( 'Hello!' ) }</h1>;
 }
 
 export default localize( Greeting );
@@ -268,10 +264,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import Greeting from './greeting';
 
-render(
-	<Greeting className="greeting" />,
-	document.body
-);
+render( <Greeting className="greeting" />, document.body );
 ```
 
 ## React Hook
@@ -284,7 +277,9 @@ and the state emitter emits a `change` event.
 The `useTranslate` hook returns the `translate` function:
 
 ```jsx
-const translate = useTranslate();
+function MyComponent() {
+	const translate = useTranslate();
+}
 ```
 
 The function can be called to return a localized value of a string, and it also exposes a
@@ -297,13 +292,9 @@ import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 function Greeting( { className } ) {
-  const translate = useTranslate();
-  debug( 'using translate with locale:', translate.localeSlug );
-	return (
-		<h1 className={ className }>
-			{ translate( 'Hello!' ) }
-		</h1>
-	);
+	const translate = useTranslate();
+	debug( 'using translate with locale:', translate.localeSlug );
+	return <h1 className={ className }>{ translate( 'Hello!' ) }</h1>;
 }
 
 export default Greeting;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 
@@ -53,13 +53,9 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 			?.map( ( { productSlug } ) => productSlug )
 			.filter( ( productSlug ) => JETPACK_PRODUCTS_LIST.includes( productSlug ) ) ?? [];
 
-	// When coming from in-connect flow, the url contains 'source=jetpack-plans' query param.
-	const isInConnectFlow = useMemo(
-		() => context.query?.source && context.query.source === 'jetpack-plans',
-		[ siteId ]
-	);
+	// When coming from in-connect flow, the url contains 'source=jetpack-connect-plans' query param.
+	const isInConnectFlow = context.query?.source === 'jetpack-connect-plans';
 
-	// TODO: Maybe make Notice dismissal persistent?
 	const [ showNotice, setShowNotice ] = useState( true );
 
 	// Only show ConnectFlowPlansHeader if coming from in-connect flow and if no products or plans have been purchased.

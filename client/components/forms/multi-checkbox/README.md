@@ -9,12 +9,12 @@ Under the hood, it uses the FormLabel and FormInputCheckbox components.
 Below is an example use for the MultiCheckbox component:
 
 ```jsx
-var options = [
+const options = [
 	{ value: 1, label: 'One' },
-	{ value: 2, label: 'Two' }
+	{ value: 2, label: 'Two' },
 ];
 
-<MultiCheckbox name="favorite_numbers" options={ options } defaultChecked={ [ 1 ] } />
+<MultiCheckbox name="favorite_numbers" options={ options } defaultChecked={ [ 1 ] } />;
 ```
 
 This code snippet will generate the following output:

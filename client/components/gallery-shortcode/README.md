@@ -10,7 +10,6 @@ Simply pass a site ID and an array of media items.
 import React from 'react';
 import GalleryShortcode from 'components/gallery-shortcode';
 
-
 export default class extends React.Component {
 	static displayName = 'MyComponent';
 
@@ -19,7 +18,8 @@ export default class extends React.Component {
 			<GalleryShortcode
 				siteId={ 6393289 }
 				items={ [ { ID: 31860 }, { ID: 31856 } ] }
-				className="my-component" />
+				className="my-component"
+			/>
 		);
 	}
 }
