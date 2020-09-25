@@ -15,7 +15,6 @@ import LoginFlow from '../lib/flows/login-flow.js';
 
 import ReaderPage from '../lib/pages/reader-page';
 
-import SidebarComponent from '../lib/components/sidebar-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
