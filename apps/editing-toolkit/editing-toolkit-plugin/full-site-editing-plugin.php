@@ -162,6 +162,16 @@ function load_editor_site_launch() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_editor_site_launch' );
 
 /**
+ * Sigh: load_composite_editor_checkout
+ */
+function load_composite_editor_checkout() {
+	require_once __DIR__ . '/editor-composite-checkout/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_composite_editor_checkout' );
+
+
+
+/**
  * Sigh: load_editor_gutenboarding_launch
  */
 function load_editor_gutenboarding_launch() {
