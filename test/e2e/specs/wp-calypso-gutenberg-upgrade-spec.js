@@ -268,10 +268,6 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 					} );
 
 					step( `Insert and configure ${ blockClass.blockName }`, async function () {
-						// For some reason, after the first run, the code editor is shown by
-						// default, this breaks the insertBlock call, so we force-switch to the
-						// editor before the insert.
-						await gEditorComponent.switchToBlockEditor();
 						await insertBlock( blockClass );
 					} );
 
