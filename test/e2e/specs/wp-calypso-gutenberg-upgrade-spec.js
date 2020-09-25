@@ -13,6 +13,11 @@ import { promises as fs } from 'fs';
  */
 import LoginFlow from '../lib/flows/login-flow.js';
 
+import ReaderPage from '../lib/pages/reader-page';
+
+import SidebarComponent from '../lib/components/sidebar-component.js';
+import NavBarComponent from '../lib/components/nav-bar-component.js';
+
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 import * as driverManager from '../lib/driver-manager.js';
@@ -279,10 +284,18 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 					verifyBlockInPublishedPage( blockClass, siteName );
 				} );
+
 				describe( `Test the same block in the corresponding edge site (${ edgeSiteName })`, function () {
 					step( `Switches to edge site (${ edgeSiteName })`, async function () {
-						// Re-use the same session created earlier but change the site
-						await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
+						await ReaderPage.Visit( driver );
+
+						const navbarComponent = await NavBarComponent.Expect( driver );
+						await navbarComponent.clickCreateNewPost( {
+							siteURL: `${ edgeSiteName }.wordpress.com`,
+						} );
+
+						gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+						await gEditorComponent.initEditor();
 					} );
 
 					step( 'Load block via markup copied from non-edge site', async function () {
