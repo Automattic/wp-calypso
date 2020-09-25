@@ -226,7 +226,7 @@ export class UpsellNudge extends React.Component {
 	};
 
 	handleOneClickUpsellComplete = () => {
-		page( `/home/${ this.props.siteSlug }` );
+		this.props.handleCheckoutCompleteRedirect( true );
 	};
 
 	renderPurchaseModal = () => {
