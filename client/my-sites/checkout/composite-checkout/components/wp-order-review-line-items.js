@@ -21,13 +21,10 @@ import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import { isGSuiteProductSlug } from 'lib/gsuite';
-<<<<<<< HEAD
 import { planMatches } from 'lib/plans';
 import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY } from 'lib/plans/constants';
-=======
 import { currentUserHasFlag } from 'state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
->>>>>>> Revert "Revert "Checkout: Remove cart message for PWPO users (#44651)" (#45017)"
 
 export function WPOrderReviewSection( { children, className } ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
