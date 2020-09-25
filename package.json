@@ -215,7 +215,7 @@
 		"@types/wordpress__api-fetch": "^3.2.2",
 		"@types/wordpress__block-editor": "^2.2.8",
 		"@types/wordpress__block-library": "^2.6.0",
-		"@types/wordpress__components": "^9.0.0",
+		"@types/wordpress__components": "^9.8.0",
 		"@types/wordpress__compose": "^3.4.2",
 		"@types/wordpress__data": "^4.6.7",
 		"@types/wordpress__data-controls": "^1.0.3",
