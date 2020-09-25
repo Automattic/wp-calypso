@@ -436,7 +436,7 @@ function setUpCSP( req, res, next ) {
 			...inlineScripts.map( ( hash ) => `'${ hash }'` ),
 		],
 		'base-uri': [ "'none'" ],
-		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com', '*.calypso.live' ],
+		'style-src': [ "'self'", '*.wp.com', 'https://fonts.googleapis.com' ],
 		'form-action': [ "'self'" ],
 		'object-src': [ "'none'" ],
 		'img-src': [
