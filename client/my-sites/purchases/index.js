@@ -37,7 +37,7 @@ export default ( router ) => {
 		clientRender
 	);
 	page(
-		'/purchases/subscriptions/:site/:receiptId',
+		'/purchases/subscriptions/:site/:purchaseId',
 		siteSelection,
 		navigation,
 		purchaseDetails,

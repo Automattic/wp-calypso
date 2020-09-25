@@ -26,7 +26,10 @@ export function redirectToPurchases( context ) {
 
 export const purchaseDetails = ( context, next ) => {
 	context.primary = (
-		<PurchaseDetails siteId={ context.params.site } receiptId={ context.params.receiptId } />
+		<PurchaseDetails
+			siteSlug={ context.params.site }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+		/>
 	);
 	next();
 };
