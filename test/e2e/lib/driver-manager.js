@@ -162,7 +162,6 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 
 				options.addArguments( '--app=https://www.wordpress.com' );
 
-
 				const service = new chrome.ServiceBuilder( chromedriver.path ).build(); // eslint-disable-line no-case-declarations
 				chrome.setDefaultService( service );
 
@@ -275,7 +274,7 @@ export async function ensureNotLoggedIn( driver ) {
 	}
 
 	await driver.executeScript(
-		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com;";'
+		'window.document.cookie = "sensitive_pixel_option=no;domain=.wordpress.com";'
 	);
 	return driver.sleep( 500 );
 }
