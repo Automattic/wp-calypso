@@ -102,6 +102,7 @@ import './style.scss';
 class ManagePurchase extends Component {
 	static propTypes = {
 		showHeader: PropTypes.bool,
+		purchaseListUrl: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
@@ -118,6 +119,7 @@ class ManagePurchase extends Component {
 
 	static defaultProps = {
 		showHeader: true,
+		purchaseListUrl: purchasesRoot,
 	};
 
 	state = {
@@ -127,7 +129,7 @@ class ManagePurchase extends Component {
 
 	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
 	}
@@ -140,7 +142,7 @@ class ManagePurchase extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
 	}
@@ -590,7 +592,7 @@ class ManagePurchase extends Component {
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 				<Main className={ classes }>
-					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
+					<HeaderCake backHref={ this.props.purchaseListUrl }>{ titles.managePurchase }</HeaderCake>
 					{ showExpiryNotice ? (
 						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
 							<NoticeAction href={ `/plans/${ site.slug || '' }` }>
