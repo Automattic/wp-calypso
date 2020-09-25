@@ -564,9 +564,9 @@ jobs:
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: |
-        source $HOME/.nvm/nvm.sh
-        nvm use
-        ./scripts/run-wrapper.sh
+          source $HOME/.nvm/nvm.sh
+          nvm use
+          ./scripts/run-wrapper.sh
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
