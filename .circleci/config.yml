@@ -560,7 +560,7 @@ jobs:
       - run: *set-e2e-variables
       - run: *save-chrome-version
       - run: *update-node
-      - run: yarn add chromedriver --force
+      - run: cp $CHROMEDRIVER_FILEPATH ./node_modules/.bin/
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: |
@@ -595,7 +595,7 @@ jobs:
       - run: *set-e2e-variables
       - run: *save-chrome-version
       - run: *update-node
-      - run: yarn add chromedriver --force
+      - run: cp $CHROMEDRIVER_FILEPATH ./node_modules/.bin/
       - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
       - run:
           name: Skip Jetpack Tests if needed
