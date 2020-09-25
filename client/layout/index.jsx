@@ -20,7 +20,6 @@ import config from 'config';
 import OfflineStatus from 'layout/offline-status';
 import QueryPreferences from 'components/data/query-preferences';
 import QuerySites from 'components/data/query-sites';
-import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor';
 import { isOffline } from 'state/application/selectors';
 import {
 	getSelectedSiteId,
@@ -179,9 +178,6 @@ class Layout extends Component {
 				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
-				{ config.isEnabled( 'layout/query-selected-editor' ) && (
-					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
-				) }
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="layout/guided-tours" placeholder={ null } />
 				) }
