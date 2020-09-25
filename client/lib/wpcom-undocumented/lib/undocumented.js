@@ -773,6 +773,22 @@ Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 };
 
 /**
+ * Retrieves the auto login link to Titan's control panel.
+ *
+ * @param orderId the Titan order ID
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
  * Get a list of WordPress.com products
  *
  * @param {Function} fn The callback function
