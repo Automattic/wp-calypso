@@ -50,7 +50,7 @@ export function PurchaseDetails( {
 				align="left"
 			/>
 
-			<ManagePurchase purchaseId={ purchaseId } siteSlug={ siteSlug } />
+			<ManagePurchase purchaseId={ purchaseId } siteSlug={ siteSlug } showHeader={ false } />
 		</Main>
 	);
 }
