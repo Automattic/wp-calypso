@@ -16,6 +16,7 @@ import {
 	useSelect,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +30,12 @@ import getSupportVariation, {
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
 import { useHasRenewalInCart } from '../hooks/has-renewal';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isWpComPersonalPlan,
+	isWpComPremiumPlan,
+} from 'lib/plans';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
@@ -235,6 +241,22 @@ function getPlanFeatures( plan, translate, hasDomainsInCart, hasRenewalInCart ) 
 	return [];
 }
 
+function getHighestWpComPlanLabel( plans ) {
+	const planMatchersInOrder = [
+		isWpComEcommercePlan,
+		isWpComBusinessPlan,
+		isWpComPremiumPlan,
+		isWpComPersonalPlan,
+	];
+	for ( const matcher of planMatchersInOrder ) {
+		for ( const plan of plans ) {
+			if ( matcher( get( plan, 'wpcom_meta.product_slug' ) ) ) {
+				return plan.label;
+			}
+		}
+	}
+}
+
 function CheckoutSummaryHelp() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -244,12 +266,8 @@ function CheckoutSummaryHelp() {
 
 	const happyChatAvailable = useSelector( isHappychatAvailable );
 	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
-	const hasPresalesPlanInCart = plans.some(
-		( { wpcom_meta } ) =>
-			isWpComBusinessPlan( wpcom_meta.product_slug ) ||
-			isWpComEcommercePlan( wpcom_meta.product_slug )
-	);
-	const isPresalesChatEligible = presalesChatAvailable && hasPresalesPlanInCart;
+	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
+	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
 
 	const isSupportChatUser = useSelector( ( state ) => {
 		return (
@@ -275,7 +293,7 @@ function CheckoutSummaryHelp() {
 			<QuerySupportTypes />
 			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
 			{ shouldRenderPaymentChatButton ? (
-				<PaymentChatButton />
+				<PaymentChatButton plan={ presalesEligiblePlanLabel } />
 			) : (
 				supportVariationDetermined && (
 					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
