@@ -80,7 +80,9 @@ export default function safeImageUrl( url ) {
 		delete parsedUrl.search;
 
 		// Force https since if there's a missing protocol it'll throw an error
-		parsedUrl.protocol = 'https';
+		if ( ! parsedUrl?.protocol ) {
+			parsedUrl.protocol = 'https';
+		}
 		url = getUrlFromParts( parsedUrl ).toString();
 	}
 
