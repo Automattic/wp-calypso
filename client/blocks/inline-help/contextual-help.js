@@ -13,6 +13,9 @@ import { localizeUrl } from 'lib/i18n-utils';
 /**
  * Module variables
  */
+
+/* eslint-disable inclusive-language/use-inclusive-words */
+// All usage of the word "master" here refers to the verb (ie. "to learn"), not a synonym of "primary".
 const getFallbackLinks = () => [
 	{
 		link: localizeUrl(
@@ -251,7 +254,7 @@ const getContextLinksForSection = () => ( {
 		{
 			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
 			post_id: 111349,
-			title: translate( 'Manage Purchases' ),
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
 			description: translate(
 				'Have a question or need to change something about a purchase you have made? Learn how.'
 			),
@@ -1491,7 +1494,6 @@ export function getContextResults( section ) {
 	// If true, still display fallback links in addition (as opposed to instead
 	// of) the other context links.
 	if ( section === 'home' ) {
-		const links = get( contextLinksForSection, section, fallbackLinks );
 		return compact( [ tour, video, ...getFallbackLinks(), ...links ] );
 	}
 
