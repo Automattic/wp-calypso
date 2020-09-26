@@ -231,6 +231,17 @@ function verifyBlockInPublishedPage( blockClass ) {
 // 	);
 // }
 
+async function startNewPost( siteURL ) {
+	await ReaderPage.Visit( driver );
+	await NavBarComponent.Expect( driver );
+
+	const navbarComponent = await NavBarComponent.Expect( driver );
+	await navbarComponent.clickCreateNewPost( { siteURL } );
+
+	gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+	await gEditorComponent.initEditor();
+}
+
 before( async function () {
 	this.timeout( startBrowserTimeoutMS );
 	driver = await driverManager.startBrowser();
@@ -263,11 +274,12 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 		].forEach( ( siteName ) => {
 			describe( `Test the ${ blockClass.blockName } block on ${ siteName } @parallel`, function () {
 				const edgeSiteName = siteName + 'edge';
+				const siteURL = `${ siteName }.wordpress.com`;
 
 				describe( `Test the block in the non-edge site (${ siteName })`, function () {
 					step( `Login to ${ siteName }`, async function () {
-						await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
-						gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+						await loginFlow.login( siteURL, true );
+						await startNewPost( siteURL );
 					} );
 
 					step( `Insert and configure ${ blockClass.blockName }`, async function () {
@@ -278,22 +290,17 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 					step( 'Copy the markup for the block', async function () {
 						currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
+						await driverManager.deleteLocalStorage( driver );
 					} );
 
 					verifyBlockInPublishedPage( blockClass, siteName );
 				} );
 
 				describe( `Test the same block in the corresponding edge site (${ edgeSiteName })`, function () {
+					const edgeSiteURL = `${ edgeSiteName }.wordpress.com`;
+
 					step( `Switches to edge site (${ edgeSiteName })`, async function () {
-						await ReaderPage.Visit( driver );
-
-						const navbarComponent = await NavBarComponent.Expect( driver );
-						await navbarComponent.clickCreateNewPost( {
-							siteURL: `${ edgeSiteName }.wordpress.com`,
-						} );
-
-						gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-						await gEditorComponent.initEditor();
+						await startNewPost( edgeSiteURL );
 					} );
 
 					step( 'Load block via markup copied from non-edge site', async function () {

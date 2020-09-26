@@ -250,8 +250,12 @@ export async function clearCookiesAndDeleteLocalStorage( driver, siteURL = null 
 	const url = await driver.getCurrentUrl();
 	await driver.manage().deleteAllCookies();
 	if ( url.startsWith( 'data:' ) === false && url !== 'about:blank' ) {
-		return await driver.executeScript( 'window.localStorage.clear();' );
+		return deleteLocalStorage( driver );
 	}
+}
+
+export function deleteLocalStorage( driver ) {
+	return driver.executeScript( 'window.localStorage.clear();' );
 }
 
 export async function ensureNotLoggedIn( driver ) {
