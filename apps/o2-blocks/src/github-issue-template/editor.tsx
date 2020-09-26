@@ -150,15 +150,19 @@ registerBlockType< Attributes >( 'a8c/github-issue-template', {
 	attributes: {
 		userOrOrg: {
 			type: 'string',
+			default: '',
 		},
 		repo: {
 			type: 'string',
+			default: '',
 		},
 		title: {
 			type: 'string',
+			default: '',
 		},
 		body: {
 			type: 'string',
+			default: '',
 		},
 	},
 	edit: ( { setAttributes, attributes, isSelected } ) => {
