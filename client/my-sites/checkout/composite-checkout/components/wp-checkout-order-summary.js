@@ -24,6 +24,7 @@ import { get } from 'lodash';
 import { showInlineHelpPopover } from 'state/inline-help/actions';
 import PaymentChatButton from 'my-sites/checkout/checkout/payment-chat-button';
 import getSupportVariation, {
+	SUPPORT_HAPPYCHAT,
 	SUPPORT_FORUM,
 	SUPPORT_DIRECTLY,
 } from 'state/selectors/get-inline-help-support-variation';
@@ -263,18 +264,12 @@ function CheckoutSummaryHelp() {
 	const plans = useLineItemsOfType( 'plan' );
 
 	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
+	const supportVariation = useSelector( getSupportVariation );
 
 	const happyChatAvailable = useSelector( isHappychatAvailable );
 	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
 	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
 	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
-
-	const isSupportChatUser = useSelector( ( state ) => {
-		return (
-			SUPPORT_FORUM !== getSupportVariation( state ) &&
-			SUPPORT_DIRECTLY !== getSupportVariation( state )
-		);
-	} );
 
 	const onEvent = useEvents();
 	const handleHelpButtonClicked = () => {
@@ -284,8 +279,10 @@ function CheckoutSummaryHelp() {
 
 	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
 	const shouldRenderPaymentChatButton =
-		happyChatAvailable &&
-		( isPresalesChatEligible || ( supportVariationDetermined && isSupportChatUser ) );
+		happyChatAvailable && ( isPresalesChatEligible || supportVariation === SUPPORT_HAPPYCHAT );
+
+	const hasDirectSupport =
+		supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
 	// If chat isn't available, use the inline help button instead.
 	return (
@@ -297,7 +294,7 @@ function CheckoutSummaryHelp() {
 			) : (
 				supportVariationDetermined && (
 					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-						{ isSupportChatUser
+						{ hasDirectSupport
 							? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
 									components: {
 										underline: <span />,
