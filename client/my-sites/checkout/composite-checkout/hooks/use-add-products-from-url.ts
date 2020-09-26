@@ -38,7 +38,13 @@ export default function useAddProductsFromUrl( {
 			setIsLoading( false );
 			return;
 		}
-		if ( ! areCartProductsPreparing && productsForCart.length === 0 && ! couponCodeFromUrl ) {
+		if (
+			! areCartProductsPreparing &&
+			productsForCart.length === 0 &&
+			! couponCodeFromUrl &&
+			! isLoadingCart &&
+			! isCartPendingUpdate
+		) {
 			setIsLoading( false );
 			return;
 		}
