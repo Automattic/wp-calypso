@@ -15,6 +15,7 @@ export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,
 	productsForCart,
+	areCartProductsPreparing,
 	couponCodeFromUrl,
 	applyCoupon,
 	recordEvent,
@@ -23,6 +24,7 @@ export default function useAddProductsFromUrl( {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
 	productsForCart: RequestCartProduct[];
+	areCartProductsPreparing: boolean;
 	couponCodeFromUrl: string | null | undefined;
 	applyCoupon: ( couponId: string ) => void;
 	recordEvent: ( action: ReactStandardAction ) => void;
@@ -32,17 +34,24 @@ export default function useAddProductsFromUrl( {
 	const hasRequestedInitialProducts = useRef< boolean >( false );
 
 	useEffect( () => {
-		if ( isCartPendingUpdate || isLoadingCart ) {
+		if ( ! isCartPendingUpdate && ! isLoadingCart && hasRequestedInitialProducts.current ) {
+			setIsLoading( false );
 			return;
 		}
-		if ( ! hasRequestedInitialProducts.current ) {
+		if ( ! areCartProductsPreparing && productsForCart.length === 0 && ! couponCodeFromUrl ) {
+			setIsLoading( false );
 			return;
 		}
-		setIsLoading( false );
-	}, [ isCartPendingUpdate, isLoadingCart ] );
+	}, [
+		isCartPendingUpdate,
+		isLoadingCart,
+		areCartProductsPreparing,
+		productsForCart.length,
+		couponCodeFromUrl,
+	] );
 
 	useEffect( () => {
-		if ( isLoadingCart || hasRequestedInitialProducts.current ) {
+		if ( areCartProductsPreparing || isLoadingCart || hasRequestedInitialProducts.current ) {
 			return;
 		}
 		if ( productsForCart.length > 0 ) {
@@ -53,6 +62,7 @@ export default function useAddProductsFromUrl( {
 		}
 		hasRequestedInitialProducts.current = true;
 	}, [
+		areCartProductsPreparing,
 		recordEvent,
 		isLoadingCart,
 		couponCodeFromUrl,
