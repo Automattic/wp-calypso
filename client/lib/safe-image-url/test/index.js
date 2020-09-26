@@ -56,6 +56,12 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( '//example.com/foo' ) ).toEqual( 'https://i1.wp.com/example.com/foo' );
 		} );
 
+		test( 'should make a non-wpcom http protocol url with params safe', () => {
+			expect( safeImageUrl( 'http://example.com/foo?w=100' ) ).toEqual(
+				'https://i1.wp.com/example.com/foo'
+			);
+		} );
+
 		test( 'should make a non-wpcom protocol relative url with params safe', () => {
 			expect( safeImageUrl( '//example.com/foo?w=100' ) ).toEqual(
 				'https://i1.wp.com/example.com/foo?ssl=1'
