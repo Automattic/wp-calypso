@@ -8,7 +8,9 @@ import createIssueUrl from 'new-github-issue-url';
 import { SVG, Rect, Path } from '@wordpress/primitives';
 import classNames from 'classnames';
 import { InspectorControls } from '@wordpress/block-editor';
-import { Octokit } from '@octokit/core';
+import { useEffect, useState } from '@wordpress/element';
+import { useDebounce } from 'use-debounce';
+
 import type * as ReactT from 'react'; // eslint-disable-line import/no-extraneous-dependencies
 
 import './editor.scss';
@@ -30,6 +32,12 @@ const icon = (
 	</SVG>
 );
 
+interface Label {
+	id: string;
+	name: string;
+	color: string;
+}
+
 type ShellAs = keyof JSX.IntrinsicElements | ReactT.JSXElementConstructor< any >;
 
 type ShellProps< T extends ShellAs > = Readonly< {
@@ -38,6 +46,7 @@ type ShellProps< T extends ShellAs > = Readonly< {
 	title: ReactT.ReactNode;
 	subtitle: ReactT.ReactNode;
 	body?: ReactT.ReactNode;
+	labels?: string[];
 } > &
 	ReactT.ComponentProps< T >;
 
@@ -47,6 +56,7 @@ const Shell = < T extends ShellAs = 'div' >( {
 	title,
 	subtitle,
 	body,
+	labels = [],
 	...elementProps
 }: ShellProps< T > ) => {
 	return (
@@ -55,6 +65,13 @@ const Shell = < T extends ShellAs = 'div' >( {
 			<div className="wp-block-a8c-github-template__title">{ title }</div>
 			<div className="wp-block-a8c-github-template__sub-title">{ subtitle }</div>
 			{ body && <div className="wp-block-a8c-github-template__body">{ body }</div> }
+			{ Boolean( labels.length ) && (
+				<ul className="wp-block-a8c-github-template__labels">
+					{ labels.map( ( l ) => (
+						<li key={ l }>{ l }</li>
+					) ) }
+				</ul>
+			) }
 		</El>
 	);
 };
@@ -80,11 +97,42 @@ const Edit = ( {
 	repo,
 	body,
 }: EditProps ): ReactT.ReactElement => {
+	const [ labelValue, setLabelValue ] = useState( '' );
+	const [ assignedLabels, setAssignedLabels ] = useState( [] );
+	const [ labels, setLabels ] = useState< FormTokenField.Value[] | undefined >( undefined );
+
+	const [ [ bUser, bRepo ] ] = useDebounce( [ userOrOrg, repo ], 250, {
+		equalityFn( l, r ) {
+			return l.every( ( val, i ) => val === r[ i ] );
+		},
+	} );
+
+	useEffect( () => {
+		if ( ! bUser || ! bRepo ) {
+			return;
+		}
+		window
+			.fetch( `https://api.github.com/repos/${ bUser }/${ bRepo }/labels?per_page=100`, {
+				headers: {
+					Accept: 'application/vnd.github.v3+json',
+				},
+			} )
+			.then( ( resp ) => resp.json(), console.warn )
+			.then( ( json ) => {
+				setLabels( json.map( ( { name }: { name: string } ) => name ) );
+			} );
+	}, [ bUser, bRepo ] );
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Labels!' ) }>
-					<FormTokenField />
+					<FormTokenField
+						onInputChange={ setLabelValue }
+						onChange={ setAssignedLabels }
+						suggestions={ labels }
+						maxSuggestions={ Infinity }
+						value={ assignedLabels }
+					/>
 				</PanelBody>
 			</InspectorControls>
 
@@ -107,6 +155,7 @@ const Edit = ( {
 				body={
 					<TextareaControl placeholder="Issue Body" onChange={ onChangeBody } value={ body } />
 				}
+				labels={ assignedLabels }
 			/>
 		</>
 	);
