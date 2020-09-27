@@ -4,6 +4,7 @@
 import { localize } from 'i18n-calypso';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,7 +13,6 @@ import wpcom from 'lib/wp';
 import { errorNotice } from 'state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
 import SectionHeader from 'components/section-header';
-import { connect } from 'react-redux';
 
 class TitanControlPanelLoginCard extends React.Component {
 	state = {
