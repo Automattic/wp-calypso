@@ -146,7 +146,7 @@ function HelpSearchResults( {
 
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
-		if ( post_id === 111349 && ! isSearching && ! hasPurchases && sectionName !== 'purchases' ) {
+		if ( post_id === 111349 && ! isSearching && ! hasAPIResults && ! hasPurchases && sectionName !== 'purchases' ) {
 			return null;
 		}
 
