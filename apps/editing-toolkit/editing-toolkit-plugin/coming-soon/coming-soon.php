@@ -76,6 +76,23 @@ function add_public_coming_soon_to_settings_endpoint_post( $input, $unfiltered_i
 add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_post', 10, 2 );
 
 /**
+ * This filter adds the coming soon page to the list of page templates using the `vertical_templates` hook
+ *
+ * @param array $templates The array of all available page templates.
+ *
+ * @return array The updated $templates array
+ */
+function add_public_coming_soon_page_template( $templates ) : array {
+	$templates[] = json_decode(
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		file_get_contents( __DIR__ . '/coming-soon-page-template.json' ),
+		false
+	);
+	return $templates;
+}
+add_filter( 'vertical_templates', __NAMESPACE__ . '\add_public_coming_soon_page_template' );
+
+/**
  * Decides whether to redirect to the site's coming soon page and performs
  * the redirect.
  */
