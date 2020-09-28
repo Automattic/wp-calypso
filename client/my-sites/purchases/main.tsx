@@ -41,6 +41,9 @@ export function PurchaseDetails( {
 } ) {
 	const translate = useTranslate();
 
+	const getCancelPurchaseUrlFor = ( targetSiteSlug: string, targetPurchaseId: string | number ) =>
+		`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/cancel`;
+
 	return (
 		<Main className="purchases is-wide-layout">
 			<DocumentHead title={ translate( 'Billing' ) } />
@@ -57,6 +60,7 @@ export function PurchaseDetails( {
 				siteSlug={ siteSlug }
 				showHeader={ false }
 				purchaseListUrl={ `/purchases/subscriptions/${ siteSlug }` }
+				getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 			/>
 		</Main>
 	);
