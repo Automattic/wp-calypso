@@ -445,14 +445,6 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getSecurity() {
 		const { selectedSite, domain, currentRoute, translate } = this.props;
 
-		const shouldRenderDomainSecurity = config.isEnabled(
-			'domains/new-status-design/security-option'
-		);
-
-		if ( ! shouldRenderDomainSecurity ) {
-			return null;
-		}
-
 		const { pointsToWpcom, sslStatus } = domain;
 
 		if ( ! pointsToWpcom || ! sslStatus ) {
