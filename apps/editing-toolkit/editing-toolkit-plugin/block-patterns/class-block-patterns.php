@@ -63,6 +63,23 @@ class Block_Patterns {
 	 * Register FSE block patterns and categories.
 	 */
 	private function register_patterns() {
+		// Remove core pattern column category.
+		if ( class_exists( 'WP_Block_Pattern_Categories_Registry' ) ) {
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'columns' ) ) {
+				unregister_block_pattern_category( 'columns' );
+			}
+		}
+
+		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
+			// Remove core patterns except 'Two Columns of Text'.
+			// Unfortunately, \WP_Block_Patterns_Registry::get_instance()->get_all_registered() doesn't return the pattern names as keys.
+			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
+				if ( 'core/' === substr( $pattern['name'], 0, 5 ) && 'core/text-two-columns' !== $pattern['name'] ) {
+					unregister_block_pattern( $pattern['name'] );
+				}
+			}
+		}
+
 		$block_patterns = $this->get_patterns();
 
 		foreach ( (array) $this->get_patterns() as $pattern ) {
