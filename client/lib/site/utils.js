@@ -167,7 +167,7 @@ export function getUnmappedUrl( site ) {
 /**
  * Checks if the plan of a site includes a specific feature.
  *
- * @param {Plan} site Site to check
+ * @param {object} site Site to check
  * @param {string} feature Feature
  * @returns {boolean} True if does
  */
