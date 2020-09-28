@@ -30,9 +30,10 @@ export default function useAddProductsFromUrl( {
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const hasRequestedInitialProducts = useRef< boolean >( false );
 
+	// If there are no products to add, no coupon to add, and nothing is loading,
+	// then mark this hook complete (it has nothing to do).
 	useEffect( () => {
-		if ( ! isCartPendingUpdate && ! isLoadingCart && hasRequestedInitialProducts.current ) {
-			setIsLoading( false );
+		if ( ! isLoading ) {
 			return;
 		}
 		if (
@@ -46,6 +47,7 @@ export default function useAddProductsFromUrl( {
 			return;
 		}
 	}, [
+		isLoading,
 		isCartPendingUpdate,
 		isLoadingCart,
 		areCartProductsPreparing,
@@ -53,7 +55,28 @@ export default function useAddProductsFromUrl( {
 		couponCodeFromUrl,
 	] );
 
+	// If we have made requests to update the cart, and the cart has finished
+	// updating, mark this hook complete.
 	useEffect( () => {
+		if ( ! isLoading ) {
+			return;
+		}
+		if ( ! hasRequestedInitialProducts.current ) {
+			return;
+		}
+		if ( ! isCartPendingUpdate && ! isLoadingCart ) {
+			setIsLoading( false );
+			return;
+		}
+	}, [ isLoading, isCartPendingUpdate, isLoadingCart ] );
+
+	// If we have products or a coupon to add, and we have not requested they be
+	// added, and nothing is loading, request that the shopping cart add those
+	// products.
+	useEffect( () => {
+		if ( ! isLoading ) {
+			return;
+		}
 		if ( areCartProductsPreparing || isLoadingCart || hasRequestedInitialProducts.current ) {
 			return;
 		}
@@ -65,6 +88,7 @@ export default function useAddProductsFromUrl( {
 		}
 		hasRequestedInitialProducts.current = true;
 	}, [
+		isLoading,
 		areCartProductsPreparing,
 		isLoadingCart,
 		couponCodeFromUrl,
