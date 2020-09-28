@@ -52,7 +52,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/wi
 import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'state/media/thunks';
-
+import Iframe from './iframe';
 /**
  * Types
  */
@@ -653,6 +653,7 @@ class CalypsoifyIframe extends Component<
 				return;
 			}
 		}
+		window.performance?.mark( 'iframe_loaded' );
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};
 
@@ -687,7 +688,7 @@ class CalypsoifyIframe extends Component<
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						/* eslint-disable jsx-a11y/iframe-has-title */
-						<iframe
+						<Iframe
 							ref={ this.iframeRef }
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
