@@ -12,10 +12,10 @@ export const collector: Collector = ( report ) => {
 	// be recorded in `performance.timeOrigin` but not all browsers supports it. However,
 	// `navigationStart` is reasonably close, therefore we don't need to correct `startTime`
 	marks.forEach( ( mark ) => {
-		report.data.set(
-			'mark__' + mark.name.toLowerCase().replace( /\W/g, '_' ),
-			Math.round( mark.startTime )
-		);
+		const name = 'mark__' + mark.name.toLowerCase().replace( /\W/g, '_' );
+		if ( ! report.data.has( name ) ) {
+			report.data.set( name, Math.round( mark.startTime ) );
+		}
 	} );
 
 	return report;
