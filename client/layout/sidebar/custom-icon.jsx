@@ -1,8 +1,7 @@
 /**
  * SidebarCustomIcon -
- *   Renders an <img> tag with props supplied if icon is a data image
- *   or a dashicon in other case. If icon is not supplied or undefined
- *   returns a blank SVG
+ *   Handles Dashicons, SVGs, or image URLs and passes on the supplied props.
+ *   Returns a blank SVG, if icon is not supplied or undefined.
  *   Adds className="sidebar__menu-icon" to the supplied className.
  *
  *   Purpose: To display a custom icon in the sidebar when using a
