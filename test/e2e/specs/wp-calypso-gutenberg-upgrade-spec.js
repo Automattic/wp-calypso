@@ -290,7 +290,6 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 					step( 'Copy the markup for the block', async function () {
 						currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
-						await driverManager.deleteLocalStorage( driver );
 					} );
 
 					verifyBlockInPublishedPage( blockClass, siteName );
@@ -305,7 +304,6 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 					step( 'Load block via markup copied from non-edge site', async function () {
 						await gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
-						await gEditorComponent.switchToBlockEditor();
 					} );
 
 					verifyBlockInEditor( blockClass, edgeSiteName );
