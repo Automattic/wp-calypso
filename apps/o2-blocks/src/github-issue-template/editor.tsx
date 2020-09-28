@@ -8,7 +8,7 @@ import createIssueUrl from 'new-github-issue-url';
 import { SVG, Rect, Path } from '@wordpress/primitives';
 import classNames from 'classnames';
 import { InspectorControls } from '@wordpress/block-editor';
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useMemo, useState } from '@wordpress/element';
 import { useDebounce } from 'use-debounce';
 
 import type * as ReactT from 'react'; // eslint-disable-line import/no-extraneous-dependencies
@@ -33,10 +33,13 @@ const icon = (
 );
 
 interface Label {
-	id: string;
 	name: string;
 	color: string;
 }
+/**
+ * Maps repositories to labels or `null` if repository can't be found.
+ */
+type RepoLabels = Map< string, Label[] | null >;
 
 type ShellAs = keyof JSX.IntrinsicElements | ReactT.JSXElementConstructor< any >;
 
@@ -46,7 +49,7 @@ type ShellProps< T extends ShellAs > = Readonly< {
 	title: ReactT.ReactNode;
 	subtitle: ReactT.ReactNode;
 	body?: ReactT.ReactNode;
-	labels?: string[];
+	labels?: Label[];
 } > &
 	ReactT.ComponentProps< T >;
 
@@ -81,6 +84,7 @@ type EditProps = Readonly< {
 	onChangeUserOrOrg: ( val: string ) => void;
 	onChangeRepoName: ( val: string ) => void;
 	onChangeBody: ( val: string ) => void;
+	onChangeLabels: ( val: Label[] ) => void;
 	title: string;
 	userOrOrg: string;
 	repo: string;
@@ -92,13 +96,13 @@ const Edit = ( {
 	onChangeUserOrOrg,
 	onChangeRepoName,
 	onChangeBody,
+	onChangeLabels,
 	title,
 	userOrOrg,
 	repo,
 	body,
 }: EditProps ): ReactT.ReactElement => {
-	const [ labelValue, setLabelValue ] = useState( '' );
-	const [ assignedLabels, setAssignedLabels ] = useState( [] );
+	const repoLabels = useMemo< RepoLabels >( () => new Map(), [] );
 	const [ labels, setLabels ] = useState< FormTokenField.Value[] | undefined >( undefined );
 
 	const [ [ bUser, bRepo ] ] = useDebounce( [ userOrOrg, repo ], 250, {
@@ -111,26 +115,37 @@ const Edit = ( {
 		if ( ! bUser || ! bRepo ) {
 			return;
 		}
+
+		const fullRepo = `${ encodeURIComponent( bUser ) }/${ encodeURIComponent( bRepo ) }`;
+		if ( repoLabels.has( fullRepo ) ) {
+			return;
+		}
+
 		window
-			.fetch( `https://api.github.com/repos/${ bUser }/${ bRepo }/labels?per_page=100`, {
+			.fetch( `https://api.github.com/repos/${ fullRepo }/labels?per_page=100`, {
 				headers: {
 					Accept: 'application/vnd.github.v3+json',
 				},
 			} )
-			.then( ( resp ) => resp.json(), console.warn )
-			.then( ( json ) => {
-				setLabels( json.map( ( { name }: { name: string } ) => name ) );
-			} );
-	}, [ bUser, bRepo ] );
+			.then(
+				( resp ) => {
+					if ( resp.status >= 200 && resp.status < 300 ) {
+						resp.json().then( ( data ) => repoLabels.set( fullRepo, data ) );
+						return;
+					}
+					repoLabels.set( fullRepo, null );
+				},
+				() => repoLabels.set( fullRepo, null )
+			);
+	}, [ bUser, bRepo, repoLabels ] );
+
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __( 'Labels!' ) }>
 					<FormTokenField
-						onInputChange={ setLabelValue }
-						onChange={ setAssignedLabels }
+						onChange={ onChangeLabels }
 						suggestions={ labels }
-						maxSuggestions={ Infinity }
 						value={ assignedLabels }
 					/>
 				</PanelBody>
@@ -190,6 +205,7 @@ interface Attributes {
 	repo: string;
 	title: string;
 	body: string;
+	labels: Label[];
 }
 
 registerBlockType< Attributes >( 'a8c/github-issue-template', {
@@ -213,18 +229,28 @@ registerBlockType< Attributes >( 'a8c/github-issue-template', {
 			type: 'string',
 			default: '',
 		},
+		labels: {
+			type: 'array',
+			default: [],
+		},
 	},
 	edit: ( { setAttributes, attributes, isSelected } ) => {
 		const { userOrOrg, repo } = attributes;
 		const isValid = Boolean( userOrOrg && repo );
+		const RepoLabels = useMemo< RepoLabels >( new Map(), [] );
+
+		const changeUserOrOrg = ( newUserOrOrg: string ) =>
+			setAttributes( { userOrOrg: newUserOrOrg, labels: [] } );
+		const changeRepo = ( newRepo: string ) => setAttributes( { repo: newRepo, labels: [] } );
 
 		if ( isSelected ) {
 			return (
 				<Edit
-					onChangeUserOrOrg={ ( newUserOrOrg ) => setAttributes( { userOrOrg: newUserOrOrg } ) }
-					onChangeRepoName={ ( newRepo ) => setAttributes( { repo: newRepo } ) }
+					onChangeUserOrOrg={ changeUserOrOrg }
+					onChangeRepoName={ changeRepo }
 					onChangeTitle={ ( newTitle ) => setAttributes( { title: newTitle } ) }
 					onChangeBody={ ( newBody ) => setAttributes( { body: newBody } ) }
+					onChangeLabels={ ( newLabels ) => setAttributes( { labels: newLabels } ) }
 					{ ...attributes }
 				/>
 			);
