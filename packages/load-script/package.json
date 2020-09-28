@@ -23,7 +23,7 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.11.2",
 		"debug": "^4.0.0"
 	},
 	"scripts": {

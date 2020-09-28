@@ -38,7 +38,7 @@
 		"prepare": "transpile && copy-assets"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.11.2",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/i18n": "^3.14.0",
 		"classnames": "^2.2.6",

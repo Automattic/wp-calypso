@@ -31,7 +31,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.11.2",
 		"crc32": "^0.2.2",
 		"debug": "^4.0.0",
 		"seed-random": "^2.2.0"

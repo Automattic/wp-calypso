@@ -93,7 +93,7 @@
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
-		"@babel/core": "^7.11.1",
+		"@babel/core": "^7.11.6",
 		"@testing-library/jest-dom": "^5.9.0",
 		"@testing-library/react": "^10.0.5",
 		"@wordpress/a11y": "^2.11.0",

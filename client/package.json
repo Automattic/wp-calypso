@@ -39,7 +39,7 @@
 		"@automattic/webpack-config-flag-plugin": "^1.0.0",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "^0.0.2",
 		"@automattic/webpack-inline-constant-exports-plugin": "^0.0.1",
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.11.2",
 		"@emotion/core": "^10.0.27",
 		"@emotion/styled": "^10.0.27",
 		"@github/webauthn-json": "^0.4.1",
