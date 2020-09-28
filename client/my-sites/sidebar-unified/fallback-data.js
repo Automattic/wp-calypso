@@ -15,21 +15,21 @@ const showShowThemeOptions = true;
 export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 	const fallbackResponse = [
 		{
-			icon: 'dashicons-home',
+			icon: 'dashicons-admin-home',
 			slug: 'home',
 			title: translate( 'My Home' ),
 			type: 'menu-item',
 			url: `/home/${ siteDomain }`,
 		},
 		{
-			icon: 'dashicons-home',
+			icon: 'dashicons-chart-bar',
 			slug: 'stats',
 			title: translate( 'Stats' ),
 			type: 'menu-item',
 			url: `/stats/day/${ siteDomain }`,
 		},
 		{
-			icon: 'dashicons-home',
+			icon: 'dashicons-cart',
 			slug: 'purchases',
 			title: translate( 'Purchases' ),
 			type: 'menu-item',
@@ -343,23 +343,7 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 			slug: 'plugins',
 			title: translate( 'Plugins' ),
 			type: 'menu-item',
-			url: `https://${ siteDomain }/wp-admin/plugins.php`,
-			children: [
-				{
-					parent: 'plugins.php',
-					slug: 'plugins-installed',
-					title: translate( 'Installed Plugins' ),
-					type: 'menu-item',
-					url: `https://${ siteDomain }/wp-admin/plugins.php`,
-				},
-				{
-					parent: 'plugins.php',
-					slug: 'plugins-add-new',
-					title: translate( 'Add New' ),
-					type: 'menu-item',
-					url: `https://${ siteDomain }/wp-admin/plugin-editor.php`,
-				},
-			],
+			url: `/plugins/${ siteDomain }`,
 		},
 		{
 			icon: 'dashicons-admin-users',

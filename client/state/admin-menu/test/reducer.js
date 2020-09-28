@@ -29,6 +29,37 @@ describe( 'reducer', () => {
 				123456: menuFixture,
 			} );
 		} );
+
+		test( 'updates menu when there already is a menu', () => {
+			const originalMenu = [
+				{
+					icon: 'dashicons-feedback',
+					slug: 'the-original-menu-item',
+					title: 'The Original Menu Item',
+					type: 'menu-item',
+					url: 'https://examplewebsite.wordpress.com/wp-admin/admin.php?page=original',
+				},
+			];
+
+			const newMenu = menuFixture;
+
+			// Populate initial state with a different menu from
+			// the one we will be replacing it with.
+			const initialState = deepFreeze( {
+				123456: originalMenu,
+			} );
+
+			const action = {
+				type: ADMIN_MENU_RECEIVE,
+				siteId: 123456,
+				menu: newMenu,
+			};
+
+			// Check the menu updates to reflect the new menu.
+			expect( menusReducer( initialState, action ) ).toEqual( {
+				123456: newMenu,
+			} );
+		} );
 	} );
 
 	describe( 'requesting reducer', () => {
