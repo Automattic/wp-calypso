@@ -7,6 +7,7 @@ import '@automattic/calypso-polyfills';
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	Checkout,
 	CheckoutStepArea,
