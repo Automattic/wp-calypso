@@ -24,6 +24,7 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { createItemToAddToCart } from '../add-items';
 import { RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
+import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -72,6 +73,7 @@ export default function usePrepareProductsForCart( {
 		initializePreparedProductsState
 	);
 
+	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
 
 	// Only one of these three should ever operate. The others should bail if
