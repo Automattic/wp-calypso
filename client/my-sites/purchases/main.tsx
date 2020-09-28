@@ -12,6 +12,7 @@ import Subscriptions from './subscriptions';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import ManagePurchase from 'me/purchases/manage-purchase';
+import CancelPurchase from 'me/purchases/cancel-purchase';
 
 export function Purchases() {
 	const translate = useTranslate();
@@ -56,6 +57,37 @@ export function PurchaseDetails( {
 				siteSlug={ siteSlug }
 				showHeader={ false }
 				purchaseListUrl={ `/purchases/subscriptions/${ siteSlug }` }
+			/>
+		</Main>
+	);
+}
+
+export function PurchaseCancel( {
+	purchaseId,
+	siteSlug,
+}: {
+	purchaseId: number;
+	siteSlug: string;
+} ) {
+	const translate = useTranslate();
+
+	const getManagePurchaseUrlFor = ( targetSiteSlug: string, targetPurchaseId: string | number ) =>
+		`/purchases/${ targetSiteSlug }/${ targetPurchaseId }`;
+
+	return (
+		<Main className="purchases is-wide-layout">
+			<DocumentHead title={ translate( 'Cancel purchase' ) } />
+			<FormattedHeader
+				brandFont
+				className="purchases__page-heading"
+				headerText={ translate( 'Cancel purchase' ) }
+				align="left"
+			/>
+
+			<CancelPurchase
+				purchaseId={ purchaseId }
+				siteSlug={ siteSlug }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 			/>
 		</Main>
 	);
