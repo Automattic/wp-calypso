@@ -218,6 +218,7 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
@@ -365,6 +366,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
@@ -935,6 +937,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1012,6 +1015,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1180,6 +1184,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -1252,6 +1257,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,

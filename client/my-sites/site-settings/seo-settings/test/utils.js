@@ -31,9 +31,6 @@ describe( 'hasSiteSeoFeature', () => {
 		expect( hasSiteSeoFeature( { plan: wpcomPremiumPlan } ) ).toEqual( false );
 		expect( hasSiteSeoFeature( { plan: jpFreePlan } ) ).toEqual( false );
 		expect( hasSiteSeoFeature( { plan: jpPersonalPlan } ) ).toEqual( false );
-		expect( hasSiteSeoFeature( { plan: jpSecurityDailyPlan } ) ).toEqual( false );
-		expect( hasSiteSeoFeature( { plan: jpSecurityRealtimePlan } ) ).toEqual( false );
-		expect( hasSiteSeoFeature( { plan: jpCompletePlan } ) ).toEqual( false );
 	} );
 
 	it( 'returns true if the site has the SEO feature', () => {
@@ -42,5 +39,8 @@ describe( 'hasSiteSeoFeature', () => {
 		expect( hasSiteSeoFeature( { plan: wpcomEnterprisePlan } ) ).toEqual( true );
 		expect( hasSiteSeoFeature( { plan: jpPremiumPlan } ) ).toEqual( true );
 		expect( hasSiteSeoFeature( { plan: jpBusinessPlan } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpSecurityDailyPlan } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpSecurityRealtimePlan } ) ).toEqual( true );
+		expect( hasSiteSeoFeature( { plan: jpCompletePlan } ) ).toEqual( true );
 	} );
 } );

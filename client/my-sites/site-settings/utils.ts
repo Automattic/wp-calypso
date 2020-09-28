@@ -1,12 +1,9 @@
 /**
- * External dependencies
- */
-import { overSome } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { isBusiness, isEnterprise, isPremium, isVipPlan, isEcommerce } from 'lib/products-values';
+import { isEnterprise, isVipPlan } from 'lib/products-values';
+import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
+import { hasSiteFeature } from 'lib/site/utils';
 
 /**
  * Type dependencies
@@ -17,8 +14,9 @@ type Site = {
 	plan: Plan;
 };
 
-const hasSupportingPlan = overSome( isPremium, isBusiness, isEcommerce, isEnterprise, isVipPlan );
-
 export function hasSiteAnalyticsFeature( site: Site ): boolean | undefined {
-	return ( site && site.plan && hasSupportingPlan( site.plan ) ) ?? undefined;
+	return (
+		hasSiteFeature( site, FEATURE_GOOGLE_ANALYTICS ) ||
+		( ( site?.plan && ( isEnterprise( site.plan ) || isVipPlan( site.plan ) ) ) ?? undefined )
+	);
 }
