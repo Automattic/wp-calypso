@@ -32,6 +32,7 @@ import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-e
 import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
 import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/window-events';
 import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
+import { requestSite } from 'state/sites/actions';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/block-editor/post/' ) ) {
@@ -116,6 +117,15 @@ export const authenticate = ( context, next ) => {
 	}
 
 	if ( isAuthenticated ) {
+		/*
+		 * Make sure we have an up-to-date frame nonce.
+		 *
+		 * By requesting the site here instead of using <QuerySites /> we avoid a race condition, where
+		 * if a render occurs before the site is requested, the first request for retrieving the iframe
+		 * will get aborted.
+		 */
+		context.store.dispatch( requestSite( siteId ) );
+
 		globalThis.sessionStorage.setItem( storageKey, 'true' );
 		return next();
 	}
