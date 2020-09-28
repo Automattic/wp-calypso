@@ -65,6 +65,7 @@ class CancelPurchase extends React.Component {
 
 	static defaultProps = {
 		getManagePurchaseUrlFor: managePurchase,
+		purchaseListUrl: purchasesRoot,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -96,7 +97,7 @@ class CancelPurchase extends React.Component {
 
 	redirect = ( props ) => {
 		const { purchase, siteSlug } = props;
-		let redirectPath = purchasesRoot;
+		let redirectPath = this.props.purchaseListUrl;
 
 		if ( siteSlug && purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
 			redirectPath = this.props.getManagePurchaseUrlFor( siteSlug, purchase.id );
