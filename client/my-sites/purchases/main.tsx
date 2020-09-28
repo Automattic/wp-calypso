@@ -19,7 +19,9 @@ import {
 	getCancelPurchaseUrlFor,
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
+	getAddPaymentMethodUrlFor,
 } from './paths';
+import AddCardDetails from 'me/purchases/payment/add-card-details';
 
 export function Purchases() {
 	const translate = useTranslate();
@@ -65,6 +67,7 @@ export function PurchaseDetails( {
 				showHeader={ false }
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
+				getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 			/>
 		</Main>
 	);
@@ -95,6 +98,34 @@ export function PurchaseCancel( {
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+			/>
+		</Main>
+	);
+}
+
+export function PurchaseAddPaymentMethod( {
+	purchaseId,
+	siteSlug,
+}: {
+	purchaseId: number;
+	siteSlug: string;
+} ) {
+	const translate = useTranslate();
+
+	return (
+		<Main className="purchases is-wide-layout">
+			<DocumentHead title={ translate( 'Billing' ) } />
+			<FormattedHeader
+				brandFont
+				className="purchases__page-heading"
+				headerText={ translate( 'Billing' ) }
+				align="left"
+			/>
+
+			<AddCardDetails
+				purchaseId={ purchaseId }
+				siteSlug={ siteSlug }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 			/>
 		</Main>
 	);

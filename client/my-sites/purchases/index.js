@@ -14,6 +14,7 @@ import {
 	purchaseDetails,
 	purchaseCancel,
 	purchaseCancelDomain,
+	purchaseAddPaymentMethod,
 } from './controller';
 import config from 'config';
 import legacyRouter from 'me/purchases';
@@ -63,6 +64,14 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		purchaseCancelDomain,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/payment/add',
+		siteSelection,
+		navigation,
+		purchaseAddPaymentMethod,
 		makeLayout,
 		clientRender
 	);
