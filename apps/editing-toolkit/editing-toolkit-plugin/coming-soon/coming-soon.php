@@ -8,6 +8,19 @@
 namespace A8C\FSE\Coming_soon;
 
 /**
+ * Load the coming soon page tempalate object
+ *
+ * @return object
+ */
+function get_coming_soon_page_template() {
+	return json_decode(
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		file_get_contents( __DIR__ . '/coming-soon-page-template.json' ),
+		false
+	);
+}
+
+/**
  * Determines whether the coming soon page should be shown.
  *
  * @return boolean
@@ -83,14 +96,28 @@ add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming
  * @return array The updated $templates array
  */
 function add_public_coming_soon_page_template( $templates ) : array {
-	$templates[] = json_decode(
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		file_get_contents( __DIR__ . '/coming-soon-page-template.json' ),
-		false
-	);
+	$templates[] = get_coming_soon_page_template();
 	return $templates;
 }
 add_filter( 'vertical_templates', __NAMESPACE__ . '\add_public_coming_soon_page_template' );
+
+/**
+ * Adds an editable coming soon page to a new site.
+ */
+function add_coming_soon_page_to_new_site() {
+	$coming_soon_template = get_coming_soon_page_template();
+	wp_insert_post(
+		array(
+			'post_title'     => $coming_soon_template->post_title,
+			'post_content'   => $coming_soon_template->post_content,
+			'post_status'    => 'publish',
+			'post_type'      => 'page',
+			'comment_status' => 'closed',
+			'ping_status'    => 'closed',
+		)
+	);
+}
+add_action( 'signup_finished', __NAMESPACE__ . '\add_coming_soon_page_to_new_site' );
 
 /**
  * Decides whether to redirect to the site's coming soon page and performs
