@@ -87,6 +87,10 @@ $font-size: rem( 14px );
 				top: 50%;
 				margin-top: -8px;
 			}
+
+			.sidebar__menu-icon {
+				color: #fff;
+			}
 		}
 
 		.sidebar__expandable-content {
@@ -104,6 +108,7 @@ $font-size: rem( 14px );
 				&:hover {
 					background-color: transparent;
 					color: white;
+					font-weight: 600;
 				}
 			}
 
@@ -164,13 +169,13 @@ $font-size: rem( 14px );
 
 			.sidebar__menu.is-togglable {
 				.sidebar__heading {
-					padding: 0 0 0 16px;
+					padding: 0 0 0 12px;
 					font-size: 1rem;
 				}
 			}
 
 			.sidebar__menu-icon {
-				margin-right: 13px;
+				margin-right: 10px;
 			}
 
 			.sidebar__expandable-title,
@@ -181,7 +186,7 @@ $font-size: rem( 14px );
 			.sidebar__expandable-content {
 				.sidebar__menu-link {
 					font-size: 1rem;
-					padding: 7px 16px 7px 48px;
+					padding: 7px 16px 7px 42px;
 				}
 			}
 
