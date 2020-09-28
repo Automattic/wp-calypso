@@ -100,7 +100,7 @@ const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
-	product,
+	product: productAliasFromUrl,
 	getCart,
 	setCart,
 	getStoredCards,
@@ -178,7 +178,7 @@ export default function CompositeCheckout( {
 		error: cartProductPrepError,
 	} = usePrepareProductsForCart( {
 		siteId,
-		product,
+		productAliasFromUrl,
 		purchaseId,
 		isJetpackNotAtomic,
 		isPrivate,
@@ -258,7 +258,7 @@ export default function CompositeCheckout( {
 		feature,
 		cart: responseCart,
 		isJetpackNotAtomic,
-		product,
+		productAliasFromUrl,
 		siteId,
 		hideNudge,
 		recordEvent,
@@ -477,7 +477,7 @@ export default function CompositeCheckout( {
 
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
-		product,
+		productAliasFromUrl,
 		siteSlug,
 		feature,
 		plan
@@ -582,7 +582,7 @@ export default function CompositeCheckout( {
 		responseCart,
 		storedCards,
 		isLoadingStoredCards,
-		product
+		productAliasFromUrl
 	);
 
 	const jetpackColors = isJetpackNotAtomic
