@@ -17,19 +17,21 @@ We use Electron's [IPC](https://github.com/atom/electron/blob/master/docs/api/ip
 
 It's a fairly complicated process so buckle up. Note that *(main)* and *(renderer)* will be added to show where the code actually runs.
 
-- *(main)* Electron looks at the `main` item in `package.json` - this is the boot file, and refers to `desktop/index.js`
-- *(main)* `desktop/index.js` sets up the environment in `desktop/env.js` - this includes Node paths for Calypso
-- *(main)* Various [app handlers](../../client/desktop/app-handlers/README.md) are loaded from `desktop/app-handlers` - these are bits of code that run before the main window opens
-- *(main)* A Calypso server is started in `desktop/start-app.js` in a forked child_process. The server is customized to serve files from the following directories:
+For clarity, all file and folder locations are relative to the root of the Calypso monorepo.
+
+- *(main)* Electron looks at the `main` item in `desktop/package.json` - this is the boot file, and refers to `client/desktop/index.js`
+- *(main)* `client/desktop/index.js` sets up the environment in `client/desktop/env.js` - this includes Node paths for Calypso
+- *(main)* Various [app handlers](../../client/desktop/app-handlers/README.md) are loaded from `client/desktop/app-handlers` - these are bits of code that run before the main window opens
+- *(main)* A Calypso server is started drectly from Electron's Node process in `client/desktop/server.js`. The server is customized to serve files from the following directories:
   - `/` - mapped to the Calypso server
   - `/calypso` - mapped to `calypso/public`
   - `/desktop` - mapped to `public_desktop`
 - *(main)* An Electron `BrowserWindow` is opened and loads the 'index' page from the Calypso server
 - *(main)* Once the window has opened the [window handlers](../../client/desktop/window-handlers/README.md) load to provide interaction between Calypso and Electron
 - *(renderer)* Calypso provides the 'index' page from `calypso/server/pages/desktop.pug`, which is a standard Calypso start page plus:
-  - `public_desktop/wordpress-desktop.css` - any CSS specific to the desktop app
-  - `public_desktop/desktop-app.js` - desktop app specific JS and also the Calypso boot code
-  - `calypso/public/build.js` - a prebuilt Calypso
+  - `desktop/public_desktop/wordpress-desktop.css` - any CSS specific to the desktop app
+  - `desktop/public_desktop/desktop-app.js` - desktop app specific JS and also the Calypso boot code
+  - `desktop/calypso/public/build.js` - a prebuilt Calypso
 - *(renderer)* The `desktop-app.js` code runs which sets up various app specific handlers that need to be inside the renderer. It also starts Calypso with `AppBoot()`
 - *(renderer)* The code in `calypso/client/lib/desktop` runs to send and receive IPC messages between the main process and Calypso.
 
