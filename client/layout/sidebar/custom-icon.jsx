@@ -35,6 +35,7 @@ const SidebarCustomIcon = ( { alt, className, icon, ...rest } ) => {
 				alt={ alt || '' }
 				className={ 'sidebar__menu-icon ' + ( className || '' ) }
 				src={ icon }
+				width="20"
 				{ ...rest }
 			/>
 		);
