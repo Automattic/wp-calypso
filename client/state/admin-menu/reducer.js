@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { flowRight as compose, partial } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import { withStorageKey, keyedReducer, combineReducers, withSchemaValidation } from 'state/utils';
