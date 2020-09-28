@@ -240,7 +240,7 @@ references:
     mentions: '$CIRCLE_USERNAME'
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
   install-specific-chrome-browser: &install-specific-chrome-browser
-    name: Downgrade Chrome
+    name: Install Chrome
     command: |
       sudo apt-get update
       cd /tmp
@@ -576,6 +576,7 @@ jobs:
       - run: *set-e2e-variables
       - run: *install-specific-chrome-browser
       - run: *save-chrome-version
+      - run: sudo apt-get install -y xvfb
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
@@ -605,7 +606,7 @@ jobs:
       - run: *set-e2e-variables
       - run: *install-specific-chrome-browser
       - run: *save-chrome-version
-      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
+      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei xvfb
       - run:
           name: Skip Jetpack Tests if needed
           command: |
