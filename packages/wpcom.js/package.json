@@ -40,5 +40,8 @@
 		"@babel/runtime": "^7.11.1",
 		"debug": "^4.1.1",
 		"qs": "^6.5.2"
+	},
+	"devDependencies": {
+		"wpcom-proxy-request": "^6.0.0"
 	}
 }
