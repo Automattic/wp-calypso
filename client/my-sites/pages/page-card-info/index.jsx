@@ -105,7 +105,7 @@ export default connect( ( state, props ) => {
 	return {
 		isComingSoon:
 			isComingSoonPage( state, props.page.site_ID, props.page.ID ) &&
-			!! config.isEnabled( 'editing-toolkit/coming-soon' ),
+			!! config.isEnabled( 'coming-soon-v2' ),
 		isFront: isFrontPage( state, props.page.site_ID, props.page.ID ),
 		isPosts: isPostsPage( state, props.page.site_ID, props.page.ID ),
 		theme: themeId && getTheme( state, 'wpcom', themeId ),

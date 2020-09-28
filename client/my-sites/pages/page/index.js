@@ -362,7 +362,7 @@ class Page extends Component {
 		const { canManageOptions, translate } = this.props;
 
 		if (
-			! config.isEnabled( 'editing-toolkit/coming-soon' ) ||
+			! config.isEnabled( 'coming-soon-v2' ) ||
 			! canManageOptions ||
 			'publish' !== this.props.page.status ||
 			this.props.isFrontPage ||
