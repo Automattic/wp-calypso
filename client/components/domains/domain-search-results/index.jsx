@@ -55,6 +55,7 @@ class DomainSearchResults extends React.Component {
 		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
 		isSignupStep: PropTypes.bool,
+		isFreeDomainExplainerVisible: PropTypes.bool,
 		railcarId: PropTypes.string,
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
@@ -225,7 +226,7 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions } = this.props;
+		const { isDomainOnly, suggestions, isFreeDomainExplainerVisible } = this.props;
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
@@ -253,7 +254,7 @@ class DomainSearchResults extends React.Component {
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					isDomainOnly={ isDomainOnly }
 					fetchAlgo={ this.props.fetchAlgo }
-					isSignupStep={ this.props.isSignupStep }
+					isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
@@ -278,7 +279,7 @@ class DomainSearchResults extends React.Component {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
-						isSignupStep={ this.props.isSignupStep }
+						isFreeDomainExplainerVisible={ this.props.isFreeDomainExplainerVisible }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						railcarId={ this.props.railcarId + '-' + ( i + 2 ) }
