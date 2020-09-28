@@ -6,7 +6,6 @@
  * External dependencies
  */
 import * as React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { render, fireEvent, screen } from '@testing-library/react';
 
 /**
