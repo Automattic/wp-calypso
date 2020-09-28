@@ -46,13 +46,13 @@ function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined 
 
 export default function usePrepareProductsForCart( {
 	siteId,
-	product: productAlias,
+	productAliasFromUrl: productAlias,
 	purchaseId: originalPurchaseId,
 	isJetpackNotAtomic,
 	isPrivate,
 }: {
 	siteId: number;
-	product: string | null | undefined;
+	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;

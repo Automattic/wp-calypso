@@ -47,7 +47,7 @@ export function getThankYouPageUrl( {
 	feature,
 	cart = {},
 	isJetpackNotAtomic,
-	product,
+	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
@@ -97,7 +97,7 @@ export function getThankYouPageUrl( {
 		feature,
 		cart,
 		isJetpackNotAtomic,
-		product,
+		productAliasFromUrl,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
@@ -181,7 +181,7 @@ function getFallbackDestination( {
 	feature,
 	cart,
 	isJetpackNotAtomic,
-	product,
+	productAliasFromUrl,
 } ) {
 	const isCartEmpty = getAllCartItems( cart ).length === 0;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
@@ -203,7 +203,9 @@ function getFallbackDestination( {
 
 		const purchasedProduct =
 			productFromCart ||
-			productsWithCustomThankYou.find( ( productWithCustom ) => productWithCustom === product );
+			productsWithCustomThankYou.find(
+				( productWithCustom ) => productWithCustom === productAliasFromUrl
+			);
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
@@ -363,7 +365,7 @@ export function useGetThankYouUrl( {
 	feature,
 	cart,
 	isJetpackNotAtomic,
-	product,
+	productAliasFromUrl,
 	siteId,
 	hideNudge,
 	recordEvent,
@@ -397,7 +399,7 @@ export function useGetThankYouUrl( {
 			feature,
 			cart,
 			isJetpackNotAtomic,
-			product,
+			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
 			hideNudge,
 			didPurchaseFail,
@@ -417,7 +419,7 @@ export function useGetThankYouUrl( {
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
-		product,
+		productAliasFromUrl,
 		redirectTo,
 		feature,
 		purchaseId,
