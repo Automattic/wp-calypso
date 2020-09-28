@@ -8,7 +8,7 @@ import page from 'page';
  */
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { purchases, redirectToPurchases } from './controller';
+import { purchases, redirectToPurchases, purchaseDetails } from './controller';
 import config from 'config';
 import legacyRouter from 'me/purchases';
 
@@ -33,6 +33,14 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		purchases,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/purchases/subscriptions/:site/:purchaseId',
+		siteSelection,
+		navigation,
+		purchaseDetails,
 		makeLayout,
 		clientRender
 	);

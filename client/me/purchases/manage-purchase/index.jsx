@@ -69,7 +69,6 @@ import {
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
-import Main from 'components/main';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
@@ -101,6 +100,9 @@ import './style.scss';
 
 class ManagePurchase extends Component {
 	static propTypes = {
+		showHeader: PropTypes.bool,
+		purchaseListUrl: PropTypes.string,
+		cardTitle: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
@@ -115,6 +117,12 @@ class ManagePurchase extends Component {
 		userId: PropTypes.number,
 	};
 
+	static defaultProps = {
+		showHeader: true,
+		purchaseListUrl: purchasesRoot,
+		cardTitle: titles.managePurchase,
+	};
+
 	state = {
 		showNonPrimaryDomainWarningDialog: false,
 		cancelLink: null,
@@ -122,7 +130,7 @@ class ManagePurchase extends Component {
 
 	UNSAFE_componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
 	}
@@ -135,7 +143,7 @@ class ManagePurchase extends Component {
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 			return;
 		}
 	}
@@ -496,7 +504,9 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
-				<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+				{ this.props.showHeader && (
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPlanIcon() }
@@ -550,7 +560,6 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 		} = this.props;
-		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
 		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
@@ -582,37 +591,35 @@ class ManagePurchase extends Component {
 				<QueryUserPurchases userId={ this.props.userId } />
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
-				<Main className={ classes }>
-					<HeaderCake backHref={ purchasesRoot }>{ titles.managePurchase }</HeaderCake>
-					{ showExpiryNotice ? (
-						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-							<NoticeAction href={ `/plans/${ site.slug || '' }` }>
-								{ translate( 'View plans' ) }
-							</NoticeAction>
-						</Notice>
-					) : (
-						<PurchaseNotice
-							isDataLoading={ isDataLoading( this.props ) }
-							handleRenew={ this.handleRenew }
-							handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
-							selectedSite={ site }
-							purchase={ purchase }
-							purchaseAttachedTo={ purchaseAttachedTo }
-							renewableSitePurchases={ renewableSitePurchases }
-							editCardDetailsPath={ editCardDetailsPath }
-						/>
-					) }
-					<AsyncLoad
-						require="blocks/product-plan-overlap-notices"
-						placeholder={ null }
-						plans={ JETPACK_PLANS }
-						products={ JETPACK_PRODUCTS_LIST }
-						siteId={ siteId }
-						currentPurchase={ purchase }
+				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
+				{ showExpiryNotice ? (
+					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+						<NoticeAction href={ `/plans/${ site.slug || '' }` }>
+							{ translate( 'View plans' ) }
+						</NoticeAction>
+					</Notice>
+				) : (
+					<PurchaseNotice
+						isDataLoading={ isDataLoading( this.props ) }
+						handleRenew={ this.handleRenew }
+						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
+						selectedSite={ site }
+						purchase={ purchase }
+						purchaseAttachedTo={ purchaseAttachedTo }
+						renewableSitePurchases={ renewableSitePurchases }
+						editCardDetailsPath={ editCardDetailsPath }
 					/>
-					{ this.renderPurchaseDetail( preventRenewal ) }
-					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
-				</Main>
+				) }
+				<AsyncLoad
+					require="blocks/product-plan-overlap-notices"
+					placeholder={ null }
+					plans={ JETPACK_PLANS }
+					products={ JETPACK_PRODUCTS_LIST }
+					siteId={ siteId }
+					currentPurchase={ purchase }
+				/>
+				{ this.renderPurchaseDetail( preventRenewal ) }
+				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 			</Fragment>
 		);
 	}

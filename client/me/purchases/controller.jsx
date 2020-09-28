@@ -125,12 +125,15 @@ export function list( context, next ) {
 
 export function managePurchase( context, next ) {
 	setTitle( context, titles.managePurchase );
+	const classes = 'manage-purchase';
 
 	context.primary = (
-		<ManagePurchase
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
+		<Main className={ classes }>
+			<ManagePurchase
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+				siteSlug={ context.params.site }
+			/>
+		</Main>
 	);
 	next();
 }

@@ -42,11 +42,15 @@ export default function SubscriptionsContent() {
 		return <PurchasesSite isPlaceholder />;
 	}
 
+	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
+		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
+
 	// If there are purchases, show them
 	if ( hasLoadedPurchases && purchases.length ) {
 		return (
 			<PurchasesSite
 				showHeader={ false }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				key={ selectedSite.ID }
 				siteId={ selectedSite.ID }
 				name={ selectedSite.name }
@@ -62,6 +66,7 @@ export default function SubscriptionsContent() {
 }
 
 function NoPurchasesMessage() {
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const translate = useTranslate();
 	return (
 		<CompactCard className="subscriptions__list--empty">
@@ -71,7 +76,7 @@ function NoPurchasesMessage() {
 					'Our plans give your site the power to thrive. Find the plan that works for you.'
 				) }
 				action={ translate( 'Upgrade now' ) }
-				actionURL={ '/plans' }
+				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
 				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 			/>
 		</CompactCard>

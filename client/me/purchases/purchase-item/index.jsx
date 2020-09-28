@@ -35,7 +35,6 @@ import {
 import Notice from 'components/notice';
 import Gridicon from 'components/gridicon';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { managePurchase } from '../paths';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { getPlanClass, getPlanTermLabel } from 'lib/plans';
 
@@ -237,12 +236,12 @@ class PurchaseItem extends Component {
 
 		let onClick;
 		let href;
-		if ( ! isPlaceholder ) {
+		if ( ! isPlaceholder && this.props.getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may not (the user has been removed).
 			if ( ! isDisconnectedSite || isJetpack ) {
 				onClick = this.scrollToTop;
-				href = managePurchase( this.props.slug, this.props.purchase.id );
+				href = this.props.getManagePurchaseUrlFor( this.props.slug, this.props.purchase.id );
 			}
 		}
 
@@ -265,6 +264,7 @@ PurchaseItem.propTypes = {
 	purchase: PropTypes.object,
 	slug: PropTypes.string,
 	isJetpack: PropTypes.bool,
+	getManagePurchaseUrlFor: PropTypes.func,
 };
 
 export default localize( withLocalizedMoment( PurchaseItem ) );
