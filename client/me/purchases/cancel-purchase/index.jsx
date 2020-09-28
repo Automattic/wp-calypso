@@ -46,6 +46,7 @@ import './style.scss';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {
+		purchaseListUrl: PropTypes.string,
 		getManagePurchaseUrlFor: PropTypes.func,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
@@ -222,6 +223,7 @@ class CancelPurchase extends React.Component {
 						selectedSite={ this.props.site }
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
+						purchaseListUrl={ this.props.purchaseListUrl }
 					/>
 				</CompactCard>
 			</Fragment>

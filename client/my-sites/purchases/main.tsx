@@ -92,6 +92,7 @@ export function PurchaseCancel( {
 				purchaseId={ purchaseId }
 				siteSlug={ siteSlug }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				purchaseListUrl={ `/purchases/subscriptions/${ siteSlug }` }
 			/>
 		</Main>
 	);
