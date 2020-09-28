@@ -30,7 +30,7 @@ const SidebarCustomIcon = ( { alt, className, icon, ...rest } ) => {
 			/>
 		);
 	}
-	if ( icon.indexOf( 'data:image' ) === 0 ) {
+	if ( icon.indexOf( 'data:image' ) === 0 || icon.indexOf( 'http' ) === 0 ) {
 		return (
 			<img
 				alt={ alt || '' }
