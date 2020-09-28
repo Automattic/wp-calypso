@@ -157,6 +157,7 @@ class CancelPurchase extends React.Component {
 					<CancelPurchaseLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						siteSlug={ this.props.siteSlug }
+						getManagePurchaseUrlFor={ this.props.getManagePurchaseUrlFor }
 					/>
 				</div>
 			);
