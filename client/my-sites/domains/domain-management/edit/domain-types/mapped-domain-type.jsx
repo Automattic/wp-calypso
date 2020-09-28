@@ -31,7 +31,6 @@ import {
 } from 'state/purchases/selectors';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
-import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
@@ -217,9 +216,6 @@ class MappedDomainType extends React.Component {
 		} );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
-		const newDomainManagementNavigation = config.isEnabled(
-			'domains/new-status-design/new-options'
-		);
 
 		return (
 			<div className="domain-types__container">
@@ -260,21 +256,12 @@ class MappedDomainType extends React.Component {
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newDomainManagementNavigation ? (
-					<DomainManagementNavigationEnhanced
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ mappingPurchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) : (
-					<DomainManagementNavigation
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ mappingPurchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) }
+				<DomainManagementNavigationEnhanced
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ mappingPurchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}

@@ -37,7 +37,6 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
-import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
@@ -305,9 +304,6 @@ class RegisteredDomainType extends React.Component {
 		} );
 
 		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
-		const newDomainManagementNavigation = config.isEnabled(
-			'domains/new-status-design/new-options'
-		);
 
 		return (
 			<div className="domain-types__container">
@@ -361,21 +357,12 @@ class RegisteredDomainType extends React.Component {
 					) }
 					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newDomainManagementNavigation ? (
-					<DomainManagementNavigationEnhanced
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ purchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) : (
-					<DomainManagementNavigation
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ purchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) }
+				<DomainManagementNavigationEnhanced
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ purchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}
