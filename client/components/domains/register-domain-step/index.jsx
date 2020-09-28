@@ -589,15 +589,27 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	renderContent() {
+		const {
+			isPlanSelectionAvailableInFlow = true,
+			forceHideFreeDomainExplainer = false,
+			selectedFreePlanInSwapFlow,
+			selectedPaidPlanInSwapFlow,
+		} = this.props;
+		const isFreeDomainExplainerVisible =
+			! forceHideFreeDomainExplainer &&
+			isPlanSelectionAvailableInFlow &&
+			! selectedFreePlanInSwapFlow &&
+			! selectedPaidPlanInSwapFlow;
+
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
-			return this.renderSearchResults();
+			return this.renderSearchResults( isFreeDomainExplainerVisible );
 		}
 
 		if ( this.props.showExampleSuggestions ) {
 			return this.renderExampleSuggestions();
 		}
 
-		return this.renderInitialSuggestions();
+		return this.renderInitialSuggestions( false );
 	}
 
 	save = () => {
@@ -1135,7 +1147,7 @@ class RegisterDomainStep extends React.Component {
 		this.setState( { pageNumber }, this.save );
 	};
 
-	renderInitialSuggestions() {
+	renderInitialSuggestions( isFreeDomainExplainerVisible ) {
 		let domainRegistrationSuggestions;
 		let domainUnavailableSuggestion;
 		let suggestions;
@@ -1153,6 +1165,7 @@ class RegisterDomainStep extends React.Component {
 				return (
 					<DomainRegistrationSuggestion
 						isSignupStep={ this.props.isSignupStep }
+						isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
@@ -1261,7 +1274,7 @@ class RegisterDomainStep extends React.Component {
 		}
 	};
 
-	renderSearchResults() {
+	renderSearchResults( isFreeDomainExplainerVisible ) {
 		const {
 			exactMatchDomain,
 			lastDomainIsTransferrable,
@@ -1303,12 +1316,6 @@ class RegisterDomainStep extends React.Component {
 				? this.goToTransferDomainStep
 				: this.goToUseYourDomainStep;
 
-		const {
-			isPlanSelectionAvailableInFlow = true,
-			forceHideFreeDomainExplainer = false,
-		} = this.props;
-		const shouldHideFreeDomainExplainer =
-			forceHideFreeDomainExplainer || isPlanSelectionAvailableInFlow;
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1333,6 +1340,7 @@ class RegisterDomainStep extends React.Component {
 				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
+				isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
 				railcarId={ this.state.railcarId }
 				fetchAlgo={ this.getFetchAlgo() }
 				cart={ this.props.cart }
@@ -1341,7 +1349,7 @@ class RegisterDomainStep extends React.Component {
 			>
 				{ this.props.isSignupStep &&
 					hasResults &&
-					! shouldHideFreeDomainExplainer &&
+					isFreeDomainExplainerVisible &&
 					this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (

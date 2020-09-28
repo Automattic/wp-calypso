@@ -38,7 +38,14 @@ class DomainSuggestion extends React.Component {
 	};
 
 	renderPrice() {
-		const { hidePrice, premiumDomain, price, priceRule, salePrice, isSignupStep } = this.props;
+		const {
+			hidePrice,
+			premiumDomain,
+			price,
+			priceRule,
+			salePrice,
+			isFreeDomainExplainerVisible,
+		} = this.props;
 
 		if ( hidePrice ) {
 			return null;
@@ -53,13 +60,20 @@ class DomainSuggestion extends React.Component {
 				price={ price }
 				salePrice={ salePrice }
 				rule={ priceRule }
-				isSignupStep={ isSignupStep }
+				isSignupStep={isSignupStep}
+				isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
 			/>
 		);
 	}
 
 	render() {
-		const { children, extraClasses, isAdded, isFeatured, isSignupStep } = this.props;
+		const {
+			children,
+			extraClasses,
+			isAdded,
+			isFeatured,
+			isFreeDomainExplainerVisible,
+		} = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -72,7 +86,7 @@ class DomainSuggestion extends React.Component {
 		);
 
 		const contentClassName = classNames( 'domain-suggestion__content', {
-			'domain-suggestion__content-domain-copy-test': isSignupStep && ! isFeatured,
+			'domain-suggestion__content-domain': isFreeDomainExplainerVisible && ! isFeatured,
 		} );
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
