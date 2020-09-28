@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from 'react';
  */
 import type { RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
 
-export type IsInitialCartLoading = boolean;
+export type isPendingAddingProductsFromUrl = boolean;
 
 export default function useAddProductsFromUrl( {
 	isLoadingCart,
@@ -26,7 +26,7 @@ export default function useAddProductsFromUrl( {
 	couponCodeFromUrl: string | null | undefined;
 	applyCoupon: ( couponId: string ) => void;
 	addProductsToCart: ( products: RequestCartProduct[] ) => void;
-} ): IsInitialCartLoading {
+} ): isPendingAddingProductsFromUrl {
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const hasRequestedInitialProducts = useRef< boolean >( false );
 
