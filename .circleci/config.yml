@@ -242,10 +242,12 @@ references:
   install-specific-chrome-browser: &install-specific-chrome-browser
     name: Downgrade Chrome
     command: |
+      sudo apt-get update
       cd /tmp
       wget --no-check-certificate https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb
-      sudo dpkg -i google-chrome-stable_${CHROME_VERSION}_amd64.deb || sudo apt -y -f install
+      sudo dpkg -i google-chrome-stable_${CHROME_VERSION}_amd64.deb || sudo apt-get -y -f install
       rm google-chrome-stable_${CHROME_VERSION}_amd64.deb;
+      sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' "/opt/google/chrome/google-chrome"
       CHROME_VERSION="$(google-chrome --version)"
       CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')"
       CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*}
