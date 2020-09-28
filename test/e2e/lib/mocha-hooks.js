@@ -19,7 +19,7 @@ const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 let allPassed = true; // For SauceLabs status
 
 before( function() {
-	if( process.env.LIVEBRANCHES ){
+	if( process.env.LIVEBRANCHES === 'true' ){
 		const isCalyspsoLiveURL =  config.get( 'calypsoBaseURL').includes( 'calypso.live' );
 		assert.strictEqual( isCalyspsoLiveURL, true );
 	}
