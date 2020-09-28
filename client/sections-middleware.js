@@ -27,7 +27,8 @@ function activateSection( sectionDefinition, context ) {
 }
 
 async function loadSection( context, sectionDefinition ) {
-	context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
+	// Do not update the current active section, only change `isLoading` flag
+	context.store.dispatch( setSection( undefined, { isLoading: true } ) );
 
 	// If the section chunk is not loaded within 400ms, report it to analytics
 	const loadReportTimeout = setTimeout( () => {
@@ -40,7 +41,8 @@ async function loadSection( context, sectionDefinition ) {
 		// call the module initialization function (possibly async, registers page.js handlers etc.)
 		await requiredModule.default( controller.clientRouter, addReducerToStore( context.store ) );
 	} finally {
-		context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
+		// Do not update the current active section, only change `isLoading` flag
+		context.store.dispatch( setSection( undefined, { isLoading: true } ) );
 
 		// If the load was faster than the timeout, this will cancel the analytics reporting
 		clearTimeout( loadReportTimeout );
