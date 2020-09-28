@@ -247,8 +247,6 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 
 	loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
-	await loginFlow.login();
-
 	sampleImages = times( 5, () => mediaHelper.createFile() );
 } );
 
@@ -279,7 +277,8 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 				const siteURL = `${ siteName }.wordpress.com`;
 
 				describe( `Test the block in the non-edge site (${ siteName })`, function () {
-					step( `Start new post on ${ siteName }`, async function () {
+					step( `Login to ${ siteName }`, async function () {
+						await loginFlow.login( siteURL, true );
 						await startNewPost( siteURL );
 					} );
 
@@ -289,7 +288,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 
 					verifyBlockInEditor( blockClass, siteName );
 
-					step( 'Copy the markup of the block', async function () {
+					step( 'Copy the markup for the block', async function () {
 						currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
 					} );
 
@@ -299,7 +298,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 				describe( `Test the same block in the corresponding edge site (${ edgeSiteName })`, function () {
 					const edgeSiteURL = `${ edgeSiteName }.wordpress.com`;
 
-					step( `Start new post on (${ edgeSiteName })`, async function () {
+					step( `Switches to edge site (${ edgeSiteName })`, async function () {
 						await startNewPost( edgeSiteURL );
 					} );
 
