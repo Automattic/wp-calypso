@@ -46,7 +46,7 @@ class TitanControlPanelLoginCard extends React.Component {
 					error ?? translate( 'An unknown error occurred. Please try again later.' )
 				);
 			} else {
-				window.location.href = loginURL;
+				window.open( loginURL, '_blank' );
 			}
 		} );
 	};
