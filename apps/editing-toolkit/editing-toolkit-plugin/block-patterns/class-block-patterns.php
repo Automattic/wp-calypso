@@ -29,13 +29,6 @@ class Block_Patterns {
 	private $patterns_cache_key;
 
 	/**
-	 * Patterns source site ID.
-	 *
-	 * @var int
-	 */
-	private $source_site_id = 174455321;
-
-	/**
 	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
@@ -104,8 +97,8 @@ class Block_Patterns {
 		if ( false === $block_patterns || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE ) ) {
 			$request_url = add_query_arg(
 				array(
-					'site'     => $this->source_site_id,
-					'language' => $this->get_iso_639_locale(),
+					'language'   => $this->get_iso_639_locale(),
+					'categories' => 'pattern',
 				),
 				'https://public-api.wordpress.com/rest/v1/ptk/patterns'
 			);
