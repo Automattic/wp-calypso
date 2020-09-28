@@ -59,7 +59,7 @@ function AddCardDetails( props ) {
 	};
 
 	return (
-		<Main>
+		<Fragment>
 			<TrackPurchasePageView
 				eventName="calypso_add_card_details_purchase_view"
 				purchaseId={ props.purchaseId }
@@ -68,7 +68,7 @@ function AddCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/add"
 				title="Purchases > Add Card Details"
 			/>
-			<HeaderCake backHref={ managePurchase( props.siteSlug, props.purchaseId ) }>
+			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.addCardDetails }
 			</HeaderCake>
 
@@ -82,11 +82,12 @@ function AddCardDetails( props ) {
 					successCallback={ successCallback }
 				/>
 			</StripeHookProvider>
-		</Main>
+		</Fragment>
 	);
 }
 
 AddCardDetails.propTypes = {
+	getManagePurchaseUrlFor: PropTypes.func.isRequired,
 	clearPurchases: PropTypes.func.isRequired,
 	hasLoadedSites: PropTypes.bool.isRequired,
 	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
