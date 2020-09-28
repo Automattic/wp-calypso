@@ -69,7 +69,6 @@ import {
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
-import Main from 'components/main';
 import PlanPrice from 'my-sites/plan-price';
 import ProductLink from 'me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
@@ -561,7 +560,6 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 		} = this.props;
-		const classes = 'manage-purchase';
 
 		let editCardDetailsPath = false;
 		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
@@ -593,37 +591,35 @@ class ManagePurchase extends Component {
 				<QueryUserPurchases userId={ this.props.userId } />
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
-				<Main className={ classes }>
-					<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
-					{ showExpiryNotice ? (
-						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-							<NoticeAction href={ `/plans/${ site.slug || '' }` }>
-								{ translate( 'View plans' ) }
-							</NoticeAction>
-						</Notice>
-					) : (
-						<PurchaseNotice
-							isDataLoading={ isDataLoading( this.props ) }
-							handleRenew={ this.handleRenew }
-							handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
-							selectedSite={ site }
-							purchase={ purchase }
-							purchaseAttachedTo={ purchaseAttachedTo }
-							renewableSitePurchases={ renewableSitePurchases }
-							editCardDetailsPath={ editCardDetailsPath }
-						/>
-					) }
-					<AsyncLoad
-						require="blocks/product-plan-overlap-notices"
-						placeholder={ null }
-						plans={ JETPACK_PLANS }
-						products={ JETPACK_PRODUCTS_LIST }
-						siteId={ siteId }
-						currentPurchase={ purchase }
+				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
+				{ showExpiryNotice ? (
+					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+						<NoticeAction href={ `/plans/${ site.slug || '' }` }>
+							{ translate( 'View plans' ) }
+						</NoticeAction>
+					</Notice>
+				) : (
+					<PurchaseNotice
+						isDataLoading={ isDataLoading( this.props ) }
+						handleRenew={ this.handleRenew }
+						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
+						selectedSite={ site }
+						purchase={ purchase }
+						purchaseAttachedTo={ purchaseAttachedTo }
+						renewableSitePurchases={ renewableSitePurchases }
+						editCardDetailsPath={ editCardDetailsPath }
 					/>
-					{ this.renderPurchaseDetail( preventRenewal ) }
-					{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
-				</Main>
+				) }
+				<AsyncLoad
+					require="blocks/product-plan-overlap-notices"
+					placeholder={ null }
+					plans={ JETPACK_PLANS }
+					products={ JETPACK_PRODUCTS_LIST }
+					siteId={ siteId }
+					currentPurchase={ purchase }
+				/>
+				{ this.renderPurchaseDetail( preventRenewal ) }
+				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 			</Fragment>
 		);
 	}
