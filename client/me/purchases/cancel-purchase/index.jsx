@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -31,7 +31,6 @@ import {
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites, getSite } from 'state/sites/selectors';
-import Main from 'components/main';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -176,7 +175,7 @@ class CancelPurchase extends React.Component {
 		}
 
 		return (
-			<Main className="cancel-purchase">
+			<Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -215,7 +214,7 @@ class CancelPurchase extends React.Component {
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 					/>
 				</CompactCard>
-			</Main>
+			</Fragment>
 		);
 	}
 }
