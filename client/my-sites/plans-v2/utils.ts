@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { translate, TranslateResult } from 'i18n-calypso';
+import { TranslateResult } from 'i18n-calypso';
 import { compact, get, isArray, isObject } from 'lodash';
 import page from 'page';
 import React, { createElement, Fragment } from 'react';
@@ -10,6 +10,7 @@ import React, { createElement, Fragment } from 'react';
  * Internal dependencies
  */
 import {
+	ALL,
 	DAILY_PLAN_TO_REALTIME_PLAN,
 	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
@@ -23,8 +24,11 @@ import {
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 	OPTIONS_SLUG_MAP,
+	PERFORMANCE,
+	PLAN_COMPARISON_PAGE,
 	PRODUCTS_WITH_OPTIONS,
 	REALTIME_PRODUCTS,
+	SECURITY,
 	SUBTYPE_TO_OPTION,
 	UPGRADEABLE_WITH_NUDGE,
 	UPSELL_PRODUCT_MATRIX,
@@ -44,9 +48,11 @@ import {
 import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
 import {
-	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_SEARCH_PRODUCTS,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'lib/products-values/constants';
 import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
@@ -54,7 +60,6 @@ import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-produc
 import { getJetpackProductCallToAction } from 'lib/products-values/get-jetpack-product-call-to-action';
 import { getJetpackProductDescription } from 'lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-product-short-name';
-import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
 
 /**
  * Type dependencies
@@ -62,6 +67,7 @@ import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
 import type {
 	Duration,
 	SelectorProduct,
+	SelectorProductCopy,
 	SelectorProductSlug,
 	DurationString,
 	SelectorProductFeaturesItem,
@@ -99,7 +105,7 @@ export function durationToString( duration: Duration ): DurationString {
 	return duration === TERM_MONTHLY ? 'monthly' : 'annual';
 }
 
-export function durationToText( duration: Duration ): TranslateResult {
+export function durationToText( duration: Duration, translate: Function ): TranslateResult {
 	return duration === TERM_MONTHLY
 		? translate( 'per month, billed monthly' )
 		: translate( 'per month, billed yearly' );
@@ -113,6 +119,7 @@ export function productButtonLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
 	isUpgradeableToYearly: boolean,
+	translate: Function,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
 	if ( isUpgradeableToYearly ) {
@@ -128,7 +135,7 @@ export function productButtonLabel(
 			: translate( 'Manage Subscription' );
 	}
 
-	const { buttonLabel, displayName } = product;
+	const { buttonLabel, displayName } = getSelectorProductCopy( product.productSlug, translate );
 
 	return (
 		buttonLabel ??
@@ -149,6 +156,7 @@ export function productBadgeLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
 	highlight: boolean,
+	translate: Function,
 	currentPlan?: SitePlan | null
 ): TranslateResult | undefined {
 	if ( isOwned ) {
@@ -163,6 +171,89 @@ export function productBadgeLabel(
 
 	if ( highlight && slugIsFeaturedProduct( product.productSlug ) ) {
 		return translate( 'Best Value' );
+	}
+}
+
+/**
+ * Link to plan comparison page.
+ */
+export function getMoreFeaturesLink( translate: Function ) {
+	return {
+		url: PLAN_COMPARISON_PAGE,
+		label: translate( 'See all features' ),
+	};
+}
+
+/*
+ * Options displayed in the Product Type filter in the Plans page.
+ */
+export function getProductTypeOptions( translate: Function ) {
+	return {
+		[ SECURITY ]: {
+			id: SECURITY,
+			label: translate( 'Security' ),
+		},
+		[ PERFORMANCE ]: {
+			id: PERFORMANCE,
+			label: translate( 'Performance' ),
+		},
+		[ ALL ]: {
+			id: ALL,
+			label: translate( 'All' ),
+		},
+	};
+}
+
+export function getSelectorProductCopy(
+	productSlug: string,
+	translate: Function
+): SelectorProductCopy {
+	const securityCopy = {
+		displayName: translate( 'Jetpack Security' ),
+		shortName: translate( 'Security', {
+			comment: 'Short name of the Jetpack Security generic plan',
+		} ),
+		tagline: translate( 'Comprehensive WordPress protection' ),
+		description: translate(
+			'Enjoy the peace of mind of complete site security. ' +
+				'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
+		),
+	};
+
+	const backupCopy = {
+		displayName: translate( 'Jetpack Backup' ),
+		shortName: translate( 'Backup', {
+			comment: 'Short name of the Jetpack Backup generic product',
+		} ),
+		tagline: translate( 'Recommended for all sites' ),
+		description: translate( 'Never lose a word, image, page, or time worrying about your site.' ),
+		buttonLabel: translate( 'Get Backup' ),
+	};
+
+	const crmCopy = {
+		displayName: translate( 'Jetpack CRM' ),
+		shortName: translate( 'CRM', {
+			comment: 'Short name of the Jetpack CRM',
+		} ),
+		tagline: translate( 'Manage contacts effortlessly' ),
+		description: translate(
+			'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
+		),
+		buttonLabel: translate( 'Get CRM' ),
+	};
+
+	switch ( productSlug ) {
+		case OPTIONS_JETPACK_SECURITY:
+		case OPTIONS_JETPACK_SECURITY_MONTHLY:
+			return securityCopy;
+		case OPTIONS_JETPACK_BACKUP:
+		case OPTIONS_JETPACK_BACKUP_MONTHLY:
+			return backupCopy;
+		case PRODUCT_JETPACK_CRM:
+		case PRODUCT_JETPACK_CRM_MONTHLY:
+			return crmCopy;
+		default:
+			throw `Unknown SelectorProductSlug: ${ productSlug }`;
 	}
 }
 
@@ -247,16 +338,11 @@ export function itemToSelectorProduct(
 		return {
 			productSlug: item.product_slug,
 			iconSlug: `${ item.product_slug }_v2`,
-			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],
-			shortName: getJetpackProductShortName( item ) || '',
-			tagline: getJetpackProductTagline( item ),
-			description: getJetpackProductDescription( item ),
 			children: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
 				? createElement( RecordsDetails, { productSlug: item.product_slug } )
 				: undefined,
-			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
 			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
@@ -281,17 +367,12 @@ export function itemToSelectorProduct(
 		return {
 			productSlug,
 			iconSlug: productSlug + iconAppend,
-			displayName: item.getTitle(),
 			type,
 			subtypes: [],
-			shortName: item.getTitle(),
-			tagline: get( item, 'getTagline', () => '' )(),
-			description: item.getDescription(),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
-				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
 		};
@@ -567,9 +648,12 @@ export function getPathToUpsell(
  * @returns ReactNode | TranslateResult
  */
 export const getJetpackDescriptionWithOptions = (
-	product: SelectorProduct
+	product: SelectorProduct,
+	translate: Function
 ): React.ReactNode | TranslateResult => {
 	const em = React.createElement( 'em', null, null );
+
+	const selectorProductCopy = getSelectorProductCopy( product.productSlug, translate );
 
 	// If the product has 'subtypes' (containing daily and real-time product slugs).
 	// then append "Available options: Real-time or Daily" to the product description.
@@ -577,11 +661,11 @@ export const getJetpackDescriptionWithOptions = (
 		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
 		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
 				args: {
-					productDescription: product.description,
+					productDescription: selectorProductCopy.description,
 				},
 				components: {
 					em,
 				},
 		  } )
-		: product.description;
+		: selectorProductCopy.description;
 };

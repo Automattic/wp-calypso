@@ -23,6 +23,7 @@ import {
 	getPathToSelector,
 	getPathToUpsell,
 	getPathToDetails,
+	getSelectorProductCopy,
 	checkout,
 } from './utils';
 import QueryProducts from './query-products';
@@ -107,7 +108,7 @@ const DetailsPage = ( {
 		page( getPathToDetails( rootUrl, newProductSlug as string, newDuration, siteSlug ) );
 	};
 
-	const { shortName } = product;
+	const { shortName } = getSelectorProductCopy( product.productSlug, translate );
 	const isBundle = [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ].includes(
 		productSlug
 	);

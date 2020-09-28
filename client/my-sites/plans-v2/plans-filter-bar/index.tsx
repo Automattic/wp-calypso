@@ -3,7 +3,7 @@
  */
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
@@ -14,7 +14,7 @@ import SelectDropdown from 'components/select-dropdown';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
 import { masterbarIsVisible } from 'state/ui/selectors';
-import { PRODUCT_TYPE_OPTIONS } from '../constants';
+import { getProductTypeOptions } from '../utils';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 
 /**
@@ -47,6 +47,8 @@ const PlansFilterBar = ( {
 	onDurationChange,
 	onProductTypeChange,
 }: Props ) => {
+	const translate = useTranslate();
+
 	const isCloud = isJetpackCloud();
 	const masterbarSelector = isCloud ? '.jpcom-masterbar' : '.masterbar';
 	const masterbarDefaultHeight = isCloud ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
@@ -59,11 +61,13 @@ const PlansFilterBar = ( {
 	const masterbarOffset = isMasterbarVisible || isCloud ? masterbarHeight : 0;
 	const hasCrossed = useDetectWindowBoundary( barRef, masterbarOffset );
 
+	const productTypeOptions = getProductTypeOptions( translate );
+
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
 			{ showProductTypes && (
-				<SelectDropdown selectedText={ productType && PRODUCT_TYPE_OPTIONS[ productType ].label }>
-					{ Object.values( PRODUCT_TYPE_OPTIONS ).map( ( option ) => (
+				<SelectDropdown selectedText={ productType && productTypeOptions[ productType ].label }>
+					{ Object.values( productTypeOptions ).map( ( option ) => (
 						<SelectDropdown.Item
 							key={ option.id }
 							selected={ productType === option.id }

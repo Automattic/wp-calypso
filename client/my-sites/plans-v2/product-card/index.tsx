@@ -3,6 +3,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 
 /**
@@ -16,12 +17,13 @@ import {
 } from '../constants';
 import {
 	durationToText,
-	productButtonLabel,
-	isUpgradeable,
 	getRealtimeFromDaily,
-	slugToSelectorProduct,
+	getSelectorProductCopy,
+	isUpgradeable,
 	productBadgeLabel,
+	productButtonLabel,
 	slugIsFeaturedProduct,
+	slugToSelectorProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
@@ -64,6 +66,8 @@ interface UpgradeNudgeProps {
 }
 
 const UpgradeNudgeWrapper = ( { siteId, item, currencyCode, onClick }: UpgradeNudgeProps ) => {
+	const translate = useTranslate();
+
 	const upgradeToProductSlug =
 		getRealtimeFromDaily( item.costProductSlug || item.productSlug ) || '';
 	const selectorProductToUpgrade = slugToSelectorProduct( upgradeToProductSlug );
@@ -80,7 +84,7 @@ const UpgradeNudgeWrapper = ( { siteId, item, currencyCode, onClick }: UpgradeNu
 
 	return (
 		<JetpackProductCardUpgradeNudge
-			billingTimeFrame={ durationToText( selectorProductToUpgrade.term ) }
+			billingTimeFrame={ durationToText( selectorProductToUpgrade.term, translate ) }
 			currencyCode={ currencyCode }
 			discountedPrice={ discountedPrice }
 			originalPrice={ originalPrice }
@@ -109,6 +113,8 @@ const ProductCardWrapper = ( {
 	highlight = false,
 	selectedTerm,
 }: ProductCardProps ) => {
+	const translate = useTranslate();
+
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
@@ -160,6 +166,8 @@ const ProductCardWrapper = ( {
 	const hidePrice =
 		EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) || ( !! siteId && item.hidePrice );
 
+	const itemCopy = getSelectorProductCopy( item.productSlug, translate );
+
 	const UpgradeNudge = isOwned ? (
 		<UpgradeNudgeWrapper
 			siteId={ siteId }
@@ -172,13 +180,19 @@ const ProductCardWrapper = ( {
 		<CardComponent
 			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
-			productName={ item.displayName }
-			subheadline={ item.tagline }
-			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
+			productName={ itemCopy.displayName }
+			subheadline={ itemCopy.tagline }
+			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : itemCopy.description }
 			currencyCode={ currencyCode }
-			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
-			badgeLabel={ productBadgeLabel( item, isOwned, highlight, sitePlan ) }
+			billingTimeFrame={ durationToText( item.term, translate ) }
+			buttonLabel={ productButtonLabel(
+				item,
+				isOwned,
+				isUpgradeableToYearly,
+				translate,
+				sitePlan
+			) }
+			badgeLabel={ productBadgeLabel( item, isOwned, highlight, translate, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			children={ item.children }

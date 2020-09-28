@@ -90,18 +90,21 @@ export interface SelectorProduct extends SelectorProductCost {
 	type: ItemType;
 	costProductSlug?: string;
 	monthlyProductSlug?: string;
-	displayName: TranslateResult;
-	shortName: TranslateResult;
-	tagline: TranslateResult;
-	description: TranslateResult | ReactNode;
 	children?: ReactNode;
 	term: Duration;
-	buttonLabel?: TranslateResult;
 	features: SelectorProductFeatures;
 	subtypes: string[];
 	legacy?: boolean;
 	hidePrice?: boolean;
 	externalUrl?: string;
+}
+
+export interface SelectorProductCopy {
+	displayName: TranslateResult;
+	shortName: TranslateResult;
+	tagline: TranslateResult;
+	description: TranslateResult | ReactNode;
+	buttonLabel?: TranslateResult;
 }
 
 export interface AvailableProductData {

@@ -28,6 +28,7 @@ import {
 	getProductUpsell,
 	getPathToSelector,
 	getPathToDetails,
+	getSelectorProductCopy,
 	slugToSelectorProduct,
 	checkout,
 } from './utils';
@@ -75,8 +76,12 @@ const UpsellComponent = ( {
 		upsellProduct.monthlyProductSlug || ''
 	);
 
-	const { shortName: mainProductName } = mainProduct;
-	const { shortName: upsellProductName, productSlug: upsellSlug } = upsellProduct;
+	const mainProductCopy = getSelectorProductCopy( mainProduct.productSlug, translate );
+	const upsellProductCopy = getSelectorProductCopy( upsellProduct.productSlug, translate );
+
+	const { shortName: mainProductName } = mainProductCopy;
+	const { shortName: upsellProductName } = upsellProductCopy;
+	const upsellSlug = upsellProduct.productSlug;
 
 	const isScanProduct = useMemo(
 		() => JETPACK_SCAN_PRODUCTS.some( ( slug ) => slug === upsellSlug ),
@@ -153,11 +158,11 @@ const UpsellComponent = ( {
 				<div className="upsell__product-card">
 					<JetpackProductCard
 						iconSlug={ upsellProduct.iconSlug }
-						productName={ upsellProduct.displayName }
-						subheadline={ upsellProduct.tagline }
-						description={ upsellProduct.description }
+						productName={ upsellProductCopy.displayName }
+						subheadline={ upsellProductCopy.tagline }
+						description={ upsellProductCopy.description }
 						currencyCode={ currencyCode }
-						billingTimeFrame={ durationToText( upsellProduct.term ) }
+						billingTimeFrame={ durationToText( upsellProduct.term, translate ) }
 						buttonLabel={ translate( 'Yes, add {{name/}}', {
 							components: {
 								name: <>{ upsellProductName }</>,
