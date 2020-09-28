@@ -22,14 +22,13 @@ import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/co
 /**
  * Internal dependencies
  */
-import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
+import { getProductsList } from 'state/products-list/selectors';
 import {
 	useStoredCards,
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
-import useFetchProductsIfNotLoaded from './hooks/use-fetch-products-if-not-loaded';
 import notices from 'notices';
 import { isJetpackSite } from 'state/sites/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
@@ -185,9 +184,6 @@ export default function CompositeCheckout( {
 		isPrivate,
 	} );
 
-	useFetchProductsIfNotLoaded();
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-
 	const {
 		removeItem,
 		couponStatus,
@@ -213,7 +209,7 @@ export default function CompositeCheckout( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
-		areCartProductsPreparing: areCartProductsPreparing || isFetchingProducts,
+		areCartProductsPreparing,
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
