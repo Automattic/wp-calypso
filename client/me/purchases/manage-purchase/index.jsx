@@ -103,6 +103,7 @@ class ManagePurchase extends Component {
 	static propTypes = {
 		showHeader: PropTypes.bool,
 		purchaseListUrl: PropTypes.string,
+		cardTitle: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
@@ -120,6 +121,7 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
+		cardTitle: titles.managePurchase,
 	};
 
 	state = {
@@ -592,7 +594,7 @@ class ManagePurchase extends Component {
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 				<Main className={ classes }>
-					<HeaderCake backHref={ this.props.purchaseListUrl }>{ titles.managePurchase }</HeaderCake>
+					<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
 					{ showExpiryNotice ? (
 						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
 							<NoticeAction href={ `/plans/${ site.slug || '' }` }>
