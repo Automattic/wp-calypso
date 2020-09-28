@@ -12,8 +12,12 @@ import UpsellPage from './upsell';
 import { stringToDuration } from './utils';
 import getCurrentPlanTerm from 'state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { Duration } from 'my-sites/plans-v2/types';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
+
+/**
+ * Type dependencies
+ */
+import type { Duration } from './types';
 
 export const productSelect = ( rootUrl: string ) => ( context: PageJS.Context, next: Function ) => {
 	// Get the selected site's current plan term, and set it as default duration
@@ -26,6 +30,7 @@ export const productSelect = ( rootUrl: string ) => ( context: PageJS.Context, n
 		<SelectorPage
 			defaultDuration={ duration }
 			rootUrl={ rootUrl }
+			siteSlug={ context.params.site || context.query.site }
 			header={ context.header }
 			footer={ context.footer }
 		/>
@@ -42,7 +47,8 @@ export const productDetails = ( rootUrl: string ) => (
 	context.primary = (
 		<DetailsPage
 			productSlug={ productType }
-			duration={ duration }
+			duration={ duration as Duration }
+			siteSlug={ context.params.site || context.query.site }
 			rootUrl={ rootUrl }
 			header={ context.header }
 		/>
@@ -56,7 +62,8 @@ export const productUpsell = ( rootUrl: string ) => ( context: PageJS.Context, n
 	context.primary = (
 		<UpsellPage
 			productSlug={ productSlug }
-			duration={ duration }
+			duration={ duration as Duration }
+			siteSlug={ context.params.site || context.query.site }
 			rootUrl={ rootUrl }
 			header={ context.header }
 		/>

@@ -44,10 +44,17 @@ import type { ProductSlug } from 'lib/products-values/types';
 
 import './style.scss';
 
-const DetailsPage = ( { duration, productSlug, rootUrl, header }: DetailsPageProps ) => {
+const DetailsPage = ( {
+	duration,
+	siteSlug: siteSlugProp,
+	productSlug,
+	rootUrl,
+	header,
+}: DetailsPageProps ) => {
 	const dispatch = useDispatch();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlug = siteSlugProp || siteSlugState;
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const hasUpsell = useHasProductUpsell();
 	const translate = useTranslate();

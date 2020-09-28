@@ -43,6 +43,7 @@ import './style.scss';
 
 const SelectorPage = ( {
 	defaultDuration = TERM_ANNUALLY,
+	siteSlug: siteSlugProp,
 	rootUrl,
 	header,
 	footer,
@@ -50,7 +51,8 @@ const SelectorPage = ( {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlug = siteSlugProp || siteSlugState;
 	const hasUpsell = useHasProductUpsell();
 	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
