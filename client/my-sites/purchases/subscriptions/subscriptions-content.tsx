@@ -66,6 +66,7 @@ export default function SubscriptionsContent() {
 }
 
 function NoPurchasesMessage() {
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const translate = useTranslate();
 	return (
 		<CompactCard className="subscriptions__list--empty">
@@ -75,7 +76,7 @@ function NoPurchasesMessage() {
 					'Our plans give your site the power to thrive. Find the plan that works for you.'
 				) }
 				action={ translate( 'Upgrade now' ) }
-				actionURL={ '/plans' }
+				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
 				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 			/>
 		</CompactCard>
