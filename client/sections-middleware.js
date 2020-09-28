@@ -8,7 +8,6 @@ import page from 'page';
  * Internal dependencies
  */
 import { setSection } from 'state/ui/actions';
-import { activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
 import * as controller from './controller/index.web';
@@ -20,11 +19,6 @@ import { performanceTrackerStart } from 'lib/performance-tracking';
 
 import sections from './sections';
 receiveSections( sections );
-
-function activateSection( sectionDefinition, context ) {
-	context.store.dispatch( setSection( sectionDefinition ) );
-	context.store.dispatch( activateNextLayoutFocus() );
-}
 
 async function loadSection( context, sectionDefinition ) {
 	// Do not update the current active section, only change `isLoading` flag
@@ -96,8 +90,8 @@ function createPageDefinition( path, sectionDefinition ) {
 				_loadedSections[ sectionDefinition.module ] = true;
 			}
 
-			// activate the section after ensuring it's fully loaded
-			activateSection( sectionDefinition, context );
+			context.nextSectionToActivate = sectionDefinition;
+
 			next();
 		} catch ( error ) {
 			// delete the cache record on failure; next attempt to load will start from scratch
