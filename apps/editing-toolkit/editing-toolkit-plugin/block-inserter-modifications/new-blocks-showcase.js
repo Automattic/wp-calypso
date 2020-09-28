@@ -23,7 +23,6 @@ const NEW_CATEGORY = {
  */
 const NEW_BLOCKS = [
 	'jetpack/podcast-player',
-	'premium-content/container',
 	'jetpack/calendly',
 	'jetpack/eventbrite',
 	'jetpack/opentable',
