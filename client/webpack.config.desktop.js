@@ -6,7 +6,16 @@
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
+/**
+ * Internal Dependencies
+ */
+const { workerCount } = require( './webpack.common' );
+const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
+const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+
 const isDevelopment = process.env.NODE_ENV === 'development';
+const cacheDirectory = path.resolve( '.cache', 'babel-desktop' );
 
 module.exports = {
 	entry: path.join( __dirname, 'desktop' ),
@@ -31,25 +40,20 @@ module.exports = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			{
-				test: /\.[jt]sx?$/,
-				loader: 'babel-loader',
-				exclude: /node_modules/,
-			},
-			{
-				test: /\.js$/,
-				loader: 'babel-loader',
-				include: ( filepath ) => {
-					// is it one of the npm dependencies we want to transpile?
-					const lastIndex = filepath.lastIndexOf( '/node_modules/' );
-					if ( lastIndex === -1 ) {
-						return false;
-					}
-					return [ 'chalk', '@automattic/calypso-polyfills' ].some( ( pkg ) =>
-						filepath.startsWith( `/node_modules/${ pkg }/`, lastIndex )
-					);
-				},
-			},
+			TranspileConfig.loader( {
+				workerCount,
+				configFile: path.resolve( 'babel.config.js' ),
+				cacheDirectory,
+				cacheIdentifier,
+				exclude: /node_modules\//,
+			} ),
+			TranspileConfig.loader( {
+				workerCount,
+				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				cacheDirectory,
+				cacheIdentifier,
+				include: shouldTranspileDependency,
+			} ),
 			{
 				test: /\.(sc|sa|c)ss$/,
 				loader: 'ignore-loader',
