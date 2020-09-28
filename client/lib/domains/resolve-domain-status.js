@@ -159,6 +159,15 @@ export function resolveDomainStatus(
 				};
 			}
 
+			if ( domain?.isPremium ) {
+				return {
+					statusText: translate( 'Active' ),
+					statusClass: 'status-premium',
+					icon: 'check_circle',
+					listStatusClass: 'premium',
+				};
+			}
+
 			return {
 				statusText: translate( 'Active' ),
 				statusClass: 'status-success',

@@ -78,6 +78,11 @@ export default function safeImageUrl( url ) {
 
 		// Ensure we're creating a new URL without the size parameters
 		delete parsedUrl.search;
+
+		// Force https since if there's a missing protocol it'll throw an error
+		if ( ! parsedUrl?.protocol ) {
+			parsedUrl.protocol = 'https';
+		}
 		url = getUrlFromParts( parsedUrl ).toString();
 	}
 

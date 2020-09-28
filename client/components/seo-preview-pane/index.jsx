@@ -4,18 +4,18 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { compact, find, get, identity, overSome } from 'lodash';
+import { compact, find, get, identity } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { hasSiteSeoFeature } from './utils';
 import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'components/seo/reader-preview';
 import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import VerticalMenu from 'components/vertical-menu';
 import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/editor/selectors';
@@ -30,7 +30,6 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import './style.scss';
 
 const PREVIEW_IMAGE_WIDTH = 512;
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
 
 const largeBlavatar = ( site ) => {
 	const siteIcon = get( site, 'icon.img' );
@@ -265,7 +264,7 @@ const mapStateToProps = ( state, { overridePost } ) => {
 			...post,
 			seoTitle: getSeoTitle( state, 'posts', { site, post } ),
 		},
-		showNudge: site && site.plan && ! hasSupportingPlan( site.plan ),
+		showNudge: ! hasSiteSeoFeature( site ),
 	};
 };
 

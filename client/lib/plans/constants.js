@@ -46,6 +46,7 @@ export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
+export const PLAN_VIP = 'vip';
 
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';

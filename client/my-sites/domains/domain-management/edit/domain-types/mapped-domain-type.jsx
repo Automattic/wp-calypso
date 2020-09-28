@@ -8,12 +8,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { Card } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 import DomainStatus from '../card/domain-status';
 import { isExpiringSoon } from 'lib/domains/utils';
-import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { WPCOM_DEFAULTS } from 'lib/domains/nameservers';
 import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
@@ -31,7 +29,6 @@ import {
 } from 'state/purchases/selectors';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
-import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import { hasPendingGSuiteUsers } from 'lib/gsuite';
@@ -216,11 +213,6 @@ class MappedDomainType extends React.Component {
 			isSiteAutomatedTransfer: this.props.isSiteAutomatedTransfer,
 		} );
 
-		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
-		const newDomainManagementNavigation = config.isEnabled(
-			'domains/new-status-design/new-options'
-		);
-
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -247,34 +239,14 @@ class MappedDomainType extends React.Component {
 				<Card compact={ true } className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
-					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
-						<WrapDomainStatusButtons>
-							<SubscriptionSettings
-								type={ domain.type }
-								compact={ true }
-								subscriptionId={ domain.subscriptionId }
-								siteSlug={ this.props.selectedSite.slug }
-								onClick={ this.handlePaymentSettingsClick }
-							/>
-						</WrapDomainStatusButtons>
-					) }
-					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
+					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newDomainManagementNavigation ? (
-					<DomainManagementNavigationEnhanced
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ mappingPurchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) : (
-					<DomainManagementNavigation
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ mappingPurchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) }
+				<DomainManagementNavigationEnhanced
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ mappingPurchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}

@@ -75,6 +75,9 @@
 	.status-error {
 		@include domain_status_color( var( --color-error ) );
 	}
+	.status-premium {
+		@include domain_status_color( var( --color-link ) );
+	}
 
 	.domain-status__card {
 		h2 {
@@ -135,6 +138,10 @@
 			border-bottom: 0;
 			padding-bottom: 0;
 			> svg {
+				margin-right: 5px;
+			}
+
+			.badge {
 				margin-right: 5px;
 			}
 		}

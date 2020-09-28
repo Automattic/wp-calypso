@@ -1010,7 +1010,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PREMIUM_CONTENT_BLOCK ]: {
 		getSlug: () => constants.FEATURE_PREMIUM_CONTENT_BLOCK,
-		getTitle: () => i18n.translate( 'Subscriber-only Content' ),
+		getTitle: () => i18n.translate( 'Subscriber-only content' ),
 		getDescription: () => i18n.translate( 'Limit content to paying subscribers.' ),
 	},
 

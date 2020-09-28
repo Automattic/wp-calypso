@@ -64,6 +64,7 @@
 		margin-left: 8px;
 		background-color: var( --color-sidebar-menu-hover-background );
 		color: var( --color-sidebar-menu-hover-text );
+		// stylelint-disable-next-line scales/radii
 		border-radius: 12px;
 		display: inline-block;
 		padding: 2px 10px;
@@ -240,6 +241,10 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-item__status-alert {
 	border-left: 3px solid var( --color-error );
+}
+
+.domain-item__status-premium {
+	border-left: 3px solid var( --color-link );
 }
 
 .domain-item__status {

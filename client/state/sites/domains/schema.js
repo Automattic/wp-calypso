@@ -22,6 +22,7 @@ export const itemsSchema = {
 					hasWpcomNameservers: { type: 'boolean' },
 					hasZone: { type: 'boolean' },
 					isPendingIcannVerification: { type: 'boolean' },
+					isPremium: { type: 'boolean' },
 					isPrimary: { type: 'boolean' },
 					isSubdomain: { type: 'boolean' },
 					isWPCOMDomain: { type: 'boolean' },
