@@ -311,6 +311,7 @@ class RegisteredDomainType extends React.Component {
 					statusText={ statusText }
 					statusClass={ statusClass }
 					icon={ icon }
+					premium={ domain.isPremium }
 				>
 					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
 						<IcannVerificationCard
