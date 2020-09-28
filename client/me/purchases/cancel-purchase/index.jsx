@@ -46,6 +46,7 @@ import './style.scss';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {
+		getManagePurchaseUrlFor: PropTypes.func,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -59,6 +60,10 @@ class CancelPurchase extends React.Component {
 	state = {
 		cancelBundledDomain: false,
 		confirmCancelBundledDomain: false,
+	};
+
+	static defaultProps = {
+		getManagePurchaseUrlFor: managePurchase,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -93,7 +98,7 @@ class CancelPurchase extends React.Component {
 		let redirectPath = purchasesRoot;
 
 		if ( siteSlug && purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
-			redirectPath = managePurchase( siteSlug, purchase.id );
+			redirectPath = this.props.getManagePurchaseUrlFor( siteSlug, purchase.id );
 		}
 
 		page.redirect( redirectPath );
@@ -180,7 +185,12 @@ class CancelPurchase extends React.Component {
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake
+					backHref={ this.props.getManagePurchaseUrlFor(
+						this.props.siteSlug,
+						this.props.purchaseId
+					) }
+				>
 					{ titles.cancelPurchase }
 				</HeaderCake>
 
