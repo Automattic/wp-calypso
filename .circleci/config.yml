@@ -239,7 +239,7 @@ references:
     fail_only: true
     mentions: '$CIRCLE_USERNAME'
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
-  install-specific-chrome-browser: &downgrade-chrome-browser
+  install-specific-chrome-browser: &install-specific-chrome-browser
     name: Downgrade Chrome
     command: |
       cd /tmp
