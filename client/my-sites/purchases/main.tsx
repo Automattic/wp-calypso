@@ -76,7 +76,7 @@ export function PurchaseCancel( {
 	const translate = useTranslate();
 
 	const getManagePurchaseUrlFor = ( targetSiteSlug: string, targetPurchaseId: string | number ) =>
-		`/purchases/${ targetSiteSlug }/${ targetPurchaseId }`;
+		`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }`;
 
 	return (
 		<Main className="purchases is-wide-layout">
