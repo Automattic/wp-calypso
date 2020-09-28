@@ -20,6 +20,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
 import StatsSparkline from 'blocks/stats-sparkline';
+import addQueryArgs from 'lib/url/add-query-args';
+import config from 'config';
 
 const onNav = () => null;
 
@@ -36,6 +38,9 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 	if ( isStats && selectedSiteId ) {
 		children = <StatsSparkline className="sidebar-unified__sparkline" siteId={ selectedSiteId } />;
 	}
+	url = config.isEnabled( 'nav-unification' )
+		? addQueryArgs( { flags: 'nav-unification' }, url )
+		: url;
 
 	return (
 		<SidebarItem
@@ -44,6 +49,7 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 			onNavigate={ onNav }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
+			forceInternalLink
 		>
 			{ children }
 		</SidebarItem>

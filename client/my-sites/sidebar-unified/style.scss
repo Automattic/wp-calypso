@@ -9,7 +9,8 @@
 
 	--color-sidebar-background: #23282d;
 	--color-sidebar-background-rgb: 35, 40, 45;
-	--color-sidebar-menu-hover-background: #191e23;
+	--color-sidebar-menu-hover-background: #32373c;
+	--color-sidebar-menu-hover-background-rgb: rgb( #32373c );
 	--color-sidebar-menu-hover: var ( --color-sidebar-text );
 	--color-sidebar-menu-selected-background: #006fad;
 	--color-sidebar-border: var( --color-surface-backdrop );
@@ -126,6 +127,20 @@ $font-size: rem( 14px );
 	.current-site .all-sites,
 	.current-site__switch-sites {
 		border-color: #333333;
+	}
+
+	//client/components/site-selector/style.scss
+	.site-selector .site.is-highlighted {
+		background-color: var ( --color-sidebar-menu-hover-background );
+	}
+
+	.site-selector .site.is-highlighted .site__domain,
+	.site-selector .site.is-highlighted .site__title {
+		color: var( --color-sidebar-text );
+	}
+
+	.site__badge {
+		background: var( --color-sidebar-text );
 	}
 }
 
