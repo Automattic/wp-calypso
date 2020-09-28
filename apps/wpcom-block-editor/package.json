@@ -44,7 +44,7 @@
 		"debug": "^4.1.1",
 		"jquery": "^1.12.3",
 		"lodash": "^4.17.15",
-		"react": "^16.12.0",
+		"react": "^16.13.1",
 		"tinymce": "^4.9.6"
 	},
 	"devDependencies": {

@@ -30,6 +30,6 @@
 		"eslint-plugin-wpcalypso": "^3.4.1 || ^4.0.0 || ^5.0.0"
 	},
 	"dependencies": {
-		"eslint-plugin-react-hooks": "^4.0.5"
+		"eslint-plugin-react-hooks": "^4.1.2"
 	}
 }

@@ -46,14 +46,14 @@
 	},
 	"devDependencies": {
 		"@testing-library/react": "^10.0.5",
-		"react": "^16.12.0",
-		"react-dom": "^16.12.0"
+		"react": "^16.13.1",
+		"react-dom": "^16.13.1"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.22.3",
 		"@wordpress/element": "^2.16.0",
 		"@wordpress/i18n": "^3.14.0",
-		"react": "^16.12.0"
+		"react": "^16.13.1"
 	},
 	"private": true
 }

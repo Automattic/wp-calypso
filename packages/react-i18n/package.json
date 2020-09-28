@@ -36,7 +36,7 @@
 		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
-		"react": "^16.8"
+		"react": "^16.13"
 	},
 	"private": true
 }

@@ -51,7 +51,7 @@
 		"@wordpress/data": "^4.22.3",
 		"@wordpress/element": "^2.16.0",
 		"@wordpress/i18n": "^3.14.0",
-		"react": "^16.8"
+		"react": "^16.13"
 	},
 	"private": true
 }
