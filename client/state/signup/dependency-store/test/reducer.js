@@ -16,10 +16,21 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should not store dependencies if none are included in the action', () => {
-		const prevState = {};
+		const prevState = { bearer_token: 'TOKENX' };
 		const action = { type: SIGNUP_PROGRESS_SUBMIT_STEP, step: { stepName: 'userCreation' } };
 		const nextState = signupDependencyStore( prevState, action );
-		expect( nextState ).toBe( prevState );
+		expect( nextState ).toEqual( prevState );
+	} );
+
+	test( 'should remove dependencies not provided in current step', () => {
+		//TODO: write a test by mocking the step definitions
+		//
+		// const prevState = { bearer_token: 'TOKENX' };
+		// const action = { type: SIGNUP_PROGRESS_SUBMIT_STEP, step: { stepName: 'userCreation' } };
+		// const nextState = signupDependencyStore( prevState, action );
+
+		// console.log( { prevState, nextState } );
+		expect( true ).toEqual( true );
 	} );
 
 	test( 'should store dependencies if they are provided in either signup action', () => {
