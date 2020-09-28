@@ -12,10 +12,15 @@ import Gridicon from 'components/gridicon';
  */
 import HappychatButton from 'components/happychat/button';
 import { recordTracksEvent } from 'state/analytics/actions';
+import getSupportLevel from 'state/selectors/get-support-level';
 
 export class PaymentChatButton extends Component {
 	chatButtonClicked = () => {
-		this.props.recordTracksEvent( 'calypso_presales_chat_click' );
+		const { plan, supportLevel } = this.props;
+		this.props.recordTracksEvent( 'calypso_presales_chat_click', {
+			plan,
+			supportLevel,
+		} );
 	};
 
 	render() {
@@ -30,4 +35,6 @@ export class PaymentChatButton extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( PaymentChatButton ) );
+export default connect( ( state ) => ( { supportLevel: getSupportLevel( state ) } ), {
+	recordTracksEvent,
+} )( localize( PaymentChatButton ) );

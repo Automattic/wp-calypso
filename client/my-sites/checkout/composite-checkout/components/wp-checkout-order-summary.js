@@ -16,6 +16,7 @@ import {
 	useSelect,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,13 +24,19 @@ import { useTranslate } from 'i18n-calypso';
 import { showInlineHelpPopover } from 'state/inline-help/actions';
 import PaymentChatButton from 'my-sites/checkout/checkout/payment-chat-button';
 import getSupportVariation, {
+	SUPPORT_HAPPYCHAT,
 	SUPPORT_FORUM,
 	SUPPORT_DIRECTLY,
 } from 'state/selectors/get-inline-help-support-variation';
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
 import { useHasRenewalInCart } from '../hooks/has-renewal';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	isWpComPersonalPlan,
+	isWpComPremiumPlan,
+} from 'lib/plans';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
@@ -235,28 +242,34 @@ function getPlanFeatures( plan, translate, hasDomainsInCart, hasRenewalInCart ) 
 	return [];
 }
 
+function getHighestWpComPlanLabel( plans ) {
+	const planMatchersInOrder = [
+		isWpComEcommercePlan,
+		isWpComBusinessPlan,
+		isWpComPremiumPlan,
+		isWpComPersonalPlan,
+	];
+	for ( const matcher of planMatchersInOrder ) {
+		for ( const plan of plans ) {
+			if ( matcher( get( plan, 'wpcom_meta.product_slug' ) ) ) {
+				return plan.label;
+			}
+		}
+	}
+}
+
 function CheckoutSummaryHelp() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const plans = useLineItemsOfType( 'plan' );
 
 	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
+	const supportVariation = useSelector( getSupportVariation );
 
 	const happyChatAvailable = useSelector( isHappychatAvailable );
 	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
-	const hasPresalesPlanInCart = plans.some(
-		( { wpcom_meta } ) =>
-			isWpComBusinessPlan( wpcom_meta.product_slug ) ||
-			isWpComEcommercePlan( wpcom_meta.product_slug )
-	);
-	const isPresalesChatEligible = presalesChatAvailable && hasPresalesPlanInCart;
-
-	const isSupportChatUser = useSelector( ( state ) => {
-		return (
-			SUPPORT_FORUM !== getSupportVariation( state ) &&
-			SUPPORT_DIRECTLY !== getSupportVariation( state )
-		);
-	} );
+	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
+	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
 
 	const onEvent = useEvents();
 	const handleHelpButtonClicked = () => {
@@ -266,8 +279,10 @@ function CheckoutSummaryHelp() {
 
 	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
 	const shouldRenderPaymentChatButton =
-		happyChatAvailable &&
-		( isPresalesChatEligible || ( supportVariationDetermined && isSupportChatUser ) );
+		happyChatAvailable && ( isPresalesChatEligible || supportVariation === SUPPORT_HAPPYCHAT );
+
+	const hasDirectSupport =
+		supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
 	// If chat isn't available, use the inline help button instead.
 	return (
@@ -275,11 +290,11 @@ function CheckoutSummaryHelp() {
 			<QuerySupportTypes />
 			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
 			{ shouldRenderPaymentChatButton ? (
-				<PaymentChatButton />
+				<PaymentChatButton plan={ presalesEligiblePlanLabel } />
 			) : (
 				supportVariationDetermined && (
 					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-						{ isSupportChatUser
+						{ hasDirectSupport
 							? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
 									components: {
 										underline: <span />,
