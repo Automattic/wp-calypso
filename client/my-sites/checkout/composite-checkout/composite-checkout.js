@@ -204,8 +204,7 @@ export default function CompositeCheckout( {
 		variantSelectOverride,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart:
-			! areCartProductsPreparing && ! isLoadingCartSynchronizer && ! isFetchingProducts,
+		canInitializeCart: ! isLoadingCartSynchronizer,
 		setCart: setCart || wpcomSetCart,
 		getCart: getCart || wpcomGetCart,
 	} );
@@ -214,7 +213,7 @@ export default function CompositeCheckout( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
-		areCartProductsPreparing,
+		areCartProductsPreparing: areCartProductsPreparing || isFetchingProducts,
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
