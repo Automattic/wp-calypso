@@ -217,7 +217,6 @@ export default function CompositeCheckout( {
 		areCartProductsPreparing,
 		couponCodeFromUrl,
 		applyCoupon,
-		recordEvent,
 		addProductsToCart,
 	} );
 

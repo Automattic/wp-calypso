@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { ReactStandardAction } from './use-shopping-cart-manager/types';
 import type { RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
 
 export type IsInitialCartLoading = boolean;
@@ -18,7 +17,6 @@ export default function useAddProductsFromUrl( {
 	areCartProductsPreparing,
 	couponCodeFromUrl,
 	applyCoupon,
-	recordEvent,
 	addProductsToCart,
 }: {
 	isLoadingCart: boolean;
@@ -27,7 +25,6 @@ export default function useAddProductsFromUrl( {
 	areCartProductsPreparing: boolean;
 	couponCodeFromUrl: string | null | undefined;
 	applyCoupon: ( couponId: string ) => void;
-	recordEvent: ( action: ReactStandardAction ) => void;
 	addProductsToCart: ( products: RequestCartProduct[] ) => void;
 } ): IsInitialCartLoading {
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
@@ -69,7 +66,6 @@ export default function useAddProductsFromUrl( {
 		hasRequestedInitialProducts.current = true;
 	}, [
 		areCartProductsPreparing,
-		recordEvent,
 		isLoadingCart,
 		couponCodeFromUrl,
 		applyCoupon,
