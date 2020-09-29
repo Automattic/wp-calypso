@@ -31,12 +31,14 @@ export const MySitesSidebarUnifiedMenu = ( { slug, title, icon, children, path, 
 	return (
 		<ExpandableSidebarMenu
 			onClick={ () => {
-				if ( isExternal( link ) ) {
-					// If the URL is external, page() will fail to replace state between different domains
-					document.location.href = link;
-					return;
+				if ( link ) {
+					if ( isExternal( link ) ) {
+						// If the URL is external, page() will fail to replace state between different domains
+						document.location.href = link;
+						return;
+					}
+					page( link );
 				}
-				page( link );
 				reduxDispatch( toggleSection( sectionId ) );
 			} }
 			expanded={ isExpanded }
