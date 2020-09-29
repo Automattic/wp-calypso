@@ -687,7 +687,6 @@ class CalypsoifyIframe extends Component<
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
-						/* eslint-disable jsx-a11y/iframe-has-title */
 						<Iframe
 							ref={ this.iframeRef }
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
@@ -697,7 +696,6 @@ class CalypsoifyIframe extends Component<
 								this.onIframeLoaded( iframeUrl );
 							} }
 						/>
-						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
 				<EditorMediaModal
