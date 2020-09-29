@@ -25,11 +25,11 @@ export function redirectLoggedIn( context, next ) {
 export function render( context ) {
 	ReactDom.render( context.layout, document.getElementById( 'wpcom' ) );
 
-	// Activate the next section after it's been successfully loaded
-	// `nextSectionToActivate` would be set in client/sections-middleware.js
-	// The section "activation" is triggered when the new section is rendered
-	// for the first time — this avoids glitchs were a sections styles would be
-	// loaded before the section would be rendered in the browser.
+	// Activate the next section after it's been successfully loaded.
+	// (`context.nextSectionToActivate` is set in client/sections-middleware.js)
+	// Section activation is triggered when the new section is rendered for the
+	// first time; this avoids glitches caused by the section's styles loading
+	// before the actual section's markup gets rendered..
 	if ( context.nextSectionToActivate ) {
 		context.store.dispatch( setSection( context.nextSectionToActivate ) );
 		context.store.dispatch( activateNextLayoutFocus() );
