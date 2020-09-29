@@ -2,11 +2,14 @@
  * External dependencies
  */
 import { useEffect, useRef, useState } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import type { RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
+
+const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
 
 export type isPendingAddingProductsFromUrl = boolean;
 
@@ -43,6 +46,7 @@ export default function useAddProductsFromUrl( {
 			! isLoadingCart &&
 			! isCartPendingUpdate
 		) {
+			debug( 'no products or coupons to add; skipping initial cart requests' );
 			setIsLoading( false );
 			return;
 		}
@@ -65,6 +69,7 @@ export default function useAddProductsFromUrl( {
 			return;
 		}
 		if ( ! isCartPendingUpdate && ! isLoadingCart ) {
+			debug( 'initial cart requests have been completed' );
 			setIsLoading( false );
 			return;
 		}
@@ -80,9 +85,11 @@ export default function useAddProductsFromUrl( {
 		if ( areCartProductsPreparing || isLoadingCart || hasRequestedInitialProducts.current ) {
 			return;
 		}
+		debug( 'adding initial products to cart', productsForCart );
 		if ( productsForCart.length > 0 ) {
 			addProductsToCart( productsForCart );
 		}
+		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
 			applyCoupon( couponCodeFromUrl );
 		}
@@ -97,5 +104,6 @@ export default function useAddProductsFromUrl( {
 		addProductsToCart,
 	] );
 
+	debug( 'useAddProductsFromUrl isLoading', isLoading );
 	return isLoading;
 }

@@ -72,6 +72,12 @@ export default function usePrepareProductsForCart( {
 		initialPreparedProductsState,
 		initializePreparedProductsState
 	);
+	debug(
+		'preparing products for cart from url string',
+		productAlias,
+		'and purchase id',
+		originalPurchaseId
+	);
 
 	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
