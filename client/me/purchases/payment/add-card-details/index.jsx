@@ -22,7 +22,7 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { managePurchase, purchasesRoot } from 'me/purchases/paths';
+import { purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { StripeHookProvider } from 'lib/stripe';
 
@@ -54,7 +54,7 @@ function AddCardDetails( props ) {
 	const successCallback = () => {
 		const { id } = props.purchase;
 		props.clearPurchases();
-		page( managePurchase( props.siteSlug, id ) );
+		page( props.getManagePurchaseUrlFor( props.siteSlug, id ) );
 	};
 
 	return (
