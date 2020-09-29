@@ -49,6 +49,8 @@ import FormSelect from 'components/forms/form-select';
 
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
+		purchaseListUrl: PropTypes.string,
+		getCancelPurchaseUrlFor: PropTypes.func,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		isDomainOnlySite: PropTypes.bool,
 		purchaseId: PropTypes.number.isRequired,
@@ -67,6 +69,11 @@ class ConfirmCancelDomain extends React.Component {
 		submitting: false,
 	};
 
+	static defaultProps = {
+		purchaseListUrl: purchasesRoot,
+		getCancelPurchaseUrlFor: cancelPurchase,
+	};
+
 	componentDidMount() {
 		this.redirectIfDataIsInvalid( this.props );
 	}
@@ -83,7 +90,7 @@ class ConfirmCancelDomain extends React.Component {
 		const { purchase } = props;
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 		}
 	};
 
@@ -150,7 +157,7 @@ class ConfirmCancelDomain extends React.Component {
 				product_slug: purchase.productSlug,
 			} );
 
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 		} );
 	};
 
@@ -272,7 +279,12 @@ class ConfirmCancelDomain extends React.Component {
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
-				<HeaderCake backHref={ cancelPurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake
+					backHref={ this.props.getCancelPurchaseUrlFor(
+						this.props.siteSlug,
+						this.props.purchaseId
+					) }
+				>
 					{ titles.confirmCancelDomain }
 				</HeaderCake>
 				<Card>
