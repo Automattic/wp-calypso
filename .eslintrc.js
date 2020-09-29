@@ -171,6 +171,7 @@ module.exports = {
 
 					// Chai
 					'chai.assert',
+					'chai.assert.*',
 					'assert',
 					'assert.*',
 					'equal',
