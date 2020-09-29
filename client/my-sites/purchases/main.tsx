@@ -119,7 +119,12 @@ export function PurchaseCancelDomain( {
 				align="left"
 			/>
 
-			<ConfirmCancelDomain purchaseId={ purchaseId } siteSlug={ siteSlug } />
+			<ConfirmCancelDomain
+				purchaseId={ purchaseId }
+				siteSlug={ siteSlug }
+				getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
+				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+			/>
 		</Main>
 	);
 }
