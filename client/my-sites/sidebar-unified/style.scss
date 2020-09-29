@@ -43,7 +43,8 @@ $font-size: rem( 14px );
 			color: var( --color-sidebar-text );
 			align-items: center;
 
-			&:hover {
+			&:hover,
+			&:focus {
 				background-color: var( --color-sidebar-menu-hover-background );
 				color: var( --color-sidebar-menu-hover );
 			}
