@@ -11,6 +11,7 @@ import { getLocaleSlug } from 'i18n-calypso';
  */
 import activeTests from 'lib/abtest/active-tests';
 import { recordTracksEvent } from 'lib/analytics/tracks';
+import { bumpStat } from 'lib/analytics/mc';
 import user from 'lib/user';
 import wpcom from 'lib/wp';
 import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
@@ -349,6 +350,8 @@ ABTest.prototype.saveVariation = function ( variation ) {
 		this.recordVariation( variation );
 	}
 	this.saveVariationInLocalStorage( variation );
+
+	bumpStat( this.experimentId, variation );
 };
 
 ABTest.prototype.saveVariationOnBackend = function ( variation ) {
