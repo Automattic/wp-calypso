@@ -448,7 +448,6 @@ export default connect( ( state, { purchaseId } ) => {
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		site: purchase ? getSite( state, purchase.siteId ) : null,
-		userId: getCurrentUserId( state ),
 		isProductOwner,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
