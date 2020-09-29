@@ -185,13 +185,9 @@ class PurchaseNotice extends Component {
 	}
 
 	renderRenewNoticeAction( onClick ) {
-		const { editCardDetailsPath, purchase, translate, isProductOwner } = this.props;
+		const { editCardDetailsPath, purchase, translate } = this.props;
 
-		if (
-			! config.isEnabled( 'upgrades/checkout' ) ||
-			! this.props.selectedSite ||
-			! isProductOwner
-		) {
+		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
 			return null;
 		}
 
