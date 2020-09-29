@@ -120,11 +120,6 @@ $font-size: rem( 14px );
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
 		}
-
-		.selected .sidebar__menu-link,
-		.selected .sidebar__menu-link:hover {
-			background-color: var( --color-sidebar-menu-selected-background );
-		}
 	}
 
 	//client/my-sites/current-site/style.scss
