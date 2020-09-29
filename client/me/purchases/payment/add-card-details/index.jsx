@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
