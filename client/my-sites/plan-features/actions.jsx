@@ -120,7 +120,7 @@ const PlanFeaturesActions = ( {
 	} else if ( ! availableForPurchase && forceDisplayButton ) {
 		upgradeButton = (
 			<Button className={ classes } disabled={ true }>
-				{ props.buttonText } a
+				{ props.buttonText }
 			</Button>
 		);
 	}
