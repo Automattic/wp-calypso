@@ -2,6 +2,7 @@
 	@at-root {
 		input[type='url']#{&},
 		input[type='password']#{&},
+		input[type='email']#{&},
 		input[type='tel']#{&},
 		input[type='number']#{&},
 		input[type='search']#{&} {
@@ -10,6 +11,7 @@
 
 		input[type='url']#{&},
 		input[type='password']#{&},
+		input[type='email']#{&},
 		input[type='search']#{&} {
 			/*!rtl:ignore*/
 			direction: ltr;
