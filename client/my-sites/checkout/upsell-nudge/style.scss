@@ -28,3 +28,12 @@
     display: flex;
     justify-content: space-between;
 }
+
+.upsell-nudge__hidden {
+	position: absolute;
+	top: -9px;
+	left: -9px;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+}

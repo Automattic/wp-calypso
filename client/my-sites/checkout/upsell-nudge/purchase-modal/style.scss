@@ -1,0 +1,199 @@
+$left-margin: 36px;
+
+@keyframes purchaseModalBackdropfadeIn {
+	0% {
+		opacity: 0;
+		transform: scale( 1.05 );
+	}
+	100% {
+		opacity: 1;
+		transform: scale( 1 );
+	}
+}
+
+.purchase-modal.dialog__backdrop {
+	animation: purchaseModalBackdropfadeIn 0.2s ease-out;
+	animation-fill-mode: backwards;
+}
+
+.purchase-modal.dialog__content {
+	--padding: -24px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 460px;
+	max-width: 100%;
+	box-sizing: border-box;
+
+	@media ( max-width: 480px ) {
+		--padding: -16px;
+		width: unset;
+	}
+
+	> hr {
+		width: calc( 100% + var( --padding ) * -2 );
+		margin: 16px var( --padding );
+		background: var( --color-neutral-5 );
+
+		// stylelint-disable-next-line unit-allowed-list
+		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+			height: 0.5px;
+		}
+	}
+}
+
+/**
+ * Close button
+ */
+.purchase-modal__close {
+	position: absolute;
+	top: 0;
+	right: 4px;
+	padding: 4px;
+}
+
+/**
+ * Order steps
+ */
+.purchase-modal__step {
+	position: relative;
+	margin: 0 0 24px $left-margin;
+	align-self: stretch;
+}
+
+.purchase-modal__step-icon {
+	position: absolute;
+	width: 27px;
+	height: 27px;
+	top: 0;
+	left: -$left-margin;
+	border-radius: 50%;
+	background: #008a20;
+	text-align: center;
+
+	> svg {
+		margin-top: 4px;
+	}
+
+	&.is-placeholder {
+		@include placeholder();
+	}
+}
+
+.purchase-modal__step-title {
+	> a {
+		display: inline-block;
+		margin-left: 0.5em;
+		text-decoration: underline;
+	}
+
+	&.is-placeholder {
+		@include placeholder();
+		width: 20em;
+	}
+}
+
+.purchase-modal__step-content {
+	color: var( --color-neutral-40 );
+	font-size: $font-body-small;
+
+	&.is-placeholder {
+		@include placeholder();
+		margin-top: 2px;
+		width: 15em;
+	}
+}
+
+.purchase-modal__product {
+	display: flex;
+	justify-content: space-between;
+	color: var( --color-neutral-60 );
+}
+
+.purchase-modal__card-number {
+	display: inline-block;
+	margin: 0 0.5em;
+}
+
+/**
+ * Checkout Terms
+ */
+.checkout__terms,
+.checkout__concierge-refund-policy,
+.checkout__bundled-domain-notice {
+	margin: 4px 0;
+	padding-left: $left-margin;
+	position: relative;
+	font-size: $font-body-extra-small;
+
+	.purchase-modal__step + & {
+		margin-top: 1em;
+	}
+
+	> svg {
+		position: absolute;
+		top: 0;
+		left: ( $left-margin - 24px );
+		width: 16px;
+		height: 16px;
+	}
+
+	p {
+		font-size: $font-body-extra-small;
+		margin: 0;
+		word-break: break-word;
+	}
+}
+
+/**
+ * Taxes and cost
+ */
+.purchase-modal__review {
+	display: flex;
+	align-self: stretch;
+	justify-content: space-between;
+	flex-wrap: wrap;
+
+	> dt {
+		width: 60%;
+		margin-left: $left-margin;
+	}
+
+	> dd {
+		margin: 0;
+	}
+
+	&.is-placeholder {
+		> dt {
+			@include placeholder();
+			width: 8em;
+		}
+
+		> dd {
+			@include placeholder();
+			width: 5em;
+		}
+	}
+}
+
+.purchase-modal__tax {
+	font-weight: normal;
+	color: var( --color-neutral-40 );
+	font-size: $font-body-small;
+}
+
+/**
+ * Pay button
+ */
+.purchase-modal__pay-button {
+	align-self: flex-end;
+	margin-top: 24px;
+	min-width: 35%;
+	font-size: 1rem;
+
+	&.is-placeholder {
+		@include placeholder();
+		height: 2rem;
+	}
+}
