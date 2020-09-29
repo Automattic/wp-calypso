@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app } = require( 'electron' );
 const path = require( 'path' );
 const fs = require( 'fs' ); // eslint-disable-line import/no-nodejs-modules
 

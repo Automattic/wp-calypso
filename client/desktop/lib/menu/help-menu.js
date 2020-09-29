@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const { shell } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { shell } = require( 'electron' );
 const ipc = require( 'desktop/lib/calypso-commands' );
 const zipLogs = require( '../../window-handlers/get-logs' );
 

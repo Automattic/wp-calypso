@@ -402,6 +402,7 @@
 	},
 	"devDependencies": {
 		"bunyan": "^1.8.14",
+		"chokidar": "^2.1.8",
 		"eslint-nibble": "^5.1.0"
 	}
 }

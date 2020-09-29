@@ -298,5 +298,8 @@ module.exports = {
 				automaticExtensions: [ '.js', '.ts', '.json', '.jsx', '.tsx' ],
 			},
 		],
+
+		// Force packages to declare their dependencies
+		'import/no-extraneous-dependencies': 'error',
 	},
 };

@@ -189,6 +189,7 @@
 		"sinon": "^9.0.2",
 		"social-logos": "^2.1.0",
 		"socket.io-client": "^2.3.0",
+		"source-map-support": "^0.5.19",
 		"store": "^2.0.12",
 		"striptags": "^3.1.1",
 		"superagent": "^3.8.3",
@@ -214,5 +215,11 @@
 		"wpcom-proxy-request": "^6.0.0",
 		"wpcom-xhr-request": "^1.1.3",
 		"yamlparser": "^0.0.2"
+	},
+	"devDependencies": {
+		"autoprefixer": "^9.7.3",
+		"component-event":"^0.1.4",
+		"component-query":"^0.0.3",
+		"postcss-custom-properties": "^9.1.1"
 	}
 }

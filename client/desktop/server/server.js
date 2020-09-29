@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { dialog } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
+import { dialog } from 'electron';
 import http from 'http'; // eslint-disable-line import/no-nodejs-modules
 import portscanner from 'portscanner';
 

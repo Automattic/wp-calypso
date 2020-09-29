@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * External dependencies
  */
