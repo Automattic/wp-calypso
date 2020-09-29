@@ -80,6 +80,13 @@ class Help extends React.PureComponent {
 					'Limit your site’s visibility or make it completely private.'
 				),
 			},
+			{
+				link: 'https://wordpress.com/support/manage-purchases/',
+				title: this.props.translate( 'Managing Purchases, Renewals, and Cancellations' ),
+				description: this.props.translate(
+					'Have a question or need to change something about a purchase you have made? Learn how.'
+				),
+			},
 		];
 
 		return (
