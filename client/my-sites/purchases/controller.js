@@ -7,7 +7,12 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { Purchases, PurchaseDetails, PurchaseCancel } from 'my-sites/purchases/main.tsx';
+import {
+	Purchases,
+	PurchaseDetails,
+	PurchaseCancel,
+	PurchaseCancelDomain,
+} from 'my-sites/purchases/main.tsx';
 
 export function redirectToPurchases( context ) {
 	const siteDomain = context.params.site;
@@ -37,6 +42,16 @@ export const purchaseDetails = ( context, next ) => {
 export const purchaseCancel = ( context, next ) => {
 	context.primary = (
 		<PurchaseCancel
+			siteSlug={ context.params.site }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+		/>
+	);
+	next();
+};
+
+export const purchaseCancelDomain = ( context, next ) => {
+	context.primary = (
+		<PurchaseCancelDomain
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>
