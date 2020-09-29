@@ -17,6 +17,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
 import { recordTracksEvent } from 'state/analytics/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { CompactCard, Card, Button } from '@automattic/components';
+import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
 
 /**
  * Style dependencies
@@ -74,6 +75,7 @@ export class SecureYourBrandStep extends Component {
 	recommendedDomains() {
 		return (
 			<div className="secure-your-brand">
+				<QuerySecureYourBrand domain={ 'test.com' } />
 				<Card>Domains</Card>
 				<CompactCard>
 					<Button>Help</Button>
