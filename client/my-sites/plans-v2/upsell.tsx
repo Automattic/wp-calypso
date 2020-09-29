@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
+import React, { ReactNode, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -17,6 +17,7 @@ import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { preventWidows } from 'lib/formatting';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -208,20 +209,26 @@ const UpsellPage = ( {
 	const upsellProductSlug = getProductUpsell( productSlug );
 	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
 
-	const checkoutCb = useCallback( ( slugs ) => checkout( siteSlug, slugs, urlQueryArgs ), [
-		siteSlug,
-		urlQueryArgs,
-	] );
-
-	const onPurchaseBothProducts = useCallback(
-		() => checkoutCb( [ productSlug, upsellProductSlug ] ),
-		[ checkoutCb, productSlug, upsellProductSlug ]
+	const onPurchaseBothProducts = useTrackCallback(
+		() => checkout( siteSlug, [ productSlug, upsellProductSlug ], urlQueryArgs ),
+		'calypso_upsell_products_click',
+		{
+			site_id: siteId || undefined,
+			product_slug: productSlug,
+			upsell_product_slug: upsellProductSlug,
+			duration,
+		}
 	);
 
-	const onPurchaseSingleProduct = useCallback( () => checkoutCb( productSlug ), [
-		checkoutCb,
-		productSlug,
-	] );
+	const onPurchaseSingleProduct = useTrackCallback(
+		() => checkout( siteSlug, productSlug, urlQueryArgs ),
+		'calypso_upsell_product_click',
+		{
+			site_id: siteId || undefined,
+			product_slug: productSlug,
+			duration,
+		}
+	);
 
 	const pageTracker = useMemo(
 		() => (
