@@ -134,12 +134,14 @@ class CalendarCard extends Component {
 			disabled,
 			isDefaultLocale,
 			times,
-			appointmentTimespan,
 			translate,
-			moment,
+			// Temporarily harcoding durationInMinutes
+			// appointmentTimespan,
+			// moment,
 		} = this.props;
 
-		const durationInMinutes = moment.duration( appointmentTimespan, 'seconds' ).minutes();
+		// Temporarily hardcoded to 30mins.
+		const durationInMinutes = 30; // moment.duration( appointmentTimespan, 'seconds' ).minutes();
 
 		const description = isDefaultLocale
 			? translate( 'Sessions are %(durationInMinutes)d minutes long.', {
