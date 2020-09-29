@@ -23,7 +23,7 @@ export default function useRecordCheckoutLoaded(
 	isLoadingStoredCards: boolean,
 	responseCart: ResponseCart,
 	storedCards: StoredCard[],
-	product: string | undefined | null
+	productAliasFromUrl: string | undefined | null
 ): void {
 	const hasRecordedCheckoutLoad = useRef( false );
 	if (
@@ -38,7 +38,7 @@ export default function useRecordCheckoutLoaded(
 			payload: {
 				saved_cards: storedCards.length,
 				apple_pay_available: isApplePayAvailable,
-				product_slug: product,
+				product_slug: productAliasFromUrl,
 				is_renewal: hasRenewalItem( responseCart as CartValue ),
 			},
 		} );
