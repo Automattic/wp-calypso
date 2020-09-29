@@ -16,7 +16,6 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import DomainOnly from './domain-only';
-import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
 import { domainManagementRoot, domainManagementList } from 'my-sites/domains/paths';
@@ -475,50 +474,6 @@ export class List extends React.Component {
 			/>,
 			...domainListItems,
 			manageAllDomainsLink,
-		];
-	}
-
-	listItems() {
-		if ( this.isLoading() ) {
-			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
-		}
-
-		const { translate, selectedSite, renderAllSites, isDomainOnly, hasSingleSite } = this.props;
-
-		const domains =
-			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
-				? this.filterOutWpcomDomains( this.props.domains )
-				: this.props.domains;
-
-		const domainListItems = domains.map( ( domain, index ) => {
-			return (
-				<ListItem
-					key={ index + domain.name }
-					domain={ domain }
-					enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
-					isSelected={ index === this.state.primaryDomainIndex }
-					selectionIndex={ index }
-					busy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
-					busyMessage={ this.props.translate( 'Setting Primary Domain…', {
-						context: 'Shows up when the primary domain is changing and the user is waiting',
-					} ) }
-					onSelect={ this.handleUpdatePrimaryDomain }
-					onClick={ this.goToEditDomainRoot }
-					shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
-					onUpgradeClick={ this.goToPlans }
-				/>
-			);
-		} );
-
-		if ( hasSingleSite || renderAllSites ) {
-			return domainListItems;
-		}
-
-		return [
-			...domainListItems,
-			<CompactCard key="manage-all-domains" href={ domainManagementRoot() }>
-				{ translate( 'Manage all your domains' ) }
-			</CompactCard>,
 		];
 	}
 
