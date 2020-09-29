@@ -249,7 +249,6 @@ export default function CompositeCheckout( {
 		siteId,
 		hideNudge,
 		recordEvent,
-		isLoggedOutCart,
 	} );
 
 	const moment = useLocalizedMoment();
