@@ -391,6 +391,13 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				case 'CART_ADD_ITEM': {
 					return recordAddEvent( action.payload );
 				}
+				case 'CART_CHANGE_PLAN_LENGTH': {
+					return reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
+							new_product_slug: action.payload?.newProductSlug,
+						} )
+					);
+				}
 				case 'THANK_YOU_URL_GENERATED':
 					return reduxDispatch(
 						logStashEventAction( 'thank you url generated', {
