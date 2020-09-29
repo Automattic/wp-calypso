@@ -26,6 +26,7 @@ import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
@@ -45,6 +46,7 @@ class MasterbarLoggedIn extends React.Component {
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		setNextLayoutFocus: PropTypes.func.isRequired,
+		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
@@ -53,7 +55,14 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMySites = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_my_sites_clicked' );
-		this.props.setNextLayoutFocus( 'sidebar' );
+		if ( ! config.isEnabled( 'nav-unification' ) ) {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		} else if ( 'sites' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
+			// when sites is not focused or sidebar is open, focus to sites content. Else, open sites sidebar.
+			this.props.setNextLayoutFocus( 'content' );
+		} else {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
 
 		/**
 		 * Site Migration: Reset a failed migration when clicking on My Sites
@@ -93,7 +102,14 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickReader = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_reader_clicked' );
-		this.props.setNextLayoutFocus( 'content' );
+		if ( ! config.isEnabled( 'nav-unification' ) ) {
+			this.props.setNextLayoutFocus( 'content' );
+		} else if ( 'reader' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
+			// when reader is not focused or sidebar is open, focus to reader content. Else, open reader sidebar.
+			this.props.setNextLayoutFocus( 'content' );
+		} else {
+			this.props.setNextLayoutFocus( 'sidebar' );
+		}
 	};
 
 	clickMe = () => {
@@ -132,12 +148,16 @@ class MasterbarLoggedIn extends React.Component {
 				siteSlug,
 				translate,
 				isCustomerHomeEnabled,
+				section,
 			} = this.props,
 			homeUrl = isCustomerHomeEnabled
 				? `/home/${ siteSlug }`
-				: getStatsPathForTab( 'day', siteSlug ),
-			mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
+				: getStatsPathForTab( 'day', siteSlug );
 
+		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
+		if ( config.isEnabled( 'nav-unification' ) && 'reader' !== section ) {
+			mySitesUrl = '';
+		}
 		return (
 			<Item
 				url={ mySitesUrl }
@@ -186,7 +206,7 @@ class MasterbarLoggedIn extends React.Component {
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
-					url="/read"
+					url={ config.isEnabled( 'nav-unification' ) ? '/read?flags=nav-unification' : '/read' }
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
@@ -264,6 +284,7 @@ export default connect(
 			currentSelectedSiteId,
 			previousPath: getPreviousPath( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
 		};
 	},
 	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta }

@@ -44,6 +44,7 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 			onNavigate={ onNav }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
+			forceInternalLink
 		>
 			{ children }
 		</SidebarItem>

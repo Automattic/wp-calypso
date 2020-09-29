@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  */
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import TranslatableString from 'components/translatable/proptype';
+import config from 'config';
 
 /**
  * Style dependencies
@@ -19,6 +20,10 @@ import TranslatableString from 'components/translatable/proptype';
 import './style.scss';
 
 function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
+	if ( config.isEnabled( 'nav-unification' ) ) {
+		return null;
+	}
+
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<header className="current-section">
