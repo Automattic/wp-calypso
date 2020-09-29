@@ -117,6 +117,7 @@ class SignupForm extends Component {
 	static defaultProps = {
 		displayNameInput: false,
 		displayUsernameInput: true,
+		displayFullNameInput: false,
 		flowName: '',
 		isSocialSignupEnabled: false,
 		showRecaptchaToS: false,
@@ -246,7 +247,7 @@ class SignupForm extends Component {
 			'email',
 			'password',
 			this.props.displayUsernameInput && 'username',
-			this.props.displayNameInput && 'firstName',
+			( this.props.displayNameInput || this.props.displayFullNameField ) && 'firstName',
 			this.props.displayNameInput && 'lastName',
 		] );
 
@@ -471,7 +472,7 @@ class SignupForm extends Component {
 			username: formState.getFieldValue( this.state.form, 'username' ),
 			password: formState.getFieldValue( this.state.form, 'password' ),
 			email: formState.getFieldValue( this.state.form, 'email' ),
-			...( this.props.displayNameInput && extraFields ),
+			...( ( this.props.displayNameInput || this.props.displayFullNameInput ) && extraFields ),
 		};
 	}
 
@@ -510,12 +511,39 @@ class SignupForm extends Component {
 		} );
 	}
 
+	displayFullNameField() {
+		return (
+			this.props.displayFullNameInput && (
+				<>
+					<FormLabel htmlFor="fullName">{ this.props.translate( 'Your full name' ) }</FormLabel>
+					<FormTextInput
+						autoCorrect="off"
+						className="signup-form__input"
+						disabled={ this.state.submitting || !! this.props.disabled }
+						id="firstName"
+						name="firstName"
+						value={ formState.getFieldValue( this.state.form, 'firstName' ) }
+						isError={ formState.isFieldInvalid( this.state.form, 'firstName' ) }
+						isValid={ formState.isFieldValid( this.state.form, 'firstName' ) }
+						onBlur={ this.handleBlur }
+						onChange={ this.handleChangeEvent }
+					/>
+
+					{ formState.isFieldInvalid( this.state.form, 'firstName' ) && (
+						<FormInputValidation isError text={ this.getErrorMessagesWithLogin( 'firstName' ) } />
+					) }
+				</>
+			)
+		);
+	}
+
 	formFields() {
 		const isEmailValid =
 			! this.props.disableEmailInput && formState.isFieldValid( this.state.form, 'email' );
 
 		return (
 			<div>
+				{ this.displayFullNameField() }
 				{ this.props.displayNameInput && (
 					<>
 						<FormLabel htmlFor="firstName">{ this.props.translate( 'Your first name' ) }</FormLabel>
@@ -1067,17 +1095,18 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, ownProps ) => {
 		const isDisplayUsernamePropSet = ownProps.hasOwnProperty( 'displayUsernameInput' );
-		const eligibleFlowsForRemoveUsernameTest = [
+		const eligibleFlowsForFullNameTest = [
 			'onboarding',
 			'personal',
 			'premium',
 			'business',
 			'ecommerce',
 		];
-		let displayUsernameInput = true;
+		let displayFullNameInput = false,
+			displayUsernameInput = false;
 
-		if ( eligibleFlowsForRemoveUsernameTest.includes( ownProps.flowName ) ) {
-			abtest( 'usernameAATest' );
+		if ( eligibleFlowsForFullNameTest.includes( ownProps.flowName ) ) {
+			displayFullNameInput = 'variant' === abtest( 'displayFullNameTest' );
 		} else if ( isDisplayUsernamePropSet ) {
 			displayUsernameInput = ownProps.displayUsernameInput;
 		}
@@ -1090,6 +1119,7 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			displayFullNameInput,
 			displayUsernameInput,
 		};
 	},

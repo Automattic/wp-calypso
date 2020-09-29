@@ -239,4 +239,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
+	displayFullNameTest: {
+		datestamp: '20200928',
+		variations: {
+			variant: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+	},
 };
