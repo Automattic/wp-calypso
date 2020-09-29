@@ -30,7 +30,6 @@ import { isDataLoading } from '../utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
 import notices from 'notices';
 import { cancelPurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -50,6 +49,8 @@ import FormSelect from 'components/forms/form-select';
 
 class ConfirmCancelDomain extends React.Component {
 	static propTypes = {
+		purchaseListUrl: PropTypes.string,
+		getCancelPurchaseUrlFor: PropTypes.func,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		isDomainOnlySite: PropTypes.bool,
 		purchaseId: PropTypes.number.isRequired,
@@ -68,6 +69,11 @@ class ConfirmCancelDomain extends React.Component {
 		submitting: false,
 	};
 
+	static defaultProps = {
+		purchaseListUrl: purchasesRoot,
+		getCancelPurchaseUrlFor: cancelPurchase,
+	};
+
 	componentDidMount() {
 		this.redirectIfDataIsInvalid( this.props );
 	}
@@ -84,7 +90,7 @@ class ConfirmCancelDomain extends React.Component {
 		const { purchase } = props;
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 		}
 	};
 
@@ -151,7 +157,7 @@ class ConfirmCancelDomain extends React.Component {
 				product_slug: purchase.productSlug,
 			} );
 
-			page.redirect( purchasesRoot );
+			page.redirect( this.props.purchaseListUrl );
 		} );
 	};
 
@@ -264,7 +270,7 @@ class ConfirmCancelDomain extends React.Component {
 		const domain = getDomainName( purchase );
 
 		return (
-			<Main className="confirm-cancel-domain">
+			<React.Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_confirm_cancel_domain_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -273,7 +279,12 @@ class ConfirmCancelDomain extends React.Component {
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
-				<HeaderCake backHref={ cancelPurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake
+					backHref={ this.props.getCancelPurchaseUrlFor(
+						this.props.siteSlug,
+						this.props.purchaseId
+					) }
+				>
 					{ titles.confirmCancelDomain }
 				</HeaderCake>
 				<Card>
@@ -305,7 +316,7 @@ class ConfirmCancelDomain extends React.Component {
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
-			</Main>
+			</React.Fragment>
 		);
 	}
 }
