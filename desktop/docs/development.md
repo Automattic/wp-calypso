@@ -6,7 +6,7 @@ Electron provides all the interfacing between Chrome (the browser that is used i
 
 It is important to understand where code runs, and for this the terminology is:
 
-- Main - this is the Electron wrapper. All code for this is contained in `desktop`
+- Main - this is the Electron wrapper. All code for this is contained in `desktop` and `client/desktop` directories
 - Renderer - this is the Chrome browser and is where Calypso runs
 
 We use Electron's [IPC](https://github.com/atom/electron/blob/master/docs/api/ipc-main.md) mechanism to send data between the main process and the renderer.
@@ -39,12 +39,12 @@ Phew!
 
 ## How do I change the main app?
 
-All app code is contained in `desktop`. Any changes you make there require a rebuild and restart of the app.
+All app code is contained in the `desktop` and `client/desktop` directories. Any changes you make there require a rebuild and restart of the app.
 
 - [Config](../desktop-config/README.md) - app configuration values
-- [Libraries](../desktop/lib/README.md) - details of the local libraries used
-- [App Handlers](.,/desktop/app-handlers/README.md) - handlers that run before the main window is created
-- [Window Handlers](../desktop/window-handlers/README.md) - handlers that run after the main window is created
+- [Libraries](../../client/desktop/lib/README.md) - details of the local libraries used
+- [App Handlers](../../client/desktop/app-handlers/README.md) - handlers that run before the main window is created
+- [Window Handlers](../../client/desktop/window-handlers/README.md) - handlers that run after the main window is created
 
 ## Debugging
 
