@@ -34,6 +34,7 @@ class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
+		getConfirmCancelDomainUrlFor: PropTypes.func,
 		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
@@ -43,6 +44,7 @@ class CancelPurchaseButton extends Component {
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
+		getConfirmCancelDomainUrlFor: confirmCancelDomain,
 	};
 
 	state = {
@@ -83,7 +85,7 @@ class CancelPurchaseButton extends Component {
 		const { id } = this.props.purchase,
 			slug = this.props.siteSlug;
 
-		page( confirmCancelDomain( slug, id ) );
+		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
 
 	cancelPurchase = () => {
