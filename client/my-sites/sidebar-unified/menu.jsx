@@ -44,31 +44,9 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	path: PropTypes.string,
 	title: PropTypes.string,
 	icon: PropTypes.string,
-	children: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ).isRequired,
+	children: PropTypes.array.isRequired,
 	/*
-	Example of children shape (object):
-	{
-		"1": {
-			"title": "Feedback",
-			"url": "https://wp.com",
-			"icon": null,
-			"type": "menu-item"
-		},
-		"2": {
-			"title": "Polls",
-			"url": "https://wp.com",
-			"icon": null,
-			"type": "menu-item"
-		},
-		"3": {
-			"title": "Ratings",
-			"url": "https://wp.com",
-			"icon": null,
-			"type": "menu-item"
-		}
-	}
-
-	Example of children shape (array):
+	Example of children shape:
 	[
 		{
 			"title": "Settings",

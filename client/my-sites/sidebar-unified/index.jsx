@@ -53,7 +53,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					return <SidebarSeparator key={ i } />;
 				}
 
-				if ( item?.children && Object.keys( item.children ).length ) {
+				if ( item?.children?.length ) {
 					return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
 				}
 
