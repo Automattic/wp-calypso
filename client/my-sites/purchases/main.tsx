@@ -126,6 +126,7 @@ export function PurchaseAddPaymentMethod( {
 				purchaseId={ purchaseId }
 				siteSlug={ siteSlug }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 			/>
 		</Main>
 	);

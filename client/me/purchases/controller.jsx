@@ -23,7 +23,7 @@ import titles from './titles';
 import { makeLayout, render as clientRender } from 'controller';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getCurrentUserSiteCount } from 'state/current-user/selectors';
-import { managePurchase as managePurchaseUrl } from 'me/purchases/paths';
+import { managePurchase as managePurchaseUrl, purchasesRoot } from 'me/purchases/paths';
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {
@@ -60,6 +60,7 @@ export function addCardDetails( context, next ) {
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
+				purchaseListUrl={ purchasesRoot }
 			/>
 		</Main>
 	);

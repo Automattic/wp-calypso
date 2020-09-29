@@ -22,7 +22,6 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { StripeHookProvider } from 'lib/stripe';
 
@@ -33,7 +32,7 @@ function AddCardDetails( props ) {
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
-		page( purchasesRoot );
+		page( props.purchaseListUrl );
 	}
 
 	if ( isDataLoading ) {
@@ -87,6 +86,7 @@ function AddCardDetails( props ) {
 
 AddCardDetails.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func.isRequired,
+	purchaseListUrl: PropTypes.string.isRequired,
 	clearPurchases: PropTypes.func.isRequired,
 	hasLoadedSites: PropTypes.bool.isRequired,
 	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
