@@ -1,3 +1,5 @@
+/* eslint-disable jest/expect-expect */
+
 /**
  * Internal dependencies
  */

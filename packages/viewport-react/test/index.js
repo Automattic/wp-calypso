@@ -1,3 +1,4 @@
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["runComponentTests", "expect"] }] */
 /**
  * @jest-environment jsdom
  */
@@ -144,7 +145,6 @@ describe( '@automattic/viewport-react', () => {
 			expect( container.textContent ).toBe( 'undefined' );
 		} );
 
-		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for a valid breakpoint', () => {
 			function TestComponent() {
 				const isActive = helpers.useBreakpoint( '<960px' );
@@ -206,7 +206,6 @@ describe( '@automattic/viewport-react', () => {
 	} );
 
 	describe( 'useMobileBreakpoint', () => {
-		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the mobile breakpoint', () => {
 			function TestComponent() {
 				const isActive = helpers.useMobileBreakpoint();
@@ -218,7 +217,6 @@ describe( '@automattic/viewport-react', () => {
 	} );
 
 	describe( 'useDesktopBreakpoint', () => {
-		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the desktop breakpoint', () => {
 			function TestComponent() {
 				const isActive = helpers.useDesktopBreakpoint();
@@ -257,7 +255,6 @@ describe( '@automattic/viewport-react', () => {
 			expect( container.textContent ).toBe( 'undefined' );
 		} );
 
-		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for a valid breakpoint', () => {
 			const TestComponent = helpers.withBreakpoint( '<960px' )( BaseComponent );
 			runComponentTests( TestComponent, '(max-width: 960px)' );
@@ -265,7 +262,6 @@ describe( '@automattic/viewport-react', () => {
 	} );
 
 	describe( 'withMobileBreakpoint', () => {
-		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the mobile breakpoint', () => {
 			const TestComponent = helpers.withMobileBreakpoint( BaseComponent );
 			runComponentTests( TestComponent, '(max-width: 480px)' );
@@ -273,7 +269,6 @@ describe( '@automattic/viewport-react', () => {
 	} );
 
 	describe( 'withDesktopBreakpoint', () => {
-		// eslint-disable-next-line jest/expect-expect
 		test( 'returns the current breakpoint state for the desktop breakpoint', () => {
 			const TestComponent = helpers.withDesktopBreakpoint( BaseComponent );
 			runComponentTests( TestComponent, '(min-width: 961px)' );

@@ -354,6 +354,7 @@ describe( 'Shipping label Actions', () => {
 			} );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		it( 'Validation request failure returns a false promise', () => {
 			// Mock an unsuccessful response
 			mockNormalizationRequest( false );

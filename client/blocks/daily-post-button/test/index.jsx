@@ -92,6 +92,7 @@ describe( 'DailyPostButton', () => {
 			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'shows the site selector if the user has more than one site', () => {
 			const dailyPostButton = shallow(
 				<DailyPostButton

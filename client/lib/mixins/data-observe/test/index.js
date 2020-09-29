@@ -1,7 +1,8 @@
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertMixin", "assert.*"] }] */
+
 /**
  * External dependencies
  */
-
 import { assert } from 'chai';
 
 /**

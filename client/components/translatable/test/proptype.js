@@ -1,3 +1,5 @@
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */
+
 /**
  * @jest-environment jsdom
  */

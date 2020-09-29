@@ -1,7 +1,8 @@
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["TestUtils.*"] }] */
+
 /**
  * @jest-environment jsdom
  */
-
 /**
  * External dependencies
  */

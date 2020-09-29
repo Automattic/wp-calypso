@@ -1,3 +1,5 @@
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testOnBlur", "expect.*"] }] */
+
 /**
  * @jest-environment jsdom
  */

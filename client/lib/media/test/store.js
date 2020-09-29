@@ -117,6 +117,7 @@ describe( 'MediaStore', () => {
 			expect( MediaStore.dispatchToken ).to.be.a( 'string' );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should emit a change event when receiving updates', () => {
 			return new Promise( ( done ) => {
 				MediaStore.once( 'change', done );
