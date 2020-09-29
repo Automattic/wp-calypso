@@ -3,8 +3,8 @@ body.hide-homepage-title {
 		display: none;
 	}
 
-	// If the title is hidden in the block editor, leave enough space
-	// above the first block for the toolbar to show correctly.
+	// When the title is hidden in the block editor while editing the homepage,
+	// leave enough space above the first block for the toolbar to show correctly.
 	.block-editor-block-list__layout.is-root-container > .wp-block:first-child {
 		margin-top: 64px;
 	}
