@@ -15,12 +15,8 @@ import CardHeading from 'components/card-heading';
 import DismissibleCard from 'blocks/dismissible-card';
 import ExternalLink from 'components/external-link';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import {
-	FEATURE_JETPACK_ESSENTIAL,
-	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_PERSONAL,
-} from 'lib/plans/constants';
+import { FEATURE_JETPACK_ESSENTIAL, PLAN_PERSONAL } from 'lib/plans/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { isFreePlan } from 'lib/plans';
@@ -47,10 +43,9 @@ class IntroBanner extends Component {
 
 	renderCardContent() {
 		const { siteIsJetpack, siteHasBackup, siteSlug, translate } = this.props;
-		const upgradePlan = siteIsJetpack ? PLAN_JETPACK_PERSONAL_MONTHLY : PLAN_PERSONAL;
-		const upgradeFeature = siteIsJetpack
-			? FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY
-			: FEATURE_JETPACK_ESSENTIAL;
+		const buttonHref = siteIsJetpack
+			? `/plans/${ OPTIONS_JETPACK_SECURITY }/annual/details/${ siteSlug }`
+			: `/plans/${ siteSlug }?feature=${ FEATURE_JETPACK_ESSENTIAL }&plan=${ PLAN_PERSONAL }`;
 
 		return (
 			<Fragment>
@@ -85,7 +80,7 @@ class IntroBanner extends Component {
 								<Button
 									primary
 									className="activity-log-banner__intro-button"
-									href={ `/plans/${ siteSlug }?feature=${ upgradeFeature }&plan=${ upgradePlan }` }
+									href={ buttonHref }
 									onClick={ this.recordUpgrade }
 								>
 									{ translate( 'Upgrade now' ) }
