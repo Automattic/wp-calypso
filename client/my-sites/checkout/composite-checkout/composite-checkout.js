@@ -100,7 +100,7 @@ const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
-	product: productAliasFromUrl,
+	productAliasFromUrl,
 	getCart,
 	setCart,
 	getStoredCards,
