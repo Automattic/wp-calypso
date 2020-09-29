@@ -102,6 +102,7 @@ class ManagePurchase extends Component {
 	static propTypes = {
 		showHeader: PropTypes.bool,
 		purchaseListUrl: PropTypes.string,
+		getCancelPurchaseUrlFor: PropTypes.func,
 		cardTitle: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
@@ -121,6 +122,7 @@ class ManagePurchase extends Component {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
 		cardTitle: titles.managePurchase,
+		getCancelPurchaseUrlFor: cancelPurchase,
 	};
 
 	state = {
@@ -325,7 +327,7 @@ class ManagePurchase extends Component {
 		}
 
 		let text,
-			link = cancelPurchase( this.props.siteSlug, id );
+			link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
 		if ( isAtomicSite && isSubscription( purchase ) && ! isGoogleApps( purchase ) ) {
 			text = translate( 'Contact Support to Cancel your Subscription' );

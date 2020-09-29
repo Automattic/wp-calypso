@@ -33,11 +33,16 @@ import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
+		purchaseListUrl: PropTypes.string,
 		selectedSite: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		purchaseListUrl: purchasesRoot,
 	};
 
 	state = {
@@ -109,7 +114,7 @@ class CancelPurchaseButton extends Component {
 					{ persistent: true }
 				);
 
-				page( purchasesRoot );
+				page( this.props.purchaseListUrl );
 			} else {
 				notices.error(
 					translate(
@@ -149,7 +154,7 @@ class CancelPurchaseButton extends Component {
 
 		this.props.clearPurchases();
 
-		page.redirect( purchasesRoot );
+		page.redirect( this.props.purchaseListUrl );
 	};
 
 	cancelAndRefund = () => {
@@ -177,7 +182,7 @@ class CancelPurchaseButton extends Component {
 
 				this.props.clearPurchases();
 
-				page.redirect( purchasesRoot );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};
@@ -212,7 +217,7 @@ class CancelPurchaseButton extends Component {
 
 				this.props.clearPurchases();
 
-				page.redirect( purchasesRoot );
+				page.redirect( this.props.purchaseListUrl );
 			}
 		);
 	};

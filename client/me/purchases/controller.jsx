@@ -69,12 +69,15 @@ export function addCreditCard( context, next ) {
 
 export function cancelPurchase( context, next ) {
 	setTitle( context, titles.cancelPurchase );
+	const classes = 'cancel-purchase';
 
 	context.primary = (
-		<CancelPurchase
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-		/>
+		<Main className={ classes }>
+			<CancelPurchase
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+				siteSlug={ context.params.site }
+			/>
+		</Main>
 	);
 	next();
 }

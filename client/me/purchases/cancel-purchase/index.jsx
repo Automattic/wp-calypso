@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 /**
  * Internal Dependencies
@@ -31,7 +31,6 @@ import {
 import HeaderCake from 'components/header-cake';
 import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
 import { isRequestingSites, getSite } from 'state/sites/selectors';
-import Main from 'components/main';
 import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -47,6 +46,8 @@ import './style.scss';
 
 class CancelPurchase extends React.Component {
 	static propTypes = {
+		purchaseListUrl: PropTypes.string,
+		getManagePurchaseUrlFor: PropTypes.func,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -60,6 +61,11 @@ class CancelPurchase extends React.Component {
 	state = {
 		cancelBundledDomain: false,
 		confirmCancelBundledDomain: false,
+	};
+
+	static defaultProps = {
+		getManagePurchaseUrlFor: managePurchase,
+		purchaseListUrl: purchasesRoot,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -91,10 +97,10 @@ class CancelPurchase extends React.Component {
 
 	redirect = ( props ) => {
 		const { purchase, siteSlug } = props;
-		let redirectPath = purchasesRoot;
+		let redirectPath = this.props.purchaseListUrl;
 
 		if ( siteSlug && purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
-			redirectPath = managePurchase( siteSlug, purchase.id );
+			redirectPath = this.props.getManagePurchaseUrlFor( siteSlug, purchase.id );
 		}
 
 		page.redirect( redirectPath );
@@ -152,6 +158,7 @@ class CancelPurchase extends React.Component {
 					<CancelPurchaseLoadingPlaceholder
 						purchaseId={ this.props.purchaseId }
 						siteSlug={ this.props.siteSlug }
+						getManagePurchaseUrlFor={ this.props.getManagePurchaseUrlFor }
 					/>
 				</div>
 			);
@@ -176,12 +183,17 @@ class CancelPurchase extends React.Component {
 		}
 
 		return (
-			<Main className="cancel-purchase">
+			<Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				<HeaderCake backHref={ managePurchase( this.props.siteSlug, this.props.purchaseId ) }>
+				<HeaderCake
+					backHref={ this.props.getManagePurchaseUrlFor(
+						this.props.siteSlug,
+						this.props.purchaseId
+					) }
+				>
 					{ titles.cancelPurchase }
 				</HeaderCake>
 
@@ -213,9 +225,10 @@ class CancelPurchase extends React.Component {
 						selectedSite={ this.props.site }
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
+						purchaseListUrl={ this.props.purchaseListUrl }
 					/>
 				</CompactCard>
-			</Main>
+			</Fragment>
 		);
 	}
 }
