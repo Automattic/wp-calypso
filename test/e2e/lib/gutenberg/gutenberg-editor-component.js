@@ -72,7 +72,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.driver.executeScript( 'arguments[0].click();', button );
 		await driverHelper.waitTillNotPresent( this.driver, this.publishingSpinnerSelector );
 		if ( closePanel ) {
-			await this.closePublishedPanel();
+			try {
+				await this.closePublishedPanel();
+
+			} catch ( e ) {
+				console.log( 'Publish panel already closed' );
+			}
 		}
 		await this.waitForSuccessViewPostNotice();
 		const url = await this.driver.findElement( snackBarNoticeLinkSelector ).getAttribute( 'href' );
@@ -81,7 +86,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
 			await this.driver.executeScript( 'arguments[0].click();', snackbar );
 		}
-
+		await this.driver.sleep( 1000 );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
 	}
