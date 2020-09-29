@@ -54,9 +54,11 @@ export const MySitesSidebarUnifiedMenu = ( { slug, title, icon, children, path, 
 
 MySitesSidebarUnifiedMenu.propTypes = {
 	path: PropTypes.string,
+	slug: PropTypes.string,
 	title: PropTypes.string,
 	icon: PropTypes.string,
 	children: PropTypes.array.isRequired,
+	link: PropTypes.string,
 	/*
 	Example of children shape:
 	[
