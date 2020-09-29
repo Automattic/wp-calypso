@@ -12,6 +12,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
+import * as driverHelper from '../lib/driver-helper.js';
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
 
@@ -59,20 +60,15 @@ describe( `[${ host }] Calypso Gutenberg Tracking: (${ screenSize })`, function 
 
 			await this.loginFlow.loginAndSelectWPAdmin();
 
-			//Wait for the new window or tab
-			await driver.wait( async () => ( await driver.getAllWindowHandles() ).length === 2, 10000 );
-
-			//Loop through until we find a new window handle
-			const windows = await driver.getAllWindowHandles();
-
-			await driver.switchTo().window( windows[ 1 ] );
+			await driverHelper.waitForNumberOfWindows( driver, 2, 10000 );
+			await driverHelper.switchToWindowByIndex( driver, 1 );
 
 			const wpadminSidebarComponent = await WPAdminSidebar.Expect( driver );
 			await wpadminSidebarComponent.selectNewPost();
 		} );
 
 		step( 'Check for presence of e2e specific tracking events stack on global', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
+			await GutenbergEditorComponent.Expect( driver, 'wp-admin' );
 			const eventsStack = await driver.executeScript( `return window._e2eEventsStack;` );
 			// Check evaluates to truthy
 			assert( eventsStack, 'Tracking events stack missing from window._e2eEventsStack' );
