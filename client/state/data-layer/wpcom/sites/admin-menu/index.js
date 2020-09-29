@@ -6,6 +6,8 @@ import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { ADMIN_MENU_REQUEST } from 'state/action-types';
 import { receiveAdminMenu } from 'state/admin-menu/actions';
+import { addQueryArgs } from 'lib/url';
+import config from 'config';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(
@@ -25,10 +27,41 @@ export const handleError = () => {
 	return null;
 };
 
+function maybeAddFlags( response ) {
+	if ( config.isEnabled( 'nav-unification' ) ) {
+		response = addFlags( response );
+	}
+	return response;
+}
+
+function addFlags( items ) {
+	return items.map( ( item ) => {
+		if ( item?.url?.length ) {
+			item.url = addFlagToURL( item.url );
+		}
+
+		if ( item?.children?.length ) {
+			item.children = addFlags( item.children );
+		}
+
+		return item;
+	} );
+}
+
+function addFlagToURL( url ) {
+	return addQueryArgs(
+		{
+			flags: 'nav-unification',
+		},
+		url
+	);
+}
+
 registerHandlers( 'state/data-layer/wpcom/admin-menu/index.js', {
 	[ ADMIN_MENU_REQUEST ]: [
 		dispatchRequest( {
 			fetch: requestFetchAdminMenu,
+			fromApi: maybeAddFlags,
 			onSuccess: handleSuccess,
 			onError: handleError,
 		} ),
