@@ -373,13 +373,15 @@ export function checkForConsoleErrors( driver ) {
 }
 
 export function printConsole( driver ) {
-	driver
-		.manage()
-		.logs()
-		.get( 'browser' )
-		.then( ( logs ) => {
-			logs.forEach( ( log ) => console.log( log ) );
-		} );
+	if ( config.get( 'printConsoleLogs' ) === true ) {
+		driver
+			.manage()
+			.logs()
+			.get('browser')
+			.then((logs) => {
+				logs.forEach((log) => console.log(log));
+			});
+	}
 }
 
 export function logPerformance( driver ) {
