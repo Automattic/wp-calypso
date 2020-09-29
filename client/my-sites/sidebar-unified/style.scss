@@ -27,6 +27,7 @@ $font-size: rem( 14px );
 	// client/layout/sidebar/style.scss
 	.sidebar {
 		background-color: var( --color-sidebar-background );
+		padding-bottom: 12px;
 
 		.sidebar__separator {
 			margin: 0 0 11px;
@@ -158,7 +159,7 @@ $font-size: rem( 14px );
 
 			.sidebar__heading,
 			.sidebar__menu-link {
-				padding: 0 0 0 16px;
+				padding: 0 0 0 12px;
 				font-size: 1rem;
 			}
 
