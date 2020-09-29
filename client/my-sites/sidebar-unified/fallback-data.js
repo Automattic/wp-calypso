@@ -486,7 +486,7 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 					{
 						parent: 'options-general.php',
 						slug: 'options-ad-control',
-						title: translate( 'Ad Control' ),
+						title: translate( 'AdControl' ),
 						type: 'submenu-item',
 						url: `https://${ siteDomain }/wp-admin/options-general.php?page=adcontrol`,
 					},
