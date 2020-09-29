@@ -15,6 +15,7 @@ import FormattedHeader from 'components/formatted-header';
 import HeaderCake from 'components/header-cake';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { preventWidows } from 'lib/formatting';
 import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -23,6 +24,7 @@ import QueryProducts from './query-products';
 import useIsLoading from './use-is-loading';
 import useItemPrice from './use-item-price';
 import {
+	durationToString,
 	durationToText,
 	getOptionFromSlug,
 	getProductUpsell,
@@ -53,6 +55,7 @@ interface Props {
 	onPurchaseBothProducts: () => void;
 	isLoading: boolean;
 	header: ReactNode;
+	pageTracker: ReactNode;
 }
 
 const UpsellComponent = ( {
@@ -65,6 +68,7 @@ const UpsellComponent = ( {
 	upsellProduct,
 	isLoading,
 	header,
+	pageTracker,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -93,6 +97,7 @@ const UpsellComponent = ( {
 
 	return (
 		<Main className="upsell" wideLayout>
+			{ pageTracker }
 			{ header }
 			<HeaderCake onClick={ onBackButtonClick }>{ translate( 'Product Options' ) }</HeaderCake>
 			{ isLoading ? (
@@ -205,6 +210,7 @@ const UpsellPage = ( {
 
 	const checkoutCb = useCallback( ( slugs ) => checkout( siteSlug, slugs, urlQueryArgs ), [
 		siteSlug,
+		urlQueryArgs,
 	] );
 
 	const onPurchaseBothProducts = useCallback(
@@ -216,6 +222,16 @@ const UpsellPage = ( {
 		checkoutCb,
 		productSlug,
 	] );
+
+	const pageTracker = useMemo(
+		() => (
+			<PageViewTracker
+				path={ `${ rootUrl }/:product_slug/${ durationToString( duration ) }/additions` }
+				title="Details"
+			/>
+		),
+		[ rootUrl, duration ]
+	);
 
 	const selectorPageUrl = getPathToSelector( rootUrl, urlQueryArgs, duration, siteSlug );
 
@@ -254,6 +270,7 @@ const UpsellPage = ( {
 				onBackButtonClick={ onBackButtonClick }
 				isLoading={ isLoading }
 				header={ header }
+				pageTracker={ pageTracker }
 			/>
 		</>
 	);
