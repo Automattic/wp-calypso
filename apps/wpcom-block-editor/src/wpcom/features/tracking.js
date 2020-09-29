@@ -26,14 +26,21 @@ const debug = debugFactory( 'wpcom-block-editor:tracking' );
  * @returns {object} Record properties object.
  */
 function globalEventPropsHandler( block, parentBlock ) {
-	// Pick up block variation slug from embed block.
-	if ( ! block?.name || block.name !== 'core/embed' || ! block?.attributes.providerNameSlug ) {
+	if ( ! block?.name ) {
 		return {};
 	}
 
-	return {
-		variation_slug: block.attributes.providerNameSlug,
-	};
+	// Pick up variation slug from `core/embed` block.
+	if ( block.name === 'core/embed' && block?.attributes.providerNameSlug ) {
+		return { variation_slug: block.attributes.providerNameSlug };
+	}
+
+	// Pick up variation slug from `core/embed` block.
+	if ( block.name === 'core/social-link' && block?.attributes.service ) {
+		return { variation_slug: block.attributes.service };
+	}
+
+	return {};
 }
 /**
  * Looks up the block name based on its id.
