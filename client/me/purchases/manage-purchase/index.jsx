@@ -554,7 +554,10 @@ class ManagePurchase extends Component {
 					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
 					{ isProductOwner && ! preventRenewal && this.renderRenewButton() }
 				</Card>
-				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
+				<PurchasePlanDetails
+					purchaseId={ this.props.purchaseId }
+					isProductOwner={ isProductOwner }
+				/>
 
 				{ isProductOwner && preventRenewal && this.renderSelectNewNavItem() }
 				{ isProductOwner && ! preventRenewal && this.renderRenewNowNavItem() }

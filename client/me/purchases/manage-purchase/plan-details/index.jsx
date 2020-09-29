@@ -32,6 +32,7 @@ export class PurchasePlanDetails extends Component {
 	static propTypes = {
 		purchaseId: PropTypes.number,
 		isPlaceholder: PropTypes.bool,
+		isProductOwner: PropTypes.bool,
 
 		// Connected props
 		purchase: PropTypes.object,
@@ -69,7 +70,7 @@ export class PurchasePlanDetails extends Component {
 	}
 
 	render() {
-		const { pluginList, purchase, site, siteId, translate } = this.props;
+		const { pluginList, purchase, site, siteId, translate, isProductOwner } = this.props;
 
 		// Short out as soon as we know it's not a Jetpack plan
 		if ( purchase && ( ! isJetpackPlan( purchase ) || isFreeJetpackPlan( purchase ) ) ) {
@@ -96,7 +97,11 @@ export class PurchasePlanDetails extends Component {
 				<SectionHeader label={ headerText } />
 				<Card>
 					{ ! isPartnerPurchase( purchase ) && (
-						<PlanBillingPeriod purchase={ purchase } site={ site } />
+						<PlanBillingPeriod
+							purchase={ purchase }
+							site={ site }
+							isProductOwner={ isProductOwner }
+						/>
 					) }
 
 					{ pluginList.map( ( plugin, i ) => {

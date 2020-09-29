@@ -28,6 +28,7 @@ export class PlanBillingPeriod extends Component {
 	static propTypes = {
 		purchase: PropTypes.object,
 		site: PropTypes.object,
+		isProductOwner: PropTypes.bool,
 	};
 
 	handleMonthlyToYearlyButtonClick = () => {
@@ -77,7 +78,7 @@ export class PlanBillingPeriod extends Component {
 	}
 
 	renderBillingPeriod() {
-		const { purchase, site, translate } = this.props;
+		const { purchase, site, translate, isProductOwner } = this.props;
 		if ( ! purchase ) {
 			return;
 		}
@@ -97,7 +98,7 @@ export class PlanBillingPeriod extends Component {
 			<React.Fragment>
 				<FormSettingExplanation>
 					{ translate( 'Billed monthly' ) }
-					{ site && (
+					{ site && isProductOwner && (
 						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
 							{ translate( 'Upgrade to yearly billing' ) }
 						</Button>
