@@ -33,10 +33,6 @@ export function render( context ) {
 	if ( context.nextSectionToActivate ) {
 		context.store.dispatch( setSection( context.nextSectionToActivate ) );
 		context.store.dispatch( activateNextLayoutFocus() );
-
-		// Removing `nextSectionToActivate` makes sure that `setSection` won't
-		// be dispatched until a new section gets activated.
-		delete context.nextSectionToActivate;
 	}
 }
 
