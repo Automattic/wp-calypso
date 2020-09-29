@@ -58,6 +58,7 @@ export interface RequestCartProduct {
  */
 export interface ResponseCart {
 	blog_id: number | string;
+	create_new_blog: boolean;
 	cart_key: string;
 	products: ( TempResponseCartProduct | ResponseCartProduct )[];
 	total_tax_integer: number;
