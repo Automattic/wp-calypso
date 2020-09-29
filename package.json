@@ -268,7 +268,7 @@
 		"@wordpress/shortcode": "^2.9.0",
 		"@wordpress/url": "^2.17.0",
 		"@wordpress/viewport": "^2.21.3",
-		"acorn": "^7.1.1",
+		"acorn": "^7.4.0",
 		"autoprefixer": "^9.7.3",
 		"babel-eslint": "^10.1.0",
 		"babel-jest": "^26.3.0",
@@ -390,6 +390,9 @@
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",
 		"yargs": "^15.3.1"
+	},
+	"resolutions": {
+		"**/webpack/acorn": "^7.4.0"
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.1.2"
