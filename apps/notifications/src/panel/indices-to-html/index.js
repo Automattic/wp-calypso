@@ -87,6 +87,12 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 					break;
 			}
 			new_container = document.createElement( range_info_type );
+			if ( range_info.hasOwnProperty( 'class' ) ) {
+				new_container.setAttribute( 'class', range_info.class );
+			}
+			if ( range_info.hasOwnProperty( 'style' ) ) {
+				new_container.setAttribute( 'style', range_info.style );
+			}
 			build_chunks( new_sub_text, new_sub_range, range_data, new_container, options );
 			break;
 		case 'gridicon':
