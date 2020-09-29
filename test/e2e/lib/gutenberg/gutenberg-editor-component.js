@@ -86,7 +86,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			const snackbar = await this.driver.findElement( snackBarNoticeLinkSelector );
 			await this.driver.executeScript( 'arguments[0].click();', snackbar );
 		}
-
+		await this.driver.sleep( 1000 );
 		await driverHelper.acceptAlertIfPresent( this.driver );
 		return url;
 	}
