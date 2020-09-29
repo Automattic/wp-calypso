@@ -92,7 +92,6 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants'
 import { hasCustomDomain } from 'lib/site/utils';
 import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
-import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 
 /**
  * Style dependencies
@@ -656,7 +655,8 @@ export default connect( ( state, props ) => {
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
 	const siteId = purchase ? purchase.siteId : null;
-	const isProductOwner = isCurrentUserCurrentPlanOwner( state, siteId );
+	const userId = getCurrentUserId( state );
+	const isProductOwner = purchase && purchase.userId === userId;
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
@@ -681,6 +681,6 @@ export default connect( ( state, props ) => {
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
 		isAtomicSite: isSiteAtomic( state, siteId ),
-		userId: getCurrentUserId( state ),
+		userId,
 	};
 } )( localize( ManagePurchase ) );

@@ -51,7 +51,7 @@ import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
-import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -441,14 +441,14 @@ class PurchaseMeta extends Component {
 
 export default connect( ( state, { purchaseId } ) => {
 	const purchase = getByPurchaseId( state, purchaseId );
-	const siteId = purchase ? purchase.siteId : null;
-	const isProductOwner = isCurrentUserCurrentPlanOwner( state, siteId );
+	const isProductOwner = purchase && purchase.userId === getCurrentUserId( state );
 
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		site: purchase ? getSite( state, purchase.siteId ) : null,
+		userId: getCurrentUserId( state ),
 		isProductOwner,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
