@@ -14,6 +14,12 @@ import FormattedHeader from 'components/formatted-header';
 import ManagePurchase from 'me/purchases/manage-purchase';
 import CancelPurchase from 'me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'me/purchases/confirm-cancel-domain';
+import {
+	getPurchaseListUrlFor,
+	getCancelPurchaseUrlFor,
+	getConfirmCancelDomainUrlFor,
+	getManagePurchaseUrlFor,
+} from './paths';
 
 export function Purchases() {
 	const translate = useTranslate();
@@ -42,9 +48,6 @@ export function PurchaseDetails( {
 } ) {
 	const translate = useTranslate();
 
-	const getCancelPurchaseUrlFor = ( targetSiteSlug: string, targetPurchaseId: string | number ) =>
-		`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/cancel`;
-
 	return (
 		<Main className="purchases is-wide-layout">
 			<DocumentHead title={ translate( 'Billing' ) } />
@@ -60,7 +63,7 @@ export function PurchaseDetails( {
 				purchaseId={ purchaseId }
 				siteSlug={ siteSlug }
 				showHeader={ false }
-				purchaseListUrl={ `/purchases/subscriptions/${ siteSlug }` }
+				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 			/>
 		</Main>
@@ -75,14 +78,6 @@ export function PurchaseCancel( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
-
-	const getManagePurchaseUrlFor = ( targetSiteSlug: string, targetPurchaseId: string | number ) =>
-		`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }`;
-
-	const getConfirmCancelDomainUrlFor = (
-		targetSiteSlug: string,
-		targetPurchaseId: string | number
-	) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/confirm-cancel-domain`;
 
 	return (
 		<Main className="purchases is-wide-layout">
@@ -99,7 +94,7 @@ export function PurchaseCancel( {
 				siteSlug={ siteSlug }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
-				purchaseListUrl={ `/purchases/subscriptions/${ siteSlug }` }
+				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 			/>
 		</Main>
 	);
