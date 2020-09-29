@@ -27,7 +27,7 @@ import MenuSeparator from 'components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
 import InfoPopover from 'components/info-popover';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import { preload } from 'sections-helper';
+import { preloadEditor } from 'sections-preloaders';
 import {
 	getSite,
 	hasStaticFrontPage,
@@ -51,10 +51,6 @@ import canCurrentUser from 'state/selectors/can-current-user';
 import config from 'config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
 
 function sleep( ms ) {
 	return new Promise( ( r ) => setTimeout( r, ms ) );

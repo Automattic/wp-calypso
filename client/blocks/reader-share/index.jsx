@@ -18,7 +18,7 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
 import SocialLogo from 'components/social-logo';
 import * as stats from 'reader/stats';
-import { preload } from 'sections-helper';
+import { preloadEditor } from 'sections-preloaders';
 import SiteSelector from 'components/site-selector';
 import getPrimarySiteId from 'state/selectors/get-primary-site-id';
 import { Button } from '@automattic/components';
@@ -27,10 +27,6 @@ import { Button } from '@automattic/components';
  * Style dependencies
  */
 import './style.scss';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
 
 /**
  * Local variables
