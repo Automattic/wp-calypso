@@ -107,7 +107,6 @@
 		"login/wp-login": true,
 		"happychat": true,
 		"mailchimp": true,
-		"manage/all-domains": true,
 		"manage/comments": true,
 		"manage/customize": true,
 		"manage/custom-post-types": true,
