@@ -73,7 +73,7 @@ const AdvancedCredentials: FunctionComponent = () => {
 	};
 
 	return (
-		<Main className="top">
+		<Main className="advanced-credentials">
 			<QueryRewindState siteId={ siteId } />
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
