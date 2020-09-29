@@ -103,6 +103,7 @@ class ManagePurchase extends Component {
 		showHeader: PropTypes.bool,
 		purchaseListUrl: PropTypes.string,
 		getCancelPurchaseUrlFor: PropTypes.func,
+		getAddPaymentMethodUrlFor: PropTypes.func,
 		cardTitle: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
@@ -121,6 +122,7 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
+		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
 	};
@@ -245,7 +247,7 @@ class ManagePurchase extends Component {
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getEditCardDetailsPath( this.props.siteSlug, purchase );
+			const path = this.props.getAddPaymentMethodUrlFor( this.props.siteSlug, purchase );
 			const renewing = isRenewing( purchase );
 
 			if (
