@@ -1,12 +1,9 @@
 /**
- * External dependencies
- */
-import { overSome } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { isBusiness, isEnterprise, isJetpackPremium, isEcommerce } from 'lib/products-values';
+import { isEnterprise } from 'lib/products-values';
+import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
+import { hasSiteFeature } from 'lib/site/utils';
 
 /**
  * Type dependencies
@@ -17,8 +14,9 @@ type Site = {
 	plan: Plan;
 };
 
-const hasSupportingPlan = overSome( isBusiness, isEnterprise, isJetpackPremium, isEcommerce );
-
 export function hasSiteSeoFeature( site: Site ): boolean | undefined {
-	return ( site && site.plan && hasSupportingPlan( site.plan ) ) ?? undefined;
+	return (
+		hasSiteFeature( site, FEATURE_ADVANCED_SEO ) ||
+		( ( site?.plan && isEnterprise( site.plan ) ) ?? undefined )
+	);
 }

@@ -31,9 +31,6 @@ describe( 'hasSiteAnalyticsFeature', () => {
 		expect( hasSiteAnalyticsFeature( { plan: wpcomFreePlan } ) ).toEqual( false );
 		expect( hasSiteAnalyticsFeature( { plan: jpFreePlan } ) ).toEqual( false );
 		expect( hasSiteAnalyticsFeature( { plan: jpPersonalPlan } ) ).toEqual( false );
-		expect( hasSiteAnalyticsFeature( { plan: jpSecurityDailyPlan } ) ).toEqual( false );
-		expect( hasSiteAnalyticsFeature( { plan: jpSecurityRealtimePlan } ) ).toEqual( false );
-		expect( hasSiteAnalyticsFeature( { plan: jpCompletePlan } ) ).toEqual( false );
 	} );
 
 	it( 'returns true if the site has the analytics feature', () => {
@@ -44,5 +41,8 @@ describe( 'hasSiteAnalyticsFeature', () => {
 		expect( hasSiteAnalyticsFeature( { plan: wpcomVipPlan } ) ).toEqual( true );
 		expect( hasSiteAnalyticsFeature( { plan: jpPremiumPlan } ) ).toEqual( true );
 		expect( hasSiteAnalyticsFeature( { plan: jpBusinessPlan } ) ).toEqual( true );
+		expect( hasSiteAnalyticsFeature( { plan: jpSecurityDailyPlan } ) ).toEqual( true );
+		expect( hasSiteAnalyticsFeature( { plan: jpSecurityRealtimePlan } ) ).toEqual( true );
+		expect( hasSiteAnalyticsFeature( { plan: jpCompletePlan } ) ).toEqual( true );
 	} );
 } );
