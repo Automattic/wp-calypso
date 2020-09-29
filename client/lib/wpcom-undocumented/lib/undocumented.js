@@ -767,7 +767,26 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
  */
 Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
 	return this.wpcom.req.get(
-		{ path: `/domains/${ encodeURIComponent( domain ) }/titan/order-provisioning-url` },
+		{
+			path: `/emails/titan/${ encodeURIComponent( domain ) }/order-provisioning-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
+ * Retrieves the auto login link to Titan's control panel.
+ *
+ * @param orderId the Titan order ID
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			apiNamespace: 'wpcom/v2',
+		},
 		fn
 	);
 };
