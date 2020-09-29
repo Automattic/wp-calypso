@@ -33,6 +33,7 @@ import {
 	hasStaticFrontPage,
 	isJetpackSite,
 	isSitePreviewable,
+	isCurrentPlanPaid,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isComingSoonPage, isFrontPage, isPostsPage } from 'state/pages/selectors';
@@ -359,9 +360,10 @@ class Page extends Component {
 	};
 
 	getComingSoonPageItem() {
-		const { canManageOptions, translate } = this.props;
+		const { canManageOptions, isFreePlan, translate } = this.props;
 
 		if (
+			isFreePlan ||
 			! config.isEnabled( 'coming-soon-v2' ) ||
 			! canManageOptions ||
 			'publish' !== this.props.page.status ||
@@ -803,6 +805,7 @@ const mapState = ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPreviewable =
 		false !== isSitePreviewable( state, pageSiteId ) && site && site.ID === selectedSiteId;
+	const isFreePlan = ! isCurrentPlanPaid( state, selectedSiteId );
 
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
@@ -823,6 +826,7 @@ const mapState = ( state, props ) => {
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
+		isFreePlan,
 	};
 };
 
