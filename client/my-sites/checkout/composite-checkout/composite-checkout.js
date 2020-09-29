@@ -658,7 +658,7 @@ export default function CompositeCheckout( {
 CompositeCheckout.propTypes = {
 	siteSlug: PropTypes.string,
 	siteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
-	product: PropTypes.string,
+	productAliasFromUrl: PropTypes.string,
 	getCart: PropTypes.func,
 	setCart: PropTypes.func,
 	getStoredCards: PropTypes.func,
