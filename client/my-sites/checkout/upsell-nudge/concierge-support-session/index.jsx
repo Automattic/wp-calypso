@@ -76,7 +76,10 @@ export class ConciergeSupportSession extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'Reserve a 45-minute one-on-one call with a website expert to help you get started on the right foot.'
+									'Reserve a %(durationInMinutes)d-minute one-on-one call with a website expert to help you get started on the right foot.',
+									{
+										args: { durationInMinutes: 30 },
+									}
 								) }
 							</b>
 						</p>
@@ -157,10 +160,11 @@ export class ConciergeSupportSession extends PureComponent {
 
 						<h4 className="concierge-support-session__sub-header">
 							{ translate(
-								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
+								'Reserve a %(durationInMinutes)d-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
 								{
 									args: {
 										saveAmount: formatCurrency( savings, currencyCode, { stripZeros: true } ),
+										durationInMinutes: 30,
 									},
 								}
 							) }
