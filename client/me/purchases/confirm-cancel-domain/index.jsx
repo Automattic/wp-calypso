@@ -30,7 +30,6 @@ import { isDataLoading } from '../utils';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isDomainRegistration } from 'lib/products-values';
 import { isRequestingSites } from 'state/sites/selectors';
-import Main from 'components/main';
 import notices from 'notices';
 import { cancelPurchase, purchasesRoot } from 'me/purchases/paths';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -264,7 +263,7 @@ class ConfirmCancelDomain extends React.Component {
 		const domain = getDomainName( purchase );
 
 		return (
-			<Main className="confirm-cancel-domain">
+			<React.Fragment>
 				<TrackPurchasePageView
 					eventName="calypso_confirm_cancel_domain_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -305,7 +304,7 @@ class ConfirmCancelDomain extends React.Component {
 					{ this.renderConfirmationCheckbox() }
 					{ this.renderSubmitButton() }
 				</Card>
-			</Main>
+			</React.Fragment>
 		);
 	}
 }
