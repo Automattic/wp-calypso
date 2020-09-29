@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import { itemLinkMatches } from '../sidebar/utils';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
@@ -26,7 +27,7 @@ const onNav = () => null;
 
 export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const selected = path === url;
+	const selected = itemLinkMatches( url, path );
 
 	let children = null;
 
