@@ -109,7 +109,7 @@ async function handleJetpackEnableSSO( mainWindow, info ) {
 
 	try {
 		// Allow sufficient time for Gutenberg's "placeholder" UI to render.
-		// Otherwise, exiting the placeholder UI will make Calypso's primary- and
+		// Otherwise, exiting the placeholder UI will make Calypso's masterbar and
 		// sidebars disappear.
 		await delay( 300 );
 
