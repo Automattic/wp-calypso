@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import wp from 'lib/wp';
-import React, { useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
@@ -35,7 +35,6 @@ import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isPrivateSite from 'state/selectors/is-private-site';
 import { updateContactDetailsCache } from 'state/domains/management/actions';
 import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { StateSelect } from 'my-sites/domains/components/form';
 import { getPlan } from 'lib/plans';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -84,10 +83,11 @@ import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
+import useDetectedCountryCode from './hooks/use-detected-country-code';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
-const { select, dispatch, registerStore } = defaultRegistry;
+const { select, registerStore } = defaultRegistry;
 
 const wpcom = wp.undocumented();
 
@@ -670,20 +670,6 @@ CompositeCheckout.propTypes = {
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
 };
-
-function useDetectedCountryCode() {
-	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
-	const refHaveUsedDetectedCountryCode = useRef( false );
-
-	useEffect( () => {
-		// Dispatch exactly once
-		if ( detectedCountryCode && ! refHaveUsedDetectedCountryCode.current ) {
-			debug( 'using detected country code "' + detectedCountryCode + '"' );
-			dispatch( 'wpcom' ).loadCountryCodeFromGeoIP( detectedCountryCode );
-			refHaveUsedDetectedCountryCode.current = true;
-		}
-	}, [ detectedCountryCode ] );
-}
 
 function getPlanProductSlugs(
 	items // : WPCOMCart
