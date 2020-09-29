@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.6.1
+Stable tag: 2.7
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.7 =
+* Update post blocks from Newspack to v1.13, fixing bugs related to grid mode.
+* Add new coming soon page patterns.
 
 = 2.6.1 =
 * Fixed an error in the Premium Content token subscription service that causing some fatal errors if the auth token was missing (https://github.com/Automattic/wp-calypso/pull/45878)
