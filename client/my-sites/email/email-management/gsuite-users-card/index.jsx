@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, get, groupBy } from 'lodash';
+import { find, get, groupBy, keyBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -23,6 +23,8 @@ import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'components/section-header';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
 
 /**
  * Style dependencies
@@ -31,7 +33,7 @@ import './style.scss';
 
 class GSuiteUsersCard extends React.Component {
 	getDomainsAsList() {
-		return this.props.selectedDomainName ? [ getSelectedDomain( this.props ) ] : this.props.domains;
+		return this.props.domainsAsList;
 	}
 
 	canAddUsers( domainName ) {
@@ -57,7 +59,7 @@ class GSuiteUsersCard extends React.Component {
 		this.props.addGoogleAppsUserClick( this.props.selectedDomainName );
 	};
 
-	renderDomain( domain, users ) {
+	renderDomainWithGSuite( domain, users ) {
 		// The product name is same for all users as product license is associated to domain
 		// Hence a snapshot of the product name from the first user is sufficient
 		const license = users[ 0 ].product_name;
@@ -84,6 +86,14 @@ class GSuiteUsersCard extends React.Component {
 				</CompactCard>
 			</div>
 		);
+	}
+
+	renderDomain( domain, users ) {
+		if ( hasTitanMailWithUs( domain ) ) {
+			return <TitanControlPanelLoginCard domain={ domain } />;
+		}
+
+		return this.renderDomainWithGSuite( domain.name, users );
 	}
 
 	renderUser( user, index ) {
@@ -131,7 +141,7 @@ class GSuiteUsersCard extends React.Component {
 	}
 
 	render() {
-		const { gsuiteUsers, selectedDomainName, selectedSiteSlug } = this.props;
+		const { gsuiteUsers, selectedSiteSlug } = this.props;
 		const pendingDomains = this.getDomainsAsList().filter( hasPendingGSuiteUsers );
 		const usersByDomain = groupBy( gsuiteUsers, 'domain' );
 
@@ -146,9 +156,9 @@ class GSuiteUsersCard extends React.Component {
 					/>
 				) }
 
-				{ Object.keys( usersByDomain )
-					.filter( ( domain ) => ! selectedDomainName || domain === selectedDomainName )
-					.map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
+				{ this.getDomainsAsList().map( ( domain ) =>
+					this.renderDomain( domain, usersByDomain[ domain.name ] )
+				) }
 			</div>
 		);
 	}
@@ -192,9 +202,16 @@ GSuiteUsersCard.propTypes = {
 };
 
 export default connect(
-	( state ) => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		user: getCurrentUser( state ),
-	} ),
+	( state, ownProps ) => {
+		const domainsList = ownProps.selectedDomainName
+			? [ getSelectedDomain( ownProps ) ]
+			: ownProps.domains;
+		return {
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			user: getCurrentUser( state ),
+			domainsByName: keyBy( domainsList, 'name' ),
+			domainsAsList: domainsList,
+		};
+	},
 	{ addGoogleAppsUserClick, manageClick }
 )( localize( withLocalizedMoment( GSuiteUsersCard ) ) );
