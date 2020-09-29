@@ -1065,34 +1065,15 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const isDisplayUsernamePropSet = ownProps.hasOwnProperty( 'displayUsernameInput' );
-		const eligibleFlowsForRemoveUsernameTest = [
-			'onboarding',
-			'personal',
-			'premium',
-			'business',
-			'ecommerce',
-		];
-		let displayUsernameInput = true;
-
-		if ( eligibleFlowsForRemoveUsernameTest.includes( ownProps.flowName ) ) {
-			abtest( 'usernameAATest' );
-		} else if ( isDisplayUsernamePropSet ) {
-			displayUsernameInput = ownProps.displayUsernameInput;
-		}
-
-		return {
-			oauth2Client: getCurrentOAuth2Client( state ),
-			sectionName: getSectionName( state ),
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			from: get( getCurrentQueryArguments( state ), 'from' ),
-			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-			displayUsernameInput,
-		};
-	},
+	( state ) => ( {
+		oauth2Client: getCurrentOAuth2Client( state ),
+		sectionName: getSectionName( state ),
+		isJetpackWooCommerceFlow:
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
