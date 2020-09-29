@@ -3,12 +3,13 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { TERM_MONTHLY } from 'lib/plans/constants';
 import { recordTracksEvent } from 'state/analytics/actions/record';
 import {
@@ -19,6 +20,7 @@ import {
 import PlansFilterBar from './plans-filter-bar';
 import ProductCard from './product-card';
 import {
+	durationToString,
 	slugToSelectorProduct,
 	getPathToSelector,
 	getPathToUpsell,
@@ -65,8 +67,19 @@ const DetailsPage = ( {
 		window.scrollTo( 0, 0 );
 	}, [] );
 
+	const trackUpsellView = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_product_details_click', {
+				site_id: siteId || undefined,
+				product_slug: productSlug,
+				duration,
+			} )
+		);
+	}, [ dispatch, duration, productSlug, siteId ] );
+
 	// If the product slug isn't one that has options, proceed to the upsell.
 	if ( ! ( PRODUCTS_WITH_OPTIONS as readonly string[] ).includes( productSlug ) ) {
+		trackUpsellView();
 		page.redirect(
 			getPathToUpsell( rootUrl, urlQueryArgs, productSlug, duration as Duration, siteSlug )
 		);
@@ -85,6 +98,7 @@ const DetailsPage = ( {
 	// Go to a new page for upsells.
 	const selectProduct: PurchaseCallback = ( { productSlug: slug }: SelectorProduct ) => {
 		if ( hasUpsell( slug as ProductSlug ) ) {
+			trackUpsellView();
 			page( getPathToUpsell( rootUrl, urlQueryArgs, slug, duration as Duration, siteSlug ) );
 			return;
 		}
@@ -120,6 +134,10 @@ const DetailsPage = ( {
 
 	return (
 		<Main className="details__main" wideLayout>
+			<PageViewTracker
+				path={ `${ rootUrl }/:product_slug/${ durationToString( duration ) }/details` }
+				title="Details"
+			/>
 			<QueryProducts />
 			{ header }
 			<HeaderCake onClick={ backButton }>
