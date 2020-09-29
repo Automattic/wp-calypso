@@ -372,6 +372,7 @@
 		"stacktrace-gps": "^3.0.3",
 		"style-loader": "^1.2.1",
 		"stylelint": "^13.7.0",
+		"stylelint-csstree-validator": "^1.8.0",
 		"supertest": "^4.0.2",
 		"svgstore-cli": "^1.3.1",
 		"terser": "^5.2.1",
