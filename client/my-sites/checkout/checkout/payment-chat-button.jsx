@@ -19,7 +19,7 @@ export class PaymentChatButton extends Component {
 		const { plan, supportLevel } = this.props;
 		this.props.recordTracksEvent( 'calypso_presales_chat_click', {
 			plan,
-			supportLevel,
+			support_level: supportLevel,
 		} );
 	};
 
