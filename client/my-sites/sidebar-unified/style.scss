@@ -13,7 +13,7 @@
 	--color-sidebar-menu-hover-background-rgb: rgb( #32373c );
 	--color-sidebar-menu-hover: var ( --color-sidebar-text );
 	--color-sidebar-menu-selected-background: #006fad;
-	--color-sidebar-border: var( --color-surface-backdrop );
+	--color-sidebar-border: #333333;
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
@@ -124,13 +124,6 @@ $font-size: rem( 14px );
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
 		}
-	}
-
-	//client/my-sites/current-site/style.scss
-	.current-site .site,
-	.current-site .all-sites,
-	.current-site__switch-sites {
-		border-color: #333333;
 	}
 
 	//client/components/site-selector/style.scss
