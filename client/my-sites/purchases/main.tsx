@@ -79,6 +79,11 @@ export function PurchaseCancel( {
 	const getManagePurchaseUrlFor = ( targetSiteSlug: string, targetPurchaseId: string | number ) =>
 		`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }`;
 
+	const getConfirmCancelDomainUrlFor = (
+		targetSiteSlug: string,
+		targetPurchaseId: string | number
+	) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/confirm-cancel-domain`;
+
 	return (
 		<Main className="purchases is-wide-layout">
 			<DocumentHead title={ translate( 'Cancel purchase' ) } />
@@ -93,6 +98,7 @@ export function PurchaseCancel( {
 				purchaseId={ purchaseId }
 				siteSlug={ siteSlug }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 				purchaseListUrl={ `/purchases/subscriptions/${ siteSlug }` }
 			/>
 		</Main>
