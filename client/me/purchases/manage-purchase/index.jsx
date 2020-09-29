@@ -92,6 +92,7 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants'
 import { hasCustomDomain } from 'lib/site/utils';
 import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
 import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
+import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 
 /**
  * Style dependencies
@@ -502,7 +503,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId, translate, getManagePurchaseUrlFor, siteSlug } = this.props;
+		const { purchase, siteId, translate, isProductOwner, getManagePurchaseUrlFor, siteSlug } = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
@@ -551,13 +552,16 @@ class ManagePurchase extends Component {
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						/>
 					) }
-					{ preventRenewal ? this.renderSelectNewButton() : this.renderRenewButton() }
+					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
+					{ isProductOwner && ! preventRenewal && this.renderRenewButton() }
 				</Card>
 				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
-				{ preventRenewal ? this.renderSelectNewNavItem() : this.renderRenewNowNavItem() }
-				{ this.renderEditPaymentMethodNavItem() }
-				{ this.renderCancelPurchaseNavItem() }
-				{ this.renderRemovePurchaseNavItem() }
+
+				{ isProductOwner && preventRenewal && this.renderSelectNewNavItem() }
+				{ isProductOwner && ! preventRenewal && this.renderRenewNowNavItem() }
+				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
+				{ isProductOwner && this.renderCancelPurchaseNavItem() }
+				{ isProductOwner && this.renderRemovePurchaseNavItem() }
 			</Fragment>
 		);
 	}
@@ -650,6 +654,7 @@ export default connect( ( state, props ) => {
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
 	const siteId = purchase ? purchase.siteId : null;
+	const isProductOwner = isCurrentUserCurrentPlanOwner( state, siteId );
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
@@ -667,6 +672,7 @@ export default connect( ( state, props ) => {
 		purchase,
 		purchaseAttachedTo,
 		siteId,
+		isProductOwner,
 		site,
 		renewableSitePurchases,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),

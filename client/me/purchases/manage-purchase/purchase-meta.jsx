@@ -40,7 +40,6 @@ import {
 	getProductFromSlug,
 } from 'lib/products-values';
 import { getPlan } from 'lib/plans';
-
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSite, isRequestingSites } from 'state/sites/selectors';
 import { getUser } from 'state/users/selectors';
@@ -52,6 +51,7 @@ import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
+import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -327,7 +327,15 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const { purchase, site, translate, moment, isAutorenewalEnabled, hideAutoRenew } = this.props;
+		const {
+			purchase,
+			site,
+			translate,
+			moment,
+			isAutorenewalEnabled,
+			isProductOwner,
+			hideAutoRenew,
+		} = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -371,7 +379,7 @@ class PurchaseMeta extends Component {
 					>
 						{ subsBillingText }
 					</span>
-					{ site && ! hideAutoRenew && (
+					{ site && ! hideAutoRenew && isProductOwner && (
 						<span className="manage-purchase__detail">
 							<AutoRenewToggle
 								planName={ site.plan.product_name_short }
@@ -433,12 +441,15 @@ class PurchaseMeta extends Component {
 
 export default connect( ( state, { purchaseId } ) => {
 	const purchase = getByPurchaseId( state, purchaseId );
+	const siteId = purchase ? purchase.siteId : null;
+	const isProductOwner = isCurrentUserCurrentPlanOwner( state, siteId );
 
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		site: purchase ? getSite( state, purchase.siteId ) : null,
+		isProductOwner,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
 		hideAutoRenew:
