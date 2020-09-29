@@ -580,6 +580,7 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
+			isProductOwner,
 		} = this.props;
 
 		let editCardDetailsPath = false;
@@ -630,6 +631,7 @@ class ManagePurchase extends Component {
 						renewableSitePurchases={ renewableSitePurchases }
 						editCardDetailsPath={ editCardDetailsPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+						isProductOwner={ isProductOwner }
 					/>
 				) }
 				<AsyncLoad
