@@ -15,16 +15,25 @@ import { hasRenewalItem } from 'lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-record-checkout-loaded' );
 
-export default function useRecordCheckoutLoaded(
-	recordEvent: ( action: ReactStandardAction ) => void,
-	isLoadingCart: boolean,
-	isApplePayAvailable: boolean,
-	isApplePayLoading: boolean,
-	isLoadingStoredCards: boolean,
-	responseCart: ResponseCart,
-	storedCards: StoredCard[],
-	productAliasFromUrl: string | undefined | null
-): void {
+export default function useRecordCheckoutLoaded( {
+	recordEvent,
+	isLoadingCart,
+	isApplePayAvailable,
+	isApplePayLoading,
+	isLoadingStoredCards,
+	responseCart,
+	storedCards,
+	productAliasFromUrl,
+}: {
+	recordEvent: ( action: ReactStandardAction ) => void;
+	isLoadingCart: boolean;
+	isApplePayAvailable: boolean;
+	isApplePayLoading: boolean;
+	isLoadingStoredCards: boolean;
+	responseCart: ResponseCart;
+	storedCards: StoredCard[];
+	productAliasFromUrl: string | undefined | null;
+} ): void {
 	const hasRecordedCheckoutLoad = useRef( false );
 	if (
 		! isLoadingCart &&
