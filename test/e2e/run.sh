@@ -37,7 +37,7 @@ declare -a MAGELLAN_CONFIGS
 usage () {
   cat <<EOF
 -a [workers]	  - Number of parallel workers in Magellan (defaults to 3)
--R		  - Use custom Slack/Spec/XUnit reporter, otherwise just use Spec reporter
+-R		  - Use custom Slack/Spec/JUnit reporter, otherwise just use Spec reporter
 -p 		  - Execute the tests in parallel via CircleCI envvars (implies -g -s mobile,desktop)
 -S [commitHash]   - Run tests against given commit via https://calypso.live
 -B [branch]	  - Run Jetpack tests on given Jetpack branch via https://jurassic.ninja
@@ -76,7 +76,7 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
       continue
       ;;
     R)
-      MOCHA_ARGS+="-R spec-xunit-reporter "
+      MOCHA_ARGS+="-R mocha-multi-reporters --reporter-options configFile=mocha-reporter-config.json "
       continue
       ;;
     p)
