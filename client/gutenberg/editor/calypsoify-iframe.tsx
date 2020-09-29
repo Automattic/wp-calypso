@@ -11,8 +11,8 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import MediaStore from 'lib/media/store';
-import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getCustomizerUrl,
@@ -697,7 +697,9 @@ class CalypsoifyIframe extends Component<
 						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
-				<EditorMediaModal
+				<AsyncLoad
+					require="post-editor/editor-media-modal"
+					placeholder={ null }
 					disabledDataSources={ getDisabledDataSources( allowedTypes ) }
 					enabledFilters={ getEnabledFilters( allowedTypes ) }
 					galleryViewEnabled={ isUsingClassicBlock }
