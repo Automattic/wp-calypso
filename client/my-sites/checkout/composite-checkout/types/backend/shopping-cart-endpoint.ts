@@ -105,6 +105,7 @@ export interface ResponseCartMessage {
 
 export const emptyResponseCart: ResponseCart = {
 	blog_id: '',
+	create_new_blog: false,
 	cart_generated_at_timestamp: 0,
 	cart_key: '',
 	products: [],
