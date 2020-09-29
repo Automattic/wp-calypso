@@ -36,9 +36,14 @@ const AdvancedCredentials: FunctionComponent = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ selectedHost, setSelectedHost ] = useState< null | string >( null );
-	const { state: backupState } = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const { state: backupState } = useSelector( ( state ) => getRewindState( state, siteId ) ) as {
+		state: string;
+	};
 
-	const changeHost = ( newHost: string | null ) => setSelectedHost( newHost );
+	const changeHost = ( newHost: string | null ) => {
+		setSelectedHost( newHost );
+		setCurrentStep( 1 );
+	};
 
 	const getStatusState = ( currentBackupState: string ): StatusState => {
 		switch ( currentBackupState ) {
@@ -56,6 +61,12 @@ const AdvancedCredentials: FunctionComponent = () => {
 
 	const renderStep = ( step: number ) => {
 		switch ( step ) {
+			case 1:
+				return (
+					<div>
+						<h3>{ selectedHost }</h3>
+					</div>
+				);
 			case 0:
 				return <HostSelection onHostChange={ changeHost } />;
 		}
@@ -66,10 +77,9 @@ const AdvancedCredentials: FunctionComponent = () => {
 			<QueryRewindState siteId={ siteId } />
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
-			<Card className="top__server-connection-status">
-				<div className="top__server-connection-status-content">
+			<Card className="advanced-credentials__server-connection-status">
+				<div className="advanced-credentials__server-connection-status-content">
 					<h3>{ translate( 'Remote server connection credentials' ) }</h3>
-					<h4>{ selectedHost }</h4>
 					<ConnectionStatus state={ getStatusState( backupState ) } />
 				</div>
 			</Card>

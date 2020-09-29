@@ -22,15 +22,15 @@ const ConnectionStatus: FunctionComponent< Props > = ( { state } ) => {
 	const getClass = () => {
 		switch ( state ) {
 			case StatusState.Failed:
-				return 'top__connection-status-failed';
+				return 'connection-status__failed';
 			case StatusState.Connected:
-				return 'top__connection-status-connected';
+				return 'connection-status__connected';
 			case StatusState.Connecting:
-				return 'top__connection-status-connecting';
+				return 'connection-status__connecting';
 			case StatusState.Disconnected:
-				return 'top__connection-status-disconnected';
+				return 'connection-status__disconnected';
 			case StatusState.Loading:
-				return 'top__connection-status-loading';
+				return 'connection-status__loading';
 		}
 	};
 
