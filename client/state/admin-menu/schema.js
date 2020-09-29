@@ -1,5 +1,4 @@
 const commonItemPropsSchema = {
-	icon: { type: 'string' },
 	slug: { type: 'string' },
 	title: { type: 'string' },
 	type: { type: 'string' },
@@ -13,6 +12,7 @@ const menuItemsSite = {
 		required: [ 'type' ],
 		properties: {
 			...commonItemPropsSchema,
+			icon: { type: 'string' },
 			children: {
 				type: 'array',
 				items: {
