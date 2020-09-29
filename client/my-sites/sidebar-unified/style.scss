@@ -108,7 +108,8 @@ $font-size: rem( 14px );
 				font-weight: 400;
 				color: #b4b9be;
 
-				&:hover {
+				&:hover,
+				&:focus {
 					background-color: transparent;
 					color: white;
 					font-weight: 600;
