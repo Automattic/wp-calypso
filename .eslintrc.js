@@ -299,7 +299,7 @@ module.exports = {
 			},
 		],
 
-		// Force packages to declare their depdendencies
+		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
 	},
 };
