@@ -107,6 +107,7 @@ export function generateSteps( {
 				showExampleSuggestions: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
+				forceHideFreeDomainExplainer: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
 				subHeaderText: i18n.translate( 'Select a domain name for your website' ),
 			},
