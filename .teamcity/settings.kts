@@ -336,7 +336,7 @@ object RunAllUnitTests : BuildType({
 			scriptContent = """
 				set -e
 				export HOME="/calypso"
-				export NODE_ENV="test"
+				export NODE_ENV="production"
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
