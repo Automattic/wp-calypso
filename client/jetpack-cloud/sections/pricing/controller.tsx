@@ -11,13 +11,15 @@ import { hideMasterbar } from 'state/ui/actions';
 import Header from './header';
 import JetpackComFooter from './jpcom-footer';
 import { setLocale } from 'state/ui/language/actions';
+import { addQueryArgs } from 'lib/route';
 
-export function jetpackPricingContext( context, next ) {
+export function jetpackPricingContext( context: PageJS.Context, next: Function ) {
+	const urlQueryArgs = context.query;
 	const { locale } = context.params;
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
-		page.redirect( '/pricing' );
+		page.redirect( addQueryArgs( urlQueryArgs, `/pricing` ) );
 	}
 
 	context.store.dispatch( hideMasterbar() );

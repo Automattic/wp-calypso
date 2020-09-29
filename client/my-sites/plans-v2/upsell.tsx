@@ -185,10 +185,11 @@ const UpsellComponent = ( {
 };
 
 const UpsellPage = ( {
-	duration,
+	rootUrl,
+	urlQueryArgs,
 	siteSlug: siteSlugProp,
 	productSlug,
-	rootUrl,
+	duration,
 	header,
 }: UpsellPageProps ) => {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
@@ -202,7 +203,9 @@ const UpsellPage = ( {
 	const upsellProductSlug = getProductUpsell( productSlug );
 	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
 
-	const checkoutCb = useCallback( ( slugs ) => checkout( siteSlug, slugs ), [ siteSlug ] );
+	const checkoutCb = useCallback( ( slugs ) => checkout( siteSlug, slugs, urlQueryArgs ), [
+		siteSlug,
+	] );
 
 	const onPurchaseBothProducts = useCallback(
 		() => checkoutCb( [ productSlug, upsellProductSlug ] ),
@@ -214,7 +217,7 @@ const UpsellPage = ( {
 		productSlug,
 	] );
 
-	const selectorPageUrl = getPathToSelector( rootUrl, duration, siteSlug );
+	const selectorPageUrl = getPathToSelector( rootUrl, urlQueryArgs, duration, siteSlug );
 
 	// If the product is not valid send the user to the selector page.
 	if ( ! mainProduct ) {
@@ -233,7 +236,7 @@ const UpsellPage = ( {
 	// page.
 	const productOption = getOptionFromSlug( productSlug );
 	const backUrl = productOption
-		? getPathToDetails( rootUrl, productOption, duration as Duration, siteSlug )
+		? getPathToDetails( rootUrl, urlQueryArgs, productOption, duration as Duration, siteSlug )
 		: selectorPageUrl;
 
 	const onBackButtonClick = () => page( backUrl );
