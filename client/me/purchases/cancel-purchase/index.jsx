@@ -48,6 +48,7 @@ class CancelPurchase extends React.Component {
 	static propTypes = {
 		purchaseListUrl: PropTypes.string,
 		getManagePurchaseUrlFor: PropTypes.func,
+		getConfirmCancelDomainUrlFor: PropTypes.func,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -226,6 +227,7 @@ class CancelPurchase extends React.Component {
 						siteSlug={ this.props.siteSlug }
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl }
+						getConfirmCancelDomainUrlFor={ this.props.getConfirmCancelDomainUrlFor }
 					/>
 				</CompactCard>
 			</Fragment>
