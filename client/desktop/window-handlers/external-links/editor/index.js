@@ -3,7 +3,7 @@
  */
 const { URL } = require( 'url' );
 const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
-const { dialog, ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { dialog, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies

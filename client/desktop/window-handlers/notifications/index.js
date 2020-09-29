@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc, Notification } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { ipcMain: ipc, Notification } = require( 'electron' );
 const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
 
 /**

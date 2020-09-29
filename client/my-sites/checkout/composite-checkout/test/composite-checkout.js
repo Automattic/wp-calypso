@@ -9,8 +9,8 @@ import React from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
-import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
-import { render, act, fireEvent } from '@testing-library/react'; // eslint-disable-line import/no-extraneous-dependencies
+import '@testing-library/jest-dom/extend-expect';
+import { render, act, fireEvent } from '@testing-library/react';
 
 /**
  * Internal dependencies

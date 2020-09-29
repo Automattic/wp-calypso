@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import { newPost } from 'lib/paths';
 import store from 'store';
 import user from 'lib/user';
-import { ipcRenderer as ipc } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
+import { ipcRenderer as ipc } from 'electron';
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';

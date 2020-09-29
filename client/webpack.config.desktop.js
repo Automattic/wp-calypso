@@ -1,5 +1,3 @@
-/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
-
 /**
  * External Dependencies
  */

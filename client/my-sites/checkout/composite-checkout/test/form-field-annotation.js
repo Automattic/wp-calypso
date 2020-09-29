@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable wpcalypso/jsx-classname-namespace,import/no-extraneous-dependencies */
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * External dependencies
