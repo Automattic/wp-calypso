@@ -1,8 +1,8 @@
-/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectSelectedItems", "expect"] }] */
-
 /**
  * @jest-environment jsdom
  */
+
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectSelectedItems", "expect"] }] */
 
 /**
  * External dependencies
