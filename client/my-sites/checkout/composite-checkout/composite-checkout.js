@@ -81,8 +81,8 @@ import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-det
 import CartMessages from 'my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
-import useEffectOnChange from './hooks/use-effect-on-change';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
+import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -215,25 +215,12 @@ export default function CompositeCheckout( {
 		addProductsToCart,
 	} );
 
-	useEffectOnChange( () => {
-		if ( ! isInitialCartLoading ) {
-			productsForCart.forEach( ( productToAdd ) => {
-				recordEvent( {
-					type: 'CART_ADD_ITEM',
-					payload: productToAdd,
-				} );
-			} );
-		}
-	}, [ isInitialCartLoading ] );
-
-	useEffectOnChange( () => {
-		if ( ! isInitialCartLoading ) {
-			recordEvent( {
-				type: 'CART_INIT_COMPLETE',
-				payload: responseCart,
-			} );
-		}
-	}, [ isInitialCartLoading ] );
+	useRecordCartLoaded( {
+		recordEvent,
+		responseCart,
+		productsForCart,
+		isInitialCartLoading,
+	} );
 
 	const {
 		items,
