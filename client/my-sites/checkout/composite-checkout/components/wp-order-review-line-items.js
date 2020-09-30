@@ -322,11 +322,13 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items
 				.filter( ( item ) => item.label ) // remove items without a label
-				.map( ( item ) => {
+				.filter( ( item ) => {
 					if ( isSummary && ! shouldLineItemBeShownWhenStepInactive( item ) ) {
-						return;
+						return false;
 					}
-
+					return true;
+				} )
+				.map( ( item ) => {
 					return (
 						<WPOrderReviewListItem key={ item.id }>
 							<LineItemUI
