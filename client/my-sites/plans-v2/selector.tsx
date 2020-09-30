@@ -83,7 +83,7 @@ const SelectorPage = ( {
 
 		if ( purchase && isUpgradeableToYearly ) {
 			dispatch(
-				recordTracksEvent( 'calypso_cart_product_add', {
+				recordTracksEvent( 'calypso_product_checkout_click', {
 					site_id: siteId || undefined,
 					product_slug: product.productSlug,
 					duration: currentDuration,
@@ -134,7 +134,7 @@ const SelectorPage = ( {
 		}
 
 		dispatch(
-			recordTracksEvent( 'calypso_cart_product_add', {
+			recordTracksEvent( 'calypso_product_checkout_click', {
 				site_id: siteId || undefined,
 				product_slug: product.productSlug,
 				duration: currentDuration,

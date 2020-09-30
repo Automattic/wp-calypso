@@ -104,7 +104,7 @@ const DetailsPage = ( {
 		}
 
 		dispatch(
-			recordTracksEvent( 'calypso_cart_product_add', {
+			recordTracksEvent( 'calypso_product_checkout_click', {
 				site_id: siteId || undefined,
 				product_slug: slug,
 				duration,
