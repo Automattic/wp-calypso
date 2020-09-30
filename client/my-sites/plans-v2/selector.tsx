@@ -16,6 +16,7 @@ import { EXTERNAL_PRODUCTS_LIST, SECURITY } from './constants';
 import { getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
 import useHasProductUpsell from './use-has-product-upsell';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
@@ -69,6 +70,13 @@ const SelectorPage = ( {
 		purchase
 	) => {
 		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_crm_click', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			window.location.href = product.externalUrl || '';
 			return;
 		}
@@ -85,7 +93,7 @@ const SelectorPage = ( {
 
 		if ( product.subtypes.length ) {
 			dispatch(
-				recordTracksEvent( 'calypso_product_subtypes_view', {
+				recordTracksEvent( 'calypso_product_subtypes_click', {
 					site_id: siteId || undefined,
 					product_slug: product.productSlug,
 					duration: currentDuration,
@@ -98,6 +106,13 @@ const SelectorPage = ( {
 		}
 
 		if ( hasUpsell( product.productSlug as ProductSlug ) ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_upsell_click', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			page(
 				getPathToUpsell( rootUrl, urlQueryArgs, product.productSlug, currentDuration, siteSlug )
 			);
@@ -145,6 +160,7 @@ const SelectorPage = ( {
 
 	return (
 		<Main className="selector__main" wideLayout>
+			<PageViewTracker path={ rootUrl } title="Plans" />
 			{ header }
 			<PlansFilterBar
 				showDurations
