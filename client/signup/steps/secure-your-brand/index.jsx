@@ -14,8 +14,9 @@ import { getSiteBySlug } from 'state/sites/selectors';
 import StepWrapper from 'signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { getSecureYourBrand } from 'state/secure-your-brand/selectors';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { CompactCard, Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
 
 /**
@@ -55,13 +56,25 @@ export class SecureYourBrandStep extends Component {
 	};
 
 	recommendedDomains() {
+		const { translate, domains } = this.props;
+		const domain = this.getDomainName();
+		this.getDomainName();
 		return (
 			<div className="secure-your-brand">
-				<QuerySecureYourBrand domain={ this.getDomainName() } />
-				<Card>Domains</Card>
-				<CompactCard>
-					<Button>Help</Button>
-				</CompactCard>
+				<QuerySecureYourBrand domain={ domain } />
+				<Card>
+					<div className="secure-your-brand__available">
+						{ translate( '%(domain)s is available', { args: { domain } } ) }
+					</div>
+					<div className="secure-your-brand__domains">
+						{ domains?.map( ( suggestion ) => (
+							<div className="secure-your-brand__domain">
+								<div>{ suggestion.domain }</div>
+								<div className="secure-your-brand__cost">{ suggestion.cost }</div>
+							</div>
+						) ) }
+					</div>
+				</Card>
 			</div>
 		);
 	}
@@ -117,6 +130,7 @@ export default connect(
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		domainItem,
+		domains: getSecureYourBrand( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( SecureYourBrandStep ) );
