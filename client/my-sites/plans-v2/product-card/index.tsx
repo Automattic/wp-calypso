@@ -168,6 +168,7 @@ const ProductCardWrapper = ( {
 			onClick={ onClick }
 		/>
 	) : null;
+
 	return (
 		<CardComponent
 			headingLevel={ 3 }
@@ -196,6 +197,7 @@ const ProductCardWrapper = ( {
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
 			hidePrice={ hidePrice }
+			productSlug={ item.productSlug }
 		/>
 	);
 };
