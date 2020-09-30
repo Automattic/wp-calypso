@@ -970,9 +970,8 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		const nonProductOwnerNotice = this.renderNonProductOwnerNotice();
 		if ( ! this.props.isProductOwner ) {
-			return nonProductOwnerNotice;
+			return this.renderNonProductOwnerNotice();
 		}
 
 		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();
