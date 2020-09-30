@@ -49,7 +49,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink
-			className={ isSubItem ? 'sidebar__menu-link--sub' : 'sidebar__menu-link--parent' }
+			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
 			{ children }
 		</SidebarItem>
