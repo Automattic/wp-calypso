@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -17,7 +17,10 @@ import page from 'page';
  * Internal dependencies
  */
 import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
-import { toggleMySitesSidebarSection as toggleSection } from 'state/my-sites/sidebar/actions';
+import {
+	toggleMySitesSidebarSection as toggleSection,
+	expandMySitesSidebarSection as expandSection,
+} from 'state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
@@ -38,6 +41,13 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
 	const selectedMenuItem =
 		children && children.find( ( menuItem ) => itemLinkMatches( menuItem.url, path ) );
+	const childIsSelected = !! selectedMenuItem;
+
+	useEffect( () => {
+		if ( selected || childIsSelected ) {
+			reduxDispatch( expandSection( sectionId ) );
+		}
+	}, [ selected, childIsSelected, reduxDispatch, sectionId ] );
 
 	return (
 		<ExpandableSidebarMenu
@@ -55,7 +65,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 			expanded={ isExpanded || selected }
 			title={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			className={ selected && 'sidebar__menu--selected' }
+			className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 		>
 			{ children.map( ( item ) => {
 				const isSelected = selectedMenuItem?.url === item.url;
