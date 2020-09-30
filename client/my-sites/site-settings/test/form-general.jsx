@@ -19,6 +19,13 @@ jest.mock(
 		}
 );
 
+jest.mock( 'config', () => {
+	const mock = jest.fn();
+	mock.isEnabled = jest.fn();
+
+	return mock;
+} );
+
 /**
  * External dependencies
  */
@@ -43,8 +50,11 @@ import {
  * Internal dependencies
  */
 import { SiteSettingsFormGeneral } from '../form-general';
-
+import config from 'config';
 import moment from 'moment';
+
+const configMock = ( values ) => ( key ) => values[ key ];
+config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': false } ) );
 
 moment.tz = {
 	guess: () => moment(),
@@ -202,6 +212,45 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
 			} );
+		} );
+
+		test( 'Check Coming Soon radio option remains clickable with v2 not enabled', () => {
+			config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': false } ) );
+
+			testProps.fields.blog_public = -1;
+			testProps.fields.wpcom_coming_soon = 0;
+
+			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+			const radioButton = getByLabelText( 'Coming Soon', { exact: false } );
+
+			expect( radioButton ).not.toBeChecked();
+
+			fireEvent.click( radioButton );
+
+			expect( testProps.updateFields ).toBeCalledWith( { blog_public: -1, wpcom_coming_soon: 1 } );
+		} );
+
+		test( 'Check Coming Soon disappears with v2 enabled', () => {
+			config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': true } ) );
+
+			testProps.fields.blog_public = -1;
+			testProps.fields.wpcom_coming_soon = 0;
+
+			const { queryByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+			expect( queryByLabelText( 'Coming Soon', { exact: false } ) ).toBe( null );
+		} );
+
+		test( 'Check Coming Soon disappears with v2 enabled unless Coming Soon is currently set', () => {
+			config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': true } ) );
+
+			testProps.fields.blog_public = -1; // v1 coming soon requires private
+			testProps.fields.wpcom_coming_soon = 1;
+
+			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+
+			const comingSoonRadio1 = getByLabelText( 'Coming Soon', { exact: false } );
+			expect( comingSoonRadio1 ).toBeChecked();
 		} );
 	} );
 } );
