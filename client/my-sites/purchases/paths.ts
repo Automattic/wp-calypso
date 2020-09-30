@@ -15,3 +15,8 @@ export const getCancelPurchaseUrlFor = (
 
 export const getPurchaseListUrlFor = ( targetSiteSlug: string ) =>
 	`/purchases/subscriptions/${ targetSiteSlug }`;
+
+export const getAddPaymentMethodUrlFor = (
+	targetSiteSlug: string,
+	targetPurchase: { id: string | number }
+) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase.id }/payment/add`;

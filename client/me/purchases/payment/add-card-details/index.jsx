@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
@@ -23,7 +22,6 @@ import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchas
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { StripeHookProvider } from 'lib/stripe';
 
@@ -34,7 +32,7 @@ function AddCardDetails( props ) {
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
-		page( purchasesRoot );
+		page( props.purchaseListUrl );
 	}
 
 	if ( isDataLoading ) {
@@ -55,11 +53,11 @@ function AddCardDetails( props ) {
 	const successCallback = () => {
 		const { id } = props.purchase;
 		props.clearPurchases();
-		page( managePurchase( props.siteSlug, id ) );
+		page( props.getManagePurchaseUrlFor( props.siteSlug, id ) );
 	};
 
 	return (
-		<Main>
+		<Fragment>
 			<TrackPurchasePageView
 				eventName="calypso_add_card_details_purchase_view"
 				purchaseId={ props.purchaseId }
@@ -68,7 +66,7 @@ function AddCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/add"
 				title="Purchases > Add Card Details"
 			/>
-			<HeaderCake backHref={ managePurchase( props.siteSlug, props.purchaseId ) }>
+			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.addCardDetails }
 			</HeaderCake>
 
@@ -82,11 +80,13 @@ function AddCardDetails( props ) {
 					successCallback={ successCallback }
 				/>
 			</StripeHookProvider>
-		</Main>
+		</Fragment>
 	);
 }
 
 AddCardDetails.propTypes = {
+	getManagePurchaseUrlFor: PropTypes.func.isRequired,
+	purchaseListUrl: PropTypes.string.isRequired,
 	clearPurchases: PropTypes.func.isRequired,
 	hasLoadedSites: PropTypes.bool.isRequired,
 	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
