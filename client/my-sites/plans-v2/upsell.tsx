@@ -211,7 +211,7 @@ const UpsellPage = ( {
 
 	const onPurchaseBothProducts = useTrackCallback(
 		() => checkout( siteSlug, [ productSlug, upsellProductSlug ], urlQueryArgs ),
-		'calypso_product_upsell_confirm_click',
+		'calypso_cart_product_add',
 		{
 			site_id: siteId || undefined,
 			product_slug: productSlug,
@@ -222,7 +222,7 @@ const UpsellPage = ( {
 
 	const onPurchaseSingleProduct = useTrackCallback(
 		() => checkout( siteSlug, productSlug, urlQueryArgs ),
-		'calypso_product_upsell_skipped_click',
+		'calypso_cart_product_add',
 		{
 			site_id: siteId || undefined,
 			product_slug: productSlug,

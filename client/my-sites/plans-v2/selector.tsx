@@ -82,11 +82,25 @@ const SelectorPage = ( {
 		}
 
 		if ( purchase && isUpgradeableToYearly ) {
+			dispatch(
+				recordTracksEvent( 'calypso_cart_product_add', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			checkout( siteSlug, getYearlyPlanByMonthly( product.productSlug ), urlQueryArgs );
 			return;
 		}
 
 		if ( purchase ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_manage_click', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			page( managePurchase( siteSlug, purchase.id ) );
 			return;
 		}
@@ -118,6 +132,14 @@ const SelectorPage = ( {
 			);
 			return;
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_cart_product_add', {
+				site_id: siteId || undefined,
+				product_slug: product.productSlug,
+				duration: currentDuration,
+			} )
+		);
 		checkout( siteSlug, product.productSlug, urlQueryArgs );
 	};
 

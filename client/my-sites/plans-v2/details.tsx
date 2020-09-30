@@ -103,6 +103,13 @@ const DetailsPage = ( {
 			return;
 		}
 
+		dispatch(
+			recordTracksEvent( 'calypso_cart_product_add', {
+				site_id: siteId || undefined,
+				product_slug: slug,
+				duration,
+			} )
+		);
 		checkout( siteSlug, slug, urlQueryArgs );
 	};
 
