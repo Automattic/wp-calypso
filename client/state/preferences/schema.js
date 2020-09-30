@@ -13,20 +13,6 @@ export const remoteValuesSchema = {
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean',
 		},
-		'google-my-business-dismissible-nudge': {
-			type: 'object',
-			'^[1-9]+$': {
-				type: 'array',
-				items: {
-					type: 'object',
-					properties: {
-						dismissedAt: { type: 'number', minimum: 0 },
-						type: { type: 'string', enum: [ 'dismiss' ] },
-					},
-					required: [ 'dismissedAt', 'type' ],
-				},
-			},
-		},
 		'guided-tours-history': {
 			type: 'array',
 			items: {
