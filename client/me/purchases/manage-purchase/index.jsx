@@ -80,7 +80,7 @@ import QuerySiteDomains from 'components/data/query-site-domains';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'components/vertical-nav/item';
-import { cancelPurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'lib/url/support';
 import titles from 'me/purchases/titles';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -104,6 +104,7 @@ class ManagePurchase extends Component {
 		purchaseListUrl: PropTypes.string,
 		getCancelPurchaseUrlFor: PropTypes.func,
 		getAddPaymentMethodUrlFor: PropTypes.func,
+		getManagePurchaseUrlFor: PropTypes.func,
 		cardTitle: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
@@ -125,6 +126,7 @@ class ManagePurchase extends Component {
 		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
+		getManagePurchaseUrlFor: managePurchase,
 	};
 
 	state = {
@@ -455,6 +457,8 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlaceholder() {
+		const { siteSlug, getManagePurchaseUrlFor } = this.props;
+
 		return (
 			<Fragment>
 				<PurchaseSiteHeader isPlaceholder />
@@ -469,7 +473,11 @@ class ManagePurchase extends Component {
 						<span className="manage-purchase__settings-link" />
 					</div>
 
-					<PurchaseMeta purchaseId={ false } siteSlug={ this.props.siteSlug } />
+					<PurchaseMeta
+						purchaseId={ false }
+						siteSlug={ siteSlug }
+						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
 				<VerticalNavItem isPlaceholder />
@@ -494,7 +502,7 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId, translate } = this.props;
+		const { purchase, siteId, translate, getManagePurchaseUrlFor, siteSlug } = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
@@ -537,7 +545,11 @@ class ManagePurchase extends Component {
 					</header>
 					{ this.renderPlanDescription() }
 					{ ! isPartnerPurchase( purchase ) && (
-						<PurchaseMeta purchaseId={ purchase.id } siteSlug={ this.props.siteSlug } />
+						<PurchaseMeta
+							purchaseId={ purchase.id }
+							siteSlug={ siteSlug }
+							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+						/>
 					) }
 					{ preventRenewal ? this.renderSelectNewButton() : this.renderRenewButton() }
 				</Card>
@@ -563,6 +575,7 @@ class ManagePurchase extends Component {
 			purchaseAttachedTo,
 			isPurchaseTheme,
 			translate,
+			getManagePurchaseUrlFor,
 		} = this.props;
 
 		let editCardDetailsPath = false;
@@ -612,6 +625,7 @@ class ManagePurchase extends Component {
 						purchaseAttachedTo={ purchaseAttachedTo }
 						renewableSitePurchases={ renewableSitePurchases }
 						editCardDetailsPath={ editCardDetailsPath }
+						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					/>
 				) }
 				<AsyncLoad

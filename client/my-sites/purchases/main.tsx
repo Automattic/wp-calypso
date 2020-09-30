@@ -68,6 +68,7 @@ export function PurchaseDetails( {
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 				getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 			/>
 		</Main>
 	);
