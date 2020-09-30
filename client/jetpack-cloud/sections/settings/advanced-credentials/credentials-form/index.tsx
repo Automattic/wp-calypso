@@ -44,6 +44,7 @@ const ServerCredentialsForm: FunctionComponent = () =>
 
 		return (
 			<div className="credentials-form">
+				<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
 				<FormFieldset>
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
 					<FormSelect

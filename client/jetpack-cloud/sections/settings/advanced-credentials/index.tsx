@@ -65,7 +65,7 @@ const AdvancedCredentials: FunctionComponent = () => {
 			case 1:
 				return (
 					<div>
-						<h3>{ selectedHost }</h3>
+						<h4>{ selectedHost }</h4>
 						<CredentialsForm />
 					</div>
 				);
@@ -81,7 +81,7 @@ const AdvancedCredentials: FunctionComponent = () => {
 			<SidebarNavigation />
 			<Card className="advanced-credentials__server-connection-status">
 				<div className="advanced-credentials__server-connection-status-content">
-					<h3>{ translate( 'Remote server connection credentials' ) }</h3>
+					<h3>{ translate( 'Remote server credentials' ) }</h3>
 					<ConnectionStatus state={ getStatusState( backupState ) } />
 				</div>
 			</Card>
