@@ -39,10 +39,12 @@ class AutoRenewToggle extends Component {
 		withTextStatus: PropTypes.bool,
 		toggleSource: PropTypes.string,
 		siteSlug: PropTypes.string,
+		getAddPaymentMethodUrlFor: PropTypes.func,
 	};
 
 	static defaultProps = {
 		fetchingUserPurchases: false,
+		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
 	};
 
 	state = {
@@ -86,7 +88,7 @@ class AutoRenewToggle extends Component {
 			toggle_source: toggleSource,
 		} );
 
-		page( getEditCardDetailsPath( siteSlug, purchase ) );
+		page( this.props.getAddPaymentMethodUrlFor( siteSlug, purchase ) );
 	};
 
 	onCloseAutoRenewPaymentMethodDialog = () => {

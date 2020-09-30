@@ -62,6 +62,7 @@ class PurchaseMeta extends Component {
 		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		getManagePurchaseUrlFor: PropTypes.func,
+		getAddPaymentMethodUrlFor: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -69,6 +70,7 @@ class PurchaseMeta extends Component {
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
 		getManagePurchaseUrlFor: managePurchase,
+		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
 	};
 
 	renderPrice() {
@@ -227,7 +229,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentDetails() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, getAddPaymentMethodUrlFor } = this.props;
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return null;
@@ -251,7 +253,9 @@ class PurchaseMeta extends Component {
 
 		return (
 			<li>
-				<a href={ getEditCardDetailsPath( this.props.siteSlug, purchase ) }>{ paymentDetails }</a>
+				<a href={ getAddPaymentMethodUrlFor( this.props.siteSlug, purchase ) }>
+					{ paymentDetails }
+				</a>
 			</li>
 		);
 	}

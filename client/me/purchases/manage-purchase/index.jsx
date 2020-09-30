@@ -589,12 +589,13 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
+			getAddPaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
 
 		let editCardDetailsPath = false;
 		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
-			editCardDetailsPath = getEditCardDetailsPath( siteSlug, purchase );
+			editCardDetailsPath = getAddPaymentMethodUrlFor( siteSlug, purchase );
 		}
 
 		let showExpiryNotice = false;
