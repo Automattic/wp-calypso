@@ -133,6 +133,7 @@ object RunAllUnitTests : BuildType({
 
 	artifactRules = """
 		test_results => test_results
+		checkstyle_results => checkstyle_results
 		artifacts => artifacts
 	""".trimIndent()
 
@@ -209,7 +210,7 @@ object RunAllUnitTests : BuildType({
 				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|server/|packages/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
 				echo ${'$'}FILES_TO_LINT
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
-					yarn run eslint --format junit --output-file "./test_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
@@ -373,6 +374,12 @@ object RunAllUnitTests : BuildType({
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "junit")
 			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
+		}
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/**/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
 		}
 		perfmon {
 		}
