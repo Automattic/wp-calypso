@@ -9,7 +9,7 @@ import { stringify } from 'qs';
  */
 import { serverRender, setShouldServerSideRender } from 'server/render';
 import { setSection as setSectionMiddlewareFactory } from 'controller';
-import { setRoute as setRouteAction } from 'state/route/actions';
+import { setRoute } from 'state/route/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function ( route, ...middlewares ) {
@@ -46,7 +46,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 }
 
 function setRouteMiddleware( context, next ) {
-	context.store.dispatch( setRouteAction( context.pathname, context.query ) );
+	context.store.dispatch( setRoute( context.pathname, context.query ) );
 
 	next();
 }

@@ -41,7 +41,7 @@ import { initConnection as initHappychatConnection } from 'state/happychat/conne
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import { setRoute as setRouteAction } from 'state/route/actions';
+import { setRoute } from 'state/route/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
@@ -173,7 +173,7 @@ const oauthTokenMiddleware = () => {
 
 const setRouteMiddleware = () => {
 	page( '*', ( context, next ) => {
-		context.store.dispatch( setRouteAction( context.pathname, context.query ) );
+		context.store.dispatch( setRoute( context.pathname, context.query ) );
 
 		next();
 	} );
