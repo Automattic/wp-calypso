@@ -378,7 +378,7 @@ object RunAllUnitTests : BuildType({
 
 				# Build New Strings .pot
 				git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-				bash -vx gp-localci-client/generate-new-strings-pot.sh "%teamcity.build.branch%" "%build.vcs.number.calypso_WpCalypso%" "${'$'}HOME/translations"
+				bash -vx gp-localci-client/generate-new-strings-pot.sh "%build.vcs.number.calypso_WpCalypso%" "%build.vcs.number.calypso_WpCalypso%" "${'$'}HOME/translations"
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
