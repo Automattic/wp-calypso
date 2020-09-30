@@ -73,7 +73,6 @@
 		"login/native-login-links": true,
 		"login/wp-login": true,
 		"mailchimp": false,
-		"manage/all-domains": true,
 		"manage/comments": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,

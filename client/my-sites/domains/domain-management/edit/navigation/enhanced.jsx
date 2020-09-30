@@ -9,7 +9,6 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { addQueryArgs } from '@wordpress/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import {
@@ -301,7 +300,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getManageSite() {
 		const { isManagingAllSites, selectedSite, translate } = this.props;
 
-		if ( ! config.isEnabled( 'manage/all-domains' ) || ! isManagingAllSites ) {
+		if ( ! isManagingAllSites ) {
 			return null;
 		}
 

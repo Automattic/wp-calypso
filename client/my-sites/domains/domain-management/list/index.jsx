@@ -5,7 +5,6 @@
  */
 import { connect } from 'react-redux';
 import { find, findIndex, get, identity, noop, times, isEmpty } from 'lodash';
-import Gridicon from 'components/gridicon';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -17,13 +16,10 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import DomainWarnings from 'my-sites/domains/components/domain-warnings';
 import DomainOnly from './domain-only';
-import ListItem from './item';
 import ListItemPlaceholder from './item-placeholder';
 import Main from 'components/main';
 import { domainManagementRoot, domainManagementList } from 'my-sites/domains/paths';
-import SectionHeader from 'components/section-header';
 import { Button, Card, CompactCard } from '@automattic/components';
-import PlansNavigation from 'my-sites/plans/navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import { setPrimaryDomain } from 'state/sites/domains/actions';
 import Notice from 'components/notice';
@@ -142,35 +138,6 @@ export class List extends React.Component {
 		);
 	}
 
-	renderOldDesign() {
-		const sectionLabel = this.props.renderAllSites ? this.props.selectedSite.title : null;
-
-		return (
-			<>
-				{ ! this.props.renderAllSites && (
-					<FormattedHeader
-						brandFont
-						className="domain-management__page-heading"
-						headerText={ this.props.translate( 'Site Domains' ) }
-						align="left"
-					/>
-				) }
-				{ ! this.props.renderAllSites && (
-					<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
-				) }
-				{ ! this.props.renderAllSites && this.domainWarnings() }
-
-				{ ! this.props.renderAllSites && this.domainCreditsInfoNotice() }
-
-				<SectionHeader label={ sectionLabel }>{ this.headerButtons() }</SectionHeader>
-
-				<div className="domain-management-list__items">{ this.listItems() }</div>
-
-				<DomainToPlanNudge />
-			</>
-		);
-	}
-
 	renderNewDesign() {
 		return (
 			<>
@@ -251,9 +218,7 @@ export class List extends React.Component {
 			<Main wideLayout>
 				<DocumentHead title={ headerText } />
 				<SidebarNavigation />
-				{ ! this.props.renderAllSites && config.isEnabled( 'manage/all-domains' )
-					? this.renderNewDesign()
-					: this.renderOldDesign() }
+				{ this.renderNewDesign() }
 			</Main>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -294,56 +259,6 @@ export class List extends React.Component {
 			primaryDomainIndex: -1,
 		} );
 	};
-
-	headerButtons() {
-		if ( this.props.selectedSite && this.props.selectedSite.jetpack && ! this.props.isAtomicSite ) {
-			return null;
-		}
-
-		if ( this.state.changePrimaryDomainModeEnabled ) {
-			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			return (
-				<Button
-					disabled={ this.state.settingPrimaryDomain }
-					// eslint-disable-next-line react/no-string-refs
-					ref="cancelChangePrimaryButton"
-					borderless
-					compact
-					className="domain-management-list__cancel-change-primary-button"
-					onClick={ this.disableChangePrimaryDomainMode }
-				>
-					<Gridicon icon="cross" size={ 24 } />
-				</Button>
-			);
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
-		}
-		return (
-			<>
-				{ this.changePrimaryButton() }
-				{ this.addDomainButton() }
-			</>
-		);
-	}
-
-	changePrimaryButton() {
-		if ( ! this.props.domains || this.props.domains.length < 2 ) {
-			return null;
-		}
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		return (
-			<Button
-				compact
-				className="domain-management-list__change-primary-button"
-				onClick={ this.enableChangePrimaryDomainMode }
-			>
-				{ this.props.translate( 'Change primary', {
-					context: 'Button label for changing primary domain',
-				} ) }
-			</Button>
-		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
 
 	addDomainButton() {
 		if ( ! config.isEnabled( 'upgrades/domain-search' ) ) {
@@ -559,50 +474,6 @@ export class List extends React.Component {
 			/>,
 			...domainListItems,
 			manageAllDomainsLink,
-		];
-	}
-
-	listItems() {
-		if ( this.isLoading() ) {
-			return times( 3, ( n ) => <ListItemPlaceholder key={ `item-${ n }` } /> );
-		}
-
-		const { translate, selectedSite, renderAllSites, isDomainOnly, hasSingleSite } = this.props;
-
-		const domains =
-			selectedSite.jetpack || ( renderAllSites && isDomainOnly )
-				? this.filterOutWpcomDomains( this.props.domains )
-				: this.props.domains;
-
-		const domainListItems = domains.map( ( domain, index ) => {
-			return (
-				<ListItem
-					key={ index + domain.name }
-					domain={ domain }
-					enableSelection={ this.state.changePrimaryDomainModeEnabled && domain.canSetAsPrimary }
-					isSelected={ index === this.state.primaryDomainIndex }
-					selectionIndex={ index }
-					busy={ this.state.settingPrimaryDomain && index === this.state.primaryDomainIndex }
-					busyMessage={ this.props.translate( 'Setting Primary Domain…', {
-						context: 'Shows up when the primary domain is changing and the user is waiting',
-					} ) }
-					onSelect={ this.handleUpdatePrimaryDomain }
-					onClick={ this.goToEditDomainRoot }
-					shouldUpgradeToMakePrimary={ this.shouldUpgradeToMakeDomainPrimary( domain ) }
-					onUpgradeClick={ this.goToPlans }
-				/>
-			);
-		} );
-
-		if ( hasSingleSite || renderAllSites || ! config.isEnabled( 'manage/all-domains' ) ) {
-			return domainListItems;
-		}
-
-		return [
-			...domainListItems,
-			<CompactCard key="manage-all-domains" href={ domainManagementRoot() }>
-				{ translate( 'Manage all your domains' ) }
-			</CompactCard>,
 		];
 	}
 
