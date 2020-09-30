@@ -228,15 +228,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	usernameAATest: {
-		datestamp: '20200921',
-		variations: {
-			variant: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
 	oneClickUpsell: {
 		datestamp: '20200922',
 		variations: {

@@ -1071,7 +1071,7 @@ export default connect(
 		let displayUsernameInput = true;
 
 		if ( eligibleFlowsForRemoveUsernameTest.includes( ownProps.flowName ) ) {
-			'control' === abtest( 'removeUsernameInSignup' );
+			displayUsernameInput = 'control' === abtest( 'removeUsernameInSignup' );
 		} else if ( isDisplayUsernamePropSet ) {
 			displayUsernameInput = ownProps.displayUsernameInput;
 		}
