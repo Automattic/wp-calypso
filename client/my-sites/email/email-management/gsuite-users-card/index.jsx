@@ -32,12 +32,8 @@ import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/
 import './style.scss';
 
 class GSuiteUsersCard extends React.Component {
-	getDomainsAsList() {
-		return this.props.domainsAsList;
-	}
-
 	canAddUsers( domainName ) {
-		return this.getDomainsAsList().some(
+		this.props.domainsAsList.some(
 			( domain ) =>
 				domain &&
 				domain.name === domainName &&
@@ -141,8 +137,8 @@ class GSuiteUsersCard extends React.Component {
 	}
 
 	render() {
-		const { gsuiteUsers, selectedSiteSlug } = this.props;
-		const pendingDomains = this.getDomainsAsList().filter( hasPendingGSuiteUsers );
+		const { domainsAsList, gsuiteUsers, selectedSiteSlug } = this.props;
+		const pendingDomains = domainsAsList.filter( hasPendingGSuiteUsers );
 		const usersByDomain = groupBy( gsuiteUsers, 'domain' );
 
 		return (
@@ -156,7 +152,7 @@ class GSuiteUsersCard extends React.Component {
 					/>
 				) }
 
-				{ this.getDomainsAsList()
+				{ domainsAsList
 					.filter( ( domain ) => domain.name in usersByDomain || hasTitanMailWithUs( domain ) )
 					.map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain.name ] ) ) }
 			</div>
