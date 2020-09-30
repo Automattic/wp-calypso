@@ -158,9 +158,12 @@ const SelectorPage = ( {
 
 	const showJetpackFreeCard = isInConnectFlow || isJetpackCloud();
 
+	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
+	const viewTrackerProps = siteId ? { site: siteSlug } : {};
+
 	return (
 		<Main className="selector__main" wideLayout>
-			<PageViewTracker path={ rootUrl } title="Plans" />
+			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
 			{ header }
 			<PlansFilterBar
 				showDurations
