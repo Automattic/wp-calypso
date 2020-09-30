@@ -5,5 +5,5 @@
  * @returns {boolean}       Whether the section is loading
  */
 export default function isSectionLoading( state ) {
-	return state.ui.isLoading;
+	return state.ui.isSectionLoading;
 }
