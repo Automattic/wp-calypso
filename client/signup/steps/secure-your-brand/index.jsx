@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
  */
 import { getSiteBySlug } from 'state/sites/selectors';
 import StepWrapper from 'signup/step-wrapper';
-import GutenboardingHeader from 'my-sites/plans-features-main/gutenboarding-header';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
@@ -55,23 +54,6 @@ export class SecureYourBrandStep extends Component {
 		this.onSelectAdd( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
 	};
 
-	getGutenboardingHeader() {
-		// launch flow coming from Gutenboarding
-		if ( this.props.flowName === 'new-launch' ) {
-			const { headerText, subHeaderText } = this.props;
-
-			return (
-				<GutenboardingHeader
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					onFreePlanSelect={ this.handleFreePlanButtonClick }
-				/>
-			);
-		}
-
-		return null;
-	}
-
 	recommendedDomains() {
 		return (
 			<div className="secure-your-brand">
@@ -113,7 +95,6 @@ export class SecureYourBrandStep extends Component {
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ 'TBD' }
 					backLabelText={ translate( 'Back' ) }
-					hideFormattedHeader={ !! this.getGutenboardingHeader() }
 				/>
 			</div>
 		);
