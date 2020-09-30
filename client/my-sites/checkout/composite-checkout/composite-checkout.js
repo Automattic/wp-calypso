@@ -115,6 +115,7 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
+	isInEditor,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -236,6 +237,7 @@ export default function CompositeCheckout( {
 		siteId,
 		hideNudge,
 		recordEvent,
+		isInEditor,
 		isLoggedOutCart,
 	} );
 

@@ -54,6 +54,7 @@ export function getThankYouPageUrl( {
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
+	isInEditor,
 } ) {
 	debug( 'starting getThankYouPageUrl' );
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
@@ -100,8 +101,12 @@ export function getThankYouPageUrl( {
 		product,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
-
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
+	if ( ! hasEcommercePlan( cart ) && isInEditor ) {
+		// If the user is making a purchase/upgrading within the editor,
+		// we want to return them back to the editor after the purchase is successful.
+		saveUrlToCookieIfEditor( saveUrlToCookie, window?.location.href );
+	}
 	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
 
 	// Fetch the thank-you page url from a cookie if it is set
@@ -340,6 +345,10 @@ function saveUrlToCookieIfEcomm( saveUrlToCookie, cart, destinationUrl ) {
 	}
 }
 
+function saveUrlToCookieIfEditor( saveUrlToCookie, destinationUrl ) {
+	saveUrlToCookie( destinationUrl );
+}
+
 function modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug ) {
 	const signupDestination = getUrlFromCookie();
 	if ( ! signupDestination ) {
@@ -367,6 +376,7 @@ export function useGetThankYouUrl( {
 	siteId,
 	hideNudge,
 	recordEvent,
+	isInEditor,
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
@@ -402,6 +412,7 @@ export function useGetThankYouUrl( {
 			hideNudge,
 			didPurchaseFail,
 			isTransactionResultEmpty,
+			isInEditor,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );

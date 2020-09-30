@@ -59,7 +59,12 @@ class EditorCheckout extends Component {
 					[X] Close Sidebar
 				</button>
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-					<CompositeCheckout siteId={ site.ID } siteSlug={ site.slug } getCart={ getCart } />
+					<CompositeCheckout
+						isInEditor={ true }
+						siteId={ site.ID }
+						siteSlug={ site.slug }
+						getCart={ getCart }
+					/>
 				</StripeHookProvider>
 			</div>
 		);
