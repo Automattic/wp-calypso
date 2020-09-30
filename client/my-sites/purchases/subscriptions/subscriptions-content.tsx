@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import PurchasesSite from 'me/purchases/purchases-site/index.jsx';
-import { getSitePurchases, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import { CompactCard } from '@automattic/components';
@@ -17,7 +17,7 @@ import EmptyContent from 'components/empty-content';
 import './style.scss';
 
 export default function SubscriptionsContent() {
-	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedUserPurchasesFromServer( state ) );
+	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
