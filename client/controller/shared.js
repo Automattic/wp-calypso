@@ -34,6 +34,10 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 
 export function setSectionMiddleware( section ) {
 	return ( context, next = noop ) => {
+		// save the section in context
+		context.section = section;
+
+		// save the section to Redux, too (poised to become legacy)
 		context.store.dispatch( setSection( section ) );
 		next();
 	};
