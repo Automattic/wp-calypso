@@ -67,7 +67,7 @@
 	flex: inherit;
 }
 
-input.map-domain-step__external-domain {
+input[type='text'].form-text-input.map-domain-step__external-domain {
 	flex-grow: 1;
 	width: auto;
 }

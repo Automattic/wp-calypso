@@ -77,7 +77,7 @@
 	margin-right: 10px;
 }
 
-.wpview-type-simple-payments__pay-quantity-input {
+input[type='text'].form-text-input.wpview-type-simple-payments__pay-quantity-input {
 	border: 1px solid var( --color-neutral-20 );
 	padding: 6px 8px;
 	max-width: 42px;

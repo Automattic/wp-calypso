@@ -2,7 +2,6 @@
 // ==========================================================================
 // Global form elements
 // ==========================================================================
-input[type='text'],
 textarea {
 	@extend %form-field;
 }
@@ -11,7 +10,6 @@ textarea {
 	border-radius: 2px;
 }
 
-input[type='text'],
 textarea,
 label {
 	box-sizing: border-box;

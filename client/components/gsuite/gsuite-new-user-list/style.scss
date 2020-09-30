@@ -60,18 +60,18 @@
 	flex-direction: column;
 	flex: 1;
 
-	select {
+	select.form-select {
 		width: 100%;
 	}
 
 	@include breakpoint-deprecated( '>800px' ) {
 		flex-direction: row;
 
-		input {
+		input[type='text'].form-text-input {
 			margin: 0;
 		}
 
-		select {
+		select.form-select {
 			border-bottom-left-radius: 0;
 			border-bottom-width: 1px;
 			border-top-left-radius: 0;

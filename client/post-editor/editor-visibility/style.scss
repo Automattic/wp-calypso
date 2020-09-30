@@ -25,7 +25,7 @@
 		}
 	}
 
-	.form-text-input {
+	input[type='text'].form-text-input {
 		font-size: $font-body-small;
 		margin-top: 8px;
 	}
