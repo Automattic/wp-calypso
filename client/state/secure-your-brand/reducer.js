@@ -14,7 +14,7 @@ export const secureYourBrand = withSchemaValidation(
 	( state = [], action ) => {
 		switch ( action.type ) {
 			case SECURE_YOUR_BRAND_SUCCESS:
-				return [ ...action.domains ];
+				return { domains: [ ...action.domains ] };
 		}
 
 		return state;
