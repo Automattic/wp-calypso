@@ -10,8 +10,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { isWithinBreakpoint } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ import { useSelector } from 'react-redux';
 import CurrentSite from 'my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
+import CollapseSidebar from './collapse-sidebar';
 import useSiteMenuItems from './use-site-menu-items';
 import useDomainsViewStatus from './use-domains-view-status';
 import { getIsRequestingAdminMenu } from 'state/admin-menu/selectors';
@@ -34,6 +36,13 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
+	const [ collapsed, setCollapsed ] = useState( isWithinBreakpoint( '<960px' ) ? true : false );
+
+	useEffect( () => {
+		collapsed
+			? document.body.classList.add( 'is-sidebar-collapsed' )
+			: document.body.classList.remove( 'is-sidebar-collapsed' );
+	}, [ collapsed ] );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -76,6 +85,12 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					/>
 				);
 			} ) }
+			<CollapseSidebar
+				key="collapse"
+				title="Collapse menu"
+				icon="dashicons-admin-collapse"
+				onClick={ () => setCollapsed( ! collapsed ) }
+			/>
 		</Sidebar>
 	);
 };

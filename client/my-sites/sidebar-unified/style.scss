@@ -19,6 +19,11 @@
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
+
+	.is-sidebar-collapsed & {
+		--sidebar-width-max: 44px;
+		--sidebar-width-min: 44px;
+	}
 }
 
 // Local Vars
@@ -187,6 +192,78 @@ $font-size: rem( 14px );
 	.site__badge {
 		background: var( --color-sidebar-text );
 	}
+
+	// client/blocks/upsell-nudge/style.scss
+	.upsell-nudge.banner.card.is-compact {
+		background-color: #fff;
+		color: #000;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
+		color: #000;
+	}
+
+	.is-sidebar-collapsed & {
+		.dashicons-admin-collapse::before {
+			transform: rotate( 180deg );
+		}
+
+		.current-site__switch-sites .button.is-borderless {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 0;
+			height: 31px;
+		}
+
+		.current-site__switch-sites .button.is-borderless .gridicon {
+			width: 14px;
+			height: 14px;
+			position: static;
+			left: inherit;
+			top: inherit;
+			margin-right: 0;
+		}
+
+		.current-site__switch-sites-label {
+			display: none;
+		}
+
+		.current-site .site .site__info {
+			display: none;
+		}
+
+		.site__content {
+			padding: 9px 6px;
+		}
+
+		.site__home {
+			top: 9px;
+			left: 5px;
+		}
+
+		.current-site__notices > a::before {
+			content: '\f534';
+			font-family: 'dashicons';
+			/* stylelint-disable-next-line scales/font-size */
+			font-size: 20px;
+			line-height: 20px;
+			background-color: #a7aaad;
+			color: white;
+			border-radius: 50%;
+			margin-left: 1px;
+		}
+
+		.upsell-nudge.banner.card.is-compact .banner__content {
+			display: none;
+		}
+
+		.sidebar__heading,
+		.sidebar__menu-link,
+		.sidebar__menu.is-togglable .sidebar__heading {
+			padding-left: 13px;
+		}
+	}
 }
 
 // Flyout menu (showing from >782px)
@@ -279,6 +356,10 @@ $font-size: rem( 14px );
 			}
 
 			.sidebar__menu.is-toggle-open .sidebar__heading::after {
+				display: none;
+			}
+
+			.collapse-sidebar__toggle {
 				display: none;
 			}
 		}
