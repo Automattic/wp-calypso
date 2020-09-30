@@ -89,7 +89,6 @@
 		"manage/site-settings/categories": true,
 		"manage/themes-jetpack": true,
 		"manage/themes/details": true,
-		"manage/themes/details/jetpack": true,
 		"manage/themes/logged-out": true,
 		"me/account": true,
 		"me/account/color-scheme-picker": true,
