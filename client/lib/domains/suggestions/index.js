@@ -16,7 +16,7 @@ export const getSuggestionsVendor = ( options = {} ) => {
 	if ( options?.isSignup && ! options?.isDomainOnly ) {
 		return 'variation4_front';
 	}
-	if ( config.isEnabled( 'domains/premium-domain-purchases' ) ) {
+	if ( options?.isDomainOnly && config.isEnabled( 'domains/premium-domain-purchases' ) ) {
 		return 'variation7_front';
 	}
 	return 'variation2_front';
