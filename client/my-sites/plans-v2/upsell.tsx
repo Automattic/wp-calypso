@@ -211,7 +211,7 @@ const UpsellPage = ( {
 
 	const onPurchaseBothProducts = useTrackCallback(
 		() => checkout( siteSlug, [ productSlug, upsellProductSlug ], urlQueryArgs ),
-		'calypso_upsell_products_click',
+		'calypso_product_upsell_confirm_click',
 		{
 			site_id: siteId || undefined,
 			product_slug: productSlug,
@@ -222,7 +222,7 @@ const UpsellPage = ( {
 
 	const onPurchaseSingleProduct = useTrackCallback(
 		() => checkout( siteSlug, productSlug, urlQueryArgs ),
-		'calypso_upsell_product_click',
+		'calypso_product_upsell_skipped_click',
 		{
 			site_id: siteId || undefined,
 			product_slug: productSlug,
@@ -239,15 +239,11 @@ const UpsellPage = ( {
 		? getPathToDetails( rootUrl, urlQueryArgs, productOption, duration as Duration, siteSlug )
 		: selectorPageUrl;
 
-	const onBackButtonClick = useTrackCallback(
-		() => page( backUrl ),
-		'calypso_plans_upsell_back_click',
-		{
-			site_id: siteId || undefined,
-			product_slug: productSlug,
-			duration,
-		}
-	);
+	const onBackButtonClick = useTrackCallback( () => page( backUrl ), 'calypso_upsell_back_click', {
+		site_id: siteId || undefined,
+		product_slug: productSlug,
+		duration,
+	} );
 
 	const viewTrackerPath = siteId
 		? `${ rootUrl }/:product/${ durationToString( duration ) }/additions/:site`

@@ -115,7 +115,7 @@ const DetailsPage = ( {
 			newDuration === TERM_MONTHLY ? product.monthlyOptionSlug : product.annualOptionSlug;
 
 		dispatch(
-			recordTracksEvent( 'calypso_product_duration_change', {
+			recordTracksEvent( 'calypso_plans_duration_change', {
 				site_id: siteId || undefined,
 				product_slug: newProductSlug,
 				duration: newDuration,
@@ -132,7 +132,7 @@ const DetailsPage = ( {
 	);
 	const backButton = () => {
 		dispatch(
-			recordTracksEvent( 'calypso_plans_subtypes_back_click', {
+			recordTracksEvent( 'calypso_subtypes_back_click', {
 				site_id: siteId || undefined,
 				product_slug: productSlug,
 				duration,
