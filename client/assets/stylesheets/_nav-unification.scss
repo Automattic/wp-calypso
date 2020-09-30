@@ -44,12 +44,12 @@
 	}
 
 	// client/layout/masterbar/style.scss
-
 	.masterbar__item-new,
 	.masterbar__toggle-drafts.button.is-borderless {
 		height: 24px;
 		margin: 4px 8px;
-		border-radius: 2px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
 	}
 
 	.masterbar__item-new {
