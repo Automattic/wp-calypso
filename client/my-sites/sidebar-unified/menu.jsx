@@ -55,7 +55,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 			expanded={ isExpanded || selected }
 			title={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			className={ selected && 'selected' }
+			className={ selected && 'sidebar__menu--selected' }
 		>
 			{ children.map( ( item ) => {
 				const isSelected = selectedMenuItem?.url === item.url;
