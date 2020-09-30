@@ -69,7 +69,7 @@ const DetailsPage = ( {
 
 	const trackUpsellView = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_product_details_click', {
+			recordTracksEvent( 'calypso_product_upsell_click', {
 				site_id: siteId || undefined,
 				product_slug: productSlug,
 				duration,
