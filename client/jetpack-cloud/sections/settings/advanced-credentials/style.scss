@@ -1,25 +1,25 @@
-.top {
+.advanced-credentials {
 	.step-progress {
 		margin-top: 16px;
 		margin-bottom: 16px;
 	}
 }
 
-.top__server-connection-status {
+.advanced-credentials__server-connection-status {
 	margin-bottom: 0;
 }
 
-.top__server-connection-status-content {
+.advanced-credentials__server-connection-status-content {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 }
 
-.top__connection-status-failed,
-.top__connection-status-connected,
-.top__connection-status-connecting,
-.top__connection-status-disconnected,
-.top__connection-status-loading {
+.connection-status__failed,
+.connection-status__connected,
+.connection-status__connecting,
+.connection-status__disconnected,
+.connection-status__loading {
 	display: flex;
 	*:not( first-child ) {
 		margin-left: 8px;
@@ -31,23 +31,23 @@
 	align-items: center;
 }
 
-.top__connection-status-failed,
-.top__connection-status-disconnected {
+.connection-status__failed,
+.connection-status__disconnected {
 	color: var( --color-error );
 	fill: var( --color-error );
 }
 
-.top__connection-status-connecting {
+.connection-status__connecting {
 	color: var( --color-warning );
 	fill: var( --color-warning );
 }
 
-.top__connection-status-connected {
+.connection-status__connected {
 	color: var( --color-primary-50 );
 	fill: var( --color-primary-50 );
 }
 
-.top__connection-status-loading {
+.connection-status__loading {
 	circle {
 		@include placeholder();
 		fill: var( --color-neutral-5 );
