@@ -66,6 +66,7 @@ function shoppingCartReducer(
 		};
 	}
 
+	debug( 'processing requested action', action );
 	switch ( action.type ) {
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
