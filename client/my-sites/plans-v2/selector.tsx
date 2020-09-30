@@ -71,7 +71,7 @@ const SelectorPage = ( {
 	) => {
 		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
 			dispatch(
-				recordTracksEvent( 'calypso_product_crm_click', {
+				recordTracksEvent( 'calypso_product_external_click', {
 					site_id: siteId || undefined,
 					product_slug: product.productSlug,
 					duration: currentDuration,
