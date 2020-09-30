@@ -19,6 +19,7 @@ import PurchaseDetail from 'components/purchase-detail';
  * Image dependencies
  */
 import adsRemovedImage from 'assets/images/illustrations/removed-ads.svg';
+import earnImage from 'assets/images/customer-home/illustration--task-earn.svg';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
 	const plan = find( sitePlans.data, isPersonal );
@@ -31,6 +32,17 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } 
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+			/>
+
+			<PurchaseDetail
+				icon={ <img alt={ translate( 'Earn Illustration' ) } src={ earnImage } /> }
+				title={ translate( 'Make money with your website' ) }
+				description={ translate(
+					'Accept credit card payments today for just about anything – physical and digital goods, services, ' +
+						'donations and tips, or access to your exclusive content.'
+				) }
+				buttonText={ translate( 'Start Earning' ) }
+				href={ '/earn/' + selectedSite.slug }
 			/>
 
 			<PurchaseDetail
