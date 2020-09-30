@@ -167,8 +167,8 @@ $font-size: rem( 14px );
 	}
 }
 
-// Flyout menu showing from >660px
-@include breakpoint-deprecated( '>660px' ) {
+// Flyout menu (showing from >782px)
+@media screen and ( min-width: 783px ) {
 	.is-nav-unification {
 
 		// client/layout/style.scss
