@@ -27,7 +27,7 @@
 		margin-top: 24px; // Give labels some margin when they immediately follow a select
 	}
 
-	input[type='number'] {
+	input[type='number'].form-text-input {
 		padding: 0;
 		width: 50px;
 		text-align: center;
