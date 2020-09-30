@@ -90,7 +90,7 @@ class GSuiteUsersCard extends React.Component {
 
 	renderDomain( domain, users ) {
 		if ( hasTitanMailWithUs( domain ) ) {
-			return <TitanControlPanelLoginCard domain={ domain } />;
+			return <TitanControlPanelLoginCard domain={ domain } key={ `titan-${ domain.name }` } />;
 		}
 
 		return this.renderDomainWithGSuite( domain.name, users );
@@ -156,9 +156,9 @@ class GSuiteUsersCard extends React.Component {
 					/>
 				) }
 
-				{ this.getDomainsAsList().map( ( domain ) =>
-					this.renderDomain( domain, usersByDomain[ domain.name ] )
-				) }
+				{ this.getDomainsAsList()
+					.filter( ( domain ) => domain.name in usersByDomain || hasTitanMailWithUs( domain ) )
+					.map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain.name ] ) ) }
 			</div>
 		);
 	}
