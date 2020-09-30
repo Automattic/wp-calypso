@@ -1,4 +1,3 @@
-$masterbar-height: 46px;
 $autobar-height: 20px;
 
 // The WordPress.com Masterbar
@@ -8,7 +7,7 @@ $autobar-height: 20px;
 	color: var( --color-masterbar-text );
 	font-size: $font-body;
 	display: flex;
-	height: $masterbar-height;
+	height: var( --masterbar-height );
 	margin: 0;
 	position: fixed;
 	left: 0;
@@ -17,6 +16,7 @@ $autobar-height: 20px;
 	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 	transition: transform 0.2s ease-out;
+	box-sizing: border-box;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -104,8 +104,8 @@ $autobar-height: 20px;
 	position: relative;
 	color: var( --color-masterbar-text );
 	font-size: $font-body-small;
-	height: $masterbar-height;
-	line-height: $masterbar-height;
+	height: var( --masterbar-height );
+	line-height: var( --masterbar-height );
 	padding: 0 15px;
 	text-decoration: none;
 	cursor: default;

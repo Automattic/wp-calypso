@@ -48,7 +48,7 @@
 		& > .mce-toolbar-grp,
 		&::after {
 			position: fixed;
-			top: 47px;
+			top: var( --masterbar-height );
 		}
 
 		& > .mce-toolbar-grp {
@@ -179,6 +179,7 @@
 	}
 }
 
+/* stylelint-disable-next-line selector-combinator-space-before */
 .mce-toolbar
 	.mce-btn-group
 	.mce-btn.mce-toolbar-segment-end:not( .mce-hidden )

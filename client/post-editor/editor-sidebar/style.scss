@@ -1,6 +1,6 @@
 .editor-sidebar {
 	position: fixed;
-	top: 46px;
+	top: var( --masterbar-height );
 	right: calc( -1 * var( --sidebar-width-max ) );
 	bottom: 0;
 	display: flex;
