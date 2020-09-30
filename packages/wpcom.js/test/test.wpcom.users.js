@@ -14,17 +14,19 @@ describe( 'wpcom.users', function () {
 	var users = wpcom.users();
 
 	describe( 'wpcom.users.suggets', function () {
-		it( 'should get a list of possible users to suggest.', ( done ) => {
-			users
-				.suggest()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.equal( 'object', typeof data.suggestions );
-					assert.ok( data.suggestions instanceof Array );
+		it( 'should get a list of possible users to suggest.', () => {
+			return new Promise( ( done ) => {
+				users
+					.suggest()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.equal( 'object', typeof data.suggestions );
+						assert.ok( data.suggestions instanceof Array );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

@@ -143,31 +143,33 @@ describe( 'index', () => {
 					expect( setPrimaryDomainStub ).not.toHaveBeenCalled();
 				} );
 
-				// eslint-disable-next-line jest/no-test-callback
-				test( 'should call setPrimaryDomain with a domain name', ( done ) => {
-					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
-					expect( component.state( 'settingPrimaryDomain' ) ).toBe( true );
-					expect( component.state( 'primaryDomainIndex' ) ).toBe( 0 );
-					// `.setPrimaryDomain` should be called with the domain name
-					expect( setPrimaryDomainStub ).toHaveBeenCalledWith( defaultProps.domains[ 0 ].name );
-					setPrimaryDomainResolve();
-					setTimeout( () => {
-						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
-						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
-						done();
-					}, 0 );
+				test( 'should call setPrimaryDomain with a domain name', () => {
+					return new Promise( ( done ) => {
+						component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
+						expect( component.state( 'settingPrimaryDomain' ) ).toBe( true );
+						expect( component.state( 'primaryDomainIndex' ) ).toBe( 0 );
+						// `.setPrimaryDomain` should be called with the domain name
+						expect( setPrimaryDomainStub ).toHaveBeenCalledWith( defaultProps.domains[ 0 ].name );
+						setPrimaryDomainResolve();
+						setTimeout( () => {
+							expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
+							expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( false );
+							done();
+						}, 0 );
+					} );
 				} );
 
-				// eslint-disable-next-line jest/no-test-callback
-				test( 'should handle errors and revert the optimistic updates', ( done ) => {
-					component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
-					setPrimaryDomainReject( { error: 'Message' } );
-					setTimeout( () => {
-						expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
-						expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
-						expect( component.state( 'primaryDomainIndex' ) ).toBe( 1 );
-						done();
-					}, 0 );
+				test( 'should handle errors and revert the optimistic updates', () => {
+					return new Promise( ( done ) => {
+						component.instance().handleUpdatePrimaryDomain( 0, defaultProps.domains[ 0 ] );
+						setPrimaryDomainReject( { error: 'Message' } );
+						setTimeout( () => {
+							expect( component.state( 'settingPrimaryDomain' ) ).toBe( false );
+							expect( component.state( 'changePrimaryDomainModeEnabled' ) ).toBe( true );
+							expect( component.state( 'primaryDomainIndex' ) ).toBe( 1 );
+							done();
+						}, 0 );
+					} );
 				} );
 			} );
 		} );
