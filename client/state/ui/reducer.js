@@ -3,7 +3,7 @@
  */
 import {
 	SELECTED_SITE_SET,
-	SECTION_SET,
+	SECTION_LOADING_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'state/action-types';
@@ -45,10 +45,10 @@ export const siteSelectionInitialized = withoutPersistence( ( state = false, act
 	return state;
 } );
 
-export function isLoading( state = false, action ) {
+export function isSectionLoading( state = false, action ) {
 	switch ( action.type ) {
-		case SECTION_SET:
-			return action.isLoading !== undefined ? action.isLoading : state;
+		case SECTION_LOADING_SET:
+			return action.isSectionLoading;
 	}
 	return state;
 }
@@ -83,7 +83,7 @@ const reducer = combineReducers( {
 	checkout,
 	editorDeprecationDialog,
 	gutenbergOptInDialog,
-	isLoading,
+	isSectionLoading,
 	isNotificationsOpen,
 	isPreviewShowing,
 	language,

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SECTION_SET } from 'state/action-types';
+import { SECTION_SET, SECTION_LOADING_SET } from 'state/action-types';
 
 export function setSection( section, options = {} ) {
 	const action = {
@@ -13,4 +13,11 @@ export function setSection( section, options = {} ) {
 	}
 
 	return action;
+}
+
+export function setSectionLoading( isSectionLoading ) {
+	return {
+		type: SECTION_LOADING_SET,
+		isSectionLoading,
+	};
 }
