@@ -64,6 +64,7 @@ class PurchaseNotice extends Component {
 		selectedSite: PropTypes.object,
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		getManagePurchaseUrlFor: PropTypes.func,
+		isProductOwner: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -946,6 +947,20 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	renderNonProductOwnerNotice() {
+		const { translate } = this.props;
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-info"
+				text={ translate(
+					'This product was purchased by a different WordPress.com account. To manage this product, log in to that account or contact the account owner.'
+				) }
+			></Notice>
+		);
+	}
+
 	render() {
 		if ( this.props.isDataLoading ) {
 			return null;
@@ -953,6 +968,10 @@ class PurchaseNotice extends Component {
 
 		if ( isDomainTransfer( this.props.purchase ) ) {
 			return null;
+		}
+
+		if ( ! this.props.isProductOwner ) {
+			return this.renderNonProductOwnerNotice();
 		}
 
 		const consumedConciergeSessionNotice = this.renderConciergeConsumedNotice();

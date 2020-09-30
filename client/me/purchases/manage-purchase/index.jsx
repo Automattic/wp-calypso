@@ -502,7 +502,14 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId, translate, getManagePurchaseUrlFor, siteSlug } = this.props;
+		const {
+			purchase,
+			siteId,
+			translate,
+			isProductOwner,
+			getManagePurchaseUrlFor,
+			siteSlug,
+		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
@@ -551,13 +558,19 @@ class ManagePurchase extends Component {
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						/>
 					) }
-					{ preventRenewal ? this.renderSelectNewButton() : this.renderRenewButton() }
+					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
+					{ isProductOwner && ! preventRenewal && this.renderRenewButton() }
 				</Card>
-				<PurchasePlanDetails purchaseId={ this.props.purchaseId } />
-				{ preventRenewal ? this.renderSelectNewNavItem() : this.renderRenewNowNavItem() }
-				{ this.renderEditPaymentMethodNavItem() }
-				{ this.renderCancelPurchaseNavItem() }
-				{ this.renderRemovePurchaseNavItem() }
+				<PurchasePlanDetails
+					purchaseId={ this.props.purchaseId }
+					isProductOwner={ isProductOwner }
+				/>
+
+				{ isProductOwner && preventRenewal && this.renderSelectNewNavItem() }
+				{ isProductOwner && ! preventRenewal && this.renderRenewNowNavItem() }
+				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
+				{ isProductOwner && this.renderCancelPurchaseNavItem() }
+				{ isProductOwner && this.renderRemovePurchaseNavItem() }
 			</Fragment>
 		);
 	}
@@ -576,6 +589,7 @@ class ManagePurchase extends Component {
 			isPurchaseTheme,
 			translate,
 			getManagePurchaseUrlFor,
+			isProductOwner,
 		} = this.props;
 
 		let editCardDetailsPath = false;
@@ -626,6 +640,7 @@ class ManagePurchase extends Component {
 						renewableSitePurchases={ renewableSitePurchases }
 						editCardDetailsPath={ editCardDetailsPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+						isProductOwner={ isProductOwner }
 					/>
 				) }
 				<AsyncLoad
@@ -650,6 +665,8 @@ export default connect( ( state, props ) => {
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
 	const siteId = purchase ? purchase.siteId : null;
+	const userId = getCurrentUserId( state );
+	const isProductOwner = purchase && purchase.userId === userId;
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 	const isPurchasePlan = purchase && isPlan( purchase );
 	const isPurchaseTheme = purchase && isTheme( purchase );
@@ -667,12 +684,12 @@ export default connect( ( state, props ) => {
 		purchase,
 		purchaseAttachedTo,
 		siteId,
+		isProductOwner,
 		site,
 		renewableSitePurchases,
 		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, abtest ),
 		isPurchaseTheme,
 		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
 		isAtomicSite: isSiteAtomic( state, siteId ),
-		userId: getCurrentUserId( state ),
 	};
 } )( localize( ManagePurchase ) );

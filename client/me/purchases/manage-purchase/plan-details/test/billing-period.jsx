@@ -31,6 +31,7 @@ const props = {
 		ID: 123,
 		name: 'Site Name',
 	},
+	isProductOwner: true,
 	recordTracksEvent: jest.fn(),
 	translate,
 	moment,
