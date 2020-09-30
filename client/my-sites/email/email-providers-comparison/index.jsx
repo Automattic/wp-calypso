@@ -46,13 +46,13 @@ class EmailProvidersComparison extends React.Component {
 
 	goToEmailForwarding = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
-		recordTracksEvent( 'calypso_email_providers_email_forwarding_click' );
+		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
 		page( emailManagementForwarding( selectedSiteSlug, domain.name, currentRoute ) );
 	};
 
 	goToAddGSuite = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
-		recordTracksEvent( 'calypso_email_providers_add_gsuite_click' );
+		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'gsuite' } );
 		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domain.name, 'basic', currentRoute ) );
 	};
 
@@ -71,7 +71,7 @@ class EmailProvidersComparison extends React.Component {
 				window.location.href = provisioningURL;
 			}
 		} );
-		recordTracksEvent( 'calypso_email_providers_add_titan_click' );
+		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'titan' } );
 	};
 
 	fetchTitanOrderProvisioningURL = ( domain ) => {
