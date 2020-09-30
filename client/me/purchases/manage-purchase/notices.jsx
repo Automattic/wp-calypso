@@ -12,6 +12,7 @@ import { isEmpty, merge, minBy } from 'lodash';
  */
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
+import { getEditCardDetailsPath } from '../utils';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -64,11 +65,13 @@ class PurchaseNotice extends Component {
 		selectedSite: PropTypes.object,
 		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		getManagePurchaseUrlFor: PropTypes.func,
+		getAddPaymentMethodUrlFor: PropTypes.func,
 		isProductOwner: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		getManagePurchaseUrlFor: managePurchase,
+		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
 	};
 
 	state = {
@@ -338,6 +341,7 @@ class PurchaseNotice extends Component {
 			selectedSite,
 			renewableSitePurchases,
 			getManagePurchaseUrlFor,
+			getAddPaymentMethodUrlFor,
 		} = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/upcoming-renewals-notices' ) ) {
@@ -643,7 +647,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = showCreditCardExpiringWarning( currentPurchase ) ? 'is-error' : 'is-info';
-				noticeActionHref = '/me/purchases/add-credit-card';
+				noticeActionHref = getAddPaymentMethodUrlFor( selectedSite.slug, currentPurchase );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-soon-others-renew-soon-cc-expiring';
@@ -737,7 +741,7 @@ class PurchaseNotice extends Component {
 				);
 			} else {
 				noticeStatus = 'is-info';
-				noticeActionHref = '/me/purchases/add-credit-card';
+				noticeActionHref = getAddPaymentMethodUrlFor( selectedSite.slug, currentPurchase );
 				noticeActionOnClick = this.handleExpiringCardNoticeUpdateAll;
 				noticeActionText = translate( 'Update all' );
 				noticeImpressionName = 'current-renews-later-others-renew-soon-cc-expiring';
