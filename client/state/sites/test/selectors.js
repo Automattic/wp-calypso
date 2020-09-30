@@ -41,7 +41,6 @@ import {
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
-	hasJetpackSiteJetpackThemes,
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
@@ -2589,40 +2588,6 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
 			chaiExpect( canAutoUpdateCore ).to.equal( false );
-		} );
-	} );
-
-	describe( '#hasJetpackSiteJetpackThemes()', () => {
-		test( 'it should return `false` if jetpack version is smaller than 3.7-beta', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '3.7-alpha',
-					},
-				},
-			} );
-
-			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			chaiExpect( hasThemes ).to.equal( false );
-		} );
-
-		test( 'it should return `true` if jetpack version is greater or equal to 3.7-beta', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '3.7',
-					},
-				},
-			} );
-
-			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			chaiExpect( hasThemes ).to.equal( true );
 		} );
 	} );
 
