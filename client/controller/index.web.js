@@ -25,7 +25,7 @@ import { hydrate } from './web-util.js';
 /**
  * Re-export
  */
-export { setSection, setUpLocale } from './shared.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 export { render, hydrate, redirectLoggedIn } from './web-util.js';
 
 export const ProviderWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {

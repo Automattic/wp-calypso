@@ -8,7 +8,7 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import { serverRender, setShouldServerSideRender } from 'server/render';
-import { setSection as setSectionMiddlewareFactory } from 'controller';
+import { setSectionMiddleware } from 'controller';
 import { setRoute } from 'state/route/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
@@ -34,7 +34,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				route,
 				setUpRoute,
 				combineMiddlewares(
-					setSectionMiddlewareFactory( section ),
+					setSectionMiddleware( section ),
 					setRouteMiddleware,
 					setShouldServerSideRender,
 					...middlewares
