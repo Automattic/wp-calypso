@@ -18,6 +18,7 @@ import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StepProgress from 'components/step-progress';
+import CredentialsForm from './credentials-form';
 
 /**
  * Style dependencies
@@ -65,6 +66,7 @@ const AdvancedCredentials: FunctionComponent = () => {
 				return (
 					<div>
 						<h3>{ selectedHost }</h3>
+						<CredentialsForm />
 					</div>
 				);
 			case 0:
