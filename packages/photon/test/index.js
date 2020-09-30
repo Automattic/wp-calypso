@@ -1,4 +1,4 @@
-/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "expectPathname", "expectQuery", "expectHostedOnPhoton", "expectHostedOnPhotonInsecurely" ] } ] */
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectHostedOnPhoton", "expectHostedOnPhotonInsecurely", "expectPathname", "expectQuery", "expect"] }] */
 
 /**
  * Internal dependencies

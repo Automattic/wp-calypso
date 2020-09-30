@@ -20,6 +20,7 @@ const mockProps = {
 };
 
 describe( 'ca-form', () => {
+	// eslint-disable-next-line jest/expect-expect
 	test( 'should render without errors when extra is empty', () => {
 		const testProps = {
 			...mockProps,

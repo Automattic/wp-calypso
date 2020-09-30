@@ -19,6 +19,7 @@ describe( 'wpcom', function () {
 	var wpcom = util.wpcomPublic();
 
 	describe( 'wpcom.promises', function () {
+		// eslint-disable-next-line jest/expect-expect
 		it( 'should fail when slower than timeout', ( done ) => {
 			wpcom
 				.site( util.site() )
@@ -28,6 +29,7 @@ describe( 'wpcom', function () {
 				.catch( trueAssertion( done ) );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		it( 'should still catch() with timeout()', ( done ) => {
 			wpcom
 				.site( util.site() )

@@ -112,6 +112,7 @@ describe( 'wpcom.me', function () {
 	} );
 
 	describe( 'wpcom.me.sites', function () {
+		// eslint-disable-next-line jest/expect-expect
 		it( 'should require user sites object', ( done ) => {
 			me.sites()
 				.then( () => done() )

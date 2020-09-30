@@ -114,11 +114,13 @@ describe( 'flow-controller', () => {
 			} );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should call apiRequestFunction on steps with that property', ( done ) => {
 			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
 			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should not call apiRequestFunction multiple times', ( done ) => {
 			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
 			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
@@ -227,6 +229,7 @@ describe( 'flow-controller', () => {
 			} ).toThrow();
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted without an error', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
@@ -241,6 +244,7 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a flow with optional dependencies', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted, including optional dependency', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {
@@ -264,6 +268,7 @@ describe( 'flow-controller', () => {
 			);
 		} );
 
+		// eslint-disable-next-line jest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted, excluding optional dependency', ( done ) => {
 			const store = createSignupStore();
 			signupFlowController = new SignupFlowController( {

@@ -162,6 +162,29 @@ module.exports = {
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',
 
+		'jest/expect-expect': [
+			'error',
+			{
+				assertFunctionNames: [
+					// Jest
+					'expect',
+
+					// Chai
+					'chai.assert',
+					'chai.assert.*',
+					'assert',
+					'assert.*',
+					'equal',
+					'ok',
+					'deepStrictEqual',
+					'chaiExpect',
+
+					// Sinon
+					'sinon.assert.*',
+				],
+			},
+		],
+
 		// Only use known tag names plus `jest-environment`.
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 

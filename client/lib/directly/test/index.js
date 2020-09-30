@@ -74,6 +74,7 @@ describe( 'index', () => {
 					.then( () => done() );
 			} );
 
+			// eslint-disable-next-line jest/expect-expect
 			test( 'resolves the returned promise if the library load succeeds', ( done ) => {
 				directly.initialize().then( () => done() );
 			} );
