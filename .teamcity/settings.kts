@@ -376,10 +376,9 @@ object RunAllUnitTests : BuildType({
 					--base "${'$'}{HOME}" \
 					--output "${'$'}{HOME}/artifacts/translations/calypso-strings.pot"
 
-				set -x
 				# Build New Strings .pot
 				git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-				bash gp-localci-client/generate-new-strings-pot.sh "" "%build.vcs.number.calypso_WpCalypso%" "${'$'}HOME/translations"
+				bash -vx gp-localci-client/generate-new-strings-pot.sh "" "%build.vcs.number.calypso_WpCalypso%" "${'$'}HOME/translations"
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
