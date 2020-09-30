@@ -356,6 +356,35 @@ object RunAllUnitTests : BuildType({
 			dockerImage = "%docker_image%"
 			dockerRunParameters = "-u %env.UID%"
 		}
+		script {
+			name = "Build translations"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export NODE_ENV="production"
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Extract strings
+				npx https://github.com/Automattic/wp-babel-makepot \
+					"${'$'}{HOME}/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" \
+					--ignore "**/node_modules/**,**/test/**,**/*.d.ts" \
+					--base "${'$'}{HOME}" \
+					--output "${'$'}{HOME}/artifacts/translations/calypso-strings.pot"
+
+				set -x
+				# Build New Strings .pot
+				git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
+				bash gp-localci-client/generate-new-strings-pot.sh "" "%build.vcs.number.calypso_WpCalypso%" "${'$'}HOME/translations"
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
 	}
 
 	triggers {
