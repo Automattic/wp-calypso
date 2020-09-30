@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -36,6 +36,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	link,
 	selected,
 } ) => {
+	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
@@ -43,9 +44,14 @@ export const MySitesSidebarUnifiedMenu = ( {
 		children && children.find( ( menuItem ) => itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
 
+	/**
+	 * One time only, auto-expand the currently active section, or the section
+	 * which contains the current active item.
+	 */
 	useEffect( () => {
-		if ( selected || childIsSelected ) {
+		if ( ! hasAutoExpanded.current && ( selected || childIsSelected ) ) {
 			reduxDispatch( expandSection( sectionId ) );
+			hasAutoExpanded.current = true;
 		}
 	}, [ selected, childIsSelected, reduxDispatch, sectionId ] );
 
