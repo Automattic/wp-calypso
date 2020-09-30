@@ -61,12 +61,14 @@ class PurchaseMeta extends Component {
 		purchase: PropTypes.object,
 		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
+		getManagePurchaseUrlFor: PropTypes.func,
 	};
 
 	static defaultProps = {
 		hasLoadedSites: false,
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
+		getManagePurchaseUrlFor: managePurchase,
 	};
 
 	renderPrice() {
@@ -163,10 +165,10 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOn() {
-		const { moment, purchase, siteSlug, translate } = this.props;
+		const { moment, purchase, siteSlug, translate, getManagePurchaseUrlFor } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = managePurchase( siteSlug, purchase.attachedToPurchaseId );
+			const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
 
 			return (
 				<span>
