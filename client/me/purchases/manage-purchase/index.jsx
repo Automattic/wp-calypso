@@ -575,6 +575,7 @@ class ManagePurchase extends Component {
 			purchaseAttachedTo,
 			isPurchaseTheme,
 			translate,
+			getManagePurchaseUrlFor,
 		} = this.props;
 
 		let editCardDetailsPath = false;
@@ -624,6 +625,7 @@ class ManagePurchase extends Component {
 						purchaseAttachedTo={ purchaseAttachedTo }
 						renewableSitePurchases={ renewableSitePurchases }
 						editCardDetailsPath={ editCardDetailsPath }
+						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					/>
 				) }
 				<AsyncLoad
