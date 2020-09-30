@@ -22,8 +22,6 @@ import JetpackConnectPage from '../lib/pages/jetpack/jetpack-connect-page';
 import LoginPage from '../lib/pages/login-page';
 import JetpackComPage from '../lib/pages/external/jetpackcom-page';
 import JetpackComFeaturesDesignPage from '../lib/pages/external/jetpackcom-features-design-page';
-import WooWizardSetupPage from '../lib/pages/woocommerce/woo-wizard-setup-page';
-import WooWizardJetpackPage from '../lib/pages/woocommerce/woo-wizard-jetpack-page';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
@@ -33,11 +31,6 @@ import SecurePaymentComponent from '../lib/components/secure-payment-component';
 import WPHomePage from '../lib/pages/wp-home-page';
 import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
 import MyPlanPage from '../lib/pages/my-plan-page';
-import WooWizardWelcomePage from '../lib/pages/woocommerce/woo-wizard-welcome-page';
-import WooWizardIndustryPage from '../lib/pages/woocommerce/woo-wizard-industry-page';
-import WooWizardProductPage from '../lib/pages/woocommerce/woo-wizard-product-page';
-import WooWizardBusinessDetailsPage from '../lib/pages/woocommerce/woo-wizard-business-details-page';
-import WooWizardThemePage from '../lib/pages/woocommerce/woo-wizard-theme-page';
 import WPAdminInPlaceApprovePage from '../lib/pages/wp-admin/wp-admin-in-place-approve-page';
 import WPAdminInPlacePlansPage from '../lib/pages/wp-admin/wp-admin-in-place-plans-page';
 
@@ -59,21 +52,6 @@ before( async function () {
 
 describe( `Jetpack Connect: (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-
-	// Expired sites cleanup is moved to async job: `e2e_jetpack_cleanup_user`
-	describe.skip( 'Disconnect expired sites: @parallel @jetpack @canary', function () {
-		const timeout = mochaTimeOut * 10;
-
-		this.timeout( timeout );
-
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can disconnect any expired sites', async function () {
-			return await new JetpackConnectFlow( driver, 'jetpackConnectUser' ).removeSites( timeout );
-		} );
-	} );
 
 	describe( 'Connect From wp-admin: @parallel @jetpack @canary', function () {
 		before( async function () {
@@ -273,93 +251,5 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 			const isPremium = await myPlanPage.isPremium();
 			assert( isPremium, 'Can not verify Premium plan' );
 		} );
-	} );
-
-	// The Woo wizard is just not reliable.
-	describe.skip( 'Connect From WooCommerce plugin when Jetpack is not installed: @parallel @jetpack', function () {
-		const countryCode = 'US';
-		const stateCode = 'CO';
-		const address = '2101 Blake St';
-		const address2 = '';
-		const city = 'Denver';
-		const postalCode = '80205';
-
-		before( async function () {
-			return await driverManager.ensureNotLoggedIn( driver );
-		} );
-
-		step( 'Can login into WordPress.com', async function () {
-			const loginFlow = new LoginFlow( driver, 'jetpackConnectUser' );
-			return await loginFlow.login();
-		} );
-
-		step( 'Can create wporg site', async function () {
-			this.timeout( mochaTimeOut * 12 );
-
-			this.jnFlow = new JetpackConnectFlow( driver, null, 'wooCommerceNoJetpack' );
-			return await this.jnFlow.createJNSite();
-		} );
-
-		step( 'Can enter WooCommerce Wizard', async function () {
-			await WPAdminDashboardPage.refreshIfJNError( driver );
-			const wPAdminDashboardPage = await WPAdminDashboardPage.Expect( driver );
-			return await wPAdminDashboardPage.enterWooCommerceWizard();
-		} );
-
-		step( 'Can fill out and submit store information form', async function () {
-			await ( await WooWizardWelcomePage.Expect( driver ) ).start();
-			const wooWizardSetupPage = await WooWizardSetupPage.Expect( driver );
-			return await wooWizardSetupPage.enterStoreDetailsAndSubmit( {
-				countryCode,
-				stateCode,
-				address,
-				address2,
-				city,
-				postalCode,
-			} );
-		} );
-
-		step( 'Can select fashion industry', async function () {
-			await ( await WooWizardIndustryPage.Expect( driver ) ).selectFashionIndustry();
-		} );
-		step( 'Can select product type', async function () {
-			await ( await WooWizardProductPage.Expect( driver ) ).selectPhysicalProduct();
-		} );
-
-		step( 'Can fill business details', async function () {
-			await ( await WooWizardBusinessDetailsPage.Expect( driver ) ).fillBusinessInfo();
-		} );
-
-		step( 'Can skip theme step', async function () {
-			await ( await WooWizardThemePage.Expect( driver ) ).skip();
-		} );
-
-		// @TODO: Fix me! Disabled on May 23rd 2019 since the flow was getting stuck there.
-		// Passes locally and in manual testing, so we suspect it's the way how
-		// Calypso live-branches URL is passed to this step.
-		// /*
-		step( 'Can continue with Jetpack', async function () {
-			this.timeout( mochaTimeOut * 5 );
-
-			const wooWizardJetpackPage = await WooWizardJetpackPage.Expect( driver );
-			return await wooWizardJetpackPage.selectContinueWithJetpack();
-		} );
-
-		step( 'Can wait for Jetpack get connected', async function () {
-			const jetpackAuthorizePage = await JetpackAuthorizePage.Expect( driver );
-			// HACKY. Connection should be auto-approved, but it fails all the time, so we need to manually click the button
-			return await jetpackAuthorizePage.approveConnection();
-		} );
-
-		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlanJetpack();
-		} );
-
-		// Ignored for now. Discussion (internal ref): p1556635263170900-slack-proton
-		// step( 'Can see the Woo wizard ready page', async function() {
-		// 	return await WooWizardReadyPage.Expect( driver );
-		// } );
-		// */
 	} );
 } );

@@ -114,6 +114,7 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 
 			// This test passes locally but won't pass in CI.
 			// Disabling for now.
+			// eslint-disable-next-line jest/no-disabled-tests
 			describe.skip( 'Can upload Featured image', () => {
 				let fileDetails;
 				let gutenbergSidebar;
@@ -134,7 +135,7 @@ describe( `[${ host }] Editor: Media Upload (${ screenSize }) @parallel @jetpack
 				step( 'Can set Featured Image', async function () {
 					mediaPage = await MediaPage.Expect( driver );
 					await mediaPage.uploadFile( fileDetails.file );
-					await driver.sleep(2000);
+					await driver.sleep( 2000 );
 					await mediaPage.selectInsertImage();
 				} );
 

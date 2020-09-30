@@ -583,21 +583,6 @@ describe( 'wpcom.site', function () {
 				} );
 			} );
 		} );
-
-		describe.skip( 'wpcom.site.wpcomPluginsList', function () {
-			it( 'should request wpcom plugins list', () => {
-				return new Promise( ( done ) => {
-					wpcom
-						.site( fixture.site_business )
-						.wpcomPluginsList()
-						.then( ( list ) => {
-							assert.ok( list.plugins instanceof Array );
-							done();
-						} )
-						.catch( done );
-				} );
-			} );
-		} );
 	} );
 
 	describe( 'wpcom.site.get', function () {
