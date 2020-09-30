@@ -230,17 +230,35 @@ const UpsellPage = ( {
 		}
 	);
 
-	const pageTracker = useMemo(
-		() => (
-			<PageViewTracker
-				path={ `${ rootUrl }/:product_slug/${ durationToString( duration ) }/additions` }
-				title="Details"
-			/>
-		),
-		[ rootUrl, duration ]
+	// Construct a URL to send users to when they click the back button. Since at this moment
+	// there is only one Jetpack Scan option, the back button takes users back to the Selector
+	// page.
+	const productOption = getOptionFromSlug( productSlug );
+	const selectorPageUrl = getPathToSelector( rootUrl, urlQueryArgs, duration, siteSlug );
+	const backUrl = productOption
+		? getPathToDetails( rootUrl, urlQueryArgs, productOption, duration as Duration, siteSlug )
+		: selectorPageUrl;
+
+	const onBackButtonClick = useTrackCallback(
+		() => page( backUrl ),
+		'calypso_plans_upsell_back_click',
+		{
+			site_id: siteId || undefined,
+			product_slug: productSlug,
+			duration,
+		}
 	);
 
-	const selectorPageUrl = getPathToSelector( rootUrl, urlQueryArgs, duration, siteSlug );
+	const viewTrackerPath = siteId
+		? `${ rootUrl }/:product/${ durationToString( duration ) }/additions/:site`
+		: `${ rootUrl }/:product/${ durationToString( duration ) }/additions`;
+	const viewTrackerProps = siteId
+		? { site: siteSlug, product: productSlug }
+		: { product: productSlug };
+
+	const pageTracker = (
+		<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Details" />
+	);
 
 	// If the product is not valid send the user to the selector page.
 	if ( ! mainProduct ) {
@@ -253,16 +271,6 @@ const UpsellPage = ( {
 		onPurchaseSingleProduct();
 		return null;
 	}
-
-	// Construct a URL to send users to when they click the back button. Since at this moment
-	// there is only one Jetpack Scan option, the back button takes users back to the Selector
-	// page.
-	const productOption = getOptionFromSlug( productSlug );
-	const backUrl = productOption
-		? getPathToDetails( rootUrl, urlQueryArgs, productOption, duration as Duration, siteSlug )
-		: selectorPageUrl;
-
-	const onBackButtonClick = () => page( backUrl );
 
 	return (
 		<>
