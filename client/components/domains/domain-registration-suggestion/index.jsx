@@ -81,7 +81,9 @@ class DomainRegistrationSuggestion extends React.Component {
 	recordRender() {
 		if ( this.props.railcarId && isNumber( this.props.uiPosition ) ) {
 			let resultSuffix = '';
-			if ( this.props.suggestion.isRecommended ) {
+			if ( this.props.suggestion.is_premium ) {
+				resultSuffix = '#premium';
+			} else if ( this.props.suggestion.isRecommended ) {
 				resultSuffix = '#recommended';
 			} else if ( this.props.suggestion.isBestAlternative ) {
 				resultSuffix = '#best-alternative';
