@@ -106,7 +106,9 @@ export class WechatPaymentQRCode extends Component {
 					{ translate(
 						'On mobile? To open and pay with the WeChat Pay app directly, {{a}}click here{{/a}}.',
 						{
-							components: { a: <a href={ this.props.redirectUrl } /> },
+							components: {
+								a: <a target={ '_blank' } rel={ 'noreferrer' } href={ this.props.redirectUrl } />,
+							},
 							comment:
 								'Asking if mobile detection has failed and they would like to open and be redirected directly into the WeChat app in order to pay.',
 						}
