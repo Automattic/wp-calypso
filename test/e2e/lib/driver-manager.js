@@ -160,7 +160,14 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 					options.addArguments( `--display=:${global.displayNum}` );
 				}
 
-				options.addArguments( '--app=https://www.wordpress.com' );
+				if ( screenSize !== 'desktop' ) {
+					options.addArguments( '--window-size=1600,1200' );
+					options.setMobileEmulation( {
+						deviceMetrics: this.getBrowserSize(screenSize)
+					} );
+				} else {
+					options.addArguments( '--app=https://www.wordpress.com' );
+				}
 
 				const service = new chrome.ServiceBuilder( chromedriver.path ).build(); // eslint-disable-line no-case-declarations
 				chrome.setDefaultService( service );
@@ -205,11 +212,50 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	await driver
 		.manage()
 		.setTimeouts( { implicit: webDriverImplicitTimeOutMS, pageLoad: webDriverPageLoadTimeOutMS } );
-	if ( resizeBrowserWindow ) {
+	if ( resizeBrowserWindow && !( browser.toLowerCase() === 'chrome' && screenSize !== 'desktop' ) ) {
 		await resizeBrowser( driver, screenSize );
 	}
 
 	return driver;
+}
+
+export function getBrowserSize( screenSize ) {
+	let deviceMetrics = {
+		width: 1440,
+		height: 1000,
+		pixelRatio: 2
+	};
+	if ( typeof screenSize === 'string' ) {
+		switch ( screenSize.toLowerCase() ) {
+			case 'mobile':
+				deviceMetrics.height = 1000;
+				deviceMetrics.width = 400;
+				break;
+			case 'tablet':
+				deviceMetrics.height = 1000;
+				deviceMetrics.width = 1024;
+				break;
+			case 'desktop':
+				break;
+			case 'laptop':
+				deviceMetrics.height = 790;
+				deviceMetrics.width = 1400;
+				break;
+			default:
+				throw new Error(
+					'Unsupported screen size specified (' +
+					screenSize +
+					'). Supported values are desktop, tablet and mobile.'
+				);
+		}
+	} else {
+		throw new Error(
+			'Unsupported screen size specified (' +
+			screenSize +
+			'). Supported values are desktop, tablet and mobile.'
+		);
+	}
+	return deviceMetrics;
 }
 
 export async function resizeBrowser( driver, screenSize ) {
