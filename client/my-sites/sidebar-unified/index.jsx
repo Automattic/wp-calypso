@@ -54,7 +54,14 @@ export const MySitesSidebarUnified = ( { path } ) => {
 				}
 
 				if ( item?.children?.length ) {
-					return <MySitesSidebarUnifiedMenu key={ item.slug } path={ path } { ...item } />;
+					return (
+						<MySitesSidebarUnifiedMenu
+							key={ item.slug }
+							path={ path }
+							link={ item.url }
+							{ ...item }
+						/>
+					);
 				}
 
 				return <MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />;
