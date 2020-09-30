@@ -16,7 +16,7 @@ import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions'
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSecureYourBrand } from 'state/secure-your-brand/selectors';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
 
 /**
@@ -51,14 +51,42 @@ export class SecureYourBrandStep extends Component {
 		return this.props.domainItem && this.props.domainItem.meta;
 	}
 
-	handleFreePlanButtonClick = () => {
-		this.onSelectAdd( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-	};
+	handleUpgradeButtonClick() {
+		const { additionalStepData, stepSectionName, stepName } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_secure_your_brand_add' );
+		const step = {
+			stepName,
+			stepSectionName,
+			...additionalStepData,
+		};
+
+		this.props.submitSignupStep( step );
+		this.props.goToNextStep();
+	}
+
+	handleSkipButtonClick() {
+		const { additionalStepData, stepSectionName, stepName } = this.props;
+
+		this.props.recordTracksEvent( 'calypso_secure_your_brand_skip' );
+		const step = {
+			stepName,
+			stepSectionName,
+			...additionalStepData,
+		};
+
+		this.props.submitSignupStep( step );
+		this.props.goToNextStep();
+	}
 
 	recommendedDomains() {
 		const { translate, domains } = this.props;
 		const domain = this.getDomainName();
 		this.getDomainName();
+		const classNames = {
+			'is-primary': true,
+		};
+
 		return (
 			<div className="secure-your-brand">
 				<QuerySecureYourBrand domain={ domain } />
@@ -73,6 +101,14 @@ export class SecureYourBrandStep extends Component {
 								<div className="secure-your-brand__cost">{ suggestion.cost }</div>
 							</div>
 						) ) }
+					</div>
+					<div>
+						<Button onClick={ () => this.handleSkipButtonClick() }>
+							{ translate( 'No thanks, continue' ) }
+						</Button>
+						<Button className={ classNames } onClick={ () => this.handleUpgradeButtonClick() }>
+							{ translate( 'Yes, add them to my cart' ) }
+						</Button>
 					</div>
 				</Card>
 			</div>
