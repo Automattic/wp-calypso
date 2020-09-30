@@ -130,14 +130,27 @@ const DetailsPage = ( {
 	const isBundle = [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ].includes(
 		productSlug
 	);
-	const backButton = () => page( selectorPageUrl );
+	const backButton = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_plans_subtypes_back_click', {
+				site_id: siteId || undefined,
+				product_slug: productSlug,
+				duration,
+			} )
+		);
+		page( selectorPageUrl );
+	};
+
+	const viewTrackerPath = siteId
+		? `${ rootUrl }/:product/${ durationToString( duration ) }/details/:site`
+		: `${ rootUrl }/:product/${ durationToString( duration ) }/details`;
+	const viewTrackerProps = siteId
+		? { site: siteSlug, product: productSlug }
+		: { product: productSlug };
 
 	return (
 		<Main className="details__main" wideLayout>
-			<PageViewTracker
-				path={ `${ rootUrl }/:product_slug/${ durationToString( duration ) }/details` }
-				title="Details"
-			/>
+			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Details" />
 			<QueryProducts />
 			{ header }
 			<HeaderCake onClick={ backButton }>
