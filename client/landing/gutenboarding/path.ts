@@ -96,3 +96,8 @@ export function useCurrentStep() {
 export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
 }
+
+// Returns true if the url has a `?single-page`
+export function useSinglePageQueryParam() {
+	return new URLSearchParams( useLocation().search ).has( 'single-page' );
+}
