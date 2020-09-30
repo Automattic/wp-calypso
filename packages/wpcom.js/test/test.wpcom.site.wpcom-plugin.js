@@ -28,30 +28,34 @@ describe.skip( 'wpcom.site.wpcomPlugin', function () {
 	} );
 
 	describe( 'wpcom.site.wpcomPlugin.activate', function () {
-		it( 'should activate the wpcom plugin', ( done ) => {
-			testingWPComPlugin
-				.activate()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data instanceof Object, 'data is not an object' );
-					assert.equal( data.active, true );
-					done();
-				} )
-				.catch( done );
+		it( 'should activate the wpcom plugin', () => {
+			return new Promise( ( done ) => {
+				testingWPComPlugin
+					.activate()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data instanceof Object, 'data is not an object' );
+						assert.equal( data.active, true );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.wpcomPlugin.deactivate', function () {
-		it( 'should deactivate the wpcom plugin', ( done ) => {
-			testingWPComPlugin
-				.deactivate()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data instanceof Object, 'data is not an object' );
-					assert.equal( data.active, false );
-					done();
-				} )
-				.catch( done );
+		it( 'should deactivate the wpcom plugin', () => {
+			return new Promise( ( done ) => {
+				testingWPComPlugin
+					.deactivate()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data instanceof Object, 'data is not an object' );
+						assert.equal( data.active, false );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

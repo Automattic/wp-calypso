@@ -41,47 +41,53 @@ describe( 'wpcom.site.post.reblog', function () {
 	} );
 
 	describe( 'wpcom.site.post.reblog.add', function () {
-		it( 'should reblog the added post', ( done ) => {
-			testing_reblog_post
-				.reblog()
-				.add( {
-					note: fixture.reblog.note,
-					destination_site_id: site._id,
-				} )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.can_reblog );
-					done();
-				} )
-				.catch( done );
+		it( 'should reblog the added post', () => {
+			return new Promise( ( done ) => {
+				testing_reblog_post
+					.reblog()
+					.add( {
+						note: fixture.reblog.note,
+						destination_site_id: site._id,
+					} )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.can_reblog );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.post.reblog.to', function () {
-		it( 'should get reblog the added post', ( done ) => {
-			testing_reblog_post
-				.reblog()
-				.to( site._id, fixture.reblog.note + '-to' )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.can_reblog );
-					done();
-				} )
-				.catch( done );
+		it( 'should get reblog the added post', () => {
+			return new Promise( ( done ) => {
+				testing_reblog_post
+					.reblog()
+					.to( site._id, fixture.reblog.note + '-to' )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.can_reblog );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.post.reblog.mine', function () {
-		it( 'should get the post reblog status of mine', ( done ) => {
-			testing_post
-				.reblog()
-				.mine()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.can_reblog );
-					done();
-				} )
-				.catch( done );
+		it( 'should get the post reblog status of mine', () => {
+			return new Promise( ( done ) => {
+				testing_post
+					.reblog()
+					.mine()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.can_reblog );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

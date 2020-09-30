@@ -38,18 +38,20 @@ describe( 'wpcom.site.shortcodes', function () {
 	} );
 
 	describe( "wpcom.site.renderShortcode('gallery' )", function () {
-		it( 'should render [gallery] shortcode', ( done ) => {
-			var shortcode = '[gallery ids="' + testing_media.ID + '"]';
-			site
-				.renderShortcode( shortcode )
-				.then( ( data ) => {
-					assert.equal( data.shortcode, shortcode );
-					assert.ok( data.result );
-					assert.ok( data.scripts );
-					assert.ok( data.styles );
-					done();
-				} )
-				.catch( done );
+		it( 'should render [gallery] shortcode', () => {
+			return new Promise( ( done ) => {
+				var shortcode = '[gallery ids="' + testing_media.ID + '"]';
+				site
+					.renderShortcode( shortcode )
+					.then( ( data ) => {
+						assert.equal( data.shortcode, shortcode );
+						assert.ok( data.result );
+						assert.ok( data.scripts );
+						assert.ok( data.styles );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );
