@@ -22,11 +22,22 @@ import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
 import { isExternal } from 'lib/url';
+import { itemLinkMatches } from '../sidebar/utils';
 
-export const MySitesSidebarUnifiedMenu = ( { slug, title, icon, children, path, link } ) => {
+export const MySitesSidebarUnifiedMenu = ( {
+	slug,
+	title,
+	icon,
+	children,
+	path,
+	link,
+	selected,
+} ) => {
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
+	const selectedMenuItem =
+		children && children.find( ( menuItem ) => itemLinkMatches( menuItem.url, path ) );
 
 	return (
 		<ExpandableSidebarMenu
@@ -41,13 +52,23 @@ export const MySitesSidebarUnifiedMenu = ( { slug, title, icon, children, path, 
 				}
 				reduxDispatch( toggleSection( sectionId ) );
 			} }
-			expanded={ isExpanded }
+			expanded={ isExpanded || selected }
 			title={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
+			className={ selected && 'selected' }
 		>
-			{ children.map( ( item ) => (
-				<MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />
-			) ) }
+			{ children.map( ( item ) => {
+				const isSelected = selectedMenuItem?.url === item.url;
+				return (
+					<MySitesSidebarUnifiedItem
+						key={ item.slug }
+						path={ path }
+						{ ...item }
+						selected={ isSelected }
+						isSubItem={ true }
+					/>
+				);
+			} ) }
 		</ExpandableSidebarMenu>
 	);
 };

@@ -27,7 +27,7 @@ import SidebarSeparator from 'layout/sidebar/separator';
 import 'layout/sidebar-unified/style.scss';
 import 'state/admin-menu/init';
 import Spinner from 'components/spinner';
-
+import { itemLinkMatches } from '../sidebar/utils';
 import './style.scss';
 
 export const MySitesSidebarUnified = ( { path } ) => {
@@ -49,6 +49,8 @@ export const MySitesSidebarUnified = ( { path } ) => {
 		<Sidebar>
 			<CurrentSite forceAllSitesView={ isAllDomainsView } />
 			{ menuItems.map( ( item, i ) => {
+				const isSelected = item?.url && itemLinkMatches( item.url, path );
+
 				if ( 'separator' === item?.type ) {
 					return <SidebarSeparator key={ i } />;
 				}
@@ -59,12 +61,20 @@ export const MySitesSidebarUnified = ( { path } ) => {
 							key={ item.slug }
 							path={ path }
 							link={ item.url }
+							selected={ isSelected }
 							{ ...item }
 						/>
 					);
 				}
 
-				return <MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />;
+				return (
+					<MySitesSidebarUnifiedItem
+						key={ item.slug }
+						path={ path }
+						selected={ isSelected }
+						{ ...item }
+					/>
+				);
 			} ) }
 		</Sidebar>
 	);

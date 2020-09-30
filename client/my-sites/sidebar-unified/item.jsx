@@ -15,7 +15,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { itemLinkMatches } from '../sidebar/utils';
+
 import { getSelectedSiteId } from 'state/ui/selectors';
 import SidebarItem from 'layout/sidebar/item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
@@ -23,11 +23,15 @@ import StatsSparkline from 'blocks/stats-sparkline';
 
 const onNav = () => null;
 
-// selected={ itemLinkMatches( [ '/domains', '/email' ], path ) }
-
-export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) => {
+export const MySitesSidebarUnifiedItem = ( {
+	title,
+	icon,
+	url,
+	slug,
+	selected = false,
+	isSubItem = false,
+} ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const selected = itemLinkMatches( url, path );
 
 	let children = null;
 
@@ -45,6 +49,7 @@ export const MySitesSidebarUnifiedItem = ( { title, icon, url, path, slug } ) =>
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink
+			className={ isSubItem ? 'sidebar__menu-link--sub' : 'sidebar__menu-link--parent' }
 		>
 			{ children }
 		</SidebarItem>
