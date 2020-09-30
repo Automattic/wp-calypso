@@ -41,7 +41,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 2.7 =
-* Update post blocks from Newspack to v1.13, fixing bugs related to grid mode.
+* Update post blocks from Newspack to v1.13.1, fixing bugs related to grid mode and adding alignment options to post carousel.
 * Add new coming soon page patterns.
 
 = 2.6.1 =
