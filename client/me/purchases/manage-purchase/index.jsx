@@ -502,7 +502,14 @@ class ManagePurchase extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const { purchase, siteId, translate, isProductOwner, getManagePurchaseUrlFor, siteSlug } = this.props;
+		const {
+			purchase,
+			siteId,
+			translate,
+			isProductOwner,
+			getManagePurchaseUrlFor,
+			siteSlug,
+		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
 			'is-expired': purchase && isExpired( purchase ),
