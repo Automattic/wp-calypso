@@ -30,6 +30,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { preloadEditor } from 'sections-preloaders';
 import {
 	getSite,
+	getSitePlanSlug,
 	hasStaticFrontPage,
 	isJetpackSite,
 	isSitePreviewable,
@@ -37,7 +38,7 @@ import {
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isComingSoonPage, isFrontPage, isPostsPage } from 'state/pages/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
@@ -354,8 +355,17 @@ class Page extends Component {
 	}
 
 	setComingSoonPage = () => {
+		const pageId = this.props.isComingSoonPage ? 0 : this.props.page.ID;
+
 		this.props.updateSiteFrontPage( this.props.siteId, {
-			wpcom_public_coming_soon_page_id: this.props.isComingSoonPage ? 0 : this.props.page.ID,
+			wpcom_public_coming_soon_page_id: pageId,
+		} );
+
+		// records whether a page has been set as 'coming soon'
+		// and the paid plan slug
+		this.props.recordTracksEvent( 'calypso_coming_soon_set_page', {
+			is_coming_soon_page: pageId !== 0,
+			plan_slug: this.props.sitePlanSlug,
 		} );
 	};
 
@@ -827,6 +837,7 @@ const mapState = ( state, props ) => {
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
 		isFreePlan,
+		sitePlanSlug: getSitePlanSlug( state, pageSiteId ),
 	};
 };
 
@@ -845,6 +856,7 @@ const mapDispatch = {
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 	updateSiteFrontPage,
+	recordTracksEvent,
 };
 
 export default flow( localize, connect( mapState, mapDispatch ) )( Page );
