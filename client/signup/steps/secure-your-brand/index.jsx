@@ -75,7 +75,7 @@ export class SecureYourBrandStep extends Component {
 	recommendedDomains() {
 		return (
 			<div className="secure-your-brand">
-				<QuerySecureYourBrand domain={ 'test.com' } />
+				<QuerySecureYourBrand domain={ this.getDomainName() } />
 				<Card>Domains</Card>
 				<CompactCard>
 					<Button>Help</Button>
