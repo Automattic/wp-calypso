@@ -22,6 +22,8 @@ import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { emailManagementForwarding, emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
 import wpcom from 'lib/wp';
 import { errorNotice } from 'state/notices/actions';
+import { recordTracksEvent } from 'lib/analytics/tracks';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import emailIllustration from 'assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'assets/images/email-providers/titan.svg';
 import gSuiteLogo from 'assets/images/email-providers/gsuite.svg';
@@ -44,11 +46,13 @@ class EmailProvidersComparison extends React.Component {
 
 	goToEmailForwarding = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
+		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'email-forwarding' } );
 		page( emailManagementForwarding( selectedSiteSlug, domain.name, currentRoute ) );
 	};
 
 	goToAddGSuite = () => {
 		const { domain, currentRoute, selectedSiteSlug } = this.props;
+		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'gsuite' } );
 		page( emailManagementNewGSuiteAccount( selectedSiteSlug, domain.name, 'basic', currentRoute ) );
 	};
 
@@ -67,6 +71,7 @@ class EmailProvidersComparison extends React.Component {
 				window.location.href = provisioningURL;
 			}
 		} );
+		recordTracksEvent( 'calypso_email_providers_add_click', { provider: 'titan' } );
 	};
 
 	fetchTitanOrderProvisioningURL = ( domain ) => {
@@ -219,6 +224,10 @@ class EmailProvidersComparison extends React.Component {
 					{ this.renderForwardingDetails( cardClassName ) }
 					{ this.renderTitanDetails( cardClassName ) }
 					{ isGSuiteSupported && this.renderGSuiteDetails() }
+					<TrackComponentView
+						eventName="calypso_email_providers_comparison_page_view"
+						eventProperties={ { is_gsuite_supported: isGSuiteSupported } }
+					/>
 				</div>
 			</>
 		);
