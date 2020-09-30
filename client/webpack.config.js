@@ -292,7 +292,7 @@ const webpackConfig = {
 		} ),
 		new AssetsWriter( {
 			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
-			path: path.join( outputDir, 'client', 'server', 'bundler' ),
+			path: path.join( outputDir, 'build' ),
 			assetExtraPath: extraPath,
 		} ),
 		shouldCheckForDuplicatePackages && new DuplicatePackageCheckerPlugin(),

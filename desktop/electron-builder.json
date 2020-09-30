@@ -10,10 +10,10 @@
 		"package.json",
 		"build/desktop.js",
 		"build/*.desktop.js",
+		"build/assets-*.json",
 		"public_desktop",
 		"public/**/*",
 		"public/**/*.css.map",
-		"client/server/bundler/assets-*.json",
 		"config/*.json"
 	],
 	"mac": {

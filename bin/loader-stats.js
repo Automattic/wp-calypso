@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const path = require( 'path' );
-const stats = require( path.join( __dirname, '..', 'server', 'bundler', 'assets-evergreen.json' ) );
+const stats = require( path.join( __dirname, '..', 'build', 'assets-evergreen.json' ) );
 const _ = require( 'lodash' );
 const gzipSize = require( 'gzip-size' );
 
