@@ -39,7 +39,6 @@ export { default as hasDefaultSiteTitle } from './has-default-site-title';
 export { default as hasJetpackSiteCustomDomain } from './has-jetpack-site-custom-domain';
 export { default as hasJetpackSiteJetpackThemes } from './has-jetpack-site-jetpack-themes';
 export { default as hasSiteProduct } from './has-site-product';
-export { default as hasJetpackSiteJetpackThemesExtendedFeatures } from './has-jetpack-site-jetpack-themes-extended-features';
 export { default as hasStaticFrontPage } from './has-static-front-page';
 export { default as isCurrentPlanPaid } from './is-current-plan-paid';
 export { default as isCurrentSitePlan } from './is-current-site-plan';
