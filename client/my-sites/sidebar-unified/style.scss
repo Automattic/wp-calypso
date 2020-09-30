@@ -206,6 +206,10 @@ $font-size: rem( 14px );
 				top: 0;
 				left: var( --sidebar-width-max );
 				width: 160px;
+
+				.sidebar__menu-link:hover {
+					font-weight: normal;
+				}
 			}
 		}
 	}
