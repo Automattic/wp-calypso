@@ -369,6 +369,7 @@ object RunAllUnitTests : BuildType({
 				nvm install
 
 				# Extract strings
+				mkdir -p "${'$'}{HOME}/artifacts/translations/"
 				npx https://github.com/Automattic/wp-babel-makepot \
 					"${'$'}{HOME}/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" \
 					--ignore "**/node_modules/**,**/test/**,**/*.d.ts" \
