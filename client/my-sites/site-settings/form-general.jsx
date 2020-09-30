@@ -300,8 +300,8 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 		} = this.props;
 		const blogPublic = parseInt( fields.blog_public, 10 );
-		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
-		const wasWpcomComingSoon = parseInt( fields.was_wpcom_coming_soon, 10 );
+		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
+		const wasWpcomComingSoon = 1 === parseInt( fields.was_wpcom_coming_soon, 10 );
 		const showComingSoonOption =
 			! config.isEnabled( 'coming-soon-v2' ) || wasWpcomComingSoon || wpcomComingSoon;
 
@@ -315,7 +315,7 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={ -1 === blogPublic && 1 === wpcomComingSoon }
+								checked={ -1 === blogPublic && wpcomComingSoon }
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: -1,
