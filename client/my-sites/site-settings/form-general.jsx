@@ -301,12 +301,15 @@ export class SiteSettingsFormGeneral extends Component {
 		} = this.props;
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = parseInt( fields.wpcom_coming_soon, 10 );
+		const wasWpcomComingSoon = parseInt( fields.was_wpcom_coming_soon, 10 );
+		const showComingSoonOption =
+			! config.isEnabled( 'coming-soon-v2' ) || wasWpcomComingSoon || wpcomComingSoon;
 
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 
 		return (
 			<FormFieldset>
-				{ ! isNonAtomicJetpackSite && ! isWPForTeamsSite && (
+				{ ! isNonAtomicJetpackSite && ! isWPForTeamsSite && showComingSoonOption && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-coming-soon">
 							<FormRadio
@@ -700,9 +703,10 @@ const getFormSettings = ( settings ) => {
 		lang_id: settings.lang_id,
 		blog_public: settings.blog_public,
 		timezone_string: settings.timezone_string,
-	};
 
-	formSettings.wpcom_coming_soon = settings.wpcom_coming_soon;
+		wpcom_coming_soon: settings.wpcom_coming_soon,
+		was_wpcom_coming_soon: settings.wpcom_coming_soon,
+	};
 
 	// handling `gmt_offset` and `timezone_string` values
 	const gmt_offset = settings.gmt_offset;
