@@ -11,7 +11,6 @@ import Webinars from 'my-sites/customer-home/cards/tasks/webinars';
 import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
 import SiteSetupListEcommerce from 'my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
-import DeprecateEditor from 'my-sites/customer-home/cards/tasks/deprecate-editor';
 import GoMobile from 'my-sites/customer-home/cards/tasks/go-mobile';
 import EarnFeatures from 'my-sites/customer-home/cards/tasks/earn-features';
 import GrowthSummit from 'my-sites/customer-home/cards/tasks/growth-summit';
@@ -25,7 +24,6 @@ import {
 	NOTICE_CELEBRATE_SITE_MIGRATION,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	TASK_CONNECT_ACCOUNTS,
-	TASK_EDITOR_DEPRECATION,
 	TASK_FIND_DOMAIN,
 	TASK_SITE_SETUP_CHECKLIST_ECOMMERCE,
 	TASK_GO_MOBILE_ANDROID,
@@ -45,7 +43,6 @@ const cardComponents = {
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_FIND_DOMAIN ]: FindDomain,
 	[ TASK_WEBINARS ]: Webinars,
-	[ TASK_EDITOR_DEPRECATION ]: DeprecateEditor,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
