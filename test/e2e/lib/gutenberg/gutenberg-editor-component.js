@@ -183,19 +183,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async switchToBlockEditor() {
-		await this.toggleMoreToolsAndOptions();
-
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='Options']//button[text()='Visual editor']" )
+			By.xpath( "//button[text()='Exit code editor']" )
 		);
-
-		// Wait for the visual editor element.
-		const visualEditorSelector = By.css( 'div.edit-post-visual-editor' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, visualEditorSelector );
-
-		// Close the menu.
-		await this.toggleMoreToolsAndOptions();
 	}
 
 	async getBlocksCode() {
