@@ -15,7 +15,7 @@ const helloDolly = {
 	active: false,
 };
 
-export const jetpack = {
+const jetpack = {
 	id: 'jetpack/jetpack',
 	slug: 'jetpack',
 	active: true,

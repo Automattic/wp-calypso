@@ -16,7 +16,7 @@ import {
 	receiveTags as receiveTagsAction,
 } from 'state/reader/tags/items/actions';
 
-export const successfulFollowResponse = freeze( {
+const successfulFollowResponse = freeze( {
 	subscribed: true,
 	added_tag: '422',
 	tags: [

@@ -88,6 +88,7 @@ describe( 'Label purchase form reducer', () => {
 	afterEach( () => {
 		// make sure the state hasn't been mutated
 		// after each test
+		// eslint-disable-next-line jest/no-standalone-expect
 		expect( initialState ).to.eql( stateBefore );
 	} );
 
