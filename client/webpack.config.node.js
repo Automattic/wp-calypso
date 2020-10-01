@@ -170,6 +170,7 @@ const webpackConfig = {
 			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
 	].filter( Boolean ),
 };
 
