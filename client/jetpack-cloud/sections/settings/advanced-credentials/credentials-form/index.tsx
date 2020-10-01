@@ -2,7 +2,7 @@
  * External dependendies
  */
 import React, { FunctionComponent, useState } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 // import { get } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 
@@ -31,12 +31,12 @@ enum Mode {
 	PrivateKey,
 }
 
-// interface Props {
-// 	host: string;
-// }
+interface Props {
+	// 	host: string;
+	onCredentialsSave: () => void;
+}
 
-// const ServerCredentialsForm: FunctionComponent< Props > = ( { host } ) =>
-const ServerCredentialsForm: FunctionComponent = () =>
+const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave } ) =>
 	// {
 	// 	// formIsSubmitting,
 	// 	// formSubmissionStatus,
@@ -213,7 +213,7 @@ const ServerCredentialsForm: FunctionComponent = () =>
 						primary
 						className="credentials-form__btn"
 						// disabled={ formIsSubmitting }
-						// onClick={ handleSubmit }
+						onClick={ onCredentialsSave }
 					>
 						{ /* { labels.save || translate( 'Save' ) } */ }
 						{ translate( 'Save' ) }
@@ -222,24 +222,24 @@ const ServerCredentialsForm: FunctionComponent = () =>
 			</div>
 		);
 	};
-ServerCredentialsForm.propTypes = {
-	allowCancel: PropTypes.bool,
-	allowDelete: PropTypes.bool,
-	onCancel: PropTypes.func,
-	onComplete: PropTypes.func,
-	labels: PropTypes.object,
-	showAdvancedSettings: PropTypes.bool,
-	toggleAdvancedSettings: PropTypes.func,
-	// The following props are provided by the withServerCredentials HOC
-	requirePath: PropTypes.bool,
-	form: PropTypes.object,
-	formErrors: PropTypes.object,
-	formIsSubmitting: PropTypes.bool,
-	formSubmissionStatus: PropTypes.string,
-	handleFieldChange: PropTypes.func,
-	handleSubmit: PropTypes.func,
-	handleDelete: PropTypes.func,
-};
+// ServerCredentialsForm.propTypes = {
+// 	allowCancel: PropTypes.bool,
+// 	allowDelete: PropTypes.bool,
+// 	onCancel: PropTypes.func,
+// 	onComplete: PropTypes.func,
+// 	labels: PropTypes.object,
+// 	showAdvancedSettings: PropTypes.bool,
+// 	toggleAdvancedSettings: PropTypes.func,
+// 	// The following props are provided by the withServerCredentials HOC
+// 	requirePath: PropTypes.bool,
+// 	form: PropTypes.object,
+// 	formErrors: PropTypes.object,
+// 	formIsSubmitting: PropTypes.bool,
+// 	formSubmissionStatus: PropTypes.string,
+// 	handleFieldChange: PropTypes.func,
+// 	handleSubmit: PropTypes.func,
+// 	handleDelete: PropTypes.func,
+// };
 
 // export default withServerCredentialsForm( localize( ServerCredentialsForm ) );
 export default ServerCredentialsForm;

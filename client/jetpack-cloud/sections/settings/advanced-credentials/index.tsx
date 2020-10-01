@@ -19,11 +19,18 @@ import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StepProgress from 'components/step-progress';
+import Verfication from './verification';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+enum Steps {
+	HostSelectionStep = 0,
+	CredentialsStep = 1,
+	VerificationStep = 2,
+}
 
 const AdvancedCredentials: FunctionComponent = () => {
 	const translate = useTranslate();
@@ -35,7 +42,7 @@ const AdvancedCredentials: FunctionComponent = () => {
 	];
 
 	const siteId = useSelector( getSelectedSiteId );
-	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ currentStep, setCurrentStep ] = useState( Steps.HostSelectionStep );
 	const [ selectedHost, setSelectedHost ] = useState< null | string >( null );
 	const { state: backupState } = useSelector( ( state ) => getRewindState( state, siteId ) ) as {
 		state: string;
@@ -43,7 +50,15 @@ const AdvancedCredentials: FunctionComponent = () => {
 
 	const changeHost = ( newHost: string | null ) => {
 		setSelectedHost( newHost );
-		setCurrentStep( 1 );
+		setCurrentStep( Steps.CredentialsStep );
+	};
+
+	const switchToConnectionStep = () => {
+		setCurrentStep( Steps.VerificationStep );
+	};
+
+	const switchToCredentialsStep = () => {
+		setCurrentStep( Steps.CredentialsStep );
 	};
 
 	const getStatusState = ( currentBackupState: string ): StatusState => {
@@ -60,16 +75,18 @@ const AdvancedCredentials: FunctionComponent = () => {
 		}
 	};
 
-	const renderStep = ( step: number ) => {
+	const renderStep = ( step: Steps ) => {
 		switch ( step ) {
-			case 1:
+			case Steps.VerificationStep:
+				return <Verfication onReviewCredentialsClick={ switchToCredentialsStep } />;
+			case Steps.CredentialsStep:
 				return (
 					<div>
 						<h4>{ selectedHost }</h4>
-						<CredentialsForm />
+						<CredentialsForm onCredentialsSave={ switchToConnectionStep } />
 					</div>
 				);
-			case 0:
+			case Steps.HostSelectionStep:
 				return <HostSelection onHostChange={ changeHost } />;
 		}
 	};

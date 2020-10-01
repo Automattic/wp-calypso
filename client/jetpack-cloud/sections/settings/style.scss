@@ -8,14 +8,14 @@
 .card.is-compact.settings__disconnected {
 	display: flex;
 	align-items: center;
-    margin-bottom: 32px;
+	margin-bottom: 32px;
 }
 
 .settings__connected .gridicon {
-    display: inline-block;
-    fill: var( --studio-jetpack-green-40 );
-    width: 4rem;
-    height: 4rem;
+	display: inline-block;
+	fill: var( --studio-jetpack-green-40 );
+	width: 4rem;
+	height: 4rem;
 }
 
 .settings__status-uninitialized {
@@ -42,10 +42,10 @@
 }
 
 .settings__disconnected .gridicon {
-    display: inline-block;
-    fill: red;
-    width: 4rem;
-    height: 4rem;
+	display: inline-block;
+	fill: red;
+	width: 4rem;
+	height: 4rem;
 }
 
 .settings__title {
@@ -53,17 +53,17 @@
 	font-weight: 600;
 	margin: 16px 0 24px;
 
-	@include breakpoint-deprecated('>660px') {
+	@include breakpoint-deprecated( '>660px' ) {
 		font-size: $font-headline-small;
 		margin: 32px 0;
 	}
 }
 
 .settings__details {
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 1rem;
-    margin-top: 0.5rem;
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 1rem;
+	margin-top: 0.5rem;
 }
 
 .settings__icon {
@@ -72,6 +72,6 @@
 }
 
 .settings__details-head {
-    font-weight: 600;
-    margin-bottom: 0.3rem;
+	font-weight: 600;
+	margin-bottom: 0.3rem;
 }
