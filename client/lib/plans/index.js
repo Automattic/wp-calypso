@@ -29,6 +29,8 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	JETPACK_RESET_PLANS,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
 
@@ -566,3 +568,13 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 
 	return 'personal';
 };
+
+/**
+ * Determines if a plan includes Jetpack Search by looking at the plan's features.
+ *
+ * @param   {string}  planSlug  Slug of the plan.
+ * @returns {boolean}           Whether the specified plan includes Jetpack Search.
+ */
+export const hasPlanJetpackSearch = ( planSlug ) =>
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );
