@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import Main from 'components/main';
-import MySitesSidebarNavigation from 'my-sites/sidebar-navigation';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -25,7 +24,6 @@ export default function Subscriptions() {
 		<Main className="subscriptions is-wide-layout">
 			<QueryUserPurchases userId={ userId } />
 			<PageViewTracker path="/purchases/subscriptions" title="Subscriptions" />
-			<MySitesSidebarNavigation />
 			<SectionHeader label={ translate( 'Subscriptions' ) } />
 			<SubscriptionsContent />
 			<AccountLevelPurchaseLinks />
