@@ -96,7 +96,7 @@
 // the site-selector elements.
 .layout__secondary {
 	position: fixed;
-	top: 47px;
+	top: var( --masterbar-height );
 	left: 0;
 	bottom: 0;
 	color: var( --color-sidebar-text );

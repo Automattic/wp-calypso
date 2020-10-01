@@ -86,9 +86,7 @@
 
 .plans-filter-bar.sticky {
 	position: fixed;
-
-	// This is the height of the masterbar
-	top: 47px;
+	top: var( --masterbar-height );
 
 	width: 100%;
 	max-width: 1040px;

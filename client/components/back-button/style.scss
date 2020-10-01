@@ -1,8 +1,8 @@
 .back-button {
 	margin: 0;
 	position: fixed;
-		top: 47px;
-		left: 0;
+	top: var( --masterbar-height );
+	left: 0;
 	z-index: z-index( '.masterbar', '.reader-back' );
 
 	.button.is-compact.is-borderless {
@@ -24,7 +24,7 @@
 }
 
 .back-button__label {
-	@include breakpoint-deprecated( '<660px') {
+	@include breakpoint-deprecated( '<660px' ) {
 		display: none;
 	}
 }
