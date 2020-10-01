@@ -179,6 +179,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// Close the menu.
 		await this.toggleMoreToolsAndOptions();
 
+		// Set the editor element active.
+		await driverHelper.clickWhenClickable( this.driver, textAreaSelector );
+
 		return textAreaSelector;
 	}
 
@@ -196,6 +199,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		// Close the menu.
 		await this.toggleMoreToolsAndOptions();
+
+		// Set the editor element active.
+		await driverHelper.clickWhenClickable( this.driver, visualEditorSelector );
 	}
 
 	async getBlocksCode() {
