@@ -27,10 +27,8 @@ export default function SubscriptionsContent() {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 
-	// If we are loading purchases, show the placeholder
-	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
-		return <PurchasesSite isPlaceholder />;
-	}
+	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
+		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
 
 	// If there is no selected site, show the "no sites" page
 	if ( ! selectedSiteId ) {
@@ -41,9 +39,6 @@ export default function SubscriptionsContent() {
 	if ( ! selectedSite?.ID ) {
 		return <PurchasesSite isPlaceholder />;
 	}
-
-	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
-		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
 
 	// If there are purchases, show them
 	if ( purchases.length ) {
@@ -59,6 +54,11 @@ export default function SubscriptionsContent() {
 				purchases={ purchases }
 			/>
 		);
+	}
+
+	// If we are loading purchases, show the placeholder
+	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
+		return <PurchasesSite isPlaceholder />;
 	}
 
 	// If there is selected site data but no purchases, show the "no purchases" page
