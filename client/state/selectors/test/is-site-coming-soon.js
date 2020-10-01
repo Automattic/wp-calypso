@@ -14,7 +14,6 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
-							ID: 2916284,
 							is_coming_soon: false,
 						},
 					},
@@ -35,8 +34,49 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
-							ID: 2916284,
-							is_coming_soon: true,
+							is_coming_soon: true, // Prefer
+						},
+					},
+				},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_public_coming_soon: 1, // Ignore
+						},
+					},
+				},
+			},
+			2916284
+		);
+		expect( isComingSoon ).toBe( true );
+
+		const isAlsoComingSoon = isSiteComingSoon(
+			{
+				sites: {
+					items: {
+						2916284: {
+							is_coming_soon: true, // Prefer
+						},
+					},
+				},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_public_coming_soon: 0, // Ignore
+						},
+					},
+				},
+			},
+			2916284
+		);
+		expect( isAlsoComingSoon ).toBe( true );
+
+		const isNotComingSoon = isSiteComingSoon(
+			{
+				sites: {
+					items: {
+						2916284: {
+							is_coming_soon: false, // Prefer
 							is_private: true,
 						},
 					},
@@ -44,44 +84,37 @@ describe( 'isSiteComingSoon()', () => {
 				siteSettings: {
 					items: {
 						2916284: {
-							wpcom_coming_soon: 1,
+							wpcom_public_coming_soon: 1, // Ignore
 						},
 					},
 				},
 			},
 			2916284
 		);
-
-		expect( isComingSoon ).toBe( true );
+		expect( isNotComingSoon ).toBe( false );
 	} );
 
-	test( 'should always return false for non-private sites', () => {
+	test( 'should always return false for private sites', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
 					items: {
 						2916284: {
-							ID: 2916284,
 							is_coming_soon: true,
-							is_private: false,
+							is_private: true,
 						},
 					},
 				},
-				siteSettings: {
-					items: {
-						2916284: {
-							wpcom_coming_soon: 1,
-						},
-					},
-				},
+				siteSettings: {},
 			},
 			2916284
 		);
 
+		// Currently failing with dropping of private check
 		expect( isComingSoon ).toBe( false );
 	} );
 
-	test( 'should fall back to settings state', () => {
+	test( 'should fallback to settings state', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -90,8 +123,8 @@ describe( 'isSiteComingSoon()', () => {
 				siteSettings: {
 					items: {
 						2916284: {
-							wpcom_coming_soon: 1,
-							blog_public: -1,
+							wpcom_public_coming_soon: 1,
+							blog_public: 1,
 						},
 					},
 				},
@@ -100,6 +133,26 @@ describe( 'isSiteComingSoon()', () => {
 		);
 
 		expect( isComingSoon ).toBe( true );
+
+		const isNotComingSoon = isSiteComingSoon(
+			{
+				sites: {
+					items: {},
+				},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_public_coming_soon: 1,
+							blog_public: -1,
+						},
+					},
+				},
+			},
+			2916284
+		);
+
+		// Currently failing with dropping of private check
+		expect( isNotComingSoon ).toBe( false );
 	} );
 
 	test( 'should return false for public sites', () => {
@@ -108,7 +161,6 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
-							ID: 2916284,
 							is_coming_soon: false,
 						},
 					},
@@ -133,8 +185,7 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
-							ID: 2916284,
-							is_private: true,
+							is_private: false,
 							is_coming_soon: true,
 						},
 					},
