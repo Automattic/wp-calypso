@@ -23,6 +23,8 @@ import Notice from 'components/notice';
 import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 import SectionHeader from 'components/section-header';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
 
 /**
  * Style dependencies
@@ -30,12 +32,8 @@ import { withLocalizedMoment } from 'components/localized-moment';
 import './style.scss';
 
 class GSuiteUsersCard extends React.Component {
-	getDomainsAsList() {
-		return this.props.selectedDomainName ? [ getSelectedDomain( this.props ) ] : this.props.domains;
-	}
-
 	canAddUsers( domainName ) {
-		return this.getDomainsAsList().some(
+		return this.props.domainsAsList.some(
 			( domain ) =>
 				domain &&
 				domain.name === domainName &&
@@ -57,20 +55,20 @@ class GSuiteUsersCard extends React.Component {
 		this.props.addGoogleAppsUserClick( this.props.selectedDomainName );
 	};
 
-	renderDomain( domain, users ) {
+	renderDomainWithGSuite( domainName, users ) {
 		// The product name is same for all users as product license is associated to domain
 		// Hence a snapshot of the product name from the first user is sufficient
 		const license = users[ 0 ].product_name;
 		// This ensures display consistency if the API is not ready yet
-		const label = license ? `${ license }: ${ domain }` : domain;
+		const label = license ? `${ license }: ${ domainName }` : domainName;
 		return (
-			<div key={ `google-apps-user-${ domain }` } className="gsuite-users-card__container">
+			<div key={ `google-apps-user-${ domainName }` } className="gsuite-users-card__container">
 				<SectionHeader label={ label }>
-					{ this.canAddUsers( domain ) && (
+					{ this.canAddUsers( domainName ) && (
 						<Button
 							primary
 							compact
-							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domain ) }
+							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domainName ) }
 							onClick={ this.goToAddGoogleApps }
 						>
 							{ this.props.translate( 'Add New User' ) }
@@ -84,6 +82,14 @@ class GSuiteUsersCard extends React.Component {
 				</CompactCard>
 			</div>
 		);
+	}
+
+	renderDomain( domain, users ) {
+		if ( hasTitanMailWithUs( domain ) ) {
+			return <TitanControlPanelLoginCard domain={ domain } key={ `titan-${ domain.name }` } />;
+		}
+
+		return this.renderDomainWithGSuite( domain.name, users );
 	}
 
 	renderUser( user, index ) {
@@ -131,8 +137,8 @@ class GSuiteUsersCard extends React.Component {
 	}
 
 	render() {
-		const { gsuiteUsers, selectedDomainName, selectedSiteSlug } = this.props;
-		const pendingDomains = this.getDomainsAsList().filter( hasPendingGSuiteUsers );
+		const { domainsAsList, gsuiteUsers, selectedSiteSlug } = this.props;
+		const pendingDomains = domainsAsList.filter( hasPendingGSuiteUsers );
 		const usersByDomain = groupBy( gsuiteUsers, 'domain' );
 
 		return (
@@ -146,9 +152,9 @@ class GSuiteUsersCard extends React.Component {
 					/>
 				) }
 
-				{ Object.keys( usersByDomain )
-					.filter( ( domain ) => ! selectedDomainName || domain === selectedDomainName )
-					.map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain ] ) ) }
+				{ domainsAsList
+					.filter( ( domain ) => domain.name in usersByDomain || hasTitanMailWithUs( domain ) )
+					.map( ( domain ) => this.renderDomain( domain, usersByDomain[ domain.name ] ) ) }
 			</div>
 		);
 	}
@@ -192,9 +198,15 @@ GSuiteUsersCard.propTypes = {
 };
 
 export default connect(
-	( state ) => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		user: getCurrentUser( state ),
-	} ),
+	( state, ownProps ) => {
+		const domainsList = ownProps.selectedDomainName
+			? [ getSelectedDomain( ownProps ) ]
+			: ownProps.domains;
+		return {
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+			user: getCurrentUser( state ),
+			domainsAsList: domainsList,
+		};
+	},
 	{ addGoogleAppsUserClick, manageClick }
 )( localize( withLocalizedMoment( GSuiteUsersCard ) ) );

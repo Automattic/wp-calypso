@@ -14,6 +14,11 @@ import { errorNotice } from 'state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
 import SectionHeader from 'components/section-header';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 class TitanControlPanelLoginCard extends React.Component {
 	state = {
 		isFetchingAutoLoginLink: false,
@@ -61,7 +66,7 @@ class TitanControlPanelLoginCard extends React.Component {
 		};
 
 		return (
-			<div>
+			<div className="titan-control-panel-login-card">
 				<SectionHeader label={ translate( 'Titan Mail: %(domainName)s', translateArgs ) }>
 					<Button
 						primary

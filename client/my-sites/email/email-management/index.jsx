@@ -45,6 +45,7 @@ import { localizeUrl } from 'lib/i18n-utils';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import EmailProvidersComparison from '../email-providers-comparison';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 /**
  * Style dependencies
@@ -130,7 +131,7 @@ class EmailManagement extends React.Component {
 
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuiteWithUs ) ) {
+		if ( domainList.some( hasGSuiteWithUs ) || domainList.some( hasTitanMailWithUs ) ) {
 			return this.googleAppsUsersCard();
 		}
 
