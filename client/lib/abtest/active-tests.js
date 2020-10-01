@@ -103,15 +103,6 @@ export default {
 		defaultVariation: 'variantShowUpdates',
 		allowExistingUsers: true,
 	},
-	domainStepPlanStepSwap: {
-		datestamp: '20210513',
-		variations: {
-			variantShowSwapped: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	newSiteGutenbergOnboarding: {
 		datestamp: '20200818',
 		variations: {

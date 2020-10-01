@@ -35,7 +35,6 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
-	addOrRemoveFromProgressStore = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
@@ -278,23 +277,6 @@ export function generateSteps( {
 					"Almost there, pick a plan that's right for you. Upgrade as you grow."
 				),
 				isLaunchPage: true,
-			},
-		},
-
-		'upsell-plan': {
-			stepName: 'upsell-plan',
-			fulfilledStepCallback: addOrRemoveFromProgressStore,
-		},
-
-		'plans-plan-only': {
-			stepName: 'plans-plan-only',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: addOrRemoveFromProgressStore,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			props: {
-				hideFreePlan: true,
-				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
 			},
 		},
 
