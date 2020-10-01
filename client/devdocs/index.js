@@ -68,6 +68,13 @@ export default function () {
 			clientRender
 		);
 		page(
+			'/devdocs/block-playground',
+			controller.sidebar,
+			controller.blockPlayground,
+			makeLayout,
+			clientRender
+		);
+		page(
 			'/devdocs/typography',
 			controller.sidebar,
 			controller.typography,

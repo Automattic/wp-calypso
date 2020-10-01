@@ -5,6 +5,12 @@ const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 const babelConfig = {
 	presets: [ '@automattic/calypso-build/babel/default' ],
 	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser } ] ],
+	overrides: [
+		{
+			test: [ './apps/o2-blocks/src' ],
+			plugins: [ '@wordpress/import-jsx-pragma', '@babel/transform-react-jsx' ],
+		},
+	],
 	env: {
 		production: {
 			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],
