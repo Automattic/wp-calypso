@@ -318,7 +318,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				blockClass = 'dynamic-separator';
 				break;
 			case 'Heading':
-				ariaLabel = 'Write heading…';
 				break;
 			case 'Layout Grid':
 				prefix = 'jetpack-';
@@ -355,11 +354,21 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
-		const insertedBlockSelector = By.css(
+
+		let insertedBlockSelector = By.css(
 			`.block-editor-block-list__block.${
 				hasChildBlocks ? 'has-child-selected' : 'is-selected'
 			}[aria-label*='${ selectorAriaLabel }']`
 		);
+
+		// @TODO: Remove this condition when Gutenberg v9.1 is deployed for all sites.
+		if ( title === 'Heading' ) {
+			const deprecatedSelector = insertedBlockSelector.value.replace(
+				selectorAriaLabel,
+				'Write heading…'
+			);
+			insertedBlockSelector = By.css( `${ insertedBlockSelector.value }, ${ deprecatedSelector }` );
+		}
 
 		await this.openBlockInserterAndSearch( title );
 
@@ -416,15 +425,28 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async removeBlock( blockID ) {
-		const blockSelector = By.css( `.wp-block[id="${blockID}"]`);
-		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, blockSelector, this.explicitWaitMS / 5 );
+		const blockSelector = By.css( `.wp-block[id="${ blockID }"]` );
+		await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			blockSelector,
+			this.explicitWaitMS / 5
+		);
 		await this.driver.findElement( blockSelector ).click();
-		await driverHelper.clickWhenClickable( this.driver, By.css( '.block-editor-block-settings-menu' ) );
-		await driverHelper.isEventuallyPresentAndDisplayed( this.driver, By.css( '.components-menu-group' ), this.explicitWaitMS / 5 );
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.block-editor-block-settings-menu' )
+		);
+		await driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '.components-menu-group' ),
+			this.explicitWaitMS / 5
+		);
 		await this.driver.sleep( 1000 );
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css( '.components-menu-group:last-of-type button.components-menu-item__button:last-of-type' )
+			By.css(
+				'.components-menu-group:last-of-type button.components-menu-item__button:last-of-type'
+			)
 		);
 	}
 
