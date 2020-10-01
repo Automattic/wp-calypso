@@ -339,7 +339,6 @@ jobs:
     <<: *defaults
     parallelism: 1
     steps:
-      - only-external-pr
       - prepare
       - run:
           name: TypeScript strict typecheck of individual subprojects
