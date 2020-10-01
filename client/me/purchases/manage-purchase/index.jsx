@@ -457,7 +457,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlaceholder() {
-		const { siteSlug, getManagePurchaseUrlFor } = this.props;
+		const { siteSlug, getManagePurchaseUrlFor, getAddPaymentMethodUrlFor } = this.props;
 
 		return (
 			<Fragment>
@@ -477,6 +477,7 @@ class ManagePurchase extends Component {
 						purchaseId={ false }
 						siteSlug={ siteSlug }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
@@ -509,6 +510,7 @@ class ManagePurchase extends Component {
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
+			getAddPaymentMethodUrlFor,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -556,6 +558,7 @@ class ManagePurchase extends Component {
 							purchaseId={ purchase.id }
 							siteSlug={ siteSlug }
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+							getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 						/>
 					) }
 					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }

@@ -339,6 +339,7 @@ class PurchaseMeta extends Component {
 			isAutorenewalEnabled,
 			isProductOwner,
 			hideAutoRenew,
+			getAddPaymentMethodUrlFor,
 		} = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
@@ -391,6 +392,7 @@ class PurchaseMeta extends Component {
 								siteSlug={ site.slug }
 								purchase={ purchase }
 								toggleSource="manage-purchase"
+								getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 							/>
 						</span>
 					) }
