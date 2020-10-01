@@ -9,7 +9,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 /**
  * Internal dependencies
  */
-import { MomentContext } from './context';
+import MomentContext from './context';
 
 export const withLocalizedMoment = createHigherOrderComponent( ( Wrapped ) => {
 	return function WithLocalizedMoment( props ) {

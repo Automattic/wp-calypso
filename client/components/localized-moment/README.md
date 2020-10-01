@@ -64,7 +64,7 @@ locale slug.
 ```jsx
 import React from 'react';
 import ReactDom from 'react-dom';
-import { MomentProvider } from 'components/localized-moment/context';
+import MomentProvider from 'components/localized-moment/provider';
 
 ReactDom.render(
 	<MomentProvider currentLocale="cs">
