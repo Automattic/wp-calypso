@@ -758,6 +758,7 @@ class PurchaseNotice extends Component {
 					isVisible={ this.state.showUpcomingRenewalsDialog }
 					purchases={ renewableSitePurchases }
 					site={ selectedSite }
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					onConfirm={ this.handleExpiringNoticeRenewSelection }
 					onClose={ this.closeUpcomingRenewalsDialog }
 				/>

@@ -46,6 +46,7 @@ interface Props {
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string | TranslateResult;
 	showManagePurchaseLinks?: boolean;
+	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
 }
 
 function getExpiresText(
@@ -84,6 +85,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	onConfirm,
 	submitButtonText = '',
 	showManagePurchaseLinks = true,
+	getManagePurchaseUrlFor = managePurchase,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -166,7 +168,10 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 								</div>
 								{ showManagePurchaseLinks && (
 									<div className="upcoming-renewals-dialog__renewal-settings-link">
-										<a onClick={ onClose } href={ managePurchase( site.slug, purchase.id ) }>
+										<a
+											onClick={ onClose }
+											href={ getManagePurchaseUrlFor( site.slug, purchase.id ) }
+										>
 											{ translate( 'Manage purchase' ) }
 										</a>
 									</div>
