@@ -602,26 +602,4 @@ describe( `[${ host }] Calypso Gutenberg Editor: Pages (${ screenSize })`, funct
 			await driverHelper.ensurePopupsClosed( driver );
 		} );
 	} );
-
-	/* Temporarily disabling this test until we smooth out the integration of Gutenberg 7.7.1 See: #40078 */
-
-	describe.skip( 'Use the Calypso Media Modal: @parallel', function () {
-		let fileDetails;
-
-		// Create image file for upload
-		before( async function () {
-			fileDetails = await mediaHelper.createFile();
-			return fileDetails;
-		} );
-
-		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, gutenbergUser );
-			return await loginFlow.loginAndStartNewPage( null, true );
-		} );
-
-		step( 'Can insert an image in an Image block with the Media Modal', async function () {
-			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			return await gEditorComponent.addImageFromMediaModal( fileDetails );
-		} );
-	} );
 } );

@@ -168,20 +168,6 @@ describe( 'flow-controller', () => {
 				store.dispatch( submitSignupStep( { stepName: 'userCreation' } ) );
 			} );
 		} );
-
-		test.skip( 'should throw an error when the flow is completed without all dependencies provided', () => {
-			const store = createSignupStore();
-			signupFlowController = new SignupFlowController( {
-				flowName: 'invalid_flow_with_dependencies',
-				onComplete: function () {},
-				reduxStore: store,
-			} );
-
-			store.dispatch( submitSignupStep( { stepName: 'siteCreation' } ) );
-			store.dispatch( submitSignupStep( { stepName: 'userCreationWithoutToken' } ) );
-			// TODO: assert that the apiFunction handler that triggers completion of the flow
-			// throws an exception. It's all inside async callbacks and difficult to test.
-		} );
 	} );
 
 	describe( 'controlling a flow w/ a delayed step', () => {
