@@ -12,9 +12,9 @@ import CreditCardFormFieldsLoadingPlaceholder from 'components/credit-card-form-
 import FormButton from 'components/forms/form-button';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 
-const CreditCardFormLoadingPlaceholder = ( { title } ) => {
+const CreditCardFormLoadingPlaceholder = ( { title, isSiteLevelBilling } ) => {
 	return (
-		<LoadingPlaceholder title={ title }>
+		<LoadingPlaceholder title={ title } isSiteLevelBilling={ isSiteLevelBilling }>
 			<Card className="credit-card-form__content">
 				<CreditCardFormFieldsLoadingPlaceholder />
 			</Card>

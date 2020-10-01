@@ -131,6 +131,7 @@ export function PurchaseAddPaymentMethod( {
 				siteSlug={ siteSlug }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+				isSiteLevelBilling={ true }
 			/>
 		</Main>
 	);
@@ -160,6 +161,7 @@ export function PurchaseEditPaymentMethod( {
 				siteSlug={ siteSlug }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+				isSiteLevelBilling={ true }
 			/>
 		</Main>
 	);

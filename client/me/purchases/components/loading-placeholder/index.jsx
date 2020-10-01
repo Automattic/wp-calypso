@@ -21,6 +21,7 @@ class LoadingPlaceholder extends React.Component {
 	static propTypes = {
 		path: PropTypes.string,
 		title: PropTypes.string.isRequired,
+		isSiteLevelBilling: PropTypes.bool.isRequired,
 	};
 
 	goBack = () => {
@@ -29,7 +30,11 @@ class LoadingPlaceholder extends React.Component {
 
 	render() {
 		return (
-			<Main className="loading-placeholder">
+			<Main
+				className={
+					'loading-placeholder' + ( this.props.isSiteLevelBilling ? ' is-wide-layout' : '' )
+				}
+			>
 				<HeaderCake className="loading-placeholder__header" onClick={ this.goBack }>
 					{ this.props.title }
 				</HeaderCake>

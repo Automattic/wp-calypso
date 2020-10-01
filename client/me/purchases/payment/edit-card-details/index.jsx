@@ -43,7 +43,10 @@ function EditCardDetails( props ) {
 
 				<QueryUserPurchases userId={ props.userId } />
 
-				<CreditCardFormLoadingPlaceholder title={ titles.editCardDetails } />
+				<CreditCardFormLoadingPlaceholder
+					title={ titles.editCardDetails }
+					isSiteLevelBilling={ props.isSiteLevelBilling }
+				/>
 			</Fragment>
 		);
 	}
@@ -103,6 +106,7 @@ EditCardDetails.propTypes = {
 	userId: PropTypes.number,
 	purchaseListUrl: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func.isRequired,
+	isSiteLevelBilling: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
