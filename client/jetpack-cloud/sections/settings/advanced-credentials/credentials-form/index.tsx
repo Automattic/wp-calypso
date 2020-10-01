@@ -25,6 +25,11 @@ import FormTextArea from 'components/forms/form-textarea';
  */
 import './style.scss';
 
+// interface Props {
+// 	host: string;
+// }
+
+// const ServerCredentialsForm: FunctionComponent< Props > = ( { host } ) =>
 const ServerCredentialsForm: FunctionComponent = () =>
 	// {
 	// 	// formIsSubmitting,

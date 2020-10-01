@@ -9,7 +9,7 @@ import React, { FunctionComponent, useEffect, useMemo } from 'react';
  * Internal dependencies
  */
 import { getHttpData, DataState } from 'state/data-layer/http-data';
-import { getProviderNameFromId, hosts } from '../../utils';
+import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import Badge from 'components/badge';
@@ -43,13 +43,10 @@ const HostSelection: FunctionComponent< Props > = ( { onHostChange } ) => {
 	const providerGuessName = getProviderNameFromId( guess );
 
 	const hostsToShow = useMemo( () => {
-		const list = [];
-		for ( const hostId in hosts ) {
-			if ( hosts[ hostId ].top || hostId === guess ) {
-				list.push( {
-					...hosts[ hostId ],
-					id: hostId,
-				} );
+		const list = [ ...topHosts ];
+		for ( const host of otherHosts ) {
+			if ( guess === host.id ) {
+				list.push( host );
 			}
 		}
 		return list;
@@ -111,8 +108,8 @@ const HostSelection: FunctionComponent< Props > = ( { onHostChange } ) => {
 							? 'host-selection__list-item-placeholder'
 							: 'host-selection__list-item'
 					}
-					key={ 'unknown' }
-					onClick={ () => onHostChange( 'unknown' ) }
+					key={ 'generic' }
+					onClick={ () => onHostChange( 'generic' ) }
 				>
 					{ translate(
 						'I don’t know / my host is not listed here / I have my server credentials'

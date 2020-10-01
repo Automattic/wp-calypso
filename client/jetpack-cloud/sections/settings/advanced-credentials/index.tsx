@@ -11,6 +11,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { Card } from '@automattic/components';
 import { ConnectionStatus, StatusState } from './connection-status';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import CredentialsForm from './credentials-form';
 import DocumentHead from 'components/data/document-head';
 import getRewindState from 'state/selectors/get-rewind-state';
 import HostSelection from './host-selection';
@@ -18,7 +19,6 @@ import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StepProgress from 'components/step-progress';
-import CredentialsForm from './credentials-form';
 
 /**
  * Style dependencies
