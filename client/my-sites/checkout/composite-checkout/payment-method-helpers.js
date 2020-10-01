@@ -566,9 +566,8 @@ export function getPostalCode() {
 }
 
 function isPaymentMethodLegallyRestricted( paymentMethodId ) {
-	const restrictedPaymentMethods = [
-		'wechat', // whitehouse.gov/presidential-actions/executive-order-addressing-threat-posed-wechat/
-	];
+	// Add the names of any legally-restricted payment methods to this list.
+	const restrictedPaymentMethods = [];
 
 	return restrictedPaymentMethods.includes( paymentMethodId );
 }
