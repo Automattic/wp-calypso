@@ -483,6 +483,17 @@ export default function CompositeCheckout( {
 
 	const products = useSelector( ( state ) => getProductsList( state ) );
 
+	const changePlanLength = useCallback(
+		( uuidToReplace, newProductSlug, newProductId ) => {
+			recordEvent( {
+				type: 'CART_CHANGE_PLAN_LENGTH',
+				payload: { newProductSlug },
+			} );
+			changeItemVariant( uuidToReplace, newProductSlug, newProductId );
+		},
+		[ changeItemVariant, recordEvent ]
+	);
+
 	// Often products are added using just the product_slug but missing the
 	// product_id; this adds it.
 	const addItemWithEssentialProperties = useCallback(
@@ -633,7 +644,7 @@ export default function CompositeCheckout( {
 						submitCoupon={ submitCoupon }
 						removeCoupon={ removeCoupon }
 						couponStatus={ couponStatus }
-						changePlanLength={ changeItemVariant }
+						changePlanLength={ changePlanLength }
 						siteId={ siteId }
 						siteUrl={ siteSlug }
 						countriesList={ countriesList }
