@@ -163,7 +163,7 @@ class MasterbarLoggedIn extends React.Component {
 				: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( config.isEnabled( 'nav-unification' ) && ! [ 'reader', 'me' ].includes( section ) ) {
+		if ( config.isEnabled( 'nav-unification' ) && 'sites' === section ) {
 			mySitesUrl = '';
 		}
 		return (
