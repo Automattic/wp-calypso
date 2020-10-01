@@ -18,19 +18,16 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
  * @returns {object} request object
  */
 export async function postRequest( glotPressUrl, postFormData ) {
-	let response;
-
-	try {
-		response = await fetch( glotPressUrl, {
-			method: 'POST',
-			credentials: 'include',
-			body: postFormData,
-		} );
-		if ( response.ok ) {
-			return await response.json();
-		}
-	} catch ( err ) {
-		throw err;
+	const response = await window.fetch( glotPressUrl, {
+		method: 'POST',
+		credentials: 'include',
+		body: postFormData,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+	} );
+	if ( response.ok ) {
+		return await response.json();
 	}
 
 	// Invalid response.
