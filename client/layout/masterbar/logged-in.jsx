@@ -58,7 +58,7 @@ class MasterbarLoggedIn extends React.Component {
 		if ( ! config.isEnabled( 'nav-unification' ) ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		} else if ( 'sites' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-			// when sites is not focused or sidebar is open, focus to sites content. Else, open sites sidebar.
+			// when my-sites is not focused or sidebar is open, focus to my-sites' content. Else, open my-sites' sidebar.
 			this.props.setNextLayoutFocus( 'content' );
 		} else {
 			this.props.setNextLayoutFocus( 'sidebar' );
@@ -105,7 +105,7 @@ class MasterbarLoggedIn extends React.Component {
 		if ( ! config.isEnabled( 'nav-unification' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 		} else if ( 'reader' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-			// when reader is not focused or sidebar is open, focus to reader content. Else, open reader sidebar.
+			// when reader is not focused or sidebar is open, focus to reader's content. Else, open reader's sidebar.
 			this.props.setNextLayoutFocus( 'content' );
 		} else {
 			this.props.setNextLayoutFocus( 'sidebar' );
@@ -116,7 +116,7 @@ class MasterbarLoggedIn extends React.Component {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
 		if ( config.isEnabled( 'nav-unification' ) ) {
 			if ( 'me' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-				// when me is not focused or sidebar is open, focus to sites content. Else, open sites sidebar.
+				// when me is not focused or sidebar is open, focus to me's content. Else, open me's sidebar.
 				this.props.setNextLayoutFocus( 'content' );
 			} else {
 				this.props.setNextLayoutFocus( 'sidebar' );
