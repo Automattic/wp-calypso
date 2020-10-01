@@ -87,16 +87,13 @@ class DomainRegistrationSuggestion extends React.Component {
 				resultSuffix = '#best-alternative';
 			}
 
-			if ( this.props.suggestion.is_premium ) {
-				resultSuffix = resultSuffix + '#premium';
-			}
-
 			this.props.recordTracksEvent( 'calypso_traintracks_render', {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: `${ this.props.fetchAlgo }/${ this.props.suggestion.vendor }`,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
+				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',
 			} );
 		}
 	}
