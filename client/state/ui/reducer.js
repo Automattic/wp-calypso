@@ -18,6 +18,7 @@ import mediaModal from './media-modal/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
+import sidebarVisibility from './sidebar-visibility/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -109,6 +110,7 @@ const reducer = combineReducers( {
 	preview,
 	section,
 	selectedSiteId,
+	sidebarVisibility,
 	siteSelectionInitialized,
 } );
 
