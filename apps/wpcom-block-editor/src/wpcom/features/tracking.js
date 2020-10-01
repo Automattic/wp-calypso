@@ -31,12 +31,12 @@ function globalEventPropsHandler( block, parentBlock ) {
 	}
 
 	// Pick up variation slug from `core/embed` block.
-	if ( block.name === 'core/embed' && block?.attributes.providerNameSlug ) {
+	if ( block.name === 'core/embed' && block?.attributes?.providerNameSlug ) {
 		return { variation_slug: block.attributes.providerNameSlug };
 	}
 
 	// Pick up variation slug from `core/social-link` block.
-	if ( block.name === 'core/social-link' && block?.attributes.service ) {
+	if ( block.name === 'core/social-link' && block?.attributes?.service ) {
 		return { variation_slug: block.attributes.service };
 	}
 
