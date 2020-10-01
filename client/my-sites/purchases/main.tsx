@@ -54,7 +54,6 @@ export function PurchaseDetails( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<MySitesSidebarNavigation />
 			<DocumentHead title={ translate( 'Billing' ) } />
 			<FormattedHeader
 				brandFont
@@ -88,7 +87,6 @@ export function PurchaseCancel( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<MySitesSidebarNavigation />
 			<DocumentHead title={ translate( 'Cancel purchase' ) } />
 			<FormattedHeader
 				brandFont
@@ -119,7 +117,6 @@ export function PurchaseAddPaymentMethod( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<MySitesSidebarNavigation />
 			<DocumentHead title={ translate( 'Billing' ) } />
 			<FormattedHeader
 				brandFont
@@ -149,7 +146,6 @@ export function PurchaseCancelDomain( {
 
 	return (
 		<Main className="purchases is-wide-layout">
-			<MySitesSidebarNavigation />
 			<DocumentHead title={ translate( 'Cancel domain' ) } />
 			<FormattedHeader
 				brandFont
