@@ -285,7 +285,7 @@ class ManagePurchase extends Component {
 		return (
 			<RemovePurchase
 				hasLoadedSites={ hasLoadedSites }
-				hasLoadedUserPurchasesFromServer={ hasLoadedUserPurchasesFromServer }
+				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
 				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
 				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
 				site={ site }
