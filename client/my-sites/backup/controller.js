@@ -15,6 +15,8 @@ import BackupPlaceholder from 'components/jetpack/backup-placeholder';
 import FormattedHeader from 'components/formatted-header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import getRewindState from 'state/selectors/get-rewind-state';
+import isJetpackSiteMultiSite from 'state/sites/selectors/is-jetpack-site-multi-site';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import QueryRewindState from 'components/data/query-rewind-state';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { isJetpackBackupSlug } from 'lib/products-values';
@@ -41,6 +43,20 @@ export function showUpsellIfNoBackup( context, next ) {
 			</UpsellSwitch>
 		</>
 	);
+	next();
+}
+
+export function showUnavailableForMultisites( context, next ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( isJetpackSiteMultiSite( state, siteId ) ) {
+		context.primary = isJetpackCloud() ? (
+			<BackupUpsell reason="multisite_not_supported" />
+		) : (
+			<WPCOMBackupUpsell reason="multisite_not_supported" />
+		);
+	}
+
 	next();
 }
 
