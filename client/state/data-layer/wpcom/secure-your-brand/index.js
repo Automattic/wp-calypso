@@ -11,7 +11,7 @@ import {
 } from 'state/secure-your-brand/actions';
 
 /**
- * @module state/data-layer/wpcom/plans
+ * @module state/data-layer/wpcom/secure-your-brand
  */
 
 /**
@@ -35,13 +35,15 @@ export const requestSecureYourBrand = ( action ) => {
  * Dispatches returned WordPress.com secure your brand data
  *
  * @param {object} action Redux action
- * @param {Array} plans raw data from plans API
+ * @param {Array} domains ns raw data from secure-your-brand API
  * @returns {Array<object>} Redux actions
  */
-export const receiveSecureYourBrand = ( action, plans ) => [ getSecureYourBrandSuccess( plans ) ];
+export const receiveSecureYourBrand = ( action, domains ) => [
+	getSecureYourBrandSuccess( domains ),
+];
 
 /**
- * Dispatches returned error from plans request
+ * Dispatches returned error from secure-your-brand request
  *
  * @param {object} action Redux action
  * @param {object} rawError raw error from HTTP request
@@ -56,6 +58,6 @@ export const dispatchSecureYourBrandRequest = dispatchRequest( {
 	onError: receiveError,
 } );
 
-registerHandlers( 'state/data-layer/wpcom/plans', {
+registerHandlers( 'state/data-layer/wpcom/secure-your-brand', {
 	[ SECURE_YOUR_BRAND_REQUEST ]: [ dispatchSecureYourBrandRequest ],
 } );
