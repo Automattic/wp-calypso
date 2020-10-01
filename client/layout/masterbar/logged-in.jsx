@@ -58,7 +58,7 @@ class MasterbarLoggedIn extends React.Component {
 		if ( ! config.isEnabled( 'nav-unification' ) ) {
 			this.props.setNextLayoutFocus( 'sidebar' );
 		} else if ( 'sites' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-			// when sites is not focused or sidebar is open, focus to sites content. Else, open sites sidebar.
+			// when my-sites is not focused or sidebar is open, focus to my-sites' content. Else, open my-sites' sidebar.
 			this.props.setNextLayoutFocus( 'content' );
 		} else {
 			this.props.setNextLayoutFocus( 'sidebar' );
@@ -105,7 +105,7 @@ class MasterbarLoggedIn extends React.Component {
 		if ( ! config.isEnabled( 'nav-unification' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 		} else if ( 'reader' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
-			// when reader is not focused or sidebar is open, focus to reader content. Else, open reader sidebar.
+			// when reader is not focused or sidebar is open, focus to reader's content. Else, open reader's sidebar.
 			this.props.setNextLayoutFocus( 'content' );
 		} else {
 			this.props.setNextLayoutFocus( 'sidebar' );
@@ -114,6 +114,14 @@ class MasterbarLoggedIn extends React.Component {
 
 	clickMe = () => {
 		this.props.recordTracksEvent( 'calypso_masterbar_me_clicked' );
+		if ( config.isEnabled( 'nav-unification' ) ) {
+			if ( 'me' !== this.props.section || 'sidebar' === this.props.currentLayoutFocus ) {
+				// when me is not focused or sidebar is open, focus to me's content. Else, open me's sidebar.
+				this.props.setNextLayoutFocus( 'content' );
+			} else {
+				this.props.setNextLayoutFocus( 'sidebar' );
+			}
+		}
 	};
 
 	preloadMySites = () => {
@@ -155,7 +163,7 @@ class MasterbarLoggedIn extends React.Component {
 				: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( config.isEnabled( 'nav-unification' ) && 'reader' !== section ) {
+		if ( config.isEnabled( 'nav-unification' ) && 'sites' === section ) {
 			mySitesUrl = '';
 		}
 		return (
@@ -206,7 +214,7 @@ class MasterbarLoggedIn extends React.Component {
 				<Item
 					tipTarget="reader"
 					className="masterbar__reader"
-					url={ config.isEnabled( 'nav-unification' ) ? '/read?flags=nav-unification' : '/read' }
+					url="/read"
 					icon="reader"
 					onClick={ this.clickReader }
 					isActive={ this.isActive( 'reader' ) }
