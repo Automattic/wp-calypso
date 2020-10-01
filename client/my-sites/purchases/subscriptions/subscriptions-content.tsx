@@ -9,7 +9,11 @@ import { useTranslate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import PurchasesSite from 'me/purchases/purchases-site/index.jsx';
-import { getSitePurchases, hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
+import {
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
+} from 'state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
 import { CompactCard } from '@automattic/components';
@@ -17,13 +21,14 @@ import EmptyContent from 'components/empty-content';
 import './style.scss';
 
 export default function SubscriptionsContent() {
+	const isFetchingPurchases = useSelector( ( state ) => isFetchingSitePurchases( state ) );
 	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 
 	// If we are loading purchases, show the placeholder
-	if ( ! hasLoadedPurchases ) {
+	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
 		return <PurchasesSite isPlaceholder />;
 	}
 
