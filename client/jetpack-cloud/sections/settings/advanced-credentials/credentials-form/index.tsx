@@ -1,7 +1,7 @@
 /**
  * External dependendies
  */
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useRef } from 'react';
 // import PropTypes from 'prop-types';
 // import { get } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +20,8 @@ import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextArea from 'components/forms/form-textarea';
 import SegmentedControl from 'components/segmented-control';
+import InfoPopover from 'components/info-popover';
+import { getHostInfoFromId, LinkAndInfo } from '../host-info';
 
 /**
  * Style dependencies
@@ -32,11 +34,11 @@ enum Mode {
 }
 
 interface Props {
-	// 	host: string;
+	host: string;
 	onCredentialsSave: () => void;
 }
 
-const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave } ) =>
+const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave, host } ) =>
 	// {
 	// 	// formIsSubmitting,
 	// 	// formSubmissionStatus,
@@ -53,6 +55,10 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave 
 	{
 		const translate = useTranslate();
 		const [ mode, setMode ] = useState( Mode.Password );
+		const hostInfo = getHostInfoFromId( host );
+
+		// popover refs
+		const installationPathRef = useRef();
 
 		const renderPasswordForm = () => (
 			<div className="credentials-form__row credentials-form__user-pass">
@@ -114,6 +120,13 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave 
 			</FormFieldset>
 		);
 
+		const renderInlineSupport = ( ref: React.MutableRefObject< any >, linkOrInfo: LinkAndInfo ) => (
+			<InfoPopover ref={ ref }>
+				{ linkOrInfo.info }
+				{ linkOrInfo.link }
+			</InfoPopover>
+		);
+
 		return (
 			<div className="credentials-form">
 				<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
@@ -167,9 +180,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave 
 
 				<FormFieldset className="credentials-form__path">
 					<FormLabel htmlFor="wordpress-path">
-						{ /* { labels.path || translate( 'WordPress installation path' ) } */ }
 						{ translate( 'WordPress installation path' ) }
 					</FormLabel>
+					{ hostInfo &&
+						hostInfo.installationPath &&
+						renderInlineSupport( installationPathRef, hostInfo.installationPath ) }
 					<FormTextInput
 						name="path"
 						id="wordpress-path"
@@ -179,6 +194,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave 
 						// disabled={ formIsSubmitting }
 						// isError={ !! formErrors.path }
 					/>
+
 					{ /* { formErrors.path && <FormInputValidation isError={ true } text={ formErrors.path } /> } */ }
 				</FormFieldset>
 

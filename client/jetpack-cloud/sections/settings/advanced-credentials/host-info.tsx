@@ -3,29 +3,23 @@
  */
 import { translate, TranslateResult } from 'i18n-calypso';
 import React from 'react';
-
-interface Info {
-	info: TranslateResult;
+interface LinkAndInfo {
+	info?: TranslateResult;
+	link?: string | TranslateResult;
 }
-
-interface Link {
-	link: string | TranslateResult;
-}
-
-type LinkAndInfo = Link & Info;
 
 export interface HostInfo {
 	id: string;
 	name: string;
-	credentials?: Link | Info | LinkAndInfo;
-	credentialType?: Link | Info | LinkAndInfo;
-	serverAddress?: Link | Info | LinkAndInfo;
-	portNumber?: Link | Info | LinkAndInfo;
-	installationPath?: Link | Info | LinkAndInfo;
-	serverUserName?: Link | Info | LinkAndInfo;
-	ftp?: Link | Info | LinkAndInfo;
-	sftp?: Link | Info | LinkAndInfo;
-	ssh?: Link | Info | LinkAndInfo;
+	credentials?: LinkAndInfo;
+	credentialType?: LinkAndInfo;
+	serverAddress?: LinkAndInfo;
+	portNumber?: LinkAndInfo;
+	installationPath?: LinkAndInfo;
+	serverUserName?: LinkAndInfo;
+	ftp?: LinkAndInfo;
+	sftp?: LinkAndInfo;
+	ssh?: LinkAndInfo;
 }
 
 export const topHosts: HostInfo[] = [
@@ -248,7 +242,7 @@ export const otherHosts: HostInfo[] = [
 	},
 ];
 
-export const getProviderNameFromId = ( searchId?: string ) => {
+export const getProviderNameFromId = ( searchId?: string ): string | null => {
 	for ( const host of topHosts ) {
 		if ( host.id === searchId ) {
 			return host.name;
@@ -257,6 +251,20 @@ export const getProviderNameFromId = ( searchId?: string ) => {
 	for ( const host of otherHosts ) {
 		if ( host.id === searchId ) {
 			return host.name;
+		}
+	}
+	return null;
+};
+
+export const getHostInfoFromId = ( searchId?: string ): HostInfo | null => {
+	for ( const host of topHosts ) {
+		if ( host.id === searchId ) {
+			return host;
+		}
+	}
+	for ( const host of otherHosts ) {
+		if ( host.id === searchId ) {
+			return host;
 		}
 	}
 	return null;

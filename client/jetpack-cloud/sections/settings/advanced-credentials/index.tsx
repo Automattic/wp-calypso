@@ -83,7 +83,7 @@ const AdvancedCredentials: FunctionComponent = () => {
 				return (
 					<div>
 						<h4>{ selectedHost }</h4>
-						<CredentialsForm onCredentialsSave={ switchToConnectionStep } />
+						<CredentialsForm host={ selectedHost } onCredentialsSave={ switchToConnectionStep } />
 					</div>
 				);
 			case Steps.HostSelectionStep:
