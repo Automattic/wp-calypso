@@ -89,9 +89,12 @@ module.exports = {
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'no-console': 'off',
-				'jest/valid-describe': 'off',
-				'jest/no-test-prefixes': 'off',
-				'jest/no-identical-title': 'off',
+
+				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
+				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
+					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
+					{}
+				),
 			},
 			globals: {
 				step: false,
