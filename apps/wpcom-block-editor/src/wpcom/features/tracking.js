@@ -113,17 +113,17 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
  * a track event for it. The recorded event will also reflect whether the
  * inserted pattern replaced blocks.
  *
- * @param {Array} args Data supplied to block insertion or replacement tracking functions.
+ * @param {Array} actionData Data supplied to block insertion or replacement tracking functions.
  * @returns {string} Pattern name being inserted if available.
  */
-const trackPatternInsertion = ( args ) => {
-	const meta = find( args, ( arg ) => arg?.patternName );
+const maybeTrackPatternInsertion = ( actionData ) => {
+	const meta = find( actionData, ( item ) => item?.patternName );
 	const patternName = meta?.patternName;
 
 	if ( patternName ) {
 		tracksRecordEvent( 'wpcom_pattern_inserted', {
 			pattern_name: patternName,
-			blocks_replaced: args.blocks_replaced,
+			blocks_replaced: actionData?.blocks_replaced,
 		} );
 	}
 
@@ -138,7 +138,7 @@ const trackPatternInsertion = ( args ) => {
  * @returns {void}
  */
 const trackBlockInsertion = ( blocks, ...args ) => {
-	const patternName = trackPatternInsertion( { ...args, blocks_replaced: false } );
+	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: false } );
 
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
@@ -168,7 +168,7 @@ const trackBlockRemoval = ( blocks ) => {
  * @returns {void}
  */
 const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
-	const patternName = trackPatternInsertion( { ...args, blocks_replaced: true } );
+	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: true } );
 
 	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
 		block_name: name,
