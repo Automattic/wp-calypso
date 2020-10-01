@@ -23,6 +23,7 @@ describe( 'LanguagePickerModal', () => {
 	const defaultProps = {
 		onSelected: noop,
 		onClose: noop,
+		recordTracksEvent: noop,
 		isVisible: true,
 		languages: [
 			{
@@ -449,6 +450,75 @@ describe( 'LanguagePickerModal', () => {
 			}
 
 			LanguagePickerModal.prototype.getLanguagesListColumnsCount = getLanguagesListColumnsCount;
+		} );
+	} );
+
+	describe( 'search event', () => {
+		let recordTracksEvent;
+		let wrapper;
+
+		beforeEach( () => {
+			recordTracksEvent = jest.fn();
+
+			wrapper = shallow(
+				<LanguagePickerModal { ...defaultProps } recordTracksEvent={ recordTracksEvent } />
+			);
+		} );
+
+		test( 'should not fire when language does not change', () => {
+			expect( wrapper.state( 'selectedLanguageSlug' ) ).toEqual( defaultProps.selected );
+
+			wrapper.instance().handleClose();
+
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
+		describe( 'when searched', () => {
+			test( 'should fire an event with searched prop set to true', () => {
+				wrapper.instance().handleSearch( 'It' );
+
+				expect( wrapper.state( 'search' ) ).toEqual( 'It' );
+
+				wrapper.instance().handleClose();
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_language_picker_language_picked',
+					{ searched: true }
+				);
+			} );
+
+			test( 'should fire an event with searched prop set to true if search closed', () => {
+				wrapper.instance().handleSearch( 'it' );
+				// pass an empty string to simluate when someone searches and then closes
+				// the search box
+				wrapper.instance().handleSearch( '' );
+
+				expect( wrapper.state( 'search' ) ).toEqual( '' );
+
+				wrapper.instance().handleClose();
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_language_picker_language_picked',
+					{ searched: true }
+				);
+			} );
+		} );
+
+		describe( 'when not searched', () => {
+			test( 'should fire an event with searched prop set to false', () => {
+				expect( wrapper.state( 'search' ) ).toBe( false );
+
+				wrapper.instance().handleLanguageItemClick( 'it', { preventDefault: noop } );
+
+				expect( wrapper.state( 'selectedLanguageSlug' ) ).toEqual( 'it' );
+
+				wrapper.instance().handleClose();
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_language_picker_language_picked',
+					{ searched: false }
+				);
+			} );
 		} );
 	} );
 } );

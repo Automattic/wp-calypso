@@ -433,7 +433,7 @@ export class LanguagePickerModal extends PureComponent {
 		 * moment, and I'm not sure there's a better solution that
 		 * wouldn't be overkill given what we're trying to record here.
 		 */
-		const searched = false === search;
+		const searched = false !== search;
 		this.props.recordTracksEvent( 'calypso_language_picker_language_picked', { searched } );
 	};
 
