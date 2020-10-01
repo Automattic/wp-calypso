@@ -645,6 +645,7 @@ class ManagePurchase extends Component {
 						editCardDetailsPath={ editCardDetailsPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
+						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 					/>
 				) }
 				<AsyncLoad
