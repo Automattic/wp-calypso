@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -17,16 +17,43 @@ import page from 'page';
  * Internal dependencies
  */
 import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
-import { toggleMySitesSidebarSection as toggleSection } from 'state/my-sites/sidebar/actions';
+import {
+	toggleMySitesSidebarSection as toggleSection,
+	expandMySitesSidebarSection as expandSection,
+} from 'state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
 import { isExternal } from 'lib/url';
+import { itemLinkMatches } from '../sidebar/utils';
 
-export const MySitesSidebarUnifiedMenu = ( { slug, title, icon, children, path, link } ) => {
+export const MySitesSidebarUnifiedMenu = ( {
+	slug,
+	title,
+	icon,
+	children,
+	path,
+	link,
+	selected,
+} ) => {
+	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
+	const selectedMenuItem =
+		children && children.find( ( menuItem ) => itemLinkMatches( menuItem.url, path ) );
+	const childIsSelected = !! selectedMenuItem;
+
+	/**
+	 * One time only, auto-expand the currently active section, or the section
+	 * which contains the current active item.
+	 */
+	useEffect( () => {
+		if ( ! hasAutoExpanded.current && ( selected || childIsSelected ) ) {
+			reduxDispatch( expandSection( sectionId ) );
+			hasAutoExpanded.current = true;
+		}
+	}, [ selected, childIsSelected, reduxDispatch, sectionId ] );
 
 	return (
 		<ExpandableSidebarMenu
@@ -41,13 +68,23 @@ export const MySitesSidebarUnifiedMenu = ( { slug, title, icon, children, path, 
 				}
 				reduxDispatch( toggleSection( sectionId ) );
 			} }
-			expanded={ isExpanded }
+			expanded={ isExpanded || selected }
 			title={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
+			className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
 		>
-			{ children.map( ( item ) => (
-				<MySitesSidebarUnifiedItem key={ item.slug } path={ path } { ...item } />
-			) ) }
+			{ children.map( ( item ) => {
+				const isSelected = selectedMenuItem?.url === item.url;
+				return (
+					<MySitesSidebarUnifiedItem
+						key={ item.slug }
+						path={ path }
+						{ ...item }
+						selected={ isSelected }
+						isSubItem={ true }
+					/>
+				);
+			} ) }
 		</ExpandableSidebarMenu>
 	);
 };
