@@ -35,7 +35,7 @@ function globalEventPropsHandler( block, parentBlock ) {
 		return { variation_slug: block.attributes.providerNameSlug };
 	}
 
-	// Pick up variation slug from `core/embed` block.
+	// Pick up variation slug from `core/social-link` block.
 	if ( block.name === 'core/social-link' && block?.attributes.service ) {
 		return { variation_slug: block.attributes.service };
 	}
