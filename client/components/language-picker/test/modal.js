@@ -473,6 +473,16 @@ describe( 'LanguagePickerModal', () => {
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
 
+		test( 'should not fire when dialog is closing due to cancellation', () => {
+			wrapper.instance().handleSearch( 'it' );
+
+			expect( wrapper.state( 'selectedLanguageSlug' ) ).not.toEqual( defaultProps.selected );
+
+			wrapper.instance().handleClose( /* isClosingWithoutSelection = */ true );
+
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
+		} );
+
 		describe( 'when searched', () => {
 			test( 'should fire an event with searched prop set to true', () => {
 				wrapper.instance().handleSearch( 'It' );

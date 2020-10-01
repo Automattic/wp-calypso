@@ -415,10 +415,13 @@ export class LanguagePickerModal extends PureComponent {
 		this.handleClose();
 	};
 
-	recordLanguagePickedEvent = () => {
+	recordLanguagePickedEvent = ( isClosingWithoutSelection ) => {
 		const { selectedLanguageSlug, search } = this.state;
 
-		if ( this.initiallySelectedLanguageSlug === selectedLanguageSlug ) {
+		if (
+			isClosingWithoutSelection ||
+			this.initiallySelectedLanguageSlug === selectedLanguageSlug
+		) {
 			// we don't record an event if the language wasn't changed
 			return;
 		}
@@ -437,8 +440,8 @@ export class LanguagePickerModal extends PureComponent {
 		this.props.recordTracksEvent( 'calypso_language_picker_language_picked', { searched } );
 	};
 
-	handleClose = () => {
-		this.recordLanguagePickedEvent();
+	handleClose = ( isClosingWithoutSelection ) => {
+		this.recordLanguagePickedEvent( isClosingWithoutSelection );
 		this.props.onClose();
 	};
 
@@ -601,7 +604,7 @@ export class LanguagePickerModal extends PureComponent {
 			<Dialog
 				isVisible
 				buttons={ buttons }
-				onClose={ this.handleClose }
+				onClose={ () => this.handleClose( true ) }
 				additionalClassNames="language-picker__modal"
 			>
 				<QueryLanguageNames />
