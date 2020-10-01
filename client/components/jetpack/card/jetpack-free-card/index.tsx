@@ -11,6 +11,7 @@ import { Button } from '@automattic/components';
  */
 import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
 import { addQueryArgs } from 'lib/route';
 
@@ -24,13 +25,17 @@ import type { JetpackFreeProps } from 'my-sites/plans-v2/types';
  */
 import './style.scss';
 
-const JetpackFreeCard = ( { urlQueryArgs }: JetpackFreeProps ) => {
+const JetpackFreeCard = ( { siteId, urlQueryArgs }: JetpackFreeProps ) => {
 	const translate = useTranslate();
 	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
 
 	const startHref = isJetpackCloud()
 		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ JPC_PATH_REMOTE_INSTALL }` )
 		: wpAdminUrl || JPC_PATH_REMOTE_INSTALL;
+
+	const onClickTrack = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
+		site_id: siteId || undefined,
+	} );
 
 	return (
 		<div className="jetpack-free-card">
@@ -48,7 +53,7 @@ const JetpackFreeCard = ( { urlQueryArgs }: JetpackFreeProps ) => {
 						}
 					) }
 				</p>
-				<Button className="jetpack-free-card__button" href={ startHref }>
+				<Button className="jetpack-free-card__button" href={ startHref } onClick={ onClickTrack }>
 					{ translate( 'Start for free' ) }
 				</Button>
 			</div>

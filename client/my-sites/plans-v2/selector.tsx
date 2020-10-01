@@ -213,7 +213,7 @@ const SelectorPage = ( {
 			{ showJetpackFreeCard && (
 				<>
 					<div className="selector__divider" />
-					<JetpackFreeCard urlQueryArgs={ urlQueryArgs } />
+					<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 				</>
 			) }
 
