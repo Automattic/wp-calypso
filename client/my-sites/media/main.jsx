@@ -423,8 +423,8 @@ class Media extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { mediaId, site } ) => {
-	const siteId = getSelectedSiteId( state ) || site.ID;
+const mapStateToProps = ( state, { mediaId } ) => {
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		selectedSite: getSelectedSite( state ),
