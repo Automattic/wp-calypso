@@ -26,6 +26,11 @@
 	--color-masterbar-item-hover-background: #333;
 	--color-masterbar-item-active-background: #23282d;
 
+	// client/layout/style.scss
+	.layout__secondary {
+		border-right: none;
+	}
+
 	// client/layout/masterbar/style.scss
 	.masterbar {
 		font-size: $nav-unification-masterbar-font-size;

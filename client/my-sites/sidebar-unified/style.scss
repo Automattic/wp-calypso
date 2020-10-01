@@ -11,8 +11,10 @@
 	--color-sidebar-background-rgb: 35, 40, 45;
 	--color-sidebar-menu-hover-background: #32373c;
 	--color-sidebar-menu-hover-background-rgb: rgb( #32373c );
-	--color-sidebar-menu-hover: var ( --color-sidebar-text );
-	--color-sidebar-menu-selected-background: #006fad;
+	--color-sidebar-menu-hover-heading-background: #1a1e23;
+	--color-sidebar-menu-hover: #00b9eb;
+	--color-sidebar-menu-hover-text: #00b9eb;
+	--color-sidebar-menu-selected-background: #0073aa;
 	--color-sidebar-border: #333333;
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
@@ -45,7 +47,7 @@ $font-size: rem( 14px );
 
 			&:hover,
 			&:focus {
-				background-color: var( --color-sidebar-menu-hover-background );
+				background-color: var( --color-sidebar-menu-hover-heading-background );
 				color: var( --color-sidebar-menu-hover );
 			}
 		}
@@ -60,49 +62,6 @@ $font-size: rem( 14px );
 			display: none;
 			width: 20px;
 			height: 20px;
-		}
-		.sidebar__menu.is-togglable {
-			.sidebar__heading {
-				padding: 0 0 0 8px;
-				font-weight: 400;
-
-				&:hover,
-				&:focus {
-					background-color: var( --color-sidebar-menu-hover-background );
-					color: var( --color-sidebar-menu-hover );
-				}
-			}
-		}
-
-		.sidebar__menu.is-toggle-open {
-
-			// Open
-			.sidebar__heading {
-				background: #32373c;
-
-				&::after {
-					right: 0;
-					border: solid 8px transparent;
-					content: ' ';
-					height: 0;
-					width: 0;
-					position: absolute;
-					pointer-events: none;
-					border-right-color: #f1f1f1;
-					top: 50%;
-					margin-top: -8px;
-				}
-
-				.sidebar__menu-icon {
-					color: #fff;
-				}
-			}
-
-			// Open and selected
-			&.sidebar__menu--selected .sidebar__heading {
-				background: #0073aa;
-				color: white;
-			}
 		}
 
 		.sidebar__expandable-content {
@@ -120,8 +79,7 @@ $font-size: rem( 14px );
 				&:hover,
 				&:focus {
 					background-color: transparent;
-					color: white;
-					font-weight: 600;
+					color: var( --color-sidebar-menu-hover );
 				}
 			}
 
@@ -139,6 +97,81 @@ $font-size: rem( 14px );
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
 		}
+
+		.sidebar__menu-item-parent {
+			&.selected {
+				.sidebar__menu-link {
+					background: var( --color-sidebar-menu-selected-background );
+					color: white;
+
+					.sidebar__menu-icon {
+						color: white;
+					}
+				}
+			}
+		}
+
+		.sidebar__menu,
+		.sidebar__menu-item-parent {
+			&:hover {
+				.sidebar__menu-icon {
+					color: var( --color-sidebar-menu-hover );
+				}
+			}
+		}
+
+		// Is togglable but closed
+		.sidebar__menu.is-togglable {
+			.sidebar__heading {
+				padding: 0 0 0 8px;
+				font-weight: 400;
+
+				&::after {
+					display: none;
+					right: 0;
+					border: solid 8px transparent;
+					content: ' ';
+					height: 0;
+					width: 0;
+					position: absolute;
+					pointer-events: none;
+					border-right-color: #f1f1f1;
+					top: 50%;
+					margin-top: -8px;
+				}
+			}
+		}
+
+		// Is toggled open
+		.sidebar__menu.is-toggle-open {
+			.sidebar__heading {
+				background: var( --color-sidebar-menu-hover-heading-background );
+
+				&:hover {
+					.sidebar__menu-icon {
+						color: var( --color-sidebar-menu-hover );
+					}
+				}
+
+				&::after {
+					display: block;
+				}
+
+				.sidebar__menu-icon {
+					color: #fff;
+				}
+
+			}
+			// Is toggled open and selected
+			&.sidebar__menu--selected .sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: white;
+
+				.sidebar__menu-icon {
+					color: #fff;
+				}
+			}
+		}
 	}
 
 	//client/components/site-selector/style.scss
@@ -153,6 +186,54 @@ $font-size: rem( 14px );
 
 	.site__badge {
 		background: var( --color-sidebar-text );
+	}
+}
+
+// Flyout menu (showing from >782px)
+@media screen and ( min-width: 783px ) {
+	.is-nav-unification {
+
+		// client/layout/style.scss
+		// layout/sidebar/style.scss
+		// TODO: For prototype only, this prevents the sidebar from being scrollable.
+		// In wp-admin there's custom JS to a) position the sidebar based on the scroll
+		// position and b) position the flyout menu based on available screen space.
+		&.focus-content,
+		&.focus-sidebar {
+			.sidebar,
+			.layout__secondary {
+				z-index: 1;
+				overflow: initial;
+			}
+		}
+
+		.sidebar__menu.is-togglable:not( .is-toggle-open ):hover {
+			position: relative;
+
+			.sidebar__heading {
+				background-color: var( --color-sidebar-menu-hover-heading-background );
+				color: var( --color-sidebar-menu-hover );
+			}
+
+			// indicator arrow
+			.sidebar__heading::after {
+				display: block;
+				border-right-color: var( --color-sidebar-menu-hover-background );
+			}
+
+			// flyout content
+			.sidebar__expandable-content {
+				display: block;
+				position: absolute;
+				top: 0;
+				left: var( --sidebar-width-max );
+				width: 160px;
+
+				.sidebar__menu-link:hover {
+					font-weight: normal;
+				}
+			}
+		}
 	}
 }
 
