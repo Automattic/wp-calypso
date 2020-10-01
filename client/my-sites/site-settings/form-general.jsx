@@ -533,6 +533,84 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	handleSupportAccessChange = ( { isAllowed } ) => {
+		const SUPPORT_ACCESS_EXPIRY_IN_DAYS = 30;
+		const { updateFields } = this.props;
+		if ( isAllowed ) {
+			const today = new Date();
+			const expiry =
+				( today.setDate( today.getDate() + SUPPORT_ACCESS_EXPIRY_IN_DAYS ) / 1000 ) | 0;
+			updateFields( { support_access_allowed_until: expiry, allow_support_access: 1 } );
+		} else {
+			updateFields( { support_access_allowed_until: '', allow_support_access: 0 } );
+		}
+	};
+
+	supportAccessOptions() {
+		const { fields, isRequestingSettings, translate } = this.props;
+		const isSupportAccessAllowed = fields.allow_support_access === 1;
+
+		return (
+			<FormFieldset>
+				<FormLabel>
+					<FormRadio
+						name="allow_support_access"
+						value="1"
+						checked={ isSupportAccessAllowed }
+						onChange={ () =>
+							this.handleSupportAccessChange( {
+								isAllowed: true,
+							} )
+						}
+						disabled={ isRequestingSettings }
+						label={ translate( 'Allow us to access your P2 to provide support' ) }
+					/>
+				</FormLabel>
+				<FormSettingExplanation isIndented>
+					{ translate( 'This will deactivate automatically in 30 days.' ) }
+				</FormSettingExplanation>
+
+				<FormLabel>
+					<FormRadio
+						name="allow_support_access"
+						value="0"
+						checked={ ! isSupportAccessAllowed }
+						onChange={ () =>
+							this.handleSupportAccessChange( {
+								isAllowed: false,
+							} )
+						}
+						disabled={ isRequestingSettings }
+						label={ translate( "Don't allow (recommended)" ) }
+					/>
+				</FormLabel>
+				<FormSettingExplanation isIndented>
+					{ translate( "We won't be able to access your P2 if you reach out for help." ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+		);
+	}
+
+	supportAccessSettings() {
+		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
+
+		return (
+			<>
+				<SettingsSectionHeader
+					disabled={ isRequestingSettings || isSavingSettings }
+					id="support-access-settings"
+					isSaving={ isSavingSettings }
+					onButtonClick={ handleSubmitForm }
+					showButton
+					title={ translate( 'Support Access', { context: 'Support Access settings header' } ) }
+				/>
+				<Card>
+					<form>{ this.supportAccessOptions() }</form>
+				</Card>
+			</>
+		);
+	}
+
 	disablePrivacySettings = ( e ) => {
 		e.target.blur();
 	};
@@ -604,6 +682,8 @@ export class SiteSettingsFormGeneral extends Component {
 				</Card>
 
 				{ this.privacySettingsWrapper() }
+
+				{ isWPForTeamsSite && <>{ this.supportAccessSettings() }</> }
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
@@ -690,6 +770,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		admin_url: '',
+		support_access_allowed_until: '',
 	};
 
 	if ( ! settings ) {
@@ -706,6 +787,9 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		was_wpcom_coming_soon: settings.wpcom_coming_soon,
+
+		support_access_allowed_until: settings.support_access_allowed_until,
+		allow_support_access: settings.support_access_allowed_until ? 1 : 0,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
