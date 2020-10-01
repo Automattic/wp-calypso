@@ -14,39 +14,68 @@ export default function LoadingContent() {
 	const { __ } = useI18n();
 
 	return (
-		<LoadingContentWrapperUI>
-			<LoadingCard>
-				<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
+		<LoadingContentWrapperUi>
+			<LoadingContentUi>
+				<LoadingCard>
+					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingFooter />
+			</LoadingContentUi>
+
+			<LoadingSideBarUi>
 				<LoadingCopy />
 				<LoadingCopy />
-			</LoadingCard>
-			<LoadingCard>
-				<LoadingTitle />
 				<LoadingCopy />
-				<LoadingCopy />
-			</LoadingCard>
-			<LoadingCard>
-				<LoadingTitle />
-			</LoadingCard>
-			<LoadingCard>
-				<LoadingTitle />
-			</LoadingCard>
-			<LoadingFooter />
-		</LoadingContentWrapperUI>
+			</LoadingSideBarUi>
+		</LoadingContentWrapperUi>
 	);
 }
 
-const LoadingContentWrapperUI = styled.div`
+const LoadingContentWrapperUi = styled.div`
+	display: flex;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+	}
+`;
+
+const LoadingContentUi = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	width: 100%;
-	box-sizing: border-box;
-	margin-bottom: 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin: 32px auto;
-		box-sizing: border-box;
 		max-width: 556px;
+	}
+`;
+
+const LoadingSideBarUi = styled.div`
+	display: none;
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: block;
+		padding: 24px;
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		max-width: 326px;
+		background: ${ ( props ) => props.theme.colors.surface };
+		margin-left: 24px;
 	}
 `;
 
