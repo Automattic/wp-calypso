@@ -10,6 +10,7 @@ import { forEach } from 'lodash';
  */
 import * as SlackNotifier from './slack-notifier.js';
 import * as dataHelper from './data-helper';
+import * as driverManager from './driver-manager';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
@@ -434,8 +435,11 @@ export function waitForInfiniteListLoad( driver, elementSelector, { numElements 
 }
 
 export async function switchToWindowByIndex( driver, index ) {
+	const currentScreenSize = driverManager.currentScreenSize();
 	const handles = await driver.getAllWindowHandles();
-	return await driver.switchTo().window( handles[ index ] );
+	await driver.switchTo().window( handles[ index ] );
+	// Resize target window to ensure we stay in the same viewport size:
+	await driverManager.resizeBrowser( driver, currentScreenSize );
 }
 
 export async function numberOfOpenWindows( driver ) {
