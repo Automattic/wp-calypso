@@ -11,8 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 import PurchasesSite from 'me/purchases/purchases-site/index.jsx';
 import {
 	getSitePurchases,
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
 } from 'state/purchases/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
@@ -21,16 +21,14 @@ import EmptyContent from 'components/empty-content';
 import './style.scss';
 
 export default function SubscriptionsContent() {
-	const isFetchingPurchases = useSelector( ( state ) => isFetchingUserPurchases( state ) );
-	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedUserPurchasesFromServer( state ) );
+	const isFetchingPurchases = useSelector( ( state ) => isFetchingSitePurchases( state ) );
+	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 
-	// If we are loading purchases, show the placeholder
-	if ( isFetchingPurchases && ! hasLoadedPurchases ) {
-		return <PurchasesSite isPlaceholder />;
-	}
+	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
+		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
 
 	// If there is no selected site, show the "no sites" page
 	if ( ! selectedSiteId ) {
@@ -42,11 +40,8 @@ export default function SubscriptionsContent() {
 		return <PurchasesSite isPlaceholder />;
 	}
 
-	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
-		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
-
 	// If there are purchases, show them
-	if ( hasLoadedPurchases && purchases.length ) {
+	if ( purchases.length ) {
 		return (
 			<PurchasesSite
 				showHeader={ false }
@@ -59,6 +54,11 @@ export default function SubscriptionsContent() {
 				purchases={ purchases }
 			/>
 		);
+	}
+
+	// If we are loading purchases, show the placeholder
+	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
+		return <PurchasesSite isPlaceholder />;
 	}
 
 	// If there is selected site data but no purchases, show the "no purchases" page

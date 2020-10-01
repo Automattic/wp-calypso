@@ -10,19 +10,19 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import QuerySitePurchases from 'components/data/query-site-purchases';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import SubscriptionsContent from './subscriptions-content';
 import AccountLevelPurchaseLinks from './account-level-purchase-links';
 import SectionHeader from 'components/section-header';
 
 export default function Subscriptions() {
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const translate = useTranslate();
 
 	return (
 		<Main className="subscriptions is-wide-layout">
-			<QueryUserPurchases userId={ userId } />
+			<QuerySitePurchases siteId={ selectedSiteId } />
 			<PageViewTracker path="/purchases/subscriptions" title="Subscriptions" />
 			<SectionHeader label={ translate( 'Subscriptions' ) } />
 			<SubscriptionsContent />
