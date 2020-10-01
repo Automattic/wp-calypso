@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, noop, flowRight, has, trim, sortBy, reverse } from 'lodash';
-import url from 'url';
+import { getUrlParts } from 'lib/url';
 import moment from 'moment';
 
 /**
@@ -19,7 +19,6 @@ import TextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
 	importSite,
 	validateSiteIsImportable,
@@ -161,7 +160,7 @@ class SiteImporterInputPane extends React.Component {
 			return;
 		}
 
-		const { hostname, pathname } = url.parse(
+		const { hostname, pathname } = getUrlParts(
 			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
 		);
 
@@ -301,7 +300,6 @@ export default flowRight(
 		} ),
 		{
 			recordTracksEvent,
-			setSelectedEditor,
 			importSite,
 			validateSiteIsImportable,
 			resetSiteImporterImport,
