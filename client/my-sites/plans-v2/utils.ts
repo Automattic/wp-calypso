@@ -41,14 +41,19 @@ import {
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
 } from 'lib/plans/constants';
-import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
+import { getPlan, getMonthlyPlanByYearly, getYearlyPlanByMonthly, planHasFeature } from 'lib/plans';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_BACKUP_PRODUCTS,
 } from 'lib/products-values/constants';
-import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
+import {
+	Product,
+	JETPACK_PRODUCTS_LIST,
+	objectIsProduct,
+	PRODUCTS_LIST,
+} from 'lib/products-values/products-list';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
 import { getJetpackProductCallToAction } from 'lib/products-values/get-jetpack-product-call-to-action';
@@ -236,7 +241,8 @@ export function itemToSelectorProduct(
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
 	} else if ( objectIsProduct( item ) ) {
-		let monthlyProductSlug = undefined;
+		let monthlyProductSlug;
+		let yearlyProductSlug;
 		if (
 			item.term === TERM_ANNUALLY &&
 			Object.keys( JETPACK_PRODUCT_PRICE_MATRIX ).includes( item.product_slug )
@@ -245,10 +251,13 @@ export function itemToSelectorProduct(
 				JETPACK_PRODUCT_PRICE_MATRIX[
 					item.product_slug as keyof typeof JETPACK_PRODUCT_PRICE_MATRIX
 				].relatedProduct;
+		} else if ( item.term === TERM_MONTHLY ) {
+			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 		return {
 			productSlug: item.product_slug,
-			iconSlug: `${ item.product_slug }_v2`,
+			// Using the same slug for any duration helps prevent unnecessary DOM updates
+			iconSlug: `${ yearlyProductSlug || item.product_slug }_v2`,
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],
@@ -273,16 +282,20 @@ export function itemToSelectorProduct(
 		};
 	} else if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
-		let monthlyProductSlug = undefined;
+		let monthlyProductSlug;
+		let yearlyProductSlug;
 		if ( item.term === TERM_ANNUALLY ) {
 			monthlyProductSlug = getMonthlyPlanByYearly( productSlug );
+		} else if ( item.term === TERM_MONTHLY ) {
+			yearlyProductSlug = getYearlyPlanByMonthly( productSlug );
 		}
 		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
 		const type = JETPACK_SECURITY_PLANS.includes( productSlug ) ? ITEM_TYPE_BUNDLE : ITEM_TYPE_PLAN;
 		return {
 			productSlug,
-			iconSlug: productSlug + iconAppend,
+			// Using the same slug for any duration helps prevent unnecessary DOM updates
+			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: item.getTitle(),
 			type,
 			subtypes: [],

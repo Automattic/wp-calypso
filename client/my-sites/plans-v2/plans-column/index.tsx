@@ -84,7 +84,9 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			<FormattedHeader headerText={ translate( 'Plans' ) } isSecondary brandFont />
 			{ planObjects.map( ( plan ) => (
 				<ProductCard
-					key={ plan.productSlug }
+					// iconSlug has the same value for all durations. Using this value as a key
+					// prevents unnecessary DOM updates.
+					key={ plan.iconSlug }
 					item={ plan }
 					siteId={ siteId }
 					onClick={ onPlanClick }

@@ -64,7 +64,9 @@ const ProductsColumn = ( {
 			<FormattedHeader headerText={ translate( 'Individual Products' ) } isSecondary brandFont />
 			{ productObjects.map( ( product ) => (
 				<ProductCard
-					key={ product.productSlug }
+					// iconSlug has the same value for all durations. Using this value as a key
+					// prevents unnecessary DOM updates.
+					key={ product.iconSlug }
 					item={ product }
 					onClick={ onProductClick }
 					siteId={ siteId }
