@@ -95,19 +95,19 @@ const getPlanPersonalDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
 				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.',
+				'Unlock unlimited, expert email support.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.'
+				'Unlock unlimited, expert email support.'
 		),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_JETPACK_ESSENTIAL,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT,
 		constants.FEATURE_FREE_THEMES,
 		constants.FEATURE_BASIC_DESIGN,
 		constants.FEATURE_6GB_STORAGE,
@@ -116,18 +116,18 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
 	getSignupFeatures: () => [
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
+		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_DOMAIN,
 		constants.FEATURE_FREE_THEMES,
 	],
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
+		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
 	getPortfolioSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
+		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities

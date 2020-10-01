@@ -142,7 +142,16 @@ function CheckoutSummaryFeaturesList() {
 
 function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 	const translate = useTranslate();
+	const plan = usePlanInCart();
+
 	if ( hasPlanInCart && ! isJetpackNotAtomic ) {
+		if (
+			'personal-bundle' === plan.wpcom_meta?.product_slug ||
+			'personal-bundle-2y' === plan.wpcom_meta?.product_slug
+		) {
+			return <span>{ translate( 'Unlimited email support' ) }</span>;
+		}
+
 		return <span>{ translate( 'Email and live chat support' ) }</span>;
 	}
 	return <span>{ translate( 'Email support' ) }</span>;
