@@ -42,7 +42,7 @@ function AddCardDetails( props ) {
 
 				<CreditCardFormLoadingPlaceholder
 					title={ titles.addCardDetails }
-					isSiteLevelBilling={ props.isSiteLevelBilling }
+					isFullWidth={ props.isFullWidth }
 				/>
 			</Fragment>
 		);
@@ -98,7 +98,7 @@ AddCardDetails.propTypes = {
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
-	isSiteLevelBilling: PropTypes.bool.isRequired,
+	isFullWidth: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state, { purchaseId } ) => ( {

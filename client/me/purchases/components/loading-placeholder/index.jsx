@@ -22,7 +22,7 @@ class LoadingPlaceholder extends React.Component {
 	static propTypes = {
 		path: PropTypes.string,
 		title: PropTypes.string.isRequired,
-		isSiteLevelBilling: PropTypes.bool.isRequired,
+		isFullWidth: PropTypes.bool.isRequired,
 	};
 
 	goBack = () => {
@@ -31,7 +31,7 @@ class LoadingPlaceholder extends React.Component {
 
 	render() {
 		const classes = classnames( 'loading-placeholder', {
-			'is-wide-layout': this.props.isSiteLevelBilling,
+			'is-wide-layout': this.props.isFullWidth,
 		} );
 
 		return (

@@ -45,7 +45,7 @@ function EditCardDetails( props ) {
 
 				<CreditCardFormLoadingPlaceholder
 					title={ titles.editCardDetails }
-					isSiteLevelBilling={ props.isSiteLevelBilling }
+					isFullWidth={ props.isFullWidth }
 				/>
 			</Fragment>
 		);
@@ -106,7 +106,7 @@ EditCardDetails.propTypes = {
 	userId: PropTypes.number,
 	purchaseListUrl: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func.isRequired,
-	isSiteLevelBilling: PropTypes.bool.isRequired,
+	isFullWidth: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {

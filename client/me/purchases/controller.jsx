@@ -61,7 +61,7 @@ export function addCardDetails( context, next ) {
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
 				purchaseListUrl={ purchasesRoot }
-				isSiteLevelBilling={ false }
+				isFullWidth={ false }
 			/>
 		</Main>
 	);
@@ -125,7 +125,7 @@ export function editCardDetails( context, next ) {
 			siteSlug={ context.params.site }
 			getManagePurchaseUrlFor={ managePurchaseUrl }
 			purchaseListUrl={ purchasesRoot }
-			isSiteLevelBilling={ false }
+			isFullWidth={ false }
 		/>
 	);
 	next();
