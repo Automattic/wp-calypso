@@ -54,7 +54,7 @@ export function useNewSiteVisibility(): Site.Visibility {
 
 	if ( isEcommerce ) {
 		return Site.Visibility.PublicIndexed;
-	} else if ( isEnabled( 'gutenboarding/public-coming-soon' ) ) {
+	} else if ( isEnabled( 'coming-soon-v2' ) ) {
 		return Site.Visibility.PublicNotIndexed;
 	}
 
