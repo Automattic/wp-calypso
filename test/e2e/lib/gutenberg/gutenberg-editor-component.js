@@ -172,10 +172,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.xpath( "//div[@aria-label='Options']//button[text()='Code editor']" )
 		);
 
+		// Wait for the code editor element.
 		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
 
-		// close the menu
+		// Close the menu.
 		await this.toggleMoreToolsAndOptions();
 
 		return textAreaSelector;
@@ -189,7 +190,11 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			By.xpath( "//div[@aria-label='Options']//button[text()='Visual editor']" )
 		);
 
-		// close the menu
+		// Wait for the visual editor element.
+		const visualEditorSelector = By.css( 'div.edit-post-visual-editor' );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, visualEditorSelector );
+
+		// Close the menu.
 		await this.toggleMoreToolsAndOptions();
 	}
 
