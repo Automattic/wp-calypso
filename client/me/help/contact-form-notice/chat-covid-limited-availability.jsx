@@ -1,4 +1,11 @@
 /**
+ * NOTE: This notice was created early in the COVID pandemic while we were still trying to understand
+ * the long-term impacts on support volume. I'm leaving it here in case this specific language is useful
+ * again in the future (it's already translated). But for other cases you can use the more generic
+ * <ChatReducedAvailabilityNotice /> component instead.
+ */
+
+/**
  * External dependencies
  */
 
@@ -11,7 +18,7 @@ import 'moment-timezone'; // monkey patches the existing moment.js
  */
 import ContactFormNotice from 'me/help/contact-form-notice/index';
 
-const LimitedChatAvailabilityNotice = ( { showAt, hideAt, compact } ) => {
+const ChatCovidLimitedAvailabilityNotice = ( { showAt, hideAt, compact } ) => {
 	const translate = useTranslate();
 
 	const heading = translate( 'Limited chat availability' );
@@ -36,4 +43,4 @@ const LimitedChatAvailabilityNotice = ( { showAt, hideAt, compact } ) => {
 	);
 };
 
-export default LimitedChatAvailabilityNotice;
+export default ChatCovidLimitedAvailabilityNotice;
