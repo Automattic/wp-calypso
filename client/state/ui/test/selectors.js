@@ -14,7 +14,6 @@ import {
 	getSectionName,
 	getSectionGroup,
 	isSiteSection,
-	isSectionIsomorphic,
 } from '../selectors';
 import { userState } from 'state/selectors/test/fixtures/user-state';
 
@@ -240,35 +239,6 @@ describe( 'selectors', () => {
 			} );
 
 			expect( siteSection ).to.be.true;
-		} );
-	} );
-
-	describe( '#isSectionIsomorphic()', () => {
-		test( 'should return false if there is no section currently selected', () => {
-			const selected = isSectionIsomorphic( {
-				ui: {
-					section: false,
-				},
-			} );
-
-			expect( selected ).to.be.false;
-		} );
-
-		test( 'should return true if current section is isomorphic', () => {
-			const section = {
-				enableLoggedOut: true,
-				group: 'sites',
-				isomorphic: true,
-				module: 'my-sites/themes',
-				name: 'themes',
-				paths: [ '/themes' ],
-			};
-
-			const selected = isSectionIsomorphic( {
-				ui: { section },
-			} );
-
-			expect( selected ).to.be.true;
 		} );
 	} );
 } );

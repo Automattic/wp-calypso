@@ -3,7 +3,7 @@
  */
 import config from 'config';
 import webRouter from './index.web';
-import { makeLayout, redirectLoggedIn, setUpLocale } from 'controller';
+import { makeLayout, redirectLoggedIn, setLocaleMiddleware } from 'controller';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
 
 /**
@@ -16,7 +16,7 @@ export default ( router ) => {
 		const lang = getLanguageRouteParam();
 
 		// Only do the basics for layout on the server-side
-		router( `/log-in/link/use/${ lang }`, setUpLocale, redirectLoggedIn, makeLayout );
+		router( `/log-in/link/use/${ lang }`, setLocaleMiddleware, redirectLoggedIn, makeLayout );
 	}
 
 	webRouter( router );

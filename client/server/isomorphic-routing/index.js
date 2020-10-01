@@ -8,8 +8,8 @@ import { stringify } from 'qs';
  * Internal dependencies
  */
 import { serverRender, setShouldServerSideRender } from 'server/render';
-import { setSection as setSectionMiddlewareFactory } from 'controller';
-import { setRoute as setRouteAction } from 'state/route/actions';
+import { setSectionMiddleware } from 'controller';
+import { setRoute } from 'state/route/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function ( route, ...middlewares ) {
@@ -34,7 +34,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				route,
 				setUpRoute,
 				combineMiddlewares(
-					setSectionMiddlewareFactory( section ),
+					setSectionMiddleware( section ),
 					setRouteMiddleware,
 					setShouldServerSideRender,
 					...middlewares
@@ -46,7 +46,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 }
 
 function setRouteMiddleware( context, next ) {
-	context.store.dispatch( setRouteAction( context.pathname, context.query ) );
+	context.store.dispatch( setRoute( context.pathname, context.query ) );
 
 	next();
 }

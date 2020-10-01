@@ -16,7 +16,7 @@ import {
 	redirectDefaultLocale,
 } from './controller';
 import { setShouldServerSideRenderLogin } from './ssr';
-import { setUpLocale, setSection, makeLayoutMiddleware } from 'controller/shared';
+import { setLocaleMiddleware, setSectionMiddleware, makeLayoutMiddleware } from 'controller/shared';
 import { redirectLoggedIn } from 'controller/web-util';
 import LayoutLoggedOut from 'layout/logged-out';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
@@ -45,8 +45,8 @@ export default ( router ) => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
 			`/log-in/link/use/${ lang }`,
-			setUpLocale,
-			setSection( LOGIN_SECTION_DEFINITION ),
+			setLocaleMiddleware,
+			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			redirectLoggedIn,
 			magicLoginUse,
 			makeLoggedOutLayout
@@ -54,8 +54,8 @@ export default ( router ) => {
 
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
-			setUpLocale,
-			setSection( LOGIN_SECTION_DEFINITION ),
+			setLocaleMiddleware,
+			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			redirectLoggedIn,
 			magicLogin,
 			makeLoggedOutLayout
@@ -76,8 +76,8 @@ export default ( router ) => {
 			],
 			redirectJetpack,
 			redirectDefaultLocale,
-			setUpLocale,
-			setSection( LOGIN_SECTION_DEFINITION ),
+			setLocaleMiddleware,
+			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			login,
 			setShouldServerSideRenderLogin,
 			makeLoggedOutLayout
