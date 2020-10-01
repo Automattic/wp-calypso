@@ -65,6 +65,11 @@ class RemovePurchase extends Component {
 		userId: PropTypes.number.isRequired,
 		useVerticalNavItem: PropTypes.bool,
 		onClickTracks: PropTypes.func,
+		purchaseListUrl: PropTypes.string,
+	};
+
+	static defaultProps = {
+		purchaseListUrl: purchasesRoot,
 	};
 
 	state = {
@@ -120,19 +125,19 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	removePurchase = ( closeDialog ) => {
+	removePurchase = () => {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
 
 		this.props.removePurchase( purchase.id, this.props.userId ).then( () => {
 			const productName = getName( purchase );
-			const { purchasesError } = this.props;
+			const { purchasesError, purchaseListUrl } = this.props;
 
 			if ( purchasesError ) {
 				this.setState( { isRemoving: false } );
 
-				closeDialog();
+				this.closeDialog();
 
 				notices.error( purchasesError );
 			} else {
@@ -158,7 +163,7 @@ class RemovePurchase extends Component {
 					);
 				}
 
-				page( purchasesRoot );
+				page( purchaseListUrl );
 			}
 		} );
 	};
