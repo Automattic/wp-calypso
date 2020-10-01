@@ -125,7 +125,7 @@ class RemovePurchase extends Component {
 		} );
 	};
 
-	removePurchase = ( closeDialog ) => {
+	removePurchase = () => {
 		this.setState( { isRemoving: true } );
 
 		const { isDomainOnlySite, purchase, translate } = this.props;
@@ -137,7 +137,7 @@ class RemovePurchase extends Component {
 			if ( purchasesError ) {
 				this.setState( { isRemoving: false } );
 
-				closeDialog();
+				this.closeDialog();
 
 				notices.error( purchasesError );
 			} else {
