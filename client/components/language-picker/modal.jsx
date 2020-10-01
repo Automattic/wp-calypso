@@ -39,6 +39,7 @@ import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils/utils';
 import { requestGeoLocation } from 'state/data-getters';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -70,23 +71,20 @@ export class LanguagePickerModal extends PureComponent {
 		useFallbackForIncompleteLanguages: false,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		empathyMode: this.props.empathyMode,
+		filter: getLanguageGroupByCountryCode( this.props.countryCode ),
+		isSearchOpen: false,
+		search: false,
+		selectedLanguageSlug: this.props.selected,
+		showingDefaultFilter: true,
+		suggestedLanguages: this.getSuggestedLanguages(),
+		useFallbackForIncompleteLanguages: this.props.useFallbackForIncompleteLanguages,
+	};
 
-		this.state = {
-			filter: getLanguageGroupByCountryCode( this.props.countryCode ),
-			showingDefaultFilter: true,
-			search: false,
-			isSearchOpen: false,
-			selectedLanguageSlug: this.props.selected,
-			suggestedLanguages: this.getSuggestedLanguages(),
-			empathyMode: props.empathyMode,
-			useFallbackForIncompleteLanguages: props.useFallbackForIncompleteLanguages,
-		};
-
-		this.languagesList = React.createRef();
-		this.selectedLanguageItem = React.createRef();
-	}
+	initiallySelectedLanguageSlug = this.props.selected;
+	languagesList = React.createRef();
+	selectedLanguageItem = React.createRef();
 
 	componentDidMount() {
 		window.addEventListener( 'keydown', this.handleKeyDown );
@@ -417,7 +415,30 @@ export class LanguagePickerModal extends PureComponent {
 		this.handleClose();
 	};
 
+	recordLanguagePickedEvent = () => {
+		const { selectedLanguageSlug, search } = this.state;
+
+		if ( this.initiallySelectedLanguageSlug === selectedLanguageSlug ) {
+			// we don't record an event if the language wasn't changed
+			return;
+		}
+
+		/**
+		 * We match specifically against the default value of `false`
+		 * rather than treating this falsy as `search` may be an empty
+		 * string if the user searches and then closes the search bar.
+		 * We'll naïvely assume that if someone searched *at all* that
+		 * we should record them as having used the search to find the
+		 * language they want. It's the simplest assumption for the
+		 * moment, and I'm not sure there's a better solution that
+		 * wouldn't be overkill given what we're trying to record here.
+		 */
+		const searched = false === search;
+		this.props.recordTracksEvent( 'calypso_language_picker_language_picked', { searched } );
+	};
+
 	handleClose = () => {
+		this.recordLanguagePickedEvent();
 		this.props.onClose();
 	};
 
@@ -606,8 +627,11 @@ export class LanguagePickerModal extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => ( {
-	countryCode: requestGeoLocation().data || '',
-	localizedLanguageNames: getLocalizedLanguageNames( state ),
-	currentUserLocale: getCurrentUserLocale( state ),
-} ) )( localize( LanguagePickerModal ) );
+export default connect(
+	( state ) => ( {
+		countryCode: requestGeoLocation().data || '',
+		localizedLanguageNames: getLocalizedLanguageNames( state ),
+		currentUserLocale: getCurrentUserLocale( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( LanguagePickerModal ) );
