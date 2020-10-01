@@ -21,8 +21,9 @@ import { performanceTrackerStart } from 'lib/performance-tracking';
 import sections from './sections';
 receiveSections( sections );
 
-function activateSection( sectionDefinition, context ) {
-	context.store.dispatch( setSection( sectionDefinition ) );
+function activateSection( section, context ) {
+	context.section = section;
+	context.store.dispatch( setSection( section ) );
 	context.store.dispatch( activateNextLayoutFocus() );
 }
 
