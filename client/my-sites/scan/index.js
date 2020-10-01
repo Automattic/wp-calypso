@@ -16,6 +16,7 @@ import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-e
 import {
 	showUpsellIfNoScan,
 	showUpsellIfNoScanHistory,
+	showUnavailableForMultisites,
 	scan,
 	scanHistory,
 } from 'my-sites/scan/controller';
@@ -45,6 +46,7 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
+		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -58,6 +60,7 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScanHistory,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
+		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -71,6 +74,7 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
+		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
