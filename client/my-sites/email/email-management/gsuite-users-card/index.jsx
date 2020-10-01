@@ -33,7 +33,7 @@ import './style.scss';
 
 class GSuiteUsersCard extends React.Component {
 	canAddUsers( domainName ) {
-		this.props.domainsAsList.some(
+		return this.props.domainsAsList.some(
 			( domain ) =>
 				domain &&
 				domain.name === domainName &&
