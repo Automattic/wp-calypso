@@ -17,6 +17,7 @@ type LinkAndInfo = Link & Info;
 export interface HostInfo {
 	id: string;
 	name: string;
+	credentials?: Link | Info | LinkAndInfo;
 	credentialType?: Link | Info | LinkAndInfo;
 	serverAddress?: Link | Info | LinkAndInfo;
 	portNumber?: Link | Info | LinkAndInfo;
@@ -46,6 +47,11 @@ export const topHosts: HostInfo[] = [
 				'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
 			),
 			link: 'https://my.bluehost.com/cgi/help/ftpaccounts',
+		},
+		installationPath: {
+			info: translate(
+				'The folder path to your WordPress installation (e.g. /myserver/home/wordpress/). You can determine your servers folder structure using an FTP/SFTP client. If you are unsure, speak with your hosting provider. '
+			),
 		},
 	},
 	{

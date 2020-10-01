@@ -1,7 +1,7 @@
 /**
  * External dependendies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import PropTypes from 'prop-types';
 // import { get } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
@@ -19,11 +19,17 @@ import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextArea from 'components/forms/form-textarea';
+import SegmentedControl from 'components/segmented-control';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+enum Mode {
+	Password,
+	PrivateKey,
+}
 
 // interface Props {
 // 	host: string;
@@ -46,6 +52,67 @@ const ServerCredentialsForm: FunctionComponent = () =>
 	// }
 	{
 		const translate = useTranslate();
+		const [ mode, setMode ] = useState( Mode.Password );
+
+		const renderPasswordForm = () => (
+			<div className="credentials-form__row credentials-form__user-pass">
+				<FormFieldset className="credentials-form__username">
+					<FormLabel htmlFor="server-username">
+						{ /* { labels.user || translate( 'Server username' ) } */ }
+						{ translate( 'Server username' ) }
+					</FormLabel>
+					<FormTextInput
+						name="user"
+						id="server-username"
+						placeholder={ translate( 'username' ) }
+						// value={ get( form, 'user', '' ) }
+						// onChange={ handleFieldChange }
+						// disabled={ formIsSubmitting }
+						// isError={ !! formErrors.user }
+						// Hint to LastPass not to attempt autofill
+						data-lpignore="true"
+					/>
+					{ /* { formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> } */ }
+				</FormFieldset>
+
+				<FormFieldset className="credentials-form__password">
+					<FormLabel htmlFor="server-password">
+						{ /* { labels.pass || translate( 'Server password' ) } */ }
+						{ translate( 'Server password' ) }
+					</FormLabel>
+					<FormPasswordInput
+						name="pass"
+						id="server-password"
+						// placeholder={ translate( 'password' ) }
+						// value={ get( form, 'pass', '' ) }
+						// onChange={ handleFieldChange }
+						// disabled={ formIsSubmitting }
+						// isError={ !! formErrors.pass }
+						// Hint to LastPass not to attempt autofill
+						data-lpignore="true"
+					/>
+					{ /* { formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> } */ }
+				</FormFieldset>
+			</div>
+		);
+
+		const renderPrivateKeyForm = () => (
+			<FormFieldset className="credentials-form__kpri">
+				{ /* <FormLabel htmlFor="private-key">{ labels.kpri || translate( 'Private Key' ) }</FormLabel> */ }
+				<FormLabel htmlFor="private-key">{ translate( 'Private Key' ) }</FormLabel>
+				<FormTextArea
+					name="kpri"
+					id="private-key"
+					// value={ get( form, 'kpri', '' ) }
+					// onChange={ handleFieldChange }
+					// disabled={ formIsSubmitting }
+					className="credentials-form__private-key"
+				/>
+				<FormSettingExplanation>
+					{ translate( 'Only non-encrypted private keys are supported.' ) }
+				</FormSettingExplanation>
+			</FormFieldset>
+		);
 
 		return (
 			<div className="credentials-form">
@@ -98,46 +165,6 @@ const ServerCredentialsForm: FunctionComponent = () =>
 					</FormFieldset>
 				</div>
 
-				<div className="credentials-form__row credentials-form__user-pass">
-					<FormFieldset className="credentials-form__username">
-						<FormLabel htmlFor="server-username">
-							{ /* { labels.user || translate( 'Server username' ) } */ }
-							{ translate( 'Server username' ) }
-						</FormLabel>
-						<FormTextInput
-							name="user"
-							id="server-username"
-							placeholder={ translate( 'username' ) }
-							// value={ get( form, 'user', '' ) }
-							// onChange={ handleFieldChange }
-							// disabled={ formIsSubmitting }
-							// isError={ !! formErrors.user }
-							// Hint to LastPass not to attempt autofill
-							data-lpignore="true"
-						/>
-						{ /* { formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> } */ }
-					</FormFieldset>
-
-					<FormFieldset className="credentials-form__password">
-						<FormLabel htmlFor="server-password">
-							{ /* { labels.pass || translate( 'Server password' ) } */ }
-							{ translate( 'Server password' ) }
-						</FormLabel>
-						<FormPasswordInput
-							name="pass"
-							id="server-password"
-							// placeholder={ translate( 'password' ) }
-							// value={ get( form, 'pass', '' ) }
-							// onChange={ handleFieldChange }
-							// disabled={ formIsSubmitting }
-							// isError={ !! formErrors.pass }
-							// Hint to LastPass not to attempt autofill
-							data-lpignore="true"
-						/>
-						{ /* { formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> } */ }
-					</FormFieldset>
-				</div>
-
 				<FormFieldset className="credentials-form__path">
 					<FormLabel htmlFor="wordpress-path">
 						{ /* { labels.path || translate( 'WordPress installation path' ) } */ }
@@ -155,21 +182,22 @@ const ServerCredentialsForm: FunctionComponent = () =>
 					{ /* { formErrors.path && <FormInputValidation isError={ true } text={ formErrors.path } /> } */ }
 				</FormFieldset>
 
-				<FormFieldset className="credentials-form__kpri">
-					{ /* <FormLabel htmlFor="private-key">{ labels.kpri || translate( 'Private Key' ) }</FormLabel> */ }
-					<FormLabel htmlFor="private-key">{ translate( 'Private Key' ) }</FormLabel>
-					<FormTextArea
-						name="kpri"
-						id="private-key"
-						// value={ get( form, 'kpri', '' ) }
-						// onChange={ handleFieldChange }
-						// disabled={ formIsSubmitting }
-						className="credentials-form__private-key"
-					/>
-					<FormSettingExplanation>
-						{ translate( 'Only non-encrypted private keys are supported.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				<SegmentedControl>
+					<SegmentedControl.Item
+						selected={ mode === Mode.Password }
+						onClick={ () => setMode( Mode.Password ) }
+					>
+						{ translate( 'Use password' ) }
+					</SegmentedControl.Item>
+					<SegmentedControl.Item
+						selected={ mode === Mode.PrivateKey }
+						onClick={ () => setMode( Mode.PrivateKey ) }
+					>
+						{ translate( 'Use private key' ) }
+					</SegmentedControl.Item>
+				</SegmentedControl>
+
+				{ mode === Mode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 
 				<FormFieldset className="dialog__action-buttons credentials-form__buttons">
 					{ /* { showCancelButton && (
