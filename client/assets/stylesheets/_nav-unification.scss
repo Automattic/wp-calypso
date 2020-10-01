@@ -11,38 +11,30 @@
  */
 
 .is-nav-unification {
+	// breakpoint used in wp-admin
+	@media only screen and ( min-width: 782px ) {
+		// client/assets/stylesheets/shared/_variables.scss
+		--masterbar-height: 32px;
+	}
 	$nav-unification-primary: #23282d;
 	$nav-unification-secondary: #101517;
-	$nav-unification-masterbar-height: 32px;
-	$nav-unification-masterbar-height-mobile: 46px;
 	$nav-unification-masterbar-font-size: 13px;
 
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
 	--color-masterbar-background: #101517;
+	--color-masterbar-border: #333;
 	--color-masterbar-item-hover-background: #333;
 	--color-masterbar-item-active-background: #23282d;
 
-	// client/layout/style.scss
-	.layout__secondary {
-		top: $nav-unification-masterbar-height;
-	}
-
 	// client/layout/masterbar/style.scss
 	.masterbar {
-		height: $nav-unification-masterbar-height;
-		border-bottom: none;
 		font-size: $nav-unification-masterbar-font-size;
-		-webkit-box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
-		-moz-box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
-		box-shadow: inset 0 -1px 0 var( --color-masterbar-item-hover-background );
 	}
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item {
-		height: $nav-unification-masterbar-height;
 		padding: 0 8px;
 		font-size: $nav-unification-masterbar-font-size;
-		line-height: $nav-unification-masterbar-height;
 	}
 
 	// client/layout/masterbar/style.scss
@@ -52,11 +44,11 @@
 	}
 
 	// client/layout/masterbar/style.scss
-
 	.masterbar__item-new,
 	.masterbar__toggle-drafts.button.is-borderless {
 		height: 24px;
 		margin: 4px 8px;
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 5px;
 	}
 
@@ -115,11 +107,6 @@
 		}
 	}
 
-	// apps/notifications/style.scss
-	#wpnc-panel {
-		top: $nav-unification-masterbar-height;
-	}
-
 	// client/layout/masterbar/style.scss
 	.masterbar__item-notifications .masterbar__notifications-bubble {
 		top: 3px;
@@ -141,24 +128,9 @@
 			padding: 71px 24px 24px;
 		}
 
-		.layout__secondary {
-			top: $nav-unification-masterbar-height-mobile;
-		}
-
 		.layout.focus-sites:not( .is-section-post-editor ) .layout__primary .main,
 		.layout.focus-sidebar:not( .is-section-post-editor ) .layout__primary .main {
 			transform: translateX( 100% );
-		}
-
-		// client/layout/masterbar/style.scss
-		.masterbar {
-			height: $nav-unification-masterbar-height-mobile;
-		}
-
-		// client/layout/masterbar/style.scss
-		.masterbar__item {
-			height: $nav-unification-masterbar-height-mobile;
-			line-height: $nav-unification-masterbar-height-mobile;
 		}
 
 		// client/layout/masterbar/style.scss
@@ -174,11 +146,6 @@
 			.masterbar__item-content {
 				display: block;
 			}
-		}
-
-		// apps/notifications/style.scss
-		#wpnc-panel {
-			top: $nav-unification-masterbar-height-mobile;
 		}
 
 		// client/layout/masterbar/style.scss

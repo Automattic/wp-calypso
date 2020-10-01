@@ -6,7 +6,7 @@
 .directly-rtm:not( .is-minimized ) {
 	padding: 0 !important;
 	max-height: none !important;
-	top: 47px;
+	top: var( --masterbar-height );
 	height: auto !important;
 	box-shadow: -3px 1px 10px rgba( 46, 68, 83, 0.1 );
 	border-left: 1px solid #d9e3ea;

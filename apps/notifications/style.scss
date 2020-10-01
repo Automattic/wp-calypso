@@ -6,7 +6,7 @@
 
 #wpnc-panel {
 	position: fixed;
-	top: 47px;
+	top: var( --masterbar-height );
 	right: 0;
 	bottom: 0;
 	min-width: 400px;
@@ -37,13 +37,13 @@
 	}
 
 	&.wpnc__main .wpnc__single-view {
-			left: inherit;
-			width: 400px;
+		left: inherit;
+		width: 400px;
 
-			@include breakpoint-deprecated( '<800px' ) {
-		    	left: 0;
-				width: auto;
-		  }
+		@include breakpoint-deprecated( '<800px' ) {
+			left: 0;
+			width: auto;
+		}
 	}
 
 	@include breakpoint-deprecated( '<800px' ) {
