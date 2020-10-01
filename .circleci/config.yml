@@ -1048,9 +1048,6 @@ workflows:
                 # Only run for fork pull requets.
                 - /pull\/[0-9]+/
       - wait-calypso-live:
-          requires:
-            - test-client
-            - test-server
           filters:
             branches:
               ignore:
