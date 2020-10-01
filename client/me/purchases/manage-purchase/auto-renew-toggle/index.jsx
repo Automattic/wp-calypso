@@ -39,10 +39,13 @@ class AutoRenewToggle extends Component {
 		withTextStatus: PropTypes.bool,
 		toggleSource: PropTypes.string,
 		siteSlug: PropTypes.string,
+		getEditPaymentMethodUrlFor: PropTypes.func,
+		paymentMethodUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
 		fetchingUserPurchases: false,
+		getEditPaymentMethodUrlFor: getEditCardDetailsPath,
 	};
 
 	state = {
@@ -77,7 +80,14 @@ class AutoRenewToggle extends Component {
 	}
 
 	goToUpdatePaymentMethod = () => {
-		const { purchase, siteSlug, productSlug, isAtomicSite, toggleSource } = this.props;
+		const {
+			purchase,
+			siteSlug,
+			productSlug,
+			isAtomicSite,
+			toggleSource,
+			getEditPaymentMethodUrlFor,
+		} = this.props;
 		this.closeAutoRenewPaymentMethodDialog();
 
 		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_add_click', {
@@ -86,7 +96,7 @@ class AutoRenewToggle extends Component {
 			toggle_source: toggleSource,
 		} );
 
-		page( getEditCardDetailsPath( siteSlug, purchase ) );
+		page( getEditPaymentMethodUrlFor( siteSlug, purchase ) );
 	};
 
 	onCloseAutoRenewPaymentMethodDialog = () => {

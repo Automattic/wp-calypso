@@ -19,4 +19,11 @@ export const getPurchaseListUrlFor = ( targetSiteSlug: string ) =>
 export const getAddPaymentMethodUrlFor = (
 	targetSiteSlug: string,
 	targetPurchase: { id: string | number }
-) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase.id }/payment/add`;
+) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/add`;
+
+export const editPaymentMethod = (
+	targetSiteSlug: string,
+	targetPurchase: { id: string | number },
+	targetCardId: { id: string | number }
+) =>
+	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;

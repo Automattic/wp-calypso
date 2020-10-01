@@ -13,6 +13,7 @@ import {
 	PurchaseCancel,
 	PurchaseCancelDomain,
 	PurchaseAddPaymentMethod,
+	PurchaseEditPaymentMethod,
 } from 'my-sites/purchases/main.tsx';
 
 export function redirectToPurchases( context ) {
@@ -63,6 +64,17 @@ export const purchaseCancelDomain = ( context, next ) => {
 export const purchaseAddPaymentMethod = ( context, next ) => {
 	context.primary = (
 		<PurchaseAddPaymentMethod
+			siteSlug={ context.params.site }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+		/>
+	);
+	next();
+};
+
+export const purchaseEditPaymentMethod = ( context, next ) => {
+	context.primary = (
+		<PurchaseEditPaymentMethod
+			cardId={ context.params.cardId }
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>

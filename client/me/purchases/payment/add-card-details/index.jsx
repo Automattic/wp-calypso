@@ -40,7 +40,10 @@ function AddCardDetails( props ) {
 			<Fragment>
 				<QueryUserPurchases userId={ props.userId } />
 
-				<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
+				<CreditCardFormLoadingPlaceholder
+					title={ titles.addCardDetails }
+					isFullWidth={ props.isFullWidth }
+				/>
 			</Fragment>
 		);
 	}
@@ -95,6 +98,7 @@ AddCardDetails.propTypes = {
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
+	isFullWidth: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = ( state, { purchaseId } ) => ( {
