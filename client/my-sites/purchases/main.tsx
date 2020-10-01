@@ -14,6 +14,7 @@ import FormattedHeader from 'components/formatted-header';
 import ManagePurchase from 'me/purchases/manage-purchase';
 import CancelPurchase from 'me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'me/purchases/confirm-cancel-domain';
+import MySitesSidebarNavigation from 'my-sites/sidebar-navigation';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -28,6 +29,7 @@ export function Purchases() {
 
 	return (
 		<Main className="purchases is-wide-layout">
+			<MySitesSidebarNavigation />
 			<DocumentHead title={ translate( 'Billing' ) } />
 			<FormattedHeader
 				brandFont
