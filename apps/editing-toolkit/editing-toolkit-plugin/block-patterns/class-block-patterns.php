@@ -83,8 +83,8 @@ class Block_Patterns {
 		$block_patterns = $this->get_patterns();
 
 		foreach ( (array) $this->get_patterns() as $pattern ) {
-			foreach ( (array) $pattern['tags'] as $slug => $tag ) {
-				register_block_pattern_category( $slug, array( 'label' => $tag['title'] ) );
+			foreach ( (array) $pattern['categories'] as $slug => $category ) {
+				register_block_pattern_category( $slug, array( 'label' => $category['title'] ) );
 			}
 
 			register_block_pattern(
@@ -95,7 +95,7 @@ class Block_Patterns {
 					'content'       => $pattern['html'],
 					'viewportWidth' => 1280,
 					'categories'    => array_keys(
-						$pattern['tags']
+						$pattern['categories']
 					),
 				)
 			);
@@ -115,7 +115,7 @@ class Block_Patterns {
 			$request_url = add_query_arg(
 				array(
 					'language'   => $this->get_iso_639_locale(),
-					'categories' => 'pattern',
+					'tags' => 'pattern',
 				),
 				'https://public-api.wordpress.com/rest/v1/ptk/patterns'
 			);
