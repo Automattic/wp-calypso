@@ -84,6 +84,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	isExpanded,
 	UpgradeNudge,
 	hidePrice,
+	productSlug,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
@@ -208,7 +209,11 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 				{ children && <div className="jetpack-product-card__children">{ children }</div> }
 			</div>
 			{ features && features.items.length > 0 && (
-				<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
+				<JetpackProductCardFeatures
+					features={ features }
+					productSlug={ productSlug }
+					isExpanded={ isExpanded }
+				/>
 			) }
 			{ UpgradeNudge }
 		</div>

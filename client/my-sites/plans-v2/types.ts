@@ -57,6 +57,7 @@ export interface WithRedirectToSelectorProps extends BasePageProps {
 
 export interface JetpackFreeProps {
 	urlQueryArgs: QueryArgs;
+	siteId?: number;
 }
 
 export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];

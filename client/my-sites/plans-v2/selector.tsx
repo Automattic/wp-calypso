@@ -16,6 +16,7 @@ import { EXTERNAL_PRODUCTS_LIST, SECURITY } from './constants';
 import { getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
 import useHasProductUpsell from './use-has-product-upsell';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { getYearlyPlanByMonthly } from 'lib/plans';
 import { TERM_ANNUALLY } from 'lib/plans/constants';
@@ -69,23 +70,44 @@ const SelectorPage = ( {
 		purchase
 	) => {
 		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_external_click', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			window.location.href = product.externalUrl || '';
 			return;
 		}
 
 		if ( purchase && isUpgradeableToYearly ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_checkout_click', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			checkout( siteSlug, getYearlyPlanByMonthly( product.productSlug ), urlQueryArgs );
 			return;
 		}
 
 		if ( purchase ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_manage_click', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			page( managePurchase( siteSlug, purchase.id ) );
 			return;
 		}
 
 		if ( product.subtypes.length ) {
 			dispatch(
-				recordTracksEvent( 'calypso_product_subtypes_view', {
+				recordTracksEvent( 'calypso_product_subtypes_click', {
 					site_id: siteId || undefined,
 					product_slug: product.productSlug,
 					duration: currentDuration,
@@ -98,11 +120,26 @@ const SelectorPage = ( {
 		}
 
 		if ( hasUpsell( product.productSlug as ProductSlug ) ) {
+			dispatch(
+				recordTracksEvent( 'calypso_product_upsell_click', {
+					site_id: siteId || undefined,
+					product_slug: product.productSlug,
+					duration: currentDuration,
+				} )
+			);
 			page(
 				getPathToUpsell( rootUrl, urlQueryArgs, product.productSlug, currentDuration, siteSlug )
 			);
 			return;
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_product_checkout_click', {
+				site_id: siteId || undefined,
+				product_slug: product.productSlug,
+				duration: currentDuration,
+			} )
+		);
 		checkout( siteSlug, product.productSlug, urlQueryArgs );
 	};
 
@@ -143,8 +180,12 @@ const SelectorPage = ( {
 
 	const showJetpackFreeCard = isInConnectFlow || isJetpackCloud();
 
+	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
+	const viewTrackerProps = siteId ? { site: siteSlug } : {};
+
 	return (
 		<Main className="selector__main" wideLayout>
+			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
 			{ header }
 			<PlansFilterBar
 				showDurations
@@ -172,7 +213,7 @@ const SelectorPage = ( {
 			{ showJetpackFreeCard && (
 				<>
 					<div className="selector__divider" />
-					<JetpackFreeCard urlQueryArgs={ urlQueryArgs } />
+					<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 				</>
 			) }
 
