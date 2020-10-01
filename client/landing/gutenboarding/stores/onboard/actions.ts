@@ -41,7 +41,7 @@ export function* createSite(
 	username: string,
 	languageSlug: string,
 	bearerToken?: string,
-	visibility: number = isEnabled( 'gutenboarding/public-coming-soon' )
+	visibility: number = isEnabled( 'coming-soon-v2' )
 		? Site.Visibility.PublicNotIndexed
 		: Site.Visibility.Private
 ) {
@@ -87,7 +87,7 @@ export function* createSite(
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
-			...( isEnabled( 'gutenboarding/public-coming-soon' ) &&
+			...( isEnabled( 'coming-soon-v2' ) &&
 				visibility === Site.Visibility.PublicNotIndexed && {
 					public_coming_soon: true,
 				} ),
