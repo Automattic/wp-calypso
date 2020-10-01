@@ -5,6 +5,7 @@
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -29,12 +30,12 @@ class LoadingPlaceholder extends React.Component {
 	};
 
 	render() {
+		const classes = classnames( 'loading-placeholder', {
+			'is-wide-layout': this.props.isSiteLevelBilling,
+		} );
+
 		return (
-			<Main
-				className={
-					'loading-placeholder' + ( this.props.isSiteLevelBilling ? ' is-wide-layout' : '' )
-				}
-			>
+			<Main className={ classes }>
 				<HeaderCake className="loading-placeholder__header" onClick={ this.goBack }>
 					{ this.props.title }
 				</HeaderCake>
