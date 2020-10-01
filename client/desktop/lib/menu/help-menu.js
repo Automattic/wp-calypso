@@ -62,5 +62,12 @@ module.exports = function ( mainWindow ) {
 				zipLogs( mainWindow );
 			},
 		},
+		{
+			label: 'Force Notifications Refresh',
+			click: function () {
+				log.info( 'Forcing notifications refresh...' );
+				mainWindow.webContents.send( 'notifications-panel-refresh' );
+			},
+		},
 	] );
 };
