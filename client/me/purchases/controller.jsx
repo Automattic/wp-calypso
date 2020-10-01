@@ -122,6 +122,8 @@ export function editCardDetails( context, next ) {
 			cardId={ context.params.cardId }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 			siteSlug={ context.params.site }
+			getManagePurchaseUrlFor={ managePurchaseUrl }
+			purchaseListUrl={ purchasesRoot }
 		/>
 	);
 	next();

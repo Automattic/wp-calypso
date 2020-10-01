@@ -49,7 +49,7 @@ import PaymentLogo from 'components/payment-logo';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'lib/url/support';
 import UserItem from 'components/user';
 import { withLocalizedMoment } from 'components/localized-moment';
-import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
+import { canEditPaymentDetails, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
 import { getCurrentUserId } from 'state/current-user/selectors';
 
@@ -62,7 +62,7 @@ class PurchaseMeta extends Component {
 		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
 		getManagePurchaseUrlFor: PropTypes.func,
-		getAddPaymentMethodUrlFor: PropTypes.func,
+		getEditPaymentMethodUrlFor: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -70,7 +70,6 @@ class PurchaseMeta extends Component {
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
 		getManagePurchaseUrlFor: managePurchase,
-		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
 	};
 
 	renderPrice() {
@@ -229,7 +228,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentDetails() {
-		const { purchase, translate, getAddPaymentMethodUrlFor } = this.props;
+		const { purchase, translate, getEditPaymentMethodUrlFor, siteSlug } = this.props;
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return null;
@@ -253,9 +252,7 @@ class PurchaseMeta extends Component {
 
 		return (
 			<li>
-				<a href={ getAddPaymentMethodUrlFor( this.props.siteSlug, purchase ) }>
-					{ paymentDetails }
-				</a>
+				<a href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }>{ paymentDetails }</a>
 			</li>
 		);
 	}
@@ -339,7 +336,7 @@ class PurchaseMeta extends Component {
 			isAutorenewalEnabled,
 			isProductOwner,
 			hideAutoRenew,
-			getAddPaymentMethodUrlFor,
+			getEditPaymentMethodUrlFor,
 		} = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
@@ -372,7 +369,6 @@ class PurchaseMeta extends Component {
 								dateSpan,
 							},
 					  } );
-
 			return (
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
@@ -392,7 +388,7 @@ class PurchaseMeta extends Component {
 								siteSlug={ site.slug }
 								purchase={ purchase }
 								toggleSource="manage-purchase"
-								getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+								getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
 							/>
 						</span>
 					) }

@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -25,7 +24,6 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
 import { isRequestingSites } from 'state/sites/selectors';
-import { managePurchase, purchasesRoot } from 'me/purchases/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { StripeHookProvider } from 'lib/stripe';
 
@@ -35,7 +33,7 @@ function EditCardDetails( props ) {
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
-		page( purchasesRoot );
+		page( props.purchaseListUrl );
 	}
 
 	if ( isDataLoading || ! props.hasLoadedStoredCardsFromServer ) {
@@ -58,13 +56,13 @@ function EditCardDetails( props ) {
 	const successCallback = () => {
 		const { id } = props.purchase;
 		props.clearPurchases();
-		page( managePurchase( props.siteSlug, id ) );
+		page( props.getManagePurchaseUrlFor( props.siteSlug, id ) );
 	};
 
 	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );
 
 	return (
-		<Main>
+		<Fragment>
 			<TrackPurchasePageView
 				eventName="calypso_edit_card_details_purchase_view"
 				purchaseId={ props.purchaseId }
@@ -73,7 +71,7 @@ function EditCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
 				title="Purchases > Edit Card Details"
 			/>
-			<HeaderCake backHref={ managePurchase( props.siteSlug, props.purchaseId ) }>
+			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.editCardDetails }
 			</HeaderCake>
 
@@ -88,7 +86,7 @@ function EditCardDetails( props ) {
 					successCallback={ successCallback }
 				/>
 			</StripeHookProvider>
-		</Main>
+		</Fragment>
 	);
 }
 
@@ -103,6 +101,8 @@ EditCardDetails.propTypes = {
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
+	purchaseListUrl: PropTypes.string.isRequired,
+	getManagePurchaseUrlFor: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {

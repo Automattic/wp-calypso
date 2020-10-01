@@ -104,6 +104,7 @@ class ManagePurchase extends Component {
 		purchaseListUrl: PropTypes.string,
 		getCancelPurchaseUrlFor: PropTypes.func,
 		getAddPaymentMethodUrlFor: PropTypes.func,
+		getEditPaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
 		cardTitle: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
@@ -124,6 +125,7 @@ class ManagePurchase extends Component {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
 		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
+		getEditPaymentMethodUrlFor: getEditCardDetailsPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
 		getManagePurchaseUrlFor: managePurchase,
@@ -242,14 +244,14 @@ class ManagePurchase extends Component {
 	}
 
 	renderEditPaymentMethodNavItem() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, siteSlug, getEditPaymentMethodUrlFor } = this.props;
 
 		if ( ! this.props.site ) {
 			return null;
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = this.props.getAddPaymentMethodUrlFor( this.props.siteSlug, purchase );
+			const path = getEditPaymentMethodUrlFor( siteSlug, purchase );
 			const renewing = isRenewing( purchase );
 
 			if (
@@ -457,7 +459,13 @@ class ManagePurchase extends Component {
 	}
 
 	renderPlaceholder() {
-		const { siteSlug, getManagePurchaseUrlFor, getAddPaymentMethodUrlFor } = this.props;
+		const {
+			siteSlug,
+			getManagePurchaseUrlFor,
+			getAddCardDetailsPathFor,
+			getAddPaymentMethodUrlFor,
+			getEditCardDetailsPathFor,
+		} = this.props;
 
 		return (
 			<Fragment>
@@ -477,6 +485,8 @@ class ManagePurchase extends Component {
 						purchaseId={ false }
 						siteSlug={ siteSlug }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+						getAddCardDetailsPathFor={ getAddCardDetailsPathFor }
+						getEditCardDetailsPathFor={ getEditCardDetailsPathFor }
 						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 					/>
 				</Card>
@@ -510,7 +520,7 @@ class ManagePurchase extends Component {
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
-			getAddPaymentMethodUrlFor,
+			getEditPaymentMethodUrlFor,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -558,7 +568,7 @@ class ManagePurchase extends Component {
 							purchaseId={ purchase.id }
 							siteSlug={ siteSlug }
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-							getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
 						/>
 					) }
 					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
@@ -593,12 +603,13 @@ class ManagePurchase extends Component {
 			translate,
 			getManagePurchaseUrlFor,
 			getAddPaymentMethodUrlFor,
+			getEditPaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
 
 		let editCardDetailsPath = false;
 		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
-			editCardDetailsPath = getAddPaymentMethodUrlFor( siteSlug, purchase );
+			editCardDetailsPath = getEditPaymentMethodUrlFor( siteSlug, purchase );
 		}
 
 		let showExpiryNotice = false;
