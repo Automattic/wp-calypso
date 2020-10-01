@@ -71,6 +71,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 							path={ path }
 							link={ item.url }
 							selected={ isSelected }
+							sidebarCollapsed={ collapsed }
 							{ ...item }
 						/>
 					);
