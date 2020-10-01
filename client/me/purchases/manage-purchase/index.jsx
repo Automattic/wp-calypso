@@ -273,14 +273,24 @@ class ManagePurchase extends Component {
 	}
 
 	renderRemovePurchaseNavItem() {
+		const {
+			hasLoadedSites,
+			hasNonPrimaryDomainsFlag,
+			hasCustomPrimaryDomain,
+			site,
+			purchase,
+			purchaseListUrl,
+		} = this.props;
+
 		return (
 			<RemovePurchase
-				hasLoadedSites={ this.props.hasLoadedSites }
-				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
-				hasNonPrimaryDomainsFlag={ this.props.hasNonPrimaryDomainsFlag }
-				hasCustomPrimaryDomain={ this.props.hasCustomPrimaryDomain }
-				site={ this.props.site }
-				purchase={ this.props.purchase }
+				hasLoadedSites={ hasLoadedSites }
+				hasLoadedUserPurchasesFromServer={ hasLoadedUserPurchasesFromServer }
+				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
+				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
+				site={ site }
+				purchase={ purchase }
+				purchaseListUrl={ purchaseListUrl }
 			/>
 		);
 	}
