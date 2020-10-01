@@ -16,6 +16,27 @@
 		min-width: 0;
 	}
 
+	.has-text-align-center {
+		text-align: center;
+	}
+
+	.has-text-align-right {
+		text-align: right;
+	}
+
+	.has-text-align-left {
+		text-align: left;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: bold;
+	}
+
 	&.wpnt-open {
 		right: 0;
 		transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );

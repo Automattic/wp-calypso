@@ -384,7 +384,10 @@
 		}
 
 		.unread {
-			background: rgba( var( --color-primary-rgb ), 0.1 ); // rgba is used to meet AA contrast standard
+			background: rgba(
+				var( --color-primary-rgb ),
+				0.1
+			); // rgba is used to meet AA contrast standard
 		}
 
 		.wpnc__traffic_surge .wpnc__note-icon img {
@@ -512,7 +515,6 @@
 		user-select: none;
 	}
 
-	.wpnc__single-view,
 	.error-view {
 		h1 {
 			text-align: center;
