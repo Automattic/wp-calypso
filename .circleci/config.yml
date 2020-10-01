@@ -601,6 +601,9 @@ jobs:
       slack-webhook:
         type: string
         default: $SLACK_E2E
+      env-vars:
+        type: string
+        default: ''
     steps:
       - prepare
       - run: *set-e2e-variables
@@ -647,7 +650,7 @@ jobs:
       - run:
           name: Run Canary Tests
           command: |
-            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> << parameters.env-vars >> ./run.sh -R << parameters.test-flags >>
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
@@ -1145,6 +1148,22 @@ workflows:
           filters:
             branches:
               only: master
+
+  e2e-full-suite-edge-scheduled:
+    jobs:
+    - setup
+    - test-e2e-canary:
+        name: test-e2e-full-suite-edge
+        requires:
+        - setup
+        test-flags: '-g'
+        env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
+    #triggers:
+    #- schedule:
+    #    cron: '30 8 * * *'
+    #    filters:
+    #      branches:
+    #        only: master
 
   e2e-jetpack-be-scheduled:
     jobs:
