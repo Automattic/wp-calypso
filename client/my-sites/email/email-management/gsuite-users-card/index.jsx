@@ -55,20 +55,20 @@ class GSuiteUsersCard extends React.Component {
 		this.props.addGoogleAppsUserClick( this.props.selectedDomainName );
 	};
 
-	renderDomainWithGSuite( domain, users ) {
+	renderDomainWithGSuite( domainName, users ) {
 		// The product name is same for all users as product license is associated to domain
 		// Hence a snapshot of the product name from the first user is sufficient
 		const license = users[ 0 ].product_name;
 		// This ensures display consistency if the API is not ready yet
-		const label = license ? `${ license }: ${ domain }` : domain;
+		const label = license ? `${ license }: ${ domainName }` : domainName;
 		return (
-			<div key={ `google-apps-user-${ domain }` } className="gsuite-users-card__container">
+			<div key={ `google-apps-user-${ domainName }` } className="gsuite-users-card__container">
 				<SectionHeader label={ label }>
-					{ this.canAddUsers( domain ) && (
+					{ this.canAddUsers( domainName ) && (
 						<Button
 							primary
 							compact
-							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domain ) }
+							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domainName ) }
 							onClick={ this.goToAddGoogleApps }
 						>
 							{ this.props.translate( 'Add New User' ) }
