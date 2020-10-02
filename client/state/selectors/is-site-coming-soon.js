@@ -14,7 +14,7 @@ import isPrivateSite from 'state/selectors/is-private-site';
  * @returns {boolean} True if site is coming_soon
  */
 export default function isSiteComingSoon( state, siteId ) {
-	if ( isPrivateSite( state, siteId ) ) {
+	if ( ! isPrivateSite( state, siteId ) ) {
 		return false;
 	}
 
@@ -27,7 +27,7 @@ export default function isSiteComingSoon( state, siteId ) {
 	const settings = getSiteSettings( state, siteId );
 
 	if ( settings ) {
-		// Site settings returns a numerical value for wpcom_public_coming_soon.
+		// Site settings returns a numerical value for wpcom_coming_soon.
 		return parseInt( settings.wpcom_coming_soon, 10 ) === 1;
 	}
 
