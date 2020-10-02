@@ -52,7 +52,6 @@ export default function useCartUpdateAndRevalidate(
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
 					updatedResponseCart: convertRawResponseCartToResponseCart( response ),
 				} );
-				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while setting cart', error );

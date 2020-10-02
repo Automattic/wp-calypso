@@ -17,11 +17,6 @@ export interface ShoppingCartManagerArguments {
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 }
 
-export interface VariantSelectOverride {
-	uuid: string;
-	overrideSelectedProductSlug: string;
-}
-
 export interface ShoppingCartManager {
 	isLoading: boolean;
 	loadingError: string | null | undefined;
@@ -33,7 +28,6 @@ export interface ShoppingCartManager {
 	removeCoupon: () => void;
 	couponStatus: CouponStatus;
 	updateLocation: ( arg0: CartLocation ) => void;
-	variantSelectOverride: VariantSelectOverride[];
 	changeItemVariant: (
 		uuidToReplace: string,
 		newProductSlug: string,
@@ -76,7 +70,6 @@ export type ShoppingCartAction =
 			newProductId: number;
 			newProductSlug: string;
 	  }
-	| { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'REMOVE_COUPON' }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
@@ -107,6 +100,5 @@ export type ShoppingCartState = {
 	cacheStatus: CacheStatus;
 	loadingError?: string;
 	loadingErrorType?: ShoppingCartError;
-	variantSelectOverride: VariantSelectOverride[];
 	queuedActions: ShoppingCartAction[];
 };

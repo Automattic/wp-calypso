@@ -117,17 +117,8 @@ function shoppingCartReducer(
 					newProductSlug
 				),
 				cacheStatus: 'invalid',
-				variantSelectOverride: [
-					...state.variantSelectOverride.filter( ( item ) => item.uuid !== action.uuidToReplace ),
-					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
-				],
 			};
 		}
-		case 'CLEAR_VARIANT_SELECT_OVERRIDE':
-			return {
-				...state,
-				variantSelectOverride: [],
-			};
 		case 'REMOVE_COUPON': {
 			if ( couponStatus !== 'applied' ) {
 				debug( `coupon status is '${ couponStatus }'; not removing` );
@@ -225,7 +216,6 @@ function getInitialShoppingCartState(): ShoppingCartState {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-		variantSelectOverride: [],
 		queuedActions: [],
 	};
 }

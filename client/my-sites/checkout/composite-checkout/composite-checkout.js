@@ -197,7 +197,6 @@ export default function CompositeCheckout( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
-		variantSelectOverride,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: ! isLoadingCartSynchronizer,
@@ -637,7 +636,6 @@ export default function CompositeCheckout( {
 						siteUrl={ siteSlug }
 						countriesList={ countriesList }
 						StateSelect={ StateSelect }
-						variantSelectOverride={ variantSelectOverride }
 						getItemVariants={ getItemVariants }
 						responseCart={ responseCart }
 						addItemToCart={ addItemWithEssentialProperties }

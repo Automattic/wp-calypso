@@ -96,7 +96,6 @@ export default function WPCheckout( {
 	CheckoutTerms,
 	countriesList,
 	StateSelect,
-	variantSelectOverride,
 	getItemVariants,
 	responseCart,
 	addItemToCart,
@@ -316,7 +315,6 @@ export default function WPCheckout( {
 							couponFieldStateProps={ couponFieldStateProps }
 							removeCoupon={ removeCoupon }
 							onChangePlanLength={ changePlanLength }
-							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
