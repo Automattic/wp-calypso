@@ -34,7 +34,7 @@ import {
 	isJetpackBusiness,
 	isEcommerce,
 } from 'lib/products-values';
-import { hasPlanJetpackSearch } from 'lib/plans';
+import { planHasJetpackSearch } from 'lib/plans';
 import { FEATURE_SEARCH, PLAN_BUSINESS } from 'lib/plans/constants';
 import { PRODUCT_JETPACK_SEARCH, isJetpackSearch } from 'lib/products-values/constants';
 
@@ -269,7 +269,7 @@ export default connect( ( state, { isRequestingSettings } ) => {
 	const siteId = getSelectedSiteId( state );
 	const hasSearchProduct =
 		getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
-		hasPlanJetpackSearch( site.plan?.product_slug );
+		planHasJetpackSearch( site.plan?.product_slug );
 	const isSearchEligible =
 		( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
 		!! hasSearchProduct;
