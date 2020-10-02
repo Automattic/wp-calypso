@@ -22,6 +22,7 @@ const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const nodeExternals = require( 'webpack-node-externals' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+const ExternalModulesWriter = require( './server/bundler/external-modules' );
 
 /**
  * Internal variables
@@ -180,6 +181,7 @@ const webpackConfig = {
 			'components/empty-component'
 		), // Depends on BOM
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
+		! isDevelopment && new ExternalModulesWriter(),
 	].filter( Boolean ),
 };
 
