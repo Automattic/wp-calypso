@@ -25,6 +25,7 @@ import ExpandableSidebarMenu from 'layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
 import SidebarCustomIcon from 'layout/sidebar/custom-icon';
 import { isExternal } from 'lib/url';
+import { externalRedirect } from 'lib/route/path';
 import { itemLinkMatches } from '../sidebar/utils';
 
 export const MySitesSidebarUnifiedMenu = ( {
@@ -61,7 +62,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				if ( link ) {
 					if ( isExternal( link ) ) {
 						// If the URL is external, page() will fail to replace state between different domains
-						document.location.href = link;
+						externalRedirect( link );
 						return;
 					}
 					page( link );
