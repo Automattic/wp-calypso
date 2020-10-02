@@ -337,14 +337,13 @@ export function addItemsToResponseCart(
 export function replaceItemInResponseCart(
 	cart: ResponseCart,
 	uuidToReplace: string,
-	newProductId: number,
-	newProductSlug: string
+	productPropertiesToChange: Partial< RequestCartProduct >
 ): ResponseCart {
 	return {
 		...cart,
 		products: cart.products.map( ( item ) => {
 			if ( item.uuid === uuidToReplace ) {
-				return { ...item, product_id: newProductId, product_slug: newProductSlug };
+				return { ...item, ...productPropertiesToChange };
 			}
 			return item;
 		} ),

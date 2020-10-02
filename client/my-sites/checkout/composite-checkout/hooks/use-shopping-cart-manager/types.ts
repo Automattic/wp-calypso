@@ -28,13 +28,14 @@ export interface ShoppingCartManager {
 	removeCoupon: () => void;
 	couponStatus: CouponStatus;
 	updateLocation: ( arg0: CartLocation ) => void;
-	changeItemVariant: (
-		uuidToReplace: string,
-		newProductSlug: string,
-		newProductId: number
-	) => void;
+	replaceProductInCart: ReplaceProductInCart;
 	responseCart: ResponseCart;
 }
+
+export type ReplaceProductInCart = (
+	uuidToReplace: string,
+	productPropertiesToChange: Partial< RequestCartProduct >
+) => void;
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
@@ -65,10 +66,9 @@ export type ShoppingCartAction =
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
 	| { type: 'SET_LOCATION'; location: CartLocation }
 	| {
-			type: 'REPLACE_CART_ITEM';
+			type: 'CART_PRODUCT_REPLACE';
 			uuidToReplace: string;
-			newProductId: number;
-			newProductSlug: string;
+			productPropertiesToChange: Partial< RequestCartProduct >;
 	  }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'REMOVE_COUPON' }

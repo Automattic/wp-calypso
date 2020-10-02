@@ -190,7 +190,7 @@ export default function CompositeCheckout( {
 		applyCoupon,
 		removeCoupon,
 		updateLocation,
-		changeItemVariant,
+		replaceProductInCart,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
@@ -476,9 +476,12 @@ export default function CompositeCheckout( {
 				type: 'CART_CHANGE_PLAN_LENGTH',
 				payload: { newProductSlug },
 			} );
-			changeItemVariant( uuidToReplace, newProductSlug, newProductId );
+			replaceProductInCart( uuidToReplace, {
+				product_slug: newProductSlug,
+				product_id: newProductId,
+			} );
 		},
-		[ changeItemVariant, recordEvent ]
+		[ replaceProductInCart, recordEvent ]
 	);
 
 	// Often products are added using just the product_slug but missing the

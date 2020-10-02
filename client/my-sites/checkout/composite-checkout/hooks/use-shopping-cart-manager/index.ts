@@ -17,6 +17,7 @@ import {
 	CacheStatus,
 	CouponStatus,
 	ShoppingCartError,
+	ReplaceProductInCart,
 } from './types';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
@@ -69,13 +70,9 @@ export default function useShoppingCartManager( {
 		[ hookDispatch ]
 	);
 
-	const changeItemVariant: (
-		uuidToReplace: string,
-		newProductSlug: string,
-		newProductId: number
-	) => void = useCallback(
-		( uuidToReplace, newProductSlug, newProductId ) => {
-			hookDispatch( { type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId } );
+	const replaceProductInCart: ReplaceProductInCart = useCallback(
+		( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => {
+			hookDispatch( { type: 'CART_PRODUCT_REPLACE', uuidToReplace, productPropertiesToChange } );
 		},
 		[ hookDispatch ]
 	);
@@ -109,7 +106,7 @@ export default function useShoppingCartManager( {
 		removeCoupon,
 		couponStatus,
 		updateLocation,
-		changeItemVariant,
+		replaceProductInCart,
 		responseCart,
 	};
 }

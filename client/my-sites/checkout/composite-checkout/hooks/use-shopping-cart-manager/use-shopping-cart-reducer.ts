@@ -89,32 +89,25 @@ function shoppingCartReducer(
 				cacheStatus: 'invalid',
 			};
 		}
-		case 'REPLACE_CART_ITEM': {
+		case 'CART_PRODUCT_REPLACE': {
 			const uuidToReplace = action.uuidToReplace;
-			const newProductId = action.newProductId;
-			const newProductSlug = action.newProductSlug;
 			if (
 				doesResponseCartContainProductMatching( state.responseCart, {
 					uuid: uuidToReplace,
-					product_id: newProductId,
-					product_slug: newProductSlug,
+					...action.productPropertiesToChange,
 				} )
 			) {
 				debug( `variant is already in cart; not submitting again` );
 				return state;
 			}
-			debug( `replacing item with uuid ${ uuidToReplace } by product`, {
-				newProductId,
-				newProductSlug,
-			} );
+			debug( `replacing item with uuid ${ uuidToReplace } with`, action.productPropertiesToChange );
 
 			return {
 				...state,
 				responseCart: replaceItemInResponseCart(
 					state.responseCart,
 					uuidToReplace,
-					newProductId,
-					newProductSlug
+					action.productPropertiesToChange
 				),
 				cacheStatus: 'invalid',
 			};
