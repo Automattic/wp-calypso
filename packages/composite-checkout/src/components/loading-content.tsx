@@ -74,7 +74,7 @@ const LoadingSideBarUi = styled.div`
 		padding: 24px;
 		box-sizing: border-box;
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		max-width: 326px;
+		max-width: 328px;
 		background: ${ ( props ) => props.theme.colors.surface };
 		margin-left: 24px;
 	}
