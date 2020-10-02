@@ -43,7 +43,6 @@ import {
 	isJetpackScan,
 } from 'lib/products-values';
 import {
-	isJetpackSearch,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
@@ -99,18 +98,13 @@ class PurchasesListing extends Component {
 		return (
 			filter(
 				this.props.purchases,
-				( purchase ) =>
-					purchase.active && ( isJetpackProduct( purchase ) || isJetpackSearch( purchase ) )
+				( purchase ) => purchase.active && isJetpackProduct( purchase )
 			) ?? null
 		);
 	}
 
 	getTitle( purchase ) {
 		const { currentPlanSlug } = this.props;
-
-		if ( isJetpackSearch( purchase.productSlug ) ) {
-			return getJetpackProductDisplayName( purchase );
-		}
 
 		if ( isJetpackProduct( purchase ) ) {
 			return getJetpackProductDisplayName( purchase );
@@ -129,10 +123,6 @@ class PurchasesListing extends Component {
 
 		if ( isJetpackProduct( purchase ) ) {
 			return getJetpackProductTagline( purchase );
-		}
-
-		if ( isJetpackSearch( purchase ) ) {
-			return getJetpackProductTagline( 'search' );
 		}
 
 		const productPurchases = this.getProductPurchases();
