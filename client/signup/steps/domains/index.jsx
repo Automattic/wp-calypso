@@ -131,19 +131,23 @@ class DomainsStep extends React.Component {
 	}
 
 	/**
-	 * Derive if the "plans" step actually will be visible to the customer in a given flow
+	 * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
 	 */
-	getIsPlanSelectionAvailableInFlow = () => {
+	getIsPlanSelectionAvailableLaterInFlow = () => {
 		const { steps, isPlanStepSkipped } = this.props;
 
 		/**
 		 * Caveat here even though "plans" step maybe available in a flow it might not be active
 		 * i.e. Check flow "domain"
 		 */
-		const isPlansStepExistsInFlow = steps?.some(
-			( stepName ) => getStepModuleName( stepName ) === 'plans'
+
+		const plansIndex = steps.findIndex( ( stepName ) => getStepModuleName( stepName ) === 'plans' );
+		const domainsIndex = steps.findIndex(
+			( stepName ) => getStepModuleName( stepName ) === 'domains'
 		);
-		return isPlansStepExistsInFlow && ! isPlanStepSkipped;
+		const isPlansStepExistsInFutureOfFlow = plansIndex > 0 && plansIndex > domainsIndex;
+
+		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -222,19 +226,24 @@ class DomainsStep extends React.Component {
 		return this.getThemeSlug() ? true : false;
 	}
 
-	handleSkip = ( googleAppsCartItem, shouldHideFreePlan ) => {
+	isDependencyShouldHideFreePlanProvided = () => {
+		/**
+		 * This prop is used to supress providing the dependency - shouldHideFreePlan - when the plans step is in the current flow
+		 */
+		return (
+			! this.props.isSupressedDependencyShouldHideFreePlan &&
+			this.getIsPlanSelectionAvailableLaterInFlow()
+		);
+	};
+
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
 				flow: this.props.flowName,
 				step: this.props.stepName,
 			},
-			/*
-			 * This is done to avoid tracking a shouldHideFreePlan flag
-			 * for steps that do not have a future dependency on this parameter.
-			 * If shouldHideFreePlan is undefined or there is no plans step in this flow it will not be tracked
-			 */
-			shouldHideFreePlan !== undefined && this.getIsPlanSelectionAvailableInFlow()
+			this.isDependencyShouldHideFreePlanProvided()
 				? { should_hide_free_plan: shouldHideFreePlan }
 				: {}
 		);
@@ -253,7 +262,7 @@ class DomainsStep extends React.Component {
 		} );
 	};
 
-	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan ) => {
+	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -290,15 +299,9 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-
 			Object.assign(
 				{ domainItem },
-				/*
-				 * This is done to avoid enforcing a shouldHideFreePlan dependency
-				 * for steps depending on the domains component.
-				 * If shouldHideFreePlan is undefined it will not be propagated as a dependency
-				 */
-				shouldHideFreePlan !== undefined ? { shouldHideFreePlan } : {},
+				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem
 			)
 		);
@@ -463,7 +466,7 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableInFlow();
+		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableLaterInFlow();
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
