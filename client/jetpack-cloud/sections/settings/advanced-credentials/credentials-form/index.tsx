@@ -1,26 +1,30 @@
 /**
  * External dependendies
  */
-import React, { FunctionComponent, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent, useState } from 'react';
 
 /**
  * Internal dependencies
  */
+// import FormInputValidation from 'components/forms/form-input-validation';
 // import withServerCredentialsForm from '../with-credentials-form';
 import { Button } from '@automattic/components';
+import { getHostInfoFromId } from '../host-info';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { settingsPath } from 'lib/jetpack/paths';
 import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
 import FormLabel from 'components/forms/form-label';
-// import FormInputValidation from 'components/forms/form-input-validation';
 import FormPasswordInput from 'components/forms/form-password-input';
+import FormSelect from 'components/forms/form-select';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextArea from 'components/forms/form-textarea';
-import SegmentedControl from 'components/segmented-control';
+import FormTextInput from 'components/forms/form-text-input';
 import InfoPopover from 'components/info-popover';
-import { getHostInfoFromId } from '../host-info';
 import InlineInfo from './inline-info';
+import SegmentedControl from 'components/segmented-control';
+import Gridicon from 'components/gridicon';
 
 /**
  * Style dependencies
@@ -34,13 +38,13 @@ enum Mode {
 
 interface Props {
 	host: string;
-	onCredentialsSave: () => void;
 }
 
-const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave, host } ) => {
+const ServerCredentialsForm: FunctionComponent< Props > = ( { host } ) => {
 	const translate = useTranslate();
 	const [ mode, setMode ] = useState( Mode.Password );
 	const hostInfo = getHostInfoFromId( host );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const renderPasswordForm = () => (
 		<div className="credentials-form__row credentials-form__user-pass">
@@ -221,11 +225,16 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave,
 						{ labels.cancel || translate( 'Cancel' ) }
 					</Button>
 				) } */ }
+				<Button compact borderless href={ `${ settingsPath( siteSlug ) }` }>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Change Host' ) }
+				</Button>
+
 				<Button
 					primary
 					className="credentials-form__btn"
 					// disabled={ formIsSubmitting }
-					onClick={ onCredentialsSave }
+					// onClick={ onCredentialsSave }
 				>
 					{ /* { labels.save || translate( 'Save' ) } */ }
 					{ translate( 'Save' ) }

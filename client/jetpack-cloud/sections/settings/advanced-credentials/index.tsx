@@ -3,7 +3,7 @@
  */
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -19,20 +19,16 @@ import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StepProgress from 'components/step-progress';
-import Verfication from './verification';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-enum Steps {
-	HostSelectionStep = 0,
-	CredentialsStep = 1,
-	VerificationStep = 2,
+interface Props {
+	host?: string;
 }
 
-const AdvancedCredentials: FunctionComponent = () => {
+const AdvancedCredentials: FunctionComponent< Props > = ( { host } ) => {
 	const translate = useTranslate();
 
 	const steps = [
@@ -42,23 +38,8 @@ const AdvancedCredentials: FunctionComponent = () => {
 	];
 
 	const siteId = useSelector( getSelectedSiteId );
-	const [ currentStep, setCurrentStep ] = useState( Steps.HostSelectionStep );
-	const [ selectedHost, setSelectedHost ] = useState< null | string >( null );
 	const { state: backupState } = useSelector( ( state ) => getRewindState( state, siteId ) ) as {
 		state: string;
-	};
-
-	const changeHost = ( newHost: string | null ) => {
-		setSelectedHost( newHost );
-		setCurrentStep( Steps.CredentialsStep );
-	};
-
-	const switchToConnectionStep = () => {
-		setCurrentStep( Steps.VerificationStep );
-	};
-
-	const switchToCredentialsStep = () => {
-		setCurrentStep( Steps.CredentialsStep );
 	};
 
 	const getStatusState = ( currentBackupState: string ): StatusState => {
@@ -75,20 +56,23 @@ const AdvancedCredentials: FunctionComponent = () => {
 		}
 	};
 
-	const renderStep = ( step: Steps ) => {
-		switch ( step ) {
-			case Steps.VerificationStep:
-				return <Verfication onReviewCredentialsClick={ switchToCredentialsStep } />;
-			case Steps.CredentialsStep:
-				return (
-					<div>
-						<h4>{ selectedHost }</h4>
-						<CredentialsForm host={ selectedHost } onCredentialsSave={ switchToConnectionStep } />
-					</div>
-				);
-			case Steps.HostSelectionStep:
-				return <HostSelection onHostChange={ changeHost } />;
+	const getCurrentStep = () => {
+		if ( host === undefined ) {
+			return 0;
 		}
+		return 1;
+	};
+
+	const render = () => {
+		if ( host === undefined ) {
+			return <HostSelection />;
+		}
+		return (
+			<div>
+				<h4>{ host }</h4>
+				<CredentialsForm host={ host } />
+			</div>
+		);
 	};
 
 	return (
@@ -103,8 +87,8 @@ const AdvancedCredentials: FunctionComponent = () => {
 				</div>
 			</Card>
 			<Card>
-				<StepProgress currentStep={ currentStep } steps={ steps } />
-				{ renderStep( currentStep ) }
+				<StepProgress currentStep={ getCurrentStep() } steps={ steps } />
+				{ render() }
 			</Card>
 		</Main>
 	);

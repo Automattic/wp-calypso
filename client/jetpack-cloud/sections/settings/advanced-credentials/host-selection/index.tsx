@@ -12,6 +12,7 @@ import { getHttpData, DataState } from 'state/data-layer/http-data';
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
 import { getRequestHosingProviderGuessId, requestHosingProviderGuess } from 'state/data-getters';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { settingsPath } from 'lib/jetpack/paths';
 import Badge from 'components/badge';
 import Gridicon from 'components/gridicon';
 
@@ -20,11 +21,12 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 
-interface Props {
-	onHostChange: ( newHost: string | null ) => void;
-}
+// interface Props {
+// 	onHostChange: ( newHost: string | null ) => void;
+// }
 
-const HostSelection: FunctionComponent< Props > = ( { onHostChange } ) => {
+// const HostSelection: FunctionComponent< Props > = ( { onHostChange } ) => {
+const HostSelection: FunctionComponent = () => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -84,38 +86,38 @@ const HostSelection: FunctionComponent< Props > = ( { onHostChange } ) => {
 			</div>
 			<div className="host-selection__list">
 				{ hostsToShow.map( ( { id, name } ) => (
-					<button
+					<a
 						className={
 							loadingProviderGuess
 								? 'host-selection__list-item-placeholder'
 								: 'host-selection__list-item'
 						}
 						key={ id }
-						onClick={ () => onHostChange( id ) }
+						href={ `${ settingsPath( siteSlug ) }?host=${ id }` }
 					>
-						{ /* <div className="host-selection__host-guess-badge"> */ }
-						{ name }
-						{ guess === id && (
-							<Badge>{ translate( 'If we had to guess your host, this would be it' ) }</Badge>
-						) }
-						{ /* </div> */ }
-						<Gridicon icon="chevron-right" />
-					</button>
+						<span>{ name }</span>
+						<div className="host-selection__list-item-badge-and-icon">
+							{ guess === id && (
+								<Badge>{ translate( 'If we had to guess your host, this would be it' ) }</Badge>
+							) }
+							<Gridicon icon="chevron-right" />
+						</div>
+					</a>
 				) ) }
-				<button
+				<a
 					className={
 						loadingProviderGuess
 							? 'host-selection__list-item-placeholder'
 							: 'host-selection__list-item'
 					}
 					key={ 'generic' }
-					onClick={ () => onHostChange( 'generic' ) }
+					href={ `${ settingsPath( siteSlug ) }?host=generic` }
 				>
 					{ translate(
 						'I don’t know / my host is not listed here / I have my server credentials'
 					) }
 					<Gridicon icon="chevron-right" />
-				</button>
+				</a>
 			</div>
 		</div>
 	);
