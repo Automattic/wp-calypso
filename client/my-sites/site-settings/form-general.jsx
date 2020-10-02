@@ -542,7 +542,7 @@ export class SiteSettingsFormGeneral extends Component {
 				( today.setDate( today.getDate() + SUPPORT_ACCESS_EXPIRY_IN_DAYS ) / 1000 ) | 0;
 			updateFields( { support_access_allowed_until: expiry, allow_support_access: 1 } );
 		} else {
-			updateFields( { support_access_allowed_until: '', allow_support_access: 0 } );
+			updateFields( { support_access_allowed_until: 0, allow_support_access: 0 } );
 		}
 	};
 
@@ -602,7 +602,7 @@ export class SiteSettingsFormGeneral extends Component {
 					isSaving={ isSavingSettings }
 					onButtonClick={ handleSubmitForm }
 					showButton
-					title={ translate( 'Support Access', { context: 'Support Access settings header' } ) }
+					title={ translate( 'Support Access' ) }
 				/>
 				<Card>
 					<form>{ this.supportAccessOptions() }</form>
@@ -770,7 +770,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		admin_url: '',
-		support_access_allowed_until: '',
+		support_access_allowed_until: 0,
 	};
 
 	if ( ! settings ) {
