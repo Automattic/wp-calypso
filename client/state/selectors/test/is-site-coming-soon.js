@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
+import isSiteComingSoon, { isSiteComingSoonV2 } from 'state/selectors/is-site-coming-soon';
 
 describe( 'isSiteComingSoon()', () => {
 	test( 'should return false if neither the site nor settings are known', () => {
@@ -41,7 +41,7 @@ describe( 'isSiteComingSoon()', () => {
 				siteSettings: {
 					items: {
 						2916284: {
-							wpcom_public_coming_soon: 1, // Ignore
+							wpcom_coming_soon: 1, // Ignore
 						},
 					},
 				},
@@ -62,7 +62,7 @@ describe( 'isSiteComingSoon()', () => {
 				siteSettings: {
 					items: {
 						2916284: {
-							wpcom_public_coming_soon: 0, // Ignore
+							wpcom_coming_soon: 0, // Ignore
 						},
 					},
 				},
@@ -84,7 +84,7 @@ describe( 'isSiteComingSoon()', () => {
 				siteSettings: {
 					items: {
 						2916284: {
-							wpcom_public_coming_soon: 1, // Ignore
+							wpcom_coming_soon: 1, // Ignore
 						},
 					},
 				},
@@ -123,7 +123,7 @@ describe( 'isSiteComingSoon()', () => {
 				siteSettings: {
 					items: {
 						2916284: {
-							wpcom_public_coming_soon: 1,
+							wpcom_coming_soon: 1,
 							blog_public: 1,
 						},
 					},
@@ -134,7 +134,44 @@ describe( 'isSiteComingSoon()', () => {
 
 		expect( isComingSoon ).toBe( true );
 
+		const isComingSoonV2 = isSiteComingSoonV2(
+			{
+				sites: {
+					items: {},
+				},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_public_coming_soon: 1,
+							blog_public: 1,
+						},
+					},
+				},
+			},
+			2916284
+		);
+
+		expect( isComingSoonV2 ).toBe( true );
+
 		const isNotComingSoon = isSiteComingSoon(
+			{
+				sites: {
+					items: {},
+				},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_coming_soon: 1,
+							blog_public: -1,
+						},
+					},
+				},
+			},
+			2916284
+		);
+		expect( isNotComingSoon ).toBe( false );
+
+		const isNotComingSoonV2 = isSiteComingSoonV2(
 			{
 				sites: {
 					items: {},
@@ -150,9 +187,7 @@ describe( 'isSiteComingSoon()', () => {
 			},
 			2916284
 		);
-
-		// Currently failing with dropping of private check
-		expect( isNotComingSoon ).toBe( false );
+		expect( isNotComingSoonV2 ).toBe( true );
 	} );
 
 	test( 'should return false for public sites', () => {
