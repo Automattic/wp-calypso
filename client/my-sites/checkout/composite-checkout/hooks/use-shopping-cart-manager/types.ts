@@ -33,7 +33,6 @@ export interface ShoppingCartManager {
 	removeCoupon: () => void;
 	couponStatus: CouponStatus;
 	updateLocation: ( arg0: CartLocation ) => void;
-	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: VariantSelectOverride[];
 	changeItemVariant: (
 		uuidToReplace: string,
@@ -54,18 +53,6 @@ export interface ShoppingCartManager {
  *   - 'error': Something went wrong.
  */
 export type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
-
-/**
- * Possible states re. variant selection. Note that all variant
- * change requests share the same state; this means if there is more
- * than one item in the cart with variant options they will all be in
- * pending state at the same time. Right now this is moot because at most
- * one cart item (the plan, if it exists) can have a variant picker.
- * If later we want to allow variations on more than one cart item
- * It should be straightforward to adjust the type of ShoppingCartManager
- * to accommodate this. For now the extra complexity is not worth it.
- */
-export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
 
 /**
  * Possible states re. coupon submission.
@@ -120,7 +107,6 @@ export type ShoppingCartState = {
 	cacheStatus: CacheStatus;
 	loadingError?: string;
 	loadingErrorType?: ShoppingCartError;
-	variantRequestStatus: VariantRequestStatus;
 	variantSelectOverride: VariantSelectOverride[];
 	queuedActions: ShoppingCartAction[];
 };

@@ -17,6 +17,8 @@ import {
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 	ResponseCart,
+	ResponseCartProduct,
+	TempResponseCartProduct,
 } from '../../types/backend/shopping-cart-endpoint';
 import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
 
@@ -91,13 +93,20 @@ function shoppingCartReducer(
 			const uuidToReplace = action.uuidToReplace;
 			const newProductId = action.newProductId;
 			const newProductSlug = action.newProductSlug;
-			if ( state.variantRequestStatus === 'pending' ) {
-				debug(
-					`variant request status is '${ state.variantRequestStatus }'; not submitting again`
-				);
+			if (
+				doesResponseCartContainProductMatching( state.responseCart, {
+					uuid: uuidToReplace,
+					product_id: newProductId,
+					product_slug: newProductSlug,
+				} )
+			) {
+				debug( `variant is already in cart; not submitting again` );
 				return state;
 			}
-			debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
+			debug( `replacing item with uuid ${ uuidToReplace } by product`, {
+				newProductId,
+				newProductSlug,
+			} );
 
 			return {
 				...state,
@@ -108,7 +117,6 @@ function shoppingCartReducer(
 					newProductSlug
 				),
 				cacheStatus: 'invalid',
-				variantRequestStatus: 'pending',
 				variantSelectOverride: [
 					...state.variantSelectOverride.filter( ( item ) => item.uuid !== action.uuidToReplace ),
 					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
@@ -181,7 +189,6 @@ function shoppingCartReducer(
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
-				variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
 			};
 		}
 		case 'RAISE_ERROR':
@@ -218,7 +225,6 @@ function getInitialShoppingCartState(): ShoppingCartState {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-		variantRequestStatus: 'fresh',
 		variantSelectOverride: [],
 		queuedActions: [],
 	};
@@ -269,4 +275,16 @@ function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart
 		default:
 			return currentCouponStatus;
 	}
+}
+
+function doesResponseCartContainProductMatching(
+	responseCart: ResponseCart,
+	productProperties: Partial< ResponseCartProduct >
+): boolean {
+	return responseCart.products.some( ( product: ResponseCartProduct | TempResponseCartProduct ) => {
+		return Object.keys( productProperties ).every( ( key ) => {
+			const typedKey = key as keyof ResponseCartProduct;
+			return product[ typedKey ] === productProperties[ typedKey ];
+		} );
+	} );
 }

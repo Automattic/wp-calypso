@@ -16,7 +16,6 @@ import {
 	ShoppingCartManagerArguments,
 	CacheStatus,
 	CouponStatus,
-	VariantRequestStatus,
 	ShoppingCartError,
 } from './types';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
@@ -43,7 +42,6 @@ export default function useShoppingCartManager( {
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
-	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
 	const variantSelectOverride = hookState.variantSelectOverride;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
@@ -112,7 +110,6 @@ export default function useShoppingCartManager( {
 		removeCoupon,
 		couponStatus,
 		updateLocation,
-		variantRequestStatus,
 		variantSelectOverride,
 		changeItemVariant,
 		responseCart,
