@@ -56,3 +56,12 @@
 		flex: 0 0 160px;
 	}
 }
+
+.credentials-form__support_info {
+	display: flex;
+	align-items: center;
+	.form-label {
+		margin-bottom: 0;
+		margin-right: 5px;
+	}
+}

@@ -2,55 +2,142 @@
  * External dependencies
  */
 import { translate, TranslateResult } from 'i18n-calypso';
-import React from 'react';
-interface LinkAndInfo {
+
+export interface LinkAndInfo {
 	info?: TranslateResult;
 	link?: string | TranslateResult;
 }
 
+enum InfoTypes {
+	InfoText = 'InfoText',
+	InfoLink = 'InfoLink',
+	InfoUnorderedList = 'InfoUnorderedList',
+	InfoOrderedList = 'InfoOrderedList',
+	InfoLine = 'InfoLine',
+}
+
+export interface InfoText {
+	type: InfoTypes.InfoText;
+	text: string;
+}
+
+export interface InfoLink {
+	type: InfoTypes.InfoLink;
+	text: string;
+	link: string;
+}
+
+export interface InfoUnorderedList {
+	type: InfoTypes.InfoUnorderedList;
+	items: string[];
+}
+
+export interface InfoOrderedList {
+	type: InfoTypes.InfoOrderedList;
+	items: string[];
+}
+
+export interface InfoLine {
+	type: InfoTypes.InfoLine;
+}
+
+export type Info = InfoText | InfoLink | InfoUnorderedList | InfoOrderedList | InfoLine;
+
+export const infoIsText = ( info: Info ): info is InfoText => info.type === InfoTypes.InfoText;
+export const infoIsLink = ( info: Info ): info is InfoLink => info.type === InfoTypes.InfoLink;
+export const infoIsUnorderedList = ( info: Info ): info is InfoUnorderedList =>
+	info.type === InfoTypes.InfoUnorderedList;
+export const infoIsOrderedList = ( info: Info ): info is InfoOrderedList =>
+	info.type === InfoTypes.InfoOrderedList;
+export const infoIsLine = ( info: Info ): info is InfoLine => info.type === InfoTypes.InfoLine;
+
 export interface HostInfo {
 	id: string;
 	name: string;
-	credentials?: LinkAndInfo;
-	credentialType?: LinkAndInfo;
-	serverAddress?: LinkAndInfo;
-	portNumber?: LinkAndInfo;
-	installationPath?: LinkAndInfo;
-	serverUserName?: LinkAndInfo;
-	ftp?: LinkAndInfo;
-	sftp?: LinkAndInfo;
-	ssh?: LinkAndInfo;
+	allowGenericFill: boolean;
+	credentialType?: Info[];
+	serverAddress?: Info[];
+	portNumber?: Info[];
+	installationPath?: Info[];
+	serverUserName?: Info[];
+	serverPassword?: Info[];
+	serverPrivateKey?: Info[];
 }
 
 export const topHosts: HostInfo[] = [
 	{
 		id: 'amazon',
 		name: 'Amazon / AWS',
-		sftp: {
-			link: 'https://docs.aws.amazon.com/transfer/latest/userguide/create-server-sftp.html',
-		},
-		ssh: {
-			link: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html',
-		},
+		allowGenericFill: true,
+		// sftp: {
+		// 	link: 'https://docs.aws.amazon.com/transfer/latest/userguide/create-server-sftp.html',
+		// },
+		// ssh: {
+		// 	link: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html',
+		// },
 	},
 	{
 		id: 'bluehost',
 		name: 'Bluehost',
-		ftp: {
-			info: translate(
-				'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
-			),
-			link: 'https://my.bluehost.com/cgi/help/ftpaccounts',
-		},
-		installationPath: {
-			info: translate(
-				'The folder path to your WordPress installation (e.g. /myserver/home/wordpress/). You can determine your servers folder structure using an FTP/SFTP client. If you are unsure, speak with your hosting provider. '
-			),
-		},
+		allowGenericFill: false,
+		// ftp: {
+		// 	info: translate(
+		// 		'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
+		// 	),
+		// 	link: 'https://my.bluehost.com/cgi/help/ftpaccounts',
+		// },
+		credentialType: [
+			{
+				type: InfoTypes.InfoUnorderedList,
+				items: [
+					translate(
+						'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
+					).toString(),
+					translate(
+						'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).'
+					).toString(),
+					translate(
+						'SFTP/SSH  is the preferred method to choose. Both methods are supported by Bluehost.'
+					).toString(),
+				],
+			},
+			{
+				type: InfoTypes.InfoLine,
+			},
+			{
+				type: InfoTypes.InfoLink,
+				text: translate( 'Read more' ).toString(),
+				link: 'https://my.bluehost.com/cgi/help/ftpaccounts',
+			},
+		],
+		serverAddress: [
+			{
+				type: InfoTypes.InfoText,
+				text: translate(
+					'Your Domain Name or server IP address. Both are available from the Bluehost cPanel.'
+				).toString(),
+			},
+			{
+				type: InfoTypes.InfoLine,
+			},
+			{
+				type: InfoTypes.InfoLink,
+				text: translate( 'Vist my Bluehost cPanel' ).toString(),
+				link: 'https://my.bluehost.com/cgi-bin/cplogin',
+			},
+		],
+		portNumber: [
+			{
+				type: InfoTypes.InfoText,
+				text: translate( 'Enter port 21 for Bluehost’s FTP service.' ).toString(),
+			},
+		],
 	},
 	{
 		id: 'dreamhost',
 		name: 'Dreamhost',
+		allowGenericFill: true,
+
 		// ftp: 'https://help.dreamhost.com/hc/en-us/articles/115000675027',
 		// sftp: 'https://help.dreamhost.com/hc/en-us/articles/115000675027',
 		// ssh: 'https://help.dreamhost.com/hc/en-us/articles/216385837-Enabling-Shell-access',
@@ -58,6 +145,8 @@ export const topHosts: HostInfo[] = [
 	{
 		id: 'godaddy',
 		name: 'GoDaddy',
+		allowGenericFill: true,
+
 		// 		ftp: false,
 		// 		sftp: 'https://www.godaddy.com/help/upload-files-with-sftp-8940',
 		// 		ssh: 'https://www.godaddy.com/help/enable-ssh-24596',
@@ -65,6 +154,8 @@ export const topHosts: HostInfo[] = [
 	{
 		id: 'hostgator',
 		name: 'HostGator',
+		allowGenericFill: true,
+
 		// ftp: 'https://www.hostgator.com/help/article/ftp-settings-and-connection',
 		// sftp: 'https://www.hostgator.com/help/article/secure-ftp-sftp-and-ftps',
 		// ssh: 'https://www.hostgator.com/help/article/how-do-i-get-and-use-ssh-access',
@@ -72,6 +163,8 @@ export const topHosts: HostInfo[] = [
 	{
 		id: 'siteground',
 		name: 'Siteground',
+		allowGenericFill: true,
+
 		// 		ftp: 'https://www.siteground.com/kb/establish-ftp-connection-hosting-account/',
 		// 		sftp:
 		// 			'https://www.siteground.com/kb/how_to_establish_sftp_connection_to_hosting_with_filezilla',
@@ -82,36 +175,38 @@ export const topHosts: HostInfo[] = [
 export const genericInfo: HostInfo = {
 	id: 'generic',
 	name: 'Other',
-	ftp: {
-		info: translate(
-			'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
-		),
-		link: translate( '{{a}}Read More{{/a}}', {
-			components: {
-				a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
-			},
-		} ),
-	},
-	sftp: {
-		info: translate(
-			'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).'
-		),
-		link: translate( '{{a}}Read More{{/a}}', {
-			components: {
-				a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
-			},
-		} ),
-	},
-	ssh: {
-		info: translate(
-			'SFTP/SSH is the preferred method to choose and should be supported by most modern hosts.'
-		),
-		link: translate( '{{a}}Read More{{/a}}', {
-			components: {
-				a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
-			},
-		} ),
-	},
+	allowGenericFill: true,
+
+	// ftp: {
+	// 	info: translate(
+	// 		'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
+	// 	),
+	// 	link: translate( '{{a}}Read More{{/a}}', {
+	// 		components: {
+	// 			a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
+	// 		},
+	// 	} ),
+	// },
+	// sftp: {
+	// 	info: translate(
+	// 		'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).'
+	// 	),
+	// 	link: translate( '{{a}}Read More{{/a}}', {
+	// 		components: {
+	// 			a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
+	// 		},
+	// 	} ),
+	// },
+	// ssh: {
+	// 	info: translate(
+	// 		'SFTP/SSH is the preferred method to choose and should be supported by most modern hosts.'
+	// 	),
+	// 	link: translate( '{{a}}Read More{{/a}}', {
+	// 		components: {
+	// 			a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
+	// 		},
+	// 	} ),
+	// },
 };
 
 export const otherHosts: HostInfo[] = [
@@ -119,6 +214,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'land1',
 		name: '1&1',
+		allowGenericFill: true,
+
 		// 		ftp: false,
 		// 		sftp:
 		// 			'https://www.ionos.com/help/server-cloud-infrastructure/accordions-to-managed-cloud-hosting/sftp-ssh/activating-sftpssh-access/',
@@ -128,6 +225,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'digitalocean',
 		name: 'DigitalOcean',
+		allowGenericFill: true,
+
 		// 		ftp: false,
 		// 		sftp:
 		// 			'https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server#how-to-connect-with-sftp (SFTP)',
@@ -137,6 +236,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'flywheel',
 		name: 'Flywheel',
+		allowGenericFill: true,
+
 		// 		ftp: false,
 		// 		sftp: 'https://getflywheel.com/wordpress-support/how-do-i-access-my-site-via-sftp/',
 		// 		ssh: false,
@@ -144,6 +245,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'hostinger',
 		name: 'Hostinger',
+		allowGenericFill: true,
+
 		// 		ftp: 'https://www.hostinger.com/how-to/i-m-having-trouble-connecting-to-ftp-what-should-i-do',
 		// 		sftp: 'https://www.hostinger.com/how-to/do-you-provide-sftp-access',
 		// 		ssh: 'https://www.hostinger.com/how-to/how-can-i-log-in-onto-my-account-via-ssh',
@@ -151,6 +254,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'hostmonster',
 		name: 'HostMonster',
+		allowGenericFill: true,
+
 		// 		ftp: 'https://my.hostmonster.com/hosting/help/ftpaccounts',
 		// 		sftp: 'https://my.hostmonster.com/hosting/help/ftpaccounts',
 		// 		ssh: 'https://my.hostmonster.com/hosting/help/180',
@@ -158,6 +263,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'inmotion',
 		name: 'InMotion Hosting',
+		allowGenericFill: true,
+
 		// 		ftp: 'https://www.inmotionhosting.com/support/website/ftp/getting-started-guide/',
 		// 		sftp: 'https://www.inmotionhosting.com/support/website/ftp/shared-sftp-setup/',
 		// 		ssh: 'https://www.inmotionhosting.com/support/website/ssh/shared-reseller-ssh',
@@ -165,6 +272,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'ipage',
 		name: 'iPage',
+		allowGenericFill: true,
 		// 		ftp: 'https://www.ipage.com/help/article/ftp-how-to-connect-to-your-website',
 		// 		sftp: 'https://www.ipage.com/help/article/ftp-how-to-connect-to-your-website',
 		// 		ssh: false,
@@ -172,6 +280,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'justhost',
 		name: 'Just Host',
+		allowGenericFill: true,
 		// 		ftp: 'https://my.justhost.com/hosting/help/ftpaccounts',
 		// 		sftp: 'https://my.justhost.com/hosting/help/ftpaccounts',
 		// 		ssh: 'https://my.justhost.com/hosting/help/180',
@@ -179,6 +288,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'kinsta',
 		name: 'Kinsta',
+		allowGenericFill: true,
 		// 		ftp: false,
 		// 		sftp: 'https://kinsta.com/knowledgebase/how-to-use-sftp/',
 		// 		ssh: 'https://kinsta.com/knowledgebase/connect-to-ssh/',
@@ -186,6 +296,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'liquidweb',
 		name: 'Liquid Web',
+		allowGenericFill: true,
 		// 		ftp: false,
 		// 		sftp: 'https://www.liquidweb.com/kb/finding-sftpssh-credentials-managed-wordpress-portal/',
 		// 		ssh: 'https://www.liquidweb.com/kb/finding-sftpssh-credentials-managed-wordpress-portal/',
@@ -193,6 +304,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'mediatemple',
 		name: 'Media Temple',
+		allowGenericFill: true,
+
 		// 		ftp:
 		// 			'https://mediatemple.net/community/products/dv/204643370/using-ftp-and-sftp#gs/What_you_need_gs',
 		// 		sftp:
@@ -203,6 +316,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'namecheap',
 		name: 'Namecheap',
+		allowGenericFill: true,
 		// 		ftp:
 		// 			'https://www.namecheap.com/support/knowledgebase/article.aspx/188/205/how-to-access-an-account-via-ftp',
 		// 		sftp:
@@ -213,6 +327,8 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'ovh',
 		name: 'OVH',
+		allowGenericFill: true,
+
 		// 		ftp: 'https://docs.ovh.com/gb/en/hosting/web_hosting_filezilla_user_guide/#ftp-connection',
 		// 		sftp: 'https://docs.ovh.com/gb/en/hosting/web_hosting_filezilla_user_guide/#sftp-connection',
 		// 		ssh:
@@ -221,6 +337,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'pagely',
 		name: 'Pagely',
+		allowGenericFill: true,
 		// 		ftp: false,
 		// 		sftp: 'https://support.pagely.com/hc/en-us/articles/203115864-Using-SFTP-With-Pagely',
 		// 		ssh:
@@ -229,6 +346,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'pressable',
 		name: 'Pressable',
+		allowGenericFill: true,
 		// 		ftp: false,
 		// 		sftp: 'https://pressable.com/knowledgebase/ftp-access-through-pressable-sftp-tools/',
 		// 		ssh: false,
@@ -236,6 +354,7 @@ export const otherHosts: HostInfo[] = [
 	{
 		id: 'wpengine',
 		name: 'WPEngine',
+		allowGenericFill: true,
 		// 		ftp: false,
 		// 		sftp: 'https://wpengine.com/support/sftp/#Connect_to_SFTP',
 		// 		ssh: 'https://wpengine.com/support/ssh-keys-for-shell-access/',
