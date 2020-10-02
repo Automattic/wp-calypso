@@ -12,3 +12,7 @@ import shouldNewSiteBePrivateByDefault from './should-new-site-be-private-by-def
 export default function getNewSiteComingSoonSetting( state: object ): number {
 	return shouldNewSiteBePrivateByDefault( state ) ? 1 : 0;
 }
+
+export function getNewSiteComingSoonSettingV2( state: object ): number {
+	return shouldNewSiteBePrivateByDefault( state ) ? 0 : 1;
+}

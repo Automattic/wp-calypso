@@ -47,7 +47,9 @@ import { getSignupDependencyStore } from 'state/signup/dependency-store/selector
 import { getProductsList } from 'state/products-list/selectors';
 import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
 import getNewSitePublicSetting from 'state/selectors/get-new-site-public-setting';
-import getNewSiteComingSoonSetting from 'state/selectors/get-new-site-coming-soon-setting';
+import getNewSiteComingSoonSetting, {
+	getNewSiteComingSoonSettingV2,
+} from 'state/selectors/get-new-site-coming-soon-setting';
 import getSiteId from 'state/selectors/get-site-id';
 
 // Current directory dependencies
@@ -191,7 +193,9 @@ function getNewSiteParams( {
 	};
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
-		newSiteParams.options.wpcom_public_coming_soon = getNewSiteComingSoonSetting( state );
+		newSiteParams.options.wpcom_public_coming_soon = getNewSiteComingSoonSettingV2( state );
+		newSiteParams.public =
+			newSiteParams.options.wpcom_public_coming_soon === 1 ? 0 : newSiteParams.public;
 	} else {
 		newSiteParams.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
@@ -605,7 +609,8 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	};
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
-		data.options.wpcom_public_coming_soon = getNewSiteComingSoonSetting( state );
+		data.options.wpcom_public_coming_soon = getNewSiteComingSoonSettingV2( state );
+		data.public = data.options.wpcom_public_coming_soon === 1 ? 0 : data.public;
 	} else {
 		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
