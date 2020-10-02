@@ -1067,17 +1067,11 @@ function TrackRender( { children, eventName } ) {
 export default connect(
 	( state, ownProps ) => {
 		const isDisplayUsernamePropSet = ownProps.hasOwnProperty( 'displayUsernameInput' );
-		const eligibleFlowsForRemoveUsernameTest = [
-			'onboarding',
-			'personal',
-			'premium',
-			'business',
-			'ecommerce',
-		];
+		const eligibleFlowsForRemoveUsernameTest = [ 'personal', 'premium', 'business', 'ecommerce' ];
 		let displayUsernameInput = true;
 
 		if ( eligibleFlowsForRemoveUsernameTest.includes( ownProps.flowName ) ) {
-			abtest( 'usernameAATest' );
+			displayUsernameInput = 'control' === abtest( 'removeUsernameInSignup' );
 		} else if ( isDisplayUsernamePropSet ) {
 			displayUsernameInput = ownProps.displayUsernameInput;
 		}
