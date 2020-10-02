@@ -220,7 +220,7 @@ export default {
 		localeTargets: [ 'en' ],
 	},
 	removeUsernameInSignup: {
-		datestamp: '20200930',
+		datestamp: '20201002',
 		variations: {
 			variantRemoveUsername: 50,
 			control: 50,
