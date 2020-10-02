@@ -20,7 +20,7 @@ import FormTextArea from 'components/forms/form-textarea';
 import SegmentedControl from 'components/segmented-control';
 import InfoPopover from 'components/info-popover';
 import { getHostInfoFromId } from '../host-info';
-import Info from './info';
+import InlineInfo from './inline-info';
 
 /**
  * Style dependencies
@@ -110,7 +110,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave,
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential Type' ) }</FormLabel>
 					{ hostInfo && hostInfo.credentialType && (
 						<InfoPopover>
-							<Info info={ hostInfo.credentialType } />
+							<InlineInfo info={ hostInfo.credentialType } />
 						</InfoPopover>
 					) }
 				</div>
@@ -132,7 +132,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave,
 						<FormLabel htmlFor="host-address">{ translate( 'Server Address' ) }</FormLabel>
 						{ hostInfo && hostInfo.serverAddress && (
 							<InfoPopover>
-								<Info info={ hostInfo.serverAddress } />
+								<InlineInfo info={ hostInfo.serverAddress } />
 							</InfoPopover>
 						) }
 					</div>
@@ -153,7 +153,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave,
 						<FormLabel htmlFor="server-port">{ translate( 'Port Number' ) }</FormLabel>
 						{ hostInfo && hostInfo.portNumber && (
 							<InfoPopover>
-								<Info info={ hostInfo.portNumber } />
+								<InlineInfo info={ hostInfo.portNumber } />
 							</InfoPopover>
 						) }
 					</div>
@@ -177,7 +177,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( { onCredentialsSave,
 					</FormLabel>
 					{ hostInfo && hostInfo.installationPath && (
 						<InfoPopover>
-							<Info info={ hostInfo.installationPath } />
+							<InlineInfo info={ hostInfo.installationPath } />
 						</InfoPopover>
 					) }
 				</div>

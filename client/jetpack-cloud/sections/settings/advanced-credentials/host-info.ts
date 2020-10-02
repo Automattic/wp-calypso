@@ -9,49 +9,49 @@ export interface LinkAndInfo {
 }
 
 enum InfoTypes {
-	InfoText = 'InfoText',
-	InfoLink = 'InfoLink',
-	InfoUnorderedList = 'InfoUnorderedList',
-	InfoOrderedList = 'InfoOrderedList',
-	InfoLine = 'InfoLine',
+	Text = 'Text',
+	Link = 'Link',
+	UnorderedList = 'UnorderedList',
+	OrderedList = 'OrderedList',
+	Line = 'Line',
 }
 
-export interface InfoText {
-	type: InfoTypes.InfoText;
+export interface Text {
+	type: InfoTypes.Text;
 	text: string;
 }
 
-export interface InfoLink {
-	type: InfoTypes.InfoLink;
+export interface Link {
+	type: InfoTypes.Link;
 	text: string;
 	link: string;
 }
 
-export interface InfoUnorderedList {
-	type: InfoTypes.InfoUnorderedList;
+export interface UnorderedList {
+	type: InfoTypes.UnorderedList;
 	items: string[];
 }
 
-export interface InfoOrderedList {
-	type: InfoTypes.InfoOrderedList;
+export interface OrderedList {
+	type: InfoTypes.OrderedList;
 	items: string[];
 }
 
-export interface InfoLine {
-	type: InfoTypes.InfoLine;
+export interface Line {
+	type: InfoTypes.Line;
 }
 
-export type Info = InfoText | InfoLink | InfoUnorderedList | InfoOrderedList | InfoLine;
+export type Info = Text | Link | UnorderedList | OrderedList | Line;
 
-export const infoIsText = ( info: Info ): info is InfoText => info.type === InfoTypes.InfoText;
-export const infoIsLink = ( info: Info ): info is InfoLink => info.type === InfoTypes.InfoLink;
-export const infoIsUnorderedList = ( info: Info ): info is InfoUnorderedList =>
-	info.type === InfoTypes.InfoUnorderedList;
-export const infoIsOrderedList = ( info: Info ): info is InfoOrderedList =>
-	info.type === InfoTypes.InfoOrderedList;
-export const infoIsLine = ( info: Info ): info is InfoLine => info.type === InfoTypes.InfoLine;
+export const infoIsText = ( info: Info ): info is Text => info.type === InfoTypes.Text;
+export const infoIsLink = ( info: Info ): info is Link => info.type === InfoTypes.Link;
+export const infoIsUnorderedList = ( info: Info ): info is UnorderedList =>
+	info.type === InfoTypes.UnorderedList;
+export const infoIsOrderedList = ( info: Info ): info is OrderedList =>
+	info.type === InfoTypes.OrderedList;
+export const infoIsLine = ( info: Info ): info is Line => info.type === InfoTypes.Line;
 
-export interface HostInfo {
+export interface Host {
 	id: string;
 	name: string;
 	allowGenericFill: boolean;
@@ -64,7 +64,7 @@ export interface HostInfo {
 	serverPrivateKey?: Info[];
 }
 
-export const topHosts: HostInfo[] = [
+export const topHosts: Host[] = [
 	{
 		id: 'amazon',
 		name: 'Amazon / AWS',
@@ -88,7 +88,7 @@ export const topHosts: HostInfo[] = [
 		// },
 		credentialType: [
 			{
-				type: InfoTypes.InfoUnorderedList,
+				type: InfoTypes.UnorderedList,
 				items: [
 					translate(
 						'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
@@ -97,38 +97,38 @@ export const topHosts: HostInfo[] = [
 						'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).'
 					).toString(),
 					translate(
-						'SFTP/SSH  is the preferred method to choose. Both methods are supported by Bluehost.'
+						'SFTP/SSH is the preferred method to choose. Both methods are supported by Bluehost.'
 					).toString(),
 				],
 			},
 			{
-				type: InfoTypes.InfoLine,
+				type: InfoTypes.Line,
 			},
 			{
-				type: InfoTypes.InfoLink,
+				type: InfoTypes.Link,
 				text: translate( 'Read more' ).toString(),
 				link: 'https://my.bluehost.com/cgi/help/ftpaccounts',
 			},
 		],
 		serverAddress: [
 			{
-				type: InfoTypes.InfoText,
+				type: InfoTypes.Text,
 				text: translate(
 					'Your Domain Name or server IP address. Both are available from the Bluehost cPanel.'
 				).toString(),
 			},
 			{
-				type: InfoTypes.InfoLine,
+				type: InfoTypes.Line,
 			},
 			{
-				type: InfoTypes.InfoLink,
+				type: InfoTypes.Link,
 				text: translate( 'Vist my Bluehost cPanel' ).toString(),
 				link: 'https://my.bluehost.com/cgi-bin/cplogin',
 			},
 		],
 		portNumber: [
 			{
-				type: InfoTypes.InfoText,
+				type: InfoTypes.Text,
 				text: translate( 'Enter port 21 for Bluehost’s FTP service.' ).toString(),
 			},
 		],
@@ -172,7 +172,7 @@ export const topHosts: HostInfo[] = [
 	},
 ];
 
-export const genericInfo: HostInfo = {
+export const genericInfo: Host = {
 	id: 'generic',
 	name: 'Other',
 	allowGenericFill: true,
@@ -209,7 +209,7 @@ export const genericInfo: HostInfo = {
 	// },
 };
 
-export const otherHosts: HostInfo[] = [
+export const otherHosts: Host[] = [
 	genericInfo,
 	{
 		id: 'land1',
@@ -375,7 +375,7 @@ export const getProviderNameFromId = ( searchId?: string ): string | null => {
 	return null;
 };
 
-export const getHostInfoFromId = ( searchId?: string ): HostInfo | null => {
+export const getHostInfoFromId = ( searchId?: string ): Host | null => {
 	for ( const host of topHosts ) {
 		if ( host.id === searchId ) {
 			return host;

@@ -12,9 +12,9 @@ interface Props {
 	info: HostInfo.Info[];
 }
 
-const Info: FunctionComponent< Props > = ( { info } ) => {
+const InlineInfo: FunctionComponent< Props > = ( { info } ) => {
 	return (
-		<div>
+		<div className="inline-info">
 			{ info.map( ( infom ) => {
 				if ( HostInfo.infoIsLink( infom ) ) {
 					return <a href={ infom.link }>{ infom.text }</a>;
@@ -23,16 +23,16 @@ const Info: FunctionComponent< Props > = ( { info } ) => {
 				} else if ( HostInfo.infoIsOrderedList( infom ) ) {
 					return (
 						<ol>
-							{ infom.items.map( ( text ) => (
-								<li>{ text }</li>
+							{ infom.items.map( ( text, index ) => (
+								<li key={ index }>{ text }</li>
 							) ) }
 						</ol>
 					);
 				} else if ( HostInfo.infoIsUnorderedList( infom ) ) {
 					return (
 						<ul>
-							{ infom.items.map( ( text ) => (
-								<li>{ text }</li>
+							{ infom.items.map( ( text, index ) => (
+								<li key={ index }>{ text }</li>
 							) ) }
 						</ul>
 					);
@@ -45,4 +45,4 @@ const Info: FunctionComponent< Props > = ( { info } ) => {
 	);
 };
 
-export default Info;
+export default InlineInfo;
