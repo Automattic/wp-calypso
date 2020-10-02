@@ -90,9 +90,6 @@ export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR
  *         Used to determine whether we need to re-validate the cart on
  *         the backend. We can't use responseCart directly to decide this
  *         in e.g. useEffect because this causes an infinite loop.
- *     * variantRequestStatus
- *         Used to allow updating the view immediately upon a variant
- *         change request.
  */
 export type ShoppingCartState = {
 	responseCart: ResponseCart;
