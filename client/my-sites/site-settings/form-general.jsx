@@ -31,7 +31,7 @@ import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteSettings from 'components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
-import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
+import isSiteComingSoon, { isSiteComingSoonV2 } from 'state/selectors/is-site-coming-soon';
 import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import guessTimezone from 'lib/i18n-utils/guess-timezone';
 import { preventWidows } from 'lib/formatting';
@@ -665,7 +665,9 @@ const connectComponent = connect(
 
 		return {
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
-			isComingSoon: isSiteComingSoon( state, siteId ),
+			isComingSoon: config.isEnabled( 'coming-soon-v2' )
+				? isSiteComingSoonV2( state, siteId )
+				: isSiteComingSoon( state, siteId ),
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
