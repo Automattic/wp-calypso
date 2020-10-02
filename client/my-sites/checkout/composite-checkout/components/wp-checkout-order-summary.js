@@ -149,7 +149,7 @@ function SupportText( { hasPlanInCart, isJetpackNotAtomic } ) {
 			'personal-bundle' === plan.wpcom_meta?.product_slug ||
 			'personal-bundle-2y' === plan.wpcom_meta?.product_slug
 		) {
-			return <span>{ translate( 'Unlimited email support' ) }</span>;
+			return <span>{ translate( 'Access unlimited email support' ) }</span>;
 		}
 
 		return <span>{ translate( 'Email and live chat support' ) }</span>;

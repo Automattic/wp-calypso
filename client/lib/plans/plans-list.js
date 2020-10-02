@@ -107,7 +107,7 @@ const getPlanPersonalDetails = () => ( {
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_JETPACK_ESSENTIAL,
-		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT,
+		constants.FEATURE_EMAIL_SUPPORT,
 		constants.FEATURE_FREE_THEMES,
 		constants.FEATURE_BASIC_DESIGN,
 		constants.FEATURE_6GB_STORAGE,
@@ -116,18 +116,18 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
 	getSignupFeatures: () => [
-		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_DOMAIN,
 		constants.FEATURE_FREE_THEMES,
 	],
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
 	getPortfolioSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities

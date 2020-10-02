@@ -205,15 +205,6 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Email support' ),
-		getDescription: () =>
-			i18n.translate(
-				'High quality email support to help you get your website up and running and working how you want it.'
-			),
-	},
-
-	[ constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP ]: {
-		getSlug: () => constants.FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP,
 		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalize, expert support.' ),
@@ -640,15 +631,6 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => constants.FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Email support' ),
-		getDescription: () =>
-			i18n.translate(
-				'High quality email support to help you get your website up and running and working how you want it.'
-			),
-	},
-
-	[ constants.FEATURE_UNLIMITED_EMAIL_SUPPORT ]: {
-		getSlug: () => constants.FEATURE_UNLIMITED_EMAIL_SUPPORT,
 		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalize, expert support.' ),

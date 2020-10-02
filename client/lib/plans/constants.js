@@ -115,7 +115,6 @@ export const FEATURE_200GB_STORAGE = '200gb-storage';
 export const FEATURE_UNLIMITED_STORAGE = 'unlimited-storage';
 export const FEATURE_COMMUNITY_SUPPORT = 'community-support';
 export const FEATURE_EMAIL_SUPPORT = 'email-support';
-export const FEATURE_UNLIMITED_EMAIL_SUPPORT = 'unlimited-email-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT = 'email-live-chat-support';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS =
 	'email-live-chat-support-business-days';
@@ -156,7 +155,6 @@ export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
 export const FEATURE_UNLIMITED_STORAGE_SIGNUP = 'unlimited-storage-signup';
 export const FEATURE_EMAIL_SUPPORT_SIGNUP = 'email-support-signup';
-export const FEATURE_UNLIMITED_EMAIL_SUPPORT_SIGNUP = 'unlimited-email-support-signup';
 export const FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP = 'email-live-chat-support-signup';
 export const FEATURE_MONETISE = 'monetise-your-site';
 export const FEATURE_WP_SUBDOMAIN_SIGNUP = 'wordpress-subdomain-signup';
