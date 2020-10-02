@@ -52,13 +52,22 @@ function getExternals() {
 		// with modules that are incompatible with webpack bundling.
 		nodeExternals( {
 			allowlist: [
-				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
-				// non-JS asset imports that couldn't be processed by Node.js at runtime.
-				'@automattic/components',
-
-				// The polyfills module is transpiled by Babel and only the `core-js` modules that are
-				// needed by current Node.js are included instead of the whole package.
+				'@automattic/calypso-analytics',
 				'@automattic/calypso-polyfills',
+				'@automattic/components',
+				'@automattic/format-currency',
+				'@automattic/load-script',
+				'@automattic/popup-monitor',
+				'@automattic/react-i18n',
+				'@automattic/request-external-access',
+				'@automattic/social-previews',
+				'@automattic/tree-select',
+				'@automattic/viewport',
+				'@automattic/viewport-react',
+				'i18n-calypso',
+				'photon',
+				'wpcom',
+				'wpcom-proxy-request',
 				/^core-js\//,
 
 				// Ensure that file-loader files imported from packages in node_modules are
