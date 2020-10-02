@@ -378,10 +378,10 @@ export function printConsole( driver ) {
 		driver
 			.manage()
 			.logs()
-			.get('browser')
-			.then((logs) => {
-				logs.forEach((log) => console.log(log));
-			});
+			.get( 'browser' )
+			.then( ( logs ) => {
+				logs.forEach( ( log ) => console.log( log ) );
+			} );
 	}
 }
 
