@@ -550,8 +550,22 @@ export class MySitesSidebar extends Component {
 	}
 
 	planMenu() {
+		const { canUserManageOptions, site, isWpMobile } = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+			return null;
+		}
+
+		if ( ! canUserManageOptions ) {
+			return null;
+		}
+
 		// Hide "Plans" because the App/Play Stores reject apps that present non In-App Purchase flows, even in a WebView
-		if ( this.props.isWpMobile ) {
+		if ( isWpMobile ) {
 			return null;
 		}
 
