@@ -391,7 +391,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * You can just import the class of the block(s) you want to add and pass it to this function, which
 	 * also means we don't need to couple the block class with this one.
 	 *
-	 * @param { typeof GutenbergBlockComponent } blockClass A block class
+	 * @param { Function } blockClass A block class
 	 */
 	async insertBlock( blockClass ) {
 		const blockID = await this.addBlock( blockClass.blockTitle );

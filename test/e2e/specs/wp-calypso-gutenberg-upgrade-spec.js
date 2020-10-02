@@ -66,7 +66,7 @@ const blockInits = new Map()
  * IMPORTANT: It relies on the `gEditorComponent` having a proper instance of
  * `GutenbergEditorComponent`, so make sure to call it only when this instance is available.
  *
- * @param { typeof GutenbergBlockComponent } blockClass A block class.
+ * @param { Function } blockClass A block class.
  * @returns { Function } the init function to be called.
  */
 async function insertBlock( blockClass ) {
@@ -157,7 +157,7 @@ async function assertNoErrorInEditor() {
 /**
  * Re-usable collection of steps for verifying blocks in the editor.
  *
- * @param { typeof GutenbergBlockComponent } blockClass A block class.
+ * @param { Function } blockClass A block class.
  */
 function verifyBlockInEditor( blockClass ) {
 	step( 'Block is displayed in the editor', async function () {
@@ -187,7 +187,7 @@ function verifyBlockInEditor( blockClass ) {
 /**
  * Re-usable collection of steps for verifying blocks in the frontend/published page.
  *
- * @param { typeof GutenbergBlockComponent } blockClass A block class.
+ * @param { Function } blockClass A block class.
  */
 function verifyBlockInPublishedPage( blockClass ) {
 	step( 'Publish page', async function () {
