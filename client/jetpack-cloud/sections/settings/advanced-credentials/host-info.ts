@@ -122,7 +122,7 @@ export const topHosts: Host[] = [
 			},
 			{
 				type: InfoTypes.Link,
-				text: translate( 'Vist my Bluehost cPanel' ).toString(),
+				text: translate( 'Visit my Bluehost cPanel' ).toString(),
 				link: 'https://my.bluehost.com/cgi-bin/cplogin',
 			},
 		],
