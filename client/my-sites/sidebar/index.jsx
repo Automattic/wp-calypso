@@ -1019,7 +1019,7 @@ export class MySitesSidebar extends Component {
 					<ul>
 						{ this.customerHome() }
 						{ this.stats() }
-						{ config.isEnabled( 'site-level-billing' ) ? this.planMenu() : this.plan() }
+						{ this.planMenu() }
 						{ this.store() }
 					</ul>
 				</SidebarMenu>

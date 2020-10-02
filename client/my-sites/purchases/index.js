@@ -17,15 +17,8 @@ import {
 	purchaseAddPaymentMethod,
 	purchaseEditPaymentMethod,
 } from './controller';
-import config from 'config';
-import legacyRouter from 'me/purchases';
 
-export default ( router ) => {
-	if ( ! config.isEnabled( 'site-level-billing' ) ) {
-		legacyRouter( router );
-		return;
-	}
-
+export default () => {
 	page( '/purchases', siteSelection, navigation, sites, makeLayout, clientRender );
 	page( '/purchases/subscriptions', siteSelection, navigation, sites, makeLayout, clientRender );
 	page(
