@@ -10,6 +10,12 @@
 	margin: 0;
 }
 
+/** Subscribe button **/
+.wp-block-premium-content-logged-out-view .wp-block-jetpack-recurring-payments {
+	display: inline-block;
+	margin-right: .5em;
+}
+
 /* Login button */
 
 .wp-block-premium-content-login-button {
