@@ -74,7 +74,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		if ( closePanel ) {
 			try {
 				await this.closePublishedPanel();
-
 			} catch ( e ) {
 				console.log( 'Publish panel already closed' );
 			}
@@ -154,56 +153,54 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return contactFormBlock.insertSubject( subject );
 	}
 
-	toggleMoreToolsAndOptions() {
-		return driverHelper.clickWhenClickable(
-			this.driver,
-			By.xpath( "//button[@aria-label='More tools & options']" )
-		);
-	}
-
-	async switchToCodeView() {
-		await this.toggleMoreToolsAndOptions();
-
-		// Now click to switch to the code editor
+	async toggleOptionsMenu() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[2]" )
+			By.xpath( "//button[@aria-label='Options']" )
 		);
 
-		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
+		// This sleep is needed for the Options menu to be accessible. I've tried `waitTillPresentAndDisplayed`
+		// but it doesn't seem to work consistently, but this is pending improvement as this adds up on total time.
+		await this.driver.sleep( 2000 );
+	}
 
+	async switchToCodeEditor() {
+		await this.toggleOptionsMenu();
+
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			By.xpath( "//div[@aria-label='Options']//button[text()='Code editor']" )
+		);
+
+		// Wait for the code editor element.
+		const textAreaSelector = By.css( 'textarea.editor-post-text-editor' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
 
-		// close the menu
-		await this.toggleMoreToolsAndOptions();
+		// Close the menu.
+		await this.toggleOptionsMenu();
 
-		return this.driver.findElement( textAreaSelector );
+		return textAreaSelector;
 	}
 
-	async switchToBlockEditor() {
-		await this.toggleMoreToolsAndOptions();
-
+	async exitCodeEditor() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='More tools & options']/div[2]/div[2]/button[1]" )
-		);
-
-		// close the menu
-		await this.toggleMoreToolsAndOptions();
-	}
-
-	async copyBlocksCode() {
-		const codeEditor = await this.switchToCodeView();
-		return this.driver.executeScript(
-			'arguments[0].select(); document.execCommand("copy");',
-			codeEditor
+			By.xpath( "//button[text()='Exit code editor']" )
 		);
 	}
 
-	async pasteBlocksCode() {
-		const codeEditor = await this.switchToCodeView();
-		// Might not work in a Mac?
-		return codeEditor.sendKeys( Key.CONTROL + 'v' );
+	async getBlocksCode() {
+		const textAreaSelector = await this.switchToCodeEditor();
+		const blocksCode = this.driver.findElement( textAreaSelector ).getAttribute( 'value' );
+		await this.exitCodeEditor();
+
+		return blocksCode;
+	}
+
+	async setBlocksCode( blocksCode ) {
+		const textAreaSelector = await this.switchToCodeEditor();
+		await driverHelper.setWhenSettable( this.driver, textAreaSelector, blocksCode );
+		await this.exitCodeEditor();
 	}
 
 	blockDisplayedInEditor( dataTypeSelectorVal ) {
@@ -218,8 +215,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async errorDisplayed() {
-		await this.driver.sleep( 1000 );
-		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-error-boundary' ) );
+		return driverHelper.isEventuallyPresentAndDisplayed(
+			this.driver,
+			By.css( '.editor-error-boundary' )
+		);
 	}
 
 	async hasInvalidBlocks() {
@@ -392,7 +391,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * You can just import the class of the block(s) you want to add and pass it to this function, which
 	 * also means we don't need to couple the block class with this one.
 	 *
-	 * @param { GutenbergBlockComponent } blockClass A block class that responds to title and name
+	 * @param { Function } blockClass A block class
 	 */
 	async insertBlock( blockClass ) {
 		const blockID = await this.addBlock( blockClass.blockTitle );

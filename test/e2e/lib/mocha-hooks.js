@@ -162,6 +162,11 @@ after( async function () {
 
 // Quit browser
 after( function () {
+	if ( ! global.__BROWSER__ ) {
+		// Early return if there's no browser, i.e. when all specs were skipped.
+		return;
+	}
+
 	this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 

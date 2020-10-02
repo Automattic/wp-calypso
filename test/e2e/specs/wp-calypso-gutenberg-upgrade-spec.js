@@ -4,20 +4,25 @@
 import assert from 'assert';
 import config from 'config';
 import { times } from 'lodash';
-import { By } from 'selenium-webdriver';
-import { promises as fs } from 'fs';
-import { join } from 'path';
+// import { By } from 'selenium-webdriver';
+// import { join } from 'path';
+// import { promises as fs } from 'fs';
 
 /**
  * Internal dependencies
  */
 import LoginFlow from '../lib/flows/login-flow.js';
 
+import ReaderPage from '../lib/pages/reader-page';
+
+import NavBarComponent from '../lib/components/nav-bar-component.js';
+
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
 import * as mediaHelper from '../lib/media-helper';
+import * as driverHelper from '../lib/driver-helper';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -25,6 +30,7 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 import {
+	GutenbergBlockComponent,
 	BlogPostsBlockComponent,
 	ContactFormBlockComponent,
 	ContactInfoBlockComponent,
@@ -42,244 +48,279 @@ let driver;
 let loginFlow;
 let gEditorComponent;
 let currentGutenbergBlocksCode;
-let galleryImages;
+let sampleImages;
+
+const blockInits = new Map()
+	.set( TiledGalleryBlockComponent, ( block ) => block.uploadImages( sampleImages ) )
+	.set( ContactFormBlockComponent, async ( block ) => {
+		await block.openEditSettings();
+		await block.insertEmail( 'testing@automattic.com' );
+		await block.insertSubject( "Let's work together" );
+	} );
+
+/**
+ * Wrapper that provides an uniform API for creating blocks on the page. It uses the `inits`
+ * dictionary defined in this module. If an entry is not found for the passed `blockClass`, it
+ * fall-backs to just inserting the block on the page.
+ *
+ * IMPORTANT: It relies on the `gEditorComponent` having a proper instance of
+ * `GutenbergEditorComponent`, so make sure to call it only when this instance is available.
+ *
+ * @param { Function } blockClass A block class.
+ * @returns { Function } the init function to be called.
+ */
+async function insertBlock( blockClass ) {
+	const blockInit = blockInits.get( blockClass );
+	const block = await gEditorComponent.insertBlock( blockClass );
+
+	return blockInit && blockInit( block );
+}
+
+// Commented out for now because of ENOMEM erros on CI
+// /**
+//  * Take screenshot(s) of a given site's page.
+//  *
+//  * There's no way I know of to take a full-height screenshot of the page using wedriver. Because of
+//  * that, we basically scroll down the page in pieces and take screenshot of those areas. In the end
+//  * we have multiple screenshots that do represent the full page, vertically.
+//  *
+//  * @param { string } siteName the name of the WP test site (it will prepended to .wordpress.com)
+//  * @param { number } totalHeight The total height of the page
+//  * @param { number } viewportHeight The visible height
+//  * @param { Function } scrollCb A callback function that will be called to scroll down the page, it
+//  * should accept an integer that will be used in formula to calculate how much it should scroll.
+//  */
+// async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
+// 	const now = Date.now() / 1000;
+
+// 	const siteScreenshotsDir = join( mediaHelper.screenshotsDir, siteName );
+// 	await fs
+// 		.access( siteScreenshotsDir )
+// 		.catch( () => fs.mkdir( siteScreenshotsDir, { recursive: true } ) );
+
+// 	for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
+// 		await scrollCb( i );
+
+// 		const screenshotData = await driver.takeScreenshot();
+// 		const url = await driver.getCurrentUrl();
+// 		await mediaHelper.writeScreenshot(
+// 			screenshotData,
+// 			() => join( siteName, `${ siteName }-${ i }-${ now }` ),
+// 			{ url }
+// 		);
+// 	}
+// }
+
+// Commented out for now because of ENOMEM erros on CI
+// /**
+//  * Take screenshot(s) of the editor. Useful to diagnose glitches that might manifest visually and
+//  * that we still don't verify automatically.
+//  *
+//  * @param { string } siteName the name of the WP test site (it will prepended to .wordpress.com)
+//  */
+// async function takeEditorScreenshots( siteName ) {
+// 	const editorViewport = await driver.findElement(
+// 		By.css( 'div.interface-interface-skeleton__content' )
+// 	);
+
+// 	const editorViewportScrollHeight = await driver.executeScript(
+// 		'return arguments[0].scrollHeight',
+// 		editorViewport
+// 	);
+// 	const editorViewportClientHeight = await driver.executeScript(
+// 		'return arguments[0].clientHeight',
+// 		editorViewport
+// 	);
+
+// 	await takeScreenshot(
+// 		`${ siteName }-editor`,
+// 		editorViewportScrollHeight,
+// 		editorViewportClientHeight,
+// 		( i ) =>
+// 			driver.executeScript(
+// 				`arguments[0].scroll({top: arguments[0].clientHeight*${ i }})`,
+// 				editorViewport
+// 			)
+// 	);
+// }
+
+async function assertNoErrorInEditor() {
+	const errorDisplayed = await gEditorComponent.errorDisplayed();
+	assert.strictEqual( errorDisplayed, false, 'The block errored in the editor!' );
+}
+
+// Commented-out for now because of https://github.com/Automattic/jetpack/issues/16514
+// async function assertNoInvalidBlocksInEditor() {
+// 	assert.strictEqual( await gEditorComponent.hasInvalidBlocks(), false, 'The block is invalid!' );
+// }
+
+/**
+ * Re-usable collection of steps for verifying blocks in the editor.
+ *
+ * @param { Function } blockClass A block class.
+ */
+function verifyBlockInEditor( blockClass ) {
+	step( 'Block is displayed in the editor', async function () {
+		const displayed = await gEditorComponent.blockDisplayedInEditor( blockClass.blockName );
+		assert.strictEqual(
+			displayed,
+			true,
+			`The block "${ blockClass.blockName }" was not found in the editor`
+		);
+	} );
+
+	step( 'Block does not error in the editor', async function () {
+		await assertNoErrorInEditor();
+	} );
+
+	// Commented-out for now because of https://github.com/Automattic/jetpack/issues/16514
+	// step( 'Blocks do not invalidate', async function () {
+	// 		await assertNoInvalidBlocksInEditor();
+	// } );
+
+	// Commented out for now because of ENOMEM erros on CI
+	// step( 'Take screenshots of the block in the editor', async function () {
+	// 	await takeEditorScreenshots( siteName );
+	// } );
+}
+
+/**
+ * Re-usable collection of steps for verifying blocks in the frontend/published page.
+ *
+ * @param { Function } blockClass A block class.
+ */
+function verifyBlockInPublishedPage( blockClass ) {
+	step( 'Publish page', async function () {
+		await gEditorComponent.publish( { visit: true } );
+	} );
+
+	// Commented out for now because of ENOMEM errors on CI
+	// step( 'Take screenshots of the published page', async function () {
+	// 	await takePublishedScreenshots( siteName );
+	// } );
+
+	/**
+	 * This is a temporary hack for this changeset to skip checking some blocks in the frontend until
+	 * they are properly setup (which is done in subsequent PRs). Some blocks will not appear if not
+	 * properly configured/filled with sample attributes or assets. This guard and comment will
+	 * eventually be removed.
+	 */
+	if ( ! [ YoutubeBlockComponent, SlideshowBlockComponent ].includes( blockClass ) ) {
+		step( 'Block is displayed in the published page', async function () {
+			await driverHelper.waitTillPresentAndDisplayed( driver, blockClass.blockFrontendSelector );
+		} );
+	}
+}
+
+// Commented out for now because of ENOMEM erros on CI
+// /**
+//  * Take screenshot(s) of the published page for given site. Useful to diagnose glitches that might
+//  * manifest visually and that we still don't verify automatically.
+//  *
+//  * @param { string } siteName the name of the WP test site (it will prepended to .wordpress.com)
+//  */
+// async function takePublishedScreenshots( siteName ) {
+// 	// Give blocks a chance to render and load assets before taking the screenshots.
+// 	await driver.sleep( 2000 );
+
+// 	const totalHeight = await driver.executeScript( 'return document.body.offsetHeight' );
+// 	const windowHeight = await driver.executeScript( 'return window.outerHeight' );
+
+// 	await takeScreenshot( `${ siteName }-published`, totalHeight, windowHeight, ( i ) =>
+// 		driver.executeScript( `window.scrollTo(0, window.outerHeight*${ i })` )
+// 	);
+// }
+
+async function startNewPost( siteURL ) {
+	await ReaderPage.Visit( driver );
+	await NavBarComponent.Expect( driver );
+
+	const navbarComponent = await NavBarComponent.Expect( driver );
+	await navbarComponent.clickCreateNewPost( { siteURL } );
+
+	gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+	await gEditorComponent.initEditor();
+}
 
 before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
-
-	loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
-	galleryImages = times( 5, () => mediaHelper.createFile() );
+	if ( process.env.GUTENBERG_EDGE === 'true' ) {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
+		sampleImages = times( 5, () => mediaHelper.createFile() );
+	} else {
+		this.skip();
+	}
 } );
 
-// Should we keep the @parallel tag here for this e2e test?
-describe( `[${ host }] Test popular Gutenberg blocks in edge and non-edge sites across most popular themes (${ screenSize })`, function () {
+after( async function () {
+	if ( process.env.GUTENBERG_EDGE === 'true' ) {
+		await Promise.all(
+			sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
+		);
+	}
+} );
+
+describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most popular themes (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
-
-	async function takeScreenshot( siteName, totalHeight, viewportHeight, scrollCb ) {
-		const now = Date.now() / 1000;
-
-		const siteSshotDir = join( mediaHelper.screenShotsDir(), siteName );
-		await fs.access( siteSshotDir ).catch( () => fs.mkdir( siteSshotDir ) );
-
-		for ( let i = 0; i <= totalHeight / viewportHeight; i++ ) {
-			await scrollCb( i );
-
-			await driver.takeScreenshot().then( ( data ) => {
-				return driver
-					.getCurrentUrl()
-					.then( ( url ) =>
-						mediaHelper.writeScreenshot(
-							data,
-							() => join( siteName, `${ siteName }-${ i }-${ now }.png` ),
-							{ url }
-						)
-					);
-			} );
-		}
-	}
-
-	async function assertBlockIsDisplayed( blockClass ) {}
-
-	async function assertNoErrorInEditor() {
-		assert.strictEqual(
-			await gEditorComponent.errorDisplayed(),
-			false,
-			'There is an error shown on the editor page!'
-		);
-	}
-
-	async function assertNoInvalidBlocksInEditor() {
-		assert.strictEqual(
-			await gEditorComponent.hasInvalidBlocks(),
-			false,
-			'There is at least one invalid block on the editor page!'
-		);
-	}
-
-	async function takeBlockScreenshots( siteName ) {
-		const editorViewport = await driver.findElement(
-			By.css( 'div.interface-interface-skeleton__content' )
-		);
-
-		const editorViewportScrollHeight = await driver.executeScript(
-			'return arguments[0].scrollHeight',
-			editorViewport
-		);
-		const editorViewportClientHeight = await driver.executeScript(
-			'return arguments[0].clientHeight',
-			editorViewport
-		);
-
-		await takeScreenshot(
-			`${ siteName }-editor`,
-			editorViewportScrollHeight,
-			editorViewportClientHeight,
-			( i ) =>
-				driver.executeScript(
-					`arguments[0].scroll({top: arguments[0].clientHeight*${ i }})`,
-					editorViewport
-				)
-		);
-	}
-
-	async function takePublishedScreenshots( siteName ) {
-		await gEditorComponent.publish( { visit: true } );
-
-		// Give blocks a chance to render and load assets before taking the screenshots
-		await driver.sleep( 2000 );
-
-		const totalHeight = await driver.executeScript( 'return document.body.offsetHeight' );
-		const windowHeight = await driver.executeScript( 'return window.outerHeight' );
-
-		await takeScreenshot( `${ siteName }-published`, totalHeight, windowHeight, ( i ) =>
-			driver.executeScript( `window.scrollTo(0, window.outerHeight*${ i })` )
-		);
-	}
-
-	function verifyBlocksInEditor( siteName ) {
-		step( 'Blocks are displayed in the editor', async function () {
-			await Promise.all(
-				[
-					BlogPostsBlockComponent,
-					ContactFormBlockComponent,
-					ContactInfoBlockComponent,
-					DynamicSeparatorBlockComponent,
-					GalleryMasonryBlockComponent,
-					LayoutGridBlockComponent,
-					RatingStarBlockComponent,
-					SlideshowBlockComponent,
-					SubscriptionsBlockComponent,
-					TiledGalleryBlockComponent,
-					YoutubeBlockComponent,
-				].map( async ( blockClass ) =>
-					assert.strictEqual(
-						await gEditorComponent.blockDisplayedInEditor( blockClass.blockName ),
-						true,
-						`The block "${ blockClass.blockName }" was not found in the editor`
-					)
-				)
-			);
-		} );
-
-		step( 'Blocks do not error in the editor', async function () {
-			await assertNoErrorInEditor();
-		} );
-
-		// Commented-out for now because of https://github.com/Automattic/jetpack/issues/16514
-		/*step( 'Blocks do not invalidate', async function () {
-			await assertNoInvalidBlocksInEditor();
-		} );*/
-
-		step( 'Take screenshots of all the blocks in the editor', async function () {
-			await takeBlockScreenshots( siteName );
-		} );
-	}
-
 	[
-		'e2egbupgradehever',
-		'e2egbupgradeshawburn',
-		'e2egbupgrademorden',
-		'e2egbupgradeexford',
-		'e2egbupgrademayland',
-	].forEach( ( siteName ) => {
-		describe( 'Can add most popular blocks to the editor without errors', function () {
-			step( `Login to ${ siteName }`, async function () {
-				await loginFlow.loginAndStartNewPost( `${ siteName }.wordpress.com`, true );
-				gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			} );
-
-			// There's the potential for simplifying (reducing) the following steps further by encapsulating the configuration
-			// of the block into each block's class. This way, we could just loop through a list of block classes
-			// since the API would be the same.
-
-			step( 'Insert and configure jetpack/tiled-gallery', async function () {
-				const tiledGallery = await gEditorComponent.insertBlock( TiledGalleryBlockComponent );
-				await tiledGallery.uploadImages( galleryImages );
-			} );
-
-			step( 'Insert and configure jetpack/contact-form', async function () {
-				const contactEmail = 'testing@automattic.com';
-				const subject = "Let's work together";
-
-				// I re-used this method since it was already available
-				await gEditorComponent.insertContactForm( contactEmail, subject );
-			} );
-
-			step( 'Insert and configure jetpack/layout-grid', async function () {
-				await gEditorComponent.insertBlock( LayoutGridBlockComponent );
-			} );
-
-			step( 'Insert and configure core-embed/youtube', async function () {
-				await gEditorComponent.insertBlock( YoutubeBlockComponent );
-			} );
-
-			step( 'Insert and configure a8c/blog-posts', async function () {
-				await gEditorComponent.insertBlock( BlogPostsBlockComponent );
-			} );
-
-			step( 'Insert and configure jetpack/subscriptions', async function () {
-				await gEditorComponent.insertBlock( SubscriptionsBlockComponent );
-			} );
-
-			step( 'Insert and configure jetpack/slideshow', async function () {
-				await gEditorComponent.insertBlock( SlideshowBlockComponent );
-			} );
-
-			step( 'Insert and configure jetpack/rating-star', async function () {
-				await gEditorComponent.insertBlock( RatingStarBlockComponent );
-			} );
-
-			step( 'Insert and configure coblocks/dynamic-separator', async function () {
-				await gEditorComponent.insertBlock( DynamicSeparatorBlockComponent );
-			} );
-
-			step( 'Insert and configure coblocks/gallery-masonry', async function () {
-				await gEditorComponent.insertBlock( GalleryMasonryBlockComponent );
-			} );
-
-			step( 'Insert and configure jetpack/contact-info', async function () {
-				await gEditorComponent.insertBlock( ContactInfoBlockComponent );
-			} );
-
-			verifyBlocksInEditor( siteName );
-
-			step(
-				'Switch to the code editor and copy the code markup for all the blocks',
-				async function () {
-					currentGutenbergBlocksCode = await gEditorComponent.copyBlocksCode();
-				}
-			);
-
-			step( 'Take screenshots of the published page', async function () {
-				await takePublishedScreenshots( siteName );
-			} );
-
-			describe( 'Test the same blocks in the corresponding edge site', function () {
+		BlogPostsBlockComponent,
+		ContactFormBlockComponent,
+		ContactInfoBlockComponent,
+		DynamicSeparatorBlockComponent,
+		GalleryMasonryBlockComponent,
+		LayoutGridBlockComponent,
+		RatingStarBlockComponent,
+		SlideshowBlockComponent,
+		SubscriptionsBlockComponent,
+		TiledGalleryBlockComponent,
+		YoutubeBlockComponent,
+	].forEach( ( blockClass ) => {
+		[
+			'e2egbupgradehever',
+			'e2egbupgradeshawburn',
+			'e2egbupgrademorden',
+			'e2egbupgradeexford',
+			'e2egbupgrademayland',
+		].forEach( ( siteName ) => {
+			describe( `Test the ${ blockClass.blockName } block on ${ siteName } @parallel`, function () {
 				const edgeSiteName = siteName + 'edge';
+				const siteURL = `${ siteName }.wordpress.com`;
 
-				step( 'Switches to edge site', async function () {
-					// Re-use the same session created earlier but change the site
-					await loginFlow.loginAndStartNewPost( `${ edgeSiteName }.wordpress.com`, true );
+				describe( `Test the block in the non-edge site (${ siteName })`, function () {
+					step( `Login to ${ siteName }`, async function () {
+						await loginFlow.login( siteURL, true );
+						await startNewPost( siteURL );
+					} );
 
-					// Loads the same blocks from the non-edge site by pasting the code markup code in the code editor
-					// and then switching to the block editor
-					await gEditorComponent.pasteBlocksCode( currentGutenbergBlocksCode );
-					await gEditorComponent.switchToBlockEditor();
+					step( `Insert and configure ${ blockClass.blockName }`, async function () {
+						await insertBlock( blockClass );
+					} );
+
+					verifyBlockInEditor( blockClass, siteName );
+
+					step( 'Copy the markup for the block', async function () {
+						currentGutenbergBlocksCode = await gEditorComponent.getBlocksCode();
+					} );
+
+					verifyBlockInPublishedPage( blockClass, siteName );
 				} );
 
-				verifyBlocksInEditor( edgeSiteName );
+				describe( `Test the same block in the corresponding edge site (${ edgeSiteName })`, function () {
+					const edgeSiteURL = `${ edgeSiteName }.wordpress.com`;
 
-				step( 'Take screenshots of the published page', async function () {
-					await takePublishedScreenshots( siteName );
+					step( `Switches to edge site (${ edgeSiteName })`, async function () {
+						await startNewPost( edgeSiteURL );
+					} );
+
+					step( 'Load block via markup copied from non-edge site', async function () {
+						await gEditorComponent.setBlocksCode( currentGutenbergBlocksCode );
+					} );
+
+					verifyBlockInEditor( blockClass, edgeSiteName );
+					verifyBlockInPublishedPage( blockClass, edgeSiteName );
 				} );
 			} );
 		} );
 	} );
-} );
-
-after( async function () {
-	await Promise.all(
-		galleryImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
-	);
 } );

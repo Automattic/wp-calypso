@@ -69,21 +69,18 @@ export function deleteFile( fileDetails ) {
 	return fs.deleteSync( fileDetails.file );
 }
 
+export const screenshotsDir = path.resolve(
+	process.env.TEMP_ASSET_PATH || __dirname + '/..',
+	process.env.SCREENSHOTDIR || 'screenshots'
+);
+
 export function writeScreenshot( data, filenameCallback, metadata ) {
 	const buffer = Buffer.from( data, 'base64' );
 	let filename;
 	let pt = new PassThrough();
 
-	let screenShotBase = __dirname + '/..';
-	if ( process.env.TEMP_ASSET_PATH ) {
-		screenShotBase = process.env.TEMP_ASSET_PATH;
-	}
-
-	const directoryName = screenShotsDir();
-
-	const screenShotDir = path.resolve( screenShotBase, directoryName );
-	if ( ! fs.existsSync( screenShotDir ) ) {
-		fs.mkdirSync( screenShotDir );
+	if ( ! fs.existsSync( screenshotsDir ) ) {
+		fs.mkdirSync( screenshotsDir );
 	}
 
 	if ( typeof filenameCallback === 'function' ) {
@@ -91,7 +88,8 @@ export function writeScreenshot( data, filenameCallback, metadata ) {
 	} else {
 		filename = new Date().getTime().toString();
 	}
-	const screenshotPath = `${ screenShotDir }/${ filename }.png`;
+	const screenshotPath = `${ screenshotsDir }/${ filename }.png`;
+
 	if ( typeof metadata === 'object' ) {
 		for ( const i in metadata ) {
 			pt = pt.pipe( pngitxt.set( i, metadata[ i ] ) );
@@ -116,8 +114,4 @@ export function writeTextLogFile( textContent, prefix, pathOverride ) {
 	fs.writeFileSync( logPath, textContent );
 
 	return logPath;
-}
-
-export function screenShotsDir() {
-	return process.env.SCREENSHOTDIR || 'screenshots';
 }
