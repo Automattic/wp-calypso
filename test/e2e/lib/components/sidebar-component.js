@@ -64,7 +64,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPlan() {
-		await this.expandDrawerItem( 'Plan' );
+		await this.expandDrawerItem( /^Plan\b/ );
 		return await this._scrollToAndClickMenuItem( 'plan' );
 	}
 
