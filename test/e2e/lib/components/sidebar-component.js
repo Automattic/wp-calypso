@@ -20,9 +20,9 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async expandDrawerItem( itemName ) {
-		const selector = await driverHelper.getElementByText(
+		const selector = driverHelper.getElementByText(
 			this.driver,
-			By.css( '.sidebar__heading,.menu-link-text' ),
+			By.css( '.sidebar__heading' ),
 			itemName
 		);
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
@@ -31,7 +31,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		if ( isExpanded === 'false' ) {
 			await driverHelper.selectElementByText(
 				this.driver,
-				By.css( '.sidebar__heading,.menu-link-text' ),
+				By.css( '.sidebar__heading' ),
 				itemName
 			);
 		}
