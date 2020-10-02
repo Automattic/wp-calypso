@@ -42,22 +42,6 @@ The block editor integration provides features for the following combination of 
     <td>✅</td>
   </tr>
   <tr>
-    <td rowspan="2">
-      <a href="./src/default/features/switch-to-classic.js"><code>switch-to-classic</code></a>:
-      Appends a button to the "More tools" menu for switching to the classic editor.
-    </td>
-    <td>WP Admin</td>
-    <td>✅</td>
-    <td>❌</td>
-    <td>❌</td>
-  </tr>
-  <tr>
-    <td>Calypso</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>✅</td>
-  </tr>
-  <tr>
       <td rowspan="2">
         <a href="./src/wpcom/features/deprecate-coblocks-buttons.js"><code>deprecate-coblocks-buttons</code></a>:
         Prevents the CoBlocks Buttons block from being insertable.
