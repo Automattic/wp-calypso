@@ -17,8 +17,11 @@ import {
 	purchaseAddPaymentMethod,
 	purchaseEditPaymentMethod,
 } from './controller';
+import legacyRouter from 'me/purchases';
 
-export default () => {
+export default ( router ) => {
+	legacyRouter( router );
+
 	page( '/purchases', siteSelection, navigation, sites, makeLayout, clientRender );
 	page( '/purchases/subscriptions', siteSelection, navigation, sites, makeLayout, clientRender );
 	page(
