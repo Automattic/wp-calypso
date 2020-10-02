@@ -141,33 +141,4 @@ export default ( router ) => {
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
-
-	// more redirect legacy urls
-	// Note: these routes are being replaced by the /my-sites/purchases section.
-	// They will remain here for now because that section is currently behind a
-	// feature flag (`site-level-billing`), but when that flag is removed, these
-	// should also be removed to prevent confusion. It is also important at that
-	// time to be certain that all these routes still work with the new section!
-	router( '/purchases', () => page.redirect( paths.purchasesRoot ) );
-	router( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.managePurchase( siteName, purchaseId ) )
-	);
-	router( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.confirmCancelDomain( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/payment/add',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.addCardDetails( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
-		( { params: { siteName, purchaseId, cardId } } ) =>
-			page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
-	);
 };
