@@ -9,7 +9,7 @@ import {
 	addItemsToResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
-} from '../types/backend/shopping-cart-endpoint';
+} from '../hooks/use-shopping-cart-manager/cart-functions';
 
 const cart = {
 	products: [],

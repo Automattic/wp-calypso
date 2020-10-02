@@ -9,6 +9,11 @@ import debugFactory from 'debug';
  */
 import {
 	emptyResponseCart,
+	ResponseCart,
+	ResponseCartProduct,
+	TempResponseCartProduct,
+} from '../../types/backend/shopping-cart-endpoint';
+import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
 	replaceItemInResponseCart,
@@ -16,10 +21,7 @@ import {
 	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
-	ResponseCart,
-	ResponseCartProduct,
-	TempResponseCartProduct,
-} from '../../types/backend/shopping-cart-endpoint';
+} from './cart-functions';
 import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );
