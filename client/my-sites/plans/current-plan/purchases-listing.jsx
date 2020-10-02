@@ -330,7 +330,7 @@ class PurchasesListing extends Component {
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
 						product={ purchase.productSlug }
-						tagline={ getJetpackProductTagline( purchase ) }
+						tagline={ getJetpackProductTagline( purchase, true ) }
 						title={ this.getTitle( purchase ) }
 					/>
 				) ) }

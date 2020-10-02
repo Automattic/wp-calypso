@@ -132,23 +132,43 @@ export const getJetpackProductsCallToAction = () => {
 export const getJetpackProductsTaglines = () => {
 	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
+	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
 	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
+	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
 
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: searchTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchTagline,
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: searchTagline,
-		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: searchTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: scanTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: scanTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamTagline,
-		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamTagline,
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: {
+			default: backupDailyTagline,
+			owned: backupOwnedTagline,
+		},
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: {
+			default: backupDailyTagline,
+			owned: backupOwnedTagline,
+		},
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: {
+			default: backupRealtimeTagline,
+			owned: backupOwnedTagline,
+		},
+		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: { default: searchTagline },
+		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
+		[ CONSTANTS.PRODUCT_WPCOM_SEARCH_MONTHLY ]: { default: searchTagline },
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN ]: {
+			default: scanTagline,
+			owned: scanOwnedTagline,
+		},
+		[ CONSTANTS.PRODUCT_JETPACK_SCAN_MONTHLY ]: {
+			default: scanTagline,
+			owned: scanOwnedTagline,
+		},
+		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM ]: { default: antiSpamTagline },
+		[ CONSTANTS.PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: { default: antiSpamTagline },
 	};
 };
 
