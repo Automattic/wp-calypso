@@ -2,6 +2,16 @@
 	.step-progress {
 		margin-top: 16px;
 		margin-bottom: 16px;
+
+		.step-progress__element-number-complete {
+			background-color: var( --color-primary-50 );
+		}
+		.step-progress__element-number-current {
+			background-color: var( --color-neutral-50 );
+		}
+		.step-progress__element-number {
+			background-color: var( --color-neutral-10 );
+		}
 	}
 }
 
