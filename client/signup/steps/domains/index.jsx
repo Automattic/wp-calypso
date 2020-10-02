@@ -190,7 +190,11 @@ class DomainsStep extends React.Component {
 			suggestion,
 		};
 
-		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClick(
+			suggestion.domain_name,
+			this.getAnalyticsSection(),
+			suggestion?.is_premium
+		);
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {

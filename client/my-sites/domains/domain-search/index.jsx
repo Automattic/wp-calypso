@@ -111,9 +111,10 @@ class DomainSearch extends Component {
 			domain_name: domain,
 			product_slug: productSlug,
 			supports_privacy: supportsPrivacy,
+			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains' );
+		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
 
 		let registration = domainRegistration( {
 			domain,
