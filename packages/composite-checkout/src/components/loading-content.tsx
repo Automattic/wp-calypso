@@ -36,9 +36,9 @@ export default function LoadingContent() {
 			</LoadingContentUi>
 
 			<LoadingSideBarUi>
-				<LoadingCopy />
-				<LoadingCopy />
-				<LoadingCopy />
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
 			</LoadingSideBarUi>
 		</LoadingContentWrapperUi>
 	);
@@ -72,6 +72,7 @@ const LoadingSideBarUi = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		display: block;
 		padding: 24px;
+		box-sizing: border-box;
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		max-width: 326px;
 		background: ${ ( props ) => props.theme.colors.surface };
@@ -149,6 +150,17 @@ const LoadingCopy = styled.p`
 	.rtl & {
 		margin: 8px 35px 0 0;
 	}
+`;
+
+const SideBarLoadingCopy = styled.p`
+	font-size: 14px;
+	height: 16px;
+	content: '';
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
+	color: ${ ( props ) => props.theme.colors.borderColorLight };
+	margin: 8px 0 0 0;
+	padding: 0;
+	animation: ${ pulse } 2s ease-in-out infinite;
 `;
 
 const LoadingFooter = styled.div`
