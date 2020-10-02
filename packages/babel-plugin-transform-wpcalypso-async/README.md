@@ -24,8 +24,9 @@ See [Babel options documentation](http://babeljs.io/docs/usage/options/) for mor
 
 `asyncRequire` will transform to one of:
 
-- `require.ensure` if `async` plugin option is true
-- `require` if `async` plugin option is false or unset
+- dynamic `import()` if `async` plugin option is `true`
+- static `require` if `async` plugin option is `false` or unset
+- nothing (will be removed and no module will be imported) if the `ignore` plugin option is `true`
 
 `asyncRequire` expects one required argument, with an optional callback:
 
@@ -55,4 +56,5 @@ asyncRequire( 'components/accordion', ( Accordion ) => {
 
 ## Options
 
-The plugin accepts a single option, `async`, which controls whether transformations applied by the plugin should should [Webpack code-splitting `require.ensure`](https://webpack.github.io/docs/code-splitting.html) or the synchronous CommonJS `require` function. This defaults to `false`.
+- `async` - controls whether transformations applied by the plugin should use a dynamic ESM `import` statement that enables [webpack code-splitting](https://webpack.github.io/docs/code-splitting.html) or the synchronous CommonJS `require` function. This defaults to `false`.
+- `ignore` - if set to `true`, the `asyncRequire` call will be completely removed, and `AsyncLoad` will show the placeholder forever and won't do any import. Useful for server side rendering where the render is one-pass and doesn't wait for any imports to finish.
