@@ -64,6 +64,7 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async selectPlan() {
+		await this.expandDrawerItem( 'Plan' );
 		return await this._scrollToAndClickMenuItem( 'plan' );
 	}
 
@@ -183,11 +184,15 @@ export default class SidebarComponent extends AsyncBaseContainer {
 		const sidebarRect = await sidebar.getRect();
 		const sidebarVisible = sidebar.isDisplayed() && sidebarRect.x >= -100;
 
-		if ( ! sidebarVisible  ) {
+		if ( ! sidebarVisible ) {
 			try {
-				await driverHelper.clickWhenClickable(this.driver, allSitesSelector, this.explicitWaitMS / 4);
-			} catch( e ){
-				console.log( 'All sites button did not click')
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					allSitesSelector,
+					this.explicitWaitMS / 4
+				);
+			} catch ( e ) {
+				console.log( 'All sites button did not click' );
 			}
 		}
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, sidebarSelector );
