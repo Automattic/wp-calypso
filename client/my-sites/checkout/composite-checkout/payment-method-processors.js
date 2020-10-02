@@ -255,12 +255,20 @@ export async function payPalProcessor(
 	transactionOptions
 ) {
 	const { createUserAndSiteBeforeTransaction } = transactionOptions;
-	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
+	const defaultDomain = 'https://wordpress.com';
+	const isWindow = typeof window !== 'undefined';
+	const { protocol, hostname, port, pathname } = parseUrl(
+		isWindow ? window.location.href : defaultDomain,
+		true
+	);
+	const originDomain = isWindow ? window.location.origin : defaultDomain;
+	const thankYouUrl = getThankYouUrl();
+	const relativeThankYouUrl = thankYouUrl.replace?.( originDomain, '' );
 	const successUrl = formatUrl( {
 		protocol,
 		hostname,
 		port,
-		pathname: getThankYouUrl(),
+		pathname: relativeThankYouUrl,
 	} );
 	const cancelUrl = formatUrl( {
 		protocol,
