@@ -17,6 +17,32 @@ import delegateEventTracking from './tracking/delegate-event-tracking';
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
 /**
+ * Global handler.
+ * Use this function when you need to inspect the block
+ * to get specific data and populate the record.
+ *
+ * @param {object} block - Block object data.
+ * @param {object} parentBlock - Block object data.
+ * @returns {object} Record properties object.
+ */
+function globalEventPropsHandler( block, parentBlock ) {
+	if ( ! block?.name ) {
+		return {};
+	}
+
+	// Pick up variation slug from `core/embed` block.
+	if ( block.name === 'core/embed' && block?.attributes?.providerNameSlug ) {
+		return { variation_slug: block.attributes.providerNameSlug };
+	}
+
+	// Pick up variation slug from `core/social-link` block.
+	if ( block.name === 'core/social-link' && block?.attributes?.service ) {
+		return { variation_slug: block.attributes.service };
+	}
+
+	return {};
+}
+/**
  * Looks up the block name based on its id.
  *
  * @param {string} blockId Block identifier.
@@ -71,6 +97,7 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 		block = ensureBlockObject( block );
 
 		const eventProperties = {
+			...globalEventPropsHandler( block, parentBlock ),
 			...propertiesHandler( block, parentBlock ),
 			inner_block: !! parentBlock,
 		};
