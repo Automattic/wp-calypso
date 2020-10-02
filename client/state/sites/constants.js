@@ -54,6 +54,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'permalink_structure',
 	'page_on_front',
 	'page_for_posts',
+	'wpcom_public_coming_soon_page_id',
 	'podcasting_archive',
 	'podcasting_category_id',
 	'publicize_permanently_disabled',

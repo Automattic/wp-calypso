@@ -30,13 +30,15 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import { preloadEditor } from 'sections-preloaders';
 import {
 	getSite,
+	getSitePlanSlug,
 	hasStaticFrontPage,
 	isJetpackSite,
 	isSitePreviewable,
+	isCurrentPlanPaid,
 } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'state/pages/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { isComingSoonPage, isFrontPage, isPostsPage } from 'state/pages/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
@@ -342,10 +344,61 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.exportPage }>
-				<Gridicon icon="cloud-download" size={ 18 } />
-				{ this.props.translate( 'Export page' ) }
-			</PopoverMenuItem>
+			<>
+				<MenuSeparator key="separator" />
+				<PopoverMenuItem onClick={ this.exportPage }>
+					<Gridicon icon="cloud-download" size={ 18 } />
+					{ this.props.translate( 'Export page' ) }
+				</PopoverMenuItem>
+			</>
+		);
+	}
+
+	setComingSoonPage = () => {
+		const pageId = this.props.isComingSoonPage ? 0 : this.props.page.ID;
+
+		this.props.updateSiteFrontPage( this.props.siteId, {
+			wpcom_public_coming_soon_page_id: pageId,
+		} );
+
+		// records whether a page has been set as 'coming soon'
+		// and the paid plan slug
+		this.props.recordTracksEvent( 'calypso_coming_soon_set_page', {
+			is_coming_soon_page: pageId !== 0,
+			plan_slug: this.props.sitePlanSlug,
+		} );
+	};
+
+	getComingSoonPageItem() {
+		const { canManageOptions, isFreePlan, translate } = this.props;
+
+		if (
+			isFreePlan ||
+			! config.isEnabled( 'coming-soon-v2' ) ||
+			! canManageOptions ||
+			'publish' !== this.props.page.status ||
+			this.props.isFrontPage ||
+			this.props.isPostsPage
+		) {
+			return null;
+		}
+
+		return (
+			<>
+				<MenuSeparator key="separator" />
+				{ this.props.isComingSoonPage && (
+					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage }>
+						<Gridicon icon="undo" size={ 18 } />
+						{ translate( 'Set as Regular Page' ) }
+					</PopoverMenuItem>
+				) }
+				{ ! this.props.isComingSoonPage && (
+					<PopoverMenuItem key="item" onClick={ this.setComingSoonPage }>
+						<Gridicon icon="time" size={ 18 } />
+						{ translate( 'Set as Coming Soon' ) }
+					</PopoverMenuItem>
+				) }
+			</>
 		);
 	}
 
@@ -452,14 +505,15 @@ class Page extends Component {
 			siteId,
 			translate,
 			isPostsPage: latestPostsPage,
+			isComingSoonPage: comingSoonPage,
 		} = this.props;
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
-
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
+		const comingSoonPageItem = this.getComingSoonPageItem();
 		const frontPageItem = this.getFrontPageItem();
 		const postsPageItem = this.getPostsPageItem();
 		const restoreItem = this.getRestoreItem();
@@ -495,6 +549,7 @@ class Page extends Component {
 				{ restoreItem }
 				{ frontPageItem }
 				{ postsPageItem }
+				{ comingSoonPageItem }
 				{ exportItem }
 				{ sendToTrashItem }
 				{ moreInfoItem }
@@ -536,6 +591,11 @@ class Page extends Component {
 						{ translate(
 							'The content of your latest posts page is automatically generated and cannot be edited.'
 						) }
+					</InfoPopover>
+				) }
+				{ ! isTrashed && comingSoonPage && (
+					<InfoPopover position="right">
+						{ translate( 'Visitors will see this page until you launch your site.' ) }
 					</InfoPopover>
 				) }
 			</>
@@ -755,9 +815,11 @@ const mapState = ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const isPreviewable =
 		false !== isSitePreviewable( state, pageSiteId ) && site && site.ID === selectedSiteId;
+	const isFreePlan = ! isCurrentPlanPaid( state, selectedSiteId );
 
 	return {
 		hasStaticFrontPage: hasStaticFrontPage( state, pageSiteId ),
+		isComingSoonPage: isComingSoonPage( state, pageSiteId, props.page.ID ),
 		isFrontPage: isFrontPage( state, pageSiteId, props.page.ID ),
 		isPostsPage: isPostsPage( state, pageSiteId, props.page.ID ),
 		isPreviewable,
@@ -774,6 +836,8 @@ const mapState = ( state, props ) => {
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
+		isFreePlan,
+		sitePlanSlug: getSitePlanSlug( state, pageSiteId ),
 	};
 };
 
@@ -792,6 +856,7 @@ const mapDispatch = {
 	recordViewPage: partial( recordEvent, 'Clicked View Page' ),
 	recordStatsPage: partial( recordEvent, 'Clicked Stats Page' ),
 	updateSiteFrontPage,
+	recordTracksEvent,
 };
 
 export default flow( localize, connect( mapState, mapDispatch ) )( Page );
