@@ -127,7 +127,7 @@
 
 .wp-block-buttons .wp-block[data-type='jetpack/recurring-payments'] {
 	display: inline-block;
-	margin: 0 8px 0 0;
+	margin: 0 .5em 0 0;
 }
 
 .editor-styles-wrapper
