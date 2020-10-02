@@ -52,7 +52,10 @@ import {
 } from 'state/help/directly/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
-import getSupportLevel, { SUPPORT_LEVEL_PERSONAL } from 'state/selectors/get-support-level';
+import getSupportLevel, {
+	SUPPORT_LEVEL_PERSONAL,
+	SUPPORT_LEVEL_PERSONAL_WITH_LEGACY_CHAT,
+} from 'state/selectors/get-support-level';
 import hasUserAskedADirectlyQuestion from 'state/selectors/has-user-asked-a-directly-question';
 import isDirectlyReady from 'state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
@@ -598,9 +601,15 @@ class HelpContact extends React.Component {
 					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
 				) }
 
-				{ isUserAffectedByLiveChatClosure && supportLevel === SUPPORT_LEVEL_PERSONAL && (
-					<ChatCovidLimitedAvailabilityNotice showAt="2020-08-24" compact={ compact } />
-				) }
+				{ isUserAffectedByLiveChatClosure &&
+					( supportLevel === SUPPORT_LEVEL_PERSONAL ||
+						supportLevel === SUPPORT_LEVEL_PERSONAL_WITH_LEGACY_CHAT ) && (
+						<ChatCovidLimitedAvailabilityNotice
+							showAt="2020-08-24"
+							hideAt="2020-10-05"
+							compact={ compact }
+						/>
+					) }
 
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice
