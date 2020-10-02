@@ -153,7 +153,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		return contactFormBlock.insertSubject( subject );
 	}
 
-	async toggleMoreToolsAndOptions() {
+	async toggleOptionsMenu() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.xpath( "//button[@aria-label='Options']" )
@@ -164,8 +164,8 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await this.driver.sleep( 2000 );
 	}
 
-	async switchToCodeView() {
-		await this.toggleMoreToolsAndOptions();
+	async switchToCodeEditor() {
+		await this.toggleOptionsMenu();
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
@@ -177,12 +177,12 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, textAreaSelector );
 
 		// Close the menu.
-		await this.toggleMoreToolsAndOptions();
+		await this.toggleOptionsMenu();
 
 		return textAreaSelector;
 	}
 
-	async switchToBlockEditor() {
+	async exitCodeEditor() {
 		await driverHelper.clickWhenClickable(
 			this.driver,
 			By.xpath( "//button[text()='Exit code editor']" )
@@ -190,17 +190,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async getBlocksCode() {
-		const textAreaSelector = await this.switchToCodeView();
+		const textAreaSelector = await this.switchToCodeEditor();
 		const blocksCode = this.driver.findElement( textAreaSelector ).getAttribute( 'value' );
-		await this.switchToBlockEditor();
+		await this.exitCodeEditor();
 
 		return blocksCode;
 	}
 
 	async setBlocksCode( blocksCode ) {
-		const textAreaSelector = await this.switchToCodeView();
+		const textAreaSelector = await this.switchToCodeEditor();
 		await driverHelper.setWhenSettable( this.driver, textAreaSelector, blocksCode );
-		await this.switchToBlockEditor();
+		await this.exitCodeEditor();
 	}
 
 	blockDisplayedInEditor( dataTypeSelectorVal ) {
