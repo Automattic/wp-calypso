@@ -19,14 +19,21 @@ import NoSitesMessage from 'components/empty-content/no-sites-message';
 import { CompactCard } from '@automattic/components';
 import EmptyContent from 'components/empty-content';
 import './style.scss';
+import { Purchase } from 'calypso/lib/purchases/types';
 
-export default function SubscriptionsContent() {
-	const isFetchingPurchases = useSelector( ( state ) => isFetchingSitePurchases( state ) );
-	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
-
+function SubscriptionsContent( {
+	isFetchingPurchases,
+	hasLoadedPurchases,
+	selectedSiteId,
+	selectedSite,
+	purchases,
+}: {
+	isFetchingPurchases: boolean;
+	hasLoadedPurchases: boolean;
+	selectedSiteId: number | null;
+	selectedSite: null | { ID: number; name: string; domain: string; slug: string };
+	purchases: Purchase[];
+} ) {
 	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
 
@@ -63,6 +70,24 @@ export default function SubscriptionsContent() {
 
 	// If there is selected site data but no purchases, show the "no purchases" page
 	return <NoPurchasesMessage />;
+}
+
+export default function SubscriptionsContentWrapper() {
+	const isFetchingPurchases = useSelector( ( state ) => isFetchingSitePurchases( state ) );
+	const hasLoadedPurchases = useSelector( ( state ) => hasLoadedSitePurchasesFromServer( state ) );
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+
+	return (
+		<SubscriptionsContent
+			isFetchingPurchases={ isFetchingPurchases }
+			hasLoadedPurchases={ hasLoadedPurchases }
+			selectedSiteId={ selectedSiteId }
+			selectedSite={ selectedSite }
+			purchases={ purchases }
+		/>
+	);
 }
 
 function NoPurchasesMessage() {
