@@ -28,12 +28,12 @@ import { isJetpackSite } from 'state/sites/selectors';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'lib/i18n-utils';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
 
 const validateGoogleAnalyticsCode = ( code ) => ! code || code.match( /^UA-\d+-\d+$/i );
 
@@ -108,22 +108,28 @@ export class GoogleAnalyticsForm extends Component {
 		const wooCommerceActive = wooCommercePlugin ? wooCommercePlugin.active : false;
 
 		const nudgeTitle = siteIsJetpack
-			? translate(
-					'Connect your site to Google Analytics in seconds with Jetpack Premium or Professional'
-			  )
+			? translate( 'Connect your site to Google Analytics' )
 			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
 
-		const nudge = shouldShowOfferResetFlow() ? null : (
-			<UpsellNudge
-				description={ translate(
-					"Add your unique tracking ID to monitor your site's performance in Google Analytics."
-				) }
-				event={ 'google_analytics_settings' }
-				feature={ FEATURE_GOOGLE_ANALYTICS }
-				plan={ findFirstSimilarPlanKey( site.plan.product_slug, {
+		const plan = siteIsJetpack
+			? OPTIONS_JETPACK_SECURITY
+			: findFirstSimilarPlanKey( site.plan.product_slug, {
 					type: TYPE_PREMIUM,
 					...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
-				} ) }
+			  } );
+
+		const nudge = (
+			<UpsellNudge
+				description={
+					siteIsJetpack
+						? translate( "Monitor your site's views, clicks, and other important metrics" )
+						: translate(
+								"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+						  )
+				}
+				event={ 'google_analytics_settings' }
+				feature={ FEATURE_GOOGLE_ANALYTICS }
+				plan={ plan }
 				showIcon={ true }
 				title={ nudgeTitle }
 			/>
