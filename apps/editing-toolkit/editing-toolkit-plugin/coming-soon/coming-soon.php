@@ -101,26 +101,10 @@ function add_public_coming_soon_page_template( $templates ) : array {
 }
 add_filter( 'vertical_templates', __NAMESPACE__ . '\add_public_coming_soon_page_template' );
 
-// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 /**
- * Adds an editable coming soon page to a site if no coming soon page exists and
- * a paid plan is purchased
- *
- * @param int $blog_id current blog id.
- * @param int $user_id current user id.
- * @param int $product_id the id of the plan that was just purchased.
+ * Adds an editable coming soon page to a site
  */
-function add_coming_soon_page_to_paid_site( $blog_id, $user_id, $product_id ) {
-	if ( ! \WPCOM_Store::is_wpcom_plan( $product_id ) ) {
-		return;
-	}
-
-	// if there is an existing coming soon page don't add a new one.
-	$existing_page_id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
-	if ( $existing_page_id ) {
-		return;
-	}
-
+function add_coming_soon_page_to_new_site() {
 	$coming_soon_template = get_coming_soon_page_template();
 	$new_page_id          = wp_insert_post(
 		array(
@@ -134,7 +118,7 @@ function add_coming_soon_page_to_paid_site( $blog_id, $user_id, $product_id ) {
 	);
 	add_option( 'wpcom_public_coming_soon_page_id', $new_page_id );
 }
-add_action( 'subscription_changed', __NAMESPACE__ . '\add_coming_soon_page_to_new_site', 10, 3 );
+add_action( 'signup_finished', __NAMESPACE__ . '\add_coming_soon_page_to_new_site', 10, 1 );
 
 /**
  * Decides whether to redirect to the site's coming soon page and performs
