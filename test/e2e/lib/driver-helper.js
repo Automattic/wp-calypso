@@ -378,10 +378,10 @@ export function printConsole( driver ) {
 		driver
 			.manage()
 			.logs()
-			.get('browser')
-			.then((logs) => {
-				logs.forEach((log) => console.log(log));
-			});
+			.get( 'browser' )
+			.then( ( logs ) => {
+				logs.forEach( ( log ) => console.log( log ) );
+			} );
 	}
 }
 
@@ -522,10 +522,7 @@ export async function scrollIntoView( driver, selector, position = 'center' ) {
 export async function selectElementByText( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter(
-			allElements,
-			async ( e ) => ( await e.getText() ) === text
-		);
+		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 	return await this.clickWhenClickable( driver, element );
 }
@@ -533,10 +530,7 @@ export async function selectElementByText( driver, selector, text ) {
 export async function verifyTextPresent( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter(
-			allElements,
-			async ( e ) => ( await e.getText() ) === text
-		);
+		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 	return await this.isElementPresent( driver, element );
 }
@@ -544,10 +538,7 @@ export async function verifyTextPresent( driver, selector, text ) {
 export function getElementByText( driver, selector, text ) {
 	return async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter(
-			allElements,
-			async ( e ) => ( await e.getText() ) === text
-		);
+		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 }
 
@@ -581,4 +572,17 @@ export async function acceptAlertIfPresent( driver ) {
 
 export async function waitForAlertPresent( driver ) {
 	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
+}
+
+function getInnerTextMatcherFunction( match ) {
+	return async ( element ) => {
+		const elementText = await element.getText();
+		if ( typeof match === 'string' ) {
+			return elementText === match;
+		}
+		if ( match.test ) {
+			return match.test( elementText );
+		}
+		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
+	};
 }
