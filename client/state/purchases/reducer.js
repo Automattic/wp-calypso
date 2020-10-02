@@ -128,17 +128,21 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 			return {
 				...state,
 				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
 			};
 		case PURCHASES_SITE_FETCH_FAILED:
 			return {
 				...state,
 				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
 				isFetchingSitePurchases: false,
 			};
 		case PURCHASES_USER_FETCH_FAILED:
 			return {
 				...state,
 				error: action.error,
+				hasLoadedUserPurchasesFromServer: true,
 				isFetchingUserPurchases: false,
 			};
 	}
