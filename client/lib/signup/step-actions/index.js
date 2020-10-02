@@ -379,6 +379,26 @@ export function addDomainToCart(
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
+export function addItemsToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const { cartItems } = stepProvidedItems;
+	if ( isEmpty( cartItems ) ) {
+		defer( callback );
+		return;
+	}
+	const slug = siteSlug || dependencies.siteSlug;
+	const newCartItems = cartItems.filter( ( item ) => item );
+	const providedDependencies = stepProvidedDependencies || { cartItems };
+
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
+}
+
 function processItemCart(
 	providedDependencies,
 	newCartItems,

@@ -21,6 +21,7 @@ import {
 } from 'lib/plans/constants';
 
 export function generateSteps( {
+	addItemsToCart = noop,
 	addPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
@@ -326,6 +327,8 @@ export function generateSteps( {
 
 		'secure-your-brand': {
 			stepName: 'secure-your-brand',
+			providesDependencies: [ 'cartItems' ],
+			apiRequestFunction: addItemsToCart,
 		},
 
 		'domains-store': {
