@@ -18,6 +18,7 @@ import { getSecureYourBrand } from 'state/secure-your-brand/selectors';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { Button, Card } from '@automattic/components';
 import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
+import { domainRegistration } from 'lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -52,16 +53,20 @@ export class SecureYourBrandStep extends Component {
 	}
 
 	handleUpgradeButtonClick() {
-		const { additionalStepData, stepSectionName, stepName } = this.props;
+		const { additionalStepData, stepSectionName, stepName, domains } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_secure_your_brand_add' );
+		const cartItems = domains?.map( ( domain ) =>
+			domainRegistration( { productSlug: domain.product_slug, domain: domain.domain } )
+		);
 		const step = {
 			stepName,
 			stepSectionName,
+			cartItems,
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step );
+		this.props.submitSignupStep( step, { cartItems } );
 		this.props.goToNextStep();
 	}
 
