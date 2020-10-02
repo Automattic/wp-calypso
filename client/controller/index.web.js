@@ -14,7 +14,7 @@ import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
 import EmptyContent from 'components/empty-content';
 import CalypsoI18nProvider from 'components/calypso-i18n-provider';
-import { MomentProvider } from 'components/localized-moment/context';
+import MomentProvider from 'components/localized-moment/provider';
 import { login } from 'lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
 import { isUserLoggedIn } from 'state/current-user/selectors';
