@@ -32,7 +32,7 @@ import getCurrentRouteParameterized from 'state/selectors/get-current-route-para
 import isHiddenSite from 'state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'state/selectors/is-private-site';
-import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
+import isSiteComingSoon, { isSiteComingSoonV2 } from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
@@ -272,6 +272,7 @@ export class SeoForm extends React.Component {
 			siteId,
 			siteIsJetpack,
 			siteIsComingSoon,
+			siteIsComingSoonV2,
 			showAdvancedSeo,
 			showWebsiteMeta,
 			selectedSite,
@@ -312,30 +313,37 @@ export class SeoForm extends React.Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden ) && hasSiteSeoFeature( selectedSite ) && (
-					<Notice
-						status="is-warning"
-						showDismiss={ false }
-						text={ ( function () {
-							if ( isSitePrivate ) {
-								if ( siteIsComingSoon ) {
+				{ ( isSitePrivate || isSiteHidden || siteIsComingSoonV2 ) &&
+					hasSiteSeoFeature( selectedSite ) && (
+						<Notice
+							status="is-warning"
+							showDismiss={ false }
+							text={ ( function () {
+								if ( isSitePrivate ) {
+									if ( siteIsComingSoon ) {
+										return translate(
+											"SEO settings aren't recognized by search engines while your site is Coming Soon."
+										);
+									}
+
+									return translate(
+										"SEO settings aren't recognized by search engines while your site is Private."
+									);
+								} else if ( siteIsComingSoonV2 ) {
 									return translate(
 										"SEO settings aren't recognized by search engines while your site is Coming Soon."
 									);
 								}
-
 								return translate(
-									"SEO settings aren't recognized by search engines while your site is Private."
+									"SEO settings aren't recognized by search engines while your site is Hidden."
 								);
-							}
-							return translate(
-								"SEO settings aren't recognized by search engines while your site is Hidden."
-							);
-						} )() }
-					>
-						<NoticeAction href={ generalTabUrl }>{ translate( 'Privacy Settings' ) }</NoticeAction>
-					</Notice>
-				) }
+							} )() }
+						>
+							<NoticeAction href={ generalTabUrl }>
+								{ translate( 'Privacy Settings' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 				{ conflictedSeoPlugin && (
 					<Notice
 						status="is-warning"
@@ -495,6 +503,7 @@ const mapStateToProps = ( state ) => {
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		siteIsComingSoon: isSiteComingSoon( state, siteId ),
+		siteIsComingSoonV2: isSiteComingSoonV2( state, siteId ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
