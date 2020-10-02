@@ -822,20 +822,37 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: ( feature ) => {
-			switch ( feature ) {
-				case constants.FEATURE_JETPACK_BACKUP_DAILY:
-				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
-				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
-				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
-					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection and priority support.'
-					);
-				default:
-					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-					);
+		getTagline: ( siteFeatures = [] ) => {
+			const hasSiteJetpackBackup = siteFeatures.some( ( feature ) =>
+				[
+					constants.FEATURE_JETPACK_BACKUP_DAILY,
+					constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+					constants.FEATURE_JETPACK_BACKUP_REALTIME,
+					constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+				].includes( feature )
+			);
+			const hasSiteJetpackScan = siteFeatures.some( ( feature ) =>
+				[
+					constants.FEATURE_JETPACK_SCAN_DAILY,
+					constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+				].includes( feature )
+			);
+			if ( hasSiteJetpackBackup && hasSiteJetpackScan ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection and priority support.'
+				);
+			} else if ( hasSiteJetpackBackup ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection, security scanning, and priority support.'
+				);
+			} else if ( hasSiteJetpackScan ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+				);
 			}
+			return i18n.translate(
+				'Upgrade your site for additional features, including spam protection, backups, security scanning, and priority support.'
+			);
 		},
 		getDescription: () =>
 			i18n.translate(
