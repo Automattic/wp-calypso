@@ -5,14 +5,12 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
 	getCurrentPlan,
-	getSitePlanSlug,
 	isCurrentPlanExpiring,
 	isRequestingSitePlans,
 } from 'state/sites/plans/selectors';
@@ -53,7 +51,6 @@ import QueryRewindState from 'components/data/query-rewind-state';
 class PurchasesListing extends Component {
 	static propTypes = {
 		currentPlan: PropTypes.object,
-		currentPlanSlug: PropTypes.string,
 		isPlanExpiring: PropTypes.bool,
 		isRequestingPlans: PropTypes.bool,
 		selectedSite: PropTypes.object,
@@ -96,40 +93,35 @@ class PurchasesListing extends Component {
 
 	getProductPurchases() {
 		return (
-			filter(
-				this.props.purchases,
+			this.props.purchases?.filter(
 				( purchase ) => purchase.active && isJetpackProduct( purchase )
-			) ?? null
+			) ?? []
 		);
 	}
 
 	getTitle( purchase ) {
-		const { currentPlanSlug } = this.props;
+		const { currentPlan } = this.props;
 
 		if ( isJetpackProduct( purchase ) ) {
 			return getJetpackProductDisplayName( purchase );
 		}
 
-		if ( currentPlanSlug ) {
-			const planObject = getPlan( currentPlanSlug );
+		if ( currentPlan ) {
+			const planObject = getPlan( currentPlan.productSlug );
 			return planObject.getTitle();
 		}
 
 		return null;
 	}
 
-	getTagline( purchase ) {
-		const { currentPlanSlug, translate } = this.props;
+	getPlanTagline( plan ) {
+		const { translate } = this.props;
 
-		if ( isJetpackProduct( purchase ) ) {
-			return getJetpackProductTagline( purchase );
-		}
-
-		const productPurchases = this.getProductPurchases();
-		if ( currentPlanSlug ) {
-			const planObject = getPlan( currentPlanSlug );
+		if ( plan ) {
+			const productPurchases = this.getProductPurchases().map( ( { productSlug } ) => productSlug );
+			const planObject = getPlan( plan.productSlug );
 			return (
-				planObject.getTagline?.( productPurchases[ 0 ]?.productSlug ) ??
+				planObject.getTagline?.( productPurchases ) ??
 				translate(
 					'Unlock the full potential of your site with all the features included in your plan.'
 				)
@@ -292,7 +284,7 @@ class PurchasesListing extends Component {
 	}
 
 	renderPlan() {
-		const { currentPlan, currentPlanSlug, isPlanExpiring, translate } = this.props;
+		const { currentPlan, isPlanExpiring, translate } = this.props;
 
 		return (
 			<Fragment>
@@ -306,8 +298,8 @@ class PurchasesListing extends Component {
 						action={ this.getPlanActionButtons( currentPlan ) }
 						details={ this.getExpirationInfoForPlan( currentPlan ) }
 						isError={ isPlanExpiring }
-						product={ currentPlanSlug }
-						tagline={ this.getTagline( currentPlan ) }
+						product={ currentPlan.productSlug }
+						tagline={ this.getPlanTagline( currentPlan ) }
 						title={ this.getTitle( currentPlan ) }
 					/>
 				) }
@@ -321,9 +313,10 @@ class PurchasesListing extends Component {
 		// Get all products and filter out falsy items.
 		const productPurchases = this.getProductPurchases();
 
-		if ( isEmpty( productPurchases ) ) {
+		if ( productPurchases.length === 0 ) {
 			return null;
 		}
+
 		return (
 			<Fragment>
 				<Card compact>
@@ -337,7 +330,7 @@ class PurchasesListing extends Component {
 						isError={ this.isProductExpiring( purchase ) }
 						isPlaceholder={ this.isLoading() }
 						product={ purchase.productSlug }
-						tagline={ this.getTagline( purchase ) }
+						tagline={ getJetpackProductTagline( purchase ) }
 						title={ this.getTitle( purchase ) }
 					/>
 				) ) }
@@ -367,7 +360,6 @@ export default connect( ( state ) => {
 
 	return {
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
-		currentPlanSlug: getSitePlanSlug( state, selectedSiteId ),
 		isPlanExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		isRequestingPlans: isRequestingSitePlans( state, selectedSiteId ),
 		purchases: getSitePurchases( state, selectedSiteId ),
