@@ -244,15 +244,15 @@ function getPlanFeatures( plan, translate, hasDomainsInCart, hasRenewalInCart ) 
 
 function getHighestWpComPlanLabel( plans ) {
 	const planMatchersInOrder = [
-		isWpComEcommercePlan,
-		isWpComBusinessPlan,
-		isWpComPremiumPlan,
-		isWpComPersonalPlan,
+		{ label: 'WordPress.com eCommerce', matcher: isWpComEcommercePlan },
+		{ label: 'WordPress.com Business', matcher: isWpComBusinessPlan },
+		{ label: 'WordPress.com Premium', matcher: isWpComPremiumPlan },
+		{ label: 'WordPress.com Personal', matcher: isWpComPersonalPlan },
 	];
-	for ( const matcher of planMatchersInOrder ) {
+	for ( const { label, matcher } of planMatchersInOrder ) {
 		for ( const plan of plans ) {
 			if ( matcher( get( plan, 'wpcom_meta.product_slug' ) ) ) {
-				return plan.label;
+				return label;
 			}
 		}
 	}
