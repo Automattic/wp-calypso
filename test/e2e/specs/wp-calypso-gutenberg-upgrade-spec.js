@@ -243,11 +243,22 @@ async function startNewPost( siteURL ) {
 }
 
 before( async function () {
-	this.timeout( startBrowserTimeoutMS );
-	driver = await driverManager.startBrowser();
+	if ( process.env.GUTENBERG_EDGE === 'true' ) {
+		this.timeout( startBrowserTimeoutMS );
+		driver = await driverManager.startBrowser();
+		loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
+		sampleImages = times( 5, () => mediaHelper.createFile() );
+	} else {
+		this.skip();
+	}
+} );
 
-	loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
-	sampleImages = times( 5, () => mediaHelper.createFile() );
+after( async function () {
+	if ( process.env.GUTENBERG_EDGE === 'true' ) {
+		await Promise.all(
+			sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
+		);
+	}
 } );
 
 describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most popular themes (${ screenSize })`, function () {
@@ -312,8 +323,4 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 			} );
 		} );
 	} );
-} );
-
-after( async function () {
-	await Promise.all( sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) ) );
 } );
