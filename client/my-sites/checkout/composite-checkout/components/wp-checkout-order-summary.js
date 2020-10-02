@@ -31,12 +31,7 @@ import getSupportVariation, {
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
 import { useHasRenewalInCart } from '../hooks/has-renewal';
-import {
-	isWpComBusinessPlan,
-	isWpComEcommercePlan,
-	isWpComPersonalPlan,
-	isWpComPremiumPlan,
-} from 'lib/plans';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
 import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
 import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
 import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
@@ -246,8 +241,6 @@ function getHighestWpComPlanLabel( plans ) {
 	const planMatchersInOrder = [
 		{ label: 'WordPress.com eCommerce', matcher: isWpComEcommercePlan },
 		{ label: 'WordPress.com Business', matcher: isWpComBusinessPlan },
-		{ label: 'WordPress.com Premium', matcher: isWpComPremiumPlan },
-		{ label: 'WordPress.com Personal', matcher: isWpComPersonalPlan },
 	];
 	for ( const { label, matcher } of planMatchersInOrder ) {
 		for ( const plan of plans ) {
