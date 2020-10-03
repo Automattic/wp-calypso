@@ -10,7 +10,7 @@ import {
 	ResponseCart,
 	ResponseCartProduct,
 	TempResponseCartProduct,
-} from '../types/backend/shopping-cart-endpoint';
+} from '../hooks/use-shopping-cart-manager/types';
 import {
 	WPCOMCart,
 	WPCOMCartItem,

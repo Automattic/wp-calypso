@@ -217,9 +217,9 @@ export function canRemoveFromCart( cart, cartItem ) {
  * own timestamp) as well as the ResponseCart object returned by the
  * shopping-cart endpoint directly.
  *
- * @param {import('my-sites/checkout/composite-checkout/types/backend/shopping-cart-endpoint').ResponseCart|null} previousCartValue - the previously loaded cart
- * @param {import('my-sites/checkout/composite-checkout/types/backend/shopping-cart-endpoint').ResponseCart} nextCartValue - the new cart value
- * @returns {import('my-sites/checkout/composite-checkout/types/backend/shopping-cart-endpoint').ResponseCartMessages} nextCartMessages - messages about the state of the cart
+ * @param {import('my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types').ResponseCart|null} previousCartValue - the previously loaded cart
+ * @param {import('my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types').ResponseCart} nextCartValue - the new cart value
+ * @returns {import('my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types').ResponseCartMessages} nextCartMessages - messages about the state of the cart
  */
 export function getNewMessages( previousCartValue, nextCartValue ) {
 	const nextCartMessages = nextCartValue.messages || [];

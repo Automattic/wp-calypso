@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import type { RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
+import type { RequestCartProduct } from './use-shopping-cart-manager/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
 

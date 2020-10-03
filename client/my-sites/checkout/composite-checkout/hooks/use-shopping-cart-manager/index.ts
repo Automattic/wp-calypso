@@ -10,8 +10,6 @@ import {
 	ResponseCart,
 	RequestCartProduct,
 	CartLocation,
-} from '../../types/backend/shopping-cart-endpoint';
-import {
 	ShoppingCartManager,
 	ShoppingCartManagerArguments,
 	CacheStatus,

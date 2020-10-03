@@ -6,7 +6,9 @@ import {
 	RequestCart,
 	RequestCartProduct,
 	CartLocation,
-} from '../../types/backend/shopping-cart-endpoint';
+} from './shopping-cart-endpoint';
+
+export * from './shopping-cart-endpoint';
 
 export type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 

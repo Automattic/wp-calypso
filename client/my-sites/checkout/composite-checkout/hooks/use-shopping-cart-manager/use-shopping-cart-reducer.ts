@@ -8,12 +8,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import {
-	emptyResponseCart,
-	ResponseCart,
-	ResponseCartProduct,
-	TempResponseCartProduct,
-} from '../../types/backend/shopping-cart-endpoint';
-import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
 	replaceItemInResponseCart,
@@ -22,7 +16,15 @@ import {
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 } from './cart-functions';
-import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
+import {
+	emptyResponseCart,
+	ResponseCart,
+	ResponseCartProduct,
+	TempResponseCartProduct,
+	ShoppingCartState,
+	ShoppingCartAction,
+	CouponStatus,
+} from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );
 

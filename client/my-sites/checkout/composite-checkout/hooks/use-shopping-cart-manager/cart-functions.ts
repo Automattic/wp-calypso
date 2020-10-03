@@ -8,7 +8,7 @@ import type {
 	ResponseCart,
 	ResponseCartProduct,
 	TempResponseCartProduct,
-} from '../../types/backend/shopping-cart-endpoint';
+} from './types';
 
 let lastUUID = 100;
 
