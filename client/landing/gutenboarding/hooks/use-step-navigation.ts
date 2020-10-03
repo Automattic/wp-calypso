@@ -9,7 +9,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { Step, usePath, useCurrentStep, useSinglePageQueryParam, StepType } from '../path';
+import { Step, usePath, useCurrentStep, useFlowRouteParam, StepType } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility, useHasPaidPlanFromPath } from './use-selected-plan';
@@ -30,7 +30,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const makePath = usePath();
 	const history = useHistory();
 	const currentStep = useCurrentStep();
-	const isSinglePageFlow = useSinglePageQueryParam();
+	const flow = useFlowRouteParam();
 	const { i18nLocale } = useI18n();
 
 	// If the user enters a site title on Intent Capture step we are showing Domains step next.
@@ -94,7 +94,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	}
 
 	// Experimental, simple, single page -site flow
-	if ( isSinglePageFlow ) {
+	if ( flow === 'single-page' ) {
 		steps = [ Step.DesignSelection ];
 	}
 
