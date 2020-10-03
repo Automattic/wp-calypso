@@ -28,6 +28,41 @@
 		text-align: left;
 	}
 
+	.uppercase {
+		text-transform: uppercase;
+	}
+
+	.has-drop-cap:not( :focus )::first-letter {
+		font-weight: bold;
+		line-height: 0.66;
+		text-transform: uppercase;
+		font-style: normal;
+		float: left;
+		font-size: calc( 2 * 2.25rem );
+		margin: 0.05em 0.1em 0 0;
+	}
+
+	.has-drop-cap:not( :focus )::after {
+		content: '';
+		display: table;
+		clear: both;
+		padding-top: 14px;
+	}
+
+	.wpnc__sub {
+		font-size: smaller;
+		vertical-align: sub;
+	}
+
+	.wpnc__sup {
+		font-size: smaller;
+		vertical-align: super;
+	}
+
+	.wpnc__em {
+		font-style: italic;
+	}
+
 	h1,
 	h2,
 	h3,

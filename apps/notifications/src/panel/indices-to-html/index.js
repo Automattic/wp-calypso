@@ -78,8 +78,12 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'p':
 		case 'div':
 		case 'code':
+		case 'span':
 		case 'strong':
 		case 'em':
+		case 'sub':
+		case 'sup':
+		case 's':
 		case 'list':
 		case 'h1':
 		case 'h2':
