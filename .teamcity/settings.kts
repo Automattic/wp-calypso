@@ -42,6 +42,7 @@ project {
 
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
+	buildType(CheckCodeStyle)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
@@ -129,17 +130,15 @@ object BuildBaseImages : BuildType({
 
 object RunAllUnitTests : BuildType({
 	name = "Run unit tests"
-	description = "Runs code hygiene and unit tests"
+	description = "Run unit tests"
 
 	artifactRules = """
 		test_results => test_results
-		checkstyle_results => checkstyle_results
 		artifacts => artifacts
 	""".trimIndent()
 
 	vcs {
 		root(WpCalypso)
-
 		cleanCheckout = true
 	}
 
@@ -186,31 +185,6 @@ object RunAllUnitTests : BuildType({
 					echo "${'$'}DIRTY_FILES"
 					echo "You need to checkout the branch, run 'yarn' and commit those files."
 					exit 1
-				fi
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
-			name = "Run linters"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -e
-				set -x
-				export HOME="/calypso"
-				export NODE_ENV="test"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				# Code style
-				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|server/|packages/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
-				echo ${'$'}FILES_TO_LINT
-				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
@@ -375,6 +349,120 @@ object RunAllUnitTests : BuildType({
 			param("xmlReportParsing.reportType", "junit")
 			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
 		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				serverUrl = ""
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#team-calypso-bot"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = """
+				+:master
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+	}
+})
+
+object CheckCodeStyle : BuildType({
+	name = "Check code style"
+	description = "Check code style"
+
+	artifactRules = """
+		checkstyle_results => checkstyle_results
+	""".trimIndent()
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export NODE_ENV="test"
+				export CHROMEDRIVER_SKIP_DOWNLOAD=true
+				export PUPPETEER_SKIP_DOWNLOAD=true
+				export npm_config_cache=${'$'}(yarn cache dir)
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run linters"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export NODE_ENV="test"
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Code style
+				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|packages/|apps/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
+				echo ${'$'}FILES_TO_LINT
+				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
+					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:pull/*
+				+:master
+				+:trunk
+			""".trimIndent()
+		}
+	}
+
+	features {
 		feature {
 			type = "xml-report-plugin"
 			param("xmlReportParsing.reportType", "checkstyle")
