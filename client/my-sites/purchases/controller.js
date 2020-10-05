@@ -14,6 +14,7 @@ import {
 	PurchaseCancelDomain,
 	PurchaseAddPaymentMethod,
 	PurchaseEditPaymentMethod,
+	BillingHistory,
 } from 'my-sites/purchases/main.tsx';
 
 export function redirectToPurchases( context ) {
@@ -79,5 +80,10 @@ export const purchaseEditPaymentMethod = ( context, next ) => {
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>
 	);
+	next();
+};
+
+export const billingHistory = ( context, next ) => {
+	context.primary = <BillingHistory siteSlug={ context.params.site } />;
 	next();
 };
