@@ -16,12 +16,11 @@ import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import SupportInfo from 'components/support-info';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import {
-	PLAN_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	TERM_ANNUALLY,
 } from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
@@ -32,6 +31,8 @@ import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
 import QueryMediaStorage from 'components/data/query-media-storage';
 import PlanStorageBar from 'blocks/plan-storage/bar';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
+import { getPathToDetails } from 'my-sites/plans-v2/utils';
 
 class MediaSettingsPerformance extends Component {
 	static propTypes = {
@@ -125,21 +126,24 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	renderVideoUpgradeNudge() {
-		const { isVideoPressAvailable, translate } = this.props;
+		const { isVideoPressAvailable, siteSlug, translate } = this.props;
 
 		return (
-			! shouldShowOfferResetFlow() &&
 			! isVideoPressAvailable && (
 				<UpsellNudge
+					title={ translate( 'Get unlimited video hosting' ) }
 					description={ translate(
-						'Get high-speed, high-resolution video hosting without ads or watermarks.'
+						'Tired of ads in your videos? Get high-speed video right on your site'
 					) }
 					event={ 'jetpack_video_settings' }
 					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
-					plan={ PLAN_JETPACK_PREMIUM }
 					showIcon={ true }
-					title={ translate(
-						'Host video right on your site! Upgrade to Jetpack Premium to get started'
+					href={ getPathToDetails(
+						'/plans',
+						{},
+						OPTIONS_JETPACK_SECURITY,
+						TERM_ANNUALLY,
+						siteSlug
 					) }
 				/>
 			)
