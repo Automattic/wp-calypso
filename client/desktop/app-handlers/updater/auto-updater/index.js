@@ -47,17 +47,23 @@ class AutoUpdater extends Updater {
 			autoUpdater.allowPrerelease = true;
 			autoUpdater.allowDowngrade = false;
 		}
+
+		// Tracks whether an auto-update check was initiated via menu selection.
+		this.isUserRequested = false;
 	}
 
-	ping() {
+	ping( isUserRequested ) {
 		if ( process.env.DEBUG ) {
 			dialogDebug( 'DEBUG is set: skipping auto-update check' );
 			return;
 		}
 		dialogDebug( 'Checking for update' );
 		autoUpdater.checkForUpdates();
+		this.isUserRequested = isUserRequested;
 	}
 
+	// ignore (available), confirm (available), cancel (available)
+	// not available ( do nothing ) - user initiated
 	onAvailable( info ) {
 		log.info( 'New update is available: ', info.version );
 		bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-needs-update` );
@@ -66,6 +72,10 @@ class AutoUpdater extends Updater {
 	onNotAvailable() {
 		log.info( 'No update is available' );
 		bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-no-update` );
+		if ( this.isUserRequested ) {
+			this.notifyNotAvailable();
+		}
+		this.isUserRequested = false;
 	}
 
 	onDownloaded( info ) {
@@ -93,6 +103,7 @@ class AutoUpdater extends Updater {
 	}
 
 	onCancel() {
+		this.isUserRequested = false;
 		bumpStat( 'wpcom-desktop-update', `${ getStatsString( this.beta ) }-update-cancel` );
 	}
 

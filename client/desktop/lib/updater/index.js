@@ -75,6 +75,17 @@ class Updater extends EventEmitter {
 		}
 	}
 
+	notifyNotAvailable() {
+		const mainWindow = BrowserWindow.getFocusedWindow();
+
+		const notAvailableDialogOptions = {
+			buttons: [ 'OK' ],
+			message: 'There are currently no updates available.',
+		};
+
+		dialog.showMessageBox( mainWindow, notAvailableDialogOptions );
+	}
+
 	setVersion( version ) {
 		this._version = version;
 	}

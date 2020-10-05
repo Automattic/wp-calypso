@@ -39,8 +39,12 @@ module.exports = function ( mainWindow ) {
 		updateNotificationBadge( count );
 	} );
 
-	ipc.on( 'preferences-changed-notification-badge', function ( event, arg ) {
-		updateNotificationBadge( arg );
+	ipc.on( 'preferences-changed-notification-badge', function ( _, enabled ) {
+		if ( enabled ) {
+			mainWindow.webContents.send( 'enable-notification-badge' );
+		} else {
+			updateNotificationBadge( 0 );
+		}
 	} );
 
 	ipc.on( 'received-notification', function ( _, noteWithMeta ) {
