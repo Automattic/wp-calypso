@@ -220,16 +220,16 @@ function EpsLabel() {
 		<React.Fragment>
 			<span>{ __( 'EPS e-Pay' ) }</span>
 			<PaymentMethodLogos className="eps__logo payment-logos">
-				<EpsLogoUI />
+				<EpsLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const EpsLogoUI = styled( EpsLogo )`
+const EpsLogo = styled( EpsLogoImg )`
 	width: 28px;
 `;
 
-function EpsLogo( { className } ) {
+function EpsLogoImg( { className } ) {
 	return <img src="/calypso/images/upgrades/eps.svg" alt="EPS e-Pay" className={ className } />;
 }

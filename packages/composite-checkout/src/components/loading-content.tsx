@@ -14,8 +14,8 @@ export default function LoadingContent() {
 	const { __ } = useI18n();
 
 	return (
-		<LoadingContentWrapperUI>
-			<LoadingContentUI>
+		<LoadingContentWrapper>
+			<LoadingContentInnerWrapper>
 				<LoadingCard>
 					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
 					<LoadingCopy />
@@ -33,18 +33,18 @@ export default function LoadingContent() {
 					<LoadingTitle />
 				</LoadingCard>
 				<LoadingFooter />
-			</LoadingContentUI>
+			</LoadingContentInnerWrapper>
 
-			<LoadingSideBarUI>
+			<LoadingSidebar>
 				<SideBarLoadingCopy />
 				<SideBarLoadingCopy />
 				<SideBarLoadingCopy />
-			</LoadingSideBarUI>
-		</LoadingContentWrapperUI>
+			</LoadingSidebar>
+		</LoadingContentWrapper>
 	);
 }
 
-const LoadingContentWrapperUI = styled.div`
+const LoadingContentWrapper = styled.div`
 	display: flex;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
@@ -55,7 +55,7 @@ const LoadingContentWrapperUI = styled.div`
 	}
 `;
 
-const LoadingContentUI = styled.div`
+const LoadingContentInnerWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	width: 100%;
 
@@ -65,7 +65,7 @@ const LoadingContentUI = styled.div`
 	}
 `;
 
-const LoadingSideBarUI = styled.div`
+const LoadingSidebar = styled.div`
 	display: none;
 	width: 100%;
 

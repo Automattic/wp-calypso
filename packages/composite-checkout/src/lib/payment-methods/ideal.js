@@ -305,17 +305,17 @@ function IdealLabel() {
 		<React.Fragment>
 			<span>{ __( 'iDEAL' ) }</span>
 			<PaymentMethodLogos className="ideal__logo payment-logos">
-				<IdealLogoUI />
+				<IdealLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const IdealLogoUI = styled( IdealLogo )`
+const IdealLogo = styled( IdealLogoSvg )`
 	width: 28px;
 `;
 
-function IdealLogo( { className } ) {
+function IdealLogoSvg( { className } ) {
 	return (
 		<svg
 			className={ className }

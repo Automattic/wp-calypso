@@ -223,16 +223,16 @@ function SofortLabel() {
 		<React.Fragment>
 			<span>{ __( 'Sofort' ) }</span>
 			<PaymentMethodLogos className="sofort__logo payment-logos">
-				<SofortLogoUI />
+				<SofortLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const SofortLogoUI = styled( SofortLogo )`
+const SofortLogo = styled( SofortLogoImg )`
 	width: 64px;
 `;
 
-function SofortLogo( { className } ) {
+function SofortLogoImg( { className } ) {
 	return <img src="/calypso/images/upgrades/sofort.svg" alt="Sofort" className={ className } />;
 }
