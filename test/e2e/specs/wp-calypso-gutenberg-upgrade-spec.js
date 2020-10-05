@@ -242,17 +242,6 @@ async function startNewPost( siteURL ) {
 	await gEditorComponent.initEditor();
 }
 
-before( async function () {
-	if ( process.env.GUTENBERG_EDGE === 'true' ) {
-		this.timeout( startBrowserTimeoutMS );
-		driver = await driverManager.startBrowser();
-		loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
-		sampleImages = times( 5, () => mediaHelper.createFile() );
-	} else {
-		this.skip();
-	}
-} );
-
 after( async function () {
 	if ( process.env.GUTENBERG_EDGE === 'true' ) {
 		await Promise.all(
@@ -262,6 +251,17 @@ after( async function () {
 } );
 
 describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most popular themes (${ screenSize })`, function () {
+	before( async function () {
+		if ( process.env.GUTENBERG_EDGE === 'true' ) {
+			this.timeout( startBrowserTimeoutMS );
+			driver = await driverManager.startBrowser();
+			loginFlow = new LoginFlow( driver, 'gutenbergUpgradeUser' );
+			sampleImages = times( 5, () => mediaHelper.createFile() );
+		} else {
+			this.skip();
+		}
+	} );
+
 	this.timeout( mochaTimeOut );
 	[
 		BlogPostsBlockComponent,
