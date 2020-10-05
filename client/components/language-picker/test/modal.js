@@ -453,7 +453,7 @@ describe( 'LanguagePickerModal', () => {
 		} );
 	} );
 
-	describe( 'search event', () => {
+	describe( 'events', () => {
 		let recordTracksEvent;
 		let wrapper;
 
@@ -465,69 +465,94 @@ describe( 'LanguagePickerModal', () => {
 			);
 		} );
 
-		test( 'should not fire when language does not change', () => {
-			expect( wrapper.state( 'selectedLanguageSlug' ) ).toEqual( defaultProps.selected );
-
-			wrapper.instance().handleClose();
-
-			expect( recordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		test( 'should not fire when dialog is closing due to cancellation', () => {
-			wrapper.instance().handleSearch( 'it' );
-
-			expect( wrapper.state( 'selectedLanguageSlug' ) ).not.toEqual( defaultProps.selected );
-
-			wrapper.instance().handleClose( /* isClosingWithoutSelection = */ true );
-
-			expect( recordTracksEvent ).not.toHaveBeenCalled();
-		} );
-
-		describe( 'when searched', () => {
-			test( 'should fire an event with searched prop set to true', () => {
-				wrapper.instance().handleSearch( 'It' );
-
-				expect( wrapper.state( 'search' ) ).toEqual( 'It' );
-
-				wrapper.instance().handleClose();
-
-				expect( recordTracksEvent ).toHaveBeenCalledWith(
-					'calypso_language_picker_language_picked',
-					{ searched: true }
-				);
-			} );
-
-			test( 'should fire an event with searched prop set to true if search closed', () => {
+		describe( 'searched', () => {
+			test( 'should fire a single time when search', () => {
+				wrapper.instance().handleSearch( 'i' );
 				wrapper.instance().handleSearch( 'it' );
-				// pass an empty string to simluate when someone searches and then closes
-				// the search box
-				wrapper.instance().handleSearch( '' );
+				wrapper.instance().handleSearch( 'ita' );
 
-				expect( wrapper.state( 'search' ) ).toEqual( '' );
-
-				wrapper.instance().handleClose();
-
-				expect( recordTracksEvent ).toHaveBeenCalledWith(
-					'calypso_language_picker_language_picked',
-					{ searched: true }
-				);
+				expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+				expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_language_picker_searched' );
 			} );
 		} );
 
-		describe( 'when not searched', () => {
-			test( 'should fire an event with searched prop set to false', () => {
-				expect( wrapper.state( 'search' ) ).toBe( false );
-
-				wrapper.instance().handleLanguageItemClick( 'it', { preventDefault: noop } );
-
-				expect( wrapper.state( 'selectedLanguageSlug' ) ).toEqual( 'it' );
+		describe( 'new language picked', () => {
+			test( 'should not fire when language does not change', () => {
+				expect( wrapper.state( 'selectedLanguageSlug' ) ).toEqual( defaultProps.selected );
 
 				wrapper.instance().handleClose();
 
-				expect( recordTracksEvent ).toHaveBeenCalledWith(
-					'calypso_language_picker_language_picked',
-					{ searched: false }
+				expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+					'calypso_language_picker_new_language_picked',
+					expect.anything()
 				);
+			} );
+
+			test( 'should not fire when dialog is closing due to cancellation', () => {
+				wrapper.instance().handleSearch( 'it' );
+
+				expect( wrapper.state( 'selectedLanguageSlug' ) ).not.toEqual( defaultProps.selected );
+
+				wrapper.instance().handleClose( /* isClosingWithoutSelection = */ true );
+
+				expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+					'calypso_language_picker_new_language_picked',
+					expect.anything()
+				);
+			} );
+
+			describe( 'when searched', () => {
+				test( 'should fire an event with searched prop set to true', () => {
+					wrapper.instance().handleSearch( 'It' );
+
+					expect( wrapper.state( 'search' ) ).toEqual( 'It' );
+
+					wrapper.instance().handleClose();
+
+					expect( recordTracksEvent ).toHaveBeenCalledWith(
+						'calypso_language_picker_new_language_picked',
+						{
+							searched: true,
+						}
+					);
+				} );
+
+				test( 'should fire an event with searched prop set to true if search closed', () => {
+					wrapper.instance().handleSearch( 'it' );
+					// pass an empty string to simluate when someone searches and then closes
+					// the search box
+					wrapper.instance().handleSearch( '' );
+
+					expect( wrapper.state( 'search' ) ).toEqual( '' );
+
+					wrapper.instance().handleClose();
+
+					expect( recordTracksEvent ).toHaveBeenCalledWith(
+						'calypso_language_picker_new_language_picked',
+						{
+							searched: true,
+						}
+					);
+				} );
+			} );
+
+			describe( 'when not searched', () => {
+				test( 'should fire an event with searched prop set to false', () => {
+					expect( wrapper.state( 'search' ) ).toBe( false );
+
+					wrapper.instance().handleLanguageItemClick( 'it', { preventDefault: noop } );
+
+					expect( wrapper.state( 'selectedLanguageSlug' ) ).toEqual( 'it' );
+
+					wrapper.instance().handleClose();
+
+					expect( recordTracksEvent ).toHaveBeenCalledWith(
+						'calypso_language_picker_new_language_picked',
+						{
+							searched: false,
+						}
+					);
+				} );
 			} );
 		} );
 	} );

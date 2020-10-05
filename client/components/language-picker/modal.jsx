@@ -75,6 +75,7 @@ export class LanguagePickerModal extends PureComponent {
 		empathyMode: this.props.empathyMode,
 		filter: getLanguageGroupByCountryCode( this.props.countryCode ),
 		isSearchOpen: false,
+		recordedTracksSearchEvent: false,
 		search: false,
 		selectedLanguageSlug: this.props.selected,
 		showingDefaultFilter: true,
@@ -253,7 +254,21 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
+	/**
+	 * Only record a single search event per modal instance
+	 * otherwise we would get a search event per keystroke.
+	 */
+	recordSearchTracksEvent = () => {
+		if ( this.state.recordedTracksSearchEvent ) {
+			return;
+		}
+
+		this.setState( { recordedTracksSearchEvent: true } );
+		this.props.recordTracksEvent( 'calypso_language_picker_searched' );
+	};
+
 	selectLanguageFromSearch( search ) {
+		this.recordSearchTracksEvent();
 		const filteredLanguages = this.getFilteredLanguages();
 		const exactMatch = filteredLanguages.find( ( { langSlug } ) => langSlug === search );
 
@@ -415,8 +430,8 @@ export class LanguagePickerModal extends PureComponent {
 		this.handleClose();
 	};
 
-	recordLanguagePickedEvent = ( isClosingWithoutSelection ) => {
-		const { selectedLanguageSlug, search } = this.state;
+	recordNewLanguagePickedEvent = ( isClosingWithoutSelection ) => {
+		const { selectedLanguageSlug } = this.state;
 
 		if (
 			isClosingWithoutSelection ||
@@ -426,22 +441,12 @@ export class LanguagePickerModal extends PureComponent {
 			return;
 		}
 
-		/**
-		 * We match specifically against the default value of `false`
-		 * rather than treating this falsy as `search` may be an empty
-		 * string if the user searches and then closes the search bar.
-		 * We'll naïvely assume that if someone searched *at all* that
-		 * we should record them as having used the search to find the
-		 * language they want. It's the simplest assumption for the
-		 * moment, and I'm not sure there's a better solution that
-		 * wouldn't be overkill given what we're trying to record here.
-		 */
-		const searched = false !== search;
-		this.props.recordTracksEvent( 'calypso_language_picker_language_picked', { searched } );
+		const searched = this.state.recordedTracksSearchEvent;
+		this.props.recordTracksEvent( 'calypso_language_picker_new_language_picked', { searched } );
 	};
 
-	handleClose = ( isClosingWithoutSelection ) => {
-		this.recordLanguagePickedEvent( isClosingWithoutSelection );
+	handleClose = ( isClosingWithoutSelection = false ) => {
+		this.recordNewLanguagePickedEvent( isClosingWithoutSelection );
 		this.props.onClose();
 	};
 
