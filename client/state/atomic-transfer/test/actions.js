@@ -39,7 +39,7 @@ describe( 'action', () => {
 	} );
 
 	describe( 'atomicTransferFetchingFailure', () => {
-		describe( 'should return a failed transfer request action object', () => {
+		test( 'should return a failed transfer request action object', () => {
 			const failedRequestAction = atomicTransferFetchingFailure( 1 );
 
 			expect( failedRequestAction ).to.eql( {

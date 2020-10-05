@@ -111,9 +111,7 @@ describe( 'wpcom.site.media', function () {
 					.catch( done );
 			} );
 		} );
-	} );
 
-	describe( 'wpcom.site.media.addUrls', function () {
 		it( 'should create a new media', () => {
 			return new Promise( ( done ) => {
 				site
