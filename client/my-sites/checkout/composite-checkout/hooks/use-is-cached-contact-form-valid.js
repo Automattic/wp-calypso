@@ -21,6 +21,7 @@ export default function useIsCachedContactFormValid( contactValidationCallback )
 	const [ isFormValid, setFormValid ] = useState( false );
 
 	useEffect( () => {
+		let isSubscribed = true;
 		if ( ! contactValidationCallback ) {
 			debug( 'Cannot validate contact details; no validation callback' );
 			return;
@@ -33,6 +34,10 @@ export default function useIsCachedContactFormValid( contactValidationCallback )
 			}
 			contactValidationCallback()
 				.then( ( areDetailsCompleteAndValid ) => {
+					if ( ! isSubscribed ) {
+						return;
+					}
+
 					// If the details are already populated and valid, jump to payment method step
 					if ( areDetailsCompleteAndValid ) {
 						setFormValid( true );
@@ -40,16 +45,20 @@ export default function useIsCachedContactFormValid( contactValidationCallback )
 					} else {
 						debug( 'Contact details are already populated but not valid' );
 					}
+
 					if ( shouldResetFormStatus.current ) {
 						setFormReady();
 					}
 				} )
 				.catch( () => {
-					if ( shouldResetFormStatus.current ) {
+					if ( isSubscribed && shouldResetFormStatus.current ) {
 						setFormReady();
 					}
 				} );
 		}
+		return () => {
+			isSubscribed = false;
+		};
 	}, [
 		formStatus,
 		setFormReady,

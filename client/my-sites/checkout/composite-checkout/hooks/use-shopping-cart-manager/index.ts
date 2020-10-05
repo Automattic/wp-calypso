@@ -26,8 +26,6 @@ import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 export default function useShoppingCartManager( {
 	cartKey,
 	canInitializeCart,
-	productsToAddOnInitialize,
-	couponToAddOnInitialize,
 	setCart,
 	getCart,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
@@ -52,8 +50,6 @@ export default function useShoppingCartManager( {
 	useInitializeCartFromServer(
 		cacheStatus,
 		canInitializeCart,
-		productsToAddOnInitialize,
-		couponToAddOnInitialize,
 		getServerCart,
 		setServerCart,
 		hookDispatch
@@ -62,14 +58,14 @@ export default function useShoppingCartManager( {
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
 
-	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
-		( requestCartProductToAdd ) => {
-			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
+	const addProductsToCart: ( products: RequestCartProduct[] ) => void = useCallback(
+		( products ) => {
+			hookDispatch( { type: 'CART_PRODUCTS_ADD', products } );
 		},
 		[ hookDispatch ]
 	);
 
-	const removeItem: ( arg0: string ) => void = useCallback(
+	const removeItem: ( uuidToRemove: string ) => void = useCallback(
 		( uuidToRemove ) => {
 			hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 		},
@@ -94,7 +90,7 @@ export default function useShoppingCartManager( {
 		[ hookDispatch ]
 	);
 
-	const submitCoupon: ( arg0: string ) => void = useCallback(
+	const applyCoupon: ( arg0: string ) => void = useCallback(
 		( newCoupon ) => {
 			hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
 		},
@@ -110,9 +106,9 @@ export default function useShoppingCartManager( {
 		loadingError: cacheStatus === 'error' ? loadingError : null,
 		loadingErrorType,
 		isPendingUpdate: cacheStatus !== 'valid',
-		addItem,
+		addProductsToCart,
 		removeItem,
-		submitCoupon,
+		applyCoupon,
 		removeCoupon,
 		couponStatus,
 		updateLocation,

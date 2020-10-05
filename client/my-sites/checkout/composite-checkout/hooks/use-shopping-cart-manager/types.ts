@@ -13,8 +13,6 @@ export type ReactStandardAction = { type: string; payload?: any }; // eslint-dis
 export interface ShoppingCartManagerArguments {
 	cartKey: string | number | null;
 	canInitializeCart: boolean;
-	productsToAddOnInitialize: RequestCartProduct[] | null;
-	couponToAddOnInitialize: string | null;
 	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 }
@@ -29,9 +27,9 @@ export interface ShoppingCartManager {
 	loadingError: string | null | undefined;
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
-	addItem: ( arg0: RequestCartProduct ) => void;
-	removeItem: ( arg0: string ) => void;
-	submitCoupon: ( arg0: string ) => void;
+	addProductsToCart: ( products: RequestCartProduct[] ) => void;
+	removeItem: ( uuidToRemove: string ) => void;
+	applyCoupon: ( couponId: string ) => void;
 	removeCoupon: () => void;
 	couponStatus: CouponStatus;
 	updateLocation: ( arg0: CartLocation ) => void;
@@ -83,7 +81,7 @@ export type CouponStatus = 'fresh' | 'pending' | 'applied' | 'invalid' | 'reject
 export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
-	| { type: 'ADD_CART_ITEM'; requestCartProductToAdd: RequestCartProduct }
+	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
 	| { type: 'SET_LOCATION'; location: CartLocation }
 	| {
 			type: 'REPLACE_CART_ITEM';
@@ -123,6 +121,6 @@ export type ShoppingCartState = {
 	loadingError?: string;
 	loadingErrorType?: ShoppingCartError;
 	variantRequestStatus: VariantRequestStatus;
-	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
+	variantSelectOverride: VariantSelectOverride[];
 	queuedActions: ShoppingCartAction[];
 };
