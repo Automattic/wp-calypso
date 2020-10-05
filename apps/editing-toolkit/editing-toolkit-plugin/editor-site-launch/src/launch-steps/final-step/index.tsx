@@ -167,6 +167,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 						) }
 						<CheckoutStepAreaWrapper>
 							<CheckoutStepBody
+								isStepActive={ false }
 								titleContent={ __( 'Your site name', 'full-site-editing' ) }
 								isStepComplete={ isStepCompleted( LaunchStep.Name ) }
 								goToThisStep={ () => setStep( LaunchStep.Name ) }
@@ -175,6 +176,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								formStatus={ FormStatus.READY }
 							/>
 							<CheckoutStepBody
+								isStepActive={ false }
 								titleContent={ __( 'Your domain', 'full-site-editing' ) }
 								isStepComplete={ isStepCompleted( LaunchStep.Domain ) }
 								goToThisStep={ () => setStep( LaunchStep.Domain ) }
@@ -183,6 +185,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								formStatus={ FormStatus.READY }
 							/>
 							<CheckoutStepBody
+								isStepActive={ false }
 								titleContent={ __( 'Your plan', 'full-site-editing' ) }
 								isStepComplete={ isStepCompleted( LaunchStep.Plan ) }
 								goToThisStep={ () => setStep( LaunchStep.Plan ) }
