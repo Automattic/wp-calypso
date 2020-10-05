@@ -202,6 +202,10 @@ class PurchaseMeta extends Component {
 			return translate( 'Included with plan' );
 		}
 
+		if ( ( isExpired( purchase ) || isExpiring( purchase ) ) && ! isPaidWithCredits( purchase ) ) {
+			return '—';
+		}
+
 		if ( hasPaymentMethod( purchase ) ) {
 			let paymentInfo = null;
 
