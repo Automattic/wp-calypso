@@ -104,16 +104,10 @@ export class SecureYourBrandStep extends Component {
 	}
 
 	render() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			translate,
-			hasInitializedSitesBackUrl,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate } = this.props;
 
 		const subHeaderText = translate(
-			'Secure your name and save 20% with our Domain signup bundle'
+			'Secure your name and save 50% with our Domain signup bundle'
 		);
 		const headerText = translate( 'Secure your name' );
 
@@ -129,9 +123,6 @@ export class SecureYourBrandStep extends Component {
 					fallbackSubHeaderText={ subHeaderText }
 					isWideLayout={ true }
 					stepContent={ this.recommendedDomains() }
-					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
-					backUrl={ 'TBD' }
-					backLabelText={ translate( 'Back' ) }
 				/>
 			</div>
 		);
