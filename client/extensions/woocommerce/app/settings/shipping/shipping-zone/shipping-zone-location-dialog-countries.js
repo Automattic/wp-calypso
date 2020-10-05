@@ -56,7 +56,7 @@ const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, a
 
 		return (
 			<li key={ index } className={ listItemClass }>
-				<label htmlFor={ inputId }>
+				<FormLabel htmlFor={ inputId }>
 					{ isCountry ? (
 						<FormCheckbox
 							id={ inputId }
@@ -78,7 +78,7 @@ const ShippingZoneLocationDialogCountries = ( { continentCountries, translate, a
 					{ isCountry ? <LocationFlag code={ code } /> : null }
 					<span>{ name }</span>
 					{ disabled && <small>{ translate( '(An existing zone covers this location)' ) }</small> }
-				</label>
+				</FormLabel>
 			</li>
 		);
 	};

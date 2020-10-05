@@ -11,6 +11,7 @@ import { snakeCase } from 'lodash';
  * Internal dependencies
  */
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
+import FormLabel from 'components/forms/form-label';
 import FormSelect from 'components/forms/form-select';
 import NumberInput from 'woocommerce/woocommerce-services/components/number-field/number-input';
 
@@ -28,10 +29,10 @@ const ShippingServiceEntry = ( props ) => {
 
 	return (
 		<div className={ classNames( 'shipping-services__entry', { 'wcc-error': hasError } ) }>
-			<label className="shipping-services__entry-title" htmlFor={ id }>
+			<FormLabel className="shipping-services__entry-title" htmlFor={ id }>
 				<Checkbox id={ id } checked={ enabled } onChange={ onToggleEnabled } />
 				<span>{ name }</span>
-			</label>
+			</FormLabel>
 			{ hasError ? <Gridicon icon="notice" /> : null }
 			<NumberInput
 				disabled={ ! enabled }
