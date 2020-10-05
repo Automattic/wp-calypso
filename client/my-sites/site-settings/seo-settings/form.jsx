@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { hasSiteSeoFeature } from './utils';
+import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
+import { getPathToDetails } from 'my-sites/plans-v2/utils';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
@@ -42,7 +44,6 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	TYPE_PREMIUM,
 	TERM_ANNUALLY,
 	JETPACK_RESET_PLANS,
 } from 'lib/plans/constants';
@@ -298,11 +299,21 @@ export class SeoForm extends React.Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
-		const nudgeTitle = siteIsJetpack
-			? translate( 'Boost your search engine ranking' )
-			: translate(
-					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-			  );
+		const jetpackSiteProps = {
+			title: translate( 'Boost your search engine ranking' ),
+			feature: FEATURE_SEO_PREVIEW_TOOLS,
+			href: getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, slug ),
+		};
+
+		const wpcomSiteProps = {
+			title: translate(
+				'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+			),
+			feature: FEATURE_ADVANCED_SEO,
+			plan: findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+				type: TYPE_BUSINESS,
+			} ),
+		};
 
 		return (
 			<div>
@@ -352,17 +363,12 @@ export class SeoForm extends React.Component {
 					! this.props.hasAdvancedSEOFeature &&
 					selectedSite.plan && (
 						<UpsellNudge
+							{ ...( siteIsJetpack ? jetpackSiteProps : wpcomSiteProps ) }
 							description={ translate(
 								'Get tools to optimize your site for improved search engine results.'
 							) }
 							event={ 'calypso_seo_settings_upgrade_nudge' }
-							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
-							plan={ findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
-								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
-							} ) }
 							showIcon={ true }
-							title={ nudgeTitle }
 						/>
 					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
