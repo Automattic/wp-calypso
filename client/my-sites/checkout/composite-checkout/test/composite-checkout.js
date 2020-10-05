@@ -498,7 +498,7 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'personal' };
+		const additionalProps = { product: 'personal' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -511,7 +511,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the aliased plan to the cart when the url has a plan alias', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'personal' };
+		const additionalProps = { product: 'personal' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -530,7 +530,7 @@ describe( 'CompositeCheckout', () => {
 
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
+		const additionalProps = { product: 'jetpack_scan' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -549,7 +549,7 @@ describe( 'CompositeCheckout', () => {
 
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
+		const additionalProps = { product: 'jetpack_scan,jetpack_backup_daily' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -567,7 +567,7 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'concierge-session' };
+		const additionalProps = { product: 'concierge-session' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -580,7 +580,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { productAliasFromUrl: 'concierge-session' };
+		const additionalProps = { product: 'concierge-session' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -598,7 +598,7 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a theme', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
+		const additionalProps = { product: 'theme:ovation' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -611,7 +611,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
+		const additionalProps = { product: 'theme:ovation' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -629,7 +629,7 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
+		const additionalProps = { product: 'domain-mapping:bar.com' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -642,7 +642,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
+		const additionalProps = { product: 'domain-mapping:bar.com' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -662,7 +662,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'personal-bundle', purchaseId: '12345' };
+		const additionalProps = { product: 'personal-bundle', purchaseId: '12345' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -678,7 +678,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal with a domain registration', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'domain_reg:foo.cash', purchaseId: '12345' };
+		const additionalProps = { product: 'domain_reg:foo.cash', purchaseId: '12345' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -693,7 +693,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { productAliasFromUrl: 'domain_map:bar.com', purchaseId: '12345' };
+		const additionalProps = { product: 'domain_map:bar.com', purchaseId: '12345' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -709,7 +709,7 @@ describe( 'CompositeCheckout', () => {
 		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = {
-			productAliasFromUrl: 'domain_map:bar.com,domain_reg:bar.com',
+			product: 'domain_map:bar.com,domain_reg:bar.com',
 			purchaseId: '12345,54321',
 		};
 		await act( async () => {

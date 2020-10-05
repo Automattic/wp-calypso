@@ -32,7 +32,7 @@ export type CartItemExtra = {
 };
 
 export type CartValue = {
-	blog_id: string | number;
+	blog_id: number;
 	products: CartItemValue[];
 	total_cost?: number;
 	temporary?: boolean;

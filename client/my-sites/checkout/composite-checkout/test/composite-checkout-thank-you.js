@@ -167,7 +167,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
-			productAliasFromUrl: 'jetpack_backup_daily',
+			product: 'jetpack_backup_daily',
 		} );
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_backup_daily' );
 	} );
@@ -191,7 +191,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
-			productAliasFromUrl: 'jetpack_security_daily_monthly',
+			product: 'jetpack_security_daily_monthly',
 		} );
 		expect( url ).toBe(
 			'/plans/my-plan/foo.bar?thank-you=true&product=jetpack_security_daily_monthly'

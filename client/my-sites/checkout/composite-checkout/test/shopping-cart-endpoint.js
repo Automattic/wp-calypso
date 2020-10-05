@@ -6,7 +6,7 @@ import {
 	addCouponToResponseCart,
 	removeCouponFromResponseCart,
 	replaceItemInResponseCart,
-	addItemsToResponseCart,
+	addItemToResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
 } from '../types/backend/shopping-cart-endpoint';
@@ -69,11 +69,9 @@ describe( 'replaceItemInResponseCart', function () {
 	} );
 } );
 
-describe( 'addItemsToResponseCart', function () {
+describe( 'addItemToResponseCart', function () {
 	it( 'adds the requested item to the product list with placeholder properties', function () {
-		const result = addItemsToResponseCart( { ...cart, products: [ product1, product2 ] }, [
-			product3,
-		] );
+		const result = addItemToResponseCart( { ...cart, products: [ product1, product2 ] }, product3 );
 		const product3B = {
 			...product3,
 			cost: null,

@@ -41,6 +41,7 @@ type WpcomStoreAction =
 			payload: PossiblyCompleteDomainContactDetails;
 	  };
 
+type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 type WordPressDataStore = {
 	getState: () => object;
 	subscribe: ( listener: Function ) => void;
@@ -49,6 +50,7 @@ type WordPressDataStore = {
 
 export function useWpcomStore(
 	registerStore: ( key: string, storeOptions: object ) => WordPressDataStore,
+	onEvent: ( action: ReactStandardAction ) => void,
 	managedContactDetails: ManagedContactDetails,
 	updateContactDetailsCache: ( _: DomainContactDetails ) => void
 ) {
