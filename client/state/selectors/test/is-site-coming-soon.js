@@ -14,6 +14,7 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
+							ID: 2916284,
 							is_coming_soon: false,
 						},
 					},
@@ -34,7 +35,9 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
+							ID: 2916284,
 							is_coming_soon: true, // Prefer
+							is_private: true,
 						},
 					},
 				},
@@ -48,6 +51,7 @@ describe( 'isSiteComingSoon()', () => {
 			},
 			2916284
 		);
+
 		expect( isComingSoon ).toBe( true );
 
 		const isAlsoComingSoon = isSiteComingSoon(
@@ -56,6 +60,7 @@ describe( 'isSiteComingSoon()', () => {
 					items: {
 						2916284: {
 							is_coming_soon: true, // Prefer
+							is_private: true,
 						},
 					},
 				},
@@ -94,27 +99,33 @@ describe( 'isSiteComingSoon()', () => {
 		expect( isNotComingSoon ).toBe( false );
 	} );
 
-	test( 'should always return false for private sites', () => {
+	test( 'should always return false for non-private sites', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
 					items: {
 						2916284: {
+							ID: 2916284,
 							is_coming_soon: true,
-							is_private: true,
+							is_private: false,
 						},
 					},
 				},
-				siteSettings: {},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_coming_soon: 1,
+						},
+					},
+				},
 			},
 			2916284
 		);
 
-		// Currently failing with dropping of private check
 		expect( isComingSoon ).toBe( false );
 	} );
 
-	test( 'should fallback to settings state', () => {
+	test( 'should fall back to settings state', () => {
 		const isComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -124,7 +135,7 @@ describe( 'isSiteComingSoon()', () => {
 					items: {
 						2916284: {
 							wpcom_coming_soon: 1,
-							blog_public: 1,
+							blog_public: -1,
 						},
 					},
 				},
@@ -134,25 +145,6 @@ describe( 'isSiteComingSoon()', () => {
 
 		expect( isComingSoon ).toBe( true );
 
-		const isComingSoonV2 = isSiteComingSoonV2(
-			{
-				sites: {
-					items: {},
-				},
-				siteSettings: {
-					items: {
-						2916284: {
-							wpcom_public_coming_soon: 1,
-							blog_public: 1,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isComingSoonV2 ).toBe( true );
-
 		const isNotComingSoon = isSiteComingSoon(
 			{
 				sites: {
@@ -161,7 +153,7 @@ describe( 'isSiteComingSoon()', () => {
 				siteSettings: {
 					items: {
 						2916284: {
-							wpcom_coming_soon: 1,
+							wpcom_coming_soon: 0,
 							blog_public: -1,
 						},
 					},
@@ -170,24 +162,6 @@ describe( 'isSiteComingSoon()', () => {
 			2916284
 		);
 		expect( isNotComingSoon ).toBe( false );
-
-		const isNotComingSoonV2 = isSiteComingSoonV2(
-			{
-				sites: {
-					items: {},
-				},
-				siteSettings: {
-					items: {
-						2916284: {
-							wpcom_public_coming_soon: 1,
-							blog_public: -1,
-						},
-					},
-				},
-			},
-			2916284
-		);
-		expect( isNotComingSoonV2 ).toBe( true );
 	} );
 
 	test( 'should return false for public sites', () => {
@@ -196,6 +170,7 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
+							ID: 2916284,
 							is_coming_soon: false,
 						},
 					},
@@ -220,7 +195,8 @@ describe( 'isSiteComingSoon()', () => {
 				sites: {
 					items: {
 						2916284: {
-							is_private: false,
+							ID: 2916284,
+							is_private: true,
 							is_coming_soon: true,
 						},
 					},
@@ -233,5 +209,46 @@ describe( 'isSiteComingSoon()', () => {
 		);
 
 		expect( isComingSoon ).toBe( true );
+	} );
+} );
+
+describe( 'isSiteComingSoonV2()', () => {
+	test( 'should fall back to settings state', () => {
+		const isComingSoonV2 = isSiteComingSoonV2(
+			{
+				sites: {
+					items: {},
+				},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_public_coming_soon: 1,
+							blog_public: 0,
+						},
+					},
+				},
+			},
+			2916284
+		);
+
+		expect( isComingSoonV2 ).toBe( true );
+
+		const isNotComingSoonV2 = isSiteComingSoonV2(
+			{
+				sites: {
+					items: {},
+				},
+				siteSettings: {
+					items: {
+						2916284: {
+							wpcom_public_coming_soon: 0,
+							blog_public: -1,
+						},
+					},
+				},
+			},
+			2916284
+		);
+		expect( isNotComingSoonV2 ).toBe( false );
 	} );
 } );
