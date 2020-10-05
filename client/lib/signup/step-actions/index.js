@@ -389,8 +389,7 @@ export function addItemsToCart(
 ) {
 	const { cartItems } = stepProvidedItems;
 	if ( isEmpty( cartItems ) ) {
-		defer( callback );
-		return;
+		return defer( () => callback( undefined, stepProvidedDependencies ) );
 	}
 	const slug = siteSlug || dependencies.siteSlug;
 	const newCartItems = cartItems.filter( ( item ) => item );
