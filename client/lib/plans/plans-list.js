@@ -1359,6 +1359,10 @@ export const PLANS_LIST = {
 		// Features not displayed but used for checking plan abilities
 		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 		getInferiorHiddenFeatures: () => [],
+		getAudience: () => i18n.translate( 'Best for P2ers' ),
+		getBlogAudience: () => i18n.translate( 'Best for P2ers' ),
+		getPortfolioAudience: () => i18n.translate( 'Best for P2ers' ),
+		getStoreAudience: () => i18n.translate( 'Best for P2ers' ),
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ), //TODO: only for P2 sites.
 		getProductId: () => 1040,
