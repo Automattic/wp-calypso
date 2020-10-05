@@ -42,7 +42,6 @@ import { waitForData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
-import Experiment, { DefaultVariation, Variation } from 'components/experiment';
 import user from 'lib/user';
 
 /**
@@ -96,7 +95,6 @@ export default {
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-plan-first' ) >= 0 ||
 			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
@@ -290,45 +288,6 @@ export default {
 
 		if ( flowName !== 'launch-site' ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
-		}
-
-		if ( flowName === 'onboarding' || flowName === 'onboarding-plan-first' ) {
-			context.primary = (
-				<Experiment name="signup_domain_plan_step_swap">
-					<DefaultVariation>
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName={ flowName }
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</DefaultVariation>
-					<Variation name="variant_plans_first">
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName="onboarding-plan-first"
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</Variation>
-				</Experiment>
-			);
-
-			next();
 		}
 
 		context.primary = React.createElement( SignupComponent, {

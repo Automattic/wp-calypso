@@ -61,7 +61,6 @@ class DomainSuggestion extends React.Component {
 				salePrice={ salePrice }
 				rule={ priceRule }
 				isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
-				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 			/>
 		);
 	}

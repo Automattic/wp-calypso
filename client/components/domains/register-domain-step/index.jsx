@@ -1165,8 +1165,6 @@ class RegisterDomainStep extends React.Component {
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
-						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 						isReskinned={ this.props.isReskinned }
 					/>
 				);
@@ -1309,71 +1307,54 @@ class RegisterDomainStep extends React.Component {
 				? this.goToTransferDomainStep
 				: this.goToUseYourDomainStep;
 
-		const domainForwardingExplainer =
-			'Domains purchased on a free site will get redirected to your WordPress.com address. You can always upgrade ' +
-			'to a paid plan later and fully use your domain name, instead of having WordPress.com in your URL.';
-
-		const renderCustomDomainForFreePlanExplainer = this.props.shouldHideFreeDomainExplainer && (
-			<Notice text={ domainForwardingExplainer } showDismiss={ false } />
-		);
-
-		const shouldHideFreeDomainExplainer =
-			this.props.selectedFreePlanInSwapFlow || this.props.selectedPaidPlanInSwapFlow;
-
 		return (
-			<>
-				{ renderCustomDomainForFreePlanExplainer }
-				<DomainSearchResults
-					key="domain-search-results" // key is required for CSS transition of content/
-					availableDomain={ availableDomain }
-					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					isDomainOnly={ this.props.isDomainOnly }
-					lastDomainSearched={ lastDomainSearched }
-					lastDomainStatus={ lastDomainStatus }
-					lastDomainIsTransferrable={ lastDomainIsTransferrable }
-					onAddMapping={ onAddMapping }
-					onClickResult={ this.onAddDomain }
-					onClickMapping={ this.goToMapDomainStep }
-					onAddTransfer={ this.props.onAddTransfer }
-					onClickTransfer={ this.goToTransferDomainStep }
-					onClickUseYourDomain={ useYourDomainFunction }
-					tracksButtonClickSource="exact-match-top"
-					suggestions={ suggestions }
-					premiumDomains={ premiumDomains }
-					isLoadingSuggestions={ this.state.loadingResults }
-					products={ this.props.products }
-					selectedSite={ this.props.selectedSite }
-					offerUnavailableOption={ this.props.offerUnavailableOption }
-					placeholderQuantity={ PAGE_SIZE }
-					isSignupStep={ this.props.isSignupStep }
-					railcarId={ this.state.railcarId }
-					fetchAlgo={ this.getFetchAlgo() }
-					cart={ this.props.cart }
-					pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
-					unavailableDomains={ this.state.unavailableDomains }
-					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
-					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
-				>
-					{ this.props.isEligibleVariantForDomainTest &&
-						hasResults &&
-						! shouldHideFreeDomainExplainer &&
-						this.renderFreeDomainExplainer() }
+			<DomainSearchResults
+				key="domain-search-results" // key is required for CSS transition of content/
+				availableDomain={ availableDomain }
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+				isDomainOnly={ this.props.isDomainOnly }
+				lastDomainSearched={ lastDomainSearched }
+				lastDomainStatus={ lastDomainStatus }
+				lastDomainIsTransferrable={ lastDomainIsTransferrable }
+				onAddMapping={ onAddMapping }
+				onClickResult={ this.onAddDomain }
+				onClickMapping={ this.goToMapDomainStep }
+				onAddTransfer={ this.props.onAddTransfer }
+				onClickTransfer={ this.goToTransferDomainStep }
+				onClickUseYourDomain={ useYourDomainFunction }
+				tracksButtonClickSource="exact-match-top"
+				suggestions={ suggestions }
+				premiumDomains={ premiumDomains }
+				isLoadingSuggestions={ this.state.loadingResults }
+				products={ this.props.products }
+				selectedSite={ this.props.selectedSite }
+				offerUnavailableOption={ this.props.offerUnavailableOption }
+				placeholderQuantity={ PAGE_SIZE }
+				isSignupStep={ this.props.isSignupStep }
+				railcarId={ this.state.railcarId }
+				fetchAlgo={ this.getFetchAlgo() }
+				cart={ this.props.cart }
+				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
+				unavailableDomains={ this.state.unavailableDomains }
+				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
+			>
+				{ this.props.isEligibleVariantForDomainTest &&
+					hasResults &&
+					this.renderFreeDomainExplainer() }
 
-					{ showTldFilterBar && (
-						<TldFilterBar
-							availableTlds={ this.state.availableTlds }
-							filters={ this.state.filters }
-							isSignupStep={ this.props.isSignupStep }
-							lastFilters={ this.state.lastFilters }
-							onChange={ this.onFiltersChange }
-							onReset={ this.onFiltersReset }
-							onSubmit={ this.onFiltersSubmit }
-							showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-						/>
-					) }
-				</DomainSearchResults>
-			</>
+				{ showTldFilterBar && (
+					<TldFilterBar
+						availableTlds={ this.state.availableTlds }
+						filters={ this.state.filters }
+						isSignupStep={ this.props.isSignupStep }
+						lastFilters={ this.state.lastFilters }
+						onChange={ this.onFiltersChange }
+						onReset={ this.onFiltersReset }
+						onSubmit={ this.onFiltersSubmit }
+						showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+					/>
+				) }
+			</DomainSearchResults>
 		);
 	}
 

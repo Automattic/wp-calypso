@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import cookie from 'cookie';
 import { filter, find, includes, indexOf, isEmpty, pick, sortBy } from 'lodash';
 import { translate } from 'i18n-calypso';
 
@@ -11,37 +10,13 @@ import { translate } from 'i18n-calypso';
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import user from 'lib/user';
-import { abtest } from 'lib/abtest';
 
 const { defaultFlowName } = flows;
-
-function isEligibleForSwapStepsTest() {
-	const cookies = cookie.parse( document.cookie );
-	const countryCodeFromCookie = cookies.country_code;
-	const isUserFromUS = 'US' === countryCodeFromCookie;
-
-	if ( user() && user().get() && isUserFromUS && 'onboarding' === defaultFlowName ) {
-		return true;
-	}
-
-	return false;
-}
-
-function getDefaultFlowName() {
-	if (
-		isEligibleForSwapStepsTest() &&
-		'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
-	) {
-		return 'onboarding-plan-first';
-	}
-
-	return defaultFlowName;
-}
 
 export function getFlowName( parameters ) {
 	return parameters.flowName && isFlowName( parameters.flowName )
 		? parameters.flowName
-		: getDefaultFlowName();
+		: defaultFlowName;
 }
 
 function isFlowName( pathFragment ) {
