@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -34,6 +34,8 @@ interface PlanColumnType {
 }
 
 const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumnType ) => {
+	const translate = useTranslate();
+
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
@@ -61,7 +63,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 			)
 			.map( ( product: SelectorProduct ) => ( {
 				...product,
-				description: getJetpackDescriptionWithOptions( product ),
+				description: getJetpackDescriptionWithOptions( product, translate ),
 			} ) );
 
 		// If the user owns a plan, get it and insert it on the top of the plan array.

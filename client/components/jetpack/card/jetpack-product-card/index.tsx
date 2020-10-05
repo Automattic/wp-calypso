@@ -81,6 +81,7 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	isDeprecated,
 	expiryDate,
 	features,
+	moreFeatures,
 	isExpanded,
 	UpgradeNudge,
 	hidePrice,
@@ -210,8 +211,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 			</div>
 			{ features && features.items.length > 0 && (
 				<JetpackProductCardFeatures
-					features={ features }
 					productSlug={ productSlug }
+					features={ features }
+					moreFeatures={ moreFeatures }
 					isExpanded={ isExpanded }
 				/>
 			) }

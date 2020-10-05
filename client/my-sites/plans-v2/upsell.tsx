@@ -25,14 +25,16 @@ import QueryProducts from './query-products';
 import useIsLoading from './use-is-loading';
 import useItemPrice from './use-item-price';
 import {
+	checkout,
 	durationToString,
 	durationToText,
+	getMoreFeaturesLink,
 	getOptionFromSlug,
 	getProductUpsell,
 	getPathToSelector,
 	getPathToDetails,
+	getSelectorProductCopy,
 	slugToSelectorProduct,
-	checkout,
 } from './utils';
 import withRedirectToSelector from './with-redirect-to-selector';
 
@@ -80,9 +82,10 @@ const UpsellComponent = ( {
 		upsellProduct.monthlyProductSlug || ''
 	);
 
-	const { shortName: mainProductName } = mainProduct;
-	const { shortName: upsellProductName, productSlug: upsellSlug } = upsellProduct;
+	const mainProductCopy = getSelectorProductCopy( mainProduct.productSlug, translate );
+	const upsellProductCopy = getSelectorProductCopy( upsellProduct.productSlug, translate );
 
+	const upsellSlug = upsellProduct.productSlug;
 	const isScanProduct = useMemo(
 		() => JETPACK_SCAN_PRODUCTS.some( ( slug ) => slug === upsellSlug ),
 		[ upsellSlug ]
@@ -109,7 +112,7 @@ const UpsellComponent = ( {
 						headerText={ preventWidows(
 							translate( 'Would you like to add {{name/}}?', {
 								components: {
-									name: <>{ upsellProductName }</>,
+									name: <>{ upsellProductCopy.shortName }</>,
 								},
 								comment:
 									'{{name/}} is the name of a product such as Jetpack Scan or Jetpack Backup',
@@ -130,8 +133,8 @@ const UpsellComponent = ( {
 											'Combine {{mainName/}} and {{upsellName/}} to give your site comprehensive protection from malware and other threats.',
 											{
 												components: {
-													mainName: <>{ mainProductName }</>,
-													upsellName: <>{ upsellProductName }</>,
+													mainName: <>{ mainProductCopy.shortName }</>,
+													upsellName: <>{ upsellProductCopy.shortName }</>,
 												},
 												comment:
 													"{{mainName/}} refers to the product the customer is purchasing (Backup in that case), {{upsellName/}} to the product we're upselling (Scan in that case)",
@@ -141,8 +144,8 @@ const UpsellComponent = ( {
 											'Combine {{mainName/}} and {{upsellName/}} to be able to save every change and restore your site in one click.',
 											{
 												components: {
-													mainName: <>{ mainProductName }</>,
-													upsellName: <>{ upsellProductName }</>,
+													mainName: <>{ mainProductCopy.shortName }</>,
+													upsellName: <>{ upsellProductCopy.shortName }</>,
 												},
 												comment:
 													"{{mainName/}} refers to the product the customer is purchasing (Scan in that case), {{upsellName/}} to the product we're upselling (Backup in that case)",
@@ -159,25 +162,26 @@ const UpsellComponent = ( {
 				<div className="upsell__product-card">
 					<JetpackProductCard
 						iconSlug={ upsellProduct.iconSlug }
-						productName={ upsellProduct.displayName }
-						subheadline={ upsellProduct.tagline }
-						description={ upsellProduct.description }
+						productName={ upsellProductCopy.displayName }
+						subheadline={ upsellProductCopy.tagline }
+						description={ upsellProductCopy.description }
 						currencyCode={ currencyCode }
-						billingTimeFrame={ durationToText( upsellProduct.term ) }
+						billingTimeFrame={ durationToText( upsellProduct.term, translate ) }
 						buttonLabel={ translate( 'Yes, add {{name/}}', {
 							components: {
-								name: <>{ upsellProductName }</>,
+								name: <>{ upsellProductCopy.shortName }</>,
 							},
 							comment:
 								'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
 						} ) }
 						features={ upsellProduct.features }
+						moreFeatures={ getMoreFeaturesLink( upsellProduct.productSlug, translate ) }
 						discountedPrice={ discountedPrice }
 						originalPrice={ originalPrice }
 						onButtonClick={ onPurchaseBothProducts }
 						cancelLabel={ translate( 'No, I do not want {{name/}}', {
 							components: {
-								name: <>{ upsellProductName }</>,
+								name: <>{ upsellProductCopy.shortName }</>,
 							},
 							comment:
 								'{{name/}} refers to a name of a product such as Jetpack Backup or Jetpack Scan',
