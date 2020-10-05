@@ -36,7 +36,6 @@ import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import {
@@ -300,9 +299,7 @@ export class SeoForm extends React.Component {
 		const generalTabUrl = getGeneralTabUrl( slug );
 
 		const nudgeTitle = siteIsJetpack
-			? translate(
-					'Boost your search engine ranking with the powerful SEO tools in Jetpack Premium'
-			  )
+			? translate( 'Boost your search engine ranking' )
 			: translate(
 					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
 			  );
@@ -353,11 +350,10 @@ export class SeoForm extends React.Component {
 
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature &&
-					selectedSite.plan &&
-					! shouldShowOfferResetFlow() && (
+					selectedSite.plan && (
 						<UpsellNudge
 							description={ translate(
-								'Get tools to optimize your site for improved performance in search engine results.'
+								'Get tools to optimize your site for improved search engine results.'
 							) }
 							event={ 'calypso_seo_settings_upgrade_nudge' }
 							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
