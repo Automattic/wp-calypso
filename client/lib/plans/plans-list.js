@@ -1336,6 +1336,35 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
 	},
+
+	[ constants.PLAN_P2_PLUS ]: {
+		group: constants.GROUP_WPCOM,
+		type: constants.TYPE_BLOGGER, //TODO: what is this used for?
+		getTitle: () => i18n.translate( 'P2+' ),
+		getDescription: () => i18n.translate( 'Some long description' ),
+		getShortDescription: () => i18n.translate( 'Some short description' ),
+		getPlanCompareFeatures: () => [
+			// pay attention to ordering, shared features should align on /plan page
+			constants.FEATURE_EMAIL_SUPPORT,
+			constants.FEATURE_BASIC_DESIGN,
+			constants.FEATURE_13GB_STORAGE,
+			constants.FEATURE_NO_ADS,
+		],
+		getSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
+		getBlogSignupFeatures: () => [
+			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+			constants.FEATURE_ALL_FREE_FEATURES,
+		],
+		getPortfolioSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
+		// Features not displayed but used for checking plan abilities
+		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+		getInferiorHiddenFeatures: () => [],
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ), //TODO: only for P2 sites.
+		getProductId: () => 1040,
+		getStoreSlug: () => constants.PLAN_P2_PLUS,
+		getPathSlug: () => 'p2-plus',
+	},
 };
 
 export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );
