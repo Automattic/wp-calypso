@@ -84,6 +84,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="image"
+							label="Illustrations"
+							link="/devdocs/illustrations"
+							selected={ this.isItemSelected( '/devdocs/illustrations' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="globe"
 							label="Internationalization"
 							link="/devdocs/docs/i18n.md"
