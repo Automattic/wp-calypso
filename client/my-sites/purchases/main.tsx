@@ -142,9 +142,11 @@ export function PurchaseAddPaymentMethod( {
 export function PurchaseEditPaymentMethod( {
 	purchaseId,
 	siteSlug,
+	cardId,
 }: {
 	purchaseId: number;
 	siteSlug: string;
+	cardId: string;
 } ) {
 	const translate = useTranslate();
 
@@ -159,6 +161,7 @@ export function PurchaseEditPaymentMethod( {
 			/>
 
 			<EditCardDetails
+				cardId={ cardId }
 				purchaseId={ purchaseId }
 				siteSlug={ siteSlug }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
