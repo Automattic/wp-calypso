@@ -24,7 +24,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { checkout } from 'calypso/my-sites/plans-v2/utils';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
@@ -70,7 +69,7 @@ const SpamFilteringSettings = ( {
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
 				showIcon={ true }
-				onClick={ () => checkout( siteSlug, PRODUCT_JETPACK_ANTI_SPAM ) }
+				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }
 			/>
 		);
 	}
