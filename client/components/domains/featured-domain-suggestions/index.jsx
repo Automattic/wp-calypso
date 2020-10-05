@@ -42,8 +42,6 @@ export class FeaturedDomainSuggestions extends Component {
 			'selectedSite',
 			'pendingCheckSuggestion',
 			'unavailableDomains',
-			'selectedFreePlanInSwapFlow',
-			'selectedPaidPlanInSwapFlow',
 		];
 		return pick( this.props, childKeys );
 	}

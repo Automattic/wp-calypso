@@ -65,6 +65,8 @@ import './style.scss';
 
 
 
+
+
 class DomainsStep extends React.Component {
 	static propTypes = {
 		forceDesignType: PropTypes.string,
