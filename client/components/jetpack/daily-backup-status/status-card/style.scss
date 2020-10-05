@@ -52,6 +52,7 @@
 	font-size: $font-body-small;
 }
 
+<<<<<<< HEAD
 .status-card__link-list {
 	margin: 40px 0 0;
 	padding: 0;
@@ -63,6 +64,8 @@
 	}
 }
 
+=======
+>>>>>>> Upgrade Backup successful screen
 /* Buttons */
 .daily-backup-status .form-button.status-card__support-button {
 	margin: 32px 0;
@@ -78,6 +81,10 @@
 .status-card__realtime-details {
 	margin-top: 24px;
 	text-align: left;
+
+	&.is-simplified {
+		margin-top: 48px;
+	}
 }
 
 .status-card__realtime-details-card .activity-card .card {

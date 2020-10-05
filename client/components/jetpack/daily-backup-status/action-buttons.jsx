@@ -1,21 +1,22 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { useTranslate } from 'i18n-calypso';
+import { isEnabled } from 'config';
+import ExternalLink from 'components/external-link';
+import Button from 'components/forms/form-button';
 import { settingsPath } from 'lib/jetpack/paths';
 import { backupDownloadPath, backupRestorePath } from 'my-sites/backup/paths';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
-import Button from 'components/forms/form-button';
-import ExternalLink from 'components/external-link';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Style dependencies
@@ -69,7 +70,9 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 			onClick={ onRestore }
 		>
 			<div className="daily-backup-status__restore-button-icon">
-				{ needsCredentials && <img src={ missingCredentialsIcon } alt="" role="presentation" /> }
+				{ needsCredentials && ! isEnabled( 'jetpack/backup-simplified-screens' ) && (
+					<img src={ missingCredentialsIcon } alt="" role="presentation" />
+				) }
 				<div>{ translate( 'Restore to this point' ) }</div>
 			</div>
 		</Button>
@@ -131,7 +134,9 @@ const ActionButtons = ( { rewindId, disabled } ) => {
 		<>
 			<DownloadButton disabled={ disabled || ! rewindId } rewindId={ rewindId } />
 			<RestoreButton disabled={ disabled || ! rewindId } rewindId={ rewindId } />
-			{ ! hasCredentials && <MissingCredentials /> }
+			{ ! hasCredentials && ! isEnabled( 'jetpack/backup-simplified-screens' ) && (
+				<MissingCredentials />
+			) }
 		</>
 	);
 };
