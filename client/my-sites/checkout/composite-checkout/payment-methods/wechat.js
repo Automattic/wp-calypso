@@ -28,7 +28,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'my-sites/checkout/composite-checkout/components/summary-details';
-import WeChatPaymentQRcode from 'my-sites/checkout/checkout/wechat-payment-qrcode';
+import WeChatPaymentQRcodeUnstyled from 'my-sites/checkout/checkout/wechat-payment-qrcode';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 import userAgent from 'lib/user-agent';
 
@@ -162,7 +162,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 
 	if ( transactionStatus === 'authorizing' ) {
 		return (
-			<WeChatPaymentQRcodeUI
+			<WeChatPaymentQRcode
 				orderId={ transactionLastResponse.order_id }
 				cart={ cart }
 				redirectUrl={ transactionLastResponse.redirect_url }
@@ -221,7 +221,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 	);
 }
 
-const WeChatPaymentQRcodeUI = styled( WeChatPaymentQRcode )`
+const WeChatPaymentQRcode = styled( WeChatPaymentQRcodeUnstyled )`
 	background-color: #fff;
 	margin: -24px;
 	padding: 24px;

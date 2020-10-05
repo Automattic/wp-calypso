@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
+import CountrySpecificPaymentFieldsUnstyled from 'my-sites/checkout/checkout/country-specific-payment-fields';
 
 export type CountrySpecificPaymentFieldsProps = {
 	countryCode: string;
@@ -18,8 +18,8 @@ export type CountrySpecificPaymentFieldsProps = {
 	disableFields: boolean;
 };
 
-const CountrySpecificPaymentFieldsUI: FunctionComponent< CountrySpecificPaymentFieldsProps > = styled(
-	CountrySpecificPaymentFields
+const CountrySpecificPaymentFields: FunctionComponent< CountrySpecificPaymentFieldsProps > = styled(
+	CountrySpecificPaymentFieldsUnstyled
 )`
 	margin-top: 0;
 
@@ -52,4 +52,4 @@ const CountrySpecificPaymentFieldsUI: FunctionComponent< CountrySpecificPaymentF
 	}
 `;
 
-export default CountrySpecificPaymentFieldsUI;
+export default CountrySpecificPaymentFields;

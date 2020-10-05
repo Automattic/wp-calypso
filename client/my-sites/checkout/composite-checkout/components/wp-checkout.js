@@ -10,7 +10,7 @@ import {
 	CheckoutStepArea,
 	CheckoutSteps,
 	CheckoutStepBody,
-	CheckoutSummaryArea,
+	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
 	useDispatch,
 	useEvents,
@@ -35,7 +35,7 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import { isCompleteAndValid } from '../types/wpcom-store-state';
-import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
+import { WPOrderReviewTotal, WPOrderReviewSection, LineItem } from './wp-order-review-line-items';
 import MaterialIcon from 'components/material-icon';
 import Gridicon from 'components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -280,7 +280,7 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
-			<CheckoutSummaryAreaUI className={ isSummaryVisible ? 'is-visible' : '' }>
+			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
 					<CheckoutSummaryTitle>
 						<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
@@ -295,7 +295,7 @@ export default function WPCheckout( {
 					<WPCheckoutOrderSummary />
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
-			</CheckoutSummaryAreaUI>
+			</CheckoutSummaryArea>
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				disableSubmitButton={ isOrderReviewActive }
@@ -415,7 +415,7 @@ export default function WPCheckout( {
 	);
 }
 
-const CheckoutSummaryAreaUI = styled( CheckoutSummaryArea )`
+const CheckoutSummaryArea = styled( CheckoutSummaryAreaUnstyled )`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		position: relative;
 	}
@@ -514,14 +514,14 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 		<>
 			{ paymentMethodStep.activeStepContent }
 
-			<CheckoutTermsUI>
+			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsUI>
+			</CheckoutTermsWrapper>
 
 			<WPOrderReviewSection>
-				{ subtotal && <LineItemUI subtotal item={ subtotal } /> }
+				{ subtotal && <LineItem subtotal item={ subtotal } /> }
 				{ taxes.map( ( tax ) => (
-					<LineItemUI tax key={ tax.id } item={ tax } />
+					<LineItem tax key={ tax.id } item={ tax } />
 				) ) }
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
@@ -529,7 +529,7 @@ function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
 	);
 }
 
-const CheckoutTermsUI = styled.div`
+const CheckoutTermsWrapper = styled.div`
 	& > * {
 		margin: 16px 0 16px -24px;
 		padding-left: 24px;
@@ -584,17 +584,17 @@ function SubmitButtonHeader() {
 	const scrollToTOS = () => document.getElementById( 'checkout-terms' ).scrollIntoView();
 
 	return (
-		<SubmitButtonHeaderUI>
+		<SubmitButtonHeaderWrapper>
 			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
 				components: {
 					button: <button onClick={ scrollToTOS } />,
 				},
 			} ) }
-		</SubmitButtonHeaderUI>
+		</SubmitButtonHeaderWrapper>
 	);
 }
 
-const SubmitButtonHeaderUI = styled.div`
+const SubmitButtonHeaderWrapper = styled.div`
 	display: none;
 	font-size: 13px;
 	margin-top: -5px;

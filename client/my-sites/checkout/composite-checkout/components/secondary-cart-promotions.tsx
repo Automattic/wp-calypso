@@ -43,16 +43,16 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, ad
 		selectedSiteId
 	) {
 		return (
-			<UpsellWrapperUI>
+			<UpsellWrapper>
 				<UpcomingRenewalsReminder cart={ mockCart } addItemToCart={ addItemToCart } />
-			</UpsellWrapperUI>
+			</UpsellWrapper>
 		);
 	}
 
 	return (
-		<UpsellWrapperUI>
+		<UpsellWrapper>
 			<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
-		</UpsellWrapperUI>
+		</UpsellWrapper>
 	);
 };
 
@@ -61,7 +61,7 @@ export default SecondaryCartPromotions;
 type DivProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
-const UpsellWrapperUI = styled.div< DivProps >`
+const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

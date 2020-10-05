@@ -9,7 +9,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
  */
 import useCountryList from 'my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
-import CountrySpecificPaymentFieldsUI from '../../components/country-specific-payment-fields-ui';
+import CountrySpecificPaymentFields from '../../components/country-specific-payment-fields';
 
 export default function ContactFields( {
 	getFieldValue,
@@ -23,7 +23,7 @@ export default function ContactFields( {
 	return (
 		<div className="contact-fields">
 			{ shouldRenderAdditionalCountryFields( getFieldValue( 'countryCode' ) ) && (
-				<CountrySpecificPaymentFieldsUI
+				<CountrySpecificPaymentFields
 					countryCode={ getFieldValue( 'countryCode' ) }
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
