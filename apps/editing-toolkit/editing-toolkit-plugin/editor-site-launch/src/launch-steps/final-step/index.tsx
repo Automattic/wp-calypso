@@ -16,9 +16,9 @@ import {
 	checkoutTheme,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
-	MainContentUI,
-	CheckoutStepAreaUI,
-	SubmitButtonWrapperUI,
+	MainContentWrapper,
+	CheckoutStepAreaWrapper,
+	SubmitButtonWrapper,
 } from '@automattic/composite-checkout';
 
 /**
@@ -141,7 +141,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 			</div>
 			<div className="nux-launch-step__body">
 				<ThemeProvider theme={ checkoutTheme }>
-					<MainContentUI>
+					<MainContentWrapper>
 						{ isStepCompleted( LaunchStep.Plan ) && (
 							<CheckoutSummaryArea>
 								<CheckoutSummaryCard className="nux-launch__feature-list">
@@ -164,7 +164,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								</CheckoutSummaryCard>
 							</CheckoutSummaryArea>
 						) }
-						<CheckoutStepAreaUI>
+						<CheckoutStepAreaWrapper>
 							<CheckoutStepBody
 								titleContent={ __( 'Your site name', 'full-site-editing' ) }
 								isStepComplete={ isStepCompleted( LaunchStep.Name ) }
@@ -189,7 +189,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								stepId="plan"
 								formStatus="ready"
 							/>
-							<SubmitButtonWrapperUI>
+							<SubmitButtonWrapper>
 								<Button
 									isPrimary
 									disabled={ ! isFlowCompleted }
@@ -198,9 +198,9 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								>
 									{ __( 'Launch your site', 'full-site-editing' ) }
 								</Button>
-							</SubmitButtonWrapperUI>
-						</CheckoutStepAreaUI>
-					</MainContentUI>
+							</SubmitButtonWrapper>
+						</CheckoutStepAreaWrapper>
+					</MainContentWrapper>
 				</ThemeProvider>
 			</div>
 		</LaunchStepContainer>
