@@ -15,38 +15,68 @@ export default function LoadingContent() {
 
 	return (
 		<LoadingContentWrapperUI>
-			<LoadingCard>
-				<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
-				<LoadingCopy />
-				<LoadingCopy />
-			</LoadingCard>
-			<LoadingCard>
-				<LoadingTitle />
-				<LoadingCopy />
-				<LoadingCopy />
-			</LoadingCard>
-			<LoadingCard>
-				<LoadingTitle />
-			</LoadingCard>
-			<LoadingCard>
-				<LoadingTitle />
-			</LoadingCard>
-			<LoadingFooter />
+			<LoadingContentUI>
+				<LoadingCard>
+					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingFooter />
+			</LoadingContentUI>
+
+			<LoadingSideBarUI>
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+			</LoadingSideBarUI>
 		</LoadingContentWrapperUI>
 	);
 }
 
 const LoadingContentWrapperUI = styled.div`
+	display: flex;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		align-items: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		width: 100%;
+	}
+`;
+
+const LoadingContentUI = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	width: 100%;
-	box-sizing: border-box;
-	margin-bottom: 0;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		margin: 32px auto;
-		box-sizing: border-box;
 		max-width: 556px;
+	}
+`;
+
+const LoadingSideBarUI = styled.div`
+	display: none;
+	width: 100%;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		display: block;
+		padding: 24px;
+		box-sizing: border-box;
+		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		max-width: 328px;
+		background: ${ ( props ) => props.theme.colors.surface };
+		margin-left: 24px;
 	}
 `;
 
@@ -120,6 +150,17 @@ const LoadingCopy = styled.p`
 	.rtl & {
 		margin: 8px 35px 0 0;
 	}
+`;
+
+const SideBarLoadingCopy = styled.p`
+	font-size: 14px;
+	height: 16px;
+	content: '';
+	background: ${ ( props ) => props.theme.colors.borderColorLight };
+	color: ${ ( props ) => props.theme.colors.borderColorLight };
+	margin: 8px 0 0 0;
+	padding: 0;
+	animation: ${ pulse } 2s ease-in-out infinite;
 `;
 
 const LoadingFooter = styled.div`

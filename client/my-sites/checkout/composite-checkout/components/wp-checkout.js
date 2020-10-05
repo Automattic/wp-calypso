@@ -503,6 +503,7 @@ const CheckoutSummaryBody = styled.div`
 		display: block;
 		max-width: 328px;
 		position: fixed;
+		width: 100%;
 	}
 `;
 
