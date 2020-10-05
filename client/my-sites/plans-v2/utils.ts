@@ -594,7 +594,7 @@ export function getAllOptionsFromSlug( slug: string ): string[] {
 export function checkout(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs
+	urlQueryArgs: QueryArgs = {}
 ): void {
 	const productsArray = isArray( products ) ? products : [ products ];
 
