@@ -1,9 +1,10 @@
-.edit-post-status__sticky,
-.edit-post-status__pending-review {
+.edit-post-status__sticky.form-label,
+.edit-post-status__pending-review.form-label {
 	align-content: center;
 	display: flex;
 	justify-content: space-between;
 	margin: 8px 0;
+	font-weight: 400;
 
 	.gridicon {
 		margin-top: 2px;
