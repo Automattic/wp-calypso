@@ -193,7 +193,7 @@ function getNewSiteParams( {
 	};
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
-		newSiteParams.options.wpcom_public_coming_soon = getNewSiteComingSoonSettingV2( state );
+		newSiteParams.options.wpcom_public_coming_soon = getNewSiteComingSoonSettingV2();
 		newSiteParams.public =
 			newSiteParams.options.wpcom_public_coming_soon === 1 ? 0 : newSiteParams.public;
 	} else {
@@ -609,7 +609,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	};
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
-		data.options.wpcom_public_coming_soon = getNewSiteComingSoonSettingV2( state );
+		data.options.wpcom_public_coming_soon = getNewSiteComingSoonSettingV2();
 		data.public = data.options.wpcom_public_coming_soon === 1 ? 0 : data.public;
 	} else {
 		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
