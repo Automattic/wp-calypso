@@ -30,24 +30,6 @@ export class SecureYourBrandStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 	}
 
-	onSelectAdd = ( cartItem ) => {
-		const { additionalStepData, stepSectionName, stepName } = this.props;
-
-		this.props.recordTracksEvent( 'calypso_signup_brand_upsell' );
-
-		const step = {
-			stepName,
-			stepSectionName,
-			cartItem,
-			...additionalStepData,
-		};
-
-		this.props.submitSignupStep( step, {
-			cartItem,
-		} );
-		this.props.goToNextStep();
-	};
-
 	getDomainName() {
 		return this.props.domainItem && this.props.domainItem.meta;
 	}
@@ -77,10 +59,11 @@ export class SecureYourBrandStep extends Component {
 		const step = {
 			stepName,
 			stepSectionName,
+			cartItems: null,
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step );
+		this.props.submitSignupStep( step, { cartItems: null } );
 		this.props.goToNextStep();
 	}
 
