@@ -82,7 +82,7 @@ class PostRelativeTime extends React.PureComponent {
 		}
 
 		// If the content is scheduled to be release within a year, do not display the year at the end
-		return timestamp.diff( now, 'years' ) > 0
+		return timestamp.diff( now, 'years' ) !== 0
 			? displayedTime
 			: displayedTime.replace( timestamp.format( 'Y' ), '' );
 	}
