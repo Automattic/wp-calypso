@@ -44,6 +44,7 @@ class DomainSuggestion extends React.Component {
 			price,
 			priceRule,
 			salePrice,
+			isSignupStep,
 			isFreeDomainExplainerVisible,
 		} = this.props;
 
@@ -60,7 +61,7 @@ class DomainSuggestion extends React.Component {
 				price={ price }
 				salePrice={ salePrice }
 				rule={ priceRule }
-				isSignupStep={isSignupStep}
+				isSignupStep={ isSignupStep }
 				isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
 			/>
 		);

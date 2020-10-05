@@ -51,7 +51,7 @@ import { isPlanStepExistsAndSkipped } from 'state/signup/progress/selectors';
 import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
 import { getABTestVariation } from 'lib/abtest';
 import getSitesItems from 'state/selectors/get-sites-items';
-import { getStepModuleName } from 'calypso/signup/config/step-components';
+import { getStepModuleName } from 'signup/config/step-components';
 
 /**
  * Style dependencies

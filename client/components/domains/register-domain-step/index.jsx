@@ -593,14 +593,9 @@ class RegisterDomainStep extends React.Component {
 		const {
 			isPlanSelectionAvailableInFlow = true,
 			forceHideFreeDomainExplainer = false,
-			selectedFreePlanInSwapFlow,
-			selectedPaidPlanInSwapFlow,
 		} = this.props;
 		const isFreeDomainExplainerVisible =
-			! forceHideFreeDomainExplainer &&
-			isPlanSelectionAvailableInFlow &&
-			! selectedFreePlanInSwapFlow &&
-			! selectedPaidPlanInSwapFlow;
+			! forceHideFreeDomainExplainer && isPlanSelectionAvailableInFlow;
 
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
 			return this.renderSearchResults( isFreeDomainExplainerVisible );
@@ -1348,10 +1343,7 @@ class RegisterDomainStep extends React.Component {
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
 			>
-				{ this.props.isSignupStep &&
-					hasResults &&
-					isFreeDomainExplainerVisible &&
-					this.renderFreeDomainExplainer() }
+				{ hasResults && isFreeDomainExplainerVisible && this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar

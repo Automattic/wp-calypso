@@ -1,4 +1,4 @@
-import { getStepModuleName } from 'calypso/signup/config/step-components';
+import { getStepModuleName } from 'signup/config/step-components';
 /**
  * External dependencies
  */

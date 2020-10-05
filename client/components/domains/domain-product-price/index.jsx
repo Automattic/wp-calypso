@@ -35,7 +35,7 @@ class DomainProductPrice extends React.Component {
 	};
 
 	renderFreeWithPlanText() {
-		const { isMappingProduct, isFreeDomainExplainerVisible, isSignupStep, translate } = this.props;
+		const { isMappingProduct, isFreeDomainExplainerVisible, translate } = this.props;
 
 		let message;
 		switch ( this.props.rule ) {
@@ -46,7 +46,7 @@ class DomainProductPrice extends React.Component {
 				}
 				break;
 			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( isSignupStep ) {
+				if ( isFreeDomainExplainerVisible ) {
 					message = translate( 'Registration fee: {{del}}%(cost)s{{/del}} {{span}}Free{{/span}}', {
 						args: { cost: this.props.price },
 						components: {
