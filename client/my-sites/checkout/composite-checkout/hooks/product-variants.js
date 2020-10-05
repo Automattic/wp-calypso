@@ -25,7 +25,7 @@ import { myFormatCurrency } from 'blocks/subscription-length-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
-export function useProductVariants( { siteId, productSlug, credits, couponDiscounts } ) {
+export function useProductVariants( { siteId, productSlug } ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
@@ -36,8 +36,8 @@ export function useProductVariants( { siteId, productSlug, credits, couponDiscou
 			state,
 			siteId,
 			variantProductSlugs, // : WPCOMProductSlug[]
-			credits || 0, // : number
-			couponDiscounts || {} // object of product ID / absolute amount pairs
+			0, // coupon: number
+			{} // couponDiscounts: object of product ID / absolute amount pairs
 		);
 	} );
 

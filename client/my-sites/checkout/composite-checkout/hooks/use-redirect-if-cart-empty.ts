@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import page from 'page';
 import debugFactory from 'debug';
 
@@ -19,8 +19,13 @@ export default function useRedirectIfCartEmpty< T >(
 	errors: string[],
 	createUserAndSiteBeforeTransaction: boolean
 ) {
+	const didRedirect = useRef< boolean >( false );
 	useEffect( () => {
+		if ( didRedirect.current ) {
+			return;
+		}
 		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
+			didRedirect.current = true;
 			debug( 'cart is empty and not still loading; redirecting...' );
 
 			debug( 'Before redirect, first clear redirect url cookie' );
