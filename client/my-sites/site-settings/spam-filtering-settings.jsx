@@ -24,12 +24,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_SECURITY_DAILY,
 } from 'calypso/lib/plans/constants';
 
 const SpamFilteringSettings = ( {
@@ -59,19 +58,16 @@ const SpamFilteringSettings = ( {
 		className,
 		header = null;
 
-	if (
-		! shouldShowOfferResetFlow() &&
-		! inTransition &&
-		! ( hasAkismetFeature || hasAntiSpam ) &&
-		! isValidKey
-	) {
+	if ( ! inTransition && ! ( hasAkismetFeature || hasAntiSpam ) && ! isValidKey ) {
 		return (
 			<UpsellNudge
-				description={ translate( 'Automatically remove spam from comments and contact forms.' ) }
+				description={ translate(
+					'Save time, get more responses, give your visitors a better experience - all without lifting a finger.'
+				) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
-				plan={ PLAN_JETPACK_PERSONAL }
-				title={ translate( 'Defend your site against spam! Upgrade to Jetpack Personal.' ) }
+				plan={ PLAN_JETPACK_SECURITY_DAILY }
+				title={ translate( 'Automatically clear spam from comments and forms' ) }
 				showIcon={ true }
 			/>
 		);
