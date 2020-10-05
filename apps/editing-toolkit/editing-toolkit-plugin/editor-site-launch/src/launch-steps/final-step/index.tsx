@@ -19,6 +19,7 @@ import {
 	MainContentWrapper,
 	CheckoutStepAreaWrapper,
 	SubmitButtonWrapper,
+	FormStatus,
 } from '@automattic/composite-checkout';
 
 /**
@@ -171,7 +172,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								goToThisStep={ () => setStep( LaunchStep.Name ) }
 								completeStepContent={ nameSummary }
 								stepId="name"
-								formStatus="ready"
+								formStatus={ FormStatus.READY }
 							/>
 							<CheckoutStepBody
 								titleContent={ __( 'Your domain', 'full-site-editing' ) }
@@ -179,7 +180,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								goToThisStep={ () => setStep( LaunchStep.Domain ) }
 								completeStepContent={ domainSummary }
 								stepId="domain"
-								formStatus="ready"
+								formStatus={ FormStatus.READY }
 							/>
 							<CheckoutStepBody
 								titleContent={ __( 'Your plan', 'full-site-editing' ) }
@@ -187,7 +188,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								goToThisStep={ () => setStep( LaunchStep.Plan ) }
 								completeStepContent={ planSummary }
 								stepId="plan"
-								formStatus="ready"
+								formStatus={ FormStatus.READY }
 							/>
 							<SubmitButtonWrapper>
 								<Button
