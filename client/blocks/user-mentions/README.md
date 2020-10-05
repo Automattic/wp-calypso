@@ -8,10 +8,11 @@ It also provides the components `UserMentionsSuggestionList` and `UserMentionsSu
 ## How to use
 
 ```js
+import FormTextarea from 'components/forms/form-textarea';
 import withUserMentions from 'blocks/user-mentions';
 
 const ExampleInput = React.forwardRef( ( props, ref ) => (
-	<textarea ref={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />
+	<FormTextarea forwardedRef={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />
 ) );
 
 export default withUserMentions( ExampleInput );
