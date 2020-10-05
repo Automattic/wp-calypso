@@ -80,7 +80,6 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
-					use_patterns: true,
 				} );
 				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
 					url = addQueryArgs( url, {
