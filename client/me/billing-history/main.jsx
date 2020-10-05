@@ -23,10 +23,10 @@ import QueryBillingTransactions from 'components/data/query-billing-transactions
  */
 import './style.scss';
 
-export function BillingHistoryList() {
+export function BillingHistoryList( { siteId = null } ) {
 	return (
 		<Card className="billing-history__receipts">
-			<BillingHistoryTable />
+			<BillingHistoryTable siteId={ siteId } />
 		</Card>
 	);
 }

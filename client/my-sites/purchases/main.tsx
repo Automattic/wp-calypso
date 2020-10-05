@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -28,6 +29,7 @@ import AddCardDetails from 'me/purchases/payment/add-card-details';
 import EditCardDetails from 'me/purchases/payment/edit-card-details';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 export function Purchases() {
 	const translate = useTranslate();
@@ -205,6 +207,7 @@ export function PurchaseCancelDomain( {
 }
 
 export function BillingHistory() {
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const translate = useTranslate();
 
 	return (
@@ -219,7 +222,7 @@ export function BillingHistory() {
 				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
-			<BillingHistoryList />
+			<BillingHistoryList siteId={ selectedSiteId } />
 		</Main>
 	);
 }
