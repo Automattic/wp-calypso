@@ -11,6 +11,7 @@ import {
 	backupRestore,
 	backups,
 	showUpsellIfNoBackup,
+	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
 } from 'my-sites/backup/controller';
 import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
@@ -45,6 +46,7 @@ export default function () {
 		backupDownload,
 		wrapInSiteOffsetProvider,
 		wpcomUpsellController( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
 		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
@@ -60,6 +62,7 @@ export default function () {
 			backupRestore,
 			wrapInSiteOffsetProvider,
 			wpcomUpsellController( WPCOMUpsellPage ),
+			showUnavailableForVaultPressSites,
 			showUnavailableForMultisites,
 			notFoundIfNotEnabled,
 			makeLayout,
@@ -76,6 +79,7 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
 		wpcomUpsellController( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
 		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
