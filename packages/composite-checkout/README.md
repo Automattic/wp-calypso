@@ -127,7 +127,7 @@ The registry used for these stores is created by default but you can use a custo
 
 ## API
 
-While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
+While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package. The following are in alphabetical order.
 
 ### Button
 
@@ -213,6 +213,10 @@ This component's props are:
 - `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
 - `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
 
+## CheckoutStepAreaWrapper
+
+A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.
+
 ## CheckoutStepBody
 
 A component that looks like a checkout step. Normally you don't need to use this directly, since [CheckoutStep](#CheckoutStep) creates this for you, but you can use it manually if you wish.
@@ -257,6 +261,20 @@ Renders its `children` prop and acts as a wrapper to flow outside of the [`Check
 
 Can be used inside [CheckoutSummaryArea](#CheckoutSummaryArea) to render a bordered area.
 
+### FormStatus
+
+An enum that holds the values of the [form status](#useFormStatus).
+
+- `.LOADING`
+- `.READY`
+- `.SUBMITTING`
+- `.VALIDATING`
+- `.COMPLETE`
+
+## MainContentWrapper
+
+A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [Checkout](#Checkout) component. You shouldn't need to use this manually.
+
 ### OrderReviewLineItems
 
 Renders a list of line items passed in the `items` prop. Each line item must have at least the props `label`, `id`, and `amount.displayValue`.
@@ -274,6 +292,21 @@ A wrapper for a section of a list of related line items. Renders its `children` 
 Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### SubmitButtonWrapper
+
+A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the submit button that's rendered by each [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.
+
+### TransactionStatus
+
+An enum that holds the values of the [transaction status](#useTransactionStatus).
+
+- `.NOT_STARTED`
+- `.PENDING`
+- `.AUTHORIZING`
+- `.COMPLETE`
+- `.REDIRECTING`
+- `.ERROR`
 
 ### checkoutTheme
 
@@ -373,16 +406,6 @@ A React Hook that will return all the bound action creators for a [Data store](#
 
 A React Hook that will return the `onEvent` callback as passed to `CheckoutProvider`. Only works within [CheckoutProvider](#CheckoutProvider).
 
-### FormStatus
-
-An enum that holds the values of the [form status](#useFormStatus).
-
-- `.LOADING`
-- `.READY`
-- `.SUBMITTING`
-- `.VALIDATING`
-- `.COMPLETE`
-
 ### useFormStatus
 
 A React Hook that will return an object with the following properties. Used to represent and change the current status of the checkout form (eg: causing it to be disabled). This differs from the status of the transaction itself, which is handled by [useTransactionStatus](#useTransactionStatus).
@@ -447,17 +470,6 @@ A React Hook that will return a function to set a step to "complete". Only works
 ### useTotal
 
 A React Hook that returns the `total` property provided to the [CheckoutProvider](#checkoutprovider). This is the same as the second return value of [useLineItems](#useLineItems) but may be more semantic in some cases. Only works within `CheckoutProvider`.
-
-### TransactionStatus
-
-An enum that holds the values of the [transaction status](#useTransactionStatus).
-
-- `.NOT_STARTED`
-- `.PENDING`
-- `.AUTHORIZING`
-- `.COMPLETE`
-- `.REDIRECTING`
-- `.ERROR`
 
 ### useTransactionStatus
 
