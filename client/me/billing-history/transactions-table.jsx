@@ -199,6 +199,7 @@ TransactionsTable.propTypes = {
 	total: PropTypes.number.isRequired,
 	transactions: PropTypes.array,
 	//own props
+	siteId: PropTypes.number,
 	transactionType: PropTypes.string.isRequired,
 	//array allows to accept the output of translate() with components in the string
 	emptyTableText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
@@ -208,8 +209,8 @@ TransactionsTable.propTypes = {
 };
 
 export default connect(
-	( state, { transactionType } ) => {
-		const filteredTransactions = getFilteredBillingTransactions( state, transactionType );
+	( state, { transactionType, siteId } ) => {
+		const filteredTransactions = getFilteredBillingTransactions( state, transactionType, siteId );
 		const filter = getBillingTransactionFilters( state, transactionType );
 		return {
 			app: filter.app,
