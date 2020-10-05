@@ -427,7 +427,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		};
 
 		if ( peerReferralLink ) {
-			cta.component = <ClipboardButtonInput value={ peerReferralLink } />;
+			cta.component = <ClipboardButtonInput value={ localizeUrl( peerReferralLink ) } />;
 		}
 
 		return {
