@@ -987,34 +987,73 @@ workflows:
       - build-notifications:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - build-o2-blocks:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - build-wpcom-block-editor:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - translate:
           requires:
             - setup
       - lint:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - test-client:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - test-packages:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - test-server:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - typecheck-strict:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - wait-calypso-live:
           requires:
-            - test-client
-            - test-server
+            - setup
           filters:
             branches:
               ignore:
