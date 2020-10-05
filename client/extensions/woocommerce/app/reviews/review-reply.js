@@ -29,6 +29,7 @@ import {
 	getReviewReplyEdits,
 } from 'woocommerce/state/ui/review-replies/selectors';
 import { getReviewReply } from 'woocommerce/state/sites/review-replies/selectors';
+import FormTextarea from 'components/forms/form-textarea';
 import Gravatar from './gravatar';
 import humanDate from 'lib/human-date';
 
@@ -102,7 +103,7 @@ class ReviewReply extends Component {
 		const { translate, editContent } = this.props;
 		return (
 			<div className="reviews__reply-edit">
-				<textarea onChange={ this.onTextChange } value={ editContent } />
+				<FormTextarea onChange={ this.onTextChange } value={ editContent } />
 
 				<div className="reviews__reply-edit-buttons">
 					<Button compact onClick={ this.onCancel }>
