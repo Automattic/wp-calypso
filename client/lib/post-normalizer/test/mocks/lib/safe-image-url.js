@@ -11,6 +11,9 @@ let returnValue;
 
 function makeSafe( url ) {
 	const parts = getUrlParts( url );
+	if ( parts.searchParams.get( 'ad' ) ) {
+		return null;
+	}
 	if ( ! parts.protocol ) {
 		parts.protocol = 'fake';
 	}
