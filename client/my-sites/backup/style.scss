@@ -75,6 +75,12 @@
 	}
 }
 
+.backup__restore-banner {
+	&.banner.card {
+		@include banner-color( var( --color-jetpack ) );
+	}
+}
+
 /* WordPress.com-only styles */
 .wordpressdotcom.backup__page {
 	.backup__main-wrap {
