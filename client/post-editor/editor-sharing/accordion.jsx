@@ -13,6 +13,7 @@ import { includes, reduce } from 'lodash';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
+import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import PostMetadata from 'lib/post-metadata';
 import Sharing from './';
@@ -76,9 +77,9 @@ class EditorSharingAccordion extends React.Component {
 
 		return (
 			<div className={ classes }>
-				<label className="editor-sharing__shortlink-label" htmlFor="shortlink-field">
+				<FormLabel className="editor-sharing__shortlink-label" htmlFor="shortlink-field">
 					{ this.props.translate( 'Shortlink' ) }
-				</label>
+				</FormLabel>
 				<FormTextInput
 					className="editor-sharing__shortlink-field"
 					id="shortlink-field"

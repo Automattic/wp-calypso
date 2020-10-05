@@ -12,6 +12,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import PostMetadata from 'lib/post-metadata';
 import { addSiteFragment } from 'lib/route';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
@@ -200,14 +201,14 @@ export class EditorSharingPublicizeConnection extends React.Component {
 		return (
 			<div className="editor-sharing__publicize-connection">
 				<QueryKeyringConnections />
-				<label>
+				<FormLabel>
 					<FormCheckbox
 						checked={ ! this.isConnectionSkipped() }
 						disabled={ this.isDisabled() }
 						onChange={ this.onChange }
 					/>
 					<span data-e2e-service={ label }>{ connection && connection.external_display }</span>
-				</label>
+				</FormLabel>
 				{ this.renderFacebookProfileWarning() }
 				{ this.renderBrokenConnection() }
 				{ this.renderMustReauthConnection() }
