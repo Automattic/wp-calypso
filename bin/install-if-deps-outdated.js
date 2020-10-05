@@ -55,7 +55,8 @@ function install() {
 	const installResult = spawnSync( 'yarn', [ 'install', '--frozen-lockfile' ], {
 		shell: true,
 		stdio: 'inherit',
-		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env },
+		// we won't need postinstall because everything in it will run in "build" script, which will run soon
+		env: { PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true', ...process.env, DISABLEPOSTINSTALL: 1 },
 	} );
 	if ( installResult.status ) {
 		console.error( 'failed to install: exited with code %d', installResult.status );
