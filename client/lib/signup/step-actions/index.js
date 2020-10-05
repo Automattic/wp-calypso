@@ -868,3 +868,12 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 		flows.excludeStep( stepName );
 	}
 }
+
+export function isSecureYourBrandFulfilled( stepName, deefaultDependencies, nextProps ) {
+	const hasdDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
+	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
+	if ( hasdDomainItemInDependencyStore && isEmpty( domainItem ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+

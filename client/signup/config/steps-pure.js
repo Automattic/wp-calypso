@@ -38,6 +38,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
+	isSecureYourBrandFulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -330,6 +331,7 @@ export function generateSteps( {
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'cartItems' ],
 			apiRequestFunction: addItemsToCart,
+			fulfilledStepCallback: isSecureYourBrandFulfilled,
 		},
 
 		'domains-store': {
