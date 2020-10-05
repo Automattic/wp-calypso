@@ -199,6 +199,7 @@
 		"to-title-case": "^1.0.0",
 		"tracekit": "^0.4.5",
 		"twemoji": "^12.1.4",
+		"ua-parser-js": "^0.7.22",
 		"url": "^0.11.0",
 		"use-subscription": "^1.3.0",
 		"utility-types": "^3.10.0",
@@ -218,8 +219,8 @@
 	},
 	"devDependencies": {
 		"autoprefixer": "^9.7.3",
-		"component-event":"^0.1.4",
-		"component-query":"^0.0.3",
+		"component-event": "^0.1.4",
+		"component-query": "^0.0.3",
 		"postcss-custom-properties": "^9.1.1"
 	}
 }
