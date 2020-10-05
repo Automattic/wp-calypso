@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 import {
 	emptyResponseCart,
 	removeItemFromResponseCart,
-	addItemsToResponseCart,
+	addItemToResponseCart,
 	replaceItemInResponseCart,
 	addCouponToResponseCart,
 	removeCouponFromResponseCart,
@@ -66,7 +66,6 @@ function shoppingCartReducer(
 		};
 	}
 
-	debug( 'processing requested action', action );
 	switch ( action.type ) {
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
@@ -79,11 +78,12 @@ function shoppingCartReducer(
 				cacheStatus: 'invalid',
 			};
 		}
-		case 'CART_PRODUCTS_ADD': {
-			debug( 'adding items to cart', action.products );
+		case 'ADD_CART_ITEM': {
+			const { requestCartProductToAdd } = action;
+			debug( 'adding item to cart', requestCartProductToAdd );
 			return {
 				...state,
-				responseCart: addItemsToResponseCart( state.responseCart, action.products ),
+				responseCart: addItemToResponseCart( state.responseCart, requestCartProductToAdd ),
 				cacheStatus: 'invalid',
 			};
 		}

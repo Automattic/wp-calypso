@@ -24,7 +24,6 @@ import { getProductsList, isProductsListFetching } from 'state/products-list/sel
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import { createItemToAddToCart } from '../add-items';
 import { RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
-import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -46,13 +45,13 @@ function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined 
 
 export default function usePrepareProductsForCart( {
 	siteId,
-	productAliasFromUrl: productAlias,
+	product: productAlias,
 	purchaseId: originalPurchaseId,
 	isJetpackNotAtomic,
 	isPrivate,
 }: {
 	siteId: number;
-	productAliasFromUrl: string | null | undefined;
+	product: string | null | undefined;
 	purchaseId: string | number | null | undefined;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
@@ -72,14 +71,7 @@ export default function usePrepareProductsForCart( {
 		initialPreparedProductsState,
 		initializePreparedProductsState
 	);
-	debug(
-		'preparing products for cart from url string',
-		productAlias,
-		'and purchase id',
-		originalPurchaseId
-	);
 
-	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
 
 	// Only one of these three should ever operate. The others should bail if

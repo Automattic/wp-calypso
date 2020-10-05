@@ -86,7 +86,7 @@ export function checkout( context, next ) {
 	context.primary = (
 		<CartData>
 			<CheckoutSystemDecider
-				productAliasFromUrl={ product }
+				product={ product }
 				purchaseId={ purchaseId }
 				selectedFeature={ feature }
 				couponCode={ couponCode }
