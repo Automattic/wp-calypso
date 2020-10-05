@@ -34,6 +34,7 @@ import QueryJetpackModules from 'components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'lib/i18n-utils';
 import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
+import { getPathToDetails } from 'my-sites/plans-v2/utils';
 
 const validateGoogleAnalyticsCode = ( code ) => ! code || code.match( /^UA-\d+-\d+$/i );
 
@@ -112,11 +113,15 @@ export class GoogleAnalyticsForm extends Component {
 			: translate( 'Connect your site to Google Analytics in seconds with the Premium plan' );
 
 		const plan = siteIsJetpack
-			? OPTIONS_JETPACK_SECURITY
+			? null
 			: findFirstSimilarPlanKey( site.plan.product_slug, {
 					type: TYPE_PREMIUM,
 					...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
 			  } );
+
+		const href = siteIsJetpack
+			? getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, site.slug )
+			: null;
 
 		const nudge = (
 			<UpsellNudge
@@ -130,6 +135,7 @@ export class GoogleAnalyticsForm extends Component {
 				event={ 'google_analytics_settings' }
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ plan }
+				href={ href }
 				showIcon={ true }
 				title={ nudgeTitle }
 			/>
