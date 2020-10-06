@@ -31,6 +31,9 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { CompactCard } from '@automattic/components';
+import QueryBillingTransaction from 'components/data/query-billing-transaction';
+import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
+import { ReceiptBody, ReceiptPlaceholder } from 'me/billing-history/receipt';
 
 export function Purchases() {
 	const translate = useTranslate();
@@ -227,6 +230,46 @@ export function BillingHistory() {
 			<CompactCard href="/me/purchases/billing">
 				{ translate( 'View all billing history and receipts' ) }
 			</CompactCard>
+		</Main>
+	);
+}
+
+export function ReceiptView( { receiptId }: { receiptId: number } ) {
+	const translate = useTranslate();
+	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
+	// TODO: handle error redirects
+	// const transactionFetchError = useSelector( ( state ) =>
+	// 	isPastBillingTransactionError( state, receiptId )
+	// );
+
+	// TODO: handle clicks
+	const handlePrintLinkClick = () => {
+		window.print();
+	};
+
+	// TODO: add back button in header
+
+	return (
+		<Main className="purchases billing-history">
+			<DocumentHead title={ translate( 'Billing History' ) } />
+			<PageViewTracker
+				path="/purchases/billing-history/:site/:receipt"
+				title="Billing History > Receipt"
+			/>
+			<QueryBillingTransaction transactionId={ receiptId } />
+
+			<FormattedHeader
+				brandFont
+				className="purchases__page-heading"
+				headerText={ translate( 'Billing' ) }
+				align="left"
+			/>
+
+			{ transaction ? (
+				<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
+			) : (
+				<ReceiptPlaceholder />
+			) }
 		</Main>
 	);
 }

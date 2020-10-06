@@ -17,6 +17,7 @@ import {
 	purchaseAddPaymentMethod,
 	purchaseEditPaymentMethod,
 	billingHistory,
+	receiptView,
 } from './controller';
 
 export default ( router ) => {
@@ -84,6 +85,15 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		billingHistory,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/billing-history/:site/:receiptId',
+		siteSelection,
+		navigation,
+		receiptView,
 		makeLayout,
 		clientRender
 	);

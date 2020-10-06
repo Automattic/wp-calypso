@@ -15,6 +15,7 @@ import {
 	PurchaseAddPaymentMethod,
 	PurchaseEditPaymentMethod,
 	BillingHistory,
+	ReceiptView,
 } from 'my-sites/purchases/main.tsx';
 
 export function redirectToPurchases( context ) {
@@ -85,5 +86,10 @@ export const purchaseEditPaymentMethod = ( context, next ) => {
 
 export const billingHistory = ( context, next ) => {
 	context.primary = <BillingHistory />;
+	next();
+};
+
+export const receiptView = ( context, next ) => {
+	context.primary = <ReceiptView receiptId={ context.params.receiptId } />;
 	next();
 };
