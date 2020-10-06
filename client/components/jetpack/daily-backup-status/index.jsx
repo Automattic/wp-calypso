@@ -9,7 +9,6 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import { applySiteOffset } from 'lib/site/timezone';
 import { Card } from '@automattic/components';
 import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
@@ -76,9 +75,6 @@ DailyBackupStatus.propTypes = {
 
 const Wrapper = ( props ) => (
 	<Card className="daily-backup-status">
-		{ isEnabled( 'jetpack/backup-simplified-screens' ) && (
-			<p style={ { color: 'red' } }>Feature Flag: jetpack/backup-simplified-screens is ON</p>
-		) }
 		<DailyBackupStatus { ...props } />
 	</Card>
 );
