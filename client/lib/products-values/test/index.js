@@ -201,11 +201,20 @@ describe( 'getJetpackProductDisplayName', () => {
 } );
 
 describe( 'getJetpackProductTagline', () => {
-	test( 'should return Jetpack Backup product tagline', () => {
+	test( 'should return Jetpack Backup product default tagline', () => {
 		const jetpackProductsTaglines = getJetpackProductsTaglines();
 		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( ( product ) =>
 			expect( getJetpackProductTagline( product ) ).toBe(
-				jetpackProductsTaglines[ product.product_slug ]
+				jetpackProductsTaglines[ product.product_slug ].default
+			)
+		);
+	} );
+
+	test( 'should return Jetpack Backup owned product tagline', () => {
+		const jetpackProductsTaglines = getJetpackProductsTaglines();
+		JETPACK_BACKUP_PRODUCTS.map( makeProductFromSlug ).forEach( ( product ) =>
+			expect( getJetpackProductTagline( product, true ) ).toBe(
+				jetpackProductsTaglines[ product.product_slug ].owned
 			)
 		);
 	} );
