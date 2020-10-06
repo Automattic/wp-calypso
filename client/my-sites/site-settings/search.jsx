@@ -193,31 +193,35 @@ class Search extends Component {
 	}
 
 	renderUpgradeNotice() {
+		const { siteIsJetpack, siteSlug, translate } = this.props;
+
+		const jetpackSiteProps = {
+			title: translate( 'Keep people reading and buying' ),
+			description: translate(
+				'Incredibly powerful and customizable, Jetpack Search helps your visitors' +
+					' instantly find the right content – right when they need it.'
+			),
+			href: `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH }`,
+		};
+
+		const wpcomSiteProps = {
+			title: translate(
+				'Add faster, more advanced searching to your site with WordPress.com Business'
+			),
+			description: translate(
+				'The built-in WordPress search is great for sites without much content.' +
+					' But as your site grows, searches slow down and return less relevant results.'
+			),
+			plan: PLAN_BUSINESS,
+		};
+
 		return (
 			<Fragment>
 				<UpsellNudge
-					description={
-						this.props.siteIsJetpack
-							? this.props.translate(
-									'Jetpack Search replaces the built-in search with a fast, scalable, and customizable search powered by WordPress.com. The result: Your users find the content they want, faster.'
-							  )
-							: this.props.translate(
-									'The built-in WordPress search is great for sites without much content. But as your site grows, searches slow down and return less relevant results.'
-							  )
-					}
+					{ ...( siteIsJetpack ? jetpackSiteProps : wpcomSiteProps ) }
 					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
 					feature={ FEATURE_SEARCH }
-					plan={ this.props.siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PLAN_BUSINESS }
 					showIcon={ true }
-					title={
-						this.props.siteIsJetpack
-							? this.props.translate(
-									'Add faster, more advanced searching to your site with Jetpack Search'
-							  )
-							: this.props.translate(
-									'Add faster, more advanced searching to your site with WordPress.com Business'
-							  )
-					}
 				/>
 			</Fragment>
 		);
