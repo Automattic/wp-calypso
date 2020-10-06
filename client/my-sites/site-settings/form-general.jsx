@@ -815,6 +815,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: '',
 		blog_public: '',
 		wpcom_coming_soon: '',
+		wpcom_public_coming_soon: '',
 		admin_url: '',
 	};
 
@@ -831,7 +832,7 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
-		was_wpcom_coming_soon: settings.wpcom_coming_soon,
+		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
