@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { addCardDetails, editCardDetails } from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-} from 'lib/purchases';
-import { isDomainTransfer } from 'lib/products-values';
+} from 'calypso/lib/purchases';
+import { isDomainTransfer } from 'calypso/lib/products-values';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;

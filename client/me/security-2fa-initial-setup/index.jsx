@@ -10,8 +10,8 @@ const debug = debugFactory( 'calypso:me:security:2fa-initial-setup' );
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import FormButton from 'calypso/components/forms/form-button';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 class Security2faInitialSetup extends React.Component {
 	static displayName = 'Security2faInitialSetup';

@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormButton from 'components/forms/form-button';
-import Gridicon from 'components/gridicon';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormButton from 'calypso/components/forms/form-button';
+import Gridicon from 'calypso/components/gridicon';
 
 class SecurityAccountRecoveryManageContactButtons extends React.Component {
 	static displayName = 'SecurityAccountRecoveryManageContactButtons';

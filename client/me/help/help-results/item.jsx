@@ -3,14 +3,14 @@
  */
 
 import React from 'react';
-import Gridicon from 'components/gridicon';
-import { decodeEntities } from 'lib/formatting';
+import Gridicon from 'calypso/components/gridicon';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export default class extends React.PureComponent {
 	static displayName = 'HelpResult';

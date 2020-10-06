@@ -12,17 +12,22 @@ import page from 'page';
  * Internal Dependencies
  */
 import { Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { isMonthly } from 'lib/plans/constants';
-import { getYearlyPlanByMonthly } from 'lib/plans';
-import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
-import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
-import { JETPACK_SUPPORT } from 'lib/url/support';
-import { recordTracksEvent } from 'state/analytics/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isMonthly } from 'calypso/lib/plans/constants';
+import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { planItem } from 'calypso/lib/cart-values/cart-items';
+import { addItem } from 'calypso/lib/cart/actions';
+import {
+	isExpired,
+	isExpiring,
+	isRenewing,
+	showCreditCardExpiringWarning,
+} from 'calypso/lib/purchases';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export class PlanBillingPeriod extends Component {
 	static propTypes = {

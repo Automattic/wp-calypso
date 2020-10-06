@@ -9,9 +9,9 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 class PurchaseReconnectNotice extends Component {
 	static propTypes = {

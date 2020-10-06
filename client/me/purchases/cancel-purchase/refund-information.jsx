@@ -16,13 +16,13 @@ import {
 	isSubscription,
 	isOneTimePurchase,
 	maybeWithinRefundPeriod,
-} from 'lib/purchases';
-import { isDomainRegistration, isDomainMapping } from 'lib/products-values';
-import { getIncludedDomainPurchase } from 'state/purchases/selectors';
-import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'lib/url/support';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
+} from 'calypso/lib/purchases';
+import { isDomainRegistration, isDomainMapping } from 'calypso/lib/products-values';
+import { getIncludedDomainPurchase } from 'calypso/state/purchases/selectors';
+import { CALYPSO_CONTACT, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 
 const CancelPurchaseRefundInformation = ( {
 	purchase,

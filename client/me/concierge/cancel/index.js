@@ -9,22 +9,22 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import QuerySites from 'components/data/query-sites';
-import QueryConciergeInitial from 'components/data/query-concierge-initial';
-import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
+import HeaderCake from 'calypso/components/header-cake';
+import QuerySites from 'calypso/components/data/query-sites';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
 import { Button, CompactCard } from '@automattic/components';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import { localize } from 'i18n-calypso';
 import Confirmation from '../shared/confirmation';
-import { cancelConciergeAppointment } from 'state/concierge/actions';
+import { cancelConciergeAppointment } from 'calypso/state/concierge/actions';
 import { CONCIERGE_STATUS_CANCELLED, CONCIERGE_STATUS_CANCELLING } from '../constants';
-import { getSite } from 'state/sites/selectors';
-import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
-import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
-import { recordTracksEvent } from 'state/analytics/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import { getSite } from 'calypso/state/sites/selectors';
+import getConciergeAppointmentDetails from 'calypso/state/selectors/get-concierge-appointment-details';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class ConciergeCancel extends Component {
 	static propTypes = {

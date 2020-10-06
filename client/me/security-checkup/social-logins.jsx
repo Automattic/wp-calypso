@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupSocialLogins extends React.Component {

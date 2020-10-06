@@ -11,13 +11,13 @@ import React, { Component, Fragment } from 'react';
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
-import { abtest } from 'lib/abtest';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { applyTestFiltersToPlansList } from 'lib/plans';
+import AsyncLoad from 'calypso/components/async-load';
+import { abtest } from 'calypso/lib/abtest';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { applyTestFiltersToPlansList } from 'calypso/lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
-import config from 'config';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import config from 'calypso/config';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
@@ -39,19 +39,19 @@ import {
 	isCloseToExpiration,
 	purchaseType,
 	getName,
-} from 'lib/purchases';
+} from 'calypso/lib/purchases';
 import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	getRenewableSitePurchases,
-} from 'state/purchases/selectors';
-import { getCanonicalTheme } from 'state/themes/selectors';
-import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import Gridicon from 'components/gridicon';
-import HeaderCake from 'components/header-cake';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
+} from 'calypso/state/purchases/selectors';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import Gridicon from 'calypso/components/gridicon';
+import HeaderCake from 'calypso/components/header-cake';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import {
 	isPersonal,
 	isPremium,
@@ -65,33 +65,37 @@ import {
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
-} from 'lib/products-values';
-import { getSite, isRequestingSites } from 'state/sites/selectors';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
-import PlanPrice from 'my-sites/plan-price';
-import ProductLink from 'me/purchases/product-link';
+} from 'calypso/lib/products-values';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { JETPACK_PLANS, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import ProductLink from 'calypso/me/purchases/product-link';
 import PurchaseMeta from './purchase-meta';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
 import PurchaseSiteHeader from '../purchases-site/header';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import QueryUserPurchases from 'components/data/query-user-purchases';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import RemovePurchase from '../remove-purchase';
-import VerticalNavItem from 'components/vertical-nav/item';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import titles from 'me/purchases/titles';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
-import { currentUserHasFlag, getCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
-import CartStore from 'lib/cart/store';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
-import { hasCustomDomain } from 'lib/site/utils';
-import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
-import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import titles from 'calypso/me/purchases/titles';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import {
+	currentUserHasFlag,
+	getCurrentUser,
+	getCurrentUserId,
+} from 'calypso/state/current-user/selectors';
+import CartStore from 'calypso/lib/cart/store';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 
 /**
  * Style dependencies
@@ -670,7 +674,7 @@ class ManagePurchase extends Component {
 					/>
 				) }
 				<AsyncLoad
-					require="blocks/product-plan-overlap-notices"
+					require="calypso/blocks/product-plan-overlap-notices"
 					placeholder={ null }
 					plans={ JETPACK_PLANS }
 					products={ JETPACK_PRODUCTS_LIST }

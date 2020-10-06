@@ -9,23 +9,29 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import CreditCardForm from 'blocks/credit-card-form';
-import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
-import HeaderCake from 'components/header-cake';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import titles from 'me/purchases/titles';
-import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import { clearPurchases } from 'state/purchases/actions';
-import { createCardToken } from 'lib/store-transactions';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { StripeHookProvider } from 'lib/stripe';
+import CreditCardForm from 'calypso/blocks/credit-card-form';
+import CreditCardFormLoadingPlaceholder from 'calypso/blocks/credit-card-form/loading-placeholder';
+import HeaderCake from 'calypso/components/header-cake';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import titles from 'calypso/me/purchases/titles';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import { createCardToken } from 'calypso/lib/store-transactions';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	getStoredCardById,
+	hasLoadedStoredCardsFromServer,
+} from 'calypso/state/stored-cards/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { StripeHookProvider } from 'calypso/lib/stripe';
 
 function EditCardDetails( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
