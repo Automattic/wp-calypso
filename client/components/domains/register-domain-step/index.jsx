@@ -592,10 +592,11 @@ class RegisterDomainStep extends React.Component {
 	renderContent() {
 		const {
 			isPlanSelectionAvailableInFlow = true,
-			forceHideFreeDomainExplainer = false,
+			forceHideFreeDomainExplainer,
+			isSignupStep,
 		} = this.props;
 		const isFreeDomainExplainerVisible =
-			! forceHideFreeDomainExplainer && isPlanSelectionAvailableInFlow;
+			isSignupStep && ! forceHideFreeDomainExplainer && isPlanSelectionAvailableInFlow;
 
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
 			return this.renderSearchResults( isFreeDomainExplainerVisible );
