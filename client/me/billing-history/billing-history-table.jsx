@@ -41,9 +41,12 @@ class BillingHistoryTable extends React.Component {
 		}
 
 		return (
-			<a href="#" onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }>
+			<button
+				className="billing-history__email-button"
+				onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }
+			>
 				{ translate( 'Email receipt' ) }
-			</a>
+			</button>
 		);
 	};
 

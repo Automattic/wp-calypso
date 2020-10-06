@@ -146,6 +146,12 @@
 	}
 }
 
+.billing-history__email-button {
+	color: var( --color-link );
+	cursor: pointer;
+	font-size: inherit;
+}
+
 // View Receipt
 .billing-history__app-overview {
 	min-height: 65px;
