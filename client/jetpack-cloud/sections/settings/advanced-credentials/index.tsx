@@ -71,7 +71,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 		// TODO: update form state logic
 		const foundCredentials = !! credentials && find( credentials, { role } );
 		foundCredentials && setFormState( foundCredentials );
-	}, [ credentials ] );
+	}, [ credentials, role ] );
 
 	const handleDeleteCredentials = () => {
 		dispatch( deleteCredentials( siteId, role ) );
