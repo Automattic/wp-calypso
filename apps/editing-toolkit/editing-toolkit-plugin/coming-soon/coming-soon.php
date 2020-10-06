@@ -7,18 +7,7 @@
 
 namespace A8C\FSE\Coming_soon;
 
-/**
- * Load the coming soon page tempalate object
- *
- * @return object
- */
-function get_coming_soon_page_template() {
-	return json_decode(
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		file_get_contents( __DIR__ . '/coming-soon-page-template.json' ),
-		false
-	);
-}
+require_once __DIR__ . '/coming-soon-page-template.php';
 
 /**
  * Determines whether the coming soon page should be shown.
@@ -96,7 +85,7 @@ add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming
  * @return array The updated $templates array
  */
 function add_public_coming_soon_page_template( $templates ) : array {
-	$templates[] = get_coming_soon_page_template();
+	$templates[] = (object) COMING_SOON_PAGE_TEMPLATE;
 	return $templates;
 }
 add_filter( 'vertical_templates', __NAMESPACE__ . '\add_public_coming_soon_page_template' );
@@ -105,11 +94,11 @@ add_filter( 'vertical_templates', __NAMESPACE__ . '\add_public_coming_soon_page_
  * Adds an editable coming soon page to a site
  */
 function add_coming_soon_page_to_new_site() {
-	$coming_soon_template = get_coming_soon_page_template();
+	$coming_soon_template = COMING_SOON_PAGE_TEMPLATE;
 	$new_page_id          = wp_insert_post(
 		array(
-			'post_title'     => $coming_soon_template->post_title,
-			'post_content'   => $coming_soon_template->post_content,
+			'post_title'     => $coming_soon_template['post_title'],
+			'post_content'   => $coming_soon_template['post_content'],
 			'post_status'    => 'publish',
 			'post_type'      => 'page',
 			'comment_status' => 'closed',
