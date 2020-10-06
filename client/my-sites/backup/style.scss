@@ -75,6 +75,12 @@
 	}
 }
 
+.backup__restore-banner {
+	&.banner.card {
+		@include banner-color( var( --color-jetpack ) );
+	}
+}
+
 /* WordPress.com-only styles */
 .wordpressdotcom.backup__page {
 	.backup__main-wrap {
@@ -138,6 +144,15 @@
 			@include breakpoint-deprecated( '>1280px' ) {
 				flex: 1 1 calc( 50% - 1em );
 			}
+		}
+	}
+}
+
+/* Jetpack.com-only changes */
+.is_jetpackcom {
+	.backup__restore-banner {
+		&.banner.card {
+			@include banner-color( var( --color-primary-40 ) );
 		}
 	}
 }
