@@ -9,7 +9,7 @@ import { combineReducers } from 'state/utils';
  * @param {object} action Action payload
  * @returns {object} Updated state
  */
-export const shouldForceNotificationsRefresh = ( state = false, { type, refresh } ) => {
+export const shouldForceRefresh = ( state = false, { type, refresh } ) => {
 	if ( type === NOTIFICATIONS_FORCE_REFRESH ) {
 		return refresh || false;
 	}
@@ -17,7 +17,7 @@ export const shouldForceNotificationsRefresh = ( state = false, { type, refresh 
 };
 
 const reducer = combineReducers( {
-	shouldForceNotificationsRefresh,
+	shouldForceRefresh,
 } );
 
 export default reducer;
