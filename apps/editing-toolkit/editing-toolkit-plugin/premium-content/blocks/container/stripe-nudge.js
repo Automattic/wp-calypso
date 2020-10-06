@@ -39,11 +39,11 @@ export const StripeNudge = ( { autosaveAndRedirect, stripeConnectUrl } ) => (
 			{ <Dashicon icon="star-filled" /> }
 			<span className="premium-content-block-nudge__text-container">
 				<span className="premium-content-block-nudge__title">
-					{ __( 'Connect to Stripe to use this block on your site', 'full-site-editing' ) }
+					{ __( 'Connect to Stripe to add premium content to your site.', 'full-site-editing' ) }
 				</span>
 				<span className="premium-content-block-nudge__message">
 					{ __(
-						'This block will be hidden from your visitors until you connect to Stripe.',
+						'Premium content will be hidden from your visitors until you connect to Stripe.',
 						'full-site-editing'
 					) }
 				</span>
@@ -64,6 +64,8 @@ export default compose( [
 		 * Complicated to define the valid type with JSDoc
 		 *
 		 * @param dispatch
+		 * @param root0
+		 * @param root0.stripeConnectUrl
 		 */
 		// @ts-ignore
 		( dispatch, { stripeConnectUrl } ) => ( {
