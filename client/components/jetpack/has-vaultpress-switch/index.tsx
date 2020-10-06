@@ -20,7 +20,7 @@ const HasVaultPressSwitch = ( { loadingComponent, trueComponent, falseComponent 
 
 	return (
 		<RenderSwitch
-			loadingCondition={ () => ! rewindState }
+			loadingCondition={ () => ! rewindState || rewindState.state === 'uninitialized' }
 			renderCondition={ () => hasVaultPress }
 			queryComponent={ <QueryRewindState siteId={ siteId } /> }
 			loadingComponent={ loadingComponent }
