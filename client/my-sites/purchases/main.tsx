@@ -30,6 +30,7 @@ import EditCardDetails from 'me/purchases/payment/edit-card-details';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'components/data/query-billing-transactions';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { CompactCard } from '@automattic/components';
 
 export function Purchases() {
 	const translate = useTranslate();
@@ -223,6 +224,9 @@ export function BillingHistory() {
 				align="left"
 			/>
 			<BillingHistoryList siteId={ selectedSiteId } />
+			<CompactCard href="/me/purchases/billing">
+				{ translate( 'View all billing history and receipts' ) }
+			</CompactCard>
 		</Main>
 	);
 }
