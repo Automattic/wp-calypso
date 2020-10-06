@@ -230,6 +230,10 @@ interface RequestHttpDataOptions {
 	freshness?: number;
 }
 
+function defaultFromApi( requestId: DataId ): Lazy< ResponseParser > {
+	return () => ( data: any ) => [ [ requestId, data ] ];
+}
+
 /**
  * Fetches data from a fetchable action
  *
@@ -243,7 +247,7 @@ interface RequestHttpDataOptions {
 export const requestHttpData = (
 	requestId: DataId,
 	fetchAction: Lazy< AnyAction > | AnyAction,
-	{ fromApi, freshness = Infinity }: RequestHttpDataOptions
+	{ fromApi = defaultFromApi( requestId ), freshness = Infinity }: RequestHttpDataOptions
 ): Resource => {
 	const data = getHttpData( requestId );
 	const { state, lastUpdated } = data;
@@ -260,8 +264,7 @@ export const requestHttpData = (
 			type: HTTP_DATA_REQUEST,
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			fromApi: 'function' === typeof fromApi ? fromApi : () => ( a: any ) => a,
+			fromApi,
 		};
 
 		dispatch ? dispatch( action ) : dispatchQueue.push( action );
