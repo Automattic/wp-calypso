@@ -110,7 +110,7 @@
 		"lint:js": "yarn run install-if-deps-outdated && eslint --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"**/*.tsx\" \"**/*.tsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
 		"lint:package-json": "npmPkgJsonLint './package.json' './client/package.json' './packages/*/package.json' './apps/*/package.json'",
-		"prestart": "npx check-node-version --package && yarn run install-if-deps-outdated && node bin/welcome.js",
+		"prestart": "npx check-node-version --package && node bin/welcome.js",
 		"start": "yarn run -s build",
 		"poststart": "run-p -s start-build-if-web start-build-if-desktop build-packages:watch",
 		"start-fallback": "DEV_TARGET=fallback yarn run start",
