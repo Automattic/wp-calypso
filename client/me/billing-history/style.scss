@@ -150,6 +150,10 @@
 	color: var( --color-link );
 	cursor: pointer;
 	font-size: inherit;
+
+	&:focus {
+		outline: thin dotted;
+	}
 }
 
 // View Receipt
