@@ -14,7 +14,6 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
 	NOTIFICATIONS_UNSEEN_COUNT_SET,
-	NOTIFICATIONS_FORCE_REFRESH,
 	SEND_TO_PRINTER,
 } from '../../state/action-types';
 
@@ -145,10 +144,6 @@ export const desktopMiddleware = () => {
 						},
 					} )
 				);
-				return next( action );
-
-			case NOTIFICATIONS_FORCE_REFRESH:
-				debug( 'Dispatching desktop window event for action type: ', action.type );
 				return next( action );
 
 			default:
