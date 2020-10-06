@@ -65,7 +65,7 @@ export const paths = {
 };
 
 export const iconToProductSlugMap = {
-	'wpcom-free': [ 'free_plan' ],
+	'wpcom-free': [ 'free_plan', 'wp_p2_plus_monthly' ],
 	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
 	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
 	'wpcom-premium': [ 'value_bundle', 'value_bundle-2y', 'value_bundle-monthly' ],

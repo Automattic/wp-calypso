@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
+import { isEnabled } from 'config';
 
 /**
  * Internal dependencies
@@ -18,6 +19,7 @@ import Main from 'components/main';
 import EmptyContent from 'components/empty-content';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
+import P2PlansMain from 'my-sites/plans/p2-plans-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import TrackComponentView from 'lib/analytics/track-component-view';
@@ -31,6 +33,7 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import CartData from 'components/data/cart';
 import { PerformanceTrackerStop } from 'lib/performance-tracking';
+import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -97,6 +100,7 @@ class Plans extends React.Component {
 			displayJetpackPlans,
 			canAccessPlans,
 			customerType,
+			isWPForTeamsSite,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
@@ -125,19 +129,29 @@ class Plans extends React.Component {
 								<CartData>
 									<PlansNavigation path={ this.props.context.path } />
 								</CartData>
-								<PlansFeaturesMain
-									displayJetpackPlans={ displayJetpackPlans }
-									hideFreePlan={ true }
-									customerType={ customerType }
-									intervalType={ this.props.intervalType }
-									selectedFeature={ this.props.selectedFeature }
-									selectedPlan={ this.props.selectedPlan }
-									redirectTo={ this.props.redirectTo }
-									withDiscount={ this.props.withDiscount }
-									discountEndDate={ this.props.discountEndDate }
-									site={ selectedSite }
-									plansWithScroll={ false }
-								/>
+								{ isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ? (
+									<P2PlansMain
+										selectedPlan={ this.props.selectedPlan }
+										redirectTo={ this.props.redirectTo }
+										site={ selectedSite }
+										withDiscount={ this.props.withDiscount }
+										discountEndDate={ this.props.discountEndDate }
+									/>
+								) : (
+									<PlansFeaturesMain
+										displayJetpackPlans={ displayJetpackPlans }
+										hideFreePlan={ true }
+										customerType={ customerType }
+										intervalType={ this.props.intervalType }
+										selectedFeature={ this.props.selectedFeature }
+										selectedPlan={ this.props.selectedPlan }
+										redirectTo={ this.props.redirectTo }
+										withDiscount={ this.props.withDiscount }
+										discountEndDate={ this.props.discountEndDate }
+										site={ selectedSite }
+										plansWithScroll={ false }
+									/>
+								) }
 								<PerformanceTrackerStop />
 							</div>
 						</>
@@ -160,5 +174,6 @@ export default connect( ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
