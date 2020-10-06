@@ -8,6 +8,7 @@ import { By } from 'selenium-webdriver';
  */
 import GutenbergBlockComponent from './gutenberg-block-component';
 import * as driverHelper from '../../driver-helper';
+import * as driverManager from '../../driver-manager';
 
 class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockTitle = 'Layout Grid';
@@ -15,39 +16,54 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-layout-grid' );
 
 	/**
-	 * Setups the number of columns for the layout grid block.
+	 * Sets up the number of columns for the layout grid block.
 	 *
-	 * This needs to be called before you call @see {@link insertBlock}.
-	 *
-	 * @param {number} no number of columns, 1 to 4 (based on the default buttons in the block).
+	 * @param {number} number number of columns, 1 to 4 (based on the default buttons in the block).
 	 */
-	async setupColumns( no ) {
-		const columnButtonSelector = By.css( `${ this.blockID } button[aria-label="${ no } columns"]` );
+	async setupColumns( number ) {
+		const columnButtonSelector = By.css(
+			`${ this.blockID } button[aria-label="${ number } columns"]`
+		);
 		await driverHelper.clickWhenClickable( this.driver, columnButtonSelector );
 
 		// Updates the blockId, since the block is replaced by another one upon the selection of the columns.
 		this.blockID = await this.driver
 			.findElement( By.css( 'div.block-editor-block-list__block.is-selected' ) )
 			.getAttribute( 'id' );
+		this.columns = number;
 	}
 
 	/**
 	 * Inserts a block in the last available grid for the layout grid.
-	 *
-	 * You must call @see {@link setupColumns} before inserting an inner block using this method.
-	 *
 	 * This will add to each column in sequence, from left to right.
 	 *
-	 * @param { typeof GutenbergBlockComponent } blockClass A block class that responds to blockTitle and blockName
+	 * @param { Function } blockClass A block class that responds to blockTitle and blockName
 	 * @returns { GutenbergBlockComponent } instance of the added block
 	 **/
 	async insertBlock( blockClass ) {
-		const addColumnButtonsSelector = By.css(
-			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid button[aria-label="Add block"]`
-		);
-		const buttons = await this.driver.findElements( addColumnButtonsSelector );
+		if ( ! this.columns ) {
+			throw new Error( 'You need to run setupColumns before inserting an inner block.' );
+		}
 
-		await buttons[ 0 ].click();
+		const screenSize = driverManager.currentScreenSize();
+		const blockSelector = By.id( this.blockID );
+		const addBlockButtonSelector = By.css(
+			`${ blockSelector.value } button[aria-label="Add block"]`
+		);
+
+		if ( screenSize === 'mobile' ) {
+			const addBlockButtons = await this.driver.findElements( addBlockButtonSelector );
+			const firstEmptyColumnIndex = this.columns - addBlockButtons.length + 1;
+			const columnSelector = By.css(
+				`${ blockSelector.value } div[data-type="jetpack/layout-grid-column"]:nth-child(${ firstEmptyColumnIndex })`
+			);
+
+			// On mobiles, we need to click through the layers until the appender is clickable:
+			await driverHelper.clickWhenClickable( this.driver, blockSelector );
+			await driverHelper.clickWhenClickable( this.driver, columnSelector );
+		}
+
+		await driverHelper.clickWhenClickable( this.driver, addBlockButtonSelector );
 
 		const inserterSearchInputSelector = By.css( 'input.block-editor-inserter__search-input' );
 
