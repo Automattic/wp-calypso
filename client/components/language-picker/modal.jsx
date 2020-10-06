@@ -38,6 +38,7 @@ import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils/utils';
+import { requestGeoLocation } from 'state/data-getters';
 
 /**
  * Style dependencies
@@ -64,7 +65,6 @@ export class LanguagePickerModal extends PureComponent {
 		localizedLanguageNames: {},
 		isVisible: false,
 		selected: 'en',
-		countryCode: '',
 		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
 		useFallbackForIncompleteLanguages: false,
@@ -607,6 +607,7 @@ export class LanguagePickerModal extends PureComponent {
 }
 
 export default connect( ( state ) => ( {
+	countryCode: requestGeoLocation().data || '',
 	localizedLanguageNames: getLocalizedLanguageNames( state ),
 	currentUserLocale: getCurrentUserLocale( state ),
 } ) )( localize( LanguagePickerModal ) );
