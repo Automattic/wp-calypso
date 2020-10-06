@@ -17,13 +17,16 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gridicon from 'calypso/components/gridicon';
 import SupportInfo from 'calypso/components/support-info';
 import ExternalLink from 'calypso/components/external-link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { isJetpackAntiSpam } from 'calypso/lib/products-values';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { getSiteProducts } from 'calypso/state/sites/selectors';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
@@ -37,21 +40,22 @@ const SpamFilteringSettings = ( {
 	fields,
 	hasAkismetFeature,
 	hasAkismetKeyError,
-	hasAntiSpam,
+	hasAntiSpamFeature,
+	hasJetpackAntiSpamProduct,
 	isRequestingSettings,
-	isRequestingSitePlan,
+	isRequestingSitePurchases,
 	isSavingSettings,
 	onChangeField,
 	siteSlug,
 	translate,
 } ) => {
 	const { akismet: akismetActive, wordpress_api_key } = fields;
-	const isStoredKey = wordpress_api_key === currentAkismetKey;
+	const isStoredKey = wordpress_api_key === currentAkismetKey && !! wordpress_api_key;
 	const isDirty = includes( dirtyFields, 'wordpress_api_key' );
 	const isCurrentKeyEmpty = isEmpty( currentAkismetKey );
 	const isKeyFieldEmpty = isEmpty( wordpress_api_key );
 	const isEmptyKey = isCurrentKeyEmpty || isKeyFieldEmpty;
-	const inTransition = isRequestingSettings || isSavingSettings || isRequestingSitePlan;
+	const inTransition = isRequestingSettings || isSavingSettings || isRequestingSitePurchases;
 	const isValidKey =
 		( wordpress_api_key && isStoredKey ) ||
 		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
@@ -64,7 +68,7 @@ const SpamFilteringSettings = ( {
 		return null;
 	}
 
-	if ( ! inTransition && ! ( hasAkismetFeature || hasAntiSpam ) && ! isValidKey ) {
+	if ( ! ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct ) ) {
 		return (
 			<UpsellNudge
 				title={ translate( 'Automatically clear spam from comments and forms' ) }
@@ -79,7 +83,7 @@ const SpamFilteringSettings = ( {
 		);
 	}
 
-	if ( ! inTransition && isValidKey ) {
+	if ( isValidKey ) {
 		validationText = translate( 'Your Antispam key is valid.' );
 		className = 'is-valid';
 		header = (
@@ -90,7 +94,7 @@ const SpamFilteringSettings = ( {
 		);
 	}
 
-	if ( ! inTransition && isInvalidKey ) {
+	if ( isInvalidKey ) {
 		validationText = translate( 'Please enter a valid Antispam API key.' );
 		className = 'is-error';
 		header = (
@@ -162,15 +166,18 @@ export default connect( ( state, { dirtyFields, fields } ) => {
 		isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
 		includes( dirtyFields, 'wordpress_api_key' );
 	const hasAkismetFeature = hasFeature( state, selectedSiteId, FEATURE_SPAM_AKISMET_PLUS );
-	const hasAntiSpam =
+	const hasAntiSpamFeature =
 		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM ) ||
 		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM_MONTHLY );
+	const hasJetpackAntiSpamProduct =
+		getSiteProducts( state, selectedSiteId )?.filter( isJetpackAntiSpam ).length > 0;
 
 	return {
 		hasAkismetFeature,
 		hasAkismetKeyError,
-		hasAntiSpam,
+		hasAntiSpamFeature,
+		hasJetpackAntiSpamProduct,
 		siteSlug: selectedSiteSlug,
-		isRequestingSitePlan: isRequestingSitePlans( state, selectedSiteId ),
+		isRequestingSitePurchases: isFetchingSitePurchases( state ),
 	};
 } )( localize( SpamFilteringSettings ) );
