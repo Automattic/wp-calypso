@@ -74,7 +74,7 @@ class Block_Patterns {
 			// Remove core patterns except 'Two Columns of Text'.
 			// Unfortunately, \WP_Block_Patterns_Registry::get_instance()->get_all_registered() doesn't return the pattern names as keys.
 			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-				if ( 'core/' === substr( $pattern['name'], 0, 5 ) && 'core/text-two-columns' !== $pattern['name'] ) {
+				if ( 'core/' === substr( $pattern['name'], 0, 5 ) ) {
 					unregister_block_pattern( $pattern['name'] );
 				}
 			}
