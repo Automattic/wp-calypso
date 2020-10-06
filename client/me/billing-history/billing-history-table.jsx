@@ -91,14 +91,16 @@ class BillingHistoryTable extends React.Component {
 	}
 }
 
+function getIsSendingReceiptEmail( state ) {
+	return function isSendingBillingReceiptEmailForReceiptId( receiptId ) {
+		return isSendingBillingReceiptEmail( state, receiptId );
+	};
+}
+
 export default connect(
 	( state ) => {
-		const sendingBillingReceiptEmail = ( receiptId ) => {
-			return isSendingBillingReceiptEmail( state, receiptId );
-		};
-
 		return {
-			sendingBillingReceiptEmail,
+			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};
 	},
 	{
