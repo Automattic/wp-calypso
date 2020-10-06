@@ -207,7 +207,7 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalize, expert support.' ),
+			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
 
 	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP ]: {
@@ -633,7 +633,7 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_EMAIL_SUPPORT,
 		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalize, expert support.' ),
+			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
 
 	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
