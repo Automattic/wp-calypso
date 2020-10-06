@@ -30,6 +30,7 @@ class CaaRecord extends React.Component {
 		const classes = classnames( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
 		const isDataValid = isValid( 'data' );
+		const isFlagsValid = isValid( 'flags' );
 
 		const options = [ 'issue', 'issuewild' ].map( ( type ) => {
 			return (
@@ -67,15 +68,24 @@ class CaaRecord extends React.Component {
 
 				<FormFieldset>
 					<FormLabel>{ translate( 'Flags', { context: 'Dns Record' } ) }</FormLabel>
-					<FormTextInput name="flags" onChange={ onChange } value={ fieldValues.flags } />
+					<FormTextInput
+						name="flags"
+						onChange={ onChange }
+						isError={ ! isFlagsValid }
+						value={ fieldValues.flags }
+					/>
+					{ ! isFlagsValid && (
+						<FormInputValidation text={ translate( 'Invalid Flags' ) } isError />
+					) }
 				</FormFieldset>
 
 				<FormFieldset>
 					<FormLabel>{ translate( 'Issuer', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextarea
-						name="value"
+						name="data"
 						onChange={ onChange }
-						value={ fieldValues.value }
+						isError={ ! isDataValid }
+						value={ fieldValues.data }
 						placeholder={ translate( 'e.g. %(example)s', {
 							args: { example: 'letsencrypt.org' },
 						} ) }

@@ -51,9 +51,9 @@ class DnsAddNew extends React.Component {
 			types: [ 'CAA' ],
 			initialFields: {
 				name: '',
-				flags: 0,
+				flags: '0',
 				tag: 'issue',
-				value: '',
+				data: '',
 			},
 		},
 		{
