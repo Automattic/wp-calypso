@@ -44,6 +44,14 @@ class DnsRecord extends React.Component {
 					},
 				} );
 
+			case 'CAA':
+				return translate( '%(tag)s %(value)s', {
+					args: {
+						value: dnsRecord.value,
+						tag: dnsRecord.tag,
+					},
+				} );
+
 			case 'CNAME':
 				return translate( 'Alias of %(data)s', {
 					args: {
