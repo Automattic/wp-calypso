@@ -23,7 +23,7 @@ const filteredStream = ( fields, destination ) => {
 		// Set object mode to receive unserialized JSON objects
 		objectMode: true,
 		transform( data, encoding, callback ) {
-			// Make a copye of `data`, excluding any field in `fields`
+			// Make a copy of `data`, excluding any field in `fields`
 			const filteredData = Object.entries( data )
 				.filter( ( [ key ] ) => ! fields.includes( key ) )
 				.reduce( ( record, [ key, value ] ) => {
