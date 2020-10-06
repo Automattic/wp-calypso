@@ -243,8 +243,8 @@ const buildApp = ( environment ) => {
 				],
 			};
 			mockFs( {
-				'./client/server/bundler/assets-fallback.json': JSON.stringify( assetsFallback ),
-				'./client/server/bundler/assets-evergreen.json': JSON.stringify( assetsFallback ).replace(
+				'./build/assets-fallback.json': JSON.stringify( assetsFallback ),
+				'./build/assets-evergreen.json': JSON.stringify( assetsFallback ).replace(
 					/fallback/g,
 					'evergreen'
 				),
