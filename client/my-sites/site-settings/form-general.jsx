@@ -43,7 +43,6 @@ import { launchSite } from 'state/sites/launch/actions';
 import { getDomainsBySiteId } from 'state/sites/domains/selectors';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import FormInputCheckbox from 'components/forms/form-checkbox';
-import { hasLocalizedText } from 'blocks/eligibility-warnings/has-localized-text';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 export class SiteSettingsFormGeneral extends Component {
@@ -328,13 +327,9 @@ export class SiteSettingsFormGeneral extends Component {
 							/>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ hasLocalizedText(
+							{ translate(
 								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-							)
-								? translate(
-										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-								  )
-								: translate( "Your site is hidden from visitors until it's ready for viewing." ) }
+							) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -399,15 +394,9 @@ export class SiteSettingsFormGeneral extends Component {
 							/>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ hasLocalizedText(
+							{ translate(
 								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-							)
-								? translate(
-										'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-								  )
-								: translate(
-										'Your site is only visible to you and logged-in members you approve.'
-								  ) }
+							) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -494,15 +483,9 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
 							{ isComingSoon &&
-							hasLocalizedText(
-								'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-							)
-								? translate(
-										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
-								  )
-								: translate(
-										"Your site hasn't been launched yet. It's private; only you can see it until it is launched."
-								  ) }
+								translate(
+									'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
+								) }
 						</p>
 					</div>
 					<div className={ launchSiteClasses }>{ btnComponent }</div>
