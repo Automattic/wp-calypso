@@ -16,13 +16,13 @@ import filesize from 'filesize';
 import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'components/forms/form-fieldset';
 import SupportInfo from 'components/support-info';
+import { planHasFeature } from 'lib/plans';
 import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	TERM_ANNUALLY,
 } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
 import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
@@ -151,7 +151,11 @@ class MediaSettingsPerformance extends Component {
 	}
 
 	render() {
-		const { isVideoPressAvailable } = this.props;
+		const { isVideoPressAvailable, sitePlanSlug } = this.props;
+
+		if ( ! sitePlanSlug ) {
+			return null;
+		}
 
 		return (
 			<div className="site-settings__module-settings site-settings__media-settings">
@@ -166,9 +170,9 @@ export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	const sitePlanSlug = getSitePlanSlug( state, selectedSiteId );
 	const isVideoPressAvailable =
-		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS ) ||
-		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
-		hasFeature( state, selectedSiteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
+		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS ) ||
+		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM ) ||
+		planHasFeature( sitePlanSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO );
 
 	return {
 		isVideoPressActive: isJetpackModuleActive( state, selectedSiteId, 'videopress' ),
