@@ -19,7 +19,6 @@ import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import Main from 'calypso/components/main';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -63,7 +62,6 @@ const SiteSettingsSecurity = ( {
 	return (
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
-			<QuerySitePlans siteId={ siteId } />
 			<QuerySitePurchases siteId={ siteId } />
 			<DocumentHead title={ translate( 'Site Settings' ) } />
 			<JetpackDevModeNotice />
