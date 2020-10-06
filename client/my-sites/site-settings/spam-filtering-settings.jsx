@@ -23,7 +23,7 @@ import ExternalLink from 'calypso/components/external-link';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
@@ -39,6 +39,7 @@ const SpamFilteringSettings = ( {
 	hasAkismetKeyError,
 	hasAntiSpam,
 	isRequestingSettings,
+	isRequestingSitePlan,
 	isSavingSettings,
 	onChangeField,
 	siteSlug,
@@ -50,7 +51,7 @@ const SpamFilteringSettings = ( {
 	const isCurrentKeyEmpty = isEmpty( currentAkismetKey );
 	const isKeyFieldEmpty = isEmpty( wordpress_api_key );
 	const isEmptyKey = isCurrentKeyEmpty || isKeyFieldEmpty;
-	const inTransition = isRequestingSettings || isSavingSettings;
+	const inTransition = isRequestingSettings || isSavingSettings || isRequestingSitePlan;
 	const isValidKey =
 		( wordpress_api_key && isStoredKey ) ||
 		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
@@ -58,6 +59,10 @@ const SpamFilteringSettings = ( {
 	let validationText,
 		className,
 		header = null;
+
+	if ( inTransition ) {
+		return null;
+	}
 
 	if ( ! inTransition && ! ( hasAkismetFeature || hasAntiSpam ) && ! isValidKey ) {
 		return (
@@ -166,5 +171,6 @@ export default connect( ( state, { dirtyFields, fields } ) => {
 		hasAkismetKeyError,
 		hasAntiSpam,
 		siteSlug: selectedSiteSlug,
+		isRequestingSitePlan: isRequestingSitePlans( state, selectedSiteId ),
 	};
 } )( localize( SpamFilteringSettings ) );
