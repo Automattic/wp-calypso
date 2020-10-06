@@ -439,11 +439,7 @@ object CheckCodeStyle : BuildType({
 				nvm install
 
 				# Code style
-				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|packages/|apps/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
-				echo ${'$'}FILES_TO_LINT
-				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
-				fi
+				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml"
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
