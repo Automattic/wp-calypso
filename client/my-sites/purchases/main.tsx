@@ -212,7 +212,7 @@ export function BillingHistory() {
 	const translate = useTranslate();
 
 	return (
-		<Main className="purchases billing-history">
+		<Main className="purchases billing-history is-wide-layout">
 			<MySitesSidebarNavigation />
 			<DocumentHead title={ translate( 'Billing History' ) } />
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
