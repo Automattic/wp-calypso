@@ -123,7 +123,6 @@ export class GoogleAnalyticsForm extends Component {
 			? getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, site.slug )
 			: null;
 
-		console.log( plan );
 		const nudge = (
 			<UpsellNudge
 				description={

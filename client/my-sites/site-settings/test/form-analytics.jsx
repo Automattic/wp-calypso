@@ -27,7 +27,6 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
 } from 'lib/plans/constants';
 import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
 
