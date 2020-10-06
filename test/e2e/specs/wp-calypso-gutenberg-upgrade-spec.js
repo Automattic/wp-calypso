@@ -242,14 +242,6 @@ async function startNewPost( siteURL ) {
 	await gEditorComponent.initEditor();
 }
 
-after( async function () {
-	if ( process.env.GUTENBERG_EDGE === 'true' ) {
-		await Promise.all(
-			sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
-		);
-	}
-} );
-
 describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most popular themes (${ screenSize })`, function () {
 	before( async function () {
 		if ( process.env.GUTENBERG_EDGE === 'true' ) {
@@ -259,6 +251,14 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 			sampleImages = times( 5, () => mediaHelper.createFile() );
 		} else {
 			this.skip();
+		}
+	} );
+
+	after( async function () {
+		if ( process.env.GUTENBERG_EDGE === 'true' ) {
+			await Promise.all(
+				sampleImages.map( ( fileDetails ) => mediaHelper.deleteFile( fileDetails ) )
+			);
 		}
 	} );
 
