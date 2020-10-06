@@ -21,11 +21,6 @@ import Gridicon from 'components/gridicon';
  */
 import './style.scss';
 
-// interface Props {
-// 	onHostChange: ( newHost: string | null ) => void;
-// }
-
-// const HostSelection: FunctionComponent< Props > = ( { onHostChange } ) => {
 const HostSelection: FunctionComponent = () => {
 	const translate = useTranslate();
 

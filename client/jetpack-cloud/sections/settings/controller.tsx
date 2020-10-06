@@ -16,6 +16,6 @@ export const settings: PageJS.Callback = ( context, next ) => {
 
 export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 	const { host } = context.query;
-	context.primary = <AdvancedCredentials host={ host } />;
+	context.primary = <AdvancedCredentials host={ host } role="main" />;
 	next();
 };

@@ -9,20 +9,30 @@ import React, { FunctionComponent } from 'react';
 import * as HostInfo from '../host-info';
 
 interface Props {
-	info: HostInfo.Info[];
+	info: HostInfo.Info[] | HostInfo.InfoSplit;
+	credentialType: 'ftp' | 'ssh';
 }
 
-const InlineInfo: FunctionComponent< Props > = ( { info } ) => {
+const InlineInfo: FunctionComponent< Props > = ( { credentialType, info } ) => {
+	const choseSplitInfo = ( splitInfo: HostInfo.InfoSplit ) =>
+		credentialType === 'ftp' ? splitInfo.ftp : splitInfo.sftp;
+
+	const infoToRender = HostInfo.infoIsSplit( info ) ? choseSplitInfo( info ) : info;
+
 	return (
 		<div className="inline-info">
-			{ info.map( ( infom ) => {
+			{ infoToRender.map( ( infom, topLevelIndex ) => {
 				if ( HostInfo.infoIsLink( infom ) ) {
-					return <a href={ infom.link }>{ infom.text }</a>;
+					return (
+						<a key={ topLevelIndex } href={ infom.link }>
+							{ infom.text }
+						</a>
+					);
 				} else if ( HostInfo.infoIsText( infom ) ) {
-					return <p>{ infom.text }</p>;
+					return <p key={ topLevelIndex }>{ infom.text }</p>;
 				} else if ( HostInfo.infoIsOrderedList( infom ) ) {
 					return (
-						<ol>
+						<ol key={ topLevelIndex }>
 							{ infom.items.map( ( text, index ) => (
 								<li key={ index }>{ text }</li>
 							) ) }
@@ -30,14 +40,14 @@ const InlineInfo: FunctionComponent< Props > = ( { info } ) => {
 					);
 				} else if ( HostInfo.infoIsUnorderedList( infom ) ) {
 					return (
-						<ul>
+						<ul key={ topLevelIndex }>
 							{ infom.items.map( ( text, index ) => (
 								<li key={ index }>{ text }</li>
 							) ) }
 						</ul>
 					);
 				} else if ( HostInfo.infoIsLine( infom ) ) {
-					return <hr />;
+					return <hr key={ topLevelIndex } />;
 				}
 				return null;
 			} ) }
