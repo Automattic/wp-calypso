@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { endsWith, filter, includes, mapValues, trim, trimStart } from 'lodash';
+import { endsWith, filter, includes, mapValues, trimStart } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -88,11 +88,6 @@ function getNormalizedData( record, selectedDomainName ) {
 	// The record itself should not contain it
 	if ( record.service ) {
 		normalizedRecord.service = trimStart( record.service, '_' );
-	}
-
-	// PDNS expects the issuer to be wrapped in double-quotes
-	if ( 'CAA' === record.type && record.value ) {
-		normalizedRecord.value = '"' + trim( record.value, '"' ) + '"';
 	}
 
 	return normalizedRecord;
