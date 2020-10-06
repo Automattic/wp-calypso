@@ -90,8 +90,10 @@ it( 'It logs info about the request', () => {
 			headers: {
 				'user-agent':
 					'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+				referer: 'https://wordpress.com',
 			},
 			url: '/example.html',
+			ip: '127.0.0.1',
 		} ),
 		res: fakeResponse( {
 			statusCode: '200',
@@ -111,6 +113,10 @@ it( 'It logs info about the request', () => {
 		url: '/example.html',
 		httpVersion: '2.0',
 		userAgent: 'Chrome 85',
+		rawUserAgent:
+			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+		remoteAddr: '127.0.0.1',
+		referrer: 'https://wordpress.com',
 	} );
 } );
 

@@ -35,6 +35,9 @@ const logRequest = ( req, res, options ) => {
 		version,
 		env,
 		userAgent: parseUA( req.get( 'user-agent' ) ),
+		rawUserAgent: req.get( 'user-agent' ),
+		remoteAddr: req.ip,
+		referrer: req.get( 'referer' ),
 	};
 
 	req.logger.info( fields );
