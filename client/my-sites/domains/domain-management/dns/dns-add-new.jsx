@@ -53,7 +53,7 @@ class DnsAddNew extends React.Component {
 				name: '',
 				flags: '0',
 				tag: 'issue',
-				data: '',
+				value: '',
 			},
 		},
 		{

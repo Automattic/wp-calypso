@@ -23,6 +23,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'target':
 			return isValidDomain( value );
 		case 'data':
+		case 'value':
 			return isValidData( value, type );
 		case 'protocol':
 			return includes( [ 'tcp', 'udp', 'tls' ], value );
