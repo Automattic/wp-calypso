@@ -28,9 +28,9 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+const themedSites = dataHelper.configGet( 'themedSites' );
 
 import {
-	GutenbergBlockComponent,
 	BlogPostsBlockComponent,
 	ContactFormBlockComponent,
 	ContactInfoBlockComponent,
@@ -276,13 +276,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 		TiledGalleryBlockComponent,
 		YoutubeBlockComponent,
 	].forEach( ( blockClass ) => {
-		[
-			'e2egbupgradehever',
-			'e2egbupgradeshawburn',
-			'e2egbupgrademorden',
-			'e2egbupgradeexford',
-			'e2egbupgrademayland',
-		].forEach( ( siteName ) => {
+		themedSites.forEach( ( siteName ) => {
 			describe( `Test the ${ blockClass.blockName } block on ${ siteName } @parallel`, function () {
 				const edgeSiteName = siteName + 'edge';
 				const siteURL = `${ siteName }.wordpress.com`;
