@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ARecord from './a-record';
+import CaaRecord from './caa-record';
 import CnameRecord from './cname-record';
 import FormButton from 'components/forms/form-button';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -43,6 +44,16 @@ class DnsAddNew extends React.Component {
 			initialFields: {
 				name: '',
 				data: '',
+			},
+		},
+		{
+			component: CaaRecord,
+			types: [ 'CAA' ],
+			initialFields: {
+				name: '',
+				flags: 0,
+				tag: 'issue',
+				value: '',
 			},
 		},
 		{

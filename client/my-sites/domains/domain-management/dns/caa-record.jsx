@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from 'classnames';
@@ -15,8 +14,9 @@ import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormSelect from 'components/forms/form-select';
 
-class TxtRecord extends React.Component {
+class CaaRecord extends React.Component {
 	static propTypes = {
 		fieldValues: PropTypes.object.isRequired,
 		onChange: PropTypes.func.isRequired,
@@ -24,26 +24,18 @@ class TxtRecord extends React.Component {
 		show: PropTypes.bool.isRequired,
 	};
 
-	getValidationErrorMessage( value ) {
-		const { translate } = this.props;
-
-		if ( value?.length === 0 ) {
-			return translate( 'TXT records may not be empty' );
-		} else if ( value?.length > 255 ) {
-			return translate( 'TXT records may not exceed 255 characters' );
-		}
-
-		return null;
-	}
-
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
 		const classes = classnames( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
-		const isDataValid = isValid( 'data' );
-		// eslint-disable-next-line no-control-regex
-		const hasNonAsciiData = /[^\u0000-\u007f]/.test( fieldValues.data );
-		const validationError = this.getValidationErrorMessage( fieldValues.data );
+
+		const options = [ 'issue', 'issuewild' ].map( ( type ) => {
+			return (
+				<option key={ type } value={ type }>
+					{ type }
+				</option>
+			);
+		} );
 
 		return (
 			<div className={ classes }>
@@ -64,25 +56,27 @@ class TxtRecord extends React.Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Text', { context: 'Dns Record TXT' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Tag', { context: 'Dns Record' } ) }</FormLabel>
+
+					<FormSelect name="tag" onChange={ onChange } value={ fieldValues.tag }>
+						{ options }
+					</FormSelect>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel>{ translate( 'Issuer', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextarea
-						name="data"
+						name="value"
 						onChange={ onChange }
-						value={ fieldValues.data }
+						value={ fieldValues.value }
 						placeholder={ translate( 'e.g. %(example)s', {
-							args: { example: 'v=spf1 include:example.com ~all' },
+							args: { example: 'letsencrypt.org' },
 						} ) }
 					/>
-					{ hasNonAsciiData && (
-						<FormInputValidation text={ translate( 'TXT Record has non-ASCII data' ) } isWarning />
-					) }
-					{ ! isDataValid && validationError && (
-						<FormInputValidation text={ validationError } isError />
-					) }
 				</FormFieldset>
 			</div>
 		);
 	}
 }
 
-export default localize( TxtRecord );
+export default localize( CaaRecord );
