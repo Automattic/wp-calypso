@@ -52,6 +52,8 @@ module.exports = function ( mainWindow ) {
 	ViewModel.on( 'notification', function ( notification ) {
 		log.info( 'Received notification: ', notification );
 
+		// Calypso's renderer websocket connection does not work w/ Electron. Manually refresh
+		// the notifications panel when a new message is received so it's as up-to-date as possible.
 		debounce( () => {
 			mainWindow.webContents.send( 'notifications-panel-refresh' );
 		}, 100 );
@@ -75,7 +77,11 @@ module.exports = function ( mainWindow ) {
 			} );
 
 			desktopNotification.on( 'click', async function () {
-				ViewModel.didClickNotification( id );
+				ViewModel.didClickNotification( id, () =>
+					// Manually refresh notifications panel when a message is clicked
+					// to reflect read/unread highlighting.
+					mainWindow.webContents.send( 'notifications-panel-refresh' )
+				);
 
 				if ( ! mainWindow.isVisible() ) {
 					mainWindow.show();
