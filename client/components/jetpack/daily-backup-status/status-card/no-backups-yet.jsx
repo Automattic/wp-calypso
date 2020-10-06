@@ -12,6 +12,8 @@ import { isEnabled } from 'config';
 import ExternalLink from 'components/external-link';
 import Button from 'components/forms/form-button';
 import contactSupportUrl from 'lib/jetpack/contact-support-url';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import getRawSite from 'state/selectors/get-raw-site';
 import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
 import getSiteUrl from 'state/sites/selectors/get-site-url';
 import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
@@ -28,20 +30,44 @@ const NoBackupsYet = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	const siteName = useSelector( ( state ) => getRawSite( state, siteId ) )?.name;
 
 	if ( isEnabled( 'jetpack/backup-simplified-screens' ) ) {
 		return (
 			<>
 				<div className="status-card__message-head">
 					<img src={ cloudPendingIcon } alt="" role="presentation" />
-					<div>{ translate( 'Backing up your website' ) }&#8230;</div>
+					<div>
+						{ translate( 'We are preparing to backup %s', {
+							args: siteName,
+							comment: '%s is the name of the site',
+						} ) }
+					</div>
 				</div>
-				<h2 className="status-card__title">{ translate( 'First backup is on the way!' ) }</h2>
+				<h2 className="status-card__title">
+					{ translate( 'Your first backup will be ready soon' ) }
+				</h2>
 				<div className="status-card__label">
-					{ translate(
-						'And it should become available in the {{strong}}next 24 hours{{/strong}}. We will let you know once the backup has been completed.',
-						{ components: { strong: <strong /> } }
-					) }
+					{ isJetpackCloud()
+						? translate(
+								'Your first backup will appear here {{strong}}within 24 hours{{/strong}} and you will receive a {{wpcomLink/}} notification once the backup has been completed.',
+								{
+									components: {
+										strong: <strong />,
+										wpcomLink: (
+											<ExternalLink href="https://wordpress.com">WordPress.com</ExternalLink>
+										),
+									},
+								}
+						  )
+						: translate(
+								'Your first backup will appear here {{strong}}within 24 hours{{/strong}} and you will receive a notification once the backup has been completed.',
+								{
+									components: {
+										strong: <strong />,
+									},
+								}
+						  ) }
 				</div>
 				<ul className="status-card__link-list">
 					<li>
