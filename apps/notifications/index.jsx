@@ -14,6 +14,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
@@ -27,10 +28,6 @@ import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-
 import { setUnseenCount } from 'calypso/state/notifications';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
 import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
-
-import debugFactory from 'debug';
-
-const debug = debugFactory( 'calypso:notifications' );
 
 /**
  * Internal dependencies
@@ -61,6 +58,8 @@ const getIsVisible = () => {
 };
 
 const isDesktop = config.isEnabled( 'desktop' );
+
+const debug = debugFactory( 'notifications:panel' );
 
 export class Notifications extends Component {
 	state = {
@@ -180,8 +179,8 @@ export class Notifications extends Component {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
 
 		if ( this.props.forceRefresh ) {
-			debug( 'Refreshing Notes Panel...' );
-			this.props.refreshNotes();
+			debug( 'Refreshing notes panel...' );
+			refreshNotes();
 			this.props.didForceRefresh();
 		}
 
