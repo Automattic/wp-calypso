@@ -100,7 +100,7 @@ export default createSelector(
 		if ( siteId ) {
 			results = results.filter( ( transaction ) => {
 				return transaction.items.some( ( receiptItem ) => {
-					return receiptItem.site_id === siteId;
+					return String( receiptItem.site_id ) === String( siteId );
 				} );
 			} );
 		}
