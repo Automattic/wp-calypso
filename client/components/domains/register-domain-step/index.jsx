@@ -590,15 +590,8 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	renderContent() {
-		const {
-			isPlanSelectionAvailableInFlow = true,
-			forceHideFreeDomainExplainer = false,
-		} = this.props;
-		const isFreeDomainExplainerVisible =
-			! forceHideFreeDomainExplainer && isPlanSelectionAvailableInFlow;
-
 		if ( Array.isArray( this.state.searchResults ) || this.state.loadingResults ) {
-			return this.renderSearchResults( isFreeDomainExplainerVisible );
+			return this.renderSearchResults();
 		}
 
 		if ( this.props.showExampleSuggestions ) {
@@ -1143,7 +1136,7 @@ class RegisterDomainStep extends React.Component {
 		this.setState( { pageNumber }, this.save );
 	};
 
-	renderInitialSuggestions( isFreeDomainExplainerVisible ) {
+	renderInitialSuggestions() {
 		let domainRegistrationSuggestions;
 		let domainUnavailableSuggestion;
 		let suggestions;
@@ -1161,7 +1154,6 @@ class RegisterDomainStep extends React.Component {
 				return (
 					<DomainRegistrationSuggestion
 						isSignupStep={ this.props.isSignupStep }
-						isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
@@ -1270,7 +1262,7 @@ class RegisterDomainStep extends React.Component {
 		}
 	};
 
-	renderSearchResults( isFreeDomainExplainerVisible ) {
+	renderSearchResults() {
 		const {
 			exactMatchDomain,
 			lastDomainIsTransferrable,
@@ -1312,6 +1304,9 @@ class RegisterDomainStep extends React.Component {
 				? this.goToTransferDomainStep
 				: this.goToUseYourDomainStep;
 
+		const isFreeDomainExplainerVisible =
+			! this.props.forceHideFreeDomainExplainer && this.props.isPlanSelectionAvailableInFlow;
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1336,7 +1331,7 @@ class RegisterDomainStep extends React.Component {
 				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
-				isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
+				showStrikedOutPrice={ this.props.isSignupStep && ! this.props.forceHideFreeDomainExplainer }
 				railcarId={ this.state.railcarId }
 				fetchAlgo={ this.getFetchAlgo() }
 				cart={ this.props.cart }

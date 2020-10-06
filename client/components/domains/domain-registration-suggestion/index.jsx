@@ -39,7 +39,7 @@ const NOTICE_GREEN = '#4ab866';
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
-		isFreeDomainExplainerVisible: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
 		buttonStyles: PropTypes.object,
 		cart: PropTypes.object,
@@ -123,7 +123,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const {
 			cart,
 			domainsWithPlansOnly,
-			isFreeDomainExplainerVisible,
+			showStrikedOutPrice,
 			selectedSite,
 			suggestion,
 			translate,
@@ -145,7 +145,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonStyles = { ...buttonStyles, primary: false };
 		} else {
 			buttonContent =
-				! isFreeDomainExplainerVisible &&
+				! showStrikedOutPrice &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 					? translate( 'Upgrade', {
 							context: 'Domain mapping suggestion button with plan upgrade',
@@ -242,7 +242,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
-				this.props.isFreeDomainExplainerVisible && ! this.props.isFeatured,
+				this.props.showStrikedOutPrice && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -292,7 +292,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { isRecommended, isBestAlternative, relevance: matchScore },
 			translate,
 			isFeatured,
-			isFreeDomainExplainerVisible,
+			showStrikedOutPrice,
 		} = this.props;
 
 		if ( ! isFeatured ) {
@@ -301,9 +301,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = isFreeDomainExplainerVisible
-				? translate( 'Our Recommendation' )
-				: translate( 'Best Match' );
+			title = showStrikedOutPrice ? translate( 'Our Recommendation' ) : translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -320,7 +318,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
-			if ( isFreeDomainExplainerVisible ) {
+			if ( showStrikedOutPrice ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
@@ -343,7 +341,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.isFreeDomainExplainerVisible ) {
+		if ( this.props.showStrikedOutPrice ) {
 			return null;
 		}
 
@@ -378,7 +376,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			productCost,
 			productSaleCost,
 			premiumDomain,
-			isFreeDomainExplainerVisible,
+			showStrikedOutPrice,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -400,7 +398,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
 				isFeatured={ isFeatured }
-				isFreeDomainExplainerVisible={ isFreeDomainExplainerVisible }
+				showStrikedOutPrice={ showStrikedOutPrice }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -414,7 +412,7 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const stripZeros = props.isFreeDomainExplainerVisible ? true : false;
+	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 
 	let productCost;

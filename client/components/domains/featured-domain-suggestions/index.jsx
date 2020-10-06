@@ -22,7 +22,7 @@ export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		fetchAlgo: PropTypes.string,
-		isFreeDomainExplainerVisible: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
 		railcarId: PropTypes.string,
 		secondarySuggestion: PropTypes.object,
@@ -36,7 +36,7 @@ export class FeaturedDomainSuggestions extends Component {
 			'cart',
 			'isDomainOnly',
 			'domainsWithPlansOnly',
-			'isFreeDomainExplainerVisible',
+			'showStrikedOutPrice',
 			'onButtonClick',
 			'query',
 			'selectedSite',
@@ -84,8 +84,7 @@ export class FeaturedDomainSuggestions extends Component {
 
 	getClassNames() {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
-			'featured-domain-suggestions__is-domain-management': ! this.props
-				.isFreeDomainExplainerVisible,
+			'featured-domain-suggestions__is-domain-management': ! this.props.showStrikedOutPrice,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
 		} );
 	}
