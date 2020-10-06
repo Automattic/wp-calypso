@@ -1,9 +1,9 @@
 /**
  * External dependencies
- *
- * master
  */
 import bunyan from 'bunyan';
+
+// master
 
 let logger;
 
