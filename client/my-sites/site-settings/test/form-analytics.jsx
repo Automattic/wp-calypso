@@ -27,8 +27,8 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
 } from 'lib/plans/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
 
 /**
  * Internal dependencies
@@ -98,7 +98,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 
 	[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].forEach(
 		( product_slug ) => {
-			test( `Jetpack Premium for (${ product_slug })`, () => {
+			test( `Jetpack Security for (${ product_slug })`, () => {
 				const comp = shallow(
 					<GoogleAnalyticsForm
 						{ ...myProps }
@@ -108,7 +108,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 				);
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ) ).toHaveLength( 1 );
 				expect( comp.find( 'UpsellNudge[event="google_analytics_settings"]' ).props().plan ).toBe(
-					PLAN_JETPACK_PREMIUM
+					OPTIONS_JETPACK_SECURITY
 				);
 			} );
 		}
