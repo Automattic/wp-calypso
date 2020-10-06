@@ -29,7 +29,7 @@ const NoBackupsYet = () => {
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
-	if ( ! isEnabled( 'jetpack/backup-simplified-screens' ) ) {
+	if ( isEnabled( 'jetpack/backup-simplified-screens' ) ) {
 		return (
 			<>
 				<div className="status-card__message-head">
