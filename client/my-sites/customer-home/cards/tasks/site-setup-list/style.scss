@@ -1,6 +1,6 @@
 .site-setup-list {
-	padding: 0 !important;
-	display: flex !important;
+	padding: 0;
+	display: flex;
 
 	@include breakpoint-deprecated( '<960px' ) {
 		display: block;
