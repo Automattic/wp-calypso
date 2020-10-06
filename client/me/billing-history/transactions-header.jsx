@@ -219,12 +219,13 @@ TransactionsHeader.propTypes = {
 	filter: PropTypes.object.isRequired,
 	//own props
 	transactionType: PropTypes.string.isRequired,
+	siteId: PropTypes.string,
 };
 
 export default connect(
-	( state, { transactionType } ) => ( {
-		appFilters: getBillingTransactionAppFilterValues( state, transactionType ),
-		dateFilters: getBillingTransactionDateFilterValues( state, transactionType ),
+	( state, { transactionType, siteId } ) => ( {
+		appFilters: getBillingTransactionAppFilterValues( state, transactionType, siteId ),
+		dateFilters: getBillingTransactionDateFilterValues( state, transactionType, siteId ),
 		filter: getBillingTransactionFilters( state, transactionType ),
 	} ),
 	{

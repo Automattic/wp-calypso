@@ -42,7 +42,12 @@ class TransactionsTable extends React.Component {
 		let header;
 
 		if ( false !== this.props.header ) {
-			header = <TransactionsHeader transactionType={ this.props.transactionType } />;
+			header = (
+				<TransactionsHeader
+					transactionType={ this.props.transactionType }
+					siteId={ this.props.siteId }
+				/>
+			);
 		}
 
 		return (
