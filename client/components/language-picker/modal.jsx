@@ -264,7 +264,7 @@ export class LanguagePickerModal extends PureComponent {
 		}
 
 		this.setState( { recordedTracksSearchEvent: true } );
-		this.props.recordTracksEvent( 'calypso_language_picker_searched' );
+		this.props.recordTracksEvent( 'calypso_language_picker_searched_language' );
 	};
 
 	selectLanguageFromSearch( search ) {
@@ -442,7 +442,7 @@ export class LanguagePickerModal extends PureComponent {
 		}
 
 		const searched = this.state.recordedTracksSearchEvent;
-		this.props.recordTracksEvent( 'calypso_language_picker_new_language_picked', { searched } );
+		this.props.recordTracksEvent( 'calypso_language_picker_selected_language', { searched } );
 	};
 
 	handleClose = ( isClosingWithoutSelection = false ) => {
