@@ -21,8 +21,11 @@
 	}
 }
 
-.editor-sharing__shortlink-label {
+.editor-sharing__shortlink-label.form-label {
 	padding: 8px 0;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	margin-bottom: 0;
 	display: block;
 	user-select: none;
 }
@@ -41,6 +44,12 @@ input[type='text'].form-text-input.editor-sharing__shortlink-field {
 	display: block;
 	font-size: $font-body-extra-small;
 	padding: 2px 0;
+
+	.form-label {
+		margin-bottom: 0;
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+	}
 
 	label input[disabled] + span {
 		opacity: 0.5;

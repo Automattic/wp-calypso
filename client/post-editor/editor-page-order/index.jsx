@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AccordionSection from 'components/accordion/section';
+import FormLabel from 'components/forms/form-label';
 import TextInput from 'components/forms/form-text-input';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -61,7 +62,7 @@ class EditorPageOrder extends Component {
 
 		return (
 			<AccordionSection className="editor-page-order">
-				<label>
+				<FormLabel>
 					<span className="editor-page-order__label-text">
 						{ translate( 'Order', { context: 'Editor: Field label for menu order.' } ) }
 					</span>
@@ -73,7 +74,7 @@ class EditorPageOrder extends Component {
 						onBlur={ this.editMenuOrder }
 						className="editor-page-order__input"
 					/>
-				</label>
+				</FormLabel>
 			</AccordionSection>
 		);
 	}
