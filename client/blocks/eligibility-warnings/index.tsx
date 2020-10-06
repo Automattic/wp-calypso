@@ -12,6 +12,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import hasLocalizedText from './has-localized-text';
 import {
 	FEATURE_UPLOAD_PLUGINS,
 	FEATURE_PERFORMANCE,
@@ -155,29 +156,43 @@ function getSiteIsEligibleMessage(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ]
 ) {
+	const defaultCopy = translate( 'This site is eligible to install plugins and upload themes.' );
 	switch ( context ) {
 		case 'plugins':
 		case 'themes':
-			return translate( 'This site is eligible to install plugins and upload themes.' );
+			return hasLocalizedText( 'This site is eligible to install plugins and upload themes.' )
+				? translate( 'This site is eligible to install plugins and upload themes.' )
+				: defaultCopy;
 		case 'hosting':
-			return translate( 'This site is eligible to activate hosting access.' );
+			return hasLocalizedText( 'This site is eligible to activate hosting access.' )
+				? translate( 'This site is eligible to activate hosting access.' )
+				: defaultCopy;
 		default:
-			return translate( 'This site is eligible to continue.' );
+			return hasLocalizedText( 'This site is eligible to continue.' )
+				? translate( 'This site is eligible to continue.' )
+				: defaultCopy;
 	}
 }
 
 function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
+	const defaultCopy = translate( 'Proceed' );
 	if ( siteRequiresUpgrade( holds ) ) {
-		return translate( 'Upgrade and continue' );
+		return hasLocalizedText( 'Upgrade and continue' )
+			? translate( 'Upgrade and continue' )
+			: defaultCopy;
 	}
 	if ( siteRequiresLaunch( holds ) ) {
-		return translate( 'Launch your site and continue' );
+		return hasLocalizedText( 'Launch your site and continue' )
+			? translate( 'Launch your site and continue' )
+			: defaultCopy;
 	}
 	if ( siteRequiresGoingPublic( holds ) ) {
-		return translate( 'Make your site public and continue' );
+		return hasLocalizedText( 'Make your site public and continue' )
+			? translate( 'Make your site public and continue' )
+			: defaultCopy;
 	}
 
-	return translate( 'Continue' );
+	return hasLocalizedText( 'Continue' ) ? translate( 'Continue' ) : defaultCopy;
 }
 
 function isProceedButtonDisabled( isEligible: boolean, holds: string[] ) {
