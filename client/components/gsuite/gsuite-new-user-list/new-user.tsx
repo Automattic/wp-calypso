@@ -56,10 +56,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
 	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
 
-	const emailAddressPlaceholder = translate( 'e.g. contact', {
-		comment:
-			'An example of the local-part of an email address: "contact" in "contact@example.com".',
-	} );
+	const emailAddressPlaceholder = translate( 'Email' );
 
 	const renderSingleDomain = () => {
 		return (
@@ -107,9 +104,9 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div>
-			<FormFieldset className="gsuite-new-user-list__new-user-name-fieldset">
-				<div className="gsuite-new-user-list__new-user-name">
+		<div className="gsuite-new-user-list__new-user">
+			<FormFieldset>
+				<div className="gsuite-new-user-list__new-user-section">
 					<div className="gsuite-new-user-list__new-user-name-container">
 						<FormTextInput
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
@@ -147,24 +144,26 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						{ hasLastNameError && <FormInputValidation text={ lastNameError } isError /> }
 					</div>
 
-					<div>
-						<Button
-							className="gsuite-new-user-list__new-user-remove-user-button"
-							onClick={ onUserRemove }
-						>
-							<Gridicon icon="trash" />
-							<span>{ translate( 'Remove user' ) }</span>
-						</Button>
-					</div>
+					<Button
+						className="gsuite-new-user-list__new-user-remove-user-button"
+						onClick={ onUserRemove }
+					>
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Remove user' ) }</span>
+					</Button>
 				</div>
 			</FormFieldset>
 
-			<FormFieldset className="gsuite-new-user-list__new-user-email-fieldset">
-				<div className="gsuite-new-user-list__new-user-email">
-					{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
-				</div>
+			<FormFieldset>
+				<div className="gsuite-new-user-list__new-user-section">
+					<div className="gsuite-new-user-list__new-user-email-container">
+						<div className="gsuite-new-user-list__new-user-email">
+							{ domains.length > 1 ? renderMultiDomain() : renderSingleDomain() }
+						</div>
 
-				{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
+						{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
+					</div>
+				</div>
 			</FormFieldset>
 		</div>
 	);

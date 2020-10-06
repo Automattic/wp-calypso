@@ -200,7 +200,7 @@ class GSuiteAddUsers extends React.Component {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 
-				<SectionHeader label={ translate( 'Add G Suite' ) } />
+				<SectionHeader label={ translate( 'Add New Users' ) } />
 
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
@@ -246,7 +246,7 @@ class GSuiteAddUsers extends React.Component {
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ translate( 'Add G Suite' ) }
+						{ translate( 'G Suite' ) }
 					</DomainManagementHeader>
 
 					<EmailVerificationGate

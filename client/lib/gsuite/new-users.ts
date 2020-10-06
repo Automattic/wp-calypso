@@ -2,7 +2,7 @@
  * External dependencies
  */
 import emailValidator from 'email-validator';
-import i18n, { TranslateResult } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -67,9 +67,7 @@ const removePreviousErrors = ( { value }: GSuiteNewUserField ): GSuiteNewUserFie
 const requiredField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => ( {
 	value,
 	error:
-		! error && ( ! value || '' === value.trim() )
-			? i18n.translate( 'This field is required.' )
-			: error,
+		! error && ( ! value || '' === value.trim() ) ? translate( 'This field is required.' ) : error,
 } );
 
 /*
@@ -79,7 +77,7 @@ const sixtyCharacterField = ( { value, error }: GSuiteNewUserField ): GSuiteNewU
 	value,
 	error:
 		! error && 60 < value.length
-			? i18n.translate( "This field can't be longer than %s characters.", {
+			? translate( "This field can't be longer than %s characters.", {
 					args: '60',
 			  } )
 			: error,
@@ -92,7 +90,7 @@ const validEmailCharacterField = ( { value, error }: GSuiteNewUserField ): GSuit
 	value,
 	error:
 		! error && ! /^[0-9a-z_'-](\.?[0-9a-z_'-])*$/i.test( value )
-			? i18n.translate(
+			? translate(
 					'Only number, letters, dashes, underscores, apostrophes and periods are allowed.'
 			  )
 			: error,
@@ -116,7 +114,7 @@ const validateOverallEmail = (
 	value: mailBox,
 	error:
 		! mailBoxError && ! emailValidator.validate( `${ mailBox }@${ domain }` )
-			? i18n.translate( 'Please provide a valid email address.' )
+			? translate( 'Please provide a valid email address.' )
 			: mailBoxError,
 } );
 
@@ -132,7 +130,7 @@ const validateOverallEmailAgainstExistingEmails = (
 	error:
 		! mailBoxError &&
 		includes( mapValues( existingGSuiteUsers, 'email' ), `${ mailBox }@${ domain }` )
-			? i18n.translate( 'You already have this email address.' )
+			? translate( 'You already have this email address.' )
 			: mailBoxError,
 } );
 
@@ -155,7 +153,7 @@ const validateNewUserMailboxIsUnique = (
 	value: mailBox,
 	error:
 		mailboxesByCount[ mailBox ] > 1
-			? i18n.translate( 'Please use a unique mailbox for each user.' )
+			? translate( 'Please use a unique mailbox for each user.' )
 			: previousError,
 } );
 

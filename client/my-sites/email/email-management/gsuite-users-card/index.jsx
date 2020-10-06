@@ -71,7 +71,7 @@ class GSuiteUsersCard extends React.Component {
 							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domainName ) }
 							onClick={ this.goToAddGoogleApps }
 						>
-							{ this.props.translate( 'Add New User' ) }
+							{ this.props.translate( 'Add New Users' ) }
 						</Button>
 					) }
 				</SectionHeader>
