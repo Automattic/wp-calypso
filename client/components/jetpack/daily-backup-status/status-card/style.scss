@@ -37,7 +37,9 @@
 }
 
 .status-card__label {
+	max-width: 500px;
 	margin-top: 24px;
+
 	color: var( --studio-gray-80 );
 	text-align: left;
 }
@@ -50,19 +52,27 @@
 	font-size: $font-body-small;
 }
 
+.status-card__link-list {
+	margin: 40px 0 0;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		margin: 12px 0;
+	}
+}
 
 /* Buttons */
 .daily-backup-status .form-button.status-card__support-button {
 	margin: 32px 0;
 }
 
-
 /* Status-specific rules */
 .status-card__no-backup-last-backup {
 	margin-bottom: 24px;
 	font-style: italic;
 }
-
 
 /* Details for real-time backups */
 .status-card__realtime-details {
@@ -96,19 +106,10 @@
 	margin-right: 0.2rem;
 }
 
-.status-card__realtime-details-card
-	.activity-card
-	.card
-	.activity-log-item__actor
-	.gravatar,
-.status-card__realtime-details-card
-	.activity-card
-	.card
-	.activity-log-item__actor
-	svg {
+.status-card__realtime-details-card .activity-card .card .activity-log-item__actor .gravatar,
+.status-card__realtime-details-card .activity-card .card .activity-log-item__actor svg {
 	width: 30px;
 }
-
 
 /* Screen size-specific rules */
 .status-card__hide-mobile {
