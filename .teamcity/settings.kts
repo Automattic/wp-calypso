@@ -439,7 +439,7 @@ object CheckCodeStyle : BuildType({
 				nvm install
 
 				# Code style
-				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml"
+				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
