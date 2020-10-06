@@ -8,6 +8,15 @@ import fs from 'fs';
 let mockStdout;
 let getLogger;
 
+const withEnvironment = ( name, value ) => {
+	const current = process.env[ name ];
+	process.env[ name ] = value;
+
+	afterAll( () => {
+		process.env[ name ] = current;
+	} );
+};
+
 beforeEach( () => {
 	( { getLogger } = require( '../index' ) );
 	mockStdout = mockProcessStdout();
@@ -53,7 +62,7 @@ it( 'Logs info and above levels to stdout', () => {
 } );
 
 it( 'Logs info and above levels to the filesystem when the env variable is present', async () => {
-	process.env.CALYPSO_LOGFILE = '/tmp/calypso.log';
+	withEnvironment( 'CALYPSO_LOGFILE', '/tmp/calypso.log' );
 	const logger = getLogger();
 
 	logger.trace( 'trace' ); // not logged
@@ -80,4 +89,28 @@ it( 'Reuses the same logger', () => {
 	const logger2 = getLogger();
 
 	expect( logger1 ).toEqual( logger2 );
+} );
+
+it( 'Does not log the hostname to stdout', () => {
+	const logger = getLogger();
+
+	logger.info( 'info' );
+
+	// Fetch the first logged line
+	const loggedMessages = mockStdout.mock.calls.map( ( args ) => JSON.parse( args[ 0 ] ) )[ 0 ];
+	expect( Object.keys( loggedMessages ) ).not.toContain( 'hostname' );
+} );
+
+it( 'Does not log the hostname to a file', async () => {
+	withEnvironment( 'CALYPSO_LOGFILE', '/tmp/calypso.log' );
+	const logger = getLogger();
+
+	logger.info( 'info' );
+
+	// Fetch the first logged line
+	const logLines = ( await fs.promises.readFile( '/tmp/calypso.log', 'utf8' ) )
+		.split( '\n' )
+		.filter( ( line ) => line.length > 0 )
+		.map( JSON.parse )[ 0 ];
+	expect( Object.keys( logLines ) ).not.toContain( 'hostname' );
 } );
