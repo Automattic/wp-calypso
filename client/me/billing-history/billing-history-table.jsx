@@ -77,6 +77,7 @@ class BillingHistoryTable extends React.Component {
 
 		return (
 			<TransactionsTable
+				siteId={ this.props.siteId }
 				transactionType="past"
 				header
 				emptyTableText={ emptyTableText }
