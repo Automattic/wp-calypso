@@ -147,3 +147,12 @@
 		}
 	}
 }
+
+/* Jetpack.com-only changes */
+.is_jetpackcom {
+	.backup__restore-banner {
+		&.banner.card {
+			@include banner-color( var( --color-primary-40 ) );
+		}
+	}
+}

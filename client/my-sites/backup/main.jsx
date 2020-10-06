@@ -191,9 +191,9 @@ class BackupsPage extends Component {
 								<Banner
 									className="backup__restore-banner"
 									callToAction={ translate( 'Enable restores' ) }
-									title={ translate( 'Recover your website anytime by enabling restores.' ) }
+									title={ translate( 'Set up your server credentials to get back online quickly' ) }
 									description={ translate(
-										'Enable one click site restores and get your website back anytime.'
+										'Add SSH, SFTP or FTP credentials to enable one click site restores.'
 									) }
 									href={
 										isJetpackCloud()
