@@ -327,9 +327,11 @@
 	padding: 3px 6px;
 	margin: 1px 0;
 
-	label {
+	.form-label {
 		display: block;
 		cursor: pointer;
+		font-weight: 400;
+		margin-bottom: 0;
 	}
 
 	small {

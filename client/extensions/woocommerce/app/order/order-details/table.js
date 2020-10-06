@@ -13,6 +13,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import { Button, ScreenReaderText } from '@automattic/components';
+import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import FormTextInput from 'components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
@@ -150,11 +151,11 @@ class OrderDetailsTable extends Component {
 		if ( isEditing ) {
 			return (
 				<Fragment>
-					<label htmlFor={ inputId }>
+					<FormLabel htmlFor={ inputId }>
 						<ScreenReaderText>
 							{ translate( 'Quantity of %(item)s', { args: { item: item.name } } ) }
 						</ScreenReaderText>
-					</label>
+					</FormLabel>
 
 					<FormTextInput
 						type="number"
