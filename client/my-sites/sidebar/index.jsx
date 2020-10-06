@@ -556,7 +556,11 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (
+			isEnabled( 'signup/wpforteams' ) &&
+			this.props.isSiteWPForTeams &&
+			! isEnabled( 'p2/p2-plus' )
+		) {
 			return null;
 		}
 
@@ -623,7 +627,11 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (
+			isEnabled( 'signup/wpforteams' ) &&
+			this.props.isSiteWPForTeams &&
+			! isEnabled( 'p2/p2-plus' )
+		) {
 			return null;
 		}
 

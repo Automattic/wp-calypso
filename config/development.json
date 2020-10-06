@@ -139,6 +139,7 @@
 		"nps-survey/dev-trigger": true,
 		"network-connection": true,
 		"oauth": false,
+		"p2/p2-plus": true,
 		"page/export": true,
 		"perfmon": false,
 		"persist-redux": true,

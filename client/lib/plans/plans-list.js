@@ -1339,7 +1339,7 @@ export const PLANS_LIST = {
 
 	[ constants.PLAN_P2_PLUS ]: {
 		group: constants.GROUP_WPCOM,
-		type: constants.TYPE_BLOGGER, //TODO: what is this used for?
+		type: constants.TYPE_P2,
 		getTitle: () => i18n.translate( 'P2+' ),
 		getDescription: () => i18n.translate( 'Some long description' ),
 		getShortDescription: () => i18n.translate( 'Some short description' ),

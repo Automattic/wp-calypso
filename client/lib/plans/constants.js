@@ -292,6 +292,7 @@ export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
 export const TYPE_SECURITY_DAILY = 'TYPE_SECURITY_DAILY';
 export const TYPE_SECURITY_REALTIME = 'TYPE_SECURITY_REALTIME';
 export const TYPE_ALL = 'TYPE_ALL';
+export const TYPE_P2 = 'TYPE_P2';
 
 export function isMonthly( plan ) {
 	return plan === PLAN_BUSINESS_MONTHLY || JETPACK_MONTHLY_PLANS.includes( plan );
