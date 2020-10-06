@@ -12,7 +12,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 /**
  * Types
  */
-import { Lazy, TimestampMS, TimerHandle } from 'types';
+import type { Lazy, TimestampMS, TimerHandle } from 'types';
 
 export enum DataState {
 	Failure = 'failure',
@@ -23,8 +23,8 @@ export enum DataState {
 
 interface ResourceData {
 	state: DataState;
-	data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-	error: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	data: unknown;
+	error: unknown;
 	lastUpdated: TimestampMS;
 	pendingSince: TimestampMS | undefined;
 }
@@ -157,8 +157,7 @@ type ParseResult = SuccessfulParse | FailedParse;
  * @param fromApi - transforms API response data
  * @returns output data to store
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
+const parseResponse = ( data: unknown, fromApi: ResponseParser ): ParseResult => {
 	try {
 		return [ undefined, fromApi( data ) ];
 	} catch ( error ) {
@@ -222,8 +221,8 @@ export const enhancer = ( next: StoreEnhancerStoreCreator ) => (
 	return store;
 };
 
-type ResourcePair = [ DataId, any ]; // eslint-disable-line @typescript-eslint/no-explicit-any
-type ResponseParser = ( apiData: any ) => ResourcePair[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+type ResourcePair = [ DataId, unknown ];
+type ResponseParser = ( apiData: unknown ) => ResourcePair[];
 
 interface RequestHttpDataOptions {
 	fromApi?: Lazy< ResponseParser >;
@@ -231,7 +230,7 @@ interface RequestHttpDataOptions {
 }
 
 function defaultFromApi( requestId: DataId ): Lazy< ResponseParser > {
-	return () => ( data: any ) => [ [ requestId, data ] ];
+	return () => ( data: unknown ) => [ [ requestId, data ] ];
 }
 
 /**
@@ -308,13 +307,12 @@ export const waitForData = < T extends Query >(
 	{ timeout }: { timeout?: number } = {}
 ): Promise< Results< T > > =>
 	new Promise( ( resolve, reject ) => {
-		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		let unsubscribe = () => {};
 		let timer: TimerHandle;
 		const names = Object.keys( query );
 
 		const getValues = () =>
-			names.reduce(
+			names.reduce< [ Results< T >, boolean, boolean ] >(
 				( [ values, allBad, allDone ], name ) => {
 					const value = query[ name ]();
 
@@ -324,7 +322,7 @@ export const waitForData = < T extends Query >(
 						allDone && ( value.state === DataState.Success || value.state === DataState.Failure ),
 					];
 				},
-				[ {}, true, true ] as [ Results< T >, boolean, boolean ]
+				[ {} as Results< T >, true, true ]
 			);
 
 		const listener = () => {
@@ -350,7 +348,7 @@ export const waitForData = < T extends Query >(
 		listener();
 	} );
 
-if ( 'object' === typeof window && window.app && window.app.isDebug ) {
+if ( window?.app?.isDebug ) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
 	window.requestHttpData = requestHttpData;
