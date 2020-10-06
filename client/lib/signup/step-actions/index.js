@@ -603,15 +603,15 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const data = {
 		blog_name: site,
 		blog_title: '',
-		public: getNewSitePublicSetting( state ),
 		options: { theme: themeSlugWithRepo, timezone_string: guessTimezone() },
 		validate: false,
 	};
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
-		data.options.wpcom_public_coming_soon = getNewSiteComingSoonSettingV2();
-		data.public = data.options.wpcom_public_coming_soon === 1 ? 0 : data.public;
+		data.options.wpcom_public_coming_soon = 1;
+		data.public = 0;
 	} else {
+		data.public = getNewSitePublicSetting( state );
 		data.options.wpcom_coming_soon = getNewSiteComingSoonSetting( state );
 	}
 
