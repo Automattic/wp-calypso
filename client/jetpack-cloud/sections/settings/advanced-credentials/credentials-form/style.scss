@@ -6,21 +6,23 @@
 		width: 100%;
 	}
 
+	.form-select {
+		width: 100%;
+	}
+
 	.dialog__action-buttons::before {
 		background: initial;
 	}
 
 	&__buttons {
-		background: var( --studio-gray-0 );
-		margin: 0 -24px;
-		padding: 16px 24px;
-		text-align: right;
-		box-sizing: content-box;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
 	}
 
 	&__btn {
 		width: 100%;
-
 		@include breakpoint-deprecated( '>480px' ) {
 			width: 200px;
 		}
@@ -28,6 +30,27 @@
 
 	&__btn--cancel {
 		margin-right: 16px;
+	}
+
+	&__mode-control {
+		display: flex;
+		justify-content: center;
+
+		.segmented-control {
+			max-width: 244px;
+
+			.is-selected {
+				a {
+					background-color: var( --color-neutral-70 );
+					color: var( --color-text-inverted );
+					&:hover,
+					&:focus {
+						background-color: var( --color-neutral-60 );
+						color: var( --color-text-inverted );
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -58,8 +81,11 @@
 }
 
 .credentials-form__support-info {
-	display: flex;
 	align-items: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+
 	.form-label {
 		margin-bottom: 0;
 		margin-right: 5px;
