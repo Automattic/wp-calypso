@@ -32,7 +32,7 @@ const logRequest = ( req, res, options ) => {
 			( Number( process.hrtime.bigint() - requestStart ) * NS_TO_MS ).toFixed( 3 )
 		),
 		httpVersion: req.httpVersion,
-		version,
+		appVersion: version,
 		env,
 		userAgent: parseUA( req.get( 'user-agent' ) ),
 		rawUserAgent: req.get( 'user-agent' ),
