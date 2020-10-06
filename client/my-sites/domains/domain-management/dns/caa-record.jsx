@@ -15,6 +15,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
 import FormSelect from 'components/forms/form-select';
+import FormTextInput from 'components/forms/form-text-input';
 
 class CaaRecord extends React.Component {
 	static propTypes = {
@@ -24,10 +25,22 @@ class CaaRecord extends React.Component {
 		show: PropTypes.bool.isRequired,
 	};
 
+	getValidationErrorMessage( value ) {
+		const { translate } = this.props;
+
+		if ( value?.length === 0 ) {
+			return translate( 'CAA record may not be empty' );
+		}
+
+		return null;
+	}
+
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
 		const classes = classnames( { 'is-hidden': ! show } );
 		const isNameValid = isValid( 'name' );
+		const isDataValid = isValid( 'data' );
+		const dataValidationError = this.getValidationErrorMessage( fieldValues.data );
 
 		const options = [ 'issue', 'issuewild' ].map( ( type ) => {
 			return (
@@ -64,15 +77,23 @@ class CaaRecord extends React.Component {
 				</FormFieldset>
 
 				<FormFieldset>
+					<FormLabel>{ translate( 'Flags', { context: 'Dns Record' } ) }</FormLabel>
+					<FormTextInput name="flags" onChange={ onChange } value={ fieldValues.flags } />
+				</FormFieldset>
+
+				<FormFieldset>
 					<FormLabel>{ translate( 'Issuer', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextarea
-						name="value"
+						name="data"
 						onChange={ onChange }
-						value={ fieldValues.value }
+						value={ fieldValues.data }
 						placeholder={ translate( 'e.g. %(example)s', {
 							args: { example: 'letsencrypt.org' },
 						} ) }
 					/>
+					{ ! isDataValid && dataValidationError && (
+						<FormInputValidation text={ translate( 'Invalid Data' ) } isError />
+					) }
 				</FormFieldset>
 			</div>
 		);
