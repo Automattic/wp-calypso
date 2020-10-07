@@ -309,7 +309,7 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
-				forceHideFreeDomainExplainer: true,
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 				isSupressedDependencyShouldHideFreePlan: true,
 			},
 		},
@@ -320,7 +320,7 @@ export function generateSteps( {
 			props: {
 				isAllDomains: true,
 				isDomainOnly: true,
-				forceHideFreeDomainExplainer: true,
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 				isSupressedDependencyShouldHideFreePlan: true,
 			},
 		},

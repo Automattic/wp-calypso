@@ -1304,7 +1304,8 @@ class RegisterDomainStep extends React.Component {
 				: this.goToUseYourDomainStep;
 
 		const isFreeDomainExplainerVisible =
-			! this.props.forceHideFreeDomainExplainer && this.props.isPlanSelectionAvailableInFlow;
+			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
+			this.props.isPlanSelectionAvailableInFlow;
 
 		return (
 			<DomainSearchResults
@@ -1330,7 +1331,9 @@ class RegisterDomainStep extends React.Component {
 				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
-				showStrikedOutPrice={ this.props.isSignupStep && ! this.props.forceHideFreeDomainExplainer }
+				showStrikedOutPrice={
+					this.props.isSignupStep && ! this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+				}
 				railcarId={ this.state.railcarId }
 				fetchAlgo={ this.getFetchAlgo() }
 				cart={ this.props.cart }

@@ -507,7 +507,9 @@ class DomainsStep extends React.Component {
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
-				forceHideFreeDomainExplainer={ this.props.forceHideFreeDomainExplainer }
+				forceHideFreeDomainExplainerAndStrikeoutUi={
+					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+				}
 				isReskinned={ this.props.isReskinned }
 			/>
 		);
