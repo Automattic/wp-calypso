@@ -17,6 +17,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSecureYourBrand } from 'state/secure-your-brand/selectors';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
 import { Button, Card } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
 import { domainRegistration } from 'lib/cart-values/cart-items';
 
@@ -68,9 +69,15 @@ export class SecureYourBrandStep extends Component {
 	}
 
 	recommendedDomains() {
-		const { translate, domains } = this.props;
+		const { translate, secureYourBrand } = this.props;
 		const domain = this.getDomainName();
 		this.getDomainName();
+		const productData = secureYourBrand.product_data;
+		const currency = secureYourBrand.currency;
+		const discountedCost = formatCurrency( secureYourBrand.discounted_cost, currency, {
+			stripZeros: true,
+		} );
+		const totalCost = formatCurrency( secureYourBrand.total_cost, currency, { stripZeros: true } );
 		const classNames = {
 			'is-primary': true,
 		};
@@ -82,13 +89,25 @@ export class SecureYourBrandStep extends Component {
 					<div className="secure-your-brand__available">
 						{ translate( '%(domain)s is available', { args: { domain } } ) }
 					</div>
+					<h3>{ translate( 'Domain signup bundle' ) }</h3>
 					<div className="secure-your-brand__domains">
-						{ domains?.map( ( suggestion ) => (
-							<div className="secure-your-brand__domain">
+						{ productData?.map( ( suggestion ) => (
+							<div className="secure-your-brand__domain" key={ suggestion.domain }>
 								<div>{ suggestion.domain }</div>
-								<div className="secure-your-brand__cost">{ suggestion.cost }</div>
+								<div className="secure-your-brand__cost">
+									{ formatCurrency( suggestion.cost, currency, { stripZeros: true } ) }
+								</div>
 							</div>
 						) ) }
+					</div>
+					<div>
+						<div>{ translate( 'Total' ) }</div>
+						<div>
+							{ translate( '%(discountedCost)s for your first year', {
+								args: { discountedCost },
+							} ) }
+						</div>
+						<div>{ totalCost }</div>
 					</div>
 					<div>
 						<Button onClick={ () => this.handleSkipButtonClick() }>
@@ -145,7 +164,7 @@ export default connect(
 		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		domainItem,
-		domains: getSecureYourBrand( state ),
+		secureYourBrand: getSecureYourBrand( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( SecureYourBrandStep ) );

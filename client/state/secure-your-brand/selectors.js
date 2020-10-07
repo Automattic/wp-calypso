@@ -10,7 +10,7 @@ import 'state/secure-your-brand/init';
  * @returns {Array} WordPress activePromotions
  */
 export function getSecureYourBrand( state ) {
-	return state.secureYourBrand.secureYourBrand.domains;
+	return state.secureYourBrand.secureYourBrand;
 }
 
 /**
