@@ -302,7 +302,7 @@
 		"eslint-config-wpcalypso": "^6.1.0",
 		"eslint-plugin-import": "^2.20.0",
 		"eslint-plugin-inclusive-language": "^1.2.0",
-		"eslint-plugin-jest": "^23.6.0",
+		"eslint-plugin-jest": "^23.20.0",
 		"eslint-plugin-jsdoc": "^30.6.3",
 		"eslint-plugin-jsx-a11y": "^6.2.3",
 		"eslint-plugin-md": "^1.0.19",
