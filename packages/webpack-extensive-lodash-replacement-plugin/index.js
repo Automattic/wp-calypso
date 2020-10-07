@@ -1,5 +1,5 @@
 const path = require( 'path' );
-const semver = require( 'semver' );
+//const semver = require( 'semver' );
 
 const LODASH_MODULE_NAMES = require( './module-names' );
 
@@ -68,7 +68,7 @@ class ExtensiveLodashReplacementPlugin {
 		}
 
 		if ( baseLodashVersion !== this.baseLodashESVersion ) {
-			throw createError( 'Root `lodash` and `lodash-es` versions do not match.' );
+			//throw createError( 'Root `lodash` and `lodash-es` versions do not match.' );
 		}
 	}
 
@@ -92,10 +92,7 @@ class ExtensiveLodashReplacementPlugin {
 	// It takes the importer's version and the global lodash-es version into account.
 	async canBeReplaced( file, packageName ) {
 		const importVersion = await this.findRequestedVersion( file, packageName );
-		const isVersionMatch =
-			importVersion &&
-			semver.major( this.baseLodashESVersion ) === semver.major( importVersion ) &&
-			semver.gte( this.baseLodashESVersion, importVersion );
+		const isVersionMatch = !! importVersion; // Forcefully replace everything. Unsafe; just an experiment.
 
 		if ( ! isVersionMatch ) {
 			const relativePath = path.relative( this.baseDir, file );
