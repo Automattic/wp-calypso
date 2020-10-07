@@ -17,11 +17,12 @@ import 'state/billing-transactions/init';
  *
  * @param   {object}  state           Global state tree
  * @param   {string}  transactionType Transaction type
+ * @param   {string}  [siteId]        Optional site id
  * @returns {Array}                   Date filter metadata
  */
 export default createSelector(
-	( state, transactionType ) => {
-		const transactions = getBillingTransactionsByType( state, transactionType );
+	( state, transactionType, siteId = null ) => {
+		let transactions = getBillingTransactionsByType( state, transactionType );
 
 		if ( ! transactions ) {
 			return [];
@@ -41,6 +42,14 @@ export default createSelector(
 			value: { month: lastMonth, operator: 'before' },
 			count: 0,
 		} );
+
+		if ( siteId ) {
+			transactions = transactions.filter( ( transaction ) => {
+				return transaction.items.some( ( receiptItem ) => {
+					return String( receiptItem.site_id ) === String( siteId );
+				} );
+			} );
+		}
 
 		transactions.forEach( ( transaction ) => {
 			const transactionDateString = moment( transaction.date )

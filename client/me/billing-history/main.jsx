@@ -23,6 +23,14 @@ import QueryBillingTransactions from 'components/data/query-billing-transactions
  */
 import './style.scss';
 
+export function BillingHistoryList( { siteId = null } ) {
+	return (
+		<Card className="billing-history__receipts">
+			<BillingHistoryTable siteId={ siteId } />
+		</Card>
+	);
+}
+
 const BillingHistory = ( { translate } ) => (
 	<Main className="billing-history">
 		<DocumentHead title={ translate( 'Billing History' ) } />
@@ -30,9 +38,7 @@ const BillingHistory = ( { translate } ) => (
 		<MeSidebarNavigation />
 		<QueryBillingTransactions />
 		<PurchasesHeader section={ 'billing' } />
-		<Card className="billing-history__receipts">
-			<BillingHistoryTable />
-		</Card>
+		<BillingHistoryList />
 		{ config.isEnabled( 'upgrades/credit-cards' ) && <CreditCards /> }
 	</Main>
 );
