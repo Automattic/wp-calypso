@@ -161,7 +161,7 @@ class Search extends Component {
 								onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
 							>
 								{ translate(
-									'Replace WordPress built-in search with a higher performance query.'
+									'Improve built-in WordPress search performance.'
 								) }
 							</CompactFormToggle>
 						) }
