@@ -102,6 +102,7 @@
 		"paladin": true,
 		"network-connection": true,
 		"oauth": true,
+		"p2/p2-plus": true,
 		"perfmon": false,
 		"persist-redux": true,
 		"plans/alternate-selector": true,
