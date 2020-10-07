@@ -149,7 +149,6 @@ class EmailProvidersComparison extends React.Component {
 		return (
 			<EmailProviderDetails
 				title={ translate( 'Titan Mail' ) }
-				badge={ translate( 'Recommended' ) }
 				description={ translate(
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 				) }
@@ -162,7 +161,7 @@ class EmailProvidersComparison extends React.Component {
 				] }
 				formattedPrice={ translate( '{{price/}} /user /month', {
 					components: {
-						price: <span>$4</span>,
+						price: <span>$3.50</span>,
 					},
 					comment: '{{price/}} is the formatted price, e.g. $20',
 				} ) }
