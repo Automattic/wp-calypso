@@ -9,7 +9,7 @@ import {
 	addItemsToResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
-} from '../types/backend/shopping-cart-endpoint';
+} from '../hooks/use-shopping-cart-manager/cart-functions';
 
 const cart = {
 	products: [],
@@ -53,8 +53,7 @@ describe( 'replaceItemInResponseCart', function () {
 		const result = replaceItemInResponseCart(
 			{ ...cart, products: [ product1, product2 ] },
 			product1.uuid,
-			product1B.product_id,
-			product1B.product_slug
+			product1B
 		);
 		expect( result ).toEqual( { ...cart, products: [ product1B, product2 ] } );
 	} );
@@ -62,8 +61,7 @@ describe( 'replaceItemInResponseCart', function () {
 		const result = replaceItemInResponseCart(
 			{ ...cart, products: [ product1, product2 ] },
 			'22',
-			product3.product_id,
-			product3.product_slug
+			product3
 		);
 		expect( result ).toEqual( { ...cart, products: [ product1, product2 ] } );
 	} );

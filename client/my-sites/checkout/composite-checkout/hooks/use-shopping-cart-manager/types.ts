@@ -6,7 +6,9 @@ import {
 	RequestCart,
 	RequestCartProduct,
 	CartLocation,
-} from '../../types/backend/shopping-cart-endpoint';
+} from './shopping-cart-endpoint';
+
+export * from './shopping-cart-endpoint';
 
 export type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -15,11 +17,6 @@ export interface ShoppingCartManagerArguments {
 	canInitializeCart: boolean;
 	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
-}
-
-export interface VariantSelectOverride {
-	uuid: string;
-	overrideSelectedProductSlug: string;
 }
 
 export interface ShoppingCartManager {
@@ -33,15 +30,14 @@ export interface ShoppingCartManager {
 	removeCoupon: () => void;
 	couponStatus: CouponStatus;
 	updateLocation: ( arg0: CartLocation ) => void;
-	variantRequestStatus: VariantRequestStatus;
-	variantSelectOverride: VariantSelectOverride[];
-	changeItemVariant: (
-		uuidToReplace: string,
-		newProductSlug: string,
-		newProductId: number
-	) => void;
+	replaceProductInCart: ReplaceProductInCart;
 	responseCart: ResponseCart;
 }
+
+export type ReplaceProductInCart = (
+	uuidToReplace: string,
+	productPropertiesToChange: Partial< RequestCartProduct >
+) => void;
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
@@ -54,18 +50,6 @@ export interface ShoppingCartManager {
  *   - 'error': Something went wrong.
  */
 export type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
-
-/**
- * Possible states re. variant selection. Note that all variant
- * change requests share the same state; this means if there is more
- * than one item in the cart with variant options they will all be in
- * pending state at the same time. Right now this is moot because at most
- * one cart item (the plan, if it exists) can have a variant picker.
- * If later we want to allow variations on more than one cart item
- * It should be straightforward to adjust the type of ShoppingCartManager
- * to accommodate this. For now the extra complexity is not worth it.
- */
-export type VariantRequestStatus = 'fresh' | 'pending' | 'valid' | 'error';
 
 /**
  * Possible states re. coupon submission.
@@ -84,12 +68,10 @@ export type ShoppingCartAction =
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
 	| { type: 'SET_LOCATION'; location: CartLocation }
 	| {
-			type: 'REPLACE_CART_ITEM';
+			type: 'CART_PRODUCT_REPLACE';
 			uuidToReplace: string;
-			newProductId: number;
-			newProductSlug: string;
+			productPropertiesToChange: Partial< RequestCartProduct >;
 	  }
-	| { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'REMOVE_COUPON' }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
@@ -110,9 +92,6 @@ export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR
  *         Used to determine whether we need to re-validate the cart on
  *         the backend. We can't use responseCart directly to decide this
  *         in e.g. useEffect because this causes an infinite loop.
- *     * variantRequestStatus
- *         Used to allow updating the view immediately upon a variant
- *         change request.
  */
 export type ShoppingCartState = {
 	responseCart: ResponseCart;
@@ -120,7 +99,5 @@ export type ShoppingCartState = {
 	cacheStatus: CacheStatus;
 	loadingError?: string;
 	loadingErrorType?: ShoppingCartError;
-	variantRequestStatus: VariantRequestStatus;
-	variantSelectOverride: VariantSelectOverride[];
 	queuedActions: ShoppingCartAction[];
 };

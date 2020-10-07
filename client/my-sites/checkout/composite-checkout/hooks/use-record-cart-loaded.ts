@@ -6,8 +6,11 @@ import { useRef, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import type { ReactStandardAction } from 'my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types';
-import type { ResponseCart, RequestCartProduct } from '../types/backend/shopping-cart-endpoint';
+import type {
+	ResponseCart,
+	RequestCartProduct,
+	ReactStandardAction,
+} from './use-shopping-cart-manager/types';
 
 export default function useRecordCartLoaded( {
 	recordEvent,

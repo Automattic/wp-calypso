@@ -9,11 +9,9 @@ import debugFactory from 'debug';
  */
 import {
 	convertResponseCartToRequestCart,
-	ResponseCart,
-	RequestCart,
 	convertRawResponseCartToResponseCart,
-} from '../../types/backend/shopping-cart-endpoint';
-import { CacheStatus, ShoppingCartAction } from './types';
+} from './cart-functions';
+import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cart-update-and-revalidate' );
 
@@ -52,7 +50,6 @@ export default function useCartUpdateAndRevalidate(
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
 					updatedResponseCart: convertRawResponseCartToResponseCart( response ),
 				} );
-				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while setting cart', error );

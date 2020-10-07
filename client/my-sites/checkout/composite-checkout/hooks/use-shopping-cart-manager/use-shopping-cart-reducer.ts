@@ -8,7 +8,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import {
-	emptyResponseCart,
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
 	replaceItemInResponseCart,
@@ -16,9 +15,16 @@ import {
 	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
+} from './cart-functions';
+import {
+	emptyResponseCart,
 	ResponseCart,
-} from '../../types/backend/shopping-cart-endpoint';
-import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
+	ResponseCartProduct,
+	TempResponseCartProduct,
+	ShoppingCartState,
+	ShoppingCartAction,
+	CouponStatus,
+} from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );
 
@@ -87,39 +93,29 @@ function shoppingCartReducer(
 				cacheStatus: 'invalid',
 			};
 		}
-		case 'REPLACE_CART_ITEM': {
+		case 'CART_PRODUCT_REPLACE': {
 			const uuidToReplace = action.uuidToReplace;
-			const newProductId = action.newProductId;
-			const newProductSlug = action.newProductSlug;
-			if ( state.variantRequestStatus === 'pending' ) {
-				debug(
-					`variant request status is '${ state.variantRequestStatus }'; not submitting again`
-				);
+			if (
+				doesResponseCartContainProductMatching( state.responseCart, {
+					uuid: uuidToReplace,
+					...action.productPropertiesToChange,
+				} )
+			) {
+				debug( `variant is already in cart; not submitting again` );
 				return state;
 			}
-			debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
+			debug( `replacing item with uuid ${ uuidToReplace } with`, action.productPropertiesToChange );
 
 			return {
 				...state,
 				responseCart: replaceItemInResponseCart(
 					state.responseCart,
 					uuidToReplace,
-					newProductId,
-					newProductSlug
+					action.productPropertiesToChange
 				),
 				cacheStatus: 'invalid',
-				variantRequestStatus: 'pending',
-				variantSelectOverride: [
-					...state.variantSelectOverride.filter( ( item ) => item.uuid !== action.uuidToReplace ),
-					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
-				],
 			};
 		}
-		case 'CLEAR_VARIANT_SELECT_OVERRIDE':
-			return {
-				...state,
-				variantSelectOverride: [],
-			};
 		case 'REMOVE_COUPON': {
 			if ( couponStatus !== 'applied' ) {
 				debug( `coupon status is '${ couponStatus }'; not removing` );
@@ -181,7 +177,6 @@ function shoppingCartReducer(
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
-				variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
 			};
 		}
 		case 'RAISE_ERROR':
@@ -218,8 +213,6 @@ function getInitialShoppingCartState(): ShoppingCartState {
 		responseCart: emptyResponseCart,
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-		variantRequestStatus: 'fresh',
-		variantSelectOverride: [],
 		queuedActions: [],
 	};
 }
@@ -269,4 +262,16 @@ function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart
 		default:
 			return currentCouponStatus;
 	}
+}
+
+function doesResponseCartContainProductMatching(
+	responseCart: ResponseCart,
+	productProperties: Partial< ResponseCartProduct >
+): boolean {
+	return responseCart.products.some( ( product: ResponseCartProduct | TempResponseCartProduct ) => {
+		return Object.keys( productProperties ).every( ( key ) => {
+			const typedKey = key as keyof ResponseCartProduct;
+			return product[ typedKey ] === productProperties[ typedKey ];
+		} );
+	} );
 }

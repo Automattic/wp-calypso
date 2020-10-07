@@ -21,7 +21,6 @@ export default function WPCheckoutOrderReview( {
 	removeCoupon,
 	couponStatus,
 	couponFieldStateProps,
-	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
@@ -54,7 +53,6 @@ export default function WPCheckoutOrderReview( {
 					items={ items }
 					removeItem={ removeItem }
 					removeCoupon={ removeCouponAndClearField }
-					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
@@ -83,7 +81,6 @@ WPCheckoutOrderReview.propTypes = {
 	siteUrl: PropTypes.string,
 	couponStatus: PropTypes.string,
 	couponFieldStateProps: PropTypes.object.isRequired,
-	variantSelectOverride: PropTypes.array,
 };
 
 function CouponFieldArea( {
