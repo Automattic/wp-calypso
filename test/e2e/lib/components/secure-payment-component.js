@@ -413,6 +413,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				this.driver,
 				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
 			);
+			const lineItemCount = await driverHelper.getElementCount(
+				this.driver,
+				By.css( '.checkout-line-item button.checkout-line-item__remove-product' )
+			);
 			// Click delete button on line item
 			await driverHelper.clickWhenClickable(
 				this.driver,
@@ -434,11 +438,15 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				this.driver,
 				By.css( `.checkout-line-item[data-e2e-product-slug="${ productSlug }"]` )
 			);
-			// Close editing review step
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				By.css( '.wp-checkout__review-order-step button.is-status-primary' )
-			);
+			// If the plan is the last item in the cart, then removing it will cause
+			// a redirect, so we won't try to close the review step.
+			if ( lineItemCount > 1 ) {
+				// Close editing review step
+				await driverHelper.clickWhenClickable(
+					this.driver,
+					By.css( '.wp-checkout__review-order-step button.is-status-primary' )
+				);
+			}
 			return;
 		}
 
