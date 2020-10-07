@@ -23,6 +23,7 @@ import FormattedHeader from 'components/formatted-header';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
 import { clearBillingTransactionError } from 'state/billing-transactions/individual-transactions/actions';
+import { recordGoogleEvent } from 'state/analytics/actions';
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -57,11 +58,13 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receiptId: number } ) {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
+	const reduxDispatch = useDispatch();
 
 	useRedirectToHistoryPageOnInvalidTransaction( siteSlug, receiptId );
 
-	// TODO: handle clicks
 	const handlePrintLinkClick = () => {
+		const action = 'Print Receipt Button in Billing History Receipt';
+		reduxDispatch( recordGoogleEvent( 'Me', 'Clicked on ' + action ) );
 		window.print();
 	};
 
