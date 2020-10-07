@@ -150,7 +150,7 @@ class Search extends Component {
 								siteId={ siteId }
 								moduleSlug="search"
 								label={ translate(
-									'Replace WordPress built-in search with a higher performance query.'
+									'Improve built-in WordPress search performance.'
 								) }
 								disabled={ isRequestingSettings || isSavingSettings }
 							/>
