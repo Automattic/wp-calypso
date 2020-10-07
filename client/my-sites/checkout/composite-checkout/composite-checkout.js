@@ -198,6 +198,7 @@ export default function CompositeCheckout( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
+		replaceProductsInCart,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: ! isLoadingCartSynchronizer,
@@ -214,6 +215,7 @@ export default function CompositeCheckout( {
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
+		replaceProductsInCart,
 	} );
 
 	useRecordCartLoaded( {
