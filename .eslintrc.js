@@ -108,12 +108,52 @@ module.exports = {
 			require( '@typescript-eslint/eslint-plugin' ).configs.base,
 			// basic recommended rules config from the TypeScript plugin
 			{ rules: require( '@typescript-eslint/eslint-plugin' ).configs.recommended.rules },
+			// disables rules that are already checked by the TypeScript compiler
+			// see https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/src/configs#eslint-recommended
+			{
+				rules: require( '@typescript-eslint/eslint-plugin' ).configs[ 'eslint-recommended' ]
+					.overrides[ 0 ].rules,
+			},
 			// Prettier rules config
 			require( 'eslint-config-prettier/@typescript-eslint' ),
 			// Our own overrides
 			{
 				files: [ '**/*.ts', '**/*.tsx' ],
 				rules: {
+					// Disable vanilla eslint rules that have a Typescript implementation
+					// See https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/README.md#extension-rules
+					'brace-style': 'off',
+					'comma-dangle': 'off',
+					'comma-spacing': 'off',
+					'default-param-last': 'off',
+					'dot-notation': 'off',
+					'func-call-spacing': 'off',
+					indent: 'off',
+					'init-declarations': 'off',
+					'keyword-spacing': 'off',
+					'lines-between-class-members': 'off',
+					'no-array-constructor': 'off',
+					'no-dupe-class-members': 'off',
+					'no-duplicate-imports': 'off',
+					'no-empty-function': 'off',
+					'no-extra-parens': 'off',
+					'no-extra-semi': 'off',
+					'no-invalid-this': 'off',
+					'no-loop-func': 'off',
+					'no-loss-of-precision': 'off',
+					'no-magic-numbers': 'off',
+					'no-redeclare': 'off',
+					'no-shadow': 'off',
+					'no-unused-expressions': 'off',
+					'no-unused-vars': 'off',
+					'no-use-before-define': 'off',
+					'no-useless-constructor': 'off',
+					quotes: 'off',
+					'require-await': 'off',
+					'return-await': 'off',
+					semi: 'off',
+					'space-before-function-paren': 'off',
+
 					'@typescript-eslint/explicit-function-return-type': 'off',
 					'@typescript-eslint/explicit-member-accessibility': 'off',
 					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
@@ -121,7 +161,6 @@ module.exports = {
 						'error',
 						{ functions: false, typedefs: false },
 					],
-					'no-use-before-define': 'off',
 					'@typescript-eslint/no-var-requires': 'off',
 					// REST API objects include underscores
 					'@typescript-eslint/camelcase': 'off',
