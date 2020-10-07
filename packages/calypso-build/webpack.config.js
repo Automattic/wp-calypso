@@ -54,6 +54,7 @@ function getWebpackConfig(
 		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-library-target': outputLibraryTarget = 'window',
+		'output-jsonp-function': outputJsonpFunction = 'webpackJsonp',
 	}
 ) {
 	const workerCount = 1;
@@ -88,6 +89,7 @@ function getWebpackConfig(
 			path: outputPath,
 			filename: outputFilename,
 			libraryTarget: outputLibraryTarget,
+			jsonpFunction: outputJsonpFunction,
 		},
 		optimization: {
 			minimize: ! isDevelopment,
