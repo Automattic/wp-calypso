@@ -25,11 +25,11 @@ export interface ShoppingCartManager {
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
 	addProductsToCart: AddProductsToCart;
-	removeItem: ( uuidToRemove: string ) => void;
-	applyCoupon: ( couponId: string ) => void;
-	removeCoupon: () => void;
+	removeItem: RemoveProductFromCart;
+	applyCoupon: ApplyCouponToCart;
+	removeCoupon: RemoveCouponFromCart;
 	couponStatus: CouponStatus;
-	updateLocation: ( arg0: CartLocation ) => void;
+	updateLocation: UpdateTaxLocationInCart;
 	replaceProductInCart: ReplaceProductInCart;
 	replaceProductsInCart: ReplaceProductsInCart;
 	responseCart: ResponseCart;
@@ -43,6 +43,14 @@ export type ReplaceProductInCart = (
 export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => void;
 
 export type AddProductsToCart = ( products: RequestCartProduct[] ) => void;
+
+export type RemoveCouponFromCart = () => void;
+
+export type ApplyCouponToCart = ( couponId: string ) => void;
+
+export type RemoveProductFromCart = ( uuidToRemove: string ) => void;
+
+export type UpdateTaxLocationInCart = ( location: CartLocation ) => void;
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
