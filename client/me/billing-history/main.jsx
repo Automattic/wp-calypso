@@ -7,6 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { billingHistoryReceipt } from 'me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import config from 'calypso/config';
@@ -23,10 +24,10 @@ import QueryBillingTransactions from 'calypso/components/data/query-billing-tran
  */
 import './style.scss';
 
-export function BillingHistoryList( { siteId = null } ) {
+export function BillingHistoryList( { siteId = null, getReceiptUrlFor = billingHistoryReceipt } ) {
 	return (
 		<Card className="billing-history__receipts">
-			<BillingHistoryTable siteId={ siteId } />
+			<BillingHistoryTable siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 		</Card>
 	);
 }
