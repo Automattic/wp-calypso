@@ -38,7 +38,7 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isSiteComingSoon, { isSiteComingSoonV2 }  from 'calypso/state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -276,6 +276,7 @@ export class SeoForm extends React.Component {
 			siteId,
 			siteIsJetpack,
 			siteIsComingSoon,
+			siteIsComingSoonV2,
 			showAdvancedSeo,
 			showWebsiteMeta,
 			selectedSite,
@@ -326,7 +327,7 @@ export class SeoForm extends React.Component {
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden ) && hasSiteSeoFeature( selectedSite ) && (
+				{ ( isSitePrivate || isSiteHidden ) && true /*hasSiteSeoFeature( selectedSite )*/ && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -340,6 +341,10 @@ export class SeoForm extends React.Component {
 
 								return translate(
 									"SEO settings aren't recognized by search engines while your site is Private."
+								);
+							} else if ( siteIsComingSoonV2 ) {
+								return translate(
+									"SEO settings aren't recognized by search engines while your site is Coming Soon."
 								);
 							}
 							return translate(
@@ -503,6 +508,7 @@ const mapStateToProps = ( state ) => {
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		siteIsComingSoon: isSiteComingSoon( state, siteId ),
+		siteIsComingSoonV2: isSiteComingSoonV2( state, siteId ),
 		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),

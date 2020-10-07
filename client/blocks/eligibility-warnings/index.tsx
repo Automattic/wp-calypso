@@ -236,6 +236,8 @@ const mapDispatchToProps = {
 	makeSitePublic: ( selectedSiteId: number | null ) =>
 		saveSiteSettings( selectedSiteId, {
 			blog_public: 1,
+			// This `makeSitePublic` function is used for handling jetpack/atomic private/public requirements.
+			// We are intentionally not setting `wpcom_public_coming_soon` here as coming soon v2 sites are already public.
 			wpcom_coming_soon: 0,
 			apiVersion: '1.4',
 		} ),
