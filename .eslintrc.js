@@ -368,5 +368,3 @@ module.exports = {
 		'import/no-extraneous-dependencies': 'error',
 	},
 };
-
-console.dir( module.exports, { depth: 20 } );
