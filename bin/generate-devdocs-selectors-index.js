@@ -5,10 +5,12 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const doctrine = require( 'doctrine' );
 const { camelCase, forEach } = require( 'lodash' );
+const mkdirp = require( 'mkdirp' );
 
 const REGEXP_DOCBLOCKS = /\/\*\* *\n( *\*.*\n)* *\*\//g;
 const SELECTORS_DIR = 'client/state/selectors';
-const DEST_FILE = 'build/devdocs-selectors-index.json';
+const DEST_DIR = 'build';
+const DEST_FILE = 'devdocs-selectors-index.json';
 
 // Omit index, system files, and subdirectories
 const files = fs
@@ -32,4 +34,5 @@ const selectors = files.map( ( file ) => {
 
 selectors.sort( ( a, b ) => a.name > b.name );
 
-fs.writeFileSync( DEST_FILE, JSON.stringify( selectors, null, 2 ) );
+mkdirp.sync( DEST_DIR );
+fs.writeFileSync( path.join( DEST_DIR, DEST_FILE ), JSON.stringify( selectors, null, 2 ) );
