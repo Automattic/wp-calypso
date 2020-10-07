@@ -13,5 +13,5 @@ export function isRenewalInLineItems( items ) {
 }
 
 export function isLineItemARenewal( item ) {
-	return 'renewal' === ( item.wpcom_meta?.extra?.purchaseType ?? '' );
+	return 'renewal' === ( ( item.wpcom_meta ?? item )?.extra?.purchaseType ?? '' );
 }
