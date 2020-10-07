@@ -11,6 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { hasSiteSeoFeature } from './utils';
+import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
+import { getPathToDetails } from 'my-sites/plans-v2/utils';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
@@ -36,14 +38,12 @@ import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	TYPE_PREMIUM,
 	TERM_ANNUALLY,
 	JETPACK_RESET_PLANS,
 } from 'lib/plans/constants';
@@ -299,13 +299,23 @@ export class SeoForm extends React.Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
-		const nudgeTitle = siteIsJetpack
-			? translate(
-					'Boost your search engine ranking with the powerful SEO tools in Jetpack Premium'
-			  )
-			: translate(
-					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-			  );
+		const upsellProps = siteIsJetpack
+			? {
+					title: translate( 'Boost your search engine ranking' ),
+					feature: FEATURE_SEO_PREVIEW_TOOLS,
+					href: getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, slug ),
+			  }
+			: {
+					title: translate(
+						'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+					),
+					feature: FEATURE_ADVANCED_SEO,
+					plan:
+						selectedSite.plan &&
+						findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+							type: TYPE_BUSINESS,
+						} ),
+			  };
 
 		return (
 			<div>
@@ -353,20 +363,14 @@ export class SeoForm extends React.Component {
 
 				{ ! this.props.hasSeoPreviewFeature &&
 					! this.props.hasAdvancedSEOFeature &&
-					selectedSite.plan &&
-					! shouldShowOfferResetFlow() && (
+					selectedSite.plan && (
 						<UpsellNudge
+							{ ...upsellProps }
 							description={ translate(
-								'Get tools to optimize your site for improved performance in search engine results.'
+								'Get tools to optimize your site for improved search engine results.'
 							) }
 							event={ 'calypso_seo_settings_upgrade_nudge' }
-							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
-							plan={ findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
-								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
-							} ) }
 							showIcon={ true }
-							title={ nudgeTitle }
 						/>
 					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
