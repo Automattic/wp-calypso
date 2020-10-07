@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import wp from 'lib/wp';
@@ -22,23 +21,36 @@ import './style.scss';
 
 const wpcom = wp.undocumented();
 
-class EditorCheckoutModal extends Component {
-	static propTypes = {
-		site: PropTypes.object,
-		isOpen: PropTypes.bool,
-		onClose: PropTypes.func,
-		cartData: PropTypes.object,
-	};
+interface CartData {
+	products: Array< {
+		product_id: number;
+		product_slug: string;
+	} >;
+}
 
+type Props = {
+	site: object;
+	cartData: CartData;
+	onClose: () => void;
+	isOpen: boolean;
+};
+
+class EditorCheckoutModal extends Component< Props > {
 	static defaultProps = {
 		isOpen: false,
-		onClose: () => {},
+		onClose: () => null,
 		cartData: {},
 	};
 
 	async getCart() {
 		// Important: If getCart or cartData is empty, it will redirect to the plans page in customer home.
-		return await wpcom.setCart( this.props.site.ID, this.props.cartData );
+		const { site, cartData } = this.props;
+
+		try {
+			return await wpcom.setCart( site.ID, cartData );
+		} catch {
+			return;
+		}
 	}
 
 	render() {
@@ -63,7 +75,7 @@ class EditorCheckoutModal extends Component {
 	}
 }
 
-function fetchStripeConfigurationWpcom( args ) {
+function fetchStripeConfigurationWpcom( args: object ) {
 	return fetchStripeConfiguration( args, wpcom );
 }
 

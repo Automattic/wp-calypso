@@ -686,8 +686,7 @@ class CalypsoifyIframe extends Component<
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
-
-		const hasCheckoutOverlay = config.isEnabled( 'gutenboarding/checkout-overlay' );
+		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 
 		return (
 			<Fragment>
@@ -725,7 +724,7 @@ class CalypsoifyIframe extends Component<
 					source=""
 					visible={ isMediaModalVisible }
 				/>
-				{ hasCheckoutOverlay && (
+				{ isCheckoutOverlayEnabled && isCheckoutModalVisible && (
 					<AsyncLoad
 						require="blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
