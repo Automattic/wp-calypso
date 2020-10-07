@@ -357,6 +357,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	async removeCoupon() {
 		const isCompositeCheckout = await this.isCompositeCheckout();
 
+		// New checkout
 		if ( isCompositeCheckout ) {
 			// Open review step for editing
 			await driverHelper.clickWhenClickable(
@@ -376,7 +377,13 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 				By.css( '.checkout-modal .checkout-button.is-status-primary' )
 			);
 			// Make sure the coupon item is removed
-			return this.waitForCouponToBeRemoved();
+			await this.waitForCouponToBeRemoved();
+			// Close editing review step
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step button.is-status-primary' )
+			);
+			return;
 		}
 
 		// Old checkout - desktop
@@ -397,6 +404,45 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async removeBusinessPlan() {
 		const productSlug = this.businessPlanSlug;
+		const isCompositeCheckout = await this.isCompositeCheckout();
+
+		// New checkout
+		if ( isCompositeCheckout ) {
+			// Open review step for editing
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step .checkout-step__edit-button' )
+			);
+			// Click delete button on line item
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css(
+					`.checkout-line-item[data-e2e-product-slug="${ productSlug }"] button.checkout-line-item__remove-product`
+				)
+			);
+			// Dismiss confirmation modal
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.checkout-modal .checkout-button.is-status-primary' )
+			);
+			// Make sure the item is removed
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '[data-e2e-cart-is-loading="true"]' )
+			);
+			await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( `.checkout-line-item[data-e2e-product-slug="${ productSlug }"]` )
+			);
+			// Close editing review step
+			await driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( '.wp-checkout__review-order-step button.is-status-primary' )
+			);
+			return;
+		}
+
+		// Old checkout
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css(
