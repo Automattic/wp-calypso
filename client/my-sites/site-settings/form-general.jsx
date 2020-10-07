@@ -394,15 +394,9 @@ export class SiteSettingsFormGeneral extends Component {
 							/>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ hasLocalizedText(
+							{ translate(
 								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-							)
-								? translate(
-										'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
-								  )
-								: translate(
-										'Your site is only visible to you and logged-in members you approve.'
-								  ) }
+							) }
 						</FormSettingExplanation>
 					</>
 				) }
@@ -452,13 +446,9 @@ export class SiteSettingsFormGeneral extends Component {
 							/>
 						</FormLabel>
 						<FormSettingExplanation isIndented>
-							{ hasLocalizedText(
+							{ translate(
 								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-							)
-								? translate(
-										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-								  )
-								: translate( "Your site is hidden from visitors until it's ready for viewing." ) }
+							) }
 						</FormSettingExplanation>
 					</>
 				) }
