@@ -89,6 +89,8 @@ export const billingHistory = ( context, next ) => {
 };
 
 export const receiptView = ( context, next ) => {
-	context.primary = <ReceiptView receiptId={ context.params.receiptId } />;
+	context.primary = (
+		<ReceiptView receiptId={ context.params.receiptId } siteSlug={ context.params.site } />
+	);
 	next();
 };

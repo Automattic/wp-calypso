@@ -30,3 +30,6 @@ export const editPaymentMethod = (
 
 export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
 	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;
+
+export const getBillingHistoryUrlFor = ( targetSiteSlug: string ) =>
+	`/purchases/billing-history/${ targetSiteSlug }`;

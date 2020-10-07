@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -20,7 +20,9 @@ import QueryBillingTransaction from 'components/data/query-billing-transaction';
 import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
 import { ReceiptBody, ReceiptPlaceholder } from 'me/billing-history/receipt';
 import FormattedHeader from 'components/formatted-header';
-import { getReceiptUrlFor } from '../paths';
+import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
+import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
+import { clearBillingTransactionError } from 'state/billing-transactions/individual-transactions/actions';
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -52,13 +54,11 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-export function ReceiptView( { receiptId }: { receiptId: number } ) {
+export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receiptId: number } ) {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
-	// TODO: handle error redirects
-	// const transactionFetchError = useSelector( ( state ) =>
-	// 	isPastBillingTransactionError( state, receiptId )
-	// );
+
+	useRedirectToHistoryPageOnInvalidTransaction( siteSlug, receiptId );
 
 	// TODO: handle clicks
 	const handlePrintLinkClick = () => {
@@ -90,4 +90,23 @@ export function ReceiptView( { receiptId }: { receiptId: number } ) {
 			) }
 		</Main>
 	);
+}
+
+function useRedirectToHistoryPageOnInvalidTransaction( siteSlug: string, receiptId: number ) {
+	const transactionFetchError = useSelector( ( state ) =>
+		isPastBillingTransactionError( state, receiptId )
+	);
+	const reduxDispatch = useDispatch();
+	const didRedirect = useRef( false );
+
+	useEffect( () => {
+		if ( didRedirect.current ) {
+			return;
+		}
+		if ( transactionFetchError ) {
+			didRedirect.current = true;
+			reduxDispatch( clearBillingTransactionError( receiptId ) );
+			page.redirect( getBillingHistoryUrlFor( siteSlug ) );
+		}
+	}, [ transactionFetchError, receiptId, reduxDispatch, siteSlug ] );
 }
