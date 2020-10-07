@@ -69,7 +69,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 	};
 
 	return (
-		<Main className="purchases billing-history">
+		<Main className="purchases billing-history is-wide-layout">
 			<DocumentHead title={ translate( 'Billing History' ) } />
 			<PageViewTracker
 				path="/purchases/billing-history/:site/:receipt"
