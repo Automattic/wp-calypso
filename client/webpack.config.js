@@ -27,7 +27,6 @@ const {
 	IncrementalProgressPlugin,
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
-const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 
@@ -384,7 +383,7 @@ const webpackConfig = {
 		/*
 		 * Replace `lodash` with `lodash-es`
 		 */
-		new ExtensiveLodashReplacementPlugin(),
+		// new ExtensiveLodashReplacementPlugin(),
 
 		! isDesktop && new ExtractManifestPlugin(),
 	].filter( Boolean ),
