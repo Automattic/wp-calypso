@@ -24,6 +24,7 @@ import {
 	WPCOMPaymentMethodClass,
 } from '../types/backend/payment-method';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
+import { isLineItemARenewal } from 'calypso/my-sites/checkout/composite-checkout/hooks/has-renewal';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -190,7 +191,11 @@ function translateReponseCartProductToWPCOMCartItem(
 	let label = product_name || '';
 	let sublabel;
 	if ( isPlan( serverCartItem ) ) {
-		sublabel = String( translate( 'Plan Subscription' ) );
+		if ( isLineItemARenewal( serverCartItem ) ) {
+			sublabel = String( translate( 'Plan Renewal' ) );
+		} else {
+			sublabel = String( translate( 'Plan Subscription' ) );
+		}
 	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
 		sublabel = '';
 	} else if (
@@ -199,6 +204,9 @@ function translateReponseCartProductToWPCOMCartItem(
 	) {
 		label = meta;
 		sublabel = product_name || '';
+		if ( isLineItemARenewal( serverCartItem ) ) {
+			sublabel += ( sublabel ? ' ' : '' ) + String( translate( 'Renewal' ) );
+		}
 	}
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
