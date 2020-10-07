@@ -17,7 +17,7 @@ import { isLineItemADomain } from '../hooks/has-domains';
 
 export default function WPCheckoutOrderReview( {
 	className,
-	removeItem,
+	removeProductFromCart,
 	removeCoupon,
 	couponStatus,
 	couponFieldStateProps,
@@ -51,7 +51,7 @@ export default function WPCheckoutOrderReview( {
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
 					items={ items }
-					removeItem={ removeItem }
+					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
@@ -74,7 +74,7 @@ export default function WPCheckoutOrderReview( {
 WPCheckoutOrderReview.propTypes = {
 	isSummary: PropTypes.bool,
 	className: PropTypes.string,
-	removeItem: PropTypes.func,
+	removeProductFromCart: PropTypes.func,
 	removeCoupon: PropTypes.func,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,

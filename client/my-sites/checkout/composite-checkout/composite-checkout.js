@@ -186,7 +186,7 @@ export default function CompositeCheckout( {
 	} );
 
 	const {
-		removeItem,
+		removeProductFromCart,
 		couponStatus,
 		applyCoupon,
 		removeCoupon,
@@ -633,7 +633,7 @@ export default function CompositeCheckout( {
 					theme={ theme }
 				>
 					<WPCheckout
-						removeItem={ removeItem }
+						removeProductFromCart={ removeProductFromCart }
 						updateLocation={ updateLocation }
 						applyCoupon={ applyCoupon }
 						removeCoupon={ removeCoupon }

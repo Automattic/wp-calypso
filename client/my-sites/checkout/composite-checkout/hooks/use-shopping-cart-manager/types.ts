@@ -25,7 +25,7 @@ export interface ShoppingCartManager {
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
 	addProductsToCart: AddProductsToCart;
-	removeItem: RemoveProductFromCart;
+	removeProductFromCart: RemoveProductFromCart;
 	applyCoupon: ApplyCouponToCart;
 	removeCoupon: RemoveCouponFromCart;
 	couponStatus: CouponStatus;

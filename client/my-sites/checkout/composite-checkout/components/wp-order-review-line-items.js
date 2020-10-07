@@ -38,7 +38,7 @@ function WPLineItem( {
 	item,
 	className,
 	hasDeleteButton,
-	removeItem,
+	removeProductFromCart,
 	getItemVariants,
 	onChangePlanLength,
 	isSummary,
@@ -121,7 +121,7 @@ function WPLineItem( {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeItem( item.wpcom_meta.uuid );
+							removeProductFromCart( item.wpcom_meta.uuid );
 							onEvent( {
 								type: 'a8c_checkout_delete_product',
 								payload: {
@@ -157,7 +157,7 @@ WPLineItem.propTypes = {
 	total: PropTypes.bool,
 	isSummary: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
-	removeItem: PropTypes.func,
+	removeProductFromCart: PropTypes.func,
 	item: PropTypes.shape( {
 		label: PropTypes.string,
 		amount: PropTypes.shape( {
@@ -309,7 +309,7 @@ export function WPOrderReviewLineItems( {
 	items,
 	className,
 	isSummary,
-	removeItem,
+	removeProductFromCart,
 	removeCoupon,
 	getItemVariants,
 	onChangePlanLength,
@@ -331,7 +331,9 @@ export function WPOrderReviewLineItems( {
 							<LineItemUI
 								item={ item }
 								hasDeleteButton={ ! isSummary && canItemBeDeleted( item ) }
-								removeItem={ item.type === 'coupon' ? removeCoupon : removeItem }
+								removeProductFromCart={
+									item.type === 'coupon' ? removeCoupon : removeProductFromCart
+								}
 								getItemVariants={ getItemVariants }
 								onChangePlanLength={ onChangePlanLength }
 								isSummary={ isSummary }
@@ -347,7 +349,7 @@ export function WPOrderReviewLineItems( {
 WPOrderReviewLineItems.propTypes = {
 	className: PropTypes.string,
 	isSummary: PropTypes.bool,
-	removeItem: PropTypes.func,
+	removeProductFromCart: PropTypes.func,
 	removeCoupon: PropTypes.func,
 	items: PropTypes.arrayOf(
 		PropTypes.shape( {

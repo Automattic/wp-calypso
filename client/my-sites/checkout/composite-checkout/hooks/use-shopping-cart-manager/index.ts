@@ -68,7 +68,7 @@ export default function useShoppingCartManager( {
 		[ hookDispatch ]
 	);
 
-	const removeItem: ( uuidToRemove: string ) => void = useCallback(
+	const removeProductFromCart: ( uuidToRemove: string ) => void = useCallback(
 		( uuidToRemove ) => {
 			hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 		},
@@ -106,7 +106,7 @@ export default function useShoppingCartManager( {
 		loadingErrorType,
 		isPendingUpdate: cacheStatus !== 'valid',
 		addProductsToCart,
-		removeItem,
+		removeProductFromCart,
 		applyCoupon,
 		removeCoupon,
 		couponStatus,
