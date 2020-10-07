@@ -174,6 +174,7 @@ export default function CompositeCheckout( {
 
 	const {
 		productsForCart,
+		renewalsForCart,
 		isLoading: areCartProductsPreparing,
 		error: cartProductPrepError,
 	} = usePrepareProductsForCart( {
@@ -208,6 +209,7 @@ export default function CompositeCheckout( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
+		renewalsForCart,
 		areCartProductsPreparing,
 		couponCodeFromUrl,
 		applyCoupon,
