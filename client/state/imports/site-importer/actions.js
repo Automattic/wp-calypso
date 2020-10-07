@@ -18,6 +18,7 @@ import {
 	createFinishUploadAction,
 } from 'lib/importer/actions';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+import { setSelectedEditor } from 'state/selected-editor/actions';
 import {
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
@@ -144,6 +145,13 @@ export const importSite = ( {
 		.undocumented()
 		.importWithSiteImporter( siteId, toApi( importerStatus ), params, targetSiteUrl )
 		.then( ( response ) => {
+			// At this point we're assuming that an import is going to happen
+			// so we set the user's editor to Gutenberg in order to make sure
+			// that the posts aren't mangled by the classic editor.
+			if ( 'godaddy-gocentral' === engine ) {
+				dispatch( setSelectedEditor( siteId, 'gutenberg' ) );
+			}
+
 			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams ) );
 			dispatch( siteImporterImportSuccessful( response ) );
 

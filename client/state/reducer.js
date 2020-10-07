@@ -37,6 +37,7 @@ import pageTemplates from './page-templates/reducer';
 import postFormats from './post-formats/reducer';
 import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
+import selectedEditor from './selected-editor/reducer';
 import simplePayments from './simple-payments/reducer';
 import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
@@ -78,6 +79,7 @@ const reducers = {
 	postFormats,
 	receipts,
 	rewind,
+	selectedEditor,
 	simplePayments,
 	siteAddressChange,
 	siteKeyrings,
