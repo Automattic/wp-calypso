@@ -7,8 +7,6 @@
 
 namespace A8C\FSE\Coming_soon;
 
-require_once __DIR__ . '/coming-soon-page-template.php';
-
 /**
  * Determines whether the coming soon page should be shown.
  *
@@ -78,36 +76,27 @@ function add_public_coming_soon_to_settings_endpoint_post( $input, $unfiltered_i
 add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_post', 10, 2 );
 
 /**
- * This filter adds the coming soon page to the list of page templates using the `vertical_templates` hook
- *
- * @param array $templates The array of all available page templates.
- *
- * @return array The updated $templates array
+ * Adds the `wpcom_public_coming_soon` option to new sites
  */
-function add_public_coming_soon_page_template( $templates ) : array {
-	$templates[] = (object) COMING_SOON_PAGE_TEMPLATE;
-	return $templates;
+function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+	if ( 0 === $meta['public'] && 1 === (int) $meta['options']['wpcom_public_coming_soon'] ) {
+		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 1 );
+	} else {
+		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 0 );
+	}
 }
-add_filter( 'vertical_templates', __NAMESPACE__ . '\add_public_coming_soon_page_template' );
+add_action( 'wpmu_new_blog', __NAMESPACE__ . '\add_option_to_new_site', 10, 6 );
 
 /**
- * Adds an editable coming soon page to a site
+ * This action hook sets the coming soon options when a site launches
+ *
+ * @param int $current_blog_id The blog id of the current site
  */
-function add_coming_soon_page_to_new_site() {
-	$coming_soon_template = COMING_SOON_PAGE_TEMPLATE;
-	$new_page_id          = wp_insert_post(
-		array(
-			'post_title'     => $coming_soon_template['post_title'],
-			'post_content'   => $coming_soon_template['post_content'],
-			'post_status'    => 'publish',
-			'post_type'      => 'page',
-			'comment_status' => 'closed',
-			'ping_status'    => 'closed',
-		)
-	);
-	add_option( 'wpcom_public_coming_soon_page_id', $new_page_id );
+function update_options_after_wpcom_site_launched( $current_blog_id ) {
+	update_option( 'wpcom_public_coming_soon', 0 ); // version 2
+	delete_option( 'wpcom_coming_soon' ); // version 1
 }
-add_action( 'signup_finished', __NAMESPACE__ . '\add_coming_soon_page_to_new_site', 10, 1 );
+add_action( 'wpcom_site_launched', __NAMESPACE__ . '\update_options_after_wpcom_site_launched', 10, 2 );
 
 /**
  * Decides whether to redirect to the site's coming soon page and performs
@@ -121,47 +110,7 @@ function coming_soon_page() {
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 
-	$should_show_fallback = false;
-
-	$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
-	if ( empty( $id ) ) {
-		$should_show_fallback = true;
-	}
-
-	$custom_coming_soon_page = get_post( $id );
-	if ( ! $custom_coming_soon_page ) {
-		$should_show_fallback = true;
-	}
-
-	if ( $should_show_fallback ) {
-		render_fallback_coming_soon_page();
-		die();
-	}
-
-	?>
-	<!doctype html>
-	<html <?php language_attributes(); ?>>
-		<head>
-			<meta charset="<?php bloginfo( 'charset' ); ?>" />
-			<meta name="viewport" content="width=device-width, initial-scale=1" />
-			<?php wp_head(); ?>
-		</head>
-		<body>
-			<?php
-				// Replicates the core `the_content()` function except using the custom
-				// coming soon page instead of the current page.
-				$content = get_the_content( null, false, $custom_coming_soon_page );
-				$content = apply_filters( 'the_content', $content );
-
-				// Perform the same escaping done by the `the_content()` function.
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo str_replace( ']]>', ']]&gt;', $content );
-			?>
-			<?php wp_footer(); ?>
-		</body>
-	</html>
-	<?php
-
+	render_fallback_coming_soon_page();
 	die();
 }
 add_action( 'template_redirect', __NAMESPACE__ . '\coming_soon_page' );
