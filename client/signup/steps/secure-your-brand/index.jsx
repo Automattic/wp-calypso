@@ -110,6 +110,28 @@ export class SecureYourBrandStep extends Component {
 						<div>{ totalCost }</div>
 					</div>
 					<div>
+						{ translate(
+							'For just {{del}}%(totalCost)s{{/del}} %(discountedCost)s for the first year, you will:',
+							{
+								args: {
+									discountedCost,
+									totalCost,
+								},
+								components: {
+									del: <del />,
+								},
+							}
+						) }
+					</div>
+					<div>
+						<ul>
+							<li>{ translate( 'Prevent anyone from registering (and misusing) your name' ) }</li>
+							<li>{ translate( 'Avoid confusing your visitors' ) }</li>
+							<li>{ translate( 'Redirect all domains to your site as a catch-all' ) }</li>
+							<li>{ translate( 'Unlock SEO and geo-location opportunities' ) }</li>
+						</ul>
+					</div>
+					<div>
 						<Button onClick={ () => this.handleSkipButtonClick() }>
 							{ translate( 'No thanks, continue' ) }
 						</Button>
