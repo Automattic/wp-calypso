@@ -219,7 +219,7 @@ TransactionsHeader.propTypes = {
 	filter: PropTypes.object.isRequired,
 	//own props
 	transactionType: PropTypes.string.isRequired,
-	siteId: PropTypes.string,
+	siteId: PropTypes.number,
 };
 
 export default connect(
