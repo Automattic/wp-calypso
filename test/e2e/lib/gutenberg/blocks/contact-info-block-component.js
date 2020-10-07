@@ -6,6 +6,7 @@ import { By } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
+import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class ContactInfoBlockComponent extends GutenbergBlockComponent {
@@ -25,34 +26,29 @@ class ContactInfoBlockComponent extends GutenbergBlockComponent {
 		country,
 		linkToGmaps,
 	} ) {
-		const blockQuery = `div[id='${ this.blockID.slice( 1 ) }']`;
+		const setInputValue = ( name, value ) =>
+			driverHelper.setWhenSettable(
+				this.driver,
+				By.css( `${ this.blockID } textarea[aria-label='${ name }']` ),
+				value
+			);
 
-		const selectField = ( name ) => By.css( `${ blockQuery } textarea[aria-label='${ name }']` );
+		await setInputValue( 'Email', email );
+		await setInputValue( 'Phone number', phoneNumber );
+		await setInputValue( 'Street Address', streetAddress );
+		await setInputValue( 'Address Line 2', addressLine2 );
+		await setInputValue( 'Address Line 3', addressLine3 );
+		await setInputValue( 'City', city );
+		await setInputValue( 'State/Province/Region', state );
+		await setInputValue( 'Postal/Zip Code', zipCode );
+		await setInputValue( 'Country', country );
 
-		const emailInputEl = await this.driver.findElement( selectField( 'Email' ) );
-		const phoneNumberInputEl = await this.driver.findElement( selectField( 'Phone number' ) );
-		const streetAddressInputEl = await this.driver.findElement( selectField( 'Street Address' ) );
-		const addressLine2InputEl = await this.driver.findElement( selectField( 'Address Line 2' ) );
-		const addressLine3InputEl = await this.driver.findElement( selectField( 'Address Line 3' ) );
-		const cityInputEl = await this.driver.findElement( selectField( 'City' ) );
-		const stateInputEl = await this.driver.findElement( selectField( 'State/Province/Region' ) );
-		const zipCodeInputEl = await this.driver.findElement( selectField( 'Postal/Zip Code' ) );
-		const countryInputEl = await this.driver.findElement( selectField( 'Country' ) );
-		const linkToGmapsEl = await this.driver.findElement(
-			By.css( `${ blockQuery } span.components-form-toggle` )
-		);
-
-		await emailInputEl.sendKeys( email );
-		await phoneNumberInputEl.sendKeys( phoneNumber );
-		await streetAddressInputEl.sendKeys( streetAddress );
-		await addressLine2InputEl.sendKeys( addressLine2 );
-		await addressLine3InputEl.sendKeys( addressLine3 );
-		await cityInputEl.sendKeys( city );
-		await stateInputEl.sendKeys( state );
-		await zipCodeInputEl.sendKeys( zipCode );
-		await countryInputEl.sendKeys( country );
-
-		if ( linkToGmaps ) await linkToGmapsEl.click();
+		if ( linkToGmaps ) {
+			driverHelper.clickWhenClickable(
+				this.driver,
+				By.css( `${ this.blockID } span.components-form-toggle` )
+			);
+		}
 	}
 }
 
