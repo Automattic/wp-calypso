@@ -18,7 +18,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { CompactCard } from '@automattic/components';
 import QueryBillingTransaction from 'components/data/query-billing-transaction';
 import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
-import { ReceiptBody, ReceiptPlaceholder } from 'me/billing-history/receipt';
+import { ReceiptBody, ReceiptPlaceholder, ReceiptTitle } from 'me/billing-history/receipt';
 import FormattedHeader from 'components/formatted-header';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
@@ -68,8 +68,6 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 		window.print();
 	};
 
-	// TODO: add back button in header
-
 	return (
 		<Main className="purchases billing-history">
 			<DocumentHead title={ translate( 'Billing History' ) } />
@@ -85,6 +83,8 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
+
+			<ReceiptTitle backHref={ getBillingHistoryUrlFor( siteSlug ) } />
 
 			{ transaction ? (
 				<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
