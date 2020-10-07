@@ -108,6 +108,12 @@ module.exports = {
 			require( '@typescript-eslint/eslint-plugin' ).configs.base,
 			// basic recommended rules config from the TypeScript plugin
 			{ rules: require( '@typescript-eslint/eslint-plugin' ).configs.recommended.rules },
+			// disables rules that are already checked by the TypeScript compiler
+			// see https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/src/configs#eslint-recommended
+			{
+				rules: require( '@typescript-eslint/eslint-plugin' ).configs[ 'eslint-recommended' ]
+					.overrides[ 0 ].rules,
+			},
 			// Prettier rules config
 			require( 'eslint-config-prettier/@typescript-eslint' ),
 			// Our own overrides
@@ -362,3 +368,5 @@ module.exports = {
 		'import/no-extraneous-dependencies': 'error',
 	},
 };
+
+console.dir( module.exports, { depth: 20 } );
