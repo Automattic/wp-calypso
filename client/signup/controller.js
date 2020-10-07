@@ -38,7 +38,7 @@ import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { login } from 'lib/paths';
-import { waitForData } from 'state/data-layer/http-data';
+import { waitForHttpData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
@@ -130,9 +130,7 @@ export default {
 				return;
 			}
 
-			waitForData( {
-				geo: () => requestGeoLocation(),
-			} )
+			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if (
