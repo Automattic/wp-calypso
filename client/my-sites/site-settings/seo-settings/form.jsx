@@ -299,21 +299,23 @@ export class SeoForm extends React.Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
-		const jetpackSiteProps = {
-			title: translate( 'Boost your search engine ranking' ),
-			feature: FEATURE_SEO_PREVIEW_TOOLS,
-			href: getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, slug ),
-		};
-
-		const wpcomSiteProps = {
-			title: translate(
-				'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-			),
-			feature: FEATURE_ADVANCED_SEO,
-			plan: findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-				type: TYPE_BUSINESS,
-			} ),
-		};
+		const upsellProps = siteIsJetpack
+			? {
+					title: translate( 'Boost your search engine ranking' ),
+					feature: FEATURE_SEO_PREVIEW_TOOLS,
+					href: getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, slug ),
+			  }
+			: {
+					title: translate(
+						'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+					),
+					feature: FEATURE_ADVANCED_SEO,
+					plan:
+						selectedSite.plan &&
+						findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+							type: TYPE_BUSINESS,
+						} ),
+			  };
 
 		return (
 			<div>
@@ -363,7 +365,7 @@ export class SeoForm extends React.Component {
 					! this.props.hasAdvancedSEOFeature &&
 					selectedSite.plan && (
 						<UpsellNudge
-							{ ...( siteIsJetpack ? jetpackSiteProps : wpcomSiteProps ) }
+							{ ...upsellProps }
 							description={ translate(
 								'Get tools to optimize your site for improved search engine results.'
 							) }
