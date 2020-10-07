@@ -27,3 +27,6 @@ export const editPaymentMethod = (
 	targetCardId: { id: string | number }
 ) =>
 	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;
+
+export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
+	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;

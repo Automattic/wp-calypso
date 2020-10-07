@@ -20,10 +20,14 @@ import QueryBillingTransaction from 'components/data/query-billing-transaction';
 import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
 import { ReceiptBody, ReceiptPlaceholder } from 'me/billing-history/receipt';
 import FormattedHeader from 'components/formatted-header';
+import { getReceiptUrlFor } from '../paths';
 
-export function BillingHistory() {
+export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const translate = useTranslate();
+
+	const getReceiptUrlForReceiptId = ( targetReceiptId: string | number ) =>
+		getReceiptUrlFor( siteSlug, targetReceiptId );
 
 	return (
 		<Main className="purchases billing-history is-wide-layout">
@@ -37,7 +41,10 @@ export function BillingHistory() {
 				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
-			<BillingHistoryList siteId={ selectedSiteId } />
+			<BillingHistoryList
+				siteId={ selectedSiteId }
+				getReceiptUrlFor={ getReceiptUrlForReceiptId }
+			/>
 			<CompactCard href="/me/purchases/billing">
 				{ translate( 'View all billing history and receipts' ) }
 			</CompactCard>

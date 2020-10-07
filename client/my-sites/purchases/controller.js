@@ -84,7 +84,7 @@ export const purchaseEditPaymentMethod = ( context, next ) => {
 };
 
 export const billingHistory = ( context, next ) => {
-	context.primary = <BillingHistory />;
+	context.primary = <BillingHistory siteSlug={ context.params.site } />;
 	next();
 };
 
