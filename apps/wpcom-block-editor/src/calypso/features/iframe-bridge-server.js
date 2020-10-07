@@ -912,6 +912,33 @@ async function preselectParentPage() {
 	}
 }
 
+function handleCheckoutModal( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCheckoutModalStatus',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( message ) => {
+		const { isCheckoutOverlayEnabled } = message.data;
+
+		if ( isCheckoutOverlayEnabled ) {
+			addAction(
+				'a8c.wpcom-block-editor.openCheckoutModal',
+				'a8c/wpcom-block-editor/openCheckoutModal',
+				( data ) => {
+					calypsoPort.postMessage( {
+						action: 'openCheckoutModal',
+						payload: data,
+					} );
+				}
+			);
+		}
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1014,6 +1041,8 @@ function initPort( message ) {
 		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
+
+		handleCheckoutModal( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

@@ -41,9 +41,12 @@ class BillingHistoryTable extends React.Component {
 		}
 
 		return (
-			<a href="#" onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }>
+			<button
+				className="billing-history__email-button"
+				onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }
+			>
 				{ translate( 'Email receipt' ) }
-			</a>
+			</button>
 		);
 	};
 
@@ -77,6 +80,7 @@ class BillingHistoryTable extends React.Component {
 
 		return (
 			<TransactionsTable
+				siteId={ this.props.siteId }
 				transactionType="past"
 				header
 				emptyTableText={ emptyTableText }
@@ -87,14 +91,16 @@ class BillingHistoryTable extends React.Component {
 	}
 }
 
+function getIsSendingReceiptEmail( state ) {
+	return function isSendingBillingReceiptEmailForReceiptId( receiptId ) {
+		return isSendingBillingReceiptEmail( state, receiptId );
+	};
+}
+
 export default connect(
 	( state ) => {
-		const sendingBillingReceiptEmail = ( receiptId ) => {
-			return isSendingBillingReceiptEmail( state, receiptId );
-		};
-
 		return {
-			sendingBillingReceiptEmail,
+			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};
 	},
 	{

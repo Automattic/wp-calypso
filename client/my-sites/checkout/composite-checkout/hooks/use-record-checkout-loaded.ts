@@ -7,8 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import type { ReactStandardAction } from 'my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types';
-import type { ResponseCart } from '../types/backend/shopping-cart-endpoint';
+import type { ReactStandardAction, ResponseCart } from './use-shopping-cart-manager/types';
 import type { StoredCard } from '../types/stored-cards';
 import type { CartValue } from 'calypso/lib/cart-values/types';
 import { hasRenewalItem } from 'lib/cart-values/cart-items';

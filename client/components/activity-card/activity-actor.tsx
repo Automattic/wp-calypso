@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
+import { translate } from 'i18n-calypso';
 import React, { FunctionComponent } from 'react';
 
 /**
  * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
+import { isEnabled } from 'config';
 import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
 import JetpackLogo from 'components/jetpack-logo';
@@ -17,7 +18,7 @@ import SocialLogo from 'components/social-logo';
  */
 const JETPACK_ACTOR = (
 	<div className="activity-card__actor">
-		<JetpackLogo size={ 40 } />
+		{ ! isEnabled( 'jetpack/backup-simplified-screens' ) && <JetpackLogo size={ 40 } /> }
 		<div className="activity-card__actor-info">
 			<div className="activity-card__actor-name">Jetpack</div>
 		</div>
@@ -26,7 +27,7 @@ const JETPACK_ACTOR = (
 
 const HAPPINESS_ACTOR = (
 	<div className="activity-card__actor">
-		<JetpackLogo size={ 40 } />
+		{ ! isEnabled( 'jetpack/backup-simplified-screens' ) && <JetpackLogo size={ 40 } /> }
 		<div className="activity-card__actor-info">
 			<div className="activity-card__actor-name">Happiness Engineer</div>
 		</div>

@@ -147,7 +147,7 @@ it( 'Adds the COMMIT_SHA as version', () => {
 
 	expect( mockLogger.info ).toHaveBeenCalledWith(
 		expect.objectContaining( {
-			version: 'abcd1234',
+			appVersion: 'abcd1234',
 		} )
 	);
 } );

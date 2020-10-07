@@ -7,12 +7,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import {
-	ResponseCart,
-	RequestCart,
-	convertRawResponseCartToResponseCart,
-} from '../../types/backend/shopping-cart-endpoint';
-import { CacheStatus, ShoppingCartAction } from './types';
+import { convertRawResponseCartToResponseCart } from './cart-functions';
+import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-initialize-cart-from-server' );
 

@@ -154,25 +154,45 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
 		} );
 
-		[
-			[ 'Coming soon', 'Coming Soon', 1, { blog_public: -1, wpcom_coming_soon: 1 } ],
-			[ 'Public', 'Public', -1, { blog_public: 1, wpcom_coming_soon: 0 } ],
+		describe( 'blog_public states (coming-soon-v1)', () => {
 			[
-				'Hidden',
-				'Discourage search engines from indexing this site',
-				-1,
-				{ blog_public: 0, wpcom_coming_soon: 0 },
-			],
-			[ 'Private', 'Private', 1, { blog_public: -1, wpcom_coming_soon: 0 } ],
-		].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
-			test( `${ name } option should be selectable`, () => {
-				testProps.fields.blog_public = initialBlogPublic;
-				const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
+				[
+					'Coming soon',
+					'Coming Soon',
+					1,
+					{ blog_public: -1, wpcom_coming_soon: 1, wpcom_public_coming_soon: 0 },
+				],
+				[
+					'Public',
+					'Public',
+					-1,
+					{ blog_public: 1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+				],
+				[
+					'Hidden',
+					'Discourage search engines from indexing this site',
+					-1,
+					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+				],
+				[
+					'Private',
+					'Private',
+					1,
+					{ blog_public: -1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+				],
+			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
+				test( `${ name } option should be selectable`, () => {
+					config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': false } ) );
+					testProps.fields.blog_public = initialBlogPublic;
+					const { getByLabelText } = renderWithRedux(
+						<SiteSettingsFormGeneral { ...testProps } />
+					);
 
-				const radioButton = getByLabelText( text, { exact: false } );
-				expect( radioButton ).not.toBeChecked();
-				fireEvent.click( radioButton );
-				expect( testProps.updateFields ).toBeCalledWith( updatedFields );
+					const radioButton = getByLabelText( text, { exact: false } );
+					expect( radioButton ).not.toBeChecked();
+					fireEvent.click( radioButton );
+					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
+				} );
 			} );
 		} );
 
@@ -192,6 +212,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
 			} );
 		} );
 
@@ -211,46 +232,50 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
 			} );
 		} );
 
-		test( 'Check Coming Soon radio option remains clickable with v2 not enabled', () => {
-			config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': false } ) );
+		describe( 'blog_public states (coming-soon-v2)', () => {
+			[
+				[
+					'Coming soon',
+					'Coming Soon',
+					1,
+					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 1 },
+				],
+				[
+					'Public',
+					'Public',
+					-1,
+					{ blog_public: 1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+				],
+				[
+					'Hidden',
+					'Discourage search engines from indexing this site',
+					-1,
+					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+				],
+				[
+					'Private',
+					'Private',
+					1,
+					{ blog_public: -1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
+				],
+			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
+				test( `${ name } option should be selectable`, () => {
+					config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': true } ) );
+					testProps.fields.blog_public = initialBlogPublic;
+					const { getByLabelText } = renderWithRedux(
+						<SiteSettingsFormGeneral { ...testProps } />
+					);
 
-			testProps.fields.blog_public = -1;
-			testProps.fields.wpcom_coming_soon = 0;
-
-			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
-
-			const radioButton = getByLabelText( 'Coming Soon', { exact: false } );
-
-			expect( radioButton ).not.toBeChecked();
-
-			fireEvent.click( radioButton );
-
-			expect( testProps.updateFields ).toBeCalledWith( { blog_public: -1, wpcom_coming_soon: 1 } );
-		} );
-
-		test( 'Check Coming Soon disappears with v2 enabled', () => {
-			config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': true } ) );
-
-			testProps.fields.blog_public = -1;
-			testProps.fields.wpcom_coming_soon = 0;
-
-			const { queryByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
-			expect( queryByLabelText( 'Coming Soon', { exact: false } ) ).toBe( null );
-		} );
-
-		test( 'Check Coming Soon disappears with v2 enabled unless Coming Soon is currently set', () => {
-			config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': true } ) );
-
-			testProps.fields.blog_public = -1; // v1 coming soon requires private
-			testProps.fields.wpcom_coming_soon = 1;
-
-			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
-
-			const comingSoonRadio1 = getByLabelText( 'Coming Soon', { exact: false } );
-			expect( comingSoonRadio1 ).toBeChecked();
+					const radioButton = getByLabelText( text, { exact: false } );
+					expect( radioButton ).not.toBeChecked();
+					fireEvent.click( radioButton );
+					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
+				} );
+			} );
 		} );
 	} );
 } );

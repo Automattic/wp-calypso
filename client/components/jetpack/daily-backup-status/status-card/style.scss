@@ -78,6 +78,10 @@
 .status-card__realtime-details {
 	margin-top: 24px;
 	text-align: left;
+
+	&.is-simplified {
+		margin-top: 48px;
+	}
 }
 
 .status-card__realtime-details-card .activity-card .card {

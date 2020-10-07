@@ -8,15 +8,6 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
-import WPCheckout from 'my-sites/checkout/composite-checkout/components/wp-checkout';
-import { useWpcomStore } from 'my-sites/checkout/composite-checkout/hooks/wpcom-store';
-import { areDomainsInLineItems } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
-import {
-	emptyManagedContactDetails,
-	applyContactDetailsRequiredMask,
-	domainRequiredContactDetails,
-	taxRequiredContactDetails,
-} from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
 
 /**
@@ -84,6 +75,15 @@ import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
 import useDetectedCountryCode from './hooks/use-detected-country-code';
+import WPCheckout from 'my-sites/checkout/composite-checkout/components/wp-checkout';
+import { useWpcomStore } from 'my-sites/checkout/composite-checkout/hooks/wpcom-store';
+import { areDomainsInLineItems } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
+import {
+	emptyManagedContactDetails,
+	applyContactDetailsRequiredMask,
+	domainRequiredContactDetails,
+	taxRequiredContactDetails,
+} from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -190,14 +190,13 @@ export default function CompositeCheckout( {
 		applyCoupon,
 		removeCoupon,
 		updateLocation,
-		changeItemVariant,
+		replaceProductInCart,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
-		variantSelectOverride,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: ! isLoadingCartSynchronizer,
@@ -477,9 +476,12 @@ export default function CompositeCheckout( {
 				type: 'CART_CHANGE_PLAN_LENGTH',
 				payload: { newProductSlug },
 			} );
-			changeItemVariant( uuidToReplace, newProductSlug, newProductId );
+			replaceProductInCart( uuidToReplace, {
+				product_slug: newProductSlug,
+				product_id: newProductId,
+			} );
 		},
-		[ changeItemVariant, recordEvent ]
+		[ replaceProductInCart, recordEvent ]
 	);
 
 	// Often products are added using just the product_slug but missing the
@@ -637,7 +639,6 @@ export default function CompositeCheckout( {
 						siteUrl={ siteSlug }
 						countriesList={ countriesList }
 						StateSelect={ StateSelect }
-						variantSelectOverride={ variantSelectOverride }
 						getItemVariants={ getItemVariants }
 						responseCart={ responseCart }
 						addItemToCart={ addItemWithEssentialProperties }

@@ -22,15 +22,19 @@ export type WPCOMProductVariant = {
 
 export type ItemVariationPickerProps = {
 	selectedItem: WPCOMCartItem;
-	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[];
-	getItemVariants: ( arg0: WPCOMProductSlug ) => WPCOMProductVariant[];
-	onChangeItemVariant: ( arg0: string, arg1: WPCOMProductSlug, arg2: number ) => void;
+	getItemVariants: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
+	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
 };
 
+export type OnChangeItemVariant = (
+	uuid: string,
+	productSlug: WPCOMProductSlug,
+	productId: number
+) => void;
+
 export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > = ( {
 	selectedItem,
-	variantSelectOverride,
 	getItemVariants,
 	onChangeItemVariant,
 	isDisabled,
@@ -43,60 +47,58 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 
 	return (
 		<TermOptions>
-			{ variants.map(
-				renderProductVariant( selectedItem, onChangeItemVariant, variantSelectOverride, isDisabled )
-			) }
+			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
+				<ProductVariant
+					key={ productVariant.variantLabel }
+					selectedItem={ selectedItem }
+					onChangeItemVariant={ onChangeItemVariant }
+					isDisabled={ isDisabled }
+					productVariant={ productVariant }
+				/>
+			) ) }
 		</TermOptions>
 	);
 };
 
-function renderProductVariant(
-	selectedItem: WPCOMCartItem,
-	onChangeItemVariant: ( arg0: string, arg1: WPCOMProductSlug, arg2: number ) => void,
-	variantSelectOverride: { uuid: string; overrideSelectedProductSlug: string }[],
-	isDisabled: boolean
-): ( _0: WPCOMProductVariant, _1: number ) => JSX.Element {
+function ProductVariant( {
+	productVariant,
+	selectedItem,
+	onChangeItemVariant,
+	isDisabled,
+}: {
+	productVariant: WPCOMProductVariant;
+	selectedItem: WPCOMCartItem;
+	onChangeItemVariant: OnChangeItemVariant;
+	isDisabled: boolean;
+} ) {
+	const translate = useTranslate();
+	const { variantLabel, variantDetails, productSlug, productId } = productVariant;
+	const selectedProductSlug = selectedItem.wpcom_meta.product_slug;
+	const isChecked = productSlug === selectedProductSlug;
+
 	return (
-		{ variantLabel, variantDetails, productSlug, productId }: WPCOMProductVariant,
-		index: number
-	) => {
-		const translate = useTranslate();
-		const key = index.toString() + productSlug;
-		const selectedProductSlug = selectedItem.wpcom_meta.product_slug;
-
-		const isChecked = variantSelectOverride.reduce(
-			( accum, { uuid, overrideSelectedProductSlug } ) => {
-				return uuid === selectedItem.wpcom_meta.uuid
-					? productSlug === overrideSelectedProductSlug
-					: accum;
-			},
-			productSlug === selectedProductSlug
-		);
-
-		return (
-			<TermOptionsItem key={ key }>
-				<RadioButton
-					name={ key }
-					id={ key }
-					value={ productSlug }
-					checked={ isChecked }
-					isDisabled={ isDisabled }
-					onChange={ () => {
-						! isDisabled &&
-							onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
-					} }
-					ariaLabel={ translate( 'Select a different term length' ) as string }
-					label={
-						<React.Fragment>
-							<VariantLabel>{ variantLabel }</VariantLabel>
-							{ variantDetails }
-						</React.Fragment>
-					}
-					children={ [] }
-				/>
-			</TermOptionsItem>
-		);
-	};
+		<TermOptionsItem>
+			<RadioButton
+				name={ variantLabel }
+				id={ variantLabel }
+				value={ productSlug }
+				checked={ isChecked }
+				isDisabled={ isDisabled }
+				onChange={ () => {
+					! isDisabled &&
+						onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
+				} }
+				ariaLabel={ translate( 'Select a different term length' ) as string }
+				label={
+					<React.Fragment>
+						<VariantLabel>{ variantLabel }</VariantLabel>
+						{ variantDetails }
+					</React.Fragment>
+				}
+				children={ [] }
+			/>
+		</TermOptionsItem>
+	);
 }
 
 const TermOptions = styled.ul`

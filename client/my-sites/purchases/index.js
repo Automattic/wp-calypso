@@ -16,6 +16,7 @@ import {
 	purchaseCancelDomain,
 	purchaseAddPaymentMethod,
 	purchaseEditPaymentMethod,
+	billingHistory,
 } from './controller';
 
 export default ( router ) => {
@@ -74,6 +75,15 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		purchaseEditPaymentMethod,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/billing-history/:site',
+		siteSelection,
+		navigation,
+		billingHistory,
 		makeLayout,
 		clientRender
 	);

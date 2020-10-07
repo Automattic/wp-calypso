@@ -201,6 +201,9 @@ class BackupsPage extends Component {
 											: `/settings/jetpack/${ siteSlug }#credentials`
 									}
 									icon="cloud-upload"
+									event="calypso_backup_enable_restores_banner"
+									tracksImpressionName="calypso_backup_enable_restores_banner_view"
+									tracksClickName="calypso_backup_enable_restores_banner_click"
 								/>
 							) }
 

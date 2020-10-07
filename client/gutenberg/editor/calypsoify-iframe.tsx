@@ -82,10 +82,12 @@ interface State {
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
+	isCheckoutModalVisible: boolean;
 	isPreviewVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
+	cartData?: object;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -98,6 +100,8 @@ enum EditorActions {
 	GoToAllPosts = 'goToAllPosts', // Unused action in favor of CloseEditor. Maintained here to support cached scripts.
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
+	OpenCheckoutModal = 'openCheckoutModal',
+	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
@@ -121,10 +125,12 @@ class CalypsoifyIframe extends Component<
 > {
 	state: State = {
 		isMediaModalVisible: false,
+		isCheckoutModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
+		cartData: {},
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -272,6 +278,18 @@ class CalypsoifyIframe extends Component<
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+		}
+
+		if ( EditorActions.OpenCheckoutModal === action ) {
+			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
+		}
+
+		if ( EditorActions.GetCheckoutModalStatus === action ) {
+			const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
+
+			ports[ 0 ].postMessage( {
+				isCheckoutOverlayEnabled,
+			} );
 		}
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
@@ -493,6 +511,10 @@ class CalypsoifyIframe extends Component<
 		} );
 	};
 
+	closeCheckoutModal = () => {
+		this.setState( { isCheckoutModalVisible: false } );
+	};
+
 	pressThis = () => {
 		const { pressThis } = this.props;
 
@@ -660,6 +682,7 @@ class CalypsoifyIframe extends Component<
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
+			isCheckoutModalVisible,
 			allowedTypes,
 			multiple,
 			isIframeLoaded,
@@ -668,9 +691,11 @@ class CalypsoifyIframe extends Component<
 			postUrl,
 			editedPost,
 			currentIFrameUrl,
+			cartData,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
+		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 
 		return (
 			<Fragment>
@@ -708,6 +733,14 @@ class CalypsoifyIframe extends Component<
 					source=""
 					visible={ isMediaModalVisible }
 				/>
+				{ isCheckoutOverlayEnabled && isCheckoutModalVisible && (
+					<AsyncLoad
+						require="blocks/editor-checkout-modal"
+						onClose={ this.closeCheckoutModal }
+						isOpen={ isCheckoutModalVisible }
+						cartData={ cartData }
+					/>
+				) }
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
 					externalUrl={ postUrl }

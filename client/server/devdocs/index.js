@@ -16,7 +16,7 @@ import 'prismjs/components/prism-scss';
  * Internal dependencies
  */
 import config from 'config';
-import { primeSelectorsCache, selectorsRouter } from './selectors';
+import searchSelectors from './selectors';
 
 const loadSearchIndex = once( async () => {
 	const searchIndexPath = fspath.resolve( __dirname, '../../../build/devdocs-search-index.json' );
@@ -235,14 +235,7 @@ export default function devdocs() {
 		}
 	} );
 
-	// In environments where enabled, prime the selectors search cache whenever
-	// a request is made for DevDocs
-	app.use( '/devdocs', function ( request, response, next ) {
-		primeSelectorsCache();
-		next();
-	} );
-
-	app.use( '/devdocs/service/selectors', selectorsRouter );
+	app.get( '/devdocs/service/selectors', searchSelectors );
 
 	return app;
 }

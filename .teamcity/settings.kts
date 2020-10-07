@@ -438,9 +438,17 @@ object CheckCodeStyle : BuildType({
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
-				# Code style
-				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|packages/|apps/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
+				# Find files to lint
+				if [ "%teamcity.build.branch.is_default%" = "true" ]; then
+					FILES_TO_LINT="."
+				else
+					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
+				fi
+				echo "Files to lint:"
 				echo ${'$'}FILES_TO_LINT
+				echo ""
+
+				# Lint files
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
@@ -489,23 +497,6 @@ object CheckCodeStyle : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
-		}
-
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#team-calypso-bot"
-				messageFormat = simpleMessageFormat()
-			}
-			branchFilter = """
-				+:master
-				+:trunk
-			""".trimIndent()
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = true
-			firstSuccessAfterFailure = true
-			buildProbablyHanging = true
 		}
 	}
 })

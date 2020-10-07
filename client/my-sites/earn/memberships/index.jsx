@@ -473,24 +473,6 @@ class MembershipsSection extends Component {
 						</NoticeAction>
 					</Notice>
 				) }
-				{ this.props.query.stripe_connect_success === 'gutenberg' && (
-					<Notice
-						status="is-success"
-						showDismiss={ false }
-						text={ this.props.translate(
-							'Congrats! Your site is now connected to Stripe. You can now close this window, click "Re-check connection" and add your first payment plan.'
-						) }
-					>
-						<NoticeAction
-							href={ localizeUrl(
-								'https://wordpress.com/support/recurring-payments-button/#stripe-account-connected'
-							) }
-							icon="external"
-						>
-							{ this.props.translate( 'Learn how' ) }
-						</NoticeAction>
-					</Notice>
-				) }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderManagePlans() }

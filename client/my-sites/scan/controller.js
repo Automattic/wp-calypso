@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import UpsellSwitch from 'components/jetpack/upsell-switch';
+import HasVaultPressSwitch from 'components/jetpack/has-vaultpress-switch';
 import ScanPage from './main';
 import ScanHistoryPage from './history';
 import ScanUpsellPage from './upsell';
@@ -28,6 +29,20 @@ export function showUpsellIfNoScan( context, next ) {
 
 export function showUpsellIfNoScanHistory( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanHistoryPlaceholder />, context.primary );
+	next();
+}
+
+export function showUnavailableForVaultPressSites( context, next ) {
+	const message = isJetpackCloud() ? (
+		<ScanUpsellPage reason="vp_active_on_site" />
+	) : (
+		<WPCOMScanUpsellPage reason="vp_active_on_site" />
+	);
+
+	context.primary = (
+		<HasVaultPressSwitch trueComponent={ message } falseComponent={ context.primary } />
+	);
+
 	next();
 }
 
