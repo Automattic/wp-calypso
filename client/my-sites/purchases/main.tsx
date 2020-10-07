@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -10,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Main from 'components/main';
 import Subscriptions from './subscriptions';
-import { BillingHistoryList } from 'me/billing-history/main';
 import DocumentHead from 'components/data/document-head';
 import FormattedHeader from 'components/formatted-header';
 import ManagePurchase from 'me/purchases/manage-purchase';
@@ -27,13 +25,6 @@ import {
 import { getEditPaymentMethodUrlFor } from './utils';
 import AddCardDetails from 'me/purchases/payment/add-card-details';
 import EditCardDetails from 'me/purchases/payment/edit-card-details';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { CompactCard } from '@automattic/components';
-import QueryBillingTransaction from 'components/data/query-billing-transaction';
-import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
-import { ReceiptBody, ReceiptPlaceholder } from 'me/billing-history/receipt';
 
 export function Purchases() {
 	const translate = useTranslate();
@@ -206,70 +197,6 @@ export function PurchaseCancelDomain( {
 				getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 			/>
-		</Main>
-	);
-}
-
-export function BillingHistory() {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const translate = useTranslate();
-
-	return (
-		<Main className="purchases billing-history is-wide-layout">
-			<MySitesSidebarNavigation />
-			<DocumentHead title={ translate( 'Billing History' ) } />
-			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
-			<QueryBillingTransactions />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
-				align="left"
-			/>
-			<BillingHistoryList siteId={ selectedSiteId } />
-			<CompactCard href="/me/purchases/billing">
-				{ translate( 'View all billing history and receipts' ) }
-			</CompactCard>
-		</Main>
-	);
-}
-
-export function ReceiptView( { receiptId }: { receiptId: number } ) {
-	const translate = useTranslate();
-	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
-	// TODO: handle error redirects
-	// const transactionFetchError = useSelector( ( state ) =>
-	// 	isPastBillingTransactionError( state, receiptId )
-	// );
-
-	// TODO: handle clicks
-	const handlePrintLinkClick = () => {
-		window.print();
-	};
-
-	// TODO: add back button in header
-
-	return (
-		<Main className="purchases billing-history">
-			<DocumentHead title={ translate( 'Billing History' ) } />
-			<PageViewTracker
-				path="/purchases/billing-history/:site/:receipt"
-				title="Billing History > Receipt"
-			/>
-			<QueryBillingTransaction transactionId={ receiptId } />
-
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
-				align="left"
-			/>
-
-			{ transaction ? (
-				<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
-			) : (
-				<ReceiptPlaceholder />
-			) }
 		</Main>
 	);
 }
