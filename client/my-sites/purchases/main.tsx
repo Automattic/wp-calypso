@@ -22,7 +22,7 @@ import {
 	getManagePurchaseUrlFor,
 	getAddPaymentMethodUrlFor,
 } from './paths';
-import { getEditPaymentMethodUrlFor } from './utils';
+import { getEditOrAddPaymentMethodUrlFor } from './utils';
 import AddCardDetails from 'me/purchases/payment/add-card-details';
 import EditCardDetails from 'me/purchases/payment/edit-card-details';
 
@@ -72,7 +72,7 @@ export function PurchaseDetails( {
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 				getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-				getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+				getEditPaymentMethodUrlFor={ getEditOrAddPaymentMethodUrlFor }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 			/>
 		</Main>

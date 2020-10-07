@@ -4,7 +4,7 @@
 import { getAddPaymentMethodUrlFor, editPaymentMethod } from './paths';
 import { isPaidWithCreditCard } from 'lib/purchases';
 
-function getEditPaymentMethodUrlFor( siteSlug, purchase ) {
+export function getEditOrAddPaymentMethodUrlFor( siteSlug, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		const {
 			payment: { creditCard },
@@ -14,5 +14,3 @@ function getEditPaymentMethodUrlFor( siteSlug, purchase ) {
 	}
 	return getAddPaymentMethodUrlFor( siteSlug, purchase.id );
 }
-
-export { getEditPaymentMethodUrlFor };
