@@ -70,7 +70,7 @@ class BillingReceipt extends React.Component {
 				/>
 				<QueryBillingTransaction transactionId={ transactionId } />
 
-				<ReceiptTitle />
+				<ReceiptTitle backHref={ billingHistory } />
 
 				{ transaction ? (
 					<ReceiptBody
@@ -305,9 +305,9 @@ function ReceiptLabels() {
 	);
 }
 
-function ReceiptTitle() {
+export function ReceiptTitle( { backHref } ) {
 	const translate = useTranslate();
-	return <HeaderCake backHref={ billingHistory }>{ translate( 'Billing History' ) }</HeaderCake>;
+	return <HeaderCake backHref={ backHref }>{ translate( 'Billing History' ) }</HeaderCake>;
 }
 
 export default connect(
