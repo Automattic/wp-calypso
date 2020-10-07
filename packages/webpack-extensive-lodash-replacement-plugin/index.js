@@ -67,9 +67,11 @@ class ExtensiveLodashReplacementPlugin {
 			throw createError( 'Could not determine root `lodash-es` version.' );
 		}
 
-		if ( baseLodashVersion !== this.baseLodashESVersion ) {
-			throw createError( 'Root `lodash` and `lodash-es` versions do not match.' );
+		if ( semver.lt( baseLodashVersion, this.baseLodashESVersion ) ) {
+			throw createError( 'Root `lodash` version cannot replace root `lodash-es` version.' );
 		}
+
+		this.baseLodashVersion = baseLodashVersion;
 	}
 
 	// Figure out the version for a given import.
@@ -94,15 +96,15 @@ class ExtensiveLodashReplacementPlugin {
 		const importVersion = await this.findRequestedVersion( file, packageName );
 		const isVersionMatch =
 			importVersion &&
-			semver.major( this.baseLodashESVersion ) === semver.major( importVersion ) &&
-			semver.gte( this.baseLodashESVersion, importVersion );
+			semver.major( this.baseLodashVersion ) === semver.major( importVersion ) &&
+			semver.gte( this.baseLodashVersion, importVersion );
 
 		if ( ! isVersionMatch ) {
 			const relativePath = path.relative( this.baseDir, file );
 			// Output compilation warning.
 			this.compilation.warnings.push(
 				new Error(
-					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash-es version ${ this.baseLodashESVersion }`
+					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash version ${ this.baseLodashVersion }`
 				)
 			);
 		}
@@ -118,21 +120,21 @@ class ExtensiveLodashReplacementPlugin {
 			return request;
 		}
 
-		// Replace plain 'lodash' with 'lodash-es'.
-		if ( /^lodash$/.test( request ) ) {
-			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
-				return 'lodash-es';
+		// Replace plain 'lodash-es' with 'lodash'.
+		if ( /^lodash-es$/.test( request ) ) {
+			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash-es' ) ) {
+				return 'lodash';
 			}
 		}
 
-		// Replace 'lodash/foo' with 'lodash-es/foo'.
-		if ( /^lodash\/(.*)$/.test( request ) ) {
-			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
-				return request.replace( 'lodash/', 'lodash-es/' );
+		// Replace 'lodash-es/foo' with 'lodash/foo'.
+		if ( /^lodash-es\/(.*)$/.test( request ) ) {
+			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash-es' ) ) {
+				return request.replace( 'lodash-es/', 'lodash/' );
 			}
 		}
 
-		// Replace 'lodash.foo' with 'lodash-es/foo'.
+		// Replace 'lodash.foo' with 'lodash/foo'.
 		if ( /^lodash\.(.*)$/.test( request ) ) {
 			if ( await this.canBeReplaced( result.contextInfo.issuer, request ) ) {
 				const match = /^lodash\.(.*)$/.exec( request );
@@ -147,7 +149,7 @@ class ExtensiveLodashReplacementPlugin {
 					}
 				} );
 
-				return `lodash-es/${ subModule }`;
+				return `lodash/${ subModule }`;
 			}
 		}
 
@@ -164,25 +166,25 @@ class ExtensiveLodashReplacementPlugin {
 
 		const { request } = result;
 
-		// Replace plain 'lodash' with 'lodash-es'.
-		if ( /^lodash$/.test( request ) ) {
-			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+		// Replace plain 'lodash-es' with 'lodash'.
+		if ( /^lodash-es$/.test( request ) ) {
+			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash-es' ) ) {
 				// eslint-disable-next-line require-atomic-updates
-				result.request = 'lodash-es';
+				result.request = 'lodash';
 				return;
 			}
 		}
 
-		// Replace 'lodash/foo' with 'lodash-es/foo'.
-		if ( /^lodash\/(.*)$/.test( request ) ) {
-			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash' ) ) {
+		// Replace 'lodash-es/foo' with 'lodash/foo'.
+		if ( /^lodash-es\/(.*)$/.test( request ) ) {
+			if ( await this.canBeReplaced( result.contextInfo.issuer, 'lodash-es' ) ) {
 				// eslint-disable-next-line require-atomic-updates
-				result.request = request.replace( 'lodash/', 'lodash-es/' );
+				result.request = request.replace( 'lodash-es/', 'lodash/' );
 				return;
 			}
 		}
 
-		// Replace 'lodash.foo' with 'lodash-es/foo'.
+		// Replace 'lodash.foo' with 'lodash/foo'.
 		if ( /^lodash\.(.*)$/.test( request ) ) {
 			if ( await this.canBeReplaced( result.contextInfo.issuer, request ) ) {
 				const match = /^lodash\.(.*)$/.exec( request );
@@ -198,7 +200,7 @@ class ExtensiveLodashReplacementPlugin {
 				} );
 
 				// eslint-disable-next-line require-atomic-updates
-				result.request = `lodash-es/${ subModule }`;
+				result.request = `lodash/${ subModule }`;
 				return;
 			}
 		}
