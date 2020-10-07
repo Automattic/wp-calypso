@@ -75,6 +75,9 @@ const blockInits = new Map()
 			country: 'United Gutenberg States of Calypsoland',
 			linkToGmaps: true,
 		} )
+	)
+	.set( YoutubeBlockComponent, ( block ) =>
+		block.embed( 'https://www.youtube.com/watch?v=FhMO5QnRNvo' )
 	);
 
 /**
