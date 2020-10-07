@@ -8,13 +8,13 @@ import TransitionGroup from 'react-transition-group/TransitionGroup';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import emailValidator from 'email-validator';
 import { debounce, flowRight as compose, get, has, map, size, update } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import AccountSettingsEmailAddress from './email-address';
 import LanguagePicker from 'components/language-picker';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import { protectForm } from 'lib/protect-form';
@@ -24,7 +24,6 @@ import { languages } from 'languages';
 import { supportsCssCustomProperties } from 'lib/feature-detection';
 import { Card, Button } from '@automattic/components';
 import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
 import FormCheckbox from 'components/forms/form-checkbox';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -38,7 +37,6 @@ import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'state/analytics/
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import observe from 'lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
 import Main from 'components/main';
 import SitesDropdown from 'components/sites-dropdown';
@@ -165,20 +163,6 @@ const Account = createReactClass( {
 		this.updateUserSetting( colorSchemeKey, colorScheme );
 	},
 
-	getEmailAddress() {
-		return this.hasPendingEmailChange()
-			? this.getUserSetting( 'new_user_email' )
-			: this.getUserSetting( 'user_email' );
-	},
-
-	updateEmailAddress( event ) {
-		const { value } = event.target;
-		const emailValidationError =
-			( '' === value && 'empty' ) || ( ! emailValidator.validate( value ) && 'invalid' ) || false;
-		this.setState( { emailValidationError } );
-		this.updateUserSetting( 'user_email', value );
-	},
-
 	updateUserLoginConfirm( event ) {
 		this.setState( { userLoginConfirm: event.target.value } );
 	},
@@ -189,8 +173,12 @@ const Account = createReactClass( {
 		this.props.username.validate( username );
 	},
 
-	hasEmailValidationError() {
-		return !! this.state.emailValidationError;
+	isEmailInvalid() {
+		return !! this.state.emailIsInvalid;
+	},
+
+	setEmailValidationState( emailIsInvalid ) {
+		this.setState( { emailIsInvalid } );
 	},
 
 	shouldDisplayCommunityTranslator() {
@@ -283,21 +271,6 @@ const Account = createReactClass( {
 				) }
 			</FormSettingExplanation>
 		);
-	},
-
-	cancelEmailChange() {
-		const { translate, userSettings } = this.props;
-		userSettings.cancelPendingEmailChange( ( error, response ) => {
-			if ( error ) {
-				debug( 'Error canceling email change: ' + JSON.stringify( error ) );
-				this.props.errorNotice(
-					translate( 'There was a problem canceling the email change. Please, try again.' )
-				);
-			} else {
-				debug( JSON.stringify( 'Email change canceled successfully' + response ) );
-				this.props.successNotice( translate( 'The email change has been successfully canceled.' ) );
-			}
-		} );
 	},
 
 	handleRadioChange( event ) {
@@ -431,35 +404,6 @@ const Account = createReactClass( {
 		);
 	},
 
-	hasPendingEmailChange() {
-		return this.props.userSettings.isPendingEmailChange();
-	},
-
-	renderPendingEmailChange() {
-		const { translate } = this.props;
-
-		if ( ! this.hasPendingEmailChange() ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				showDismiss={ false }
-				status="is-info"
-				text={ translate(
-					'There is a pending change of your email to %(email)s. Please check your inbox for a confirmation link.',
-					{
-						args: {
-							email: this.getUserSetting( 'new_user_email' ),
-						},
-					}
-				) }
-			>
-				<NoticeAction onClick={ this.cancelEmailChange }>{ translate( 'Cancel' ) }</NoticeAction>
-			</Notice>
-		);
-	},
-
 	renderUsernameValidation() {
 		const { translate, username, userSettings } = this.props;
 
@@ -531,31 +475,6 @@ const Account = createReactClass( {
 		);
 	},
 
-	renderEmailValidation() {
-		const { translate, userSettings } = this.props;
-
-		if ( ! userSettings.isSettingUnsaved( 'user_email' ) ) {
-			return null;
-		}
-
-		if ( ! this.state.emailValidationError ) {
-			return null;
-		}
-		let notice;
-		switch ( this.state.emailValidationError ) {
-			case 'invalid':
-				notice = translate( '%(email)s is not a valid email address.', {
-					args: { email: this.getUserSetting( 'user_email' ) },
-				} );
-				break;
-			case 'empty':
-				notice = translate( 'Email address can not be empty.' );
-				break;
-		}
-
-		return <FormTextValidation isError={ true } text={ notice } />;
-	},
-
 	/*
 	 * These form fields are displayed when there is not a username change in progress.
 	 */
@@ -563,29 +482,19 @@ const Account = createReactClass( {
 		const { translate, userSettings } = this.props;
 
 		const isSubmitButtonDisabled =
-			! userSettings.hasUnsavedSettings() ||
-			this.getDisabledState() ||
-			this.hasEmailValidationError();
+			! userSettings.hasUnsavedSettings() || this.getDisabledState() || this.isEmailInvalid();
 
 		return (
 			<div className="account__settings-form" key="settingsForm">
-				<FormFieldset>
-					<FormLabel htmlFor="user_email">{ translate( 'Email address' ) }</FormLabel>
-					<FormTextInput
-						disabled={ this.getDisabledState() || this.hasPendingEmailChange() }
-						id="user_email"
-						name="user_email"
-						isError={ !! this.state.emailValidationError }
-						onFocus={ this.getFocusHandler( 'Email Address Field' ) }
-						value={ this.getEmailAddress() || '' }
-						onChange={ this.updateEmailAddress }
-					/>
-					{ this.renderEmailValidation() }
-					{ this.renderPendingEmailChange() }
-					<FormSettingExplanation>
-						{ translate( 'Will not be publicly displayed' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
+				<AccountSettingsEmailAddress
+					debug={ debug }
+					emailValidationListener={ this.setEmailValidationState }
+					errorNotice={ this.props.errorNotice }
+					focusHandler={ this.getFocusHandler( 'Email Address Field' ) }
+					isSubmitting={ this.getDisabledState }
+					successNotice={ this.props.successNotice }
+					userSettings={ userSettings }
+				/>
 
 				<FormFieldset>
 					<FormLabel htmlFor="primary_site_ID">{ translate( 'Primary site' ) }</FormLabel>

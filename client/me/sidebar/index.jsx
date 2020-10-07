@@ -77,6 +77,7 @@ class MeSidebar extends React.Component {
 		const { context, translate } = this.props;
 		const filterMap = {
 			'/me': 'profile',
+			'/me/security/account-email': 'security',
 			'/me/security/account-recovery': 'security',
 			'/me/security/connected-applications': 'security',
 			'/me/security/password': 'security',

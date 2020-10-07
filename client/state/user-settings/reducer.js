@@ -8,12 +8,36 @@ import { omit } from 'lodash';
  * Internal dependencies
  */
 import {
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_SAVE,
 	USER_SETTINGS_UPDATE,
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
 } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'state/utils';
+
+export const fetchingSettings = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case USER_SETTINGS_REQUEST:
+			return true;
+		case USER_SETTINGS_SAVE:
+		case USER_SETTINGS_UPDATE:
+			return false;
+	}
+	return state;
+} );
+
+export const savingSettings = withoutPersistence( ( state = false, action ) => {
+	switch ( action.type ) {
+		case USER_SETTINGS_SAVE:
+			return true;
+		case USER_SETTINGS_REQUEST:
+		case USER_SETTINGS_UPDATE:
+			return false;
+	}
+	return state;
+} );
 
 export const settings = ( state = null, { type, settingValues } ) =>
 	USER_SETTINGS_UPDATE === type ? { ...state, ...settingValues } : state;
@@ -43,6 +67,8 @@ export const unsavedSettings = ( state = {}, action ) => {
 };
 
 export default combineReducers( {
+	fetchingSettings,
+	savingSettings,
 	settings,
 	unsavedSettings,
 } );
