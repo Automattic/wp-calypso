@@ -29,7 +29,6 @@ import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	PLAN_PERSONAL,
-	PLAN_P2_PLUS,
 } from 'lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST, JETPACK_PRODUCT_PRICE_MATRIX } from 'lib/products-values/constants';
 import { getJetpackProducts } from 'lib/products-values/translations';
@@ -191,9 +190,9 @@ export class PlansFeaturesMain extends Component {
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
-					plans={ [ ...plans, PLAN_P2_PLUS ] }
+					plans={ plans }
 					redirectTo={ redirectTo }
-					visiblePlans={ [ ...availablePlans, PLAN_P2_PLUS ] }
+					visiblePlans={ availablePlans }
 					selectedFeature={ selectedFeature }
 					selectedPlan={ selectedPlan }
 					withDiscount={ withDiscount }
