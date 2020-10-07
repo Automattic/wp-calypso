@@ -101,6 +101,7 @@ enum EditorActions {
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenCheckoutModal = 'openCheckoutModal',
+	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
@@ -281,6 +282,14 @@ class CalypsoifyIframe extends Component<
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
 			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
+		}
+
+		if ( EditorActions.GetCheckoutModalStatus === action ) {
+			const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
+
+			ports[ 0 ].postMessage( {
+				isCheckoutOverlayEnabled,
+			} );
 		}
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
