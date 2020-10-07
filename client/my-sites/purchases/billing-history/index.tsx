@@ -23,6 +23,7 @@ import FormattedHeader from 'components/formatted-header';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
+import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -60,6 +61,11 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 	const reduxDispatch = useDispatch();
 
 	useRedirectToHistoryPageOnInvalidTransaction( siteSlug, receiptId );
+	const isCorrectSite = useRedirectToHistoryPageOnWrongSiteForTransaction(
+		siteSlug,
+		receiptId,
+		transaction
+	);
 
 	const handlePrintLinkClick = () => {
 		const action = 'Print Receipt Button in Billing History Receipt';
@@ -85,7 +91,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 
 			<ReceiptTitle backHref={ getBillingHistoryUrlFor( siteSlug ) } />
 
-			{ transaction ? (
+			{ transaction && isCorrectSite ? (
 				<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
 			) : (
 				<ReceiptPlaceholder />
