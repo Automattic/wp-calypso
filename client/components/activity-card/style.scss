@@ -14,6 +14,10 @@
 			flex-direction: row;
 			flex-wrap: wrap;
 			margin-left: 8px;
+
+			&:first-child {
+				margin-left: 0;
+			}
 			> *:not( :last-child ) {
 				margin-right: 8px;
 			}
