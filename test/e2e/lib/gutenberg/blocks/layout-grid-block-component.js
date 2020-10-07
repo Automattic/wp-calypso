@@ -26,10 +26,12 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		);
 		await driverHelper.clickWhenClickable( this.driver, columnButtonSelector );
 
-		// Updates the blockId, since the block is replaced by another one upon the selection of the columns.
-		this.blockID = await this.driver
+		const updatedBlockID = await this.driver
 			.findElement( By.css( 'div.block-editor-block-list__block.is-selected' ) )
 			.getAttribute( 'id' );
+
+		// Update the blockID, since the block is replaced by another one upon the selection of the columns.
+		this.blockID = `#${ updatedBlockID }`;
 		this.columns = number;
 	}
 
@@ -46,16 +48,14 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		}
 
 		const screenSize = driverManager.currentScreenSize();
-		const blockSelector = By.id( this.blockID );
-		const addBlockButtonSelector = By.css(
-			`${ blockSelector.value } button[aria-label="Add block"]`
-		);
+		const addBlockButtonSelector = By.css( `${ this.blockID } button[aria-label="Add block"]` );
 
 		if ( screenSize === 'mobile' ) {
 			const addBlockButtons = await this.driver.findElements( addBlockButtonSelector );
 			const firstEmptyColumnIndex = this.columns - addBlockButtons.length + 1;
+			const blockSelector = By.css( this.blockID );
 			const columnSelector = By.css(
-				`${ blockSelector.value } div[data-type="jetpack/layout-grid-column"]:nth-child(${ firstEmptyColumnIndex })`
+				`${ this.blockID } div[data-type="jetpack/layout-grid-column"]:nth-child(${ firstEmptyColumnIndex })`
 			);
 
 			// On mobiles, we need to click through the layers until the appender is clickable:
@@ -85,7 +85,7 @@ class LayoutGridBlockComponent extends GutenbergBlockComponent {
 		);
 
 		const insertedBlockSelector = By.css(
-			`div[id="${ this.blockID }"] div.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`
+			`${ this.blockID } div.wp-block-jetpack-layout-grid .block-editor-block-list__block[aria-label='Block: ${ blockClass.blockTitle }']`
 		);
 		const blockId = await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 
