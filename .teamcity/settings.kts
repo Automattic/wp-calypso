@@ -498,23 +498,6 @@ object CheckCodeStyle : BuildType({
 				}
 			}
 		}
-
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#team-calypso-bot"
-				messageFormat = simpleMessageFormat()
-			}
-			branchFilter = """
-				+:master
-				+:trunk
-			""".trimIndent()
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = true
-			firstSuccessAfterFailure = true
-			buildProbablyHanging = true
-		}
 	}
 })
 
