@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getAddPaymentMethodUrlFor, editPaymentMethod } from './paths';
+import { getAddPaymentMethodUrlFor, getEditPaymentMethodUrlFor } from './paths';
 import { isPaidWithCreditCard } from 'lib/purchases';
 
 export function getEditOrAddPaymentMethodUrlFor( siteSlug, purchase ) {
@@ -10,7 +10,7 @@ export function getEditOrAddPaymentMethodUrlFor( siteSlug, purchase ) {
 			payment: { creditCard },
 		} = purchase;
 
-		return editPaymentMethod( siteSlug, purchase.id, creditCard.id );
+		return getEditPaymentMethodUrlFor( siteSlug, purchase.id, creditCard.id );
 	}
 	return getAddPaymentMethodUrlFor( siteSlug, purchase.id );
 }
