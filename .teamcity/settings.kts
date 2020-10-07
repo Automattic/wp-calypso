@@ -439,7 +439,7 @@ object CheckCodeStyle : BuildType({
 				nvm install
 
 				# Find files to lint
-				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+				if [ "%teamcity.build.branch.is_default%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
 					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
@@ -497,23 +497,6 @@ object CheckCodeStyle : BuildType({
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
 			}
-		}
-
-		notifications {
-			notifierSettings = slackNotifier {
-				connection = "PROJECT_EXT_11"
-				sendTo = "#team-calypso-bot"
-				messageFormat = simpleMessageFormat()
-			}
-			branchFilter = """
-				+:master
-				+:trunk
-			""".trimIndent()
-			buildFailedToStart = true
-			buildFailed = true
-			buildFinishedSuccessfully = true
-			firstSuccessAfterFailure = true
-			buildProbablyHanging = true
 		}
 	}
 })
