@@ -91,15 +91,14 @@ class ExtensiveLodashReplacementPlugin {
 	// Figure out if the requested Lodash import can be replaced with global lodash-es.
 	// It takes the importer's version and the global lodash-es version into account.
 	async canBeReplaced( file, packageName ) {
-		const importVersion = await this.findRequestedVersion( file, packageName );
-		const isVersionMatch = !! importVersion; // Forcefully replace everything. Unsafe; just an experiment.
+		const isVersionMatch = true; // Forcefully replace everything. Unsafe; just an experiment.
 
 		if ( ! isVersionMatch ) {
 			const relativePath = path.relative( this.baseDir, file );
 			// Output compilation warning.
 			this.compilation.warnings.push(
 				new Error(
-					`${ relativePath }\n  ${ packageName } version ${ importVersion } cannot be replaced by lodash-es version ${ this.baseLodashESVersion }`
+					`${ relativePath }\n  ${ packageName } version cannot be replaced by lodash-es version ${ this.baseLodashESVersion }`
 				)
 			);
 		}
