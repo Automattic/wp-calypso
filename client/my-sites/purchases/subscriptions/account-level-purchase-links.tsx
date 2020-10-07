@@ -15,9 +15,6 @@ export default function AccountLevelPurchaseLinks() {
 		<>
 			<CompactCard href="/me/purchases">{ translate( 'View all subscriptions' ) }</CompactCard>
 			<CompactCard href="/me/purchases/billing">
-				{ translate( 'View billing history and receipts' ) }
-			</CompactCard>
-			<CompactCard href="/me/purchases/billing">
 				{ translate( 'Manage payment methods' ) }
 			</CompactCard>
 		</>
