@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -254,21 +253,7 @@ export class LanguagePickerModal extends PureComponent {
 		);
 	}
 
-	/**
-	 * Only record a single search event per modal instance
-	 * otherwise we would get a search event per keystroke.
-	 */
-	recordSearchTracksEvent = () => {
-		if ( this.state.recordedTracksSearchEvent ) {
-			return;
-		}
-
-		this.setState( { recordedTracksSearchEvent: true } );
-		this.props.recordTracksEvent( 'calypso_language_picker_searched_language' );
-	};
-
 	selectLanguageFromSearch( search ) {
-		this.recordSearchTracksEvent();
 		const filteredLanguages = this.getFilteredLanguages();
 		const exactMatch = filteredLanguages.find( ( { langSlug } ) => langSlug === search );
 
@@ -430,23 +415,16 @@ export class LanguagePickerModal extends PureComponent {
 		this.handleClose();
 	};
 
-	recordNewLanguagePickedEvent = ( isClosingWithoutSelection ) => {
-		const { selectedLanguageSlug } = this.state;
-
-		if (
-			isClosingWithoutSelection ||
-			this.initiallySelectedLanguageSlug === selectedLanguageSlug
-		) {
-			// we don't record an event if the language wasn't changed
-			return;
-		}
-
-		const searched = this.state.recordedTracksSearchEvent;
-		this.props.recordTracksEvent( 'calypso_language_picker_selected_language', { searched } );
+	recordLanguagePickerEvent = ( isClosingWithoutSelection ) => {
+		this.props.recordTracksEvent( 'calypso_languagepicker_closed', {
+			searched: false !== this.state.search,
+			is_closing_without_selection: isClosingWithoutSelection,
+			did_select_language: this.initiallySelectedLanguageSlug !== this.state.selectedLanguageSlug,
+		} );
 	};
 
 	handleClose = ( isClosingWithoutSelection = false ) => {
-		this.recordNewLanguagePickedEvent( isClosingWithoutSelection );
+		this.recordLanguagePickerEvent( isClosingWithoutSelection );
 		this.props.onClose();
 	};
 
