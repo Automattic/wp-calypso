@@ -24,6 +24,7 @@ import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
+import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -44,6 +45,8 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
+			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
+
 			<BillingHistoryList
 				siteId={ selectedSiteId }
 				getReceiptUrlFor={ getReceiptUrlForReceiptId }
@@ -81,7 +84,6 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 				title="Billing History > Receipt"
 			/>
 			<QueryBillingTransaction transactionId={ receiptId } />
-
 			<FormattedHeader
 				brandFont
 				className="billing-history__page-heading"
@@ -90,7 +92,6 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 			/>
 
 			<ReceiptTitle backHref={ getBillingHistoryUrlFor( siteSlug ) } />
-
 			{ transaction && isCorrectSite ? (
 				<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
 			) : (
