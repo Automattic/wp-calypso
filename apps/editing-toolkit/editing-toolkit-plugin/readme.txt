@@ -41,8 +41,12 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 2.7 =
-* Update post blocks from Newspack to v1.13.1, fixing bugs related to grid mode and adding alignment options to post carousel.
-* Add new coming soon page patterns.
+* Begin loading patterns from an API. (https://github.com/Automattic/wp-calypso/pull/45926)
+* Improve styles of premium content login button. (https://github.com/Automattic/wp-calypso/pull/46227)
+* Add new coming soon page pattern. (https://github.com/Automattic/wp-calypso/pull/46179)
+* Improve styles of recurring payments block. (https://github.com/Automattic/wp-calypso/pull/46125)
+* Add extra space to the first block when the page title is hidden. (https://github.com/Automattic/wp-calypso/pull/46003)
+* Update the category of the premium content block. (https://github.com/Automattic/wp-calypso/pull/45978)
 
 = 2.6.1 =
 * Fixed an error in the Premium Content token subscription service that causing some fatal errors if the auth token was missing (https://github.com/Automattic/wp-calypso/pull/45878)
