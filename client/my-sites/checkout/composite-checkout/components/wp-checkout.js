@@ -85,7 +85,7 @@ const OrderReviewTitle = () => {
 const paymentMethodStep = getDefaultPaymentMethodStep();
 
 export default function WPCheckout( {
-	removeItem,
+	removeProductFromCart,
 	updateLocation,
 	applyCoupon,
 	removeCoupon,
@@ -310,7 +310,7 @@ export default function WPCheckout( {
 					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
 					activeStepContent={
 						<WPCheckoutOrderReview
-							removeItem={ removeItem }
+							removeProductFromCart={ removeProductFromCart }
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							removeCoupon={ removeCoupon }

@@ -30,6 +30,7 @@ const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for
 
 interface PreparedProductsForCart {
 	productsForCart: RequestCartProduct[];
+	renewalsForCart: RequestCartProduct[];
 	isLoading: boolean;
 	error: string | null;
 }
@@ -37,6 +38,7 @@ interface PreparedProductsForCart {
 const initialPreparedProductsState = {
 	isLoading: true,
 	productsForCart: [],
+	renewalsForCart: [],
 	error: null,
 };
 
@@ -112,6 +114,7 @@ export default function usePrepareProductsForCart( {
 
 type PreparedProductsAction =
 	| { type: 'PRODUCTS_ADD'; products: RequestCartProduct[] }
+	| { type: 'RENEWALS_ADD'; products: RequestCartProduct[] }
 	| { type: 'PRODUCTS_ADD_ERROR'; message: string };
 
 function preparedProductsReducer(
@@ -123,7 +126,14 @@ function preparedProductsReducer(
 			if ( ! state.isLoading ) {
 				return state;
 			}
-			return { ...state, productsForCart: action.products, isLoading: false };
+			// Note that products and renewals are mutually exclusive; they cannot both be in the cart at the same time
+			return { ...state, productsForCart: action.products, renewalsForCart: [], isLoading: false };
+		case 'RENEWALS_ADD':
+			if ( ! state.isLoading ) {
+				return state;
+			}
+			// Note that products and renewals are mutually exclusive; they cannot both be in the cart at the same time
+			return { ...state, productsForCart: [], renewalsForCart: action.products, isLoading: false };
 		case 'PRODUCTS_ADD_ERROR':
 			if ( ! state.isLoading ) {
 				return state;
@@ -213,7 +223,7 @@ function useAddRenewalItems( {
 			return;
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
-		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
+		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
 	}, [
 		translate,
 		isLoading,

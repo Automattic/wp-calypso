@@ -174,6 +174,7 @@ export default function CompositeCheckout( {
 
 	const {
 		productsForCart,
+		renewalsForCart,
 		isLoading: areCartProductsPreparing,
 		error: cartProductPrepError,
 	} = usePrepareProductsForCart( {
@@ -185,7 +186,7 @@ export default function CompositeCheckout( {
 	} );
 
 	const {
-		removeItem,
+		removeProductFromCart,
 		couponStatus,
 		applyCoupon,
 		removeCoupon,
@@ -197,6 +198,7 @@ export default function CompositeCheckout( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
+		replaceProductsInCart,
 	} = useShoppingCartManager( {
 		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
 		canInitializeCart: ! isLoadingCartSynchronizer,
@@ -208,10 +210,12 @@ export default function CompositeCheckout( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
+		renewalsForCart,
 		areCartProductsPreparing,
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
+		replaceProductsInCart,
 	} );
 
 	useRecordCartLoaded( {
@@ -629,7 +633,7 @@ export default function CompositeCheckout( {
 					theme={ theme }
 				>
 					<WPCheckout
-						removeItem={ removeItem }
+						removeProductFromCart={ removeProductFromCart }
 						updateLocation={ updateLocation }
 						applyCoupon={ applyCoupon }
 						removeCoupon={ removeCoupon }

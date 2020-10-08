@@ -24,13 +24,14 @@ export interface ShoppingCartManager {
 	loadingError: string | null | undefined;
 	loadingErrorType: ShoppingCartError | undefined;
 	isPendingUpdate: boolean;
-	addProductsToCart: ( products: RequestCartProduct[] ) => void;
-	removeItem: ( uuidToRemove: string ) => void;
-	applyCoupon: ( couponId: string ) => void;
-	removeCoupon: () => void;
+	addProductsToCart: AddProductsToCart;
+	removeProductFromCart: RemoveProductFromCart;
+	applyCoupon: ApplyCouponToCart;
+	removeCoupon: RemoveCouponFromCart;
 	couponStatus: CouponStatus;
-	updateLocation: ( arg0: CartLocation ) => void;
+	updateLocation: UpdateTaxLocationInCart;
 	replaceProductInCart: ReplaceProductInCart;
+	replaceProductsInCart: ReplaceProductsInCart;
 	responseCart: ResponseCart;
 }
 
@@ -38,6 +39,18 @@ export type ReplaceProductInCart = (
 	uuidToReplace: string,
 	productPropertiesToChange: Partial< RequestCartProduct >
 ) => void;
+
+export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => void;
+
+export type AddProductsToCart = ( products: RequestCartProduct[] ) => void;
+
+export type RemoveCouponFromCart = () => void;
+
+export type ApplyCouponToCart = ( couponId: string ) => void;
+
+export type RemoveProductFromCart = ( uuidToRemove: string ) => void;
+
+export type UpdateTaxLocationInCart = ( location: CartLocation ) => void;
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
@@ -66,6 +79,7 @@ export type ShoppingCartAction =
 	| { type: 'CLEAR_QUEUED_ACTIONS' }
 	| { type: 'REMOVE_CART_ITEM'; uuidToRemove: string }
 	| { type: 'CART_PRODUCTS_ADD'; products: RequestCartProduct[] }
+	| { type: 'CART_PRODUCTS_REPLACE_ALL'; products: RequestCartProduct[] }
 	| { type: 'SET_LOCATION'; location: CartLocation }
 	| {
 			type: 'CART_PRODUCT_REPLACE';

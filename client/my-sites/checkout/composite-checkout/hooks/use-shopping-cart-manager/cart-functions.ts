@@ -140,6 +140,19 @@ export function addItemsToResponseCart(
 	};
 }
 
+export function replaceAllItemsInResponseCart(
+	responseCart: ResponseCart,
+	products: RequestCartProduct[]
+): ResponseCart {
+	const responseCartProducts: TempResponseCartProduct[] = products.map(
+		convertRequestCartProductToResponseCartProduct
+	);
+	return {
+		...responseCart,
+		products: [ ...responseCartProducts ],
+	};
+}
+
 export function replaceItemInResponseCart(
 	cart: ResponseCart,
 	uuidToReplace: string,

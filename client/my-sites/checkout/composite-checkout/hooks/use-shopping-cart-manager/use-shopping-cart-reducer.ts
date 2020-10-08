@@ -10,6 +10,7 @@ import debugFactory from 'debug';
 import {
 	removeItemFromResponseCart,
 	addItemsToResponseCart,
+	replaceAllItemsInResponseCart,
 	replaceItemInResponseCart,
 	addCouponToResponseCart,
 	removeCouponFromResponseCart,
@@ -90,6 +91,14 @@ function shoppingCartReducer(
 			return {
 				...state,
 				responseCart: addItemsToResponseCart( state.responseCart, action.products ),
+				cacheStatus: 'invalid',
+			};
+		}
+		case 'CART_PRODUCTS_REPLACE_ALL': {
+			debug( 'replacing items in cart with', action.products );
+			return {
+				...state,
+				responseCart: replaceAllItemsInResponseCart( state.responseCart, action.products ),
 				cacheStatus: 'invalid',
 			};
 		}
