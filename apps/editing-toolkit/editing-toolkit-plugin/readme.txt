@@ -41,7 +41,6 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 2.7 =
-* Begin loading patterns from an API. (https://github.com/Automattic/wp-calypso/pull/45926)
 * Improve styles of premium content login button. (https://github.com/Automattic/wp-calypso/pull/46227)
 * Add new coming soon page pattern. (https://github.com/Automattic/wp-calypso/pull/46179)
 * Improve styles of recurring payments block. (https://github.com/Automattic/wp-calypso/pull/46125)
