@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import CountrySpecificPaymentFields from 'calypso/my-sites/checkout/checkout/country-specific-payment-fields';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
 import notices from 'calypso/notices';
 import PaymentCountrySelect from 'calypso/components/payment-country-select';
@@ -123,14 +124,14 @@ function CreditCardNumberField( { translate, createField, getErrorMessage, card 
 		};
 		return (
 			<div className="credit-card-form-fields__field number">
-				<label className="credit-card-form-fields__label form-label">
+				<FormLabel className="credit-card-form-fields__label">
 					{ cardNumberLabel }
 					<CardNumberElementWithValidation
 						fieldName="card_number"
 						getErrorMessage={ getErrorMessage }
 						classes={ elementClasses }
 					/>
-				</label>
+				</FormLabel>
 			</div>
 		);
 	}
@@ -181,24 +182,24 @@ function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage
 		return (
 			<React.Fragment>
 				<div className="credit-card-form-fields__field expiration-date">
-					<label className="credit-card-form-fields__label form-label">
+					<FormLabel className="credit-card-form-fields__label">
 						{ expiryLabel }
 						<CardExpiryElementWithValidation
 							fieldName="card_expiry"
 							getErrorMessage={ getErrorMessage }
 							classes={ elementClasses }
 						/>
-					</label>
+					</FormLabel>
 				</div>
 				<div className="credit-card-form-fields__field cvv">
-					<label className="credit-card-form-fields__label form-label">
+					<FormLabel className="credit-card-form-fields__label">
 						{ cvcLabel }
 						<CardCvcElementWithValidation
 							fieldName="card_cvc"
 							getErrorMessage={ getErrorMessage }
 							classes={ elementClasses }
 						/>
-					</label>
+					</FormLabel>
 				</div>
 			</React.Fragment>
 		);
