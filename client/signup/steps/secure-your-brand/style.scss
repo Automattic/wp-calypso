@@ -84,4 +84,10 @@
 	.button {
 		margin-left: 13px;
 	}
+	@media screen and ( max-width: 660px ) {
+		.button {
+			width: 100%;
+			margin: 0 12px 20px 0;
+		}
+	}
 }
