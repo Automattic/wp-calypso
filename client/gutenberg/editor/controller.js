@@ -25,12 +25,14 @@ import {
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'calypso/config';
 import { Placeholder } from './placeholder';
+
 import { makeLayout, render } from 'calypso/controller';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/window-events';
 import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
+import { stopEditingPost } from 'calypso/state/editor/actions';
 
 function determinePostType( context ) {
 	if ( context.path.startsWith( '/post/' ) ) {
@@ -248,4 +250,13 @@ export const siteEditor = ( context, next ) => {
 	);
 
 	return next();
+};
+
+export const exitPost = ( context, next ) => {
+	const postId = getPostID( context );
+	const siteId = getSelectedSiteId( context.store.getState() );
+	if ( siteId ) {
+		context.store.dispatch( stopEditingPost( siteId, postId ) );
+	}
+	next();
 };
