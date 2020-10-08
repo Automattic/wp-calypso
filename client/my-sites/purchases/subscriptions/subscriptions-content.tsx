@@ -8,16 +8,16 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import PurchasesSite from 'me/purchases/purchases-site/index.jsx';
+import PurchasesSite from 'calypso/me/purchases/purchases-site/index.jsx';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
-} from 'state/purchases/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import NoSitesMessage from 'components/empty-content/no-sites-message';
+} from 'calypso/state/purchases/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import { CompactCard } from '@automattic/components';
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import './style.scss';
 import { Purchase } from 'calypso/lib/purchases/types';
 
@@ -97,9 +97,7 @@ function NoPurchasesMessage() {
 		<CompactCard className="subscriptions__list--empty">
 			<EmptyContent
 				title={ translate( 'Looking to upgrade?' ) }
-				line={ translate(
-					'Our plans give your site the power to thrive. Find the plan that works for you.'
-				) }
+				line={ translate( 'You have made no purchases for this site.' ) }
 				action={ translate( 'Upgrade now' ) }
 				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
 				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
