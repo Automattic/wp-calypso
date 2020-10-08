@@ -24,7 +24,7 @@ import {
 	WPCOMPaymentMethodClass,
 } from '../types/backend/payment-method';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
-import { isLineItemARenewal } from 'calypso/my-sites/checkout/composite-checkout/hooks/has-renewal';
+import { isRenewal } from 'lib/cart-values/cart-items';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -191,7 +191,7 @@ function translateReponseCartProductToWPCOMCartItem(
 	let label = product_name || '';
 	let sublabel;
 	if ( isPlan( serverCartItem ) ) {
-		if ( isLineItemARenewal( serverCartItem ) ) {
+		if ( isRenewal( serverCartItem ) ) {
 			sublabel = String( translate( 'Plan Renewal' ) );
 		} else {
 			sublabel = String( translate( 'Plan Subscription' ) );
@@ -204,7 +204,7 @@ function translateReponseCartProductToWPCOMCartItem(
 	) {
 		label = meta;
 		sublabel = product_name || '';
-		if ( isLineItemARenewal( serverCartItem ) ) {
+		if ( isRenewal( serverCartItem ) ) {
 			sublabel += ( sublabel ? ' ' : '' ) + String( translate( 'Renewal' ) );
 		}
 	}
