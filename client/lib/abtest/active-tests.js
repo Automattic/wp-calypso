@@ -228,4 +228,13 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
+	secureYourBrand: {
+		datestamp: '20201008',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };

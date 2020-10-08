@@ -10,13 +10,21 @@ import { translate } from 'i18n-calypso';
 import steps from 'signup/config/steps-pure';
 import flows from 'signup/config/flows';
 import user from 'lib/user';
+import { abtest } from 'lib/abtest';
 
 const { defaultFlowName } = flows;
+
+function getDefaultFlowName() {
+	if ( 'test' === abtest( 'secureYourBrand' ) ) {
+		return 'onboarding-secure-your-brand';
+	}
+	return defaultFlowName;
+}
 
 export function getFlowName( parameters ) {
 	return parameters.flowName && isFlowName( parameters.flowName )
 		? parameters.flowName
-		: defaultFlowName;
+		: getDefaultFlowName();
 }
 
 function isFlowName( pathFragment ) {
