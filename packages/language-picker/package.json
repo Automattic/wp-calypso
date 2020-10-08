@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/language-picker",
-	"version": "1.0.0-alpha.3",
+	"version": "1.0.0",
 	"description": "Automattic Language Picker",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
