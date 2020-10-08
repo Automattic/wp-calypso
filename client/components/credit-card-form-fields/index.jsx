@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { isEmpty, noop } from 'lodash';
-import notices from 'notices';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 
 /**
@@ -22,6 +21,7 @@ import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import FormInputValidation from 'components/forms/form-input-validation';
 import { useStripe } from 'lib/stripe';
+import notices from 'notices';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
