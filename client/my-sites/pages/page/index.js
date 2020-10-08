@@ -41,7 +41,7 @@ import { setPreviewUrl } from 'state/ui/preview/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
 import { infoNotice, withoutNotice } from 'state/notices/actions';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import { isEligibleForGutenframe } from 'state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
 import getEditorUrl from 'state/selectors/get-editor-url';
 import { getEditorDuplicatePostPath } from 'state/editor/selectors';
 import { updateSiteFrontPage } from 'state/sites/actions';
@@ -772,7 +772,7 @@ const mapState = ( state, props ) => {
 		copyPagesModuleDisabled:
 			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
 			isJetpackSite( state, pageSiteId ),
-		wpAdminGutenberg: shouldRedirectGutenberg( state, pageSiteId ),
+		wpAdminGutenberg: ! isEligibleForGutenframe( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),
