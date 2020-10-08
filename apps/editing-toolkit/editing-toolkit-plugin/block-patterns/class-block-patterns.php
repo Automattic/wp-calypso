@@ -21,11 +21,28 @@ class Block_Patterns {
 	 */
 	private static $instance = null;
 
+	/**
+	 * Cache key for patterns array.
+	 *
+	 * @var string
+	 */
+	private $patterns_cache_key;
 
 	/**
 	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
+		$this->patterns_cache_key = sha1(
+			implode(
+				'_',
+				array(
+					'block_patterns',
+					PLUGIN_VERSION,
+					$this->get_iso_639_locale(),
+				)
+			)
+		);
+
 		$this->register_patterns();
 	}
 
@@ -45,35 +62,64 @@ class Block_Patterns {
 	/**
 	 * Register FSE block patterns and categories.
 	 */
-	public function register_patterns() {
-		// Register Block Pattern Categories.
+	private function register_patterns() {
+		// Remove core pattern categories, categories added later that match
+		// will then remain in alphabetical order.
 		if ( class_exists( 'WP_Block_Pattern_Categories_Registry' ) ) {
-			register_block_pattern_category( 'blog', array( 'label' => _x( 'Blog', 'Block pattern category', 'full-site-editing' ) ) );
-			register_block_pattern_category( 'call-to-action', array( 'label' => _x( 'Call to Action', 'Block pattern category', 'full-site-editing' ) ) );
-			register_block_pattern_category( 'contact', array( 'label' => _x( 'Contact', 'Block pattern category', 'full-site-editing' ) ) );
-			register_block_pattern_category( 'images', array( 'label' => _x( 'Images', 'Block pattern category', 'full-site-editing' ) ) );
-			register_block_pattern_category( 'list', array( 'label' => _x( 'List', 'Block pattern category', 'full-site-editing' ) ) );
-
-			// The 'Two Columns of Text' pattern is in the 'columns' and 'text' categories.
-			// Removing 'columns' so it doesn't appear as a category with only a single item.
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'buttons' ) ) {
+				unregister_block_pattern_category( 'buttons' );
+			}
 			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'columns' ) ) {
 				unregister_block_pattern_category( 'columns' );
+			}
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'gallery' ) ) {
+				unregister_block_pattern_category( 'gallery' );
+			}
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'header' ) ) {
+				unregister_block_pattern_category( 'header' );
+			}
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'text' ) ) {
+				unregister_block_pattern_category( 'text' );
 			}
 		}
 
 		if ( class_exists( 'WP_Block_Patterns_Registry' ) ) {
-			// Remove core patterns except 'Two Columns of Text'.
-			// Unfortunately, \WP_Block_Patterns_Registry::get_instance()->get_all_registered() doesn't return the pattern names as keys.
+			// Remove core patterns.
 			foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
-				if ( 'core/' === substr( $pattern['name'], 0, 5 ) && 'core/text-two-columns' !== $pattern['name'] ) {
+				if ( 'core/' === substr( $pattern['name'], 0, 5 ) ) {
 					unregister_block_pattern( $pattern['name'] );
 				}
 			}
+		}
 
-			// Add our patterns.
-			foreach ( $this->get_patterns() as $name => $pattern ) {
-				register_block_pattern( $name, $pattern );
+		$pattern_categories = array();
+		$block_patterns     = $this->get_patterns();
+
+		foreach ( (array) $this->get_patterns() as $pattern ) {
+			foreach ( (array) $pattern['categories'] as $slug => $category ) {
+				$pattern_categories[ $slug ] = $category['title'];
 			}
+		}
+
+		// Order categories alphabetically and register them.
+		ksort( $pattern_categories );
+		foreach ( (array) $pattern_categories as $slug => $label ) {
+			register_block_pattern_category( $slug, array( 'label' => $label ) );
+		}
+
+		foreach ( (array) $this->get_patterns() as $pattern ) {
+			register_block_pattern(
+				Block_Patterns::PATTERN_NAMESPACE . $pattern['name'],
+				array(
+					'title'         => $pattern['title'],
+					'description'   => $pattern['title'],
+					'content'       => $pattern['html'],
+					'viewportWidth' => 1280,
+					'categories'    => array_keys(
+						$pattern['categories']
+					),
+				)
+			);
 		}
 	}
 
@@ -82,75 +128,50 @@ class Block_Patterns {
 	 *
 	 * @return array
 	 */
-	public function get_patterns() {
-		$patterns_dir = __DIR__ . '/patterns/';
-		$patterns     = array();
+	private function get_patterns() {
+		$block_patterns = get_transient( $this->patterns_cache_key );
 
-		if ( ! is_dir( $patterns_dir ) ) {
-			return $patterns;
-		}
+		// Load fresh data if we don't have any patterns.
+		if ( false === $block_patterns || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE ) ) {
+			$request_url = add_query_arg(
+				array(
+					'language' => $this->get_iso_639_locale(),
+					'tags'     => 'pattern',
+				),
+				'https://public-api.wordpress.com/rest/v1/ptk/patterns'
+			);
 
-		$directory_handle = opendir( $patterns_dir );
-		if ( ! $directory_handle ) {
-			return $patterns;
-		}
+			$response = wp_remote_get(
+				esc_url_raw( $request_url ),
+				array( 'timeout' => 20 )
+			);
 
-		// Get all the pattern files.
-		$pattern       = readdir( $directory_handle );
-		$pattern_files = array();
-		while ( false !== $pattern ) {
-			// Only allow files ending in .json or .php.
-			if ( substr( $pattern, -5 ) === '.json' || substr( $pattern, -4 ) === '.php' ) {
-				$pattern_files[] = $pattern;
+			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				return array();
 			}
-
-			$pattern = readdir( $directory_handle );
+			$block_patterns = json_decode( wp_remote_retrieve_body( $response ), true );
+			set_transient( $this->patterns_cache_key, $block_patterns, DAY_IN_SECONDS );
 		}
 
-		closedir( $directory_handle );
+		return $block_patterns;
+	}
 
-		// Manually curated list of patterns to go at the top of the list.
-		$featured_patterns = array(
-			'masonry-gallery.php',
-			'description-and-image.php',
-			'two-images-and-quote.php',
-			'image-and-description.php',
-			'three-images-side-by-side.php',
-			'image-and-text.php',
-			'three-columns-and-image.php',
-			'collage-gallery.php',
-			'headline.php',
-			'headline-02.php',
-			'recent-posts.php',
-			'recent-posts-02.php',
-			'two-images-side-by-side.php',
-			'numbers.php',
-			'contact.php',
-			'contact-02.php',
-			'contact-03.php',
-			'food-menu.php',
-		);
+	/**
+	 * Returns ISO 639 conforming locale string.
+	 *
+	 * @return string ISO 639 locale string
+	 */
+	private function get_iso_639_locale() {
+		// Make sure to get blog locale, not user locale.
+		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		$language = strtolower( $language );
 
-		// Add the featured patterns to the top of the patterns.
-		$pattern_files = array_merge( $featured_patterns, array_diff( $pattern_files, $featured_patterns ) );
-
-		// Get the pattern files contents.
-		foreach ( $pattern_files as $pattern_file ) {
-			if ( substr( $pattern_file, -5 ) === '.json' ) {
-				$pattern_name              = self::PATTERN_NAMESPACE . substr( $pattern_file, 0, -5 );
-				$patterns[ $pattern_name ] = json_decode(
-					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					file_get_contents( $patterns_dir . $pattern_file ),
-					true
-				);
-			}
-
-			if ( substr( $pattern_file, -4 ) === '.php' ) {
-				$pattern_name              = self::PATTERN_NAMESPACE . substr( $pattern_file, 0, -4 );
-				$patterns[ $pattern_name ] = include $patterns_dir . $pattern_file;
-			}
+		if ( in_array( $language, array( 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
+			$language = str_replace( '_', '-', $language );
+		} else {
+			$language = preg_replace( '/([-_].*)$/i', '', $language );
 		}
 
-		return $patterns;
+		return $language;
 	}
 }
