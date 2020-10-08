@@ -1,27 +1,26 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { isEmpty, noop } from 'lodash';
+import PropTypes from 'prop-types';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
+import { isEmpty, noop } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import PaymentCountrySelect from 'components/payment-country-select';
 import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
-import { Input } from 'my-sites/domains/components/form';
+import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
+import FormInputValidation from 'components/forms/form-input-validation';
 import InfoPopover from 'components/info-popover';
+import notices from 'notices';
+import PaymentCountrySelect from 'components/payment-country-select';
+import { Input } from 'my-sites/domains/components/form';
 import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
-import FormInputValidation from 'components/forms/form-input-validation';
 import { useStripe } from 'lib/stripe';
-import notices from 'notices';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
