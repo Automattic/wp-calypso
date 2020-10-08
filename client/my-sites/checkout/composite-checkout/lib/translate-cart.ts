@@ -203,9 +203,16 @@ function translateReponseCartProductToWPCOMCartItem(
 		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
 	) {
 		label = meta;
-		sublabel = product_name || '';
 		if ( isRenewal( serverCartItem ) ) {
-			sublabel += ( sublabel ? ' ' : '' ) + String( translate( 'Renewal' ) );
+			if ( product_name ) {
+				sublabel = String(
+					translate( '%(productName)s Renewal', { args: { productName: product_name } } )
+				);
+			} else {
+				sublabel = String( translate( 'Renewal' ) );
+			}
+		} else {
+			sublabel = product_name || '';
 		}
 	}
 
