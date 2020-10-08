@@ -33,7 +33,7 @@ const OrderReviewSectionArea = styled.div`
 	margin-bottom: 16px;
 `;
 
-function OrderReviewLineItem( { item, className }: LineItemProps ) {
+function OrderReviewLineItemUnstyled( { item, className }: LineItemProps ) {
 	const itemSpanId = `checkout-line-item-${ item.id }`;
 	return (
 		<div className={ joinClasses( [ className, 'checkout-line-item' ] ) }>
@@ -50,7 +50,7 @@ interface LineItemProps {
 	item: LineItem;
 }
 
-OrderReviewLineItem.propTypes = {
+OrderReviewLineItemUnstyled.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
 	isSummaryVisible: PropTypes.bool,
@@ -62,7 +62,7 @@ OrderReviewLineItem.propTypes = {
 	} ),
 };
 
-const OrderReviewLineItemUI = styled( OrderReviewLineItem )< LineItemProps >`
+const OrderReviewLineItem = styled( OrderReviewLineItemUnstyled )< LineItemProps >`
 	display: flex;
 	width: 100%;
 	justify-content: space-between;
@@ -81,7 +81,7 @@ const OrderReviewLineItemUI = styled( OrderReviewLineItem )< LineItemProps >`
 export function OrderReviewTotal( { total, className }: { total: LineItem; className?: string } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
-			<OrderReviewLineItemUI total item={ total } />
+			<OrderReviewLineItem total item={ total } />
 		</div>
 	);
 }
@@ -94,11 +94,7 @@ export function OrderReviewLineItems( {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ items.map( ( item ) => (
-				<OrderReviewLineItemUI
-					isSummaryVisible={ isSummaryVisible }
-					key={ item.id }
-					item={ item }
-				/>
+				<OrderReviewLineItem isSummaryVisible={ isSummaryVisible } key={ item.id } item={ item } />
 			) ) }
 		</div>
 	);

@@ -33,7 +33,7 @@ import {
 } from 'my-sites/checkout/composite-checkout/components/summary-details';
 import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
 import { maskField } from 'lib/checkout';
-import CountrySpecificPaymentFieldsUI from '../components/country-specific-payment-fields-ui';
+import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
 
 const debug = debugFactory( 'composite-checkout:ebanx-tef-payment-method' );
 
@@ -190,7 +190,7 @@ function EbanxTefFields() {
 				disabled={ isDisabled }
 			/>
 			<div className="ebanx-tef__contact-fields">
-				<CountrySpecificPaymentFieldsUI
+				<CountrySpecificPaymentFields
 					countryCode={ 'BR' } // If this payment method is available and the country is not Brazil, we have other problems
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
@@ -428,17 +428,17 @@ function EbanxTefLabel() {
 		<React.Fragment>
 			<span>{ 'Transferência bancária' }</span>
 			<PaymentMethodLogos className="ebanx-tef__logo payment-logos">
-				<EbanxTefLogoUI />
+				<EbanxTefLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const EbanxTefLogoUI = styled( EbanxTefLogo )`
+const EbanxTefLogo = styled( EbanxTefLogoImg )`
 	width: 76px;
 `;
 
-function EbanxTefLogo( { className } ) {
+function EbanxTefLogoImg( { className } ) {
 	return (
 		<img
 			src="/calypso/images/upgrades/brazil-tef.svg"

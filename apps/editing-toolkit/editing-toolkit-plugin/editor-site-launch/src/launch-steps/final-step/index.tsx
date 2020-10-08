@@ -16,9 +16,10 @@ import {
 	checkoutTheme,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
-	MainContentUI,
-	CheckoutStepAreaUI,
-	SubmitButtonWrapperUI,
+	MainContentWrapper,
+	CheckoutStepAreaWrapper,
+	SubmitButtonWrapper,
+	FormStatus,
 } from '@automattic/composite-checkout';
 
 /**
@@ -141,7 +142,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 			</div>
 			<div className="nux-launch-step__body">
 				<ThemeProvider theme={ checkoutTheme }>
-					<MainContentUI>
+					<MainContentWrapper>
 						{ isStepCompleted( LaunchStep.Plan ) && (
 							<CheckoutSummaryArea>
 								<CheckoutSummaryCard className="nux-launch__feature-list">
@@ -164,32 +165,35 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								</CheckoutSummaryCard>
 							</CheckoutSummaryArea>
 						) }
-						<CheckoutStepAreaUI>
+						<CheckoutStepAreaWrapper>
 							<CheckoutStepBody
+								isStepActive={ false }
 								titleContent={ __( 'Your site name', 'full-site-editing' ) }
 								isStepComplete={ isStepCompleted( LaunchStep.Name ) }
 								goToThisStep={ () => setStep( LaunchStep.Name ) }
 								completeStepContent={ nameSummary }
 								stepId="name"
-								formStatus="ready"
+								formStatus={ FormStatus.READY }
 							/>
 							<CheckoutStepBody
+								isStepActive={ false }
 								titleContent={ __( 'Your domain', 'full-site-editing' ) }
 								isStepComplete={ isStepCompleted( LaunchStep.Domain ) }
 								goToThisStep={ () => setStep( LaunchStep.Domain ) }
 								completeStepContent={ domainSummary }
 								stepId="domain"
-								formStatus="ready"
+								formStatus={ FormStatus.READY }
 							/>
 							<CheckoutStepBody
+								isStepActive={ false }
 								titleContent={ __( 'Your plan', 'full-site-editing' ) }
 								isStepComplete={ isStepCompleted( LaunchStep.Plan ) }
 								goToThisStep={ () => setStep( LaunchStep.Plan ) }
 								completeStepContent={ planSummary }
 								stepId="plan"
-								formStatus="ready"
+								formStatus={ FormStatus.READY }
 							/>
-							<SubmitButtonWrapperUI>
+							<SubmitButtonWrapper>
 								<Button
 									isPrimary
 									disabled={ ! isFlowCompleted }
@@ -198,9 +202,9 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } )
 								>
 									{ __( 'Launch your site', 'full-site-editing' ) }
 								</Button>
-							</SubmitButtonWrapperUI>
-						</CheckoutStepAreaUI>
-					</MainContentUI>
+							</SubmitButtonWrapper>
+						</CheckoutStepAreaWrapper>
+					</MainContentWrapper>
 				</ThemeProvider>
 			</div>
 		</LaunchStepContainer>

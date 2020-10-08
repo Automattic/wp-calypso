@@ -32,7 +32,7 @@ import {
 } from 'my-sites/checkout/composite-checkout/components/summary-details';
 import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
 import { maskField } from 'lib/checkout';
-import CountrySpecificPaymentFieldsUI from '../components/country-specific-payment-fields-ui';
+import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
 
 const debug = debugFactory( 'composite-checkout:id-wallet-payment-method' );
 
@@ -170,7 +170,7 @@ function IdWalletFields() {
 				disabled={ isDisabled }
 			/>
 			<div className="id-wallet__contact-fields">
-				<CountrySpecificPaymentFieldsUI
+				<CountrySpecificPaymentFields
 					countryCode={ 'ID' }
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
@@ -345,17 +345,17 @@ function IdWalletLabel() {
 		<React.Fragment>
 			<span>OVO</span>
 			<PaymentMethodLogos className="id-wallet__logo payment-logos">
-				<IdWalletLogoUI />
+				<IdWalletLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const IdWalletLogoUI = styled( IdWalletLogo )`
+const IdWalletLogo = styled( IdWalletLogoImg )`
 	transform: translateY( -2px );
 `;
 
-function IdWalletLogo( { className } ) {
+function IdWalletLogoImg( { className } ) {
 	return (
 		<svg
 			width="31"

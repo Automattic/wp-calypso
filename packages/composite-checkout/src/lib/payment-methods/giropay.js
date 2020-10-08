@@ -215,18 +215,18 @@ function GiropayLabel() {
 		<React.Fragment>
 			<span>Giropay</span>
 			<PaymentMethodLogos className="giropay__logo payment-logos">
-				<GiropayLogoUI />
+				<GiropayLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const GiropayLogoUI = styled( GiropayLogo )`
+const GiropayLogo = styled( GiropayLogoImg )`
 	width: 64px;
 	margin: -10px 0;
 `;
 
-function GiropayLogo( { className } ) {
+function GiropayLogoImg( { className } ) {
 	return <img src="/calypso/images/upgrades/giropay.svg" alt="Giropay" className={ className } />;
 }
 

@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { keyframes } from '@emotion/core';
 import {
 	CheckoutCheckIcon,
-	CheckoutSummaryCard,
+	CheckoutSummaryCard as CheckoutSummaryCardUnstyled,
 	FormStatus,
 	useEvents,
 	useFormStatus,
@@ -55,7 +55,7 @@ export default function WPCheckoutOrderSummary() {
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 
 	return (
-		<CheckoutSummaryCardUI
+		<CheckoutSummaryCard
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
@@ -90,7 +90,7 @@ export default function WPCheckoutOrderSummary() {
 					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</CheckoutSummaryCardUI>
+		</CheckoutSummaryCard>
 	);
 }
 
@@ -122,7 +122,7 @@ function CheckoutSummaryFeaturesList() {
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListUI>
+		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.id } />;
@@ -136,7 +136,7 @@ function CheckoutSummaryFeaturesList() {
 				<WPCheckoutCheckIcon />
 				{ refundText }
 			</CheckoutSummaryFeaturesListItem>
-		</CheckoutSummaryFeaturesListUI>
+		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
 
@@ -329,7 +329,7 @@ const pulse = keyframes`
 	}
 `;
 
-const CheckoutSummaryCardUI = styled( CheckoutSummaryCard )`
+const CheckoutSummaryCard = styled( CheckoutSummaryCardUnstyled )`
 	border-bottom: none 0;
 `;
 
@@ -356,7 +356,7 @@ const CheckoutSummaryFeaturesTitle = styled.h3`
 	margin-bottom: 6px;
 `;
 
-const CheckoutSummaryFeaturesListUI = styled.ul`
+const CheckoutSummaryFeaturesListWrapper = styled.ul`
 	margin: 0;
 	list-style: none;
 	font-size: 14px;

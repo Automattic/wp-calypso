@@ -158,7 +158,7 @@ const FieldIcon = styled.div`
 	}
 `;
 
-const ButtonIconUI = styled.div`
+const ButtonIcon = styled.div`
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -198,9 +198,9 @@ function RenderedIcon( { icon, iconAction, isIconVisible } ) {
 
 	if ( iconAction ) {
 		return (
-			<ButtonIconUI>
+			<ButtonIcon>
 				<Button onClick={ iconAction }>{ icon }</Button>
-			</ButtonIconUI>
+			</ButtonIcon>
 		);
 	}
 

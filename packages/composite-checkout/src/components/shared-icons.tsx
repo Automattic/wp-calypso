@@ -11,7 +11,7 @@ import styled from '../lib/styled';
 
 export function CheckIcon( { className, id }: { className?: string; id: string } ) {
 	return (
-		<CheckIconUI
+		<CheckIconSvg
 			width="20"
 			height="20"
 			viewBox="0 0 20 20"
@@ -33,7 +33,7 @@ export function CheckIcon( { className, id }: { className?: string; id: string }
 			<g mask={ 'url(#' + id + '-check-icon-mask)' }>
 				<rect width="20" height="20" />
 			</g>
-		</CheckIconUI>
+		</CheckIconSvg>
 	);
 }
 
@@ -42,7 +42,7 @@ CheckIcon.propTypes = {
 	id: PropTypes.string,
 };
 
-const CheckIconUI = styled.svg`
+const CheckIconSvg = styled.svg`
 	fill: #fff;
 `;
 
