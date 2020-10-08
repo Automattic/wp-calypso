@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import { isEligibleForGutenframe } from 'state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
 import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 
 /**
@@ -14,7 +14,7 @@ import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
 export const getSiteEditorUrl = ( state, siteId ) => {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 
-	if ( shouldRedirectGutenberg( state, siteId ) ) {
+	if ( ! isEligibleForGutenframe( state, siteId ) ) {
 		return `${ siteAdminUrl }admin.php?page=gutenberg-edit-site`;
 	}
 
