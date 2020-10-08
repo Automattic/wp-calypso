@@ -126,6 +126,7 @@ function disable_coming_soon_on_privacy_change( $old_value, $value ) {
 }
 add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_on_privacy_change', 10, 2 );
 
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 /**
  * Adds the `wpcom_public_coming_soon` option to new sites
  *
@@ -136,7 +137,6 @@ add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_o
  * @param int    $site_id    Site ID.
  * @param array  $meta       Meta data. Used to set initial site options.
  */
-// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
 	if ( 0 === $meta['public'] && 1 === (int) $meta['options']['wpcom_public_coming_soon'] ) {
 		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 1 );
@@ -144,6 +144,7 @@ function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $site_id, $
 		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 0 );
 	}
 }
+// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 add_action( 'wpmu_new_blog', __NAMESPACE__ . '\add_option_to_new_site', 10, 6 );
 
 /**
