@@ -209,7 +209,7 @@
 		"webpack-dev-middleware": "^3.7.2",
 		"webpack-hot-middleware": "^2.25.0",
 		"webpack-node-externals": "^2.1.0",
-		"webpack-sources": "^1.4.3",
+		"webpack-sources": "^2.0.1",
 		"winston": "^3.2.1",
 		"wpcom": "^6.0.0",
 		"wpcom-proxy-request": "^6.0.0",
