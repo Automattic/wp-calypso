@@ -44,6 +44,7 @@ const cachePath = path.resolve( '.cache' );
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
+ * @param  {string}  argv.'output-jsonp-function'  Output jsonp function
  * @returns {object}                                webpack config
  */
 function getWebpackConfig(
