@@ -19,6 +19,10 @@
 	margin-bottom: 9px;
 	.secure-your-brand__domain-name {
 		flex: 2;
+		span {
+			color: #1f71af;
+			font-weight: 600;
+		}
 	}
 	.secure-your-brand__cost {
 		flex: 1;
