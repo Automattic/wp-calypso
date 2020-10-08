@@ -55,11 +55,11 @@ export default ( props ) =>
 	React.createElement(
 		asyncLoader( {
 			promises: {
-				data: waitForData( {
+				data: waitForHttpData( () => ( {
 					plan: requestPlan( props.userId ),
 					site: requestSiteInfo( props.siteId ),
 					user: requestUserInfo( props.userId ),
-				} ),
+				} ) ),
 			},
 			loading: () => <div>Loading profile information…</div>,
 			success: ( { data: { plan, site, user } } ) => (
@@ -82,9 +82,9 @@ Thus we're not passing any data to the success component.
 import { asyncLoader } from 'components/async-loader';
 
 const getTranslations = ( slug ) =>
-	waitForData( {
+	waitForHttpData( () => ( {
 		translations: requestTranslations( slug ),
-	} );
+	} ) );
 
 const Panel = asyncLoader( {
 	promises: {
