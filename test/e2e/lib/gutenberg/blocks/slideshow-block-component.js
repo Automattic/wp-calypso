@@ -19,10 +19,8 @@ class SlideshowBlockComponent extends GutenbergBlockComponent {
 	 * @param {{imageName: string, fileName: string, file: string}} filesDetails a list of fileDetails
 	 */
 	async uploadImages( filesDetails ) {
-		const fileInputSelector = By.css( `div[id="${ this.blockID.slice( 1 ) }"] input[type=file]` );
-
+		const fileInputSelector = By.css( `${ this.blockID } input[type=file]` );
 		const fileInput = this.driver.findElement( fileInputSelector );
-
 		const files = filesDetails.map( ( f ) => f.file ).join( '\n ' );
 
 		fileInput.sendKeys( files );

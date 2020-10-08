@@ -16,13 +16,11 @@ class YoutubeBlockComponent extends GutenbergBlockComponent {
 	);
 
 	async embed( videoURL ) {
-		const blockDivSelector = `div[id='${ this.blockID.slice( 1 ) }']`;
-
 		const embedInput = await this.driver.findElement(
-			By.css( `${ blockDivSelector } input[type='url']` )
+			By.css( `${ this.blockID } input[type='url']` )
 		);
 		const embedButton = await this.driver.findElement(
-			By.css( `${ blockDivSelector } button[type='submit']` )
+			By.css( `${ this.blockID } button[type='submit']` )
 		);
 
 		await embedInput.sendKeys( videoURL );
