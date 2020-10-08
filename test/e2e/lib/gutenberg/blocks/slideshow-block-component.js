@@ -17,7 +17,7 @@ class SlideshowBlockComponent extends GutenbergBlockComponent {
 	/**
 	 * Uploads images to the slideshow.
 	 *
-	 * @param {{imageName: string, fileName: string, file: string}} filesDetails a list of fileDetails
+	 * @param {{imageName: string, fileName: string, file: string}[]} filesDetails a list of fileDetails
 	 */
 	async uploadImages( filesDetails ) {
 		const fileInputSelector = By.css( `${ this.blockID } input[type=file]` );
