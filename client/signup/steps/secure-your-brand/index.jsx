@@ -20,6 +20,8 @@ import { Button, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
 import { domainRegistration } from 'lib/cart-values/cart-items';
+import Gridicon from 'components/gridicon';
+import CardHeading from 'components/card-heading';
 
 /**
  * Style dependencies
@@ -87,29 +89,42 @@ export class SecureYourBrandStep extends Component {
 				<QuerySecureYourBrand domain={ domain } />
 				<Card>
 					<div className="secure-your-brand__available">
-						{ translate( '%(domain)s is available', { args: { domain } } ) }
+						<Gridicon icon="checkmark-circle" />
+						<span>{ translate( '%(domain)s is available', { args: { domain } } ) }</span>
 					</div>
-					<h3>{ translate( 'Domain signup bundle' ) }</h3>
+					<CardHeading size={ 20 } tagName="h3">
+						{ translate( 'Domain signup bundle' ) }
+					</CardHeading>
 					<div className="secure-your-brand__domains">
 						{ productData?.map( ( suggestion ) => (
 							<div className="secure-your-brand__domain" key={ suggestion.domain }>
-								<div>{ suggestion.domain }</div>
+								<div className="secure-your-brand__domain-name">{ suggestion.domain }</div>
 								<div className="secure-your-brand__cost">
-									{ formatCurrency( suggestion.cost, currency, { stripZeros: true } ) }
+									{ translate( '%(price)s/year', {
+										args: {
+											price: formatCurrency( suggestion.cost, currency, { stripZeros: true } ),
+										},
+									} ) }
 								</div>
 							</div>
 						) ) }
 					</div>
-					<div>
-						<div>{ translate( 'Total' ) }</div>
-						<div>
-							{ translate( '%(discountedCost)s for your first year', {
-								args: { discountedCost },
-							} ) }
+					<div className="secure-your-brand__total">
+						<div className="secure-your-brand__total-label">{ translate( 'Total' ) }</div>
+						<div className="secure-your-brand__total-description">
+							<span className="secure-your-brand__discount-label">
+								{ translate( '%(discountedCost)s for your first year', {
+									args: { discountedCost },
+								} ) }
+							</span>
+							<span className="secure-your-brand__total-cost">
+								{ translate( '%(totalCost)s/year', {
+									args: { totalCost },
+								} ) }
+							</span>
 						</div>
-						<div>{ totalCost }</div>
 					</div>
-					<div>
+					<CardHeading size={ 16 } tagName="h4">
 						{ translate(
 							'For just {{del}}%(totalCost)s{{/del}} %(discountedCost)s for the first year, you will:',
 							{
@@ -122,8 +137,8 @@ export class SecureYourBrandStep extends Component {
 								},
 							}
 						) }
-					</div>
-					<div>
+					</CardHeading>
+					<div class="secure-your-brand__benefits">
 						<ul>
 							<li>{ translate( 'Prevent anyone from registering (and misusing) your name' ) }</li>
 							<li>{ translate( 'Avoid confusing your visitors' ) }</li>
@@ -131,7 +146,7 @@ export class SecureYourBrandStep extends Component {
 							<li>{ translate( 'Unlock SEO and geo-location opportunities' ) }</li>
 						</ul>
 					</div>
-					<div>
+					<div class="secure-your-brand__buttons">
 						<Button onClick={ () => this.handleSkipButtonClick() }>
 							{ translate( 'No thanks, continue' ) }
 						</Button>
