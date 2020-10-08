@@ -202,4 +202,13 @@ export default {
 		defaultVariation: 'v1 - 3 cols layout',
 		allowExistingUsers: true,
 	},
+	secureYourBrand: {
+		datestamp: '20201008',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
 };
