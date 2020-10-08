@@ -115,13 +115,20 @@ export function generateFlows( {
 		},
 
 		onboarding: {
-			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
+			steps: [ 'user', 'domains', 'plans' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-03-03',
 			showRecaptcha: true,
 		},
 
+		'onboarding-secure-your-brand': {
+			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
+			destination: getSignupDestination,
+			description: 'Onboarding flow with an additional step to upsell domains',
+			lastModified: '2020-10-08',
+			showRecaptcha: true,
+		},
 		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
