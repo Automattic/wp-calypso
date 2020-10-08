@@ -240,7 +240,7 @@ class DomainsStep extends React.Component {
 		 * This prop is used to supress providing the dependency - shouldHideFreePlan - when the plans step is in the current flow
 		 */
 		return (
-			! this.props.isSupressedDependencyShouldHideFreePlan &&
+			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
 			this.getIsPlanSelectionAvailableLaterInFlow()
 		);
 	};

@@ -310,7 +310,6 @@ export function generateSteps( {
 			props: {
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
-				isSupressedDependencyShouldHideFreePlan: true,
 			},
 		},
 
@@ -321,7 +320,6 @@ export function generateSteps( {
 				isAllDomains: true,
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
-				isSupressedDependencyShouldHideFreePlan: true,
 			},
 		},
 
