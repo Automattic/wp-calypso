@@ -63,10 +63,23 @@ class Block_Patterns {
 	 * Register FSE block patterns and categories.
 	 */
 	private function register_patterns() {
-		// Remove core pattern column category.
+		// Remove core pattern categories, categories added later that match
+		// will then remain in alphabetical order.
 		if ( class_exists( 'WP_Block_Pattern_Categories_Registry' ) ) {
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'buttons' ) ) {
+				unregister_block_pattern_category( 'buttons' );
+			}
 			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'columns' ) ) {
 				unregister_block_pattern_category( 'columns' );
+			}
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'gallery' ) ) {
+				unregister_block_pattern_category( 'gallery' );
+			}
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'header' ) ) {
+				unregister_block_pattern_category( 'header' );
+			}
+			if ( \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( 'text' ) ) {
+				unregister_block_pattern_category( 'text' );
 			}
 		}
 
@@ -79,13 +92,22 @@ class Block_Patterns {
 			}
 		}
 
+		$pattern_categories = [];
 		$block_patterns = $this->get_patterns();
 
 		foreach ( (array) $this->get_patterns() as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
-				register_block_pattern_category( $slug, array( 'label' => $category['title'] ) );
+				$pattern_categories[$slug] = $category['title'];
 			}
+		}
 
+		// Order categories alphabetically and register them
+		ksort( $pattern_categories );
+		foreach ( (array) $pattern_categories as $slug => $label ) {
+			register_block_pattern_category( $slug, array( 'label' => $label ) );
+		}
+
+		foreach ( (array) $this->get_patterns() as $pattern ) {
 			register_block_pattern(
 				Block_Patterns::PATTERN_NAMESPACE . $pattern['name'],
 				array(
