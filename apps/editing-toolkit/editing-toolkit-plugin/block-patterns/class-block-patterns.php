@@ -92,16 +92,16 @@ class Block_Patterns {
 			}
 		}
 
-		$pattern_categories = [];
-		$block_patterns = $this->get_patterns();
+		$pattern_categories = array();
+		$block_patterns     = $this->get_patterns();
 
 		foreach ( (array) $this->get_patterns() as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
-				$pattern_categories[$slug] = $category['title'];
+				$pattern_categories[ $slug ] = $category['title'];
 			}
 		}
 
-		// Order categories alphabetically and register them
+		// Order categories alphabetically and register them.
 		ksort( $pattern_categories );
 		foreach ( (array) $pattern_categories as $slug => $label ) {
 			register_block_pattern_category( $slug, array( 'label' => $label ) );
