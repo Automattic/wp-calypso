@@ -15,6 +15,9 @@ const path = require( 'path' );
 // electron.
 let screen;
 app.on( 'ready', () => {
+	if ( process.platform === 'win32' ) {
+		app.setAppUserModelId( 'com.automattic.wordpress' );
+	}
 	screen = electron.screen;
 } );
 
