@@ -10,15 +10,15 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import InlineSupportLink from 'components/inline-support-link';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { closeAccount } from 'state/account/actions';
+import Gridicon from 'calypso/components/gridicon';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { closeAccount } from 'calypso/state/account/actions';
 
 /**
  * Style dependencies

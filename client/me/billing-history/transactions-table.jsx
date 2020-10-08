@@ -7,21 +7,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
-import { capitalPDangit } from 'lib/formatting';
+import { capitalPDangit } from 'calypso/lib/formatting';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 import TransactionsHeader from './transactions-header';
 import { groupDomainProducts, renderTransactionAmount } from './utils';
-import SearchCard from 'components/search-card';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { setPage, setQuery } from 'state/billing-transactions/ui/actions';
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
-import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
-import { getPlanTermLabel } from 'lib/plans';
+import SearchCard from 'calypso/components/search-card';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { setPage, setQuery } from 'calypso/state/billing-transactions/ui/actions';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
+import { getPlanTermLabel } from 'calypso/lib/plans';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';

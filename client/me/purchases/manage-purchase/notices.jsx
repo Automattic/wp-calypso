@@ -10,8 +10,8 @@ import { isEmpty, merge, minBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import config from 'config';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import config from 'calypso/config';
 import { getEditCardDetailsPath } from '../utils';
 import {
 	canExplicitRenew,
@@ -32,20 +32,20 @@ import {
 	showCreditCardExpiringWarning,
 	isPaidWithCredits,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
-} from 'lib/purchases';
+} from 'calypso/lib/purchases';
 import {
 	isDomainTransfer,
 	isConciergeSession,
 	isPlan,
 	isDomainRegistration,
-} from 'lib/products-values';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { isMonthly } from 'lib/plans/constants';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { managePurchase } from 'me/purchases/paths';
-import UpcomingRenewalsDialog from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+} from 'calypso/lib/products-values';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isMonthly } from 'calypso/lib/plans/constants';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 
 /**
  * Style dependencies

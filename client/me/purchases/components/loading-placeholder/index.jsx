@@ -10,8 +10,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 
 /**
  * Style dependencies

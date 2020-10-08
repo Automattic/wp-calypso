@@ -22,7 +22,7 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning,
 	getPartnerName,
-} from 'lib/purchases';
+} from 'calypso/lib/purchases';
 import {
 	isDomainProduct,
 	isDomainTransfer,
@@ -31,12 +31,12 @@ import {
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
-} from 'lib/products-values';
-import Notice from 'components/notice';
-import Gridicon from 'components/gridicon';
-import { withLocalizedMoment } from 'components/localized-moment';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getPlanClass, getPlanTermLabel } from 'lib/plans';
+} from 'calypso/lib/products-values';
+import Notice from 'calypso/components/notice';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getPlanClass, getPlanTermLabel } from 'calypso/lib/plans';
 
 /**
  * Style dependencies

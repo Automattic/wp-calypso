@@ -9,26 +9,26 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import Main from 'calypso/components/main';
+import ReauthRequired from 'calypso/me/reauth-required';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import Navigation from '../navigation';
 import { Card } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import {
 	fetchSettings,
 	toggleWPcomEmailSetting,
 	saveSettings,
-} from 'state/notification-settings/actions';
+} from 'calypso/state/notification-settings/actions';
 import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
-} from 'state/notification-settings/selectors';
+} from 'calypso/state/notification-settings/selectors';
 import EmailCategory from './email-category';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import hasJetpackSites from 'state/selectors/has-jetpack-sites';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 
 /**
  * Style dependencies

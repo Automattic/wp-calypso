@@ -142,6 +142,7 @@
 		"page/export": true,
 		"perfmon": false,
 		"persist-redux": true,
+		"plans/alternate-selector": true,
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": false,
 		"post-editor/html-toolbar": true,

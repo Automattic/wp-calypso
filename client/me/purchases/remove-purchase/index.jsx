@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -13,12 +13,12 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Dialog, Button, CompactCard } from '@automattic/components';
-import config from 'config';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
-import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
-import GSuiteCancellationPurchaseDialog from 'components/marketing-survey/gsuite-cancel-purchase-dialog';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'lib/purchases';
+import config from 'calypso/config';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
+import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
+import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'calypso/lib/purchases';
 import { isDataLoading } from '../utils';
 import {
 	isDomainMapping,
@@ -29,22 +29,22 @@ import {
 	isJetpackProduct,
 	isPlan,
 	isJetpackSearch,
-} from 'lib/products-values';
-import notices from 'notices';
+} from 'calypso/lib/products-values';
+import notices from 'calypso/notices';
 import { purchasesRoot } from '../paths';
-import { getPurchasesError } from 'state/purchases/selectors';
-import { removePurchase } from 'state/purchases/actions';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import isDomainOnly from 'state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { receiveDeletedSite } from 'state/sites/actions';
-import { setAllSitesSelected } from 'state/ui/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import { removePurchase } from 'calypso/state/purchases/actions';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { receiveDeletedSite } from 'calypso/state/sites/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import RemoveDomainDialog from './remove-domain-dialog';
-import NonPrimaryDomainDialog from 'me/purchases/non-primary-domain-dialog';
-import VerticalNavItem from 'components/vertical-nav/item';
+import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 /**
  * Style dependencies

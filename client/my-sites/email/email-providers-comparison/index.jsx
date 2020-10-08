@@ -24,6 +24,7 @@ import wpcom from 'lib/wp';
 import { errorNotice } from 'state/notices/actions';
 import { recordTracksEvent } from 'lib/analytics/tracks';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import formatCurrency from '@automattic/format-currency';
 import emailIllustration from 'assets/images/email-providers/email-illustration.svg';
 import titanLogo from 'assets/images/email-providers/titan.svg';
 import gSuiteLogo from 'assets/images/email-providers/gsuite.svg';
@@ -149,7 +150,6 @@ class EmailProvidersComparison extends React.Component {
 		return (
 			<EmailProviderDetails
 				title={ translate( 'Titan Mail' ) }
-				badge={ translate( 'Recommended' ) }
 				description={ translate(
 					'Easy-to-use email with incredibly powerful features. Manage your email and more on any device.'
 				) }
@@ -159,10 +159,12 @@ class EmailProvidersComparison extends React.Component {
 					translate( 'Send and receive from your custom domain' ),
 					translate( '10GB storage' ),
 					translate( 'Email, calendars, and contacts' ),
+					translate( 'One-click import of existing emails and contacts' ),
+					translate( 'Read receipts to track email opens' ),
 				] }
 				formattedPrice={ translate( '{{price/}} /user /month', {
 					components: {
-						price: <span>$4</span>,
+						price: <span>{ formatCurrency( 3.5, 'USD' ) }</span>,
 					},
 					comment: '{{price/}} is the formatted price, e.g. $20',
 				} ) }

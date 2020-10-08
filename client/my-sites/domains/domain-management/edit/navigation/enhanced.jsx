@@ -607,6 +607,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		return (
 			<React.Fragment>
 				{ this.getManageSite() }
+				{ this.getDnsRecords() }
+				{ this.getSecurity() }
 				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);

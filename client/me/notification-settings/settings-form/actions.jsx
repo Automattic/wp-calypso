@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 
 /**
  * Style dependencies

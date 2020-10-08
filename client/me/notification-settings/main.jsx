@@ -9,20 +9,20 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import Main from 'calypso/components/main';
+import ReauthRequired from 'calypso/me/reauth-required';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import Navigation from './navigation';
 import BlogsSettings from './blogs-settings';
 import PushNotificationSettings from './push-notification-settings';
-import QueryUserDevices from 'components/data/query-user-devices';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { fetchSettings, toggle, saveSettings } from 'state/notification-settings/actions';
+import QueryUserDevices from 'calypso/components/data/query-user-devices';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fetchSettings, toggle, saveSettings } from 'calypso/state/notification-settings/actions';
 import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
-} from 'state/notification-settings/selectors';
+} from 'calypso/state/notification-settings/selectors';
 
 class NotificationSettings extends Component {
 	componentDidMount() {

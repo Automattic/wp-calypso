@@ -22,7 +22,7 @@ export function getDomainTypeText( domain = {} ) {
 			return 'Default Site Domain';
 
 		case domainTypes.TRANSFER:
-			return 'Transfer';
+			return 'Domain Transfer';
 
 		default:
 			return '';

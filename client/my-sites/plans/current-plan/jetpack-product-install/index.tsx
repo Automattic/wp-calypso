@@ -84,9 +84,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 
 	fetchPluginKeys = (): void => {
 		if ( this.shouldRequestKeys() ) {
-			requestPluginKeys( this.props.siteId as SiteId, {
-				freshness: PLUGIN_KEY_REFETCH_INTERVAL - 1,
-			} );
+			requestPluginKeys( this.props.siteId as SiteId );
 		}
 	};
 
