@@ -14,6 +14,11 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
 
 /**
+ * Type dependencies
+ */
+import { Activity } from 'calypso/state/activity-log/types';
+
+/**
  * Module constants
  */
 const JETPACK_ACTOR = (
@@ -52,12 +57,7 @@ const MULTIPLE_ACTORS = (
 	</div>
 );
 
-interface Props {
-	actorAvatarUrl?: string;
-	actorName?: string;
-	actorRole?: string;
-	actorType?: string;
-}
+type Props = Partial< Activity >;
 
 const ActivityActor: FunctionComponent< Props > = ( {
 	actorAvatarUrl,
