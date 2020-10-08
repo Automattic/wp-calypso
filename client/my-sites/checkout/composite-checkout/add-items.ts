@@ -24,13 +24,11 @@ export function createItemToAddToCart( {
 	productAlias,
 	product_id,
 	isJetpackNotAtomic,
-	isPrivate,
 }: {
 	product_id: number;
 	planSlug?: string;
 	productAlias?: string;
 	isJetpackNotAtomic?: boolean;
-	isPrivate?: boolean;
 } ): RequestCartProduct | null {
 	let cartItem, cartMeta;
 
@@ -70,27 +68,9 @@ export function createItemToAddToCart( {
 
 	// Search product
 	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) && product_id ) {
-		cartItem = null;
-		let isSearchProduct = false;
-		// is site JP
-		if ( isJetpackNotAtomic ) {
-			debug( 'creating jetpack search product' );
-			isSearchProduct = true;
-		}
-		// is site WPCOM
-		else if (
-			config.isEnabled( 'jetpack/wpcom-search-product' ) &&
-			! isJetpackNotAtomic &&
-			! isPrivate
-		) {
-			debug( 'creating wpcom search product' );
-			isSearchProduct = true;
-		}
-		if ( isSearchProduct ) {
-			cartItem = jetpackProductItem( productAlias );
-			if ( cartItem ) {
-				cartItem.product_id = product_id;
-			}
+		cartItem = jetpackProductItem( productAlias );
+		if ( cartItem ) {
+			cartItem.product_id = product_id;
 		}
 	}
 

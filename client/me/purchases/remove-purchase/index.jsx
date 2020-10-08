@@ -28,8 +28,8 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isPlan,
+	isJetpackSearch,
 } from 'calypso/lib/products-values';
-import { isJetpackSearch } from 'calypso/lib/products-values/constants';
 import notices from 'calypso/notices';
 import { purchasesRoot } from '../paths';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
@@ -346,7 +346,7 @@ class RemovePurchase extends Component {
 				/>
 			);
 		}
-		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase.productSlug ) ) {
+		if ( this.props.isAtomicSite && ! isJetpackSearch( purchase ) ) {
 			return this.renderAtomicDialog( purchase );
 		}
 

@@ -53,6 +53,7 @@ export { isJetpackProduct } from './is-jetpack-product';
 export { isJetpackProductSlug } from './is-jetpack-product-slug';
 export { isJetpackScan } from './is-jetpack-scan';
 export { isJetpackScanSlug } from './is-jetpack-scan-slug';
+export { isJetpackSearch } from './is-jetpack-search';
 export { isJpphpBundle } from './is-jpphp-bundle';
 export { isMonthly } from './is-monthly';
 export { isNoAds } from './is-no-ads';
