@@ -27,6 +27,7 @@ export const SIZE_M = 40;
 
 type Props = Partial< Activity > & {
 	size?: typeof SIZE_XS | typeof SIZE_S | typeof SIZE_M;
+	withoutInfo?: boolean;
 };
 
 const ActivityActor: FunctionComponent< Props > = ( {
@@ -34,15 +35,18 @@ const ActivityActor: FunctionComponent< Props > = ( {
 	actorName,
 	actorRole,
 	actorType,
+	withoutInfo,
 	size = SIZE_M,
 } ) => {
 	if ( actorName === 'WordPress' && actorType === 'Application' ) {
 		return (
 			<div className="activity-card__actor">
 				<SocialLogo icon="wordpress" size={ size } />
-				<div className="activity-card__actor-info">
-					<div className="activity-card__actor-name">WordPress</div>
-				</div>
+				{ ! withoutInfo && (
+					<div className="activity-card__actor-info">
+						<div className="activity-card__actor-name">WordPress</div>
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -52,9 +56,11 @@ const ActivityActor: FunctionComponent< Props > = ( {
 			<div className="activity-card__actor">
 				{ ( ! isEnabled( 'jetpack/backup-simplified-screens' ) ||
 					isEnabled( 'jetpack/backup-simplified-screens-i4' ) ) && <JetpackLogo size={ size } /> }
-				<div className="activity-card__actor-info">
-					<div className="activity-card__actor-name">Jetpack</div>
-				</div>
+				{ ! withoutInfo && (
+					<div className="activity-card__actor-info">
+						<div className="activity-card__actor-name">Jetpack</div>
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -64,9 +70,11 @@ const ActivityActor: FunctionComponent< Props > = ( {
 			<div className="activity-card__actor">
 				{ ( ! isEnabled( 'jetpack/backup-simplified-screens' ) ||
 					isEnabled( 'jetpack/backup-simplified-screens-i4' ) ) && <JetpackLogo size={ size } /> }
-				<div className="activity-card__actor-info">
-					<div className="activity-card__actor-name">Happiness Engineer</div>
-				</div>
+				{ ! withoutInfo && (
+					<div className="activity-card__actor-info">
+						<div className="activity-card__actor-name">Happiness Engineer</div>
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -75,20 +83,24 @@ const ActivityActor: FunctionComponent< Props > = ( {
 		return (
 			<div className="activity-card__actor">
 				<Gridicon icon="multiple-users" size={ SIZE_XS } />
-				<div className="activity-card__actor-info">
-					<div className="activity-card__actor-name">{ translate( 'Multiple users' ) }</div>
-				</div>
+				{ ! withoutInfo && (
+					<div className="activity-card__actor-info">
+						<div className="activity-card__actor-name">{ translate( 'Multiple users' ) }</div>
+					</div>
+				) }
 			</div>
 		);
 	}
 
 	return (
 		<div className="activity-card__actor">
-			<Gravatar user={ { avatar_URL: actorAvatarUrl } } size={ size } />
-			<div className="activity-card__actor-info">
-				<div className="activity-card__actor-name">{ actorName }</div>
-				{ actorRole && <div className="activity-card__actor-role">{ actorRole }</div> }
-			</div>
+			<Gravatar user={ { avatar_URL: actorAvatarUrl, display_name: actorName } } size={ size } />
+			{ ! withoutInfo && (
+				<div className="activity-card__actor-info">
+					<div className="activity-card__actor-name">{ actorName }</div>
+					{ actorRole && <div className="activity-card__actor-role">{ actorRole }</div> }
+				</div>
+			) }
 		</div>
 	);
 };
