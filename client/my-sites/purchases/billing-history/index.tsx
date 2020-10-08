@@ -4,24 +4,24 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { CompactCard } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import MySitesSidebarNavigation from 'my-sites/sidebar-navigation';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
-import { BillingHistoryList } from 'me/billing-history/main';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { CompactCard } from '@automattic/components';
-import QueryBillingTransaction from 'components/data/query-billing-transaction';
-import getPastBillingTransaction from 'state/selectors/get-past-billing-transaction';
-import { ReceiptBody, ReceiptPlaceholder, ReceiptTitle } from 'me/billing-history/receipt';
-import FormattedHeader from 'components/formatted-header';
+import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
+import { BillingHistoryList } from 'calypso/me/billing-history/main';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
+import getPastBillingTransaction from 'calypso/state/selectors/get-past-billing-transaction';
+import { ReceiptBody, ReceiptPlaceholder, ReceiptTitle } from 'calypso/me/billing-history/receipt';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 

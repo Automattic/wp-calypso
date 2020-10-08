@@ -14,8 +14,8 @@ import {
 	PurchaseCancelDomain,
 	PurchaseAddPaymentMethod,
 	PurchaseEditPaymentMethod,
-} from 'my-sites/purchases/main';
-import { BillingHistory, ReceiptView } from 'my-sites/purchases/billing-history';
+} from 'calypso/my-sites/purchases/main';
+import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 
 export function redirectToPurchases( context ) {
 	const siteDomain = context.params.site;

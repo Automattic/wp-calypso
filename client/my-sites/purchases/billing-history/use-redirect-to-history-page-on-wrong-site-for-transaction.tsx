@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getBillingHistoryUrlFor } from '../paths';
 
 export default function useRedirectToHistoryPageOnWrongSiteForTransaction(

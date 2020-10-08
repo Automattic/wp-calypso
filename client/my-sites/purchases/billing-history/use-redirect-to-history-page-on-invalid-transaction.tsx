@@ -9,8 +9,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { getBillingHistoryUrlFor } from '../paths';
-import isPastBillingTransactionError from 'state/selectors/is-past-billing-transaction-error';
-import { clearBillingTransactionError } from 'state/billing-transactions/individual-transactions/actions';
+import isPastBillingTransactionError from 'calypso/state/selectors/is-past-billing-transaction-error';
+import { clearBillingTransactionError } from 'calypso/state/billing-transactions/individual-transactions/actions';
 
 export default function useRedirectToHistoryPageOnInvalidTransaction(
 	siteSlug: string,

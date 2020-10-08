@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getAddPaymentMethodUrlFor, getEditPaymentMethodUrlFor } from './paths';
-import { isPaidWithCreditCard } from 'lib/purchases';
+import { isPaidWithCreditCard } from 'calypso/lib/purchases';
 
 export function getEditOrAddPaymentMethodUrlFor( siteSlug, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {

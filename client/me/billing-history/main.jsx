@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { billingHistoryReceipt } from 'me/purchases/paths';
+import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import config from 'calypso/config';

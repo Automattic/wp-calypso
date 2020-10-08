@@ -7,14 +7,14 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import Subscriptions from './subscriptions';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import ManagePurchase from 'me/purchases/manage-purchase';
-import CancelPurchase from 'me/purchases/cancel-purchase';
-import ConfirmCancelDomain from 'me/purchases/confirm-cancel-domain';
-import MySitesSidebarNavigation from 'my-sites/sidebar-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import ManagePurchase from 'calypso/me/purchases/manage-purchase';
+import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
+import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
+import MySitesSidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -23,8 +23,8 @@ import {
 	getAddPaymentMethodUrlFor,
 } from './paths';
 import { getEditOrAddPaymentMethodUrlFor } from './utils';
-import AddCardDetails from 'me/purchases/payment/add-card-details';
-import EditCardDetails from 'me/purchases/payment/edit-card-details';
+import AddCardDetails from 'calypso/me/purchases/payment/add-card-details';
+import EditCardDetails from 'calypso/me/purchases/payment/edit-card-details';
 
 export function Purchases() {
 	const translate = useTranslate();
