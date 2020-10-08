@@ -16,6 +16,15 @@
   resolved "https://registry.yarnpkg.com/@automattic/color-studio/-/color-studio-2.3.0.tgz#6549e77f823514bdcf520cb2c48932c2c9db379f"
   integrity sha512-GRMV4PMtn2iE+30+RP33LyJSe4Qp8oILFNvk+iF8zd0LzUUaErZu86rk8YpEcLvFJzOU2BTXSewSdwyGc/sa1g==
 
+"@automattic/language-picker@file:packages/language-picker":
+  version "1.0.0-alpha.3"
+  dependencies:
+    "@automattic/react-i18n" "file:../../Library/Caches/Yarn/v6/npm-@automattic-language-picker-1.0.0-alpha.3-0c765296-2de2-4d1c-a515-a0556d288183-1602189433742/node_modules/@automattic/react-i18n"
+    "@babel/runtime" "^7.11.1"
+    "@wordpress/base-styles" "^2.0.1"
+    "@wordpress/components" "^10.0.5"
+    "@wordpress/i18n" "^3.14.0"
+
 "@automattic/lasagna@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@automattic/lasagna/-/lasagna-0.6.1.tgz#98984f268e3186c3d4455f7f2bc324d509910f0c"
@@ -33,6 +42,13 @@
     normalize-url "1.9.1"
     schema-utils "^1.0.0"
     webpack-sources "^1.1.0"
+
+"@automattic/react-i18n@file:packages/react-i18n":
+  version "1.0.0-alpha.0"
+  dependencies:
+    "@wordpress/compose" "1.x.x - 3.x.x"
+    "@wordpress/i18n" "^3.14.0"
+    tslib "^1.10.0"
 
 "@automattic/react-virtualized@^9.21.2":
   version "9.21.2"
