@@ -21,9 +21,15 @@ export const getAddPaymentMethodUrlFor = (
 	targetPurchase: { id: string | number }
 ) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/add`;
 
-export const editPaymentMethod = (
+export const getEditPaymentMethodUrlFor = (
 	targetSiteSlug: string,
 	targetPurchase: { id: string | number },
 	targetCardId: { id: string | number }
 ) =>
 	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;
+
+export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
+	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;
+
+export const getBillingHistoryUrlFor = ( targetSiteSlug: string ) =>
+	`/purchases/billing-history/${ targetSiteSlug }`;

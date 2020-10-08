@@ -6,8 +6,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	purchases,
 	redirectToPurchases,
@@ -17,6 +17,7 @@ import {
 	purchaseAddPaymentMethod,
 	purchaseEditPaymentMethod,
 	billingHistory,
+	receiptView,
 } from './controller';
 
 export default ( router ) => {
@@ -84,6 +85,15 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		billingHistory,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/billing-history/:site/:receiptId',
+		siteSelection,
+		navigation,
+		receiptView,
 		makeLayout,
 		clientRender
 	);

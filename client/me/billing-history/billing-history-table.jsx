@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import TransactionsTable from './transactions-table';
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -51,13 +50,13 @@ class BillingHistoryTable extends React.Component {
 	};
 
 	renderTransaction = ( transaction ) => {
-		const { translate } = this.props;
+		const { translate, getReceiptUrlFor } = this.props;
 
 		return (
 			<div className="billing-history__transaction-links">
 				<a
 					className="billing-history__view-receipt"
-					href={ billingHistoryReceipt( transaction.id ) }
+					href={ getReceiptUrlFor( transaction.id ) }
 					onClick={ this.handleReceiptLinkClick }
 				>
 					{ translate( 'View receipt' ) }
