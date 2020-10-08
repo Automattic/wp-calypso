@@ -70,6 +70,17 @@ export class SecureYourBrandStep extends Component {
 		this.props.goToNextStep();
 	}
 
+	getFormattedDomain( domain ) {
+		const domainBase = domain.substring( 0, domain.indexOf( '.' ) );
+		const domainTld = domain.substring( domain.indexOf( '.' ) );
+		return (
+			<>
+				{ domainBase }
+				<span>{ domainTld }</span>
+			</>
+		);
+	}
+
 	recommendedDomains() {
 		const { translate, secureYourBrand } = this.props;
 		const domain = this.getDomainName();
@@ -98,7 +109,9 @@ export class SecureYourBrandStep extends Component {
 					<div className="secure-your-brand__domains">
 						{ productData?.map( ( suggestion ) => (
 							<div className="secure-your-brand__domain" key={ suggestion.domain }>
-								<div className="secure-your-brand__domain-name">{ suggestion.domain }</div>
+								<div className="secure-your-brand__domain-name">
+									{ this.getFormattedDomain( suggestion.domain ) }
+								</div>
 								<div className="secure-your-brand__cost">
 									{ translate( '%(price)s/year', {
 										args: {
@@ -138,7 +151,7 @@ export class SecureYourBrandStep extends Component {
 							}
 						) }
 					</CardHeading>
-					<div class="secure-your-brand__benefits">
+					<div className="secure-your-brand__benefits">
 						<ul>
 							<li>{ translate( 'Prevent anyone from registering (and misusing) your name' ) }</li>
 							<li>{ translate( 'Avoid confusing your visitors' ) }</li>
@@ -146,7 +159,7 @@ export class SecureYourBrandStep extends Component {
 							<li>{ translate( 'Unlock SEO and geo-location opportunities' ) }</li>
 						</ul>
 					</div>
-					<div class="secure-your-brand__buttons">
+					<div className="secure-your-brand__buttons">
 						<Button onClick={ () => this.handleSkipButtonClick() }>
 							{ translate( 'No thanks, continue' ) }
 						</Button>
