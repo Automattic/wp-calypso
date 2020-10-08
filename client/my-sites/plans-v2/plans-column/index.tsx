@@ -15,11 +15,11 @@ import {
 	slugToSelectorProduct,
 } from '../utils';
 import ProductCard from '../product-card';
-import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'lib/plans';
-import { JETPACK_LEGACY_PLANS, PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import getSitePlan from 'state/sites/selectors/get-site-plan';
-import FormattedHeader from 'components/formatted-header';
+import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { JETPACK_LEGACY_PLANS, PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Type dependencies
