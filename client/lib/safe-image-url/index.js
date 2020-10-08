@@ -54,6 +54,10 @@ export default function safeImageUrl( url ) {
 		return null;
 	}
 
+	if ( url.length < 1 ) {
+		return null;
+	}
+
 	if ( REGEX_EXEMPT_URL.test( url ) ) {
 		return url;
 	}
@@ -83,6 +87,7 @@ export default function safeImageUrl( url ) {
 		if ( ! parsedUrl?.protocol ) {
 			parsedUrl.protocol = 'https';
 		}
+
 		url = getUrlFromParts( parsedUrl ).toString();
 	}
 

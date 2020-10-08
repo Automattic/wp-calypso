@@ -589,9 +589,9 @@ describe( 'index', () => {
 	} );
 
 	describe( 'keepValidImages', () => {
-		test( 'should filter post.images based on size', () => {
+		test( 'should filter post.images and post.content_images based on size', () => {
 			function fakeImage( width, height ) {
-				return { width, height };
+				return { width, height, src: 'http://example.com/giraffe.jpg' };
 			}
 
 			const post = {
@@ -608,6 +608,32 @@ describe( 'index', () => {
 
 			expect( normalized.images ).toHaveLength( 1 );
 			expect( normalized.content_images ).toHaveLength( 2 );
+		} );
+
+		test( 'should filter post.images and post.content_images for unsafe URLs', () => {
+			function fakeImage( src ) {
+				return { width: 500, height: 500, src };
+			}
+
+			const goodSrc = 'http://example.com/giraffe.jpg';
+			// External images with query string parameters that aren't related to image formatting
+			// should be omitted
+			const badSrc = 'http://example.com/adserver?ad=123456';
+
+			const post = {
+				images: [ fakeImage( goodSrc ), fakeImage( goodSrc ), fakeImage( badSrc ) ],
+				content_images: [
+					fakeImage( goodSrc ),
+					fakeImage( goodSrc ),
+					fakeImage( goodSrc ),
+					fakeImage( badSrc ),
+				],
+			};
+
+			const normalized = keepValidImages( 100, 200 )( post );
+
+			expect( normalized.images ).toHaveLength( 2 );
+			expect( normalized.content_images ).toHaveLength( 3 );
 		} );
 	} );
 
