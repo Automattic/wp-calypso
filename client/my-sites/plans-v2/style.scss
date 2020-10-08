@@ -32,11 +32,13 @@
 	color: var( --studio-color-gray-70 );
 }
 
-.selector__main {
+.selector__main,
+.selector-alt__main {
 	position: relative;
 }
 
-.selector__divider {
+.selector__divider,
+.selector-alt__divider {
 	margin: 40px 0;
 
 	border-bottom: solid 1px var( --color-border-subtle );

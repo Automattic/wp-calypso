@@ -8,6 +8,7 @@ import React from 'react';
  */
 import { isEnabled } from 'calypso/config';
 import SelectorPage from './selector';
+import SelectorPageAlt from './selector-alt';
 import DetailsPage from './details';
 import UpsellPage from './upsell';
 import { stringToDuration } from './utils';
@@ -34,7 +35,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 		// right now we're showing exactly the same page
 		// as when the flag is disabled
 		context.primary = (
-			<SelectorPage
+			<SelectorPageAlt
 				defaultDuration={ duration }
 				rootUrl={ rootUrl }
 				siteSlug={ context.params.site || context.query.site }
