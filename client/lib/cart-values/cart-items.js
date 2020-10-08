@@ -72,6 +72,7 @@ import { shouldShowOfferResetFlow } from 'lib/plans/config';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
+ * @typedef { import("./types").CartItemExtra} CartItemExtra
  * @typedef { import("./types").CartValue } CartValue
  */
 
@@ -1126,7 +1127,7 @@ export function isPartialCredits( cartItem ) {
 /**
  * Determines whether a cart item is a renewal
  *
- * @param {CartItemValue} cartItem - `CartItemValue` object
+ * @param {{extra?: CartItemExtra}} cartItem - object with `CartItemExtra` `extra` property
  * @returns {boolean} true if item is a renewal
  */
 export function isRenewal( cartItem ) {
