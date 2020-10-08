@@ -239,16 +239,17 @@ function defaultFromApi( requestId: DataId ): Lazy< ResponseParser > {
  *
  * @param requestId - uniquely identifies the request or request type
  * @param fetchAction - action that when dispatched will request the data (may be wrapped in a lazy thunk)
- * @param options - object with options for the http request. Following options are allowed:
- *     - fromAPI: when called produces a function that validates and transforms API data into Calypso data
- *     - freshness - indicates how many ms stale data is allowed to be before refetching
+ * @param options - options object
+ * @param options.fromApi - when called produces a function that validates and transforms API data into Calypso data
+ * @param options.freshness - indicates how many ms stale data is allowed to be before refetching
  * @returns stored data container for request
  */
 export const requestHttpData = (
 	requestId: DataId,
 	fetchAction: Lazy< AnyAction > | AnyAction,
-	{ fromApi = defaultFromApi( requestId ), freshness = Infinity }: RequestHttpDataOptions
+	options: RequestHttpDataOptions = {}
 ): Resource => {
+	const { fromApi = defaultFromApi( requestId ), freshness = Infinity } = options;
 	const data = getHttpData( requestId );
 	const { state, lastUpdated } = data;
 
@@ -272,6 +273,10 @@ export const requestHttpData = (
 
 	return data;
 };
+
+interface WaitForHttpDataOptions {
+	timeout?: number;
+}
 
 interface QueryResults {
 	[ key: string ]: Resource;
@@ -298,12 +303,13 @@ interface QueryResults {
  * }
  *
  * @param query - function that returns key/value pairs of data name and request state
- * @param timeout - how many ms to wait until giving up on requests
+ * @param options - options object
+ * @param options.timeout - how many ms to wait until giving up on requests
  * @returns fulfilled data of request (or partial if could not fulfill)
  */
 export const waitForHttpData = (
 	query: Lazy< QueryResults >,
-	{ timeout }: { timeout?: number } = {}
+	options: WaitForHttpDataOptions = {}
 ): Promise< QueryResults > =>
 	new Promise( ( resolve, reject ) => {
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -330,13 +336,13 @@ export const waitForHttpData = (
 			}
 		};
 
-		if ( timeout ) {
+		if ( options.timeout ) {
 			timer = setTimeout( () => {
 				const { results } = getResults();
 
 				unsubscribe();
 				reject( results );
-			}, timeout );
+			}, options.timeout );
 		}
 
 		unsubscribe = subscribe( listener );
