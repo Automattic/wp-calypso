@@ -9,14 +9,14 @@ import React, { Component, Fragment } from 'react';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { MOVE_DOMAIN } from 'lib/url/support';
-import { getName } from 'lib/purchases';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { MOVE_DOMAIN } from 'calypso/lib/url/support';
+import { getName } from 'calypso/lib/purchases';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {

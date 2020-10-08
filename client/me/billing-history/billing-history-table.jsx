@@ -8,11 +8,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { billingHistoryReceipt } from 'me/purchases/paths';
+import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import TransactionsTable from './transactions-table';
-import isSendingBillingReceiptEmail from 'state/selectors/is-sending-billing-receipt-email';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
+import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calypso/state/billing-transactions/actions';
 
 class BillingHistoryTable extends React.Component {
 	recordClickEvent = ( eventAction ) => {

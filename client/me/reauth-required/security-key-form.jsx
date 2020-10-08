@@ -9,10 +9,10 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormInputValidation from 'components/forms/form-input-validation';
+import FormButton from 'calypso/components/forms/form-button';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { localize } from 'i18n-calypso';
-import Spinner from 'components/spinner';
+import Spinner from 'calypso/components/spinner';
 
 /**
  * Style dependencies

@@ -7,8 +7,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { notifications, comments, updates, subscriptions } from './controller';
-import { sidebar } from 'me/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { sidebar } from 'calypso/me/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	page( '/me/notifications', sidebar, notifications, makeLayout, clientRender );

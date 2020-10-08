@@ -11,7 +11,7 @@ import React, { Component } from 'react';
 
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { recordTracksEventWithClientId } from 'state/analytics/actions';
+import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

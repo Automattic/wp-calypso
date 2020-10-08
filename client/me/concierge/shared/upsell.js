@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import { Button, CompactCard } from '@automattic/components';
 import PrimaryHeader from './primary-header';
-import Site from 'blocks/site';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Site from 'calypso/blocks/site';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class Upsell extends Component {
 	static propTypes = {

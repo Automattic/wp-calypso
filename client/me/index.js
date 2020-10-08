@@ -2,14 +2,14 @@
  * External dependencies
  */
 
-import config from 'config';
+import config from 'calypso/config';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
 import * as controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	if ( config.isEnabled( 'me/my-profile' ) ) {

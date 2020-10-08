@@ -12,23 +12,23 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
  * Internal Dependencies
  */
 import { Button } from '@automattic/components';
-import { cancelAndRefundPurchase, cancelPurchase } from 'lib/purchases/actions';
-import { clearPurchases } from 'state/purchases/actions';
-import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
-import { CANCEL_FLOW_TYPE } from 'components/marketing-survey/cancel-purchase-form/constants';
+import { cancelAndRefundPurchase, cancelPurchase } from 'calypso/lib/purchases/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import {
 	getName,
 	getSubscriptionEndDate,
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
 	isSubscription,
-} from 'lib/purchases';
-import { isDomainRegistration } from 'lib/products-values';
-import notices from 'notices';
-import { confirmCancelDomain, purchasesRoot } from 'me/purchases/paths';
-import { refreshSitePlans } from 'state/sites/plans/actions';
+} from 'calypso/lib/purchases';
+import { isDomainRegistration } from 'calypso/lib/products-values';
+import notices from 'calypso/notices';
+import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
-import { getDowngradePlanFromPurchase } from 'state/purchases/selectors';
+import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {

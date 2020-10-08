@@ -11,18 +11,18 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import config from 'config';
-import CreditCard from 'components/credit-card';
+import config from 'calypso/config';
+import CreditCard from 'calypso/components/credit-card';
 import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
 	getUniquePaymentAgreements,
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
-} from 'state/stored-cards/selectors';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import { addCreditCard } from 'me/purchases/paths';
-import SectionHeader from 'components/section-header';
+} from 'calypso/state/stored-cards/selectors';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import { addCreditCard } from 'calypso/me/purchases/paths';
+import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies

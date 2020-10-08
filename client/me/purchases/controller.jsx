@@ -12,18 +12,18 @@ import AddCreditCard from './add-credit-card';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import EditCardDetails from './payment/edit-card-details';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import ManagePurchase from './manage-purchase';
-import NoSitesMessage from 'components/empty-content/no-sites-message';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import PurchasesHeader from './purchases-list/header';
 import PurchasesList from './purchases-list';
-import { concatTitle } from 'lib/react-helpers';
-import { setDocumentHeadTitle } from 'state/document-head/actions';
+import { concatTitle } from 'calypso/lib/react-helpers';
+import { setDocumentHeadTitle } from 'calypso/state/document-head/actions';
 import titles from './titles';
-import { makeLayout, render as clientRender } from 'controller';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
-import { managePurchase as managePurchaseUrl, purchasesRoot } from 'me/purchases/paths';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { managePurchase as managePurchaseUrl, purchasesRoot } from 'calypso/me/purchases/paths';
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {

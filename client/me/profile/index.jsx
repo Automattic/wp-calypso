@@ -12,24 +12,24 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import EditGravatar from 'blocks/edit-gravatar';
-import formBase from 'me/form-base';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
-import ProfileLinks from 'me/profile-links';
-import ReauthRequired from 'me/reauth-required';
-import SectionHeader from 'components/section-header';
-import { localizeUrl } from 'lib/i18n-utils';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { protectForm } from 'lib/protect-form';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import EditGravatar from 'calypso/blocks/edit-gravatar';
+import formBase from 'calypso/me/form-base';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
+import ProfileLinks from 'calypso/me/profile-links';
+import ReauthRequired from 'calypso/me/reauth-required';
+import SectionHeader from 'calypso/components/section-header';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { protectForm } from 'calypso/lib/protect-form';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies

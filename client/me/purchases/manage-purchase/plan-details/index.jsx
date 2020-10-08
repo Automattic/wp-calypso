@@ -10,18 +10,21 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import SectionHeader from 'components/section-header';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
+import SectionHeader from 'calypso/components/section-header';
 import PlanBillingPeriod from './billing-period';
-import { isRequestingSites, getSite } from 'state/sites/selectors';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { isDataLoading } from 'me/purchases/utils';
-import { getName, isExpired, isPartnerPurchase } from 'lib/purchases';
-import { isJetpackPlan, isFreeJetpackPlan } from 'lib/products-values';
-import { getPluginsForSite } from 'state/plugins/premium/selectors';
+import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
+import { isDataLoading } from 'calypso/me/purchases/utils';
+import { getName, isExpired, isPartnerPurchase } from 'calypso/lib/purchases';
+import { isJetpackPlan, isFreeJetpackPlan } from 'calypso/lib/products-values';
+import { getPluginsForSite } from 'calypso/state/plugins/premium/selectors';
 
 /**
  * Style dependencies

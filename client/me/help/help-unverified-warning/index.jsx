@@ -3,14 +3,14 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import user from 'lib/user';
+import user from 'calypso/lib/user';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import notices from 'calypso/notices';
 
 /**
  * Style dependencies

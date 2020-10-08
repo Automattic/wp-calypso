@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import { getName, getSubscriptionEndDate, isRefundable } from 'lib/purchases';
+import { getName, getSubscriptionEndDate, isRefundable } from 'calypso/lib/purchases';
 import {
 	isDomainMapping,
 	isGoogleApps,
@@ -15,7 +15,7 @@ import {
 	isDotComPlan,
 	isPlan,
 	isTheme,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 
 export function cancellationEffectHeadline( purchase, translate ) {
 	const { domain } = purchase;

@@ -11,7 +11,7 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	getName,
 	isExpired,
@@ -28,7 +28,7 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 	isRenewable,
-} from 'lib/purchases';
+} from 'calypso/lib/purchases';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -38,20 +38,23 @@ import {
 	isJetpackProduct,
 	isPlan,
 	getProductFromSlug,
-} from 'lib/products-values';
-import { getPlan } from 'lib/plans';
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSite, isRequestingSites } from 'state/sites/selectors';
-import { getUser } from 'state/users/selectors';
+} from 'calypso/lib/products-values';
+import { getPlan } from 'calypso/lib/plans';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getUser } from 'calypso/state/users/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
-import PaymentLogo from 'components/payment-logo';
-import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'lib/url/support';
-import UserItem from 'components/user';
-import { withLocalizedMoment } from 'components/localized-moment';
+import PaymentLogo from 'calypso/components/payment-logo';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import UserItem from 'calypso/components/user';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails, isDataLoading } from '../utils';
-import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 class PurchaseMeta extends Component {
 	static propTypes = {

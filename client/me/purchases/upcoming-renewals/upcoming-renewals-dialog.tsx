@@ -16,17 +16,23 @@ import { capitalize } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getName, getRenewalPrice, purchaseType, isExpired, isRenewing } from 'lib/purchases';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import {
+	getName,
+	getRenewalPrice,
+	purchaseType,
+	isExpired,
+	isRenewing,
+} from 'calypso/lib/purchases';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { Button, Dialog } from '@automattic/components';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { managePurchase } from '../paths';
 
 /**
  * Type dependencies
  */
-import type { Purchase } from 'lib/purchases/types';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 /**
  * Style dependencies

@@ -9,17 +9,17 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ReduxDispatch } from 'state/redux-store';
-import { deleteStoredCard } from 'state/stored-cards/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { isDeletingStoredCard } from 'state/stored-cards/selectors';
+import { ReduxDispatch } from 'calypso/state/redux-store';
+import { deleteStoredCard } from 'calypso/state/stored-cards/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { isDeletingStoredCard } from 'calypso/state/stored-cards/selectors';
 import { Button } from '@automattic/components';
 import {
 	isPaymentAgreement,
 	getPaymentMethodSummary,
 	PaymentMethod,
-} from 'lib/checkout/payment-methods';
-import StoredCard from 'components/credit-card/stored-card';
+} from 'calypso/lib/checkout/payment-methods';
+import StoredCard from 'calypso/components/credit-card/stored-card';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 
 /**

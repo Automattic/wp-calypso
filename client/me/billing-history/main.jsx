@@ -8,15 +8,15 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import config from 'config';
-import CreditCards from 'me/purchases/credit-cards';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import config from 'calypso/config';
+import CreditCards from 'calypso/me/purchases/credit-cards';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import BillingHistoryTable from './billing-history-table';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 
 /**
  * Style dependencies

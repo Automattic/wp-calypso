@@ -8,9 +8,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import Site from 'blocks/site';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import Site from 'calypso/blocks/site';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class ProfileLinksAddWordPressSite extends Component {
 	static propTypes = {

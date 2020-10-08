@@ -12,7 +12,7 @@ import React, { Fragment } from 'react';
  */
 import { Card, CompactCard } from '@automattic/components';
 import CancelPurchaseButton from './button';
-import CancelPurchaseLoadingPlaceholder from 'me/purchases/cancel-purchase/loading-placeholder';
+import CancelPurchaseLoadingPlaceholder from 'calypso/me/purchases/cancel-purchase/loading-placeholder';
 import CancelPurchaseRefundInformation from './refund-information';
 import {
 	getName,
@@ -21,23 +21,23 @@ import {
 	isOneTimePurchase,
 	isRefundable,
 	isSubscription,
-} from 'lib/purchases';
-import { isDataLoading } from 'me/purchases/utils';
+} from 'calypso/lib/purchases';
+import { isDataLoading } from 'calypso/me/purchases/utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
-} from 'state/purchases/selectors';
-import HeaderCake from 'components/header-cake';
-import { isDomainRegistration, isDomainTransfer } from 'lib/products-values';
-import { isRequestingSites, getSite } from 'state/sites/selectors';
-import { managePurchase, purchasesRoot } from 'me/purchases/paths';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { withLocalizedMoment } from 'components/localized-moment';
-import ProductLink from 'me/purchases/product-link';
-import titles from 'me/purchases/titles';
-import TrackPurchasePageView from 'me/purchases/track-purchase-page-view';
-import { getCurrentUserId } from 'state/current-user/selectors';
+} from 'calypso/state/purchases/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import { isDomainRegistration, isDomainTransfer } from 'calypso/lib/products-values';
+import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import { managePurchase, purchasesRoot } from 'calypso/me/purchases/paths';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ProductLink from 'calypso/me/purchases/product-link';
+import titles from 'calypso/me/purchases/titles';
+import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies

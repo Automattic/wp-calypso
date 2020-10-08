@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import config from 'config';
-import ProfileGravatar from 'me/profile-gravatar';
+import config from 'calypso/config';
+import ProfileGravatar from 'calypso/me/profile-gravatar';
 import {
 	addCreditCard,
 	billingHistory,
@@ -19,19 +19,19 @@ import {
 	pendingPayments,
 	myMemberships,
 	purchasesRoot,
-} from 'me/purchases/paths';
-import Sidebar from 'layout/sidebar';
-import SidebarFooter from 'layout/sidebar/footer';
-import SidebarHeading from 'layout/sidebar/heading';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarRegion from 'layout/sidebar/region';
-import user from 'lib/user';
-import userUtilities from 'lib/user/utils';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { logoutUser } from 'state/logout/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+} from 'calypso/me/purchases/paths';
+import Sidebar from 'calypso/layout/sidebar';
+import SidebarFooter from 'calypso/layout/sidebar/footer';
+import SidebarHeading from 'calypso/layout/sidebar/heading';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
+import SidebarRegion from 'calypso/layout/sidebar/region';
+import user from 'calypso/lib/user';
+import userUtilities from 'calypso/lib/user/utils';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { logoutUser } from 'calypso/state/logout/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 /**
  * Style dependencies
