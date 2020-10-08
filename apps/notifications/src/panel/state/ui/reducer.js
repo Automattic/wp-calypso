@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { combineReducers } from 'redux';
 
 import {

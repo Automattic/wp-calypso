@@ -1,6 +1,12 @@
+/**
+ * External dependencies
+ */
 import { combineReducers } from 'redux';
 import { keyBy, omit } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import * as types from '../action-types';
 
 export const allNotes = ( state = {}, { type, notes, noteIds } ) => {

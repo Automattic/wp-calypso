@@ -1,9 +1,14 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import { wpcom } from '../rest-client/wpcom';
-
 import Comment from './block-comment';
 import NoteActions from './actions';
 import NotePreface from './preface';

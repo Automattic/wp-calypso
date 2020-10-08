@@ -1,8 +1,14 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { init as initStore, store } from './state';
 import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';

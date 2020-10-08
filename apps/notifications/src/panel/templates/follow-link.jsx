@@ -1,11 +1,16 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import { wpcom } from '../rest-client/wpcom';
 import { bumpStat } from '../rest-client/bump-stat';
-
 import Gridicon from './gridicons';
 
 export const FollowLink = createReactClass( {

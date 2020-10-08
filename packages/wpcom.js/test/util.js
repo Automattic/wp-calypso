@@ -1,9 +1,16 @@
 /**
  * Module dependencies
  */
-import wpcomFactory from '../index';
+/**
+ * External dependencies
+ */
 import qs from 'qs';
 import oauthCors from 'wpcom-oauth-cors';
+
+/**
+ * Internal dependencies
+ */
+import wpcomFactory from '../index';
 import fixture from './fixture';
 var configFactory;
 

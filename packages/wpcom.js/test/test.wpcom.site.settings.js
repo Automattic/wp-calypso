@@ -1,8 +1,12 @@
 /**
- * Module dependencies
+ * External dependencies
+ */
+import assert from 'assert';
+
+/**
+ * Internal dependencies
  */
 import util from './util';
-import assert from 'assert';
 
 /**
  * site.settings
