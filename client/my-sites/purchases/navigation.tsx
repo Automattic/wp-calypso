@@ -35,6 +35,12 @@ export default function PurchasesNavigation( {
 				>
 					{ translate( 'Billing History' ) }
 				</NavItem>
+				<NavItem
+					path={ `/purchases/payment-methods/${ siteSlug }` }
+					selected={ sectionTitle === 'Payment Methods' }
+				>
+					{ translate( 'Payment Methods' ) }
+				</NavItem>
 			</NavTabs>
 		</SectionNav>
 	);
