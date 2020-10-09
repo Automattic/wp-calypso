@@ -39,6 +39,8 @@ type OwnProps = {
 	withStartingPrice?: boolean;
 	billingTimeFrame: TranslateResult;
 	buttonLabel: TranslateResult;
+	buttonPrimary: boolean;
+	badgeLabel: TranslateResult;
 	onButtonClick: () => void;
 	cancelLabel?: TranslateResult;
 	onCancelClick?: () => void;
@@ -66,6 +68,8 @@ const JetpackProductCardAlt = ( {
 	withStartingPrice,
 	billingTimeFrame,
 	buttonLabel,
+	buttonPrimary,
+	badgeLabel,
 	onButtonClick,
 	cancelLabel,
 	onCancelClick,
@@ -172,7 +176,12 @@ const JetpackProductCardAlt = ( {
 				) }
 			</header>
 			<div className="jetpack-product-card-alt__body">
-				<Button primary className="jetpack-product-card-alt__button" onClick={ onButtonClick }>
+				<span className="jetpack-product-card-alt__badge">{ badgeLabel }</span>
+				<Button
+					primary={ buttonPrimary }
+					className="jetpack-product-card-alt__button"
+					onClick={ onButtonClick }
+				>
 					{ buttonLabel }
 				</Button>
 				{ cancelLabel && (

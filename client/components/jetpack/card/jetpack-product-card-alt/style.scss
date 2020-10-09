@@ -210,6 +210,21 @@ $jetpack-product-card-alt-icon-size: 55px;
 	font-style: italic;
 }
 
+.jetpack-product-card-alt__badge {
+	display: block;
+
+	margin: -10px 0 10px;
+
+	min-height: 12px;
+
+	color: var( --color-primary );
+
+	font-size: $font-body-extra-small;
+	font-style: italic;
+	line-height: 1;
+	text-align: center;
+}
+
 .jetpack-product-card-alt .button {
 	width: 100%;
 	margin-bottom: 30px;

@@ -8,8 +8,12 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 /**
  * Internal dependencies
  */
-import { EXTERNAL_PRODUCTS_LIST } from '../constants';
-import { durationToText, productButtonLabel, slugIsFeaturedProduct } from '../utils';
+import {
+	durationToText,
+	productBadgeLabelAlt,
+	productButtonLabel,
+	slugIsFeaturedProduct,
+} from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
@@ -17,6 +21,7 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import JetpackProductCardAlt from 'calypso/components/jetpack/card/jetpack-product-card-alt';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { JETPACK_SEARCH_PRODUCTS } from 'calypso/lib/products-values/constants';
@@ -89,12 +94,8 @@ const ProductCardAltWrapper = ( {
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
 
-	// Don't hide price if siteId is not defined, since it most likely won't be shown
-	// in other parts of the card (e.g. Jetpack Search)
-	// Jetpack CRM is an external product and we don't have access to its price, therefore,
-	// we hide it.
-	const hidePrice =
-		EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) || ( !! siteId && item.hidePrice );
+	// We only want to show Jetpack Search price in the Pricing page (Calypso Green)
+	const hidePrice = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && ! isJetpackCloud();
 
 	return (
 		<JetpackProductCardAlt
@@ -106,6 +107,8 @@ const ProductCardAltWrapper = ( {
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
+			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			children={ item.children }

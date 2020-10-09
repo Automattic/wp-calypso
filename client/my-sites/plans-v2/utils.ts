@@ -9,7 +9,7 @@ import React, { createElement, Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
+import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
 import {
 	DAILY_PLAN_TO_REALTIME_PLAN,
 	DAILY_PRODUCTS,
@@ -31,9 +31,9 @@ import {
 	UPSELL_PRODUCT_MATRIX,
 } from './constants';
 import RecordsDetails from './records-details';
-import { addItems } from 'lib/cart/actions';
-import { jetpackProductItem } from 'lib/cart-values/cart-items';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import { addItems } from 'calypso/lib/cart/actions';
+import { jetpackProductItem } from 'calypso/lib/cart-values/cart-items';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -41,26 +41,31 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
-} from 'lib/plans/constants';
-import { getPlan, getMonthlyPlanByYearly, getYearlyPlanByMonthly, planHasFeature } from 'lib/plans';
+} from 'calypso/lib/plans/constants';
+import {
+	getPlan,
+	getMonthlyPlanByYearly,
+	getYearlyPlanByMonthly,
+	planHasFeature,
+} from 'calypso/lib/plans';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_BACKUP_PRODUCTS,
-} from 'lib/products-values/constants';
+} from 'calypso/lib/products-values/constants';
 import {
 	Product,
 	JETPACK_PRODUCTS_LIST,
 	objectIsProduct,
 	PRODUCTS_LIST,
-} from 'lib/products-values/products-list';
-import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
-import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
-import { getJetpackProductCallToAction } from 'lib/products-values/get-jetpack-product-call-to-action';
-import { getJetpackProductDescription } from 'lib/products-values/get-jetpack-product-description';
-import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-product-short-name';
-import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
-import { addQueryArgs } from 'lib/route';
+} from 'calypso/lib/products-values/products-list';
+import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
+import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpack-product-tagline';
+import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
+import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
+import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
+import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Type dependencies
@@ -80,9 +85,9 @@ import type {
 	Plan,
 	JetpackPlanCardFeature,
 	JetpackPlanCardFeatureSection,
-} from 'lib/plans/types';
-import type { JetpackProductSlug } from 'lib/products-values/types';
-import type { SitePlan } from 'state/sites/selectors/get-site-plan';
+} from 'calypso/lib/plans/types';
+import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 
 /**
  * Duration utils.
@@ -173,6 +178,20 @@ export function productBadgeLabel(
 	}
 }
 
+export function productBadgeLabelAlt(
+	product: SelectorProduct,
+	isOwned: boolean,
+	currentPlan?: SitePlan | null
+): TranslateResult | undefined {
+	if ( isOwned ) {
+		return translate( 'You own this' );
+	}
+
+	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
+		return translate( 'Included in your plan' );
+	}
+}
+
 /**
  * Type guards.
  */
@@ -204,7 +223,9 @@ export function slugToItem( slug: string ): Plan | Product | SelectorProduct | n
 	return null;
 }
 
-function objectIsSelectorProduct( item: object ): item is SelectorProduct {
+function objectIsSelectorProduct(
+	item: Record< string, unknown > | SelectorProduct
+): item is SelectorProduct {
 	const requiredKeys = [
 		'productSlug',
 		'iconSlug',
@@ -215,7 +236,8 @@ function objectIsSelectorProduct( item: object ): item is SelectorProduct {
 	];
 	return requiredKeys.every( ( k ) => k in item );
 }
-function objectIsPlan( item: object ): item is Plan {
+
+function objectIsPlan( item: Record< string, unknown > | Plan ): item is Plan {
 	const requiredKeys = [
 		'group',
 		'type',
@@ -236,7 +258,7 @@ function objectIsPlan( item: object ): item is Plan {
  * @returns SelectorProduct
  */
 export function itemToSelectorProduct(
-	item: Plan | Product | SelectorProduct | object
+	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): SelectorProduct | null {
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
@@ -323,6 +345,8 @@ export function itemToSelectorProduct(
  *
  * @param {JetpackPlanCardFeature} featureKey Key of the feature
  * @param {object?} options Options
+ * @param {string?} options.withoutDescription Whether to build the card with a description
+ * @param {string?} options.withoutIcon Whether to build the card with an icon
  * @returns {SelectorProductFeaturesItem} Feature item
  */
 export function buildCardFeatureItemFromFeatureKey(
@@ -364,7 +388,7 @@ export function buildCardFeatureItemFromFeatureKey(
  */
 export function buildCardFeaturesFromFeatureKeys(
 	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
-	options?: object
+	options?: Record< string, unknown >
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	// Without sections (JetpackPlanCardFeature[])
 	if ( isArray( features ) ) {
@@ -403,8 +427,8 @@ export function buildCardFeaturesFromFeatureKeys(
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromItem(
-	item: Plan | Product | object,
-	options?: object
+	item: Plan | Product | Record< string, unknown >,
+	options?: Record< string, unknown >
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
 		const features = item.getPlanCardFeatures?.();
@@ -538,7 +562,7 @@ export function getPathToSelector(
 	urlQueryArgs: QueryArgs,
 	duration?: Duration,
 	siteSlug?: string
-) {
+): string {
 	const strDuration = duration ? durationToString( duration ) : null;
 	const path = [ rootUrl, strDuration, siteSlug ].filter( Boolean ).join( '/' );
 
@@ -563,7 +587,7 @@ export function getPathToDetails(
 	productSlug: string,
 	duration: Duration,
 	siteSlug?: string
-) {
+): string {
 	const strDuration = durationToString( duration );
 	const path = [ rootUrl, productSlug, strDuration, 'details', siteSlug ]
 		.filter( Boolean )
@@ -590,7 +614,7 @@ export function getPathToUpsell(
 	productSlug: string,
 	duration: Duration,
 	siteSlug?: string
-) {
+): string {
 	const strDuration = durationToString( duration );
 	const path = [ rootUrl, productSlug, strDuration, 'additions', siteSlug ]
 		.filter( Boolean )
