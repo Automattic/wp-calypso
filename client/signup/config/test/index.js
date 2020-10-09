@@ -41,14 +41,18 @@ describe( 'Signup config steps', () => {
 	test( 'Should not have unused steps configured', () => {
 		const activeSteps = Object.values( flows.getFlows() )
 			.flatMap( ( { steps: stepsArray } ) => stepsArray )
-			.reduce( ( acc, cur ) => ( ! acc.includes( cur ) ? [ ...acc, cur ] : acc ), [] );
+			.filter( ( value, index, self ) => {
+				return self.indexOf( value ) === index;
+			} );
 
 		const deadSteps = Object.entries( steps )
 			.map( ( [ stepKey ] ) => stepKey )
 			.filter( ( stepName ) => ! activeSteps.includes( stepName ) );
 
 		if ( deadSteps.length > 0 ) {
-			throw new Error( 'The following steps do not appear in any flow: [' + deadSteps + '].' );
+			throw new Error(
+				`The following steps do not appear in any flow: ${ JSON.stringify( deadSteps, null, 2 ) }`
+			);
 		}
 	} );
 } );
