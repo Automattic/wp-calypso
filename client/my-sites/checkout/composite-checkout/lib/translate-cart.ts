@@ -203,15 +203,15 @@ function translateReponseCartProductToWPCOMCartItem(
 		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
 	) {
 		label = meta;
-		if ( isRenewal( serverCartItem ) ) {
-			if ( product_name ) {
-				sublabel = String(
-					translate( '%(productName)s Renewal', { args: { productName: product_name } } )
-				);
-			} else {
-				sublabel = String( translate( 'Renewal' ) );
-			}
-		} else {
+		if ( isRenewal( serverCartItem ) && product_name ) {
+			sublabel = String(
+				translate( '%(productName)s Renewal', { args: { productName: product_name } } )
+			);
+		}
+		if ( isRenewal( serverCartItem ) && ! product_name ) {
+			sublabel = String( translate( 'Renewal' ) );
+		}
+		if ( ! isRenewal( serverCartItem ) ) {
 			sublabel = product_name || '';
 		}
 	}
