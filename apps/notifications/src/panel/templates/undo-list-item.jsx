@@ -1,12 +1,16 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import { wpcom } from '../rest-client/wpcom';
-
 import actions from '../state/actions';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
-
 import { bumpStat } from '../rest-client/bump-stat';
 
 import Gridicon from './gridicons';

@@ -1,8 +1,11 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import { difference, get, pick, property, range } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { store } from '../state';
 import actions from '../state/actions';
 

@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * Internal dependencies
  */
 import DomainEmail from './domain.email';
 import DomainDns from './domain.dns';

@@ -1,5 +1,10 @@
 /**
- * Module dependencies.
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
  */
 import Category from './site.category';
 import Comment from './site.comment';
@@ -15,10 +20,8 @@ import SiteTaxonomy from './site.taxonomy';
 import SiteCreditVouchers from './site.credit-vouchers';
 import SiteWordAds from './site.wordads';
 import SiteWPComPlugin from './site.wpcom-plugin';
-
 import siteGetMethods from './runtime/site.get';
 import runtimeBuilder from './util/runtime-builder';
-import debugFactory from 'debug';
 
 /**
  * Module vars

@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import { get } from 'lodash';
 
 export const noticon2gridicon = ( c ) =>

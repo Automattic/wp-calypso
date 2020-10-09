@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { combineReducers } from 'redux';
 
+/**
+ * Internal dependencies
+ */
 import {
 	NOTES_LOADED,
 	NOTES_LOADING,

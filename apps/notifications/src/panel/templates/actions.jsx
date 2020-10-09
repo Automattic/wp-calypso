@@ -1,11 +1,16 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import getIsNoteApproved from '../state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../state/selectors/get-is-note-liked';
-
 import ApproveButton from './button-approve';
 import EditButton from './button-edit';
 import LikeButton from './button-like';

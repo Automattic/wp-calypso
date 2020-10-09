@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import store from '../flux/store';
 
 export const keys = {
