@@ -38,6 +38,7 @@ describe( 'Signup config steps', () => {
 		}
 	} );
 
+	// eslint-disable-next-line jest/expect-expect
 	test( 'Should not have unused steps configured', () => {
 		const activeSteps = Object.values( flows.getFlows() )
 			.flatMap( ( { steps: stepsArray } ) => stepsArray )
