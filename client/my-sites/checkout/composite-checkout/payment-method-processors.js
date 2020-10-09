@@ -159,7 +159,7 @@ export async function ebanxCardProcessor(
 		cvv: submitData.cvv,
 		'expiration-date': submitData[ 'expiration-date' ],
 	} );
-	const pending = submitEbanxCardTransaction(
+	return submitEbanxCardTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -168,11 +168,13 @@ export async function ebanxCardProcessor(
 			paymentMethodToken,
 		},
 		wpcomTransaction
-	);
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	)
+		.then( ( result ) => {
+			dispatch( 'wpcom' ).setTransactionResponse( result );
+		} )
+		.then( ( response ) => {
+			return { type: 'SUCCESS', payload: response };
+		} );
 }
 
 export async function multiPartnerCardProcessor(
