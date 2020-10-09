@@ -90,6 +90,7 @@
 	color: var( --color-primary );
 
 	font-size: $font-body-extra-small;
+	font-style: italic;
 
 	@include break-mobile {
 		display: inline;
