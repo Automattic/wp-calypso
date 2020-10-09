@@ -33,6 +33,36 @@ const formatDate = ( date: Date ) => {
 	return moment( date ).format( 'LL' );
 };
 
+const getThreatStatusMessage = ( translate, threat: Threat ) => {
+	const { status, fixedOn } = threat;
+
+	const date = fixedOn && formatDate( fixedOn );
+
+	if ( status === 'fixed' ) {
+		return date
+			? translate( 'Threat fixed on %(date)s', {
+					args: { date },
+					comment: 'Past tense action: a threat was fixed on a specific date',
+			  } )
+			: translate( 'Threat fixed', {
+					comment: 'Past tense action: a threat was fixed on an unspecified date',
+			  } );
+	}
+
+	if ( status === 'ignored' ) {
+		return date
+			? translate( 'Threat ignored on %(date)s', {
+					args: { date },
+					comment: 'Past tense action: a threat was ignored on a specific date',
+			  } )
+			: translate( 'Threat ignored', {
+					comment: 'Past tense action: a threat was ignored on an unspecified date',
+			  } );
+	}
+
+	return null;
+};
+
 // This renders two different kind of sub-headers. One is for current threats (displayed
 // in the Scanner section), and the other for threats in the History section.
 const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
@@ -58,26 +88,28 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 				return <> { getThreatVulnerability( threat ) }</>;
 		}
 	} else {
+		const threatStatusMessage = getThreatStatusMessage( translate, threat );
+
 		return (
 			<>
 				<div className="threat-item-subheader__subheader">
-					<span className="threat-item-subheader__date">
+					<span className="threat-item-subheader__status">
 						{ translate( 'Threat found on %s', {
 							args: formatDate( threat.firstDetected ),
 						} ) }
 					</span>
-					{ threat.fixedOn && <span className="threat-item-subheader__date-separator"></span> }
-					{ threat.fixedOn && (
-						<span
-							className={ classnames(
-								'threat-item-subheader__date',
-								entryActionClassNames( threat )
-							) }
-						>
-							{ translate( 'Threat %(action)s on %(fixedOn)s', {
-								args: { action: threat.status, fixedOn: formatDate( threat.fixedOn ) },
-							} ) }
-						</span>
+					{ threatStatusMessage && (
+						<>
+							<span className="threat-item-subheader__status-separator"></span>
+							<span
+								className={ classnames(
+									'threat-item-subheader__status',
+									entryActionClassNames( threat )
+								) }
+							>
+								{ threatStatusMessage }
+							</span>
+						</>
 					) }
 				</div>
 				<Badge
