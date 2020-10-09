@@ -25,11 +25,12 @@ import { createCardToken } from 'calypso/lib/store-transactions';
 import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 	const translate = useTranslate();
 
 	return (
-		<Main className="purchases payment-methods is-wide-layout">
+		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<PageViewTracker path="/purchases/payment-methods" title="Payment Methods" />
@@ -55,7 +56,7 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 	const saveStoredCard = ( ...args: unknown[] ) => reduxDispatch( addStoredCard( ...args ) );
 
 	return (
-		<Main className="purchases payment-methods is-wide-layout">
+		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
 			<PageViewTracker path="/purchases/add-credit-card" title="Add Credit Card" />
 			<DocumentHead title={ translate( 'Add Credit Card' ) } />
@@ -79,3 +80,4 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 		</Main>
 	);
 }
+/* eslint-enable wpcalypso/jsx-classname-namespace */
