@@ -11,9 +11,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import PlansFilterBar from './plans-filter-bar';
 import { EXTERNAL_PRODUCTS_LIST } from './constants';
-import { getPathToDetails, getPathToUpsell, checkout } from './utils';
+import { getPathToDetails, checkout } from './utils';
 import QueryProducts from './query-products';
-import useHasProductUpsell from './use-has-product-upsell';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
@@ -29,7 +28,6 @@ import ProductsGridAlt from './products-grid-alt';
  * Type dependencies
  */
 import type { Duration, SelectorPageProps, SelectorProduct, PurchaseCallback } from './types';
-import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
@@ -46,7 +44,6 @@ const SelectorPageAlt = ( {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
-	const hasUpsell = useHasProductUpsell();
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
 	useEffect( () => {
@@ -105,20 +102,6 @@ const SelectorPageAlt = ( {
 			);
 			page(
 				getPathToDetails( rootUrl, urlQueryArgs, product.productSlug, currentDuration, siteSlug )
-			);
-			return;
-		}
-
-		if ( hasUpsell( product.productSlug as ProductSlug ) ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_upsell_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
-			page(
-				getPathToUpsell( rootUrl, urlQueryArgs, product.productSlug, currentDuration, siteSlug )
 			);
 			return;
 		}
