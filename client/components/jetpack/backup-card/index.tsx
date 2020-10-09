@@ -34,9 +34,9 @@ import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-car
  */
 import { Activity } from 'calypso/state/activity-log/types';
 
-type Props = { activity: Activity; isLatest: boolean };
+type Props = { activity: Activity; subActivities: Activity[]; isLatest: boolean };
 
-const BackupCard: FunctionComponent< Props > = ( { activity, isLatest } ) => {
+const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLatest } ) => {
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 	const applySiteOffset = useApplySiteOffset();
@@ -57,16 +57,7 @@ const BackupCard: FunctionComponent< Props > = ( { activity, isLatest } ) => {
 		setTooltipVisibility,
 	] );
 
-	const {
-		activityTs,
-		activityTitle,
-		actorAvatarUrl,
-		actorName,
-		actorRole,
-		actorType,
-		activityMedia,
-		rewindId,
-	} = activity;
+	const { activityTs, activityTitle, rewindId } = activity;
 	const dateMoment = applySiteOffset ? applySiteOffset( activityTs ) : moment( activityTs );
 	const dateTime = dateMoment.format();
 	const displayDate = getDisplayDate( activityTs, false );
@@ -139,25 +130,33 @@ const BackupCard: FunctionComponent< Props > = ( { activity, isLatest } ) => {
 			<div className="backup-card__about">
 				<h3 className="backup-card__about-heading">{ translate( 'About this backup' ) }</h3>
 				<div className="backup-card__about-content">
-					<div className="backup-card__about-media">
-						<ActivityActor
-							actorAvatarUrl={ actorAvatarUrl }
-							actorName={ actorName }
-							actorRole={ actorRole }
-							actorType={ actorType }
-							size={ SIZE_S }
-							withoutInfo
-						/>
-					</div>
-					<div className="backup-card__about-body">
-						{ activityMedia?.available && (
-							<ActivityMedia
-								name={ activityMedia?.name }
-								thumbnail={ activityMedia?.medium_url || activityMedia?.thumbnail_url }
-							/>
-						) }
-						<ActivityDescription activity={ activity } />
-					</div>
+					<ul className="backup-card__about-list">
+						{ ( subActivities?.length > 0 ? subActivities : [ activity ] ).map( ( item ) => (
+							<li key={ item.activityId }>
+								<div className="backup-card__about-media">
+									<ActivityActor
+										actorAvatarUrl={ item.actorAvatarUrl }
+										actorName={ item.actorName }
+										actorRole={ item.actorRole }
+										actorType={ item.actorType }
+										size={ SIZE_S }
+										withoutInfo
+									/>
+								</div>
+								<div className="backup-card__about-body">
+									{ item.activityMedia?.available && (
+										<ActivityMedia
+											name={ item.activityMedia?.name }
+											thumbnail={
+												item.activityMedia?.medium_url || item.activityMedia?.thumbnail_url
+											}
+										/>
+									) }
+									<ActivityDescription activity={ item } />
+								</div>
+							</li>
+						) ) }
+					</ul>
 				</div>
 			</div>
 		</Card>

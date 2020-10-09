@@ -112,13 +112,24 @@ $cloud-icon-height: 24px;
 }
 
 .backup-card__about-content {
-	display: flex;
-	align-items: center;
-
 	padding: 20px;
 
 	background-color: var( --color-neutral-0 );
 	color: var( --color-neutral-40 );
+}
+
+.backup-card__about-list {
+	margin: -16px 0;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		display: flex;
+		align-items: flex-start;
+
+		margin: 16px 0;
+	}
 }
 
 .backup-card__about-media {
@@ -129,5 +140,15 @@ $cloud-icon-height: 24px;
 		// Prevent container from being larger than image
 		// Ref. https://stackoverflow.com/questions/11126685/why-does-container-div-insist-on-being-slightly-larger-than-img-or-svg-content
 		display: block;
+	}
+}
+
+.backup-card__about-body {
+	flex: 1;
+	align-self: center;
+
+	.activity-card__activity-media {
+		max-width: 250px;
+		margin-bottom: 4px;
 	}
 }
