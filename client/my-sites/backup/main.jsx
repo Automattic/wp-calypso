@@ -18,6 +18,7 @@ import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import { updateFilter, setFilter } from 'calypso/state/activity-log/actions';
 import {
+	getRawDailyBackupDeltas,
 	getDailyBackupDeltas,
 	// getMetaDiffForDailyBackup,
 	isActivityBackup,
@@ -33,6 +34,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import DailyBackupStatus from 'calypso/components/jetpack/daily-backup-status';
+import DailyBackupStatusAlternate from 'calypso/components/jetpack/daily-backup-status/index-alternate';
 import BackupDatePicker from 'calypso/components/jetpack/backup-date-picker';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
@@ -220,15 +222,26 @@ class BackupsPage extends Component {
 								} }
 							/>
 
-							<DailyBackupStatus
-								{ ...{
-									selectedDate: this.getSelectedDate(),
-									lastBackupDate: lastDateAvailable,
-									backup: lastBackup,
-									deltas,
-									// metaDiff, todo: commented because the non-english account issue
-								} }
-							/>
+							{ isEnabled( 'jetpack/backup-simplified-screens-i4' ) ? (
+								<DailyBackupStatusAlternate
+									{ ...{
+										selectedDate: this.getSelectedDate(),
+										lastBackupDate: lastDateAvailable,
+										backup: lastBackup,
+										dailyDeltas: getRawDailyBackupDeltas( logs, selectedDateString ),
+									} }
+								/>
+							) : (
+								<DailyBackupStatus
+									{ ...{
+										selectedDate: this.getSelectedDate(),
+										lastBackupDate: lastDateAvailable,
+										backup: lastBackup,
+										deltas,
+										// metaDiff, todo: commented because the non-english account issue
+									} }
+								/>
+							) }
 						</div>
 
 						{ hasRealtimeBackups &&

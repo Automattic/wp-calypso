@@ -17,7 +17,6 @@ import ActivityMedia from 'calypso/components/activity-card/activity-media';
 import Badge from 'calypso/components/badge';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useApplySiteOffset } from 'calypso/components/site-offset';
 import Tooltip from 'calypso/components/tooltip';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -32,14 +31,13 @@ import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-car
 /**
  * Type dependencies
  */
-import { Activity } from 'calypso/state/activity-log/types';
+import type { Activity } from 'calypso/state/activity-log/types';
 
-type Props = { activity: Activity; subActivities: Activity[]; isLatest: boolean };
+type Props = { activity: Activity; subActivities?: Activity[]; isLatest: boolean };
 
 const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLatest } ) => {
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
-	const applySiteOffset = useApplySiteOffset();
 	const moment = useLocalizedMoment();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -58,9 +56,6 @@ const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLa
 	] );
 
 	const { activityTs, activityTitle, rewindId } = activity;
-	const dateMoment = applySiteOffset ? applySiteOffset( activityTs ) : moment( activityTs );
-	const dateTime = dateMoment.format();
-	const displayDate = getDisplayDate( activityTs, false );
 
 	return (
 		<Card
@@ -72,7 +67,9 @@ const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLa
 				<div className="backup-card__header">
 					<div className="backup-card__header-text">
 						<h2 className="backup-card__date">
-							<time dateTime={ dateTime }>{ displayDate }</time>
+							<time dateTime={ moment( activityTs ).format() }>
+								{ getDisplayDate( activityTs, false ) }
+							</time>
 						</h2>
 						<p className="backup-card__title">
 							<img className="backup-card__icon" src={ cloudIcon } alt="" />
@@ -131,31 +128,33 @@ const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLa
 				<h3 className="backup-card__about-heading">{ translate( 'About this backup' ) }</h3>
 				<div className="backup-card__about-content">
 					<ul className="backup-card__about-list">
-						{ ( subActivities?.length > 0 ? subActivities : [ activity ] ).map( ( item ) => (
-							<li key={ item.activityId }>
-								<div className="backup-card__about-media">
-									<ActivityActor
-										actorAvatarUrl={ item.actorAvatarUrl }
-										actorName={ item.actorName }
-										actorRole={ item.actorRole }
-										actorType={ item.actorType }
-										size={ SIZE_S }
-										withoutInfo
-									/>
-								</div>
-								<div className="backup-card__about-body">
-									{ item.activityMedia?.available && (
-										<ActivityMedia
-											name={ item.activityMedia?.name }
-											thumbnail={
-												item.activityMedia?.medium_url || item.activityMedia?.thumbnail_url
-											}
+						{ ( subActivities && subActivities?.length > 0 ? subActivities : [ activity ] ).map(
+							( item ) => (
+								<li key={ item.activityId }>
+									<div className="backup-card__about-media">
+										<ActivityActor
+											actorAvatarUrl={ item.actorAvatarUrl }
+											actorName={ item.actorName }
+											actorRole={ item.actorRole }
+											actorType={ item.actorType }
+											size={ SIZE_S }
+											withoutInfo
 										/>
-									) }
-									<ActivityDescription activity={ item } />
-								</div>
-							</li>
-						) ) }
+									</div>
+									<div className="backup-card__about-body">
+										{ item.activityMedia?.available && (
+											<ActivityMedia
+												name={ item.activityMedia?.name }
+												thumbnail={
+													item.activityMedia?.medium_url || item.activityMedia?.thumbnail_url
+												}
+											/>
+										) }
+										<ActivityDescription activity={ item } />
+									</div>
+								</li>
+							)
+						) }
 					</ul>
 				</div>
 			</div>
