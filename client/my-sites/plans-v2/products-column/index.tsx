@@ -12,8 +12,8 @@ import { getJetpackDescriptionWithOptions } from '../utils';
 import { PRODUCTS_TYPES } from '../constants';
 import ProductCard from '../product-card';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import FormattedHeader from 'components/formatted-header';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 
 /**
  * Type dependencies
