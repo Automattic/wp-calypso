@@ -3,7 +3,7 @@
  */
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import React, { FunctionComponent, FormEventHandler, useState, useEffect } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import { find, isEmpty } from 'lodash';
 
 /**
@@ -11,12 +11,20 @@ import { find, isEmpty } from 'lodash';
  */
 import { Button, Card } from '@automattic/components';
 import { ConnectionStatus, StatusState } from './connection-status';
+import {
+	Credentials,
+	FormMode,
+	FormState,
+	INITIAL_FORM_ERRORS,
+	INITIAL_FORM_STATE,
+	validate,
+} from './form';
 import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
-import { FormState, FormErrors, INITIAL_FORM_STATE } from './form';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { settingsPath } from 'lib/jetpack/paths';
 import CredentialsForm from './credentials-form';
 import DocumentHead from 'components/data/document-head';
+import getJetpackCredentialsUpdateError from 'state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'state/selectors/get-rewind-state';
 import Gridicon from 'components/gridicon';
@@ -25,7 +33,6 @@ import Main from 'components/main';
 import QueryRewindState from 'components/data/query-rewind-state';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import StepProgress from 'components/step-progress';
-import Verification from './verification';
 
 /**
  * Style dependencies
@@ -48,15 +55,24 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 	];
 
 	const [ formState, setFormState ] = useState( INITIAL_FORM_STATE );
-	const [ formErrors ] = useState< FormErrors >( {} );
-	const [ requestedCredentialsSave ] = useState( false );
+	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
+	const [ formMode, setFormMode ] = useState( FormMode.Password );
+	const [ requestedCredentialsSave, setRequestedCredentialsSave ] = useState( false );
 	const [ requestedCredentialsEdit, setRequestedCredentialsEdit ] = useState( false );
-	// const hostInfo = getHostInfoFromId( host );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const formSubmissionStatus = useSelector( ( state ) =>
-		getJetpackCredentialsUpdateStatus( state, siteId )
+	const formSubmissionStatus = useSelector(
+		( state ) =>
+			getJetpackCredentialsUpdateStatus( state, siteId ) as
+				| 'unsubmitted'
+				| 'pending'
+				| 'success'
+				| 'failed'
+	);
+
+	const formSubmissionError = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateError( state, siteId )
 	);
 
 	const { state: backupState, credentials } = useSelector( ( state ) =>
@@ -69,48 +85,48 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 	// when credentials load, merge w/ the form state
 	useEffect( () => {
 		// TODO: update form state logic
-		const foundCredentials = !! credentials && find( credentials, { role } );
-		foundCredentials && setFormState( foundCredentials );
+		const foundCredentials = !! credentials && ( find( credentials, { role } ) as Credentials );
+		if ( foundCredentials ) {
+			const { type, ...otherProperties } = foundCredentials;
+			setFormState( { ...otherProperties, protocol: type, pass: '', kpri: '' } );
+		}
 	}, [ credentials, role ] );
+
+	// validate changes to the credentials form
+	useEffect( () => {
+		setFormErrors( validate( formState, formMode ) );
+	}, [ formState, formMode ] );
+
+	// if a new error occurs from a form submission add that to the errors
+	useEffect( () => {
+		if ( null !== formSubmissionError ) {
+			switch ( formSubmissionError.code ) {
+				case 'invalid_wordpress_path':
+					setFormErrors( {
+						path: {
+							message: translate(
+								'WordPress could not be found in this folder, please check the path was entered correctly'
+							),
+							waitForInteraction: false,
+						},
+					} );
+					break;
+				// TODO: more cases that could be added here
+			}
+		}
+	}, [ setFormErrors, formSubmissionError, translate ] );
 
 	const handleDeleteCredentials = () => {
 		dispatch( deleteCredentials( siteId, role ) );
 	};
 
 	const handleUpdateCredentials = () => {
-		// TODO: check for missing fields
-
 		if ( ! isEmpty( formErrors ) ) {
 			return;
 		}
 
+		setRequestedCredentialsSave( true );
 		dispatch( updateCredentials( siteId, { role, ...formState } ) );
-	};
-
-	const updateFormState: FormEventHandler< HTMLInputElement > = ( { currentTarget } ) => {
-		switch ( currentTarget.name ) {
-			case 'protocol':
-				setFormState( { ...formState, protocol: currentTarget.value as 'ftp' | 'ssh' } );
-				break;
-			case 'host':
-				setFormState( { ...formState, host: currentTarget.value as string } );
-				break;
-			case 'port':
-				setFormState( { ...formState, port: currentTarget.value as string } );
-				break;
-			case 'user':
-				setFormState( { ...formState, user: currentTarget.value as string } );
-				break;
-			case 'pass':
-				setFormState( { ...formState, pass: currentTarget.value as string } );
-				break;
-			case 'path':
-				setFormState( { ...formState, path: currentTarget.value as string } );
-				break;
-			case 'kpri':
-				setFormState( { ...formState, kpri: currentTarget.value as string } );
-				break;
-		}
 	};
 
 	const getStatusState = ( currentBackupState: string | undefined ): StatusState => {
@@ -129,46 +145,54 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 		}
 	};
 
+	const statusState = getStatusState( backupState );
+
 	const getCurrentStep = () => {
 		if ( host === undefined ) {
 			return 0;
+		} else if ( requestedCredentialsSave ) {
+			return 2;
+		} else if ( statusState === StatusState.Connected ) {
+			return 3;
 		}
 		return 1;
 	};
 
-	const render = ( statusState: StatusState ) => {
-		if ( statusState === StatusState.Loading ) {
+	const render = ( status: StatusState ) => {
+		if ( status === StatusState.Loading ) {
 			// TODO:, placeholder
 			return <div></div>;
 		}
 
-		if ( 'pending' === formSubmissionStatus ) {
-			return <Verification />;
-		}
-
-		if ( requestedCredentialsEdit && statusState === StatusState.Connected ) {
+		if ( requestedCredentialsEdit && status === StatusState.Connected ) {
 			return (
 				<CredentialsForm
-					handleFormChange={ updateFormState }
-					host={ 'generic' }
+					disabled={ 'pending' === formSubmissionStatus }
+					formErrors={ formErrors }
+					formMode={ formMode }
 					formState={ formState }
+					host={ 'generic' }
+					onFormStateChange={ setFormState }
+					onModeChange={ setFormMode }
 				>
 					<Button scary onClick={ handleDeleteCredentials }>
 						{ translate( 'Delete Credentials' ) }
 					</Button>
-					<Button
-					// onClick={ onCredentialsSave }
-					>
+					<Button onClick={ handleUpdateCredentials } disabled={ ! isEmpty( formErrors ) }>
 						{ translate( 'Update credentials' ) }
 					</Button>
 				</CredentialsForm>
 			);
 		}
 
-		if ( ! requestedCredentialsSave && statusState === StatusState.Connected ) {
+		if ( status === StatusState.Connected ) {
 			return (
 				<div>
-					<Button borderless onClick={ () => setRequestedCredentialsEdit( true ) }>
+					<Button
+						borderless
+						className="advanced-credentials__connected"
+						onClick={ () => setRequestedCredentialsEdit( true ) }
+					>
 						{ translate(
 							'The remote server credentials for %(siteSlug)s are present and correct, allowing Jetpack to perform restores and security fixes when required.',
 							{
@@ -187,21 +211,26 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 
 		return (
 			<div>
-				<h4>{ host }</h4>
-				<CredentialsForm handleFormChange={ updateFormState } host={ host } formState={ formState }>
+				<CredentialsForm
+					disabled={ 'pending' === formSubmissionStatus }
+					formErrors={ formErrors }
+					formMode={ formMode }
+					formState={ formState }
+					host={ host }
+					onFormStateChange={ setFormState }
+					onModeChange={ setFormMode }
+				>
 					<Button compact borderless href={ `${ settingsPath( siteSlug ) }` }>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ translate( 'Change host' ) }
 					</Button>
-					<Button primary onClick={ handleUpdateCredentials }>
+					<Button primary onClick={ handleUpdateCredentials } disabled={ ! isEmpty( formErrors ) }>
 						{ translate( 'Save credentials' ) }
 					</Button>
 				</CredentialsForm>
 			</div>
 		);
 	};
-
-	const statusState = getStatusState( backupState );
 
 	return (
 		<Main className="advanced-credentials">

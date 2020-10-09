@@ -7,11 +7,11 @@ import React, { FunctionComponent, useState, FormEventHandler } from 'react';
 /**
  * Internal dependencies
  */
-// import FormInputValidation from 'components/forms/form-input-validation';
 import { Button } from '@automattic/components';
-import { FormState } from '../form';
+import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
 import { getHostInfoFromId } from '../host-info';
 import FormFieldset from 'components/forms/form-fieldset';
+import FormInputValidation from 'components/forms/form-input-validation';
 import FormLabel from 'components/forms/form-label';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSelect from 'components/forms/form-select';
@@ -28,16 +28,13 @@ import SegmentedControl from 'components/segmented-control';
  */
 import './style.scss';
 
-enum Mode {
-	Password,
-	PrivateKey,
-}
-
 interface Props {
-	// formErrors: formErrorsState;
+	formErrors: FormErrors;
+	formMode: FormMode;
 	disabled?: boolean;
 	formState: FormState;
-	handleFormChange: FormEventHandler< HTMLInputElement >;
+	onFormStateChange: ( newFormState: FormState ) => void;
+	onModeChange: ( fromMode: FormMode ) => void;
 	host: string;
 }
 
@@ -45,33 +42,90 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	children,
 	disabled = false,
 	formState,
-	handleFormChange,
+	formErrors,
+	formMode,
+	onFormStateChange,
+	onModeChange,
 	host,
 } ) => {
 	const translate = useTranslate();
-	const [ mode, setMode ] = useState( Mode.Password );
+	const [ interactions, setFormInteractions ] = useState( INITIAL_FORM_INTERACTION );
 	const hostInfo = getHostInfoFromId( host );
+
+	const handleFormChange: FormEventHandler< HTMLInputElement > = ( { currentTarget } ) => {
+		switch ( currentTarget.name ) {
+			case 'protocol':
+				onFormStateChange( { ...formState, protocol: currentTarget.value as 'ftp' | 'ssh' } );
+				break;
+			case 'host':
+				setFormInteractions( { ...interactions, host: true } );
+				onFormStateChange( { ...formState, host: currentTarget.value } );
+				break;
+			case 'port':
+				setFormInteractions( { ...interactions, port: true } );
+				onFormStateChange( {
+					...formState,
+					port: isNaN( parseInt( currentTarget.value ) ) ? '' : parseInt( currentTarget.value ),
+				} );
+				break;
+			case 'user':
+				setFormInteractions( { ...interactions, user: true } );
+				onFormStateChange( { ...formState, user: currentTarget.value } );
+				break;
+			case 'pass':
+				setFormInteractions( { ...interactions, pass: true } );
+				onFormStateChange( { ...formState, pass: currentTarget.value } );
+				break;
+			case 'path':
+				setFormInteractions( { ...interactions, path: true } );
+				onFormStateChange( { ...formState, path: currentTarget.value } );
+				break;
+			case 'kpri':
+				setFormInteractions( { ...interactions, kpri: true } );
+				onFormStateChange( { ...formState, kpri: currentTarget.value } );
+				break;
+		}
+	};
+
+	const renderServerUsernameForm = () => (
+		<FormFieldset className="credentials-form__username">
+			<div className="credentials-form__support-info">
+				<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
+				{ hostInfo?.inline?.user && (
+					<InfoPopover>
+						<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.user } />
+					</InfoPopover>
+				) }
+			</div>
+			<FormTextInput
+				name="user"
+				id="server-username"
+				placeholder={ translate( 'username' ) }
+				value={ formState.user }
+				onChange={ handleFormChange }
+				disabled={ disabled }
+				isError={ formErrors.user && ( interactions.user || ! formErrors.user.waitForInteraction ) }
+				// Hint to LastPass not to attempt autofill
+				data-lpignore="true"
+			/>
+			{ formErrors.user && ( interactions.user || ! formErrors.user.waitForInteraction ) && (
+				<FormInputValidation isError={ true } text={ formErrors.user.message } />
+			) }
+		</FormFieldset>
+	);
 
 	const renderPasswordForm = () => (
 		<div className="credentials-form__row credentials-form__user-pass">
-			<FormFieldset className="credentials-form__username">
-				<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
-				<FormTextInput
-					name="user"
-					id="server-username"
-					placeholder={ translate( 'username' ) }
-					value={ formState.user }
-					onChange={ handleFormChange }
-					disabled={ disabled }
-					// isError={ !! formErrors.user }
-					// Hint to LastPass not to attempt autofill
-					data-lpignore="true"
-				/>
-				{ /* { formErrors.user && <FormInputValidation isError={ true } text={ formErrors.user } /> } */ }
-			</FormFieldset>
-
+			{ renderServerUsernameForm() }
 			<FormFieldset className="credentials-form__password">
-				<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
+				<div className="credentials-form__support-info">
+					<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
+					{ hostInfo?.inline?.pass && (
+						<InfoPopover>
+							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.pass } />
+						</InfoPopover>
+					) }
+				</div>
 				<FormPasswordInput
 					name="pass"
 					id="server-password"
@@ -79,30 +133,50 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					value={ formState.pass }
 					onChange={ handleFormChange }
 					disabled={ disabled }
-					// isError={ !! formErrors.pass }
+					isError={
+						formErrors.pass && ( interactions.pass || ! formErrors.pass.waitForInteraction )
+					}
 					// Hint to LastPass not to attempt autofill
 					data-lpignore="true"
 				/>
-				{ /* { formErrors.pass && <FormInputValidation isError={ true } text={ formErrors.pass } /> } */ }
+				{ formErrors.pass && ( interactions.pass || ! formErrors.pass.waitForInteraction ) && (
+					<FormInputValidation isError={ true } text={ formErrors.pass.message } />
+				) }
 			</FormFieldset>
 		</div>
 	);
 
 	const renderPrivateKeyForm = () => (
-		<FormFieldset className="credentials-form__kpri">
-			<FormLabel htmlFor="private-key">{ translate( 'Private key' ) }</FormLabel>
-			<FormTextArea
-				name="kpri"
-				id="private-key"
-				value={ formState.kpri }
-				onChange={ handleFormChange }
-				disabled={ disabled }
-				className="credentials-form__private-key"
-			/>
-			<FormSettingExplanation>
-				{ translate( 'Only non-encrypted private keys are supported.' ) }
-			</FormSettingExplanation>
-		</FormFieldset>
+		<>
+			{ renderServerUsernameForm() }
+			<FormFieldset className="credentials-form__kpri">
+				<div className="credentials-form__support-info">
+					<FormLabel htmlFor="private-key">{ translate( 'Private key' ) }</FormLabel>
+					{ hostInfo?.inline?.kpri && (
+						<InfoPopover>
+							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.kpri } />
+						</InfoPopover>
+					) }
+				</div>
+				<FormTextArea
+					name="kpri"
+					id="private-key"
+					value={ formState.kpri }
+					onChange={ handleFormChange }
+					disabled={ disabled }
+					className="credentials-form__private-key"
+					isError={
+						formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction )
+					}
+				/>
+				<FormSettingExplanation>
+					{ translate( 'Only non-encrypted private keys are supported.' ) }
+				</FormSettingExplanation>
+				{ formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction ) && (
+					<FormInputValidation isError={ true } text={ formErrors.kpri.message } />
+				) }
+			</FormFieldset>
+		</>
 	);
 
 	const getSubHeaderText = () => {
@@ -132,7 +206,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 		if ( hostInfo !== null && hostInfo.credentialLinks !== undefined ) {
 			if ( 'ftp' === formState.protocol && hostInfo.credentialLinks.ftp !== undefined ) {
 				return (
-					<Button href={ hostInfo.credentialLinks.ftp } target="_blank">
+					<Button
+						className="credentials-form__credentials-guide-link"
+						href={ hostInfo.credentialLinks.ftp }
+						target="_blank"
+					>
 						{ translate( 'Read the %(hostName)s credentials guide', {
 							args: {
 								hostName: hostInfo.name,
@@ -144,7 +222,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			}
 			if ( 'ssh' === formState.protocol && hostInfo.credentialLinks.sftp !== undefined ) {
 				return (
-					<Button href={ hostInfo.credentialLinks.sftp } target="_blank">
+					<Button
+						className="credentials-form__credentials-guide-link"
+						href={ hostInfo.credentialLinks.sftp }
+						target="_blank"
+					>
 						{ translate( 'Read the %(hostName)s credentials guide', {
 							args: {
 								hostName: hostInfo.name,
@@ -166,12 +248,9 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
-					{ hostInfo?.inline?.credentialType && (
+					{ hostInfo?.inline?.protocol && (
 						<InfoPopover>
-							<InlineInfo
-								credentialType={ formState.protocol }
-								info={ hostInfo.inline.credentialType }
-							/>
+							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.protocol } />
 						</InfoPopover>
 					) }
 				</div>
@@ -191,12 +270,9 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				<FormFieldset className="credentials-form__server-address">
 					<div className="credentials-form__support-info">
 						<FormLabel htmlFor="host-address">{ translate( 'Server address' ) }</FormLabel>
-						{ hostInfo?.inline?.serverAddress && (
+						{ hostInfo?.inline?.host && (
 							<InfoPopover>
-								<InlineInfo
-									credentialType={ formState.protocol }
-									info={ hostInfo.inline.serverAddress }
-								/>
+								<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.host } />
 							</InfoPopover>
 						) }
 					</div>
@@ -207,20 +283,21 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						value={ formState.host }
 						onChange={ handleFormChange }
 						disabled={ disabled }
-						// isError={ !! formErrors.host }
+						isError={
+							formErrors.host && ( interactions.host || ! formErrors.host.waitForInteraction )
+						}
 					/>
-					{ /* { formErrors.host && <FormInputValidation isError={ true } text={ formErrors.host } /> } */ }
+					{ formErrors.host && ( interactions.host || ! formErrors.host.waitForInteraction ) && (
+						<FormInputValidation isError={ true } text={ formErrors.host.message } />
+					) }
 				</FormFieldset>
 
 				<FormFieldset className="credentials-form__port-number">
 					<div className="credentials-form__support-info">
 						<FormLabel htmlFor="server-port">{ translate( 'Port number' ) }</FormLabel>
-						{ hostInfo?.inline?.portNumber && (
+						{ hostInfo?.inline?.port && (
 							<InfoPopover>
-								<InlineInfo
-									credentialType={ formState.protocol }
-									info={ hostInfo.inline.portNumber }
-								/>
+								<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.port } />
 							</InfoPopover>
 						) }
 					</div>
@@ -231,9 +308,13 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						value={ formState.port }
 						onChange={ handleFormChange }
 						disabled={ disabled }
-						// isError={ !! formErrors.port }
+						isError={
+							formErrors.port && ( interactions.port || ! formErrors.port.waitForInteraction )
+						}
 					/>
-					{ /* { formErrors.port && <FormInputValidation isError={ true } text={ formErrors.port } /> } */ }
+					{ formErrors.port && ( interactions.port || ! formErrors.port.waitForInteraction ) && (
+						<FormInputValidation isError={ true } text={ formErrors.port.message } />
+					) }
 				</FormFieldset>
 			</div>
 
@@ -242,12 +323,9 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					<FormLabel htmlFor="wordpress-path">
 						{ translate( 'WordPress installation path' ) }
 					</FormLabel>
-					{ hostInfo?.inline?.installationPath && (
+					{ hostInfo?.inline?.path && (
 						<InfoPopover>
-							<InlineInfo
-								credentialType={ formState.protocol }
-								info={ hostInfo.inline.installationPath }
-							/>
+							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.path } />
 						</InfoPopover>
 					) }
 				</div>
@@ -258,34 +336,43 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					value={ formState.path }
 					onChange={ handleFormChange }
 					disabled={ disabled }
-					// isError={ !! formErrors.path }
+					isError={
+						formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction )
+					}
 				/>
 
-				{ /* { formErrors.path && <FormInputValidation isError={ true } text={ formErrors.path } /> } */ }
+				{ formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction ) && (
+					<FormInputValidation isError={ true } text={ formErrors.path.message } />
+				) }
 			</FormFieldset>
 
 			<div className="credentials-form__mode-control">
-				<SegmentedControl>
-					<SegmentedControl.Item
-						selected={ mode === Mode.Password }
-						onClick={ () => setMode( Mode.Password ) }
-					>
-						{ translate( 'Use password' ) }
-					</SegmentedControl.Item>
-					<SegmentedControl.Item
-						selected={ mode === Mode.PrivateKey }
-						onClick={ () => setMode( Mode.PrivateKey ) }
-					>
-						{ translate( 'Use private key' ) }
-					</SegmentedControl.Item>
-				</SegmentedControl>
+				<div className="credentials-form__support-info">
+					<SegmentedControl>
+						<SegmentedControl.Item
+							selected={ formMode === FormMode.Password }
+							onClick={ () => onModeChange( FormMode.Password ) }
+						>
+							{ translate( 'Use password' ) }
+						</SegmentedControl.Item>
+						<SegmentedControl.Item
+							selected={ formMode === FormMode.PrivateKey }
+							onClick={ () => onModeChange( FormMode.PrivateKey ) }
+						>
+							{ translate( 'Use private key' ) }
+						</SegmentedControl.Item>
+					</SegmentedControl>
+					{ hostInfo?.inline?.mode && (
+						<InfoPopover>
+							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.mode } />
+						</InfoPopover>
+					) }
+				</div>
 			</div>
 
-			{ mode === Mode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
+			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 
-			<FormFieldset className="dialog__action-buttons credentials-form__buttons">
-				{ children }
-			</FormFieldset>
+			<FormFieldset className="credentials-form__buttons">{ children }</FormFieldset>
 		</div>
 	);
 };

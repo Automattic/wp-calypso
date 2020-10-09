@@ -36,7 +36,17 @@ export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	return state;
 } );
 
+export const errors = keyedReducer( 'siteId', ( state, { type, error } ) => {
+	switch ( type ) {
+		case JETPACK_CREDENTIALS_UPDATE_FAILURE:
+			return error;
+	}
+
+	return state;
+} );
+
 export const reducer = combineReducers( {
 	items,
 	requestStatus,
+	errors,
 } );
