@@ -18,6 +18,8 @@ import {
 	purchaseEditPaymentMethod,
 	billingHistory,
 	receiptView,
+	paymentMethods,
+	addCreditCard,
 } from './controller';
 
 export default ( router ) => {
@@ -94,6 +96,24 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		receiptView,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/payment-methods/:site',
+		siteSelection,
+		navigation,
+		paymentMethods,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/add-credit-card/:site',
+		siteSelection,
+		navigation,
+		addCreditCard,
 		makeLayout,
 		clientRender
 	);

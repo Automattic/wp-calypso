@@ -6,28 +6,28 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import debugFactory from 'debug';
+import { Card, CompactCard } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { Card, CompactCard } from '@automattic/components';
-import CreditCardFormFields from 'components/credit-card-form-fields';
-import FormButton from 'components/forms/form-button';
-import notices from 'notices';
-import { validatePaymentDetails } from 'lib/checkout';
-import ValidationErrorList from 'notices/validation-error-list';
-import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
-import getCountries from 'state/selectors/get-countries';
-import QueryPaymentCountries from 'components/data/query-countries/payments';
-import { localizeUrl } from 'lib/i18n-utils';
+import Gridicon from 'calypso/components/gridicon';
+import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
+import FormButton from 'calypso/components/forms/form-button';
+import notices from 'calypso/notices';
+import { validatePaymentDetails } from 'calypso/lib/checkout';
+import ValidationErrorList from 'calypso/notices/validation-error-list';
+import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	createStripeSetupIntent,
 	StripeSetupIntentError,
 	StripeValidationError,
 	useStripe,
-} from 'lib/stripe';
+} from 'calypso/lib/stripe';
 import {
 	getInitializedFields,
 	camelCaseFormFields,
@@ -50,16 +50,16 @@ export function CreditCardForm( {
 	apiParams = {},
 	createCardToken,
 	countriesList,
-	initialValues,
-	purchase,
+	initialValues = undefined,
+	purchase = undefined,
 	recordFormSubmitEvent,
 	saveStoredCard = null,
-	siteSlug,
+	siteSlug = undefined,
 	successCallback,
 	showUsedForExistingPurchasesInfo = false,
 	autoFocus = true,
-	heading,
-	onCancel,
+	heading = undefined,
+	onCancel = undefined,
 	translate,
 } ) {
 	const { stripe, stripeConfiguration, setStripeError } = useStripe();

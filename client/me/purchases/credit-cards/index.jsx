@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ import {
 	isFetchingStoredCards,
 } from 'calypso/state/stored-cards/selectors';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
-import { addCreditCard } from 'calypso/me/purchases/paths';
 import SectionHeader from 'calypso/components/section-header';
 
 /**
@@ -52,9 +52,9 @@ class CreditCards extends Component {
 		} );
 	}
 
-	goToAddCreditCard() {
-		page( addCreditCard );
-	}
+	goToAddCreditCard = () => {
+		page( this.props.addPaymentMethodUrl );
+	};
 
 	renderAddCreditCardButton() {
 		if ( ! config.isEnabled( 'manage/payment-methods' ) ) {
@@ -91,6 +91,15 @@ class CreditCards extends Component {
 		);
 	}
 }
+
+CreditCards.propTypes = {
+	addPaymentMethodUrl: PropTypes.string.isRequired,
+	// From connect:
+	cards: PropTypes.array.isRequired,
+	paymentAgreements: PropTypes.array.isRequired,
+	hasLoadedFromServer: PropTypes.bool,
+	isFetching: PropTypes.bool,
+};
 
 export default connect( ( state ) => ( {
 	cards: getStoredCards( state ),

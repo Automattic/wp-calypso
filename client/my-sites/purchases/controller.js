@@ -16,6 +16,7 @@ import {
 	PurchaseEditPaymentMethod,
 } from 'calypso/my-sites/purchases/main';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
+import { PaymentMethods, AddNewPaymentMethod } from 'calypso/my-sites/purchases/payment-methods';
 
 export function redirectToPurchases( context ) {
 	const siteDomain = context.params.site;
@@ -80,6 +81,16 @@ export const purchaseEditPaymentMethod = ( context, next ) => {
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>
 	);
+	next();
+};
+
+export const paymentMethods = ( context, next ) => {
+	context.primary = <PaymentMethods siteSlug={ context.params.site } />;
+	next();
+};
+
+export const addCreditCard = ( context, next ) => {
+	context.primary = <AddNewPaymentMethod siteSlug={ context.params.site } />;
 	next();
 };
 
