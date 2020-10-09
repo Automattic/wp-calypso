@@ -51,7 +51,7 @@ async function markReadStatus( noteId, isRead ) {
 				authToken: state.getUser().token,
 				body: {
 					counts: {
-						[ noteId ]: isRead ? 9999 : -1,
+						[ noteId ]: isRead ? 9999 : -1, // magic values required by the API \_(ツ)_/¯
 					},
 				},
 			},
