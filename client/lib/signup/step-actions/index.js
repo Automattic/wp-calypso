@@ -869,7 +869,7 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 }
 
-export function isSecureYourBrandFulfilled( stepName, deefaultDependencies, nextProps ) {
+export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextProps ) {
 	const hasdDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	if ( hasdDomainItemInDependencyStore && isEmpty( domainItem ) ) {
