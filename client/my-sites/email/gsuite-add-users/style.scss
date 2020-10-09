@@ -3,16 +3,33 @@
 	flex-direction: column;
 
 	button {
-		margin: 5px 0 0;
-		width: 100%;
+		margin-top: 10px;
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
 		flex-direction: row;
 
 		button {
-			margin: 0 0 0 5px;
-			width: auto;
+			margin-left: 10px;
+			margin-top: 0;
+		}
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: column;
+
+		button {
+			margin-left: 0;
+			margin-top: 10px;
+		}
+	}
+
+	@include breakpoint-deprecated( '>800px' ) {
+		flex-direction: row;
+
+		button {
+			margin-left: 10px;
+			margin-top: 0;
 		}
 	}
 }

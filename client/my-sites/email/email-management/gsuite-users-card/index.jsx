@@ -11,18 +11,22 @@ import React from 'react';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { emailManagementAddGSuiteUsers } from 'my-sites/email/paths';
-import { hasPendingGSuiteUsers } from 'lib/gsuite';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedDomain } from 'lib/domains';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
-import Notice from 'components/notice';
-import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
-import SectionHeader from 'components/section-header';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { emailManagementAddGSuiteUsers } from 'calypso/my-sites/email/paths';
+import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import GSuiteUserItem from 'calypso/my-sites/email/email-management/gsuite-user-item';
+import Notice from 'calypso/components/notice';
+import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import SectionHeader from 'calypso/components/section-header';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
 
@@ -71,7 +75,7 @@ class GSuiteUsersCard extends React.Component {
 							href={ emailManagementAddGSuiteUsers( this.props.selectedSiteSlug, domainName ) }
 							onClick={ this.goToAddGoogleApps }
 						>
-							{ this.props.translate( 'Add New User' ) }
+							{ this.props.translate( 'Add New Users' ) }
 						</Button>
 					) }
 				</SectionHeader>
