@@ -22,7 +22,8 @@ import {
 	submitExistingCardPayment,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
-import { createEbanxToken } from 'lib/store-transactions';
+import { createEbanxToken } from 'calypso/lib/store-transactions';
+import { showStripeModalAuth } from 'calypso/lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
@@ -102,7 +103,7 @@ export function applePayProcessor(
 
 export async function stripeCardProcessor(
 	submitData,
-	{ includeDomainDetails, includeGSuiteDetails },
+	{ includeDomainDetails, includeGSuiteDetails, recordEvent: onEvent },
 	transactionOptions
 ) {
 	const paymentMethodToken = await createStripePaymentMethodToken( {
@@ -110,7 +111,7 @@ export async function stripeCardProcessor(
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 		postalCode: getPostalCode(),
 	} );
-	const pending = submitStripeCardTransaction(
+	return submitStripeCardTransaction(
 		{
 			...submitData,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -122,12 +123,29 @@ export async function stripeCardProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	)
+		.then( ( result ) => {
+			// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+			dispatch( 'wpcom' ).setTransactionResponse( result );
+			return result;
+		} )
+		.then( ( stripeResponse ) => {
+			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				// 3DS authentication required
+				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+				return showStripeModalAuth( {
+					stripeConfiguration: submitData.stripeConfiguration,
+					response: stripeResponse,
+				} );
+			}
+			return stripeResponse;
+		} )
+		.then( ( stripeResponse ) => {
+			if ( stripeResponse?.redirect_url ) {
+				return { type: 'REDIRECT', payload: stripeResponse.redirect_url };
+			}
+			return { type: 'SUCCESS', payload: stripeResponse };
+		} );
 }
 
 export async function ebanxCardProcessor(
