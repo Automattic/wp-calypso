@@ -72,19 +72,14 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 								if ( stripeResponse?.message?.payment_intent_client_secret ) {
 									debug( 'showing stripe authentication modal' );
 									onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-									showStripeModalAuth( {
+									return showStripeModalAuth( {
 										stripeConfiguration,
 										response: stripeResponse,
-									} )
-										.then( ( authenticationResponse ) => {
-											debug( 'stripe authentication is complete', authenticationResponse );
-											setTransactionComplete();
-										} )
-										.catch( ( error ) => {
-											setTransactionError( error.message );
-										} );
-									return;
+									} );
 								}
+								return stripeResponse;
+							} )
+							.then( ( stripeResponse ) => {
 								// Redirect required
 								if ( stripeResponse?.redirect_url ) {
 									debug( 'stripe transaction requires redirect' );
