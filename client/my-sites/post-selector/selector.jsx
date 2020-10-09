@@ -24,7 +24,9 @@ import {
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import NoResults from './no-results';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
@@ -308,13 +310,13 @@ class PostSelectorPosts extends React.Component {
 		const onChange = ( ...args ) => this.props.onChange( item, ...args );
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getPostChildren( item.ID );
+		const InputComponent = this.props.multiple ? FormInputCheckbox : FormRadio;
 
 		return (
 			<div key={ item.global_ID } ref={ setItemRef } className="post-selector__list-item">
 				<FormLabel>
-					<input
+					<InputComponent
 						name="posts"
-						type={ this.props.multiple ? 'checkbox' : 'radio' }
 						value={ item.ID }
 						onChange={ onChange }
 						checked={ this.props.selected === item.ID }
@@ -375,14 +377,12 @@ class PostSelectorPosts extends React.Component {
 			return this.renderItem( item );
 		}
 
+		const InputComponent = this.props.multiple ? FormInputCheckbox : FormRadio;
+
 		return (
 			<div key="placeholder" className="post-selector__list-item is-placeholder">
 				<FormLabel>
-					<input
-						type={ this.props.multiple ? 'checkbox' : 'radio' }
-						disabled
-						className="post-selector__input"
-					/>
+					<InputComponent disabled className="post-selector__input" />
 					<span className="post-selector__label">{ this.props.translate( 'Loading…' ) }</span>
 				</FormLabel>
 			</div>
