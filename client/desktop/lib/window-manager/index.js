@@ -16,6 +16,7 @@ const path = require( 'path' );
 let screen;
 app.on( 'ready', () => {
 	if ( process.platform === 'win32' ) {
+		// required to display application notification settings in Windows
 		app.setAppUserModelId( 'com.automattic.wordpress' );
 	}
 	screen = electron.screen;
