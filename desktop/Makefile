@@ -46,6 +46,11 @@ source:
 
 	@cd $(CALYPSO_DIR) && yarn run build-desktop:source
 
+secrets:
+	$(info Making app secrets...)
+
+	@cd $(CALYPSO_DIR) && yarn run build-desktop:secrets
+
 # Note: cannot prepend prepend desktop/package.json with full path: cannot be resolved on Windows.
 package: PACKAGE_ELECTRON_VERSION = $(shell cd $(DESKTOP_DIR) && node -e "console.log(require('./package.json').devDependencies.electron)")
 package:
