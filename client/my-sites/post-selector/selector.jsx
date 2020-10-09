@@ -25,18 +25,18 @@ import {
  * Internal dependencies
  */
 import NoResults from './no-results';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 import Search from './search';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
 	getPostsForQueryIgnoringPage,
-	isRequestingPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getPostTypes } from 'state/post-types/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import QueryPosts from 'components/data/query-posts';
+	isRequestingPostsForQueryIgnoringPage,
+} from 'calypso/state/posts/selectors';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
 
 /**
  * Constants
