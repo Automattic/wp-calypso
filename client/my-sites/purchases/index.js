@@ -19,6 +19,7 @@ import {
 	billingHistory,
 	receiptView,
 	paymentMethods,
+	addCreditCard,
 } from './controller';
 
 export default ( router ) => {
@@ -104,6 +105,15 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		paymentMethods,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/add-credit-card/:site',
+		siteSelection,
+		navigation,
+		addCreditCard,
 		makeLayout,
 		clientRender
 	);
