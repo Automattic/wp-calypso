@@ -22,7 +22,7 @@ class GalleryMasonryBlockComponent extends GutenbergBlockComponent {
 	 * @param {{imageName: string, fileName: string, file: string}[]} filesDetails a list of fileDetails
 	 */
 	async uploadImages( filesDetails ) {
-		const fileInputSelector = By.css( `${ this.blockID } input[type=file]` );
+		const fileInputSelector = By.css( `${ this.blockID } input[type="file"]` );
 		const files = filesDetails.map( ( f ) => f.file ).join( '\n ' );
 
 		await driverHelper.setWhenSettable( this.driver, fileInputSelector, files );
