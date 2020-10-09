@@ -84,6 +84,18 @@
 	}
 }
 
+.plans-filter-bar__discount-message {
+	display: none;
+
+	color: var( --color-primary );
+
+	font-size: $font-body-extra-small;
+
+	@include break-mobile {
+		display: inline;
+	}
+}
+
 .plans-filter-bar.sticky {
 	position: fixed;
 	top: var( --masterbar-height );

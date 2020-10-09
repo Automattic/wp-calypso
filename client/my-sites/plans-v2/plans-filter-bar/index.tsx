@@ -9,11 +9,11 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import SelectDropdown from 'components/select-dropdown';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
-import { masterbarIsVisible } from 'state/ui/selectors';
+import SegmentedControl from 'calypso/components/segmented-control';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import { PRODUCT_TYPE_OPTIONS } from '../constants';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 
@@ -28,18 +28,20 @@ import type { Duration, ProductType } from '../types';
 import './style.scss';
 
 interface Props {
+	showDiscountMessage?: boolean;
 	showDurations?: boolean;
 	showProductTypes?: boolean;
 	duration?: Duration;
 	productType?: ProductType;
-	onDurationChange?: Function;
-	onProductTypeChange?: Function;
+	onDurationChange?: ( arg0: Duration ) => void;
+	onProductTypeChange?: ( arg0: Duration ) => void;
 }
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 94;
 
 const PlansFilterBar = ( {
+	showDiscountMessage,
 	showDurations,
 	showProductTypes,
 	duration,
@@ -90,6 +92,13 @@ const PlansFilterBar = ( {
 						{ translate( 'Yearly' ) }
 					</SegmentedControl.Item>
 				</SegmentedControl>
+			) }
+			{ showDiscountMessage && (
+				<span className="plans-filter-bar__discount-message">
+					{ translate( 'You save %(discount)s by paying yearly', {
+						args: { discount: '17%' },
+					} ) }
+				</span>
 			) }
 		</div>
 	);
