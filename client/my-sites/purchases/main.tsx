@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -25,9 +26,12 @@ import {
 import { getEditOrAddPaymentMethodUrlFor } from './utils';
 import AddCardDetails from 'calypso/me/purchases/payment/add-card-details';
 import EditCardDetails from 'calypso/me/purchases/payment/edit-card-details';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 
 export function Purchases() {
 	const translate = useTranslate();
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
 		<Main className="purchases is-wide-layout">
@@ -39,6 +43,7 @@ export function Purchases() {
 				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
+			<PurchasesNavigation sectionTitle={ 'Purchases' } siteSlug={ siteSlug } />
 
 			<Subscriptions />
 		</Main>
