@@ -497,14 +497,14 @@ export function getOptionFromSlug( slug: string ): string | null {
 
 /**
  * Returns all options, both yearly and monthly, given a slug. If the slug
- * is not related to any option, it returns null.
+ * has no related to option, it returns an empty array.
  * e.g. jetpack_security_daily -> [ jetpack_security_monthly, jetpack_security ]
- * e.g. jetpack_scan -> null
+ * e.g. jetpack_scan -> []
  *
  * @param slug string
- * @returns string[] | null
+ * @returns string[]
  */
-export function getAllOptionsFromSlug( slug: string ): string[] | null {
+export function getAllOptionsFromSlug( slug: string ): string[] {
 	if ( JETPACK_BACKUP_PRODUCTS.includes( slug ) ) {
 		return [ OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY ];
 	}
@@ -513,7 +513,7 @@ export function getAllOptionsFromSlug( slug: string ): string[] | null {
 		return [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ];
 	}
 
-	return null;
+	return [];
 }
 
 /**
