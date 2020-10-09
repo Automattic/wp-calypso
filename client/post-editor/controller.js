@@ -12,21 +12,20 @@ import { get, has, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordPlaceholdersTiming } from 'lib/perfmon';
-import { startEditingPostCopy, startEditingExistingPost } from 'state/posts/actions';
-import { addQueryArgs, addSiteFragment } from 'lib/route';
+import { recordPlaceholdersTiming } from 'calypso/lib/perfmon';
+import { startEditingPostCopy, startEditingExistingPost } from 'calypso/state/posts/actions';
+import { addQueryArgs, addSiteFragment } from 'calypso/lib/route';
 import PostEditor from './post-editor';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { startEditingNewPost, stopEditingPost } from 'state/editor/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getEditorNewPostPath } from 'state/editor/selectors';
-import { getEditURL } from 'state/posts/utils';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { requestSelectedEditor, setSelectedEditor } from 'state/selected-editor/actions';
-import { getGutenbergEditorUrl } from 'state/selectors/get-gutenberg-editor-url';
-import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { startEditingNewPost, stopEditingPost } from 'calypso/state/editor/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getEditorNewPostPath } from 'calypso/state/editor/selectors';
+import { getEditURL } from 'calypso/state/posts/utils';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { requestSelectedEditor, setSelectedEditor } from 'calypso/state/selected-editor/actions';
+import { getGutenbergEditorUrl } from 'calypso/state/selectors/get-gutenberg-editor-url';
+import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -174,7 +173,7 @@ function waitForEditorSelection( context, siteId, newEditor ) {
 	} );
 }
 
-async function redirectIfBlockEditor( context, next ) {
+async function redirectIfBlockEditor( context ) {
 	const tmpState = context.store.getState();
 	const selectedEditor = getSelectedEditor( tmpState, getSelectedSiteId( tmpState ) );
 	if ( ! selectedEditor ) {
@@ -194,16 +193,12 @@ async function redirectIfBlockEditor( context, next ) {
 		state = context.store.getState();
 	}
 
-	if ( ! shouldLoadGutenberg( state, siteId ) ) {
-		return next();
-	}
-
 	const postType = determinePostType( context );
 	const postId = getPostID( context );
 	// pass along parameters, for example press-this
 	const gutenbergUrl = getGutenbergEditorUrl( state, siteId, postId, postType );
 	const url = addQueryArgs( context.query, gutenbergUrl );
-	if ( shouldRedirectGutenberg( state, siteId ) ) {
+	if ( ! isEligibleForGutenframe( state, siteId ) ) {
 		return window.location.replace( url );
 	}
 	return page.redirect( url );
