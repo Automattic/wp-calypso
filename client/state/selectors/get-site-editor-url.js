@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { isEligibleForGutenframe } from 'state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
-import { getSiteAdminUrl, getSiteSlug } from 'state/sites/selectors';
+import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Retrieves url for site editor.

@@ -6,8 +6,8 @@ import {
 	SECTION_LOADING_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
 import language from './language/reducer';

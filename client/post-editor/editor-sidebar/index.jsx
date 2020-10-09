@@ -7,10 +7,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import EditorDrawer from 'post-editor/editor-drawer';
+import EditorDrawer from 'calypso/post-editor/editor-drawer';
 import EditorSidebarHeader from './header';
-import SidebarFooter from 'layout/sidebar/footer';
-import EditorDeletePost from 'post-editor/editor-delete-post';
+import SidebarFooter from 'calypso/layout/sidebar/footer';
+import EditorDeletePost from 'calypso/post-editor/editor-delete-post';
 
 /**
  * Style dependencies

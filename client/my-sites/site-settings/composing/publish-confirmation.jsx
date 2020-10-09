@@ -10,13 +10,13 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { isFetchingPreferences } from 'state/preferences/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isConfirmationSidebarEnabled } from 'state/editor/selectors';
-import { saveConfirmationSidebarPreference } from 'state/editor/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isConfirmationSidebarEnabled } from 'calypso/state/editor/selectors';
+import { saveConfirmationSidebarPreference } from 'calypso/state/editor/actions';
 
 class PublishConfirmation extends Component {
 	constructor( props ) {

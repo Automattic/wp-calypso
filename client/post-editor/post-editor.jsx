@@ -16,29 +16,29 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { autosave, editPost, saveEdited } from 'state/posts/actions';
-import { addSiteFragment } from 'lib/route';
-import EditorActionBar from 'post-editor/editor-action-bar';
-import FeaturedImage from 'post-editor/editor-featured-image';
-import EditorTitle from 'post-editor/editor-title';
-import EditorPageSlug from 'post-editor/editor-page-slug';
-import TinyMCE from 'components/tinymce';
-import SegmentedControl from 'components/segmented-control';
-import InvalidURLDialog from 'post-editor/invalid-url-dialog';
-import RestorePostDialog from 'post-editor/restore-post-dialog';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
-import * as utils from 'state/posts/utils';
+import { autosave, editPost, saveEdited } from 'calypso/state/posts/actions';
+import { addSiteFragment } from 'calypso/lib/route';
+import EditorActionBar from 'calypso/post-editor/editor-action-bar';
+import FeaturedImage from 'calypso/post-editor/editor-featured-image';
+import EditorTitle from 'calypso/post-editor/editor-title';
+import EditorPageSlug from 'calypso/post-editor/editor-page-slug';
+import TinyMCE from 'calypso/components/tinymce';
+import SegmentedControl from 'calypso/components/segmented-control';
+import InvalidURLDialog from 'calypso/post-editor/invalid-url-dialog';
+import RestorePostDialog from 'calypso/post-editor/restore-post-dialog';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
+import * as utils from 'calypso/state/posts/utils';
 import EditorPreview from './editor-preview';
-import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import { bumpStat } from 'lib/analytics/mc';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	saveConfirmationSidebarPreference,
 	editorEditRawContent,
 	editorResetRawContent,
 	setEditorIframeLoaded,
-} from 'state/editor/actions';
-import { closeEditorSidebar, openEditorSidebar } from 'state/editor/sidebar/actions';
+} from 'calypso/state/editor/actions';
+import { closeEditorSidebar, openEditorSidebar } from 'calypso/state/editor/sidebar/actions';
 import {
 	getEditorPostId,
 	isConfirmationSidebarEnabled,
@@ -48,40 +48,40 @@ import {
 	isEditorSaveBlocked,
 	getEditorPostPreviewUrl,
 	getEditorLoadingError,
-} from 'state/editor/selectors';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
+} from 'calypso/state/editor/selectors';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	getSitePost,
 	getEditedPost,
 	getEditedPostValue,
 	isEditedPostDirty,
-} from 'state/posts/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { editedPostHasContent } from 'state/posts/selectors/edited-post-has-content';
-import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
-import isVipSite from 'state/selectors/is-vip-site';
-import EditorConfirmationSidebar from 'post-editor/editor-confirmation-sidebar';
-import EditorDocumentHead from 'post-editor/editor-document-head';
-import EditorPostTypeUnsupported from 'post-editor/editor-post-type-unsupported';
-import EditorForbidden from 'post-editor/editor-forbidden';
-import EditorNotice from 'post-editor/editor-notice';
-import EditorWordCount from 'post-editor/editor-word-count';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import QueryPreferences from 'components/data/query-preferences';
-import { setLayoutFocus, setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { protectForm } from 'lib/protect-form';
-import EditorSidebar from 'post-editor/editor-sidebar';
-import Site from 'blocks/site';
-import EditorStatusLabel from 'post-editor/editor-status-label';
-import EditorGroundControl from 'post-editor/editor-ground-control';
-import { isSitePreviewable } from 'state/sites/selectors';
-import { removep } from 'lib/formatting';
-import QuickSaveButtons from 'post-editor/editor-ground-control/quick-save-buttons';
-import EditorRevisionsDialog from 'post-editor/editor-revisions/dialog';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { pauseGuidedTour } from 'state/guided-tours/actions';
+} from 'calypso/state/posts/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { editedPostHasContent } from 'calypso/state/posts/selectors/edited-post-has-content';
+import hasBrokenSiteUserConnection from 'calypso/state/selectors/has-broken-site-user-connection';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import EditorConfirmationSidebar from 'calypso/post-editor/editor-confirmation-sidebar';
+import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
+import EditorPostTypeUnsupported from 'calypso/post-editor/editor-post-type-unsupported';
+import EditorForbidden from 'calypso/post-editor/editor-forbidden';
+import EditorNotice from 'calypso/post-editor/editor-notice';
+import EditorWordCount from 'calypso/post-editor/editor-word-count';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { setLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { protectForm } from 'calypso/lib/protect-form';
+import EditorSidebar from 'calypso/post-editor/editor-sidebar';
+import Site from 'calypso/blocks/site';
+import EditorStatusLabel from 'calypso/post-editor/editor-status-label';
+import EditorGroundControl from 'calypso/post-editor/editor-ground-control';
+import { isSitePreviewable } from 'calypso/state/sites/selectors';
+import { removep } from 'calypso/lib/formatting';
+import QuickSaveButtons from 'calypso/post-editor/editor-ground-control/quick-save-buttons';
+import EditorRevisionsDialog from 'calypso/post-editor/editor-revisions/dialog';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { pauseGuidedTour } from 'calypso/state/guided-tours/actions';
 
 /**
  * Style dependencies
