@@ -15,13 +15,13 @@ import {
 	slugIsFeaturedProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
+import RecordsDetailsAlt from '../records-details-alt';
 import useItemPrice from '../use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import JetpackProductCardAlt from 'calypso/components/jetpack/card/jetpack-product-card-alt';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { JETPACK_SEARCH_PRODUCTS } from 'calypso/lib/products-values/constants';
@@ -94,8 +94,8 @@ const ProductCardAltWrapper = ( {
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
 
-	// We only want to show Jetpack Search price in the Pricing page (Calypso Green)
-	const hidePrice = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && ! isJetpackCloud();
+	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
+	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
 	return (
 		<JetpackProductCardAlt
@@ -103,7 +103,7 @@ const ProductCardAltWrapper = ( {
 			iconSlug={ item.iconSlug }
 			productName={ item.displayName }
 			subheadline={ item.tagline }
-			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
+			description={ ! showRecordsDetails ? description : null }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
@@ -124,9 +124,11 @@ const ProductCardAltWrapper = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={ hidePrice }
+			hidePrice={ false }
 			productSlug={ item.productSlug }
-		/>
+		>
+			{ showRecordsDetails && <RecordsDetailsAlt productSlug={ item.productSlug } /> }
+		</JetpackProductCardAlt>
 	);
 };
 

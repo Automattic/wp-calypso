@@ -141,13 +141,15 @@
  * Record slider
  */
 
-.records-details {
+.records-details,
+.records-details-alt {
 	background-color: var( --studio-gray-0 );
 	border: solid 1px var( --studio-wordpress-blue-30 );
 	color: var( --color-text-subtle );
 }
 
-.records-details__records {
+.records-details__records,
+.records-details-alt__records {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -164,13 +166,25 @@
 	}
 }
 
-.records-details__details {
+.records-details-alt__records {
+	padding: 14px 14px 0;
+
+	border-bottom: none;
+}
+
+.records-details__details,
+.records-details-alt__details {
 	padding: 16px;
 
 	text-align: center;
 }
 
-.records-details__tier {
+.records-details-alt__details {
+	padding: 10px 14px 14px;
+}
+
+.records-details__tier,
+.records-details-alt__tier {
 	margin-bottom: 8px;
 
 	color: var( --color-text );
