@@ -16,3 +16,8 @@ export function usePaymentProcessor( key: string ): PaymentProcessorFunction {
 	}
 	return paymentProcessors[ key ];
 }
+
+export function usePaymentProcessors(): Record< string, PaymentProcessorFunction > {
+	const { paymentProcessors } = useContext( CheckoutContext );
+	return paymentProcessors;
+}
