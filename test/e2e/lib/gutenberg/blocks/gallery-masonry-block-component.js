@@ -6,7 +6,6 @@ import { By } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
-import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class GalleryMasonryBlockComponent extends GutenbergBlockComponent {
@@ -23,9 +22,10 @@ class GalleryMasonryBlockComponent extends GutenbergBlockComponent {
 	 */
 	async uploadImages( filesDetails ) {
 		const fileInputSelector = By.css( `${ this.blockID } input[type="file"]` );
+		const fileInputElement = await this.driver.findElement( fileInputSelector );
 		const files = filesDetails.map( ( f ) => f.file ).join( '\n ' );
 
-		await driverHelper.setWhenSettable( this.driver, fileInputSelector, files );
+		await fileInputElement.sendKeys( files );
 	}
 }
 
