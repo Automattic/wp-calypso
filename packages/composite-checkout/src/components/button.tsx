@@ -98,7 +98,7 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 			${ getBackgroundAccentColor } 72%,
 			${ getBackgroundColor } 72%
 		);
-		background-size: 200px;
+		background-size: 200px 100%;
 		opacity: 1;
 	}
 
