@@ -33,7 +33,7 @@ import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
-const SelectorAltPage = ( {
+const SelectorPageAlt = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
 	rootUrl,
@@ -177,4 +177,4 @@ const SelectorAltPage = ( {
 	);
 };
 
-export default SelectorAltPage;
+export default SelectorPageAlt;
