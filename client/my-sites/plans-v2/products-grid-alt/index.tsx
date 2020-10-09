@@ -14,7 +14,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
-import { SELECTOR_PLANS } from '../constants';
+import { SELECTOR_PLANS_ALT } from '../constants';
 import {
 	getAllOptionsFromSlug,
 	getJetpackDescriptionWithOptions,
@@ -47,7 +47,7 @@ const getPlansToDisplay = ( {
 
 	const currentPlanOptions = currentPlanSlug ? getAllOptionsFromSlug( currentPlanSlug ) : [];
 
-	const plansToDisplay = SELECTOR_PLANS.map( slugToSelectorProduct )
+	const plansToDisplay = SELECTOR_PLANS_ALT.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
 			( product: SelectorProduct | null ): product is SelectorProduct =>
@@ -66,7 +66,7 @@ const getPlansToDisplay = ( {
 	if (
 		currentPlanSlug &&
 		( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ||
-			SELECTOR_PLANS.includes( currentPlanSlug ) )
+			SELECTOR_PLANS_ALT.includes( currentPlanSlug ) )
 	) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
