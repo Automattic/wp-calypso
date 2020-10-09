@@ -7,6 +7,7 @@ import {
 	defer,
 	difference,
 	get,
+	has,
 	includes,
 	isEmpty,
 	isNull,
@@ -877,4 +878,3 @@ export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextP
 		flows.excludeStep( stepName );
 	}
 }
-
