@@ -186,9 +186,9 @@ const SelectorAltPage = ( {
 	return (
 		<Main className="selector-alt__main" wideLayout>
 			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
-			<p>Alternative</p>
 			{ header }
 			<PlansFilterBar
+				showDiscountMessage
 				showDurations
 				onProductTypeChange={ trackProductTypeChange }
 				productType={ productType }
