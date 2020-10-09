@@ -1,10 +1,8 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
@@ -335,11 +333,7 @@ object RunAllUnitTests : BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = """
-				+:pull/*
-				+:master
-				+:trunk
-			""".trimIndent()
+			branchFilter = "+:*"
 		}
 	}
 
@@ -350,16 +344,6 @@ object RunAllUnitTests : BuildType({
 			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
 		}
 		perfmon {
-		}
-		pullRequests {
-			vcsRootExtId = "${WpCalypso.id}"
-			provider = github {
-				serverUrl = ""
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
-			}
 		}
 		commitStatusPublisher {
 			vcsRootExtId = "${WpCalypso.id}"
@@ -462,11 +446,7 @@ object CheckCodeStyle : BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = """
-				+:pull/*
-				+:master
-				+:trunk
-			""".trimIndent()
+			branchFilter = "+:*"
 		}
 	}
 
@@ -478,16 +458,6 @@ object CheckCodeStyle : BuildType({
 			param("xmlReportParsing.verboseOutput", "true")
 		}
 		perfmon {
-		}
-		pullRequests {
-			vcsRootExtId = "${WpCalypso.id}"
-			provider = github {
-				serverUrl = ""
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
-			}
 		}
 		commitStatusPublisher {
 			vcsRootExtId = "${WpCalypso.id}"
