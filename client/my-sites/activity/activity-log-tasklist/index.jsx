@@ -534,7 +534,6 @@ const updateTheme = ( siteId, themeId ) =>
 			body: { action: 'update', themes: themeId },
 		} ),
 		{
-			fromApi: () => ( { themes } ) => themes.map( ( { id } ) => [ id, true ] ),
 			freshness: -Infinity,
 		}
 	);
@@ -555,9 +554,6 @@ const updateCore = ( siteId ) =>
 			// No need to pass version: if it's missing, WP will be updated to latest core version.
 		} ),
 		{
-			fromApi: () => ( { version } ) => {
-				return [ [ version, true ] ];
-			},
 			freshness: -Infinity,
 		}
 	);
