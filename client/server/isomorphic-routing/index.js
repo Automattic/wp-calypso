@@ -37,6 +37,9 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 					req.logger.warn( err );
 				}
 				serverRender( req, res, next );
+				// Keep propagating the error to ensure regular middleware doesn't get executed.
+				// In particular, without this we'll try to render a 404 page.
+				next( err );
 			}
 		);
 	};
