@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -13,6 +14,7 @@ import { useTranslate } from 'i18n-calypso';
 import ActivityActor, { SIZE_S } from 'calypso/components/activity-card/activity-actor';
 import ActivityDescription from 'calypso/components/activity-card/activity-description';
 import ActivityMedia from 'calypso/components/activity-card/activity-media';
+import Badge from 'calypso/components/badge';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useApplySiteOffset } from 'calypso/components/site-offset';
@@ -32,9 +34,9 @@ import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-car
  */
 import { Activity } from 'calypso/state/activity-log/types';
 
-type Props = { activity: Activity };
+type Props = { activity: Activity; isLatest: boolean };
 
-const BackupCard: FunctionComponent< Props > = ( { activity } ) => {
+const BackupCard: FunctionComponent< Props > = ( { activity, isLatest } ) => {
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 	const applySiteOffset = useApplySiteOffset();
@@ -70,15 +72,28 @@ const BackupCard: FunctionComponent< Props > = ( { activity } ) => {
 	const displayDate = getDisplayDate( activityTs, false );
 
 	return (
-		<Card>
+		<Card
+			className={ classNames( 'backup-card', {
+				'is-latest': isLatest,
+			} ) }
+		>
 			<div className="backup-card__main">
-				<h2 className="backup-card__date">
-					<time dateTime={ dateTime }>{ displayDate }</time>
-				</h2>
-				<p className="backup-card__title">
-					<img className="backup-card__icon" src={ cloudIcon } alt="" />
-					{ activityTitle }
-				</p>
+				<div className="backup-card__header">
+					<div className="backup-card__header-text">
+						<h2 className="backup-card__date">
+							<time dateTime={ dateTime }>{ displayDate }</time>
+						</h2>
+						<p className="backup-card__title">
+							<img className="backup-card__icon" src={ cloudIcon } alt="" />
+							{ activityTitle }
+						</p>
+					</div>
+					{ isLatest && (
+						<Badge className="backup-card__badge" type="success">
+							{ translate( 'Latest backup' ) }
+						</Badge>
+					) }
+				</div>
 				{ rewindId && (
 					<ul className="backup-card__actions">
 						<li>

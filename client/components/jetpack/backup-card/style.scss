@@ -1,13 +1,21 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-/* Headings */
+/* Header */
 
 $cloud-icon-height: 24px;
 
+.backup-card__header {
+	position: relative;
+}
+
 .backup-card__date {
 	font-size: 1.25rem;
-	font-weight: 700;
+	font-weight: 600;
+
+	.is-latest & {
+		font-size: 2.25rem;
+	}
 }
 
 .backup-card__title {
@@ -20,11 +28,28 @@ $cloud-icon-height: 24px;
 
 	font-weight: 700;
 	line-height: $cloud-icon-height;
+
+	.is-latest & {
+		margin-bottom: 100px;
+	}
 }
 
 .backup-card__icon {
 	margin-right: 6px;
 	height: $cloud-icon-height;
+}
+
+.backup-card__badge {
+	position: absolute;
+	top: 0;
+	right: 0;
+
+	&.badge {
+		background-color: var( --studio-jetpack-green-5 );
+		color: var( --color-text );
+
+		font-size: 0.75rem;
+	}
 }
 
 /* Actions */
