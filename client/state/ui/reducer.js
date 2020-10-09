@@ -65,9 +65,10 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
 /**
  * Tracks if the notifications panel is open
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param   {object} state       Current state
+ * @param   {object} action      Action payload
+ * @param   {string} action.type The action type identifier. In this case it's looking for NOTIFICATIONS_PANEL_TOGGLE
+ * @returns {object}             Updated state
  */
 export const isNotificationsOpen = function ( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
