@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import type { AnyAction } from 'redux';
@@ -9,15 +9,15 @@ import type { AnyAction } from 'redux';
 /**
  * Internal dependencies
  */
-import type { SiteId } from 'types';
-import { getHttpData, requestHttpData, DataState } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { getHttpData, requestHttpData, DataState } from 'calypso/state/data-layer/http-data';
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { settingsPath } from 'lib/jetpack/paths';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import Badge from 'components/badge';
-import Gridicon from 'components/gridicon';
+import Badge from 'calypso/components/badge';
+import Gridicon from 'calypso/components/gridicon';
+import type { SiteId } from 'calypso/types';
 /**
  * Style dependencies
  */
@@ -44,16 +44,15 @@ function requestHostingProviderGuess( siteId: SiteId ) {
 
 const HostSelection: FunctionComponent = () => {
 	const isMobile = useMobileBreakpoint();
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as SiteId;
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const {
 		state: providerGuessState,
 		data: guess = null,
 		// error: providerGuessError,
-	} = useSelector( () => getHttpData( getRequestHostingProviderGuessId( siteId as SiteId ) ) );
+	} = useSelector( () => getHttpData( getRequestHostingProviderGuessId( siteId ) ) );
 
 	const loadingProviderGuess = ! [ DataState.Success, DataState.Failure ].includes(
 		providerGuessState
