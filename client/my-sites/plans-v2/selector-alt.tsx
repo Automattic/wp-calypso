@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
-import { EXTERNAL_PRODUCTS_LIST, SECURITY } from './constants';
+import { EXTERNAL_PRODUCTS_LIST, ALL } from './constants';
 import { getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
 import useHasProductUpsell from './use-has-product-upsell';
@@ -31,13 +31,7 @@ import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
 /**
  * Type dependencies
  */
-import type {
-	Duration,
-	ProductType,
-	SelectorPageProps,
-	SelectorProduct,
-	PurchaseCallback,
-} from './types';
+import type { Duration, SelectorPageProps, SelectorProduct, PurchaseCallback } from './types';
 import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
@@ -56,7 +50,6 @@ const SelectorAltPage = ( {
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const hasUpsell = useHasProductUpsell();
-	const [ productType, setProductType ] = useState< ProductType >( SECURITY );
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
 	useEffect( () => {
@@ -143,20 +136,6 @@ const SelectorAltPage = ( {
 		checkout( siteSlug, product.productSlug, urlQueryArgs );
 	};
 
-	const trackProductTypeChange = ( selectedType: ProductType ) => {
-		if ( selectedType === productType ) {
-			return;
-		}
-
-		dispatch(
-			recordTracksEvent( 'calypso_plans_type_change', {
-				site_id: siteId || undefined,
-				product_type: selectedType,
-			} )
-		);
-		setProductType( selectedType );
-	};
-
 	const trackDurationChange = ( selectedDuration: Duration ) => {
 		if ( selectedDuration === currentDuration ) {
 			return;
@@ -187,11 +166,10 @@ const SelectorAltPage = ( {
 		<Main className="selector-alt__main" wideLayout>
 			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
 			{ header }
+
 			<PlansFilterBar
 				showDiscountMessage
 				showDurations
-				onProductTypeChange={ trackProductTypeChange }
-				productType={ productType }
 				onDurationChange={ trackDurationChange }
 				duration={ currentDuration }
 			/>
@@ -199,13 +177,13 @@ const SelectorAltPage = ( {
 				<PlansColumn
 					duration={ currentDuration }
 					onPlanClick={ selectProduct }
-					productType={ productType }
+					productType={ ALL }
 					siteId={ siteId }
 				/>
 				<ProductsColumn
 					duration={ currentDuration }
 					onProductClick={ selectProduct }
-					productType={ productType }
+					productType={ ALL }
 					siteId={ siteId }
 				/>
 			</div>
