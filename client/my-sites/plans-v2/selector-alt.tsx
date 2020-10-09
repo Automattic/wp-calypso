@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -10,14 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import PlansFilterBar from './plans-filter-bar';
-import PlansColumn from './plans-column';
-import ProductsColumn from './products-column';
-import { EXTERNAL_PRODUCTS_LIST, ALL } from './constants';
+import { EXTERNAL_PRODUCTS_LIST } from './constants';
 import { getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
 import useHasProductUpsell from './use-has-product-upsell';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -26,7 +23,7 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
+import ProductsGridAlt from './products-grid-alt';
 
 /**
  * Type dependencies
@@ -150,15 +147,6 @@ const SelectorAltPage = ( {
 		setDuration( selectedDuration );
 	};
 
-	const isInConnectFlow = useMemo(
-		() =>
-			/jetpack\/connect\/plans/.test( window.location.href ) ||
-			/source=jetpack-connect-plans/.test( window.location.href ),
-		[]
-	);
-
-	const showJetpackFreeCard = isInConnectFlow || isJetpackCloud();
-
 	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
@@ -173,27 +161,12 @@ const SelectorAltPage = ( {
 				onDurationChange={ trackDurationChange }
 				duration={ currentDuration }
 			/>
-			<div className="plans-v2__columns">
-				<PlansColumn
-					duration={ currentDuration }
-					onPlanClick={ selectProduct }
-					productType={ ALL }
-					siteId={ siteId }
-				/>
-				<ProductsColumn
-					duration={ currentDuration }
-					onProductClick={ selectProduct }
-					productType={ ALL }
-					siteId={ siteId }
-				/>
-			</div>
 
-			{ showJetpackFreeCard && (
-				<>
-					<div className="selector-alt__divider" />
-					<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-				</>
-			) }
+			<ProductsGridAlt
+				duration={ currentDuration }
+				onSelectProduct={ selectProduct }
+				urlQueryArgs={ urlQueryArgs }
+			/>
 
 			<QueryProductsList />
 			<QueryProducts />
