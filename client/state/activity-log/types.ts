@@ -1,4 +1,5 @@
 export type Activity = {
+	activityId: number;
 	activityTs: number;
 	activityName: string;
 	activityTitle: string;
