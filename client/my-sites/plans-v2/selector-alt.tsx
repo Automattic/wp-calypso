@@ -153,6 +153,7 @@ const SelectorPageAlt = ( {
 	return (
 		<Main className="selector-alt__main" wideLayout>
 			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
+
 			{ header }
 
 			<PlansFilterBar
@@ -172,6 +173,7 @@ const SelectorPageAlt = ( {
 			<QueryProducts />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySites siteId={ siteId } /> }
+
 			{ footer }
 		</Main>
 	);
