@@ -12,48 +12,49 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import Banner from 'components/banner';
-import DocumentHead from 'components/data/document-head';
-import { updateFilter, setFilter } from 'state/activity-log/actions';
+import { backupMainPath } from './paths';
+import { isEnabled } from 'calypso/config';
+import Banner from 'calypso/components/banner';
+import DocumentHead from 'calypso/components/data/document-head';
+import { updateFilter, setFilter } from 'calypso/state/activity-log/actions';
 import {
 	getDailyBackupDeltas,
 	// getMetaDiffForDailyBackup,
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 	INDEX_FORMAT,
-} from 'lib/jetpack/backup-utils';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { requestActivityLogs } from 'state/data-getters';
-import { withLocalizedMoment } from 'components/localized-moment';
-import BackupPlaceholder from 'components/jetpack/backup-placeholder';
-import EmptyContent from 'components/empty-content';
-import FormattedHeader from 'components/formatted-header';
-import BackupDelta from 'components/jetpack/backup-delta';
-import DailyBackupStatus from 'components/jetpack/daily-backup-status';
-import BackupDatePicker from 'components/jetpack/backup-date-picker';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import ActivityCardList from 'components/activity-card-list';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getSiteUrl from 'state/sites/selectors/get-site-url';
-import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials.js';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { applySiteOffset } from 'lib/site/timezone';
-import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
-import { backupMainPath } from './paths';
-import { emptyFilter } from 'state/activity-log/reducer';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/jetpack/backup-utils';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { requestActivityLogs } from 'calypso/state/data-getters';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import BackupDelta from 'calypso/components/jetpack/backup-delta';
+import DailyBackupStatus from 'calypso/components/jetpack/daily-backup-status';
+import BackupDatePicker from 'calypso/components/jetpack/backup-date-picker';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import ActivityCardList from 'calypso/components/activity-card-list';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials.js';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // Required to get site time offset
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import { emptyFilter } from 'calypso/state/activity-log/reducer';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import BackupCard from 'calypso/components/jetpack/backup-card';
 
 /**
  * Style dependencies
@@ -230,19 +231,29 @@ class BackupsPage extends Component {
 							/>
 						</div>
 
-						{ hasRealtimeBackups && lastBackup && (
-							<BackupDelta
-								{ ...{
-									deltas,
-									realtimeBackups,
-									doesRewindNeedCredentials,
-									allowRestore,
-									moment,
-									siteSlug,
-									isToday,
-								} }
-							/>
-						) }
+						{ hasRealtimeBackups &&
+							lastBackup &&
+							( isEnabled( 'jetpack/backup-simplified-screens-i4' ) ? (
+								<ul className="backup__card-list">
+									{ realtimeBackups.map( ( activity ) => (
+										<li key={ activity.activityId }>
+											<BackupCard activity={ activity } />
+										</li>
+									) ) }
+								</ul>
+							) : (
+								<BackupDelta
+									{ ...{
+										deltas,
+										realtimeBackups,
+										doesRewindNeedCredentials,
+										allowRestore,
+										moment,
+										siteSlug,
+										isToday,
+									} }
+								/>
+							) ) }
 					</div>
 				) }
 			</>

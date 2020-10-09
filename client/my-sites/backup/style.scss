@@ -46,6 +46,17 @@
 	}
 }
 
+.backup__card-list {
+	margin: 0;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		margin: 44px 0;
+	}
+}
+
 .backup__search {
 	padding: 0 1rem;
 }

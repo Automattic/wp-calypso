@@ -1,0 +1,108 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+/* Headings */
+
+$cloud-icon-height: 24px;
+
+.backup-card__date {
+	font-size: 1.25rem;
+	font-weight: 700;
+}
+
+.backup-card__title {
+	display: flex;
+	justify-items: center;
+
+	margin-bottom: 36px;
+
+	color: var( --studio-jetpack-green-50 );
+
+	font-weight: 700;
+	line-height: $cloud-icon-height;
+}
+
+.backup-card__icon {
+	margin-right: 6px;
+	height: $cloud-icon-height;
+}
+
+/* Actions */
+
+.backup-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+
+	margin: 0 0 32px;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		position: relative;
+
+		margin-right: 24px;
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}
+
+.backup-card__restore-area {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 100%;
+	height: 100%;
+}
+
+.backup-card__restore-tooltip {
+	max-width: 174px;
+
+	&.tooltip.popover .popover__inner {
+		text-align: center;
+	}
+}
+
+/* About section */
+
+.backup-card__about {
+	// Necessary so that the border takes the full width of the card
+	margin: 0 -16px -16px;
+	padding: 24px;
+
+	border-top: solid 1px var( --color-neutral-5 );
+
+	@include break-mobile {
+		margin: 0 -24px -24px;
+	}
+}
+
+.backup-card__about-heading {
+	margin-bottom: 16px;
+
+	font-weight: 700;
+}
+
+.backup-card__about-content {
+	display: flex;
+	align-items: center;
+
+	padding: 20px;
+
+	background-color: var( --color-neutral-0 );
+	color: var( --color-neutral-40 );
+}
+
+.backup-card__about-media {
+	margin-right: 16px;
+
+	img,
+	svg {
+		// Prevent container from being larger than image
+		// Ref. https://stackoverflow.com/questions/11126685/why-does-container-div-insist-on-being-slightly-larger-than-img-or-svg-content
+		display: block;
+	}
+}
