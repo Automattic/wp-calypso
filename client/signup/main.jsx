@@ -91,6 +91,7 @@ import ReskinnedProcessingScreen from 'signup/reskinned-processing-screen';
 import user from 'lib/user';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import { abtest } from 'lib/abtest';
+import { hasSecureYourBrandError } from 'state/secure-your-brand/selectors';
 
 /**
  * Style dependencies
@@ -771,6 +772,7 @@ export default connect(
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 			isReskinned,
+			skipSecureYourBrand: hasSecureYourBrandError( state ),
 		};
 	},
 	{

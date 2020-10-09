@@ -870,9 +870,10 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 }
 
 export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextProps ) {
-	const hasdDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
+	const hasDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
-	if ( hasdDomainItemInDependencyStore && isEmpty( domainItem ) ) {
+	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
+	if ( ( hasDomainItemInDependencyStore && isEmpty( domainItem ) ) || skipSecureYourBrand ) {
 		flows.excludeStep( stepName );
 	}
 }
