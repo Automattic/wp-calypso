@@ -8,8 +8,6 @@ import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
 	FormStatus,
-	usePaymentProcessor,
-	useTransactionStatus,
 	useLineItems,
 	useEvents,
 	useFormStatus,
@@ -37,12 +35,6 @@ export default function CreditCardPayButton( {
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionComplete,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
 
 	const cart = useCart();
@@ -74,9 +66,8 @@ export default function CreditCardPayButton( {
 					}
 					if ( paymentPartner === 'ebanx' ) {
 						debug( 'submitting ebanx payment' );
-						setTransactionPending();
 						onEvent( { type: 'EBANX_TRANSACTION_BEGIN' } );
-						submitTransaction( {
+						onClick( 'card', {
 							name: cardholderName?.value || '',
 							countryCode: fields?.countryCode?.value || '',
 							number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
@@ -92,15 +83,7 @@ export default function CreditCardPayButton( {
 							items,
 							total,
 							paymentPartner,
-						} )
-							.then( ( ebanxResponse ) => {
-								debug( 'ebanx transaction is successful', ebanxResponse );
-								setTransactionComplete();
-							} )
-							.catch( ( error ) => {
-								debug( 'ebanx transaction error', error );
-								setTransactionError( error );
-							} );
+						} );
 						return;
 					}
 					throw new Error(
