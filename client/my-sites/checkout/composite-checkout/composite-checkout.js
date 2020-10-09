@@ -513,8 +513,9 @@ export default function CompositeCheckout( {
 		() => ( {
 			includeDomainDetails,
 			includeGSuiteDetails,
+			recordEvent,
 		} ),
-		[ includeDomainDetails, includeGSuiteDetails ]
+		[ includeDomainDetails, includeGSuiteDetails, recordEvent ]
 	);
 	const dataForRedirectProcessor = useMemo(
 		() => ( {
