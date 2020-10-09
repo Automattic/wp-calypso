@@ -19,20 +19,20 @@ import {
 	INITIAL_FORM_STATE,
 	validate,
 } from './form';
-import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { settingsPath } from 'lib/jetpack/paths';
+import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
 import CredentialsForm from './credentials-form';
-import DocumentHead from 'components/data/document-head';
-import getJetpackCredentialsUpdateError from 'state/selectors/get-jetpack-credentials-update-error';
-import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'state/selectors/get-rewind-state';
-import Gridicon from 'components/gridicon';
+import DocumentHead from 'calypso/components/data/document-head';
+import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
+import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import Gridicon from 'calypso/components/gridicon';
 import HostSelection from './host-selection';
-import Main from 'components/main';
-import QueryRewindState from 'components/data/query-rewind-state';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import StepProgress from 'components/step-progress';
+import Main from 'calypso/components/main';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import StepProgress from 'calypso/components/step-progress';
 
 /**
  * Style dependencies

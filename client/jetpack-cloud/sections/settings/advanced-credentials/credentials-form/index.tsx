@@ -10,18 +10,18 @@ import React, { FunctionComponent, useState, FormEventHandler } from 'react';
 import { Button } from '@automattic/components';
 import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
 import { getHostInfoFromId } from '../host-info';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextArea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
-import InfoPopover from 'components/info-popover';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextArea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
+import InfoPopover from 'calypso/components/info-popover';
 import InlineInfo from './inline-info';
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 /**
  * Style dependencies
