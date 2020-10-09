@@ -24,7 +24,7 @@ const InlineInfo: FunctionComponent< Props > = ( { credentialType, info } ) => {
 			{ infoToRender.map( ( infom, topLevelIndex ) => {
 				if ( HostInfo.infoIsLink( infom ) ) {
 					return (
-						<a key={ topLevelIndex } href={ infom.link }>
+						<a key={ topLevelIndex } href={ infom.link } target="_blank" rel="noreferrer noopener">
 							{ infom.text }
 						</a>
 					);

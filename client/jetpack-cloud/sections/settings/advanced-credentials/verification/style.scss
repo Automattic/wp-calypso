@@ -1,0 +1,35 @@
+.verification__step-list {
+	list-style: none;
+	margin-left: 0;
+}
+
+.verification__step-complete,
+.verification__step-in-progress {
+	display: flex;
+	align-items: center;
+	.gridicon {
+		margin-right: 5px;
+	}
+}
+
+.verification__step-complete {
+	.gridicon {
+		fill: var( --studio-jetpack-green-50 );
+	}
+}
+
+.verification__step-in-progress {
+	.gridicon {
+		fill: var( --studio-yellow-30 );
+	}
+}
+
+.verification__title {
+	margin-top: 35px;
+	margin-bottom: 35px;
+}
+
+.verification__buttons {
+	display: flex;
+	flex-direction: row-reverse;
+}

@@ -1,4 +1,7 @@
-.advanced-credentials {
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.advanced-credentials.main {
 	.step-progress {
 		margin-top: 16px;
 		margin-bottom: 16px;
@@ -13,6 +16,17 @@
 			background-color: var( --color-neutral-10 );
 		}
 	}
+
+	// remove the margin for everything but the top section header at smaller widths
+	> :not( :first-child ) {
+		margin-left: -16px;
+		margin-right: -16px;
+
+		@include break-medium {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
 }
 
 .advanced-credentials__server-connection-status {
@@ -23,6 +37,14 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+}
+
+.advanced-credentials__connected {
+	display: flex;
+	align-items: center;
+	.gridicon {
+		flex-shrink: 0;
+	}
 }
 
 .connection-status__failed,

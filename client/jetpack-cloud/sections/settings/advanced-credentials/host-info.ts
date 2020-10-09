@@ -72,13 +72,14 @@ export interface Host {
 		sftp?: number;
 	};
 	inline?: {
-		credentialType?: InfoSplit | Info[];
-		serverAddress?: InfoSplit | Info[];
-		portNumber?: InfoSplit | Info[];
-		installationPath?: InfoSplit | Info[];
-		serverUserName?: InfoSplit | Info[];
-		serverPassword?: InfoSplit | Info[];
-		serverPrivateKey?: InfoSplit | Info[];
+		protocol?: InfoSplit | Info[];
+		host?: InfoSplit | Info[];
+		port?: InfoSplit | Info[];
+		path?: InfoSplit | Info[];
+		user?: InfoSplit | Info[];
+		pass?: InfoSplit | Info[];
+		kpri?: InfoSplit | Info[];
+		mode?: InfoSplit | Info[];
 	};
 }
 
@@ -86,19 +87,16 @@ export const topHosts: Host[] = [
 	{
 		id: 'amazon',
 		name: 'Amazon / AWS',
-		// // allowGenericFill: true,
-		// sftp: {
-		// 	link: 'https://docs.aws.amazon.com/transfer/latest/userguide/create-server-sftp.html',
-		// },
-		// ssh: {
-		// 	link: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AccessingInstancesLinux.html',
-		// },
+		// supportLink: '',
+		credentialLinks: {
+			sftp: 'https://docs.aws.amazon.com/transfer/latest/userguide/create-server-sftp.html ',
+		},
 	},
 	{
 		id: 'bluehost',
 		name: 'Bluehost',
 		inline: {
-			credentialType: {
+			protocol: {
 				ftp: [
 					{
 						type: InfoTypes.UnorderedList,
@@ -150,7 +148,7 @@ export const topHosts: Host[] = [
 					},
 				],
 			},
-			serverAddress: [
+			host: [
 				{
 					type: InfoTypes.Text,
 					text: translate(
@@ -166,7 +164,7 @@ export const topHosts: Host[] = [
 					link: 'https://my.bluehost.com/cgi-bin/cplogin',
 				},
 			],
-			portNumber: {
+			port: {
 				ftp: [
 					{
 						type: InfoTypes.Text,
@@ -182,6 +180,136 @@ export const topHosts: Host[] = [
 					},
 				],
 			},
+			user: {
+				ftp: [
+					{
+						type: InfoTypes.OrderedList,
+						items: [
+							translate( 'Login to your Bluehost cPanel' ).toString(),
+							translate(
+								'Click the "Advanced" tab towards the left side of the account.'
+							).toString(),
+							translate(
+								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.'
+							).toString(),
+							translate( 'Create a new FTP account' ).toString(),
+						],
+					},
+					{
+						type: InfoTypes.Text,
+						text: translate(
+							'Your Bluehost username will end with your domain (e.g. test@example.com).'
+						).toString(),
+					},
+					{
+						type: InfoTypes.Line,
+					},
+					{
+						type: InfoTypes.Link,
+						text: translate( 'Vist my Bluehost cPanel' ).toString(),
+						link: 'https://my.bluehost.com/cgi-bin/cplogin',
+					},
+				],
+				sftp: [
+					{
+						type: InfoTypes.Text,
+						text: translate(
+							'For Bluehost VPS and dedicated servers, the login will be `root`.'
+						).toString(),
+					},
+					{
+						type: InfoTypes.Text,
+						text: translate(
+							'If you enable shell access for individual cPanels, the SSH username and password would be the same as the cPanel username and password for those accounts.'
+						).toString(),
+					},
+				],
+			},
+			pass: {
+				ftp: [
+					{
+						type: InfoTypes.OrderedList,
+						items: [
+							translate( 'Login to your Bluehost cPanel' ).toString(),
+							translate(
+								'Click the "Advanced" tab towards the left side of the account.'
+							).toString(),
+							translate(
+								'Choose FTP from the sub-menu, or click the FTP Accounts icon from the Files section.'
+							).toString(),
+							translate( 'Create a new FTP account' ).toString(),
+						],
+					},
+					{
+						type: InfoTypes.Text,
+						text: translate(
+							'Your Bluehost FTP password is chosen by you using the tools above.'
+						).toString(),
+					},
+					{
+						type: InfoTypes.Line,
+					},
+					{
+						type: InfoTypes.Link,
+						text: translate( 'Vist my Bluehost cPanel' ).toString(),
+						link: 'https://my.bluehost.com/cgi-bin/cplogin',
+					},
+				],
+				sftp: [
+					{
+						type: InfoTypes.Text,
+						text: translate(
+							'If you enable shell access for individual cPanels, the SSH username and password would be the same as the cPanel username and password for those accounts.'
+						).toString(),
+					},
+					{
+						type: InfoTypes.Line,
+					},
+					{
+						type: InfoTypes.Link,
+						text: translate( 'Vist my Bluehost cPanel' ).toString(),
+						link: 'https://my.bluehost.com/cgi-bin/cplogin',
+					},
+				],
+			},
+			mode: [
+				{
+					type: InfoTypes.Text,
+					text: translate(
+						'The majority of Bluehost accounts require private key authentication. Bluehost VPS and Dedicated Servers also allow for username and password authentication as secondary option.'
+					).toString(),
+				},
+				{
+					type: InfoTypes.Line,
+				},
+				{
+					type: InfoTypes.Link,
+					text: translate( 'Read more' ).toString(),
+					link: 'https://www.bluehost.com/help/article/ssh-access',
+				},
+			],
+			kpri: [
+				{
+					type: InfoTypes.OrderedList,
+					items: [
+						translate( 'Login to your Bluehost cPanel' ).toString(),
+						translate(
+							'Click the "Advanced" tab towards the left side of the account.'
+						).toString(),
+						translate( 'Click the Shell Access icon under the Security section.' ).toString(),
+						translate( 'Click the Manage SSH Keys button' ).toString(),
+						translate( 'Choose generate a new key and complete the form' ).toString(),
+					],
+				},
+				{
+					type: InfoTypes.Line,
+				},
+				{
+					type: InfoTypes.Link,
+					text: translate( 'Vist my Bluehost cPanel' ).toString(),
+					link: 'https://my.bluehost.com/cgi-bin/cplogin',
+				},
+			],
 		},
 	},
 	{
@@ -192,77 +320,24 @@ export const topHosts: Host[] = [
 			ftp: 'https://help.dreamhost.com/hc/en-us/sections/203242517-Connecting-To-Your-Server',
 			sftp: 'https://help.dreamhost.com/hc/en-us/articles/216385837-Enabling-Shell-access',
 		},
-		// // allowGenericFill: true,
-
-		// ftp: 'https://help.dreamhost.com/hc/en-us/articles/115000675027',
-		// sftp: 'https://help.dreamhost.com/hc/en-us/articles/115000675027',
-		// ssh: 'https://help.dreamhost.com/hc/en-us/articles/216385837-Enabling-Shell-access',
 	},
 	{
 		id: 'godaddy',
 		name: 'GoDaddy',
-		// // allowGenericFill: true,
-
-		// 		ftp: false,
-		// 		sftp: 'https://www.godaddy.com/help/upload-files-with-sftp-8940',
-		// 		ssh: 'https://www.godaddy.com/help/enable-ssh-24596',
 	},
 	{
 		id: 'hostgator',
 		name: 'HostGator',
-		// // allowGenericFill: true,
-
-		// ftp: 'https://www.hostgator.com/help/article/ftp-settings-and-connection',
-		// sftp: 'https://www.hostgator.com/help/article/secure-ftp-sftp-and-ftps',
-		// ssh: 'https://www.hostgator.com/help/article/how-do-i-get-and-use-ssh-access',
 	},
 	{
 		id: 'siteground',
 		name: 'Siteground',
-		// allowGenericFill: true,
-
-		// 		ftp: 'https://www.siteground.com/kb/establish-ftp-connection-hosting-account/',
-		// 		sftp:
-		// 			'https://www.siteground.com/kb/how_to_establish_sftp_connection_to_hosting_with_filezilla',
-		// 		ssh: 'https://www.siteground.com/kb/cpanel/enable-ssh-shell-access-cpanel/',
 	},
 ];
 
 export const genericInfo: Host = {
 	id: 'generic',
 	name: 'Other',
-	// allowGenericFill: true,
-
-	// ftp: {
-	// 	info: translate(
-	// 		'FTP (File Transfer Protocol): the original standard for transferring files between servers.'
-	// 	),
-	// 	link: translate( '{{a}}Read More{{/a}}', {
-	// 		components: {
-	// 			a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
-	// 		},
-	// 	} ),
-	// },
-	// sftp: {
-	// 	info: translate(
-	// 		'SFTP (Secure File Transfer Protocol): is like FTP, but adds a layer of security (SSH encryption).'
-	// 	),
-	// 	link: translate( '{{a}}Read More{{/a}}', {
-	// 		components: {
-	// 			a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
-	// 		},
-	// 	} ),
-	// },
-	// ssh: {
-	// 	info: translate(
-	// 		'SFTP/SSH is the preferred method to choose and should be supported by most modern hosts.'
-	// 	),
-	// 	link: translate( '{{a}}Read More{{/a}}', {
-	// 		components: {
-	// 			a: <a href="https://jetpack.com/support/ssh-sftp-and-ftp-credentials/" />,
-	// 		},
-	// 	} ),
-	// },
 };
 
 export const otherHosts: Host[] = [
@@ -270,150 +345,67 @@ export const otherHosts: Host[] = [
 	{
 		id: 'land1',
 		name: '1&1',
-		// allowGenericFill: true,
-
-		// 		ftp: false,
-		// 		sftp:
-		// 			'https://www.ionos.com/help/server-cloud-infrastructure/accordions-to-managed-cloud-hosting/sftp-ssh/activating-sftpssh-access/',
-		// 		ssh:
-		// 			'https://www.ionos.com/help/server-cloud-infrastructure/accordions-to-managed-cloud-hosting/sftp-ssh/activating-sftpssh-access/',
 	},
 	{
 		id: 'digitalocean',
 		name: 'DigitalOcean',
-		// allowGenericFill: true,
-
-		// 		ftp: false,
-		// 		sftp:
-		// 			'https://www.digitalocean.com/community/tutorials/how-to-use-sftp-to-securely-transfer-files-with-a-remote-server#how-to-connect-with-sftp (SFTP)',
-		// 		ssh: 'https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2 ',
 	},
 
 	{
 		id: 'flywheel',
 		name: 'Flywheel',
-		// allowGenericFill: true,
-
-		// 		ftp: false,
-		// 		sftp: 'https://getflywheel.com/wordpress-support/how-do-i-access-my-site-via-sftp/',
-		// 		ssh: false,
 	},
 	{
 		id: 'hostinger',
 		name: 'Hostinger',
-		// allowGenericFill: true,
-
-		// 		ftp: 'https://www.hostinger.com/how-to/i-m-having-trouble-connecting-to-ftp-what-should-i-do',
-		// 		sftp: 'https://www.hostinger.com/how-to/do-you-provide-sftp-access',
-		// 		ssh: 'https://www.hostinger.com/how-to/how-can-i-log-in-onto-my-account-via-ssh',
 	},
 	{
 		id: 'hostmonster',
 		name: 'HostMonster',
-		// allowGenericFill: true,
-
-		// 		ftp: 'https://my.hostmonster.com/hosting/help/ftpaccounts',
-		// 		sftp: 'https://my.hostmonster.com/hosting/help/ftpaccounts',
-		// 		ssh: 'https://my.hostmonster.com/hosting/help/180',
 	},
 	{
 		id: 'inmotion',
 		name: 'InMotion Hosting',
-		// allowGenericFill: true,
-
-		// 		ftp: 'https://www.inmotionhosting.com/support/website/ftp/getting-started-guide/',
-		// 		sftp: 'https://www.inmotionhosting.com/support/website/ftp/shared-sftp-setup/',
-		// 		ssh: 'https://www.inmotionhosting.com/support/website/ssh/shared-reseller-ssh',
 	},
 	{
 		id: 'ipage',
 		name: 'iPage',
-		// allowGenericFill: true,
-		// 		ftp: 'https://www.ipage.com/help/article/ftp-how-to-connect-to-your-website',
-		// 		sftp: 'https://www.ipage.com/help/article/ftp-how-to-connect-to-your-website',
-		// 		ssh: false,
 	},
 	{
 		id: 'justhost',
 		name: 'Just Host',
-		// allowGenericFill: true,
-		// 		ftp: 'https://my.justhost.com/hosting/help/ftpaccounts',
-		// 		sftp: 'https://my.justhost.com/hosting/help/ftpaccounts',
-		// 		ssh: 'https://my.justhost.com/hosting/help/180',
 	},
 	{
 		id: 'kinsta',
 		name: 'Kinsta',
-		// allowGenericFill: true,
-		// 		ftp: false,
-		// 		sftp: 'https://kinsta.com/knowledgebase/how-to-use-sftp/',
-		// 		ssh: 'https://kinsta.com/knowledgebase/connect-to-ssh/',
 	},
 	{
 		id: 'liquidweb',
 		name: 'Liquid Web',
-		// allowGenericFill: true,
-		// 		ftp: false,
-		// 		sftp: 'https://www.liquidweb.com/kb/finding-sftpssh-credentials-managed-wordpress-portal/',
-		// 		ssh: 'https://www.liquidweb.com/kb/finding-sftpssh-credentials-managed-wordpress-portal/',
 	},
 	{
 		id: 'mediatemple',
 		name: 'Media Temple',
-		// allowGenericFill: true,
-
-		// 		ftp:
-		// 			'https://mediatemple.net/community/products/dv/204643370/using-ftp-and-sftp#gs/What_you_need_gs',
-		// 		sftp:
-		// 			'https://mediatemple.net/community/products/dv/204643370/using-ftp-and-sftp#gs/What_you_need_gs',
-		// 		ssh:
-		// 			'https://mediatemple.net/community/products/dv/204403684/connecting-via-ssh-to-your-server',
 	},
 	{
 		id: 'namecheap',
 		name: 'Namecheap',
-		// allowGenericFill: true,
-		// 		ftp:
-		// 			'https://www.namecheap.com/support/knowledgebase/article.aspx/188/205/how-to-access-an-account-via-ftp',
-		// 		sftp:
-		// 			'https://www.namecheap.com/support/knowledgebase/article.aspx/188/205/how-to-access-an-account-via-ftp',
-		// 		ssh:
-		// 			'https://www.namecheap.com/support/knowledgebase/article.aspx/1016/89/how-to-access-a-hosting-account-via-ssh',
 	},
 	{
 		id: 'ovh',
 		name: 'OVH',
-		// allowGenericFill: true,
-
-		// 		ftp: 'https://docs.ovh.com/gb/en/hosting/web_hosting_filezilla_user_guide/#ftp-connection',
-		// 		sftp: 'https://docs.ovh.com/gb/en/hosting/web_hosting_filezilla_user_guide/#sftp-connection',
-		// 		ssh:
-		// 			'https://docs.ovh.com/gb/en/hosting/web_hosting_ssh_on_web_hosting_packages/#connecting-to-your-server-via-ssh',
 	},
 	{
 		id: 'pagely',
 		name: 'Pagely',
-		// allowGenericFill: true,
-		// 		ftp: false,
-		// 		sftp: 'https://support.pagely.com/hc/en-us/articles/203115864-Using-SFTP-With-Pagely',
-		// 		ssh:
-		// 			'https://support.pagely.com/hc/en-us/articles/227315588-Using-SSH-on-your-VPS-Enterprise-Server',
 	},
 	{
 		id: 'pressable',
 		name: 'Pressable',
-		// allowGenericFill: true,
-		// 		ftp: false,
-		// 		sftp: 'https://pressable.com/knowledgebase/ftp-access-through-pressable-sftp-tools/',
-		// 		ssh: false,
 	},
 	{
 		id: 'wpengine',
 		name: 'WPEngine',
-		// allowGenericFill: true,
-		// 		ftp: false,
-		// 		sftp: 'https://wpengine.com/support/sftp/#Connect_to_SFTP',
-		// 		ssh: 'https://wpengine.com/support/ssh-keys-for-shell-access/',
 	},
 ];
 

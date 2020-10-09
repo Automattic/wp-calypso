@@ -35,9 +35,11 @@
 	&__mode-control {
 		display: flex;
 		justify-content: center;
+		margin-bottom: 16px;
 
 		.segmented-control {
 			max-width: 244px;
+			margin-right: 5px;
 
 			.is-selected {
 				a {
@@ -94,6 +96,15 @@
 
 .inline-info {
 	p {
-		font-size: $font-body;
+		font-size: $font-body-small;
 	}
+	ul,
+	ol {
+		margin-left: 16px;
+	}
+}
+
+.credentials-form__credentials-guide-link {
+	width: 100%;
+	margin-bottom: 35px;
 }

@@ -1,17 +1,34 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState } from 'react';
-import { useTranslate } from 'i18n-calypso';
 import { random } from 'lodash';
+import { useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import React, { FunctionComponent, useState } from 'react';
 
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 import { useInterval, EVERY_SECOND } from 'lib/interval';
+import Gridicon from 'components/gridicon';
 
-const Verification: FunctionComponent = () => {
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
+interface Props {
+	formSubmissionError: Error | null;
+	formSubmissionStatus: 'unsubmitted' | 'pending' | 'success' | 'failed';
+	onFinishUp: () => void;
+}
+
+const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 	const translate = useTranslate();
+
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const steps = [
 		translate( 'Preflight check' ),
@@ -27,22 +44,50 @@ const Verification: FunctionComponent = () => {
 		() => {
 			setCurrentStep( currentStep + 1 );
 		},
-		currentStep < steps.length - 1 ? random( EVERY_SECOND, EVERY_SECOND * 3 ) : null
+		currentStep < steps.length ? random( EVERY_SECOND, EVERY_SECOND * 3 ) : null
 	);
 
 	return (
 		<div>
-			<h4>Verification</h4>
-			<ul>
+			<div className="verification__title">
+				<h3>
+					{ translate( 'Establishing a connection to {{strong}}%(siteSlug)s{{/strong}}.', {
+						args: {
+							siteSlug,
+						},
+						components: {
+							strong: <strong />,
+						},
+					} ) }
+				</h3>
+			</div>
+			<ul className="verification__step-list">
 				{ steps.map( ( step, index ) => {
 					if ( index < currentStep ) {
-						return <li key={ index }>{ step }</li>;
+						return (
+							<li key={ index } className="verification__step-complete">
+								<Gridicon icon="checkmark" />
+								{ step }
+							</li>
+						);
 					} else if ( index === currentStep ) {
-						return <li key={ index }>{ step }</li>;
+						return (
+							<li key={ index } className="verification__step-in-progress">
+								<Gridicon icon="sync" />
+								{ step }
+							</li>
+						);
 					}
 					return null;
 				} ) }
 			</ul>
+			{ currentStep >= steps.length && (
+				<div className="verification__buttons">
+					<Button primary onClick={ onFinishUp }>
+						{ translate( 'Finish up' ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 };
