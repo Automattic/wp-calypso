@@ -13,7 +13,7 @@ import { JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
+import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
 import { SELECTOR_PLANS_ALT } from '../constants';
 import {
 	getAllOptionsFromSlug,

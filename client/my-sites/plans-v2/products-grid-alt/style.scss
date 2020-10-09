@@ -13,12 +13,13 @@
 	grid-gap: 16px;
 	align-items: stretch;
 
-	& > .jetpack-free-card {
+	& > .jetpack-free-card-alt {
 		/*
-		 * To match its top border with the top border
+		 * To match its top and bottom border with the borders
 		 * of the product cards next to it
 		 */
 		margin-block-start: calc( 24px + 32.5px );
+		margin-bottom: 24px;
 
 		/*
 		 * The Free card takes up two columns
