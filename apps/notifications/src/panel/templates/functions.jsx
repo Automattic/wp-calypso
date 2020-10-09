@@ -43,11 +43,10 @@ const toBlocks = ( text ) =>
 				};
 			}
 
-			const blockquoteRegex = /blockquote(.*)>/i;
-			const containsBlockquoteTag = blockquoteRegex.test( raw );
-
-			// Blockquote start/end tags do not need to be wrapped in div/p
-			if ( containsBlockquoteTag ) {
+			// Blockquote and list start/end tags do not need to be wrapped in div/p
+			const skipRegex = /(blockquote|ol|ul|li)(.*)>/i;
+			const shouldSkipWrap = skipRegex.test( raw );
+			if ( shouldSkipWrap ) {
 				return {
 					out: out + raw,
 					inFence,

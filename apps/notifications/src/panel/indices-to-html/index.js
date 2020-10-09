@@ -85,7 +85,9 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'sub':
 		case 'sup':
 		case 's':
-		case 'list':
+		case 'ol':
+		case 'ul':
+		case 'li':
 		case 'h1':
 		case 'h2':
 		case 'h3':

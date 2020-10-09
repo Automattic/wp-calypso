@@ -112,13 +112,29 @@
 		}
 	}
 
-	blockquote {
-		padding: 0 24px 0 32px;
-		margin: 16px 0 32px;
-		border-left: 3px solid var( --color-neutral-0 );
-		color: var( --color-neutral-50 );
-		font-weight: 400;
-		background: transparent;
+	&.wpnc__main .wpnc__post {
+		blockquote {
+			padding: 0 24px 0 32px;
+			margin: 16px 0 32px;
+			border-left: 3px solid var( --color-neutral-0 );
+			color: var( --color-neutral-50 );
+			font-weight: 400;
+			background: transparent;
+		}
+		ul,
+		ol {
+			margin-left: 1.5em;
+			list-style-position: inside;
+		}
+		ul {
+			list-style-type: disc;
+		}
+		ol {
+			list-style-type: decimal;
+		}
+		li {
+			margin: auto;
+		}
 	}
 }
 
