@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+const { debounce } = require( 'lodash' );
 const { ipcMain: ipc, Notification } = require( 'electron' );
 const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
 
@@ -9,7 +10,6 @@ const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs
  */
 const Settings = require( 'desktop/lib/settings' );
 const Platform = require( 'desktop/lib/platform' );
-const debounce = require( 'desktop/lib/debounce' );
 const ViewModel = require( 'desktop/lib/notifications/viewmodel' );
 const log = require( 'desktop/lib/logger' )( 'desktop:notifications' );
 
@@ -49,14 +49,22 @@ module.exports = function ( mainWindow ) {
 		}
 	} );
 
+	// Calypso's renderer websocket connection does not work w/ Electron. Manually refresh
+	// the notifications panel when a new message is received so it's as up-to-date as possible.
+	// Invoke debounce directly, and not as nested fn.
+	ViewModel.on(
+		'notification',
+		debounce(
+			() => {
+				mainWindow.webContents.send( 'notifications-panel-refresh' );
+			},
+			100,
+			{ leading: true }
+		)
+	);
+
 	ViewModel.on( 'notification', function ( notification ) {
 		log.info( 'Received notification: ', notification );
-
-		// Calypso's renderer websocket connection does not work w/ Electron. Manually refresh
-		// the notifications panel when a new message is received so it's as up-to-date as possible.
-		debounce( () => {
-			mainWindow.webContents.send( 'notifications-panel-refresh' );
-		}, 100 );
 
 		if ( ! Settings.getSetting( 'notifications' ) ) {
 			log.info( 'Notifications disabled!' );
