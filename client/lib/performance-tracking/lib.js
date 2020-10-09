@@ -30,6 +30,7 @@ const buildDefaultCollector = ( state ) => {
 	const sitesVisibleCount = getCurrentUserVisibleSiteCount( state );
 
 	return ( report ) => {
+		report.data.set( 'siteId', siteId );
 		report.data.set( 'siteIsJetpack', siteIsJetpack );
 		report.data.set( 'siteIsSingleUser', siteIsSingleUser );
 		report.data.set( 'siteIsAtomic', siteIsAtomic );
