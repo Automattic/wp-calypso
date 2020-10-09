@@ -1,11 +1,8 @@
 /**
  * External dependencies
  */
-<<<<<<< HEAD
 import classNames from 'classnames';
 import { noop } from 'lodash';
-=======
->>>>>>> Replace backup deltas with new backup cards
 import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
