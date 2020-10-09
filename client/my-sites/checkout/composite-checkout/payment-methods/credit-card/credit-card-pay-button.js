@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
@@ -19,10 +19,10 @@ import {
 /**
  * Internal dependencies
  */
-import { showStripeModalAuth } from 'lib/stripe';
-import { validatePaymentDetails } from 'lib/checkout/validation';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-import { paymentMethodClassName } from 'lib/cart-values';
+import { showStripeModalAuth } from 'calypso/lib/stripe';
+import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import { useCart } from 'calypso/my-sites/checkout/composite-checkout/cart-provider';
+import { paymentMethodClassName } from 'calypso/lib/cart-values';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -33,9 +33,7 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
 	const {
-		transactionStatus,
 		setTransactionComplete,
-		setTransactionAuthorizing,
 		setTransactionRedirecting,
 		setTransactionError,
 		setTransactionPending,
@@ -51,8 +49,6 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 		cart,
 		contactCountryCode,
 	} );
-
-	useShowStripeModalAuth( transactionStatus === 'authorizing', stripeConfiguration );
 
 	return (
 		<Button
@@ -72,16 +68,30 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 							paymentPartner,
 						} )
 							.then( ( stripeResponse ) => {
+								// 3DS authentication required
 								if ( stripeResponse?.message?.payment_intent_client_secret ) {
-									debug( 'stripe transaction requires auth' );
-									setTransactionAuthorizing( stripeResponse );
+									debug( 'showing stripe authentication modal' );
+									onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+									showStripeModalAuth( {
+										stripeConfiguration,
+										response: stripeResponse,
+									} )
+										.then( ( authenticationResponse ) => {
+											debug( 'stripe authentication is complete', authenticationResponse );
+											setTransactionComplete();
+										} )
+										.catch( ( error ) => {
+											setTransactionError( error.message );
+										} );
 									return;
 								}
+								// Redirect required
 								if ( stripeResponse?.redirect_url ) {
 									debug( 'stripe transaction requires redirect' );
 									setTransactionRedirecting( stripeResponse.redirect_url );
 									return;
 								}
+								// Nothing more required
 								debug( 'stripe transaction is successful' );
 								setTransactionComplete();
 							} )
@@ -144,46 +154,6 @@ function ButtonContents( { formStatus, total } ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
-}
-
-function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
-	const onEvent = useEvents();
-	const {
-		transactionLastResponse,
-		resetTransaction,
-		setTransactionComplete,
-		setTransactionError,
-	} = useTransactionStatus();
-
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( shouldShowModal ) {
-			debug( 'showing stripe authentication modal' );
-			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionLastResponse,
-			} )
-				.then( ( authenticationResponse ) => {
-					debug( 'stripe auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete();
-				} )
-				.catch( ( error ) => {
-					isSubscribed && setTransactionError( error.message );
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		shouldShowModal,
-		onEvent,
-		setTransactionComplete,
-		resetTransaction,
-		transactionLastResponse,
-		setTransactionError,
-		stripeConfiguration,
-	] );
 }
 
 function getPaymentPartner( { cart, contactCountryCode } ) {
