@@ -10,50 +10,6 @@ import styled from '../lib/styled';
 import joinClasses from '../lib/join-classes';
 import { Theme } from '../lib/theme';
 
-type ButtonType = 'primary' | 'secondary' | 'text-button' | 'borderless' | 'paypal';
-
-const Button: React.FC< ButtonProps & React.ButtonHTMLAttributes< HTMLButtonElement > > = ( {
-	className,
-	buttonType,
-	isBusy,
-	children,
-	fullWidth,
-	...props
-} ) => {
-	const classNames = joinClasses( [
-		'checkout-button',
-		...( buttonType ? [ 'is-status-' + buttonType ] : [] ),
-		...( isBusy ? [ 'is-busy' ] : [] ),
-		...( className ? [ className ] : [] ),
-	] );
-
-	return (
-		<CallToAction
-			fullWidth={ fullWidth }
-			buttonType={ buttonType }
-			className={ classNames }
-			{ ...props }
-		>
-			{ children }
-		</CallToAction>
-	);
-};
-
-export default Button;
-
-export interface ButtonProps {
-	className?: string;
-	buttonType?: ButtonType;
-	isBusy?: boolean;
-	fullWidth?: boolean;
-}
-
-interface CallToActionProps {
-	fullWidth?: boolean;
-	buttonType?: ButtonType;
-	disabled?: boolean;
-}
-
 const CallToAction = styled( 'button' )< CallToActionProps >`
 	display: block;
 	width: ${ ( props: CallToActionProps ) => ( props.fullWidth ? '100%' : 'auto' ) };
@@ -98,7 +54,7 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 			${ getBackgroundAccentColor } 72%,
 			${ getBackgroundColor } 72%
 		);
-		background-size: 200px;
+		background-size: 200px 100%;
 		opacity: 1;
 	}
 
@@ -108,6 +64,50 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 		}
 	}
 `;
+
+interface CallToActionProps {
+	fullWidth?: boolean;
+	buttonType?: ButtonType;
+	disabled?: boolean;
+}
+
+type ButtonType = 'primary' | 'secondary' | 'text-button' | 'borderless' | 'paypal';
+
+const Button: React.FC< ButtonProps & React.ButtonHTMLAttributes< HTMLButtonElement > > = ( {
+	className,
+	buttonType,
+	isBusy,
+	children,
+	fullWidth,
+	...props
+} ) => {
+	const classNames = joinClasses( [
+		'checkout-button',
+		...( buttonType ? [ 'is-status-' + buttonType ] : [] ),
+		...( isBusy ? [ 'is-busy' ] : [] ),
+		...( className ? [ className ] : [] ),
+	] );
+
+	return (
+		<CallToAction
+			fullWidth={ fullWidth }
+			buttonType={ buttonType }
+			className={ classNames }
+			{ ...props }
+		>
+			{ children }
+		</CallToAction>
+	);
+};
+
+export default Button;
+
+export interface ButtonProps {
+	className?: string;
+	buttonType?: ButtonType;
+	isBusy?: boolean;
+	fullWidth?: boolean;
+}
 
 function getImageFilter( { buttonType }: { buttonType?: ButtonType } ) {
 	return `grayscale( ${
