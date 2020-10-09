@@ -5,13 +5,13 @@
 	/*
 	 * Create a grid with cells that are evenly sized,
 	 * with a minimum width of 300px each.
-	 * Each cell should be vertically top-aligned,
-	 * and the gap between them should always be 16px.
+	 * Each cell should take up as much vertical space as it's allowed,
+	 * and the horizontal/vertical gap between them should always be 16px.
 	 */
 	display: grid;
 	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
 	grid-gap: 16px;
-	align-items: start;
+	align-items: stretch;
 
 	& > .jetpack-free-card {
 		/*
