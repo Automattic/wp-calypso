@@ -34,7 +34,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				if ( err.status >= 500 ) {
 					req.logger.error( err );
 				} else {
-					req.logger.info( err );
+					req.logger.warn( err );
 				}
 				serverRender( req, res, next );
 			}
