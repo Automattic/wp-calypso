@@ -86,13 +86,17 @@ function applyMiddlewares( context, ...middlewares ) {
 	// at any point a middleware calls `next(error)`, only middlewares that declare
 	// 3 arguments (aka error handlers) will be called from that point.
 	const liftedMiddlewares = middlewares.map( ( middleware ) => ( next, err ) => {
-		if ( ! err && middleware.length === 2 ) {
-			// No errors so far, call next middleware
-			return middleware( context, next );
-		}
-		if ( err && middleware.length === 3 ) {
-			// There is an error and this middleware can handle errors
-			return middleware( err, context, next );
+		try {
+			if ( ! err && middleware.length !== 3 ) {
+				// No errors so far, call next middleware
+				return middleware( context, next );
+			}
+			if ( err && middleware.length === 3 ) {
+				// There is an error and this middleware can handle errors
+				return middleware( err, context, next );
+			}
+		} catch ( error ) {
+			next( error );
 		}
 
 		// At this point we are in either of these scenarios:
