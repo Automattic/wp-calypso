@@ -6,13 +6,17 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isProductsListFetching } from 'state/products-list/selectors/is-products-list-fetching';
-import { getProductCost } from 'state/products-list/selectors/get-product-cost';
-import { TERM_MONTHLY } from 'lib/plans/constants';
+import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
+import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
+import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import {
 	getSiteAvailableProductCost,
 	isRequestingSiteProducts,
-} from 'state/sites/products/selectors';
+} from 'calypso/state/sites/products/selectors';
+import {
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
+} from 'calypso/lib/products-values/constants';
 
 /**
  * Type dependencies
@@ -103,6 +107,12 @@ const useItemPrice = (
 			originalPrice = monthlyItemCost;
 			discountedPrice = itemCost / 12;
 		}
+	}
+
+	// Jetpack CRM price won't come from the API, so we need to hard-code it.
+	if ( [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( item.productSlug ) ) {
+		discountedPrice = 11;
+		originalPrice = 132;
 	}
 
 	return {
