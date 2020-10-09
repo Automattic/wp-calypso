@@ -17,6 +17,10 @@
 			font-size: $font-title-small;
 		}
 	}
+	
+	.threat-item-header__alert-filename {
+		word-break: break-all;
+	}
 
 	.log-item__subheader {
 		color: var( --studio-gray-60 );
