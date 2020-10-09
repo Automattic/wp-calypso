@@ -414,27 +414,25 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 						stripeConfiguration,
 					} )
 						.then( ( stripeResponse ) => {
+							// 3DS authentication required
 							if ( stripeResponse?.message?.payment_intent_client_secret ) {
-								debug( 'stripe transaction requires auth' );
+								debug( 'showing stripe authentication modal' );
 								onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-								showStripeModalAuth( {
+								return showStripeModalAuth( {
 									stripeConfiguration,
 									response: stripeResponse,
-								} )
-									.then( ( authenticationResponse ) => {
-										debug( 'stripe auth is complete', authenticationResponse );
-										setTransactionComplete();
-									} )
-									.catch( ( error ) => {
-										setTransactionError( error.message );
-									} );
-								return;
+								} );
 							}
+							return stripeResponse;
+						} )
+						.then( ( stripeResponse ) => {
+							// Redirect required
 							if ( stripeResponse?.redirect_url ) {
 								debug( 'stripe transaction requires redirect' );
 								setTransactionRedirecting( stripeResponse.redirect_url );
 								return;
 							}
+							// Nothing more required
 							debug( 'stripe transaction is successful' );
 							setTransactionComplete();
 						} )
