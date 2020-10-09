@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal dependencies
  */
-import { googleApps, googleAppsExtraLicenses } from 'lib/cart-values/cart-items';
+import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import { hasGSuiteWithUs } from './has-gsuite-with-us';
 
 // exporting these in the big export below causes trouble
@@ -48,7 +48,7 @@ const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
  * @param {object} user - user with a list of fields
  * @param {Function} callback - function to call for each field
  */
-const mapFieldValues = ( user: GSuiteNewUser, callback: Function ): GSuiteNewUser =>
+const mapFieldValues = ( user: GSuiteNewUser, callback ): GSuiteNewUser =>
 	mapValues( user, ( fieldValue, fieldName ) =>
 		'uuid' === fieldName ? fieldValue : callback( fieldValue, fieldName, user )
 	);

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React, { ChangeEvent, Fragment, FunctionComponent, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
@@ -10,11 +10,11 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import GSuiteDomainsSelect from './domains-select';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { GSuiteNewUser as NewUser } from 'lib/gsuite/new-users';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { GSuiteNewUser as NewUser } from 'calypso/lib/gsuite/new-users';
 
 interface Props {
 	autoFocus: boolean;
