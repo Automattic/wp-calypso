@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import React, { ReactElement, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -26,7 +26,7 @@ import ProductCard from '../product-card';
 /**
  * Type dependencies
  */
-import type { SelectorProduct } from '../types';
+import type { Duration, PurchaseCallback, QueryArgs, SelectorProduct } from '../types';
 
 /**
  * Style dependencies
@@ -34,7 +34,13 @@ import type { SelectorProduct } from '../types';
 import './style.scss';
 
 // Map over all plan slugs and convert them to SelectorProduct types.
-const getPlansToDisplay = ( { duration, currentPlanSlug } ) => {
+const getPlansToDisplay = ( {
+	duration,
+	currentPlanSlug,
+}: {
+	duration: Duration;
+	currentPlanSlug: string | null;
+} ): SelectorProduct[] => {
 	const currentPlanTerms = currentPlanSlug
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
@@ -58,10 +64,14 @@ const getPlansToDisplay = ( { duration, currentPlanSlug } ) => {
 		} ) );
 
 	if (
-		JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ||
-		SELECTOR_PLANS.includes( currentPlanSlug )
+		currentPlanSlug &&
+		( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ||
+			SELECTOR_PLANS.includes( currentPlanSlug ) )
 	) {
-		return [ slugToSelectorProduct( currentPlanSlug ), ...plansToDisplay ];
+		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
+		if ( currentPlanSelectorProduct ) {
+			return [ currentPlanSelectorProduct, ...plansToDisplay ];
+		}
 	}
 
 	return plansToDisplay;
@@ -72,6 +82,11 @@ const getProductsToDisplay = ( {
 	availableProducts,
 	purchasedProducts,
 	includedInPlanProducts,
+}: {
+	duration: Duration;
+	availableProducts: ( SelectorProduct | null )[];
+	purchasedProducts: ( SelectorProduct | null )[];
+	includedInPlanProducts: ( SelectorProduct | null )[];
 } ) => {
 	// Products that have not been directly purchased must honor the current filter
 	// selection since they exist in both monthly and yearly version.
@@ -89,7 +104,15 @@ const getProductsToDisplay = ( {
 	);
 };
 
-const ProductsGridAlt = ( { duration, onSelectProduct, urlQueryArgs } ) => {
+const ProductsGridAlt = ( {
+	duration,
+	onSelectProduct,
+	urlQueryArgs,
+}: {
+	duration: Duration;
+	onSelectProduct: PurchaseCallback;
+	urlQueryArgs: QueryArgs;
+} ): ReactElement => {
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 

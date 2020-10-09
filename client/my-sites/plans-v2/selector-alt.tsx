@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { useState, useEffect } from 'react';
+import React, { ReactElement, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -40,7 +40,7 @@ const SelectorPageAlt = ( {
 	urlQueryArgs,
 	header,
 	footer,
-}: SelectorPageProps ) => {
+}: SelectorPageProps ): ReactElement => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
