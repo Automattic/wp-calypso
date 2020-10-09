@@ -96,11 +96,10 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async _expandOrCollapseSectionByText( text, expand = true ) {
-		const sectionSelector = await driverHelper.getElementByText(
-			this.driver,
-			By.css( '.components-panel__body-toggle' ),
-			text
+		const sectionSelector = By.xpath(
+			`//button[contains(@class, 'components-panel__body-toggle') and text()='${ text }']`
 		);
+
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, sectionSelector );
 		const sectionButton = await this.driver.findElement( sectionSelector );
 		const c = await sectionButton.getAttribute( 'aria-expanded' );
@@ -115,10 +114,8 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async setCommentsPreference( { allow = true } = {} ) {
-		const labelSelector = await driverHelper.getElementByText(
-			this.driver,
-			By.css( '.components-checkbox-control__label' ),
-			'Allow comments'
+		const labelSelector = By.xpath(
+			"//label[contains(@class, 'components-checkbox-control__label') and text()='Allow comments']"
 		);
 		const checkBoxSelectorID = await this.driver.findElement( labelSelector ).getAttribute( 'for' );
 		const checkBoxSelector = By.id( checkBoxSelectorID );

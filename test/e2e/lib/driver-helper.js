@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import webdriver, { until } from 'selenium-webdriver';
+import webdriver, { By, until } from 'selenium-webdriver';
 import config from 'config';
 import { forEach } from 'lodash';
 
@@ -13,7 +13,6 @@ import * as dataHelper from './data-helper';
 import * as driverManager from './driver-manager';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
-const by = webdriver.By;
 
 export async function highlightElement( driver, element ) {
 	if ( process.env.HIGHLIGHT_ELEMENT === 'true' ) {
@@ -166,35 +165,22 @@ export function waitTillSelected( driver, selector, waitOverride ) {
 	);
 }
 
-export function isEventuallyPresentAndDisplayed( driver, selector, waitOverride ) {
+export async function isEventuallyPresentAndDisplayed( driver, selector, waitOverride ) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	let element;
 
-	return driver
-		.wait( function () {
-			return driver.findElement( selector ).then(
-				function ( element ) {
-					return element.isDisplayed().then(
-						function () {
-							return true;
-						},
-						function () {
-							return false;
-						}
-					);
-				},
-				function () {
-					return false;
-				}
-			);
-		}, timeoutWait )
-		.then(
-			( shown ) => {
-				return shown;
-			},
-			() => {
-				return false;
-			}
-		);
+	try {
+		element = await driver.wait( until.elementLocated( selector ), timeoutWait );
+	} catch ( _error ) {
+		return false;
+	}
+
+	try {
+		await driver.wait( until.elementIsVisible( element ), timeoutWait );
+		return true;
+	} catch ( _error ) {
+		return false;
+	}
 }
 
 export function clickIfPresent( driver, selector, attempts ) {
@@ -407,7 +393,7 @@ export function logPerformance( driver ) {
 
 export async function ensureMobileMenuOpen( driver ) {
 	const self = this;
-	const mobileHeaderSelector = by.css( '.section-nav__mobile-header' );
+	const mobileHeaderSelector = By.css( '.section-nav__mobile-header' );
 	await waitTillPresentAndDisplayed( driver, mobileHeaderSelector );
 	return driver
 		.findElement( mobileHeaderSelector )
@@ -415,7 +401,7 @@ export async function ensureMobileMenuOpen( driver ) {
 		.then( ( mobileDisplayed ) => {
 			if ( mobileDisplayed ) {
 				driver
-					.findElement( by.css( '.section-nav' ) )
+					.findElement( By.css( '.section-nav' ) )
 					.getAttribute( 'class' )
 					.then( ( classNames ) => {
 						if ( classNames.includes( 'is-open' ) === false ) {
@@ -480,12 +466,12 @@ export async function refreshIfJNError( driver, timeout = 2000 ) {
 	}
 
 	// Match only 503 Error codes
-	const jnSiteError = by.xpath(
+	const jnSiteError = By.xpath(
 		"//pre[@class='error' and .='/srv/users/SYSUSER/log/APPNAME/APPNAME_apache.error.log' and //title[.='503 Service Unavailable']]"
 	);
 
 	// Match WP DB error
-	const jnDBError = by.xpath( '//h1[.="Error establishing a database connection"]' );
+	const jnDBError = By.xpath( '//h1[.="Error establishing a database connection"]' );
 
 	const refreshIfNeeded = async () => {
 		const jnErrorDisplayed = await isEventuallyPresentAndDisplayed( driver, jnSiteError, timeout );
@@ -535,11 +521,10 @@ export async function verifyTextPresent( driver, selector, text ) {
 	return await this.isElementPresent( driver, element );
 }
 
-export function getElementByText( driver, selector, text ) {
-	return async () => {
-		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
-	};
+export async function getElementByText( driver, selector, text ) {
+	const allElements = await driver.findElements( selector );
+
+	return webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 }
 
 export async function clearTextArea( driver, selector ) {

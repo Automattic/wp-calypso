@@ -20,11 +20,10 @@ export default class SidebarComponent extends AsyncBaseContainer {
 	}
 
 	async expandDrawerItem( itemName ) {
-		const selector = driverHelper.getElementByText(
-			this.driver,
-			By.css( '.sidebar__heading' ),
-			itemName
+		const selector = By.xpath(
+			`//h2[contains(@class, 'sidebar__heading') and //text()='${ itemName }']`
 		);
+
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, selector );
 		const itemSelector = await this.driver.findElement( selector );
 		const isExpanded = await itemSelector.getAttribute( 'aria-expanded' );
