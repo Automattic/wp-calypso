@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
@@ -22,10 +22,8 @@ import PaymentLogo from './payment-logo';
 import { showStripeModalAuth } from '../stripe';
 import {
 	FormStatus,
-	TransactionStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
-	useMessages,
 	useLineItems,
 	useEvents,
 } from '../../public-api';
@@ -389,53 +387,16 @@ function LoadingFields() {
 function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage, showInfoMessage } = useMessages();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
 	const { formStatus } = useFormStatus();
 	const {
-		transactionStatus,
-		transactionLastResponse,
-		resetTransaction,
 		setTransactionComplete,
-		setTransactionAuthorizing,
 		setTransactionRedirecting,
 		setTransactionError,
 		setTransactionPending,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
-
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( transactionStatus === TransactionStatus.AUTHORIZING ) {
-			debug( 'showing auth' );
-			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionLastResponse,
-			} )
-				.then( ( authenticationResponse ) => {
-					debug( 'stripe auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete();
-				} )
-				.catch( ( error ) => {
-					isSubscribed && setTransactionError( error.message );
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		onEvent,
-		setTransactionComplete,
-		resetTransaction,
-		showInfoMessage,
-		showErrorMessage,
-		transactionStatus,
-		transactionLastResponse,
-		setTransactionError,
-		stripeConfiguration,
-	] );
 
 	return (
 		<Button
@@ -455,7 +416,18 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 						.then( ( stripeResponse ) => {
 							if ( stripeResponse?.message?.payment_intent_client_secret ) {
 								debug( 'stripe transaction requires auth' );
-								setTransactionAuthorizing( stripeResponse );
+								onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+								showStripeModalAuth( {
+									stripeConfiguration,
+									response: stripeResponse,
+								} )
+									.then( ( authenticationResponse ) => {
+										debug( 'stripe auth is complete', authenticationResponse );
+										setTransactionComplete();
+									} )
+									.catch( ( error ) => {
+										setTransactionError( error.message );
+									} );
 								return;
 							}
 							if ( stripeResponse?.redirect_url ) {
