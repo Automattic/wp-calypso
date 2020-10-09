@@ -21,7 +21,7 @@ import {
 	slugToSelectorProduct,
 } from '../utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import ProductCard from '../product-card';
+import ProductCardAlt from '../product-card-alt';
 
 /**
  * Type dependencies
@@ -149,7 +149,7 @@ const ProductsGridAlt = ( {
 	return (
 		<div className="products-grid-alt">
 			{ plansToDisplay.map( ( plan ) => (
-				<ProductCard
+				<ProductCardAlt
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
 					key={ plan.iconSlug }
@@ -161,7 +161,7 @@ const ProductsGridAlt = ( {
 				/>
 			) ) }
 			{ productsToDisplay.map( ( product ) => (
-				<ProductCard
+				<ProductCardAlt
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
 					key={ product.iconSlug }
