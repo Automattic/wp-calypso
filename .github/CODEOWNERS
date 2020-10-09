@@ -66,6 +66,7 @@
 /client/state/simple-payments/ @Automattic/payments
 /client/state/stored-cards/ @Automattic/payments
 /client/state/sites/plans/ @Automattic/payments
+/packages/composite-checkout/ @Automattic/shilling
 
 # Reader
 /client/reader @Automattic/reader
