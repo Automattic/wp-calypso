@@ -190,7 +190,6 @@ const SelectorAltPage = ( {
 			{ header }
 			<PlansFilterBar
 				showDurations
-				showProductTypes
 				onProductTypeChange={ trackProductTypeChange }
 				productType={ productType }
 				onDurationChange={ trackDurationChange }
