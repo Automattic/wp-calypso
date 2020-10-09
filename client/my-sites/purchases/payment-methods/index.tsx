@@ -59,6 +59,12 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 			<MySitesSidebarNavigation />
 			<PageViewTracker path="/purchases/add-credit-card" title="Add Credit Card" />
 			<DocumentHead title={ translate( 'Add Credit Card' ) } />
+			<FormattedHeader
+				brandFont
+				className="payment-methods__page-heading"
+				headerText={ translate( 'Billing' ) }
+				align="left"
+			/>
 
 			<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
 			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
