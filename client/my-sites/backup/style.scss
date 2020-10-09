@@ -41,9 +41,6 @@
 	margin-left: -16px;
 	margin-right: -16px;
 
-	div:last-child {
-		flex-grow: 1;
-	}
 	@include breakpoint-deprecated( '>660px' ) {
 		height: auto;
 	}
