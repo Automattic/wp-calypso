@@ -6,10 +6,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { siteSelection, sites } from 'my-sites/controller';
+import { siteSelection, sites } from 'calypso/my-sites/controller';
 import { authenticate, post, redirect, siteEditor, exitPost } from './controller';
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
+import config from 'calypso/config';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	page(
