@@ -112,7 +112,7 @@
 		}
 	}
 
-	&.wpnc__main .wpnc__post {
+	&.wpnc__main .wpnc__note {
 		blockquote {
 			padding: 0 24px 0 32px;
 			margin: 16px 0 32px;
@@ -128,6 +128,12 @@
 		}
 		ul {
 			list-style-type: disc;
+			ul {
+				list-style-type: circle;
+				ul {
+					list-style-type: square;
+				}
+			}
 		}
 		ol {
 			list-style-type: decimal;
