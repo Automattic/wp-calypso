@@ -54,6 +54,10 @@
 
 	> li {
 		margin: 44px 0;
+
+		&:first-child {
+			margin-top: 0;
+		}
 	}
 }
 
@@ -84,6 +88,8 @@
 }
 
 .backup__restore-banner {
+	width: 100%;
+
 	&.banner.card {
 		@include banner-color( var( --color-jetpack ) );
 	}
