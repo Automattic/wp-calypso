@@ -24,6 +24,7 @@ import {
 /**
  * Internal dependencies
  */
+import FormLabel from 'calypso/components/forms/form-label';
 import NoResults from './no-results';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
@@ -310,7 +311,7 @@ class PostSelectorPosts extends React.Component {
 
 		return (
 			<div key={ item.global_ID } ref={ setItemRef } className="post-selector__list-item">
-				<label>
+				<FormLabel>
 					<input
 						name="posts"
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
@@ -334,7 +335,7 @@ class PostSelectorPosts extends React.Component {
 							</span>
 						) }
 					</span>
-				</label>
+				</FormLabel>
 				{ children.length > 0 && (
 					<div className="post-selector__nested-list">
 						{ children.map( ( child ) => this.renderItem( child, true ) ) }
@@ -376,14 +377,14 @@ class PostSelectorPosts extends React.Component {
 
 		return (
 			<div key="placeholder" className="post-selector__list-item is-placeholder">
-				<label>
+				<FormLabel>
 					<input
 						type={ this.props.multiple ? 'checkbox' : 'radio' }
 						disabled
 						className="post-selector__input"
 					/>
 					<span className="post-selector__label">{ this.props.translate( 'Loading…' ) }</span>
-				</label>
+				</FormLabel>
 			</div>
 		);
 	};
