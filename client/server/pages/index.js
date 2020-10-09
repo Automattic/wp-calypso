@@ -505,8 +505,10 @@ const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	 eslint-disable. */
 // eslint-disable-next-line no-unused-vars
 const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next ) => {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		console.error( err );
+	try {
+		req.logger.error( err );
+	} catch ( error ) {
+		console.error( error );
 	}
 
 	const ctx = {
