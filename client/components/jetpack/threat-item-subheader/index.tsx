@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import classnames from 'classnames';
 import moment from 'moment';
 
@@ -36,6 +36,8 @@ const formatDate = ( date: Date ) => {
 // This renders two different kind of sub-headers. One is for current threats (displayed
 // in the Scanner section), and the other for threats in the History section.
 const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
+	const translate = useTranslate();
+
 	if ( threat.status === 'current' ) {
 		switch ( getThreatType( threat ) ) {
 			case 'file':
