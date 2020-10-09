@@ -24,6 +24,9 @@ export const getAddPaymentMethodUrlFor = (
 export const getAddNewPaymentMethod = ( targetSiteSlug: string ) =>
 	`/purchases/add-credit-card/${ targetSiteSlug }`;
 
+export const getPaymentMethodsUrlFor = ( targetSiteSlug: string ) =>
+	`/purchases/payment-methods/${ targetSiteSlug }`;
+
 export const getEditPaymentMethodUrlFor = (
 	targetSiteSlug: string,
 	targetPurchase: { id: string | number },
