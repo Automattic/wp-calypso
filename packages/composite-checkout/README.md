@@ -40,6 +40,7 @@ Any component which is a child of `CheckoutProvider` gets access to the followin
 - [useFormStatus](#useFormStatus)
 - [useTransactionStatus](#useTransactionStatus)
 - [usePaymentProcessor](#usePaymentProcessor)
+- [usePaymentProcessors](#usePaymentProcessors)
 - [useMessages](#useMessages)
 - [useDispatch](#useDispatch)
 - [useLineItems](#useLineItems)
@@ -449,6 +450,10 @@ A React Hook that will return a two element array. The first element is a string
 ### usePaymentProcessor
 
 A React Hook that returns a payment processor function as passed to the `paymentProcessors` prop of [CheckoutProvider](#CheckoutProvider). Takes one argument which is the key of the processor function to return. Throws an Error if the key does not match a processor function. See [Payment Methods](#payment-methods) for an explanation of how this is used. Only works within [CheckoutProvider](#CheckoutProvider).
+
+### usePaymentProcessors
+
+A React Hook that returns all the payment processor functions in a Record.
 
 ### useRegisterStore
 
