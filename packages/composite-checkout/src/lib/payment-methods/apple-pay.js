@@ -8,12 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import {
-	useTransactionStatus,
-	usePaymentProcessor,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { useLineItems, useEvents } from '../../public-api';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -44,48 +39,25 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } ) {
+export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const {
-		setTransactionError,
-		setTransactionComplete,
-		setTransactionPending,
-	} = useTransactionStatus();
 	const onEvent = useEvents();
-	const submitTransaction = usePaymentProcessor( 'apple-pay' );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
-			setTransactionPending();
 			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
-			submitTransaction( {
+			onClick( 'apple-pay', {
 				stripe,
 				paymentMethodToken,
 				name,
 				items,
 				total,
 				stripeConfiguration,
-			} )
-				.then( () => {
-					setTransactionComplete();
-				} )
-				.catch( ( error ) => {
-					setTransactionError( error.message );
-				} );
+			} );
 		},
-		[
-			submitTransaction,
-			setTransactionComplete,
-			setTransactionError,
-			setTransactionPending,
-			onEvent,
-			items,
-			total,
-			stripe,
-			stripeConfiguration,
-		]
+		[ onClick, onEvent, items, total, stripe, stripeConfiguration ]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
