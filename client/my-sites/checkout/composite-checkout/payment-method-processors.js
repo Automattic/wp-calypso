@@ -27,7 +27,7 @@ import { showStripeModalAuth } from 'calypso/lib/stripe';
 
 const { select, dispatch } = defaultRegistry;
 
-export function genericRedirectProcessor(
+export async function genericRedirectProcessor(
 	paymentMethodId,
 	submitData,
 	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
@@ -57,7 +57,7 @@ export function genericRedirectProcessor(
 		pathname,
 		query: cancelUrlQuery,
 	} );
-	const pending = submitRedirectTransaction(
+	return submitRedirectTransaction(
 		paymentMethodId,
 		{
 			...submitData,
@@ -70,20 +70,15 @@ export function genericRedirectProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( saveTransactionResponseToWpcomStore );
 }
 
-export function applePayProcessor(
+export async function applePayProcessor(
 	submitData,
 	{ includeDomainDetails, includeGSuiteDetails },
 	transactionOptions
 ) {
-	const pending = submitApplePayPayment(
+	return submitApplePayPayment(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -93,12 +88,7 @@ export function applePayProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( saveTransactionResponseToWpcomStore );
 }
 
 export async function stripeCardProcessor(
@@ -124,11 +114,7 @@ export async function stripeCardProcessor(
 		wpcomTransaction,
 		transactionOptions
 	)
-		.then( ( result ) => {
-			// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-			dispatch( 'wpcom' ).setTransactionResponse( result );
-			return result;
-		} )
+		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
@@ -169,9 +155,7 @@ export async function ebanxCardProcessor(
 		},
 		wpcomTransaction
 	)
-		.then( ( result ) => {
-			dispatch( 'wpcom' ).setTransactionResponse( result );
-		} )
+		.then( saveTransactionResponseToWpcomStore )
 		.then( ( response ) => {
 			return { type: 'SUCCESS', payload: response };
 		} );
@@ -216,11 +200,7 @@ export async function existingCardProcessor(
 		wpcomTransaction,
 		transactionOptions
 	)
-		.then( ( result ) => {
-			// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-			dispatch( 'wpcom' ).setTransactionResponse( result );
-			return result;
-		} )
+		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
@@ -244,7 +224,7 @@ export async function freePurchaseProcessor(
 	submitData,
 	{ includeDomainDetails, includeGSuiteDetails }
 ) {
-	const pending = submitFreePurchaseTransaction(
+	return submitFreePurchaseTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -254,12 +234,7 @@ export async function freePurchaseProcessor(
 			postalCode: null,
 		},
 		wpcomTransaction
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( saveTransactionResponseToWpcomStore );
 }
 
 export async function fullCreditsProcessor(
@@ -267,7 +242,7 @@ export async function fullCreditsProcessor(
 	{ includeDomainDetails, includeGSuiteDetails },
 	transactionOptions
 ) {
-	const pending = submitCreditsTransaction(
+	return submitCreditsTransaction(
 		{
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
@@ -278,12 +253,7 @@ export async function fullCreditsProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	).then( saveTransactionResponseToWpcomStore );
 }
 
 export async function payPalProcessor(
@@ -307,7 +277,7 @@ export async function payPalProcessor(
 		query: createUserAndSiteBeforeTransaction ? { cart: 'no-user' } : {},
 	} );
 
-	const pending = submitPayPalExpressRequest(
+	return submitPayPalExpressRequest(
 		{
 			...submitData,
 			successUrl,
@@ -321,10 +291,11 @@ export async function payPalProcessor(
 		},
 		wpcomPayPalExpress,
 		transactionOptions
-	);
+	).then( saveTransactionResponseToWpcomStore );
+}
+
+async function saveTransactionResponseToWpcomStore( result ) {
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	dispatch( 'wpcom' ).setTransactionResponse( result );
+	return result;
 }
