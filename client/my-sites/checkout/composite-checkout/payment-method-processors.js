@@ -201,10 +201,10 @@ export async function multiPartnerCardProcessor(
 
 export async function existingCardProcessor(
 	submitData,
-	{ includeDomainDetails, includeGSuiteDetails },
+	{ includeDomainDetails, includeGSuiteDetails, recordEvent },
 	transactionOptions
 ) {
-	const pending = submitExistingCardPayment(
+	return submitExistingCardPayment(
 		{
 			...submitData,
 			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -215,12 +215,29 @@ export async function existingCardProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	);
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	pending.then( ( result ) => {
-		dispatch( 'wpcom' ).setTransactionResponse( result );
-	} );
-	return pending;
+	)
+		.then( ( result ) => {
+			// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
+			dispatch( 'wpcom' ).setTransactionResponse( result );
+			return result;
+		} )
+		.then( ( stripeResponse ) => {
+			if ( stripeResponse?.message?.payment_intent_client_secret ) {
+				// 3DS authentication required
+				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+				return showStripeModalAuth( {
+					stripeConfiguration: submitData.stripeConfiguration,
+					response: stripeResponse,
+				} );
+			}
+			return stripeResponse;
+		} )
+		.then( ( stripeResponse ) => {
+			if ( stripeResponse?.redirect_url ) {
+				return { type: 'REDIRECT', payload: stripeResponse.redirect_url };
+			}
+			return { type: 'SUCCESS', payload: stripeResponse };
+		} );
 }
 
 export async function freePurchaseProcessor(
