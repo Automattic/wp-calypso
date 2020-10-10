@@ -43,7 +43,12 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 
 		new_classes.push( `wpnc__${ range_info_type }` );
 	}
-
+	console.log( 'newsubText', new_sub_text );
+	console.log( 'newsubrange', new_sub_range );
+	console.log( 'rangedata', range_data );
+	console.log( 'range_inf', range_info );
+	console.log( 'options', options );
+	console.log( 'rangeInfoType', range_info_type );
 	// We want to do different things depending on the range type.
 	switch ( range_info_type ) {
 		// The badges should have their height and width set on
@@ -69,6 +74,21 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			if ( new_sub_text.trim().length > 0 ) {
 				new_container.setAttribute( 'alt', new_sub_text );
 			}
+			break;
+		case 'figure':
+		case 'iframe':
+			new_container = document.createElement( range_info_type );
+			new_container.setAttribute( 'src', range_info.src );
+			if ( range_info.hasOwnProperty( 'width' ) ) {
+				new_container.setAttribute( 'width', range_info.width );
+			}
+			if ( range_info.hasOwnProperty( 'height' ) ) {
+				new_container.setAttribute( 'height', range_info.height );
+			}
+			if ( new_sub_text.trim().length > 0 ) {
+				new_container.setAttribute( 'alt', new_sub_text );
+			}
+			build_chunks( new_sub_text, new_sub_range, range_data, new_container, options );
 			break;
 		// All of the following are simple element types we want to create and then
 		// recurse into for their constituent blocks or texts
