@@ -24,6 +24,7 @@ import {
 } from './payment-method-helpers';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import { showStripeModalAuth } from 'calypso/lib/stripe';
+import userAgent from 'calypso/lib/user-agent';
 
 const { select, dispatch } = defaultRegistry;
 
@@ -74,6 +75,61 @@ export async function genericRedirectProcessor(
 		.then( saveTransactionResponseToWpcomStore )
 		.then( ( response ) => {
 			return { type: 'REDIRECT', payload: response?.redirect_url };
+		} );
+}
+
+export async function weChatProcessor(
+	submitData,
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+) {
+	const paymentMethodId = 'wechat';
+	const { protocol, hostname, port, pathname } = parseUrl(
+		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
+		true
+	);
+	const cancelUrlQuery = {};
+	const redirectToSuccessUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname: getThankYouUrl(),
+	} );
+	const successUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname: `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`,
+		query: { redirectTo: redirectToSuccessUrl },
+	} );
+	const cancelUrl = formatUrl( {
+		protocol,
+		hostname,
+		port,
+		pathname,
+		query: cancelUrlQuery,
+	} );
+	return submitRedirectTransaction(
+		paymentMethodId,
+		{
+			...submitData,
+			successUrl,
+			cancelUrl,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: submitData.postalCode || getPostalCode(),
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
+			siteId: select( 'wpcom' )?.getSiteId?.(),
+			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+		},
+		wpcomTransaction
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( ( response ) => {
+			// The WeChat payment type should only redirect when on mobile as redirect urls
+			// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
+			if ( userAgent.isMobile ) {
+				return { type: 'REDIRECT', payload: response?.redirect_url };
+			}
+			return { type: 'NOOP' };
 		} );
 }
 

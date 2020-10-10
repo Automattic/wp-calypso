@@ -40,6 +40,7 @@ import {
 	existingCardProcessor,
 	payPalProcessor,
 	genericRedirectProcessor,
+	weChatProcessor,
 } from './payment-method-processors';
 import { useGetThankYouUrl } from './use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
@@ -542,8 +543,7 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForRedirectProcessor ),
 			giropay: ( transactionData ) =>
 				genericRedirectProcessor( 'giropay', transactionData, dataForRedirectProcessor ),
-			wechat: ( transactionData ) =>
-				genericRedirectProcessor( 'wechat', transactionData, dataForRedirectProcessor ),
+			wechat: ( transactionData ) => weChatProcessor( transactionData, dataForRedirectProcessor ),
 			netbanking: ( transactionData ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForRedirectProcessor ),
 			id_wallet: ( transactionData ) =>
