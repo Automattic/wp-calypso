@@ -12,13 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import {
-	FormStatus,
-	usePaymentProcessor,
-	useTransactionStatus,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -131,16 +125,9 @@ const GiropayField = styled( Field )`
 	}
 `;
 
-function GiropayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const { __ } = useI18n();
+function GiropayPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'giropay' );
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
 
@@ -150,33 +137,17 @@ function GiropayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting giropay payment' );
-					setTransactionPending();
 					onEvent( {
 						type: 'REDIRECT_TRANSACTION_BEGIN',
 						payload: { paymentMethodId: 'giropay' },
 					} );
-					submitTransaction( {
+					onClick( 'giropay', {
 						stripe,
 						name: customerName?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'giropay transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
