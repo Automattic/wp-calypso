@@ -3,6 +3,7 @@
  */
 import React, { useCallback } from 'react';
 import debugFactory from 'debug';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -27,9 +28,13 @@ export default function CheckoutSubmitButton( {
 		setTransactionPending,
 	} = useTransactionStatus();
 	const paymentProcessors = usePaymentProcessors();
+	const { __ } = useI18n();
+	const redirectErrorMessage = __(
+		'There was an error redirecting you to the payment partner. Please try again or contact support.'
+	);
 
 	const onClick = useCallback(
-		( paymentProcessorId: string, submitData: unknown ) => {
+		async ( paymentProcessorId: string, submitData: unknown ) => {
 			debug( 'beginning payment processor onClick handler' );
 			if ( ! paymentProcessors[ paymentProcessorId ] ) {
 				throw new Error( `No payment processor found with key: ${ paymentProcessorId }` );
@@ -40,6 +45,9 @@ export default function CheckoutSubmitButton( {
 				.then( ( processorResponse: PaymentProcessorResponse ) => {
 					debug( 'payment processor function response', processorResponse );
 					if ( processorResponse.type === 'REDIRECT' ) {
+						if ( ! processorResponse.payload ) {
+							throw new Error( redirectErrorMessage );
+						}
 						setTransactionRedirecting( processorResponse.payload );
 						return;
 					}
@@ -57,6 +65,7 @@ export default function CheckoutSubmitButton( {
 				} );
 		},
 		[
+			redirectErrorMessage,
 			paymentProcessors,
 			setTransactionComplete,
 			setTransactionPending,
