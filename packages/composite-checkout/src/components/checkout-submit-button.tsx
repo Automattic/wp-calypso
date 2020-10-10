@@ -55,6 +55,9 @@ export default function CheckoutSubmitButton( {
 						setTransactionComplete( processorResponse.payload );
 						return;
 					}
+					if ( processorResponse.type === 'NOOP' ) {
+						return;
+					}
 					throw new Error(
 						`Unknown payment processor response for processor "${ paymentProcessorId }"`
 					);

@@ -104,6 +104,7 @@ export type PaymentProcessorResponseData = unknown;
 
 export type PaymentProcessorResponse =
 	| { type: 'SUCCESS'; payload: PaymentProcessorResponseData }
+	| { type: 'NOOP' }
 	| { type: 'REDIRECT'; payload: string };
 
 export type PaymentProcessorFunction = (
