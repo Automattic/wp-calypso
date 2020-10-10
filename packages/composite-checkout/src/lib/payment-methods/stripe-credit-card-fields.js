@@ -19,14 +19,7 @@ import Field from '../../components/field';
 import GridRow from '../../components/grid-row';
 import Button from '../../components/button';
 import PaymentLogo from './payment-logo';
-import { showStripeModalAuth } from '../stripe';
-import {
-	FormStatus,
-	usePaymentProcessor,
-	useTransactionStatus,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import Spinner from '../../components/spinner';
 import { useFormStatus } from '../form-status';
@@ -384,18 +377,11 @@ function LoadingFields() {
 	);
 }
 
-function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
+function StripePayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const cardholderName = useSelect( ( select ) => select( 'stripe' ).getCardholderName() );
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionComplete,
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
 
 	return (
@@ -404,41 +390,14 @@ function StripePayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			onClick={ () => {
 				if ( isCreditCardFormValid( store, __ ) ) {
 					debug( 'submitting stripe payment' );
-					setTransactionPending();
 					onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
-					submitTransaction( {
+					onClick( 'card', {
 						stripe,
 						name: cardholderName?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							// 3DS authentication required
-							if ( stripeResponse?.message?.payment_intent_client_secret ) {
-								debug( 'showing stripe authentication modal' );
-								onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-								return showStripeModalAuth( {
-									stripeConfiguration,
-									response: stripeResponse,
-								} );
-							}
-							return stripeResponse;
-						} )
-						.then( ( stripeResponse ) => {
-							// Redirect required
-							if ( stripeResponse?.redirect_url ) {
-								debug( 'stripe transaction requires redirect' );
-								setTransactionRedirecting( stripeResponse.redirect_url );
-								return;
-							}
-							// Nothing more required
-							debug( 'stripe transaction is successful' );
-							setTransactionComplete();
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
