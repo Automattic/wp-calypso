@@ -30,6 +30,7 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Gridicon from 'calypso/components/gridicon';
 import HostSelection from './host-selection';
 import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
@@ -220,7 +221,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 					onFormStateChange={ setFormState }
 					onModeChange={ setFormMode }
 				>
-					<Button compact borderless href={ `${ settingsPath( siteSlug ) }` }>
+					<Button compact borderless href={ settingsPath( siteSlug ) }>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ translate( 'Change host' ) }
 					</Button>
@@ -237,6 +238,11 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 			<QueryRewindState siteId={ siteId } poll />
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
+			<PageViewTracker
+				path={ settingsPath( ':site' ) }
+				title="Advanced Credentials"
+				properties={ { step: getCurrentStep() } }
+			/>
 			<Card className="advanced-credentials__server-connection-status">
 				<div className="advanced-credentials__server-connection-status-content">
 					<h3>{ translate( 'Remote server credentials' ) }</h3>
