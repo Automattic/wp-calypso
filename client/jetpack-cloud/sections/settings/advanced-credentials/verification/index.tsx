@@ -10,9 +10,9 @@ import React, { FunctionComponent, useState } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { useInterval, EVERY_SECOND } from 'lib/interval';
-import Gridicon from 'components/gridicon';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useInterval, EVERY_SECOND } from 'calypso/lib/interval';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
