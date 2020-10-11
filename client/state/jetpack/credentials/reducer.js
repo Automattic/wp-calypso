@@ -6,8 +6,8 @@ import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
-} from 'state/action-types';
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation(
