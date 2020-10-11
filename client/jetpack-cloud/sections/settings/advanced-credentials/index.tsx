@@ -117,6 +117,11 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 		}
 	}, [ setFormErrors, formSubmissionError, translate ] );
 
+	// reset form information on siteId change
+	useEffect( () => {
+		setFormState( INITIAL_FORM_STATE );
+	}, [ siteId, setFormState ] );
+
 	const handleDeleteCredentials = () => {
 		dispatch( deleteCredentials( siteId, role ) );
 	};
