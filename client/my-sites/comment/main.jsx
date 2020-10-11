@@ -102,7 +102,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const comment = getSiteComment( state, siteId, commentId );
 	const postId = get( comment, 'post.ID' );
 
-	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' ) !== false;
+	const canModerateComments = canCurrentUser( state, siteId, 'moderate_comments' );
 	const hasPermalink = includes( [ 'approved', 'unapproved' ], get( comment, 'status' ) );
 
 	return {

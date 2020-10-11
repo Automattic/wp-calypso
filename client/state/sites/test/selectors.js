@@ -1,5 +1,3 @@
-/* eslint jest/expect-expect: [ "error", { "assertFunctionNames": [ "expect", "chaiExpect" ] } ] */
-
 /**
  * External dependencies
  */
@@ -128,7 +126,7 @@ describe( 'selectors', () => {
 				canUpdateFiles: true,
 				isMainNetworkSite: false,
 				isSecondaryNetworkSite: false,
-				isSiteUpgradeable: null,
+				isSiteUpgradeable: false,
 				options: {
 					jetpack_version: '8.0',
 					unmapped_url: 'https://example.wordpress.com',

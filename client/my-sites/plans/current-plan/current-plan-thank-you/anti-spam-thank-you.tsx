@@ -36,7 +36,7 @@ const AntiSpamProductThankYou = ( { installProgress } ): ReactElement => {
 			ThankYouCtaComponent={ isInstalled && ThankYouCta }
 		>
 			<>
-				<p>{ translate( "We're setting up Jetpack Anti-Spam for you right now." ) }</p>
+				<p>{ translate( "We're setting up Jetpack Anti-spam for you right now." ) }</p>
 				<p>
 					{ translate(
 						"In no time you'll be able to enjoy more peace of mind and provide a better experience to your visitors."

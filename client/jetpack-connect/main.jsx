@@ -17,7 +17,7 @@ import MainWrapper from './main-wrapper';
 import SiteUrlInput from './site-url-input';
 import { cleanUrl } from './utils';
 import { checkUrl } from 'state/jetpack-connect/actions';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
+import { FLOW_TYPES } from 'jetpack-connect/flow-types';
 import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isRequestingSites } from 'state/sites/selectors';

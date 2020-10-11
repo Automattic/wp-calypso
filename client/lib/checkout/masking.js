@@ -91,6 +91,15 @@ fieldMasks.cvv = {
 	unmask: identity,
 };
 
+fieldMasks.nik = {
+	mask: function ( previousValue, nextValue ) {
+		const digitsOnly = nextValue.replace( /[^0-9]/g, '' );
+		return digitsOnly;
+	},
+
+	unmask: identity,
+};
+
 // `document` is an EBANX field. Currently used for Brazilian CPF numbers
 // See isValidCPF()/isValidCNPJ() / ebanx.js
 fieldMasks.document = {
@@ -123,7 +132,7 @@ fieldMasks.document = {
 				digits.slice( 9, 11 );
 		}
 
-		return string.replace( /^[\s\.\-]+|[\s\.\-]+$/g, '' );
+		return string.replace( /^[\s.-]+|[\s.-]+$/g, '' );
 	},
 
 	unmask: identity,

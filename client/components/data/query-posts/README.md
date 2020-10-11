@@ -1,5 +1,4 @@
-Query Posts
-===========
+# Query Posts
 
 Query Posts is a React component used in managing the fetching of posts queries.
 
@@ -15,16 +14,10 @@ import MyPostsListItem from './list-item';
 export default function MyPostsList( { posts } ) {
 	return (
 		<div>
-			<QueryPosts
-				siteId={ 3584907 }
-				query={ { search: 'Themes' } } />
+			<QueryPosts siteId={ 3584907 } query={ { search: 'Themes' } } />
 			{ posts.map( ( post ) => {
-				return (
-					<MyPostsListItem
-						key={ post.global_ID }
-						post={ post } />
-				);
-			} }
+				return <MyPostsListItem key={ post.global_ID } post={ post } />;
+			} ) }
 		</div>
 	);
 }

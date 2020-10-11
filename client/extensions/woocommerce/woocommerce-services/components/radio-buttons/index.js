@@ -15,13 +15,19 @@ import FormRadio from 'components/forms/form-radio';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';
 import FieldDescription from 'woocommerce/woocommerce-services/components/field-description';
 
+import './style.scss';
+
 const RadioButton = ( { value, currentValue, setValue, description } ) => {
 	const onChange = () => setValue( value );
 
 	return (
 		<FormLabel>
 			<FormRadio value={ value } checked={ value === currentValue } onChange={ onChange } />
-			<span dangerouslySetInnerHTML={ sanitizeHTML( description ) } />
+			<div
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				className="woocommerce-services-radio-buttons__description"
+				dangerouslySetInnerHTML={ sanitizeHTML( description ) }
+			/>
 		</FormLabel>
 	);
 };

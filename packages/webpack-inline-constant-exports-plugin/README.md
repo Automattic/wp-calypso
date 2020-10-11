@@ -3,6 +3,7 @@
 Detects that bindings exported from a module are constants and inlines them at the usage site.
 
 _constants.js_
+
 ```js
 export const BLOGGER = 'BLOGGER_PLAN'; // strings
 export const PREMIUM = 'PREMIUM_PLAN';
@@ -12,6 +13,7 @@ export const NO_PLAN = null; // null
 ```
 
 _app.js_
+
 ```js
 import { BLOGGER, PREMIUM } from './constants';
 
@@ -23,6 +25,7 @@ booleans, anything that's `===`-equal to each other even for different instances
 into the importing module and the actual import will be removed:
 
 _bundled-app.js_
+
 ```js
 console.log( 'BLOGGER_PLAN', 'PREMIUM_PLAN' );
 ```
@@ -30,15 +33,12 @@ console.log( 'BLOGGER_PLAN', 'PREMIUM_PLAN' );
 ## Usage
 
 _webpack.config.js_
+
 ```js
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 
 module.exports = {
-  ...,
-  plugins: [
-    new InlineConstantExportsPlugin( [ /\/constants.js/ ] ),
-    ...
-  ]
+	plugins: [ new InlineConstantExportsPlugin( [ /\/constants.js/ ] ) ],
 };
 ```
 
@@ -48,9 +48,11 @@ path, the module will be treated as an constant-exporting one and these exports 
 ## Side Effects
 
 If you import bindings from a constants module:
+
 ```js
 import { BLOGGER, PREMIUM } from './constants';
 ```
+
 it is assumed that the module is imported only to get the constant bindings, and not for its
 side effects. The import will be removed if all the imported bindings were inlined and the
 potential side effects will not be performed.

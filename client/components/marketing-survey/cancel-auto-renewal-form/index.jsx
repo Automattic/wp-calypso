@@ -114,8 +114,8 @@ class CancelAutoRenewalForm extends Component {
 					value={ value }
 					onChange={ this.onRadioChange }
 					checked={ this.state.response === value }
+					label={ text }
 				/>
-				<span>{ text }</span>
 			</FormLabel>
 		);
 	};

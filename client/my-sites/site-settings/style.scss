@@ -1,7 +1,7 @@
 .site-settings {
 	font-size: $font-body-small;
 
-	fieldset {
+	fieldset.form-fieldset {
 		clear: both;
 		margin-bottom: 24px;
 
@@ -27,13 +27,13 @@
 		margin-top: 24px; // Give labels some margin when they immediately follow a select
 	}
 
-	input[type='number'] {
+	input[type='number'].form-text-input {
 		padding: 0;
 		width: 50px;
 		text-align: center;
 	}
 
-	input[type='text'] {
+	input[type='text'].form-text-input {
 		-webkit-appearance: none;
 	}
 
@@ -181,7 +181,7 @@
 		margin-bottom: 1.5em;
 	}
 
-	fieldset.site-icon-setting {
+	fieldset.form-fieldset.site-icon-setting {
 		padding-bottom: 16px;
 
 		@include breakpoint-deprecated( '>660px' ) {
@@ -369,16 +369,15 @@
 }
 
 .jetpack-protect__deactivate,
-.jetpack-protect__edit-settings,
-.disconnect-jetpack-button,
-.jetpack-protect__edit-settings,
-.disconnect-jetpack-button {
+.jetpack-protect__edit-settings {
 	margin-right: 8px;
 }
 
 // @TODO: Remove has-divider once all instances have been replaced with .site-settings__has-divider
 .has-divider,
-.site-settings__has-divider {
+.site-settings__has-divider,
+.form-fieldset.has-divider,
+.form-fieldset.site-settings__has-divider {
 	margin: 0 -24px;
 	padding: 24px 24px 16px;
 	border: 1px var( --color-neutral-0 ) solid;

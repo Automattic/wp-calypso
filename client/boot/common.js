@@ -41,7 +41,7 @@ import { initConnection as initHappychatConnection } from 'state/happychat/conne
 import { requestHappychatEligibility } from 'state/happychat/user/actions';
 import { getHappychatAuth } from 'state/happychat/utils';
 import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import { setRoute as setRouteAction } from 'state/route/actions';
+import { setRoute } from 'state/route/actions';
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
@@ -55,6 +55,7 @@ import { setStore } from 'state/redux-store';
 import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
 import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
+import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso' );
 
@@ -127,6 +128,11 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
+		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
+			loggedOutRoutes.push( '/pricing' );
+			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
+		}
+
 		// Forces OAuth users to the /login page if no token is present
 		page( '*', function ( context, next ) {
 			const isValidSection = loggedOutRoutes.some( ( route ) => startsWith( context.path, route ) );
@@ -167,7 +173,7 @@ const oauthTokenMiddleware = () => {
 
 const setRouteMiddleware = () => {
 	page( '*', ( context, next ) => {
-		context.store.dispatch( setRouteAction( context.pathname, context.query ) );
+		context.store.dispatch( setRoute( context.pathname, context.query ) );
 
 		next();
 	} );
@@ -376,12 +382,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		require( 'lib/desktop' ).default.init();
-	}
-
-	if ( config.isEnabled( 'rubberband-scroll-disable' ) ) {
-		asyncRequire( 'lib/rubberband-scroll-disable', ( disableRubberbandScroll ) => {
-			disableRubberbandScroll( document.body );
-		} );
 	}
 
 	if (

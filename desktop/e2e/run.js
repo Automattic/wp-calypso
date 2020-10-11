@@ -8,6 +8,7 @@ const electron = require( 'electron' );
 const { promisify } = require( 'util' );
 const { openSync, mkdirSync } = require( 'fs' );
 const { execSync, spawn } = require( 'child_process' );
+const videoRecorder = require( './tests/lib/video-recorder' );
 
 const PROJECT_DIR = path.join( __dirname, '../' );
 const E2E_DIR = path.join( PROJECT_DIR, 'e2e' );
@@ -112,6 +113,8 @@ async function run() {
 		const timestamp = new Date().toJSON().replace( /:/g, '-' );
 		const { appLog, driverLog } = initLogs( timestamp );
 
+		await videoRecorder.startVideo();
+
 		const parentEnv = process.env;
 		app = spawnDetached( CWD, SPAWN_CMD, APP_ARGS, null, {
 			WP_DEBUG_LOG: appLog.path,
@@ -136,6 +139,8 @@ async function run() {
 		console.error( err ); // eslint-disable-line no-console
 		process.exitCode = 1;
 	} finally {
+		await videoRecorder.stopVideo();
+
 		// Explicitly call process.exit to ensure that spawned processes are killed.
 		process.exit();
 	}

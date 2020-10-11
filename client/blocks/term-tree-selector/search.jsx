@@ -7,6 +7,11 @@ import React from 'react';
 import Gridicon from 'components/gridicon';
 
 /**
+ * Internal dependencies
+ */
+import FormTextInput from 'components/forms/form-text-input';
+
+/**
  * Style dependencies
  */
 import './search.scss';
@@ -17,7 +22,7 @@ function TermTreeSelectorSearch( { searchTerm, onSearch } ) {
 	return (
 		<div className="term-tree-selector__search">
 			<Gridicon icon="search" size={ 18 } />
-			<input
+			<FormTextInput
 				type="search"
 				placeholder={ translate( 'Search…', { textOnly: true } ) }
 				value={ searchTerm }

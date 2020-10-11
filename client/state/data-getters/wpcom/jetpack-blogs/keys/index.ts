@@ -14,10 +14,7 @@ interface ResponseData {
 	};
 }
 
-export function requestPluginKeys(
-	siteId: SiteId,
-	options: Parameters< typeof requestHttpData >[ 2 ] = {}
-) {
+export function requestPluginKeys( siteId: SiteId ) {
 	requestHttpData(
 		dataKey( siteId ),
 		http( {
@@ -26,10 +23,8 @@ export function requestPluginKeys(
 			apiVersion: '1.1',
 		} ),
 		{
-			// Defaults
 			fromApi: () => ( data: ResponseData ) => [ [ dataKey( siteId ), data.keys ] ],
-			// Allow overwrite
-			...options,
+			freshness: -Infinity,
 		}
 	);
 }

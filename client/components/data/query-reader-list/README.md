@@ -1,5 +1,4 @@
-Query Reader List
-==================
+# Query Reader List
 
 `<QueryReaderList />` is a React component used in managing network requests for single Reader lists.
 

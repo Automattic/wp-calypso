@@ -21,9 +21,6 @@ jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
 	require( './mocks/plugin-action' )
 );
 jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
-jest.mock( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button', () =>
-	require( 'components/empty-component' )
-);
 
 describe( 'PluginActivateToggle', () => {
 	const analyticsMock = {

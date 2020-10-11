@@ -1,0 +1,134 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.jpcom-footer {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+
+	padding: 12px 16px 24px;
+
+	@include break-mobile {
+		padding: 12px 12px 24px;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding: 40px 0 24px;
+	}
+}
+
+.jpcom-footer__separator {
+	// This color comes from design (not present in color-studio).
+	background: #c9d7e1;
+
+	margin: 0;
+
+	// These 3 properties make the line go across the whole viewport even when the
+	// parent component doesn't go that far.
+	position: relative;
+	left: calc( -50vw + 50% );
+	width: 100vw;
+}
+
+.jpcom-footer__col {
+	flex: 0 0 100%;
+
+	padding: 10px 0;
+
+	@include break-mobile {
+		flex: 0 0 calc( 50% - 24px );
+
+		padding: 10px 12px;
+	}
+
+	// We need this deprecated breakpoint since Calypso still uses it to determine
+	// the layout padding.
+	@include breakpoint-deprecated( '>660px' ) {
+		flex: 0 0 calc( 50% - 12px );
+
+		padding: 10px 0;
+	}
+
+	@include break-large {
+		flex: 0 0 25%;
+	}
+
+	@include break-xlarge {
+		flex: 0 0 20%;
+	}
+}
+
+.jpcom-footer__sub-col {
+	margin-top: 20px;
+}
+
+.jpcom-footer__links {
+	list-style: none;
+	list-style-image: none;
+
+	margin: 0;
+}
+
+.jpcom-footer__link {
+	padding-bottom: 8px;
+}
+
+.jpcom-footer__col-header {
+	font-weight: 700;
+	margin-bottom: 20px;
+}
+
+.jpcom-footer__col--logo {
+	display: none;
+
+	@include break-xlarge {
+		display: block;
+	}
+}
+
+.jpcom-footer__plugs {
+	text-align: center;
+
+	font-size: 0.875rem;
+}
+
+.jpcom-footer__plugs-group {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+
+	padding: 20px 10px;
+
+	a {
+		color: #2e4453;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+}
+
+.jpcom-footer__a8c-services-plug {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	padding-bottom: 14px;
+
+	@include break-mobile {
+		padding-bottom: 0;
+	}
+
+	svg {
+		margin-right: 8px;
+	}
+}
+
+.jpcom-footer__a8c-attr-plug {
+	width: 180px;
+}
+
+.jpcom-footer__hiring-plug {
+	padding: 20px;
+}

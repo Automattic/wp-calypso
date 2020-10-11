@@ -1,5 +1,4 @@
-Editor Fieldset
-===============
+# Editor Fieldset
 
 Editor Fieldset is a React component to wrap a set of related options under a single grouping with a header.
 
@@ -10,17 +9,24 @@ The `<EditorFieldset />` component accepts a single `legend` prop to specify the
 ```jsx
 import React from 'react';
 import EditorFieldset from 'post-editor/editor-fieldset';
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 
 class MyComponent extends React.Component {
 	render() {
 		return (
 			<EditorFieldset legend="Settings">
-				<label><input type="checkbox"> Option One</label>
-				<label><input type="checkbox"> Option Two</label>
+				<FormLabel>
+					<FormInputCheckbox />
+					<span>Option One</span>
+				</FormLabel>
+				<FormLabel>
+					<FormInputCheckbox />
+					<span>Option Two</span>
+				</FormLabel>
 			</EditorFieldset>
 		);
 	}
-
 }
 ```
 

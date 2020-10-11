@@ -57,7 +57,11 @@ class SecondaryCart extends Component {
 			return (
 				<div className={ cartClasses }>
 					<ul className="secondary-cart__item">
-						<CartMessages cart={ cart } selectedSite={ selectedSite } />
+						<CartMessages
+							cart={ cart }
+							selectedSite={ selectedSite }
+							isLoadingCart={ ! cart.hasLoadedFromServer }
+						/>
 						<CartSummaryBar additionalClasses="cart-header" />
 						<CartBodyLoadingPlaceholder />
 					</ul>
@@ -68,7 +72,11 @@ class SecondaryCart extends Component {
 		return (
 			<div className={ cartClasses }>
 				<ul className="secondary-cart__item">
-					<CartMessages cart={ cart } selectedSite={ selectedSite } />
+					<CartMessages
+						cart={ cart }
+						selectedSite={ selectedSite }
+						isLoadingCart={ ! cart.hasLoadedFromServer }
+					/>
 					<CartSummaryBar additionalClasses="cart-header" />
 					<CartPlanAdTheme selectedSite={ selectedSite } cart={ cart } />
 					<CartBody

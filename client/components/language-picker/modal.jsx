@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -38,6 +37,8 @@ import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils/utils';
+import { requestGeoLocation } from 'state/data-getters';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Style dependencies
@@ -64,29 +65,26 @@ export class LanguagePickerModal extends PureComponent {
 		localizedLanguageNames: {},
 		isVisible: false,
 		selected: 'en',
-		countryCode: '',
 		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
 		useFallbackForIncompleteLanguages: false,
 	};
 
-	constructor( props ) {
-		super( props );
+	state = {
+		empathyMode: this.props.empathyMode,
+		filter: getLanguageGroupByCountryCode( this.props.countryCode ),
+		isSearchOpen: false,
+		recordedTracksSearchEvent: false,
+		search: false,
+		selectedLanguageSlug: this.props.selected,
+		showingDefaultFilter: true,
+		suggestedLanguages: this.getSuggestedLanguages(),
+		useFallbackForIncompleteLanguages: this.props.useFallbackForIncompleteLanguages,
+	};
 
-		this.state = {
-			filter: getLanguageGroupByCountryCode( this.props.countryCode ),
-			showingDefaultFilter: true,
-			search: false,
-			isSearchOpen: false,
-			selectedLanguageSlug: this.props.selected,
-			suggestedLanguages: this.getSuggestedLanguages(),
-			empathyMode: props.empathyMode,
-			useFallbackForIncompleteLanguages: props.useFallbackForIncompleteLanguages,
-		};
-
-		this.languagesList = React.createRef();
-		this.selectedLanguageItem = React.createRef();
-	}
+	initiallySelectedLanguageSlug = this.props.selected;
+	languagesList = React.createRef();
+	selectedLanguageItem = React.createRef();
 
 	componentDidMount() {
 		window.addEventListener( 'keydown', this.handleKeyDown );
@@ -417,7 +415,16 @@ export class LanguagePickerModal extends PureComponent {
 		this.handleClose();
 	};
 
-	handleClose = () => {
+	recordLanguagePickerEvent = ( isClosingWithoutSelection ) => {
+		this.props.recordTracksEvent( 'calypso_languagepicker_closed', {
+			searched: false !== this.state.search,
+			is_closing_without_selection: isClosingWithoutSelection,
+			did_select_language: this.initiallySelectedLanguageSlug !== this.state.selectedLanguageSlug,
+		} );
+	};
+
+	handleClose = ( isClosingWithoutSelection = false ) => {
+		this.recordLanguagePickerEvent( isClosingWithoutSelection );
 		this.props.onClose();
 	};
 
@@ -580,7 +587,7 @@ export class LanguagePickerModal extends PureComponent {
 			<Dialog
 				isVisible
 				buttons={ buttons }
-				onClose={ this.handleClose }
+				onClose={ () => this.handleClose( true ) }
 				additionalClassNames="language-picker__modal"
 			>
 				<QueryLanguageNames />
@@ -606,7 +613,11 @@ export class LanguagePickerModal extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => ( {
-	localizedLanguageNames: getLocalizedLanguageNames( state ),
-	currentUserLocale: getCurrentUserLocale( state ),
-} ) )( localize( LanguagePickerModal ) );
+export default connect(
+	( state ) => ( {
+		countryCode: requestGeoLocation().data || '',
+		localizedLanguageNames: getLocalizedLanguageNames( state ),
+		currentUserLocale: getCurrentUserLocale( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( LanguagePickerModal ) );

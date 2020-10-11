@@ -1,5 +1,4 @@
-Query Rewind Restore Status
-===========================
+# Query Rewind Restore Status
 
 `QueryRewindRestoreStatus` is a React component which dispatches actions for querying the status of a Rewind restore.
 

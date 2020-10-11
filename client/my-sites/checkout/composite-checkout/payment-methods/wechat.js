@@ -8,6 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -21,13 +22,13 @@ import {
 /**
  * Internal dependencies
  */
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/wpcom/components/payment-method-logos';
-import Field from 'my-sites/checkout/composite-checkout/wpcom/components/field';
+import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
+import Field from 'my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/summary-details';
-import WeChatPaymentQRcode from 'my-sites/checkout/checkout/wechat-payment-qrcode';
+} from 'my-sites/checkout/composite-checkout/components/summary-details';
+import WeChatPaymentQRcodeUnstyled from 'my-sites/checkout/checkout/wechat-payment-qrcode';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 import userAgent from 'lib/user-agent';
 
@@ -91,7 +92,7 @@ function WeChatFields() {
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'wechat' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<WeChatFormWrapper>
@@ -161,7 +162,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 
 	if ( transactionStatus === 'authorizing' ) {
 		return (
-			<WeChatPaymentQRcodeUI
+			<WeChatPaymentQRcode
 				orderId={ transactionLastResponse.order_id }
 				cart={ cart }
 				redirectUrl={ transactionLastResponse.redirect_url }
@@ -212,7 +213,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -220,7 +221,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 	);
 }
 
-const WeChatPaymentQRcodeUI = styled( WeChatPaymentQRcode )`
+const WeChatPaymentQRcode = styled( WeChatPaymentQRcodeUnstyled )`
 	background-color: #fff;
 	margin: -24px;
 	padding: 24px;
@@ -242,10 +243,10 @@ const WeChatPaymentQRcodeUI = styled( WeChatPaymentQRcode )`
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

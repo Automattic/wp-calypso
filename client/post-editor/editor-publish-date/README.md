@@ -1,5 +1,4 @@
-Editor Publish Date
-===================
+# Editor Publish Date
 
 Editor Publish Date is a React component that allows the user to set a post's publish date inside the Editor.
 
@@ -14,9 +13,7 @@ export default function MyComponent() {
 		setPostDate: setPostDate,
 	};
 
-	return (
-		<EditorPublishDate { ...props } />
-	);
+	return <EditorPublishDate { ...props } />;
 }
 ```
 

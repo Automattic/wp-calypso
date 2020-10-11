@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="newspack-blocks">
+	<description>Detect issues with newspack blocks sync</description>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+		<property name="text_domain" type="array">
+			<element value="full-site-editing"/>
+		</property>
+		</properties>
+	</rule>
+
+	<file>../editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</file>
+</ruleset>

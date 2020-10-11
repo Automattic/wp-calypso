@@ -18,18 +18,19 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
-import wpcom from 'wp-calypso-client/lib/wp';
-import { recordTracksEvent } from 'wp-calypso-client/lib/analytics/tracks';
-import config from 'wp-calypso-client/config';
-import { recordTracksEvent as recordTracksEventAction } from 'wp-calypso-client/state/analytics/actions';
-import getCurrentLocaleSlug from 'wp-calypso-client/state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'wp-calypso-client/state/selectors/get-current-locale-variant';
-import { setUnseenCount } from 'wp-calypso-client/state/notifications';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import config from 'calypso/config';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import { setUnseenCount } from 'calypso/state/notifications';
+import { notifyDesktopNewNote } from 'calypso/state/desktop/actions';
 
 /**
  * Internal dependencies
  */
-import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
+import NotificationsPanel, { refreshNotes, markNoteAsRead } from './src/panel/Notifications';
 
 /**
  * Style dependencies
@@ -54,9 +55,12 @@ const getIsVisible = () => {
 	return document.visibilityState === 'visible';
 };
 
+const isDesktop = config.isEnabled( 'desktop' );
+
 export class Notifications extends Component {
 	state = {
-		isVisible: getIsVisible(),
+		// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
+		isVisible: isDesktop ? true : getIsVisible(),
 	};
 
 	componentDidMount() {
@@ -78,6 +82,12 @@ export class Notifications extends Component {
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
+
+		window.addEventListener(
+			'desktop-notification-mark-as-read',
+			this.handleDesktopNotificationMarkAsRead,
+			false
+		);
 	}
 
 	componentWillUnmount() {
@@ -98,6 +108,8 @@ export class Notifications extends Component {
 				this.receiveServiceWorkerMessage
 			);
 		}
+
+		window.removeEventListener( 'message', this.handleDesktopNotificationMarkAsRead );
 	}
 
 	handleKeyPress = ( event ) => {
@@ -122,7 +134,13 @@ export class Notifications extends Component {
 		}
 	};
 
-	handleVisibilityChange = () => this.setState( { isVisible: getIsVisible() } );
+	// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
+	handleVisibilityChange = () => this.setState( { isVisible: isDesktop ? true : getIsVisible() } );
+
+	handleDesktopNotificationMarkAsRead = ( event ) => {
+		const { noteId } = event.detail;
+		markNoteAsRead( noteId, true, refreshNotes );
+	};
 
 	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker
@@ -231,6 +249,11 @@ export class Notifications extends Component {
 					page( `/comment/${ siteId }/${ commentId }?action=edit` );
 				},
 			],
+			NOTIFY_DESKTOP_NEW_NOTE: [
+				( store, { note, isApproved } ) => {
+					this.props.notifyDesktopNewNote( note, isApproved );
+				},
+			],
 		};
 
 		return (
@@ -260,5 +283,6 @@ export default connect(
 	{
 		recordTracksEventAction,
 		setUnseenCount,
+		notifyDesktopNewNote,
 	}
 )( Notifications );

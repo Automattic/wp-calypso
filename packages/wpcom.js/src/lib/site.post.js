@@ -1,5 +1,10 @@
 /**
- * Module dependencies.
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
  */
 import Like from './site.post.like';
 import Reblog from './site.post.reblog';
@@ -7,7 +12,6 @@ import Comment from './site.comment';
 import Subscriber from './site.post.subscriber';
 import runtimeBuilder from './util/runtime-builder';
 import sitePostGetMethods from './runtime/site.post.get';
-import debugFactory from 'debug';
 
 /**
  * Module vars
@@ -220,7 +224,7 @@ class SitePost {
 	 * @returns {Function} request handler
 	 */
 	comments( query, fn ) {
-		var comment = new Comment( null, this._id, this._sid, this.wpcom );
+		const comment = new Comment( null, this._id, this._sid, this.wpcom );
 		return comment.replies( query, fn );
 	}
 

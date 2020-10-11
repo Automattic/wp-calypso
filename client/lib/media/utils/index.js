@@ -21,3 +21,4 @@ export { playtime } from 'lib/media/utils/playtime';
 export { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
 export { url } from 'lib/media/utils/url';
 export { validateMediaItem } from 'lib/media/utils/validate-media-item';
+export { createTransientMediaId } from 'lib/media/utils/create-transient-media-id';

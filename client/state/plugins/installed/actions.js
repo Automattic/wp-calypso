@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import wpcom from 'lib/wp';
 
 /**
@@ -44,12 +43,14 @@ import {
 	REMOVE_PLUGIN,
 } from './constants';
 
+import 'state/plugins/init';
+
 /**
  * Return a SitePlugin instance used to handle the plugin
  *
  * @param {object} siteId - site ID
  * @param {string} pluginId - plugin identifier
- * @returns {SitePlugin} SitePlugin instance
+ * @returns {any} SitePlugin instance
  */
 const getPluginHandler = ( siteId, pluginId ) => {
 	const siteHandler = wpcom.site( siteId );

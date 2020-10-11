@@ -12,6 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Button from '../../components/button';
 import {
+	FormStatus,
 	useMessages,
 	useLineItems,
 	useEvents,
@@ -198,7 +199,7 @@ function ExistingCardPayButton( {
 					} );
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -208,10 +209,10 @@ function ExistingCardPayButton( {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

@@ -13,6 +13,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import Popover from 'components/popover';
+import FormLabel from 'components/forms/form-label';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { Button } from '@automattic/components';
 import { setPreference, savePreference } from 'state/preferences/actions';
@@ -88,13 +89,13 @@ class EditorMediaModalGalleryHelp extends React.PureComponent {
 						</span>
 					</div>
 					<div className="editor-media-modal__gallery-help-actions">
-						<label className="editor-media-modal__gallery-help-remember-dismiss">
+						<FormLabel className="editor-media-modal__gallery-help-remember-dismiss">
 							<FormCheckbox
 								checked={ this.state.rememberDismiss }
 								onChange={ this.toggleRememberDismiss }
 							/>
 							<span>{ this.props.translate( "Don't show again" ) }</span>
-						</label>
+						</FormLabel>
 						<Button
 							onClick={ () => this.dismiss( { remember: this.state.rememberDismiss } ) }
 							compact

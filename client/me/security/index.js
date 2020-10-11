@@ -6,9 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
-import { sidebar } from 'me/controller';
+import config from 'calypso/config';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { sidebar } from 'calypso/me/controller';
 import {
 	accountRecovery,
 	connectedApplications,

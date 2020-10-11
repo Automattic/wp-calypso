@@ -68,6 +68,35 @@ describe( 'PaginatedQueryManager', () => {
 			expect( manager.getItems( { number: 2, page: 2 } ) ).toEqual( [] );
 		} );
 
+		test( 'should memoize paginated results', () => {
+			manager = manager.receive( { ID: 144 }, { query: { number: 1 } } );
+			manager = manager.receive( { ID: 152 }, { query: { number: 1, page: 2 } } );
+
+			const firstPage1 = manager.getItems( { number: 1, page: 1 } );
+			const secondPage1 = manager.getItems( { number: 1, page: 2 } );
+			const firstPage2 = manager.getItems( { number: 1, page: 1 } );
+			const secondPage2 = manager.getItems( { number: 1, page: 2 } );
+
+			expect( firstPage1.map( ( item ) => item.ID ) ).toEqual( [ 144 ] );
+			expect( secondPage1.map( ( item ) => item.ID ) ).toEqual( [ 152 ] );
+			expect( firstPage1 ).toBe( firstPage2 );
+			expect( secondPage1 ).toBe( secondPage2 );
+		} );
+
+		test( 'should invalidate memoized results when the underlying data change', () => {
+			// receive first page
+			manager = manager.receive( { ID: 144 }, { query: { number: 1 } } );
+			const firstPage1 = manager.getItems( { number: 1, page: 1 } );
+
+			// receive second page, invalidating the memoized `items`
+			manager = manager.receive( { ID: 152 }, { query: { number: 1, page: 2 } } );
+			const firstPage2 = manager.getItems( { number: 1, page: 1 } );
+
+			expect( firstPage1.map( ( item ) => item.ID ) ).toEqual( [ 144 ] );
+			expect( firstPage1 ).toEqual( firstPage2 ); // results are the same
+			expect( firstPage1 ).not.toBe( firstPage2 ); // but the instances are different
+		} );
+
 		test( 'should return page subset for non-sequentially received query', () => {
 			manager = manager.receive( { ID: 152 }, { query: { page: 2, number: 1 } } );
 

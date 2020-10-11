@@ -7,16 +7,16 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/wpcom/hooks/has-domains';
+import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
 	getSignupValidationErrorResponse,
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 	areRequiredFieldsNotEmpty,
-} from 'my-sites/checkout/composite-checkout/wpcom';
+} from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
 import wp from 'lib/wp';
 
 const wpcom = wp.undocumented();

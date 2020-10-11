@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Button, Card, Dialog } from '@automattic/components';
 import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import CardHeading from 'components/card-heading';
 import MaterialIcon from 'components/material-icon';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -103,9 +104,8 @@ const MiscellaneousCard = ( {
 						</p>
 					</FormLabel>
 
-					<input
+					<FormTextInput
 						autoCapitalize="off"
-						type="text"
 						onChange={ onReasonChange }
 						value={ reason }
 						aria-required="true"

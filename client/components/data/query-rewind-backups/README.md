@@ -1,5 +1,4 @@
-Query Rewind Backups
-====================
+# Query Rewind Backups
 
 `QueryRewindBackups` is a React component which dispatches actions for querying the details of a site's most recent Rewind backups.
 

@@ -3,13 +3,16 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, isArray, isEqual, mapValues, omit, overSome, pickBy, partial } from 'lodash';
+import { get, isArray, isEqual, mapValues, omit, pickBy, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
+import { hasSiteSeoFeature } from './utils';
+import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
+import { getPathToDetails } from 'my-sites/plans-v2/utils';
 import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
@@ -35,21 +38,14 @@ import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestSite } from 'state/sites/actions';
-import {
-	isBusiness,
-	isEnterprise,
-	isJetpackBusiness,
-	isJetpackPremium,
-	isEcommerce,
-} from 'lib/products-values';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { getPlugins } from 'state/plugins/installed/selectors';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	TYPE_PREMIUM,
 	TERM_ANNUALLY,
+	JETPACK_RESET_PLANS,
 } from 'lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'lib/plans';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -72,14 +68,6 @@ import pageTitleImage from 'assets/images/illustrations/seo-page-title.svg';
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
-
-const hasSupportingPlan = overSome(
-	isBusiness,
-	isEnterprise,
-	isJetpackBusiness,
-	isJetpackPremium,
-	isEcommerce
-);
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -311,20 +299,30 @@ export class SeoForm extends React.Component {
 
 		const generalTabUrl = getGeneralTabUrl( slug );
 
-		const nudgeTitle = siteIsJetpack
-			? translate(
-					'Boost your search engine ranking with the powerful SEO tools in Jetpack Premium'
-			  )
-			: translate(
-					'Boost your search engine ranking with the powerful SEO tools in the Business plan'
-			  );
+		const upsellProps = siteIsJetpack
+			? {
+					title: translate( 'Boost your search engine ranking' ),
+					feature: FEATURE_SEO_PREVIEW_TOOLS,
+					href: getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, slug ),
+			  }
+			: {
+					title: translate(
+						'Boost your search engine ranking with the powerful SEO tools in the Business plan'
+					),
+					feature: FEATURE_ADVANCED_SEO,
+					plan:
+						selectedSite.plan &&
+						findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
+							type: TYPE_BUSINESS,
+						} ),
+			  };
 
 		return (
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
-				{ ( isSitePrivate || isSiteHidden ) && hasSupportingPlan( selectedSite.plan ) && (
+				{ ( isSitePrivate || isSiteHidden ) && hasSiteSeoFeature( selectedSite ) && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -367,17 +365,12 @@ export class SeoForm extends React.Component {
 					! this.props.hasAdvancedSEOFeature &&
 					selectedSite.plan && (
 						<UpsellNudge
+							{ ...upsellProps }
 							description={ translate(
-								'Get tools to optimize your site for improved performance in search engine results.'
+								'Get tools to optimize your site for improved search engine results.'
 							) }
 							event={ 'calypso_seo_settings_upgrade_nudge' }
-							feature={ siteIsJetpack ? FEATURE_SEO_PREVIEW_TOOLS : FEATURE_ADVANCED_SEO }
-							plan={ findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
-								type: siteIsJetpack ? TYPE_PREMIUM : TYPE_BUSINESS,
-								...( siteIsJetpack ? { term: TERM_ANNUALLY } : {} ),
-							} ) }
 							showIcon={ true }
-							title={ nudgeTitle }
 						/>
 					) }
 				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
@@ -437,7 +430,6 @@ export class SeoForm extends React.Component {
 									</FormLabel>
 									<CountedTextarea
 										name="advanced_seo_front_page_description"
-										type="text"
 										id="advanced_seo_front_page_description"
 										value={ frontPageMetaDescription || '' }
 										disabled={ isSeoDisabled }
@@ -483,7 +475,10 @@ export class SeoForm extends React.Component {
 const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	// SEO Tools are available with Business plan on WordPress.com, and with Premium plan on Jetpack sites
-	const isAdvancedSeoEligible = selectedSite.plan && hasSupportingPlan( selectedSite.plan );
+	const isAdvancedSeoEligible =
+		selectedSite.plan &&
+		( hasSiteSeoFeature( selectedSite ) ||
+			JETPACK_RESET_PLANS.includes( selectedSite.plan.product_slug ) );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
 

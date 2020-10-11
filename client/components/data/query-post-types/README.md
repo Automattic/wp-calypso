@@ -1,5 +1,4 @@
-Query Post Types
-================
+# Query Post Types
 
 `<QueryPostTypes />` is a React component used in managing network requests for post types.
 
@@ -17,12 +16,8 @@ export default function MyPostTypesList( { postTypes } ) {
 		<div>
 			<QueryPostTypes siteId={ 3584907 } />
 			{ postTypes.map( ( postType ) => {
-				return (
-					<MyPostTypesListItem
-						key={ postType.name }
-						postType={ postType } />
-				);
-			} }
+				return <MyPostTypesListItem key={ postType.name } postType={ postType } />;
+			} ) }
 		</div>
 	);
 }

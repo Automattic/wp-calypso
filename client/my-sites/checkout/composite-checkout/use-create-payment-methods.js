@@ -42,6 +42,14 @@ import {
 	createEbanxTefPaymentMethodStore,
 	createEbanxTefMethod,
 } from './payment-methods/ebanx-tef';
+import {
+	createIdWalletPaymentMethodStore,
+	createIdWalletMethod,
+} from './payment-methods/id-wallet';
+import {
+	createNetBankingPaymentMethodStore,
+	createNetBankingMethod,
+} from './payment-methods/netbanking';
 
 function useCreatePayPal( { onlyLoadPaymentMethods } ) {
 	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
@@ -289,6 +297,42 @@ function useCreateEps( {
 	);
 }
 
+function useCreateNetbanking( { onlyLoadPaymentMethods } ) {
+	// If this PM is allowed by props and allowed by the cart, then create the PM.
+	const isMethodAllowed = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'netbanking' )
+		: true;
+	const shouldLoad = isMethodAllowed;
+	const paymentMethodStore = useMemo( () => createNetBankingPaymentMethodStore(), [] );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createNetBankingMethod( {
+						store: paymentMethodStore,
+				  } )
+				: null,
+		[ shouldLoad, paymentMethodStore ]
+	);
+}
+
+function useCreateIdWallet( { onlyLoadPaymentMethods } ) {
+	// If this PM is allowed by props and allowed by the cart, then create the PM.
+	const isMethodAllowed = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'id_wallet' )
+		: true;
+	const shouldLoad = isMethodAllowed;
+	const paymentMethodStore = useMemo( () => createIdWalletPaymentMethodStore(), [] );
+	return useMemo(
+		() =>
+			shouldLoad
+				? createIdWalletMethod( {
+						store: paymentMethodStore,
+				  } )
+				: null,
+		[ shouldLoad, paymentMethodStore ]
+	);
+}
+
 function useCreateEbanxTef( { onlyLoadPaymentMethods } ) {
 	// If this PM is allowed by props and allowed by the cart, then create the PM.
 	const isMethodAllowed = onlyLoadPaymentMethods
@@ -470,6 +514,10 @@ export default function useCreatePaymentMethods( {
 
 	const ebanxTefMethod = useCreateEbanxTef( { onlyLoadPaymentMethods } );
 
+	const idWalletMethod = useCreateIdWallet( { onlyLoadPaymentMethods } );
+
+	const netbankingMethod = useCreateNetbanking( { onlyLoadPaymentMethods } );
+
 	const sofortMethod = useCreateSofort( {
 		onlyLoadPaymentMethods,
 		isStripeLoading,
@@ -529,6 +577,8 @@ export default function useCreatePaymentMethods( {
 		giropayMethod,
 		sofortMethod,
 		ebanxTefMethod,
+		idWalletMethod,
+		netbankingMethod,
 		alipayMethod,
 		p24Method,
 		epsMethod,

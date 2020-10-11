@@ -14,7 +14,7 @@ import CalypsoI18nProvider from 'components/calypso-i18n-provider';
 /**
  * Re-export
  */
-export { setSection, setUpLocale } from './shared.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 
 const ProviderWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
 	<CalypsoI18nProvider>

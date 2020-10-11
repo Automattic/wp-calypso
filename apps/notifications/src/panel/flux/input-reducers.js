@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import { actions } from './constants';
 
 export default ( state, action ) => {

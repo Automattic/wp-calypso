@@ -193,7 +193,7 @@ function bindIsInstallingTheme( state, siteId ) {
 }
 
 function bindGetPremiumThemePrice( state, siteId ) {
-	( themeId ) => getPremiumThemePrice( state, themeId, siteId );
+	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
 }
 
 // Exporting this for use in recommended-themes.jsx

@@ -35,7 +35,6 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
-	addOrRemoveFromProgressStore = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
@@ -281,23 +280,6 @@ export function generateSteps( {
 			},
 		},
 
-		'upsell-plan': {
-			stepName: 'upsell-plan',
-			fulfilledStepCallback: addOrRemoveFromProgressStore,
-		},
-
-		'plans-plan-only': {
-			stepName: 'plans-plan-only',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: addOrRemoveFromProgressStore,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			props: {
-				hideFreePlan: true,
-				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
-			},
-		},
-
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
@@ -314,8 +296,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'isManageSiteFlow',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -660,6 +643,10 @@ export function generateSteps( {
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
+		},
+
+		'p2-details': {
+			stepName: 'p2-details',
 		},
 
 		'p2-site': {

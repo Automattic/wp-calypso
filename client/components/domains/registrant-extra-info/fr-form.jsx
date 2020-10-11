@@ -141,8 +141,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							id="registrantType"
 							checked={ 'individual' === registrantType }
 							onChange={ this.handleChangeContactExtraEvent }
+							label={ translate( 'An individual' ) }
 						/>
-						<span>{ translate( 'An individual' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
@@ -151,8 +151,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							id="registrantType"
 							checked={ 'organization' === registrantType }
 							onChange={ this.handleChangeContactExtraEvent }
+							label={ translate( 'A company or organization' ) }
 						/>
-						<span>{ translate( 'A company or organization' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
@@ -377,7 +377,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="sirenSiret"
 						value={ sirenSiret }
-						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
 						placeholder={ translate( 'ex. 123 456 789 or 123 456 789 01234', {
@@ -399,7 +398,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="trademarkNumber"
 						value={ trademarkNumber }
-						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
 						autoCapitalize="off"

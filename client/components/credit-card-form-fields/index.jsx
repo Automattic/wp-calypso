@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { isEmpty, noop } from 'lodash';
-import notices from 'notices';
+import PropTypes from 'prop-types';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
+import { isEmpty, noop } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
-import PaymentCountrySelect from 'components/payment-country-select';
-import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
-import { Input } from 'my-sites/domains/components/form';
-import InfoPopover from 'components/info-popover';
-import { maskField, unmaskField, getCreditCardType } from 'lib/checkout';
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { useStripe } from 'lib/stripe';
+import CountrySpecificPaymentFields from 'calypso/my-sites/checkout/checkout/country-specific-payment-fields';
+import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import InfoPopover from 'calypso/components/info-popover';
+import notices from 'calypso/notices';
+import PaymentCountrySelect from 'calypso/components/payment-country-select';
+import { Input } from 'calypso/my-sites/domains/components/form';
+import { maskField, unmaskField, getCreditCardType } from 'calypso/lib/checkout';
+import { shouldRenderAdditionalCountryFields } from 'calypso/lib/checkout/processor-specific';
+import { useStripe } from 'calypso/lib/stripe';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );
@@ -35,8 +35,8 @@ import './style.scss';
 /**
  * Image assets
  */
-import creditCardSecurityBackImage from 'assets/images/upgrades/cc-cvv-back.svg';
-import creditCardSecurityFrontImage from 'assets/images/upgrades/cc-cvv-front.svg';
+import creditCardSecurityBackImage from 'calypso/assets/images/upgrades/cc-cvv-back.svg';
+import creditCardSecurityFrontImage from 'calypso/assets/images/upgrades/cc-cvv-front.svg';
 
 function CvvPopover( { translate, card } ) {
 	const brand = getCreditCardType( card.number );
@@ -124,14 +124,14 @@ function CreditCardNumberField( { translate, createField, getErrorMessage, card 
 		};
 		return (
 			<div className="credit-card-form-fields__field number">
-				<label className="credit-card-form-fields__label form-label">
+				<FormLabel className="credit-card-form-fields__label">
 					{ cardNumberLabel }
 					<CardNumberElementWithValidation
 						fieldName="card_number"
 						getErrorMessage={ getErrorMessage }
 						classes={ elementClasses }
 					/>
-				</label>
+				</FormLabel>
 			</div>
 		);
 	}
@@ -182,24 +182,24 @@ function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage
 		return (
 			<React.Fragment>
 				<div className="credit-card-form-fields__field expiration-date">
-					<label className="credit-card-form-fields__label form-label">
+					<FormLabel className="credit-card-form-fields__label">
 						{ expiryLabel }
 						<CardExpiryElementWithValidation
 							fieldName="card_expiry"
 							getErrorMessage={ getErrorMessage }
 							classes={ elementClasses }
 						/>
-					</label>
+					</FormLabel>
 				</div>
 				<div className="credit-card-form-fields__field cvv">
-					<label className="credit-card-form-fields__label form-label">
+					<FormLabel className="credit-card-form-fields__label">
 						{ cvcLabel }
 						<CardCvcElementWithValidation
 							fieldName="card_cvc"
 							getErrorMessage={ getErrorMessage }
 							classes={ elementClasses }
 						/>
-					</label>
+					</FormLabel>
 				</div>
 			</React.Fragment>
 		);

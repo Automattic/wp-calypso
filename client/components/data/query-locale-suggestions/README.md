@@ -1,5 +1,4 @@
-Query Locale Suggestions
-===========================
+# Query Locale Suggestions
 
 `<QueryLocaleSuggestions />` is a React component that manages requests to get locale suggestions for the user based on his or her IP/geo-location.
 
@@ -10,7 +9,7 @@ Render the component without props. It does not accept any children or render an
 ```jsx
 import QueryLocaleSuggestions from 'components/data/query-locale-suggestions';
 
-export default function() {
+export default function () {
 	return (
 		<div>
 			<QueryLocaleSuggestions />

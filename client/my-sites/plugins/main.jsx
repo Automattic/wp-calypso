@@ -22,7 +22,7 @@ import urlSearch from 'lib/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import { getPlugin } from 'state/plugins/wporg/selectors';
+import { getAllPlugins as getAllWporgPlugins } from 'state/plugins/wporg/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PluginsList from './plugins-list';
 import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
@@ -99,7 +99,7 @@ export class PluginsMain extends Component {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( ( plugin ) => {
-			const pluginData = getPlugin( this.props.wporgPlugins, plugin.slug );
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
 			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
@@ -486,7 +486,7 @@ export default flow(
 				canJetpackSiteUpdateFiles: ( siteId ) => canJetpackSiteUpdateFiles( state, siteId ),
 				isJetpackSite: ( siteId ) => isJetpackSite( state, siteId ),
 				/* eslint-enable wpcalypso/redux-no-bound-selectors */
-				wporgPlugins: state.plugins.wporg.items,
+				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )

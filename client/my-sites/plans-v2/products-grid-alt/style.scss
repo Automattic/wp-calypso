@@ -1,0 +1,36 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.products-grid-alt {
+	/*
+	 * Create a grid with cells that are evenly sized,
+	 * with a minimum width of 300px each.
+	 * Each cell should take up as much vertical space as it's allowed,
+	 * and the horizontal/vertical gap between them should always be 16px.
+	 */
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+	grid-gap: 16px;
+	align-items: stretch;
+
+	& > .jetpack-free-card {
+		/*
+		 * To match its top border with the top border
+		 * of the product cards next to it
+		 */
+		margin-block-start: calc( 24px + 32.5px );
+
+		/*
+		 * The Free card takes up two columns
+		 * when the screen is wide enough to support it
+		 */
+		@include break-small {
+			grid-column-end: span 2;
+		}
+	}
+
+	& .formatted-header__title {
+		font-size: 1.25rem;
+		color: var( --studio-color-gray-70 );
+	}
+}

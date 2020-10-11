@@ -24,16 +24,18 @@ import './style.scss';
 const DomainPickerButton: React.FunctionComponent = () => {
 	const { __, i18nLocale } = useI18n();
 	const makePath = usePath();
-	const { domain, domainSearch, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
+	const { domain, selectedDesign, siteTitle, siteVertical } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 
 	// Use site title or vertical as search query for a domain suggestion
-	const suggestionQuery = siteTitle || siteVertical?.label;
+	const suggestionQuery = siteTitle || siteVertical?.label || '';
+	const isValidQuery = suggestionQuery.length > 1;
+
 	const domainSuggestion = useSelect(
 		( select ) => {
 			// Get suggestion only if the query is valid and if there isn't a selected domain
-			if ( ! suggestionQuery || suggestionQuery.length < 2 || domain ) {
+			if ( domain || ! isValidQuery ) {
 				return;
 			}
 			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( suggestionQuery, {
@@ -47,10 +49,10 @@ const DomainPickerButton: React.FunctionComponent = () => {
 		[ suggestionQuery ]
 	)?.[ 0 ];
 
-	const isLoadingSuggestion = suggestionQuery && ! domainSuggestion && ! domain;
+	const isLoadingSuggestion = ! domain && ! domainSuggestion && isValidQuery;
 
 	// Show slide-in animation when a domain suggestion is loaded only if the user didn't interacted with Domain Picker
-	const showAnimation = ! domain && ! domainSearch && ! selectedDesign && domainSuggestion;
+	const showAnimation = ! domain && ! selectedDesign && domainSuggestion;
 
 	const getDomainElementContent = () => {
 		if ( isLoadingSuggestion ) {

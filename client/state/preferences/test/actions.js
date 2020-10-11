@@ -71,7 +71,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'fetchPreferences()', () => {
+	describe( 'fetchPreferences() with error', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

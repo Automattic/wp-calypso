@@ -16,17 +16,23 @@ import { capitalize } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getName, getRenewalPrice, purchaseType, isExpired, isRenewing } from 'lib/purchases';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import {
+	getName,
+	getRenewalPrice,
+	purchaseType,
+	isExpired,
+	isRenewing,
+} from 'calypso/lib/purchases';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { Button, Dialog } from '@automattic/components';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { managePurchase } from '../paths';
 
 /**
  * Type dependencies
  */
-import type { Purchase } from 'lib/purchases/types';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 /**
  * Style dependencies
@@ -46,6 +52,7 @@ interface Props {
 	onConfirm: ( purchases: Purchase[] ) => void;
 	submitButtonText?: string | TranslateResult;
 	showManagePurchaseLinks?: boolean;
+	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
 }
 
 function getExpiresText(
@@ -84,6 +91,7 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 	onConfirm,
 	submitButtonText = '',
 	showManagePurchaseLinks = true,
+	getManagePurchaseUrlFor = managePurchase,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -166,7 +174,10 @@ const UpcomingRenewalsDialog: FunctionComponent< Props > = ( {
 								</div>
 								{ showManagePurchaseLinks && (
 									<div className="upcoming-renewals-dialog__renewal-settings-link">
-										<a onClick={ onClose } href={ managePurchase( site.slug, purchase.id ) }>
+										<a
+											onClick={ onClose }
+											href={ getManagePurchaseUrlFor( site.slug, purchase.id ) }
+										>
 											{ translate( 'Manage purchase' ) }
 										</a>
 									</div>

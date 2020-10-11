@@ -210,33 +210,49 @@ class ScanPage extends Component< Props > {
 
 	renderScanState() {
 		const { site, scanState, isRequestingScan } = this.props;
-		if ( isRequestingScan || ! site ) {
+
+		// We don't know yet which site we're looking at,
+		// so show a placeholder until data comes in
+		if ( ! site ) {
 			return <ScanPlaceholder />;
 		}
 
+		// If we're scanning or preparing to scan, show those statuses;
+		// importantly, *don't* show the loading placeholder,
+		// because it disrupts the fluidity of the progress bar
+
+		if ( scanState?.state === 'provisioning' ) {
+			return this.renderProvisioning();
+		}
+
+		if ( scanState?.state === 'scanning' ) {
+			return this.renderScanning();
+		}
+
+		// *Now* we can show the loading placeholder,
+		// if in fact we're requesting a Scan status update
+		if ( isRequestingScan ) {
+			return <ScanPlaceholder />;
+		}
+
+		// We should have a scanState by now, since we're not requesting an update;
+		// if we don't, that's an error condition and we should display that
 		if ( ! scanState ) {
 			return this.renderScanError();
 		}
 
-		const { state, mostRecent, threats } = scanState;
+		const { threats, mostRecent } = scanState;
 
-		if ( state === 'provisioning' ) {
-			return this.renderProvisioning();
-		}
-
-		if ( state === 'scanning' ) {
-			return this.renderScanning();
-		}
-
-		const errorFound = !! mostRecent?.error;
 		const threatsFound = threats.length > 0;
+		const errorFound = !! mostRecent?.error;
 
-		if ( errorFound && ! threatsFound ) {
-			return this.renderScanError();
-		}
-
+		// If we found threats, show them whether or not Scan encountered an error
 		if ( threatsFound ) {
 			return <ScanThreats threats={ threats } error={ errorFound } site={ site } />;
+		}
+
+		if ( errorFound ) {
+			return this.renderScanError();
 		}
 
 		return this.renderScanOkay();

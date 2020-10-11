@@ -1,5 +1,4 @@
-Query Shortcode
-================
+# Query Shortcode
 
 `<QueryShortcode />` is a React component used in managing network requests for a specific shortcode in a given site.
 

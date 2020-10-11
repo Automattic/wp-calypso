@@ -1,5 +1,4 @@
-Calypso Commands
-=========
+# Calypso Commands
 
 Sends commands via IPC to Calypso.
 

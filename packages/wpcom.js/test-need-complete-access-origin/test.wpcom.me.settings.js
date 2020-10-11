@@ -15,12 +15,14 @@ describe( 'wpcom.me.settings', function () {
 	var settings = me.settings();
 
 	describe( 'wpcom.me.settings.get', function () {
-		it( 'should get settings for current user', function ( done ) {
-			settings.get( function ( err, data ) {
-				if ( err ) throw err;
+		it( 'should get settings for current user', function () {
+			return new Promise( ( done ) => {
+				settings.get( function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( data );
-				done();
+					assert.ok( data );
+					done();
+				} );
 			} );
 		} );
 	} );

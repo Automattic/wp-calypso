@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
+import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle/compact';
 import * as postUtils from 'state/posts/utils';
 import InfoPopover from 'components/info-popover';
@@ -94,7 +95,7 @@ export class EditPostStatus extends Component {
 				{ this.renderPostScheduling() }
 				{ this.renderPostVisibility() }
 				{ showSticky && (
-					<label className="edit-post-status__sticky">
+					<FormLabel className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
 							{ translate( 'Stick to the top of the blog' ) }
 							<InfoPopover position="top right" gaEventCategory="Editor" popoverName="Sticky Post">
@@ -106,10 +107,10 @@ export class EditPostStatus extends Component {
 							onChange={ this.toggleStickyStatus }
 							aria-label={ translate( 'Stick post to the front page' ) }
 						/>
-					</label>
+					</FormLabel>
 				) }
 				{ showPending && (
-					<label className="edit-post-status__pending-review">
+					<FormLabel className="edit-post-status__pending-review">
 						<span className="edit-post-status__label-text">
 							{ translate( 'Pending review' ) }
 							<InfoPopover position="top right">
@@ -121,7 +122,7 @@ export class EditPostStatus extends Component {
 							onChange={ this.togglePendingStatus }
 							aria-label={ translate( 'Request review for post' ) }
 						/>
-					</label>
+					</FormLabel>
 				) }
 				{ showRevertToDraft && (
 					<Button

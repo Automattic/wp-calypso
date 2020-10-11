@@ -17,5 +17,5 @@ export default function canCurrentUserUseEarn( state, siteId = null ) {
 		siteId = getSelectedSiteId( state );
 	}
 	const site = getSite( state, siteId );
-	return site && !! canCurrentUser( state, siteId, 'manage_options' );
+	return site && canCurrentUser( state, siteId, 'manage_options' );
 }

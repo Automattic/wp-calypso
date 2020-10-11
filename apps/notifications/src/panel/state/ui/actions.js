@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import {
 	CLOSE_PANEL,
 	EDIT_COMMENT,

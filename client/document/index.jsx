@@ -2,7 +2,7 @@
  * External dependencies
  *
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import path from 'path';
 
@@ -34,12 +34,11 @@ class Document extends React.Component {
 			initialReduxState,
 			isRTL,
 			entrypoint,
-			manifest,
+			manifests,
 			lang,
 			languageRevisions,
 			renderedLayout,
 			user,
-			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
@@ -147,17 +146,6 @@ class Document extends React.Component {
 								<div className="masterbar" />
 								<div className="layout__content">
 									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
-									{ hasSecondary && (
-										<Fragment>
-											<div className="layout__secondary" />
-											<ul className="sidebar" />
-										</Fragment>
-									) }
-									{ sectionGroup === 'editor' && (
-										<div className="card editor-ground-control">
-											<div className="editor-ground-control__action-buttons" />
-										</div>
-									) }
 								</div>
 							</div>
 						</div>
@@ -213,15 +201,21 @@ class Document extends React.Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src={ `/calypso/${ target }/manifest.js` } /> }
-					{ env !== 'development' && (
-						<script
-							nonce={ inlineScriptNonce }
-							dangerouslySetInnerHTML={ {
-								__html: manifest,
-							} }
-						/>
+					{ env === 'development' && (
+						<>
+							<script src={ `/calypso/${ target }/manifest.js` } />
+							<script src={ `/calypso/${ target }/runtime.js` } />
+						</>
 					) }
+					{ env !== 'development' &&
+						manifests.map( ( manifest ) => (
+							<script
+								nonce={ inlineScriptNonce }
+								dangerouslySetInnerHTML={ {
+									__html: manifest,
+								} }
+							/>
+						) ) }
 
 					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
 

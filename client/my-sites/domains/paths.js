@@ -149,12 +149,12 @@ export function domainManagementTransfer( siteName, domainName, relativeTo = nul
 	return domainManagementTransferBase( siteName, domainName, '', relativeTo );
 }
 
-export function domainManagementTransferIn( siteName, domainName ) {
-	return domainManagementTransferBase( siteName, domainName, 'in' );
+export function domainManagementTransferIn( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'in', relativeTo );
 }
 
-export function domainManagementTransferInPrecheck( siteName, domainName ) {
-	return domainManagementTransferBase( siteName, domainName, 'precheck' );
+export function domainManagementTransferInPrecheck( siteName, domainName, relativeTo = null ) {
+	return domainManagementTransferBase( siteName, domainName, 'precheck', relativeTo );
 }
 
 export function domainManagementTransferOut( siteName, domainName, relativeTo = null ) {

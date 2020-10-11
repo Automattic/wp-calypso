@@ -26,7 +26,6 @@ const stepNameToModuleName = {
 	'plans-ecommerce': 'plans',
 	'plans-import': 'plans',
 	'plans-launch': 'plans',
-	'plans-plan-only': 'plans',
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
@@ -65,14 +64,14 @@ const stepNameToModuleName = {
 	'domains-with-preview': 'domains',
 	'site-title-with-preview': 'site-title',
 	passwordless: 'passwordless',
+	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
-	'upsell-plan': 'upsell',
 };
 
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
 	const module = await import(
-		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.jsx$/ */ `wp-calypso-client/signup/steps/${ moduleName }`
+		/* webpackChunkName: "async-load-signup-steps-[request]", webpackInclude: /signup\/steps\/[0-9a-z-]+\/index.jsx$/ */ `calypso/signup/steps/${ moduleName }`
 	);
 	return module.default;
 }

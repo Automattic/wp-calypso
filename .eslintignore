@@ -1,3 +1,4 @@
+.cache/
 .vscode
 .yarn
 /assets/
@@ -9,8 +10,13 @@ node_modules/
 !.eslintrc.js
 /client/server/devdocs/search-index.js
 /packages/calypso-codemods/tests
-/packages/wp-babel-makepot/test
+/packages/wp-babel-makepot/test/examples
 /packages/wpcom.js/webapp/tests/mocha.js
+/desktop/build/
+/desktop/client/
+/desktop/config/
+/desktop/public/
+/desktop/release/
 
 # Built packages
 /packages/*/dist/

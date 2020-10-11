@@ -48,7 +48,7 @@ const Sso = ( {
 						siteId={ selectedSiteId }
 						moduleSlug="sso"
 						label={ translate( 'Allow users to log in to this site using WordPress.com accounts' ) }
-						description="Use WordPress.com's secure authentication"
+						description={ translate( "Use WordPress.com's secure authentication" ) }
 						disabled={ isRequestingSettings || isSavingSettings || ssoModuleUnavailable }
 					/>
 

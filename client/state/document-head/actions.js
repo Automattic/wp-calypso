@@ -41,7 +41,7 @@ export function setDocumentHeadUnreadCount( count ) {
  * Returns an action object used in signalling that the specified link object
  * should be included in the set of document head links.
  *
- * @param  {object} link Link object
+ * @param  {object|Array<object>} link Link object (or array of link objects)
  * @returns {object}      Action object
  */
 export function setDocumentHeadLink( link ) {

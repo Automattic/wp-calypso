@@ -21,7 +21,7 @@ import { paymentMethodClassName, getLocationOrigin } from 'lib/cart-values';
 import userAgent from 'lib/user-agent';
 import { Input } from 'my-sites/domains/components/form';
 import { convertToSnakeCase } from 'state/data-layer/utils';
-import { getHttpData, requestHttpData, httpData } from 'state/data-layer/http-data';
+import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { infoNotice, errorNotice } from 'state/notices/actions';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
@@ -276,14 +276,7 @@ export default connect(
 
 			requestRedirect( cart, convertToSnakeCase( transaction.domainDetails ), payment );
 		},
-		// We should probably extend `update()` in client/state/data-layer/http-data.js
-		// to set state back to 'uninitialized'
-		reset: () =>
-			httpData.set( requestId( cart ), {
-				state: 'uninitialized',
-				data: {},
-				error: undefined,
-			} ),
+		reset: () => resetHttpData( requestId( cart ) ),
 		showErrorNotice: ( error, options ) =>
 			dispatch( errorNotice( error, Object.assign( {}, options, { id: 'wechat-payment-box' } ) ) ),
 		showInfoNotice: ( info, options ) =>

@@ -55,31 +55,12 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'setSection()', () => {
-		test( 'should return an action object where hasSidebar is true by default', () => {
-			expect( setSection() ).to.eql( {
-				type: SECTION_SET,
-				hasSidebar: true,
-			} );
-		} );
-
 		test( 'should return an action object with the section specified', () => {
 			const section = { name: 'me' };
 
 			expect( setSection( section ) ).to.eql( {
 				type: SECTION_SET,
 				section,
-				hasSidebar: true,
-			} );
-		} );
-
-		test( 'should return an action object with the section and hasSidebar specified', () => {
-			const section = { name: 'me' };
-			const options = { hasSidebar: false };
-
-			expect( setSection( section, options ) ).to.eql( {
-				type: SECTION_SET,
-				section,
-				hasSidebar: false,
 			} );
 		} );
 	} );

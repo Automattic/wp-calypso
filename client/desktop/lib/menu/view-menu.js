@@ -1,4 +1,4 @@
-const { BrowserWindow } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { BrowserWindow } = require( 'electron' );
 
 /**
  * Internal dependencies

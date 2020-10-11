@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { defer, endsWith, get, has, includes, isEmpty } from 'lodash';
+import { defer, endsWith, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -125,12 +125,7 @@ class DomainsStep extends React.Component {
 		this.showTestCopy = false;
 
 		const isEligibleFlowForDomainTest = includes(
-			[
-				'onboarding',
-				'onboarding-plan-first',
-				'onboarding-passwordless',
-				'onboarding-registrationless',
-			],
+			[ 'onboarding', 'onboarding-registrationless' ],
 			props.flowName
 		);
 
@@ -190,7 +185,11 @@ class DomainsStep extends React.Component {
 			suggestion,
 		};
 
-		this.props.recordAddDomainButtonClick( suggestion.domain_name, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClick(
+			suggestion.domain_name,
+			this.getAnalyticsSection(),
+			suggestion?.is_premium
+		);
 		this.props.saveSignupStep( stepData );
 
 		defer( () => {
@@ -457,14 +456,6 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const hasCartItemInDependencyStore = has( this.props, 'signupDependencies.cartItem' );
-		const cartItem = get( this.props, 'signupDependencies.cartItem', false );
-		const hasSelectedFreePlan = hasCartItemInDependencyStore && ! cartItem;
-
-		const selectedFreePlanInSwapFlow =
-			'onboarding-plan-first' === this.props.flowName && hasSelectedFreePlan;
-		const selectedPaidPlanInSwapFlow = 'onboarding-plan-first' === this.props.flowName && cartItem;
-
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
@@ -496,8 +487,6 @@ class DomainsStep extends React.Component {
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
-				selectedFreePlanInSwapFlow={ selectedFreePlanInSwapFlow }
-				selectedPaidPlanInSwapFlow={ selectedPaidPlanInSwapFlow }
 				isReskinned={ this.props.isReskinned }
 			/>
 		);
@@ -665,7 +654,7 @@ class DomainsStep extends React.Component {
 
 		const { flowName, isAllDomains, translate, sites } = this.props;
 		const hasSite = Object.keys( sites ).length > 0;
-		let backUrl, backLabelText;
+		let backUrl, backLabelText, isExternalBackUrl;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
 			backUrl = getStepUrl(
@@ -686,6 +675,21 @@ class DomainsStep extends React.Component {
 			}
 		}
 
+		// Override Back link if source parameter is found below
+		const backUrlSourceOverrides = {
+			'business-name-generator': '/business-name-generator',
+			domains: '/domains',
+		};
+		const source = get( this.props, 'queryObject.source' );
+
+		if ( source && backUrlSourceOverrides[ source ] ) {
+			backUrl = backUrlSourceOverrides[ source ];
+			backLabelText = translate( 'Back' );
+
+			// Solves route conflicts between LP and calypso (ex. /domains).
+			isExternalBackUrl = true;
+		}
+
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 		const showSkip = isDomainStepSkippable( flowName );
@@ -698,6 +702,7 @@ class DomainsStep extends React.Component {
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ headerText }
 				subHeaderText={ fallbackSubHeaderText }
+				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={

@@ -1,5 +1,4 @@
-`create-selector`
-=================
+# `create-selector`
 
 This module exports a single function which creates a memoized state selector for use with the Redux global application state.
 
@@ -54,22 +53,15 @@ Let's assume your new selector depends on the state selectors `foo`, `bar`, and 
 
 ```js
 createSelector(
-    state => foo( state ) && bar( state ),
-    state => [
-        foo( state ),
-        bar( state ),
-        baz( state ),
-    ]
+	( state ) => foo( state ) && bar( state ),
+	( state ) => [ foo( state ), bar( state ), baz( state ) ]
 );
 ```
 
 Since this is a recurring pattern, there is a shorthand for this situation. You can reduce the above to an array just the selectors:
 
 ```js
-createSelector(
-    state => foo( state ) && bar( state ),
-    [ foo, bar, baz ]
-);
+createSelector( ( state ) => foo( state ) && bar( state ), [ foo, bar, baz ] );
 ```
 
 ### How can I access the internal cache?

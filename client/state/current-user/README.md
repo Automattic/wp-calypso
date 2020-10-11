@@ -1,5 +1,4 @@
-User State
-==========
+# User State
 
 A module for managing user state.
 

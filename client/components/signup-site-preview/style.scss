@@ -15,7 +15,7 @@
 	}
 
 	&.is-desktop {
-		border-radius: 4px;
+		border-radius: 2px;
 		// Side by side layout uses flexbox to show
 		// both mockups next to each other.
 		@include breakpoint-deprecated( '>960px' ) {
@@ -71,7 +71,7 @@
 	overflow: hidden;
 
 	.is-desktop & {
-		border-radius: 4px;
+		border-radius: 2px;
 		@include elevation( 3dp );
 		@include breakpoint-deprecated( '<660px' ) {
 			border-radius: 12px 12px 0 0;
@@ -133,7 +133,7 @@
 		display: block;
 		width: 70%;
 		background: var( --color-neutral-0 );
-		border-radius: 3px;
+		border-radius: 2px;
 		cursor: default;
 
 		// At small screen sizes "hide" the label

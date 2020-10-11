@@ -16,8 +16,8 @@ import EmptyContent from 'components/empty-content';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import RegisterDomainStep from 'components/domains/register-domain-step';
-import PlansNavigation from 'my-sites/plans/navigation';
 import Main from 'components/main';
+import FormattedHeader from 'components/formatted-header';
 import { addItem, removeItem } from 'lib/cart/actions';
 import { canDomainAddGSuite } from 'lib/gsuite';
 import {
@@ -39,11 +39,13 @@ import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state
 import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
+import HeaderCart from 'my-sites/checkout/cart/header-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import 'my-sites/domains/style.scss';
 
 class DomainSearch extends Component {
 	static propTypes = {
@@ -109,9 +111,10 @@ class DomainSearch extends Component {
 			domain_name: domain,
 			product_slug: productSlug,
 			supports_privacy: supportsPrivacy,
+			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains' );
+		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
 
 		let registration = domainRegistration( {
 			domain,
@@ -155,7 +158,7 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate } = this.props;
+		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains } = this.props;
 		const classes = classnames( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
@@ -188,7 +191,25 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<PlansNavigation cart={ this.props.cart } path={ this.props.context.path } />
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<div className="domains__header">
+							<FormattedHeader
+								brandFont
+								headerText={
+									isManagingAllDomains ? translate( 'All Domains' ) : translate( 'Site Domains' )
+								}
+								align="left"
+							/>
+							{ ! isManagingAllDomains /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ && (
+								<div className="domains__header-buttons">
+									<HeaderCart
+										cart={ this.props.cart }
+										selectedSite={ this.props.selectedSite }
+										currentRoute={ this.props.currentRoute }
+									/>
+								</div>
+							) }
+						</div>
 
 						<EmailVerificationGate
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }

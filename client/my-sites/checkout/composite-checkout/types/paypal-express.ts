@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
-import type {
-	WPCOMCartItem,
-	DomainContactDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom/types';
+import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/lib/translate-cart';
+import type { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/types/checkout-cart';
+import type { DomainContactDetails } from 'my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 
 /**
  * Internal dependencies

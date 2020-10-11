@@ -39,7 +39,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const { pathname } = useLocation();
 
 	React.useEffect( () => {
-		window.scrollTo( 0, 0 );
+		setTimeout( () => window.scrollTo( 0, 0 ), 0 );
 	}, [ pathname ] );
 
 	const canUseDesignStep = React.useCallback( (): boolean => {
@@ -100,7 +100,11 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.Features ) }>
-					{ isEnabled( 'gutenboarding/feature-picker' ) ? <Features /> : redirectToLatestStep }
+					{ canUseStyleStep() && isEnabled( 'gutenboarding/feature-picker' ) ? (
+						<Features />
+					) : (
+						redirectToLatestStep
+					) }
 				</Route>
 
 				<Route path={ makePath( Step.Domains ) }>

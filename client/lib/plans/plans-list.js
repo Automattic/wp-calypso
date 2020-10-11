@@ -8,8 +8,8 @@ import i18n, { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import * as constants from './constants';
+import { isEnabled } from 'config';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
@@ -218,6 +218,7 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
@@ -365,15 +366,15 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
-	type: constants.TYPE_SECURITY,
-	getTitle: () =>
-		translate( 'Jetpack Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+	type: constants.TYPE_SECURITY_DAILY,
+	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
@@ -384,6 +385,21 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		),
 	getTagline: () => translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
+	getPlanCardFeatures: () => ( {
+		[ constants.FEATURE_CATEGORY_SECURITY ]: [
+			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+			constants.FEATURE_PRODUCT_SCAN_V2,
+			constants.FEATURE_PRODUCT_ANTISPAM_V2,
+			constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
+		],
+		[ constants.FEATURE_CATEGORY_OTHER ]: [
+			constants.FEATURE_VIDEO_HOSTING_V2,
+			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+			constants.FEATURE_COLLECT_PAYMENTS_V2,
+			constants.FEATURE_SITE_MONETIZATION_V2,
+			constants.FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -392,15 +408,22 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_30,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_REPUBLICIZE,
+		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SIMPLE_PAYMENTS,
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
 
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
-	type: constants.TYPE_SECURITY,
-	getTitle: () =>
-		translate( 'Jetpack Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	type: constants.TYPE_SECURITY_REALTIME,
+	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -416,6 +439,22 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
 	getPlanCompareFeatures: () => [],
+	getPlanCardFeatures: () => ( {
+		[ constants.FEATURE_CATEGORY_SECURITY ]: [
+			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+			constants.FEATURE_PRODUCT_SCAN_V2,
+			constants.FEATURE_PRODUCT_ANTISPAM_V2,
+			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+		],
+		[ constants.FEATURE_CATEGORY_OTHER ]: [
+			constants.FEATURE_PREMIUM_THEMES_V2,
+			constants.FEATURE_VIDEO_HOSTING_V2,
+			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+			constants.FEATURE_COLLECT_PAYMENTS_V2,
+			constants.FEATURE_SITE_MONETIZATION_V2,
+			constants.FEATURE_PRIORITY_SUPPORT_V2,
+		],
+	} ),
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
@@ -424,10 +463,20 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_REPUBLICIZE,
+		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SIMPLE_PAYMENTS,
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
+		constants.FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
 		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_30,
 	],
 } );
 
@@ -443,14 +492,38 @@ const getPlanJetpackCompleteDetails = () => ( {
 			...constants.JETPACK_LEGACY_PLANS,
 		].includes( plan ),
 	getDescription: () =>
-		translate( 'The most powerful WordPress sites: Top-tier security bundle, enhanced search' ),
-	getTagline: () => translate( 'Complete WordPress security, performance, and growth' ),
+		translate(
+			'Superpower your site with everything Jetpack has to offer: real-time security, enhanced search, CRM, and marketing, growth, and design tools.'
+		),
+	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCompareFeatures: () => [],
+	getPlanCardFeatures: () => ( {
+		[ constants.FEATURE_CATEGORY_SECURITY ]: [
+			[
+				constants.FEATURE_SECURITY_REALTIME_V2,
+				[
+					constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+					constants.FEATURE_PRODUCT_SCAN_V2,
+					constants.FEATURE_PRODUCT_ANTISPAM_V2,
+					constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+				],
+			],
+		],
+		[ constants.FEATURE_CATEGORY_PERFORMANCE ]: [
+			constants.FEATURE_PRODUCT_SEARCH_V2,
+			constants.FEATURE_VIDEO_HOSTING_V2,
+		],
+		[ constants.FEATURE_CATEGORY_GROWTH ]: [
+			constants.FEATURE_CRM_V2,
+			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+			constants.FEATURE_COLLECT_PAYMENTS_V2,
+			constants.FEATURE_SITE_MONETIZATION_V2,
+		],
+		[ constants.FEATURE_CATEGORY_DESIGN ]: [ constants.FEATURE_PREMIUM_THEMES_V2 ],
+		[ constants.FEATURE_CATEGORY_OTHER ]: [ constants.FEATURE_PRIORITY_SUPPORT_V2 ],
+	} ),
 	getSignupFeatures: () => [],
-	getHiddenFeatures: () => [],
-	getInferiorHiddenFeatures: () => [
-		constants.FEATURE_JETPACK_BACKUP_DAILY,
-		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
 		constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		constants.FEATURE_JETPACK_SCAN_DAILY,
@@ -458,7 +531,23 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		constants.FEATURE_JETPACK_SEARCH,
-		constants.FEATURE_JETPACK_SEARCH,
+		constants.FEATURE_JETPACK_SEARCH_MONTHLY,
+		constants.FEATURE_JETPACK_CRM,
+		constants.FEATURE_JETPACK_CRM_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_REPUBLICIZE,
+		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SIMPLE_PAYMENTS,
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
+		constants.FEATURE_PREMIUM_SUPPORT,
+	],
+	getInferiorHiddenFeatures: () => [
+		constants.FEATURE_JETPACK_BACKUP_DAILY,
+		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_30,
 	],
 } );
 
@@ -733,20 +822,37 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: ( feature ) => {
-			switch ( feature ) {
-				case constants.FEATURE_JETPACK_BACKUP_DAILY:
-				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
-				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
-				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
-					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection and priority support.'
-					);
-				default:
-					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-					);
+		getTagline: ( siteFeatures = [] ) => {
+			const hasSiteJetpackBackup = siteFeatures.some( ( feature ) =>
+				[
+					constants.FEATURE_JETPACK_BACKUP_DAILY,
+					constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+					constants.FEATURE_JETPACK_BACKUP_REALTIME,
+					constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+				].includes( feature )
+			);
+			const hasSiteJetpackScan = siteFeatures.some( ( feature ) =>
+				[
+					constants.FEATURE_JETPACK_SCAN_DAILY,
+					constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+				].includes( feature )
+			);
+			if ( hasSiteJetpackBackup && hasSiteJetpackScan ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection and priority support.'
+				);
+			} else if ( hasSiteJetpackBackup ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection, security scanning, and priority support.'
+				);
+			} else if ( hasSiteJetpackScan ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+				);
 			}
+			return i18n.translate(
+				'Upgrade your site for additional features, including spam protection, backups, security scanning, and priority support.'
+			);
 		},
 		getDescription: () =>
 			i18n.translate(
@@ -848,6 +954,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -925,6 +1032,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1087,13 +1195,13 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getHiddenFeatures: () => [
-			constants.FEATURE_GOOGLE_MY_BUSINESS,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 			constants.FEATURE_JETPACK_SCAN_DAILY,
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -1160,17 +1268,17 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 		getHiddenFeatures: () => [
-			constants.FEATURE_GOOGLE_MY_BUSINESS,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-			constants.FEATURE_JETPACK_SCAN_DAILY,
-			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 	},
 
@@ -1202,7 +1310,7 @@ export const PLANS_LIST = {
 	},
 
 	[ constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: {
-		...getPlanJetpackSecurityDailyDetails(),
+		...getPlanJetpackSecurityRealtimeDetails(),
 		...getMonthlyTimeframe(),
 		getAnnualSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME,
 		getStoreSlug: () => constants.PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,

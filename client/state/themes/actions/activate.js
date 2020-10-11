@@ -11,6 +11,7 @@ import {
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
 } from 'state/themes/selectors';
+import isSiteAtomic from 'state/selectors/is-site-wpcom-atomic';
 
 import 'state/themes/init';
 
@@ -33,6 +34,8 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 		 */
 		if (
 			themeHasAutoLoadingHomepage( getState(), themeId ) &&
+			! isJetpackSite( getState(), siteId ) &&
+			! isSiteAtomic( getState(), siteId ) &&
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );

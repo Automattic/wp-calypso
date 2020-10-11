@@ -1,4 +1,7 @@
 .form-fieldset {
+	@extend %generic-reset;
+
+	box-sizing: border-box;
 	clear: both;
 	margin-bottom: 20px;
 }

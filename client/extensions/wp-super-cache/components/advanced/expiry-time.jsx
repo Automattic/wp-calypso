@@ -80,19 +80,21 @@ const ExpiryTime = ( {
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="interval"
+						label={
+							<>
+								{ translate( 'Timer' ) }
+								<FormTextInput
+									disabled={ isDisabled || 'interval' !== cache_schedule_type }
+									min="1"
+									onChange={ handleChange( 'cache_time_interval' ) }
+									step="1"
+									type="number"
+									value={ cache_time_interval || '' }
+								/>
+								{ translate( 'seconds' ) }
+							</>
+						}
 					/>
-					<span>
-						{ translate( 'Timer' ) }
-						<FormTextInput
-							disabled={ isDisabled || 'interval' !== cache_schedule_type }
-							min="1"
-							onChange={ handleChange( 'cache_time_interval' ) }
-							step="1"
-							type="number"
-							value={ cache_time_interval || '' }
-						/>
-						{ translate( 'seconds' ) }
-					</span>
 				</FormLabel>
 				<FormSettingExplanation isIndented>
 					{ translate( 'Check for stale cached files every interval seconds.' ) }
@@ -105,16 +107,18 @@ const ExpiryTime = ( {
 						name="cache_schedule_type"
 						onChange={ handleRadio }
 						value="time"
+						label={
+							<>
+								{ translate( 'Clock' ) }
+								<FormTextInput
+									disabled={ isDisabled || 'time' !== cache_schedule_type }
+									onChange={ handleChange( 'cache_scheduled_time' ) }
+									value={ cache_scheduled_time || '' }
+								/>
+								{ translate( 'HH:MM' ) }
+							</>
+						}
 					/>
-					<span>
-						{ translate( 'Clock' ) }
-						<FormTextInput
-							disabled={ isDisabled || 'time' !== cache_schedule_type }
-							onChange={ handleChange( 'cache_scheduled_time' ) }
-							value={ cache_scheduled_time || '' }
-						/>
-						{ translate( 'HH:MM' ) }
-					</span>
 				</FormLabel>
 				<FormSettingExplanation isIndented>
 					{ translate(

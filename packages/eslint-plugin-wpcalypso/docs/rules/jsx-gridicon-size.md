@@ -9,11 +9,11 @@ In previous incarnations, this warning could be subdued by adding a `nonStandard
 The following patterns are considered warnings:
 
 ```jsx
-<Gridicon size={ 20 } />
+<Gridicon size={ 20 } />;
 ```
 
 The following patterns are not warnings:
 
 ```jsx
-<Gridicon size={ 18 } />
+<Gridicon size={ 18 } />;
 ```

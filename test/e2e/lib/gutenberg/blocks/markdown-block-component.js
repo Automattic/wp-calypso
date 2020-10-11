@@ -10,10 +10,6 @@ import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 export default class MarkdownBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
-
 	async setContent( content ) {
 		const inputSelector = By.css( `${ this.blockID } textarea.wp-block-jetpack-markdown__editor` );
 

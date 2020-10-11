@@ -11,27 +11,26 @@ import { localize } from 'i18n-calypso';
  */
 import { CompactCard } from '@automattic/components';
 import ConciergeBanner from '../concierge-banner';
-import EmptyContent from 'components/empty-content';
-import isBusinessPlanUser from 'state/selectors/is-business-plan-user';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import EmptyContent from 'calypso/components/empty-content';
+import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getPurchasesBySite } from 'lib/purchases';
-import getSites from 'state/selectors/get-sites';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getPurchasesBySite } from 'calypso/lib/purchases';
+import getSites from 'calypso/state/selectors/get-sites';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
-} from 'state/purchases/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
-import getHasAvailableConciergeSessions from 'state/selectors/get-concierge-has-available-sessions.js';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id.js';
-import QueryConciergeInitial from 'components/data/query-concierge-initial';
+} from 'calypso/state/purchases/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import {
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
@@ -39,8 +38,8 @@ import {
 	CONCIERGE_SUGGEST_PURCHASE_CONCIERGE,
 	CONCIERGE_WPCOM_BUSINESS_ID,
 	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
-} from 'me/concierge/constants';
-import NoSitesMessage from 'components/empty-content/no-sites-message';
+} from 'calypso/me/concierge/constants';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -52,9 +51,9 @@ class PurchasesList extends Component {
 	}
 
 	renderConciergeBanner() {
-		const { nextAppointment, scheduleId, hasAvailableConciergeSessions } = this.props;
+		const { nextAppointment, scheduleId } = this.props;
 
-		if ( null === hasAvailableConciergeSessions ) {
+		if ( null === scheduleId ) {
 			return (
 				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
 			);
@@ -64,7 +63,7 @@ class PurchasesList extends Component {
 
 		if ( nextAppointment ) {
 			bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
-		} else if ( hasAvailableConciergeSessions ) {
+		} else if ( scheduleId ) {
 			switch ( scheduleId ) {
 				case CONCIERGE_WPCOM_BUSINESS_ID:
 					bannerType = CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION;
@@ -176,7 +175,6 @@ export default connect(
 			purchases: getUserPurchases( state, userId ),
 			sites: getSites( state ),
 			nextAppointment: getConciergeNextAppointment( state ),
-			hasAvailableConciergeSessions: getHasAvailableConciergeSessions( state ),
 			scheduleId: getConciergeScheduleId( state ),
 			userId,
 		};

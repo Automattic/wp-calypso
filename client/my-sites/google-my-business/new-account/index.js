@@ -17,7 +17,6 @@ import HeaderCake from 'components/header-cake';
 import KeyringConnectButton from 'blocks/keyring-connect-button';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { dismissNudge } from 'blocks/google-my-business-stats-nudge/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
@@ -66,7 +65,6 @@ class GoogleMyBusinessNewAccount extends Component {
 
 	handleNoThanksClick = () => {
 		this.props.recordTracksEvent( 'calypso_google_my_business_new_account_no_thanks_button_click' );
-		this.props.dismissNudge();
 	};
 
 	render() {
@@ -142,7 +140,6 @@ export default connect(
 	} ),
 	{
 		connectGoogleMyBusinessAccount,
-		dismissNudge,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [
 			enhanceWithLocationCounts,

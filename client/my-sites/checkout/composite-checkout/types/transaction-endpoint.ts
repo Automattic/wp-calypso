@@ -6,11 +6,9 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/wpcom';
-import type {
-	WPCOMCartItem,
-	DomainContactDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom/types';
+import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/lib/translate-cart';
+import type { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/types/checkout-cart';
+import type { DomainContactDetails } from 'my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 import type { CartItemExtra } from 'lib/cart-values/types';
 import { isGSuiteProductSlug } from 'lib/gsuite';
 
@@ -31,17 +29,28 @@ export type WPCOMTransactionEndpointRequestPayload = {
 export type WPCOMTransactionEndpointPaymentDetails = {
 	paymentMethod: string;
 	paymentKey?: string;
-	paymentPartner: string;
+	paymentPartner?: string;
 	storedDetailsId?: string;
 	name: string;
 	email?: string;
 	zip: string;
 	postalCode: string;
 	country: string;
+	countryCode: string;
+	state?: string;
+	city?: string;
+	address?: string;
+	streetNumber?: string;
+	phoneNumber?: string;
+	document?: string;
+	deviceId?: string;
 	successUrl?: string;
 	cancelUrl?: string;
 	idealBank?: string;
 	tefBank?: string;
+	pan?: string;
+	gstin?: string;
+	nik?: string;
 };
 
 export type WPCOMTransactionEndpointCart = {
@@ -171,6 +180,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	successUrl,
 	idealBank,
 	tefBank,
+	pan,
+	gstin,
+	nik,
 }: {
 	siteId: string;
 	couponId?: string;
@@ -196,6 +208,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 	cancelUrl?: string;
 	idealBank?: string;
 	tefBank?: string;
+	pan?: string;
+	gstin?: string;
+	nik?: string;
 } ): WPCOMTransactionEndpointRequestPayload {
 	return {
 		cart: createTransactionEndpointCartFromLineItems( {
@@ -230,6 +245,9 @@ export function createTransactionEndpointRequestPayloadFromLineItems( {
 			cancelUrl,
 			idealBank,
 			tefBank,
+			pan,
+			gstin,
+			nik,
 		},
 	};
 }

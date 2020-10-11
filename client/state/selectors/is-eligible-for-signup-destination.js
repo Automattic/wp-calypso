@@ -6,7 +6,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getGoogleApps, hasGoogleApps } from 'lib/cart-values/cart-items';
-import { retrieveSignupDestination } from 'signup/utils';
+import { retrieveSignupDestination } from 'signup/storageUtils';
 
 /**
  * @param {object} state Global state tree

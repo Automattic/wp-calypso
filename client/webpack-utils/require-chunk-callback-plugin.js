@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-const webpack = require( 'webpack' ); //eslint-disable-line import/no-extraneous-dependencies
+const webpack = require( 'webpack' );
 
 const { Template } = webpack;
 

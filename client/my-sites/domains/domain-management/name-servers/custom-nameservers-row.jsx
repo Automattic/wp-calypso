@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'components/forms/form-fieldset';
 import { Button } from '@automattic/components';
 import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
 
@@ -36,9 +38,8 @@ class CustomNameserversRow extends React.PureComponent {
 	render() {
 		return (
 			<div className="name-servers__custom-nameservers-row">
-				<fieldset>
-					<input
-						type="text"
+				<FormFieldset>
+					<FormTextInput
 						placeholder={ this.props.placeholder }
 						onChange={ this.handleChange }
 						onFocus={ this.handleFocus }
@@ -46,7 +47,7 @@ class CustomNameserversRow extends React.PureComponent {
 					/>
 
 					{ this.renderRemoveIcon() }
-				</fieldset>
+				</FormFieldset>
 			</div>
 		);
 	}

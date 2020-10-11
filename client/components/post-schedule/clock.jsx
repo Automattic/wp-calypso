@@ -12,6 +12,7 @@ import 'moment-timezone'; // monkey patches the existing moment.js
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
 import SegmentedControl from 'components/segmented-control';
 import InfoPopover from 'components/info-popover';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -184,26 +185,24 @@ class PostScheduleClock extends Component {
 
 		return (
 			<div className="post-schedule__clock">
-				<input
+				<FormTextInput
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_hour"
-					ref={ this.hourRef }
+					inputRef={ this.hourRef }
 					value={ date.format( is12hour ? 'hh' : 'HH' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustHour }
-					type="text"
 				/>
 
 				<span className="post-schedule__clock-divisor">:</span>
 
-				<input
+				<FormTextInput
 					className="post-schedule__clock-time"
 					name="post-schedule__clock_minute"
-					ref={ this.minRef }
+					inputRef={ this.minRef }
 					value={ date.format( 'mm' ) }
 					onChange={ this.setTime }
 					onKeyDown={ this.adjustMinute }
-					type="text"
 				/>
 
 				{ is12hour && (

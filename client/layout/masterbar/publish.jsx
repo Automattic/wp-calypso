@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'components/async-load';
 import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
 import MasterbarItem from './item';
-import { preload } from 'sections-helper';
+import { preloadEditor } from 'sections-preloaders';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserVisibleSiteCount } from 'state/current-user/selectors';
 import MasterbarDrafts from './drafts';
@@ -57,8 +57,6 @@ class MasterbarItemNew extends React.Component {
 			event.preventDefault();
 		}
 	};
-
-	preloadPostEditor = () => preload( 'post-editor' );
 
 	getPopoverPosition() {
 		return isMobile() ? 'bottom' : 'bottom left';
@@ -104,7 +102,7 @@ class MasterbarItemNew extends React.Component {
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
 					className={ classes }
-					preloadSection={ this.preloadPostEditor }
+					preloadSection={ preloadEditor }
 				>
 					{ this.props.children }
 				</MasterbarItem>

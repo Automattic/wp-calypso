@@ -24,7 +24,6 @@ import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor'
 import { isOffline } from 'state/application/selectors';
 import {
 	getSelectedSiteId,
-	hasSidebar,
 	masterbarIsVisible,
 	getSectionGroup,
 	getSectionName,
@@ -51,8 +50,6 @@ import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import LayoutLoader from './loader';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
-import { getABTestVariation } from 'lib/abtest';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
 
 /**
  * Style dependencies
@@ -112,7 +109,7 @@ class Layout extends Component {
 		}
 
 		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
-		const exemptedRoutes = [ '/jetpack/new', '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
 
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
@@ -140,9 +137,8 @@ class Layout extends Component {
 			`is-section-${ this.props.sectionName }`,
 			`focus-${ this.props.currentLayoutFocus }`,
 			{
-				'is-add-site-page': this.props.currentRoute === '/jetpack/new',
 				'is-support-session': this.props.isSupportSession,
-				'has-no-sidebar': ! this.props.hasSidebar,
+				'has-no-sidebar': ! this.props.secondary,
 				'has-chat': this.props.chatIsOpen,
 				'has-no-masterbar': this.props.masterbarIsHidden,
 				'is-jetpack-login': this.props.isJetpackLogin,
@@ -155,22 +151,15 @@ class Layout extends Component {
 					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 					isWooOAuth2Client( this.props.oauth2Client ) &&
 					this.props.wccomFrom,
+				'is-nav-unification': config.isEnabled( 'nav-unification' ),
 			}
 		);
 
 		const optionalBodyProps = () => {
 			const optionalProps = {};
 
-			const bodyClass = classnames( {
-				'is-new-launch-flow': this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding,
-				'is-white-signup':
-					'signup' === this.props.sectionName &&
-					this.props.isOnboardingFlow &&
-					'reskinned' === getABTestVariation( 'reskinSignupFlow' ),
-			} );
-
-			if ( bodyClass ) {
-				optionalProps.bodyClass = bodyClass;
+			if ( this.props.isNewLaunchFlow || this.props.isCheckoutFromGutenboarding ) {
+				optionalProps.bodyClass = 'is-new-launch-flow';
 			}
 
 			return optionalProps;
@@ -208,6 +197,7 @@ class Layout extends Component {
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="blocks/jitm"
+							placeholder={ null }
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 							sectionName={ this.props.sectionName }
 						/>
@@ -285,7 +275,6 @@ export default connect( ( state ) => {
 	const isEligibleForJITM =
 		[ 'stats', 'plans', 'themes', 'plugins', 'comments' ].indexOf( sectionName ) >= 0;
 	const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
-	const isOnboardingFlow = 'onboarding' === getCurrentFlowName( state );
 
 	return {
 		masterbarIsHidden:
@@ -303,7 +292,6 @@ export default connect( ( state ) => {
 		sectionName,
 		sectionJitmPath,
 		shouldShowAppBanner,
-		hasSidebar: hasSidebar( state ),
 		isOffline: isOffline( state ),
 		currentLayoutFocus: getCurrentLayoutFocus( state ),
 		chatIsOpen: isHappychatOpen( state ),
@@ -318,6 +306,5 @@ export default connect( ( state ) => {
 		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 		isNewLaunchFlow,
 		isCheckoutFromGutenboarding,
-		isOnboardingFlow,
 	};
 } )( Layout );

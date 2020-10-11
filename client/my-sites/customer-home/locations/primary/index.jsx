@@ -10,6 +10,7 @@ import ConnectAccounts from 'my-sites/customer-home/cards/tasks/connect-accounts
 import Webinars from 'my-sites/customer-home/cards/tasks/webinars';
 import FindDomain from 'my-sites/customer-home/cards/tasks/find-domain';
 import SiteSetupList from 'my-sites/customer-home/cards/tasks/site-setup-list';
+import SiteSetupListEcommerce from 'my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
 import DeprecateEditor from 'my-sites/customer-home/cards/tasks/deprecate-editor';
 import GoMobile from 'my-sites/customer-home/cards/tasks/go-mobile';
 import EarnFeatures from 'my-sites/customer-home/cards/tasks/earn-features';
@@ -26,6 +27,7 @@ import {
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EDITOR_DEPRECATION,
 	TASK_FIND_DOMAIN,
+	TASK_SITE_SETUP_CHECKLIST_ECOMMERCE,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
 	TASK_SITE_SETUP_CHECKLIST,
@@ -38,6 +40,7 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/a
 import { connect } from 'react-redux';
 
 const cardComponents = {
+	[ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE ]: SiteSetupListEcommerce,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_FIND_DOMAIN ]: FindDomain,

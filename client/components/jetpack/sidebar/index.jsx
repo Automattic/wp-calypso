@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { format as formatUrl, parse as parseUrl } from 'url';
+import { format as formatUrl, getUrlParts, getUrlFromParts } from 'lib/url';
 import { localize } from 'i18n-calypso';
 import { memoize } from 'lodash';
 import PropTypes from 'prop-types';
@@ -29,7 +29,7 @@ import './style.scss';
 // We import these styles from here because this is the only section that gets always
 // loaded when a user visits Jetpack Cloud. We might have to find a better place for
 // this in the future.
-import 'landing/jetpack-cloud/style.scss';
+import 'jetpack-cloud/style.scss';
 
 class JetpackCloudSidebar extends Component {
 	static propTypes = {
@@ -82,12 +82,12 @@ class JetpackCloudSidebar extends Component {
 	}
 }
 
-// Borrowed from Calypso: /client/my-sites/sidebar/index.jsx:683
-const getJetpackAdminUrl = ( state, siteId ) =>
-	formatUrl( {
-		...parseUrl( getSiteAdminUrl( state, siteId ) + 'admin.php' ),
-		query: { page: 'jetpack' },
-	} );
+const getJetpackAdminUrl = ( state, siteId ) => {
+	const parts = getUrlParts( getSiteAdminUrl( state, siteId ) + 'admin.php' );
+	parts.searchParams.set( 'page', 'jetpack' );
+
+	return formatUrl( getUrlFromParts( parts ) );
+};
 
 export default connect(
 	( state ) => {

@@ -123,7 +123,9 @@ module.exports = {
 The `default` preset has a `modules` option that specifies whether we want to transpile ESM `import` and `export` statements. Most common values are `false`, which keeps these statements intact and results in ES modules as output, and `'commonjs'`, which transpiles the module to the CommonJS format. See the [@babel/preset-env documentation](https://babeljs.io/docs/en/babel-preset-env#modules) for more details.
 
 ```js
-presets: [ [ '@automattic/calypso-build/babel/default', { modules: 'commonjs' } ] ];
+module.exports = {
+	presets: [ [ '@automattic/calypso-build/babel/default', { modules: 'commonjs' } ] ],
+};
 ```
 
 Another way to set the `modules` option is to set the `MODULES` environment variable to `'esm'` (maps to `false`) or any other valid value. That's convenient for running Babel from command line, where specifying options for presets (`--presets=...`) is not supported.

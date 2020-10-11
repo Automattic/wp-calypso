@@ -47,18 +47,20 @@ describe( 'FormToggle', () => {
 			} );
 		} );
 
-		test( 'should fire onChange event with value param when clicked', ( done ) => {
-			const toggle = shallow(
-				<FormToggle
-					checked={ false }
-					onChange={ function ( checked ) {
-						assert( checked, 'onChange handler was called with a value param' );
-						done();
-					} }
-				/>
-			);
+		test( 'should fire onChange event with value param when clicked', () => {
+			return new Promise( ( done ) => {
+				const toggle = shallow(
+					<FormToggle
+						checked={ false }
+						onChange={ function ( checked ) {
+							assert( checked, 'onChange handler was called with a value param' );
+							done();
+						} }
+					/>
+				);
 
-			toggle.find( '.form-toggle__switch' ).simulate( 'click' );
+				toggle.find( '.form-toggle__switch' ).simulate( 'click' );
+			} );
 		} );
 
 		test( 'should not be disabled when disabled is false', () => {
@@ -93,7 +95,7 @@ describe( 'FormToggle', () => {
 					<FormToggle checked={ false } />
 				</div>
 			);
-			const toggleInputs = toggles.find( '.form-toggle' );
+			const toggleInputs = toggles.find( 'input.form-toggle' );
 			const ids = toggleInputs.map( ( input ) => input.props().id );
 
 			assert( ids.length === uniq( ids ).length );

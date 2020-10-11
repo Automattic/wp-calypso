@@ -1,7 +1,11 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
 import { createReadStream } from './util/fs';
 
 const debug = debugFactory( 'wpcom:media' );
@@ -110,7 +114,7 @@ Media.prototype.update = function ( query, body, fn ) {
  * @returns {Function} request handler
  */
 Media.prototype.edit = function ( query, body, fn ) {
-	if ( typeof body == 'function' || ! body ) {
+	if ( typeof body === 'function' || ! body ) {
 		fn = body;
 		body = query;
 		query = {};

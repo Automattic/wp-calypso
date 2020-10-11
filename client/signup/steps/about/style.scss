@@ -11,7 +11,7 @@
 	transition: 0.5s ease-in-out opacity;
 
 	.card {
-		border-radius: 3px;
+		border-radius: 2px;
 		@include elevation ( 2dp );
 	}
 }
@@ -27,7 +27,7 @@
 
 .about__checkboxes {
 	border: 1px solid var( --color-neutral-10 );
-	border-radius: 3px;
+	border-radius: 2px;
 }
 
 .about__checkbox-option {

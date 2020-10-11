@@ -61,9 +61,15 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { setThemePreviewOptions } from 'state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
+import {
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from 'lib/plans/constants';
 import { hasFeature } from 'state/sites/plans/selectors';
 import getPreviousRoute from 'state/selectors/get-previous-route';
+import { PerformanceTrackerStop } from 'lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -611,9 +617,11 @@ class ThemeSheet extends React.Component {
 			retired,
 			isPremium,
 			isJetpack,
+			isWpcomTheme,
 			isVip,
 			translate,
 			hasUnlimitedPremiumThemes,
+			canUserUploadThemes,
 			previousRoute,
 		} = this.props;
 
@@ -657,9 +665,13 @@ class ThemeSheet extends React.Component {
 		}
 
 		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner =
+		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
-		if ( hasUpsellBanner ) {
+		const hasWpOrgThemeUpsellBanner =
+			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
+
+		if ( hasWpComThemeUpsellBanner ) {
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
@@ -676,10 +688,34 @@ class ThemeSheet extends React.Component {
 					showIcon={ true }
 				/>
 			);
+		}
+
+		if ( hasWpOrgThemeUpsellBanner ) {
+			pageUpsellBanner = (
+				<UpsellNudge
+					plan={ PLAN_BUSINESS }
+					className="theme__page-upsell-banner"
+					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					description={ preventWidows(
+						translate(
+							'Instantly unlock thousands of different themes and install your own when you upgrade.'
+						)
+					) }
+					forceHref
+					feature={ FEATURE_UPLOAD_THEMES }
+					forceDisplay
+					href={ ! siteId ? '/plans' : null }
+					showIcon
+				/>
+			);
+		}
+
+		if ( hasUpsellBanner ) {
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
 				className: 'theme__preview-upsell-banner',
 			} );
 		}
+
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
 
 		const links = [ { rel: 'canonical', href: canonicalUrl } ];
@@ -706,7 +742,7 @@ class ThemeSheet extends React.Component {
 					backText={ previousRoute ? i18n.translate( 'Back' ) : i18n.translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
-					{ ! retired && this.renderButton() }
+					{ ! retired && ! hasWpOrgThemeUpsellBanner && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
@@ -716,6 +752,7 @@ class ThemeSheet extends React.Component {
 					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
+				<PerformanceTrackerStop />
 			</Main>
 		);
 	};
@@ -806,6 +843,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
 			previousRoute: getPreviousRoute( state ),

@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import NavItem from 'components/section-nav/item';
 import NavTabs from 'components/section-nav/tabs';
-import Notice from 'components/notice';
 import SectionNav from 'components/section-nav';
 import SectionHeader from 'components/section-header';
 import { recordTracksEvent } from 'lib/analytics/tracks';
@@ -189,11 +188,7 @@ export class PaymentBox extends PureComponent {
 				<Card className={ cardClass }>
 					<div className="checkout__box-padding">
 						<div className={ contentClass }>
-							{ infoMessage && (
-								<Notice status="is-info" showDismiss={ false }>
-									{ this.props.infoMessage }
-								</Notice>
-							) }
+							{ infoMessage && this.props.infoMessage }
 							<IncompatibleProductNotice incompatibleProducts={ this.props.incompatibleProducts } />
 							{ this.props.children }
 						</div>

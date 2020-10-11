@@ -1,5 +1,4 @@
-Back Button
-===
+# Back Button
 
 Simple back button, usually used in a HeaderCake to go back to the previous screen.
 
@@ -8,15 +7,13 @@ Simple back button, usually used in a HeaderCake to go back to the previous scre
 ```jsx
 import BackButton from 'components/back-button';
 
-render() {
-	return (
-		<BackButton onClick={ myClickHandler } />
-	);
+function render() {
+	return <BackButton onClick={ myClickHandler } />;
 }
 ```
 
 ### Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`onClick`* | `function` | null | Called when the button is clicked
+| Name        | Type       | Default | Description                       |
+| ----------- | ---------- | ------- | --------------------------------- |
+| `onClick`\* | `function` | null    | Called when the button is clicked |

@@ -43,9 +43,12 @@
 	@include breakpoint-deprecated( '>960px' ) {
 		flex-direction: row;
 	}
+
+	.form-radio__label {
+		font-weight: 600;
+	}
 }
 
-.address-step__suggestion-title,
 .address-step__unverifiable-title {
 	font-weight: 600;
 }
@@ -68,7 +71,7 @@
 
 .address-step__suggestion {
 	border: 1px solid transparent;
-	border-radius: 4px;
+	border-radius: 2px;
 	cursor: pointer;
 	width: 100%;
 

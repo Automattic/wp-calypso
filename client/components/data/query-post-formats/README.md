@@ -1,5 +1,4 @@
-Query Post Formats
-================
+# Query Post Formats
 
 `<QueryPostFormats />` is a React component used in managing network requests for post formats.
 
@@ -17,10 +16,8 @@ export default function MyPostFormatsList( { postFormats } ) {
 		<div>
 			<QueryPostFormats siteId={ 12345678 } />
 			{ postFormats.map( ( label, id ) => {
-				return (
-					<MyPostFormatsListItem postFormatId={ id } />
-				);
-			} }
+				return <MyPostFormatsListItem postFormatId={ id } />;
+			} ) }
 		</div>
 	);
 }

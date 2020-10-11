@@ -1,5 +1,4 @@
-safeImageUrl
-=======
+# safeImageUrl
 
 This is a small module that takes a URL to a supposed image and returns a safe
 version of it, guaranteed to be hosted by Automattic. If the URL appears to be

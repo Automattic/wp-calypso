@@ -1,5 +1,4 @@
-Security2faBackupCodes
-======
+# Security2faBackupCodes
 
 Used by Security2fa, this component manages the display and verification
 of backup codes independent of the 2fa activation flow.

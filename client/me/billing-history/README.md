@@ -1,5 +1,4 @@
-Billing History
-======
+# Billing History
 
 This is the Billing History React component that renders the /me/purchases/billing/ route.
 

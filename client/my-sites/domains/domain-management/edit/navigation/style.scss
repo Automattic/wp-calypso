@@ -19,4 +19,8 @@
 			}
 		}
 	}
+
+	a:hover & {
+		background: var( --color-neutral-0 );
+	}
 }

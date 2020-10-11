@@ -1,5 +1,4 @@
-Editor Visibility
-=================
+# Editor Visibility
 
 Editor Visibility is a React component that allows the user to set a post's visibility (public, private, or password protected) inside the Editor.
 
@@ -9,9 +8,7 @@ Editor Visibility is a React component that allows the user to set a post's visi
 import EditorVisibility from 'post-editor/editor-visibility';
 
 export default function MyComponent() {
-	return (
-		<EditorVisibility onPrivatePublish={ onPublish } context="post-settings" />
-	);
+	return <EditorVisibility onPrivatePublish={ onPublish } context="post-settings" />;
 }
 ```
 

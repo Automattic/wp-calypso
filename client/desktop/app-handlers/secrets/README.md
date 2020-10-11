@@ -1,5 +1,4 @@
-Secrets
-=========
+# Secrets
 
 Show a secret screen. Shhh.
 

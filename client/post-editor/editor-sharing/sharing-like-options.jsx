@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  */
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
 import { isEditorNewPost, getEditorPostId } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -34,14 +35,14 @@ class SharingLikeOptions extends React.Component {
 		}
 
 		return (
-			<label>
+			<FormLabel>
 				<FormCheckbox
 					name="sharing_enabled"
 					checked={ this.props.isShowingSharingButtons }
 					onChange={ this.onChange }
 				/>
 				<span>{ this.props.translate( 'Show Sharing Buttons', { context: 'Post Editor' } ) }</span>
-			</label>
+			</FormLabel>
 		);
 	}
 
@@ -51,14 +52,14 @@ class SharingLikeOptions extends React.Component {
 		}
 
 		return (
-			<label>
+			<FormLabel>
 				<FormCheckbox
 					name="likes_enabled"
 					checked={ this.props.isShowingLikeButton }
 					onChange={ this.onChange }
 				/>
 				<span>{ this.props.translate( 'Show Like Button', { context: 'Post Editor' } ) }</span>
-			</label>
+			</FormLabel>
 		);
 	}
 

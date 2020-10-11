@@ -5,8 +5,9 @@ import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import { Button } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import type { WPCOMFeatures } from '@automattic/data-stores';
 import {
+	FeatureIcon,
 	Title,
 	SubTitle,
 	ActionButtons,
@@ -20,17 +21,22 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { FEATURE_LIST, FeatureId } from './data';
+import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
 import useStepNavigation from '../../hooks/use-step-navigation';
+import { useTrackStep } from '../../hooks/use-track-step';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+type FeatureId = WPCOMFeatures.FeatureId;
+
 const FeaturesStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goBack, goNext } = useStepNavigation();
+
+	const allFeatures = useSelect( ( select ) => select( WPCOM_FEATURES_STORE ).getAllFeatures() );
 
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const { addFeature, removeFeature } = useDispatch( ONBOARD_STORE );
@@ -44,6 +50,16 @@ const FeaturesStep: React.FunctionComponent = () => {
 			addFeature( featureId );
 		}
 	};
+
+	// Keep a copy of the selected domain locally so it's available when the component is unmounting
+	const hasSelectedFeaturesRef = React.useRef< boolean >();
+	React.useEffect( () => {
+		hasSelectedFeaturesRef.current = hasSelectedFeatures;
+	}, [ hasSelectedFeatures ] );
+
+	useTrackStep( 'Features', () => ( {
+		has_selected_features: hasSelectedFeaturesRef.current,
+	} ) );
 
 	return (
 		<div className="gutenboarding-page features">
@@ -67,7 +83,7 @@ const FeaturesStep: React.FunctionComponent = () => {
 			</div>
 			<div className="features__body">
 				<div className="features__items">
-					{ Object.entries( FEATURE_LIST ).map( ( [ id, feature ] ) => (
+					{ Object.entries( allFeatures ).map( ( [ id, feature ] ) => (
 						<Button
 							className={ classnames( 'features__item', {
 								'is-selected': selectedFeatures.includes( feature.id ),
@@ -77,7 +93,7 @@ const FeaturesStep: React.FunctionComponent = () => {
 							isTertiary
 						>
 							<div className="features__item-image">
-								<Icon icon={ feature.icon } />
+								<FeatureIcon featureId={ feature.id } />
 							</div>
 							<div className="features__item-heading">
 								<div className="features__item-name">{ feature.name }</div>

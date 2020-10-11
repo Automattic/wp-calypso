@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  */
 import AsyncLoad from 'components/async-load';
 import { translate } from 'i18n-calypso';
-import { preload } from 'sections-helper';
+import { preloadEditor } from 'sections-preloaders';
 import { Button } from '@automattic/components';
 import { markPostSeen } from 'state/reader/posts/actions';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
@@ -41,10 +41,6 @@ function getPingbackAttributes( post ) {
 		title,
 		url: post.URL,
 	};
-}
-
-function preloadEditor() {
-	preload( 'post-editor' );
 }
 
 export class DailyPostButton extends React.Component {

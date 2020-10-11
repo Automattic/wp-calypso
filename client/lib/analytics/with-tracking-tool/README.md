@@ -1,5 +1,4 @@
-withTrackingTool
-================
+# withTrackingTool
 
 This high-order component allows us to load a tracking tool when component gets mounted.
 
@@ -7,7 +6,7 @@ The `withTrackingTool` is called with a `trackingTool` parameter. Currently, onl
 
 The return is a wrapper function that takes your component and loads the specified tracking tool on top of it.
 
-# Usage
+## Usage
 
 When directly wrapping a component:
 
@@ -21,7 +20,6 @@ class MyComponent {
 }
 
 export default withTrackingTool( 'HotJar' )( MyComponent );
-
 ```
 
 When combined with other wrappers (like `localize()`):
@@ -37,9 +35,5 @@ class MyComponent {
 	}
 }
 
-export default flowRight(
-	localize,
-	withTrackingTool( 'HotJar' ),
-)( MyComponent );
-
+export default flowRight( localize, withTrackingTool( 'HotJar' ) )( MyComponent );
 ```

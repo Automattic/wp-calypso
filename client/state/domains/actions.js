@@ -5,7 +5,7 @@ import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/an
 
 import 'state/domains/init';
 
-export const recordAddDomainButtonClick = ( domainName, section ) =>
+export const recordAddDomainButtonClick = ( domainName, section, isPremium = false ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -16,6 +16,7 @@ export const recordAddDomainButtonClick = ( domainName, section ) =>
 		recordTracksEvent( 'calypso_domain_search_add_button_click', {
 			domain_name: domainName,
 			section,
+			is_premium: isPremium,
 		} )
 	);
 

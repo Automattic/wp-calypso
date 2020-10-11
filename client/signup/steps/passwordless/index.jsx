@@ -176,7 +176,6 @@ export class PasswordlessStep extends Component {
 					<FormTextInput
 						autoCapitalize={ 'off' }
 						className="passwordless__code"
-						type="text"
 						name="code"
 						onChange={ this.handleFieldChange }
 						disabled={ this.state.submitting }

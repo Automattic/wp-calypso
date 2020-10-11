@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase, set } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -546,22 +546,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 };
 
 /**
- * Initiates a resend of the inbound transfer verification email.
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.resendInboundTransferEmail = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/resend-inbound-transfer-email`,
-		},
-		fn
-	);
-};
-
-/**
  * Fetches a list of available top-level domain names ordered by popularity.
  *
  * @param {object} query Optional query parameters
@@ -638,6 +622,20 @@ Undocumented.prototype.getDomainContactInformation = function ( fn ) {
 
 			fn( null, newData );
 		}
+	);
+};
+/**
+ *
+ * @param domain {string}
+ * @param fn {function}
+ */
+Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
+	return this.wpcom.req.get(
+		`/domains/${ encodeURIComponent( domain ) }/price`,
+		{
+			apiVersion: '1.1',
+		},
+		fn
 	);
 };
 
@@ -759,6 +757,38 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	);
 
 	return result.then?.( camelCaseKeys );
+};
+
+/**
+ * Retrieves the Titan order provisioning URL for a domain.
+ *
+ * @param domain the domain name
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( domain ) }/order-provisioning-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
+ * Retrieves the auto login link to Titan's control panel.
+ *
+ * @param orderId the Titan order ID
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
 };
 
 /**
@@ -885,23 +915,6 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
 Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
 	return this.wpcom.req.get( '/me/payment-methods', query, fn );
-};
-
-/**
- * Return a list of third-party services that WordPress.com can integrate with
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-Undocumented.prototype.metaKeyring = function ( fn ) {
-	debug( '/meta/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/meta/external-services/',
-			apiVersion: '1.1',
-		},
-		fn
-	);
 };
 
 /**
@@ -1367,6 +1380,17 @@ Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
 	);
 };
 
+Undocumented.prototype.supportAlternates = function ( query, fn ) {
+	const params = omit( query, [ 'site', 'postId' ] );
+	debug( '/support/alternates/:site/posts/:post' );
+	addReaderContentWidth( params );
+	return this.wpcom.req.get(
+		'/support/alternates/' + query.site + '/posts/' + query.postId,
+		params,
+		fn
+	);
+};
+
 /**
  * Saves a user's A/B test variation on the backend
  *
@@ -1691,8 +1715,7 @@ Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function ( domain, records, fn ) {
-	const filtered = reject( records, 'isBeingDeleted' ),
-		body = { dns: JSON.stringify( filtered ) };
+	const body = { dns: JSON.stringify( records ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
@@ -2520,10 +2543,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.applePayMerchantValidation = function ( validationURL ) {
-	return this.wpcom.req.get( '/apple-pay/merchant-validation/', { validation_url: validationURL } );
 };
 
 Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {

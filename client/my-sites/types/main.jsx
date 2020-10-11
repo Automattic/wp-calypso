@@ -34,17 +34,17 @@ function Types( {
 } ) {
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ get( postType, 'label' ) } />
+			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
 			<SidebarNavigation />
 			<FormattedHeader
 				brandFont
 				className="types__page-heading"
-				headerText={ get( postType, 'label' ) }
+				headerText={ get( postType, 'label', '' ) }
 				align="left"
 			/>
-			{ false !== userCanEdit &&
-				false !== postTypeSupported && [
+			{ userCanEdit &&
+				postTypeSupported && [
 					<PostTypeFilter
 						key="filter"
 						query={ userCanEdit ? query : null }
@@ -57,8 +57,8 @@ function Types( {
 						scrollContainer={ document.body }
 					/>,
 				] }
-			{ false === postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
-			{ false === userCanEdit && <PostTypeForbidden /> }
+			{ ! postTypeSupported && <PostTypeUnsupported type={ query.type } /> }
+			{ ! userCanEdit && <PostTypeForbidden /> }
 		</Main>
 	);
 }

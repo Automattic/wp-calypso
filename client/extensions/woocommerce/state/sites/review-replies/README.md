@@ -1,5 +1,4 @@
-Review Replies
-======
+# Review Replies
 
 This module is used to get admin replies to reviews for a site.
 
@@ -14,12 +13,15 @@ Pulls admin replies to a specific review from the remote site.
 This is saved on a per-site basis. All replies are collected in `reviewReplies`, under its corresponding `reviewId`.
 
 ```js
-{
-	"reviewReplies": {
-		555: [ ... ]
-	}
-}
+const object = {
+	reviewReplies: {
+		555: [
+			/*...*/
+		],
+	},
+};
 ```
+
 ## Selectors
 
 ### `getReviewReplies( state, reviewId, [siteId] )`

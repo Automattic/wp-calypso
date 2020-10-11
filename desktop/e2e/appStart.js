@@ -15,7 +15,6 @@ process.chdir( process.env.CALYPSO_PATH );
 describe( 'check app loads', function () {
 	it( 'should have calypso in DOM', function () {
 		return new Promise( ( done ) => {
-			// eslint-disable-line jest/no-test-callback
 			boot( function ( mainWindow ) {
 				// We need to wait for the page to load before sending the request
 				mainWindow.webContents.on( 'did-finish-load', function () {

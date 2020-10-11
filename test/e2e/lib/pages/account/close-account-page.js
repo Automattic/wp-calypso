@@ -20,7 +20,7 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 
 	async chooseCloseAccount() {
 		const buttonSelector = by.css( '.account-close button.is-scary' );
-		const confirmButtonSelector = by.css( '.dialog__action-buttons button.is-primary');
+		const confirmButtonSelector = by.css( '.dialog__action-buttons button.is-primary' );
 		const confirmDialogSelector = by.css( '.account-close__confirm-dialog' );
 		const pauseBetweenClickAttemptsMS = 100;
 

@@ -1,5 +1,4 @@
-Email Settings
-================
+# Email Settings
 
 This module is used to manage settings for products for a site.
 
@@ -19,16 +18,22 @@ has different fields that describe the object. Because we are only interested in
 confusing a bit because naming is not very consistent across various options. The top level element for
 each option is `group_id` and that value is different for each object in response array. Each group can
 have have the same `id` like for example `enabled` or `recipient` but as mentioned before it is for
-different group. 
+different group.
 
-```j
-{
-	"settings": {
-		"email": "LOADING",
-	}
-	// or
-	"settings": {
-		"email": [
+```js
+const object = {
+	settings: {
+		email: 'LOADING',
+	},
+};
+```
+
+Or
+
+```js
+const object = {
+	settings: {
+		email: [
 			{
 				group_id: 'email',
 				id: 'woocommerce_email_from_name',
@@ -94,9 +99,10 @@ different group.
 				id: 'enabled',
 				value: 'yes',
 			},
-		];
-	}, { … } ],
-}
+		],
+	},
+	/*...*/
+};
 ```
 
 ## Selectors

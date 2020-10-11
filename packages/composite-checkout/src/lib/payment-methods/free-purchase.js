@@ -9,6 +9,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Button from '../../components/button';
 import {
+	FormStatus,
 	useLineItems,
 	useEvents,
 	useTransactionStatus,
@@ -66,7 +67,7 @@ function FreePurchaseSubmitButton( { disabled } ) {
 			disabled={ disabled }
 			onClick={ onClick }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } />
@@ -76,10 +77,10 @@ function FreePurchaseSubmitButton( { disabled } ) {
 
 function ButtonContents( { formStatus } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return __( 'Complete Checkout' );
 	}
 	return __( 'Please wait…' );

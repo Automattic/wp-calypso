@@ -1,5 +1,4 @@
-Query Site Products
-===================
+# Query Site Products
 
 `<QuerySiteProducts />` is a React component used in managing network requests for sites-specific product data.
 

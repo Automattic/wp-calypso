@@ -85,7 +85,7 @@ const SVG_IGNORE_PATHS = [
 	/ninja-joy\.svg$/,
 
 	// Specific directories
-	/^apps\/full-site-editing\/full-site-editing-plugin/,
+	/^apps\/editing-toolkit\/editing-toolkit-plugin/,
 	/^docs/,
 	/^static\/images\/marketing/,
 	/^static\/images\/me/,

@@ -1,5 +1,4 @@
-Query Site Plans
-================
+# Query Site Plans
 
 `<QuerySitePlans />` is a React component used in managing network requests for sites/plans.
 

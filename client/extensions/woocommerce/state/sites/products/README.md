@@ -1,5 +1,4 @@
-Products
-========
+# Products
 
 This module is used to manage products for a site.
 
@@ -20,38 +19,38 @@ A list of products as returned from the site's API, saved on a per-site basis.
 Products are collected in `products`, `isLoading` indicates which pages are being requested. `totalPages` tracks the number of pages of products. The products example below is not a complete list of product arguments. See the [API documentation for products](https://woocommerce.github.io/woocommerce-rest-api-docs/#products).
 
 ```js
-{
-	"products": {
-		"queries": {
+const object = {
+	products: {
+		queries: {
 			// Keyed by request parameters
 			'{}': {
-				"id": [ 31, 32, 33, … ]
-				"isLoading": false,
-				"totalPages": 2,
-				"totalProducts": 18,
+				id: [ 31, 32, 33 /*...*/ ],
+				isLoading: false,
+				totalPages: 2,
+				totalProducts: 18,
 			},
 			'{"page":2}': {
-				"isLoading": true,
+				isLoading: true,
 			},
 			'{"search":"test"}': {
-				"id": [ 32, 43 … ]
-				"isLoading": false,
-				"totalPages": 2,
-				"totalProducts": 18,
-			}
-		},
-		"products": { [
-			{
-				"id": 31,
-				"name": "Sticker",
-				"slug": "sticker",
-				"permalink": "https://woo.local/product/sticker/",
-				"date_created": "2013-06-07T10:49:51",
-				…
+				id: [ 32, 43 /*...*/ ],
+				isLoading: false,
+				totalPages: 2,
+				totalProducts: 18,
 			},
-		] }
-	}
-}
+		},
+		products: [
+			{
+				id: 31,
+				name: 'Sticker',
+				slug: 'sticker',
+				permalink: 'https://woo.local/product/sticker/',
+				date_created: '2013-06-07T10:49:51',
+				/*...*/
+			},
+		],
+	},
+};
 ```
 
 ## Selectors

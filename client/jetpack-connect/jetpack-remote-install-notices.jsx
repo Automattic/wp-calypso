@@ -43,32 +43,22 @@ export class JetpackRemoteInstallNotices extends Component {
 
 	renderNotice() {
 		const { noticeType, siteToConnect, translate } = this.props;
+		const buttonLabel = translate( 'Install Jetpack manually' );
+		const redirectTo = addQueryArgs( { url: siteToConnect }, '/jetpack/connect/instructions' );
+
 		// default values for INSTALL_RESPONSE_ERROR,
 		let header = translate( 'Try Installing Manually' );
 		let subheader = translate(
 			"We were unable to install Jetpack. Don't worry—you can either install Jetpack manually or contact support for help."
 		);
-		let buttonLabel = translate( 'Install Jetpack manually' );
 		let noticeImage = '/calypso/images/illustrations/customizeTheme.svg';
-		let redirectTo = addQueryArgs( { url: siteToConnect }, '/jetpack/connect/instructions' );
 
 		switch ( noticeType ) {
 			case ACTIVATION_RESPONSE_ERROR:
+			case ACTIVATION_FAILURE:
 				subheader = translate(
 					"We were unable to activate Jetpack. Don't worry—you can either install Jetpack manually or contact support for help."
 				);
-				break;
-
-			case ACTIVATION_FAILURE:
-				header = translate( 'WordPress version update needed' );
-				subheader = translate(
-					'We were unable to install Jetpack because you are running an oudated version ' +
-						'of WordPress. Jetpack needs WordPress version 4.7 or higher. ' +
-						'Please update to the latest version by clicking below.'
-				);
-				noticeImage = '/calypso/images/illustrations/install-button.svg';
-				buttonLabel = translate( 'Update WordPress now' );
-				redirectTo = siteToConnect + '/wp-admin/update-core.php';
 				break;
 
 			case INVALID_PERMISSIONS:

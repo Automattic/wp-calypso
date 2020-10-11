@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
  */
 import EditorFieldset from 'post-editor/editor-fieldset';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 import InfoPopover from 'components/info-popover';
 import ExternalLink from 'components/external-link';
 import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
@@ -106,7 +107,7 @@ export class EditorDiscussion extends React.Component {
 
 		return (
 			<EditorFieldset legend={ this.props.translate( 'Discussion' ) }>
-				<label>
+				<FormLabel>
 					<FormCheckbox
 						name="comment_status"
 						checked={ statusToBoolean( discussion.comment_status ) }
@@ -126,8 +127,8 @@ export class EditorDiscussion extends React.Component {
 							) }
 						</InfoPopover>
 					</span>
-				</label>
-				<label>
+				</FormLabel>
+				<FormLabel>
 					<FormCheckbox
 						name="ping_status"
 						checked={ statusToBoolean( discussion.ping_status ) }
@@ -166,7 +167,7 @@ export class EditorDiscussion extends React.Component {
 							) }
 						</InfoPopover>
 					</span>
-				</label>
+				</FormLabel>
 			</EditorFieldset>
 		);
 	}

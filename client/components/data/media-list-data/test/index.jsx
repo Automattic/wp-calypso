@@ -15,12 +15,6 @@ import React from 'react';
 import { MediaListData } from 'components/data/media-list-data';
 
 jest.mock( 'lib/media/actions', () => ( { setQuery: () => {}, fetchNextPage: () => {} } ) );
-jest.mock( 'lib/media/list-store', () => ( {
-	getAll: () => {},
-	hasNextPage: () => {},
-	isFetchingNextPage: () => {},
-	on: () => {},
-} ) );
 
 /**
  * Module variables

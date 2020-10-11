@@ -80,7 +80,6 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
-					use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
 				} );
 				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
 					url = addQueryArgs( url, {
@@ -132,11 +131,11 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 			const iframeDocument = iframeWindow.document;
 			if ( selectedFonts ) {
 				const { headings, base } = selectedFonts;
-				iframeDocument.body.style.setProperty( '--font-headings', headings );
-				iframeDocument.body.style.setProperty( '--font-base', base );
+				iframeDocument.documentElement.style.setProperty( '--font-headings', headings );
+				iframeDocument.documentElement.style.setProperty( '--font-base', base );
 			} else {
-				iframeDocument.body.style.removeProperty( '--font-headings' );
-				iframeDocument.body.style.removeProperty( '--font-base' );
+				iframeDocument.documentElement.style.removeProperty( '--font-headings' );
+				iframeDocument.documentElement.style.removeProperty( '--font-base' );
 			}
 		}
 	}, [ previewHtml, selectedFonts ] );

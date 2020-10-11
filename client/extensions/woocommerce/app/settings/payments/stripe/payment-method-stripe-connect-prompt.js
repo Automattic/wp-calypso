@@ -37,8 +37,8 @@ class StripeConnectPrompt extends Component {
 							value={ isCreateSelected }
 							checked={ isCreateSelected }
 							onChange={ onSelectCreate }
+							label={ translate( 'Create a new Stripe account' ) }
 						/>
-						<span>{ translate( 'Create a new Stripe account' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
@@ -46,8 +46,8 @@ class StripeConnectPrompt extends Component {
 							value={ ! isCreateSelected }
 							checked={ ! isCreateSelected }
 							onChange={ onSelectConnect }
+							label={ translate( 'I already have a Stripe account' ) }
 						/>
-						<span>{ translate( 'I already have a Stripe account' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 			</div>

@@ -37,7 +37,7 @@ declare -a MAGELLAN_CONFIGS
 usage () {
   cat <<EOF
 -a [workers]	  - Number of parallel workers in Magellan (defaults to 3)
--R		  - Use custom Slack/Spec/XUnit reporter, otherwise just use Spec reporter
+-R		  - Use custom Slack/Spec/JUnit reporter, otherwise just use Spec reporter
 -p 		  - Execute the tests in parallel via CircleCI envvars (implies -g -s mobile,desktop)
 -S [commitHash]   - Run tests against given commit via https://calypso.live
 -B [branch]	  - Run Jetpack tests on given Jetpack branch via https://jurassic.ninja
@@ -76,7 +76,7 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
       continue
       ;;
     R)
-      MOCHA_ARGS+="-R spec-xunit-reporter "
+      MOCHA_ARGS+="-R mocha-multi-reporters --reporter-options configFile=mocha-reporter-config.json "
       continue
       ;;
     p)
@@ -212,7 +212,6 @@ fi
 
 # Combine any NODE_CONFIG entries into a single object
 NODE_CONFIG_ARG="$(joinStr , ${NODE_CONFIG_ARGS[*]})"
-MOCHA_ARGS+="--NODE_CONFIG={$NODE_CONFIG_ARG}"
 
 if [ $PARALLEL == 1 ]; then
   # Assign an index to each test segment to run in parallel
@@ -223,14 +222,14 @@ if [ $PARALLEL == 1 ]; then
 
   if [ $CIRCLE_NODE_INDEX == $MOBILE ]; then
       echo "Executing tests at mobile screen width"
-      CMD="env BROWSERSIZE=mobile $MAGELLAN --config=$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
+      CMD="env BROWSERSIZE=mobile NODE_CONFIG='{$NODE_CONFIG_ARG}' $MAGELLAN --config=$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
 
       eval $CMD
       RETURN+=$?
   fi
   if [ $CIRCLE_NODE_INDEX == $DESKTOP ]; then
       echo "Executing tests at desktop screen width"
-      CMD="env BROWSERSIZE=desktop $MAGELLAN --config=$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
+      CMD="env BROWSERSIZE=desktop NODE_CONFIG='{$NODE_CONFIG_ARG}' $MAGELLAN --config=$MAGELLAN_CONFIGS --mocha_args='$MOCHA_ARGS' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
 
       eval $CMD
       RETURN+=$?
@@ -248,7 +247,7 @@ elif [ $CIRCLE_NODE_TOTAL > 1 ]; then
             	S_T_OVERRIDE=""
             fi
 
-            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST $S_T_OVERRIDE"
+            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale NODE_CONFIG='{$NODE_CONFIG_ARG}' $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --test=$FILE_LIST $S_T_OVERRIDE"
 
             eval $CMD
             RETURN+=$?
@@ -264,7 +263,7 @@ else # Not using multiple CircleCI containers, just queue up the tests in sequen
       for locale in ${LOCALE_ARRAY[@]}; do
         for config in "${MAGELLAN_CONFIGS[@]}"; do
           if [ "$config" != "" ]; then
-            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER"
+            CMD="env BROWSERSIZE=$size BROWSERLOCALE=$locale NODE_CONFIG='{$NODE_CONFIG_ARG}' $MAGELLAN --mocha_args='$MOCHA_ARGS' --config='$config' --max_workers=$WORKERS --local_browser=$LOCAL_BROWSER --debug"
 
             eval $CMD
             RETURN+=$?

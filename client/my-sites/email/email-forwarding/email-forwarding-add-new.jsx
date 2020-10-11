@@ -180,7 +180,6 @@ class EmailForwardingAddNew extends React.Component {
 						onFocus={ this.mailboxFieldFocus }
 						isError={ ! isValidMailbox }
 						placeholder={ exampleEmailText }
-						type="text"
 						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
@@ -201,7 +200,6 @@ class EmailForwardingAddNew extends React.Component {
 						onFocus={ this.destinationFieldFocus }
 						isError={ ! isValidDestination }
 						placeholder={ translate( 'Your Existing Email Address' ) }
-						type="text"
 						value={ destination }
 					/>
 					{ ! isValidDestination && (

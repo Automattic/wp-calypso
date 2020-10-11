@@ -10,8 +10,8 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getStripeConfiguration } from 'lib/store-transactions';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:stripe' );
 
@@ -298,7 +298,11 @@ function StripeHookProviderInnerWrapper( { stripe, stripeData, children } ) {
 }
 const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
 
-export function StripeHookProvider( { children, configurationArgs, fetchStripeConfiguration } ) {
+export function StripeHookProvider( {
+	children,
+	configurationArgs,
+	fetchStripeConfiguration = null,
+} ) {
 	debug( 'rendering StripeHookProvider' );
 	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
 		configurationArgs,

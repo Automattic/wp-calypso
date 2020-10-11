@@ -8,53 +8,49 @@ import pageRouter from 'page';
 import { connect } from 'react-redux';
 import { flow, get, includes, noop, partial } from 'lodash';
 import { saveAs } from 'browser-filesaver';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuItemClipboard from 'components/popover/menu-item-clipboard';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import SiteIcon from 'blocks/site-icon';
+import Gridicon from 'calypso/components/gridicon';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuItemClipboard from 'calypso/components/popover/menu-item-clipboard';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { statsLinkForPage } from '../helpers';
-import * as utils from 'state/posts/utils';
-import classNames from 'classnames';
-import MenuSeparator from 'components/popover/menu-separator';
+import * as utils from 'calypso/state/posts/utils';
+import MenuSeparator from 'calypso/components/popover/menu-separator';
 import PageCardInfo from '../page-card-info';
-import InfoPopover from 'components/info-popover';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import { preload } from 'sections-helper';
+import InfoPopover from 'calypso/components/info-popover';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import { preloadEditor } from 'calypso/sections-preloaders';
 import {
 	getSite,
 	hasStaticFrontPage,
 	isJetpackSite,
 	isSitePreviewable,
-} from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isFrontPage, isPostsPage } from 'state/pages/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setPreviewUrl } from 'state/ui/preview/actions';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { savePost, deletePost, trashPost, restorePost } from 'state/posts/actions';
-import { infoNotice, withoutNotice } from 'state/notices/actions';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import { getEditorDuplicatePostPath } from 'state/editor/selectors';
-import { updateSiteFrontPage } from 'state/sites/actions';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import canCurrentUser from 'state/selectors/can-current-user';
-import config from 'config';
+} from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { savePost, deletePost, trashPost, restorePost } from 'calypso/state/posts/actions';
+import { infoNotice, withoutNotice } from 'calypso/state/notices/actions';
+import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import config from 'calypso/config';
 
 const recordEvent = partial( recordGoogleEvent, 'Pages' );
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
 
 function sleep( ms ) {
 	return new Promise( ( r ) => setTimeout( r, ms ) );
@@ -346,10 +342,13 @@ class Page extends Component {
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.exportPage }>
-				<Gridicon icon="cloud-download" size={ 18 } />
-				{ this.props.translate( 'Export page' ) }
-			</PopoverMenuItem>
+			<>
+				<MenuSeparator key="separator" />
+				<PopoverMenuItem onClick={ this.exportPage }>
+					<Gridicon icon="cloud-download" size={ 18 } />
+					{ this.props.translate( 'Export page' ) }
+				</PopoverMenuItem>
+			</>
 		);
 	}
 
@@ -460,7 +459,6 @@ class Page extends Component {
 		const title = page.title || translate( 'Untitled' );
 		const canEdit = utils.userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
-
 		const viewItem = this.getViewItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
@@ -747,6 +745,7 @@ class Page extends Component {
 		if ( isVisible ) {
 			// record a GA event when the menu is opened
 			this.props.recordMoreOptions();
+			preloadEditor();
 		}
 	};
 }
@@ -773,7 +772,7 @@ const mapState = ( state, props ) => {
 		copyPagesModuleDisabled:
 			! isJetpackModuleActive( state, pageSiteId, 'copy-post' ) &&
 			isJetpackSite( state, pageSiteId ),
-		wpAdminGutenberg: shouldRedirectGutenberg( state, pageSiteId ),
+		wpAdminGutenberg: ! isEligibleForGutenframe( state, pageSiteId ),
 		duplicateUrl: getEditorDuplicatePostPath( state, props.page.site_ID, props.page.ID, 'page' ),
 		isFullSiteEditing: isSiteUsingFullSiteEditing( state, pageSiteId ),
 		canManageOptions: canCurrentUser( state, pageSiteId, 'manage_options' ),

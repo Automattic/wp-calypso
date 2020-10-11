@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import {
 	billingHistory,
 	upcomingCharges,
@@ -19,9 +19,9 @@ import {
 	myMemberships,
 	purchasesRoot,
 } from '../../paths.js';
-import SectionNav from 'components/section-nav';
-import config from 'config';
-import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
+import SectionNav from 'calypso/components/section-nav';
+import config from 'calypso/config';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
 const PurchasesHeader = ( { section, translate } ) => {
 	let text = translate( 'Billing History' );

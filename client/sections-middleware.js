@@ -7,7 +7,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { setSection } from 'state/ui/actions';
+import { setSection, setSectionLoading } from 'state/ui/actions';
 import { activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { bumpStat } from 'state/analytics/actions';
 import * as LoadingError from 'layout/error';
@@ -27,7 +27,7 @@ function activateSection( sectionDefinition, context ) {
 }
 
 async function loadSection( context, sectionDefinition ) {
-	context.store.dispatch( { type: 'SECTION_SET', isLoading: true } );
+	context.store.dispatch( setSectionLoading( true ) );
 
 	// If the section chunk is not loaded within 400ms, report it to analytics
 	const loadReportTimeout = setTimeout( () => {
@@ -40,7 +40,7 @@ async function loadSection( context, sectionDefinition ) {
 		// call the module initialization function (possibly async, registers page.js handlers etc.)
 		await requiredModule.default( controller.clientRouter, addReducerToStore( context.store ) );
 	} finally {
-		context.store.dispatch( { type: 'SECTION_SET', isLoading: false } );
+		context.store.dispatch( setSectionLoading( false ) );
 
 		// If the load was faster than the timeout, this will cancel the analytics reporting
 		clearTimeout( loadReportTimeout );

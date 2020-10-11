@@ -11,6 +11,12 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -87,15 +93,14 @@ export default class FormToggle extends PureComponent {
 
 		return (
 			<span className={ wrapperClasses }>
-				<input
+				<FormInputCheckbox
 					id={ id }
 					className={ toggleClasses }
-					type="checkbox"
 					checked={ this.props.checked }
 					readOnly={ true }
 					disabled={ this.props.disabled }
 				/>
-				<label className="form-toggle__label" htmlFor={ id }>
+				<FormLabel className="form-toggle__label" htmlFor={ id }>
 					<span
 						className="form-toggle__switch"
 						onClick={ this.onClick }
@@ -112,7 +117,7 @@ export default class FormToggle extends PureComponent {
 						</span>
 						/* eslint-enable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 					) }
-				</label>
+				</FormLabel>
 			</span>
 		);
 	}

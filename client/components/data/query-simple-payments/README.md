@@ -1,5 +1,4 @@
-Query Simple Payments
-===========================
+# Query Simple Payments
 
 `<QuerySimplePayments />` is a React component used in managing network requests for Simple Payments for a given site.
 If passed a product ID, it will request the product for the specified site ID when the component is mounted. If no
@@ -16,7 +15,7 @@ function AllProducts() {
 }
 
 function SingleProduct() {
-	return <QuerySimplePayments siteId={ 12345 } productId={ 141 } />
+	return <QuerySimplePayments siteId={ 12345 } productId={ 141 } />;
 }
 ```
 

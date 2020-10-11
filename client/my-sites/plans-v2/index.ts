@@ -14,7 +14,15 @@ const trackedPage = ( url: string, ...rest: PageJS.Callback[] ) => {
 };
 
 export default function ( rootUrl: string, ...rest: PageJS.Callback[] ) {
-	trackedPage( `${ rootUrl }/:duration?`, ...rest, productSelect( rootUrl ) );
-	trackedPage( `${ rootUrl }/:product/:duration/details`, ...rest, productDetails( rootUrl ) );
-	trackedPage( `${ rootUrl }/:product/:duration/additions`, ...rest, productUpsell( rootUrl ) );
+	trackedPage( `${ rootUrl }/:duration?/:site?`, ...rest, productSelect( rootUrl ) );
+	trackedPage(
+		`${ rootUrl }/:product/:duration/details/:site?`,
+		...rest,
+		productDetails( rootUrl )
+	);
+	trackedPage(
+		`${ rootUrl }/:product/:duration/additions/:site?`,
+		...rest,
+		productUpsell( rootUrl )
+	);
 }

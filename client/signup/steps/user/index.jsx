@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -33,7 +32,7 @@ import config from 'config';
 import AsyncLoad from 'components/async-load';
 import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
 import { getSocialServiceFromClientId } from 'lib/login';
-import { abtest, getABTestVariation } from 'lib/abtest';
+import { getABTestVariation } from 'lib/abtest';
 import JetpackLogo from 'components/jetpack-logo';
 
 /**
@@ -182,18 +181,6 @@ export class UserStep extends Component {
 		} );
 	}
 
-	isEligibleForSwapStepsTest() {
-		const cookies = cookie.parse( document.cookie );
-		const countryCodeFromCookie = cookies.country_code;
-		const isUserFromUS = 'US' === countryCodeFromCookie;
-
-		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
-			return true;
-		}
-
-		return false;
-	}
-
 	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -218,14 +205,6 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
-
-		if (
-			this.isEligibleForSwapStepsTest() &&
-			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
-		) {
-			const switchFlowName = 'onboarding-plan-first';
-			this.props.goToNextStep( switchFlowName );
-		}
 
 		this.props.goToNextStep();
 	};

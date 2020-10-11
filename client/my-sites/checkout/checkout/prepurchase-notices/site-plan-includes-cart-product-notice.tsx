@@ -9,12 +9,11 @@ import { useSelector } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { getProductBySlug } from 'state/products-list/selectors';
 import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
 import { getSitePurchases } from 'state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
 import type { Plan } from 'state/plans/types';
-import type { RawSiteProduct } from 'state/sites/selectors/get-site-products';
+import type { Product } from 'lib/products-values/products-list';
 
 type Site = {
 	ID: number;
@@ -23,18 +22,15 @@ type Site = {
 
 type Props = {
 	plan: Plan;
-	productSlug: string;
+	product: Product;
 	selectedSite: Site;
 };
 
 const SitePlanIncludesCartProductNotice: FunctionComponent< Props > = ( {
 	plan,
-	productSlug,
+	product,
 	selectedSite,
 } ) => {
-	const product = useSelector( ( state ) =>
-		getProductBySlug( state, productSlug )
-	) as RawSiteProduct;
 	const translate = useTranslate();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const purchase = isArray( purchases )

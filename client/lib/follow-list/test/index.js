@@ -2,10 +2,13 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
+/**
+ * External dependencies
+ */
 import { assert } from 'chai';
 import sinon from 'sinon';
+
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 describe( 'index', () => {
 	let FollowList, FollowListSite, followList, site;

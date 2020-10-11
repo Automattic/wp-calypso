@@ -8,11 +8,11 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import Field from 'my-sites/checkout/composite-checkout/wpcom/components/field';
+import Field from 'my-sites/checkout/composite-checkout/components/field';
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
+} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
 import {
 	GridRow,
 	FieldRow,

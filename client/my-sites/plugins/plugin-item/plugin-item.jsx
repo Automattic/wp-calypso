@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'components/forms/form-checkbox';
 import { CompactCard } from '@automattic/components';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
@@ -331,10 +332,9 @@ class PluginItem extends Component {
 		return (
 			<CompactCard className={ pluginItemClasses }>
 				{ ! this.props.isSelectable ? null : (
-					<input
+					<FormInputCheckbox
 						className="plugin-item__checkbox"
 						id={ plugin.slug }
-						type="checkbox"
 						onClick={ this.props.onClick }
 						checked={ this.props.isSelected }
 						readOnly={ true }

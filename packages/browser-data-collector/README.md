@@ -1,5 +1,4 @@
-Browser Data Collector
-======================
+# Browser Data Collector
 
 This package is used to collect RUM data and send it to Logstash
 
@@ -8,17 +7,18 @@ This package is used to collect RUM data and send it to Logstash
 ```js
 import { start, stop } from '@automattic/browser-data-collector';
 
-start('my-page', {fullPageLoad: true})
+start( 'my-page', { fullPageLoad: true } );
 
 // Later in the same page
-stop('my-page');
+stop( 'my-page' );
 ```
 
 This will send a report to `Logstash` including (but not limited to):
-	- `duration`: when `stop()` was called relative to when `start()` was called. If `fullPageLoad:true`, then it is relative to when the navigation started.
-	- `id`: name of the report, `"my-page"` in this case
-	- Environment data like Calypso version or build target
-	- Data from the Performance Timing API
+
+- `duration`: when `stop()` was called relative to when `start()` was called. If `fullPageLoad:true`, then it is relative to when the navigation started.
+- `id`: name of the report, `"my-page"` in this case
+- Environment data like Calypso version or build target
+- Data from the Performance Timing API
 
 Sending reports is sampled to avoid overwhelming the REST endpoint. This logic is in `should-send.ts`. The full report is available in that function, so
 we can decide if a report should be sent not only based on the id, but on any property captured by a collector.

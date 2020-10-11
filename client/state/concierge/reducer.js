@@ -8,7 +8,6 @@ import availableTimes from './available-times/reducer';
 import nextAppointment from './next-appointment/reducer';
 import signupForm from './signup-form/reducer';
 import scheduleId from './schedule-id/reducer';
-import hasAvailableConciergeSessions from './has-available-concierge-sessions/reducer';
 
 const combinedReducer = combineReducers( {
 	appointmentDetails,
@@ -17,7 +16,6 @@ const combinedReducer = combineReducers( {
 	nextAppointment,
 	signupForm,
 	scheduleId,
-	hasAvailableConciergeSessions,
 } );
 
 const conciergeReducer = withStorageKey( 'concierge', combinedReducer );

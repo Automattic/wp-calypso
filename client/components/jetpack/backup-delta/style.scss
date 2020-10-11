@@ -3,22 +3,22 @@
 }
 
 .backup-delta__realtime .activity-log-item__actor {
-    margin-left: 0;
+	margin-left: 0;
 }
 
 .backup-delta__realtime .button.is-borderless.is-primary {
-    float: none;
-    display: inline-block;
+	float: none;
+	display: inline-block;
 }
 
 .backup-delta__realtime-cards {
-    margin: 0 1rem;
+	margin: 0 1rem;
 }
 
 .backup-delta__realtime-header {
-    font-size: $font-body;
-    font-weight: 600;
-    margin: 32px 0 0.5rem;
+	font-size: $font-body;
+	font-weight: 600;
+	margin: 32px 0 0.5rem;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin-top: 16px;
@@ -26,7 +26,7 @@
 }
 
 .backup-delta__realtime-emptyday {
-    margin-top: 1rem;
+	margin-top: 1rem;
 }
 
 /* WordPress.com-only styles */
@@ -39,5 +39,15 @@
 
 	.backup-delta__realtime-header {
 		margin-top: initial;
+	}
+}
+
+/* Jetpack.com-only changes */
+.is_jetpackcom {
+	.backup-delta {
+		@include breakpoint-deprecated( '>660px' ) {
+			margin-right: 0;
+			margin-left: 0;
+		}
 	}
 }

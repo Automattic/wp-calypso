@@ -21,7 +21,7 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const gutenbergUser =
-	process.env.GUTENBERG_EDGE === 'true' ? 'gutenbergSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
+	process.env.COBLOCKS_EDGE === 'true' ? 'coBlocksSimpleSiteEdgeUser' : 'gutenbergSimpleSiteUser';
 
 let driver;
 
@@ -60,6 +60,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 
 		step( 'Can publish and view content', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			// We need to save the post to get a stable post slug for the block's `url` attribute.
+			// See https://github.com/godaddy-wordpress/coblocks/issues/1663.
+			await gEditorComponent.ensureSaved();
 			return await gEditorComponent.publish( { visit: true, closePanel: false } );
 		} );
 
@@ -127,7 +130,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Insert a Logos & Badges block: @parallel', function () {
+	describe( 'Insert a Logos block: @parallel', function () {
 		let fileDetails;
 
 		// Create image file for upload
@@ -141,9 +144,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can insert the Logos & Badges block', async function () {
+		step( 'Can insert the Logos block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
-			await gEditorComponent.addBlock( 'Logos & Badges' );
+			await gEditorComponent.addBlock( 'Logos' );
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.wp-block-coblocks-logos' )
@@ -174,7 +177,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, fu
 			return await gEditorComponent.publish( { visit: true } );
 		} );
 
-		step( 'Can see the Logos & Badges block in our published post', async function () {
+		step( 'Can see the Logos block in our published post', async function () {
 			return await driverHelper.waitTillPresentAndDisplayed(
 				driver,
 				By.css( '.entry-content .wp-block-coblocks-logos' )

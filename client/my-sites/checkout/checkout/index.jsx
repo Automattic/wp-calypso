@@ -81,7 +81,7 @@ import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'state/selectors/is-domain-only-site';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
-import { getStoredCards } from 'state/stored-cards/selectors';
+import { getStoredCards, isFetchingStoredCards } from 'state/stored-cards/selectors';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { getPlan, findPlansKeys } from 'lib/plans';
 import { GROUP_WPCOM } from 'lib/plans/constants';
@@ -105,7 +105,7 @@ import {
 	persistSignupDestination,
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
-} from 'signup/utils';
+} from 'signup/storageUtils';
 import { isExternal, addQueryArgs } from 'lib/url';
 import { withLocalizedMoment } from 'components/localized-moment';
 import { abtest } from 'lib/abtest';
@@ -481,15 +481,11 @@ export class Checkout extends React.Component {
 		}
 	}
 
-	maybeShowPlanBumpOfferConcierge( receiptId, stepResult ) {
+	maybeShowPlanBumpOffer( receiptId, stepResult ) {
 		const { cart, selectedSiteSlug } = this.props;
 
 		if ( hasPremiumPlan( cart ) && stepResult && isEmpty( stepResult.failed_purchases ) ) {
-			if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
-				return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/business/${ receiptId }`;
-			}
-
-			return `/checkout/offer-quickstart-session/${ receiptId }/${ selectedSiteSlug }`;
+			return `/checkout/${ selectedSiteSlug }/offer-plan-upgrade/business/${ receiptId }`;
 		}
 
 		return;
@@ -515,7 +511,7 @@ export class Checkout extends React.Component {
 			// A user just purchased one of the qualifying plans
 			// Show them the concierge session upsell page
 
-			const upgradePath = this.maybeShowPlanBumpOfferConcierge( pendingOrReceiptId, stepResult );
+			const upgradePath = this.maybeShowPlanBumpOffer( pendingOrReceiptId, stepResult );
 			if ( upgradePath ) {
 				return upgradePath;
 			}
@@ -956,11 +952,21 @@ export class Checkout extends React.Component {
 
 		if ( this.props.children ) {
 			this.props.setHeaderText( '' );
-			return React.Children.map( this.props.children, ( child ) => {
+			const children = React.Children.map( this.props.children, ( child ) => {
 				return React.cloneElement( child, {
+					cart: this.props.cart,
+					cards: this.props.cards,
+					isFetchingStoredCards: this.props.isFetchingStoredCards,
 					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
 				} );
 			} );
+
+			return (
+				<>
+					<QueryStoredCards />
+					{ children }
+				</>
+			);
 		}
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -1004,6 +1010,7 @@ export default connect(
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
+			isFetchingStoredCards: isFetchingStoredCards( state ),
 			isPrivate: isPrivateSite( state, selectedSiteId ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),

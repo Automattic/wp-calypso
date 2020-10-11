@@ -11,6 +11,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormFieldset from 'components/forms/form-fieldset';
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import MultiCheckbox from 'components/forms/multi-checkbox';
 import SupportInfo from 'components/support-info';
 import { getPostTypes } from 'state/post-types/selectors';
@@ -161,13 +165,12 @@ class SharingButtonsOptions extends Component {
 		const option = isJetpack ? 'jetpack-twitter-cards-site-tag' : 'twitter_via';
 
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Twitter username' ) }
 				</legend>
-				<input
+				<FormTextInput
 					name={ option }
-					type="text"
 					placeholder={ '@' + translate( 'username' ) }
 					value={ this.getSanitizedTwitterUsername( settings[ option ] ) }
 					onChange={ this.handleTwitterViaChange }
@@ -179,7 +182,7 @@ class SharingButtonsOptions extends Component {
 						'This will be included in tweets when people share using the Twitter button.'
 					) }
 				</p>
-			</fieldset>
+			</FormFieldset>
 		);
 	}
 
@@ -193,14 +196,13 @@ class SharingButtonsOptions extends Component {
 		const checked = get( settings, 'jetpack_comment_likes_enabled', false );
 
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Comment Likes', { context: 'Sharing options: Header' } ) }
 				</legend>
-				<label>
-					<input
+				<FormLabel>
+					<FormInputCheckbox
 						name="jetpack_comment_likes_enabled"
-						type="checkbox"
 						checked={ checked }
 						onChange={ this.handleChange }
 						disabled={ ! initialized }
@@ -216,8 +218,8 @@ class SharingButtonsOptions extends Component {
 						privacyLink={ false }
 						position={ 'bottom left' }
 					/>
-				</label>
-			</fieldset>
+				</FormLabel>
+			</FormFieldset>
 		);
 	}
 
@@ -226,7 +228,7 @@ class SharingButtonsOptions extends Component {
 
 		const changeSharingPostTypes = partial( this.handleMultiCheckboxChange, 'sharing_show' );
 		return (
-			<fieldset className="sharing-buttons__fieldset">
+			<FormFieldset className="sharing-buttons__fieldset">
 				<legend className="sharing-buttons__fieldset-heading">
 					{ translate( 'Show like and sharing buttons on', {
 						context: 'Sharing options: Header',
@@ -241,7 +243,7 @@ class SharingButtonsOptions extends Component {
 					onChange={ changeSharingPostTypes }
 					disabled={ ! initialized }
 				/>
-			</fieldset>
+			</FormFieldset>
 		);
 	};
 

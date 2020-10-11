@@ -13,7 +13,7 @@ import globalMoment from 'moment';
 /**
  * Internal dependencies
  */
-import { MomentProvider } from '../context';
+import MomentProvider from '../provider';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
 
 // helper to create state object with specified `languageSlug`

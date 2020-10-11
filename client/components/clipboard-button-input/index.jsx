@@ -45,7 +45,6 @@ function ClipboardButtonInput( { value = '', className, disabled, hideHttp, disp
 				{ ...rest }
 				disabled={ disabled }
 				value={ hideHttp ? withoutHttp( value ) : value }
-				type="text"
 				selectOnFocus
 				readOnly
 			/>

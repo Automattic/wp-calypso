@@ -7,6 +7,7 @@ import {
 	HELP_LINKS_REQUEST,
 	SUPPORT_HISTORY_REQUEST,
 	SUPPORT_HISTORY_SET,
+	SUPPORT_LEVEL_SET,
 } from 'state/action-types';
 
 import 'state/data-layer/wpcom/help/search';
@@ -36,4 +37,9 @@ export const requestSupportHistory = ( email ) => ( {
 export const setSupportHistory = ( items ) => ( {
 	type: SUPPORT_HISTORY_SET,
 	items,
+} );
+
+export const setSupportLevel = ( level ) => ( {
+	type: SUPPORT_LEVEL_SET,
+	level,
 } );

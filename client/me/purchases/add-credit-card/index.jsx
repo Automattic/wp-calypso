@@ -9,18 +9,18 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { addStoredCard } from 'state/stored-cards/actions';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { concatTitle } from 'lib/react-helpers';
-import { createCardToken } from 'lib/store-transactions';
-import CreditCardForm from 'blocks/credit-card-form';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import titles from 'me/purchases/titles';
-import { billingHistory } from 'me/purchases/paths';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { StripeHookProvider } from 'lib/stripe';
+import { addStoredCard } from 'calypso/state/stored-cards/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { concatTitle } from 'calypso/lib/react-helpers';
+import { createCardToken } from 'calypso/lib/store-transactions';
+import CreditCardForm from 'calypso/blocks/credit-card-form';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import titles from 'calypso/me/purchases/titles';
+import { billingHistory } from 'calypso/me/purchases/paths';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { StripeHookProvider } from 'calypso/lib/stripe';
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );

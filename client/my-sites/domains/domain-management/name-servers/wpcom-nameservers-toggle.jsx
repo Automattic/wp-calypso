@@ -32,7 +32,6 @@ class NameserversToggle extends React.PureComponent {
 						id="wp-nameservers"
 						name="wp-nameservers"
 						onChange={ this.handleToggle }
-						type="checkbox"
 						checked={ this.props.enabled }
 						value="active"
 					/>

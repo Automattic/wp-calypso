@@ -45,7 +45,7 @@
 			"prPriority": 1
 		},
 		{
-			"paths": [ "apps/full-site-editing/package.json" ],
+			"paths": [ "apps/editing-toolkit/package.json" ],
 			"packageName": "newspack-blocks",
 			"reviewers": [ "team:@Automattic/create", "team:@Automattic/ajax" ],
 			"groupName": "Newspack Blog Posts Block Update"

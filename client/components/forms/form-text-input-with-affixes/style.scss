@@ -11,12 +11,15 @@
 		flex-direction: row;
 	}
 
-	input[type='email'],
-	input[type='password'],
-	input[type='url'],
-	input[type='text'],
-	input[type='number'] {
+	input[type='email'].form-text-input,
+	input[type='password'].form-text-input,
+	input[type='url'].form-text-input,
+	input[type='text'].form-text-input,
+	input[type='number'].form-text-input {
 		flex-grow: 1;
+		border-radius: 0;
+		position: relative;
+		z-index: z-index( 'root', '.form-text-input-with-affixes .form-text-input' );
 
 		&:focus {
 			// Fixes the right border of the box shadow displayed when this input element is focused which appears as
@@ -53,7 +56,7 @@
 	background: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-10 );
 	color: var( --color-neutral-50 );
-	padding: 8px 14px;
+	padding: 7px 14px;
 	white-space: nowrap;
 	flex: 1 0 auto;
 	font-size: $font-body;
@@ -78,11 +81,11 @@
 		@include no-prefix-wrap();
 	}
 
-	& + input[type='email'],
-	& + input[type='password'],
-	& + input[type='url'],
-	& + input[type='text'],
-	& + input[type='number'] {
+	& + input[type='email'].form-text-input,
+	& + input[type='password'].form-text-input,
+	& + input[type='url'].form-text-input,
+	& + input[type='text'].form-text-input,
+	& + input[type='number'].form-text-input {
 		&:disabled {
 			border-left-color: var( --color-neutral-10 );
 			border-right-width: 1px;

@@ -30,6 +30,8 @@ import { setLocale } from 'state/ui/language/actions';
 import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
 import QueryUserSettings from 'components/data/query-user-settings';
 import FormTextInput from 'components/forms/form-text-input';
+import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'components/forms/form-label';
 
 /**
  * Style dependencies
@@ -354,10 +356,10 @@ class TranslatorLauncher extends React.Component {
 					) }
 				</p>
 				<p>
-					<label htmlFor="toggle">
-						<input type="checkbox" id="toggle" onClick={ this.toggleInfoCheckbox } />
+					<FormLabel htmlFor="toggle">
+						<FormInputCheckbox id="toggle" onClick={ this.toggleInfoCheckbox } />
 						<span>{ translate( "Don't show again" ) }</span>
-					</label>
+					</FormLabel>
 				</p>
 			</Dialog>
 		);

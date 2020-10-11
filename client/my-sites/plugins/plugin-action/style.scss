@@ -17,10 +17,6 @@
 		}
 	}
 
-	.disconnect-jetpack-button {
-		margin-right: 0;
-	}
-
 	.plugin-action__label {
 		@include breakpoint-deprecated( '<480px' ) {
 			color: var( --color-neutral-70 );

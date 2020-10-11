@@ -41,7 +41,7 @@
 		letter-spacing: 1px;
 		text-align: center;
 		text-transform: uppercase;
-		border-radius: 3px;
+		border-radius: var( --jetpack-corners-soft );
 		color: #fff;
 
 		&.is-fixed {

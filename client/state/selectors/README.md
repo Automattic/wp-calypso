@@ -1,5 +1,4 @@
-State Selectors
-===============
+# State Selectors
 
 This folder contains all available state selectors. Each file includes a single default exported function which can be used as a helper in retrieving derived data from the global state tree.
 

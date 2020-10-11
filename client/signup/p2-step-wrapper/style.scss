@@ -10,6 +10,7 @@
 	flex-direction: column;
 	padding: 32px 32px 0;
 	font-family: var( --p2-font-inter );
+	line-height: 1.8;
 
 	@include break-mobile {
 		padding: 80px 20px 0;
@@ -42,8 +43,7 @@
 }
 
 .p2-step-wrapper__header-text {
-	font-size: 16px;
-	line-height: 28px;
+	font-size: var( --p2-font-size-form-s );
 }
 
 .p2-step-wrapper__header-logo {
@@ -69,6 +69,40 @@
 }
 
 .p2-step-wrapper__footer-text {
-	font-size: 14px;
+	font-size: var( --p2-font-size-form-xs );
 	line-height: 17px;
+}
+
+.p2-step-wrapper button {
+	float: none;
+	margin: 0;
+	padding: 18px 24px;
+	width: 100%;
+	background-color: var( --p2-color-button );
+	color: var( --p2-color-text );
+	border: none;
+	border-radius: 40px;
+	font-weight: normal;
+	font-size: var( --p2-font-size-form );
+	transition: background 0.2s ease;
+
+	&.is-primary {
+		background-color: var( --p2-color-link );
+		color: var( --p2-color-text-white );
+
+		&:hover,
+		&:focus {
+			background-color: var( --p2-color-link-dark );
+			border: none;
+			color: var( --p2-color-text-white );
+		}
+	}
+
+
+	&[disabled] {
+		opacity: 0.5;
+		color: var( --p2-color-text-white );
+		background-color: var( --p2-color-link );
+		border: none;
+	}
 }

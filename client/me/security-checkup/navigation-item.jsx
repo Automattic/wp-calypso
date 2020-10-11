@@ -7,8 +7,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import MaterialIcon from 'components/material-icon';
-import VerticalNavItem from 'components/vertical-nav/item';
+import MaterialIcon from 'calypso/components/material-icon';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 
 const SecurityCheckupNavigationItemContents = function ( props ) {
 	const { materialIcon, materialIconStyle, text, description } = props;

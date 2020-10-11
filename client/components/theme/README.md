@@ -1,9 +1,8 @@
-Theme
-=====
+# Theme
 
 Theme component: displays a theme screenshot and details.
 
-### `index.jsx`
+## `index.jsx`
 
 Renders a theme by displaying its name, price, and screenshot.
 

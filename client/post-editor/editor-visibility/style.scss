@@ -17,15 +17,15 @@
 	}
 
 	.select-dropdown__header {
-		max-width: ( $sidebar-width-max - $accordion-padding * 2 );
+		max-width: calc( var( --sidebar-width-max ) - ( #{$accordion-padding} * 2 ) );
 
 		@include breakpoint-deprecated( '<660px' ) {
 			max-width: 100%;
-			min-width: ( $sidebar-width-max - $accordion-padding * 2 );
+			min-width: calc( var( --sidebar-width-max ) - ( #{$accordion-padding} * 2 ) );
 		}
 	}
 
-	.form-text-input {
+	input[type='text'].form-text-input {
 		font-size: $font-body-small;
 		margin-top: 8px;
 	}

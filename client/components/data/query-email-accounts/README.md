@@ -13,7 +13,7 @@ export default function listEmailAccounts( { emailAccounts } ) {
 	return (
 		<div>
 			<QueryEmailAccounts siteId={ siteId } />
-			{ emailAccounts.map( emailAccount => (
+			{ emailAccounts.map( ( emailAccount ) => (
 				<li>{ `${ emailAccount.mailbox }@${ emailAccount.domain }` }</li>
 			) ) }
 		</div>

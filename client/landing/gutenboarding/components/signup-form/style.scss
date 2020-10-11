@@ -63,6 +63,14 @@
 		}
 	}
 
+	.signup-form__fieldset {
+		border: 0;
+		margin: 0;
+		outline: 0;
+		padding: 0;
+		vertical-align: baseline;
+	}
+
 	.components-text-control__input {
 		padding: 18px 14px;
 		font-size: $font-body;

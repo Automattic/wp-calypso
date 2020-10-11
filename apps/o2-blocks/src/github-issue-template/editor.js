@@ -4,14 +4,13 @@
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 import { TextControl, TextareaControl } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
 import * as createIssueUrl from 'new-github-issue-url';
 import { SVG, Rect, Path } from '@wordpress/primitives';
 import classNames from 'classnames';
 
 import './editor.scss';
 
-const githubIcon = (
+const icon = (
 	<SVG
 		xmlns="http://www.w3.org/2000/svg"
 		aria-label="GitHub"
@@ -28,17 +27,13 @@ const githubIcon = (
 	</SVG>
 );
 
-const Shell = ( { as: El = 'div', className, title, subTitle, icon, body, ...elementProps } ) => {
+const Shell = ( { as: El = 'div', className, title, subtitle, body, ...elementProps } ) => {
 	return (
 		<El { ...elementProps } className={ classNames( 'wp-block-a8c-github-template', className ) }>
-			{ typeof icon === 'string' ? (
-				<div className="github-template__icon">{ icon }</div>
-			) : (
-				<Icon className="github-template__icon" icon={ icon || githubIcon } />
-			) }
-			<span className="github-template__title">{ title }</span>
-			<div className="github-template__sub-title">{ subTitle }</div>
-			{ body && <span className="github-template__body">{ body }</span> }
+			<div className="wp-block-a8c-github-template__icon" />
+			<div className="wp-block-a8c-github-template__title">{ title }</div>
+			<div className="wp-block-a8c-github-template__sub-title">{ subtitle }</div>
+			{ body && <div className="wp-block-a8c-github-template__body">{ body }</div> }
 		</El>
 	);
 };
@@ -56,7 +51,7 @@ const Edit = ( {
 	<Shell
 		className="is-edit"
 		title={ <TextControl placeholder="Issue Title" onChange={ onChangeTitle } value={ title } /> }
-		subTitle={
+		subtitle={
 			<>
 				<TextControl
 					placeholder="User or Organization"
@@ -73,8 +68,8 @@ const Edit = ( {
 
 const View = ( { title, userOrOrg, repo, ...rest } ) => (
 	<Shell
-		title={ `${ __( 'Create Issue:' ) } ${ title }` }
-		subTitle={ `${ userOrOrg }/${ repo }` }
+		title={ __( 'Create Issue' ) + ( title ? ` "${ title }"` : '' ) }
+		subtitle={ `${ userOrOrg }/${ repo }` }
 		{ ...rest }
 	/>
 );
@@ -83,16 +78,15 @@ const Invalid = () => (
 	<Shell
 		className="is-warning"
 		title={ __( 'Please fill in the required fields' ) }
-		subTitle={ __(
-			'Title, Org, and Repository are required. Select this block to open the form and fill them.'
+		subtitle={ __(
+			'Org and Repository are required. Select this block to open the form and fill them.'
 		) }
-		icon="⚠"
 	/>
 );
 
 registerBlockType( 'a8c/github-issue-template', {
 	title: __( 'Github Issue Template', 'a8c' ),
-	icon: githubIcon,
+	icon,
 	category: 'layout',
 	attributes: {
 		userOrOrg: {
@@ -108,7 +102,7 @@ registerBlockType( 'a8c/github-issue-template', {
 			type: 'string',
 		},
 	},
-	edit: ( { setAttributes, attributes, attributes: { title, userOrOrg, repo }, isSelected } ) => {
+	edit: ( { setAttributes, attributes, attributes: { userOrOrg, repo }, isSelected } ) => {
 		const handlers = {
 			onChangeUserOrOrg( newUserOrOrg ) {
 				setAttributes( { userOrOrg: newUserOrOrg } );
@@ -127,7 +121,7 @@ registerBlockType( 'a8c/github-issue-template', {
 			},
 		};
 
-		const isValid = title && userOrOrg && repo;
+		const isValid = Boolean( userOrOrg && repo );
 		const { body, ...viewAttributes } = attributes;
 
 		if ( isSelected ) {
@@ -137,7 +131,7 @@ registerBlockType( 'a8c/github-issue-template', {
 		return isValid ? <View { ...viewAttributes } /> : <Invalid />;
 	},
 	save: ( { attributes: { userOrOrg, repo, title, body } } ) => {
-		const isValid = title && userOrOrg && repo;
+		const isValid = Boolean( userOrOrg && repo );
 		if ( isValid ) {
 			const url = createIssueUrl( {
 				title,

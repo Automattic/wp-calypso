@@ -16,7 +16,6 @@
 		],
 		"settings_path": "/extensions/zoninator",
 		"module": "zoninator",
-		"group": "sites",
-		"secondary": true
+		"group": "sites"
 	}
 }

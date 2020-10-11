@@ -10,12 +10,8 @@ import * as driverManager from '../lib/driver-manager';
 import * as dataHelper from '../lib/data-helper';
 import * as mediaHelper from '../lib/media-helper';
 import LoginFlow from '../lib/flows/login-flow';
-import EditorPage from '../lib/pages/editor-page';
-import PostEditorToolbarComponent from '../lib/components/post-editor-toolbar-component';
 import CommentsAreaComponent from '../lib/pages/frontend/comments-area-component';
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
-import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
-import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
 const host = dataHelper.getJetpackHost();
 const screenSize = driverManager.currentScreenSize();
@@ -40,57 +36,6 @@ describe( `[${ host }] Comments: (${ screenSize })`, function () {
 	before( async function () {
 		fileDetails = await mediaHelper.createFile();
 		return fileDetails;
-	} );
-
-	describe( 'Commenting and replying to newly created post: @parallel @jetpack', function () {
-		if ( host !== 'WPCOM' ) {
-			step( 'Can log into Jetpack site', async function () {
-				const account = dataHelper.getAccountConfig();
-				const loginPage = await WPAdminLogonPage.Visit( driver, dataHelper.getJetpackSiteName() );
-				await loginPage.login( account[ 0 ], account[ 1 ] );
-				await WPAdminSidebar.Expect( driver );
-			} );
-		}
-
-		step( 'Can login and create a new post', async function () {
-			await new LoginFlow( driver ).loginAndStartNewPost();
-			const editorPage = await EditorPage.Expect( driver );
-			await editorPage.enterTitle( blogPostTitle );
-			await editorPage.enterContent( blogPostQuote + '\n' );
-		} );
-
-		step( 'Can publish and visit site', async function () {
-			const postEditorToolbar = await PostEditorToolbarComponent.Expect( driver );
-			await postEditorToolbar.ensureSaved();
-			await postEditorToolbar.publishAndViewContent( { useConfirmStep: true } );
-		} );
-
-		step( 'Can post a comment', async function () {
-			const commentArea = await CommentsAreaComponent.Expect( driver );
-			return await commentArea._postComment( {
-				comment: dataHelper.randomPhrase(),
-				name: 'e2eTestName',
-				email: 'e2eTestName@test.com',
-			} );
-		} );
-
-		step( 'Can post a reply', async function () {
-			// NOTE: we need to wait to prevent "You are posting comments too quickly. Slow down." error
-			if ( host === 'WPCOM' ) {
-				await driver.sleep( 10000 );
-			} else {
-				await driver.sleep( 15000 );
-			}
-			const commentArea = await CommentsAreaComponent.Expect( driver );
-			await commentArea.reply(
-				{
-					comment: dataHelper.randomPhrase(),
-					name: 'e2eTestName',
-					email: 'e2eTestName@test.com',
-				},
-				2
-			);
-		} );
 	} );
 
 	describe( 'Commenting and replying to newly created post in Gutenberg Editor: @parallel', function () {

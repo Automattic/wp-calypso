@@ -11,6 +11,7 @@ import { getLocaleSlug } from 'i18n-calypso';
  */
 import activeTests from 'lib/abtest/active-tests';
 import { recordTracksEvent } from 'lib/analytics/tracks';
+import { bumpStat } from 'lib/analytics/mc';
 import user from 'lib/user';
 import wpcom from 'lib/wp';
 import { ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
@@ -208,7 +209,7 @@ export const isUsingGivenLocales = ( localeTargets, experimentId = null ) => {
 		client.languages && client.languages.length ? client.languages[ 0 ] : 'en';
 	const localeFromSession = getLocaleSlug() || 'en';
 	const localeMatcher = new RegExp( '^(' + localeTargets.join( '|' ) + ')', 'i' );
-	const userLocale = user().get().localeSlug || 'en';
+	const userLocale = user().get()?.localeSlug || 'en';
 
 	if ( isUserSignedIn() && ! userLocale.match( localeMatcher ) ) {
 		debug( '%s: User has a %s locale', experimentId, userLocale );
@@ -349,6 +350,8 @@ ABTest.prototype.saveVariation = function ( variation ) {
 		this.recordVariation( variation );
 	}
 	this.saveVariationInLocalStorage( variation );
+
+	bumpStat( this.experimentId, variation );
 };
 
 ABTest.prototype.saveVariationOnBackend = function ( variation ) {

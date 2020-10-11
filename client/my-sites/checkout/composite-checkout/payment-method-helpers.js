@@ -10,11 +10,9 @@ import { defaultRegistry } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import {
-	createTransactionEndpointRequestPayloadFromLineItems,
-	createPayPalExpressEndpointRequestPayloadFromLineItems,
-} from './types';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
+import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
+import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -22,7 +20,7 @@ import {
 	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
 import { createStripePaymentMethod } from 'lib/stripe';
-import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/wpcom/types/wpcom-store-state';
+import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { getSavedVariations } from 'lib/abtest';
 import { stringifyBody } from 'state/login/utils';
@@ -47,7 +45,6 @@ export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
 			return getStoredCards();
 		}
 
-		// TODO: handle errors
 		fetchStoredCards()
 			.then( ( cards ) => {
 				debug( 'stored cards fetched', cards );
@@ -149,10 +146,7 @@ export async function submitRedirectTransaction( paymentMethodId, transactionDat
 		paymentMethodType,
 		paymentPartnerProcessorId: transactionData.stripeConfiguration?.processor_id,
 	} );
-	debug(
-		`sending stripe redirect transaction for type: ${ paymentMethodId }`,
-		formattedTransactionData
-	);
+	debug( `sending redirect transaction for type: ${ paymentMethodId }`, formattedTransactionData );
 	return submit( formattedTransactionData );
 }
 
@@ -262,7 +256,12 @@ async function createAccountCallback( response ) {
 }
 
 async function createAccount() {
-	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+	let newSiteParams = null;
+	try {
+		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+	} catch ( err ) {
+		newSiteParams = {};
+	}
 
 	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
 	const siteId = select( 'wpcom' )?.getSiteId();
@@ -476,7 +475,17 @@ export function filterAppropriatePaymentMethods( {
 	const isPurchaseFree = total.amount.value === 0;
 	const isFullCredits =
 		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
-	debug( 'is purchase free?', isPurchaseFree, 'is full credits?', isFullCredits );
+	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
+	debug( 'filtering payment methods with this input', {
+		total,
+		credits,
+		subtotal,
+		allowedPaymentMethods,
+		serverAllowedPaymentMethods,
+		isPurchaseFree,
+		isFullCredits,
+		countryCode,
+	} );
 
 	return paymentMethodObjects
 		.filter( ( methodObject ) => {
@@ -492,6 +501,17 @@ export function filterAppropriatePaymentMethods( {
 				return isFullCredits ? true : false;
 			}
 			return isFullCredits ? false : true;
+		} )
+		.filter( ( methodObject ) => {
+			// Some country-specific payment methods should only be available if that
+			// country is selected in the contact information.
+			if ( methodObject.id === 'netbanking' && countryCode !== 'IN' ) {
+				return false;
+			}
+			if ( methodObject.id === 'ebanx-tef' && countryCode !== 'BR' ) {
+				return false;
+			}
+			return true;
 		} )
 		.filter( ( methodObject ) => {
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
@@ -512,7 +532,8 @@ export function filterAppropriatePaymentMethods( {
 				methodObject.id,
 				allowedPaymentMethods || serverAllowedPaymentMethods
 			);
-		} );
+		} )
+		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
 }
 
 export function needsDomainDetails( cart ) {
@@ -542,4 +563,11 @@ export function getPostalCode() {
 	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
 	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
 	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
+}
+
+function isPaymentMethodLegallyRestricted( paymentMethodId ) {
+	// Add the names of any legally-restricted payment methods to this list.
+	const restrictedPaymentMethods = [];
+
+	return restrictedPaymentMethods.includes( paymentMethodId );
 }

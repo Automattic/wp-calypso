@@ -165,8 +165,8 @@ class AdsFormSettings extends Component {
 						checked={ 'yes' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
 						disabled={ this.props.isLoading }
+						label={ translate( 'Run ads for all users' ) }
 					/>
-					<span>{ translate( 'Run ads for all users' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -176,8 +176,8 @@ class AdsFormSettings extends Component {
 						checked={ 'no' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
 						disabled={ this.props.isLoading }
+						label={ translate( 'Run ads only for logged-out users (less revenue)' ) }
 					/>
-					<span>{ translate( 'Run ads only for logged-out users (less revenue)' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -187,8 +187,8 @@ class AdsFormSettings extends Component {
 						checked={ 'pause' === this.state.show_to_logged_in }
 						onChange={ this.handleChange }
 						disabled={ this.props.isLoading }
+						label={ translate( 'Pause ads (no revenue)' ) }
 					/>
-					<span>{ translate( 'Pause ads (no revenue)' ) }</span>
 				</FormLabel>
 			</FormFieldset>
 		);

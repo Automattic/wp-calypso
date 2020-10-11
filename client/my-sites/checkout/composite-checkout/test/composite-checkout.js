@@ -9,14 +9,22 @@ import React from 'react';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
-import '@testing-library/jest-dom/extend-expect'; // eslint-disable-line import/no-extraneous-dependencies
-import { render, act, fireEvent } from '@testing-library/react'; // eslint-disable-line import/no-extraneous-dependencies
+import '@testing-library/jest-dom/extend-expect';
+import { render, act, fireEvent } from '@testing-library/react';
 
 /**
  * Internal dependencies
  */
 import CompositeCheckout from '../composite-checkout';
 import { StripeHookProvider } from 'lib/stripe';
+
+/**
+ * Mocked dependencies
+ */
+jest.mock( 'state/sites/selectors' );
+import { isJetpackSite } from 'state/sites/selectors';
+jest.mock( 'state/selectors/is-site-automated-transfer' );
+import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
@@ -114,7 +122,7 @@ describe( 'CompositeCheckout', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
-		page.redirect.mockReset();
+		jest.clearAllMocks();
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
@@ -204,6 +212,18 @@ describe( 'CompositeCheckout', () => {
 							product_id: 371,
 							product_name: 'Product',
 							product_slug: 'concierge-session',
+							prices: {},
+						},
+						jetpack_backup_daily: {
+							product_id: 2100,
+							product_name: 'Jetpack Backup (Daily)',
+							product_slug: 'jetpack_backup_daily',
+							prices: {},
+						},
+						jetpack_scan: {
+							product_id: 2106,
+							product_name: 'Jetpack Scan Daily',
+							product_slug: 'jetpack_scan',
 							prices: {},
 						},
 					},
@@ -478,7 +498,7 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a plan alias', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'personal' };
+		const additionalProps = { productAliasFromUrl: 'personal' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -491,7 +511,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the aliased plan to the cart when the url has a plan alias', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'personal' };
+		const additionalProps = { productAliasFromUrl: 'personal' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -504,9 +524,50 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
+	it( 'adds the product to the cart when the url has a jetpack product', async () => {
+		isJetpackSite.mockImplementation( () => true );
+		isAtomicSite.mockImplementation( () => false );
+
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$41' )
+		);
+	} );
+
+	it( 'adds two products to the cart when the url has two jetpack products', async () => {
+		isJetpackSite.mockImplementation( () => true );
+		isAtomicSite.mockImplementation( () => false );
+
+		let renderResult;
+		const cartChanges = { products: [] };
+		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
+		await act( async () => {
+			renderResult = render(
+				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+				container
+			);
+		} );
+		const { getAllByLabelText } = renderResult;
+		getAllByLabelText( 'Jetpack Scan Daily' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$41' )
+		);
+		getAllByLabelText( 'Jetpack Backup (Daily)' ).map( ( element ) =>
+			expect( element ).toHaveTextContent( 'R$42' )
+		);
+	} );
+
 	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'concierge-session' };
+		const additionalProps = { productAliasFromUrl: 'concierge-session' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -519,7 +580,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a concierge session', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { product: 'concierge-session' };
+		const additionalProps = { productAliasFromUrl: 'concierge-session' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -537,7 +598,7 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a theme', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'theme:ovation' };
+		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -550,7 +611,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { product: 'theme:ovation' };
+		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -568,7 +629,7 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'domain-mapping:bar.com' };
+		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
 		await act( async () => {
 			render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -581,7 +642,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds the domain mapping product to the cart when the url has a domain map', async () => {
 		let renderResult;
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const additionalProps = { product: 'domain-mapping:bar.com' };
+		const additionalProps = { productAliasFromUrl: 'domain-mapping:bar.com' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -601,7 +662,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'personal-bundle', purchaseId: '12345' };
+		const additionalProps = { productAliasFromUrl: 'personal-bundle', purchaseId: '12345' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -617,7 +678,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal with a domain registration', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'domain_reg:foo.cash', purchaseId: '12345' };
+		const additionalProps = { productAliasFromUrl: 'domain_reg:foo.cash', purchaseId: '12345' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -632,7 +693,7 @@ describe( 'CompositeCheckout', () => {
 	it( 'adds renewal product to the cart when the url has a renewal with a domain mapping', async () => {
 		let renderResult;
 		const cartChanges = { products: [] };
-		const additionalProps = { product: 'domain_map:bar.com', purchaseId: '12345' };
+		const additionalProps = { productAliasFromUrl: 'domain_map:bar.com', purchaseId: '12345' };
 		await act( async () => {
 			renderResult = render(
 				<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
@@ -648,7 +709,7 @@ describe( 'CompositeCheckout', () => {
 		let renderResult;
 		const cartChanges = { products: [] };
 		const additionalProps = {
-			product: 'domain_map:bar.com,domain_reg:bar.com',
+			productAliasFromUrl: 'domain_map:bar.com,domain_reg:bar.com',
 			purchaseId: '12345,54321',
 		};
 		await act( async () => {
@@ -851,6 +912,40 @@ function convertRequestProductToResponseProduct( currency ) {
 					item_original_cost_display: 'R$49',
 					item_subtotal_integer: 49,
 					item_subtotal_display: 'R$49',
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 2106:
+				return {
+					product_id: 2106,
+					product_name: 'Jetpack Scan Daily',
+					product_slug: 'jetpack_scan',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 4100,
+					item_original_cost_display: 'R$41',
+					item_subtotal_integer: 4100,
+					item_subtotal_display: 'R$41',
+					months_per_bill_period: 12,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case 2100:
+				return {
+					product_id: 2100,
+					product_name: 'Jetpack Backup (Daily)',
+					product_slug: 'jetpack_backup_daily',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 4200,
+					item_original_cost_display: 'R$42',
+					item_subtotal_integer: 4200,
+					item_subtotal_display: 'R$42',
+					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,

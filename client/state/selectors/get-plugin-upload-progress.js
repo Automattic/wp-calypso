@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/plugins/init';
 
 /**
  * Returns percentage of plugin zip uploaded to a site.

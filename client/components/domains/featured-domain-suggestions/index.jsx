@@ -118,12 +118,11 @@ export class FeaturedDomainSuggestions extends Component {
 						railcarId={ this.props.railcarId + '-0' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 0 }
+						premiumDomain={ this.props.premiumDomains[ primarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
-						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -133,11 +132,10 @@ export class FeaturedDomainSuggestions extends Component {
 						railcarId={ this.props.railcarId + '-1' }
 						isSignupStep={ this.props.isSignupStep }
 						uiPosition={ 1 }
+						premiumDomain={ this.props.premiumDomains[ secondarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
-						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 					/>
 				) }
 			</div>

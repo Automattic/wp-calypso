@@ -47,6 +47,7 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
+	isBusiness,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
@@ -67,6 +68,7 @@ import {
 	isWpComBloggerPlan,
 } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
@@ -161,7 +163,13 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackProduct( cartItem ) ) {
 		// adding a Jetpack product should replace the cart
-		return false;
+
+		// Jetpack Offer Reset allows users to purchase multiple Jetpack products at the same time.
+		if ( shouldShowOfferResetFlow() ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	return false;
@@ -346,6 +354,10 @@ export function hasPersonalPlan( cart ) {
 
 export function hasPremiumPlan( cart ) {
 	return some( getAllCartItems( cart ), isPremium );
+}
+
+export function hasBusinessPlan( cart ) {
+	return some( getAllCartItems( cart ), isBusiness );
 }
 
 export function hasDomainCredit( cart ) {
@@ -1260,6 +1272,10 @@ export function isPaidDomain( domainPriceRule ) {
 export function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion, isDomainOnly ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
+	}
+
+	if ( suggestion?.is_premium ) {
+		return 'PRICE';
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {

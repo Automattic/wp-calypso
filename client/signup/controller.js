@@ -38,11 +38,10 @@ import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
 import { setSiteType } from 'state/signup/steps/site-type/actions';
 import { login } from 'lib/paths';
-import { waitForData } from 'state/data-layer/http-data';
+import { waitForHttpData } from 'state/data-layer/http-data';
 import { requestGeoLocation } from 'state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'lib/abtest';
-import Experiment, { DefaultVariation, Variation } from 'components/experiment';
 import user from 'lib/user';
 
 /**
@@ -63,10 +62,13 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-const gutenbergRedirect = function () {
+const gutenbergRedirect = function ( flowName ) {
 	const url = new URL( window.location );
-	url.pathname = '/new';
-
+	if ( [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
+		url.pathname = `/new/${ flowName }`;
+	} else {
+		url.pathname = '/new';
+	}
 	window.location.replace( url.toString() );
 };
 
@@ -93,13 +95,14 @@ export default {
 		} else if (
 			context.pathname.indexOf( 'domain' ) >= 0 ||
 			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-plan-first' ) >= 0 ||
 			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
 			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
-			context.params.flowName === 'crowdsignal'
+			context.params.flowName === 'crowdsignal' ||
+			context.params.flowName === 'pressable-nux' ||
+			context.params.flowName === 'clone-site'
 		) {
 			removeWhiteBackground();
 			next();
@@ -116,20 +119,21 @@ export default {
 
 			next();
 		} else {
+			const flowName = getFlowName( context.params );
 			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if ( userLoggedIn && 'gutenberg' === abtest( 'existingUsersGutenbergOnboard' ) ) {
-				gutenbergRedirect();
+			if (
+				userLoggedIn &&
+				flowName === 'onboarding' &&
+				'gutenberg' === abtest( 'existingUsersGutenbergOnboard' )
+			) {
+				gutenbergRedirect( context.params.flowName );
 				return;
 			}
 
-			waitForData( {
-				geo: () => requestGeoLocation(),
-			} )
+			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
-					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						gutenbergRedirect();
-					} else if (
+					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&
 						-1 === context.pathname.indexOf( 'personal' ) &&
@@ -282,45 +286,6 @@ export default {
 
 		if ( flowName !== 'launch-site' ) {
 			context.store.dispatch( setSelectedSiteId( null ) );
-		}
-
-		if ( flowName === 'onboarding' || flowName === 'onboarding-plan-first' ) {
-			context.primary = (
-				<Experiment name="signup_domain_plan_step_swap">
-					<DefaultVariation>
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName={ flowName }
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</DefaultVariation>
-					<Variation name="variant_plans_first">
-						<SignupComponent
-							store={ context.store }
-							path={ context.path }
-							initialContext={ initialContext }
-							locale={ context.params.lang }
-							flowName="onboarding-plan-first"
-							queryObject={ query }
-							refParameter={ query && query.ref }
-							stepName={ stepName }
-							stepSectionName={ stepSectionName }
-							stepComponent={ stepComponent }
-							pageTitle={ getFlowPageTitle( flowName ) }
-						/>
-					</Variation>
-				</Experiment>
-			);
-
-			next();
 		}
 
 		context.primary = React.createElement( SignupComponent, {

@@ -1,20 +1,20 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import page from 'page';
 
 /**
  * Internal Dependencies
  */
-import * as billingController from 'me/billing-history/controller';
-import * as pendingController from 'me/pending-payments/controller';
-import * as membershipsController from 'me/memberships/controller';
+import * as billingController from 'calypso/me/billing-history/controller';
+import * as pendingController from 'calypso/me/pending-payments/controller';
+import * as membershipsController from 'calypso/me/memberships/controller';
 import * as controller from './controller';
 import * as paths from './paths';
-import { makeLayout, render as clientRender } from 'controller';
-import { sidebar } from 'me/controller';
-import { siteSelection } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { sidebar } from 'calypso/me/controller';
+import { siteSelection } from 'calypso/my-sites/controller';
 
 export default ( router ) => {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
@@ -137,28 +137,6 @@ export default ( router ) => {
 	);
 
 	// redirect legacy urls
-	router( '/purchases', () => page.redirect( paths.purchasesRoot ) );
-	router( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.managePurchase( siteName, purchaseId ) )
-	);
-	router( '/purchases/:siteName/:purchaseId/cancel', ( { params: { siteName, purchaseId } } ) =>
-		page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.confirmCancelDomain( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/payment/add',
-		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( paths.addCardDetails( siteName, purchaseId ) )
-	);
-	router(
-		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
-		( { params: { siteName, purchaseId, cardId } } ) =>
-			page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
-	);
 	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>
 		page.redirect( paths.billingHistoryReceipt( receiptId ) )

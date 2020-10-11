@@ -14,7 +14,7 @@ import { parse } from 'qs';
 import wpcomRequest from 'wpcom-proxy-request';
 import 'jest-fetch-mock';
 import nock from 'nock';
-import { waitFor } from '@testing-library/react';
+import waitForExpect from 'wait-for-expect';
 
 /**
  * Internal dependencies
@@ -237,11 +237,11 @@ describe( 'password login flow', () => {
 		// Don't await the promise, it doesn't resolve until login flow is complete
 		submitPassword( 'passw0rd' );
 
-		await waitFor( () => expect( getLoginFlowState() ).toBe( 'WAITING_FOR_2FA_APP' ) );
+		await waitForExpect( () => expect( getLoginFlowState() ).toBe( 'WAITING_FOR_2FA_APP' ) );
 
 		userHandledPushNotification = true;
 
-		await waitFor( () => expect( getLoginFlowState() ).toBe( 'LOGGED_IN' ) );
+		await waitForExpect( () => expect( getLoginFlowState() ).toBe( 'LOGGED_IN' ) );
 	} );
 } );
 

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const { Menu, MenuItem } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { Menu, MenuItem } = require( 'electron' );
 
 module.exports = function ( mainWindow ) {
 	mainWindow.webContents.on( 'context-menu', ( event, params ) => {

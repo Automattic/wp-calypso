@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { head, uniqueId } from 'lodash';
+import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 
@@ -11,7 +11,7 @@ import Gridicon from 'components/gridicon';
  * Internal dependencies
  */
 import DropZone from 'components/drop-zone';
-import { filterItemsByMimePrefix } from 'lib/media/utils';
+import { filterItemsByMimePrefix, createTransientMediaId } from 'lib/media/utils';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
 import { addMedia } from 'state/media/thunks';
@@ -38,7 +38,7 @@ class FeaturedImageDropZone extends Component {
 			return false;
 		}
 
-		const transientId = uniqueId( 'featured-image' );
+		const transientId = createTransientMediaId( 'featured-image' );
 
 		const file = {
 			ID: transientId,

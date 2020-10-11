@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { ipcMain: ipc } = require( 'electron' );
 const https = require( 'https' ); // eslint-disable-line import/no-nodejs-modules
 const url = require( 'url' );
 const events = require( 'events' );

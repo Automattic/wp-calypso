@@ -186,7 +186,7 @@ yarn run build-packages
 
 ### Getting NPM permissions to publish in the `@automattic` scope
 
-To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, ask around to find an organization owner or admin who will add you as a member. Publish packages under your own name, so that people can find you and ping you in case anything goes wrong with the published package.
+To publish packages in the `@automattic` scope, and to update packages owned by the `automattic` organization, you need to be a member of this organization on npmjs.com. If you're an Automattician, you can add yourself to the organization, using the credentials found in the secret store.
 
 ### Publishing all outdated packages
 

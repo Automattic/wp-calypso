@@ -11,38 +11,45 @@ import PreviewFieldset from './preview-fieldset';
 import PreviewLegend from './preview-legend';
 import PreviewRequired from './preview-required';
 
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextarea from 'components/forms/form-textarea';
+import FormTextInput from 'components/forms/form-text-input';
+
 const textField = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
-		<input type="text" />
+		<FormTextInput />
 	</PreviewFieldset>
 );
 
 const textarea = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
-		<textarea />
+		<FormTextarea />
 	</PreviewFieldset>
 );
 
 const checkbox = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
-		<label>
-			<input type="checkbox" />
+		<FormLabel>
+			<FormInputCheckbox />
 			{ field.label }
 			<PreviewRequired required={ field.required } />
-		</label>
+		</FormLabel>
 	</PreviewFieldset>
 );
 
 const select = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
-		<select>
+		<FormSelect>
 			{ [].concat( field.options.split( ',' ) ).map( ( option, optionIndex ) => (
 				<option key={ 'contact-form-select-option-' + optionIndex }>{ option }</option>
 			) ) }
-		</select>
+		</FormSelect>
 	</PreviewFieldset>
 );
 
@@ -50,10 +57,9 @@ const radio = ( field, index ) => (
 	<PreviewFieldset key={ 'contact-form-field-' + index }>
 		<PreviewLegend { ...field } />
 		{ [].concat( field.options.split( ',' ) ).map( ( option, optionIndex ) => (
-			<label key={ 'contact-form-radio-' + optionIndex }>
-				<input type="radio" />
-				<span>{ option }</span>
-			</label>
+			<FormLabel key={ 'contact-form-radio-' + optionIndex }>
+				<FormRadio label={ option } />
+			</FormLabel>
 		) ) }
 	</PreviewFieldset>
 );

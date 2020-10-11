@@ -1,5 +1,4 @@
-Blocks
-======
+# Blocks
 
 Blocks are React components created from UI primitives to generate more complex entities.
 

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import { get, startsWith } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -25,9 +25,23 @@ import PlansNavigation from 'my-sites/plans/navigation';
 import PurchasesListing from './purchases-listing';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import { getPlan } from 'lib/plans';
-import { JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
+import {
+	JETPACK_LEGACY_PLANS,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+} from 'lib/plans/constants';
+import {
+	JETPACK_ANTI_SPAM_PRODUCTS,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
+} from 'lib/products-values/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 import QuerySiteDomains from 'components/data/query-site-domains';
@@ -39,7 +53,6 @@ import SidebarNavigation from 'my-sites/sidebar-navigation';
 import FormattedHeader from 'components/formatted-header';
 import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
-import { OFFER_RESET_SUPPORT_PAGE } from 'my-sites/plans-v2/constants';
 import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -47,8 +60,13 @@ import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
+import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
+import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
+import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
 import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
 import { getSitePurchases } from 'state/purchases/selectors';
+import QueryConciergeInitial from 'components/data/query-concierge-initial';
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 
 /**
  * Style dependencies
@@ -83,30 +101,45 @@ class CurrentPlan extends Component {
 	}
 
 	isLoading() {
-		const { selectedSite, isRequestingSitePlans: isRequestingPlans } = this.props;
+		const { selectedSite, isRequestingSitePlans: isRequestingPlans, scheduleId } = this.props;
 
-		return ! selectedSite || isRequestingPlans;
+		return ! selectedSite || isRequestingPlans || null === scheduleId;
 	}
 
 	renderThankYou() {
 		const { currentPlan, product, selectedSite } = this.props;
 
-		if ( startsWith( product, 'jetpack_backup' ) ) {
+		if ( JETPACK_BACKUP_PRODUCTS.includes( product ) ) {
 			return <BackupProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_scan' ) ) {
+		if ( JETPACK_SCAN_PRODUCTS.includes( product ) ) {
 			return <ScanProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_anti_spam' ) ) {
+		if ( JETPACK_ANTI_SPAM_PRODUCTS.includes( product ) ) {
 			return <AntiSpamProductThankYou />;
 		}
 
-		if ( startsWith( product, 'jetpack_search' ) ) {
+		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
 			const jetpackVersion = get( selectedSite, 'options.jetpack_version', 0 );
-
 			return <SearchProductThankYou { ...{ jetpackVersion } } />;
+		}
+
+		if (
+			[ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ].includes( product )
+		) {
+			return <JetpackSecurityDailyThankYou />;
+		}
+
+		if (
+			[ PLAN_JETPACK_SECURITY_REALTIME, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ].includes( product )
+		) {
+			return <JetpackSecurityRealtimeThankYou />;
+		}
+
+		if ( [ PLAN_JETPACK_COMPLETE, PLAN_JETPACK_COMPLETE_MONTHLY ].includes( product ) ) {
+			return <JetpackCompleteThankYou />;
 		}
 
 		if ( ! currentPlan || isFreePlan( currentPlan ) || isFreeJetpackPlan( currentPlan ) ) {
@@ -130,13 +163,13 @@ class CurrentPlan extends Component {
 			translate,
 		} = this.props;
 
-		const currentPlanSlug = selectedSite.plan.product_slug,
-			isLoading = this.isLoading();
+		const currentPlanSlug = selectedSite.plan.product_slug;
+		const isLoading = this.isLoading();
+		const planTitle = getPlan( currentPlanSlug ).getTitle();
 
-		const planConstObj = getPlan( currentPlanSlug ),
-			planFeaturesHeader = translate( '%(planName)s plan features', {
-				args: { planName: planConstObj.getTitle() },
-			} );
+		const planFeaturesHeader = translate( '{{planName/}} plan features', {
+			components: { planName: <>{ planTitle }</> },
+		} );
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -159,6 +192,10 @@ class CurrentPlan extends Component {
 					headerText={ translate( 'Plans' ) }
 					align="left"
 				/>
+				{ selectedSiteId && (
+					// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
+					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
+				) }
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
 				<QuerySitePurchases siteId={ selectedSiteId } />
@@ -193,13 +230,9 @@ class CurrentPlan extends Component {
 				) }
 
 				{ showExpiryNotice && (
-					<Notice
-						status="is-info"
-						text={ <PlanRenewalMessage purchase={ purchase } withoutLink /> }
-						showDismiss={ false }
-					>
-						<NoticeAction href={ OFFER_RESET_SUPPORT_PAGE }>
-							{ translate( 'More info' ) }
+					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+						<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+							{ translate( 'View plans' ) }
 						</NoticeAction>
 					</Notice>
 				) }
@@ -258,5 +291,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		shouldShowDomainWarnings: ! isJetpack || isAutomatedTransfer,
 		showJetpackChecklist: isJetpackNotAtomic,
 		showThankYou: requestThankYou && isJetpackNotAtomic,
+		scheduleId: getConciergeScheduleId( state ),
 	};
 } )( localize( CurrentPlan ) );

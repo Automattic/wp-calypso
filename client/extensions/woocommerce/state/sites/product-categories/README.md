@@ -1,5 +1,4 @@
-Product Categories
-==================
+# Product Categories
 
 This module is used to manage product categories for a site.
 
@@ -8,52 +7,52 @@ This module is used to manage product categories for a site.
 ### `fetchProductCategories( siteId: number, query: object )`
 
 Get the list of product categories from the remote site.
-An optional query can be provided. See https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-categories for available fields.
+An optional query can be provided. See <https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-categories> for available fields.
 
 ## Reducer
 
 Product categories are saved on a per-site basis. All categories are collected in `items`, and there is a query => ID mapping in `queries`. `isQueryLoading` indicates which queries are being requested. `isQueryError` indicates if a query returned an error. `total` tracks the total number of categories, mapped by queries. `totalPages` returns the total number of results pages for a query.
 
 ```js
-{
-	"productCategories": {
+const object = {
+	productCategories: {
 		// Keyed by serialized query
-		"isQueryLoading": {
+		isQueryLoading: {
 			'{}': false,
-			'{"page":2}': true
+			'{"page":2}': true,
 		},
-		"isQueryError": {
+		isQueryError: {
 			'{}': false,
 		},
 		// Keyed by ID
-		"items": {
+		items: {
 			1: {
-				"id": 1,
-				"name": "Watercolor",
-				"slug": "watercolor",
-				"parent": 0,
-				"description": "",
-				"display": "default",
-				"image": [],
-				"menu_order": 0,
-				"count": 2
+				id: 1,
+				name: 'Watercolor',
+				slug: 'watercolor',
+				parent: 0,
+				description: '',
+				display: 'default',
+				image: [],
+				menu_order: 0,
+				count: 2,
 			},
 			// ...
 		},
 		// Keyed by serialized query (a list of category IDs)
-		"queries": {
+		queries: {
 			'{}': [ 1, 2, 3, 4, 5 ],
-			'{"page":2}': [ 6, 7, 8, 9, 10 ]
+			'{"page":2}': [ 6, 7, 8, 9, 10 ],
 		},
 		// Keyed by serialized query, without page.
-		"total": {
+		total: {
 			'{}': 10,
-		}
-		"totalPages": {
+		},
+		totalPages: {
 			'{}': 2,
-		}
-	}
-}
+		},
+	},
+};
 ```
 
 ## Selectors

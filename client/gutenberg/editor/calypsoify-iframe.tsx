@@ -11,14 +11,13 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import MediaStore from 'lib/media/store';
-import EditorMediaModal from 'post-editor/editor-media-modal';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
 import {
 	getCustomizerUrl,
 	getSiteOption,
 	getSiteAdminUrl,
-	isRequestingSites,
 	isRequestingSite,
 	isJetpackSite,
 	getSite,
@@ -26,7 +25,7 @@ import {
 import { addQueryArgs } from 'lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, navigate } from 'state/ui/actions';
-import { setRoute } from 'state/route/actions';
+import { clearLastNonEditorRoute, setRoute } from 'state/route/actions';
 import { updateSiteFrontPage } from 'state/sites/actions';
 import getCurrentRoute from 'state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'state/selectors/get-post-type-trash-url';
@@ -49,10 +48,9 @@ import EditorDocumentHead from 'post-editor/editor-document-head';
 import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
 import { withStopPerformanceTrackingProp, PerformanceTrackProps } from 'lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'state/desktop/window-events';
-import inEditorDeprecationGroup from 'state/editor-deprecation-group/selectors/in-editor-deprecation-group';
 import { setMediaLibrarySelectedItems } from 'state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'state/media/thunks';
-
+import Iframe from './iframe';
 /**
  * Types
  */
@@ -73,6 +71,7 @@ interface Props {
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
+	stripeConnectSuccess: 'gutenberg' | null;
 }
 
 interface State {
@@ -83,10 +82,12 @@ interface State {
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
+	isCheckoutModalVisible: boolean;
 	isPreviewVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
+	cartData?: object;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -99,6 +100,8 @@ enum EditorActions {
 	GoToAllPosts = 'goToAllPosts', // Unused action in favor of CloseEditor. Maintained here to support cached scripts.
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
+	OpenCheckoutModal = 'openCheckoutModal',
+	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
 	PreviewPost = 'previewPost',
@@ -122,10 +125,12 @@ class CalypsoifyIframe extends Component<
 > {
 	state: State = {
 		isMediaModalVisible: false,
+		isCheckoutModalVisible: false,
 		isIframeLoaded: false,
 		isPreviewVisible: false,
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
+		cartData: {},
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -159,6 +164,14 @@ class CalypsoifyIframe extends Component<
 				}, 25000 );
 			}
 		}, 1000 );
+
+		// An earlier page with no access to the Calypso store (probably `/new`) has asked
+		// for the `lastNonEditorRoute` state to be cleared so that `getEditorCloseConfig()`
+		// will return the default close location.
+		if ( window.sessionStorage.getItem( 'a8c-clearLastNonEditorRoute' ) ) {
+			window.sessionStorage.removeItem( 'a8c-clearLastNonEditorRoute' );
+			this.props.clearLastNonEditorRoute();
+		}
 	}
 
 	componentWillUnmount() {
@@ -223,7 +236,14 @@ class CalypsoifyIframe extends Component<
 		// any other message is unknown and may indicate a bug
 	};
 
-	onIframePortMessage = ( { data, ports }: MessageEvent ) => {
+	onIframePortMessage = ( event: MessageEvent ) => {
+		const { data, ports: backCompatPorts } = event;
+
+		// in a previous release of wpcom-block-editor, ports array wasn't explicitly passed into the data object
+		// and the MessageEvent.ports prop was used instead. This gives support for both versions of wpcom-block-editor
+		// see: https://github.com/Automattic/wp-calypso/pull/45436
+		const ports = data.ports ?? backCompatPorts;
+
 		/* eslint-disable @typescript-eslint/no-explicit-any */
 		const { action, payload }: { action: EditorActions; payload: any } = data;
 
@@ -258,6 +278,18 @@ class CalypsoifyIframe extends Component<
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, gallery, multiple } );
+		}
+
+		if ( EditorActions.OpenCheckoutModal === action ) {
+			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
+		}
+
+		if ( EditorActions.GetCheckoutModalStatus === action ) {
+			const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
+
+			ports[ 0 ].postMessage( {
+				isCheckoutOverlayEnabled,
+			} );
 		}
 
 		if ( EditorActions.SetDraftId === action && ! this.props.postId ) {
@@ -334,12 +366,14 @@ class CalypsoifyIframe extends Component<
 			const isGutenboarding =
 				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
 			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
-			const isGutenboardingNewLaunch = config.isEnabled( 'gutenboarding/new-launch' );
+			const isNewLaunch = config.isEnabled( 'gutenboarding/new-launch' );
+			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
 				frankenflowUrl,
-				isNewLaunch: isGutenboardingNewLaunch,
+				isNewLaunch,
+				isExperimental,
 			} );
 		}
 
@@ -475,6 +509,10 @@ class CalypsoifyIframe extends Component<
 				media: markup,
 			},
 		} );
+	};
+
+	closeCheckoutModal = () => {
+		this.setState( { isCheckoutModalVisible: false } );
 	};
 
 	pressThis = () => {
@@ -635,6 +673,7 @@ class CalypsoifyIframe extends Component<
 				return;
 			}
 		}
+		window.performance?.mark( 'iframe_loaded' );
 		this.setState( { isIframeLoaded: true, currentIFrameUrl: iframeUrl } );
 	};
 
@@ -643,6 +682,7 @@ class CalypsoifyIframe extends Component<
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
+			isCheckoutModalVisible,
 			allowedTypes,
 			multiple,
 			isIframeLoaded,
@@ -651,9 +691,11 @@ class CalypsoifyIframe extends Component<
 			postUrl,
 			editedPost,
 			currentIFrameUrl,
+			cartData,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
+		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 
 		return (
 			<Fragment>
@@ -667,11 +709,8 @@ class CalypsoifyIframe extends Component<
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
-						/* eslint-disable jsx-a11y/iframe-has-title */
-						<iframe
+						<Iframe
 							ref={ this.iframeRef }
-							/* eslint-disable-next-line wpcalypso/jsx-classname-namespace */
-							className={ isIframeLoaded ? 'is-iframe-loaded' : undefined }
 							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// Iframe url needs to be kept in state to prevent editor reloading if frame_nonce changes
 							// in Jetpack sites
@@ -679,10 +718,11 @@ class CalypsoifyIframe extends Component<
 								this.onIframeLoaded( iframeUrl );
 							} }
 						/>
-						/* eslint-enable jsx-a11y/iframe-has-title */
 					) }
 				</div>
-				<EditorMediaModal
+				<AsyncLoad
+					require="post-editor/editor-media-modal"
+					placeholder={ null }
 					disabledDataSources={ getDisabledDataSources( allowedTypes ) }
 					enabledFilters={ getEnabledFilters( allowedTypes ) }
 					galleryViewEnabled={ isUsingClassicBlock }
@@ -693,6 +733,14 @@ class CalypsoifyIframe extends Component<
 					source=""
 					visible={ isMediaModalVisible }
 				/>
+				{ isCheckoutOverlayEnabled && isCheckoutModalVisible && (
+					<AsyncLoad
+						require="blocks/editor-checkout-modal"
+						onClose={ this.closeCheckoutModal }
+						isOpen={ isCheckoutModalVisible }
+						cartData={ cartData }
+					/>
+				) }
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
 					externalUrl={ postUrl }
@@ -717,6 +765,7 @@ const mapStateToProps = (
 		parentPostId,
 		creatingNewHomepage,
 		editorType = 'post',
+		stripeConnectSuccess,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -738,6 +787,7 @@ const mapStateToProps = (
 		origin: window.location.origin,
 		'environment-id': config( 'env_id' ),
 		'new-homepage': creatingNewHomepage,
+		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -746,7 +796,7 @@ const mapStateToProps = (
 	}
 
 	// Pass through to iframed editor if user is in editor deprecation group.
-	if ( inEditorDeprecationGroup( state ) && 'classic' === getSelectedEditor( state, siteId ) ) {
+	if ( 'classic' === getSelectedEditor( state, siteId ) ) {
 		queryArgs[ 'in-editor-deprecation-group' ] = 1;
 	}
 
@@ -758,7 +808,7 @@ const mapStateToProps = (
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSites( state ) && ! isRequestingSite( state, siteId );
+	const shouldLoadIframe = ! isRequestingSite( state, siteId );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,
@@ -811,6 +861,7 @@ const mapDispatchToProps = {
 	setMediaLibrarySelectedItems,
 	fetchMediaItem,
 	getMediaItem,
+	clearLastNonEditorRoute,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;

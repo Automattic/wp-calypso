@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app } = require( 'electron' );
 
 /**
  * Internal dependencies
@@ -35,12 +35,24 @@ LinuxPlatform.prototype.restore = function () {
 	this.window.show();
 };
 
-LinuxPlatform.prototype.showNotificationsBadge = function () {
-	// no op
+LinuxPlatform.prototype.showNotificationsBadge = function ( count ) {
+	// Linux: updating badge count requires Unity launcher
+	// https://www.electronjs.org/docs/api/app#appsetbadgecountcount-linux-macos
+	if ( ! app.isUnityRunning() ) {
+		log.info( `Unity not running, skipping badge update (unseenCount: ${ count })` );
+		return;
+	}
+
+	const badgeCount = app.getBadgeCount();
+	if ( badgeCount === count ) {
+		return;
+	}
+
+	app.setBadgeCount( count );
 };
 
 LinuxPlatform.prototype.clearNotificationsBadge = function () {
-	// no op
+	app.setBadgeCount( 0 );
 };
 
 LinuxPlatform.prototype.setDockMenu = function () {

@@ -10,26 +10,26 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
-import formBase from 'me/form-base';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { protectForm } from 'calypso/lib/protect-form';
+import formBase from 'calypso/me/form-base';
 import { Card } from '@automattic/components';
-import Navigation from 'me/notification-settings/navigation';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormButton from 'components/forms/form-button';
-import FormSelect from 'components/forms/form-select';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
-import Main from 'components/main';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Navigation from 'calypso/me/notification-settings/navigation';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormButton from 'calypso/components/forms/form-button';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import ReauthRequired from 'calypso/me/reauth-required';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
+import Main from 'calypso/components/main';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /* eslint-disable react/prefer-es6-class */
 const NotificationSubscriptions = createReactClass( {

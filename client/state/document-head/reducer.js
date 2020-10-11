@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { uniqWith, isEqual, isArray } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { combineReducers, withSchemaValidation } from 'state/utils';
@@ -48,7 +53,16 @@ export const meta = withSchemaValidation( metaSchema, ( state = DEFAULT_META_STA
 export const link = withSchemaValidation( linkSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case DOCUMENT_HEAD_LINK_SET:
-			return action.link;
+			if ( ! action.link ) {
+				return state;
+			}
+
+			// Append action.link to the state array and prevent duplicate objects.
+			// Works with action.link being a single link object or an array of link objects.
+			return uniqWith(
+				[ ...state, ...( isArray( action.link ) ? action.link : [ action.link ] ) ],
+				isEqual
+			);
 	}
 
 	return state;

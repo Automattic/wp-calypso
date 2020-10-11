@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import page from 'page';
-import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -47,15 +46,15 @@ export default {
 			const port = process.env.PORT || config( 'port' );
 			const redirectUri = `${ protocol }://${ host }:${ port }/api/oauth/token`;
 
-			const params = {
+			const params = new URLSearchParams( {
 				response_type: 'token',
 				client_id: config( 'oauth_client_id' ),
 				redirect_uri: redirectUri,
 				scope: 'global',
 				blog_id: 0,
-			};
+			} );
 
-			authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ stringify( params ) }`;
+			authUrl = `${ WP_AUTHORIZE_ENDPOINT }?${ params.toString() }`;
 		}
 
 		context.primary = <ConnectComponent authUrl={ authUrl } />;

@@ -37,25 +37,6 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 	background: $post-item-background-color;
 }
 
-.post-item__select {
-	align-self: stretch;
-	display: flex;
-	align-items: flex-start;
-	cursor: pointer;
-
-	&:hover .form-checkbox {
-		border-color: var( --color-neutral-20 );
-	}
-
-	padding: 16px 16px 0;
-	margin-left: -16px;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		padding-left: 24px;
-		margin-left: -24px;
-	}
-}
-
 .post-item__site-info-link,
 .post-item__post-author-link {
 	display: block;
@@ -75,10 +56,9 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 }
 
 .post-item__title {
-	@extend %content-font;
 	margin: 0;
 	padding: 0;
-	font-weight: 700;
+	font-weight: 600;
 	font-size: $font-title-small;
 	line-height: 1.2;
 }

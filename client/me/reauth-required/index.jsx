@@ -15,21 +15,21 @@ const debug = debugFactory( 'calypso:me:reauth-required' );
  * Internal Dependencies
  */
 import { Card, Dialog } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import Notice from 'components/notice';
+import FormButton from 'calypso/components/forms/form-button';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import Notice from 'calypso/components/notice';
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'calypso/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import { recordGoogleEvent } from 'state/analytics/actions';
-import SecurityKeyForm from 'me/reauth-required/security-key-form';
-import TwoFactorActions from 'me/reauth-required/two-factor-actions';
-import userUtilities from 'lib/user/utils';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import SecurityKeyForm from 'calypso/me/reauth-required/security-key-form';
+import TwoFactorActions from 'calypso/me/reauth-required/two-factor-actions';
+import userUtilities from 'calypso/lib/user/utils';
 
 /**
  * Style dependencies
@@ -250,6 +250,9 @@ const ReauthRequired = createReactClass( {
 		const shouldEnableSmsButton =
 			this.state.smsRequestsAllowed || ( method === 'sms' && twoFactorAuthType === 'webauthn' );
 
+		const hasSmsRecoveryNumber = !! this.props?.twoStepAuthorization?.data?.two_step_sms_last_four
+			?.length;
+
 		return (
 			<Dialog
 				autoFocus={ false }
@@ -268,7 +271,9 @@ const ReauthRequired = createReactClass( {
 				<TwoFactorActions
 					twoFactorAuthType={ twoFactorAuthType }
 					onChange={ this.handleAuthSwitch }
-					isSmsSupported={ method === 'sms' || method === 'authenticator' }
+					isSmsSupported={
+						method === 'sms' || ( method === 'authenticator' && hasSmsRecoveryNumber )
+					}
 					isAuthenticatorSupported={ method !== 'sms' }
 					isSmsAllowed={ shouldEnableSmsButton }
 					isSecurityKeySupported={ isSecurityKeySupported }

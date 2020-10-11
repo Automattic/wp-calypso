@@ -27,7 +27,7 @@ export default localize( ( { isJetpack, translate } ) => {
 			<PurchaseDetail
 				buttonText={ translate( 'Collect PayPal payments' ) }
 				description={ translate(
-					'Add a button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations.'
+					'Add a button to any post or page to collect PayPal payments for physical products, services, or donations.'
 				) }
 				href={ supportDocLink }
 				icon={ <img alt="" src={ paymentsImage } /> }

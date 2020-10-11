@@ -83,8 +83,8 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list, on
 						data-key="is_public"
 						onChange={ onChange }
 						value="public"
+						label={ translate( 'Everyone can view this list' ) }
 					/>
-					<span>{ translate( 'Everyone can view this list' ) }</span>
 				</FormLabel>
 
 				<FormLabel>
@@ -93,8 +93,8 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list, on
 						data-key="is_public"
 						onChange={ onChange }
 						value="private"
+						label={ translate( 'Only I can view this list' ) }
 					/>
-					<span>{ translate( 'Only I can view this list' ) }</span>
 				</FormLabel>
 				<FormSettingExplanation>
 					{ translate(

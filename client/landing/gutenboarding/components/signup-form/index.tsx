@@ -181,7 +181,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				<h1 className="signup-form__title">{ __( 'Save your progress' ) }</h1>
 
 				<form onSubmit={ handleSignUp }>
-					<fieldset>
+					<fieldset className="signup-form__fieldset">
 						<legend className="signup-form__legend">
 							<p>{ __( 'Enter an email and password to save your progress and continue.' ) }</p>
 						</legend>

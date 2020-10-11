@@ -11,7 +11,7 @@ import type { Plan } from './types';
 
 const mainFeatures = [
 	'Remove WordPress.com ads',
-	'Email & basic Live Chat Support',
+	'Email & basic live chat support',
 	'Collect recurring payments',
 	'Collect one-time payments',
 	'Earn ad revenue',
@@ -21,12 +21,13 @@ const mainFeatures = [
 	'Business features (incl. SEO)',
 	'Upload themes',
 	'Install plugins',
-	'Accept Payments in 60+ Countries',
+	'Accept payments in 60+ countries',
 ];
 
 export const PLANS_LIST: Record< string, Plan > = {
 	[ PLAN_FREE ]: {
 		title: translate( 'Free' ) as string,
+		description: translate( 'Create a beautiful, simple website in minutes' ) as string,
 		productId: 1,
 		storeSlug: PLAN_FREE,
 		pathSlug: 'beginner',
@@ -36,6 +37,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 	[ PLAN_PERSONAL ]: {
 		title: translate( 'Personal' ) as string,
+		description: translate( 'Best for personal use' ) as string,
 		productId: 1009,
 		storeSlug: PLAN_PERSONAL,
 		pathSlug: 'personal',
@@ -44,6 +46,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 	[ PLAN_PREMIUM ]: {
 		title: translate( 'Premium' ) as string,
+		description: translate( 'Best for freelancers' ) as string,
 		productId: 1003,
 		storeSlug: PLAN_PREMIUM,
 		pathSlug: 'premium',
@@ -53,6 +56,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 	[ PLAN_BUSINESS ]: {
 		title: translate( 'Business' ) as string,
+		description: translate( 'Best for small businesses' ) as string,
 		productId: 1008,
 		storeSlug: PLAN_BUSINESS,
 		pathSlug: 'business',
@@ -61,6 +65,7 @@ export const PLANS_LIST: Record< string, Plan > = {
 
 	[ PLAN_ECOMMERCE ]: {
 		title: translate( 'eCommerce' ) as string,
+		description: translate( 'Best for online stores' ) as string,
 		productId: 1011,
 		storeSlug: PLAN_ECOMMERCE,
 		pathSlug: 'ecommerce',

@@ -25,6 +25,7 @@ import { sites } from 'my-sites/controller';
 import CartData from 'components/data/cart';
 import userFactory from 'lib/user';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { retrieveSignupDestination, setSignupCheckoutPageUnloaded } from 'signup/storageUtils';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -35,8 +36,10 @@ export function checkout( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const currentUser = getCurrentUser( state );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isDisallowedForSitePicker =
-		context.pathname.includes( '/checkout/no-site' ) && ( isLoggedOut || ! hasSite );
+		context.pathname.includes( '/checkout/no-site' ) &&
+		( isLoggedOut || ! hasSite || isDomainOnlyFlow );
 
 	if ( ! selectedSite && ! isDisallowedForSitePicker ) {
 		sites( context, next );
@@ -57,7 +60,7 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	context.store.dispatch( setSection( { name: 'checkout' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout' } ) );
 
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
@@ -68,10 +71,22 @@ export function checkout( context, next ) {
 		context.pathname.includes( '/checkout/no-site' ) &&
 		'no-user' === context.query.cart;
 
+	const searchParams = new URLSearchParams( window.location.search );
+	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
+
+	// Tracks if checkout page was unloaded before purchase completion,
+	// to prevent browser back duplicate sites. Check pau2Xa-1Io-p2#comment-6759.
+	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
+		window.addEventListener( 'beforeunload', function () {
+			const signupDestinationCookieExists = retrieveSignupDestination();
+			signupDestinationCookieExists && setSignupCheckoutPageUnloaded( true );
+		} );
+	}
+
 	context.primary = (
 		<CartData>
 			<CheckoutSystemDecider
-				product={ product }
+				productAliasFromUrl={ product }
 				purchaseId={ purchaseId }
 				selectedFeature={ feature }
 				couponCode={ couponCode }
@@ -98,7 +113,7 @@ export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
 
 	context.primary = (
 		<CheckoutPendingComponent
@@ -119,7 +134,7 @@ export function checkoutThankYou( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const displayMode = get( context, 'query.d' );
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
@@ -143,7 +158,7 @@ export function checkoutThankYou( context, next ) {
 
 export function gsuiteNudge( context, next ) {
 	const { domain, site, receiptId } = context.params;
-	context.store.dispatch( setSection( { name: 'gsuite-nudge' }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: 'gsuite-nudge' } ) );
 
 	const state = context.store.getState();
 	const selectedSite =
@@ -190,7 +205,7 @@ export function upsellNudge( context, next ) {
 		upgradeItem = context.params.upgradeItem;
 	}
 
-	context.store.dispatch( setSection( { name: upsellType }, { hasSidebar: false } ) );
+	context.store.dispatch( setSection( { name: upsellType } ) );
 
 	context.primary = (
 		<CheckoutContainer

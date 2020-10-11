@@ -11,7 +11,7 @@ export default { title: 'Button' };
 const helloWorld = `Hello World!`;
 const handleClick = action( 'click' );
 
-const ButtonVariantions = ( props ) => (
+const ButtonVariations = ( props ) => (
 	<>
 		<Button onClick={ handleClick } { ...props }>
 			{ helloWorld }
@@ -22,10 +22,11 @@ const ButtonVariantions = ( props ) => (
 	</>
 );
 
-export const Normal = () => <ButtonVariantions />;
-export const Compact = () => <ButtonVariantions compact />;
-export const Busy = () => <ButtonVariantions busy />;
-export const Scary = () => <ButtonVariantions scary />;
-export const Borderless = () => <ButtonVariantions borderless />;
-export const Disabled = () => <ButtonVariantions disabled />;
-export const Link = () => <ButtonVariantions href="https://www.google.com/" target="_blank" />;
+export const Normal = () => <ButtonVariations />;
+export const Compact = () => <ButtonVariations compact />;
+export const Busy = () => <ButtonVariations busy />;
+export const Scary = () => <ButtonVariations scary />;
+export const Borderless = () => <ButtonVariations borderless />;
+export const Disabled = () => <ButtonVariations disabled />;
+export const Link = () => <ButtonVariations href="https://www.google.com/" target="_blank" />;
+export const Plain = () => <ButtonVariations plain />;

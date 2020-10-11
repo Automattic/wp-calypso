@@ -134,7 +134,8 @@
 	"sections": {
 		"jetpack-cloud": false,
 		"jetpack-cloud-settings": false,
-		"jetpack-cloud-auth": false
+		"jetpack-cloud-auth": false,
+		"jetpack-cloud-pricing": false
 	},
 	"site_filter": [],
 	"theme": "default",

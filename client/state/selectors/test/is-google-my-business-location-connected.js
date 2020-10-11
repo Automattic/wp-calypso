@@ -32,7 +32,7 @@ describe( 'isGoogleMyBusinessLocationConnected()', () => {
 			sharing: {
 				keyring: {
 					items: {
-						'1234': {
+						1234: {
 							ID: '1234',
 							external_ID: '65789',
 							service: 'google_my_business',

@@ -53,6 +53,7 @@ describe( 'useWindowResizeCallback', () => {
 		container = null;
 	} );
 
+	// eslint-disable-next-line jest/expect-expect
 	it( 'does not throw an error there is no callback', () => {
 		const TestComponent = function () {
 			const ref = useWindowResizeCallback();

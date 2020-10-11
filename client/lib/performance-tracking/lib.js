@@ -6,16 +6,14 @@ import { start, stop } from '@automattic/browser-data-collector';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { abtest } from 'lib/abtest';
-import { CONFIG_NAME, AB_NAME, AB_VARIATION_ON } from './const';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import config from 'calypso/config';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getCurrentUserSiteCount,
 	getCurrentUserVisibleSiteCount,
-} from 'state/current-user/selectors';
+} from 'calypso/state/current-user/selectors';
 
 /**
  * This reporter is added to _all_ performance tracking metrics.
@@ -32,6 +30,7 @@ const buildDefaultCollector = ( state ) => {
 	const sitesVisibleCount = getCurrentUserVisibleSiteCount( state );
 
 	return ( report ) => {
+		report.data.set( 'siteId', siteId );
 		report.data.set( 'siteIsJetpack', siteIsJetpack );
 		report.data.set( 'siteIsSingleUser', siteIsSingleUser );
 		report.data.set( 'siteIsAtomic', siteIsAtomic );
@@ -47,9 +46,7 @@ const buildMetadataCollector = ( metadata = {} ) => {
 };
 
 const isPerformanceTrackingEnabled = () => {
-	const isEnabledForEnvironment = config.isEnabled( CONFIG_NAME );
-	const isEnabledForCurrentInteraction = abtest( AB_NAME ) === AB_VARIATION_ON;
-	return isEnabledForEnvironment && isEnabledForCurrentInteraction;
+	return config.isEnabled( 'rum-tracking/logstash' );
 };
 
 export const startPerformanceTracking = ( name, { fullPageLoad = false } = {} ) => {

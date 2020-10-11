@@ -3,13 +3,17 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useLineItems } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { getAllCartItems } from 'lib/cart-values/cart-items';
-import { isJetpackPlan } from 'lib/products-values/is-jetpack-plan';
-import { isJetpackBackup } from 'lib/products-values/is-jetpack-backup';
+import {
+	getProductFromSlug,
+	isJetpackBackup,
+	isJetpackBackupSlug,
+	isJetpackPlanSlug,
+} from 'lib/products-values';
 import getSelectedSite from 'state/ui/selectors/get-selected-site';
 import { getSitePlan, getSiteProducts, isJetpackMinimumVersion } from 'state/sites/selectors';
 import {
@@ -27,9 +31,17 @@ import './style.scss';
  * Renders the most appropriate pre-purchase notice (if applicable)
  * from a range of possible options.
  */
-const PrePurchaseNotices = ( { cart } ) => {
+const PrePurchaseNotices = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
+
+	// We used to directly reference the cart itself here (passed in as a prop),
+	// but for some reason, cart items take ~20 seconds to populate in some cases,
+	// whereas line items are immediately available on page load.
+	const [ lineItems ] = useLineItems();
+	const cartItemSlugs = lineItems
+		.map( ( item ) => item.wpcom_meta?.product_slug )
+		.filter( ( item ) => item );
 
 	const currentSitePlan = useSelector( ( state ) => {
 		if ( ! siteId ) {
@@ -47,22 +59,17 @@ const PrePurchaseNotices = ( { cart } ) => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	const cartItems = getAllCartItems( cart );
-	const backupProductInCart = cartItems.find( isJetpackBackup );
+	const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
 
 	const cartPlanOverlapsSiteBackupPurchase = useSelector( ( state ) => {
-		const jetpackPlanInCart = cartItems.find( isJetpackPlan );
+		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 
-		return (
-			jetpackPlanInCart &&
-			isPlanIncludingSiteBackup( state, siteId, jetpackPlanInCart.product_slug )
-		);
+		return planSlugInCart && isPlanIncludingSiteBackup( state, siteId, planSlugInCart );
 	} );
 
 	const sitePlanIncludesCartBackupProduct = useSelector(
 		( state ) =>
-			backupProductInCart &&
-			isBackupProductIncludedInSitePlan( state, siteId, backupProductInCart.product_slug )
+			backupSlugInCart && isBackupProductIncludedInSitePlan( state, siteId, backupSlugInCart )
 	);
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
@@ -70,11 +77,19 @@ const PrePurchaseNotices = ( { cart } ) => {
 		isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
 	);
 
+	// All these notices (and the selectors that drive them)
+	// require a site ID to work. We should *conceptually* always
+	// have a site ID handy; consider this a guard, or an
+	// explicit declaration that all code beyond this point can
+	// safely assume a site ID has been defined.
+	if ( ! siteId ) {
+		return null;
+	}
+
 	// This site has an active Jetpack Backup product purchase,
 	// but we're attempting to buy a plan that includes one as well
-	if ( cartPlanOverlapsSiteBackupPurchase ) {
-		const siteBackupProduct = currentSiteProducts.find( isJetpackBackup );
-
+	const siteBackupProduct = currentSiteProducts.find( isJetpackBackup );
+	if ( cartPlanOverlapsSiteBackupPurchase && siteBackupProduct ) {
 		return (
 			<CartPlanOverlapsOwnedProductNotice
 				product={ siteBackupProduct }
@@ -83,19 +98,26 @@ const PrePurchaseNotices = ( { cart } ) => {
 		);
 	}
 
+	// Notices after this point require a Backup product to be in the cart
+	if ( ! backupSlugInCart ) {
+		return null;
+	}
+
+	const backupProductInCart = getProductFromSlug( backupSlugInCart );
+
 	// We're attempting to buy Jetpack Backup individually,
 	// but this site already has a plan that includes it
-	if ( sitePlanIncludesCartBackupProduct ) {
+	if ( sitePlanIncludesCartBackupProduct && currentSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }
-				productSlug={ backupProductInCart.product_slug }
+				product={ backupProductInCart }
 				selectedSite={ selectedSite }
 			/>
 		);
 	}
 
-	if ( backupProductInCart && ! siteHasBackupMinimumPluginVersion ) {
+	if ( ! siteHasBackupMinimumPluginVersion ) {
 		return (
 			<JetpackPluginRequiredVersionNotice
 				product={ backupProductInCart }
@@ -104,7 +126,7 @@ const PrePurchaseNotices = ( { cart } ) => {
 		);
 	}
 
-	return false;
+	return null;
 };
 
 const Wrapper = ( props ) => {

@@ -1,5 +1,4 @@
-Updater
-=========
+# Updater
 
 Uses either the manual or auto updater to check for updates.
 

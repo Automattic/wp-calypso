@@ -32,7 +32,10 @@ import { requestSite } from 'state/sites/actions';
 import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
 import shouldCustomizeHomepageWithGutenberg from 'state/selectors/should-customize-homepage-with-gutenberg';
 import getSiteUrl from 'state/selectors/get-site-url';
-
+import { addQueryArgs } from 'lib/route';
+import isSiteAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'state/sites/selectors';
+import { themeHasAutoLoadingHomepage } from 'state/themes/selectors/theme-has-auto-loading-homepage';
 /**
  * Style dependencies
  */
@@ -293,13 +296,26 @@ export default connect(
 		// Note: Gutenberg buttons will only show if the homepage is a page.
 		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
 
+		const isAtomic = isSiteAtomic( state, siteId );
+		const isJetpack = isJetpackSite( state, siteId );
+		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId );
+
+		// Atomic & Jetpack do not have auto-loading-homepage behavior, so we trigger the layout picker for them.
+		const customizeUrl =
+			( isAtomic || isJetpack ) && hasAutoLoadingHomepage
+				? addQueryArgs(
+						{ 'new-homepage': true },
+						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId )
+				  )
+				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId );
+
 		return {
 			siteId,
 			siteUrl,
 			currentTheme,
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId ),
+			customizeUrl,
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),

@@ -1,9 +1,12 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import React from 'react';
 import { escapeRegExp, find, findIndex } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import Suggestion from './suggestion';
 
 const debug = require( 'debug' )( 'notifications:note' );

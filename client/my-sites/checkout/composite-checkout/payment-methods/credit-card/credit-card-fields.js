@@ -5,7 +5,13 @@ import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
-import { useEvents, useSelect, useDispatch, useFormStatus } from '@automattic/composite-checkout';
+import {
+	FormStatus,
+	useEvents,
+	useSelect,
+	useDispatch,
+	useFormStatus,
+} from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -13,8 +19,8 @@ import { useEvents, useSelect, useDispatch, useFormStatus } from '@automattic/co
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/ie-fallback';
-import Spinner from 'my-sites/checkout/composite-checkout/wpcom/components/spinner';
+} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
+import Spinner from 'my-sites/checkout/composite-checkout/components/spinner';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
@@ -78,7 +84,7 @@ export default function CreditCardFields() {
 		contactCountryCode === 'BR' &&
 		Boolean( cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) ) );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	// Cache the country code in our store for use by the processor function
 	useEffect( () => {
@@ -100,12 +106,14 @@ export default function CreditCardFields() {
 		},
 	};
 
+	const isLoaded = shouldShowContactFields ? true : isStripeFullyLoaded;
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<StripeFields className="credit-card-form-fields">
-			{ ! isStripeFullyLoaded && <LoadingFields /> }
+			{ ! isLoaded && <LoadingFields /> }
 
-			<CreditCardFieldsWrapper isLoaded={ isStripeFullyLoaded }>
+			<CreditCardFieldsWrapper isLoaded={ isLoaded }>
 				<CreditCardField
 					id="cardholder-name"
 					type="Text"

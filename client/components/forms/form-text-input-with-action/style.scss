@@ -74,7 +74,8 @@ input[type='text'].form-text-input-with-action__input {
 	min-width: 0;
 }
 
-input[type='text'].form-text-input-with-action__input:focus {
+input[type='text'].form-text-input-with-action__input:focus,
+input[type='text'].form-text-input-with-action__input:focus:hover {
 	border: none;
 	box-shadow: none;
 }

@@ -91,12 +91,10 @@ const Caching = ( {
 								name="cache_type"
 								onChange={ handleRadio }
 								value="PHP"
-							/>
-							<span>
-								{ translate( 'Simple {{em}}(Recommended){{/em}}', {
+								label={ translate( 'Simple {{em}}(Recommended){{/em}}', {
 									components: { em: <em /> },
 								} ) }
-							</span>
+							/>
 						</FormLabel>
 
 						<FormLabel>
@@ -106,8 +104,8 @@ const Caching = ( {
 								name="cache_type"
 								onChange={ handleRadio }
 								value="mod_rewrite"
+								label={ translate( 'Expert' ) }
 							/>
-							<span>{ translate( 'Expert' ) }</span>
 						</FormLabel>
 						<FormSettingExplanation>
 							{ translate(

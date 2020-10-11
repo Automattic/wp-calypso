@@ -11,6 +11,8 @@ import React from 'react';
 import Bar from './bar';
 import XAxis from './x-axis';
 
+const X_AXIS_LABEL_WIDTH = 42;
+
 export default class ChartBarContainer extends React.PureComponent {
 	static propTypes = {
 		barClick: PropTypes.func,
@@ -46,7 +48,12 @@ export default class ChartBarContainer extends React.PureComponent {
 					) ) }
 				</div>
 				{ ! this.props.isPlaceholder && (
-					<XAxis data={ this.props.data } labelWidth={ 42 } isRtl={ this.props.isRtl } />
+					<XAxis
+						data={ this.props.data }
+						labelWidth={ X_AXIS_LABEL_WIDTH }
+						isRtl={ this.props.isRtl }
+						chartWidth={ this.props.chartWidth }
+					/>
 				) }
 			</>
 		);

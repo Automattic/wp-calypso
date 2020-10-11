@@ -34,10 +34,11 @@ const joinChannel = async ( store, topic ) => {
  * @param store middleware store
  */
 export default ( store ) => ( next ) => ( action ) => {
+	const mwResult = next( action );
 	const userId = getCurrentUserId( store.getState() );
 
 	if ( ! userId ) {
-		return next( action );
+		return mwResult;
 	}
 
 	const topic = channelTopicPrefix + userId;
@@ -49,5 +50,5 @@ export default ( store ) => ( next ) => ( action ) => {
 		}
 	}
 
-	return next( action );
+	return mwResult;
 };

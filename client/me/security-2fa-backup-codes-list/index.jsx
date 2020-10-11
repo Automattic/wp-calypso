@@ -8,26 +8,26 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import Clipboard from 'clipboard';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { saveAs } from 'browser-filesaver';
 import { flowRight as compose } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormButtonBar from 'components/forms/form-buttons-bar';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import config from 'config';
-import Notice from 'components/notice';
-import ButtonGroup from 'components/button-group';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonBar from 'calypso/components/forms/form-buttons-bar';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import config from 'calypso/config';
+import Notice from 'calypso/components/notice';
+import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';
-import Tooltip from 'components/tooltip';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getCurrentUserName } from 'state/current-user/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { notifyDesktopSendToPrinter } from 'state/desktop/actions';
+import Tooltip from 'calypso/components/tooltip';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { notifyDesktopSendToPrinter } from 'calypso/state/desktop/actions';
 
 /**
  * Style dependencies

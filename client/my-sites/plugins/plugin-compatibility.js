@@ -61,7 +61,6 @@ const incompatiblePlugins = new Set( [
 	'w3-total-cache',
 	'wp-cache',
 	'wp-fastest-cache',
-	'wp-rocket',
 	'wp-speed-of-light',
 	'wp-super-cache',
 

@@ -1,5 +1,4 @@
-Query Media Storage
-===========================
+# Query Media Storage
 
 `<QueryMediaStorage />` is a React component used in managing network requests for site media storage limits.
 

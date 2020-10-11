@@ -303,6 +303,11 @@ export function getStateFromCache( reducer, subkey ) {
 		reduxStateKey = getPersistenceKey( subkey, true );
 		persistedState = stateCache[ reduxStateKey ] ?? null;
 
+		// If we are logged in, we no longer need the 'user' step in signup progress tree.
+		if ( persistedState && persistedState.progress && persistedState.progress.user ) {
+			delete persistedState.progress.user;
+		}
+
 		debug( 'fetched signup state from logged out state', persistedState );
 	}
 

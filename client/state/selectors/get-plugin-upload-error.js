@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'state/plugins/init';
 
 /**
  * Returns any error from a plugin uploaded to a site, or

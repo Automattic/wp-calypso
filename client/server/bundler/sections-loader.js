@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const { getOptions } = require( 'loader-utils' ); // eslint-disable-line import/no-extraneous-dependencies
+const { getOptions } = require( 'loader-utils' );
 
 /**
  * Internal dependencies

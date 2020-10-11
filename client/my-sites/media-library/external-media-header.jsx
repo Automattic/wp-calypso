@@ -156,6 +156,8 @@ const mapStateToProps = ( state, { site } ) => ( {
 	isFetchingNextPage: isFetchingNextPage( state, site?.ID ),
 } );
 
-export default connect( mapStateToProps, { addExternalMedia, changeMediaSource, fetchNextMediaPage } )(
-	localize( MediaLibraryExternalHeader )
-);
+export default connect( mapStateToProps, {
+	addExternalMedia,
+	changeMediaSource,
+	fetchNextMediaPage,
+} )( localize( MediaLibraryExternalHeader ) );

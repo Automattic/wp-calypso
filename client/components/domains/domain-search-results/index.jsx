@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, includes, times, first } from 'lodash';
-import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -39,6 +38,7 @@ class DomainSearchResults extends React.Component {
 		lastDomainStatus: PropTypes.string,
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
+		premiumDomains: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
 		availableDomain: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
@@ -59,7 +59,6 @@ class DomainSearchResults extends React.Component {
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
-		isReskinned: PropTypes.bool,
 	};
 
 	componentDidUpdate() {
@@ -226,8 +225,7 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions, isReskinned } = this.props;
-		const isReskinnedAndNotOnMobile = isReskinned && ! isMobile();
+		const { isDomainOnly, suggestions } = this.props;
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
@@ -258,6 +256,7 @@ class DomainSearchResults extends React.Component {
 					isSignupStep={ this.props.isSignupStep }
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
+					premiumDomains={ this.props.premiumDomains }
 					primarySuggestion={ first( bestMatchSuggestions ) }
 					query={ this.props.lastDomainSearched }
 					railcarId={ this.props.railcarId }
@@ -266,8 +265,6 @@ class DomainSearchResults extends React.Component {
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
 					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-					selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
-					selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 				/>
 			);
 
@@ -290,12 +287,10 @@ class DomainSearchResults extends React.Component {
 						fetchAlgo={ suggestion.fetch_algo ? suggestion.fetch_algo : this.props.fetchAlgo }
 						query={ this.props.lastDomainSearched }
 						onButtonClick={ this.props.onClickResult }
+						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
-						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
-						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
-						buttonStyles={ { primary: isReskinnedAndNotOnMobile } }
 					/>
 				);
 			} );

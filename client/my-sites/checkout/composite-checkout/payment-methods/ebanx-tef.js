@@ -8,6 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -24,15 +25,15 @@ import { camelCase } from 'lodash';
  */
 import notices from 'notices';
 import { validatePaymentDetails } from 'lib/checkout/validation';
-import useCountryList from 'my-sites/checkout/composite-checkout/wpcom/hooks/use-country-list';
-import Field from 'my-sites/checkout/composite-checkout/wpcom/components/field';
+import useCountryList from 'my-sites/checkout/composite-checkout/hooks/use-country-list';
+import Field from 'my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/summary-details';
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/wpcom/components/payment-method-logos';
+} from 'my-sites/checkout/composite-checkout/components/summary-details';
+import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
 import { maskField } from 'lib/checkout';
-import CountrySpecificPaymentFieldsUI from '../wpcom/components/country-specific-payment-fields-ui';
+import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
 
 const debug = debugFactory( 'composite-checkout:ebanx-tef-payment-method' );
 
@@ -90,7 +91,7 @@ export function createEbanxTefPaymentMethodStore() {
 							[ action.payload.key ]: {
 								value: maskField(
 									action.payload.key,
-									state[ action.payload.key ],
+									state.fields[ action.payload.key ],
 									action.payload.value
 								),
 								isTouched: true,
@@ -104,7 +105,7 @@ export function createEbanxTefPaymentMethodStore() {
 						fields: {
 							...state.fields,
 							[ action.payload.key ]: {
-								...state[ action.payload.key ],
+								...state.fields[ action.payload.key ],
 								errors: [ action.payload.message ],
 							},
 						},
@@ -112,13 +113,16 @@ export function createEbanxTefPaymentMethodStore() {
 				case 'TOUCH_ALL_FIELDS':
 					return {
 						...state,
-						fields: Object.entries( state.fields ).reduce( ( obj, [ key, value ] ) => {
-							obj[ key ] = {
-								value: value.value,
-								isTouched: true,
-							};
-							return obj;
-						}, {} ),
+						fields: Object.keys( state.fields ).reduce(
+							( obj, key ) => ( {
+								...obj,
+								[ key ]: {
+									...state.fields[ key ],
+									isTouched: true,
+								},
+							} ),
+							{}
+						),
 					};
 			}
 			return state;
@@ -130,18 +134,12 @@ export function createEbanxTefPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createEbanxTefMethod( { store, stripe, stripeConfiguration } ) {
+export function createEbanxTefMethod( { store } ) {
 	return {
 		id: 'brazil-tef',
 		label: <EbanxTefLabel />,
-		activeContent: <EbanxTefFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
-		submitButton: (
-			<EbanxTefPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-			/>
-		),
+		activeContent: <EbanxTefFields />,
+		submitButton: <EbanxTefPayButton store={ store } />,
 		inactiveContent: <EbanxTefSummary />,
 		getAriaLabel: () => 'Transferência bancária',
 	};
@@ -166,7 +164,7 @@ function EbanxTefFields() {
 	const customerBank = useSelect( ( select ) => select( 'ebanx-tef' ).getCustomerBank() );
 	const { changeCustomerName, changeCustomerBank } = useDispatch( 'ebanx-tef' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
 
 	return (
@@ -192,7 +190,7 @@ function EbanxTefFields() {
 				disabled={ isDisabled }
 			/>
 			<div className="ebanx-tef__contact-fields">
-				<CountrySpecificPaymentFieldsUI
+				<CountrySpecificPaymentFields
 					countryCode={ 'BR' } // If this payment method is available and the country is not Brazil, we have other problems
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
@@ -320,15 +318,15 @@ function EbanxTefPayButton( { disabled, store } ) {
 						payload: { paymentMethodId: 'ebanx-tef' },
 					} );
 					submitTransaction( {
-						name: customerName?.value,
 						...massagedFields,
+						name: customerName?.value, // this needs to come after massagedFields to prevent it from being overridden
 						address: massagedFields?.address1,
 						tefBank: customerBank?.value,
 						items,
 						total,
 					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
+						.then( ( transactionResponse ) => {
+							if ( ! transactionResponse?.redirect_url ) {
 								setTransactionError(
 									__(
 										'There was an error processing your payment. Please try again or contact support.'
@@ -336,8 +334,8 @@ function EbanxTefPayButton( { disabled, store } ) {
 								);
 								return;
 							}
-							debug( 'ebanx-tef transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
+							debug( 'ebanx-tef transaction requires redirect', transactionResponse.redirect_url );
+							setTransactionRedirecting( transactionResponse.redirect_url );
 						} )
 						.catch( ( error ) => {
 							setTransactionError( error.message );
@@ -345,7 +343,7 @@ function EbanxTefPayButton( { disabled, store } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -355,10 +353,10 @@ function EbanxTefPayButton( { disabled, store } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -430,17 +428,17 @@ function EbanxTefLabel() {
 		<React.Fragment>
 			<span>{ 'Transferência bancária' }</span>
 			<PaymentMethodLogos className="ebanx-tef__logo payment-logos">
-				<EbanxTefLogoUI />
+				<EbanxTefLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const EbanxTefLogoUI = styled( EbanxTefLogo )`
+const EbanxTefLogo = styled( EbanxTefLogoImg )`
 	width: 76px;
 `;
 
-function EbanxTefLogo( { className } ) {
+function EbanxTefLogoImg( { className } ) {
 	return (
 		<img
 			src="/calypso/images/upgrades/brazil-tef.svg"
@@ -451,7 +449,6 @@ function EbanxTefLogo( { className } ) {
 }
 
 function getBankOptions( __ ) {
-	// Source TODO
 	const banks = [
 		{ value: 'banrisul', label: 'Banrisul' },
 		{ value: 'bradesco', label: 'Bradesco' },

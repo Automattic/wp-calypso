@@ -77,6 +77,7 @@ export { default as Spinner } from 'components/spinner/docs/example';
 export { default as SpinnerButton } from 'components/spinner-button/docs/example';
 export { default as SpinnerLine } from 'components/spinner-line/docs/example';
 export { default as SplitButton } from 'components/split-button/docs/example';
+export { default as StepProgress } from 'components/step-progress/docs/example';
 export { default as Suggestions } from '@automattic/components/src/suggestions/docs/example';
 export { default as TextareaAutosize } from 'components/textarea-autosize/docs/example';
 export { default as TextDiff } from 'components/text-diff/docs/example';

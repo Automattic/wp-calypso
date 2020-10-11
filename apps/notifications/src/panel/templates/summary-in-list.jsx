@@ -1,12 +1,16 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import { flowRight as compose } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import Gridicon from './gridicons';
 import noticon2gridicon from '../utils/noticon2gridicon';
-
 import actions from '../state/actions';
-
 import ImagePreloader from './image-loader';
 
 import { html } from '../indices-to-html';

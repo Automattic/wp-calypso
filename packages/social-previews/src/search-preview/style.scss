@@ -11,6 +11,8 @@
 
 @import '../variables.scss';
 
+/* stylelint-disable scales/font-size */
+
 .search-preview__display {
 	border: 1px solid var( --color-neutral-0 );
 	font-family: arial, sans-serif;
@@ -20,9 +22,10 @@
 
 .search-preview__title {
 	color: #1a0dab; // matching Google results
-	font-size: 18px;
-	line-height: 1.2;
+	font-size: 20px;
+	line-height: 26px;
 	max-width: 616px;
+	margin-bottom: 7px;
 
 	&:hover {
 		cursor: pointer;
@@ -31,16 +34,17 @@
 }
 
 .search-preview__url {
-	color: #006621; // matching Google results
-	font-size: $font-body-small;
-	height: 17px;
-	line-height: 16px;
+	color: #3c4043; // matching Google results
+	font-size: 14px;
+	line-height: 18.2px;
 	max-width: 616px;
+	margin-bottom: 8px;
 }
 
 .search-preview__description {
-	color: #545454; // matching Google results
-	font-size: $font-body-small;
-	line-height: 1.4;
+	color: #3c4043; // matching Google results
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 22.12px;// matching Google results
 	max-width: 616px;
 }

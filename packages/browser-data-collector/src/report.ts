@@ -11,6 +11,8 @@ import {
 	pageVisibilityStart,
 	pageVisibilityStop,
 	blockingResources,
+	performanceMarks,
+	performanceMeasures,
 } from './collectors';
 
 export class ReportImpl implements Report {
@@ -35,19 +37,22 @@ export class ReportImpl implements Report {
 
 	private constructor( id: string, isInitial: boolean ) {
 		this.id = id;
+		const commonStartCollectors = [ pageVisibilityStart ];
+		const commonStopCollectors = [
+			deviceMemory,
+			environment,
+			pageVisibilityStop,
+			networkInformation,
+			performanceMarks,
+			performanceMeasures,
+		];
+
 		if ( isInitial ) {
-			this.startCollectors = [ fullPageStart, pageVisibilityStart ];
-			this.stopCollectors = [
-				deviceMemory,
-				performanceTiming,
-				environment,
-				pageVisibilityStop,
-				networkInformation,
-				blockingResources,
-			];
+			this.startCollectors = [ fullPageStart, ...commonStartCollectors ];
+			this.stopCollectors = [ performanceTiming, blockingResources, ...commonStopCollectors ];
 		} else {
-			this.startCollectors = [ inlineStart, pageVisibilityStart ];
-			this.stopCollectors = [ deviceMemory, environment, pageVisibilityStop, networkInformation ];
+			this.startCollectors = [ inlineStart, ...commonStartCollectors ];
+			this.stopCollectors = [ ...commonStopCollectors ];
 		}
 	}
 

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { overSome } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import {
 	canUpgradeToUseWordAds,
 	canAccessAds,
 } from 'lib/ads/utils';
-import { isPremium, isBusiness, isEcommerce } from 'lib/products-values';
+import { isPremium, isBusiness, isEcommerce, isSecurityDaily } from 'lib/products-values';
 import FeatureExample from 'components/feature-example';
 import FormButton from 'components/forms/form-button';
 import { Card } from '@automattic/components';
@@ -31,7 +32,11 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import UpsellNudge from 'blocks/upsell-nudge';
-import { PLAN_PREMIUM, PLAN_JETPACK_PREMIUM, FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
+import {
+	PLAN_PREMIUM,
+	PLAN_JETPACK_SECURITY_DAILY,
+	FEATURE_WORDADS_INSTANT,
+} from 'lib/plans/constants';
 import canCurrentUser from 'state/selectors/can-current-user';
 import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'state/wordads/status/schema';
@@ -49,6 +54,8 @@ import wordAdsImage from 'assets/images/illustrations/dotcom-wordads.svg';
  */
 import './style.scss';
 import 'my-sites/stats/stats-module/style.scss';
+
+const isEligbleJetpackPlan = overSome( isPremium, isBusiness, isEcommerce, isSecurityDaily );
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -229,14 +236,14 @@ class AdsWrapper extends Component {
 
 	renderjetpackUpsell() {
 		const { siteSlug, translate } = this.props;
-		const bannerURL = `/checkout/${ siteSlug }/premium`;
+		const bannerURL = `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`;
 		return (
 			<UpsellNudge
 				callToAction={ translate( 'Upgrade' ) }
-				plan={ PLAN_JETPACK_PREMIUM }
-				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
+				plan={ PLAN_JETPACK_SECURITY_DAILY }
+				title={ translate( 'Upgrade and start earning' ) }
 				description={ translate(
-					"By upgrading to the Premium plan, you'll be able to monetize your site through the Jetpack Ads program."
+					'Make money each time someone visits your site by displaying ads on all your posts and pages.'
 				) }
 				href={ bannerURL }
 				feature={ FEATURE_WORDADS_INSTANT }
@@ -244,19 +251,13 @@ class AdsWrapper extends Component {
 				event="calypso_upgrade_nudge_impression"
 				tracksImpressionName="calypso_upgrade_nudge_impression"
 				tracksClickName="calypso_upgrade_nudge_click"
-				list={ [
-					translate( 'Instantly enroll into the Jetpack Ads network.' ),
-					translate( 'Earn money from your content and traffic.' ),
-				] }
 			/>
 		);
 	}
 
 	render() {
 		const { site, translate } = this.props;
-		const jetpackPremium =
-			site.jetpack &&
-			( isPremium( site.plan ) || isBusiness( site.plan ) || isEcommerce( site.plan ) );
+		const jetpackPremium = site.jetpack && isEligbleJetpackPlan( site.plan );
 
 		let component = this.props.children;
 		let notice = null;

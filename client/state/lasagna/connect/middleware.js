@@ -10,6 +10,8 @@ let socketConnected = false;
 let socketConnecting = false;
 
 export default ( store ) => ( next ) => async ( action ) => {
+	const mwResult = next( action );
+
 	switch ( action.type ) {
 		case SECTION_SET: {
 			const { section } = action;
@@ -31,5 +33,5 @@ export default ( store ) => ( next ) => async ( action ) => {
 		}
 	}
 
-	return next( action );
+	return mwResult;
 };

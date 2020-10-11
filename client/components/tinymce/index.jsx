@@ -82,6 +82,7 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 /**
  * Internal Dependencies
  */
+import FormTextarea from 'components/forms/form-textarea';
 import i18n from './i18n';
 import config from 'config';
 import { decodeEntities, wpautop, removep } from 'lib/formatting';
@@ -573,8 +574,8 @@ export default class TinyMCE extends React.Component {
 						onToolbarChangeContent={ this.onToolbarChangeContent }
 					/>
 				) }
-				<textarea
-					ref={ this.textInput }
+				<FormTextarea
+					forwardedRef={ this.textInput }
 					className={ className }
 					id={ this._id }
 					onChange={ this.onTextAreaChange }

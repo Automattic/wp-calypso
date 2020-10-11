@@ -250,7 +250,6 @@ class Site extends React.Component {
 					autoCapitalize={ 'off' }
 					className="site__site-url"
 					disabled={ fieldDisabled }
-					type="text"
 					name="site"
 					value={ formState.getFieldValue( this.state.form, 'site' ) }
 					isError={ formState.isFieldInvalid( this.state.form, 'site' ) }

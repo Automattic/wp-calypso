@@ -268,7 +268,7 @@ describe( 'I18n', function () {
 					localeSlug: 'xx-pig-latin',
 					'key-hash': 'sha1-1',
 				},
-				'0': [ 'implesa' ],
+				0: [ 'implesa' ],
 			} );
 			expect( translate( 'simple' ) ).toBe( 'implesa' );
 		} );
@@ -279,9 +279,9 @@ describe( 'I18n', function () {
 					localeSlug: 'xx-pig-latin',
 					'key-hash': 'sha1-1-2',
 				},
-				'0': [ 'implesa' ],
-				'6': [ 'cursus' ], // green with context `color` has a sha1 of 68d206ad95bc23f27ee157e826d2cae41c5bdd71
-				'78': [ 'edra' ], // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
+				0: [ 'implesa' ],
+				6: [ 'cursus' ], // green with context `color` has a sha1 of 68d206ad95bc23f27ee157e826d2cae41c5bdd71
+				78: [ 'edra' ], // red has a sha1 of 78988010b890ce6f4d2136481f392787ec6d6106
 				'7d': [ 'reyga' ], // grey has a sha1 of 7d1f8f911da92c0ea535cad461fd773281a79638
 			} );
 			expect( translate( 'simple' ) ).toBe( 'implesa' );

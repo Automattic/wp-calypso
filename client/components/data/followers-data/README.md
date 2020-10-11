@@ -1,11 +1,10 @@
-FollowersData
-=============
+# FollowersData
 
 A component that fetches a site's wpcom followers and passes them to its children.
 
 ## Props
 
-`<FollowersData />` should be given a `fetchOptions` object which will be used as parameters for the API call /sites/$site/stats/followers
+`<FollowersData />` should be given a `fetchOptions` object which will be used as parameters for the API call /sites/\$site/stats/followers
 
 ## Usage
 

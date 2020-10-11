@@ -29,8 +29,7 @@ const FormRadioWithThumbnail = ( { label, thumbnail, ...otherProps } ) => {
 				>
 					{ imageUrl && <img src={ imageUrl } alt={ label } /> }
 				</div>
-				<FormRadio { ...otherProps } />
-				<span>{ label }</span>
+				<FormRadio label={ label } { ...otherProps } />
 			</FormLabel>
 		</div>
 	);

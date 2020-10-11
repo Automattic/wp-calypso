@@ -2,12 +2,11 @@
  * External dependencies
  */
 import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import debugFactory from 'debug';
 import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import cookie from 'cookie';
 
 /**
  * Internal Dependencies
@@ -18,22 +17,15 @@ import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
 import { logToLogstash } from 'state/logstash/actions';
 import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();
 
-function getGeoLocationFromCookie() {
-	const cookies = cookie.parse( document.cookie );
-
-	return cookies.country_code;
-}
-
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
-	product,
+	productAliasFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
@@ -51,29 +43,27 @@ export default function CheckoutSystemDecider( {
 	isLoggedOutCart,
 	isNoSiteCart,
 } ) {
-	const countryCode =
-		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
-	const prepurchaseNotices = <PrePurchaseNotices cart={ cart } />;
+	const prepurchaseNotices = <PrePurchaseNotices />;
 
-	const checkoutVariant = getCheckoutVariant( countryCode );
+	const checkoutVariant = getCheckoutVariant();
 
 	useEffect( () => {
-		if ( product ) {
+		if ( productAliasFromUrl ) {
 			reduxDispatch(
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'CheckoutSystemDecider saw productSlug to add',
 					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 					extra: {
-						productSlug: product,
+						productSlug: productAliasFromUrl,
 					},
 				} )
 			);
 		}
-	}, [ reduxDispatch, product ] );
+	}, [ reduxDispatch, productAliasFromUrl ] );
 
 	const logCheckoutError = useCallback(
 		( error ) => {
@@ -119,7 +109,7 @@ export default function CheckoutSystemDecider( {
 						<CompositeCheckout
 							siteSlug={ siteSlug }
 							siteId={ selectedSite?.ID }
-							product={ product }
+							productAliasFromUrl={ productAliasFromUrl }
 							purchaseId={ purchaseId }
 							couponCode={ couponCode }
 							redirectTo={ redirectTo }
@@ -141,7 +131,7 @@ export default function CheckoutSystemDecider( {
 
 	return (
 		<CheckoutContainer
-			product={ product }
+			product={ productAliasFromUrl }
 			purchaseId={ purchaseId }
 			selectedFeature={ selectedFeature }
 			couponCode={ couponCode }
@@ -160,24 +150,10 @@ export default function CheckoutSystemDecider( {
 	);
 }
 
-function getCheckoutVariant( countryCode ) {
+function getCheckoutVariant() {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
 		return 'old-checkout';
-	}
-
-	if ( config.isEnabled( 'composite-checkout-force' ) ) {
-		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
-		return 'composite-checkout';
-	}
-
-	// Disable for Brazil and India
-	if ( countryCode?.toLowerCase() === 'br' || countryCode?.toLowerCase() === 'in' ) {
-		debug(
-			'shouldShowCompositeCheckout false because country is not allowed',
-			countryCode?.toLowerCase()
-		);
-		return 'disallowed-geo';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );

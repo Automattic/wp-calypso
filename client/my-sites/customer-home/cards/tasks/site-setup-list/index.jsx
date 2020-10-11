@@ -4,7 +4,7 @@
 import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
@@ -233,7 +233,7 @@ const SiteSetupList = ( {
 					const isCompleted = task.isCompleted;
 
 					return (
-						<>
+						<Fragment key={ task.id }>
 							<NavItem
 								key={ task.id }
 								taskId={ task.id }
@@ -268,7 +268,7 @@ const SiteSetupList = ( {
 									useAccordionLayout={ useAccordionLayout }
 								/>
 							) : null }
-						</>
+						</Fragment>
 					);
 				} ) }
 			</div>

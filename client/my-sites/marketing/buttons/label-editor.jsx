@@ -10,6 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
 import { decodeEntities } from 'lib/formatting';
 
 const closeKeyCodes = [
@@ -82,8 +83,7 @@ class SharingButtonsLabelEditor extends React.Component {
 					<p className="sharing-buttons-preview__panel-instructions">
 						{ this.props.translate( 'Change the text of the sharing buttons label' ) }
 					</p>
-					<input
-						type="text"
+					<FormTextInput
 						value={ decodeEntities( this.props.value ) }
 						onKeyDown={ this.onKeyDown }
 						onChange={ this.onInputChange }

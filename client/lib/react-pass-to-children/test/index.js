@@ -60,24 +60,26 @@ describe( 'index', () => {
 		expect( React.Children.count( result.props.children ) ).to.equal( 2 );
 	} );
 
-	test( 'should accept multiple children and pass along props to each', ( done ) => {
-		let result;
+	test( 'should accept multiple children and pass along props to each', () => {
+		return new Promise( ( done ) => {
+			let result;
 
-		renderer.render(
-			<PassThrough>
-				<div />
-				<div />
-			</PassThrough>
-		);
-		result = renderer.getRenderOutput();
+			renderer.render(
+				<PassThrough>
+					<div />
+					<div />
+				</PassThrough>
+			);
+			result = renderer.getRenderOutput();
 
-		React.Children.forEach( result.props.children, function ( child, i ) {
-			expect( child.type ).to.equal( 'div' );
-			expect( child.props ).to.eql( DUMMY_PROPS );
+			React.Children.forEach( result.props.children, function ( child, i ) {
+				expect( child.type ).to.equal( 'div' );
+				expect( child.props ).to.eql( DUMMY_PROPS );
 
-			if ( 1 === i ) {
-				done();
-			}
+				if ( 1 === i ) {
+					done();
+				}
+			} );
 		} );
 	} );
 

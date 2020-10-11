@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, dialog, BrowserWindow } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, dialog, BrowserWindow } = require( 'electron' );
 const { EventEmitter } = require( 'events' );
 
 /**
@@ -73,6 +73,17 @@ class Updater extends EventEmitter {
 			this._hasPrompted = false;
 			this.emit( 'end' );
 		}
+	}
+
+	notifyNotAvailable() {
+		const mainWindow = BrowserWindow.getFocusedWindow();
+
+		const notAvailableDialogOptions = {
+			buttons: [ 'OK' ],
+			message: 'There are currently no updates available.',
+		};
+
+		dialog.showMessageBox( mainWindow, notAvailableDialogOptions );
 	}
 
 	setVersion( version ) {

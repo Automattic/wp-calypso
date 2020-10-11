@@ -10,19 +10,22 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import { Card, CompactCard } from '@automattic/components';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PurchasesHeader from '../purchases/purchases-list/header';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import QueryMembershipsSubscriptions from 'components/data/query-memberships-subscriptions';
-import HeaderCake from 'components/header-cake';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
+import HeaderCake from 'calypso/components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
-import Site from 'blocks/site';
-import Gridicon from 'components/gridicon';
-import { requestSubscriptionStop } from 'state/memberships/subscriptions/actions';
-import Notice from 'components/notice';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getSubscription, getStoppingStatus } from 'state/memberships/subscriptions/selectors';
+import Site from 'calypso/blocks/site';
+import Gridicon from 'calypso/components/gridicon';
+import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
+import Notice from 'calypso/components/notice';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import {
+	getSubscription,
+	getStoppingStatus,
+} from 'calypso/state/memberships/subscriptions/selectors';
 
 /**
  * Style dependencies

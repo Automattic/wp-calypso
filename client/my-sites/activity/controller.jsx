@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import { isEqual } from 'lodash';
 
 /**
@@ -76,15 +75,4 @@ export function activity( context, next ) {
 	);
 
 	next();
-}
-
-// Add redirect
-export function redirect( context ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	if ( siteId ) {
-		page.redirect( '/activity-log/' + siteId );
-		return;
-	}
-	page.redirect( '/activity-log/' );
 }

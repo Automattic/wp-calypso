@@ -15,6 +15,12 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
 } from 'lib/plans/constants';
 import { isJetpackBackup, isJetpackScan } from 'lib/products-values';
 import {
@@ -37,7 +43,7 @@ import type { AppState } from 'types';
 import type { CartItemValue } from 'lib/cart-values/types';
 
 /**
- * Checks if Jetpack Anti-Spam is conflicting with a site's current products.
+ * Checks if Jetpack Anti-spam is conflicting with a site's current products.
  *
  * @param {AppState} state The redux state.
  * @param {number} siteId The site ID.
@@ -118,12 +124,18 @@ export const isPlanIncludingSiteBackup = createSelector(
 			case PLAN_JETPACK_PERSONAL_MONTHLY:
 			case PLAN_JETPACK_PREMIUM:
 			case PLAN_JETPACK_PREMIUM_MONTHLY:
+			case PLAN_JETPACK_SECURITY_DAILY:
+			case PLAN_JETPACK_SECURITY_DAILY_MONTHLY:
 				if ( hasRealTimeBackup ) {
 					return false;
 				}
 				return true;
 			case PLAN_JETPACK_BUSINESS:
 			case PLAN_JETPACK_BUSINESS_MONTHLY:
+			case PLAN_JETPACK_SECURITY_REALTIME:
+			case PLAN_JETPACK_SECURITY_REALTIME_MONTHLY:
+			case PLAN_JETPACK_COMPLETE:
+			case PLAN_JETPACK_COMPLETE_MONTHLY:
 				return true;
 		}
 

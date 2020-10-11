@@ -12,6 +12,8 @@ import { fetchPluginInformation } from 'lib/wporg';
 import { normalizePluginData } from 'lib/plugins/utils';
 import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
 
+import 'state/plugins/init';
+
 // TODO: fix the selector in `selectors.js` to not return `true` by default
 function isFetching( state, pluginSlug ) {
 	return get( state, [ 'plugins', 'wporg', 'fetchingItems', pluginSlug ], false );

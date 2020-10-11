@@ -17,28 +17,27 @@ import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteRoles from 'components/data/query-site-roles';
 import { getSite } from 'state/sites/selectors';
-import { getSiteRoles } from 'state/site-roles/selectors';
+import { getSiteRoles, getWpcomFollowerRole } from 'state/site-roles/selectors';
 import { ROLES_LIST } from './constants';
 import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
 
 import './style.scss';
 
-const getWpcomFollowerRole = ( { site, translate } ) => {
-	const displayName = site.is_private
-		? translate( 'Viewer', { context: 'Role that is displayed in a select' } )
-		: translate( 'Follower', { context: 'Role that is displayed in a select' } );
-
-	return {
-		display_name: displayName,
-		name: 'follower',
-	};
-};
-
 const RoleSelect = ( props ) => {
 	let { siteRoles } = props;
 	const { isWPForTeamsSite } = props;
 
-	const { site, includeFollower, siteId, id, explanation, translate, value } = props;
+	const {
+		site,
+		includeFollower,
+		wpcomFollowerRole,
+		siteId,
+		id,
+		explanation,
+		translate,
+		value,
+	} = props;
+
 	const omitProps = [
 		'isWPForTeamsSite',
 		'site',
@@ -53,10 +52,11 @@ const RoleSelect = ( props ) => {
 		'translate',
 		'value',
 		'id',
+		'wpcomFollowerRole',
 	];
 
 	if ( site && siteRoles && includeFollower ) {
-		siteRoles = siteRoles.concat( getWpcomFollowerRole( props ) );
+		siteRoles = siteRoles.concat( wpcomFollowerRole );
 	}
 
 	if ( site && siteRoles && isWPForTeamsSite ) {
@@ -100,4 +100,5 @@ export default connect( ( state, ownProps ) => ( {
 	site: getSite( state, ownProps.siteId ),
 	siteRoles: getSiteRoles( state, ownProps.siteId ),
 	isWPForTeamsSite: isSiteWPForTeams( state, ownProps.siteId ),
+	wpcomFollowerRole: getWpcomFollowerRole( state, ownProps.siteId ),
 } ) )( localize( RoleSelect ) );

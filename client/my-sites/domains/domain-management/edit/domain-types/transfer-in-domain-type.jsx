@@ -21,7 +21,7 @@ import {
 import { transferStatus } from 'lib/domains/constants';
 import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'lib/url/support';
-import DomainManagementNavigation from '../navigation';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { resolveDomainStatus } from 'lib/domains';
 
 class TransferInDomainType extends React.Component {
@@ -129,7 +129,7 @@ class TransferInDomainType extends React.Component {
 				>
 					{ this.renderStatusBody( domain.transferStatus ) }
 				</DomainStatus>
-				<DomainManagementNavigation
+				<DomainManagementNavigationEnhanced
 					domain={ domain }
 					selectedSite={ selectedSite }
 					purchase={ purchase }

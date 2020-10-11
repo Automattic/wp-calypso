@@ -1,5 +1,4 @@
-Printer
-=========
+# Printer
 
 Provides a way for Calypso to print. This is used for printing backup codes.
 

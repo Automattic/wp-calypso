@@ -18,7 +18,6 @@ import jetpackSearch from 'layout/guided-tours/tours/jetpack-search-tour/meta';
 import jetpackSignIn from 'layout/guided-tours/tours/jetpack-sign-in-tour/meta';
 import jetpackSiteAccelerator from 'layout/guided-tours/tours/jetpack-site-accelerator-tour/meta';
 import jetpackVideoHosting from 'layout/guided-tours/tours/jetpack-video-hosting-tour/meta';
-import simplePaymentsEmailTour from 'layout/guided-tours/tours/simple-payments-email-tour/meta';
 
 export default {
 	checklistSiteTitle,
@@ -38,5 +37,4 @@ export default {
 	tutorialSitePreview,
 	gdocsIntegrationTour,
 	simplePaymentsTour,
-	simplePaymentsEmailTour,
 };

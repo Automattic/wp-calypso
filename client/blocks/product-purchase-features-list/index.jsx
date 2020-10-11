@@ -18,6 +18,12 @@ import {
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
 	TYPE_FREE,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_ONBOARDING_EXPIRE,
+	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
+	TYPE_SECURITY_DAILY,
+	TYPE_SECURITY_REALTIME,
+	TYPE_ALL,
 } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
@@ -36,14 +42,15 @@ import JetpackPublicize from './jetpack-publicize';
 import MobileApps from './mobile-apps';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
+import { withLocalizedMoment } from 'components/localized-moment';
 import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { isEnabled } from 'config';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { hasDomainCredit, getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-
+import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
 /**
  * Style dependencies
  */
@@ -94,10 +101,31 @@ export class ProductPurchaseFeaturesList extends Component {
 		const {
 			isPlaceholder,
 			plan,
+			currentPlan,
 			planHasDomainCredit,
 			selectedSite,
 			showCustomizerFeature,
+			scheduleId,
 		} = this.props;
+
+		let hasBusinessOnboardingExpired;
+		if ( currentPlan ) {
+			const expiryDateMoment = this.props.moment( currentPlan.expiryDate );
+
+			const is2YearPlan = plan === PLAN_BUSINESS_2_YEARS;
+			const businessOnboardingExpiration = this.props.moment(
+				is2YearPlan ? PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE : PLAN_BUSINESS_ONBOARDING_EXPIRE
+			);
+
+			hasBusinessOnboardingExpired = businessOnboardingExpiration.diff( expiryDateMoment ) < 0;
+		}
+
+		const hasIncludedSessions = scheduleId === 1;
+		const hasPurchasedSessions = scheduleId > 1;
+
+		const isBusinessOnboardingAvailable =
+			hasPurchasedSessions || ( hasIncludedSessions && ! hasBusinessOnboardingExpired );
+
 		return (
 			<Fragment>
 				<HappinessSupportCard
@@ -106,11 +134,13 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<BusinessOnboarding
-					isWpcomPlan
-					onClick={ this.handleBusinessOnboardingClick }
-					link={ `/me/concierge/${ selectedSite.slug }/book` }
-				/>
+				{ isBusinessOnboardingAvailable && (
+					<BusinessOnboarding
+						isWpcomPlan
+						onClick={ this.handleBusinessOnboardingClick }
+						link={ `/me/concierge/${ selectedSite.slug }/book` }
+					/>
+				) }
 				{ isWordadsInstantActivationEligible( selectedSite ) && (
 					<MonetizeSite selectedSite={ selectedSite } />
 				) }
@@ -272,6 +302,48 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
+	getJetpackSecurityFeatures() {
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
+		return (
+			<Fragment>
+				<SiteActivity />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<JetpackPublicize selectedSite={ selectedSite } />
+				<SellOnlinePaypal isJetpack />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_security' }
+				/>
+			</Fragment>
+		);
+	}
+
+	getJetpackCompleteFeatures() {
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
+		return (
+			<Fragment>
+				<SiteActivity />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<JetpackPublicize selectedSite={ selectedSite } />
+				<SellOnlinePaypal isJetpack />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_complete' }
+				/>
+			</Fragment>
+		);
+	}
+
 	getFeatures() {
 		const { plan, isPlaceholder } = this.props;
 
@@ -293,6 +365,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PREMIUM ]: () => this.getJetpackPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getJetpackPersonalFeatures(),
 				[ TYPE_FREE ]: () => this.getJetpackFreeFeatures(),
+				[ TYPE_SECURITY_DAILY ]: () => this.getJetpackSecurityFeatures(),
+				[ TYPE_SECURITY_REALTIME ]: () => this.getJetpackSecurityFeatures(),
+				[ TYPE_ALL ]: () => this.getJetpackCompleteFeatures(),
 			},
 		};
 
@@ -325,9 +400,11 @@ export default connect(
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
 			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
+			currentPlan: getCurrentPlan( state, selectedSiteId ),
+			scheduleId: getConciergeScheduleId( state ),
 		};
 	},
 	{
 		recordTracksEvent,
 	}
-)( ProductPurchaseFeaturesList );
+)( withLocalizedMoment( ProductPurchaseFeaturesList ) );

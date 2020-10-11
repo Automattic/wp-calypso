@@ -255,7 +255,6 @@ class TransferDomainStep extends React.Component {
 						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ true }
-							type="text"
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
