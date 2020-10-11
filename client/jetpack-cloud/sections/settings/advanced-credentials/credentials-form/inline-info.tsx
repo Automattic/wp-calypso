@@ -1,23 +1,35 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import { useDispatch } from 'react-redux';
+import React, { FunctionComponent, useEffect } from 'react';
 
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import * as HostInfo from '../host-info';
 
 interface Props {
+	field: string;
+	host: string;
 	info: HostInfo.Info[] | HostInfo.InfoSplit;
-	credentialType: 'ftp' | 'ssh';
+	protocol: 'ftp' | 'ssh';
 }
 
-const InlineInfo: FunctionComponent< Props > = ( { credentialType, info } ) => {
+const InlineInfo: FunctionComponent< Props > = ( { field, host, info, protocol } ) => {
+	const dispatch = useDispatch();
+
 	const choseSplitInfo = ( splitInfo: HostInfo.InfoSplit ) =>
-		credentialType === 'ftp' ? splitInfo.ftp : splitInfo.sftp;
+		protocol === 'ftp' ? splitInfo.ftp : splitInfo.sftp;
 
 	const infoToRender = HostInfo.infoIsSplit( info ) ? choseSplitInfo( info ) : info;
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_viewed_inline_info', { field, host, protocol } )
+		);
+	}, [ dispatch, field, host, protocol ] );
 
 	return (
 		<div className="inline-info">

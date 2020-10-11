@@ -93,7 +93,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
 				{ hostInfo?.inline?.user && (
 					<InfoPopover>
-						<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.user } />
+						<InlineInfo
+							field="user"
+							host={ host }
+							info={ hostInfo.inline.user }
+							protocol={ formState.protocol }
+						/>
 					</InfoPopover>
 				) }
 			</div>
@@ -122,7 +127,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
 					{ hostInfo?.inline?.pass && (
 						<InfoPopover>
-							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.pass } />
+							<InlineInfo
+								field="pass"
+								host={ host }
+								info={ hostInfo.inline.pass }
+								protocol={ formState.protocol }
+							/>
 						</InfoPopover>
 					) }
 				</div>
@@ -154,7 +164,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					<FormLabel htmlFor="private-key">{ translate( 'Private key' ) }</FormLabel>
 					{ hostInfo?.inline?.kpri && (
 						<InfoPopover>
-							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.kpri } />
+							<InlineInfo
+								field="kpri"
+								host={ host }
+								info={ hostInfo.inline.kpri }
+								protocol={ formState.protocol }
+							/>
 						</InfoPopover>
 					) }
 				</div>
@@ -250,7 +265,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
 					{ hostInfo?.inline?.protocol && (
 						<InfoPopover>
-							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.protocol } />
+							<InlineInfo
+								field="protocol"
+								host={ host }
+								info={ hostInfo.inline.protocol }
+								protocol={ formState.protocol }
+							/>
 						</InfoPopover>
 					) }
 				</div>
@@ -272,7 +292,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						<FormLabel htmlFor="host-address">{ translate( 'Server address' ) }</FormLabel>
 						{ hostInfo?.inline?.host && (
 							<InfoPopover>
-								<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.host } />
+								<InlineInfo
+									field="host"
+									host={ host }
+									info={ hostInfo.inline.host }
+									protocol={ formState.protocol }
+								/>
 							</InfoPopover>
 						) }
 					</div>
@@ -297,7 +322,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						<FormLabel htmlFor="server-port">{ translate( 'Port number' ) }</FormLabel>
 						{ hostInfo?.inline?.port && (
 							<InfoPopover>
-								<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.port } />
+								<InlineInfo
+									field="port"
+									host={ host }
+									info={ hostInfo.inline.port }
+									protocol={ formState.protocol }
+								/>
 							</InfoPopover>
 						) }
 					</div>
@@ -325,7 +355,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					</FormLabel>
 					{ hostInfo?.inline?.path && (
 						<InfoPopover>
-							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.path } />
+							<InlineInfo
+								field="path"
+								host={ host }
+								info={ hostInfo.inline.path }
+								protocol={ formState.protocol }
+							/>
 						</InfoPopover>
 					) }
 				</div>
@@ -364,7 +399,12 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					</SegmentedControl>
 					{ hostInfo?.inline?.mode && (
 						<InfoPopover>
-							<InlineInfo credentialType={ formState.protocol } info={ hostInfo.inline.mode } />
+							<InlineInfo
+								field="mode"
+								host={ host }
+								info={ hostInfo.inline.mode }
+								protocol={ formState.protocol }
+							/>
 						</InfoPopover>
 					) }
 				</div>
