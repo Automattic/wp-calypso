@@ -195,6 +195,8 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	}, [ currentStep, dispatch, host ] );
 
 	const handleDeleteCredentials = () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_delete' ) );
+
 		dispatch( deleteCredentials( siteId, role ) );
 	};
 
@@ -202,6 +204,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		if ( ! isEmpty( formErrors ) ) {
 			return;
 		}
+		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
 		dispatch( updateCredentials( siteId, { role, ...formState } ) );
 	};
 
