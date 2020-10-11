@@ -33,6 +33,7 @@ import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analy
 import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'components/data/query-site-keyrings';
 import QueryKeyringConnections from 'components/data/query-keyring-connections';
+import { FEATURE_WORDADS_INSTANT } from 'lib/plans/constants';
 import memoizeLast from 'lib/memoize-last';
 import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
 import QueryJetpackModules from 'components/data/query-jetpack-modules';
@@ -40,6 +41,7 @@ import EmptyContent from 'components/empty-content';
 import { activateModule } from 'state/jetpack/modules/actions';
 import canCurrentUser from 'state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import { hasFeature } from 'state/sites/plans/selectors';
 import Banner from 'components/banner';
 import isVipSite from 'state/selectors/is-vip-site';
 
@@ -129,7 +131,16 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, hasWordAds, siteId, slug, isAdmin, isJetpack, isVip } = this.props;
+		const {
+			date,
+			hasInstantWordAds,
+			hasWordAds,
+			siteId,
+			slug,
+			isAdmin,
+			isJetpack,
+			isVip,
+		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -192,6 +203,7 @@ class StatsSite extends Component {
 								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
 							) }
 							href={ `/earn/${ slug }` }
+							dismissPreferenceName={ hasInstantWordAds ? `stats-earn-nudge-${ siteId }` : null }
 							event="stats_earn_nudge"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
@@ -343,6 +355,7 @@ export default connect(
 			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			isJetpack,
 			hasWordAds: getSiteOption( state, siteId, 'wordads' ),
+			hasInstantWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			siteId,
 			isVip,
 			slug: getSelectedSiteSlug( state ),
