@@ -50,11 +50,12 @@ enum Step {
 }
 
 interface Props {
+	action?: string;
 	host?: string;
 	role: string;
 }
 
-const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
+const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -69,8 +70,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 	const [ formState, setFormState ] = useState( INITIAL_FORM_STATE );
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
-
-	const [ requestedCredentialsEdit, setRequestedCredentialsEdit ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -113,7 +112,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 
 	const currentStep = ( (): Step => {
 		if ( statusState === StatusState.Connected ) {
-			return requestedCredentialsEdit ? Step.ConnectedEdit : Step.Connected;
+			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
 			// Verification pushed to future
 		} /* else if ( 'pending' === formSubmissionStatus ) {
 			return State.Verification;
@@ -165,7 +164,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 	useEffect( () => {
 		setFormState( INITIAL_FORM_STATE );
 		setFormMode( FormMode.Password );
-		setRequestedCredentialsEdit( false );
 	}, [ siteId, setFormState ] );
 
 	// record tracks events on each new step of process
@@ -197,7 +195,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 	}, [ currentStep, dispatch, host ] );
 
 	const handleDeleteCredentials = () => {
-		setRequestedCredentialsEdit( false );
 		dispatch( deleteCredentials( siteId, role ) );
 	};
 
@@ -276,7 +273,8 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 						<Button
 							borderless
 							className="advanced-credentials__connected"
-							onClick={ () => setRequestedCredentialsEdit( true ) }
+							// onClick={ () => setRequestedCredentialsEdit( true ) }
+							href={ `${ settingsPath( siteSlug ) }?action=edit` }
 						>
 							{ translate(
 								'The remote server credentials for %(siteSlug)s are present and correct, allowing Jetpack to perform restores and security fixes when required.',
