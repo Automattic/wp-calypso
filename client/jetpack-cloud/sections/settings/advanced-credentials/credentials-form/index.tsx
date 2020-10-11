@@ -383,7 +383,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 
 			<div className="credentials-form__mode-control">
 				<div className="credentials-form__support-info">
-					<SegmentedControl>
+					<SegmentedControl disabled={ disabled }>
 						<SegmentedControl.Item
 							selected={ formMode === FormMode.Password }
 							onClick={ () => onModeChange( FormMode.Password ) }

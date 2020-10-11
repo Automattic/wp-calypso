@@ -159,6 +159,8 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 		return 1;
 	};
 
+	const disableForm = 'pending' === formSubmissionStatus;
+
 	const render = ( status: StatusState ) => {
 		if ( status === StatusState.Loading ) {
 			// TODO:, placeholder
@@ -168,7 +170,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 		if ( requestedCredentialsEdit && status === StatusState.Connected ) {
 			return (
 				<CredentialsForm
-					disabled={ 'pending' === formSubmissionStatus }
+					disabled={ disableForm }
 					formErrors={ formErrors }
 					formMode={ formMode }
 					formState={ formState }
@@ -176,10 +178,13 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 					onFormStateChange={ setFormState }
 					onModeChange={ setFormMode }
 				>
-					<Button scary onClick={ handleDeleteCredentials }>
+					<Button scary disabled={ disableForm } onClick={ handleDeleteCredentials }>
 						{ translate( 'Delete Credentials' ) }
 					</Button>
-					<Button onClick={ handleUpdateCredentials } disabled={ ! isEmpty( formErrors ) }>
+					<Button
+						onClick={ handleUpdateCredentials }
+						disabled={ ! isEmpty( formErrors ) || disableForm }
+					>
 						{ translate( 'Update credentials' ) }
 					</Button>
 				</CredentialsForm>
@@ -221,11 +226,15 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { host, role } ) => {
 					onFormStateChange={ setFormState }
 					onModeChange={ setFormMode }
 				>
-					<Button compact borderless href={ settingsPath( siteSlug ) }>
+					<Button compact borderless disabled={ disableForm } href={ settingsPath( siteSlug ) }>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ translate( 'Change host' ) }
 					</Button>
-					<Button primary onClick={ handleUpdateCredentials } disabled={ ! isEmpty( formErrors ) }>
+					<Button
+						primary
+						onClick={ handleUpdateCredentials }
+						disabled={ ! isEmpty( formErrors ) || disableForm }
+					>
 						{ translate( 'Save credentials' ) }
 					</Button>
 				</CredentialsForm>
