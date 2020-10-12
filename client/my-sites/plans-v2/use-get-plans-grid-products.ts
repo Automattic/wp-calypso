@@ -6,23 +6,26 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'calypso/config';
 import { slugToSelectorProduct } from './utils';
-import { getPlan } from 'lib/plans';
+import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
-} from 'lib/products-values/constants';
+} from 'calypso/lib/products-values/constants';
 import {
 	OPTIONS_JETPACK_BACKUP,
 	OPTIONS_JETPACK_BACKUP_MONTHLY,
-} from 'my-sites/plans-v2/constants';
-import getSitePlan from 'state/sites/selectors/get-site-plan';
-import getSiteProducts from 'state/sites/selectors/get-site-products';
+} from 'calypso/my-sites/plans-v2/constants';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 
 const useSelectorPageProducts = ( siteId: number | null ) => {
 	let availableProducts: string[] = [];
@@ -63,11 +66,11 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 	if (
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
 	) {
-		availableProducts = [
-			...availableProducts,
-			OPTIONS_JETPACK_BACKUP,
-			OPTIONS_JETPACK_BACKUP_MONTHLY,
-		];
+		// The Alternative Selector page include Jetpack Backup Daily rather than the option card.
+		const backupProductsToShow = isEnabled( 'plans/alternate-selector' )
+			? [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]
+			: [ OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY ];
+		availableProducts = [ ...availableProducts, ...backupProductsToShow ];
 	}
 
 	// If Jetpack Scan is directly or indirectly owned, continue, otherwise make it available.

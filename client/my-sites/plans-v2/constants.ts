@@ -19,7 +19,7 @@ import {
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
-} from 'lib/products-values/constants';
+} from 'calypso/lib/products-values/constants';
 import {
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
@@ -48,13 +48,13 @@ import {
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
 	FEATURE_CRM_PRIORITY_SUPPORT,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 import { buildCardFeaturesFromItem } from './utils';
 
 /**
  * Type dependencies
  */
-import type { JetpackRealtimePlan } from 'lib/plans/types';
+import type { JetpackRealtimePlan } from 'calypso/lib/plans/types';
 import type { SelectorProduct, SelectorProductSlug, ProductType } from './types';
 
 export const ALL = 'all';
@@ -380,6 +380,13 @@ export const SELECTOR_PRODUCTS = [
 export const SELECTOR_PLANS = [
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+];
+
+export const SELECTOR_PLANS_ALT = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
