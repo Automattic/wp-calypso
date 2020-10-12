@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import type { CartItemExtra } from 'lib/cart-values/types';
+import type { CartItemExtra } from 'calypso/lib/cart-values/types';
 
 /**
  * There are three different concepts of "cart" relevant to the shopping cart endpoint:
