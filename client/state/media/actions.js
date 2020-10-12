@@ -28,9 +28,11 @@ import {
 	MEDIA_ITEM_DELETE,
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
-} from 'state/action-types';
+	ADD_GUTENFRAME_MEDIA_ACTION,
+	REMOVE_GUTENFRAME_MEDIA_ACTION,
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/media';
+import 'calypso/state/data-layer/wpcom/sites/media';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site
@@ -221,6 +223,35 @@ export function deleteMedia( siteId, mediaIds ) {
 
 export const deleteMediaItem = ( siteId, mediaId ) => ( {
 	type: MEDIA_ITEM_DELETE,
+	siteId,
+	mediaId,
+} );
+
+/**
+ * Returns an action object used in signalling that a media item was deleted or updated.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} mediaItem media item
+ * @param {string} mediaAction action to pass on to Gutenframe ('updated' or 'deleted')
+ * @returns {object} action object
+ */
+export const addGutenframeMediaAction = ( siteId, mediaItem, mediaAction ) => ( {
+	type: ADD_GUTENFRAME_MEDIA_ACTION,
+	siteId,
+	mediaItem,
+	mediaAction,
+} );
+
+/**
+ * Returns an action object used in signalling that a media item action was passed
+ * on to Gutenframe and can now be removed from the list.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} mediaId media item identifier
+ * @returns {object} action object
+ */
+export const removeGutenframeMediaAction = ( siteId, mediaId ) => ( {
+	type: REMOVE_GUTENFRAME_MEDIA_ACTION,
 	siteId,
 	mediaId,
 } );

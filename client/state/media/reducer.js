@@ -25,11 +25,13 @@ import {
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
-import MediaQueryManager from 'lib/query-manager/media';
-import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
-import { transformSite as transformSiteTransientItems } from 'state/media/utils/transientItems';
+	ADD_GUTENFRAME_MEDIA_ACTION,
+	REMOVE_GUTENFRAME_MEDIA_ACTION,
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import MediaQueryManager from 'calypso/lib/query-manager/media';
+import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
+import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
 
 const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );
@@ -440,6 +442,46 @@ export const transientItems = withoutPersistence(
 );
 
 /**
+ * Stores media actions meant to be passed on to Gutenframe
+ *
+ * Note: we used to receive plain action objects for deleted and updated
+ * media items from the Flux store. However, after the migration to Redux
+ * this isn't the case anymore. This is why we created this "channel"
+ * to hold media actions objects including the media item itself and the
+ * corresponding action ('deleted' or 'updated'). It's the responsibility
+ * of the CalypsoifyIFrame component to consume those and remove them after
+ * it passed them to the IFrame. Make sure the editor iframe is loaded before
+ * you add action items here.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export const _gutenframeMediaActions = withoutPersistence( ( state = {}, action ) => {
+	switch ( action.type ) {
+		case ADD_GUTENFRAME_MEDIA_ACTION: {
+			const { siteId, mediaItem, mediaAction } = action;
+			const item = { data: mediaItem, mediaAction };
+
+			return {
+				...state,
+				[ siteId ]: state[ siteId ] ? [ ...state[ siteId ], item ] : [ item ],
+			};
+		}
+		case REMOVE_GUTENFRAME_MEDIA_ACTION: {
+			const { siteId, mediaId } = action;
+
+			return {
+				...state,
+				[ siteId ]: state[ siteId ]?.filter( ( item ) => item.ID === mediaId ),
+			};
+		}
+	}
+
+	return state;
+} );
+
+/**
  * Returns the updated site post requests state after an action has been
  * dispatched. The state reflects a mapping of site ID, media ID pairing to a
  * boolean reflecting whether a request for the media item is in progress.
@@ -534,4 +576,5 @@ export default combineReducers( {
 	selectedItems,
 	transientItems,
 	fetching,
+	_gutenframeMediaActions,
 } );

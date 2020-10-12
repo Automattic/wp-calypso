@@ -8,15 +8,15 @@ import { toPairs, isEqual, omit } from 'lodash';
  */
 
 import debug from 'debug';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	MEDIA_REQUEST,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_UPDATE,
 	MEDIA_ITEM_EDIT,
 	MEDIA_ITEM_DELETE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	deleteMedia,
 	failMediaItemRequest,
@@ -25,8 +25,9 @@ import {
 	setNextPageHandle,
 	successMediaItemRequest,
 	successMediaRequest,
-} from 'state/media/actions';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
+	addGutenframeMediaAction,
+} from 'calypso/state/media/actions';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 import {
 	dispatchFluxUpdateMediaItemSuccess,
 	dispatchFluxUpdateMediaItemError,
@@ -35,10 +36,11 @@ import {
 	dispatchFluxRequestMediaItemSuccess,
 	dispatchFluxRequestMediaItemError,
 	dispatchFluxRequestMediaItemsSuccess,
-} from 'state/media/utils/flux-adapter';
+} from 'calypso/state/media/utils/flux-adapter';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import getNextPageQuery from 'state/selectors/get-next-page-query';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
+import { isEditorIframeLoaded } from 'calypso/state/editor/selectors';
 
 /**
  * Module variables
@@ -61,8 +63,13 @@ export function updateMedia( action ) {
 	];
 }
 
-export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
+export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch, getState ) => {
 	dispatch( receiveMedia( siteId, mediaItem ) );
+
+	if ( isEditorIframeLoaded( getState() ) ) {
+		dispatch( addGutenframeMediaAction( siteId, mediaItem, 'updated' ) );
+	}
+
 	dispatchFluxUpdateMediaItemSuccess( siteId, mediaItem );
 };
 
@@ -173,8 +180,13 @@ export const requestDeleteMedia = ( action ) => {
 	];
 };
 
-export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
+export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch, getState ) => {
 	dispatch( deleteMedia( siteId, mediaItem.ID ) );
+
+	if ( isEditorIframeLoaded( getState() ) ) {
+		dispatch( addGutenframeMediaAction( siteId, mediaItem, 'deleted' ) );
+	}
+
 	dispatch( requestMediaStorage( siteId ) );
 
 	dispatchFluxRemoveMediaItemSuccess( siteId, mediaItem );
