@@ -8,16 +8,16 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormToggle from 'components/forms/form-toggle/compact';
-import Notice from 'components/notice';
-import PostShare from 'blocks/post-share';
-import QueryPosts from 'components/data/query-posts';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySites from 'components/data/query-sites';
+import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import Notice from 'calypso/components/notice';
+import PostShare from 'calypso/blocks/post-share';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySites from 'calypso/components/data/query-sites';
 import { Card } from '@automattic/components';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSite, getSitePlanSlug } from 'state/sites/selectors';
-import { getSitePosts } from 'state/posts/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSitePosts } from 'calypso/state/posts/selectors';
 
 class PostShareExample extends Component {
 	state = {
