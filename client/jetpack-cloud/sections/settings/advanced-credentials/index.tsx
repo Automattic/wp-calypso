@@ -217,6 +217,11 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				borderless
 				disabled={ disableForm }
 				href={ settingsPath( siteSlug ?? undefined ) }
+				onClick={ () => {
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )
+					);
+				} }
 			>
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{ translate( 'Change host' ) }
