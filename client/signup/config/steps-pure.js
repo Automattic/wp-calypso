@@ -7,8 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
-import config from 'config';
+import config from 'calypso/config';
 import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,

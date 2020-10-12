@@ -8,8 +8,8 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSecureYourBrand } from 'state/secure-your-brand/selectors';
-import { getSecureYourBrand } from 'state/secure-your-brand/actions';
+import { isRequestingSecureYourBrand } from 'calypso/state/secure-your-brand/selectors';
+import { getSecureYourBrand } from 'calypso/state/secure-your-brand/actions';
 
 const request = ( domain ) => ( dispatch, getState ) => {
 	if ( ! isRequestingSecureYourBrand( getState() ) ) {

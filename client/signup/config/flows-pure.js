@@ -7,8 +7,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { addQueryArgs } from 'lib/route';
+import { isEnabled } from 'calypso/config';
+import { addQueryArgs } from 'calypso/lib/route';
 
 export function generateFlows( {
 	getSiteDestination = noop,
