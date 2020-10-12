@@ -7,8 +7,6 @@
 
 namespace A8C\FSE\Coming_soon;
 
-require_once __DIR__ . '/coming-soon-page-template.php';
-
 /**
  * Determines whether the coming soon page should be shown.
  *
@@ -76,38 +74,6 @@ function add_public_coming_soon_to_settings_endpoint_post( $input, $unfiltered_i
 	return $input;
 }
 add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_post', 10, 2 );
-
-/**
- * This filter adds the coming soon page to the list of page templates using the `vertical_templates` hook
- *
- * @param array $templates The array of all available page templates.
- *
- * @return array The updated $templates array
- */
-function add_public_coming_soon_page_template( $templates ) : array {
-	$templates[] = (object) COMING_SOON_PAGE_TEMPLATE;
-	return $templates;
-}
-add_filter( 'vertical_templates', __NAMESPACE__ . '\add_public_coming_soon_page_template' );
-
-/**
- * Adds an editable coming soon page to a site
- */
-function add_coming_soon_page_to_new_site() {
-	$coming_soon_template = COMING_SOON_PAGE_TEMPLATE;
-	$new_page_id          = wp_insert_post(
-		array(
-			'post_title'     => $coming_soon_template['post_title'],
-			'post_content'   => $coming_soon_template['post_content'],
-			'post_status'    => 'publish',
-			'post_type'      => 'page',
-			'comment_status' => 'closed',
-			'ping_status'    => 'closed',
-		)
-	);
-	add_option( 'wpcom_public_coming_soon_page_id', $new_page_id );
-}
-add_action( 'signup_finished', __NAMESPACE__ . '\add_coming_soon_page_to_new_site', 10, 1 );
 
 /**
  * Launch the site when the privacy mode changes from public-not-indexed
