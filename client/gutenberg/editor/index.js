@@ -84,4 +84,15 @@ export default function () {
 		}
 		page.redirect( `/page/${ site }/` );
 	} );
+
+	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
+		page( '/block-editor/edit/:customPostType/:site/:post?', ( { params = {} } ) => {
+			const { customPostType, site, page: postId } = params;
+			if ( postId ) {
+				return page.redirect( `/edit/${ customPostType }/${ site }/${ postId }` );
+			}
+
+			page.redirect( `/edit/${ customPostType }/${ site }` );
+		} );
+	}
 }
