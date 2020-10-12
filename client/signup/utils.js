@@ -7,10 +7,10 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import steps from 'signup/config/steps-pure';
-import flows from 'signup/config/flows';
-import user from 'lib/user';
-import { abtest } from 'lib/abtest';
+import steps from 'calypso/signup/config/steps-pure';
+import flows from 'calypso/signup/config/flows';
+import user from 'calypso/lib/user';
+import { abtest } from 'calypso/lib/abtest';
 
 const { defaultFlowName } = flows;
 

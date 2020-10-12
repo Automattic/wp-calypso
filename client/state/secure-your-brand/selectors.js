@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/secure-your-brand/init';
+import 'calypso/state/secure-your-brand/init';
 
 /**
  * Return WordPress secureYourBrand items getting from state object

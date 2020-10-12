@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
@@ -18,7 +18,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 export function generateSteps( {
 	addItemsToCart = noop,

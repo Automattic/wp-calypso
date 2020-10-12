@@ -10,18 +10,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSiteBySlug } from 'state/sites/selectors';
-import StepWrapper from 'signup/step-wrapper';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSecureYourBrand } from 'state/secure-your-brand/selectors';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSecureYourBrand } from 'calypso/state/secure-your-brand/selectors';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { Button, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
-import { domainRegistration } from 'lib/cart-values/cart-items';
-import Gridicon from 'components/gridicon';
-import CardHeading from 'components/card-heading';
+import QuerySecureYourBrand from 'calypso/components/data/query-secure-your-brand';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import Gridicon from 'calypso/components/gridicon';
+import CardHeading from 'calypso/components/card-heading';
 
 /**
  * Style dependencies
