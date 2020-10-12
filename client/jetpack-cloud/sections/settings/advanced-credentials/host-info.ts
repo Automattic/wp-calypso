@@ -324,20 +324,34 @@ export const topHosts: Host[] = [
 	{
 		id: 'godaddy',
 		name: 'GoDaddy',
+		supportLink: 'https://www.godaddy.com/help',
+		credentialLinks: {
+			sftp: 'https://www.godaddy.com/help/enable-ssh-4942',
+		},
 	},
 	{
 		id: 'hostgator',
 		name: 'HostGator',
+		supportLink: 'https://www.hostgator.com/help',
+		credentialLinks: {
+			ftp: 'https://www.hostgator.com/help/article/ftp-getting-started',
+			sftp: 'https://www.hostgator.com/help/article/how-do-i-start-using-ssl-with-ftp',
+		},
 	},
 	{
 		id: 'siteground',
 		name: 'Siteground',
+		supportLink: 'https://www.siteground.com/kb/category/website/',
+		credentialLinks: {
+			ftp: 'https://www.siteground.com/kb/establish-ftp-connection-hosting-account/',
+		},
 	},
 ];
 
 export const genericInfo: Host = {
 	id: 'generic',
 	name: 'Other',
+	supportLink: 'https://jetpack.com/support/activating-jetpack-backups/',
 };
 
 export const otherHosts: Host[] = [

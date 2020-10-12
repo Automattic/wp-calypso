@@ -205,31 +205,54 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				},
 			} );
 		} else if ( hostInfo !== null && hostInfo.supportLink !== undefined ) {
-			return translate(
-				'Read through the {{a}}%(hostName)s support site{{/a}} to learn how to obtain your credentials.',
-				{
-					args: {
-						hostName: hostInfo.name,
-					},
-					components: {
-						a: (
-							<a
-								target="_blank"
-								rel="noopener noreferrer"
-								href={ hostInfo.supportLink }
-								onClick={ () =>
-									dispatch(
-										recordTracksEvent(
-											'calypso_jetpack_advanced_credentials_flow_support_link_click',
-											{ host }
-										)
-									)
-								}
-							/>
-						),
-					},
-				}
-			);
+			return 'generic' === host
+				? translate(
+						'Read through {{a}}our support site{{/a}} to learn how to obtain your credentials.',
+						{
+							components: {
+								a: (
+									<a
+										target="_blank"
+										rel="noopener noreferrer"
+										href={ hostInfo.supportLink }
+										onClick={ () =>
+											dispatch(
+												recordTracksEvent(
+													'calypso_jetpack_advanced_credentials_flow_support_link_click',
+													{ host }
+												)
+											)
+										}
+									/>
+								),
+							},
+						}
+				  )
+				: translate(
+						'Read through the {{a}}%(hostName)s support site{{/a}} to learn how to obtain your credentials.',
+						{
+							args: {
+								hostName: hostInfo.name,
+							},
+							components: {
+								a: (
+									<a
+										target="_blank"
+										rel="noopener noreferrer"
+										href={ hostInfo.supportLink }
+										onClick={ () =>
+											dispatch(
+												recordTracksEvent(
+													'calypso_jetpack_advanced_credentials_flow_support_link_click',
+													{ host }
+												)
+											)
+										}
+									/>
+								),
+							},
+						}
+				  );
 		}
 		return translate( 'Your hosting provider will be able to supply this information to you.' );
 	};
