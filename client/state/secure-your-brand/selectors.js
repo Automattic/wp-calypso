@@ -7,7 +7,7 @@ import 'state/secure-your-brand/init';
  * Return WordPress secureYourBrand items getting from state object
  *
  * @param {object} state - current state object
- * @returns {Array} WordPress activePromotions
+ * @returns {Array} secureYourBrand data
  */
 export function getSecureYourBrand( state ) {
 	return state.secureYourBrand.secureYourBrand;
