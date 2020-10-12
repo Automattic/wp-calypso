@@ -72,9 +72,9 @@ const HostSelection: FunctionComponent = () => {
 		return topHosts;
 	}, [ guess ] );
 
-	const recordHostSelectionEvent = ( host ) => {
+	const recordHostSelectionEvent = ( host: string ) => {
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_host_selection', {
+			recordTracksEvent( 'jetpack_advanced_credentials_flow_host_select', {
 				host,
 			} )
 		);
