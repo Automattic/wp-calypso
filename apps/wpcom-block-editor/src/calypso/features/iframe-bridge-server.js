@@ -924,6 +924,7 @@ function handleCheckoutModal( calypsoPort ) {
 	port1.onmessage = ( message ) => {
 		const { isCheckoutOverlayEnabled } = message.data;
 
+		// Conditionally add the hook if the feature flag is enabled.
 		if ( isCheckoutOverlayEnabled ) {
 			addAction(
 				'a8c.wpcom-block-editor.openCheckoutModal',
