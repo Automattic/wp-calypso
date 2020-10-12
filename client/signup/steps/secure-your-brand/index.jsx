@@ -38,10 +38,10 @@ export class SecureYourBrandStep extends Component {
 	}
 
 	handleUpgradeButtonClick() {
-		const { additionalStepData, stepSectionName, stepName, domains } = this.props;
+		const { additionalStepData, stepSectionName, stepName, secureYourBrand } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_secure_your_brand_add' );
-		const cartItems = domains?.map( ( domain ) =>
+		const cartItems = secureYourBrand?.product_data?.map( ( domain ) =>
 			domainRegistration( { productSlug: domain.product_slug, domain: domain.domain } )
 		);
 		const step = {
