@@ -18,7 +18,15 @@
 
 .jetpack-free-card-alt__main {
 	position: relative;
+
 	display: flex;
+	flex-direction: column;
+	text-align: center;
+
+	@include break-small {
+		flex-direction: row;
+	}
+
 	margin-bottom: 40px;
 
 	header {
