@@ -79,7 +79,11 @@ $jetpack-product-card-alt-icon-size: 55px;
 }
 
 .jetpack-product-card-alt__summary {
-	min-height: 420px;
+	min-height: unset;
+
+	@media ( min-width: 600px ) {
+		min-height: 435px;
+	}
 }
 
 .jetpack-product-card-alt__header {
