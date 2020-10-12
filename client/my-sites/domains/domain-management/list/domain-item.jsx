@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import page from 'page';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -13,23 +13,23 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormRadio from 'components/forms/form-radio';
-import DomainNotice from 'my-sites/domains/domain-management/components/domain-notice';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
-import { withoutHttp } from 'lib/url';
-import { type as domainTypes } from 'lib/domains/constants';
-import { handleRenewNowClick } from 'lib/purchases';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormRadio from 'calypso/components/forms/form-radio';
+import DomainNotice from 'calypso/my-sites/domains/domain-management/components/domain-notice';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import { withoutHttp } from 'calypso/lib/url';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { handleRenewNowClick } from 'calypso/lib/purchases';
 import {
 	resolveDomainStatus,
 	isDomainInGracePeriod,
 	isDomainUpdateable,
 	getDomainTypeText,
-} from 'lib/domains';
-import InfoPopover from 'components/info-popover';
-import { emailManagement } from 'my-sites/email/paths';
+} from 'calypso/lib/domains';
+import InfoPopover from 'calypso/components/info-popover';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import {
 	domainManagementChangeSiteAddress,
 	domainManagementContactsPrivacy,
@@ -37,10 +37,11 @@ import {
 	domainManagementTransfer,
 	domainManagementDns,
 	domainManagementSecurity,
-} from 'my-sites/domains/paths';
-import Spinner from 'components/spinner';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/my-sites/domains/paths';
+import Spinner from 'calypso/components/spinner';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 class DomainItem extends PureComponent {
 	static propTypes = {
@@ -297,6 +298,10 @@ class DomainItem extends PureComponent {
 				},
 				comment: 'The number of GSuite mailboxes active for the current domain',
 			} );
+		}
+
+		if ( hasTitanMailWithUs( domainDetails ) ) {
+			return translate( 'Titan Mail' );
 		}
 
 		if ( domainDetails?.emailForwardsCount > 0 ) {
