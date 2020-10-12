@@ -9,8 +9,6 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { slugToSelectorProduct } from '../utils';
-import InfoPopover from 'calypso/components/info-popover';
-import { preventWidows } from 'calypso/lib/formatting';
 import { getJetpackProducts } from 'calypso/lib/products-values/translations';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsBySiteId } from 'calypso/state/sites/products/selectors';
@@ -65,22 +63,8 @@ const RecordsDetailsAlt: FunctionComponent< Props > = ( { productSlug } ) => {
 						comment: '%(recordCount)s is the number of search records of the site',
 					}
 				) }
-				<InfoPopover>
-					{ preventWidows(
-						translate(
-							'Records are all posts, pages, custom post types and other types of content indexed by Jetpack Search. {{link}}Learn more.{{/link}}',
-							{
-								components: {
-									link: <a href="https://jetpack.com/upgrade/search/"></a>,
-								},
-							}
-						)
-					) }
-				</InfoPopover>
 			</div>
-			<div className="records-details-alt__details">
-				<p className="records-details-alt__tier">{ tier }</p>
-			</div>
+			<p className="records-details-alt__tier">{ tier }</p>
 		</div>
 	);
 };

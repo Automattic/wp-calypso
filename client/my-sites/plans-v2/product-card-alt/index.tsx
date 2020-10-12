@@ -103,7 +103,7 @@ const ProductCardAltWrapper = ( {
 			iconSlug={ item.iconSlug }
 			productName={ item.displayName }
 			subheadline={ item.tagline }
-			description={ ! showRecordsDetails ? description : null }
+			description={ description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
@@ -111,7 +111,9 @@ const ProductCardAltWrapper = ( {
 			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
-			children={ item.children }
+			searchRecordsDetails={
+				showRecordsDetails && <RecordsDetailsAlt productSlug={ item.productSlug } />
+			}
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			withStartingPrice={
@@ -126,9 +128,7 @@ const ProductCardAltWrapper = ( {
 			isExpanded={ isHighlighted && ! isMobile }
 			hidePrice={ false }
 			productSlug={ item.productSlug }
-		>
-			{ showRecordsDetails && <RecordsDetailsAlt productSlug={ item.productSlug } /> }
-		</JetpackProductCardAlt>
+		/>
 	);
 };
 

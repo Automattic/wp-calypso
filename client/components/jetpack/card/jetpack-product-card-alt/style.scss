@@ -237,8 +237,13 @@ $jetpack-product-card-alt-icon-size: 55px;
 	padding: 0 4px;
 }
 
-.jetpack-product-card-alt__children {
-	margin: 0;
+.jetpack-product-card-alt__search-price-popover {
+	margin-bottom: 40px;
+	margin-left: 24px;
+
+	.gridicon {
+		color: var( --studio-gray-20 );
+	}
 }
 
 .jetpack-product-card-alt .foldable-card.is-expanded {
