@@ -12,7 +12,6 @@ import { localize, LocalizeProps } from 'i18n-calypso';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import MediaStore from 'calypso/lib/media/store';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getCustomizerUrl,
@@ -32,6 +31,7 @@ import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url
 import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
+import getGutenframeMediaActions from 'calypso/state/selectors/get-gutenframe-media-actions';
 import wpcom from 'calypso/lib/wp';
 import EditorRevisionsDialog from 'calypso/post-editor/editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
@@ -54,7 +54,10 @@ import {
 	PerformanceTrackProps,
 } from 'calypso/lib/performance-tracking';
 import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/desktop/window-events';
-import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import {
+	setMediaLibrarySelectedItems,
+	removeGutenframeMediaAction,
+} from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
 /**
@@ -150,7 +153,6 @@ class CalypsoifyIframe extends Component<
 	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
-		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
 		const isDesktop = config.isEnabled( 'desktop' );
@@ -181,8 +183,17 @@ class CalypsoifyIframe extends Component<
 		}
 	}
 
+	componentDidUpdate( prevProps: ConnectedProps ) {
+		const mediaGutenframeActions = this.props.mediaGutenframeActions;
+		if (
+			mediaGutenframeActions !== prevProps.mediaGutenframeActions &&
+			mediaGutenframeActions.length
+		) {
+			mediaGutenframeActions.forEach( this.updateImageBlocks );
+		}
+	}
+
 	componentWillUnmount() {
-		MediaStore.off( 'change', this.updateImageBlocks );
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
@@ -543,7 +554,10 @@ class CalypsoifyIframe extends Component<
 		} );
 	};
 
-	updateImageBlocks = ( action: { data: { mime_type: string; URL: string }; type: string } ) => {
+	updateImageBlocks = ( action: {
+		data: { mime_type: string; URL: string };
+		mediaAction: string;
+	} ) => {
 		if (
 			! this.iframePort ||
 			! action ||
@@ -555,12 +569,12 @@ class CalypsoifyIframe extends Component<
 		const payload = {
 			id: get( action, 'data.ID' ),
 			height: get( action, 'data.height' ),
-			status: 'REMOVE_MEDIA_ITEM' === action.type ? 'deleted' : 'updated',
-			transientId: get( action, 'id' ),
+			status: action.mediaAction,
 			url: get( action, 'data.URL' ),
 			width: get( action, 'data.width' ),
 		};
 		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
+		this.props.removeGutenframeMediaAction( this.props.siteId, payload.id );
 	};
 
 	openPreviewModal = ( postUrl: string, previewPort: MessagePort ) => {
@@ -599,7 +613,7 @@ class CalypsoifyIframe extends Component<
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
-	/* eslint-disable @typescript-eslint/ban-types */
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
 		if ( autofocus ) {
@@ -859,6 +873,7 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
+		mediaGutenframeActions: getGutenframeMediaActions( state, siteId ),
 	};
 };
 
@@ -878,6 +893,7 @@ const mapDispatchToProps = {
 	fetchMediaItem,
 	getMediaItem,
 	clearLastNonEditorRoute,
+	removeGutenframeMediaAction,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
