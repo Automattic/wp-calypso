@@ -109,42 +109,32 @@ const PlanFeaturesActionsButton = ( {
 		);
 	}
 
-	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage ) {
-		if ( ! freePlan ) {
-			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
-					{ props.buttonText ||
-						translate( 'Select %(plan)s', {
-							args: {
-								plan: planName,
-							},
-							context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
-							comment:
-								'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-						} ) }
-				</Button>
-			);
-		}
+	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage && ! freePlan ) {
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ props.buttonText ||
+					translate( 'Select %(plan)s', {
+						args: {
+							plan: planName,
+						},
+						context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
+						comment:
+							'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+					} ) }
+			</Button>
+		);
+	}
 
-		if ( freePlan ) {
-			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
-					{ props.buttonText ||
-						translate( 'Keep this plan', {
-							comment:
-								'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-						} ) }
-				</Button>
-			);
-		}
+	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage && freePlan ) {
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ props.buttonText ||
+					translate( 'Keep this plan', {
+						comment:
+							'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+					} ) }
+			</Button>
+		);
 	}
 
 	if ( ( availableForPurchase || isPlaceholder ) && isLandingPage ) {
