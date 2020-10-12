@@ -67,6 +67,7 @@ export default function () {
 	/*
 	 * Redirecto the old `/block-editor` routes to the default routes.
 	 */
+	page( '/block-editor/', '/post' );
 	page( '/block-editor/post/', '/post' );
 	page( '/block-editor/post/:site/:post?', ( { params = {} } ) => {
 		const { site, post: postId } = params;
