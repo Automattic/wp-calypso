@@ -10,8 +10,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -20,13 +20,13 @@ import {
 	isThemeActive,
 	shouldShowHomepageWarning,
 	getPreActivateThemeId,
-} from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,
 	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
-} from 'state/themes/actions';
+} from 'calypso/state/themes/actions';
 
 /**
  * Style dependencies

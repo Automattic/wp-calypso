@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { activateTheme } from 'state/themes/actions/activate-theme';
-import { installTheme } from 'state/themes/actions/install-theme';
+import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
+import { installTheme } from 'calypso/state/themes/actions/install-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to install and activate a specific theme on a given
