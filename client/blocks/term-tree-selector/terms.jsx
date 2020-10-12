@@ -22,23 +22,23 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import {
 	getTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	isRequestingTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
+} from 'calypso/state/terms/selectors';
 import NoResults from './no-results';
-import PodcastIndicator from 'components/podcast-indicator';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QueryTerms from 'components/data/query-terms';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
 import Search from './search';
-import { decodeEntities } from 'lib/formatting';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
