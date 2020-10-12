@@ -199,6 +199,7 @@ export interface TempResponseCartProduct {
 	included_domain_purchase_amount: null;
 	is_renewal: undefined;
 	subscription_id: undefined;
+	after_purchase_url: undefined;
 }
 
 export interface CartLocation {
