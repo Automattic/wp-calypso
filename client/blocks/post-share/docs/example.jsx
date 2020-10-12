@@ -45,11 +45,9 @@ class PostShareExample extends Component {
 					</p>
 				) }
 
-				<p onClick={ this.toggleEnable }>
-					<label>
-						Enabled: <FormToggle checked={ this.state.isEnabled } />
-					</label>
-				</p>
+				<FormToggle onChange={ this.toggleEnable } checked={ this.state.isEnabled }>
+					Live Sharing Enabled
+				</FormToggle>
 
 				{ this.state.isEnabled && (
 					<Notice
