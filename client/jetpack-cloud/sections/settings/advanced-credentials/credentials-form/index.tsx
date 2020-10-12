@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useState, FormEventHandler } from 'react';
 
@@ -10,6 +11,7 @@ import React, { FunctionComponent, useState, FormEventHandler } from 'react';
 import { Button } from '@automattic/components';
 import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
 import { getHostInfoFromId } from '../host-info';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -49,6 +51,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	host,
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ interactions, setFormInteractions ] = useState( INITIAL_FORM_INTERACTION );
 	const hostInfo = getHostInfoFromId( host );
 
@@ -209,7 +212,21 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						hostName: hostInfo.name,
 					},
 					components: {
-						a: <a target="_blank" rel="noopener noreferrer" href={ hostInfo.supportLink } />,
+						a: (
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={ hostInfo.supportLink }
+								onClick={ () =>
+									dispatch(
+										recordTracksEvent(
+											'calypso_jetpack_advanced_credentials_flow_support_link_click',
+											{ host }
+										)
+									)
+								}
+							/>
+						),
 					},
 				}
 			);
@@ -225,6 +242,16 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						className="credentials-form__credentials-guide-link"
 						href={ hostInfo.credentialLinks.ftp }
 						target="_blank"
+						onClick={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_advanced_credentials_flow_credentials_guide_click',
+									{
+										host,
+									}
+								)
+							)
+						}
 					>
 						{ translate( 'Read the %(hostName)s credentials guide', {
 							args: {
@@ -241,6 +268,16 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						className="credentials-form__credentials-guide-link"
 						href={ hostInfo.credentialLinks.sftp }
 						target="_blank"
+						onClick={ () =>
+							dispatch(
+								recordTracksEvent(
+									'calypso_jetpack_advanced_credentials_flow_credentials_guide_click',
+									{
+										host,
+									}
+								)
+							)
+						}
 					>
 						{ translate( 'Read the %(hostName)s credentials guide', {
 							args: {
