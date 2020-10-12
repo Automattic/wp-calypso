@@ -58,6 +58,9 @@ $jetpack-product-card-alt-icon-size: 55px;
 		background: var( --color-gray-0 );
 
 		box-shadow: none;
+		&.card.is-expanded {
+			margin-top: 0;
+		}
 	}
 
 	@media ( min-width: 660px ) {
@@ -73,6 +76,10 @@ $jetpack-product-card-alt-icon-size: 55px;
 			border-radius: 0;
 		}
 	}
+}
+
+.jetpack-product-card-alt__summary {
+	min-height: 420px;
 }
 
 .jetpack-product-card-alt__header {
