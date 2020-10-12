@@ -124,12 +124,14 @@ const PlanFeaturesActionsButton = ( {
 			buttonText = translate( 'Upgrade to Yearly' );
 		}
 
-		upgradeButton = (
+		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
 				{ props.buttonText || buttonText }
 			</Button>
 		);
-	} else if ( ! availableForPurchase && forceDisplayButton ) {
+	}
+
+	if ( ! availableForPurchase && forceDisplayButton ) {
 		upgradeButton = (
 			<Button className={ classes } disabled={ true }>
 				{ props.buttonText }
