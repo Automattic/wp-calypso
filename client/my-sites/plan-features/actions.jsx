@@ -13,13 +13,23 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isMonthly } from 'lib/plans/constants';
-import { getPlanClass, planLevelsMatch } from 'lib/plans';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isMonthly } from 'calypso/lib/plans/constants';
+import { getPlanClass, planLevelsMatch } from 'calypso/lib/plans';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-const PlanFeaturesActions = ( {
+const PlanFeaturesActions = ( props ) => {
+	return (
+		<div className="plan-features__actions">
+			<div className="plan-features__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
+};
+
+const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
 	canPurchase,
 	className,
@@ -125,11 +135,7 @@ const PlanFeaturesActions = ( {
 		);
 	}
 
-	return (
-		<div className="plan-features__actions">
-			<div className="plan-features__actions-buttons">{ upgradeButton }</div>
-		</div>
-	);
+	return upgradeButton;
 };
 
 PlanFeaturesActions.propTypes = {
