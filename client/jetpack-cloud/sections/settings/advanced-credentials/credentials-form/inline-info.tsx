@@ -27,7 +27,11 @@ const InlineInfo: FunctionComponent< Props > = ( { field, host, info, protocol }
 
 	useEffect( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_viewed_inline_info', { field, host, protocol } )
+			recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_inline_info_view', {
+				field,
+				host,
+				protocol,
+			} )
 		);
 	}, [ dispatch, field, host, protocol ] );
 
