@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import type { AnyAction } from 'redux';
@@ -13,11 +13,13 @@ import { getHttpData, requestHttpData, DataState } from 'calypso/state/data-laye
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import Badge from 'calypso/components/badge';
 import Gridicon from 'calypso/components/gridicon';
 import type { SiteId } from 'calypso/types';
+
 /**
  * Style dependencies
  */
@@ -47,6 +49,7 @@ const HostSelection: FunctionComponent = () => {
 	const siteId = useSelector( getSelectedSiteId ) as SiteId;
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const {
 		state: providerGuessState,
@@ -68,6 +71,14 @@ const HostSelection: FunctionComponent = () => {
 		}
 		return topHosts;
 	}, [ guess ] );
+
+	const recordHostSelectionEvent = ( host: string ) => {
+		dispatch(
+			recordTracksEvent( 'jetpack_advanced_credentials_flow_host_select', {
+				host,
+			} )
+		);
+	};
 
 	useEffect( () => {
 		requestHostingProviderGuess( siteId as SiteId );
@@ -109,6 +120,7 @@ const HostSelection: FunctionComponent = () => {
 						}
 						key={ id }
 						href={ `${ settingsPath( siteSlug ) }?host=${ id }` }
+						onClick={ () => recordHostSelectionEvent( id ) }
 					>
 						<span>{ name }</span>
 						<div className="host-selection__list-item-badge-and-icon">
@@ -131,6 +143,7 @@ const HostSelection: FunctionComponent = () => {
 					}
 					key={ 'generic' }
 					href={ `${ settingsPath( siteSlug ) }?host=generic` }
+					onClick={ () => recordHostSelectionEvent( 'generic' ) }
 				>
 					{ isMobile
 						? translate( 'My host is not listed here' )
