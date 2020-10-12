@@ -162,6 +162,8 @@ const PlanFeaturesActionsButton = ( {
 			</Button>
 		);
 	}
+
+	return null;
 };
 
 PlanFeaturesActions.propTypes = {
