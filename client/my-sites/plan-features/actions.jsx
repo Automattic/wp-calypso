@@ -84,81 +84,64 @@ const PlanFeaturesActionsButton = ( {
 		);
 	}
 
-	let upgradeButton;
+	if (
+		( availableForPurchase || isPlaceholder ) &&
+		isMonthly( currentSitePlanSlug ) &&
+		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
+	) {
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ props.buttonText || translate( 'Upgrade to Yearly' ) }
+			</Button>
+		);
+	}
+
+	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ props.buttonText ||
+					translate( 'Start with %(plan)s', {
+						args: {
+							plan: planName,
+						},
+					} ) }
+			</Button>
+		);
+	}
+
+	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage ) {
+		let buttonText = '';
+		if ( freePlan ) {
+			buttonText = translate( 'Keep this plan', {
+				comment:
+					'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+			} );
+		} else {
+			buttonText = translate( 'Select %(plan)s', {
+				args: {
+					plan: planName,
+				},
+				context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
+				comment:
+					'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+			} );
+		}
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ props.buttonText || buttonText }
+			</Button>
+		);
+	}
+
+	if ( ( availableForPurchase || isPlaceholder ) && isLandingPage ) {
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ props.buttonText || translate( 'Select', { context: 'button' } ) }
+			</Button>
+		);
+	}
 
 	if ( availableForPurchase || isPlaceholder ) {
-		if (
-			isMonthly( currentSitePlanSlug ) &&
-			getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
-		) {
-			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
-					{ props.buttonText || translate( 'Upgrade to Yearly' ) }
-				</Button>
-			);
-		}
-
-		if ( ! isLaunchPage && isInSignup ) {
-			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
-					{ props.buttonText ||
-						translate( 'Start with %(plan)s', {
-							args: {
-								plan: planName,
-							},
-						} ) }
-				</Button>
-			);
-		}
-
-		if ( isLaunchPage ) {
-			let buttonText = '';
-			if ( freePlan ) {
-				buttonText = translate( 'Keep this plan', {
-					comment:
-						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-				} );
-			} else {
-				buttonText = translate( 'Select %(plan)s', {
-					args: {
-						plan: planName,
-					},
-					context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
-					comment:
-						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-				} );
-			}
-			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
-					{ props.buttonText || buttonText }
-				</Button>
-			);
-		}
-
-		if ( isLandingPage ) {
-			return (
-				<Button
-					className={ classes }
-					onClick={ handleUpgradeButtonClick }
-					disabled={ isPlaceholder }
-				>
-					{ props.buttonText || translate( 'Select', { context: 'button' } ) }
-				</Button>
-			);
-		}
-
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
 				{ props.buttonText || freePlan
@@ -167,6 +150,8 @@ const PlanFeaturesActionsButton = ( {
 			</Button>
 		);
 	}
+
+	let upgradeButton;
 
 	if ( ! availableForPurchase && forceDisplayButton ) {
 		upgradeButton = (
