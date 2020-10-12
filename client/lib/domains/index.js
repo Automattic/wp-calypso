@@ -29,6 +29,5 @@ export {
 export { getRegisteredDomains, isRegisteredDomain } from './registered-domains';
 export { requestGdprConsentManagementLink } from './request-gdpr-consent-management-link';
 export { resendIcannVerification } from './resend-icann-verification';
-export { resendInboundTransferEmail } from './resend-inbound-transfer-email';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';

@@ -23,6 +23,7 @@ import {
 	useFormStatus,
 } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
+import { FormStatus } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
@@ -146,7 +147,7 @@ function PaymentMethod( {
 			value={ id }
 			id={ id }
 			checked={ checked }
-			disabled={ formStatus !== 'ready' }
+			disabled={ formStatus !== FormStatus.READY }
 			onChange={ onClick ? () => onClick( id ) : undefined }
 			ariaLabel={ ariaLabel }
 			label={ label }

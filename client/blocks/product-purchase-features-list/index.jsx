@@ -21,6 +21,9 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
 	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
+	TYPE_SECURITY_DAILY,
+	TYPE_SECURITY_REALTIME,
+	TYPE_ALL,
 } from 'lib/plans/constants';
 import { PLANS_LIST } from 'lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
@@ -299,6 +302,48 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
+	getJetpackSecurityFeatures() {
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
+		return (
+			<Fragment>
+				<SiteActivity />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<JetpackPublicize selectedSite={ selectedSite } />
+				<SellOnlinePaypal isJetpack />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_security' }
+				/>
+			</Fragment>
+		);
+	}
+
+	getJetpackCompleteFeatures() {
+		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
+		return (
+			<Fragment>
+				<SiteActivity />
+				<MonetizeSite selectedSite={ selectedSite } />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<JetpackPublicize selectedSite={ selectedSite } />
+				<SellOnlinePaypal isJetpack />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
+				<FindNewTheme selectedSite={ selectedSite } />
+				<HappinessSupportCard
+					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
+					isPlaceholder={ isPlaceholder }
+					showLiveChatButton
+					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_complete' }
+				/>
+			</Fragment>
+		);
+	}
+
 	getFeatures() {
 		const { plan, isPlaceholder } = this.props;
 
@@ -320,6 +365,9 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PREMIUM ]: () => this.getJetpackPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getJetpackPersonalFeatures(),
 				[ TYPE_FREE ]: () => this.getJetpackFreeFeatures(),
+				[ TYPE_SECURITY_DAILY ]: () => this.getJetpackSecurityFeatures(),
+				[ TYPE_SECURITY_REALTIME ]: () => this.getJetpackSecurityFeatures(),
+				[ TYPE_ALL ]: () => this.getJetpackCompleteFeatures(),
 			},
 		};
 

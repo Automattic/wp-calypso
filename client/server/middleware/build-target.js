@@ -21,26 +21,22 @@ function isUAInBrowserslist( userAgentString, environment = 'defaults' ) {
 }
 
 export default ( calypsoEnv ) => ( req, res, next ) => {
+	let target;
 	const isDevelopment = process.env.NODE_ENV === 'development';
 	const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
 
-	const devTarget = process.env.DEV_TARGET || 'evergreen';
-	const uaTarget = isUAInBrowserslist( req.useragent.source, 'evergreen' )
-		? 'evergreen'
-		: 'fallback';
-
-	// Did the user force fallback, via query parameter?
-	const prodTarget = req.query.forceFallback ? 'fallback' : uaTarget;
-
-	let target = isDevelopment ? devTarget : prodTarget;
-
 	if ( isDesktop ) {
+		target = 'evergreen';
+	} else if ( isDevelopment ) {
+		target = process.env.DEV_TARGET || 'evergreen';
+	} else if ( req.query.forceFallback ) {
+		// Did the user force fallback, via query parameter?
 		target = 'fallback';
+	} else {
+		target = isUAInBrowserslist( req.useragent.source, 'evergreen' ) ? 'evergreen' : 'fallback';
 	}
 
-	req.getTarget = () => {
-		return target === 'fallback' ? null : target;
-	};
+	req.getTarget = () => ( target === 'fallback' ? null : target );
 
 	next();
 };

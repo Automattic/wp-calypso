@@ -6,7 +6,7 @@ import { some, endsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'lib/url';
+import { getUrlParts } from 'calypso/lib/url';
 
 /**
  * Determines if an iframe is from a source we trust. We allow these to be the featured media and also give
@@ -48,6 +48,7 @@ export function iframeIsAllowed( iframe ) {
 		'megaphone.fm',
 		'icloud.com',
 		'read.amazon.com',
+		'loom.com',
 	];
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();

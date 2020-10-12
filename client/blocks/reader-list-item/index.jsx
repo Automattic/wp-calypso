@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 import classnames from 'classnames';
@@ -7,7 +7,7 @@ import { flowRight as compose, isEmpty, get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import ReaderAvatar from 'blocks/reader-avatar';
 import FollowButton from 'reader/follow-button';
@@ -20,25 +20,16 @@ import {
 	getFeedUrl,
 	getSiteUrl,
 } from 'reader/get-helpers';
-import { untrailingslashit } from 'lib/route';
 import ReaderListItemPlaceholder from 'blocks/reader-list-item/placeholder';
 import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
 import ExternalLink from 'components/external-link';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { formatUrlForDisplay } from 'reader/lib/feed-display-helper';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-/**
- * Takes in a string and removes the starting https, www., and removes a trailing slash
- *
- * @param {string} url - the url to format
- * @returns {string} - the formatted url.  e.g. "https://www.wordpress.com/" --> "wordpress.com"
- */
-const formatUrlForDisplay = ( url ) =>
-	untrailingslashit( url.replace( /^https?:\/\/(www\.)?/, '' ) );
 
 function ReaderListItem( {
 	moment,

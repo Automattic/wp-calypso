@@ -1,4 +1,6 @@
-# CreditCard
+# Credit card
+
+## CreditCard
 
 The `CreditCard` component serves as a container for a selectable credit card list item, and can display a stored credit card (passed as `card` prop) _or_ a placeholder such as a new card form (passed as `children`).
 
@@ -10,7 +12,7 @@ Example credit card selection list:
 import CreditCard from 'components/credit-card';
 
 export default ( { cards, selectedId, onSelectCard } ) => {
-	return cards.map( card => (
+	return cards.map( ( card ) => (
 		<CreditCard
 			key={ card.id }
 			card={ card }
@@ -53,11 +55,11 @@ export default ( cardData, onRemoveCard ) => {
 
 ### Props
 
-| Name              | Type       | Description                                                       |
-| ----------------- | ---------- | ----------------------------------------------------------------- |
-| `lastDigits?`     | `string`   | Last digits of card number.                                       |
-| `cardType?`       | `string`   | Card type (e.g. `visa`).                                          |
-| `name`            | `string`   | Name on card (e.g. `James Smith`).                                |
-| `expiry?`         | `string`   | Expiration date in ISO 8601 (YYYY-MM or YYYY-MM-DD) form.         |
-| `email?`          | `string`   | Email associatted with the payment method.                        |
-| `paymentPartner?` | `string`   | Payment partner for the method (e.g. `stripe`, `paypal_express`). |
+| Name              | Type     | Description                                                       |
+| ----------------- | -------- | ----------------------------------------------------------------- |
+| `lastDigits?`     | `string` | Last digits of card number.                                       |
+| `cardType?`       | `string` | Card type (e.g. `visa`).                                          |
+| `name`            | `string` | Name on card (e.g. `James Smith`).                                |
+| `expiry?`         | `string` | Expiration date in ISO 8601 (YYYY-MM or YYYY-MM-DD) form.         |
+| `email?`          | `string` | Email associatted with the payment method.                        |
+| `paymentPartner?` | `string` | Payment partner for the method (e.g. `stripe`, `paypal_express`). |

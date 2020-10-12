@@ -1,5 +1,4 @@
-Editor Fieldset
-===============
+# Editor Fieldset
 
 Editor Fieldset is a React component to wrap a set of related options under a single grouping with a header.
 
@@ -28,7 +27,6 @@ class MyComponent extends React.Component {
 			</EditorFieldset>
 		);
 	}
-
 }
 ```
 

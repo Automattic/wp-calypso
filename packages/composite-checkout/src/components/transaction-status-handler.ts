@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import debugFactory from 'debug';
 import { useI18n } from '@automattic/react-i18n';
 
@@ -13,6 +13,7 @@ import useMessages from './use-messages';
 import useEvents from './use-events';
 import { useFormStatus } from '../lib/form-status';
 import { useTransactionStatus } from '../lib/transaction-status';
+import { TransactionStatus } from '../types';
 
 const debug = debugFactory( 'composite-checkout:transaction-status-handler' );
 
@@ -47,11 +48,15 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 	);
 	const redirectInfoMessage = __( 'Redirecting to payment partner…' );
 	useEffect( () => {
-		if ( transactionStatus === 'pending' && previousTransactionStatus !== 'pending' ) {
+		if ( transactionStatus === previousTransactionStatus ) {
+			return;
+		}
+
+		if ( transactionStatus === TransactionStatus.PENDING ) {
 			debug( 'transaction is beginning' );
 			setFormSubmitting();
 		}
-		if ( transactionStatus === 'error' && previousTransactionStatus !== 'error' ) {
+		if ( transactionStatus === TransactionStatus.ERROR ) {
 			debug( 'showing error', transactionError );
 			showErrorMessage( transactionError || genericErrorMessage );
 			onEvent( {
@@ -60,11 +65,11 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 			} );
 			resetTransaction();
 		}
-		if ( transactionStatus === 'complete' && previousTransactionStatus !== 'complete' ) {
+		if ( transactionStatus === TransactionStatus.COMPLETE ) {
 			debug( 'marking complete' );
 			setFormComplete();
 		}
-		if ( transactionStatus === 'redirecting' && previousTransactionStatus !== 'redirecting' ) {
+		if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 			if ( ! transactionRedirectUrl ) {
 				debug( 'tried to redirect but there was no redirect url' );
 				setTransactionError( redirectErrormessage );
@@ -74,7 +79,7 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 			showInfoMessage( redirectInfoMessage );
 			redirectToUrl( transactionRedirectUrl );
 		}
-		if ( transactionStatus === 'not-started' && previousTransactionStatus !== 'not-started' ) {
+		if ( transactionStatus === TransactionStatus.NOT_STARTED ) {
 			debug( 'transaction status has been reset; enabling form' );
 			setFormReady();
 		}

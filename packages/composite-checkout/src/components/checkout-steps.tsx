@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React, {
-	useState,
+	Dispatch,
+	SetStateAction,
+	useCallback,
 	useContext,
 	useEffect,
-	useCallback,
-	SetStateAction,
-	Dispatch,
+	useState,
 } from 'react';
 import debugFactory from 'debug';
 import PropTypes from 'prop-types';
@@ -29,11 +29,12 @@ import {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	usePaymentMethod,
 	useEvents,
+	usePaymentMethod,
 } from '../public-api';
 import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
+import { FormStatus } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -100,19 +101,19 @@ export function Checkout( {
 		...( isRTL() ? [ 'rtl' ] : [] ),
 	] );
 
-	if ( formStatus === 'loading' ) {
+	if ( formStatus === FormStatus.LOADING ) {
 		return (
-			<ContainerUI className={ classNames }>
-				<MainContentUI className={ joinClasses( [ className, 'checkout__content' ] ) }>
+			<CheckoutWrapper className={ classNames }>
+				<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
 					<LoadingContent />
-				</MainContentUI>
-			</ContainerUI>
+				</MainContentWrapper>
+			</CheckoutWrapper>
 		);
 	}
 
 	return (
-		<ContainerUI className={ classNames }>
-			<MainContentUI className={ joinClasses( [ className, 'checkout__content' ] ) }>
+		<CheckoutWrapper className={ classNames }>
+			<MainContentWrapper className={ joinClasses( [ className, 'checkout__content' ] ) }>
 				<CheckoutStepDataContext.Provider
 					value={ {
 						activeStepNumber: actualActiveStepNumber,
@@ -125,8 +126,8 @@ export function Checkout( {
 				>
 					{ children || getDefaultCheckoutSteps() }
 				</CheckoutStepDataContext.Provider>
-			</MainContentUI>
-		</ContainerUI>
+			</MainContentWrapper>
+		</CheckoutWrapper>
 	);
 }
 
@@ -182,9 +183,9 @@ export const CheckoutSummaryArea = ( {
 	className?: string;
 } ) => {
 	return (
-		<CheckoutSummaryUI className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
+		<CheckoutSummary className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
 			{ children }
-		</CheckoutSummaryUI>
+		</CheckoutSummary>
 	);
 };
 
@@ -233,21 +234,23 @@ export function CheckoutStepArea( {
 	] );
 
 	return (
-		<CheckoutStepAreaUI className={ classNames }>
+		<CheckoutStepAreaWrapper className={ classNames }>
 			{ children }
 
-			<SubmitButtonWrapperUI>
+			<SubmitButtonWrapper>
 				{ submitButtonHeader ? submitButtonHeader : null }
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with the submit button.' ) }
 					onError={ onSubmitButtonLoadError }
 				>
 					<CheckoutSubmitButton
-						disabled={ isThereAnotherNumberedStep || formStatus !== 'ready' || disableSubmitButton }
+						disabled={
+							isThereAnotherNumberedStep || formStatus !== FormStatus.READY || disableSubmitButton
+						}
 					/>
 				</CheckoutErrorBoundary>
-			</SubmitButtonWrapperUI>
-		</CheckoutStepAreaUI>
+			</SubmitButtonWrapper>
+		</CheckoutStepAreaWrapper>
 	);
 }
 
@@ -440,7 +443,7 @@ export function CheckoutStepBody( {
 			errorMessage={ errorMessage || __( 'There was an error with this step.' ) }
 			onError={ onError }
 		>
-			<StepWrapperUI className={ className }>
+			<StepWrapper className={ className }>
 				<CheckoutStepHeader
 					id={ stepId }
 					stepNumber={ stepNumber }
@@ -448,43 +451,43 @@ export function CheckoutStepBody( {
 					isActive={ isStepActive }
 					isComplete={ isStepComplete }
 					onEdit={
-						formStatus === 'ready' && isStepComplete && goToThisStep && ! isStepActive
+						formStatus === FormStatus.READY && isStepComplete && goToThisStep && ! isStepActive
 							? goToThisStep
 							: undefined
 					}
 					editButtonText={ editButtonText || __( 'Edit' ) }
 					editButtonAriaLabel={ editButtonAriaLabel || __( 'Edit this step' ) }
 				/>
-				<StepContentUI isVisible={ isStepActive } className="checkout-steps__step-content">
+				<StepContentWrapper isVisible={ isStepActive } className="checkout-steps__step-content">
 					{ activeStepContent }
 					{ goToNextStep && isStepActive && (
 						<CheckoutNextStepButton
 							onClick={ goToNextStep }
 							value={
-								formStatus === 'validating'
+								formStatus === FormStatus.VALIDATING
 									? validatingButtonText || __( 'Please wait…' )
 									: nextStepButtonText || __( 'Continue' )
 							}
 							ariaLabel={
-								formStatus === 'validating'
+								formStatus === FormStatus.VALIDATING
 									? validatingButtonAriaLabel || __( 'Please wait…' )
 									: nextStepButtonAriaLabel || __( 'Continue to next step' )
 							}
 							buttonType="primary"
-							disabled={ formStatus !== 'ready' }
-							isBusy={ formStatus === 'validating' }
+							disabled={ formStatus !== FormStatus.READY }
+							isBusy={ formStatus === FormStatus.VALIDATING }
 						/>
 					) }
-				</StepContentUI>
+				</StepContentWrapper>
 				{ isStepComplete && completeStepContent ? (
-					<StepSummaryUI
+					<StepSummaryWrapper
 						isVisible={ ! isStepActive }
 						className="checkout-steps__step-complete-content"
 					>
 						{ completeStepContent }
-					</StepSummaryUI>
+					</StepSummaryWrapper>
 				) : null }
-			</StepWrapperUI>
+			</StepWrapper>
 		</CheckoutErrorBoundary>
 	);
 }
@@ -505,7 +508,7 @@ interface CheckoutStepBodyProps {
 	goToThisStep?: () => void;
 	goToNextStep?: () => void;
 	activeStepContent?: React.ReactNode;
-	formStatus?: string;
+	formStatus?: FormStatus;
 	completeStepContent?: React.ReactNode;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
@@ -533,13 +536,13 @@ CheckoutStepBody.propTypes = {
 	validatingButtonAriaLabel: PropTypes.string,
 };
 
-const ContainerUI = styled.div`
+const CheckoutWrapper = styled.div`
 	*:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
 `;
 
-export const MainContentUI = styled.div`
+export const MainContentWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
 	width: 100%;
@@ -556,7 +559,7 @@ export const MainContentUI = styled.div`
 	}
 `;
 
-const CheckoutSummaryUI = styled.div`
+const CheckoutSummary = styled.div`
 	box-sizing: border-box;
 	margin: 0 auto;
 	width: 100%;
@@ -573,12 +576,12 @@ const CheckoutSummaryUI = styled.div`
 
 		.rtl & {
 			margin-right: 24px;
-			margin-left; 0;
+			margin-left: 0;
 		}
 	}
 `;
 
-export const CheckoutStepAreaUI = styled.div`
+export const CheckoutStepAreaWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	box-sizing: border-box;
 	margin: 0 auto;
@@ -603,7 +606,7 @@ export const CheckoutStepAreaUI = styled.div`
 	}
 `;
 
-export const SubmitButtonWrapperUI = styled.div`
+export const SubmitButtonWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.background };
 	padding: 24px;
 	bottom: 0;
@@ -672,7 +675,7 @@ export function useSetStepComplete() {
 	return setTargetStepCompleteStatus;
 }
 
-const StepWrapperUI = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const StepWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	position: relative;
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	padding: 16px;
@@ -936,7 +939,9 @@ function getStepNumberForegroundColor( {
 	return theme.colors.textColor;
 }
 
-const StepContentUI = styled.div< StepContentUIProps & React.HTMLAttributes< HTMLDivElement > >`
+const StepContentWrapper = styled.div<
+	StepContentWrapperProps & React.HTMLAttributes< HTMLDivElement >
+>`
 	color: ${ ( props ) => props.theme.colors.textColor };
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };
 	padding-left: 35px;
@@ -947,11 +952,13 @@ const StepContentUI = styled.div< StepContentUIProps & React.HTMLAttributes< HTM
 	}
 `;
 
-interface StepContentUIProps {
+interface StepContentWrapperProps {
 	isVisible?: boolean;
 }
 
-const StepSummaryUI = styled.div< StepContentUIProps & React.HTMLAttributes< HTMLDivElement > >`
+const StepSummaryWrapper = styled.div<
+	StepContentWrapperProps & React.HTMLAttributes< HTMLDivElement >
+>`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
 	display: ${ ( props ) => ( props.isVisible ? 'block' : 'none' ) };

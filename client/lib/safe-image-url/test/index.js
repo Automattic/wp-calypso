@@ -56,6 +56,18 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( '//example.com/foo' ) ).toEqual( 'https://i1.wp.com/example.com/foo' );
 		} );
 
+		test( 'should make a non-wpcom http protocol url with params safe', () => {
+			expect( safeImageUrl( 'http://example.com/foo?w=100' ) ).toEqual(
+				'https://i1.wp.com/example.com/foo'
+			);
+		} );
+
+		test( 'should make a non-wpcom protocol relative url with params safe', () => {
+			expect( safeImageUrl( '//example.com/foo?w=100' ) ).toEqual(
+				'https://i1.wp.com/example.com/foo?ssl=1'
+			);
+		} );
+
 		test( 'should promote an http wpcom url to https', () => {
 			expect( safeImageUrl( 'http://files.wordpress.com/' ) ).toEqual(
 				'https://files.wordpress.com/'
@@ -94,6 +106,21 @@ describe( 'safeImageUrl()', () => {
 			expect( safeImageUrl( 'https://example.com/foo.gif?bar' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.png?bar' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.png?width=90' ) ).toBeNull();
+		} );
+
+		test( 'should remove known resize parameters from urls', () => {
+			expect( safeImageUrl( 'https://example.com/foo.jpg?w=123' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?h=123' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?resize=width' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+			expect( safeImageUrl( 'https://example.com/foo.jpg?fit=min' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
 		} );
 
 		test( 'should return null for SVG images', () => {

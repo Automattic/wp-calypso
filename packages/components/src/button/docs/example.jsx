@@ -168,7 +168,7 @@ export default class ButtonExample extends React.PureComponent {
 				</div>
 
 				<div className="docs__design-button-row">
-					<Button bare>Bare button</Button>
+					<Button plain>Plain button</Button>
 				</div>
 			</Card>
 		),

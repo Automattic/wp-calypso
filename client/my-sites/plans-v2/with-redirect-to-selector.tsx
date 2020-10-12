@@ -15,7 +15,7 @@ import { WithRedirectToSelectorProps } from './types';
 const withRedirectToSelector = < T extends object >(
 	Component: React.ComponentType< T >
 ): React.FC< T & WithRedirectToSelectorProps > => ( props: WithRedirectToSelectorProps ) => {
-	const { duration, rootUrl } = props;
+	const { duration, rootUrl, urlQueryArgs } = props;
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const previousSiteSlug = useRef< string | null >( null );
 
@@ -26,7 +26,7 @@ const withRedirectToSelector = < T extends object >(
 		}
 
 		if ( siteSlug && previousSiteSlug.current && siteSlug !== previousSiteSlug.current ) {
-			page.redirect( getPathToSelector( rootUrl, duration, siteSlug ) );
+			page.redirect( getPathToSelector( rootUrl, urlQueryArgs, duration, siteSlug ) );
 			return;
 		}
 	}, [ siteSlug ] );

@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * External dependencies
  */
@@ -12,7 +10,6 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { PageTemplatesPlugin } from '../index';
-/* eslint-enable import/no-extraneous-dependencies */
 class SidebarModalOpener extends Component {
 	state = {
 		isWarningOpen: false,

@@ -67,6 +67,14 @@ const isSidebarOpen: Reducer< boolean, LaunchAction > = ( state = false, action 
 	return state;
 };
 
+const isExperimental: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'ENABLE_EXPERIMENTAL' ) {
+		return true;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	step,
 	domain,
@@ -74,6 +82,7 @@ const reducer = combineReducers( {
 	domainSearch,
 	plan,
 	isSidebarOpen,
+	isExperimental,
 } );
 
 export type State = ReturnType< typeof reducer >;

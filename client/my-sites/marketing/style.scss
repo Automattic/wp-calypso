@@ -556,12 +556,12 @@
 	}
 }
 
-.sharing-buttons__fieldset {
+.sharing-buttons__fieldset.form-fieldset {
 	float: left;
 	display: block;
 	width: 50%;
 	padding: 0 3%;
-	margin-bottom: 20px;
+	clear: none;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		width: 100%;

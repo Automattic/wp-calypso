@@ -36,19 +36,21 @@ describe( 'GSuiteUserItem', () => {
 		expect( tree ).toMatchSnapshot();
 	} );
 
-	test( 'should call onClick function when manage is clicked', ( done ) => {
-		const callback = jest.fn( () => {
-			done();
+	test( 'should call onClick function when manage is clicked', () => {
+		return new Promise( ( done ) => {
+			const callback = jest.fn( () => {
+				done();
+			} );
+			const instance = renderer.create(
+				<GSuiteUserItem
+					onClick={ callback }
+					user={ { email: 'foo@bar.buzz', domain: 'bar.buzz', agreed_to_terms: true } }
+				/>
+			);
+			const link = instance.root.findByProps( { className: 'gsuite-user-item' } );
+			// trigger the onClick
+			link.props.onClick( 'buzz' );
+			expect( callback ).toHaveBeenCalledWith( 'buzz' );
 		} );
-		const instance = renderer.create(
-			<GSuiteUserItem
-				onClick={ callback }
-				user={ { email: 'foo@bar.buzz', domain: 'bar.buzz', agreed_to_terms: true } }
-			/>
-		);
-		const link = instance.root.findByProps( { className: 'gsuite-user-item' } );
-		// trigger the onClick
-		link.props.onClick( 'buzz' );
-		expect( callback ).toHaveBeenCalledWith( 'buzz' );
 	} );
 } );

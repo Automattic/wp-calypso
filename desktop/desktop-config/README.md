@@ -1,5 +1,4 @@
-Configuration
-=============
+# Configuration
 
 The app is configured via a JSON file that is built at compile time.
 

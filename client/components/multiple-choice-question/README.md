@@ -4,7 +4,7 @@ This is a component for presenting a question and a list of answers to a user. T
 
 ## Usage
 
-```es6
+```jsx
 import MultipleChoiceQuestion from 'components/multiple-choice-question';
 
 function MultipleChoiceQuestionExamples( { translate } ) {
@@ -90,7 +90,6 @@ The question to display at the top of the multiple choice
 - **Required:** `yes`
 
 Handler for when the selected answer of the multiple choice is changeed. It is called each time a new answer is selected **OR** when the optional text input of the selected answer is changes. The arguments are `id`, and optionally `text` if the answer has a text input.
-
 
 ### `selectedAnswerId`
 

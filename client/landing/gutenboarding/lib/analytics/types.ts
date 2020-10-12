@@ -88,9 +88,16 @@ type TracksDomainSelectEventProperties = {
 
 type TracksPlanSelectEventProperties = {
 	/**
-	 * The selected level domain name
+	 * The selected plan slug
 	 */
 	selected_plan: string | undefined;
+};
+
+type TracksFeaturesSelectEventProperties = {
+	/**
+	 * The selected features
+	 */
+	has_selected_features: boolean | undefined;
 };
 
 export type TracksEventProperties =
@@ -98,4 +105,5 @@ export type TracksEventProperties =
 	| TracksStyleSelectEventProperties
 	| TracksDesignSelectEventProperties
 	| TracksDomainSelectEventProperties
-	| TracksPlanSelectEventProperties;
+	| TracksPlanSelectEventProperties
+	| TracksFeaturesSelectEventProperties;

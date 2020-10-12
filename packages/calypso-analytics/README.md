@@ -1,5 +1,4 @@
-Calypso Analytics.
-=================
+# Calypso Analytics
 
 Currently this package supports calls to Tracks only.
 
@@ -15,7 +14,6 @@ Note: In most situations it is best to use the [Analytics Middleware](https://gi
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 recordTracksEvent( 'calypso_signup_step_start', { step: 'a_nice_step' } );
-
 ```
 
 _Note: Unless you have a strong reason to call `recordTracksEvent` directly, you should use the Analytics Middleware instead:_
@@ -53,7 +51,7 @@ recordTracksEvent( name, properties );
 
 To be recorded, event names originating from Calypso must be prefixed by `calypso_`, and each token in the event and property names must be separated by an underscore (`_`).
 
-_Note: Events not prefixed by `calypso_`, with words not separated by underscore (e.g. by spaces or dashes), or written in camel case, **will be discarded**._
+_Note: Events not prefixed by `calypso_`, with words not separated by underscore (e.g. by spaces or dashes), or written in camel case, **will be discarded**.\_
 
 In order to keep similar events grouped together when sorted in an alphabetized list (as is typical with analytics tools), put the verb at _the end_ of the event name:
 

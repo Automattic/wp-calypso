@@ -8,7 +8,12 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 /**
  * Internal dependencies
  */
-import { ITEM_TYPE_PLAN, ITEM_TYPE_BUNDLE, ITEM_TYPE_PRODUCT } from '../constants';
+import {
+	EXTERNAL_PRODUCTS_LIST,
+	ITEM_TYPE_PLAN,
+	ITEM_TYPE_BUNDLE,
+	ITEM_TYPE_PRODUCT,
+} from '../constants';
 import {
 	durationToText,
 	productButtonLabel,
@@ -29,13 +34,15 @@ import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
 import { planHasFeature } from 'lib/plans';
+import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
+import { JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
 import { isCloseToExpiration } from 'lib/purchases';
 import { getPurchaseByProductSlug } from 'lib/purchases/utils';
 
 /**
  * Type dependencies
  */
-import type { PurchaseCallback, SelectorProduct } from '../types';
+import type { Duration, PurchaseCallback, SelectorProduct } from '../types';
 
 const itemToCard = ( { type }: SelectorProduct ) => {
 	switch ( type ) {
@@ -90,6 +97,7 @@ interface ProductCardProps {
 	currencyCode: string | null;
 	className?: string;
 	highlight?: boolean;
+	selectedTerm?: Duration;
 }
 
 const ProductCardWrapper = ( {
@@ -99,6 +107,7 @@ const ProductCardWrapper = ( {
 	currencyCode,
 	className,
 	highlight = false,
+	selectedTerm,
 }: ProductCardProps ) => {
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -141,6 +150,16 @@ const ProductCardWrapper = ( {
 
 	const CardComponent = itemToCard( item ); // Get correct card component.
 
+	const isUpgradeableToYearly =
+		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
+
+	// Don't hide price if siteId is not defined, since it most likely won't be shown
+	// in other parts of the card (e.g. Jetpack Search)
+	// Jetpack CRM is an external product and we don't have access to its price, therefore,
+	// we hide it.
+	const hidePrice =
+		EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) || ( !! siteId && item.hidePrice );
+
 	const UpgradeNudge = isOwned ? (
 		<UpgradeNudgeWrapper
 			siteId={ siteId }
@@ -149,29 +168,27 @@ const ProductCardWrapper = ( {
 			onClick={ onClick }
 		/>
 	) : null;
+
 	return (
 		<CardComponent
 			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
 			productName={ item.displayName }
 			subheadline={ item.tagline }
-			description={
-				showExpiryNotice && purchase ? (
-					<PlanRenewalMessage purchase={ purchase } />
-				) : (
-					item.description
-				)
-			}
+			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item, isOwned, sitePlan ) }
+			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
 			badgeLabel={ productBadgeLabel( item, isOwned, highlight, sitePlan ) }
-			onButtonClick={ () => onClick( item, purchase ) }
+			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			children={ item.children }
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
-			withStartingPrice={ item.subtypes.length > 0 }
+			withStartingPrice={
+				// Search has several pricing tiers
+				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.productSlug )
+			}
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
@@ -179,7 +196,8 @@ const ProductCardWrapper = ( {
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={ item.hidePrice }
+			hidePrice={ hidePrice }
+			productSlug={ item.productSlug }
 		/>
 	);
 };

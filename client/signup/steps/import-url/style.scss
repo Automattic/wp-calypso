@@ -13,7 +13,7 @@
 }
 
 // Actual form input for typing the URL
-.import-url__wrapper .import-url__url-input {
+.import-url__wrapper input[type='text'].form-text-input.import-url__url-input {
 	border: none;
 	border-radius: 2px;
 	padding: 10px 14px;

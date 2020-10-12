@@ -1,5 +1,4 @@
-Query Connected Applications
-===========================
+# Query Connected Applications
 
 `<QueryConnectedApplications />` is a React component used to request the connected applications of the current user.
 

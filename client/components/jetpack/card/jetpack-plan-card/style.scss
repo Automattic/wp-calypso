@@ -13,10 +13,6 @@
 		border-color: $jetpack-plan-card-color;
 	}
 
-	.jetpack-product-card__badge {
-		color: $jetpack-plan-card-color;
-	}
-
 	&.is-deprecated {
 		.plan-price {
 			border-color: var( --color-text );

@@ -13,9 +13,9 @@ import {
 	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	NOTICE_CREATE,
-} from 'state/action-types';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'calypso/state/action-types';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'post comments request', () => {
@@ -201,7 +201,7 @@ describe( 'wpcom-api', () => {
 						type: NOTICE_CREATE,
 						notice: expect.objectContaining( {
 							status: 'is-error',
-							text: 'Could not retrieve comments for requested post',
+							text: 'Could not retrieve comments for post',
 							duration: 5000,
 						} ),
 					} )

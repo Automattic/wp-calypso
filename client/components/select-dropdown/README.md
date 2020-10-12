@@ -1,5 +1,4 @@
-Select Dropdown
-===============
+# Select Dropdown
 
 React component used to display a dropdown selector.
 
@@ -23,13 +22,15 @@ export default class extends React.Component {
 	render() {
 		return (
 			<SelectDropdown selectedText="Published">
-				<SelectDropdown.Item selected path="/published">Published</SelectDropdown.Item>
+				<SelectDropdown.Item selected path="/published">
+					Published
+				</SelectDropdown.Item>
 				<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
 				<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
 				<SelectDropdown.Item path="/trashed">Trashed</SelectDropdown.Item>
 			</SelectDropdown>
 		);
-	} 
+	}
 }
 ```
 
@@ -109,14 +110,17 @@ As a sibling to `SelectDropdown.Item`, an item "separator" or horizontal line ca
 import SelectDropdown from 'components/select-dropdown';
 
 export default class extends React.Component {
-
 	// ...
 
 	render() {
 		return (
 			<SelectDropdown selectedText="Published">
-				<SelectDropdown.Label><em>Post status<em></SelectDropdown.Label>
-				<SelectDropdown.Item selected path="/published">Published</SelectDropdown.Item>
+				<SelectDropdown.Label>
+					<em>Post status</em>
+				</SelectDropdown.Label>
+				<SelectDropdown.Item selected path="/published">
+					Published
+				</SelectDropdown.Item>
 				<SelectDropdown.Item path="/scheduled">Scheduled</SelectDropdown.Item>
 				<SelectDropdown.Item path="/drafts">Drafts</SelectDropdown.Item>
 				<SelectDropdown.Separator />
@@ -140,26 +144,24 @@ A good example for this case is a form element. You don't want to have to write 
 ```js
 import SelectDropdown from 'components/select-dropdown';
 
-var options = [
+const options = [
 	{ label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
-	{ value: 'trashed', label: 'Trashed' }
+	{ value: 'trashed', label: 'Trashed' },
 ];
 
 export default class extends React.Component {
-	 // ...
+	// ...
 
 	handleOnSelect = ( option ) => {
 		console.log( 'selected option:', option ); // full object of selected option
-	}
+	};
 
 	render() {
-		return (
-			<SelectDropdown options={ options } onSelect={ this.handleOnSelect } />
-		);
-	},
+		return <SelectDropdown options={ options } onSelect={ this.handleOnSelect } />;
+	}
 }
 ```
 
@@ -172,12 +174,12 @@ Note that all the "selection" logic will be applied in `SelectDropdown` itself u
 The main data set for rendering out the various options.
 
 ```js
-var options = [
+const options = [
 	{
-		value: // *required* - (string) tracked by component
-		label: // *required* - (string) displayed to user
-		isLabel: // optional - (boolean) set this item like a static label
-		path: // optional - (string) URL to navigate when clicked
+		value: 'the value', // *required* - (string) tracked by component
+		label: 'the label', // *required* - (string) displayed to user
+		isLabel: true, // optional - (boolean) set this item like a static label
+		path: '/', // optional - (string) URL to navigate when clicked
 	},
 	// ...
 ];
@@ -204,13 +206,13 @@ Optional callback that will be run after the dropdown is opened or closed. An ev
 Adding `isLabel` key set to `true` into the item object will create a `SelectDropdown.Label` component.
 
 ```js
-var options = [
+const options = [
 	{ label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
 	null,
-	{ value: 'trashed', label: 'Trashed' }
+	{ value: 'trashed', label: 'Trashed' },
 ];
 ```
 
@@ -221,11 +223,11 @@ Using a `null` or `false` item in the `options` will render an item "separator" 
 ![separator example screenshot](https://cldup.com/CWEH2K9PUf.png)
 
 ```js
-var options = [
+const options = [
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
 	null,
-	{ value: 'trashed', label: 'Trashed' }
+	{ value: 'trashed', label: 'Trashed' },
 ];
 ```

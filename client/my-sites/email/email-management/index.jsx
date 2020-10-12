@@ -43,6 +43,9 @@ import QueryGSuiteUsers from 'components/data/query-gsuite-users';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { localizeUrl } from 'lib/i18n-utils';
 import getCurrentRoute from 'state/selectors/get-current-route';
+import EmailProvidersComparison from '../email-providers-comparison';
+import { recordTracksEvent } from 'state/analytics/actions';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 /**
  * Style dependencies
@@ -128,8 +131,18 @@ class EmailManagement extends React.Component {
 
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuiteWithUs ) ) {
+		if ( domainList.some( hasGSuiteWithUs ) || domainList.some( hasTitanMailWithUs ) ) {
 			return this.googleAppsUsersCard();
+		}
+
+		if ( config.isEnabled( 'email/titan-mvp' ) ) {
+			const selectedDomain = domainList[ 0 ];
+			return (
+				<EmailProvidersComparison
+					domain={ selectedDomain }
+					isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
+				/>
+			);
 		}
 
 		if ( hasGSuiteSupportedDomain( domainList ) ) {
@@ -243,11 +256,12 @@ class EmailManagement extends React.Component {
 	}
 
 	addEmailForwardingCard( domain ) {
-		const { selectedSiteSlug, currentRoute, translate } = this.props;
+		const { selectedSiteSlug, currentRoute, trackEmailForwardingClick, translate } = this.props;
 
 		return (
 			<VerticalNav>
 				<VerticalNavItem
+					onClick={ trackEmailForwardingClick }
 					path={ emailManagementForwarding( selectedSiteSlug, domain, currentRoute ) }
 				>
 					{ translate( 'Email Forwarding' ) }
@@ -267,16 +281,24 @@ class EmailManagement extends React.Component {
 	};
 }
 
-export default connect( ( state ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	return {
-		currentRoute: getCurrentRoute( state ),
-		canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
-		domains: getDomainsBySiteId( state, selectedSiteId ),
-		gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
-		hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
-		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
-		selectedSiteId,
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	};
-}, {} )( localize( EmailManagement ) );
+export default connect(
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		return {
+			currentRoute: getCurrentRoute( state ),
+			canManageSite: canCurrentUser( state, selectedSiteId, 'manage_options' ),
+			domains: getDomainsBySiteId( state, selectedSiteId ),
+			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
+			hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
+			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+			selectedSiteId,
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+		};
+	},
+	( dispatch ) => {
+		return {
+			trackEmailForwardingClick: () =>
+				dispatch( recordTracksEvent( 'calypso_email_email_forwarding_click' ) ),
+		};
+	}
+)( localize( EmailManagement ) );

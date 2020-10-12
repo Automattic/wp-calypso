@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { get, isArray } from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { get, isArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { useTranslate } from 'i18n-calypso';
+import { isEnabled } from 'config';
 import { applySiteOffset } from 'lib/site/timezone';
 import { useLocalizedMoment } from 'components/localized-moment';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -73,7 +75,11 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 			<div className="status-card__meta">{ meta }</div>
 			<ActionButtons rewindId={ backup.rewindId } />
 			{ showBackupDetails && (
-				<div className="status-card__realtime-details">
+				<div
+					className={ classNames( 'status-card__realtime-details', {
+						'is-simplified': isEnabled( 'jetpack/backup-simplified-screens' ),
+					} ) }
+				>
 					<div className="status-card__realtime-details-card">
 						<ActivityCard activity={ backup } summarize />
 					</div>

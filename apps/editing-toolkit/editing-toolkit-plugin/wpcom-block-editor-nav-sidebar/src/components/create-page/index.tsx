@@ -6,6 +6,7 @@ import { Button as OriginalButton } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { plus } from '@wordpress/icons';
 
 /**
@@ -43,6 +44,10 @@ export default function CreatePage( { postType }: Props ) {
 		postType.slug
 	);
 
+	const trackEvent = () => {
+		recordTracksEvent( `calypso_editor_sidebar_item_add`, { post_type: postType.slug } );
+	};
+
 	return (
 		<Button
 			target={ applyFilters( 'a8c.WpcomBlockEditorNavSidebar.linkTarget', undefined ) }
@@ -50,6 +55,7 @@ export default function CreatePage( { postType }: Props ) {
 			className="wpcom-block-editor-nav-sidebar-create-page"
 			href={ url }
 			icon={ plus }
+			onClick={ trackEvent }
 		>
 			{ label }
 		</Button>

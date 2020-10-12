@@ -14,7 +14,7 @@ import {
 	jetpackProductItem,
 } from 'lib/cart-values/cart-items';
 import { JETPACK_PRODUCTS_LIST, JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
-import type { RequestCartProduct } from './types/backend/shopping-cart-endpoint';
+import type { RequestCartProduct } from './hooks/use-shopping-cart-manager/types';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:composite-checkout:add-items' );
@@ -24,13 +24,11 @@ export function createItemToAddToCart( {
 	productAlias,
 	product_id,
 	isJetpackNotAtomic,
-	isPrivate,
 }: {
-	planSlug: string | undefined;
-	productAlias: string | undefined;
 	product_id: number;
-	isJetpackNotAtomic: boolean | undefined;
-	isPrivate: boolean | undefined;
+	planSlug?: string;
+	productAlias?: string;
+	isJetpackNotAtomic?: boolean;
 } ): RequestCartProduct | null {
 	let cartItem, cartMeta;
 
@@ -70,27 +68,9 @@ export function createItemToAddToCart( {
 
 	// Search product
 	if ( productAlias && JETPACK_SEARCH_PRODUCTS.includes( productAlias ) && product_id ) {
-		cartItem = null;
-		let isSearchProduct = false;
-		// is site JP
-		if ( isJetpackNotAtomic ) {
-			debug( 'creating jetpack search product' );
-			isSearchProduct = true;
-		}
-		// is site WPCOM
-		else if (
-			config.isEnabled( 'jetpack/wpcom-search-product' ) &&
-			! isJetpackNotAtomic &&
-			! isPrivate
-		) {
-			debug( 'creating wpcom search product' );
-			isSearchProduct = true;
-		}
-		if ( isSearchProduct ) {
-			cartItem = jetpackProductItem( productAlias );
-			if ( cartItem ) {
-				cartItem.product_id = product_id;
-			}
+		cartItem = jetpackProductItem( productAlias );
+		if ( cartItem ) {
+			cartItem.product_id = product_id;
 		}
 	}
 

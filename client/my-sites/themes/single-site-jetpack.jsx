@@ -21,7 +21,10 @@ import JetpackReferrerMessage from './jetpack-referrer-message';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import { connectOptions } from './theme-options';
 import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
+import {
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	PLAN_JETPACK_SECURITY_REALTIME,
+} from 'lib/plans/constants';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
@@ -35,6 +38,7 @@ import {
 	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
 } from 'state/sites/selectors';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
@@ -68,6 +72,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		translate,
 		hasUnlimitedPremiumThemes,
 		requestingSitePlans,
+		siteSlug,
 	} = props;
 	const jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
@@ -99,15 +104,14 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 			{ ! requestingSitePlans && currentPlan && ! hasUnlimitedPremiumThemes && ! isPartnerPlan && (
 				<UpsellNudge
 					forceDisplay
-					plan={ PLAN_JETPACK_BUSINESS }
-					title={ translate( 'Access all our premium themes with our Professional plan!' ) }
+					title={ translate( 'Get unlimited premium themes' ) }
 					description={ translate(
-						'In addition to our collection of premium themes, ' +
-							'get Elasticsearch-powered site search, real-time offsite backups, ' +
-							'and security scanning.'
+						'In addition to our collection of premium themes, get comprehensive WordPress' +
+							' security, real-time backups, and unlimited video hosting.'
 					) }
 					event="themes_plans_free_personal_premium"
 					showIcon={ true }
+					href={ `/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_REALTIME }` }
 				/>
 			) }
 			<ThemeShowcase
@@ -157,6 +161,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 } );
 
 export default connect( ( state, { siteId, tier } ) => {
+	const siteSlug = getSelectedSiteSlug( state );
 	const currentPlan = getCurrentPlan( state, siteId );
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList =
@@ -179,5 +184,6 @@ export default connect( ( state, { siteId, tier } ) => {
 		isMultisite,
 		hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),
+		siteSlug,
 	};
 } )( ConnectedSingleSiteJetpack );

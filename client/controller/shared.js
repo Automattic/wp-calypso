@@ -9,7 +9,7 @@ import { noop } from 'lodash';
  */
 import config from 'config';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { setSection as setSectionAction } from 'state/ui/actions';
+import { setSection } from 'state/ui/actions';
 import { setLocale } from 'state/ui/language/actions';
 import { isTranslatedIncompletely } from 'lib/i18n-utils/utils';
 
@@ -32,14 +32,18 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 	};
 }
 
-export function setSection( section ) {
+export function setSectionMiddleware( section ) {
 	return ( context, next = noop ) => {
-		context.store.dispatch( setSectionAction( section ) );
+		// save the section in context
+		context.section = section;
+
+		// save the section to Redux, too (poised to become legacy)
+		context.store.dispatch( setSection( section ) );
 		next();
 	};
 }
 
-export function setUpLocale( context, next ) {
+export function setLocaleMiddleware( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
 
 	if ( context.params.lang ) {

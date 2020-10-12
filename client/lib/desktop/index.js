@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 import { newPost } from 'lib/paths';
 import store from 'store';
 import user from 'lib/user';
-import { ipcRenderer as ipc } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
+import { ipcRenderer as ipc } from 'electron';
 import * as oAuthToken from 'lib/oauth-token';
 import userUtilities from 'lib/user/utils';
 import { getStatsPathForTab } from 'lib/route';
@@ -17,15 +17,17 @@ import { getReduxStore } from 'lib/redux-bridge';
 import { isEditorIframeLoaded } from 'state/editor/selectors';
 import isNotificationsOpen from 'state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
 	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
+	NOTIFY_DESKTOP_NEW_NOTIFICATION,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from 'state/desktop/window-events';
-import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
+import { canCurrentUserManageSiteOptions, getSiteTitle } from 'state/sites/selectors';
 import { activateModule } from 'state/jetpack/modules/actions';
 import { requestSite } from 'state/sites/actions';
 
@@ -49,10 +51,12 @@ const Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'close-notifications-panel', this.onCloseNotificationsPanel.bind( this ) );
+		ipc.on( 'notification-clicked', this.onNotificationClicked.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 		ipc.on( 'navigate', this.onNavigate.bind( this ) );
 		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
 		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
+		ipc.on( 'enable-notification-badge', this.sendNotificationUnseenCount );
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
@@ -68,6 +72,8 @@ const Desktop = {
 			NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
 			this.onUnseenCountUpdated.bind( this )
 		);
+
+		window.addEventListener( NOTIFY_DESKTOP_NEW_NOTIFICATION, this.onNewNotification.bind( this ) );
 
 		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
@@ -113,6 +119,79 @@ const Desktop = {
 		const { unseenCount } = event.detail;
 		debug( `Sending unseen count: ${ unseenCount }` );
 		ipc.send( 'unread-notices-count', unseenCount );
+	},
+
+	onNewNotification: function ( event ) {
+		const noteWithMeta = event.detail;
+		const { note } = noteWithMeta;
+		debug( `Received notification: ${ note.id }` );
+		const siteTitle = getSiteTitle( this.store.getState(), note.meta.ids.site );
+		ipc.send( `received-notification`, {
+			siteTitle,
+			...noteWithMeta,
+		} );
+	},
+
+	onNotificationClicked: function ( _, noteWithMeta ) {
+		const { note, isApproved } = noteWithMeta;
+		debug( `Notification ${ note.id } clicked` );
+
+		const noteId = note.id;
+		const linkType = note.type;
+		const siteId = note.meta.ids.site;
+		const postId = note.meta.ids.post;
+		const commentId = note.meta.ids.comment;
+		let fallBackToNotificationsPanel = false;
+
+		// TODO: Make this a desktop-specific Tracks event.
+		this.store.dispatch( recordTracksEventAction( 'calypso_web_push_notification_clicked' ), {
+			push_notification_note_id: noteId,
+			push_notification_type: linkType,
+		} );
+
+		// Tell the notifications panel to mark this note as read.
+		window.dispatchEvent(
+			new window.CustomEvent( 'desktop-notification-mark-as-read', {
+				detail: {
+					noteId,
+				},
+			} )
+		);
+
+		switch ( linkType ) {
+			case 'post':
+				this.navigate( `/read/blogs/${ siteId }/posts/${ postId }` );
+				break;
+			case 'comment':
+				{
+					// If the note is approved, navigate to the comment URL within Calypso.
+					// Otherwise open and display Calypso's notifications panel.
+					if ( isApproved ) {
+						this.navigate( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
+					} else {
+						fallBackToNotificationsPanel = true;
+					}
+				}
+				break;
+			case 'comment_like':
+				this.navigate( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
+				break;
+			case 'site':
+				this.navigate( `/read/blogs/${ siteId }` );
+				break;
+			default:
+				fallBackToNotificationsPanel = true;
+		}
+
+		// Fall back to notifications panel for unhandled note types.
+		if ( fallBackToNotificationsPanel ) {
+			setTimeout( () => {
+				this.navigate( '/' );
+				if ( ! isNotificationsOpen( this.store.getState() ) ) {
+					this.toggleNotificationsPanel();
+				}
+			}, 1000 );
+		}
 	},
 
 	sendUserLoginStatus: function () {

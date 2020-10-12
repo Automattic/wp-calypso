@@ -382,7 +382,6 @@ class P2Site extends React.Component {
 						autoCapitalize={ 'off' }
 						className="p2-site__site-title"
 						disabled={ fieldDisabled }
-						type="text"
 						name="site-title"
 						value={ formState.getFieldValue( this.state.form, 'siteTitle' ) }
 						isError={ formState.isFieldInvalid( this.state.form, 'siteTitle' ) }
@@ -403,7 +402,6 @@ class P2Site extends React.Component {
 						autoCapitalize={ 'off' }
 						className="p2-site__site-url"
 						disabled={ fieldDisabled }
-						type="text"
 						name="site"
 						value={ formState.getFieldValue( this.state.form, 'site' ) }
 						isError={ formState.isFieldInvalid( this.state.form, 'site' ) }

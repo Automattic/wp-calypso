@@ -9,23 +9,31 @@ import React, { createElement, Fragment } from 'react';
 /**
  * Internal dependencies
  */
+import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
 import {
 	DAILY_PLAN_TO_REALTIME_PLAN,
-	PRODUCTS_WITH_OPTIONS,
-	OPTIONS_SLUG_MAP,
-	UPGRADEABLE_WITH_NUDGE,
-	UPSELL_PRODUCT_MATRIX,
+	DAILY_PRODUCTS,
+	EXTERNAL_PRODUCTS_LIST,
+	EXTERNAL_PRODUCTS_SLUG_MAP,
+	FEATURED_PRODUCTS,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	FEATURED_PRODUCTS,
-	SUBTYPE_TO_OPTION,
-	DAILY_PRODUCTS,
+	OPTIONS_JETPACK_BACKUP,
+	OPTIONS_JETPACK_BACKUP_MONTHLY,
+	OPTIONS_JETPACK_SECURITY,
+	OPTIONS_JETPACK_SECURITY_MONTHLY,
+	OPTIONS_SLUG_MAP,
+	PRODUCTS_WITH_OPTIONS,
 	REALTIME_PRODUCTS,
+	SUBTYPE_TO_OPTION,
+	UPGRADEABLE_WITH_NUDGE,
+	UPSELL_PRODUCT_MATRIX,
 } from './constants';
 import RecordsDetails from './records-details';
-import { addItems } from 'lib/cart/actions';
-import { jetpackProductItem } from 'lib/cart-values/cart-items';
+import { addItems } from 'calypso/lib/cart/actions';
+import { jetpackProductItem } from 'calypso/lib/cart-values/cart-items';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -33,20 +41,31 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
-} from 'lib/plans/constants';
-import { getPlan, getMonthlyPlanByYearly, planHasFeature } from 'lib/plans';
-import { getFeatureByKey, getFeatureCategoryByKey } from 'lib/plans/features-list';
+} from 'calypso/lib/plans/constants';
+import {
+	getPlan,
+	getMonthlyPlanByYearly,
+	getYearlyPlanByMonthly,
+	planHasFeature,
+} from 'calypso/lib/plans';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-} from 'lib/products-values/constants';
-import { Product, JETPACK_PRODUCTS_LIST, objectIsProduct } from 'lib/products-values/products-list';
-import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
-import { getJetpackProductTagline } from 'lib/products-values/get-jetpack-product-tagline';
-import { getJetpackProductCallToAction } from 'lib/products-values/get-jetpack-product-call-to-action';
-import { getJetpackProductDescription } from 'lib/products-values/get-jetpack-product-description';
-import { getJetpackProductShortName } from 'lib/products-values/get-jetpack-product-short-name';
-import { MORE_FEATURES_LINK } from 'my-sites/plans-v2/constants';
+	JETPACK_BACKUP_PRODUCTS,
+} from 'calypso/lib/products-values/constants';
+import {
+	Product,
+	JETPACK_PRODUCTS_LIST,
+	objectIsProduct,
+	PRODUCTS_LIST,
+} from 'calypso/lib/products-values/products-list';
+import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
+import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpack-product-tagline';
+import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
+import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
+import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
+import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Type dependencies
@@ -58,6 +77,7 @@ import type {
 	DurationString,
 	SelectorProductFeaturesItem,
 	SelectorProductFeaturesSection,
+	QueryArgs,
 } from './types';
 import type {
 	JetpackRealtimePlan,
@@ -65,9 +85,9 @@ import type {
 	Plan,
 	JetpackPlanCardFeature,
 	JetpackPlanCardFeatureSection,
-} from 'lib/plans/types';
-import type { JetpackProductSlug } from 'lib/products-values/types';
-import type { SitePlan } from 'state/sites/selectors/get-site-plan';
+} from 'calypso/lib/plans/types';
+import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 
 /**
  * Duration utils.
@@ -104,8 +124,13 @@ export function durationToText( duration: Duration ): TranslateResult {
 export function productButtonLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
+	isUpgradeableToYearly: boolean,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
+	if ( isUpgradeableToYearly ) {
+		return translate( 'Upgrade to Yearly' );
+	}
+
 	if (
 		isOwned ||
 		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
@@ -153,6 +178,20 @@ export function productBadgeLabel(
 	}
 }
 
+export function productBadgeLabelAlt(
+	product: SelectorProduct,
+	isOwned: boolean,
+	currentPlan?: SitePlan | null
+): TranslateResult | undefined {
+	if ( isOwned ) {
+		return translate( 'You own this' );
+	}
+
+	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
+		return translate( 'Included in your plan' );
+	}
+}
+
 /**
  * Type guards.
  */
@@ -174,6 +213,8 @@ function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlugs {
 export function slugToItem( slug: string ): Plan | Product | SelectorProduct | null {
 	if ( slugIsSelectorProductSlug( slug ) ) {
 		return OPTIONS_SLUG_MAP[ slug ];
+	} else if ( EXTERNAL_PRODUCTS_LIST.includes( slug ) ) {
+		return EXTERNAL_PRODUCTS_SLUG_MAP[ slug ];
 	} else if ( slugIsJetpackProductSlug( slug ) ) {
 		return JETPACK_PRODUCTS_LIST[ slug ];
 	} else if ( slugIsJetpackPlanSlug( slug ) ) {
@@ -182,7 +223,9 @@ export function slugToItem( slug: string ): Plan | Product | SelectorProduct | n
 	return null;
 }
 
-function objectIsSelectorProduct( item: object ): item is SelectorProduct {
+function objectIsSelectorProduct(
+	item: Record< string, unknown > | SelectorProduct
+): item is SelectorProduct {
 	const requiredKeys = [
 		'productSlug',
 		'iconSlug',
@@ -193,7 +236,8 @@ function objectIsSelectorProduct( item: object ): item is SelectorProduct {
 	];
 	return requiredKeys.every( ( k ) => k in item );
 }
-function objectIsPlan( item: object ): item is Plan {
+
+function objectIsPlan( item: Record< string, unknown > | Plan ): item is Plan {
 	const requiredKeys = [
 		'group',
 		'type',
@@ -214,12 +258,13 @@ function objectIsPlan( item: object ): item is Plan {
  * @returns SelectorProduct
  */
 export function itemToSelectorProduct(
-	item: Plan | Product | SelectorProduct | object
+	item: Plan | Product | SelectorProduct | Record< string, unknown >
 ): SelectorProduct | null {
 	if ( objectIsSelectorProduct( item ) ) {
 		return item;
 	} else if ( objectIsProduct( item ) ) {
-		let monthlyProductSlug = undefined;
+		let monthlyProductSlug;
+		let yearlyProductSlug;
 		if (
 			item.term === TERM_ANNUALLY &&
 			Object.keys( JETPACK_PRODUCT_PRICE_MATRIX ).includes( item.product_slug )
@@ -228,10 +273,13 @@ export function itemToSelectorProduct(
 				JETPACK_PRODUCT_PRICE_MATRIX[
 					item.product_slug as keyof typeof JETPACK_PRODUCT_PRICE_MATRIX
 				].relatedProduct;
+		} else if ( item.term === TERM_MONTHLY ) {
+			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
 		return {
 			productSlug: item.product_slug,
-			iconSlug: `${ item.product_slug }_v2`,
+			// Using the same slug for any duration helps prevent unnecessary DOM updates
+			iconSlug: `${ yearlyProductSlug || item.product_slug }_v2`,
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],
@@ -256,16 +304,20 @@ export function itemToSelectorProduct(
 		};
 	} else if ( objectIsPlan( item ) ) {
 		const productSlug = item.getStoreSlug();
-		let monthlyProductSlug = undefined;
+		let monthlyProductSlug;
+		let yearlyProductSlug;
 		if ( item.term === TERM_ANNUALLY ) {
 			monthlyProductSlug = getMonthlyPlanByYearly( productSlug );
+		} else if ( item.term === TERM_MONTHLY ) {
+			yearlyProductSlug = getYearlyPlanByMonthly( productSlug );
 		}
 		const isResetPlan = JETPACK_RESET_PLANS.includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
 		const type = JETPACK_SECURITY_PLANS.includes( productSlug ) ? ITEM_TYPE_BUNDLE : ITEM_TYPE_PLAN;
 		return {
 			productSlug,
-			iconSlug: productSlug + iconAppend,
+			// Using the same slug for any duration helps prevent unnecessary DOM updates
+			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: item.getTitle(),
 			type,
 			subtypes: [],
@@ -293,6 +345,8 @@ export function itemToSelectorProduct(
  *
  * @param {JetpackPlanCardFeature} featureKey Key of the feature
  * @param {object?} options Options
+ * @param {string?} options.withoutDescription Whether to build the card with a description
+ * @param {string?} options.withoutIcon Whether to build the card with an icon
  * @returns {SelectorProductFeaturesItem} Feature item
  */
 export function buildCardFeatureItemFromFeatureKey(
@@ -334,7 +388,7 @@ export function buildCardFeatureItemFromFeatureKey(
  */
 export function buildCardFeaturesFromFeatureKeys(
 	features: JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection,
-	options?: object
+	options?: Record< string, unknown >
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	// Without sections (JetpackPlanCardFeature[])
 	if ( isArray( features ) ) {
@@ -373,8 +427,8 @@ export function buildCardFeaturesFromFeatureKeys(
  * @returns {SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[]} Features
  */
 export function buildCardFeaturesFromItem(
-	item: Plan | Product | object,
-	options?: object
+	item: Plan | Product | Record< string, unknown >,
+	options?: Record< string, unknown >
 ): SelectorProductFeaturesItem[] | SelectorProductFeaturesSection[] {
 	if ( objectIsPlan( item ) ) {
 		const features = item.getPlanCardFeatures?.();
@@ -442,14 +496,53 @@ export function getOptionFromSlug( slug: string ): string | null {
 }
 
 /**
+ * Returns all options, both yearly and monthly, given a slug. If the slug
+ * has no related to option, it returns an empty array.
+ * e.g. jetpack_security_daily -> [ jetpack_security_monthly, jetpack_security ]
+ * e.g. jetpack_scan -> []
+ *
+ * @param slug string
+ * @returns string[]
+ */
+export function getAllOptionsFromSlug( slug: string ): string[] {
+	if ( JETPACK_BACKUP_PRODUCTS.includes( slug ) ) {
+		return [ OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY ];
+	}
+
+	if ( JETPACK_SECURITY_PLANS.includes( slug ) ) {
+		return [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ];
+	}
+
+	return [];
+}
+
+/**
  * Adds products to the cart and redirects to the checkout page.
  *
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
+ * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
  */
-export function checkout( siteSlug: string, products: string | string[] ): void {
-	addItems( ( isArray( products ) ? products : [ products ] ).map( jetpackProductItem ) );
-	page.redirect( `/checkout/${ siteSlug }` );
+export function checkout(
+	siteSlug: string,
+	products: string | string[],
+	urlQueryArgs: QueryArgs
+): void {
+	const productsArray = isArray( products ) ? products : [ products ];
+
+	// There is not siteSlug, we need to redirect the user to the site selection
+	// step of the flow. Since purchases of multiple products are allowed, we need
+	// to pass all products separated by comma in the URL.
+	const path = siteSlug
+		? `/checkout/${ siteSlug }/${ isJetpackCloud() ? productsArray.join( ',' ) : '' }`
+		: `/jetpack/connect/${ productsArray.join( ',' ) }`;
+
+	if ( isJetpackCloud() ) {
+		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
+	} else {
+		addItems( productsArray.map( jetpackProductItem ) );
+		page.redirect( addQueryArgs( urlQueryArgs, path ) );
+	}
 }
 
 /**
@@ -458,14 +551,22 @@ export function checkout( siteSlug: string, products: string | string[] ): void 
  * '/plans/monthly/site-slug', '/plans/site-slug', or just '/plans'.
  *
  * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
+ * @param {QueryArgs} urlQueryArgs URL query params appended to url (ie. for affiliate tracking, or whatever), or {} if none.
  * @param {Duration} duration Monthly or annual
  * @param {string} siteSlug (optional) The slug of the selected site
  *
  * @returns {string} The path to the Selector page
  */
-export function getPathToSelector( rootUrl: string, duration?: Duration, siteSlug?: string ) {
+export function getPathToSelector(
+	rootUrl: string,
+	urlQueryArgs: QueryArgs,
+	duration?: Duration,
+	siteSlug?: string
+): string {
 	const strDuration = duration ? durationToString( duration ) : null;
-	return [ rootUrl, strDuration, siteSlug ].filter( Boolean ).join( '/' );
+	const path = [ rootUrl, strDuration, siteSlug ].filter( Boolean ).join( '/' );
+
+	return addQueryArgs( urlQueryArgs, path );
 }
 
 /**
@@ -473,6 +574,7 @@ export function getPathToSelector( rootUrl: string, duration?: Duration, siteSlu
  * points to the Details page.
  *
  * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
+ * @param {QueryArgs} urlQueryArgs URL query params appended to url (ie. for affiliate tracking, or whatever), or {} if none.
  * @param {string} productSlug Slug of the product
  * @param {Duration} duration Monthly or annual
  * @param {string} siteSlug (optional) The slug of the selected site
@@ -481,12 +583,17 @@ export function getPathToSelector( rootUrl: string, duration?: Duration, siteSlu
  */
 export function getPathToDetails(
 	rootUrl: string,
+	urlQueryArgs: QueryArgs,
 	productSlug: string,
 	duration: Duration,
 	siteSlug?: string
-) {
+): string {
 	const strDuration = durationToString( duration );
-	return [ rootUrl, productSlug, strDuration, 'details', siteSlug ].filter( Boolean ).join( '/' );
+	const path = [ rootUrl, productSlug, strDuration, 'details', siteSlug ]
+		.filter( Boolean )
+		.join( '/' );
+
+	return addQueryArgs( urlQueryArgs, path );
 }
 
 /**
@@ -494,6 +601,7 @@ export function getPathToDetails(
  * points to the Upsell page.
  *
  * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
+ * @param {QueryArgs} urlQueryArgs URL query params appended to url (ie. for affiliate tracking, or whatever), or {} if none.
  * @param {string} productSlug Slug of the product
  * @param {Duration} duration Monthly or annual
  * @param {string} siteSlug (optional) The slug of the selected site
@@ -502,12 +610,17 @@ export function getPathToDetails(
  */
 export function getPathToUpsell(
 	rootUrl: string,
+	urlQueryArgs: QueryArgs,
 	productSlug: string,
 	duration: Duration,
 	siteSlug?: string
-) {
+): string {
 	const strDuration = durationToString( duration );
-	return [ rootUrl, productSlug, strDuration, 'additions', siteSlug ].filter( Boolean ).join( '/' );
+	const path = [ rootUrl, productSlug, strDuration, 'additions', siteSlug ]
+		.filter( Boolean )
+		.join( '/' );
+
+	return addQueryArgs( urlQueryArgs, path );
 }
 
 /**

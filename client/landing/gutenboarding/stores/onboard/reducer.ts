@@ -3,7 +3,7 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -11,7 +11,8 @@ import type { DomainSuggestions, Plans } from '@automattic/data-stores';
 import type { SiteVertical, Design } from './types';
 import type { OnboardAction } from './actions';
 import type { FontPair } from '../../constants';
-import type { FeatureId } from '../../onboarding-block/features/data';
+
+type FeatureId = WPCOMFeatures.FeatureId;
 
 // Returns true if the url has a `?latest`, which is used to enable experimental features
 export function hasExperimentalQueryParam() {
@@ -78,9 +79,6 @@ const isExperimental: Reducer< boolean, OnboardAction > = (
 	state = hasExperimentalQueryParam(),
 	action
 ) => {
-	if ( action.type === 'SET_ENABLE_EXPERIMENTAL' ) {
-		return true;
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return false;
 	}
@@ -164,8 +162,16 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 		return [ ...state, action.featureId ];
 	}
 
+	if ( action.type === 'SET_DOMAIN' && action.domain && ! action.domain?.is_free ) {
+		return [ ...state, 'domain' ];
+	}
+
 	if ( action.type === 'REMOVE_FEATURE' ) {
 		return state.filter( ( id ) => id !== action.featureId );
+	}
+
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
 	}
 
 	return state;
@@ -224,6 +230,16 @@ const wasVerticalSkipped: Reducer< boolean, OnboardAction > = ( state = false, a
 	return state;
 };
 
+const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'ONBOARDING_START' ) {
+		return true;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -232,6 +248,7 @@ const reducer = combineReducers( {
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	pageLayouts,
+	selectedFeatures,
 	selectedFonts,
 	selectedDesign,
 	selectedSite,
@@ -239,10 +256,10 @@ const reducer = combineReducers( {
 	siteVertical,
 	showSignupDialog,
 	plan,
-	selectedFeatures,
 	wasVerticalSkipped,
 	isExperimental,
 	randomizedDesigns,
+	hasOnboardingStarted,
 } );
 
 export type State = ReturnType< typeof reducer >;

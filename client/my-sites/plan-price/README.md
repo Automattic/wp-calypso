@@ -1,5 +1,4 @@
-PlanPrice Component
-=============
+# PlanPrice Component
 
 PlanPrice component is a React component used to display plan's price with a currency and a discount, if any.
 It can be used anywhere where a plan's price is required.
@@ -36,11 +35,11 @@ export default class extends React.Component {
 
 ## Props
 
-| Prop         | Type           | Description                                               |
-| ----         | -------        | -----------                                               |
-| rawPrice     | number / array | Price or price range of the plan                          |
-| original     | bool           | Is the price discounted and this is the original one?     |
-| discounted   | bool           | Is the price discounted and this is the discounted one?   |
-| isOnSale     | bool           | Is the product this price is for on sale?                 |
-| currencyCode | string         | Currency of the price                                     |
-| className    | string         | If you need to add additional classes                     |
+| Prop         | Type           | Description                                             |
+| ------------ | -------------- | ------------------------------------------------------- |
+| rawPrice     | number / array | Price or price range of the plan                        |
+| original     | bool           | Is the price discounted and this is the original one?   |
+| discounted   | bool           | Is the price discounted and this is the discounted one? |
+| isOnSale     | bool           | Is the product this price is for on sale?               |
+| currencyCode | string         | Currency of the price                                   |
+| className    | string         | If you need to add additional classes                   |

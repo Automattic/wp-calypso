@@ -13,7 +13,7 @@ export default function listEmailForwards( { emailForwards } ) {
 	return (
 		<div>
 			<QueryEmailForwards domainName={ 'example.com' } />
-			{ emailForwards.map( emailForwardItem => (
+			{ emailForwards.map( ( emailForwardItem ) => (
 				<li>{ `${ emailForwardItem.mailbox }@${ emailForwardItem.domainName }` }</li>
 			) ) }
 		</div>

@@ -1,11 +1,10 @@
-EmailFollowersData
-==================
+# EmailFollowersData
 
 A component that fetches a site's email followers and passes them to its children.
 
 ## Props
 
-`<EmailFollowersData />` should be given a `fetchOptions` object which will be used as parameters for the API call /sites/$site/stats/followers
+`<EmailFollowersData />` should be given a `fetchOptions` object which will be used as parameters for the API call /sites/\$site/stats/followers
 
 ## Usage
 

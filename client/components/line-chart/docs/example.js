@@ -11,6 +11,7 @@ import moment from 'moment';
 import { Card } from '@automattic/components';
 import FormInputCheckbox from 'components/forms/form-checkbox';
 import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import LineChart from 'components/line-chart';
 
 const NUM_DATA_SERIES = 3;
@@ -111,7 +112,7 @@ export default class LineChartExample extends Component {
 					<div>
 						<FormLabel>
 							Data Min
-							<input
+							<FormTextInput
 								type="number"
 								value={ this.state.dataMin }
 								min="0"
@@ -121,7 +122,7 @@ export default class LineChartExample extends Component {
 
 						<FormLabel>
 							Data Max
-							<input
+							<FormTextInput
 								type="number"
 								value={ this.state.dataMax }
 								min="0"
@@ -131,7 +132,7 @@ export default class LineChartExample extends Component {
 
 						<FormLabel>
 							Series Length
-							<input
+							<FormTextInput
 								type="number"
 								value={ this.state.seriesLength }
 								min="3"

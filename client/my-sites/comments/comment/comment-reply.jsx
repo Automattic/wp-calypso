@@ -12,6 +12,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import AutoDirection from 'components/auto-direction';
+import FormTextarea from 'components/forms/form-textarea';
 import { Button } from '@automattic/components';
 import { decodeEntities } from 'lib/formatting';
 import {
@@ -155,14 +156,14 @@ export class CommentReply extends Component {
 		return (
 			<form className="comment__reply">
 				<AutoDirection>
-					<textarea
+					<FormTextarea
 						className={ textareaClasses }
 						onBlur={ this.blurReply }
 						onChange={ this.updateTextarea }
 						onFocus={ this.focusReply }
 						onKeyDown={ this.keyDownHandler }
 						placeholder={ this.getPlaceholder() }
-						ref={ this.storeTextareaRef }
+						forwardedRef={ this.storeTextareaRef }
 						style={ textareaStyle }
 						value={ replyContent }
 					/>

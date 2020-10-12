@@ -1,10 +1,17 @@
 /**
  * External dependencies
  */
-import type { DomainSuggestions, Site, VerticalsTemplates, Plans } from '@automattic/data-stores';
+import {
+	DomainSuggestions,
+	Site,
+	VerticalsTemplates,
+	Plans,
+	WPCOMFeatures,
+} from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
 import { getLanguage } from 'lib/i18n-utils';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -15,7 +22,6 @@ import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import type { FeatureId } from '../../onboarding-block/features/data';
 import { isEnabled } from 'config';
 
 type CreateSiteParams = Site.CreateSiteParams;
@@ -24,6 +30,7 @@ type Template = VerticalsTemplates.Template;
 type Language = {
 	value: number;
 };
+type FeatureId = WPCOMFeatures.FeatureId;
 
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
@@ -34,24 +41,29 @@ export function* createSite(
 	username: string,
 	languageSlug: string,
 	bearerToken?: string,
-	isPublicSite = false
+	visibility: number = isEnabled( 'coming-soon-v2' )
+		? Site.Visibility.PublicNotIndexed
+		: Site.Visibility.Private
 ) {
-	const { domain, selectedDesign, selectedFonts, siteTitle, siteVertical }: State = yield select(
-		ONBOARD_STORE,
-		'getState'
-	);
+	const {
+		domain,
+		selectedDesign,
+		selectedFonts,
+		siteTitle,
+		siteVertical,
+		selectedFeatures,
+	}: State = yield select( ONBOARD_STORE, 'getState' );
 
 	const shouldEnableFse = !! selectedDesign?.is_fse;
-
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-
 	const defaultTheme = shouldEnableFse ? 'seedlet-blocks' : 'twentytwenty';
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
 		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
-		blog_title: siteTitle,
-		public: isPublicSite ? 1 : -1,
+		blog_title: blogTitle,
+		public: visibility,
 		options: {
 			site_vertical: siteVertical?.id,
 			site_vertical_name: siteVertical?.label,
@@ -61,7 +73,7 @@ export function* createSite(
 			// TODO: determine default vertical should user input match no official vertical
 			site_vertical_slug: siteVertical?.slug || 'football',
 			site_information: {
-				title: siteTitle,
+				title: blogTitle,
 			},
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
@@ -73,7 +85,12 @@ export function* createSite(
 				font_base: selectedFonts.base,
 				font_headings: selectedFonts.headings,
 			} ),
-			use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
+			use_patterns: true,
+			selected_features: selectedFeatures,
+			...( isEnabled( 'coming-soon-v2' ) &&
+				visibility === Site.Visibility.PublicNotIndexed && {
+					wpcom_public_coming_soon: true,
+				} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
@@ -81,10 +98,6 @@ export function* createSite(
 
 	return success;
 }
-
-export const enableExperimental = () => ( {
-	type: 'SET_ENABLE_EXPERIMENTAL' as const,
-} );
 
 export const removeFeature = ( featureId: FeatureId ) => ( {
 	type: 'REMOVE_FEATURE' as const,
@@ -189,9 +202,12 @@ export function* updatePlan( planSlug: Plans.PlanSlug ) {
 	yield setPlan( plan );
 }
 
+export const startOnboarding = () => ( {
+	type: 'ONBOARDING_START' as const,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
-	| typeof enableExperimental
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
@@ -212,4 +228,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteVertical
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
+	| typeof startOnboarding
 >;

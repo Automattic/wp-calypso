@@ -1,5 +1,4 @@
-Payment Methods
-================
+# Payment Methods
 
 This module is used to manage payment method related UI.
 
@@ -26,13 +25,13 @@ Adds an edit to currently editing changes
 This is saved on a per-site basis, either as "LOADING" (when requesting settings), or a list of settings as returned from the site's API.
 
 ```js
-{
-	"creates": [ { id: { index: 0 }, settings: { field: 'Value', ... } } ],
-	"updates": [ { id: "MethodId", settings: { field: 'Value', ... } } ],
-	"deletes": [ { id: 1 }, ... ],
-	"currentlyEditingId": "MethodId",
-	"currentlyEditingChanges": { fieldName: "Value", ... }
-}
+const object = {
+	creates: [ { id: { index: 0 }, settings: { field: 'Value' /*...*/ } } ],
+	updates: [ { id: 'MethodId', settings: { field: 'Value' /*...*/ } } ],
+	deletes: [ { id: 1 } /*...*/ ],
+	currentlyEditingId: 'MethodId',
+	currentlyEditingChanges: { fieldName: 'Value' /*...*/ },
+};
 ```
 
 ## Selectors

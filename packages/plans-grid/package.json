@@ -40,7 +40,8 @@
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
 		"tslib": "^1.10.0",
-		"uuid": "^7.0.2"
+		"uuid": "^7.0.2",
+		"debug": "^4.1.1"
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",

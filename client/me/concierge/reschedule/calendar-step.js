@@ -11,23 +11,23 @@ import { without } from 'lodash';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Timezone from 'components/timezone';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import QueryConciergeAppointmentDetails from 'components/data/query-concierge-appointment-details';
-import getConciergeAppointmentDetails from 'state/selectors/get-concierge-appointment-details';
-import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
-import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import Timezone from 'calypso/components/timezone';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
+import getConciergeAppointmentDetails from 'calypso/state/selectors/get-concierge-appointment-details';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	rescheduleConciergeAppointment,
 	updateConciergeAppointmentDetails,
-} from 'state/concierge/actions';
+} from 'calypso/state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
 import { CONCIERGE_STATUS_BOOKING, CONCIERGE_STATUS_BOOKED } from '../constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class CalendarStep extends Component {
 	static propTypes = {

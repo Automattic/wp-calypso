@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useEffect, useRef, useState } from 'react';
-import { useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
 
@@ -27,7 +27,7 @@ export default function useIsCachedContactFormValid( contactValidationCallback )
 		}
 		if ( ! hasValidated.current && cachedContactDetails ) {
 			hasValidated.current = true;
-			if ( formStatus === 'ready' ) {
+			if ( formStatus === FormStatus.READY ) {
 				setFormValidating();
 				shouldResetFormStatus.current = true;
 			}

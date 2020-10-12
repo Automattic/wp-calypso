@@ -23,6 +23,17 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 		try {
 			debug( 'heard checkout event', action );
 			switch ( action.type ) {
+				case 'PRODUCTS_ADD_ERROR':
+					reduxDispatch(
+						logStashEventAction( 'calypso_composite_checkout_products_load_error', {
+							error_message: String( action.payload ),
+						} )
+					);
+					return reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_products_load_error', {
+							error_message: String( action.payload ),
+						} )
+					);
 				case 'CHECKOUT_LOADED':
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_page_view', {
@@ -35,7 +46,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 					return reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_loaded', {} ) );
 				case 'PAYMENT_COMPLETE': {
-					const total_cost = action.payload.total.amount.value / 100; // TODO: This conversion only works for USD! We have to localize this or get it from the server directly (or better yet, just force people to use the integer version).
+					const total_cost = action.payload.responseCart.total_cost;
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_payment_success', {
 							coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
@@ -380,6 +391,13 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 				case 'CART_ADD_ITEM': {
 					return recordAddEvent( action.payload );
 				}
+				case 'CART_CHANGE_PLAN_LENGTH': {
+					return reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_plan_length_change', {
+							new_product_slug: action.payload?.newProductSlug,
+						} )
+					);
+				}
 				case 'THANK_YOU_URL_GENERATED':
 					return reduxDispatch(
 						logStashEventAction( 'thank you url generated', {
@@ -396,9 +414,24 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					);
 			}
 		} catch ( err ) {
+			// This is a fallback to catch any errors caused by the analytics code
+			// (particularly for the error reporting analytics code). Anything in
+			// this block should remain very simple and extremely tolerant of any
+			// kind of data. It should make no assumptions about the data it uses.
+			// There's no fallback for the fallback!
 			debug( 'checkout event error', err.message );
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_composite_error', {
+					error_message: err.message,
+					action_type: String( action?.type ),
+					action_payload: String( action?.payload ),
+				} )
+			);
 			return reduxDispatch(
-				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message )
+				logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
+					action_type: String( action?.type ),
+					action_payload: String( action?.payload ),
+				} )
 			);
 		}
 	};

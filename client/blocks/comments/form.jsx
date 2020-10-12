@@ -13,6 +13,7 @@ import { translate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import AutoDirection from 'components/auto-direction';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormInputValidation from 'components/forms/form-input-validation';
 import Gravatar from 'components/gravatar';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -191,7 +192,7 @@ class PostCommentForm extends React.Component {
 		return (
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
-				<fieldset>
+				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
 					<div className={ expandingAreaClasses }>
 						<pre>
@@ -220,7 +221,7 @@ class PostCommentForm extends React.Component {
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
 					</Button>
 					{ this.renderError() }
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	}

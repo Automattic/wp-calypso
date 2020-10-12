@@ -18,7 +18,7 @@ jest.mock( 'my-sites/controller', () => ( {
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-jest.mock( 'lib/abtest/getters', () => ( {
+jest.mock( 'lib/plans/config', () => ( {
 	shouldShowOfferResetFlow: jest.fn( () => false ),
 } ) );
 jest.mock( 'my-sites/plans-v2', () => jest.fn() );
@@ -41,7 +41,7 @@ import {
 import { currentPlan } from '../current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import plansV2 from 'my-sites/plans-v2';
 
 import router from '../index';

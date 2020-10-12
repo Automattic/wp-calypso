@@ -64,7 +64,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 	step( 'Displays Default Results initially', async function () {
 		supportSearchComponent = await SupportSearchComponent.Expect( driver );
 		const resultsCount = await supportSearchComponent.getDefaultResultsCount();
-		assert.equal( resultsCount, 5, 'There are not 5 Default Results displayed.' );
+		assert.equal( resultsCount, 6, 'There are not 6 Default Results displayed.' );
 	} );
 
 	step( 'Returns API Search Results for valid search query', async function () {
@@ -117,7 +117,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 		assert.equal( adminResults, true, 'The Admin Results are not displayed.' );
 
-		assert.equal( defaultResultsCount, 5, 'The 5 Default Results are not displayed.' );
+		assert.equal( defaultResultsCount, 6, 'The 6 Default Results are not displayed.' );
 	} );
 
 	step(
@@ -137,7 +137,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 			assert.equal( hasNoResultsMessage, true, 'The "No results" message was not displayed.' );
 
-			assert.equal( resultsCount, 5, 'The 5 default Error Results are not displayed.' );
+			assert.equal( resultsCount, 6, 'The 6 default Error Results are not displayed.' );
 		}
 	);
 
@@ -150,7 +150,7 @@ describe( `[${ host }] My Home "Get help" support search card: (${ screenSize })
 
 		assert.equal( errorResults, true, 'The default Error Results are not displayed.' );
 
-		assert.equal( resultsCount, 5, 'The 5 Default Results are not displayed.' );
+		assert.equal( resultsCount, 6, 'The 6 Default Results are not displayed.' );
 	} );
 
 	step( 'Does not request API Search Results for empty search queries', async function () {

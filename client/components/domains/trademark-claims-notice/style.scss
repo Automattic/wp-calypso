@@ -19,7 +19,7 @@
 			margin-bottom: 150px;
 		}
 
-		@include breakpoint-deprecated('>800px') {
+		@include breakpoint-deprecated( '>800px' ) {
 			margin-bottom: 53px;
 
 			body.is-section-signup & {
@@ -56,12 +56,12 @@
 		left: 0;
 		right: 0;
 		margin: 0;
-		padding: 1px 31px 0 ($sidebar-width-max + 32px);
+		padding: 1px 31px 0 calc( var( --sidebar-width-max ) + 32px );
 		box-sizing: border-box;
 		overflow: hidden;
 
-		@include breakpoint-deprecated('<960px') {
-			padding: 1px 23px 0 ($sidebar-width-min + 24px);
+		@include breakpoint-deprecated( '<960px' ) {
+			padding: 1px 23px 0 calc( var( --sidebar-width-min ) + 24px );
 		}
 
 		body.is-section-signup & {
@@ -74,11 +74,11 @@
 			background: var( --color-surface-backdrop );
 			padding: 0 1px 32px;
 
-			@include breakpoint-deprecated('<960px') {
+			@include breakpoint-deprecated( '<960px' ) {
 				padding: 0 1px 24px;
 			}
 
-			@include breakpoint-deprecated('<660px') {
+			@include breakpoint-deprecated( '<660px' ) {
 				padding: 0 1px;
 			}
 
@@ -86,13 +86,13 @@
 				background: var( --color-primary );
 				padding: 0;
 
-				@include breakpoint-deprecated('>800px') {
+				@include breakpoint-deprecated( '>800px' ) {
 					padding: 0 0 32px;
 				}
 			}
 		}
 
-		@include breakpoint-deprecated('<660px') {
+		@include breakpoint-deprecated( '<660px' ) {
 			margin-left: 0;
 			padding: 0;
 			padding-top: 47px;
@@ -108,7 +108,7 @@
 				width: 100%;
 				margin: 0 0 10px;
 
-				@include breakpoint-deprecated('>800px') {
+				@include breakpoint-deprecated( '>800px' ) {
 					width: auto;
 					margin: 0 0 0 14px;
 				}

@@ -108,6 +108,8 @@ class KeyedSuggestions extends React.Component {
 		} );
 	};
 
+	sanitizeInput = ( input ) => input.replace( /[-/\\^$*+?.()|[\]{}]/g, '' );
+
 	/**
 	 * Provides keybord support for suggestings component by managing items highlith position
 	 * and calling suggestion callback when user hits Enter
@@ -221,9 +223,10 @@ class KeyedSuggestions extends React.Component {
 			}
 
 			// Try a full match first and try substring matches
-			let multiRegex = filterTerm;
-			for ( let i = filterTerm.length; i > 1; i-- ) {
-				multiRegex += '|' + filterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
+			const cleanFilterTerm = this.sanitizeInput( filterTerm );
+			let multiRegex = cleanFilterTerm;
+			for ( let i = cleanFilterTerm.length; i > 1; i-- ) {
+				multiRegex += '|' + cleanFilterTerm.replace( new RegExp( '(.{' + i + '})', 'g' ), '$1.*' );
 			}
 			const regex = new RegExp( multiRegex, 'iu' );
 
@@ -241,7 +244,7 @@ class KeyedSuggestions extends React.Component {
 				const sortedMatching = sortBy( matching, ( match ) => {
 					const term = ourTerms[ match ];
 					const termString = term.name + ' ' + term.description;
-					const hitIndex = termString.toLowerCase().indexOf( filterTerm.toLowerCase() );
+					const hitIndex = termString.toLowerCase().indexOf( cleanFilterTerm.toLowerCase() );
 					return hitIndex >= 0 && hitIndex;
 				} );
 				// Concatenate mathing and non matchin - this is full set of filters just reordered.
@@ -274,7 +277,7 @@ class KeyedSuggestions extends React.Component {
 	};
 
 	createTextWithHighlight = ( text, highlightedText ) => {
-		const re = new RegExp( '(' + highlightedText + ')', 'gi' );
+		const re = new RegExp( '(' + this.sanitizeInput( highlightedText ) + ')', 'gi' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
 			const key = text + i;

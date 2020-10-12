@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { app, Menu } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, Menu } = require( 'electron' );
 
 /**
  * Internal dependencies
@@ -60,7 +60,8 @@ MacPlatform.prototype.showNotificationsBadge = function ( count, bounce ) {
 
 	app.setBadgeCount( count );
 
-	if ( bounce ) {
+	const shouldBounce = bounce && count > badgeCount;
+	if ( shouldBounce ) {
 		app.dock.bounce();
 	}
 };

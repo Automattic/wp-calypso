@@ -64,6 +64,10 @@ const settings = {
 		html: false,
 		lightBlockWrapper: true,
 	},
+	styles: [
+		{ name: 'fill', label: __( 'Fill', 'full-site-editing' ), isDefault: true },
+		{ name: 'outline', label: __( 'Outline', 'full-site-editing' ) },
+	],
 	edit,
 	save,
 };

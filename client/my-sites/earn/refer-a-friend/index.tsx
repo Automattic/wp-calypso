@@ -11,6 +11,7 @@ import { compact } from 'lodash';
 import wp from 'lib/wp';
 import { SiteSlug } from 'types';
 import { useTranslate } from 'i18n-calypso';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isJetpackSite } from 'state/sites/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
 import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
@@ -79,7 +80,7 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 		};
 
 		if ( peerReferralLink ) {
-			cta.component = <ClipboardButtonInput value={ peerReferralLink } />;
+			cta.component = <ClipboardButtonInput value={ localizeUrl( peerReferralLink ) } />;
 		}
 
 		return {

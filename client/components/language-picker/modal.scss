@@ -80,6 +80,10 @@
 
 .language-picker__modal-tooltip {
 	z-index: z-index( 'root', 'popover.is-dialog-visible' );
+
+	a {
+		color: var( --color-link-20 );
+	}
 }
 
 .language-picker__modal-list {

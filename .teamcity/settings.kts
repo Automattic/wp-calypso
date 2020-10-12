@@ -1,15 +1,13 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.dockerSupport
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
 /*
@@ -42,6 +40,7 @@ project {
 
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
+	buildType(CheckCodeStyle)
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
@@ -78,10 +77,6 @@ object BuildBaseImages : BuildType({
 		root(WpCalypso)
 
 		cleanCheckout = true
-		branchFilter = """
-			+:master
-		""".trimIndent()
-		excludeDefaultBranchChanges = true
 	}
 
 	steps {
@@ -111,7 +106,7 @@ object BuildBaseImages : BuildType({
 		}
 	}
 
-	triggers{
+	triggers {
 		schedule {
 			schedulingPolicy = daily {
 				hour = 0
@@ -133,7 +128,7 @@ object BuildBaseImages : BuildType({
 
 object RunAllUnitTests : BuildType({
 	name = "Run unit tests"
-	description = "Runs code hygiene and unit tests"
+	description = "Run unit tests"
 
 	artifactRules = """
 		test_results => test_results
@@ -142,7 +137,6 @@ object RunAllUnitTests : BuildType({
 
 	vcs {
 		root(WpCalypso)
-
 		cleanCheckout = true
 	}
 
@@ -158,8 +152,8 @@ object RunAllUnitTests : BuildType({
 				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --install
-				nvm use
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Install modules
 				yarn install
@@ -170,7 +164,8 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Code hygiene"
+			name = "Prevent uncommited changes"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -e
 				set -x
@@ -178,7 +173,8 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Prevent uncommited changes
 				DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
@@ -188,13 +184,23 @@ object RunAllUnitTests : BuildType({
 					echo "You need to checkout the branch, run 'yarn' and commit those files."
 					exit 1
 				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run type checks"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export NODE_ENV="test"
 
-				# Code style
-				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '^(client/|server/|packages/)' | grep -E '\.[jt]sx?${'$'}' || exit 0)
-				echo ${'$'}FILES_TO_LINT
-				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
-					yarn run eslint --format junit --output-file "./test_results/eslint/results.xml" ${'$'}FILES_TO_LINT
-				fi
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run type checks
 				yarn run tsc --project client/landing/gutenboarding
@@ -205,7 +211,8 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Run unit tests"
+			name = "Run unit tests for client"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -e
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
@@ -215,16 +222,77 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run client tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run unit tests for server"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export HOME="/calypso"
 
-				# Run packages tests
-				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run server tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run unit tests for packages"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export HOME="/calypso"
+
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Run packages tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run unit tests for Editing Toolkit"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export HOME="/calypso"
+
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Run Editing Toolkit tests
 				cd apps/editing-toolkit
@@ -237,13 +305,15 @@ object RunAllUnitTests : BuildType({
 		}
 		script {
 			name = "Build artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				set -e
 				export HOME="/calypso"
-				export NODE_ENV="test"
+				export NODE_ENV="production"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh"
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
 
 				# Build o2-blocks
 				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
@@ -263,11 +333,7 @@ object RunAllUnitTests : BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = """
-				+:pull/*
-				+:master
-				+:trunk
-			""".trimIndent()
+			branchFilter = "+:*"
 		}
 	}
 
@@ -278,16 +344,6 @@ object RunAllUnitTests : BuildType({
 			param("xmlReportParsing.reportDirs", "test_results/**/*.xml")
 		}
 		perfmon {
-		}
-		pullRequests {
-			vcsRootExtId = "${WpCalypso.id}"
-			provider = github {
-				serverUrl = ""
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
-			}
 		}
 		commitStatusPublisher {
 			vcsRootExtId = "${WpCalypso.id}"
@@ -314,6 +370,103 @@ object RunAllUnitTests : BuildType({
 			buildFinishedSuccessfully = true
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
+		}
+	}
+})
+
+object CheckCodeStyle : BuildType({
+	name = "Check code style"
+	description = "Check code style"
+
+	artifactRules = """
+		checkstyle_results => checkstyle_results
+	""".trimIndent()
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export NODE_ENV="test"
+				export CHROMEDRIVER_SKIP_DOWNLOAD=true
+				export PUPPETEER_SKIP_DOWNLOAD=true
+				export npm_config_cache=${'$'}(yarn cache dir)
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run linters"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export NODE_ENV="test"
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Find files to lint
+				if [ "%teamcity.build.branch.is_default%" = "true" ]; then
+					FILES_TO_LINT="."
+				else
+					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
+				fi
+				echo "Files to lint:"
+				echo ${'$'}FILES_TO_LINT
+				echo ""
+
+				# Lint files
+				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
+					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = "+:*"
+		}
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/**/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
+		perfmon {
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
 		}
 	}
 })

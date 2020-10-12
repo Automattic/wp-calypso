@@ -93,6 +93,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				fetch_algo: `${ this.props.fetchAlgo }/${ this.props.suggestion.vendor }`,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
+				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',
 			} );
 		}
 	}
@@ -154,6 +155,11 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		if ( premiumDomain?.pending ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
+		} else if ( premiumDomain?.is_price_limit_exceeded ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
+			buttonContent = translate( 'Restricted', {
+				context: 'Premium domain is not available for registration',
+			} );
 		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 			buttonContent = translate( 'Unavailable', {
@@ -173,22 +179,8 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const {
-			cart,
-			isDomainOnly,
-			domainsWithPlansOnly,
-			selectedSite,
-			suggestion,
-			selectedFreePlanInSwapFlow,
-		} = this.props;
-		const shouldShowFullDomainPrice = isDomainOnly || selectedFreePlanInSwapFlow;
-		return getDomainPriceRule(
-			domainsWithPlansOnly,
-			selectedSite,
-			cart,
-			suggestion,
-			shouldShowFullDomainPrice
-		);
+		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
+		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
 	}
 
 	/**
@@ -224,6 +216,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			isFeatured,
 			showHstsNotice,
 			productSaleCost,
+			premiumDomain,
 			suggestion: { domain_name: domain, is_premium: isPremium },
 			translate,
 			isReskinned,
@@ -254,7 +247,9 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
-				{ isPremium && <PremiumBadge /> }
+				{ isPremium && (
+					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
+				) }
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
 					<InfoPopover
@@ -403,7 +398,6 @@ class DomainRegistrationSuggestion extends React.Component {
 				{ ...this.getButtonProps() }
 				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
-				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -418,24 +412,27 @@ const mapStateToProps = ( state, props ) => {
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
 	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
+	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 
 	let productCost;
+	let productSaleCost;
 
-	if ( props.premiumDomain?.is_premium ) {
+	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
-	}
-
-	return {
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: productCost,
-		productSaleCost: getDomainSalePrice(
+		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
 			stripZeros
-		),
+		);
+	}
+
+	return {
+		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		productCost,
+		productSaleCost,
 	};
 };
 

@@ -1,8 +1,14 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { init as initStore, store } from './state';
 import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
@@ -33,6 +39,18 @@ repliesCache.cleanup();
  * Force a manual refresh of the notes data
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
+
+/**
+ * Force a manual update of a note's read status
+ * (used by the Desktop application)
+ *
+ * @param {number} noteId Unique identifier of the note
+ * @param {boolean} isRead Whether to mark the note as read (true) or unread (false)
+ * @param {Function} callback Function to be executed after the API call is made
+ */
+export const markNoteAsRead = ( noteId, isRead, callback ) => {
+	client && client.markNoteAsRead.call( client, noteId, isRead, callback );
+};
 
 export class Notifications extends PureComponent {
 	static propTypes = {

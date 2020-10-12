@@ -17,9 +17,9 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
-	MainContentUI,
-	CheckoutStepAreaUI,
-	SubmitButtonWrapperUI,
+	MainContentWrapper,
+	CheckoutStepAreaWrapper,
+	SubmitButtonWrapper,
 } from './components/checkout-steps';
 import CheckoutPaymentMethods from './components/checkout-payment-methods';
 import {
@@ -76,6 +76,7 @@ import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 import { useTransactionStatus } from './lib/transaction-status';
 import { usePaymentProcessor } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
+import { FormStatus, TransactionStatus } from './types';
 
 // Re-export the public API
 export {
@@ -91,20 +92,26 @@ export {
 	CheckoutProvider,
 	CheckoutStep,
 	CheckoutStepArea,
+	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
+	FormStatus,
+	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
+	SubmitButtonWrapper,
+	TransactionStatus,
+	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
 	createApplePayMethod,
-	createEpsMethod,
-	createEpsPaymentMethodStore,
 	createBancontactMethod,
 	createBancontactPaymentMethodStore,
+	createEpsMethod,
+	createEpsPaymentMethodStore,
 	createExistingCardMethod,
 	createFreePaymentMethod,
 	createFullCreditsMethod,
@@ -144,8 +151,4 @@ export {
 	useSetStepComplete,
 	useTotal,
 	useTransactionStatus,
-	checkoutTheme,
-	MainContentUI,
-	CheckoutStepAreaUI,
-	SubmitButtonWrapperUI,
 };

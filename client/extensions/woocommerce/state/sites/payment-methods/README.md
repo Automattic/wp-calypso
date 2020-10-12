@@ -1,5 +1,4 @@
-Payment Methods
-===============
+# Payment Methods
 
 This module is used to manage payment methods for a site.
 
@@ -14,19 +13,28 @@ Get the payment methods available on a site.
 A list of supported payment methods as returned from the site's API, saved on a per-site basis.
 
 ```js
-{
-	"paymentMethods": [ {
-		"id": "bacs",
-		"title": "Direct bank transfer",
-		"description": "Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won't be shipped until the funds have cleared in our account.",
-		"order": "",
-		"enabled": false,
-		"method_title": "BACS",
-		"method_description": "Allows payments by BACS, more commonly known as direct bank/wire transfer.",
-		"settings": { … },
-		"methodType": "offline",
-	}, { … } ]
-}
+const object = {
+	paymentMethods: [
+		{
+			id: 'bacs',
+			title: 'Direct bank transfer',
+			description:
+				"Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won't be shipped until the funds have cleared in our account.",
+			order: '',
+			enabled: false,
+			method_title: 'BACS',
+			method_description:
+				'Allows payments by BACS, more commonly known as direct bank/wire transfer.',
+			settings: {
+				/*...*/
+			},
+			methodType: 'offline',
+		},
+		{
+			/*...*/
+		},
+	],
+};
 ```
 
 ## Selectors

@@ -46,55 +46,63 @@ describe( 'wpcom.me.settings.profileLinks', function () {
 	} );
 
 	describe( 'wpcom.me.settings.profileLinks.get', function () {
-		it( 'should get at least one profile link for current user', function ( done ) {
-			profile.get( function ( err, data ) {
-				if ( err ) throw err;
+		it( 'should get at least one profile link for current user', function () {
+			return new Promise( ( done ) => {
+				profile.get( function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( data.profile_links instanceof Array );
-				assert.ok( 1 <= data.profile_links.length );
-				done();
+					assert.ok( data.profile_links instanceof Array );
+					assert.ok( 1 <= data.profile_links.length );
+					done();
+				} );
 			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.settings.profileLinks.add', function () {
-		it( 'should not add link already added', function ( done ) {
-			profile.add( fix_profile, function ( err, data ) {
-				if ( err ) throw err;
+		it( 'should not add link already added', function () {
+			return new Promise( ( done ) => {
+				profile.add( fix_profile, function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( ! data.added );
-				assert.ok( data.duplicate instanceof Array );
-				assert.ok( testing_profile.added[ 0 ].link_slug, data.duplicate[ 0 ].link_slug );
-				done();
+					assert.ok( ! data.added );
+					assert.ok( data.duplicate instanceof Array );
+					assert.ok( testing_profile.added[ 0 ].link_slug, data.duplicate[ 0 ].link_slug );
+					done();
+				} );
 			} );
 		} );
 
-		it( 'should add a new profile link', function ( done ) {
-			fix_profile.title += '-new';
-			fix_profile.value += '-new';
+		it( 'should add a new profile link', function () {
+			return new Promise( ( done ) => {
+				fix_profile.title += '-new';
+				fix_profile.value += '-new';
 
-			profile.add( fix_profile, function ( err, data ) {
-				if ( err ) throw err;
+				profile.add( fix_profile, function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( ! data.duplicate );
-				assert.ok( data.added instanceof Array );
-				assert.ok( 1 === data.added.length );
-				assert.ok( fix_profile.title === data.added[ 0 ].title );
+					assert.ok( ! data.duplicate );
+					assert.ok( data.added instanceof Array );
+					assert.ok( 1 === data.added.length );
+					assert.ok( fix_profile.title === data.added[ 0 ].title );
 
-				// store data in global var
-				added_profile = data;
-				done();
+					// store data in global var
+					added_profile = data;
+					done();
+				} );
 			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.settings.profileLinks.del', function () {
-		it( 'should delete the new link already added', function ( done ) {
-			profile.del( added_profile.added[ 0 ].link_slug, function ( err, data ) {
-				if ( err ) throw err;
+		it( 'should delete the new link already added', function () {
+			return new Promise( ( done ) => {
+				profile.del( added_profile.added[ 0 ].link_slug, function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( data.success );
-				done();
+					assert.ok( data.success );
+					done();
+				} );
 			} );
 		} );
 	} );

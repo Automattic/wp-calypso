@@ -13,7 +13,7 @@ import Shortcode from 'blocks/shortcode';
 import { parse as parseShortcode } from 'lib/shortcode';
 import { generateGalleryShortcode } from 'lib/media/utils';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
-import { SiteId } from 'wp-calypso-client/types';
+import { SiteId } from 'calypso/types';
 
 /**
  * Module variables

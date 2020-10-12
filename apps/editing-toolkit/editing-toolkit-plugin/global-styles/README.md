@@ -4,18 +4,18 @@ This plugin creates a new sidebar for the block editor through which the users c
 
 - [How to develop and build the plugin](#how-to-develop-and-build-the-plugin)
 - [How it works and how themes can use it](#how-it-works-and-how-themes-can-use-it)
-	* [Fallbacks for browsers without support for CSS custom properties](#fallbacks-for-browsers-without-support-for-css-custom-properties)
-	* [How to add a "Theme Default" option to the font list](#how-to-add-a-theme-default-option-to-the-font-list)
-	* [How to use a fallback stylesheet (experimental)](#how-to-use-a-fallback-stylesheet-experimental)
+  - [Fallbacks for browsers without support for CSS custom properties](#fallbacks-for-browsers-without-support-for-css-custom-properties)
+  - [How to add a "Theme Default" option to the font list](#how-to-add-a-theme-default-option-to-the-font-list)
+  - [How to use a fallback stylesheet (experimental)](#how-to-use-a-fallback-stylesheet-experimental)
 - [Existing hooks](#existing-hooks)
-	* [jetpack_global_styles_data_set_get_data filter](#jetpack_global_styles_data_set_get_data-filter)
-	* [jetpack_global_styles_data_set_save_data filter](#jetpack_global_styles_data_set_save_data-filter)
-	* [jetpack_global_styles_permission_check_additional filter](#jetpack_global_styles_permission_check_additional-filter)
-	* [jetpack_global_styles_settings](#jetpack_global_styles_settings)
+  - [jetpack_global_styles_data_set_get_data filter](#jetpack_global_styles_data_set_get_data-filter)
+  - [jetpack_global_styles_data_set_save_data filter](#jetpack_global_styles_data_set_save_data-filter)
+  - [jetpack_global_styles_permission_check_additional filter](#jetpack_global_styles_permission_check_additional-filter)
+  - [jetpack_global_styles_settings](#jetpack_global_styles_settings)
 - [FAQ](#faq)
-	* [Which fonts are available?](#which-fonts-are-available)
-	* [What will happen when the user changes to another theme that supports GlobalStyles?](#what-will-happen-when-the-user-changes-to-another-theme-that-supports-globalstyles)
-	* [What will happen when the user changes to a theme that doesn't support Global Styles or the plugin is deactivated?](#what-will-happen-when-the-user-changes-to-a-theme-that-doesnt-support-global-styles-or-the-plugin-is-deactivated)
+  - [Which fonts are available?](#which-fonts-are-available)
+  - [What will happen when the user changes to another theme that supports GlobalStyles?](#what-will-happen-when-the-user-changes-to-another-theme-that-supports-globalstyles)
+  - [What will happen when the user changes to a theme that doesn't support Global Styles or the plugin is deactivated?](#what-will-happen-when-the-user-changes-to-a-theme-that-doesnt-support-global-styles-or-the-plugin-is-deactivated)
 
 ## How to develop and build the plugin
 
@@ -45,7 +45,7 @@ h1 {
 
 In the above example, the `body`'s font-family will be what the user selected as the base font, or `serif` if `--font-base` is not set. Likewise, the `h1`'s font-family will be what the user selected as the headings font, or `sans-serif` if `--font-headings` is not set.
 
-**Fallback values for CSS Custom Properties**
+### Fallback values for CSS Custom Properties
 
 Note the font-family fallbacks provided for when `--font-base` or `--font-headings` are not set. There are a number of situations where these variables can have the value `unset` or even not being present (which the browsers also consider as being `unset`):
 
@@ -134,7 +134,7 @@ If the `enqueue_experimental_styles` is present and it's `true`, the plugin will
 
 Note that if the theme requests enqueueing the experimental stylesheet, the experimental Global Styles styles will override the theme ones once the plugin is activated. By default, until the user makes a font choice, the _System Font_ will be used.
 
-**_Theme Default_ option**
+## _Theme Default_ option
 
 Themes that use this experimental feature can also add a _Theme Default_ option in the font picker by setting the `enable_theme_default` property to true. Note that when the user selects _Theme Default_ the font to be used is _System Font_. Per se, this isn't very useful, however, themes can also provide fallback fonts for when the font is `unset` (the user selected _Theme Default_ or hasn't made any choice yet):
 

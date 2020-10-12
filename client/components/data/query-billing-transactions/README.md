@@ -1,5 +1,4 @@
-Query Billing Transactions
-================
+# Query Billing Transactions
 
 `<QueryBillingTransactions />` is a React component used in managing network requests for billing transactions.
 
@@ -17,10 +16,8 @@ export default function MyBillingTransactions( { billingTransactions } ) {
 		<div>
 			<QueryBillingTransactions />
 			{ billingTransactions.map( ( billingEntries, billingEntryType ) => {
-				return (
-					<MyBillingTransactionsList items={ billingEntries } />
-				);
-			} }
+				return <MyBillingTransactionsList items={ billingEntries } />;
+			} ) }
 		</div>
 	);
 }

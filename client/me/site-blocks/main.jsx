@@ -10,23 +10,23 @@ import { times } from 'lodash';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SectionHeader from 'components/section-header';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QuerySiteBlocks from 'components/data/query-site-blocks';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import SectionHeader from 'calypso/components/section-header';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QuerySiteBlocks from 'calypso/components/data/query-site-blocks';
 import {
 	getBlockedSites,
 	isFetchingSiteBlocks,
 	getSiteBlocksCurrentPage,
 	getSiteBlocksLastPage,
-} from 'state/reader/site-blocks/selectors';
+} from 'calypso/state/reader/site-blocks/selectors';
 import SiteBlockListItem from './list-item';
-import InfiniteList from 'components/infinite-list';
-import { requestSiteBlocks } from 'state/reader/site-blocks/actions';
+import InfiniteList from 'calypso/components/infinite-list';
+import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import SiteBlockListItemPlaceholder from './list-item-placeholder';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

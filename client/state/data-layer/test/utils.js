@@ -34,7 +34,7 @@ describe( 'Data Layer', () => {
 		} );
 	} );
 
-	describe( '#convertToCamelCase', () => {
+	test( '#convertToCamelCase', () => {
 		const snakeObject = {
 			primitive_value: 'string_const',
 			'value_with.dot_key': null,
@@ -137,11 +137,11 @@ describe( 'Data Layer', () => {
 			);
 		} );
 
-		describe( '#convertToCamelCase', () => {
+		test( '#convertToCamelCase', () => {
 			expect( convertToCamelCase( snakeObject ) ).toEqual( camelObject );
 		} );
 
-		describe( '#convertToSnakeCase', () => {
+		test( '#convertToSnakeCase', () => {
 			expect( convertToSnakeCase( camelObject ) ).toEqual( snakeObject );
 		} );
 	} );

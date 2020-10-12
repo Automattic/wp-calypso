@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { uniqueId, range, toArray } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
 
 export const templatesFixture = [
 	{

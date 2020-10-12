@@ -11,13 +11,16 @@ In the following example the operations array represents a title rename by inclu
 import TextDiff from 'components/text-diff';
 
 export default function RenamedTitle() {
-	const operations = [ {
-		op: 'del',
-		value: 'Old Title.',
-	}, {
-		op: 'add',
-		value: 'New Title!',
-	} ];
+	const operations = [
+		{
+			op: 'del',
+			value: 'Old Title.',
+		},
+		{
+			op: 'add',
+			value: 'New Title!',
+		},
+	];
 
 	return (
 		<h2>

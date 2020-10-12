@@ -115,6 +115,11 @@ Reporter.prototype.listenTo = function ( testRun, test, source ) {
 					} );
 				}
 
+				// Print skipped tests
+				if ( test.locator.pending === true ) {
+					console.log( '\x1b[35m', 'TEST SKIPPED: ' + test.locator.name );
+				}
+
 				// Reports
 				fs.readdir( reportDir, ( dirErr, reportFiles ) => {
 					if ( dirErr ) return 1;

@@ -3,15 +3,13 @@
  */
 import {
 	SELECTED_SITE_SET,
-	SECTION_SET,
+	SECTION_LOADING_SET,
 	PREVIEW_IS_SHOWING,
 	NOTIFICATIONS_PANEL_TOGGLE,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
-import editorDeprecationDialog from './editor-deprecation-dialog/reducer';
-import gutenbergOptInDialog from './gutenberg-opt-in-dialog/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import masterbarVisibility from './masterbar-visibility/reducer';
@@ -45,10 +43,10 @@ export const siteSelectionInitialized = withoutPersistence( ( state = false, act
 	return state;
 } );
 
-export function isLoading( state = false, action ) {
+export function isSectionLoading( state = false, action ) {
 	switch ( action.type ) {
-		case SECTION_SET:
-			return action.isLoading !== undefined ? action.isLoading : state;
+		case SECTION_LOADING_SET:
+			return action.isSectionLoading;
 	}
 	return state;
 }
@@ -67,9 +65,10 @@ export const isPreviewShowing = withoutPersistence( ( state = false, action ) =>
 /**
  * Tracks if the notifications panel is open
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param   {object} state       Current state
+ * @param   {object} action      Action payload
+ * @param   {string} action.type The action type identifier. In this case it's looking for NOTIFICATIONS_PANEL_TOGGLE
+ * @returns {object}             Updated state
  */
 export const isNotificationsOpen = function ( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {
@@ -81,9 +80,7 @@ export const isNotificationsOpen = function ( state = false, { type } ) {
 const reducer = combineReducers( {
 	actionLog,
 	checkout,
-	editorDeprecationDialog,
-	gutenbergOptInDialog,
-	isLoading,
+	isSectionLoading,
 	isNotificationsOpen,
 	isPreviewShowing,
 	language,

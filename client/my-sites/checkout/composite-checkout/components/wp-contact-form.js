@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import {
+	FormStatus,
 	useSelect,
 	useDispatch,
 	useFormStatus,
@@ -32,7 +33,6 @@ import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
-	needsExplicitAlternateEmailForGSuite,
 } from 'lib/cart-values/cart-items';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 import { getTopLevelOfTld } from 'lib/domains';
@@ -54,7 +54,7 @@ export default function WPContactForm( {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
-	const isDisabled = ! isStepActive || formStatus !== 'ready';
+	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
 
 	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
@@ -268,9 +268,7 @@ function DomainContactDetails( {
 		! hasDomainRegistration( responseCart ) &&
 		! hasTransferProduct( responseCart );
 	const getIsFieldDisabled = () => isDisabled;
-	const needsAlternateEmailForGSuite =
-		needsOnlyGoogleAppsDetails &&
-		needsExplicitAlternateEmailForGSuite( responseCart, contactDetails );
+	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
 
 	return (

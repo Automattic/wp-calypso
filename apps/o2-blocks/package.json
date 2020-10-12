@@ -32,6 +32,7 @@
 		"@wordpress/element": "^2.16.0",
 		"@wordpress/hooks": "^2.9.0",
 		"@wordpress/i18n": "^3.14.0",
+		"@wordpress/primitives": "^1.7.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
 		"moment": "^2.26.0",

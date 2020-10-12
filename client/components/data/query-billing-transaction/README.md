@@ -1,5 +1,4 @@
-Query Billing Transaction
-================
+# Query Billing Transaction
 
 `<QueryBillingTransaction transactionId={ transactionId } />` is a React component used to ensure that a single transaction is fetched and ready to display.
 

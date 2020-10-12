@@ -11,7 +11,7 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	getName,
 	isExpired,
@@ -28,7 +28,7 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 	isRenewable,
-} from 'lib/purchases';
+} from 'calypso/lib/purchases';
 import {
 	isDomainRegistration,
 	isDomainTransfer,
@@ -38,20 +38,23 @@ import {
 	isJetpackProduct,
 	isPlan,
 	getProductFromSlug,
-} from 'lib/products-values';
-import { getPlan } from 'lib/plans';
-
-import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import { getSite, isRequestingSites } from 'state/sites/selectors';
-import { getUser } from 'state/users/selectors';
+} from 'calypso/lib/products-values';
+import { getPlan } from 'calypso/lib/plans';
+import {
+	getByPurchaseId,
+	hasLoadedUserPurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getUser } from 'calypso/state/users/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
-import PaymentLogo from 'components/payment-logo';
-import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'lib/url/support';
-import UserItem from 'components/user';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
-import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'lib/plans/constants';
+import PaymentLogo from 'calypso/components/payment-logo';
+import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import UserItem from 'calypso/components/user';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { canEditPaymentDetails, isDataLoading } from '../utils';
+import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -61,12 +64,15 @@ class PurchaseMeta extends Component {
 		purchase: PropTypes.object,
 		site: PropTypes.object,
 		siteSlug: PropTypes.string.isRequired,
+		getManagePurchaseUrlFor: PropTypes.func,
+		getEditPaymentMethodUrlFor: PropTypes.func,
 	};
 
 	static defaultProps = {
 		hasLoadedSites: false,
 		hasLoadedUserPurchasesFromServer: false,
 		purchaseId: false,
+		getManagePurchaseUrlFor: managePurchase,
 	};
 
 	renderPrice() {
@@ -163,10 +169,10 @@ class PurchaseMeta extends Component {
 	}
 
 	renderRenewsOrExpiresOn() {
-		const { moment, purchase, siteSlug, translate } = this.props;
+		const { moment, purchase, siteSlug, translate, getManagePurchaseUrlFor } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = managePurchase( siteSlug, purchase.attachedToPurchaseId );
+			const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
 
 			return (
 				<span>
@@ -225,7 +231,7 @@ class PurchaseMeta extends Component {
 	}
 
 	renderPaymentDetails() {
-		const { purchase, translate } = this.props;
+		const { purchase, translate, getEditPaymentMethodUrlFor, siteSlug } = this.props;
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return null;
@@ -249,7 +255,7 @@ class PurchaseMeta extends Component {
 
 		return (
 			<li>
-				<a href={ getEditCardDetailsPath( this.props.siteSlug, purchase ) }>{ paymentDetails }</a>
+				<a href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }>{ paymentDetails }</a>
 			</li>
 		);
 	}
@@ -325,7 +331,16 @@ class PurchaseMeta extends Component {
 	}
 
 	renderExpiration() {
-		const { purchase, site, translate, moment, isAutorenewalEnabled, hideAutoRenew } = this.props;
+		const {
+			purchase,
+			site,
+			translate,
+			moment,
+			isAutorenewalEnabled,
+			isProductOwner,
+			hideAutoRenew,
+			getEditPaymentMethodUrlFor,
+		} = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
 			return null;
@@ -357,7 +372,6 @@ class PurchaseMeta extends Component {
 								dateSpan,
 							},
 					  } );
-
 			return (
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
@@ -369,7 +383,7 @@ class PurchaseMeta extends Component {
 					>
 						{ subsBillingText }
 					</span>
-					{ site && ! hideAutoRenew && (
+					{ site && ! hideAutoRenew && isProductOwner && (
 						<span className="manage-purchase__detail">
 							<AutoRenewToggle
 								planName={ site.plan.product_name_short }
@@ -377,6 +391,7 @@ class PurchaseMeta extends Component {
 								siteSlug={ site.slug }
 								purchase={ purchase }
 								toggleSource="manage-purchase"
+								getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
 							/>
 						</span>
 					) }
@@ -431,12 +446,14 @@ class PurchaseMeta extends Component {
 
 export default connect( ( state, { purchaseId } ) => {
 	const purchase = getByPurchaseId( state, purchaseId );
+	const isProductOwner = purchase && purchase.userId === getCurrentUserId( state );
 
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		site: purchase ? getSite( state, purchase.siteId ) : null,
+		isProductOwner,
 		owner: purchase ? getUser( state, purchase.userId ) : null,
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
 		hideAutoRenew:

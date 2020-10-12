@@ -1,20 +1,27 @@
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'calypso/config';
 import jetpackBackup from './images/jetpack-backup.svg';
 import jetpackBackupV2 from './images/jetpack-backup-v2.svg';
+import jetpackBackupV2Darkblue from './images/jetpack-backup-v2-darkblue.svg';
 import jetpackScan from './images/jetpack-scan.svg';
 import jetpackScanV2 from './images/jetpack-scan-v2.svg';
+import jetpackScanV2Darkblue from './images/jetpack-scan-v2-darkblue.svg';
 import jetpackFree from './images/jetpack-free.svg';
 import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
 import jetpackProfessional from './images/jetpack-professional.svg';
 import jetpackCompleteV2 from './images/jetpack-complete-v2.svg';
+import jetpackCrmV2 from './images/jetpack-crm-v2.svg';
+import jetpackCrmV2Darkblue from './images/jetpack-crm-v2-darkblue.svg';
 import jetpackSearch from './images/jetpack-search.svg';
 import jetpackSearchV2 from './images/jetpack-search-v2.svg';
+import jetpackSearchV2Darkblue from './images/jetpack-search-v2-darkblue.svg';
 import jetpackSecurityV2 from './images/jetpack-security-v2.svg';
 import jetpackAntiSpam from './images/jetpack-anti-spam.svg';
 import jetpackAntiSpamV2 from './images/jetpack-anti-spam-v2.svg';
+import jetpackAntiSpamV2Darkblue from './images/jetpack-anti-spam-v2-darkblue.svg';
 import wpcomBlogger from './images/wpcom-blogger.svg';
 import wpcomBusiness from './images/wpcom-business.svg';
 import wpcomEcommerce from './images/wpcom-ecommerce.svg';
@@ -24,20 +31,29 @@ import wpcomPremium from './images/wpcom-premium.svg';
 
 export const paths = {
 	'jetpack-scan': jetpackScan,
-	'jetpack-scan-v2': jetpackScanV2,
+	'jetpack-scan-v2': isEnabled( 'plans/alternate-selector' )
+		? jetpackScanV2Darkblue
+		: jetpackScanV2,
 	'jetpack-backup-daily': jetpackBackup,
 	'jetpack-backup-realtime': jetpackBackup,
-	'jetpack-backup-v2': jetpackBackupV2,
+	'jetpack-backup-v2': isEnabled( 'plans/alternate-selector' )
+		? jetpackBackupV2Darkblue
+		: jetpackBackupV2,
 	'jetpack-free': jetpackFree,
 	'jetpack-personal': jetpackPersonal,
 	'jetpack-premium': jetpackPremium,
 	'jetpack-professional': jetpackProfessional,
 	'jetpack-complete-v2': jetpackCompleteV2,
+	'jetpack-crm-v2': isEnabled( 'plans/alternate-selector' ) ? jetpackCrmV2Darkblue : jetpackCrmV2,
 	'jetpack-search': jetpackSearch,
-	'jetpack-search-v2': jetpackSearchV2,
+	'jetpack-search-v2': isEnabled( 'plans/alternate-selector' )
+		? jetpackSearchV2Darkblue
+		: jetpackSearchV2,
 	'jetpack-security-v2': jetpackSecurityV2,
 	'jetpack-anti-spam': jetpackAntiSpam,
-	'jetpack-anti-spam-v2': jetpackAntiSpamV2,
+	'jetpack-anti-spam-v2': isEnabled( 'plans/alternate-selector' )
+		? jetpackAntiSpamV2Darkblue
+		: jetpackAntiSpamV2,
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
 	'wpcom-ecommerce': wpcomEcommerce,
@@ -65,6 +81,7 @@ export const iconToProductSlugMap = {
 		'jetpack_complete_v2',
 		'jetpack_complete_monthly_v2',
 	],
+	'jetpack-crm-v2': [ 'jetpack_crm' ],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-backup-v2': [

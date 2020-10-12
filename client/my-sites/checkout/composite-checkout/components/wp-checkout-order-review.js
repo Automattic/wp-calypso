@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -17,11 +17,10 @@ import { isLineItemADomain } from '../hooks/has-domains';
 
 export default function WPCheckoutOrderReview( {
 	className,
-	removeItem,
+	removeProductFromCart,
 	removeCoupon,
 	couponStatus,
 	couponFieldStateProps,
-	variantSelectOverride,
 	getItemVariants,
 	onChangePlanLength,
 	siteUrl,
@@ -52,9 +51,8 @@ export default function WPCheckoutOrderReview( {
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
 					items={ items }
-					removeItem={ removeItem }
+					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
-					variantSelectOverride={ variantSelectOverride }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
@@ -76,14 +74,13 @@ export default function WPCheckoutOrderReview( {
 WPCheckoutOrderReview.propTypes = {
 	isSummary: PropTypes.bool,
 	className: PropTypes.string,
-	removeItem: PropTypes.func,
+	removeProductFromCart: PropTypes.func,
 	removeCoupon: PropTypes.func,
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 	siteUrl: PropTypes.string,
 	couponStatus: PropTypes.string,
 	couponFieldStateProps: PropTypes.object.isRequired,
-	variantSelectOverride: PropTypes.array,
 };
 
 function CouponFieldArea( {
@@ -104,7 +101,7 @@ function CouponFieldArea( {
 		return (
 			<CouponField
 				id="order-review-coupon"
-				disabled={ formStatus !== 'ready' }
+				disabled={ formStatus !== FormStatus.READY }
 				couponStatus={ couponStatus }
 				couponFieldStateProps={ couponFieldStateProps }
 			/>

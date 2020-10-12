@@ -3,7 +3,7 @@
 $colophon-height: 50px; // wpcomColophon element at the bottom
 
 .jetpack-connect__main:not( .is-woocommerce ),
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ):not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ) {
+.layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ):not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ) {
 	@include jetpack-connect-colors();
 }
 
@@ -487,10 +487,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	text-align: center;
 }
 
-.jetpack-connect__sso-display-name {
-	font-family: $serif;
-}
-
 .jetpack-connect__sso-user-email {
 	color: var( --color-neutral-20 );
 	font-weight: 400;
@@ -824,7 +820,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 /**
  * Onboarding styles
  **/
-.layout.is-section-jetpack-connect:not( .is-add-site-page ):not( .is-jetpack-mobile-flow ),
+.layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ),
 .layout.is-section-purchase-product {
 	background-color: var( --color-jetpack-onboarding-background );
 
@@ -1300,4 +1296,16 @@ body.is-section-jetpack-connect .layout {
 
 .layout.is-section-jetpack-connect .upsell .upsell__header .formatted-header {
 	color: inherit;
+}
+
+// The new Plans grid uses as primary color a darker version Jetpack's green.
+.is-section-jetpack-connect .selector-alt__main {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
+
+	.plans-filter-bar__discount-message {
+		color: var( --color-surface );
+
+		font-weight: 600;
+	}
 }

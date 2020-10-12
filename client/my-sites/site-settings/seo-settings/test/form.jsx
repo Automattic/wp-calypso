@@ -1,7 +1,7 @@
 /** @jest-environment jsdom */
 
-jest.mock( 'lib/abtest', () => ( {
-	abtest: () => '',
+jest.mock( 'lib/plans/config', () => ( {
+	shouldShowOfferResetFlow: () => false,
 } ) );
 
 jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
@@ -26,8 +26,8 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
 } from 'lib/plans/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
 
 /**
  * Internal dependencies
@@ -194,7 +194,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 
 	[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].forEach(
 		( product_slug ) => {
-			test( `Jetpack Premium for (${ product_slug })`, () => {
+			test( `Jetpack Security Daily for (${ product_slug })`, () => {
 				const comp = shallow(
 					<SeoForm
 						{ ...props }
@@ -203,7 +203,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 					/>
 				);
 				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
-				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_PREMIUM );
+				expect( comp.find( 'UpsellNudge' ).props().href ).toContain( OPTIONS_JETPACK_SECURITY );
 			} );
 		}
 	);

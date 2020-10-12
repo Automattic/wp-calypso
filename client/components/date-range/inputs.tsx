@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'components/localized-moment';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -94,7 +95,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 	const endValue = props.endDateValue !== localeDateFormat ? props.endDateValue : '';
 
 	return (
-		<fieldset className="date-range__date-inputs">
+		<FormFieldset className="date-range__date-inputs">
 			<legend className="date-range__date-inputs-legend">Start and End Dates</legend>
 			<div className="date-range__date-inputs-inner">
 				<div className="date-range__date-input date-range__date-input--from">
@@ -132,7 +133,7 @@ const DateRangeInputs: FunctionComponent< Props > = ( {
 					/>
 				</div>
 			</div>
-		</fieldset>
+		</FormFieldset>
 	);
 };
 

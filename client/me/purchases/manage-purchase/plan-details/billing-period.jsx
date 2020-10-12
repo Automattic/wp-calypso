@@ -12,22 +12,28 @@ import page from 'page';
  * Internal Dependencies
  */
 import { Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { isMonthly } from 'lib/plans/constants';
-import { getYearlyPlanByMonthly } from 'lib/plans';
-import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
-import { isExpired, isExpiring, isRenewing, showCreditCardExpiringWarning } from 'lib/purchases';
-import { JETPACK_SUPPORT } from 'lib/url/support';
-import { recordTracksEvent } from 'state/analytics/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { isMonthly } from 'calypso/lib/plans/constants';
+import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { planItem } from 'calypso/lib/cart-values/cart-items';
+import { addItem } from 'calypso/lib/cart/actions';
+import {
+	isExpired,
+	isExpiring,
+	isRenewing,
+	showCreditCardExpiringWarning,
+} from 'calypso/lib/purchases';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export class PlanBillingPeriod extends Component {
 	static propTypes = {
 		purchase: PropTypes.object,
 		site: PropTypes.object,
+		isProductOwner: PropTypes.bool,
 	};
 
 	handleMonthlyToYearlyButtonClick = () => {
@@ -77,7 +83,7 @@ export class PlanBillingPeriod extends Component {
 	}
 
 	renderBillingPeriod() {
-		const { purchase, site, translate } = this.props;
+		const { purchase, site, translate, isProductOwner } = this.props;
 		if ( ! purchase ) {
 			return;
 		}
@@ -97,7 +103,7 @@ export class PlanBillingPeriod extends Component {
 			<React.Fragment>
 				<FormSettingExplanation>
 					{ translate( 'Billed monthly' ) }
-					{ site && (
+					{ site && isProductOwner && (
 						<Button onClick={ this.handleMonthlyToYearlyButtonClick } primary compact>
 							{ translate( 'Upgrade to yearly billing' ) }
 						</Button>

@@ -12,6 +12,8 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
+import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import { updateFilter, setFilter } from 'state/activity-log/actions';
 import {
@@ -185,6 +187,26 @@ class BackupsPage extends Component {
 				{ ! isLoadingBackups && (
 					<div className="backup__main-wrap">
 						<div className="backup__last-backup-status">
+							{ isEnabled( 'jetpack/backup-simplified-screens' ) && doesRewindNeedCredentials && (
+								<Banner
+									className="backup__restore-banner"
+									callToAction={ translate( 'Enable restores' ) }
+									title={ translate( 'Set up your server credentials to get back online quickly' ) }
+									description={ translate(
+										'Add SSH, SFTP or FTP credentials to enable one click site restores.'
+									) }
+									href={
+										isJetpackCloud()
+											? `/settings/${ siteSlug }`
+											: `/settings/jetpack/${ siteSlug }#credentials`
+									}
+									icon="cloud-upload"
+									event="calypso_backup_enable_restores_banner"
+									tracksImpressionName="calypso_backup_enable_restores_banner_view"
+									tracksClickName="calypso_backup_enable_restores_banner_click"
+								/>
+							) }
+
 							<BackupDatePicker
 								{ ...{
 									onDateChange: this.onDateChange,

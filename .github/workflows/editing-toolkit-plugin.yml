@@ -11,6 +11,10 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     steps:
+    - name: Set up Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '^12.18.4'
     - name: Checkout code
       uses: actions/checkout@HEAD
 

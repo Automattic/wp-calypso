@@ -26,6 +26,18 @@ use \DateTime;
  * @license  http://opensource.org/licenses/BSD-3-Clause 3-clause BSD
  * @link     https://github.com/firebase/php-jwt
  */
+
+// define extra exceptions used
+if ( ! class_exists( 'SignatureInvalidException' ) ) {
+	class SignatureInvalidException extends \UnexpectedValueException { }
+}
+if ( ! class_exists( 'ExpiredException' ) ) {
+	class ExpiredException extends \UnexpectedValueException { }
+}
+if ( ! class_exists( 'BeforeValidException' ) ) {
+	class BeforeValidException extends \UnexpectedValueException { }
+}
+
 class JWT {
 
 

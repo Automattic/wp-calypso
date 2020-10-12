@@ -1,5 +1,4 @@
-Query Embed
-================
+# Query Embed
 
 `<QueryEmbed />` is a React component used in managing network requests for embed rendering for a given site and URL pair.
 
@@ -18,10 +17,8 @@ export default function MyEmbed( { embed } ) {
 				siteId={ 3584907 }
 				url="https://www.facebook.com/20531316728/posts/10154009990506729/"
 			/>
-			
-			<div key={ embed.embed_url }>
-				{ embed.result }
-			</div>
+
+			<div key={ embed.embed_url }>{ embed.result }</div>
 		</div>
 	);
 }

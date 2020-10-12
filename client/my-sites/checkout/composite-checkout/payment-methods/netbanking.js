@@ -8,6 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -32,7 +33,7 @@ import {
 } from 'my-sites/checkout/composite-checkout/components/summary-details';
 import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
 import { maskField } from 'lib/checkout';
-import CountrySpecificPaymentFieldsUI from '../components/country-specific-payment-fields-ui';
+import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
 
 const debug = debugFactory( 'composite-checkout:netbanking-payment-method' );
 
@@ -153,7 +154,7 @@ function NetBankingFields() {
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'netbanking' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
 
 	return (
@@ -170,7 +171,7 @@ function NetBankingFields() {
 				disabled={ isDisabled }
 			/>
 			<div className="netbanking__contact-fields">
-				<CountrySpecificPaymentFieldsUI
+				<CountrySpecificPaymentFields
 					countryCode={ 'IN' } // If this payment method is available and the country is not India, we have other problems
 					countriesList={ countriesList }
 					getErrorMessage={ getErrorMessagesForField }
@@ -269,7 +270,7 @@ function NetBankingPayButton( { disabled, store } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -279,10 +280,10 @@ function NetBankingPayButton( { disabled, store } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -345,17 +346,17 @@ function NetBankingLabel() {
 		<React.Fragment>
 			<span>Net Banking</span>
 			<PaymentMethodLogos className="netbanking__logo payment-logos">
-				<NetBankingLogoUI />
+				<NetbankingLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const NetBankingLogoUI = styled( NetBankingLogo )`
+const NetbankingLogo = styled( NetbankingLogoImg )`
 	width: 76px;
 `;
 
-function NetBankingLogo( { className } ) {
+function NetbankingLogoImg( { className } ) {
 	return (
 		<img src="/calypso/images/upgrades/netbanking.svg" alt="NetBanking" className={ className } />
 	);

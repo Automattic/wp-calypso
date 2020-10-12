@@ -377,7 +377,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="sirenSiret"
 						value={ sirenSiret }
-						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
 						placeholder={ translate( 'ex. 123 456 789 or 123 456 789 01234', {
@@ -399,7 +398,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="trademarkNumber"
 						value={ trademarkNumber }
-						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
 						autoCapitalize="off"

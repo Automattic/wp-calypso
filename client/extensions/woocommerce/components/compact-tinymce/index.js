@@ -11,9 +11,11 @@ import { ReactReduxContext } from 'react-redux';
 import tinymce from 'tinymce/tinymce';
 import 'tinymce/themes/modern/theme.js';
 import 'tinymce/plugins/lists/plugin.js';
+
 /**
  * Internal dependencies
  */
+import FormTextarea from 'components/forms/form-textarea';
 import i18n from 'components/tinymce/i18n';
 import { wpautop } from 'lib/formatting';
 // TinyMCE plugins & dependencies
@@ -169,7 +171,11 @@ class CompactTinyMCE extends Component {
 		const className = classNames( 'compact-tinymce', this.props.className );
 		return (
 			<div className={ className }>
-				<textarea ref={ this.setTextAreaRef } className={ tinyMCEClassName } id={ this._id } />
+				<FormTextarea
+					forwardedRef={ this.setTextAreaRef }
+					className={ tinyMCEClassName }
+					id={ this._id }
+				/>
 			</div>
 		);
 	}

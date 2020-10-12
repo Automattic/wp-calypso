@@ -3,16 +3,16 @@
 Replaces most usage of `lodash` with `lodash-es`:
 
 ```js
-import { map } from 'lodash';
-// becomes
-import { map } from 'lodash-es';
-
+import { uniq } from 'lodash';
 import map from 'lodash/map';
-// becomes
-import map from 'lodash-es/map';
-
 import camelCase from 'lodash.camelcase';
-// becomes
+```
+
+Becomes:
+
+```js
+import { uniq } from 'lodash-es';
+import map from 'lodash-es/map';
 import camelCase from 'lodash-es/camelCase';
 ```
 
@@ -23,17 +23,17 @@ replaced.
 ## Usage
 
 _webpack.config.js_
+
 ```js
-const ExtensiveLodashReplacementPlugin =
-  require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
+const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 
 module.exports = {
-  ...,
-  plugins: [
-    new ExtensiveLodashReplacementPlugin( { baseDir: '.' } ),
-    ...
-  ]
+	plugins: [ new ExtensiveLodashReplacementPlugin( { baseDir: '.' } ) ],
 };
 ```
 
 The optional `baseDir` is the base directory for the root project.
+
+```
+
+```

@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 
 import Badge from 'components/badge';
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
-import FormRadio from 'wp-calypso-client/components/forms/form-radio';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 const TYPE_NEW_SALE = 'new-sale';
 const TYPE_UPGRADE = 'upgrade';

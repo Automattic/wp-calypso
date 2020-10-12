@@ -11,14 +11,14 @@ import 'moment-timezone';
  */
 import Confirmation from './confirmation';
 import { CompactCard } from '@automattic/components';
-import Site from 'blocks/site';
-import FormattedHeader from 'components/formatted-header';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormButton from 'components/forms/form-button';
-import { withLocalizedMoment } from 'components/localized-moment';
+import Site from 'calypso/blocks/site';
+import FormattedHeader from 'calypso/components/formatted-header';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormButton from 'calypso/components/forms/form-button';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class AppointmentInfo extends Component {
 	static propTypes = {
@@ -35,6 +35,7 @@ class AppointmentInfo extends Component {
 
 		const conferenceLink = meta.conference_link || '';
 		const guessedTimezone = moment.tz.guess();
+		const isAllowedToChangeAppointment = meta.canChangeAppointment;
 
 		return (
 			<>
@@ -88,13 +89,15 @@ class AppointmentInfo extends Component {
 						<FormSettingExplanation>{ meta.message }</FormSettingExplanation>
 					</FormFieldset>
 
-					<FormFieldset>
-						<a href={ `/me/concierge/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
-							<FormButton isPrimary={ false } type="button">
-								{ translate( 'Reschedule or cancel' ) }
-							</FormButton>
-						</a>
-					</FormFieldset>
+					{ isAllowedToChangeAppointment && (
+						<FormFieldset>
+							<a href={ `/me/concierge/${ site.slug }/${ id }/cancel` } rel="noopener noreferrer">
+								<FormButton isPrimary={ false } type="button">
+									{ translate( 'Reschedule or cancel' ) }
+								</FormButton>
+							</a>
+						</FormFieldset>
+					) }
 
 					{ scheduleId === 1 ? (
 						<>

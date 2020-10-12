@@ -29,17 +29,13 @@ import PostActionsEllipsisMenuEdit from 'my-sites/post-type-list/post-actions-el
 import PostActionsEllipsisMenuTrash from 'my-sites/post-type-list/post-actions-ellipsis-menu/trash';
 import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
-import { preload } from 'sections-helper';
+import { preloadEditor } from 'sections-preloaders';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
 
 class PostItem extends React.Component {
 	clickHandler = ( clickTarget ) => () => {

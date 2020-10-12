@@ -21,8 +21,6 @@ import SidebarComponent from '../lib/components/sidebar-component.js';
 import NavBarComponent from '../lib/components/nav-bar-component.js';
 import MyOwnDomainPage from '../lib/pages/domain-my-own-page';
 import MapADomainPage from '../lib/pages/domain-map-page';
-import TransferDomainPage from '../lib/pages/transfer-domain-page';
-import TransferDomainPrecheckPage from '../lib/pages/transfer-domain-precheck-page';
 import EnterADomainComponent from '../lib/components/enter-a-domain-component';
 import MapADomainCheckoutPage from '../lib/pages/domain-map-checkout-page';
 
@@ -199,77 +197,6 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 			await DomainsPage.Expect( driver );
 			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
 			return await shoppingCartWidgetComponent.empty();
-		} );
-	} );
-
-	describe.skip( 'Transfer a domain to an existing site (partial) @parallel', function () {
-		const domain = 'automattic.com';
-
-		before( async function () {
-			if ( process.env.SKIP_DOMAIN_TESTS === 'true' ) {
-				await SlackNotifier.warn(
-					'Domains tests are currently disabled as SKIP_DOMAIN_TESTS is set to true',
-					{ suppressDuplicateMessages: true }
-				);
-				return this.skip();
-			}
-		} );
-
-		step( 'Log In and Select Domains', async function () {
-			return await new LoginFlow( driver ).loginAndSelectDomains();
-		} );
-
-		step( 'Can see the Domains page and choose add a domain', async function () {
-			const domainsPage = await DomainsPage.Expect( driver );
-			await domainsPage.setABTestControlGroupsInLocalStorage();
-			return await domainsPage.clickAddDomain();
-		} );
-
-		step( 'Can see the domain search component', async function () {
-			let findADomainComponent;
-			try {
-				findADomainComponent = await FindADomainComponent.Expect( driver );
-			} catch ( err ) {
-				if ( await RegistrationUnavailableComponent.Expect( driver ) ) {
-					await SlackNotifier.warn( 'SKIPPING: Domain registration is currently unavailable. ', {
-						suppressDuplicateMessages: true,
-					} );
-					return this.skip();
-				}
-			}
-			return await findADomainComponent.waitForResults();
-		} );
-
-		step( 'Can select to use an existing domain', async function () {
-			const findADomainComponent = await FindADomainComponent.Expect( driver );
-			return await findADomainComponent.selectUseOwnDomain();
-		} );
-
-		step( 'Can see use my own domain page', async function () {
-			return await MyOwnDomainPage.Expect( driver );
-		} );
-
-		step( 'Can select to transfer a domain', async function () {
-			const myOwnDomainPage = await MyOwnDomainPage.Expect( driver );
-			return await myOwnDomainPage.selectTransferDomain();
-		} );
-
-		step( 'Can see the transfer my domain page', async function () {
-			return await TransferDomainPage.Expect( driver );
-		} );
-
-		step( 'Can enter the domain name', async function () {
-			const transferDomainPage = await TransferDomainPage.Expect( driver );
-			return await transferDomainPage.enterADomain( domain );
-		} );
-
-		step( 'Click transfer domain button', async function () {
-			const transferDomainPage = await TransferDomainPage.Expect( driver );
-			return await transferDomainPage.clickTransferDomain();
-		} );
-
-		step( 'Can see the transfer precheck page', async function () {
-			return await TransferDomainPrecheckPage.Expect( driver );
 		} );
 	} );
 } );

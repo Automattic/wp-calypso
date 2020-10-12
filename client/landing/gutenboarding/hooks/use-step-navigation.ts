@@ -12,7 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Step, usePath, useCurrentStep, StepType } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { useShouldSiteBePublic, useHasPaidPlanFromPath } from './use-selected-plan';
+import { useNewSiteVisibility, useHasPaidPlanFromPath } from './use-selected-plan';
 import useSignup from './use-signup';
 
 /**
@@ -26,7 +26,6 @@ import useSignup from './use-signup';
  */
 export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const { isExperimental } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
 	const makePath = usePath();
 	const history = useHistory();
@@ -42,7 +41,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 		: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
 
 	// When feature picker experiment is enabled, if site title is skipped, we're showing Domains step before Features step.
-	if ( isExperimental && isEnabled( 'gutenboarding/feature-picker' ) ) {
+	if ( isEnabled( 'gutenboarding/feature-picker' ) ) {
 		steps = hasSiteTitle()
 			? [
 					Step.IntentGathering,
@@ -65,11 +64,11 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { createSite } = useDispatch( ONBOARD_STORE );
-	const shouldSiteBePublic = useShouldSiteBePublic();
+	const newSiteVisibility = useNewSiteVisibility();
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, i18nLocale, undefined, shouldSiteBePublic )
+			? createSite( currentUser.username, i18nLocale, undefined, newSiteVisibility )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps
@@ -83,9 +82,14 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 		steps = steps.filter( ( step ) => step !== Step.Domains );
 	}
 
-	// If the user landed from a marketing page after selecting a paid plan, don't show the mandatory Plans step.
-	if ( hasPaidPlanFromPath || ( plan && ! hasUsedPlansStep ) ) {
-		steps = steps.filter( ( step ) => step !== Step.Plans );
+	// Don't show the mandatory Plans step:
+	// - if the user landed from a marketing page after selecting a paid plan (in this case, hide also the Features step)
+	// - if a plan has been selected using the PlansModal but only if there is no Features step
+	if (
+		hasPaidPlanFromPath ||
+		( ! steps.includes( Step.Features ) && plan && ! hasUsedPlansStep )
+	) {
+		steps = steps.filter( ( step ) => step !== Step.Plans && step !== Step.Features );
 	}
 
 	const currentStepIndex = steps.findIndex( ( step ) => step === Step[ currentStep ] );

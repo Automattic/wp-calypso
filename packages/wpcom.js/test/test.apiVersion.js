@@ -21,18 +21,20 @@ describe( 'apiVersion', () => {
 	const wpcom = util.wpcom();
 	const site = wpcom.site( util.site() );
 
-	it( 'should request changing api version', ( done ) => {
-		site
-			.addMediaUrls( { apiVersion: '1.1' }, fixture.media.urls[ 1 ] )
-			.then( ( data ) => {
-				assert.ok( data );
-				return site.mediaList( { apiVersion: '1' } );
-			} )
-			.then( () => site.addMediaFiles( { apiVersion: '1.1' }, fixture.media.files[ 0 ] ) )
-			.then( ( data ) => {
-				assert.ok( data );
-				done();
-			} )
-			.catch( done );
+	it( 'should request changing api version', () => {
+		return new Promise( ( done ) => {
+			site
+				.addMediaUrls( { apiVersion: '1.1' }, fixture.media.urls[ 1 ] )
+				.then( ( data ) => {
+					assert.ok( data );
+					return site.mediaList( { apiVersion: '1' } );
+				} )
+				.then( () => site.addMediaFiles( { apiVersion: '1.1' }, fixture.media.files[ 0 ] ) )
+				.then( ( data ) => {
+					assert.ok( data );
+					done();
+				} )
+				.catch( done );
+		} );
 	} );
 } );

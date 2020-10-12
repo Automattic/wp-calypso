@@ -1,22 +1,28 @@
 /**
  * External dependencies
  */
-import { useMemo, useContext, useCallback, useReducer } from 'react';
+import { useCallback, useContext, useMemo, useReducer } from 'react';
 
 /**
  * Internal dependencies
  */
 import CheckoutContext from '../lib/checkout-context';
-import { TransactionStatus, TransactionStatusAction, TransactionStatusManager } from '../types';
+import {
+	TransactionStatus,
+	TransactionStatusState,
+	TransactionStatusAction,
+	TransactionStatusManager,
+	TransactionStatusPayloads,
+} from '../types';
 
 export function useTransactionStatus(): TransactionStatusManager {
 	const { transactionStatusManager } = useContext( CheckoutContext );
 	return transactionStatusManager;
 }
 
-const initialState: TransactionStatus = {
-	previousTransactionStatus: 'not-started',
-	transactionStatus: 'not-started',
+const initialState: TransactionStatusState = {
+	previousTransactionStatus: TransactionStatus.NOT_STARTED,
+	transactionStatus: TransactionStatus.NOT_STARTED,
 	transactionError: null,
 	transactionLastResponse: null,
 	transactionRedirectUrl: null,
@@ -24,49 +30,54 @@ const initialState: TransactionStatus = {
 
 export function useTransactionStatusManager(): TransactionStatusManager {
 	const [ state, dispatch ] = useReducer( transactionStatusReducer, initialState );
-	const resetTransaction = useCallback(
+	const resetTransaction = useCallback< TransactionStatusManager[ 'resetTransaction' ] >(
 		() =>
 			dispatch( {
 				type: 'STATUS_SET',
-				payload: { status: 'not-started' },
-			} as TransactionStatusAction ),
+				payload: { status: TransactionStatus.NOT_STARTED },
+			} ),
 		[]
 	);
-	const setTransactionComplete = useCallback(
+	const setTransactionComplete = useCallback<
+		TransactionStatusManager[ 'setTransactionComplete' ]
+	>(
 		( response ) =>
 			dispatch( {
 				type: 'STATUS_SET',
-				payload: { status: 'complete', response },
-			} as TransactionStatusAction ),
+				payload: { status: TransactionStatus.COMPLETE, response },
+			} ),
 		[]
 	);
-	const setTransactionError = useCallback(
+	const setTransactionError = useCallback< TransactionStatusManager[ 'setTransactionError' ] >(
 		( errorMessage ) =>
 			dispatch( {
 				type: 'STATUS_SET',
-				payload: { status: 'error', error: errorMessage },
-			} as TransactionStatusAction ),
+				payload: { status: TransactionStatus.ERROR, error: errorMessage },
+			} ),
 		[]
 	);
-	const setTransactionPending = useCallback(
-		() =>
-			dispatch( { type: 'STATUS_SET', payload: { status: 'pending' } } as TransactionStatusAction ),
+	const setTransactionPending = useCallback< TransactionStatusManager[ 'setTransactionPending' ] >(
+		() => dispatch( { type: 'STATUS_SET', payload: { status: TransactionStatus.PENDING } } ),
 		[]
 	);
-	const setTransactionRedirecting = useCallback(
+	const setTransactionRedirecting = useCallback<
+		TransactionStatusManager[ 'setTransactionRedirecting' ]
+	>(
 		( url ) =>
 			dispatch( {
 				type: 'STATUS_SET',
-				payload: { status: 'redirecting', response: null, url },
-			} as TransactionStatusAction ),
+				payload: { status: TransactionStatus.REDIRECTING, url },
+			} ),
 		[]
 	);
-	const setTransactionAuthorizing = useCallback(
+	const setTransactionAuthorizing = useCallback<
+		TransactionStatusManager[ 'setTransactionAuthorizing' ]
+	>(
 		( response ) =>
 			dispatch( {
 				type: 'STATUS_SET',
-				payload: { status: 'authorizing', response },
-			} as TransactionStatusAction ),
+				payload: { status: TransactionStatus.AUTHORIZING, response },
+			} ),
 		[]
 	);
 
@@ -76,7 +87,7 @@ export function useTransactionStatusManager(): TransactionStatusManager {
 		transactionLastResponse,
 		transactionError,
 		transactionRedirectUrl,
-	}: TransactionStatus = state;
+	}: TransactionStatusState = state;
 
 	return useMemo(
 		() => ( {
@@ -109,12 +120,17 @@ export function useTransactionStatusManager(): TransactionStatusManager {
 }
 
 function transactionStatusReducer(
-	state: TransactionStatus,
+	state: TransactionStatusState,
 	action: TransactionStatusAction
-): TransactionStatus {
+): TransactionStatusState {
 	switch ( action.type ) {
 		case 'STATUS_SET': {
-			const { status, response, error = null, url = null } = action.payload;
+			const {
+				status,
+				response = null,
+				error = null,
+				url = null,
+			} = action.payload as TransactionStatusPayloads;
 			return {
 				...state,
 				previousTransactionStatus: state.transactionStatus,

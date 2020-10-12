@@ -1,5 +1,4 @@
-Query Jetpack Modules
-================
+# Query Jetpack Modules
 
 `<QueryJetpackModules />` is a React component used in managing network requests for Jetpack site modules.
 
@@ -17,10 +16,8 @@ export default function MyJetpackModulesList( { jetpackModules } ) {
 		<div>
 			<QueryJetpackModules siteId={ 12345678 } />
 			{ jetpackModules.map( ( module ) => {
-				return (
-					<MyJetpackModulesListItem module={ module } />
-				);
-			} }
+				return <MyJetpackModulesListItem module={ module } />;
+			} ) }
 		</div>
 	);
 }

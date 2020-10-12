@@ -11,15 +11,16 @@ import { some, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import { getSite, isRequestingSite } from 'state/sites/selectors';
-import { isJetpackPlan } from 'lib/products-values';
-import { JETPACK_PLANS } from 'lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import QuerySites from 'components/data/query-sites';
+import AsyncLoad from 'calypso/components/async-load';
+import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { isJetpackPlan } from 'calypso/lib/products-values';
+import { JETPACK_PLANS } from 'calypso/lib/plans/constants';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import QuerySites from 'calypso/components/data/query-sites';
 import PurchaseItem from '../purchase-item';
 import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
+import { managePurchase } from '../paths';
 
 /**
  * Style dependencies
@@ -27,6 +28,8 @@ import PurchaseReconnectNotice from './reconnect-notice';
 import './style.scss';
 
 const PurchasesSite = ( {
+	showHeader = true,
+	getManagePurchaseUrlFor = managePurchase,
 	hasLoadedSite,
 	isPlaceholder,
 	site,
@@ -45,6 +48,7 @@ const PurchasesSite = ( {
 	} else {
 		items = purchases.map( ( purchase ) => (
 			<PurchaseItem
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				key={ purchase.id }
 				slug={ slug }
 				isDisconnectedSite={ ! site }
@@ -58,17 +62,19 @@ const PurchasesSite = ( {
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
 
-			<PurchaseSiteHeader
-				siteId={ siteId }
-				name={ name }
-				domain={ domain }
-				isPlaceholder={ isPlaceholder }
-			/>
+			{ ( showHeader || isPlaceholder ) && (
+				<PurchaseSiteHeader
+					siteId={ siteId }
+					name={ name }
+					domain={ domain }
+					isPlaceholder={ isPlaceholder }
+				/>
+			) }
 
 			{ items }
 
 			<AsyncLoad
-				require="blocks/product-plan-overlap-notices"
+				require="calypso/blocks/product-plan-overlap-notices"
 				placeholder={ null }
 				plans={ JETPACK_PLANS }
 				products={ JETPACK_PRODUCTS_LIST }
@@ -83,6 +89,8 @@ const PurchasesSite = ( {
 };
 
 PurchasesSite.propTypes = {
+	showHeader: PropTypes.bool,
+	getManagePurchaseUrlFor: PropTypes.func,
 	isPlaceholder: PropTypes.bool,
 	siteId: PropTypes.number,
 	purchases: PropTypes.array,

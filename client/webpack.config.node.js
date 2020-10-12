@@ -2,7 +2,6 @@
  * **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
-/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
 /* eslint-disable import/no-nodejs-modules */
 
 /**
@@ -19,14 +18,20 @@ const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const nodeExternals = require( 'webpack-node-externals' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
+const nodeExternals = require( 'webpack-node-externals' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 
 /**
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
 const devTarget = process.env.DEV_TARGET || 'evergreen';
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
+const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
+const cacheDirectory = path.resolve( '.cache', 'babel-server' );
 
 const fileLoader = FileConfig.loader( {
 	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
@@ -51,29 +56,27 @@ function getExternals() {
 				// non-JS asset imports that couldn't be processed by Node.js at runtime.
 				'@automattic/components',
 
+				// The polyfills module is transpiled by Babel and only the `core-js` modules that are
+				// needed by current Node.js are included instead of the whole package.
+				'@automattic/calypso-polyfills',
+				/^core-js\//,
+
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
 
-				/[^/]?wp-calypso-client\//,
+				/^calypso\//,
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
-		// to the path of the `build/bundle.js` bundle.
+		// to the path of the `build/server.js` bundle.
 		{
 			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 			'webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
-			'wp-calypso-client/webpack.config': {
+			'calypso/webpack.config': {
 				commonjs: '../client/webpack.config.js',
-			},
-			// Exclude the devdocs search-index, as it's huge.
-			'server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
-			},
-			'wp-calypso-client/server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
 			},
 		},
 	];
@@ -87,10 +90,14 @@ const webpackConfig = {
 	target: 'node',
 	output: {
 		path: buildDir,
-		filename: 'bundle.js',
+		filename: 'server.js',
+		chunkFilename: 'server.[name].js',
 	},
 	mode: isDevelopment ? 'development' : 'production',
-	optimization: { minimize: false },
+	optimization: {
+		concatenateModules: shouldConcatenateModules,
+		minimize: false,
+	},
 	module: {
 		rules: [
 			{
@@ -103,9 +110,16 @@ const webpackConfig = {
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
+				cacheDirectory,
 				cacheIdentifier,
 				exclude: /node_modules\//,
+			} ),
+			TranspileConfig.loader( {
+				workerCount,
+				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				cacheDirectory,
+				cacheIdentifier,
+				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
 			{
@@ -118,7 +132,7 @@ const webpackConfig = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
-			'wp-calypso-client/config': 'server/config',
+			'calypso/config': 'server/config',
 			config: 'server/config',
 		},
 	},
@@ -129,12 +143,19 @@ const webpackConfig = {
 		__dirname: true,
 	},
 	plugins: [
-		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( {
-			banner: 'require( "source-map-support" ).install();',
-			raw: true,
-			entryOnly: false,
-		} ),
+		shouldEmitStats &&
+			new BundleAnalyzerPlugin( {
+				analyzerMode: 'disabled', // just write the stats.json file
+				generateStatsFile: true,
+				statsFilename: path.join( __dirname, 'stats-server.json' ),
+				statsOptions: {
+					source: false,
+					reasons: shouldEmitStatsWithReasons,
+					optimizationBailout: false,
+					chunkOrigins: false,
+					chunkGroups: true,
+				},
+			} ),
 		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
@@ -146,19 +167,17 @@ const webpackConfig = {
 			'components/empty-component'
 		), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
-			/^wp-calypso-client[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
+			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
 	].filter( Boolean ),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' ),
-		new webpack.NormalModuleReplacementPlugin(
-			/^wp-calypso-client[/\\]lib[/\\]desktop$/,
-			'lodash/noop'
-		)
+		new webpack.NormalModuleReplacementPlugin( /^calypso[/\\]lib[/\\]desktop$/, 'lodash/noop' )
 	);
 }
 

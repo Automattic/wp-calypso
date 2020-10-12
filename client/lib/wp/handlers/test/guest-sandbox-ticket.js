@@ -47,37 +47,41 @@ describe( 'guest-sandbox-ticket', () => {
 	} );
 
 	describe( '#injectGuestSandboxTicketHandler', () => {
-		test( 'should update `wpcom` to add the ticket param if present', ( done ) => {
-			const ticket = {
-				value: 'foo',
-				createdDate: Date.now() - 1000 * 60 * 60 * 1, // one hour in the past
-			};
+		test( 'should update `wpcom` to add the ticket param if present', () => {
+			return new Promise( ( done ) => {
+				const ticket = {
+					value: 'foo',
+					createdDate: Date.now() - 1000 * 60 * 60 * 1, // one hour in the past
+				};
 
-			store.set( GUEST_TICKET_LOCALFORAGE_KEY, ticket );
+				store.set( GUEST_TICKET_LOCALFORAGE_KEY, ticket );
 
-			const wpcom = {
-				request( params ) {
-					expect( params.query ).to.equal( 'search=whatever&store_sandbox_ticket=foo' );
-					done();
-				},
-			};
+				const wpcom = {
+					request( params ) {
+						expect( params.query ).to.equal( 'search=whatever&store_sandbox_ticket=foo' );
+						done();
+					},
+				};
 
-			injectGuestSandboxTicketHandler( wpcom );
+				injectGuestSandboxTicketHandler( wpcom );
 
-			wpcom.request( { query: 'search=whatever' } );
+				wpcom.request( { query: 'search=whatever' } );
+			} );
 		} );
 
-		test( 'should not add ticket param if it is not present', ( done ) => {
-			const wpcom = {
-				request( params ) {
-					expect( params.query ).to.equal( 'search=whatever' );
-					done();
-				},
-			};
+		test( 'should not add ticket param if it is not present', () => {
+			return new Promise( ( done ) => {
+				const wpcom = {
+					request( params ) {
+						expect( params.query ).to.equal( 'search=whatever' );
+						done();
+					},
+				};
 
-			injectGuestSandboxTicketHandler( wpcom );
+				injectGuestSandboxTicketHandler( wpcom );
 
-			wpcom.request( { query: 'search=whatever' } );
+				wpcom.request( { query: 'search=whatever' } );
+			} );
 		} );
 	} );
 } );

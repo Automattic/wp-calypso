@@ -122,15 +122,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
-		'onboarding-plan-first': {
-			steps: [ 'user', 'plans', 'domains' ],
-			destination: getSignupDestination,
-			description:
-				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
-			lastModified: '2020-04-22',
-			showRecaptcha: true,
-		},
-
 		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,

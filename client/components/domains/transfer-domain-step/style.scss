@@ -248,7 +248,7 @@
 	}
 }
 
-input {
+input[type='text'].form-text-input {
 	&.transfer-domain-step__auth-code-input {
 		width: 200px;
 		margin-top: 15px;

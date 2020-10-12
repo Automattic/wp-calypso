@@ -1,5 +1,4 @@
-Query Reader Tag Images
-========================
+# Query Reader Tag Images
 
 `<QueryReaderTagImages />` is a React component used in managing network requests for Reader tag images.
 
@@ -17,12 +16,8 @@ export default function MyReaderTagImages( { images } ) {
 		<div>
 			<QueryReaderTagImages tag={ 'bananas' } />
 			{ images.map( ( image ) => {
-				return (
-					<MyListItem
-						key={ image.url }
-						image={ image } />
-				);
-			} }
+				return <MyListItem key={ image.url } image={ image } />;
+			} ) }
 		</div>
 	);
 }

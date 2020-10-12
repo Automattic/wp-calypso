@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-/* eslint-disable import/no-extraneous-dependencies */
 /* global fullSiteEditing */
 /**
  * External dependencies

@@ -85,7 +85,7 @@ yarn build:posts-list-block`
 
 ## Local Development
 
-### Docker:
+### Docker
 
 For a simple Docker experience, use wp-env.
 
@@ -107,7 +107,7 @@ wp-env run cli wp ... # Runs a wp-cli command.
 
 Once the environment running, you can use the dev script (shown above), and the environment will automatically see the updated build. It works by mounting the editing toolkit plugin as a Docker volume.
 
-### Other:
+### Other
 
 Build (or `dev`) and symlink the plugin into a local WordPress install.
 

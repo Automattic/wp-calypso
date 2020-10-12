@@ -55,7 +55,6 @@ export const TimeFormatOption = ( {
 							disabled={ disabled }
 							name="time_format_custom"
 							onChange={ setCustomTimeFormat }
-							type="text"
 							value={ timeFormat || '' }
 						/>
 						<FormSettingExplanation>

@@ -3,7 +3,7 @@
  */
 const { URL } = require( 'url' );
 const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
-const { dialog, ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { dialog, ipcMain: ipc } = require( 'electron' );
 
 /**
  * Internal dependencies
@@ -109,7 +109,7 @@ async function handleJetpackEnableSSO( mainWindow, info ) {
 
 	try {
 		// Allow sufficient time for Gutenberg's "placeholder" UI to render.
-		// Otherwise, exiting the placeholder UI will make Calypso's master- and
+		// Otherwise, exiting the placeholder UI will make Calypso's masterbar and
 		// sidebars disappear.
 		await delay( 300 );
 

@@ -1,4 +1,5 @@
 # Disallow this.translate()
+
 Disallows the usage of `this.translate()` in favor of the high order component `localize()` from `i18n-calypso` repository.
 
 ## Rule Details

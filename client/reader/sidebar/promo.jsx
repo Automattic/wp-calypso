@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AppPromo from 'blocks/app-promo';
+import AsyncLoad from 'components/async-load';
 import { getCurrentUserLocale } from 'state/current-user/selectors';
 import QueryUserSettings from 'components/data/query-user-settings';
 import config from 'config';
@@ -23,7 +23,12 @@ export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } 
 
 			{ shouldRenderAppPromo && (
 				<div className="sidebar__app-promo">
-					<AppPromo location="reader" locale={ currentUserLocale } />
+					<AsyncLoad
+						require="blocks/app-promo"
+						placeholder={ null }
+						location="reader"
+						locale={ currentUserLocale }
+					/>
 				</div>
 			) }
 		</Fragment>
@@ -44,7 +49,7 @@ export const shouldRenderAppPromo = ( options = {} ) => {
 		isUserLocaleEnglish = 'en' === options.currentUserLocale,
 		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
 		isUserDesktopAppUser = haveUserSettingsLoaded || options.isDesktopAppUser,
-		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent ),
+		isUserOnChromeOs = /\bCrOS\b/.test( window.navigator.userAgent ),
 	} = options;
 
 	return (

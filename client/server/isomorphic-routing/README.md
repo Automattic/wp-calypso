@@ -1,5 +1,4 @@
-Isomorphic Routing Middleware Adapters
-======================================
+# Isomorphic Routing Middleware Adapters
 
 ## index.js
 

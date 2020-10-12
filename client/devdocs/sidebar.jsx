@@ -84,6 +84,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 						/>
 						<SidebarItem
 							className="devdocs__navigation-item"
+							icon="image"
+							label="Illustrations"
+							link="/devdocs/illustrations"
+							selected={ this.isItemSelected( '/devdocs/illustrations' ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
 							icon="globe"
 							label="Internationalization"
 							link="/devdocs/docs/i18n.md"
@@ -114,6 +121,13 @@ export default class DevdocsSidebar extends React.PureComponent {
 							label="Playground"
 							link="/devdocs/playground"
 							selected={ this.isItemSelected( '/devdocs/playground', false ) }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="image-multiple"
+							label="WordPress Components"
+							link="/devdocs/wordpress-components-gallery"
+							selected={ this.isItemSelected( '/devdocs/wordpress-components-gallery', false ) }
 						/>
 					</ul>
 

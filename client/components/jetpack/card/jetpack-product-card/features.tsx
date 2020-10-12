@@ -25,20 +25,25 @@ export type Props = {
 	className?: string;
 	features: ProductCardFeatures;
 	isExpanded?: boolean;
+	productSlug?: string;
 };
 
 const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 	className,
 	features,
 	isExpanded: isExpandedByDefault,
+	productSlug,
 } ) => {
+	const trackProps = productSlug ? { product_slug: productSlug } : {};
 	const trackShowFeatures = useTrackCallback(
 		undefined,
-		'calypso_jetpack_show_product_card_features'
+		'calypso_product_features_open',
+		trackProps
 	);
 	const trackHideFeatures = useTrackCallback(
 		undefined,
-		'calypso_jetpack_hide_product_card_features'
+		'calypso_product_features_close',
+		trackProps
 	);
 	const [ isExpanded, setExpanded ] = useState( !! isExpandedByDefault );
 	const onOpen = useCallback( () => {

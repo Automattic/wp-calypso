@@ -1,14 +1,14 @@
-
 # Users
 
 `Users` handler class.
 
-### Create a `Users` instance from WPCOM
+## Example
+
+Create a `Users` instance from WPCOM
 
 ```js
-var wpcom = require('wpcom')('<your-token>');
-var suggestions = wpcom.users().suggest('<site-id>');
-});
+const wpcom = require( 'wpcom' )( '<your-token>' );
+const suggestions = wpcom.users().suggest( '<site-id>' );
 ```
 
 ## API
@@ -18,7 +18,7 @@ var suggestions = wpcom.users().suggest('<site-id>');
 Create a new `Users` instance giving `WPCOM` instance.
 
 ```js
-var users = Users(WPCOM);
+const users = Users( WPCOM );
 ```
 
 ### Users#suggest(query, fn)
@@ -26,7 +26,7 @@ var users = Users(WPCOM);
 Get @mention suggestions for the given site
 
 ```js
-users.suggest({ site: 'mytestsite.wordpress.com', image_size: 32 }, function(err, info){
-  // `info` data object
-});
+users.suggest( { site: 'mytestsite.wordpress.com', image_size: 32 }, function ( err, info ) {
+	// `info` data object
+} );
 ```

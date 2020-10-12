@@ -22,7 +22,7 @@ import StreamComponent from 'reader/following/main';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
 import { recordTrack } from 'reader/stats';
 import { requestFeedDiscovery } from 'state/data-getters';
-import { waitForData } from 'state/data-layer/http-data';
+import { waitForHttpData } from 'state/data-layer/http-data';
 import AsyncLoad from 'components/async-load';
 import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
 import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
@@ -178,9 +178,7 @@ const exported = {
 
 	feedDiscovery( context, next ) {
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			waitForData( {
-				feeds: () => requestFeedDiscovery( context.params.feed_id ),
-			} )
+			waitForHttpData( () => ( { feeds: requestFeedDiscovery( context.params.feed_id ) } ) )
 				.then( ( { feeds } ) => {
 					const feed = feeds?.data?.feeds?.[ 0 ];
 					if ( feed && feed.feed_ID ) {

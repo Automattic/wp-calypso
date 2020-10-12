@@ -15,15 +15,17 @@ describe( 'wpcom.site.embeds', function () {
 	var site = wpcom.site( util.site() );
 
 	describe( "wpcom.site.renderEmbed('embed' )", function () {
-		it( 'should render embed', ( done ) => {
-			site
-				.renderEmbed( fixture.embed )
-				.then( ( data ) => {
-					assert.equal( data.embed_url, fixture.embed );
-					assert.ok( data.result );
-					done();
-				} )
-				.catch( done );
+		it( 'should render embed', () => {
+			return new Promise( ( done ) => {
+				site
+					.renderEmbed( fixture.embed )
+					.then( ( data ) => {
+						assert.equal( data.embed_url, fixture.embed );
+						assert.ok( data.result );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

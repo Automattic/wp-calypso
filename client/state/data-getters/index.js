@@ -19,9 +19,9 @@ import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/fro
  * Fetches content from a URL with a GET request
  *
  * @example
- * waitForData( {
+ * waitForHttpData( () => ( {
  *     planets: requestFromUrl( 'https://swapi.co/api/planets/' ),
- * } ).then( ( { planets } ) => {
+ * } ) ).then( ( { planets } ) => {
  *     console.log( planets.data );
  * } );
  *

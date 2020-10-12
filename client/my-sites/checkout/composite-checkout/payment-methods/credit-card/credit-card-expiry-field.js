@@ -4,7 +4,7 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { CardExpiryElement } from 'react-stripe-elements';
-import { useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ export default function CreditCardExpiryField( {
 } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const { cardExpiry: cardExpiryError } = useSelect( ( select ) =>
 		select( 'credit-card' ).getCardDataErrors()
 	);

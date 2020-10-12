@@ -28,8 +28,6 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: jest.fn( ( name ) => {
 		if ( 'conciergeUpsellDial' === name ) {
 			return 'offer';
-		} else if ( 'showBusinessPlanBump' === name ) {
-			return 'variantShowPlanBump';
 		}
 	} ),
 } ) );
@@ -169,7 +167,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
-			product: 'jetpack_backup_daily',
+			productAliasFromUrl: 'jetpack_backup_daily',
 		} );
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_backup_daily' );
 	} );
@@ -193,7 +191,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
-			product: 'jetpack_security_daily_monthly',
+			productAliasFromUrl: 'jetpack_security_daily_monthly',
 		} );
 		expect( url ).toBe(
 			'/plans/my-plan/foo.bar?thank-you=true&product=jetpack_security_daily_monthly'

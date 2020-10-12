@@ -2,12 +2,10 @@
  * External dependencies
  */
 
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * WordPress dependencies
  */
 import { createBlock } from '@wordpress/blocks';
-/* eslint-enable import/no-extraneous-dependencies */
 
 const HOMEPAGE_POSTS_BLOCK_TYPES = [ 'a8c/blog-posts', 'newspack-blocks/homepage-articles' ];
 

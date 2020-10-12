@@ -12,17 +12,17 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormPhoneInput from 'components/forms/form-phone-input';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'components/notice';
-import formBase from 'me/form-base';
-import Security2faProgress from 'me/security-2fa-progress';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import observe from 'lib/mixins/data-observe';
-import { protectForm } from 'lib/protect-form';
-import getCountries from 'state/selectors/get-countries';
-import QuerySmsCountries from 'components/data/query-countries/sms';
+import FormPhoneInput from 'calypso/components/forms/form-phone-input';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import Notice from 'calypso/components/notice';
+import formBase from 'calypso/me/form-base';
+import Security2faProgress from 'calypso/me/security-2fa-progress';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import observe from 'calypso/lib/mixins/data-observe';
+import { protectForm } from 'calypso/lib/protect-form';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 
 /**
  * Style dependencies

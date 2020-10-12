@@ -8,8 +8,8 @@ import i18n, { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
 import * as constants from './constants';
+import { isEnabled } from 'config';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
@@ -218,6 +218,7 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_UPLOAD_THEMES_PLUGINS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
@@ -365,6 +366,7 @@ const getPlanBusinessDetails = () => ( {
 		constants.FEATURE_AUDIO_UPLOADS,
 		constants.FEATURE_GOOGLE_MY_BUSINESS,
 		constants.FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
+		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
@@ -406,6 +408,14 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_30,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_REPUBLICIZE,
+		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SIMPLE_PAYMENTS,
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [],
 } );
@@ -453,10 +463,20 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_REPUBLICIZE,
+		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SIMPLE_PAYMENTS,
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
+		constants.FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
 		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_30,
 	],
 } );
 
@@ -511,11 +531,23 @@ const getPlanJetpackCompleteDetails = () => ( {
 		constants.FEATURE_JETPACK_ANTI_SPAM,
 		constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		constants.FEATURE_JETPACK_SEARCH,
-		constants.FEATURE_JETPACK_SEARCH,
+		constants.FEATURE_JETPACK_SEARCH_MONTHLY,
+		constants.FEATURE_JETPACK_CRM,
+		constants.FEATURE_JETPACK_CRM_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		constants.FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		constants.FEATURE_REPUBLICIZE,
+		constants.FEATURE_ADVANCED_SEO,
+		constants.FEATURE_SIMPLE_PAYMENTS,
+		constants.FEATURE_WORDADS_INSTANT,
+		constants.FEATURE_GOOGLE_ANALYTICS,
+		constants.FEATURE_UNLIMITED_PREMIUM_THEMES,
+		constants.FEATURE_PREMIUM_SUPPORT,
 	],
 	getInferiorHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
 		constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		constants.FEATURE_BACKUP_ARCHIVE_30,
 	],
 } );
 
@@ -790,20 +822,37 @@ export const PLANS_LIST = {
 		getAudience: () => i18n.translate( 'Best for students' ),
 		getProductId: () => 2002,
 		getStoreSlug: () => constants.PLAN_JETPACK_FREE,
-		getTagline: ( feature ) => {
-			switch ( feature ) {
-				case constants.FEATURE_JETPACK_BACKUP_DAILY:
-				case constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY:
-				case constants.FEATURE_JETPACK_BACKUP_REALTIME:
-				case constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY:
-					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection and priority support.'
-					);
-				default:
-					return i18n.translate(
-						'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
-					);
+		getTagline: ( siteFeatures = [] ) => {
+			const hasSiteJetpackBackup = siteFeatures.some( ( feature ) =>
+				[
+					constants.FEATURE_JETPACK_BACKUP_DAILY,
+					constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+					constants.FEATURE_JETPACK_BACKUP_REALTIME,
+					constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+				].includes( feature )
+			);
+			const hasSiteJetpackScan = siteFeatures.some( ( feature ) =>
+				[
+					constants.FEATURE_JETPACK_SCAN_DAILY,
+					constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+				].includes( feature )
+			);
+			if ( hasSiteJetpackBackup && hasSiteJetpackScan ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection and priority support.'
+				);
+			} else if ( hasSiteJetpackBackup ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection, security scanning, and priority support.'
+				);
+			} else if ( hasSiteJetpackScan ) {
+				return i18n.translate(
+					'Upgrade your site to access additional features, including spam protection, backups, and priority support.'
+				);
 			}
+			return i18n.translate(
+				'Upgrade your site for additional features, including spam protection, backups, security scanning, and priority support.'
+			);
 		},
 		getDescription: () =>
 			i18n.translate(
@@ -905,6 +954,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -982,6 +1032,7 @@ export const PLANS_LIST = {
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [],
 	},
@@ -1144,13 +1195,13 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per year' ),
 		getHiddenFeatures: () => [
-			constants.FEATURE_GOOGLE_MY_BUSINESS,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 			constants.FEATURE_JETPACK_SCAN_DAILY,
 			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -1217,17 +1268,17 @@ export const PLANS_LIST = {
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
 		getSignupBillingTimeFrame: () => i18n.translate( 'per month' ),
 		getHiddenFeatures: () => [
-			constants.FEATURE_GOOGLE_MY_BUSINESS,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME,
 			constants.FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+			constants.FEATURE_JETPACK_SCAN_DAILY,
+			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 			constants.FEATURE_JETPACK_ANTI_SPAM,
 			constants.FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+			constants.FEATURE_SEO_PREVIEW_TOOLS,
 		],
 		getInferiorHiddenFeatures: () => [
 			constants.FEATURE_JETPACK_BACKUP_DAILY,
 			constants.FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
-			constants.FEATURE_JETPACK_SCAN_DAILY,
-			constants.FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 		],
 	},
 

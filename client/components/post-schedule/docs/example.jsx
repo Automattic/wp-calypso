@@ -9,6 +9,8 @@ import Gridicon from 'components/gridicon';
 /**
  * Internal dependencies
  */
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
 import PostSchedule from 'components/post-schedule';
 import Timezone from 'components/timezone';
 import { Card } from '@automattic/components';
@@ -160,7 +162,7 @@ const PostScheduleExample = localize(
 								</h3>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										state.timezone
 										<div
 											className="state-value"
@@ -168,7 +170,7 @@ const PostScheduleExample = localize(
 										>
 											{ this.state.timezone || 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 
 									<Timezone selectedZone={ this.state.timezone } onSelect={ this.setTimezone } />
 
@@ -186,15 +188,14 @@ const PostScheduleExample = localize(
 								</div>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										state.gmtOffset
-										<input
+										<FormTextInput
 											className="editable-property"
-											type="text"
 											onChange={ this.setGMTOffset }
 											value={ this.state.gmtOffset }
 										/>
-									</label>
+									</FormLabel>
 
 									<button
 										className="card__property-action"
@@ -206,12 +207,12 @@ const PostScheduleExample = localize(
 								</div>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										state.date
 										<div className="state-value" style={ { fontSize: '11px' } }>
 											{ this.state.date ? this.state.date.format() : 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 
 									<button
 										className="card__property-action"
@@ -231,29 +232,29 @@ const PostScheduleExample = localize(
 								</h3>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										prop.onDateChange( date )
 										<div className="state-value" style={ { fontSize: '11px' } }>
 											{ this.state.date ? this.state.date.format() : 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 								</div>
 
 								<div className="card__block">
-									<label>
+									<FormLabel>
 										prop.onMonthChange( date )
 										<div className="state-value" style={ { fontSize: '11px' } }>
 											{ this.state.month ? this.state.month.format() : 'not defined' }
 										</div>
-									</label>
+									</FormLabel>
 								</div>
 							</Card>
 
 							<Card className="card__component-instance">
-								<label>
+								<FormLabel>
 									chronologically:
 									{ this.renderDateReference() }
-								</label>
+								</FormLabel>
 							</Card>
 						</div>
 					</div>

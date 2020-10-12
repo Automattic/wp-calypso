@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -14,7 +13,6 @@ import { PageTemplatesPlugin } from './page-template-modal';
 import SidebarTemplatesPlugin from './page-template-modal/components/sidebar-modal-opener';
 import { initializeWithIdentity } from './page-template-modal/utils/tracking';
 import './store';
-/* eslint-enable import/no-extraneous-dependencies */
 
 // Load config passed from backend.
 const {

@@ -1,5 +1,4 @@
-Close on Escape
-============
+# Close on Escape
 
 Allows for an ordered stack of components that carry out an action when the <kbd>esc</kbd> key is pressed. Each instance will carry out their `onEscape` action before being removed from the stack on a first-in-last-out basis.
 
@@ -12,33 +11,29 @@ To use this component, either nest it inside of an existing component or as a si
 ```jsx
 import CloseOnEscape from 'components/close-on-escape';
 
-...
-
-closeDialog() {
-  // Take care of closing this component
+function closeDialog() {
+	// Take care of closing this component
 }
 
-render() {
-  // Nested:
+function render() {
+	// Nested:
 
-  return (
-    <Dialog ... >
-      <CloseOnEscape onEscape={ this.closeDialog } />
-    </Dialog>
-  );
+	return (
+		<Dialog>
+			<CloseOnEscape onEscape={ this.closeDialog } />
+		</Dialog>
+	);
 
-  // Or as a sibling:
-
-  return (
-    <div>
-      <CloseOnEscape onEscape={ this.closeDialog } />
-      <Dialog ... />
-    <div>
-  );
+	// Or as a sibling:
+	/*
+	return (
+		<div>
+			<CloseOnEscape onEscape={ this.closeDialog } />
+			<Dialog />
+		</div>
+	);
+	*/
 }
-
-...
-
 ```
 
 ## Props

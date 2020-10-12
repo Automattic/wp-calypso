@@ -61,6 +61,7 @@ describe( 'WebPaymentBox', () => {
 		getState: () => ( { ui: { checkout: { showCartOnMobile: false } } } ),
 	};
 
+	// eslint-disable-next-line jest/expect-expect
 	test( 'should render', () => {
 		shallow( <WebPaymentBox { ...defaultProps } /> );
 	} );

@@ -8,7 +8,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { withLocalizedMoment } from 'components/localized-moment';
@@ -21,7 +20,6 @@ import {
 	DOMAIN_EXPIRATION_REDEMPTION,
 	DOMAIN_RECENTLY_REGISTERED,
 } from 'lib/url/support';
-import SubscriptionSettings from '../card/subscription-settings';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { getProductBySlug } from 'state/products-list/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
@@ -37,7 +35,6 @@ import QuerySitePurchases from 'components/data/query-site-purchases';
 import { shouldRenderExpiringCreditCard } from 'lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
-import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
@@ -304,11 +301,6 @@ class RegisteredDomainType extends React.Component {
 			isDomainOnlySite,
 		} );
 
-		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
-		const newDomainManagementNavigation = config.isEnabled(
-			'domains/new-status-design/new-options'
-		);
-
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -319,6 +311,7 @@ class RegisteredDomainType extends React.Component {
 					statusText={ statusText }
 					statusClass={ statusClass }
 					icon={ icon }
+					premium={ domain.isPremium }
 				>
 					{ domain.isPendingIcannVerification && domain.currentUserCanManage && (
 						<IcannVerificationCard
@@ -348,34 +341,14 @@ class RegisteredDomainType extends React.Component {
 				<Card compact={ true } className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
-					{ ! newStatusDesignAutoRenew && domain.currentUserCanManage && (
-						<WrapDomainStatusButtons>
-							<SubscriptionSettings
-								type={ domain.type }
-								compact={ true }
-								subscriptionId={ domain.subscriptionId }
-								siteSlug={ this.props.selectedSite.slug }
-								onClick={ this.handlePaymentSettingsClick }
-							/>
-						</WrapDomainStatusButtons>
-					) }
-					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
+					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newDomainManagementNavigation ? (
-					<DomainManagementNavigationEnhanced
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ purchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) : (
-					<DomainManagementNavigation
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ purchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) }
+				<DomainManagementNavigationEnhanced
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ purchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}

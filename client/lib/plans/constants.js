@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -13,6 +13,8 @@ import {
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'lib/products-values/constants';
 
 // plans constants
@@ -44,6 +46,7 @@ export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
+export const PLAN_VIP = 'vip';
 
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';
@@ -225,6 +228,8 @@ export const FEATURE_JETPACK_ANTI_SPAM = PRODUCT_JETPACK_ANTI_SPAM;
 export const FEATURE_JETPACK_ANTI_SPAM_MONTHLY = PRODUCT_JETPACK_ANTI_SPAM_MONTHLY;
 export const FEATURE_JETPACK_SEARCH = PRODUCT_JETPACK_SEARCH;
 export const FEATURE_JETPACK_SEARCH_MONTHLY = PRODUCT_JETPACK_SEARCH_MONTHLY;
+export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
+export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 
 // jetpack features constants (offer reset)
 export const FEATURE_SECURITY_REALTIME_V2 = Symbol();
@@ -247,6 +252,11 @@ export const FEATURE_SEARCH_V2 = Symbol();
 export const FEATURE_PRODUCT_SEARCH_V2 = Symbol();
 export const FEATURE_VIDEO_HOSTING_V2 = Symbol();
 export const FEATURE_CRM_V2 = Symbol();
+export const FEATURE_CRM_LEADS_AND_FUNNEL = Symbol();
+export const FEATURE_CRM_PROPOSALS_AND_INVOICES = Symbol();
+export const FEATURE_CRM_TRACK_TRANSACTIONS = Symbol();
+export const FEATURE_CRM_NO_CONTACT_LIMITS = Symbol();
+export const FEATURE_CRM_PRIORITY_SUPPORT = Symbol();
 export const FEATURE_SOCIAL_MEDIA_POSTING_V2 = Symbol();
 export const FEATURE_COLLECT_PAYMENTS_V2 = Symbol();
 export const FEATURE_SITE_MONETIZATION_V2 = Symbol();
@@ -270,6 +280,7 @@ export const GROUP_JETPACK = 'GROUP_JETPACK';
 export const TERM_MONTHLY = 'TERM_MONTHLY';
 export const TERM_ANNUALLY = 'TERM_ANNUALLY';
 export const TERM_BIENNIALLY = 'TERM_BIENNIALLY';
+export const TERMS_LIST = [ TERM_MONTHLY, TERM_ANNUALLY, TERM_BIENNIALLY ];
 
 export const TYPE_FREE = 'TYPE_FREE';
 export const TYPE_BLOGGER = 'TYPE_BLOGGER';

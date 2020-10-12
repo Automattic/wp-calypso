@@ -22,11 +22,11 @@
 		}
 
 		.focus-sidebar & {
-			@media screen and ( max-width: ( 700px + $sidebar-width-max ) ) {
+			@media screen and ( max-width: ( 700px + var( --sidebar-width-max ) ) ) {
 				border-left-width: 0;
 				border-right-width: 0;
 			}
-  		}
+		}
 	}
 
 	&.is-pinned .editor-html-toolbar__wrapper {
@@ -41,22 +41,22 @@
 
 		.focus-sidebar &,
 		.has-chat & {
-			width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+			width: calc( 100% - var( --sidebar-width-max ) - 1px );
 		}
 
 		.focus-sidebar.has-chat & {
-			width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
+			width: calc( 100% - var( --sidebar-width-max ) * 2 - 1px );
 			left: 0;
 		}
 
 		@include breakpoint-deprecated( '660px-960px' ) {
 			.focus-sidebar &,
 			.has-chat & {
-				width: calc( 100% - ( #{ $sidebar-width-max + 1 } ) );
+				width: calc( 100% - var( --sidebar-width-max ) - 1px );
 			}
 
 			.focus-sidebar.has-chat & {
-				width: calc( 100% - ( #{ ( $sidebar-width-max * 2 ) + 1 } ) );
+				width: calc( 100% - var( --sidebar-width-max ) * 2 - 1px );
 			}
 		}
 	}
@@ -199,7 +199,8 @@
 		}
 
 		&:hover {
-			.gridicon, span {
+			.gridicon,
+			span {
 				color: var( --color-accent );
 			}
 		}

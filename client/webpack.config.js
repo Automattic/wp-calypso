@@ -2,7 +2,6 @@
  * **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
-/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
 /* eslint-disable import/no-nodejs-modules */
 
 /**
@@ -55,15 +54,15 @@ const shouldMinify =
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const shouldShowProgress = process.env.PROGRESS && process.env.PROGRESS !== 'false';
 const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
+const shouldCheckForDuplicatePackages = process.env.CHECK_DUPLICATE_PACKAGES === 'true';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
 const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
 const isDesktop = calypsoEnv === 'desktop' || calypsoEnv === 'desktop-development';
-const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 
-const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
+const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
@@ -115,9 +114,7 @@ let outputChunkFilename = '[name].[chunkhash].min.js'; // ditto
 
 // we should not use chunkhash in development: https://github.com/webpack/webpack-dev-server/issues/377#issuecomment-241258405
 // also we don't minify so dont name them .min.js
-//
-// Desktop: no chunks or dll here, just one big file for the desktop app
-if ( isDevelopment || isDesktop ) {
+if ( isDevelopment ) {
 	outputFilename = '[name].js';
 	outputChunkFilename = '[name].js';
 }
@@ -125,7 +122,7 @@ if ( isDevelopment || isDesktop ) {
 const cssFilename = cssNameFromFilename( outputFilename );
 const cssChunkFilename = cssNameFromFilename( outputChunkFilename );
 
-const outputDir = path.resolve( isDesktopMonorepo ? './desktop' : '.' );
+const outputDir = path.resolve( isDesktop ? './desktop' : '.' );
 
 const fileLoader = FileConfig.loader(
 	// The server bundler express middleware serves assets from a hard-coded publicPath.
@@ -267,9 +264,9 @@ const webpackConfig = {
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 				'@wordpress/data': require.resolve( '@wordpress/data' ),
 				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
-				// Alias wp-calypso-client to ./client. This allows for smaller bundles, as it ensures that
-				// importing `./client/file.js` is the same thing than importing `wp-calypso-client/file.js`
-				'wp-calypso-client': __dirname,
+				// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
+				// importing `./client/file.js` is the same thing than importing `calypso/file.js`
+				calypso: __dirname,
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -295,10 +292,10 @@ const webpackConfig = {
 		} ),
 		new AssetsWriter( {
 			filename: `assets-${ browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv }.json`,
-			path: path.join( outputDir, 'client', 'server', 'bundler' ),
+			path: path.join( outputDir, 'build' ),
 			assetExtraPath: extraPath,
 		} ),
-		new DuplicatePackageCheckerPlugin(),
+		shouldCheckForDuplicatePackages && new DuplicatePackageCheckerPlugin(),
 		shouldCheckForCycles &&
 			new CircularDependencyPlugin( {
 				exclude: /node_modules/,
@@ -338,7 +335,7 @@ const webpackConfig = {
 			? [
 					new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
 					new webpack.NormalModuleReplacementPlugin(
-						/^wp-calypso-client[/\\]lib[/\\]desktop$/,
+						/^calypso[/\\]lib[/\\]desktop$/,
 						'lodash/noop'
 					),
 			  ]
@@ -369,20 +366,21 @@ const webpackConfig = {
 						'lodash-es/noop'
 					),
 					new webpack.NormalModuleReplacementPlugin(
-						/^wp-calypso-client[/\\]lib[/\\]local-storage-polyfill$/,
+						/^calypso[/\\]lib[/\\]local-storage-polyfill$/,
 						'lodash-es/noop'
 					),
 			  ]
 			: [] ),
 
 		/*
-		 * When not available, replace languages-meta.json with fallback-languages-meta.json.
+		 * When available, replace fallback-languages-meta.json with languages-meta.json
 		 */
 		hasLanguagesMeta &&
 			new webpack.NormalModuleReplacementPlugin(
-				/^languages[/\\]fallback-languages-meta.json$/,
-				'languages/languages-meta.json'
+				new RegExp( path.join( __dirname, 'languages/fallback-languages-meta.json' ) ),
+				'./languages-meta.json'
 			),
+
 		/*
 		 * Replace `lodash` with `lodash-es`
 		 */

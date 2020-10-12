@@ -11,8 +11,6 @@
  * config file for e2e tests.
  */
 
-/* eslint-disable import/no-extraneous-dependencies */
-
 // @wordpress/scripts manually adds additional Jest config ontop of
 // @wordpress/jest-preset-default so we pull in this file to extend it
 const defaults = require( '@wordpress/scripts/config/jest-unit.config.js' );

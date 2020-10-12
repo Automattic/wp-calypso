@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testOnBlur", "expect.*"] }] */
+
 /**
  * External dependencies
  */
@@ -106,7 +108,7 @@ describe( 'TokenField', () => {
 	beforeEach( () => {
 		wrapper = mount( <TokenFieldWrapper /> );
 		tokenFieldNode = wrapper.find( '.token-field' );
-		textInputNode = wrapper.find( '.token-field__input' );
+		textInputNode = wrapper.find( 'input.token-field__input' );
 		textInputNode.simulate( 'focus' );
 	} );
 

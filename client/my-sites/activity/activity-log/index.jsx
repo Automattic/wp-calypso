@@ -18,7 +18,6 @@ import ActivityLogItem from '../activity-log-item';
 import ActivityLogAggregatedItem from '../activity-log-item/aggregated';
 import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogTasklist from '../activity-log-tasklist';
-import Banner from 'components/banner';
 import DocumentHead from 'components/data/document-head';
 import EmptyContent from 'components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
@@ -26,7 +25,6 @@ import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
 import { isFreePlan } from 'lib/plans';
-import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
 import JetpackColophon from 'components/jetpack-colophon';
 import Main from 'components/main';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
@@ -71,7 +69,6 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isVipSite from 'state/selectors/is-vip-site';
-import siteSupportsRealtimeBackup from 'state/selectors/site-supports-realtime-backup';
 import { requestActivityLogs } from 'state/data-getters';
 import { emptyFilter } from 'state/activity-log/reducer';
 import { recordTracksEvent } from 'lib/analytics/tracks';
@@ -362,37 +359,6 @@ class ActivityLog extends Component {
 		);
 	}
 
-	renderFirstBackupStatus() {
-		const mostRecentBackup = this.props.rewindBackups && this.props.rewindBackups[ 0 ];
-		const isFirstBackup = this.props.rewindBackups?.length === 1;
-		if ( ! isFirstBackup || mostRecentBackup?.status !== 'started' ) {
-			return;
-		}
-
-		const { supportsRealtimeBackup, translate } = this.props;
-
-		const firstBackupText = supportsRealtimeBackup
-			? translate(
-					"We're currently backing up your site for the first time, " +
-						"and we'll let you know when we're finished. " +
-						"After this initial backup, we'll save future changes in real time."
-			  )
-			: translate(
-					"We're currently backing up your site for the first time, " +
-						"and we'll let you know when we're finished. " +
-						"After this initial backup, we'll save future changes every day."
-			  );
-
-		return (
-			<Banner
-				icon="history"
-				disableHref
-				title={ translate( 'Your backup is underway' ) }
-				description={ firstBackupText }
-			/>
-		);
-	}
-
 	getActivityLog() {
 		const {
 			enableRewind,
@@ -453,8 +419,6 @@ class ActivityLog extends Component {
 
 				<SidebarNavigation />
 
-				<JetpackBackupCredsBanner event={ 'activity-backup-credentials' } />
-
 				<FormattedHeader
 					brandFont
 					className="activity-log__page-heading"
@@ -470,7 +434,6 @@ class ActivityLog extends Component {
 				{ siteId && 'unavailable' === rewindState.state && (
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
-				{ this.renderFirstBackupStatus() }
 				<IntroBanner siteId={ siteId } />
 				{ siteHasNoLog && isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
@@ -641,7 +604,6 @@ export default connect(
 			timezone,
 			siteHasNoLog,
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
-			supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
 		};
 	},
 	{

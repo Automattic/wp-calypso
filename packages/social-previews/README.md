@@ -49,6 +49,44 @@ import { SearchPreview } from '@automattic/social-previews';
 />;
 ```
 
+Twitter previews support the same properties for previewing a single tweet, but can also preview multiple tweets in the form of a Twitter thread. For that, the `tweets` property takes an array of tweets. Each item in this array can take additional information about the tweet, giving the preview a more native feel.
+
+```js
+import { TwitterPreview } from '@automattic/social-previews';
+
+const tweetTemplate = {
+	date: Date.now(),
+	name: 'My Account Name',
+	profileImage: 'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png',
+	screenName: '@myAccount',
+};
+
+<TwitterPreview
+	tweets={ [
+		{
+			...tweetTemplate,
+			text: 'This is the first tweet in a thread, it only has text in it.',
+		},
+		{
+			...tweetTemplate,
+			text: 'The second tweet has some images attached, too!',
+			media: [
+				{
+					alt: 'The alt text for the first image.',
+					url: 'https://url.for.the/first/image.png',
+					type: 'image/png',
+				},
+				{
+					alt: 'The alt text for the second image.',
+					url: 'https://url.for.the/second/image.png',
+					type: 'image/png',
+				},
+			],
+		},
+	] }
+/>;
+```
+
 ## Properties
 
 There are a number of common properties used across all components:

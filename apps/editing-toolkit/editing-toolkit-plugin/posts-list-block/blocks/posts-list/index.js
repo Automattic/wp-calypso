@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * WordPress dependencies
  */
@@ -12,7 +11,6 @@ import { Placeholder, RangeControl, PanelBody, Notice } from '@wordpress/compone
 import { Fragment } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/block-editor';
 import { select, dispatch } from '@wordpress/data';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies

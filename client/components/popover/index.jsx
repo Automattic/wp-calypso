@@ -38,6 +38,7 @@ class PopoverInner extends Component {
 		className: '',
 		closeOnEsc: true,
 		isRtl: false,
+		isFocusEnabled: true,
 		position: 'top',
 		onClose: noop,
 	};
@@ -189,7 +190,9 @@ class PopoverInner extends Component {
 
 	setPositionAndFocus() {
 		this.setPosition();
-		this.focusPopover();
+		if ( this.props.isFocusEnabled ) {
+			this.focusPopover();
+		}
 	}
 
 	focusPopover() {
@@ -412,6 +415,7 @@ Popover.propTypes = {
 	context: PropTypeElement,
 	ignoreContext: PropTypeElement,
 	isVisible: PropTypes.bool,
+	isFocusEnabled: PropTypes.bool,
 	position: PropTypes.oneOf( [
 		'top',
 		'top right',

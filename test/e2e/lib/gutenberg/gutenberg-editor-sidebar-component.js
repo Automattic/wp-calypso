@@ -56,7 +56,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async expandFeaturedImage() {
-		return await this._expandOrCollapseSectionByText( 'Featured Image', true );
+		return await this._expandOrCollapseSectionByText( 'Featured image', true );
 	}
 
 	async expandExcerpt() {
@@ -164,7 +164,7 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 	}
 
 	async tagEventuallyDisplayed( tag ) {
-		const selector = await driverHelper.getElementByText( this.driver, By.css( 'span' ), tag );
+		const selector = By.xpath( `//span[text()='${ tag }']` );
 		return await driverHelper.isEventuallyPresentAndDisplayed( this.driver, selector );
 	}
 
@@ -295,6 +295,20 @@ export default class GutenbergEditorSidebarComponent extends AsyncBaseContainer 
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			By.css( '.edit-post-last-revision__panel' )
+		);
+	}
+
+	async openFeaturedImageDialog() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-post-featured-image__container button' )
+		);
+	}
+
+	async removeFeaturedImage() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-post-featured-image button.is-destructive' )
 		);
 	}
 }

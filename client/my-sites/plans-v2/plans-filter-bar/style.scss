@@ -6,7 +6,7 @@
 	$border-radius: 2px;
 
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-evenly;
 	align-items: center;
 	background: var( --color-surface );
 	padding: 16px 0;
@@ -84,11 +84,22 @@
 	}
 }
 
+.plans-filter-bar__discount-message {
+	display: none;
+
+	color: var( --color-primary );
+
+	font-size: $font-body-extra-small;
+	font-style: italic;
+
+	@include break-mobile {
+		display: inline;
+	}
+}
+
 .plans-filter-bar.sticky {
 	position: fixed;
-
-	// This is the height of the masterbar
-	top: 47px;
+	top: var( --masterbar-height );
 
 	width: 100%;
 	max-width: 1040px;

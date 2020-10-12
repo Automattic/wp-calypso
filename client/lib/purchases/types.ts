@@ -12,4 +12,5 @@ export interface Purchase {
 	mostRecentRenewDate?: string;
 	productSlug: string;
 	siteId: number;
+	subscribedDate: string;
 }

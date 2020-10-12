@@ -1,7 +1,7 @@
-Reader Connect Site
-=======
+# Reader Connect Site
+
 This is a HoC that takes in a component and wraps it with one that knows how to fetch sites and feeds.
-The output component expects to be handed either a feedId or a siteId.  It will only initiate network requests if the feed/site is not already part of the state tree.
+The output component expects to be handed either a feedId or a siteId. It will only initiate network requests if the feed/site is not already part of the state tree.
 
 ## Example
 
@@ -14,14 +14,15 @@ const SiteInfo = () => {
 	}
 	const { title, url, description } = this.props.site;
 	return (
-		<h1> Site Info! </h1>
-		<p> title: { title }</p>
-		<p> url: { url }</p>
-		<p> title: { description }</p>
-	)
-}
+		<>
+			<h1> Site Info! </h1>
+			<p> title: { title }</p>
+			<p> url: { url }</p>
+			<p> title: { description }</p>
+		</>
+	);
+};
 
 const ConnectedSiteInfo = connectSite( SiteInfo );
-...
-<ConnectedSiteInfo siteId='12345' /> 
+<ConnectedSiteInfo siteId="12345" />;
 ```

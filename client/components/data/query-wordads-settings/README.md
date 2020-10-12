@@ -1,5 +1,4 @@
-Query WordAds Settings
-================
+# Query WordAds Settings
 
 `<QueryWordadsSettings />` is a React component used in managing network requests for retrieving and storing WordAds settings.
 
@@ -15,8 +14,8 @@ export default function MySettings( { settings } ) {
 	return (
 		<div>
 			<QueryWordadsSettings siteId={ 3584907 } />
-			
-			{ settings.map( setting => (
+
+			{ settings.map( ( setting ) => (
 				<div key={ setting.key }>
 					{ setting.key }: { setting.value }
 				</div>

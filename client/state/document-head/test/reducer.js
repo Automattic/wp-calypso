@@ -92,15 +92,16 @@ describe( 'reducer', () => {
 			const state = deepFreeze( [ { rel: 'some-rel', href: 'https://wordpress.org' } ] );
 			const newState = link( state, {
 				type: DOCUMENT_HEAD_LINK_SET,
-				link: [
-					{
-						rel: 'another-rel',
-						href: 'https://automattic.com',
-					},
-				],
+				link: {
+					rel: 'another-rel',
+					href: 'https://automattic.com',
+				},
 			} );
 
-			const expectedState = [ { rel: 'another-rel', href: 'https://automattic.com' } ];
+			const expectedState = [
+				{ rel: 'some-rel', href: 'https://wordpress.org' },
+				{ rel: 'another-rel', href: 'https://automattic.com' },
+			];
 
 			expect( newState ).to.eql( expectedState );
 		} );

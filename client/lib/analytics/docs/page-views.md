@@ -1,5 +1,4 @@
-Analytics: Page Views
-=====================
+# Analytics: Page Views
 
 We should record Page views every time the main content body completely changes. This includes both when the browser is refreshed and any time the URL is updated via the browser history API.
 
@@ -12,7 +11,7 @@ These tools will automatically record page views to both Google Analytics and Tr
 ```js
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 
-render() {
+function render() {
 	return (
 		<Main>
 			<PageViewTracker path="/section/page" title="My Cool Section > My Cool Page" />
@@ -21,7 +20,7 @@ render() {
 			</MyCoolComponent>
 		</Main>
 	);
-);
+}
 ```
 
 For more information about `PageViewTracker`, refer to [its own documentation](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/analytics/page-view-tracker).

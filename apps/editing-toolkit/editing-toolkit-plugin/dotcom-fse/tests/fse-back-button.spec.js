@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 const { createNewPost } = require( '@wordpress/e2e-test-utils' );
 
 import { activateTheme } from '../../e2e-test-helpers';

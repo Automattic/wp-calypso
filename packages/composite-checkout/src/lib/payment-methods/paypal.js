@@ -11,6 +11,8 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Button from '../../components/button';
 import {
+	FormStatus,
+	TransactionStatus,
 	useEvents,
 	usePaymentProcessor,
 	useTransactionStatus,
@@ -84,7 +86,7 @@ export function PaypalSubmitButton( { disabled } ) {
 			disabled={ disabled }
 			onClick={ onClick }
 			buttonType="paypal"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<PayPalButtonContents formStatus={ formStatus } transactionStatus={ transactionStatus } />
@@ -94,13 +96,13 @@ export function PaypalSubmitButton( { disabled } ) {
 
 function PayPalButtonContents( { formStatus, transactionStatus } ) {
 	const { __ } = useI18n();
-	if ( transactionStatus === 'redirecting' ) {
+	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
 	}
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <span>{ __( 'Processing…' ) }</span>;
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return <ButtonPayPalIcon />;
 	}
 	return <span>{ __( 'Please wait…' ) }</span>;

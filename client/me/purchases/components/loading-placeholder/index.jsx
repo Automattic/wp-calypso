@@ -5,12 +5,13 @@
 import page from 'page';
 import PropTypes from 'prop-types';
 import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
 
 /**
  * Style dependencies
@@ -21,6 +22,7 @@ class LoadingPlaceholder extends React.Component {
 	static propTypes = {
 		path: PropTypes.string,
 		title: PropTypes.string.isRequired,
+		isFullWidth: PropTypes.bool.isRequired,
 	};
 
 	goBack = () => {
@@ -28,8 +30,12 @@ class LoadingPlaceholder extends React.Component {
 	};
 
 	render() {
+		const classes = classnames( 'loading-placeholder', {
+			'is-wide-layout': this.props.isFullWidth,
+		} );
+
 		return (
-			<Main className="loading-placeholder">
+			<Main className={ classes }>
 				<HeaderCake className="loading-placeholder__header" onClick={ this.goBack }>
 					{ this.props.title }
 				</HeaderCake>

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
 /**
@@ -755,10 +754,11 @@ function getGutenboardingStatus( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { isGutenboarding, frankenflowUrl, isNewLaunch } = data;
+		const { isGutenboarding, frankenflowUrl, isNewLaunch, isExperimental } = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
 		calypsoifyGutenberg.isNewLaunch = isNewLaunch;
+		calypsoifyGutenberg.isExperimental = isExperimental;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
 	};
@@ -912,6 +912,34 @@ async function preselectParentPage() {
 	}
 }
 
+function handleCheckoutModal( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCheckoutModalStatus',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( message ) => {
+		const { isCheckoutOverlayEnabled } = message.data;
+
+		// Conditionally add the hook if the feature flag is enabled.
+		if ( isCheckoutOverlayEnabled ) {
+			addAction(
+				'a8c.wpcom-block-editor.openCheckoutModal',
+				'a8c/wpcom-block-editor/openCheckoutModal',
+				( data ) => {
+					calypsoPort.postMessage( {
+						action: 'openCheckoutModal',
+						payload: data,
+					} );
+				}
+			);
+		}
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -933,6 +961,7 @@ function initPort( message ) {
 						multiple: this.props.multiple,
 						value: this.props.value,
 					},
+					ports: [ mediaSelectChannel.port2, mediaCancelChannel.port2 ],
 				},
 				[ mediaSelectChannel.port2, mediaCancelChannel.port2 ]
 			);
@@ -1013,6 +1042,8 @@ function initPort( message ) {
 		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
+
+		handleCheckoutModal( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

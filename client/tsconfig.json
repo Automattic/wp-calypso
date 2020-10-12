@@ -11,7 +11,10 @@
 		"noEmit": false,
 		"emitDeclarationOnly": true,
 		"composite": true,
-		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ]
+		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ],
+		"paths": {
+			"calypso/*": [ "./*" ]
+		}
 	},
 	"references": [
 		{ "path": "../packages/calypso-analytics" },

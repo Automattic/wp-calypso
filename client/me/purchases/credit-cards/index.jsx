@@ -6,23 +6,23 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import config from 'config';
-import CreditCard from 'components/credit-card';
+import config from 'calypso/config';
+import CreditCard from 'calypso/components/credit-card';
 import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
 	getUniquePaymentAgreements,
 	hasLoadedStoredCardsFromServer,
 	isFetchingStoredCards,
-} from 'state/stored-cards/selectors';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import { addCreditCard } from 'me/purchases/paths';
-import SectionHeader from 'components/section-header';
+} from 'calypso/state/stored-cards/selectors';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies
@@ -52,9 +52,9 @@ class CreditCards extends Component {
 		} );
 	}
 
-	goToAddCreditCard() {
-		page( addCreditCard );
-	}
+	goToAddCreditCard = () => {
+		page( this.props.addPaymentMethodUrl );
+	};
 
 	renderAddCreditCardButton() {
 		if ( ! config.isEnabled( 'manage/payment-methods' ) ) {
@@ -91,6 +91,15 @@ class CreditCards extends Component {
 		);
 	}
 }
+
+CreditCards.propTypes = {
+	addPaymentMethodUrl: PropTypes.string.isRequired,
+	// From connect:
+	cards: PropTypes.array.isRequired,
+	paymentAgreements: PropTypes.array.isRequired,
+	hasLoadedFromServer: PropTypes.bool,
+	isFetching: PropTypes.bool,
+};
 
 export default connect( ( state ) => ( {
 	cards: getStoredCards( state ),

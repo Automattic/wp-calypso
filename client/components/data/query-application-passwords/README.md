@@ -1,5 +1,4 @@
-Query Application Passwords
-===========================
+# Query Application Passwords
 
 `<QueryApplicationPasswords />` is a React component used to request the application passwords of the current user.
 

@@ -12,7 +12,7 @@ import config from 'config';
 import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'my-sites/checkout/cart/upcoming-renewals-reminder';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { ResponseCart } from '../types/backend/shopping-cart-endpoint';
+import { ResponseCart } from '../hooks/use-shopping-cart-manager/types';
 
 type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
@@ -43,16 +43,16 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, ad
 		selectedSiteId
 	) {
 		return (
-			<UpsellWrapperUI>
+			<UpsellWrapper>
 				<UpcomingRenewalsReminder cart={ mockCart } addItemToCart={ addItemToCart } />
-			</UpsellWrapperUI>
+			</UpsellWrapper>
 		);
 	}
 
 	return (
-		<UpsellWrapperUI>
+		<UpsellWrapper>
 			<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
-		</UpsellWrapperUI>
+		</UpsellWrapper>
 	);
 };
 
@@ -61,7 +61,7 @@ export default SecondaryCartPromotions;
 type DivProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
-const UpsellWrapperUI = styled.div< DivProps >`
+const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {

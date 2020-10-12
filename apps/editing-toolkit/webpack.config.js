@@ -8,7 +8,6 @@
  */
 const _ = require( 'lodash' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
-// eslint-disable-next-line import/no-extraneous-dependencies
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
 

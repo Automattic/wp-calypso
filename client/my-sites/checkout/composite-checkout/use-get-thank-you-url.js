@@ -25,13 +25,14 @@ import {
 	hasBloggerPlan,
 	hasPersonalPlan,
 	hasPremiumPlan,
+	hasBusinessPlan,
 	hasEcommercePlan,
 } from 'lib/cart-values/cart-items';
 import { managePurchase } from 'me/purchases/paths';
 import { isValidFeatureKey } from 'lib/plans/features-list';
 import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
 import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
-import { persistSignupDestination, retrieveSignupDestination } from 'signup/utils';
+import { persistSignupDestination, retrieveSignupDestination } from 'signup/storageUtils';
 import { getSelectedSite } from 'state/ui/selectors';
 import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
 import { abtest } from 'lib/abtest';
@@ -46,7 +47,7 @@ export function getThankYouPageUrl( {
 	feature,
 	cart = {},
 	isJetpackNotAtomic,
-	product,
+	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
@@ -96,7 +97,7 @@ export function getThankYouPageUrl( {
 		feature,
 		cart,
 		isJetpackNotAtomic,
-		product,
+		productAliasFromUrl,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
@@ -180,7 +181,7 @@ function getFallbackDestination( {
 	feature,
 	cart,
 	isJetpackNotAtomic,
-	product,
+	productAliasFromUrl,
 } ) {
 	const isCartEmpty = getAllCartItems( cart ).length === 0;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
@@ -202,7 +203,9 @@ function getFallbackDestination( {
 
 		const purchasedProduct =
 			productFromCart ||
-			productsWithCustomThankYou.find( ( productWithCustom ) => productWithCustom === product );
+			productsWithCustomThankYou.find(
+				( productWithCustom ) => productWithCustom === productAliasFromUrl
+			);
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
@@ -230,19 +233,15 @@ function getFallbackDestination( {
 	return '/';
 }
 
-function maybeShowPlanBumpOfferConcierge( {
+function maybeShowPlanBumpOffer( {
 	pendingOrReceiptId,
-	orderId,
 	cart,
 	siteSlug,
 	didPurchaseFail,
 	isTransactionResultEmpty,
 } ) {
 	if ( hasPremiumPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
-		if ( 'variantShowPlanBump' === abtest( 'showBusinessPlanBump' ) ) {
-			return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
-		}
-		return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
+		return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
 	}
 
 	return;
@@ -267,14 +266,16 @@ function getRedirectUrlForConciergeNudge( {
 		config.isEnabled( 'upsell/concierge-session' ) &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
-		( hasBloggerPlan( cart ) || hasPersonalPlan( cart ) || hasPremiumPlan( cart ) )
+		( hasBloggerPlan( cart ) ||
+			hasPersonalPlan( cart ) ||
+			hasPremiumPlan( cart ) ||
+			hasBusinessPlan( cart ) )
 	) {
 		// A user just purchased one of the qualifying plans
 		// Show them the concierge session upsell page
 
-		const upgradePath = maybeShowPlanBumpOfferConcierge( {
+		const upgradePath = maybeShowPlanBumpOffer( {
 			pendingOrReceiptId,
-			orderId,
 			cart,
 			siteSlug,
 			didPurchaseFail,
@@ -364,7 +365,7 @@ export function useGetThankYouUrl( {
 	feature,
 	cart,
 	isJetpackNotAtomic,
-	product,
+	productAliasFromUrl,
 	siteId,
 	hideNudge,
 	recordEvent,
@@ -384,6 +385,7 @@ export function useGetThankYouUrl( {
 		const isTransactionResultEmpty = isEmpty( transactionResult );
 
 		if ( siteSlug === 'no-user' || ! siteSlug ) {
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 			siteSlug = select( 'wpcom' ).getSiteSlug();
 		}
 
@@ -397,7 +399,7 @@ export function useGetThankYouUrl( {
 			feature,
 			cart,
 			isJetpackNotAtomic,
-			product,
+			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
 			hideNudge,
 			didPurchaseFail,
@@ -417,7 +419,7 @@ export function useGetThankYouUrl( {
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
-		product,
+		productAliasFromUrl,
 		redirectTo,
 		feature,
 		purchaseId,

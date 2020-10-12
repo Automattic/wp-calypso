@@ -14,6 +14,6 @@ function myDotPager() {
 			<div>Item 2</div>
 			<div>Item 3</div>
 		</DotPager>
-	)
+	);
 }
 ```

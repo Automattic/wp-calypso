@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
@@ -10,16 +10,32 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
+import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
+import { addQueryArgs } from 'lib/route';
+
+/**
+ * Type dependencies
+ */
+import type { JetpackFreeProps } from 'my-sites/plans-v2/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const JetpackFreeCard: FunctionComponent = () => {
+const JetpackFreeCard = ( { siteId, urlQueryArgs }: JetpackFreeProps ) => {
 	const translate = useTranslate();
 	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
+
+	const startHref = isJetpackCloud()
+		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ JPC_PATH_REMOTE_INSTALL }` )
+		: wpAdminUrl || JPC_PATH_REMOTE_INSTALL;
+
+	const onClickTrack = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
+		site_id: siteId || undefined,
+	} );
 
 	return (
 		<div className="jetpack-free-card">
@@ -37,10 +53,7 @@ const JetpackFreeCard: FunctionComponent = () => {
 						}
 					) }
 				</p>
-				<Button
-					className="jetpack-free-card__button"
-					href={ wpAdminUrl || JPC_PATH_REMOTE_INSTALL }
-				>
+				<Button className="jetpack-free-card__button" href={ startHref } onClick={ onClickTrack }>
 					{ translate( 'Start for free' ) }
 				</Button>
 			</div>

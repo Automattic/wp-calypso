@@ -21,25 +21,18 @@ function MyInvitesList( { invites } ) {
 	return (
 		<div>
 			<QueryInvites siteId={ SITE_ID } />
-			{ invites.map( invite => {
-				return (
-					<MyInvitesListItem
-						key={ invite.invite_key }
-						invite={ invite }
-					/>
-				);
-			} }
+			{ invites.map( ( invite ) => {
+				return <MyInvitesListItem key={ invite.invite_key } invite={ invite } />;
+			} ) }
 		</div>
 	);
 }
 
-export default connect(
-	state => {
-		return {
-			pendingInvites: getPendingInvitesForSite( state, SITE_ID ),
-		};
-	}
-)( MyInvitesList );
+export default connect( ( state ) => {
+	return {
+		pendingInvites: getPendingInvitesForSite( state, SITE_ID ),
+	};
+} )( MyInvitesList );
 ```
 
 ## Props

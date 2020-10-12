@@ -4,12 +4,10 @@ Component/Block to share posts to social-media accounts
 
 ## Example
 
-```es6
+```jsx
 import PostShare from 'blocks/post-share';
 
-<PostShare
-	post={ post }
-	siteId={ siteId } />
+<PostShare post={ post } siteId={ siteId } />;
 ```
 
 ## Props

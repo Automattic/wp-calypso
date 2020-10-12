@@ -11,7 +11,7 @@ import { useI18n } from '@automattic/react-i18n';
 import styled from '../lib/styled';
 import Button from './button';
 import { useFormStatus } from '../lib/form-status';
-import { StripePaymentRequest } from '../types';
+import { FormStatus, StripePaymentRequest } from '../types';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
@@ -37,7 +37,7 @@ export default function PaymentRequestButton( {
 		disabled = true;
 	}
 
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return (
 			<Button disabled fullWidth>
 				{ __( 'Completing your purchase' ) }

@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormTextInput from 'components/forms/form-text-input';
 import { Button } from '@automattic/components';
 import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
 import { applyCoupon, removeCoupon } from 'lib/cart/actions';
@@ -85,8 +86,7 @@ export class CartCoupon extends React.Component {
 
 		return (
 			<form onSubmit={ this.applyCoupon } className={ 'cart__form' }>
-				<input
-					type="text"
+				<FormTextInput
 					data-e2e-type="coupon-code"
 					disabled={ this.isSubmitting }
 					placeholder={ this.props.translate( 'Enter Coupon Code', { textOnly: true } ) }

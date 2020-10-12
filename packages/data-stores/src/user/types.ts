@@ -28,6 +28,11 @@ export interface CurrentUser {
 	 * The bootstrapped user's locale variant, e.g. `es-mx`.
 	 */
 	localeVariant: string;
+
+	/**
+	 * The user's existing sites count.
+	 */
+	site_count: number;
 }
 
 export interface NewUser {

@@ -20,7 +20,6 @@ import {
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'lib/i18n-utils/switch-locale';
-import { isSectionIsomorphic } from 'state/ui/selectors';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
@@ -259,9 +258,7 @@ export function serverRender( req, res ) {
 		attachHead( context );
 
 		const cacheableReduxSubtrees = [ 'documentHead' ];
-		const isomorphicSubtrees = isSectionIsomorphic( context.store.getState() )
-			? [ 'themes', 'ui' ]
-			: [];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
 
 		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
 
@@ -326,7 +323,7 @@ export function setShouldServerSideRender( context, next ) {
  */
 function isServerSideRenderCompatible( context ) {
 	return Boolean(
-		isSectionIsomorphic( context.store.getState() ) &&
+		context.section?.isomorphic &&
 			! context.user && // logged out only
 			isDefaultLocale( context.lang ) &&
 			context.layout

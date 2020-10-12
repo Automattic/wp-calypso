@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { uniqueId, omit } from 'lodash';
 import { render, fireEvent } from '@testing-library/react';
-/* eslint-enable import/no-extraneous-dependencies */
 
 import { templatesFixture, blocksByTemplatesFixture } from './helpers/templates-blocks-helpers';
 import { TemplateSelectorControl } from '../template-selector-control';

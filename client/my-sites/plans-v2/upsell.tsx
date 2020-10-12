@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback, useMemo } from 'react';
+import React, { ReactNode, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -15,7 +15,9 @@ import FormattedHeader from 'components/formatted-header';
 import HeaderCake from 'components/header-cake';
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { preventWidows } from 'lib/formatting';
+import useTrackCallback from 'lib/jetpack/use-track-callback';
 import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
@@ -23,6 +25,7 @@ import QueryProducts from './query-products';
 import useIsLoading from './use-is-loading';
 import useItemPrice from './use-item-price';
 import {
+	durationToString,
 	durationToText,
 	getOptionFromSlug,
 	getProductUpsell,
@@ -52,6 +55,8 @@ interface Props {
 	onPurchaseSingleProduct: () => void;
 	onPurchaseBothProducts: () => void;
 	isLoading: boolean;
+	header: ReactNode;
+	pageTracker: ReactNode;
 }
 
 const UpsellComponent = ( {
@@ -63,6 +68,8 @@ const UpsellComponent = ( {
 	mainProduct,
 	upsellProduct,
 	isLoading,
+	header,
+	pageTracker,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -85,8 +92,14 @@ const UpsellComponent = ( {
 		[ upsellSlug ]
 	);
 
+	useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [] );
+
 	return (
-		<Main className="upsell">
+		<Main className="upsell" wideLayout>
+			{ pageTracker }
+			{ header }
 			<HeaderCake onClick={ onBackButtonClick }>{ translate( 'Product Options' ) }</HeaderCake>
 			{ isLoading ? (
 				<div className="upsell__header-placeholder" />
@@ -177,8 +190,16 @@ const UpsellComponent = ( {
 	);
 };
 
-const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellPageProps ) => {
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+const UpsellPage = ( {
+	rootUrl,
+	urlQueryArgs,
+	siteSlug: siteSlugProp,
+	productSlug,
+	duration,
+	header,
+}: UpsellPageProps ) => {
+	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
+	const siteSlug = siteSlugProp || siteSlugState;
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isLoading = useIsLoading( siteId );
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
@@ -188,19 +209,52 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 	const upsellProductSlug = getProductUpsell( productSlug );
 	const upsellProduct = upsellProductSlug && slugToSelectorProduct( upsellProductSlug );
 
-	const checkoutCb = useCallback( ( slugs ) => checkout( siteSlug, slugs ), [ siteSlug ] );
-
-	const onPurchaseBothProducts = useCallback(
-		() => checkoutCb( [ productSlug, upsellProductSlug ] ),
-		[ checkoutCb, productSlug, upsellProductSlug ]
+	const onPurchaseBothProducts = useTrackCallback(
+		() => checkout( siteSlug, [ productSlug, upsellProductSlug ], urlQueryArgs ),
+		'calypso_product_checkout_click',
+		{
+			site_id: siteId || undefined,
+			product_slug: productSlug,
+			upsell_product_slug: upsellProductSlug,
+			duration,
+		}
 	);
 
-	const onPurchaseSingleProduct = useCallback( () => checkoutCb( productSlug ), [
-		checkoutCb,
-		productSlug,
-	] );
+	const onPurchaseSingleProduct = useTrackCallback(
+		() => checkout( siteSlug, productSlug, urlQueryArgs ),
+		'calypso_product_checkout_click',
+		{
+			site_id: siteId || undefined,
+			product_slug: productSlug,
+			duration,
+		}
+	);
 
-	const selectorPageUrl = getPathToSelector( rootUrl, duration, siteSlug );
+	// Construct a URL to send users to when they click the back button. Since at this moment
+	// there is only one Jetpack Scan option, the back button takes users back to the Selector
+	// page.
+	const productOption = getOptionFromSlug( productSlug );
+	const selectorPageUrl = getPathToSelector( rootUrl, urlQueryArgs, duration, siteSlug );
+	const backUrl = productOption
+		? getPathToDetails( rootUrl, urlQueryArgs, productOption, duration as Duration, siteSlug )
+		: selectorPageUrl;
+
+	const onBackButtonClick = useTrackCallback( () => page( backUrl ), 'calypso_upsell_back_click', {
+		site_id: siteId || undefined,
+		product_slug: productSlug,
+		duration,
+	} );
+
+	const viewTrackerPath = siteId
+		? `${ rootUrl }/:product/${ durationToString( duration ) }/additions/:site`
+		: `${ rootUrl }/:product/${ durationToString( duration ) }/additions`;
+	const viewTrackerProps = siteId
+		? { site: siteSlug, product: productSlug }
+		: { product: productSlug };
+
+	const pageTracker = (
+		<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Details" />
+	);
 
 	// If the product is not valid send the user to the selector page.
 	if ( ! mainProduct ) {
@@ -214,20 +268,9 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 		return null;
 	}
 
-	// Construct a URL to send users to when they click the back button. Since at this moment
-	// there is only one Jetpack Scan option, the back button takes users back to the Selector
-	// page.
-	const productOption = getOptionFromSlug( productSlug );
-	const backUrl = productOption
-		? getPathToDetails( rootUrl, productOption, duration as Duration, siteSlug )
-		: selectorPageUrl;
-
-	const onBackButtonClick = () => page( backUrl );
-
 	return (
 		<>
 			<QueryProducts />
-			{ header }
 			<UpsellComponent
 				siteId={ siteId }
 				currencyCode={ currencyCode as string }
@@ -237,8 +280,9 @@ const UpsellPage = ( { duration, productSlug, rootUrl, header, footer }: UpsellP
 				onPurchaseBothProducts={ onPurchaseBothProducts }
 				onBackButtonClick={ onBackButtonClick }
 				isLoading={ isLoading }
+				header={ header }
+				pageTracker={ pageTracker }
 			/>
-			{ footer }
 		</>
 	);
 };

@@ -32,13 +32,34 @@
 	color: var( --studio-color-gray-70 );
 }
 
-.selector__main {
+.selector__main,
+.selector-alt__main {
 	position: relative;
 }
 
-.selector__divider {
-	border-bottom: solid 1px var( --color-border-subtle );
+// Override WordPress.com primary colors with Jetpack Cloud primary colors.
+// This only affects the Plans grid and the Filter bar.
+.selector-alt__main {
+	.plans-filter-bar,
+	.products-grid-alt {
+		--color-accent: var( --studio-jetpack-green-40 );
+		--color-primary: var( --studio-jetpack-green-40 );
+		--color-accent-60: var( --studio-jetpack-green-60 );
+		--color-primary-light: var( --studio-jetpack-green-60 );
+		--color-primary-dark: var( --studio-jetpack-green-40 );
+	}
+}
+
+.selector__divider,
+.selector-alt__divider {
 	margin: 40px 0;
+
+	border-bottom: solid 1px var( --color-border-subtle );
+	visibility: hidden;
+
+	@include break-large {
+		visibility: visible;
+	}
 }
 
 /**
@@ -171,6 +192,25 @@
 	font-weight: 600;
 }
 
+.records-details-alt {
+	text-align: center;
+
+	color: var( --color-text );
+}
+
+.records-details-alt__records {
+	font-size: $font-body;
+	font-weight: 600;
+}
+
+.records-details-alt__tier {
+	margin: 8px 0 0;
+
+	font-size: $font-body-small;
+
+	color: var( --color-text-subtle );
+}
+
 .records-details__price {
 	display: flex;
 	justify-content: center;
@@ -178,6 +218,9 @@
 
 .records-details__timeframe {
 	margin-top: -4px;
-
 	font-size: 0.75rem;
+}
+
+.plans-v2__heading {
+	padding: 1rem 0;
 }

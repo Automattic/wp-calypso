@@ -61,13 +61,15 @@ describe( 'section-nav', () => {
 			assert.equal( text, 'test' );
 		} );
 
-		test( 'should render children', ( done ) => {
-			//React.Children.only should work here but gives an error about not being the only child
-			React.Children.map( panelElem.props.children, function ( obj ) {
-				if ( obj.type === 'p' ) {
-					assert.equal( obj.props.children, 'mmyellow' );
-					done();
-				}
+		test( 'should render children', () => {
+			return new Promise( ( done ) => {
+				//React.Children.only should work here but gives an error about not being the only child
+				React.Children.map( panelElem.props.children, function ( obj ) {
+					if ( obj.type === 'p' ) {
+						assert.equal( obj.props.children, 'mmyellow' );
+						done();
+					}
+				} );
 			} );
 		} );
 
@@ -89,61 +91,65 @@ describe( 'section-nav', () => {
 	} );
 
 	describe( 'interaction', () => {
-		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', ( done ) => {
-			const elem = React.createElement(
-				SectionNav,
-				{
-					selectedText: 'placeholder',
-					onMobileNavPanelOpen: function () {
-						done();
+		test( 'should call onMobileNavPanelOpen function passed as a prop when tapped', () => {
+			return new Promise( ( done ) => {
+				const elem = React.createElement(
+					SectionNav,
+					{
+						selectedText: 'placeholder',
+						onMobileNavPanelOpen: function () {
+							done();
+						},
 					},
-				},
-				<p>placeholder</p>
-			);
-			const tree = TestUtils.renderIntoDocument( elem );
-			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.click(
-				ReactDom.findDOMNode(
-					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-				)
-			);
-			assert( tree.state.mobileOpen );
+					<p>placeholder</p>
+				);
+				const tree = TestUtils.renderIntoDocument( elem );
+				assert( ! tree.state.mobileOpen );
+				TestUtils.Simulate.click(
+					ReactDom.findDOMNode(
+						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+					)
+				);
+				assert( tree.state.mobileOpen );
+			} );
 		} );
 
-		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', ( done ) => {
-			const spy = sinon.spy();
-			const elem = React.createElement(
-				SectionNav,
-				{
-					selectedText: 'placeholder',
-					onMobileNavPanelOpen: spy,
-				},
-				<p>placeholder</p>
-			);
-			const tree = TestUtils.renderIntoDocument( elem );
+		test( 'should call onMobileNavPanelOpen function passed as a prop twice when tapped three times', () => {
+			return new Promise( ( done ) => {
+				const spy = sinon.spy();
+				const elem = React.createElement(
+					SectionNav,
+					{
+						selectedText: 'placeholder',
+						onMobileNavPanelOpen: spy,
+					},
+					<p>placeholder</p>
+				);
+				const tree = TestUtils.renderIntoDocument( elem );
 
-			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.click(
-				ReactDom.findDOMNode(
-					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-				)
-			);
-			assert( tree.state.mobileOpen );
-			TestUtils.Simulate.click(
-				ReactDom.findDOMNode(
-					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-				)
-			);
-			assert( ! tree.state.mobileOpen );
-			TestUtils.Simulate.click(
-				ReactDom.findDOMNode(
-					TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
-				)
-			);
-			assert( tree.state.mobileOpen );
+				assert( ! tree.state.mobileOpen );
+				TestUtils.Simulate.click(
+					ReactDom.findDOMNode(
+						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+					)
+				);
+				assert( tree.state.mobileOpen );
+				TestUtils.Simulate.click(
+					ReactDom.findDOMNode(
+						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+					)
+				);
+				assert( ! tree.state.mobileOpen );
+				TestUtils.Simulate.click(
+					ReactDom.findDOMNode(
+						TestUtils.findRenderedDOMComponentWithClass( tree, 'section-nav__mobile-header' )
+					)
+				);
+				assert( tree.state.mobileOpen );
 
-			assert( spy.calledTwice );
-			done();
+				assert( spy.calledTwice );
+				done();
+			} );
 		} );
 	} );
 } );

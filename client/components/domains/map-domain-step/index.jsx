@@ -111,7 +111,6 @@ class MapDomainStep extends React.Component {
 					<div className="map-domain-step__add-domain" role="group">
 						<FormTextInput
 							className="map-domain-step__external-domain"
-							type="text"
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }

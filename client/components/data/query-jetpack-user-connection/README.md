@@ -1,5 +1,4 @@
-Query Jetpack User Connection
-================
+# Query Jetpack User Connection
 
 `<QueryJetpackUserConnection />` is a React component used in managing network requests for Jetpack current user connection data.
 
@@ -23,11 +22,9 @@ function MyJetpackConnectionData( { jetpackConnection } ) {
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		jetpackConnection: getJetpackUserConnection( state, 12345678 )
-	} )
-)( MyJetpackConnectionData );
+export default connect( ( state ) => ( {
+	jetpackConnection: getJetpackUserConnection( state, 12345678 ),
+} ) )( MyJetpackConnectionData );
 ```
 
 ## Props

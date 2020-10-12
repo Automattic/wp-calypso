@@ -53,7 +53,6 @@ export const DateFormatOption = ( {
 							disabled={ disabled }
 							name="date_format_custom"
 							onChange={ setCustomDateFormat }
-							type="text"
 							value={ dateFormat || '' }
 						/>
 						<FormSettingExplanation>

@@ -6,7 +6,6 @@ import chalk from 'chalk';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import userAgent from 'express-useragent';
-import morgan from 'morgan';
 
 /**
  * Internal dependencies
@@ -16,6 +15,7 @@ import config from 'server/config';
 import api from 'server/api';
 import pages from 'server/pages';
 import pwa from 'server/pwa';
+import loggerMiddleware from 'server/middleware/logger';
 
 /**
  * Returns the server HTTP request handler "app".
@@ -30,12 +30,10 @@ export default function setup() {
 
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
+	app.use( loggerMiddleware() );
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		require( 'server/bundler' )( app );
-
-		// setup logger
-		app.use( morgan( 'dev' ) );
 
 		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 			if ( config( 'wordpress_logged_in_cookie' ) ) {
@@ -71,9 +69,6 @@ export default function setup() {
 				}
 			} catch ( e ) {}
 		}
-	} else {
-		// setup logger
-		app.use( morgan( 'combined' ) );
 	}
 
 	app.use( pwa() );

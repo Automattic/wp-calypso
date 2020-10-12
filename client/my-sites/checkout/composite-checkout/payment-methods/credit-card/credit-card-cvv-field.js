@@ -4,7 +4,7 @@
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { CardCvcElement } from 'react-stripe-elements';
-import { useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -34,7 +34,7 @@ export default function CreditCardCvvField( {
 } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const { cardCvc: cardCvcError } = useSelect( ( select ) =>
 		select( 'credit-card' ).getCardDataErrors()
 	);

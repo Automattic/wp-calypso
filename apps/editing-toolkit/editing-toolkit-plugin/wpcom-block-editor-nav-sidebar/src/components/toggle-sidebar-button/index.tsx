@@ -4,6 +4,7 @@
 import { Button as OriginalButton } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 
@@ -25,6 +26,11 @@ export default function ToggleSidebarButton() {
 	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
 	const isSidebarClosing = useSelect( ( select ) => select( STORE_KEY ).isSidebarClosing() );
 
+	const handleClick = () => {
+		recordTracksEvent( `calypso_editor_sidebar_open` );
+		toggleSidebar();
+	};
+
 	return (
 		<Button
 			label={ __( 'Block editor sidebar', 'full-site-editing' ) }
@@ -38,7 +44,7 @@ export default function ToggleSidebarButton() {
 			) }
 			icon={ wordpress }
 			iconSize={ 36 }
-			onClick={ toggleSidebar }
+			onClick={ handleClick }
 			aria-haspopup="dialog"
 			aria-expanded={ isSidebarOpen }
 		/>

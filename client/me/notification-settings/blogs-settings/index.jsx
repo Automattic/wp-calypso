@@ -10,13 +10,13 @@ import { find, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSites from 'state/selectors/get-sites';
-import { isRequestingSites } from 'state/sites/selectors';
-import EmptyContentComponent from 'components/empty-content';
+import getSites from 'calypso/state/selectors/get-sites';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import EmptyContentComponent from 'calypso/components/empty-content';
 import Blog from './blog';
-import InfiniteList from 'components/infinite-list';
+import InfiniteList from 'calypso/components/infinite-list';
 import Placeholder from './placeholder';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Style dependencies

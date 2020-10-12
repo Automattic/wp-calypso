@@ -13,7 +13,7 @@ import getSuperProps from 'lib/analytics/super-props';
 import { bindState as bindWpLocaleState } from 'lib/wp/localization';
 import { getUrlParts } from 'lib/url';
 import { setCurrentUser } from 'state/current-user/actions';
-import { setRoute as setRouteAction } from 'state/route/actions';
+import { setRoute } from 'state/route/actions';
 
 const debug = debugFactory( 'calypso' );
 
@@ -101,7 +101,7 @@ export const configureReduxStore = ( currentUser, reduxStore ) => {
 
 const setRouteMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
-		reduxStore.dispatch( setRouteAction( context.pathname, context.query ) );
+		reduxStore.dispatch( setRoute( context.pathname, context.query ) );
 
 		next();
 	} );

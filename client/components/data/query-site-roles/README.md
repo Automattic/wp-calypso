@@ -1,5 +1,4 @@
-Query Site Roles
-================
+# Query Site Roles
 
 `<QuerySiteRoles />` is a React component used in managing network requests for site roles.
 
@@ -17,10 +16,8 @@ export default function MySiteRolesList( { siteRoles } ) {
 		<div>
 			<QuerySiteRoles siteId={ 12345678 } />
 			{ siteRoles.map( ( role ) => {
-				return (
-					<MySiteRolesListItem role={ role } />
-				);
-			} }
+				return <MySiteRolesListItem role={ role } />;
+			} ) }
 		</div>
 	);
 }

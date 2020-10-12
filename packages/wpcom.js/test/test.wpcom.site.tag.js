@@ -44,77 +44,85 @@ describe( 'wpcom.site.tag', function () {
 	} );
 
 	describe( 'wpcom.site.tag.get', function () {
-		it( 'should get added tag', ( done ) => {
-			var cat = site.tag( testing_tag.slug );
+		it( 'should get added tag', () => {
+			return new Promise( ( done ) => {
+				var cat = site.tag( testing_tag.slug );
 
-			cat
-				.get()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data instanceof Object, 'data is not an object' );
-					assert.equal( testing_tag.slug, data.slug );
-					assert.equal( testing_tag.name, data.name );
-					done();
-				} )
-				.catch( done );
+				cat
+					.get()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data instanceof Object, 'data is not an object' );
+						assert.equal( testing_tag.slug, data.slug );
+						assert.equal( testing_tag.name, data.name );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.tag.add', function () {
-		it( 'should add a new tag', ( done ) => {
-			var tag = site.tag();
-			fixture.tag.name += '-added';
+		it( 'should add a new tag', () => {
+			return new Promise( ( done ) => {
+				var tag = site.tag();
+				fixture.tag.name += '-added';
 
-			tag
-				.add( fixture.tag )
-				.then( ( data ) => {
-					// checking some data date
-					assert.ok( data );
-					assert.ok( data instanceof Object, 'data is not an object' );
+				tag
+					.add( fixture.tag )
+					.then( ( data ) => {
+						// checking some data date
+						assert.ok( data );
+						assert.ok( data instanceof Object, 'data is not an object' );
 
-					// store added catogory
-					new_tag = data;
+						// store added catogory
+						new_tag = data;
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.tag.update', function () {
-		it( 'should edit the new added tag', ( done ) => {
-			var tag = site.tag( new_tag.slug );
-			var edited_name = fixture.tag.name + '-updated';
+		it( 'should edit the new added tag', () => {
+			return new Promise( ( done ) => {
+				var tag = site.tag( new_tag.slug );
+				var edited_name = fixture.tag.name + '-updated';
 
-			tag
-				.update( { name: edited_name } )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.equal( edited_name, data.name );
+				tag
+					.update( { name: edited_name } )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.equal( edited_name, data.name );
 
-					// update added tag
-					new_tag = data;
+						// update added tag
+						new_tag = data;
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.tag.delete', function () {
-		it( 'should delete the new added tag', ( done ) => {
-			var cat = site.tag( new_tag.slug );
+		it( 'should delete the new added tag', () => {
+			return new Promise( ( done ) => {
+				var cat = site.tag( new_tag.slug );
 
-			cat
-				.delete()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.equal( 'true', data.success );
-					assert.equal( new_tag.slug, data.slug );
+				cat
+					.delete()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.equal( 'true', data.success );
+						assert.equal( new_tag.slug, data.slug );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

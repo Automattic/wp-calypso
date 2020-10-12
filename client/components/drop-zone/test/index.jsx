@@ -115,29 +115,33 @@ describe( 'index', () => {
 		expect( tree.state.isDraggingOverElement ).to.not.be.ok;
 	} );
 
-	test( 'should start observing the body for mutations when dragging over', ( done ) => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
-			dragEnterEvent = new window.MouseEvent( 'dragenter' );
+	test( 'should start observing the body for mutations when dragging over', () => {
+		return new Promise( ( done ) => {
+			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
+				dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
-		window.dispatchEvent( dragEnterEvent );
+			window.dispatchEvent( dragEnterEvent );
 
-		process.nextTick( function () {
-			expect( tree.observer ).to.be.ok;
-			done();
+			process.nextTick( function () {
+				expect( tree.observer ).to.be.ok;
+				done();
+			} );
 		} );
 	} );
 
-	test( 'should stop observing the body for mutations upon drag ending', ( done ) => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
-			dragEnterEvent = new window.MouseEvent( 'dragenter' ),
-			dragLeaveEvent = new window.MouseEvent( 'dragleave' );
+	test( 'should stop observing the body for mutations upon drag ending', () => {
+		return new Promise( ( done ) => {
+			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
+				dragEnterEvent = new window.MouseEvent( 'dragenter' ),
+				dragLeaveEvent = new window.MouseEvent( 'dragleave' );
 
-		window.dispatchEvent( dragEnterEvent );
-		window.dispatchEvent( dragLeaveEvent );
+			window.dispatchEvent( dragEnterEvent );
+			window.dispatchEvent( dragLeaveEvent );
 
-		process.nextTick( function () {
-			expect( tree.observer ).to.be.undefined;
-			done();
+			process.nextTick( function () {
+				expect( tree.observer ).to.be.undefined;
+				done();
+			} );
 		} );
 	} );
 

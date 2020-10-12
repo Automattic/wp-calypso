@@ -132,8 +132,6 @@ describe( 'selectors', () => {
 
 				expect( getGroups( state ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
 			} );
-		} else {
-			test.skip( 'should not return JPOP group if within the jetpack-connect section' );
 		}
 	} );
 } );

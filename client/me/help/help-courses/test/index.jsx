@@ -27,7 +27,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/user', () => () => {} );
@@ -62,7 +62,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	numberFormat: ( x ) => x,
 } ) );
 
-import purchasesSelectors from 'state/purchases/selectors';
+import purchasesSelectors from 'calypso/state/purchases/selectors';
 
 describe( 'mapStateToProps should return correct value for isBusinessPlanUser', () => {
 	[

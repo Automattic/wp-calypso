@@ -69,10 +69,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20200421',
+		datestamp: '20200910',
 		variations: {
-			offer: 50,
-			noOffer: 50,
+			offer: 75,
+			noOffer: 25,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
@@ -101,15 +101,6 @@ export default {
 			control: 0,
 		},
 		defaultVariation: 'variantShowUpdates',
-		allowExistingUsers: true,
-	},
-	domainStepPlanStepSwap: {
-		datestamp: '20210513',
-		variations: {
-			variantShowSwapped: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
@@ -181,22 +172,13 @@ export default {
 			'ZA',
 		],
 	},
-	showBusinessPlanBump: {
-		datestamp: '20300619',
-		variations: {
-			variantShowPlanBump: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	offerResetFlow: {
-		datestamp: '20200804',
+		datestamp: '20200916',
 		variations: {
-			showOfferResetFlow: 0,
-			control: 100,
+			showOfferResetFlow: 100,
+			control: 0,
 		},
-		defaultVariation: 'control',
+		defaultVariation: 'showOfferResetFlow',
 		allowExistingUsers: true,
 	},
 	userlessCheckout: {
@@ -210,18 +192,16 @@ export default {
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
 	reskinSignupFlow: {
-		datestamp: '20200824',
+		datestamp: '20200928',
 		variations: {
 			reskinned: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-		localeTargets: 'any',
-		localeExceptions: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200828',
+		datestamp: '20200911',
 		variations: {
 			gutenberg: 50,
 			control: 50,
@@ -229,5 +209,23 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
+	},
+	removeUsernameInSignup: {
+		datestamp: '20201002',
+		variations: {
+			variantRemoveUsername: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+	},
+	oneClickUpsell: {
+		datestamp: '20200922',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

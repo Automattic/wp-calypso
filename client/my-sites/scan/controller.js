@@ -7,12 +7,15 @@ import React from 'react';
  * Internal dependencies
  */
 import UpsellSwitch from 'components/jetpack/upsell-switch';
+import HasVaultPressSwitch from 'components/jetpack/has-vaultpress-switch';
 import ScanPage from './main';
 import ScanHistoryPage from './history';
 import ScanUpsellPage from './upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
 import getSiteScanRequestStatus from 'state/selectors/get-site-scan-request-status';
 import getSiteScanState from 'state/selectors/get-site-scan-state';
+import isJetpackSiteMultiSite from 'state/sites/selectors/is-jetpack-site-multi-site';
+import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
 import QueryJetpackScan from 'components/data/query-jetpack-scan';
 import ScanPlaceholder from 'components/jetpack/scan-placeholder';
 import ScanHistoryPlaceholder from 'components/jetpack/scan-history-placeholder';
@@ -26,6 +29,34 @@ export function showUpsellIfNoScan( context, next ) {
 
 export function showUpsellIfNoScanHistory( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanHistoryPlaceholder />, context.primary );
+	next();
+}
+
+export function showUnavailableForVaultPressSites( context, next ) {
+	const message = isJetpackCloud() ? (
+		<ScanUpsellPage reason="vp_active_on_site" />
+	) : (
+		<WPCOMScanUpsellPage reason="vp_active_on_site" />
+	);
+
+	context.primary = (
+		<HasVaultPressSwitch trueComponent={ message } falseComponent={ context.primary } />
+	);
+
+	next();
+}
+
+export function showUnavailableForMultisites( context, next ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	if ( isJetpackSiteMultiSite( state, siteId ) ) {
+		context.primary = isJetpackCloud() ? (
+			<ScanUpsellPage reason="multisite_not_supported" />
+		) : (
+			<WPCOMScanUpsellPage reason="multisite_not_supported" />
+		);
+	}
+
 	next();
 }
 

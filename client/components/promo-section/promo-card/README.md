@@ -1,11 +1,10 @@
-Promo Card
-==========
+# Promo Card
 
 A [`Card` component](../../components/card) based on [`ActionPanel'](../../components/action-panel) designed to promote plan features and partnerships.
 
 ## Usage
 
-```es6
+```jsx
 import PromoCard from 'my-sites/promo-section/promo-card';
 import referralImage from 'assets/images/earn/referral.svg';
 
@@ -31,5 +30,5 @@ const PromoCardExample = () => {
 			/>
 		</PromoCard>
 	);
-}
+};
 ```

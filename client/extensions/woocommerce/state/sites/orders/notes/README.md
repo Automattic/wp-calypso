@@ -1,5 +1,4 @@
-Order Notes
-===========
+# Order Notes
 
 This module is used to manage order notes on a site.
 
@@ -18,41 +17,43 @@ Create a note for an order on the remote site.
 These parameters should be actions dispatched in the case of success or failure. For example,
 
 ```js
-	onSuccess: successNotice( translate( 'Note created for order.' ) ),
+const onSuccess = successNotice( translate( 'Note created for order.' ) );
 ```
 
 ## Reducer
 
-This is saved on a per-site basis. 
+This is saved on a per-site basis.
 
 ```js
-{
-	"notes": {
+const object = {
+	notes: {
 		// Keyed by post ID
-		"isLoading": {
+		isLoading: {
 			10: false,
-			12: true
+			12: true,
 		},
 		// Keyed by order ID
-		"isSaving": {
+		isSaving: {
 			10: true,
-		}
-		// Keyed by order ID
-		"items": {
-			1: {
-				"id": 1,
-				"date_created": "2017-03-21T16:46:41",
-				"note": "Order ok!!!",
-				"customer_note": false,
-				…
-			},
-			2: { … }
 		},
-		"orders": {
-			10: [ 1, 2, 3 ]
-		}
-	}
-}
+		// Keyed by order ID
+		items: {
+			1: {
+				id: 1,
+				date_created: '2017-03-21T16:46:41',
+				note: 'Order ok!!!',
+				customer_note: false,
+				/*...*/
+			},
+			2: {
+				/*...*/
+			},
+		},
+		orders: {
+			10: [ 1, 2, 3 ],
+		},
+	},
+};
 ```
 
 ## Selectors

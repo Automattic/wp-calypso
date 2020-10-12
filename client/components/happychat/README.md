@@ -8,12 +8,11 @@ Component for Happychat support chats. This component provides both:
 The component uses the `happychat` key of the redux store for displaying chat messages.
 
 ```js
-import Happychat from 'component/happychat'
+import Happychat from 'component/happychat';
 
-render: function() {
-  return <Happychat />;
+function render() {
+	return <Happychat />;
 }
-
 ```
 
 ## Autoscroll

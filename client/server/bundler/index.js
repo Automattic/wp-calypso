@@ -2,11 +2,9 @@
  * External dependencies
  */
 
-/* eslint-disable import/no-extraneous-dependencies */
 const webpackMiddleware = require( 'webpack-dev-middleware' );
 const webpack = require( 'webpack' );
 const hotMiddleware = require( 'webpack-hot-middleware' );
-/* eslint-enable import/no-extraneous-dependencies */
 
 const chalk = require( 'chalk' );
 const webpackConfig = require( 'webpack.config' );

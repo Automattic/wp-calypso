@@ -1,11 +1,9 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
-/* eslint-enable import/no-extraneous-dependencies */
 
 /**
  * Internal dependencies

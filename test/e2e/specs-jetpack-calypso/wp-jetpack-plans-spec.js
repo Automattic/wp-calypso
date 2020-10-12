@@ -23,9 +23,6 @@ import NavBarComponent from '../lib/components/nav-bar-component.js';
 
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
-import ProfilePage from '../lib/pages/profile-page.js';
-import PurchasesPage from '../lib/pages/purchases-page.js';
-import ManagePurchasePage from '../lib/pages/manage-purchase-page.js';
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
 import JetpackComSearchLandingPage from '../lib/pages/external/jetpackcom-search-landing-page';
 
@@ -93,31 +90,6 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 			await PlansPage.Expect( driver );
 			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
 			await shoppingCartWidgetComponent.empty();
-		} );
-	} );
-
-	// NOTE: Disabled, since now Pressable plans are not managed through Calypso.
-	xdescribe( 'Renew Premium Plan:', function () {
-		before( async function () {
-			return await driverManager.clearCookiesAndDeleteLocalStorage( driver );
-		} );
-
-		step( 'Can log into WordPress.com', async function () {
-			this.loginFlow = new LoginFlow( driver, 'jetpackUserPREMIUM' );
-			return await this.loginFlow.login();
-		} );
-
-		step( '"Renew Now" link takes user to Payment Details form', async function () {
-			const navBarComponent = await NavBarComponent.Expect( driver );
-			await navBarComponent.clickProfileLink();
-			const profilePage = await ProfilePage.Expect( driver );
-			await profilePage.chooseManagePurchases();
-			const purchasesPage = await PurchasesPage.Expect( driver );
-			await purchasesPage.dismissGuidedTour();
-			await purchasesPage.selectPremiumPlanOnConnectedSite();
-			const managePurchasePage = await ManagePurchasePage.Expect( driver );
-			await managePurchasePage.chooseRenewNow();
-			return await SecurePaymentComponent.Expect( driver );
 		} );
 	} );
 } );

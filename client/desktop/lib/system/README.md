@@ -1,5 +1,4 @@
-System
-==========
+# System
 
 Provides details of the host system. These details are then sent to Calypso so it has some knowledge of where it is running.
 
@@ -8,6 +7,7 @@ Provides details of the host system. These details are then sent to Calypso so i
 `getDetails()` - returns detail object
 
 Where:
+
 - `pinned` - true if app is pinned to the dock (OS X only, other platforms return false)
 
 - `installed` - true if app is installed, false otherwise (OS X only, other platforms return true)

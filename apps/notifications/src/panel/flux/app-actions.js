@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import store from './store';
 import { actions } from './constants';
 

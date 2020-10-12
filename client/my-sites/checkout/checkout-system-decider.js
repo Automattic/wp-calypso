@@ -25,7 +25,7 @@ const wpcom = wp.undocumented();
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
-	product,
+	productAliasFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
@@ -51,19 +51,19 @@ export default function CheckoutSystemDecider( {
 	const checkoutVariant = getCheckoutVariant();
 
 	useEffect( () => {
-		if ( product ) {
+		if ( productAliasFromUrl ) {
 			reduxDispatch(
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'CheckoutSystemDecider saw productSlug to add',
 					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 					extra: {
-						productSlug: product,
+						productSlug: productAliasFromUrl,
 					},
 				} )
 			);
 		}
-	}, [ reduxDispatch, product ] );
+	}, [ reduxDispatch, productAliasFromUrl ] );
 
 	const logCheckoutError = useCallback(
 		( error ) => {
@@ -109,7 +109,7 @@ export default function CheckoutSystemDecider( {
 						<CompositeCheckout
 							siteSlug={ siteSlug }
 							siteId={ selectedSite?.ID }
-							product={ product }
+							productAliasFromUrl={ productAliasFromUrl }
 							purchaseId={ purchaseId }
 							couponCode={ couponCode }
 							redirectTo={ redirectTo }
@@ -131,7 +131,7 @@ export default function CheckoutSystemDecider( {
 
 	return (
 		<CheckoutContainer
-			product={ product }
+			product={ productAliasFromUrl }
 			purchaseId={ purchaseId }
 			selectedFeature={ selectedFeature }
 			couponCode={ couponCode }

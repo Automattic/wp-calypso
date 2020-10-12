@@ -4,7 +4,7 @@
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { CardNumberElement } from 'react-stripe-elements';
-import { useFormStatus, useSelect } from '@automattic/composite-checkout';
+import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ export default function CreditCardNumberField( {
 } ) {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 	const brand = useSelect( ( select ) => select( 'credit-card' ).getBrand() );
 	const { cardNumber: cardNumberError } = useSelect( ( select ) =>
 		select( 'credit-card' ).getCardDataErrors()

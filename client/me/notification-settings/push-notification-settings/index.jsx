@@ -7,20 +7,20 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Card, Button, Dialog, ScreenReaderText } from '@automattic/components';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import {
 	getStatus,
 	isApiReady,
 	isShowingUnblockInstructions,
 	isEnabled,
-} from 'state/push-notifications/selectors';
-import { toggleEnabled, toggleUnblockInstructions } from 'state/push-notifications/actions';
+} from 'calypso/state/push-notifications/selectors';
+import { toggleEnabled, toggleUnblockInstructions } from 'calypso/state/push-notifications/actions';
 
 /**
  * Style dependencies

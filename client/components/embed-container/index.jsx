@@ -21,6 +21,7 @@ const embedsToLookFor = {
 	'fb\\:post, [class^=fb-]': embedFacebook,
 	'[class^=tumblr-]': embedTumblr,
 	'.jetpack-slideshow': embedSlideshow,
+	'.wp-block-jetpack-story': embedStory,
 	'.embed-reddit': embedReddit,
 };
 
@@ -196,6 +197,17 @@ function embedSlideshow( domNode ) {
 		loadjQueryDependentScriptDesktopWrapper( SLIDESHOW_URLS.CYCLE_JS, () => {
 			createSlideshow();
 		} );
+	}
+}
+
+function embedStory( domNode ) {
+	debug( 'processing story for ', domNode );
+
+	const storyLink = domNode.querySelector( 'a.wp-story-overlay' );
+
+	// Open story in a new tab
+	if ( storyLink ) {
+		storyLink.setAttribute( 'target', '_blank' );
 	}
 }
 

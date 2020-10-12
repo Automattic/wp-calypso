@@ -13,6 +13,7 @@ import { useI18n } from '@automattic/react-i18n';
 import Field from '../../components/field';
 import Button from '../../components/button';
 import {
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -82,7 +83,7 @@ function AlipayFields() {
 	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'alipay' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<AlipayFormWrapper>
@@ -176,7 +177,7 @@ function AlipayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -186,10 +187,10 @@ function AlipayPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

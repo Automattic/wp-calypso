@@ -34,7 +34,7 @@
 }
 
 // Token input
-input[type='text'].token-field__input {
+input[type='text'].form-text-input.token-field__input {
 	display: inline-block;
 	flex-grow: 1;
 	width: auto;
@@ -49,7 +49,8 @@ input[type='text'].token-field__input {
 	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
 
-	&:focus {
+	&:focus,
+	&:focus:hover {
 		box-shadow: none;
 	}
 }

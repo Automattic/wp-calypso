@@ -8,11 +8,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { billingHistoryReceipt } from 'me/purchases/paths';
 import TransactionsTable from './transactions-table';
-import isSendingBillingReceiptEmail from 'state/selectors/is-sending-billing-receipt-email';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'state/billing-transactions/actions';
+import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calypso/state/billing-transactions/actions';
 
 class BillingHistoryTable extends React.Component {
 	recordClickEvent = ( eventAction ) => {
@@ -41,20 +40,23 @@ class BillingHistoryTable extends React.Component {
 		}
 
 		return (
-			<a href="#" onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }>
+			<button
+				className="billing-history__email-button"
+				onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }
+			>
 				{ translate( 'Email receipt' ) }
-			</a>
+			</button>
 		);
 	};
 
 	renderTransaction = ( transaction ) => {
-		const { translate } = this.props;
+		const { translate, getReceiptUrlFor } = this.props;
 
 		return (
 			<div className="billing-history__transaction-links">
 				<a
 					className="billing-history__view-receipt"
-					href={ billingHistoryReceipt( transaction.id ) }
+					href={ getReceiptUrlFor( transaction.id ) }
 					onClick={ this.handleReceiptLinkClick }
 				>
 					{ translate( 'View receipt' ) }
@@ -73,10 +75,13 @@ class BillingHistoryTable extends React.Component {
 				components: { link: <a href="/plans" /> },
 			}
 		);
-		const noFilterResultsText = translate( 'No receipts found.' );
+		const noFilterResultsText = this.props.siteId
+			? translate( 'You have made no purchases for this site.' )
+			: translate( 'No receipts found.' );
 
 		return (
 			<TransactionsTable
+				siteId={ this.props.siteId }
 				transactionType="past"
 				header
 				emptyTableText={ emptyTableText }
@@ -87,14 +92,16 @@ class BillingHistoryTable extends React.Component {
 	}
 }
 
+function getIsSendingReceiptEmail( state ) {
+	return function isSendingBillingReceiptEmailForReceiptId( receiptId ) {
+		return isSendingBillingReceiptEmail( state, receiptId );
+	};
+}
+
 export default connect(
 	( state ) => {
-		const sendingBillingReceiptEmail = ( receiptId ) => {
-			return isSendingBillingReceiptEmail( state, receiptId );
-		};
-
 		return {
-			sendingBillingReceiptEmail,
+			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};
 	},
 	{

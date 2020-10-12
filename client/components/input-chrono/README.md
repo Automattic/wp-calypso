@@ -1,5 +1,4 @@
-InputChrono
-============
+# InputChrono
 
 React component that creates a Date object from a user-entered textual date description.
 
@@ -13,19 +12,15 @@ export default class extends React.Component {
 
 	onSet( date ) {
 		console.log( `date %s`, date );
-	},
+	}
 
 	render() {
-		return <InputChrono onSet={ this.onSet }/>;
-	} 
+		return <InputChrono onSet={ this.onSet } />;
+	}
 }
 ```
 
----
-
-## InputChrono
-
-#### Props
+### Props
 
 `value` - **optional** initial input value
 

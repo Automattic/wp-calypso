@@ -4,7 +4,7 @@
 const fs = require( 'fs' ); // eslint-disable-line  import/no-nodejs-modules
 const path = require( 'path' );
 const _ = require( 'lodash' );
-const mkdirp = require( 'mkdirp' ); // eslint-disable-line import/no-extraneous-dependencies
+const mkdirp = require( 'mkdirp' );
 
 function AssetsWriter( options ) {
 	this.options = Object.assign(

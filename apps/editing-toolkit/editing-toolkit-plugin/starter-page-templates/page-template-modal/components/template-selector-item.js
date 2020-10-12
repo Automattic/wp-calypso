@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-/* eslint-disable import/no-extraneous-dependencies */
 import { isNil, isEmpty } from 'lodash';
-/* eslint-enable import/no-extraneous-dependencies */
 import classnames from 'classnames';
 
 /**

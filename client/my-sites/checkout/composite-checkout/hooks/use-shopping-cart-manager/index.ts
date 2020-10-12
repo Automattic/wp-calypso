@@ -10,13 +10,12 @@ import {
 	ResponseCart,
 	RequestCartProduct,
 	CartLocation,
-} from '../../types/backend/shopping-cart-endpoint';
-import {
 	ShoppingCartManager,
 	ShoppingCartManagerArguments,
 	CacheStatus,
 	CouponStatus,
-	VariantRequestStatus,
+	ShoppingCartError,
+	ReplaceProductInCart,
 } from './types';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
@@ -25,11 +24,8 @@ import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 export default function useShoppingCartManager( {
 	cartKey,
 	canInitializeCart,
-	productsToAddOnInitialize,
-	couponToAddOnInitialize,
 	setCart,
 	getCart,
-	onEvent,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
 	const cartKeyString = String( cartKey || 'no-site' );
 	const setServerCart = useCallback( ( cartParam ) => setCart( cartKeyString, cartParam ), [
@@ -44,49 +40,44 @@ export default function useShoppingCartManager( {
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
-	const variantRequestStatus: VariantRequestStatus = hookState.variantRequestStatus;
-	const variantSelectOverride = hookState.variantSelectOverride;
+	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useInitializeCartFromServer(
 		cacheStatus,
 		canInitializeCart,
-		productsToAddOnInitialize,
-		couponToAddOnInitialize,
 		getServerCart,
 		setServerCart,
-		hookDispatch,
-		onEvent
+		hookDispatch
 	);
 
 	// Asynchronously re-validate when the cache is dirty.
-	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch, onEvent );
+	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
 
-	const addItem: ( arg0: RequestCartProduct ) => void = useCallback(
-		( requestCartProductToAdd ) => {
-			hookDispatch( { type: 'ADD_CART_ITEM', requestCartProductToAdd } );
-			onEvent?.( {
-				type: 'CART_ADD_ITEM',
-				payload: requestCartProductToAdd,
-			} );
+	const addProductsToCart: ( products: RequestCartProduct[] ) => void = useCallback(
+		( products ) => {
+			hookDispatch( { type: 'CART_PRODUCTS_ADD', products } );
 		},
-		[ hookDispatch, onEvent ]
+		[ hookDispatch ]
 	);
 
-	const removeItem: ( arg0: string ) => void = useCallback(
+	const replaceProductsInCart: ( products: RequestCartProduct[] ) => void = useCallback(
+		( products ) => {
+			hookDispatch( { type: 'CART_PRODUCTS_REPLACE_ALL', products } );
+		},
+		[ hookDispatch ]
+	);
+
+	const removeProductFromCart: ( uuidToRemove: string ) => void = useCallback(
 		( uuidToRemove ) => {
 			hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
 		},
 		[ hookDispatch ]
 	);
 
-	const changeItemVariant: (
-		uuidToReplace: string,
-		newProductSlug: string,
-		newProductId: number
-	) => void = useCallback(
-		( uuidToReplace, newProductSlug, newProductId ) => {
-			hookDispatch( { type: 'REPLACE_CART_ITEM', uuidToReplace, newProductSlug, newProductId } );
+	const replaceProductInCart: ReplaceProductInCart = useCallback(
+		( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => {
+			hookDispatch( { type: 'CART_PRODUCT_REPLACE', uuidToReplace, productPropertiesToChange } );
 		},
 		[ hookDispatch ]
 	);
@@ -98,7 +89,7 @@ export default function useShoppingCartManager( {
 		[ hookDispatch ]
 	);
 
-	const submitCoupon: ( arg0: string ) => void = useCallback(
+	const applyCoupon: ( arg0: string ) => void = useCallback(
 		( newCoupon ) => {
 			hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
 		},
@@ -112,16 +103,16 @@ export default function useShoppingCartManager( {
 	return {
 		isLoading: cacheStatus === 'fresh',
 		loadingError: cacheStatus === 'error' ? loadingError : null,
+		loadingErrorType,
 		isPendingUpdate: cacheStatus !== 'valid',
-		addItem,
-		removeItem,
-		submitCoupon,
+		addProductsToCart,
+		removeProductFromCart,
+		applyCoupon,
 		removeCoupon,
 		couponStatus,
 		updateLocation,
-		variantRequestStatus,
-		variantSelectOverride,
-		changeItemVariant,
+		replaceProductInCart,
+		replaceProductsInCart,
 		responseCart,
-	} as ShoppingCartManager;
+	};
 }

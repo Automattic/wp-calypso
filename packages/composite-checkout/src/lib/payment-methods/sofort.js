@@ -13,6 +13,7 @@ import { useI18n } from '@automattic/react-i18n';
 import Field from '../../components/field';
 import Button from '../../components/button';
 import {
+	FormStatus,
 	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
@@ -82,7 +83,7 @@ function SofortFields() {
 	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'sofort' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<SofortFormWrapper>
@@ -176,7 +177,7 @@ function SofortPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -186,10 +187,10 @@ function SofortPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -222,16 +223,16 @@ function SofortLabel() {
 		<React.Fragment>
 			<span>{ __( 'Sofort' ) }</span>
 			<PaymentMethodLogos className="sofort__logo payment-logos">
-				<SofortLogoUI />
+				<SofortLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const SofortLogoUI = styled( SofortLogo )`
+const SofortLogo = styled( SofortLogoImg )`
 	width: 64px;
 `;
 
-function SofortLogo( { className } ) {
+function SofortLogoImg( { className } ) {
 	return <img src="/calypso/images/upgrades/sofort.svg" alt="Sofort" className={ className } />;
 }

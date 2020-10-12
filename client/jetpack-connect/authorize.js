@@ -38,6 +38,7 @@ import { decodeEntities } from 'lib/formatting';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
 import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import { login } from 'lib/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
 import { urlToSlug } from 'lib/url';
@@ -616,10 +617,11 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		// If the redirect is part of the Jetpack Search purchase flow
-		const isSearch = this.props.selectedPlanSlug === 'jetpack_search';
-
-		if ( isSearch ) {
+		// If the redirect is part of a Jetpack plan or product go to the checkout page
+		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
+			productSlug.includes( 'jetpack' )
+		);
+		if ( jetpackCheckoutSlugs.includes( this.props.selectedPlanSlug ) ) {
 			return '/checkout/' + urlToSlug( homeUrl ) + '/' + this.props.selectedPlanSlug;
 		}
 

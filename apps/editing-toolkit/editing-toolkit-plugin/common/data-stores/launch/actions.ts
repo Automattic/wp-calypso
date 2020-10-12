@@ -64,6 +64,10 @@ export const closeSidebar = () => ( {
 	type: 'CLOSE_SIDEBAR' as const,
 } );
 
+export const enableExperimental = () => ( {
+	type: 'ENABLE_EXPERIMENTAL' as const,
+} );
+
 export type LaunchAction = ReturnType<
 	| typeof unsetDomain
 	| typeof setStep
@@ -74,4 +78,5 @@ export type LaunchAction = ReturnType<
 	| typeof unsetPlan
 	| typeof openSidebar
 	| typeof closeSidebar
+	| typeof enableExperimental
 >;

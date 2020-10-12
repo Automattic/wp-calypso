@@ -121,7 +121,6 @@ class OrderFeeDialog extends Component {
 				<FormTextInput
 					id="new_fee_name"
 					name="new_fee_name"
-					type="text"
 					value={ this.state.name }
 					onChange={ this.handleChange }
 				/>

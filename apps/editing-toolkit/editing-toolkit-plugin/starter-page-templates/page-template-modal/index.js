@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
@@ -35,7 +34,6 @@ import replacePlaceholders from './utils/replace-placeholders';
 import ensureAssets from './utils/ensure-assets';
 import mapBlocksRecursively from './utils/map-blocks-recursively';
 import containsMissingBlock from './utils/contains-missing-block';
-/* eslint-enable import/no-extraneous-dependencies */
 
 const INSERTING_HOOK_NAME = 'isInsertingPageTemplate';
 const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-template';
@@ -309,6 +307,7 @@ class PageTemplateModal extends Component {
 			servicesTemplates: filter( this.props.templates, { category: 'services' } ),
 			teamTemplates: filter( this.props.templates, { category: 'team' } ),
 			homepageTemplates: sortBy( filter( this.props.templates, { category: 'home' } ), 'title' ),
+			comingSoonTemplates: filter( this.props.templates, { category: 'coming-soon' } ),
 		};
 	};
 
@@ -398,6 +397,7 @@ class PageTemplateModal extends Component {
 			servicesTemplates,
 			teamTemplates,
 			homepageTemplates,
+			comingSoonTemplates,
 		} = this.getTemplateGroups();
 
 		return (
@@ -485,6 +485,11 @@ class PageTemplateModal extends Component {
 									this.renderTemplatesList(
 										homepageTemplates,
 										__( 'Home Pages', 'full-site-editing' )
+									) }
+								{ comingSoonTemplates &&
+									this.renderTemplatesList(
+										comingSoonTemplates,
+										__( 'Coming Soon Pages', 'full-site-editing' )
 									) }
 							</form>
 							<TemplateSelectorPreview

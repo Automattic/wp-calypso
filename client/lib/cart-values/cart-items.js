@@ -47,6 +47,7 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
+	isBusiness,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
@@ -67,7 +68,7 @@ import {
 	isWpComBloggerPlan,
 } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import { shouldShowOfferResetFlow } from 'lib/plans/config';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
@@ -353,6 +354,10 @@ export function hasPersonalPlan( cart ) {
 
 export function hasPremiumPlan( cart ) {
 	return some( getAllCartItems( cart ), isPremium );
+}
+
+export function hasBusinessPlan( cart ) {
+	return some( getAllCartItems( cart ), isBusiness );
 }
 
 export function hasDomainCredit( cart ) {

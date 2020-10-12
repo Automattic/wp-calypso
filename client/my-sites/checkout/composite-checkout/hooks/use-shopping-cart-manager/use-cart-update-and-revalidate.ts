@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -9,11 +9,9 @@ import debugFactory from 'debug';
  */
 import {
 	convertResponseCartToRequestCart,
-	ResponseCart,
-	RequestCart,
 	convertRawResponseCartToResponseCart,
-} from '../../types/backend/shopping-cart-endpoint';
-import { CacheStatus, ShoppingCartAction, ReactStandardAction } from './types';
+} from './cart-functions';
+import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cart-update-and-revalidate' );
 
@@ -21,13 +19,19 @@ export default function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
 	responseCart: ResponseCart,
 	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
-	hookDispatch: ( arg0: ShoppingCartAction ) => void,
-	onEvent?: ( arg0: ReactStandardAction ) => void
+	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
+	const pendingResponseCart = useRef< ResponseCart >( responseCart );
+
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
 			return;
 		}
+
+		if ( pendingResponseCart.current !== responseCart ) {
+			debug( 'a request is still pending; cancelling that request for a new one' );
+		}
+		pendingResponseCart.current = responseCart;
 
 		const requestCart = convertResponseCartToRequestCart( responseCart );
 		debug( 'sending edited cart to server', requestCart );
@@ -37,25 +41,23 @@ export default function useCartUpdateAndRevalidate(
 		// We need to add is_update so that we don't add a plan automatically when the cart gets updated (DWPO).
 		setServerCart( { ...requestCart, is_update: true } )
 			.then( ( response ) => {
-				debug( 'updated cart is', response );
+				debug( 'update cart request complete', requestCart, '; updated cart is', response );
+				if ( responseCart !== pendingResponseCart.current ) {
+					debug( 'ignoring updated cart because there is a newer request pending' );
+					return;
+				}
 				hookDispatch( {
 					type: 'RECEIVE_UPDATED_RESPONSE_CART',
 					updatedResponseCart: convertRawResponseCartToResponseCart( response ),
 				} );
-				hookDispatch( { type: 'CLEAR_VARIANT_SELECT_OVERRIDE' } );
 			} )
 			.catch( ( error ) => {
-				debug( 'error while fetching cart', error );
+				debug( 'error while setting cart', error );
 				hookDispatch( {
 					type: 'RAISE_ERROR',
-					error: 'GET_SERVER_CART_ERROR',
+					error: 'SET_SERVER_CART_ERROR',
 					message: error.message,
 				} );
-				// TODO: log the request (at least the products) so we can see why it failed
-				onEvent?.( {
-					type: 'CART_ERROR',
-					payload: { type: 'SET_SERVER_CART_ERROR', message: error.message },
-				} );
 			} );
-	}, [ setServerCart, cacheStatus, responseCart, onEvent, hookDispatch ] );
+	}, [ setServerCart, cacheStatus, responseCart, hookDispatch ] );
 }

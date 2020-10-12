@@ -1,14 +1,10 @@
 /**
- * External dependencies
- */
-import uniqueId from 'lodash/uniqueId';
-
-/**
  * Internal dependencies
  */
 import { saveSiteSettings, updateSiteSettings } from 'state/site-settings/actions';
 import { errorNotice } from 'state/notices/actions';
 import { addMedia } from 'state/media/thunks/add-media';
+import { createTransientMediaId } from 'lib/media/utils';
 
 const updateSiteIcon = ( siteId, mediaId ) => updateSiteSettings( siteId, { site_icon: mediaId } );
 
@@ -35,7 +31,8 @@ export const uploadSiteIcon = (
 ) => async ( dispatch ) => {
 	// Upload media using a manually generated ID so that we can continue
 	// to reference it within this function
-	const transientMediaId = uniqueId( 'site-icon' );
+	const transientMediaId = createTransientMediaId( 'site-icon' );
+
 	const file = {
 		ID: transientMediaId,
 		fileContents: blob,

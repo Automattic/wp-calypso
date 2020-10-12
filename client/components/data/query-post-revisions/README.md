@@ -1,5 +1,4 @@
-Query Post Revisions
-================
+# Query Post Revisions
 
 `<QueryPostRevisions />` is a React component used to request post revisions data.
 
@@ -14,10 +13,7 @@ import QueryPostRevisions from 'components/data/query-post-revisions';
 export default function PostRevisions( { revisions } ) {
 	return (
 		<div>
-			<QueryPostRevisions
-				siteId={ 12345678 }
-				postId={ 10 }
-			/>
+			<QueryPostRevisions siteId={ 12345678 } postId={ 10 } />
 			<div>{ revisions }</div>
 		</div>
 	);
@@ -34,7 +30,6 @@ export default function PostRevisions( { revisions } ) {
 </table>
 
 The site ID for which we request post revisions.
-
 
 ### `postId`
 

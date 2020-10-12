@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import Confirmation from '../shared/confirmation';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class ConfirmationStep extends Component {
 	componentDidMount() {

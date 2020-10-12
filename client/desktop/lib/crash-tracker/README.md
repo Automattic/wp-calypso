@@ -1,11 +1,11 @@
-Crash Tracker
-=========
+# Crash Tracker
 
 A general crash tracking library that can be passed data to store on a remote crash tracking server.
 
 The tracker is only enabled when `crash_reporter` is defined in the config. This is then used as remote URL to POST a JSON object.
 
 The following additional details are always logged:
+
 - `platform` - value from `process.platform`
 - `release` - value from `os.release()``
 - `version` - version value from `package.json`

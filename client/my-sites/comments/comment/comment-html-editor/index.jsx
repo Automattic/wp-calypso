@@ -12,6 +12,7 @@ import { delay, each, get, map, reduce, reject } from 'lodash';
  */
 import AddImageDialog from 'my-sites/comments/comment/comment-html-editor/add-image-dialog';
 import AddLinkDialog from 'my-sites/comments/comment/comment-html-editor/add-link-dialog';
+import FormTextarea from 'components/forms/form-textarea';
 import { Button } from '@automattic/components';
 import { withLocalizedMoment } from 'components/localized-moment';
 
@@ -86,7 +87,7 @@ export class CommentHtmlEditor extends Component {
 			return this.insertContent( closer, options.adjustCursorPosition );
 		}
 
-		if ( !! fragments[ 1 ] ) {
+		if ( fragments[ 1 ] ) {
 			this.setState( ( { openTags } ) => ( { openTags: openTags.concat( tag ) } ) );
 		}
 		return this.insertContent( opener, options.adjustCursorPosition );
@@ -218,11 +219,11 @@ export class CommentHtmlEditor extends Component {
 					) ) }
 				</div>
 
-				<textarea
-					className="comment-html-editor__textarea form-textarea"
+				<FormTextarea
+					className="comment-html-editor__textarea"
 					disabled={ this.props.disabled }
 					onChange={ onChange }
-					ref={ this.storeTextareaRef }
+					forwardedRef={ this.storeTextareaRef }
 					value={ commentContent }
 				/>
 

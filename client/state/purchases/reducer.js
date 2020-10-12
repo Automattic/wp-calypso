@@ -85,8 +85,6 @@ function updatePurchases( existingPurchases, action ) {
 	return purchases;
 }
 
-const assignError = ( state, action ) => ( { ...state, error: action.error } );
-
 const reducer = withoutPersistence( ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case PURCHASES_REMOVE:
@@ -127,11 +125,26 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 				hasLoadedUserPurchasesFromServer: true,
 			};
 		case PURCHASE_REMOVE_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			};
 		case PURCHASES_SITE_FETCH_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
+				isFetchingSitePurchases: false,
+			};
 		case PURCHASES_USER_FETCH_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedUserPurchasesFromServer: true,
+				isFetchingUserPurchases: false,
+			};
 	}
 
 	return state;

@@ -120,7 +120,7 @@ export default class SignupFlowController {
 		this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 
-		if ( this._flow.providesDependenciesInQuery ) {
+		if ( this._flow.providesDependenciesInQuery || options.providedDependencies ) {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 			this._reduxStore.dispatch( updateDependencies( options.providedDependencies ) );
 		} else {

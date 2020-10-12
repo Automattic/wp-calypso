@@ -24,9 +24,8 @@ import {
 	getRenewableSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 } from 'state/purchases/selectors';
-import UpcomingRenewalsDialog, {
-	Purchase,
-} from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import UpcomingRenewalsDialog from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
+import type { Purchase } from 'lib/purchases/types';
 import { MockResponseCart } from 'my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
 import { useLocalizedMoment } from 'components/localized-moment';
 

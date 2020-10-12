@@ -634,9 +634,7 @@ export function prepareGSuiteContactValidationRequest(
 		contact_information: {
 			firstName: details.firstName?.value ?? '',
 			lastName: details.lastName?.value ?? '',
-			...( details.alternateEmail?.value && { alternateEmail: details.alternateEmail?.value } ),
-			...( ! details.alternateEmail?.value &&
-				details.email?.value && { email: details.email?.value } ),
+			alternateEmail: details.alternateEmail?.value ?? '',
 			postalCode: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value

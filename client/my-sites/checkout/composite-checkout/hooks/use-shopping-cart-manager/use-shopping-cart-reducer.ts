@@ -8,17 +8,24 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import {
-	emptyResponseCart,
 	removeItemFromResponseCart,
-	addItemToResponseCart,
+	addItemsToResponseCart,
+	replaceAllItemsInResponseCart,
 	replaceItemInResponseCart,
 	addCouponToResponseCart,
 	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
+} from './cart-functions';
+import {
+	emptyResponseCart,
 	ResponseCart,
-} from '../../types/backend/shopping-cart-endpoint';
-import { ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
+	ResponseCartProduct,
+	TempResponseCartProduct,
+	ShoppingCartState,
+	ShoppingCartAction,
+	CouponStatus,
+} from './types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );
 
@@ -66,6 +73,7 @@ function shoppingCartReducer(
 		};
 	}
 
+	debug( 'processing requested action', action );
 	switch ( action.type ) {
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
@@ -78,48 +86,45 @@ function shoppingCartReducer(
 				cacheStatus: 'invalid',
 			};
 		}
-		case 'ADD_CART_ITEM': {
-			const { requestCartProductToAdd } = action;
-			debug( 'adding item to cart', requestCartProductToAdd );
+		case 'CART_PRODUCTS_ADD': {
+			debug( 'adding items to cart', action.products );
 			return {
 				...state,
-				responseCart: addItemToResponseCart( state.responseCart, requestCartProductToAdd ),
+				responseCart: addItemsToResponseCart( state.responseCart, action.products ),
 				cacheStatus: 'invalid',
 			};
 		}
-		case 'REPLACE_CART_ITEM': {
+		case 'CART_PRODUCTS_REPLACE_ALL': {
+			debug( 'replacing items in cart with', action.products );
+			return {
+				...state,
+				responseCart: replaceAllItemsInResponseCart( state.responseCart, action.products ),
+				cacheStatus: 'invalid',
+			};
+		}
+		case 'CART_PRODUCT_REPLACE': {
 			const uuidToReplace = action.uuidToReplace;
-			const newProductId = action.newProductId;
-			const newProductSlug = action.newProductSlug;
-			if ( state.variantRequestStatus === 'pending' ) {
-				debug(
-					`variant request status is '${ state.variantRequestStatus }'; not submitting again`
-				);
+			if (
+				doesResponseCartContainProductMatching( state.responseCart, {
+					uuid: uuidToReplace,
+					...action.productPropertiesToChange,
+				} )
+			) {
+				debug( `variant is already in cart; not submitting again` );
 				return state;
 			}
-			debug( `replacing item with uuid ${ uuidToReplace } by product slug`, newProductSlug );
+			debug( `replacing item with uuid ${ uuidToReplace } with`, action.productPropertiesToChange );
 
 			return {
 				...state,
 				responseCart: replaceItemInResponseCart(
 					state.responseCart,
 					uuidToReplace,
-					newProductId,
-					newProductSlug
+					action.productPropertiesToChange
 				),
 				cacheStatus: 'invalid',
-				variantRequestStatus: 'pending',
-				variantSelectOverride: [
-					...state.variantSelectOverride.filter( ( item ) => item.uuid !== action.uuidToReplace ),
-					{ uuid: action.uuidToReplace, overrideSelectedProductSlug: action.newProductSlug },
-				],
 			};
 		}
-		case 'CLEAR_VARIANT_SELECT_OVERRIDE':
-			return {
-				...state,
-				variantSelectOverride: [],
-			};
 		case 'REMOVE_COUPON': {
 			if ( couponStatus !== 'applied' ) {
 				debug( `coupon status is '${ couponStatus }'; not removing` );
@@ -181,7 +186,6 @@ function shoppingCartReducer(
 				responseCart: response,
 				couponStatus: newCouponStatus,
 				cacheStatus: 'valid',
-				variantRequestStatus: 'valid', // TODO: what if the variant doesn't actually change?
 			};
 		}
 		case 'RAISE_ERROR':
@@ -192,6 +196,7 @@ function shoppingCartReducer(
 						...state,
 						cacheStatus: 'error',
 						loadingError: action.message,
+						loadingErrorType: action.error,
 					};
 				default:
 					return state;
@@ -215,19 +220,19 @@ function shoppingCartReducer(
 function getInitialShoppingCartState(): ShoppingCartState {
 	return {
 		responseCart: emptyResponseCart,
-		loadingError: '',
 		cacheStatus: 'fresh',
 		couponStatus: 'fresh',
-		variantRequestStatus: 'fresh',
-		variantSelectOverride: [],
 		queuedActions: [],
 	};
 }
 
 function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
-	const cartItemsFromLocalStorage = JSON.parse(
-		window.localStorage.getItem( 'shoppingCart' ) || '[]'
-	);
+	let cartItemsFromLocalStorage = null;
+	try {
+		cartItemsFromLocalStorage = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) || '[]' );
+	} catch ( err ) {
+		return;
+	}
 
 	if ( ! Array.isArray( cartItemsFromLocalStorage ) ) {
 		return;
@@ -239,8 +244,8 @@ function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
 
 	try {
 		window.localStorage.setItem( 'shoppingCart', JSON.stringify( newCartItems ) );
-	} catch ( e ) {
-		throw new Error( 'An unexpected error occured while saving your cart' );
+	} catch ( err ) {
+		return;
 	}
 }
 
@@ -266,4 +271,16 @@ function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart
 		default:
 			return currentCouponStatus;
 	}
+}
+
+function doesResponseCartContainProductMatching(
+	responseCart: ResponseCart,
+	productProperties: Partial< ResponseCartProduct >
+): boolean {
+	return responseCart.products.some( ( product: ResponseCartProduct | TempResponseCartProduct ) => {
+		return Object.keys( productProperties ).every( ( key ) => {
+			const typedKey = key as keyof ResponseCartProduct;
+			return product[ typedKey ] === productProperties[ typedKey ];
+		} );
+	} );
 }

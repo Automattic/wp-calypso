@@ -12,9 +12,9 @@ import { countBy, map, omit, values, flatten } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import SiteInfo from 'blocks/site';
+import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import SiteInfo from 'calypso/blocks/site';
 
 class BlogSettingsHeader extends PureComponent {
 	static propTypes = {

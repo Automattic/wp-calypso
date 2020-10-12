@@ -45,7 +45,6 @@ export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
 			return getStoredCards();
 		}
 
-		// TODO: handle errors
 		fetchStoredCards()
 			.then( ( cards ) => {
 				debug( 'stored cards fetched', cards );
@@ -257,7 +256,12 @@ async function createAccountCallback( response ) {
 }
 
 async function createAccount() {
-	const newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+	let newSiteParams = null;
+	try {
+		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
+	} catch ( err ) {
+		newSiteParams = {};
+	}
 
 	const { email } = select( 'wpcom' )?.getContactInfo() ?? {};
 	const siteId = select( 'wpcom' )?.getSiteId();
@@ -528,7 +532,8 @@ export function filterAppropriatePaymentMethods( {
 				methodObject.id,
 				allowedPaymentMethods || serverAllowedPaymentMethods
 			);
-		} );
+		} )
+		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
 }
 
 export function needsDomainDetails( cart ) {
@@ -558,4 +563,11 @@ export function getPostalCode() {
 	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
 	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
 	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
+}
+
+function isPaymentMethodLegallyRestricted( paymentMethodId ) {
+	// Add the names of any legally-restricted payment methods to this list.
+	const restrictedPaymentMethods = [];
+
+	return restrictedPaymentMethods.includes( paymentMethodId );
 }

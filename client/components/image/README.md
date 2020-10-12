@@ -1,5 +1,4 @@
-Image
-===============
+# Image
 
 Image is a React component that wraps a normal `img` element and adds a class
 to the image element if the image fails to load.

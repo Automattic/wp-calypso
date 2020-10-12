@@ -70,7 +70,6 @@ const defaultString = null;
  * @property { boolean } isSelected
  * @property { string } className
  * @property { string } clientId
- * @property { string } containerClientId
  * @property { Attributes } attributes
  * @property { (attributes: object<Attributes>) => void } setAttributes
  * @property { ?object } noticeUI
@@ -275,7 +274,10 @@ function Edit( props ) {
 				onError( props, result.message );
 			}
 		);
-		props.selectBlock();
+
+		// Execution delayed with setTimeout to ensure it runs after any block auto-selection performed by inner blocks
+		// (such as the Recurring Payments block)
+		setTimeout( () => props.selectBlock(), 1000 );
 	}, [] );
 
 	if ( apiState === API_STATE_LOADING ) {
@@ -458,14 +460,10 @@ function getConnectUrl( props, connectURL ) {
 }
 
 export default compose( [
-	withSelect( ( select, ownProps ) => {
+	withSelect( ( select ) => {
 		const { getCurrentPostId } = select( 'core/editor' );
 		return {
 			postId: getCurrentPostId(),
-			// @ts-ignore difficult to type via JSDoc
-			containerClientId: select( 'core/block-editor' ).getBlockHierarchyRootClientId(
-				ownProps.clientId
-			),
 		};
 	} ),
 	withNotices,
@@ -474,7 +472,7 @@ export default compose( [
 		return {
 			selectBlock() {
 				// @ts-ignore difficult to type via JSDoc
-				blockEditor.selectBlock( ownProps.containerClientId );
+				blockEditor.selectBlock( ownProps.clientId );
 			},
 		};
 	} ),
