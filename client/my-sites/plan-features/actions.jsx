@@ -87,14 +87,40 @@ const PlanFeaturesActionsButton = ( {
 	let upgradeButton;
 
 	if ( availableForPurchase || isPlaceholder ) {
-		let buttonText = freePlan
-			? translate( 'Select Free', { context: 'button' } )
-			: translate( 'Upgrade', { context: 'verb' } );
-		if ( isLandingPage ) {
-			buttonText = translate( 'Select', { context: 'button' } );
+		if (
+			isMonthly( currentSitePlanSlug ) &&
+			getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
+		) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ props.buttonText || translate( 'Upgrade to Yearly' ) }
+				</Button>
+			);
+		}
+
+		if ( ! isLaunchPage && isInSignup ) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ props.buttonText ||
+						translate( 'Start with %(plan)s', {
+							args: {
+								plan: planName,
+							},
+						} ) }
+				</Button>
+			);
 		}
 
 		if ( isLaunchPage ) {
+			let buttonText = '';
 			if ( freePlan ) {
 				buttonText = translate( 'Keep this plan', {
 					comment:
@@ -110,26 +136,34 @@ const PlanFeaturesActionsButton = ( {
 						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
 				} );
 			}
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ props.buttonText || buttonText }
+				</Button>
+			);
 		}
 
-		if ( ! isLaunchPage && isInSignup ) {
-			buttonText = translate( 'Start with %(plan)s', {
-				args: {
-					plan: planName,
-				},
-			} );
-		}
-
-		if (
-			isMonthly( currentSitePlanSlug ) &&
-			getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
-		) {
-			buttonText = translate( 'Upgrade to Yearly' );
+		if ( isLandingPage ) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ props.buttonText || translate( 'Select', { context: 'button' } ) }
+				</Button>
+			);
 		}
 
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ props.buttonText || buttonText }
+				{ props.buttonText || freePlan
+					? translate( 'Select Free', { context: 'button' } )
+					: translate( 'Upgrade', { context: 'verb' } ) }
 			</Button>
 		);
 	}
