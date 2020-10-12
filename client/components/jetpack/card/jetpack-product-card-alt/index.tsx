@@ -14,6 +14,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import PlanPriceFree from 'calypso/my-sites/plan-price-free';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 
 /**
@@ -51,7 +52,6 @@ type OwnProps = {
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
 	isFree?: boolean;
-	isFreeMessage?: TranslateResult;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -83,7 +83,6 @@ const JetpackProductCardAlt = ( {
 	features,
 	isExpanded,
 	isFree,
-	isFreeMessage,
 	productSlug,
 }: Props ) => {
 	const translate = useTranslate();
@@ -146,10 +145,7 @@ const JetpackProductCardAlt = ( {
 				) }
 
 				{ isFree ? (
-					<div className="jetpack-product-card-alt__price">
-						<h4 className="jetpack-product-card-alt__free-product">{ translate( 'Free' ) }</h4>
-						<div className="jetpack-product-card-alt__billing-time-frame">{ isFreeMessage }</div>
-					</div>
+					<PlanPriceFree productSlug={ productSlug } />
 				) : (
 					<div className="jetpack-product-card-alt__price">
 						{ currencyCode && originalPrice ? (
