@@ -53,10 +53,11 @@ class RemoveDomainDialog extends Component {
 					}
 				) }
 				{ hasTitanWithUs &&
-					translate(
-						' You also have an active Titan Mail subscription for this domain, and your email will stop ' +
-							'working if you delete your domain.'
-					) }
+					' ' +
+						translate(
+							'You also have an active Titan Mail subscription for this domain, and your emails will stop ' +
+								'working if you delete your domain.'
+						) }
 			</p>
 		);
 	}
