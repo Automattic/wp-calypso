@@ -342,13 +342,13 @@ class TermTreeSelectorList extends Component {
 
 		return (
 			<div key={ itemId } ref={ setItemRef } className="term-tree-selector__list-item">
-				<label>
+				<FormLabel>
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
 						{ isPodcastingCategory && <PodcastIndicator size={ 18 } /> }
 					</span>
-				</label>
+				</FormLabel>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
 						{ children.map( ( child ) => this.renderItem( child, true ) ) }
