@@ -8,7 +8,7 @@
  * Internal dependencies
  */
 import { getThankYouPageUrl } from '../use-get-thank-you-url';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'lib/user', () =>
@@ -289,6 +289,46 @@ describe( 'getThankYouPageUrl', () => {
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
+	} );
+
+	it( 'redirects to url from product after_purchase_url if set', () => {
+		const cart = {
+			products: [ { product_slug: 'foo', after_purchase_url: '/custom' } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( '/custom' );
+	} );
+
+	it( 'redirects to url from first product after_purchase_url if multiple are set', () => {
+		const cart = {
+			products: [
+				{ product_slug: 'foo', after_purchase_url: '/custom1' },
+				{ product_slug: 'bar', after_purchase_url: '/custom2' },
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( '/custom1' );
+	} );
+
+	it( 'redirects to internal redirectTo url if set even if product after_purchase_url is set', () => {
+		const cart = {
+			products: [ { product_slug: 'foo', after_purchase_url: '/custom' } ],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			redirectTo: '/foo/bar',
+			cart,
+		} );
+		expect( url ).toBe( '/foo/bar' );
 	} );
 
 	it( 'does not redirect to url from cookie if isEligibleForSignupDestination is false', () => {
