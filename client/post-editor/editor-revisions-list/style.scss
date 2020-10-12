@@ -1,0 +1,322 @@
+.editor-revisions-list {
+	position: relative;
+	background: var( --color-neutral-0 );
+	flex-basis: 162px;
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		border-left: 1px solid var( --color-neutral-5 );
+		z-index: 1; // Put the list above the action-buttons::before overlay gradient. -shaun
+		flex-basis: 230px;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		&::after {
+			$editor-revisions-list-fade-height: 20px;
+			content: '';
+			position: absolute;
+			bottom: -$editor-revisions-list-fade-height;
+			right: 0;
+			left: 0;
+			height: $editor-revisions-list-fade-height;
+			background: linear-gradient(
+				to bottom,
+				rgba( 255, 255, 255, 1 ) 0%,
+				rgba( 255, 255, 255, 1 ) 25%,
+				rgba( 255, 255, 255, 0.85 ) 50%,
+				rgba( 255, 255, 255, 0 ) 100%
+			);
+		}
+	}
+}
+
+.editor-revisions-list__header {
+	$editor-revisions-list-header-font-size: $font-body;
+	display: flex;
+	padding: 0 16px;
+	height: 48px;
+	box-sizing: border-box;
+	color: var( --color-text-subtle );
+	background: var( --color-surface );
+	border-bottom: 1px solid var( --color-neutral-5 );
+
+	@include breakpoint-deprecated( '>1040px' ) {
+		height: 40px;
+		border-bottom: 0;
+	}
+
+	.editor-revisions-list.is-loading & {
+		&::before {
+			content: '';
+			display: block;
+			width: 50%;
+			height: $editor-revisions-list-header-font-size;
+			align-self: center;
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+}
+
+.editor-revisions-list__count {
+	align-self: center;
+}
+
+@include breakpoint-deprecated( '>1040px' ) {
+	.editor-revisions-list.is-loading {
+		.editor-revisions-list__header::before {
+			align-self: flex-end;
+		}
+	}
+	.editor-revisions-list__count {
+		align-self: flex-end;
+	}
+}
+
+// Diff View Buttons
+.editor-revisions-list__view-buttons {
+	display: none;
+	@include breakpoint-deprecated( '>1040px' ) {
+		display: flex;
+		height: 60px;
+		align-items: center;
+		padding: 0 16px;
+		box-sizing: border-box;
+		background: #fff;
+		border-bottom: 1px solid #d9e3ea;
+	}
+}
+
+.editor-revisions-list__unified-button,
+.editor-revisions-list__split-button {
+	width: 50%;
+}
+
+// Revision Navigation Buttons
+.editor-revisions-list__navigation {
+	display: flex;
+	flex-direction: row-reverse;
+	height: 40px;
+	box-sizing: border-box;
+	color: var( --color-text-subtle );
+	border-bottom: 1px solid var( --color-neutral-5 );
+	.button:first-child,
+	.button:last-child {
+		border-radius: 0;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: row;
+		height: 24px;
+	}
+}
+
+.editor-revisions-list__prev-button,
+.editor-revisions-list__next-button {
+	display: inline-block;
+	width: 50%;
+	height: 40px;
+	vertical-align: middle;
+	background: transparent;
+	border: none;
+	&.button:disabled,
+	&.button[disabled],
+	&.button.disabled {
+		background: transparent;
+		color: var( --color-neutral-10 );
+		border-color: var( --color-neutral-5 );
+	}
+	.gridicon {
+		transform: rotate( -90deg );
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		height: 24px;
+		.gridicon {
+			transform: none;
+		}
+	}
+}
+
+.button-group {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:first-child,
+	.editor-revisions-list__next-button {
+		&:focus {
+			box-shadow: none;
+		}
+	}
+}
+
+.accessible-focus {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:first-child,
+	.editor-revisions-list__next-button {
+		&:focus {
+			outline: solid 2px var( --color-primary-light );
+			outline-offset: -2px;
+		}
+	}
+}
+
+@include breakpoint-deprecated( '<660px' ) {
+	.editor-revisions-list__next-button,
+	.editor-revisions-list__next-button:hover,
+	.editor-revisions-list__next-button:active {
+		border-right: 1px solid var( --color-neutral-5 );
+	}
+}
+
+@include breakpoint-deprecated( '>660px' ) {
+	.editor-revisions-list__prev-button,
+	.editor-revisions-list__prev-button:hover {
+		border-right: 1px solid var( --color-neutral-5 );
+	}
+	.button-group {
+		.editor-revisions-list__prev-button:first-child:active {
+			border-right: 1px solid var( --color-neutral-5 );
+		}
+	}
+}
+
+// Scrollable Box for Revisions List
+.editor-revisions-list__scroller {
+	position: absolute;
+	top: 72px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		top: 88px;
+		overflow-y: hidden;
+	}
+
+	@include breakpoint-deprecated( '>1040px' ) {
+		top: 124px;
+	}
+}
+
+.editor-revisions-list__list {
+	list-style: none;
+	margin: 0;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		display: inline;
+		white-space: nowrap;
+	}
+
+	&::before {
+		content: '';
+		display: block;
+		box-sizing: border-box;
+		@include placeholder( --color-neutral-10 );
+	}
+}
+
+.editor-revisions-list__revision {
+	display: inline;
+}
+
+.editor-revisions-list__load-revision {
+	width: 100%;
+}
+
+// Individual Revision List Item
+.editor-revisions-list.is-loading .editor-revisions-list__list::before,
+.editor-revisions-list__button {
+	border-bottom: 1px solid var( --color-neutral-5 );
+	border-right: 1px solid var( --color-neutral-5 );
+	border-radius: 0;
+	color: var( --color-neutral-70 );
+	cursor: pointer;
+	text-align: left;
+	padding: 8px 16px;
+	margin: 0;
+	min-height: 73px;
+	width: 45vw;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: block;
+		width: 100%;
+		border-right: none;
+		min-height: 60px;
+	}
+}
+
+.editor-revisions-list__button {
+	&:hover {
+		background: var( --color-neutral-0 );
+	}
+
+	.editor-revisions-list__revision.is-selected > &,
+	.editor-revisions-list__revision.is-selected > &:hover {
+		background: var( --color-text-subtle );
+
+		// NOTE: force with a heavy specificity white text, see discussion on
+		// https://github.com/Automattic/wp-calypso/pull/13367#discussion_r114108253
+		* {
+			color: var( --color-text-inverted );
+		}
+	}
+}
+
+.editor-revisions-list__date {
+	color: var( --color-text );
+	font-weight: 600;
+	display: block;
+	margin-bottom: 4px;
+}
+
+.editor-revisions-list__author {
+	font-size: $font-body-small;
+	display: block;
+	margin-bottom: 4px;
+	color: var( --color-text-subtle );
+}
+
+.editor-revisions-list__changes {
+	font-size: $font-body-small;
+	display: block;
+}
+
+.editor-revisions-list__additions,
+.editor-revisions-list__deletions,
+.editor-revisions-list__minor-changes {
+	line-height: 1;
+
+	b {
+		display: inline-block;
+		border-radius: 12px;
+		padding: 0;
+		line-height: 12px;
+		font-size: $font-body-small;
+		height: 14px;
+		width: 14px;
+		color: white;
+		text-align: center;
+		margin: 0 6px 0 0;
+		font-weight: normal;
+		box-sizing: border-box;
+	}
+}
+
+.editor-revisions-list__additions {
+	margin-right: 12px;
+	b {
+		background: var( --color-success );
+	}
+}
+
+.editor-revisions-list__deletions {
+	b {
+		background: var( --color-error );
+	}
+}
+
+.editor-revisions-list__minor-changes {
+	top: 8px;
+	color: var( --color-text-subtle );
+}
