@@ -17,6 +17,7 @@ import Divider from './divider';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormsButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -302,7 +303,7 @@ export class LoginForm extends Component {
 							</p>
 						) }
 
-						<label htmlFor="usernameOrEmail">
+						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<Button
 									borderless
@@ -316,7 +317,7 @@ export class LoginForm extends Component {
 										: this.props.translate( 'Change Username' ) }
 								</Button>
 							) : null }
-						</label>
+						</FormLabel>
 
 						<TextControl
 							autoCapitalize="off"
@@ -510,7 +511,7 @@ export class LoginForm extends Component {
 							</p>
 						) }
 
-						<label htmlFor="usernameOrEmail">
+						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
 								<button
 									type="button"
@@ -525,7 +526,7 @@ export class LoginForm extends Component {
 							) : (
 								this.props.translate( 'Email Address or Username' )
 							) }
-						</label>
+						</FormLabel>
 
 						<FormTextInput
 							autoCapitalize="off"
@@ -561,7 +562,7 @@ export class LoginForm extends Component {
 								'is-hidden': isPasswordHidden,
 							} ) }
 						>
-							<label htmlFor="password">{ this.props.translate( 'Password' ) }</label>
+							<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
 
 							<FormPasswordInput
 								autoCapitalize="off"
