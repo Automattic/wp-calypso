@@ -7,8 +7,8 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import { isEnabled } from 'calypso/config';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
@@ -133,7 +133,10 @@ export const getJetpackProductsTaglines = () => {
 	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
-	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
+
+	const searchTagline = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Great for sites with a lot of content' )
+		: translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
