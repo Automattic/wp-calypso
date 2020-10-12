@@ -10,6 +10,7 @@ import React, { createElement, ReactNode } from 'react';
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
+import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -44,7 +45,7 @@ type OwnProps = {
 	onButtonClick: () => void;
 	cancelLabel?: TranslateResult;
 	onCancelClick?: () => void;
-	children?: ReactNode;
+	searchRecordsDetails?: ReactNode;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
 	isDeprecated?: boolean;
@@ -73,7 +74,7 @@ const JetpackProductCardAlt = ( {
 	onButtonClick,
 	cancelLabel,
 	onCancelClick,
-	children,
+	searchRecordsDetails,
 	isHighlighted,
 	isOwned,
 	isDeprecated,
@@ -163,6 +164,11 @@ const JetpackProductCardAlt = ( {
 										currencyCode={ currencyCode }
 									/>
 								) }
+								{ searchRecordsDetails && (
+									<InfoPopover className="jetpack-product-card-alt__search-price-popover">
+										{ searchRecordsDetails }
+									</InfoPopover>
+								) }
 							</span>
 						) : (
 							<div className="jetpack-product-card-alt__price-placeholder" />
@@ -190,7 +196,6 @@ const JetpackProductCardAlt = ( {
 					</Button>
 				) }
 				{ description && <p className="jetpack-product-card-alt__description">{ description }</p> }
-				{ children && <div className="jetpack-product-card-alt__children">{ children }</div> }
 			</div>
 			{ features && features.items.length > 0 && (
 				<JetpackProductCardFeatures
