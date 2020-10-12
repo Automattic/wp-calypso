@@ -51,6 +51,7 @@ import {
 } from 'calypso/lib/products-values/constants';
 import Gridicon from 'calypso/components/gridicon';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 
 class PurchasesListing extends Component {
 	static propTypes = {
@@ -360,14 +361,11 @@ class PurchasesListing extends Component {
 	}
 }
 
-const getSiteLevelManagePurchaseUrlFor = ( targetSiteSlug, targetPurchaseId ) =>
-	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }`;
-
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
-		getManagePurchaseUrlFor: selectedSiteId ? getSiteLevelManagePurchaseUrlFor : managePurchase,
+		getManagePurchaseUrlFor: selectedSiteId ? getManagePurchaseUrlFor : managePurchase,
 		currentPlan: getCurrentPlan( state, selectedSiteId ),
 		isPlanExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
 		isRequestingPlans: isRequestingSitePlans( state, selectedSiteId ),
