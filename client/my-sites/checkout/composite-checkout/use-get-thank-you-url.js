@@ -114,8 +114,8 @@ export function getThankYouPageUrl( {
 	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
 
 	// Fetch the thank-you page url from a cookie if it is set
-	const signupDestination = getUrlFromCookie();
-	debug( 'cookie url is', signupDestination );
+	const urlFromCookie = getUrlFromCookie();
+	debug( 'cookie url is', urlFromCookie );
 
 	if ( hasRenewalItem( cart ) ) {
 		const renewalItem = getRenewalItems( cart )[ 0 ];
@@ -136,14 +136,14 @@ export function getThankYouPageUrl( {
 	// For example, this case arises when a Skip button is clicked on a concierge upsell
 	// nudge opened by a direct link to /offer-support-session.
 	if ( ':receiptId' === pendingOrReceiptId && getAllCartItems( cart ).length === 0 ) {
-		const emptyCartUrl = signupDestination || fallbackUrl;
+		const emptyCartUrl = urlFromCookie || fallbackUrl;
 		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
 		return emptyCartUrl;
 	}
 
 	// Domain only flow
 	if ( cart.create_new_blog ) {
-		const newBlogUrl = signupDestination || fallbackUrl;
+		const newBlogUrl = urlFromCookie || fallbackUrl;
 		const newBlogReceiptUrl = `${ newBlogUrl }/${ pendingOrReceiptId }`;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
 		return newBlogReceiptUrl;
@@ -166,9 +166,9 @@ export function getThankYouPageUrl( {
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
 	const displayModeParam = getDisplayModeParamFromCart( cart );
-	if ( isEligibleForSignupDestinationResult && signupDestination ) {
-		debug( 'is eligible for signup destination', signupDestination );
-		return getUrlWithQueryParam( signupDestination, displayModeParam );
+	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
+		debug( 'is eligible for signup destination', urlFromCookie );
+		return getUrlWithQueryParam( urlFromCookie, displayModeParam );
 	}
 	debug( 'returning fallback url', fallbackUrl );
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
@@ -352,14 +352,14 @@ function saveUrlToCookieIfEcomm( saveUrlToCookie, cart, destinationUrl ) {
 }
 
 function modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug ) {
-	const signupDestination = getUrlFromCookie();
-	if ( ! signupDestination ) {
+	const urlFromCookie = getUrlFromCookie();
+	if ( ! urlFromCookie ) {
 		return;
 	}
 
 	// If atomic site, then replace wordpress.com with wpcomstaging.com
 	if ( siteSlug && siteSlug.includes( '.wpcomstaging.com' ) ) {
-		const wpcomStagingDestination = signupDestination.replace(
+		const wpcomStagingDestination = urlFromCookie.replace(
 			/\b.wordpress.com/,
 			'.wpcomstaging.com'
 		);
