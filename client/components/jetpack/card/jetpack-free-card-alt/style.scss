@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .jetpack-free-card-alt {
 	position: relative;
 
@@ -7,7 +10,7 @@
 	border: 1px solid var( --color-border-subtle );
 	padding: 24px;
 
-	@media ( min-width: 660px ) {
+	@include break-small {
 		border-left: 1px solid var( --color-border-subtle );
 		border-right: 1px solid var( --color-border-subtle );
 	}
@@ -36,7 +39,7 @@
 		font-size: $font-body-extra-small;
 		line-height: rem( 16px ) / $font-body-extra-small;
 
-		@media ( min-width: 660px ) {
+		@include break-small {
 			font-size: $font-body-small;
 		}
 	}
@@ -52,7 +55,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@media ( min-width: 660px ) {
+	@include break-small {
 		flex-direction: row;
 	}
 }
