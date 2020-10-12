@@ -63,6 +63,19 @@ const PlanFeaturesActionsButton = ( {
 		className
 	);
 
+	const handleUpgradeButtonClick = () => {
+		if ( isPlaceholder ) {
+			return;
+		}
+
+		trackTracksEvent( 'calypso_plan_features_upgrade_click', {
+			current_plan: currentSitePlanSlug,
+			upgrading_to: planType,
+		} );
+
+		onUpgradeClick();
+	};
+
 	if ( current && ! isInSignup ) {
 		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
@@ -110,19 +123,6 @@ const PlanFeaturesActionsButton = ( {
 		) {
 			buttonText = translate( 'Upgrade to Yearly' );
 		}
-
-		const handleUpgradeButtonClick = () => {
-			if ( isPlaceholder ) {
-				return;
-			}
-
-			trackTracksEvent( 'calypso_plan_features_upgrade_click', {
-				current_plan: currentSitePlanSlug,
-				upgrading_to: planType,
-			} );
-
-			onUpgradeClick();
-		};
 
 		upgradeButton = (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
