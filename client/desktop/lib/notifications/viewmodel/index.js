@@ -9,6 +9,25 @@ const EventEmitter = require( 'events' ).EventEmitter;
  */
 const WPNotificationsAPI = require( 'desktop/lib/notifications/api' );
 
+// Parses raw note data from the API into a notification for display,
+// and exposes handlers for actions performed by the user.
+class WPNotificationsViewModel extends EventEmitter {
+	constructor() {
+		super();
+
+		const self = this;
+
+		WPNotificationsAPI.on( 'note', function ( note ) {
+			const notification = parseNote( note );
+			self.emit( 'notification', notification );
+		} );
+	}
+
+	didClickNotification( noteId, callback ) {
+		WPNotificationsAPI.markNoteAsRead( noteId, callback );
+	}
+}
+
 function parseNote( note ) {
 	const id = note.id;
 	const title = getSiteTitle( note );
@@ -30,8 +49,7 @@ function parseNote( note ) {
 			break;
 		case 'comment':
 			{
-				// If the note is approved, navigate to the comment URL within Calypso.
-				// Otherwise open and display Calypso's notifications panel.
+				// If the note is approved, construct the URL to navigate to.
 				if ( isApproved ) {
 					navigate = `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
 				}
@@ -64,37 +82,19 @@ function getSiteTitle( note ) {
 
 function getApprovedStatus( note ) {
 	if ( ! note.body || ! Array.isArray( note.body ) ) {
-		return true;
+		return false;
 	}
 
 	if ( note.body.length > 0 ) {
-		return true;
+		return false;
 	}
 
 	const actions = note.body[ 1 ].actions;
 	if ( ! actions ) {
-		return true;
+		return false;
 	}
 
 	return actions[ 'approve-comment' ] === false;
-}
-
-// Parses raw note data from the API into a notification for display.
-class WPNotificationsViewModel extends EventEmitter {
-	constructor() {
-		super();
-
-		const self = this;
-
-		WPNotificationsAPI.on( 'note', function ( note ) {
-			const notification = parseNote( note );
-			self.emit( 'notification', notification );
-		} );
-	}
-
-	didClickNotification( noteId, callback ) {
-		WPNotificationsAPI.markNoteAsRead( noteId, callback );
-	}
 }
 
 module.exports = new WPNotificationsViewModel();
