@@ -1,24 +1,23 @@
 /**
  * External dependencies
  */
-
 import React, { Component } from 'react';
-import { get } from 'lodash';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import FormToggle from 'components/forms/form-toggle/compact';
+import Notice from 'components/notice';
 import PostShare from 'blocks/post-share';
 import QueryPosts from 'components/data/query-posts';
 import QuerySitePlans from 'components/data/query-site-plans';
+import QuerySites from 'components/data/query-sites';
+import { Card } from '@automattic/components';
+import { getCurrentUser } from 'state/current-user/selectors';
 import { getSite, getSitePlanSlug } from 'state/sites/selectors';
 import { getSitePosts } from 'state/posts/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { Card } from '@automattic/components';
-import QuerySites from 'components/data/query-sites';
-import FormToggle from 'components/forms/form-toggle/compact';
-import Notice from 'components/notice';
 
 class PostShareExample extends Component {
 	state = {
