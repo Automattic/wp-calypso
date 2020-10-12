@@ -292,9 +292,13 @@ $jetpack-product-card-alt-icon-size: 55px;
 
 .jetpack-product-card-alt__features-icon {
 	margin-right: 14px;
-
 	fill: var( --studio-gray-50 );
-
+	&.gridicons-lock,
+	&.gridicons-cloud-upload,
+	&.material-icon-security,
+	&.gridicons-bug {
+		fill: var( --color-primary );
+	}
 	&.gridicons-checkmark {
 		fill: $jetpack-product-card-alt-color;
 	}
