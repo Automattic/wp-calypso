@@ -49,6 +49,7 @@ export interface RequestCartProduct {
 	product_id: number;
 	meta: string;
 	extra: CartItemExtra;
+	after_purchase_url?: string;
 }
 
 /**
@@ -162,6 +163,7 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
+	after_purchase_url?: string;
 }
 
 /**
