@@ -22,6 +22,9 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 			2 * config.get( 'explicitWaitMS' )
 		);
 		this.paymentButtonSelector = By.css(
+			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button'
+		);
+		this.activePaymentButtonSelector = By.css(
 			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button:not([disabled])'
 		);
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
@@ -464,10 +467,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return await this.driver.findElement( this.getCartTotalSelector() ).getText();
 	}
 
-	async paymentButtonText() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.paymentButtonSelector );
-		await driverHelper.scrollIntoView( this.driver, this.paymentButtonSelector );
-		return await this.driver.findElement( this.paymentButtonSelector ).getText();
+	async activePaymentButtonText() {
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.activePaymentButtonSelector );
+		await driverHelper.scrollIntoView( this.driver, this.activePaymentButtonSelector );
+		return await this.driver.findElement( this.activePaymentButtonSelector ).getText();
 	}
 
 	async _cartContainsProduct( productSlug, expectedQuantity = 1 ) {

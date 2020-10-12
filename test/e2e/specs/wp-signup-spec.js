@@ -443,7 +443,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 					);
 				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
+				const paymentButtonText = await securePaymentComponent.activePaymentButtonText();
 				return assert(
 					paymentButtonText.includes( expectedCurrencySymbol ),
 					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
@@ -564,7 +564,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 					);
 				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
+				const paymentButtonText = await securePaymentComponent.activePaymentButtonText();
 				return assert(
 					paymentButtonText.includes( expectedCurrencySymbol ),
 					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
@@ -670,7 +670,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 					);
 				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
+				const paymentButtonText = await securePaymentComponent.activePaymentButtonText();
 				return assert(
 					paymentButtonText.includes( expectedCurrencySymbol ),
 					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
@@ -826,7 +826,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 					);
 				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
+				const paymentButtonText = await securePaymentComponent.activePaymentButtonText();
 				return assert(
 					paymentButtonText.includes( expectedCurrencySymbol ),
 					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
@@ -1000,7 +1000,7 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 						`The cart total '${ totalShown }' does not begin with '${ expectedCurrencySymbol }'`
 					);
 				}
-				const paymentButtonText = await securePaymentComponent.paymentButtonText();
+				const paymentButtonText = await securePaymentComponent.activePaymentButtonText();
 				return assert(
 					paymentButtonText.includes( expectedCurrencySymbol ),
 					`The payment button text '${ paymentButtonText }' does not contain the expected currency symbol: '${ expectedCurrencySymbol }'`
