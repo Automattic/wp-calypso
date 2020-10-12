@@ -110,27 +110,41 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage ) {
-		let buttonText = '';
-		if ( freePlan ) {
-			buttonText = translate( 'Keep this plan', {
-				comment:
-					'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-			} );
-		} else {
-			buttonText = translate( 'Select %(plan)s', {
-				args: {
-					plan: planName,
-				},
-				context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
-				comment:
-					'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
-			} );
+		if ( ! freePlan ) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ props.buttonText ||
+						translate( 'Select %(plan)s', {
+							args: {
+								plan: planName,
+							},
+							context: 'Button to select a paid plan by plan name, e.g., "Select Personal"',
+							comment:
+								'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+						} ) }
+				</Button>
+			);
 		}
-		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ props.buttonText || buttonText }
-			</Button>
-		);
+
+		if ( freePlan ) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ props.buttonText ||
+						translate( 'Keep this plan', {
+							comment:
+								'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
+						} ) }
+				</Button>
+			);
+		}
 	}
 
 	if ( ( availableForPurchase || isPlaceholder ) && isLandingPage ) {
