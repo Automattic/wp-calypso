@@ -41,7 +41,7 @@ import {
 	payPalProcessor,
 	genericRedirectProcessor,
 } from './payment-method-processors';
-import useGetThankYouUrl from './use-get-thank-you-url';
+import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { hasRenewalItem, getRenewalItems, hasPlan } from 'calypso/lib/cart-values/cart-items';
