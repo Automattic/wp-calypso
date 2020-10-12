@@ -1,18 +1,17 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import FormCheckbox from 'components/forms/form-checkbox';
 import notices from 'notices';
+import { Button } from '@automattic/components';
 import { createNotice } from 'state/notices/actions';
 
 class GlobalNotices extends Component {
