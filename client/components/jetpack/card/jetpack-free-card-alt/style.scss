@@ -56,7 +56,11 @@
 	.button {
 		width: 100%;
 		height: 40px;
-		margin-top: 7px;
+		margin-top: 40px;
+
+		@include break-small {
+			margin-top: 7px;
+		}
 	}
 }
 
