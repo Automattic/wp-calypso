@@ -4,6 +4,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,7 +25,11 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import JetpackProductCardAlt from 'calypso/components/jetpack/card/jetpack-product-card-alt';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import { JETPACK_SEARCH_PRODUCTS } from 'calypso/lib/products-values/constants';
+import {
+	PRODUCT_JETPACK_CRM,
+	PRODUCT_JETPACK_CRM_MONTHLY,
+	JETPACK_SEARCH_PRODUCTS,
+} from 'calypso/lib/products-values/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 
@@ -52,6 +57,7 @@ const ProductCardAltWrapper = ( {
 	highlight = false,
 	selectedTerm,
 }: ProductCardProps ) => {
+	const translate = useTranslate();
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
@@ -73,6 +79,14 @@ const ProductCardAltWrapper = ( {
 		item,
 		item?.monthlyProductSlug || ''
 	);
+
+	const isFree = originalPrice === -1 && discountedPrice === -1;
+	// TODO: we should move this text to where we keep translations for products and plans.
+	const isFreeMessage = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes(
+		item.productSlug
+	)
+		? translate( 'Start managing contacts now' )
+		: null;
 
 	// Handles expiry.
 	const moment = useLocalizedMoment();
@@ -120,13 +134,14 @@ const ProductCardAltWrapper = ( {
 				// Search has several pricing tiers
 				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.productSlug )
 			}
+			isFree={ isFree }
+			isFreeMessage={ isFreeMessage }
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={ false }
 			productSlug={ item.productSlug }
 		/>
 	);

@@ -118,6 +118,18 @@ $jetpack-product-card-alt-icon-size: 55px;
 	}
 }
 
+.jetpack-product-card-alt__free-product {
+	padding-bottom: 4px;
+
+	font-size: $font-headline-medium;
+	line-height: 1.5;
+	color: var( --color-neutral-70 );
+
+	@include breakpoint-deprecated( '<960px' ) {
+		font-size: $font-title-medium;
+	}
+}
+
 .jetpack-product-card-alt__price {
 	display: flex;
 	flex-direction: column;
