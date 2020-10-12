@@ -110,6 +110,44 @@ function add_coming_soon_page_to_new_site() {
 add_action( 'signup_finished', __NAMESPACE__ . '\add_coming_soon_page_to_new_site', 10, 1 );
 
 /**
+ * Launch the site when the privacy mode changes from public-not-indexed
+ * This can happen due to clicking the launch button from the banner
+ * Or due to manually updating the setting in wp-admin or calypso settings page.
+ *
+ * @param string $old_value the old value of blog_public.
+ * @param string $value     the new value of blog_public.
+ */
+function disable_coming_soon_on_privacy_change( $old_value, $value ) {
+	if ( 0 !== (int) $old_value || 0 === (int) $value ) {
+		// Do nothing if not moving from public-not-indexed.
+		return;
+	}
+	update_option( 'wpcom_public_coming_soon', 0 );
+}
+add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_on_privacy_change', 10, 2 );
+
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+/**
+ * Adds the `wpcom_public_coming_soon` option to new sites
+ *
+ * @param int    $blog_id    Blog ID.
+ * @param int    $user_id    User ID.
+ * @param string $domain     Site domain.
+ * @param string $path       Site path.
+ * @param int    $site_id    Site ID.
+ * @param array  $meta       Meta data. Used to set initial site options.
+ */
+function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+	if ( 0 === $meta['public'] && 1 === (int) $meta['options']['wpcom_public_coming_soon'] ) {
+		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 1 );
+	} else {
+		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 0 );
+	}
+}
+// phpcs:enable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
+add_action( 'wpmu_new_blog', __NAMESPACE__ . '\add_option_to_new_site', 10, 6 );
+
+/**
  * Decides whether to redirect to the site's coming soon page and performs
  * the redirect.
  */
