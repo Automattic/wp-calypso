@@ -8,9 +8,11 @@ import Gridicon from 'components/gridicon';
 
 const TRACKING_URL_MAP = {
 	usps: ( tracking ) => `https://tools.usps.com/go/TrackConfirmAction.action?tLabels=${ tracking }`,
-	fedex: ( tracking ) => `https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=${ tracking }`,
+	fedex: ( tracking ) =>
+		`https://www.fedex.com/apps/fedextrack/?action=track&tracknumbers=${ tracking }`,
 	ups: ( tracking ) => `https://www.ups.com/track?loc=en_US&tracknum=${ tracking }`,
-	dhlexpress: ( tracking ) => `https://www.dhl.com/en/express/tracking.html?AWB=${ tracking }&brand=DHL`,
+	dhlexpress: ( tracking ) =>
+		`https://www.dhl.com/en/express/tracking.html?AWB=${ tracking }&brand=DHL`,
 };
 
 const TrackingLink = ( { tracking, carrierId, translate } ) => {
