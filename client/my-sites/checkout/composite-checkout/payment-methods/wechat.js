@@ -148,6 +148,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 		setTransactionRedirecting,
 		setTransactionError,
 		setTransactionPending,
+		resetTransaction,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'wechat' );
 	const onEvent = useEvents();
@@ -164,7 +165,10 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 				cart={ cart }
 				redirectUrl={ stripeResponseWithCode.redirect_url }
 				slug={ siteSlug }
-				reset={ () => setStripeResponseWithCode( null ) }
+				reset={ () => {
+					resetTransaction();
+					setStripeResponseWithCode( null );
+				} }
 			/>
 		);
 	}
