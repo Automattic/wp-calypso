@@ -52,8 +52,6 @@ const PlanFeaturesActionsButton = ( {
 	translate,
 	...props
 } ) => {
-	let upgradeButton;
-
 	const classes = classNames(
 		'plan-features__actions-button',
 		{
@@ -66,12 +64,16 @@ const PlanFeaturesActionsButton = ( {
 	);
 
 	if ( current && ! isInSignup ) {
-		upgradeButton = (
+		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
-	} else if ( availableForPurchase || isPlaceholder ) {
+	}
+
+	let upgradeButton;
+
+	if ( availableForPurchase || isPlaceholder ) {
 		let buttonText = freePlan
 			? translate( 'Select Free', { context: 'button' } )
 			: translate( 'Upgrade', { context: 'verb' } );
