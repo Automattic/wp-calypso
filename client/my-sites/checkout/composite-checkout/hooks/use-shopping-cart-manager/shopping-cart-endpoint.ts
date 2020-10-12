@@ -154,7 +154,7 @@ export interface ResponseCartProduct {
 	meta: string;
 	months_per_bill_period: number | null;
 	volume: number;
-	extra: object;
+	extra: CartItemExtra;
 	uuid: string;
 	cost: number;
 	price: number;
@@ -188,7 +188,7 @@ export interface TempResponseCartProduct {
 	months_per_bill_period: number | null;
 	meta: string;
 	volume: number;
-	extra: object;
+	extra: CartItemExtra;
 	uuid: string;
 	cost: null;
 	price: null;
