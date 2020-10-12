@@ -155,17 +155,13 @@ const PlanFeaturesActionsButton = ( {
 		);
 	}
 
-	let upgradeButton;
-
 	if ( ! availableForPurchase && forceDisplayButton ) {
-		upgradeButton = (
+		return (
 			<Button className={ classes } disabled={ true }>
 				{ props.buttonText }
 			</Button>
 		);
 	}
-
-	return upgradeButton;
 };
 
 PlanFeaturesActions.propTypes = {
