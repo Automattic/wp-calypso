@@ -258,6 +258,10 @@ $jetpack-product-card-alt-icon-size: 55px;
 
 .jetpack-product-card-alt .foldable-card .foldable-card__header {
 	color: var( --studio-gray-50 );
+
+	.gridicon {
+		fill: var( --studio-gray-50 );
+	}
 }
 
 .jetpack-product-card-alt__features-category {
