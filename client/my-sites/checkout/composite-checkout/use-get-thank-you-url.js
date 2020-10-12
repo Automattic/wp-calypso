@@ -56,6 +56,7 @@ export function getThankYouPageUrl( {
 	isTransactionResultEmpty,
 } ) {
 	debug( 'starting getThankYouPageUrl' );
+
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
@@ -84,6 +85,14 @@ export function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 		debug( 'ignorning redirectTo', redirectTo );
+	}
+
+	// If any product has an `after_purchase_url` set, redirect to the first one.
+	const productAfterPurchaseUrl = cart?.products?.find( ( product ) => product.after_purchase_url )
+		?.after_purchase_url;
+	if ( productAfterPurchaseUrl ) {
+		debug( 'found product with after_purchase_url', productAfterPurchaseUrl );
+		return productAfterPurchaseUrl;
 	}
 
 	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
