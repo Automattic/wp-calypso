@@ -10,6 +10,7 @@ import { localize, useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
+import FormLabel from 'calypso/components/forms/form-label';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
@@ -290,9 +291,9 @@ function ReceiptLabels() {
 	const translate = useTranslate();
 	return (
 		<div>
-			<label htmlFor="billing-history__billing-details-textarea">
-				<strong>{ translate( 'Billing Details' ) }</strong>
-			</label>
+			<FormLabel htmlFor="billing-history__billing-details-textarea">
+				{ translate( 'Billing Details' ) }
+			</FormLabel>
 			<div
 				className="billing-history__billing-details-description"
 				id="billing-history__billing-details-description"
