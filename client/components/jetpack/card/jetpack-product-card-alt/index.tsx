@@ -165,7 +165,10 @@ const JetpackProductCardAlt = ( {
 									/>
 								) }
 								{ searchRecordsDetails && (
-									<InfoPopover className="jetpack-product-card-alt__search-price-popover">
+									<InfoPopover
+										className="jetpack-product-card-alt__search-price-popover"
+										position="right"
+									>
 										{ searchRecordsDetails }
 									</InfoPopover>
 								) }
