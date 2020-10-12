@@ -1302,4 +1302,10 @@ body.is-section-jetpack-connect .layout {
 .is-section-jetpack-connect .selector-alt__main {
 	--color-accent: var( --studio-jetpack-green-40 );
 	--color-primary: var( --studio-jetpack-green-40 );
+
+	.plans-filter-bar__discount-message {
+		color: var( --color-surface );
+
+		font-weight: 600;
+	}
 }
