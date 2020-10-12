@@ -3,6 +3,9 @@
 @import '~@automattic/typography/styles/fonts';
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
+
 	background-color: var( --color-surface );
 
 	font-family: 'Noto Sans', $sans;
