@@ -1,19 +1,19 @@
 /**
  * Internal dependencies
  */
-import { isJetpackSite } from 'state/sites/selectors';
-import { activateTheme } from 'state/themes/actions/activate-theme';
-import { installAndActivateTheme } from 'state/themes/actions/install-and-activate-theme';
-import { showAutoLoadingHomepageWarning } from 'state/themes/actions/show-auto-loading-homepage-warning';
-import { suffixThemeIdForInstall } from 'state/themes/actions/suffix-theme-id-for-install';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
+import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
+import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
+import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
-} from 'state/themes/selectors';
-import isSiteAtomic from 'state/selectors/is-site-wpcom-atomic';
+} from 'calypso/state/themes/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
@@ -23,9 +23,16 @@ import 'state/themes/init';
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
+ * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}          Action thunk
  */
-export function activate( themeId, siteId, source = 'unknown', purchased = false ) {
+export function activate(
+	themeId,
+	siteId,
+	source = 'unknown',
+	purchased = false,
+	keepCurrentHomepage = false
+) {
 	return ( dispatch, getState ) => {
 		/**
 		 * Let's check if the theme will change the homepage of the site,
@@ -45,9 +52,11 @@ export function activate( themeId, siteId, source = 'unknown', purchased = false
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
 			// and it will just be activated.
-			return dispatch( installAndActivateTheme( installId, siteId, source, purchased ) );
+			return dispatch(
+				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
+			);
 		}
 
-		return dispatch( activateTheme( themeId, siteId, source, purchased ) );
+		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 	};
 }

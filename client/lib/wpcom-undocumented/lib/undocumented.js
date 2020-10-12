@@ -11,9 +11,9 @@ import { stringify } from 'qs';
 import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
-import config from 'config';
-import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
-import readerContentWidth from 'reader/lib/content-width';
+import config from 'calypso/config';
+import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import readerContentWidth from 'calypso/reader/lib/content-width';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -1651,12 +1651,15 @@ Undocumented.prototype.activeTheme = function ( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
 };
 
-Undocumented.prototype.activateTheme = function ( themeId, siteId, fn ) {
+Undocumented.prototype.activateTheme = function ( themeId, siteId, dontChangeHomepage, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.post(
 		{
 			path: '/sites/' + siteId + '/themes/mine',
-			body: { theme: themeId },
+			body: {
+				theme: themeId,
+				...( dontChangeHomepage && { dont_change_homepage: true } ),
+			},
 		},
 		fn
 	);
