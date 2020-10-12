@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import ButtonGroup from 'calypso/components/button-group';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import notices from 'calypso/notices';
 import { Button } from '@automattic/components';
 import { createNotice } from 'calypso/state/notices/actions';
@@ -44,10 +45,10 @@ class GlobalNotices extends Component {
 	render() {
 		return (
 			<div>
-				<label>
+				<FormLabel>
 					<FormCheckbox onChange={ this.toggleUseState } checked={ this.state.useState } />
 					<span>Use global application state</span>
-				</label>
+				</FormLabel>
 				<ButtonGroup>
 					<Button onClick={ this.showSuccessNotice }>Show success notice</Button>
 					<Button onClick={ this.showErrorNotice }>Show error notice</Button>
