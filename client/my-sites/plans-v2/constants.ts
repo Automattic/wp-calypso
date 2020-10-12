@@ -6,6 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'calypso/config';
 import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
@@ -294,7 +295,9 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
-	buttonLabel: translate( 'Get CRM' ),
+	buttonLabel: isEnabled( 'plans/alternate-selector' )
+		? translate( 'Start using CRM for free' )
+		: translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem(
 			[
