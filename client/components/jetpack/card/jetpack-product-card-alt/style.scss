@@ -304,14 +304,11 @@ $jetpack-product-card-alt-icon-size: 55px;
 		width: 15px;
 		height: 15px;
 	}
-	&.gridicons-checkmark {
-		fill: $jetpack-product-card-alt-color;
-	}
-}
-
-.jetpack-product-card-alt__features-icon {
 	&.gridicons-lock {
 		background: #984a9c;
+	}
+	&.gridicons-checkmark {
+		fill: $jetpack-product-card-alt-color;
 	}
 }
 
