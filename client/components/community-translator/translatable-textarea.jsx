@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 
 const TranslatableTextarea = ( {
 	originalString,
