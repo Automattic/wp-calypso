@@ -1297,3 +1297,9 @@ body.is-section-jetpack-connect .layout {
 .layout.is-section-jetpack-connect .upsell .upsell__header .formatted-header {
 	color: inherit;
 }
+
+// The new Plans grid uses as primary color a darker version Jetpack's green.
+.is-section-jetpack-connect .selector-alt__main {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
+}

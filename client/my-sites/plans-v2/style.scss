@@ -37,6 +37,14 @@
 	position: relative;
 }
 
+.selector-alt__main {
+	.plans-filter-bar,
+	.products-grid-alt {
+		--color-accent: var( --studio-jetpack-green-40 );
+		--color-primary: var( --studio-jetpack-green-40 );
+	}
+}
+
 .selector__divider,
 .selector-alt__divider {
 	margin: 40px 0;
