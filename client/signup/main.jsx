@@ -95,7 +95,7 @@ import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-scree
 import user from 'calypso/lib/user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import { abtest } from 'calypso/lib/abtest';
-import { hasSecureYourBrandError } from 'state/secure-your-brand/selectors';
+import { hasSecureYourBrandError } from 'calypso/state/secure-your-brand/selectors';
 
 /**
  * Style dependencies

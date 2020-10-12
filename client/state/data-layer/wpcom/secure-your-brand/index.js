@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { SECURE_YOUR_BRAND_REQUEST } from 'state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { SECURE_YOUR_BRAND_REQUEST } from 'calypso/state/action-types';
 import {
 	getSecureYourBrandSuccess,
 	getSecureYourBrandFailure,
-} from 'state/secure-your-brand/actions';
+} from 'calypso/state/secure-your-brand/actions';
 
 /**
  * @module state/data-layer/wpcom/secure-your-brand

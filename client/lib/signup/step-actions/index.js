@@ -19,50 +19,56 @@ import {
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 // Libraries
-import wpcom from 'lib/wp';
-import guessTimezone from 'lib/i18n-utils/guess-timezone';
-import user from 'lib/user';
-import { getSavedVariations } from 'lib/abtest';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { recordRegistration } from 'lib/analytics/signup';
+import wpcom from 'calypso/lib/wp';
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import user from 'calypso/lib/user';
+import { getSavedVariations } from 'calypso/lib/abtest';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
-} from 'lib/cart-values/cart-items';
-import { getUrlParts } from 'lib/url';
+} from 'calypso/lib/cart-values/cart-items';
+import { getUrlParts } from 'calypso/lib/url';
 
 // State actions and selectors
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { getProductsList } from 'state/products-list/selectors';
-import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import getSiteId from 'state/selectors/get-site-id';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
+import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import {
+	getSiteVerticalId,
+	getSiteVerticalName,
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
+import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import {
+	getSelectedImportEngine,
+	getNuxUrlInputValue,
+} from 'calypso/state/importer-nux/temp-selectors';
+import getSiteId from 'calypso/state/selectors/get-site-id';
 import { Site } from '@automattic/data-stores';
 const Visibility = Site.Visibility;
 
 // Current directory dependencies
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
-import SignupCart from 'lib/signup/cart';
+import SignupCart from 'calypso/lib/signup/cart';
 
 // Others
-import flows from 'signup/config/flows';
-import steps, { isDomainStepSkippable } from 'signup/config/steps';
-import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
+import flows from 'calypso/signup/config/flows';
+import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
 
-import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 
 /**
  * Constants

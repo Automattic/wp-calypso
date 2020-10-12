@@ -5,10 +5,10 @@ import {
 	SECURE_YOUR_BRAND_REQUEST,
 	SECURE_YOUR_BRAND_FAILURE,
 	SECURE_YOUR_BRAND_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/secure-your-brand/init';
-import 'state/data-layer/wpcom/secure-your-brand/index';
+import 'calypso/state/secure-your-brand/init';
+import 'calypso/state/data-layer/wpcom/secure-your-brand/index';
 
 /**
  * Returns an action object to request suggested secure your brand domains

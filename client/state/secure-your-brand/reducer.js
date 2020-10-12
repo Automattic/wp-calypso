@@ -5,9 +5,9 @@ import {
 	SECURE_YOUR_BRAND_REQUEST,
 	SECURE_YOUR_BRAND_FAILURE,
 	SECURE_YOUR_BRAND_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { secureYourBrandSchema } from './schema';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
 
 export const secureYourBrand = withSchemaValidation(
 	secureYourBrandSchema,
