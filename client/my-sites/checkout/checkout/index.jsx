@@ -1010,11 +1010,7 @@ export default connect(
 			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
-			isEligibleForSignupDestination: isEligibleForSignupDestination(
-				state,
-				selectedSiteId,
-				props.cart
-			),
+			isEligibleForSignupDestination: isEligibleForSignupDestination( props.cart ),
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),

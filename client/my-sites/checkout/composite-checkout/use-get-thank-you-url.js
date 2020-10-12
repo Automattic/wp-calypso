@@ -379,15 +379,12 @@ export function useGetThankYouUrl( {
 	cart,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
-	siteId,
 	hideNudge,
 	recordEvent,
 } ) {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = useSelector( ( state ) =>
-		isEligibleForSignupDestination( state, siteId, cart )
-	);
+	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
 
 	const getThankYouUrl = useCallback( () => {
 		const transactionResult = select( 'wpcom' ).getTransactionResult();
