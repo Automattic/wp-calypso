@@ -351,19 +351,23 @@ function saveUrlToCookieIfEcomm( saveUrlToCookie, cart, destinationUrl ) {
 	}
 }
 
+function modifyUrlIfAtomic( siteSlug, url ) {
+	// If atomic site, then replace wordpress.com with wpcomstaging.com
+	if ( siteSlug?.includes( '.wpcomstaging.com' ) ) {
+		return url.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+	}
+	return url;
+}
+
 function modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug ) {
 	const urlFromCookie = getUrlFromCookie();
 	if ( ! urlFromCookie ) {
 		return;
 	}
+	const updatedUrl = modifyUrlIfAtomic( siteSlug, urlFromCookie );
 
-	// If atomic site, then replace wordpress.com with wpcomstaging.com
-	if ( siteSlug && siteSlug.includes( '.wpcomstaging.com' ) ) {
-		const wpcomStagingDestination = urlFromCookie.replace(
-			/\b.wordpress.com/,
-			'.wpcomstaging.com'
-		);
-		saveUrlToCookie( wpcomStagingDestination );
+	if ( updatedUrl !== urlFromCookie ) {
+		saveUrlToCookie( updatedUrl );
 	}
 }
 
