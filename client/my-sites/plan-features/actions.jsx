@@ -93,6 +93,7 @@ const PlanFeaturesActionsButton = ( {
 		if ( isLandingPage ) {
 			buttonText = translate( 'Select', { context: 'button' } );
 		}
+
 		if ( isLaunchPage ) {
 			if ( freePlan ) {
 				buttonText = translate( 'Keep this plan', {
@@ -109,7 +110,9 @@ const PlanFeaturesActionsButton = ( {
 						'A button to select a new paid plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
 				} );
 			}
-		} else if ( isInSignup ) {
+		}
+
+		if ( ! isLaunchPage && isInSignup ) {
 			buttonText = translate( 'Start with %(plan)s', {
 				args: {
 					plan: planName,
