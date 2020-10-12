@@ -421,7 +421,7 @@ class DomainsStep extends React.Component {
 
 	domainForm = () => {
 		let initialState = {};
-		if ( this.state ) {
+		if ( this.state?.domainForm ) {
 			initialState = this.state.domainForm;
 		}
 		if ( this.props.step ) {
