@@ -4,7 +4,7 @@
 import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 import { addAction } from '@wordpress/hooks';
-import { dispatch, subscribe, select } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import 'a8c-fse-common-data-stores';
 

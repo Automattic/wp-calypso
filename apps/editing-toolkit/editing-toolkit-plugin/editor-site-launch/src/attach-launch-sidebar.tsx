@@ -13,6 +13,7 @@ import { useOnLaunch } from './hooks';
 import { LAUNCH_STORE } from './stores';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	originalRegisterPlugin( name, settings as any );
 
 registerPlugin( 'a8c-editor-site-launch', {
