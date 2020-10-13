@@ -11,22 +11,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import AsyncLoad from 'components/async-load';
+import AsyncLoad from 'calypso/components/async-load';
 import { Dialog } from '@automattic/components';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { getCurrentPlan, isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import DocumentHead from 'components/data/document-head';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import PlansNavigation from 'my-sites/plans/navigation';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import PurchasesListing from './purchases-listing';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
-import { getPlan } from 'lib/plans';
+import QuerySites from 'calypso/components/data/query-sites';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_LEGACY_PLANS,
 	PLAN_JETPACK_COMPLETE,
@@ -35,25 +35,25 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
-} from 'lib/products-values/constants';
-import { isCloseToExpiration } from 'lib/purchases';
-import { getPurchaseByProductSlug } from 'lib/purchases/utils';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import JetpackChecklist from 'my-sites/plans/current-plan/jetpack-checklist';
-import PlanRenewalMessage from 'my-sites/plans-v2/plan-renewal-message';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+} from 'calypso/lib/products-values/constants';
+import { isCloseToExpiration } from 'calypso/lib/purchases';
+import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
+import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
@@ -63,10 +63,10 @@ import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import JetpackCompleteThankYou from './current-plan-thank-you/jetpack-complete';
 import JetpackSecurityDailyThankYou from './current-plan-thank-you/jetpack-security-daily';
 import JetpackSecurityRealtimeThankYou from './current-plan-thank-you/jetpack-security-realtime';
-import { isFreeJetpackPlan, isFreePlan } from 'lib/products-values';
-import { getSitePurchases } from 'state/purchases/selectors';
-import QueryConciergeInitial from 'components/data/query-concierge-initial';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
+import { isFreeJetpackPlan, isFreePlan } from 'calypso/lib/products-values';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 
 /**
  * Style dependencies
@@ -163,9 +163,9 @@ class CurrentPlan extends Component {
 			translate,
 		} = this.props;
 
-		const currentPlanSlug = selectedSite.plan.product_slug;
+		const currentPlanSlug = selectedSite?.plan.product_slug;
 		const isLoading = this.isLoading();
-		const planTitle = getPlan( currentPlanSlug ).getTitle();
+		const planTitle = getPlan( currentPlanSlug )?.getTitle();
 
 		const planFeaturesHeader = translate( '{{planName/}} plan features', {
 			components: { planName: <>{ planTitle }</> },
@@ -255,7 +255,7 @@ class CurrentPlan extends Component {
 				</div>
 
 				<AsyncLoad
-					require="blocks/product-purchase-features-list"
+					require="calypso/blocks/product-purchase-features-list"
 					placeholder={ null }
 					plan={ currentPlanSlug }
 					isPlaceholder={ isLoading }
