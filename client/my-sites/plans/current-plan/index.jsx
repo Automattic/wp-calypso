@@ -184,7 +184,11 @@ class CurrentPlan extends Component {
 		let showExpiryNotice = false;
 		let purchase = null;
 
-		if ( shouldShowOfferResetFlow() && JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
+		if (
+			currentPlanSlug &&
+			shouldShowOfferResetFlow() &&
+			JETPACK_LEGACY_PLANS.includes( currentPlanSlug )
+		) {
 			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}
