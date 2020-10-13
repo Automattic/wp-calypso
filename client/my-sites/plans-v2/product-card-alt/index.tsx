@@ -101,17 +101,17 @@ const ProductCardAltWrapper = ( {
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
-	// In the case of products that have options (daily and real-time), we want to display
-	// the name of the option, not the name of one of the variants.
+	// In the case of products that have options (daily and real-time) and that are not owned,
+	// we want to display the name of the option, not the name of one of the variants.
 	const productName = useMemo( () => {
 		const optionSlug = getOptionFromSlug( item.productSlug );
 
-		if ( ! optionSlug ) {
+		if ( ! optionSlug || isOwned ) {
 			return item.displayName;
 		}
 
 		return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
-	}, [ item ] );
+	}, [ isOwned, item ] );
 
 	return (
 		<JetpackProductCardAlt
