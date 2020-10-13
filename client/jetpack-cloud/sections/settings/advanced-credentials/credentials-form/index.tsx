@@ -59,6 +59,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 		switch ( currentTarget.name ) {
 			case 'protocol':
 				onFormStateChange( { ...formState, protocol: currentTarget.value as 'ftp' | 'ssh' } );
+				onModeChange( FormMode.Password );
 				break;
 			case 'host':
 				setFormInteractions( { ...interactions, host: true } );
@@ -472,9 +473,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				</div>
 			) }
 
-			{ formMode === FormMode.Password || 'ftp' === formState.protocol
-				? renderPasswordForm()
-				: renderPrivateKeyForm() }
+			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 
 			<FormFieldset className="credentials-form__buttons">{ children }</FormFieldset>
 		</div>
