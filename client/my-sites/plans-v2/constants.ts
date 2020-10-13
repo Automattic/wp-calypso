@@ -311,7 +311,7 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 		),
 	},
 	hidePrice: true,
-	externalUrl: 'https://jetpackcrm.com/pricing/',
+	externalUrl: 'https://jetpackcrm.com/download-wordpress-crm/',
 };
 
 export const EXTERNAL_PRODUCT_CRM_MONTHLY: SelectorProduct = {
