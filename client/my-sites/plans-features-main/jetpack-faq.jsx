@@ -7,8 +7,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+import FAQ from 'calypso/components/faq';
+import FAQItem from 'calypso/components/faq/faq-item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const JetpackFAQ = ( { translate } ) => {
 	// We want to allow Jetpack Free users to contact support, even when it isn't not available
@@ -21,6 +22,9 @@ const JetpackFAQ = ( { translate } ) => {
 			href="https://jetpack.com/contact-support/?rel=support&hpi=1"
 			target="_blank"
 			rel="noopener noreferrer"
+			onClick={ () => {
+				recordTracksEvent( 'calypso_jetpack_faq_cancellationsupport_click' );
+			} }
 		/>
 	);
 
