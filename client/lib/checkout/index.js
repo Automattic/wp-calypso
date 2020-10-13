@@ -82,7 +82,7 @@ export function getExitCheckoutUrl(
 	let url = '/plans/';
 
 	if ( returnToBlockEditor ) {
-		return `/block-editor/page/${ siteSlug }/home`;
+		return `/page/${ siteSlug }/home`;
 	}
 
 	if ( returnToHome ) {
