@@ -1,85 +1,89 @@
 .step-progress {
 	display: flex;
 	flex-direction: row;
-	// justify-content: space-between;
-	// position: relative;
-
-	// &::before {
-	// 	background: var( --color-neutral-70 );
-	// 	content: '';
-	// 	height: 2px;
-	// 	left: 10%;
-	// 	position: absolute;
-	// 	top: 12px;
-	// 	width: 85%;
-	// 	z-index: 0;
-	// }
+	justify-content: space-evenly;
 }
 
-.step-progress__element {
+.step-progress__element-complete,
+.step-progress__element-current,
+.step-progress__element-future {
+	align-items: center;
 	display: flex;
 	flex-direction: column;
+	width: 100%;
 }
 
-.step-progress__element-visual,
-.step-progress__element-step-name {
-	display: flex;
-	justify-content: center;
-}
-
-.step-progress__element-visual {
+.step-progress__element-complete:not( :last-child ),
+.step-progress__element-current:not( :last-child ),
+.step-progress__element-future:not( :last-child ) {
 	position: relative;
 	&::before {
-		background: var( --color-neutral-70 );
 		content: '';
-		height: 3px;
-		// left: 20%;
+		height: 2px;
+		left: 50%;
 		position: absolute;
-		top: 12px;
+		top: 11px;
 		width: 100%;
 		z-index: 1;
 	}
 }
 
-.step-progress__element-step-name-current,
-.step-progress__element-step-name-complete,
+.step-progress__element-complete:not( :last-child )::before {
+	background: var( --color-neutral-70 );
+}
+
+.step-progress__element-future:not( :last-child )::before,
+.step-progress__element-current:not( :last-child )::before {
+	background: var( --color-neutral-10 );
+}
+
 .step-progress__element-step-name {
-	margin-top: 9px;
 	font-style: normal;
 	font-weight: normal;
-	font-size: 1;
-	line-height: 24px;
+	margin-top: 9px;
 }
 
-.step-progress__element-step-name-complete,
-.step-progress__element-step-name {
-	color: var( --color-text-subtle );
-}
-
-.step-progress__element-number-current,
-.step-progress__element-number-complete,
-.step-progress__element-number {
-	z-index: 2;
+.step-progress__element-button {
 	border-radius: 50%;
-	height: 25px;
-	width: 25px;
-	font-weight: bold;
+	font-size: 0.875rem;
+	font-weight: 700;
+	height: 24px;
+	width: 24px;
+	z-index: 2;
+	&:hover {
+		cursor: pointer;
+	}
 }
 
-.step-progress__element-number-complete {
-	background-color: var( --color-neutral-70 );
-	border: 2px solid var( --color-neutral-70 );
-	color: var( --studio-white );
+.step-progress__element-complete {
+	.step-progress__element-button {
+		background-color: var( --color-neutral-70 );
+		border: 2px solid var( --color-neutral-70 );
+		color: var( --studio-white );
+	}
+	.step-progress__element-step-name {
+		color: var( --color-neutral-10 );
+	}
 }
 
-.step-progress__element-number-current {
-	background-color: var( --studio-white );
-	border: 2px solid var( --color-neutral-70 );
-	color: var( --color-neutral-70 );
+.step-progress__element-current {
+	.step-progress__element-button {
+		background-color: var( --studio-white );
+		border: 2px solid var( --color-neutral-70 );
+		color: var( --color-neutral-70 );
+	}
+	.step-progress__element-step-name {
+		color: var( --color-neutral-90 );
+	}
 }
 
-.step-progress__element-number {
-	background-color: var( --studio-white );
-	border: 2px solid var( --color-neutral-10 );
-	color: var( --color-neutral-10 );
+.step-progress__element-future {
+	.step-progress__element-button {
+		background-color: var( --studio-white );
+		border: 2px solid var( --color-neutral-10 );
+		color: var( --color-neutral-10 );
+	}
+	.step-progress__element-step-name {
+		color: var( --color-neutral-10 );
+	}
 }

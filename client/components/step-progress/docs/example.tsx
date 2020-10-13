@@ -34,10 +34,10 @@ const StepProgressExample: FunctionComponent = () => {
 				</Button>
 				<Button
 					primary
-					disabled={ currentStep >= steps.length - 1 }
+					disabled={ currentStep >= steps.length }
 					onClick={ () => setCurrentStep( currentStep + 1 ) }
 				>
-					{ 'Next Step' }
+					{ currentStep < steps.length - 1 ? 'Next Step' : 'Finish' }
 				</Button>
 			</div>
 		</div>
