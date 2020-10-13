@@ -10,11 +10,10 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
  */
 import {
 	durationToText,
-	getOptionFromSlug,
+	getProductWithOptionDisplayName,
 	productBadgeLabelAlt,
-	productButtonLabel,
+	productButtonLabelAlt,
 	slugIsFeaturedProduct,
-	slugToSelectorProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
@@ -101,17 +100,9 @@ const ProductCardAltWrapper = ( {
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
-	// In the case of products that have options (daily and real-time) and that are not owned,
-	// we want to display the name of the option, not the name of one of the variants.
-	const productName = useMemo( () => {
-		const optionSlug = getOptionFromSlug( item.productSlug );
-
-		if ( ! optionSlug || isOwned ) {
-			return item.displayName;
-		}
-
-		return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
-	}, [ isOwned, item ] );
+	// In the case of products that have options (daily and real-time), we want to display
+	// the name of the option, not the name of one of the variants.
+	const productName = getProductWithOptionDisplayName( item, isOwned );
 
 	return (
 		<JetpackProductCardAlt
@@ -122,7 +113,7 @@ const ProductCardAltWrapper = ( {
 			description={ description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={ productButtonLabelAlt( item, isOwned, isUpgradeableToYearly, sitePlan ) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
