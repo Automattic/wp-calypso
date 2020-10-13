@@ -9,17 +9,17 @@ import { useSelector } from 'react-redux';
  */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_LEGACY_PLANS,
+	JETPACK_RESET_PLANS,
+	JETPACK_SECURITY_PLANS,
+} from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
 import { SELECTOR_PLANS_ALT } from '../constants';
-import {
-	getAllOptionsFromSlug,
-	getJetpackDescriptionWithOptions,
-	slugToSelectorProduct,
-} from '../utils';
+import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import ProductCardAlt from '../product-card-alt';
 
@@ -45,8 +45,6 @@ const getPlansToDisplay = ( {
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
 
-	const currentPlanOptions = currentPlanSlug ? getAllOptionsFromSlug( currentPlanSlug ) : [];
-
 	const plansToDisplay = SELECTOR_PLANS_ALT.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
@@ -55,8 +53,11 @@ const getPlansToDisplay = ( {
 				product.term === duration &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug ) &&
-				// Don't include a plan option if the user already owns a related option
-				! currentPlanOptions.includes( product.productSlug )
+				! (
+					currentPlanSlug &&
+					JETPACK_SECURITY_PLANS.includes( currentPlanSlug ) &&
+					JETPACK_SECURITY_PLANS.includes( product.productSlug )
+				)
 		)
 		.map( ( product: SelectorProduct ) => ( {
 			...product,
@@ -66,7 +67,7 @@ const getPlansToDisplay = ( {
 	if (
 		currentPlanSlug &&
 		( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ||
-			SELECTOR_PLANS_ALT.includes( currentPlanSlug ) )
+			JETPACK_RESET_PLANS.includes( currentPlanSlug ) )
 	) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
