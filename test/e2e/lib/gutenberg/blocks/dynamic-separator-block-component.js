@@ -24,9 +24,7 @@ class DynamicSeparatorBlockComponent extends GutenbergBlockComponent {
 		// We need to move focus away from the layout grid, or any subsequent blocks inserted will be part of it
 		const resizeHandleSelector = await this.driver.findElement(
 			By.css(
-				`div[id='${ this.blockID.slice(
-					1
-				) }'] div.components-resizable-box__handle.components-resizable-box__side-handle.components-resizable-box__handle-bottom`
+				`${ this.blockID } div.components-resizable-box__handle.components-resizable-box__side-handle.components-resizable-box__handle-bottom`
 			)
 		);
 
