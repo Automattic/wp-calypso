@@ -308,7 +308,11 @@ export async function payPalProcessor(
 		},
 		wpcomPayPalExpress,
 		transactionOptions
-	).then( saveTransactionResponseToWpcomStore );
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( ( response ) => {
+			return { type: 'REDIRECT', payload: response };
+		} );
 }
 
 async function saveTransactionResponseToWpcomStore( result ) {
