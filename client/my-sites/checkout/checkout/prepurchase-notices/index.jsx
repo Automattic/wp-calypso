@@ -13,14 +13,18 @@ import {
 	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
-} from 'lib/products-values';
-import getSelectedSite from 'state/ui/selectors/get-selected-site';
-import { getSitePlan, getSiteProducts, isJetpackMinimumVersion } from 'state/sites/selectors';
+} from 'calypso/lib/products-values';
+import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import {
+	getSitePlan,
+	getSiteProducts,
+	isJetpackMinimumVersion,
+} from 'calypso/state/sites/selectors';
 import {
 	isPlanIncludingSiteBackup,
 	isBackupProductIncludedInSitePlan,
-} from 'state/sites/products/conflicts';
-import Notice from 'components/notice';
+} from 'calypso/state/sites/products/conflicts';
+import Notice from 'calypso/components/notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
 import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';

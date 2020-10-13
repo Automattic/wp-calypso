@@ -5,14 +5,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import HappychatButton from 'components/happychat/button';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getSupportLevel from 'state/selectors/get-support-level';
+import HappychatButton from 'calypso/components/happychat/button';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSupportLevel from 'calypso/state/selectors/get-support-level';
 
 export class PaymentChatButton extends Component {
 	chatButtonClicked = () => {

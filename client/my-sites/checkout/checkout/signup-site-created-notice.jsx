@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { hasPlan } from 'lib/cart-values/cart-items';
+import { hasPlan } from 'calypso/lib/cart-values/cart-items';
 
 export class SignupSiteCreatedNotice extends PureComponent {
 	getUpgradeText() {

@@ -6,7 +6,7 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { hasRenewableSubscription } from 'lib/cart-values/cart-items';
+import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import TermsOfService from './terms-of-service';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
