@@ -27,14 +27,13 @@
 		 * Once the screen is wide enough to support it,
 		 * create a grid with cells that are evenly sized,
 		 * with a minimum width of 300px each.
-		 * Each cell should take up as much vertical space as it's allowed,
-		 * and the horizontal/vertical gap between them should always be 16px.
+		 * The horizontal/vertical gap between each cell should always be 16px.
 		 */
 		@include breakpoint-deprecated( '>660px' ) {
 			display: grid;
 			grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
 			grid-gap: 16px;
-			align-items: stretch;
+			align-items: flex-start;
 		}
 
 		& > .jetpack-free-card-alt {
