@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -15,7 +15,7 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
-} from 'lib/products-values/constants';
+} from 'calypso/lib/products-values/constants';
 
 // plans constants
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
@@ -47,6 +47,7 @@ export const PLAN_HOST_BUNDLE = 'host-bundle';
 export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 export const PLAN_VIP = 'vip';
+export const PLAN_P2_PLUS = 'wp_p2_plus_monthly';
 
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';
@@ -291,6 +292,7 @@ export const TYPE_ECOMMERCE = 'TYPE_ECOMMERCE';
 export const TYPE_SECURITY_DAILY = 'TYPE_SECURITY_DAILY';
 export const TYPE_SECURITY_REALTIME = 'TYPE_SECURITY_REALTIME';
 export const TYPE_ALL = 'TYPE_ALL';
+export const TYPE_P2 = 'TYPE_P2';
 
 export function isMonthly( plan ) {
 	return plan === PLAN_BUSINESS_MONTHLY || JETPACK_MONTHLY_PLANS.includes( plan );
