@@ -9,9 +9,10 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import JetpackLogo from 'components/jetpack-logo';
-import useDetectWindowBoundary from 'my-sites/plans-v2/use-detect-window-boundary';
+import ExternalLink from 'calypso/components/external-link';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import useDetectWindowBoundary from 'calypso/my-sites/plans-v2/use-detect-window-boundary';
 
 /**
  * Style dependencies
@@ -50,7 +51,13 @@ const JetpackComMasterbar = () => {
 	return (
 		<div ref={ barRef } className={ classNames( 'jpcom-masterbar', { sticky: hasCrossed } ) }>
 			<div className="jpcom-masterbar__inner">
-				<ExternalLink className="jpcom-masterbar__logo" href={ JETPACK_COM_BASE_URL }>
+				<ExternalLink
+					className="jpcom-masterbar__logo"
+					href={ JETPACK_COM_BASE_URL }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_jetpack_nav_logo_click' );
+					} }
+				>
 					<JetpackLogo className="jpcom-masterbar__jetpack-logo" full size={ 49 } />
 				</ExternalLink>
 
@@ -76,6 +83,9 @@ const JetpackComMasterbar = () => {
 							<a
 								className={ path === 'pricing' ? 'current' : '' }
 								href={ `${ JETPACK_COM_BASE_URL }/${ path }` }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_jetpack_nav_item_click', { nav_item: path } );
+								} }
 							>
 								{ title }
 							</a>
