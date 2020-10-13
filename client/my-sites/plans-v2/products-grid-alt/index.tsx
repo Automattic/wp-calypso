@@ -3,6 +3,7 @@
  */
 import React, { ReactElement, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,6 +22,7 @@ import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-a
 import { SELECTOR_PLANS_ALT } from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
+import PRODUCTS_ORDER_BY_SLUG from './products-order';
 import ProductCardAlt from '../product-card-alt';
 
 /**
@@ -64,11 +66,7 @@ const getPlansToDisplay = ( {
 			description: getJetpackDescriptionWithOptions( product ),
 		} ) );
 
-	if (
-		currentPlanSlug &&
-		( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ||
-			JETPACK_RESET_PLANS.includes( currentPlanSlug ) )
-	) {
+	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
 			return [ currentPlanSelectorProduct, ...plansToDisplay ];
@@ -121,8 +119,8 @@ const ProductsGridAlt = ( {
 		siteId
 	);
 
-	const currentPlanSlug =
-		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
+	const currentPlanSlug = useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug;
+	const hasLegacyPlan = currentPlanSlug && JETPACK_LEGACY_PLANS.includes( currentPlanSlug );
 
 	const plansToDisplay = useMemo( () => getPlansToDisplay( { duration, currentPlanSlug } ), [
 		duration,
@@ -139,6 +137,15 @@ const ProductsGridAlt = ( {
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
 	);
 
+	const sortedGridItems = useMemo(
+		() =>
+			sortBy(
+				[ ...plansToDisplay, ...productsToDisplay ],
+				( item ) => PRODUCTS_ORDER_BY_SLUG[ item.productSlug ]
+			),
+		[ plansToDisplay, productsToDisplay ]
+	);
+
 	const isInConnectFlow = useMemo(
 		() =>
 			/jetpack\/connect\/plans/.test( window.location.href ) ||
@@ -149,19 +156,20 @@ const ProductsGridAlt = ( {
 
 	return (
 		<div className="products-grid-alt">
-			{ plansToDisplay.map( ( plan ) => (
+			{ hasLegacyPlan && (
 				<ProductCardAlt
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
-					key={ plan.iconSlug }
-					item={ plan }
-					siteId={ siteId }
+					key={ currentPlanSlug }
+					item={ slugToSelectorProduct( currentPlanSlug ) }
 					onClick={ onSelectProduct }
+					siteId={ siteId }
 					currencyCode={ currencyCode }
 					selectedTerm={ duration }
 				/>
-			) ) }
-			{ productsToDisplay.map( ( product ) => (
+			) }
+
+			{ sortedGridItems.map( ( product ) => (
 				<ProductCardAlt
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
@@ -170,8 +178,10 @@ const ProductsGridAlt = ( {
 					onClick={ onSelectProduct }
 					siteId={ siteId }
 					currencyCode={ currencyCode }
+					selectedTerm={ duration }
 				/>
 			) ) }
+
 			{ showJetpackFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
 		</div>
 	);
