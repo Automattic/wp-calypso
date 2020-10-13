@@ -43,7 +43,7 @@ function handleSearch( query ) {
 	}
 }
 
-const hideVoteBannerDate = new Date( '2020-10-18T00:00:00' );
+const hideVoteBannerDate = new Date( '2020-10-17T19:00:00' );
 
 const FollowingStream = ( props ) => {
 	const suggestionList =
