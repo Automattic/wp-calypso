@@ -3,21 +3,11 @@
  */
 
 import React from 'react';
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:me:security:2fa-progress' );
 import classNames from 'classnames';
 import Gridicon from 'calypso/components/gridicon';
 
 export default class extends React.Component {
 	static displayName = 'Security2faProgressItem';
-
-	componentDidMount() {
-		debug( this.constructor.displayName + ' React component is mounted.' );
-	}
-
-	componentWillUnmount() {
-		debug( this.constructor.displayName + ' React component will unmount.' );
-	}
 
 	highlight = () => {
 		return classNames( {
