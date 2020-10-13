@@ -260,6 +260,18 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferMappedDomain() {
+		const { selectedSite, translate, domain, currentRoute } = this.props;
+
+		return (
+			<DomainManagementNavigationItem
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
+				materialIcon="sync_alt"
+				text={ translate( 'Transfer mapping' ) }
+			/>
+		);
+	}
+
+	getTransferInMappedDomain() {
 		const { selectedSite, domain, translate } = this.props;
 
 		const { isEligibleForInboundTransfer } = domain;
@@ -599,6 +611,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getEmail() }
 				{ this.getDomainConnectMapping() }
 				{ this.getTransferMappedDomain() }
+				{ this.getTransferInMappedDomain() }
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
