@@ -63,6 +63,7 @@ const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
 		if ( firstIncompleteStep && firstIncompleteStep !== LaunchStep.Name ) {
 			setStep( firstIncompleteStep );
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return <CurrentLaunchStep onPrevStep={ handlePrevStep } onNextStep={ handleNextStep } />;

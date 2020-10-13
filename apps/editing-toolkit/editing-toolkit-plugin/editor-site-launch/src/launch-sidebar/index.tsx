@@ -14,7 +14,7 @@ import { LAUNCH_STORE } from '../stores';
 
 import './styles.scss';
 
-const LaunchSidebar = () => {
+const LaunchSidebar: React.FunctionComponent = () => {
 	const { setStep, unsetSidebarFullscreen } = useDispatch( LAUNCH_STORE );
 
 	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
