@@ -74,7 +74,11 @@ export async function genericRedirectProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
-	).then( saveTransactionResponseToWpcomStore );
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( ( response ) => {
+			return { type: 'REDIRECT', payload: response?.redirect_url };
+		} );
 }
 
 export async function applePayProcessor(
