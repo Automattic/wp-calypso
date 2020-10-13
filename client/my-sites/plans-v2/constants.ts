@@ -336,6 +336,7 @@ export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM
 // External Product slugs to SelectorProduct.
 export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, SelectorProduct > = {
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
+	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
 };
 
 /**
