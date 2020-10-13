@@ -121,11 +121,12 @@ export function durationToText( duration: Duration ): TranslateResult {
 // the name of the option, not the name of one of the variants.
 export function getProductWithOptionDisplayName(
 	item: SelectorProduct,
-	isOwned: boolean
+	isOwned: boolean,
+	isItemPlanFeature: boolean
 ): TranslateResult {
 	const optionSlug = getOptionFromSlug( item.productSlug );
 
-	if ( ! optionSlug || isOwned ) {
+	if ( ! optionSlug || isOwned || isItemPlanFeature ) {
 		return item.displayName;
 	}
 
@@ -171,6 +172,7 @@ export function productButtonLabel(
 export function productButtonLabelAlt(
 	product: SelectorProduct,
 	isOwned: boolean,
+	isItemPlanFeature: boolean,
 	isUpgradeableToYearly: boolean,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
@@ -191,7 +193,7 @@ export function productButtonLabelAlt(
 
 	// If it's a product with options, we want to use the name of the option
 	// to label the button.
-	const displayName = getProductWithOptionDisplayName( product, isOwned );
+	const displayName = getProductWithOptionDisplayName( product, isOwned, isItemPlanFeature );
 	if ( getOptionFromSlug( product.productSlug ) ) {
 		return translate( 'Get {{name/}}', {
 			components: {

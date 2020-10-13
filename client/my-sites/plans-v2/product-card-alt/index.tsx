@@ -102,7 +102,7 @@ const ProductCardAltWrapper = ( {
 
 	// In the case of products that have options (daily and real-time), we want to display
 	// the name of the option, not the name of one of the variants.
-	const productName = getProductWithOptionDisplayName( item, isOwned );
+	const productName = getProductWithOptionDisplayName( item, isOwned, isItemPlanFeature );
 
 	return (
 		<JetpackProductCardAlt
@@ -113,7 +113,13 @@ const ProductCardAltWrapper = ( {
 			description={ description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabelAlt( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={ productButtonLabelAlt(
+				item,
+				isOwned,
+				isItemPlanFeature,
+				isUpgradeableToYearly,
+				sitePlan
+			) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
