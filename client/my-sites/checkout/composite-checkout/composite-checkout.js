@@ -120,6 +120,7 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
+	isInEditor,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -253,6 +254,8 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge,
+		recordEvent,
+		isInEditor,
 	} );
 	const getThankYouUrl = useCallback(
 		( ...getThankYouPageUrlArguments ) => {

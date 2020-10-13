@@ -23,7 +23,12 @@ import './style.scss';
 
 const wpcom = wp.undocumented();
 
-interface CartData {
+type Site = {
+	ID: number;
+	slug: string;
+};
+
+export interface CartData {
 	products: Array< {
 		product_id: number;
 		product_slug: string;
@@ -75,6 +80,7 @@ class EditorCheckoutModal extends Component< Props > {
 				</div>
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 					<CompositeCheckout
+						isInEditor
 						siteId={ site.ID }
 						siteSlug={ site.slug }
 						getCart={ this.getCart.bind( this ) }

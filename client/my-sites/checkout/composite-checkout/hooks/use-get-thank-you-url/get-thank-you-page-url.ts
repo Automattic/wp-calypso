@@ -68,6 +68,7 @@ export default function getThankYouPageUrl( {
 	hideNudge: boolean;
 	didPurchaseFail: boolean;
 	isTransactionResultEmpty: boolean;
+	isInEditor?: boolean
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -117,6 +118,13 @@ export default function getThankYouPageUrl( {
 	debug( 'fallbackUrl is', fallbackUrl );
 
 	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
+
+	// If the user is making a purchase/upgrading within the editor,
+	// we want to return them back to the editor after the purchase is successful.
+	if ( isInEditor && ! hasEcommercePlan( cart ) ) {
+		saveUrlToCookie( window?.location.href );
+	}
+
 	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
 
 	// Fetch the thank-you page url from a cookie if it is set
