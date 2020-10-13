@@ -130,7 +130,9 @@ export const getJetpackProductsCallToAction = () => {
 };
 
 export const getJetpackProductsTaglines = () => {
-	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
+	const backupDailyTagline = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Automated backups with one-click restores' )
+		: translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
 

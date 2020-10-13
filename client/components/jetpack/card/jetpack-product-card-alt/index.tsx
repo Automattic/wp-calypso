@@ -42,7 +42,7 @@ type OwnProps = {
 	billingTimeFrame: TranslateResult;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	badgeLabel: TranslateResult;
+	badgeLabel?: TranslateResult;
 	onButtonClick: () => void;
 	cancelLabel?: TranslateResult;
 	onCancelClick?: () => void;

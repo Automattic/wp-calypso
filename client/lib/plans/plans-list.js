@@ -8,8 +8,8 @@ import i18n, { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import * as constants from './constants';
 import { isEnabled } from 'calypso/config';
+import * as constants from './constants';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
@@ -383,7 +383,10 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 			'Enjoy the peace of mind of complete site protection. ' +
 				'Great for brochure sites, restaurants, blogs, and resume sites.'
 		),
-	getTagline: () => translate( 'Best for sites with occasional updates' ),
+	getTagline: () =>
+		isEnabled( 'plans/alternate-selector' )
+			? translate( 'Backup, Scan, and Anti-spam in one package' )
+			: translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => ( {
 		[ constants.FEATURE_CATEGORY_SECURITY ]: [
