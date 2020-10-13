@@ -12,17 +12,14 @@ import Gridicon from 'calypso/components/gridicon';
 export default class extends React.Component {
 	static displayName = 'Security2faProgressItem';
 
-	highlight = () => {
-		return classNames( {
-			'security-2fa-progress__item': true,
-			'is-highlighted': this.props.step.isHighlighted,
-			'is-completed': this.props.step.isCompleted,
-		} );
-	};
-
 	render() {
 		return (
-			<div className={ this.highlight() }>
+			<div
+				className={ classNames( 'security-2fa-progress__item', {
+					'is-highlighted': this.props.step.isHighlighted,
+					'is-completed': this.props.step.isCompleted,
+				} ) }
+			>
 				<Gridicon icon={ this.props.icon } />
 				<label>{ this.props.label } </label>
 			</div>
