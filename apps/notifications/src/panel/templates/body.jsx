@@ -1,8 +1,8 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -24,36 +24,33 @@ class ReplyBlock extends React.Component {
 	render() {
 		// explicitly send className of '' here so we don't get the default of
 		// "paragraph"
-		var replyText = p( html( this.props.block ), '' );
-
+		const replyText = p( html( this.props.block ), '' );
 		return <div className="wpnc__reply">{ replyText }</div>;
 	}
 }
 
-export const NoteBody = createReactClass( {
-	displayName: 'NoteBody',
+export class NoteBody extends React.Component {
+	constructor() {
+		super();
+		this.displayName = 'NoteBody';
+		this.state = { reply: null };
+	}
 
-	getInitialState: function () {
-		return {
-			reply: null,
-		};
-	},
-
-	componentDidMount: function () {
+	componentDidMount() {
 		bumpStat( 'notes-click-type', this.props.note.type );
-	},
+	}
 
-	replyLoaded: function ( error, data ) {
-		if ( error || ! this.isMounted() ) {
+	replyLoaded( error, data ) {
+		if ( error ) {
 			return;
 		}
 
 		this.setState( { reply: data } );
-	},
+	}
 
-	UNSAFE_componentWillMount: function () {
-		var note = this.props.note,
-			hasReplyBlock;
+	UNSAFE_componentWillMount() {
+		const note = this.props.note;
+		let hasReplyBlock;
 
 		if ( note.meta && note.meta.ids.reply_comment ) {
 			hasReplyBlock =
@@ -61,7 +58,7 @@ export const NoteBody = createReactClass( {
 					return (
 						block.ranges &&
 						block.ranges.length > 1 &&
-						block.ranges[ 1 ].id == note.meta.ids.reply_comment
+						block.ranges[ 1 ].id === note.meta.ids.reply_comment
 					);
 				} ).length > 0;
 
@@ -72,16 +69,16 @@ export const NoteBody = createReactClass( {
 					.get( this.replyLoaded );
 			}
 		}
-	},
+	}
 
-	render: function () {
-		var blocks = zipWithSignature( this.props.note.body, this.props.note );
-		var actions = '';
-		var preface = '';
-		var replyBlock = null;
-		var replyMessage;
-		var firstNonTextIndex;
-		var i;
+	render() {
+		let blocks = zipWithSignature( this.props.note.body, this.props.note );
+		let actions = '';
+		let preface = '';
+		let replyBlock = null;
+		let replyMessage;
+		let firstNonTextIndex;
+		let i;
 
 		for ( i = 0; i < blocks.length; i++ ) {
 			if ( 'text' !== blocks[ i ].signature.type ) {
@@ -95,10 +92,10 @@ export const NoteBody = createReactClass( {
 			blocks = blocks.slice( i );
 		}
 
-		var body = [];
+		const body = [];
 		for ( i = 0; i < blocks.length; i++ ) {
-			var block = blocks[ i ];
-			var blockKey = 'block-' + this.props.note.id + '-' + i;
+			const block = blocks[ i ];
+			const blockKey = 'block-' + this.props.note.id + '-' + i;
 
 			if ( block.block.actions && 'user' !== block.signature.type ) {
 				actions = (
@@ -130,7 +127,12 @@ export const NoteBody = createReactClass( {
 					break;
 				case 'post':
 					body.push(
-						<Post key={ blockKey } block={ block.block } meta={ this.props.note.meta } />
+						<Post
+							key={ blockKey }
+							block={ block.block }
+							meta={ this.props.note.meta }
+							postUrl={ this.props.note.url }
+						/>
 					);
 					break;
 				case 'reply':
@@ -173,7 +175,7 @@ export const NoteBody = createReactClass( {
 				{ actions }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( NoteBody );

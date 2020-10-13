@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -107,6 +108,27 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 				new_container.setAttribute( 'style', range_info.style );
 			}
 			build_chunks( new_sub_text, new_sub_range, range_data, new_container, options );
+			break;
+		case 'figure':
+			if ( range_info.hasOwnProperty( 'class' ) && range_info.class.includes( 'wp-block-table' ) ) {
+				new_container = document.createElement( 'a' );
+				new_container.setAttribute( 'href', options.sourceUrl );
+				new_container.setAttribute( 'target', '_blank' );
+				new_container.setAttribute( 'rel', 'noopener noreferrer' );
+				new_classes.push( 'table-fallback-link' );
+				new_container.innerHTML = i18n.translate( 'Click here to view table.', {
+					comment: 'Fallback text when viewing a table in a subscribed post notification',
+				} );
+			} else {
+				new_container = document.createElement( range_info_type );
+				if ( range_info.hasOwnProperty( 'class' ) ) {
+					new_classes.push( range_info.class );
+				}
+				if ( range_info.hasOwnProperty( 'style' ) ) {
+					new_container.setAttribute( 'style', range_info.style );
+				}
+				build_chunks( new_sub_text, new_sub_range, range_data, new_container, options );
+			}
 			break;
 		case 'gridicon':
 			// Gridicons have special text, and are thus not recursed into
