@@ -32,7 +32,7 @@ export function isBlockEditorSectionInTest( state ) {
  *
  * @param {object} state  Redux state
  * @param {number} siteId Current site ID
- * @returns {bool}        Is the site qualified?
+ * @returns {boolean}        Is the site qualified?
  */
 export function siteQualifiesForPageBuilder( state, siteId ) {
 	const segment = getSiteOption( state, siteId, 'site_segment' );
