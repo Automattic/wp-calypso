@@ -10,37 +10,38 @@ import { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 interface Props {
-	steps: ( string | TranslateResult )[];
 	currentStep: number;
+	onStepClick?: ( newStep: number ) => void;
+	steps: ( string | TranslateResult )[];
 }
 
-const StepProgress: FunctionComponent< Props > = ( { steps, currentStep } ) => {
-	const getElementNumberClass = ( stepNumber: number ) => {
+const StepProgress: FunctionComponent< Props > = ( { currentStep, onStepClick, steps } ) => {
+	const getElementClass = ( stepNumber: number ) => {
 		if ( currentStep === stepNumber ) {
-			return 'step-progress__element-number-current';
+			return 'step-progress__element-current';
 		}
 		return stepNumber < currentStep
-			? 'step-progress__element-number-complete'
-			: 'step-progress__element-number';
-	};
-
-	const getStepNameClass = ( stepNumber: number ) => {
-		if ( currentStep === stepNumber ) {
-			return 'step-progress__element-step-name-current';
-		}
-		return stepNumber < currentStep
-			? 'step-progress__element-step-name-complete'
-			: 'step-progress__element-step-name';
+			? 'step-progress__element-complete'
+			: 'step-progress__element-future';
 	};
 
 	return (
 		<div className="step-progress">
 			{ steps.map( ( stepName, index ) => (
-				<div className="step-progress__element" key={ `step-${ index }` }>
-					<div className="step-progress__element-visual">
-						<div className={ getElementNumberClass( index ) }>{ index + 1 }</div>
-					</div>
-					<div className={ getStepNameClass( index ) }>{ stepName }</div>
+				<div className={ getElementClass( index ) } key={ `step-${ index }` }>
+					<button
+						className="step-progress__element-button"
+						onClick={
+							onStepClick
+								? () => {
+										onStepClick( index );
+								  }
+								: undefined
+						}
+					>
+						<span>{ index + 1 }</span>
+					</button>
+					<span className="step-progress__element-step-name">{ stepName }</span>
 				</div>
 			) ) }
 		</div>

@@ -14,6 +14,10 @@ A list of the display name of the steps to progress through
 
 The zero-based index of the current step
 
+### `onStepClick { ( number ) => void } { optional }`
+
+Optional callback for clicking on the individual step numbers
+
 ## Usage
 
 ```jsx
