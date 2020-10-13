@@ -9,11 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PlanFeatures from 'my-sites/plan-features';
-import { PLAN_P2_PLUS } from 'lib/plans/constants';
-import QueryPlans from 'components/data/query-plans';
-import QuerySites from 'components/data/query-sites';
-import QuerySitePlans from 'components/data/query-site-plans';
+import PlanFeatures from 'calypso/my-sites/plan-features';
+import { PLAN_P2_PLUS } from 'calypso/lib/plans/constants';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySites from 'calypso/components/data/query-sites';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 
 export class P2PlansMain extends Component {
 	render() {
