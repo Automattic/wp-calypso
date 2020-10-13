@@ -386,6 +386,18 @@ Returns a step object whose properties can be added to a [CheckoutStep](Checkout
 
 Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
 
+### makeNoopResponse
+
+An action creator function to be used by a [payment processor function](#payment-methods) for a NOOP response; it will do nothing.
+
+### makeRedirectResponse
+
+An action creator function to be used by a [payment processor function](#payment-methods) for a REDIRECT response. It takes one string argument and will cause the page to redirect to the URL in that string.
+
+### makeSuccessResponse
+
+An action creator function to be used by a [payment processor function](#payment-methods) for a SUCCESS response. It takes one object argument which is the transaction response. It will cause checkout to mark the payment as complete and run the `onPaymentComplete` function on the [CheckoutProvider](#CheckoutProvider).
+
 ### registerStore
 
 The `registerStore` function on the [#defaultRegistry](default registry). Don't use this if you create a custom registry.
