@@ -17,16 +17,18 @@ const JetpackFAQ = ( { translate } ) => {
 	// add two query parameters that let's show the support form to Jetpack Free users:
 	// 1. rel=support is what shows the contact form
 	// 2. hpi=1 stands for has purchase intent
-	const helpLink = (
-		<a
-			href="https://jetpack.com/contact-support/?rel=support&hpi=1"
-			target="_blank"
-			rel="noopener noreferrer"
-			onClick={ () => {
-				recordTracksEvent( 'calypso_jetpack_faq_cancellationsupport_click' );
-			} }
-		/>
-	);
+	const getHelpLink = ( context ) => {
+		return (
+			<a
+				href="https://jetpack.com/contact-support/?rel=support&hpi=1"
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ () => {
+					recordTracksEvent( 'calypso_jetpack_faq_support_click', { context } );
+				} }
+			/>
+		);
+	};
 
 	return (
 		<FAQ>
@@ -37,7 +39,7 @@ const JetpackFAQ = ( { translate } ) => {
 						' within 30 days of purchase and receive a full refund. If there’s something you’d like' +
 						' to see changed in Jetpack to better suit your needs, {{helpLink}}please let us know{{/helpLink}}!',
 					{
-						components: { helpLink },
+						components: { helpLink: getHelpLink( 'cancellation' ) },
 					}
 				) }
 			/>
@@ -72,7 +74,7 @@ const JetpackFAQ = ( { translate } ) => {
 				answer={ translate(
 					'No problem! Feel free to {{helpLink}}get in touch{{/helpLink}} with our Happiness Engineers.',
 					{
-						components: { helpLink },
+						components: { helpLink: getHelpLink( 'more_questions' ) },
 					}
 				) }
 			/>
