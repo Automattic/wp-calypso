@@ -298,7 +298,7 @@ $jetpack-product-card-alt-icon-size: 55px;
 	&.material-icon-security,
 	&.gridicons-bug {
 		background: var( --studio-blue );
-		fill: white;
+		fill: var( --studio-white );
 		border-radius: 50%;
 		padding: 5px;
 		width: 15px;
