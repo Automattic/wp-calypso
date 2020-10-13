@@ -103,7 +103,12 @@ class CurrentPlan extends Component {
 	isLoading() {
 		const { selectedSite, isRequestingSitePlans: isRequestingPlans, scheduleId } = this.props;
 
-		return ! selectedSite || isRequestingPlans || null === scheduleId;
+		return (
+			! selectedSite ||
+			isRequestingPlans ||
+			null === scheduleId ||
+			! selectedSite?.plan.product_slug
+		);
 	}
 
 	renderThankYou() {
