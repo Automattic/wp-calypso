@@ -74,7 +74,13 @@ import {
 import { useFormStatus } from './lib/form-status';
 import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 import { useTransactionStatus } from './lib/transaction-status';
-import { usePaymentProcessor, usePaymentProcessors } from './lib/payment-processors';
+import {
+	usePaymentProcessor,
+	usePaymentProcessors,
+	makeNoopResponse,
+	makeSuccessResponse,
+	makeRedirectResponse,
+} from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
 import { FormStatus, TransactionStatus } from './types';
 
@@ -132,6 +138,9 @@ export {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
+	makeNoopResponse,
+	makeRedirectResponse,
+	makeSuccessResponse,
 	registerStore,
 	useAllPaymentMethods,
 	useDispatch,
