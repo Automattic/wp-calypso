@@ -10,9 +10,9 @@ import React, { createElement, useRef, FunctionComponent, ReactNode } from 'reac
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
-import { useLocalizedMoment } from 'components/localized-moment';
-import { preventWidows } from 'lib/formatting';
-import PlanPrice from 'my-sites/plan-price';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { preventWidows } from 'calypso/lib/formatting';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
 

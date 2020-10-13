@@ -9,13 +9,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import { Card } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { validateSettingsToEmail } from './validations';
 
 class ContactFormDialogFormSettings extends React.Component {

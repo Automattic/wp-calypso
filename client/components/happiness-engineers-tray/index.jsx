@@ -8,12 +8,12 @@ import { shuffle } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
+import Gravatar from 'calypso/components/gravatar';
+import QueryHappinessEngineers from 'calypso/components/data/query-happiness-engineers';
 import {
 	getHappinessEngineers,
 	hasReceivedHappinessEngineers,
-} from 'state/happiness-engineers/selectors';
+} from 'calypso/state/happiness-engineers/selectors';
 
 /**
  * Style dependencies

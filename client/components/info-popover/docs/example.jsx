@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import InfoPopover from 'components/info-popover';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import InfoPopover from 'calypso/components/info-popover';
 
 class InfoPopoverExample extends React.PureComponent {
 	static displayName = 'InfoPopover';

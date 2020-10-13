@@ -13,7 +13,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { removep, wpautop } from 'lib/formatting';
+import { removep, wpautop } from 'calypso/lib/formatting';
 import { removeEmptySpacesInParagraphs } from './wpcom-utils';
 
 /* eslint-disable */

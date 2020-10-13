@@ -4,7 +4,7 @@
 
 import tinymce from 'tinymce/tinymce';
 import twemoji from 'twemoji';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * TinyMCE plugin tweaking Markdown behaviour.

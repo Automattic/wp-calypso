@@ -11,14 +11,14 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { HappinessSupport } from '..';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
+import HappychatButton from 'calypso/components/happychat/button';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import {
 	CALYPSO_CONTACT,
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SUPPORT,
 	SUPPORT_ROOT,
-} from 'lib/url/support';
+} from 'calypso/lib/url/support';
 
 describe( 'HappinessSupport', () => {
 	let wrapper;

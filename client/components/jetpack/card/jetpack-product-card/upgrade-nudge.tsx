@@ -11,19 +11,19 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import { preventWidows } from 'lib/formatting';
-import PlanPrice from 'my-sites/plan-price';
-import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'my-sites/plans-v2/constants';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import { preventWidows } from 'calypso/lib/formatting';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'calypso/my-sites/plans-v2/constants';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { DEFAULT_UPGRADE_NUDGE_FEATURES } from './fixtures';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
 
 /**
  * Type dependencies
  */
-import type { SelectorProduct } from 'my-sites/plans-v2/types';
+import type { SelectorProduct } from 'calypso/my-sites/plans-v2/types';
 import type { ProductCardFeaturesItem } from './types';
 
 type OwnProps = {

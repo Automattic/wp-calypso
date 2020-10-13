@@ -14,22 +14,22 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSite, hasAllSitesList } from 'state/sites/selectors';
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import getSites from 'state/selectors/get-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
-import hasLoadedSites from 'state/selectors/has-loaded-sites';
-import AllSites from 'blocks/all-sites';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import Search from 'components/search';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import getSites from 'calypso/state/selectors/get-sites';
+import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import AllSites from 'calypso/blocks/all-sites';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import Search from 'calypso/components/search';
 import SiteSelectorAddSite from './add-site';
-import searchSites from 'components/search-sites';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
-import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'lib/url';
+import searchSites from 'calypso/components/search-sites';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'calypso/lib/url';
 
 /**
  * Style dependencies

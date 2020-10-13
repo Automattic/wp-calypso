@@ -10,9 +10,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { savePreference, fetchPreferences } from 'state/preferences/actions';
-import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
-import Gridicon from 'components/gridicon';
+import { savePreference, fetchPreferences } from 'calypso/state/preferences/actions';
+import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import Gridicon from 'calypso/components/gridicon';
 
 function advanced( editor ) {
 	const store = editor.getParam( 'redux_store' );

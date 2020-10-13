@@ -4,13 +4,13 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import config from 'calypso/config';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 /**
  * Style dependencies

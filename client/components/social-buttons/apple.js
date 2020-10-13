@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import classNames from 'classnames';
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
@@ -13,14 +13,14 @@ import { loadScript } from '@automattic/load-script';
 /**
  * Internal dependencies
  */
-import { isFormDisabled } from 'state/login/selectors';
+import { isFormDisabled } from 'calypso/state/login/selectors';
 import requestExternalAccess from '@automattic/request-external-access';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import AppleIcon from 'components/social-icons/apple';
+import AppleIcon from 'calypso/components/social-icons/apple';
 
 const appleClientUrl =
 	'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';

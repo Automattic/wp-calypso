@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
+import FormLabel from 'calypso/components/forms/form-label';
 
 // Prevents the event from bubbling up the DOM tree
 const stopPropagation = ( event ) => event.stopPropagation();

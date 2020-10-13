@@ -6,16 +6,16 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { CompactCard as Card } from '@automattic/components';
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {
 	areAllUsersValid,
 	GSuiteNewUser,
 	GSuiteNewUserField,
 	newUsers,
-} from 'lib/gsuite/new-users';
+} from 'calypso/lib/gsuite/new-users';
 
 const domainOne = { name: 'example.blog' };
 const domainTwo = { name: 'test.blog' };

@@ -11,16 +11,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import { submitSurvey } from 'lib/purchases/actions';
-import { isDomainRegistration, isPlan } from 'lib/products-values';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { isDomainRegistration, isPlan } from 'calypso/lib/products-values';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 
 /**
  * Style dependencies

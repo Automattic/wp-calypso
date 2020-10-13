@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 export default function FormTelInput( { className, isError, isValid, ...props } ) {
 	const classes = classNames( 'form-tel-input', className, {

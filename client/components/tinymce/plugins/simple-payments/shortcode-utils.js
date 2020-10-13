@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { parse, stringify } from 'lib/shortcode';
+import { parse, stringify } from 'calypso/lib/shortcode';
 
 /**
  * Serializes shortcode data (object with id property) to a Simple Payments shortcode.

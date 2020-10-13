@@ -7,13 +7,13 @@ import { TranslateResult } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActionPanel from 'components/action-panel';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import ActionPanelBody from 'calypso/components/action-panel/body';
 import PromoCardCta from './cta';
 import classNames from 'classnames';
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
 
 /**
  * Style dependencies

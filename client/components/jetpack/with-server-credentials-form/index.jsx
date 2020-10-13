@@ -10,11 +10,11 @@ import { find, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
-import { getSiteSlug } from 'state/sites/selectors';
-import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'state/selectors/get-rewind-state';
-import QueryRewindState from 'components/data/query-rewind-state';
+import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 
 const INITIAL_FORM_STATE = {
 	protocol: 'ssh',

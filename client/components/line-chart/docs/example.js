@@ -9,10 +9,10 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import LineChart from 'components/line-chart';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import LineChart from 'calypso/components/line-chart';
 
 const NUM_DATA_SERIES = 3;
 

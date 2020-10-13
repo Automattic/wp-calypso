@@ -8,11 +8,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import Gridicon from 'components/gridicon';
-import Spinner from 'components/spinner';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import Gridicon from 'calypso/components/gridicon';
+import Spinner from 'calypso/components/spinner';
 import { Suggestions } from '@automattic/components';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies

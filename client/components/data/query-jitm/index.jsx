@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchJITM } from 'state/jitm/actions';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { fetchJITM } from 'calypso/state/jitm/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 function QueryJITM( { siteId, sectionName, messagePath, doFetchJITM, locale } ) {
 	useEffect( () => {

@@ -13,11 +13,11 @@ import ReactDom from 'react-dom';
 /**
  * Internal dependencies
  */
-import detectHistoryNavigation from 'lib/detect-history-navigation';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import ScrollStore from './scroll-store';
 import ScrollHelper from './scroll-helper';
-import scrollTo from 'lib/scroll-to';
-import smartSetState from 'lib/react-smart-set-state';
+import scrollTo from 'calypso/lib/scroll-to';
+import smartSetState from 'calypso/lib/react-smart-set-state';
 
 /**
  * Style dependencies

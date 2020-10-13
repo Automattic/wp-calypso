@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 
 /**
  * Style dependencies

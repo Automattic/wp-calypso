@@ -33,10 +33,10 @@ jest.mock( 'state/selectors/get-site-timezone-value' );
 jest.mock( 'state/selectors/get-site-gmt-offset' );
 
 jest.mock( 'state/selectors/get-rewind-capabilities' );
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 
 jest.mock( 'lib/jetpack/backup-utils' );
-import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
+import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 
 describe( 'DailyBackupStatus', () => {
 	const getStatus = ( element ) => shallow( element ).find( 'DailyBackupStatus' ).dive();

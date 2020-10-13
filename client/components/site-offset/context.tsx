@@ -10,11 +10,11 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getSiteId from 'state/selectors/get-site-id';
-import { applySiteOffset } from 'lib/site/timezone';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import QuerySiteSettings from 'components/data/query-site-settings'; // Required to get site time offset
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // Required to get site time offset
 
 export type contextTypeLoaded = ( input: MomentInput ) => Moment;
 export type contextType = contextTypeLoaded | null;

@@ -13,10 +13,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
-import getEmbed from 'state/selectors/get-embed';
-import QueryEmbed from 'components/data/query-embed';
-import ResizableIframe from 'components/resizable-iframe';
+import generateEmbedFrameMarkup from 'calypso/lib/embed-frame-markup';
+import getEmbed from 'calypso/state/selectors/get-embed';
+import QueryEmbed from 'calypso/components/data/query-embed';
+import ResizableIframe from 'calypso/components/resizable-iframe';
 
 class EmbedView extends Component {
 	state = {

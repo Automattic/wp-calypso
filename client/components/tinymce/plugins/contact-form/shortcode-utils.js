@@ -6,7 +6,7 @@ import { pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { next, parse, stringify } from 'lib/shortcode';
+import { next, parse, stringify } from 'calypso/lib/shortcode';
 
 export function serialize( { to, subject, fields = [] } = {} ) {
 	const content = fields

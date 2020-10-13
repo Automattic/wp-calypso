@@ -7,13 +7,13 @@ import { localize } from 'i18n-calypso';
 import { assign, findIndex, fromPairs, noop } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { ScreenReaderText } from '@automattic/components';
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from 'calypso/lib/touch-detect';
 
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 

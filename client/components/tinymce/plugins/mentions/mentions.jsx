@@ -11,11 +11,11 @@ import tinymce from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import SuggestionList from 'blocks/user-mentions/suggestion-list';
+import SuggestionList from 'calypso/blocks/user-mentions/suggestion-list';
 import EditorMention from './editor-mention';
-import QueryUsersSuggestions from 'components/data/query-users-suggestions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getUserSuggestions } from 'state/users/suggestions/selectors';
+import QueryUsersSuggestions from 'calypso/components/data/query-users-suggestions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getUserSuggestions } from 'calypso/state/users/suggestions/selectors';
 
 /**
  * Module variables

@@ -7,7 +7,7 @@ import React, { FunctionComponent, useState } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import StepProgress from 'components/step-progress';
+import StepProgress from 'calypso/components/step-progress';
 
 const steps = [ 'You got this!?', 'Host locator', 'Credentials', 'Verification' ];
 

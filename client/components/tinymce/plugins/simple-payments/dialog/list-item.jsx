@@ -12,12 +12,12 @@ import { getCurrencyObject } from '@automattic/format-currency';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import EllipsisMenu from 'components/ellipsis-menu';
-import FormRadio from 'components/forms/form-radio';
-import log from 'lib/catch-js-errors/log';
-import PopoverMenuItem from 'components/popover/menu-item';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import FormRadio from 'calypso/components/forms/form-radio';
+import log from 'calypso/lib/catch-js-errors/log';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import ProductImage from './product-image';
-import { DEFAULT_CURRENCY } from 'lib/simple-payments/constants';
+import { DEFAULT_CURRENCY } from 'calypso/lib/simple-payments/constants';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

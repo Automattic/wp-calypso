@@ -6,13 +6,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Image dependencies
  */
-import mediaImage from 'assets/images/illustrations/media.svg';
+import mediaImage from 'calypso/assets/images/illustrations/media.svg';
 
 // const renderMetaDiff = ( metaDiff ) => {
 // 	const metas = [];

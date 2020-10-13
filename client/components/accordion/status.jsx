@@ -5,12 +5,12 @@
 import React, { Fragment, PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import Tooltip from 'calypso/components/tooltip';
 
 /**
  * Mapping of Notice status to Gridicon icon

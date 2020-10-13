@@ -8,8 +8,8 @@ import { noop } from 'lodash-es';
 /**
  * Internal dependencies
  */
-import Timeline from 'components/timeline';
-import TimelineEvent from 'components/timeline/timeline-event.jsx';
+import Timeline from 'calypso/components/timeline';
+import TimelineEvent from 'calypso/components/timeline/timeline-event.jsx';
 
 class TimelineExample extends PureComponent {
 	static displayName = 'TimelineExample';

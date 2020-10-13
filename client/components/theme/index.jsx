@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { get, isEmpty, isEqual, noop, some } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import photon from 'photon';
 
@@ -16,11 +16,11 @@ import photon from 'photon';
  */
 import { Card, Ribbon, Button } from '@automattic/components';
 import ThemeMoreButton from './more-button';
-import PulsingDot from 'components/pulsing-dot';
-import InfoPopover from 'components/info-popover';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setThemesBookmark } from 'state/themes/themes-ui/actions';
+import PulsingDot from 'calypso/components/pulsing-dot';
+import InfoPopover from 'calypso/components/info-popover';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 
 /**
  * Style dependencies

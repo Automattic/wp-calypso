@@ -9,9 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
 
 class ContactFormDialogNavigation extends React.Component {
 	static displayName = 'ContactFormDialogNavigation';

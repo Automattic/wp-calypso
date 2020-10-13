@@ -7,9 +7,9 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import InfoPopover from 'components/info-popover';
-import { preventWidows } from 'lib/formatting';
+import Gridicon from 'calypso/components/gridicon';
+import InfoPopover from 'calypso/components/info-popover';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Type dependencies
