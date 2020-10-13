@@ -148,7 +148,7 @@ class RequestLoginEmailForm extends React.Component {
 								'with your account to log in instantly without your password.'
 						) }
 					</p>
-					<FormLabel htmlFor="usernameOrEmail" className="magic-login__form-label">
+					<FormLabel htmlFor="usernameOrEmail">
 						{ this.props.translate( 'Email Address' ) }
 					</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
