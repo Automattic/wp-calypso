@@ -101,7 +101,7 @@ const ProductCardAltWrapper = ( {
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
-	// In the case of products that have ptions (daily versus real-time), we want to display
+	// In the case of products that have options (daily and real-time), we want to display
 	// the name of the option, not the name of one of the variants.
 	const productName = useMemo( () => {
 		const optionSlug = getOptionFromSlug( item.productSlug );
