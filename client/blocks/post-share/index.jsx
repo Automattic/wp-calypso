@@ -21,6 +21,7 @@ import { Button } from '@automattic/components';
 import ButtonGroup from 'components/button-group';
 import NoticeAction from 'components/notice/notice-action';
 import { withLocalizedMoment } from 'components/localized-moment';
+import { CALYPSO_CONTACT, JETPACK_CONTACT_SUPPORT } from 'lib/url/support';
 import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
 import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
 import getScheduledPublicizeShareActionTime from 'state/selectors/get-scheduled-publicize-share-action-time';
@@ -105,6 +106,12 @@ class PostShare extends Component {
 		showTooltip: false,
 		tooltipContext: null,
 		eventsByDay: [],
+	};
+
+	trackContactSupport = reason => {
+		analytics.tracks.recordEvent( 'calypso_publicize_share_contact_support', {
+			reason,
+		} );
 	};
 
 	hasConnections() {
@@ -412,7 +419,17 @@ class PostShare extends Component {
 	}
 
 	renderRequestSharingNotice() {
-		const { failure, requesting, success, translate, moment } = this.props;
+		const {
+			failure,
+			isJetpack,
+			requesting,
+			schedulingFailed,
+			success,
+			translate,
+			moment,
+		} = this.props;
+
+		const supportUrl = isJetpack ? JETPACK_CONTACT_SUPPORT : CALYPSO_CONTACT;
 
 		if ( this.props.scheduling ) {
 			return (
@@ -431,10 +448,20 @@ class PostShare extends Component {
 			);
 		}
 
-		if ( this.props.schedulingFailed ) {
+		if ( schedulingFailed ) {
 			return (
-				<Notice status="is-error" onDismissClick={ this.dismiss }>
-					{ translate( "Scheduling share failed. Please don't be mad." ) }
+				<Notice
+					status="is-error"
+					onDismissClick={ this.dismiss }
+					text={ translate( 'Scheduling share failed.' ) }
+				>
+					<NoticeAction
+						href={ supportUrl }
+						onClick={ this.trackContactSupport( 'schedulingFailed' ) }
+						external={ isJetpack }
+					>
+						{ translate( 'Please contact our support team for help.' ) }
+					</NoticeAction>
 				</Notice>
 			);
 		}
@@ -457,8 +484,18 @@ class PostShare extends Component {
 
 		if ( failure ) {
 			return (
-				<Notice status="is-error" onDismissClick={ this.dismiss }>
-					{ translate( "Something went wrong. Please don't be mad." ) }
+				<Notice
+					status="is-error"
+					onDismissClick={ this.dismiss }
+					text={ translate( 'Something went wrong.' ) }
+				>
+					<NoticeAction
+						href={ supportUrl }
+						onClick={ this.trackContactSupport( 'failure' ) }
+						external={ isJetpack }
+					>
+						{ translate( 'Please contact our support team for help.' ) }
+					</NoticeAction>
 				</Notice>
 			);
 		}
