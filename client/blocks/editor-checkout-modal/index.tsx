@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import classnames from 'classnames';
+import { Button } from '@wordpress/components';
+import { Icon, close, wordpress } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -60,9 +62,14 @@ class EditorCheckoutModal extends Component< Props > {
 
 		return hasEmptyCart ? null : (
 			<div className={ classnames( 'editor-checkout-modal', isOpen ? 'is-open' : '' ) }>
-				<button type="button" className="editor-checkout-modal__close-button" onClick={ onClose }>
-					[X] Close Sidebar
-				</button>
+				<div className="editor-checkout-modal__header">
+					<div className="editor-checkout-modal__wp-logo">
+						<Icon icon={ wordpress } size={ 36 } />
+					</div>
+					<Button isLink className="editor-checkout-modal__close-button" onClick={ onClose }>
+						<Icon icon={ close } size={ 24 } />
+					</Button>
+				</div>
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 					<CompositeCheckout
 						siteId={ site.ID }

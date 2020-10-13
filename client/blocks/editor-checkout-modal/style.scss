@@ -1,13 +1,15 @@
+
+@import '~@automattic/typography/styles/variables';
+
 .editor-checkout-modal {
 	position: fixed;
 	top: 0;
+	left: 0;
 	right: -100%;
-	z-index: 999999;
-	width: 50%;
+	z-index: 9998;
 	height: 100%;
 	overflow: auto;
-	padding: 30px;
-	border-left: 1px solid black;
+	padding: 60px 30px 30px;
 	background: white;
 	transition: all 0.5s ease-in-out;
 
@@ -16,9 +18,35 @@
 	}
 }
 
-.editor-checkout-modal__close-button {
-	padding: 15px;
-	border: 1px solid #ccc;
-	margin-bottom: 10px;
-	cursor: pointer;
+.editor-checkout-modal__header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 9998;
+	width: 100%;
+	height: 0;
+	overflow: visible;
+}
+
+.editor-checkout-modal__wp-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 60px;
+}
+
+.editor-checkout-modal__close-button.components-button.is-link {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 9999;
+	width: 60px;
+	height: 60px;
+	justify-content: center;
+	color: var( --studio-gray-50 );
+
+	&:hover {
+		color: var( --studio-gray-40 );
+	}
 }
