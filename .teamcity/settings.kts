@@ -341,7 +341,10 @@ object RunAllUnitTests : BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = "+:*"
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
 		}
 	}
 
@@ -463,7 +466,10 @@ object CheckCodeStyle : BuildType({
 
 	triggers {
 		vcs {
-			branchFilter = "+:*"
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
 		}
 	}
 
