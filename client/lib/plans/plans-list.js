@@ -385,7 +385,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 		),
 	getTagline: () =>
 		isEnabled( 'plans/alternate-selector' )
-			? translate( 'Backup, Scan, and Anti-spam in one bundle' )
+			? translate( 'Backup, Scan, and Anti-spam in one package' )
 			: translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => ( {
