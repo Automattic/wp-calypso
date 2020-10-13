@@ -441,36 +441,40 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				) }
 			</FormFieldset>
 
-			<div className="credentials-form__mode-control">
-				<div className="credentials-form__support-info">
-					<SegmentedControl disabled={ disabled }>
-						<SegmentedControl.Item
-							selected={ formMode === FormMode.Password }
-							onClick={ () => onModeChange( FormMode.Password ) }
-						>
-							{ translate( 'Use password' ) }
-						</SegmentedControl.Item>
-						<SegmentedControl.Item
-							selected={ formMode === FormMode.PrivateKey }
-							onClick={ () => onModeChange( FormMode.PrivateKey ) }
-						>
-							{ translate( 'Use private key' ) }
-						</SegmentedControl.Item>
-					</SegmentedControl>
-					{ hostInfo?.inline?.mode && (
-						<InfoPopover>
-							<InlineInfo
-								field="mode"
-								host={ host }
-								info={ hostInfo.inline.mode }
-								protocol={ formState.protocol }
-							/>
-						</InfoPopover>
-					) }
+			{ 'ftp' !== formState.protocol && (
+				<div className="credentials-form__mode-control">
+					<div className="credentials-form__support-info">
+						<SegmentedControl disabled={ disabled }>
+							<SegmentedControl.Item
+								selected={ formMode === FormMode.Password }
+								onClick={ () => onModeChange( FormMode.Password ) }
+							>
+								{ translate( 'Use password' ) }
+							</SegmentedControl.Item>
+							<SegmentedControl.Item
+								selected={ formMode === FormMode.PrivateKey }
+								onClick={ () => onModeChange( FormMode.PrivateKey ) }
+							>
+								{ translate( 'Use private key' ) }
+							</SegmentedControl.Item>
+						</SegmentedControl>
+						{ hostInfo?.inline?.mode && (
+							<InfoPopover>
+								<InlineInfo
+									field="mode"
+									host={ host }
+									info={ hostInfo.inline.mode }
+									protocol={ formState.protocol }
+								/>
+							</InfoPopover>
+						) }
+					</div>
 				</div>
-			</div>
+			) }
 
-			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
+			{ formMode === FormMode.Password || 'ftp' === formState.protocol
+				? renderPasswordForm()
+				: renderPrivateKeyForm() }
 
 			<FormFieldset className="credentials-form__buttons">{ children }</FormFieldset>
 		</div>
