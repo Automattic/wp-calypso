@@ -74,6 +74,8 @@ const ProductCardAltWrapper = ( {
 		item?.monthlyProductSlug || ''
 	);
 
+	const isFree = originalPrice === -1 && discountedPrice === -1;
+
 	// Handles expiry.
 	const moment = useLocalizedMoment();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
@@ -120,13 +122,13 @@ const ProductCardAltWrapper = ( {
 				// Search has several pricing tiers
 				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.productSlug )
 			}
+			isFree={ isFree }
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={ false }
 			productSlug={ item.productSlug }
 		/>
 	);

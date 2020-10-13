@@ -14,6 +14,7 @@ import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import PlanPriceFree from 'calypso/my-sites/plan-price-free';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 
 /**
@@ -50,7 +51,7 @@ type OwnProps = {
 	isOwned?: boolean;
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
-	hidePrice?: boolean;
+	isFree?: boolean;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -81,7 +82,7 @@ const JetpackProductCardAlt = ( {
 	expiryDate,
 	features,
 	isExpanded,
-	hidePrice,
+	isFree,
 	productSlug,
 }: Props ) => {
 	const translate = useTranslate();
@@ -143,43 +144,46 @@ const JetpackProductCardAlt = ( {
 					<p className="jetpack-product-card-alt__subheadline">{ preventWidows( subheadline ) }</p>
 				) }
 
-				{ ! hidePrice && (
+				{ isFree ? (
+					<PlanPriceFree productSlug={ productSlug } />
+				) : (
 					<div className="jetpack-product-card-alt__price">
 						{ currencyCode && originalPrice ? (
-							<span className="jetpack-product-card-alt__raw-price">
-								{ withStartingPrice && (
-									<span className="jetpack-product-card-alt__from">{ translate( 'from' ) }</span>
-								) }
+							<>
+								<span className="jetpack-product-card-alt__raw-price">
+									{ withStartingPrice && (
+										<span className="jetpack-product-card-alt__from">{ translate( 'from' ) }</span>
+									) }
 
-								{ isDiscounted ? (
-									<PlanPrice
-										rawPrice={ discountedPrice }
-										discounted
-										currencyCode={ currencyCode }
-									/>
-								) : (
-									<PlanPrice
-										rawPrice={ originalPrice }
-										original={ isDiscounted }
-										currencyCode={ currencyCode }
-									/>
-								) }
-								{ searchRecordsDetails && (
-									<InfoPopover
-										className="jetpack-product-card-alt__search-price-popover"
-										position="right"
-									>
-										{ searchRecordsDetails }
-									</InfoPopover>
-								) }
-							</span>
+									{ isDiscounted ? (
+										<PlanPrice
+											rawPrice={ discountedPrice }
+											discounted
+											currencyCode={ currencyCode }
+										/>
+									) : (
+										<PlanPrice
+											rawPrice={ originalPrice }
+											original={ isDiscounted }
+											currencyCode={ currencyCode }
+										/>
+									) }
+									{ searchRecordsDetails && (
+										<InfoPopover
+											className="jetpack-product-card-alt__search-price-popover"
+											position="right"
+										>
+											{ searchRecordsDetails }
+										</InfoPopover>
+									) }
+								</span>
+								{ renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame ) }
+							</>
 						) : (
-							<div className="jetpack-product-card-alt__price-placeholder" />
-						) }
-						{ currencyCode && originalPrice ? (
-							renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame )
-						) : (
-							<div className="jetpack-product-card-alt__time-frame-placeholder" />
+							<>
+								<div className="jetpack-product-card-alt__price-placeholder" />
+								<div className="jetpack-product-card-alt__time-frame-placeholder" />
+							</>
 						) }
 					</div>
 				) }
