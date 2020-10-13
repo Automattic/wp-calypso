@@ -102,10 +102,14 @@ export interface PaymentProcessorProp {
 
 export type PaymentProcessorResponseData = unknown;
 
+export type PaymentProcessorSuccess = { type: 'SUCCESS'; payload: PaymentProcessorResponseData };
+export type PaymentProcessorRedirect = { type: 'REDIRECT'; payload: string };
+export type PaymentProcessorNoop = { type: 'NOOP' };
+
 export type PaymentProcessorResponse =
-	| { type: 'SUCCESS'; payload: PaymentProcessorResponseData }
-	| { type: 'NOOP' }
-	| { type: 'REDIRECT'; payload: string };
+	| PaymentProcessorSuccess
+	| PaymentProcessorRedirect
+	| PaymentProcessorNoop;
 
 export type PaymentProcessorFunction = (
 	submitData: unknown
