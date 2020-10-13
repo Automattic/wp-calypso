@@ -154,7 +154,7 @@ class RequestLoginEmailForm extends React.Component {
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
-							autoFocus="true"
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							disabled={ isFetching || emailRequested }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
