@@ -24,9 +24,6 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		this.paymentButtonSelector = By.css(
 			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button'
 		);
-		this.activePaymentButtonSelector = By.css(
-			'.credit-card-payment-box button.is-primary:not([disabled]),.composite-checkout .checkout-submit-button button:not([disabled])'
-		);
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
 		this.businessPlanSlug = getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_business';
@@ -467,10 +464,12 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		return await this.driver.findElement( this.getCartTotalSelector() ).getText();
 	}
 
-	async activePaymentButtonText() {
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.activePaymentButtonSelector );
-		await driverHelper.scrollIntoView( this.driver, this.activePaymentButtonSelector );
-		return await this.driver.findElement( this.activePaymentButtonSelector ).getText();
+	async paymentButtonText() {
+		const loadingPaymentButton = By.xpath( "//*[contains(text(), 'Please wait…')]" );
+		await driverHelper.waitTillNotPresent( this.driver, loadingPaymentButton );
+		await driverHelper.waitTillPresentAndDisplayed( this.driver, this.paymentButtonSelector );
+		await driverHelper.scrollIntoView( this.driver, this.paymentButtonSelector );
+		return await this.driver.findElement( this.paymentButtonSelector ).getText();
 	}
 
 	async _cartContainsProduct( productSlug, expectedQuantity = 1 ) {
