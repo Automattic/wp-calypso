@@ -726,7 +726,7 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( cleanedQuery );
 		const isInitialQueryActive = searchQuery === this.props.suggestion;
 
-		if ( isEmpty( cleanedQuery ) && ! this.props.isSignupStep ) {
+		if ( isEmpty( cleanedQuery ) ) {
 			return;
 		}
 
