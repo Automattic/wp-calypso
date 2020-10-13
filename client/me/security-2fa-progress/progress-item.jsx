@@ -7,6 +7,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import FormLabel from 'calypso/components/forms/form-label';
 import Gridicon from 'calypso/components/gridicon';
 
 const Security2faProgressItem = ( { icon, label, step } ) => (
@@ -17,7 +18,7 @@ const Security2faProgressItem = ( { icon, label, step } ) => (
 		} ) }
 	>
 		<Gridicon icon={ icon } />
-		<label>{ label } </label>
+		<FormLabel>{ label } </FormLabel>
 	</div>
 );
 
