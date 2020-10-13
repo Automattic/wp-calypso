@@ -7,10 +7,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isPaidForFullyInCredits } from 'lib/cart-values';
-import { hasOnlyFreeTrial, hasRenewalItem, hasFreeTrial } from 'lib/cart-values/cart-items';
+import { isPaidForFullyInCredits } from 'calypso/lib/cart-values';
+import { hasOnlyFreeTrial, hasRenewalItem, hasFreeTrial } from 'calypso/lib/cart-values/cart-items';
 import { Button } from '@automattic/components';
-import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
+import SubscriptionText from 'calypso/my-sites/checkout/checkout/subscription-text';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -21,7 +21,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 	REDIRECTING_FOR_AUTHORIZATION,
 	MODAL_AUTHORIZATION,
-} from 'lib/store-transactions/step-types';
+} from 'calypso/lib/store-transactions/step-types';
 
 export class PayButton extends React.Component {
 	buttonState = () => {
@@ -92,28 +92,28 @@ export class PayButton extends React.Component {
 			} );
 		}
 
-		if ( cart.total_cost_display ) {
-			if ( isPaidForFullyInCredits( cart ) ) {
-				if ( hasRenewalItem( this.props.cart ) ) {
-					return this.props.translate( 'Purchase %(price)s subscription with Credits', {
-						args: { price: cart.total_cost_display },
-						context: 'Renew button on /checkout',
-					} );
-				}
-
-				return this.props.translate( 'Pay %(price)s with Credits', {
-					args: { price: cart.total_cost_display },
-					context: 'Pay button on /checkout',
-				} );
-			}
-
+		if ( cart.total_cost_display && isPaidForFullyInCredits( cart ) ) {
 			if ( hasRenewalItem( this.props.cart ) ) {
-				return this.props.translate( 'Renew subscription - %(price)s', {
+				return this.props.translate( 'Purchase %(price)s subscription with Credits', {
 					args: { price: cart.total_cost_display },
 					context: 'Renew button on /checkout',
 				} );
 			}
 
+			return this.props.translate( 'Pay %(price)s with Credits', {
+				args: { price: cart.total_cost_display },
+				context: 'Pay button on /checkout',
+			} );
+		}
+
+		if ( cart.total_cost_display && hasRenewalItem( this.props.cart ) ) {
+			return this.props.translate( 'Renew subscription - %(price)s', {
+				args: { price: cart.total_cost_display },
+				context: 'Renew button on /checkout',
+			} );
+		}
+
+		if ( cart.total_cost_display ) {
 			return this.props.translate( 'Pay %(price)s', {
 				args: { price: cart.total_cost_display },
 				context: 'Pay button on /checkout',
