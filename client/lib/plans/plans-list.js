@@ -9,7 +9,7 @@ import i18n, { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import * as constants from './constants';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
@@ -493,7 +493,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		].includes( plan ),
 	getDescription: () =>
 		translate(
-			'Superpower your site with everything Jetpack has to offer: real-time security, enhanced search, CRM, and marketing, growth, and design tools.'
+			'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCompareFeatures: () => [],
