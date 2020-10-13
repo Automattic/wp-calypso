@@ -172,9 +172,11 @@ class CurrentPlan extends Component {
 		const isLoading = this.isLoading();
 		const planTitle = getPlan( currentPlanSlug )?.getTitle();
 
-		const planFeaturesHeader = translate( '{{planName/}} plan features', {
-			components: { planName: <>{ planTitle }</> },
-		} );
+		const planFeaturesHeader = planTitle
+			? translate( '{{planName/}} plan features', {
+					components: { planName: <>{ planTitle }</> },
+			  } )
+			: null;
 
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
@@ -256,7 +258,9 @@ class CurrentPlan extends Component {
 						'is-placeholder': { isLoading },
 					} ) }
 				>
-					<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					{ planFeaturesHeader && (
+						<h1 className="current-plan__header-heading">{ planFeaturesHeader }</h1>
+					) }
 				</div>
 
 				<AsyncLoad
