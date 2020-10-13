@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
@@ -22,15 +22,15 @@ import {
 /**
  * Internal dependencies
  */
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
-import Field from 'my-sites/checkout/composite-checkout/components/field';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/components/summary-details';
-import WeChatPaymentQRcodeUnstyled from 'my-sites/checkout/checkout/wechat-payment-qrcode';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-import userAgent from 'lib/user-agent';
+} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import WeChatPaymentQRcodeUnstyled from 'calypso/my-sites/checkout/checkout/wechat-payment-qrcode';
+import { useCart } from 'calypso/my-sites/checkout/composite-checkout/cart-provider';
+import userAgent from 'calypso/lib/user-agent';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
@@ -146,28 +146,29 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 	const { formStatus } = useFormStatus();
 	const {
 		setTransactionRedirecting,
-		setTransactionAuthorizing,
 		setTransactionError,
 		setTransactionPending,
-		transactionStatus,
-		transactionLastResponse,
 		resetTransaction,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'wechat' );
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
 	const cart = useCart();
+	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
 
-	useScrollQRCodeIntoView( transactionStatus === 'authorizing' );
+	useScrollQRCodeIntoView( !! stripeResponseWithCode );
 
-	if ( transactionStatus === 'authorizing' ) {
+	if ( stripeResponseWithCode ) {
 		return (
 			<WeChatPaymentQRcode
-				orderId={ transactionLastResponse.order_id }
+				orderId={ stripeResponseWithCode.order_id }
 				cart={ cart }
-				redirectUrl={ transactionLastResponse.redirect_url }
+				redirectUrl={ stripeResponseWithCode.redirect_url }
 				slug={ siteSlug }
-				reset={ resetTransaction }
+				reset={ () => {
+					resetTransaction();
+					setStripeResponseWithCode( null );
+				} }
 			/>
 		);
 	}
@@ -205,7 +206,7 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 							}
 
 							// For desktop, display the QR code
-							setTransactionAuthorizing( stripeResponse );
+							setStripeResponseWithCode( stripeResponse );
 						} )
 						.catch( ( error ) => {
 							setTransactionError( error.message );

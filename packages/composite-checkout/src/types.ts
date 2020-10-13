@@ -109,7 +109,6 @@ export type PaymentProcessorFunction = (
 export enum TransactionStatus {
 	NOT_STARTED = 'not-started',
 	PENDING = 'pending',
-	AUTHORIZING = 'authorizing',
 	COMPLETE = 'complete',
 	REDIRECTING = 'redirecting',
 	ERROR = 'error',
@@ -140,11 +139,6 @@ export interface TransactionStatusPayloadPending
 	status: TransactionStatus.PENDING;
 }
 
-export interface TransactionStatusPayloadAuthorizing
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'response' > > {
-	status: TransactionStatus.AUTHORIZING;
-}
-
 export interface TransactionStatusPayloadComplete
 	extends Required< Pick< TransactionStatusPayloads, 'status' | 'response' > > {
 	status: TransactionStatus.COMPLETE;
@@ -163,7 +157,6 @@ export interface TransactionStatusPayloadError
 export type TransactionStatusPayload =
 	| TransactionStatusPayloadNotStarted
 	| TransactionStatusPayloadPending
-	| TransactionStatusPayloadAuthorizing
 	| TransactionStatusPayloadComplete
 	| TransactionStatusPayloadRedirecting
 	| TransactionStatusPayloadError;
@@ -176,7 +169,6 @@ export interface TransactionStatusManager extends TransactionStatusState {
 	setTransactionComplete: ( response: PaymentProcessorResponse ) => void;
 	setTransactionPending: () => void;
 	setTransactionRedirecting: ( url: string ) => void;
-	setTransactionAuthorizing: ( response: PaymentProcessorResponse ) => void;
 }
 
 export interface LineItemsState {

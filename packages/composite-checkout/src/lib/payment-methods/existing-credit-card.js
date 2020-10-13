@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
@@ -13,7 +13,6 @@ import { useI18n } from '@automattic/react-i18n';
 import Button from '../../components/button';
 import {
 	FormStatus,
-	useMessages,
 	useLineItems,
 	useEvents,
 	useTransactionStatus,
@@ -118,52 +117,15 @@ function ExistingCardPayButton( {
 	paymentPartnerProcessorId,
 } ) {
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage, showInfoMessage } = useMessages();
 	const {
-		transactionStatus,
-		transactionLastResponse,
 		setTransactionComplete,
-		resetTransaction,
 		setTransactionRedirecting,
 		setTransactionPending,
-		setTransactionAuthorizing,
 		setTransactionError,
 	} = useTransactionStatus();
 	const submitTransaction = usePaymentProcessor( 'existing-card' );
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( transactionStatus === 'authorizing' ) {
-			debug( 'showing auth' );
-			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionLastResponse,
-			} )
-				.then( ( authenticationResponse ) => {
-					debug( 'auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete( authenticationResponse );
-				} )
-				.catch( ( error ) => {
-					isSubscribed && setTransactionError( error.message );
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		onEvent,
-		resetTransaction,
-		setTransactionComplete,
-		setTransactionError,
-		showInfoMessage,
-		showErrorMessage,
-		transactionStatus,
-		stripeConfiguration,
-		transactionLastResponse,
-	] );
 
 	return (
 		<Button
@@ -181,16 +143,25 @@ function ExistingCardPayButton( {
 					paymentPartnerProcessorId,
 				} )
 					.then( ( stripeResponse ) => {
+						// 3DS authentication required
 						if ( stripeResponse?.message?.payment_intent_client_secret ) {
-							debug( 'stripe transaction requires auth' );
-							setTransactionAuthorizing( stripeResponse );
-							return;
+							debug( 'showing stripe authentication modal' );
+							onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+							return showStripeModalAuth( {
+								stripeConfiguration,
+								response: stripeResponse,
+							} );
 						}
+						return stripeResponse;
+					} )
+					.then( ( stripeResponse ) => {
+						// Redirect required
 						if ( stripeResponse?.redirect_url ) {
 							debug( 'stripe transaction requires redirect' );
 							setTransactionRedirecting( stripeResponse.redirect_url );
 							return;
 						}
+						// Nothing more required
 						debug( 'stripe transaction is successful' );
 						setTransactionComplete();
 					} )
