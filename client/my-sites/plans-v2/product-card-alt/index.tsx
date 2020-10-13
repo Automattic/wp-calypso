@@ -10,9 +10,11 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
  */
 import {
 	durationToText,
+	getOptionFromSlug,
 	productBadgeLabelAlt,
 	productButtonLabel,
 	slugIsFeaturedProduct,
+	slugToSelectorProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
@@ -99,11 +101,23 @@ const ProductCardAltWrapper = ( {
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
+	// In the case of products that have ptions (daily versus real-time), we want to display
+	// the name of the option, not the name of one of the variants.
+	const productName = useMemo( () => {
+		const optionSlug = getOptionFromSlug( item.productSlug );
+
+		if ( ! optionSlug ) {
+			return item.displayName;
+		}
+
+		return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
+	}, [ item ] );
+
 	return (
 		<JetpackProductCardAlt
 			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
-			productName={ item.displayName }
+			productName={ productName }
 			subheadline={ item.tagline }
 			description={ description }
 			currencyCode={ currencyCode }
