@@ -126,5 +126,6 @@ function coming_soon_page() {
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 
 	render_fallback_coming_soon_page();
+	die();
 }
 add_action( 'template_redirect', __NAMESPACE__ . '\coming_soon_page' );
