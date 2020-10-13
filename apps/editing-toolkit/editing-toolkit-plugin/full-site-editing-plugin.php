@@ -261,17 +261,22 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
  * Load editing toolkit block patterns
+ *
+ * @param obj $current_screen The current screen object.
  */
-function load_block_patterns() {
+function load_block_patterns( $current_screen ) {
 	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
 		return;
 	}
 
-	require_once __DIR__ . '/block-patterns/class-block-patterns.php';
+	if ( ! $current_screen->is_block_editor ) {
+		return;
+	}
 
+	require_once __DIR__ . '/block-patterns/class-block-patterns.php';
 	Block_Patterns::get_instance();
 }
-add_action( 'init', __NAMESPACE__ . '\load_block_patterns', 20 );
+add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns' );
 
 /**
  * Load Premium Content Block
