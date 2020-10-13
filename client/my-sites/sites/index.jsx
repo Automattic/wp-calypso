@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Main from 'components/main';
-import SiteSelector from 'components/site-selector';
-import VisitSite from 'blocks/visit-site';
+import Main from 'calypso/components/main';
+import SiteSelector from 'calypso/components/site-selector';
+import VisitSite from 'calypso/blocks/visit-site';
 /**
  * Style dependencies
  */
