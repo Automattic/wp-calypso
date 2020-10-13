@@ -93,7 +93,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: object;
+	cartData?: any;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -599,6 +599,7 @@ class CalypsoifyIframe extends Component<
 
 	closePreviewModal = () => this.setState( { isPreviewVisible: false } );
 
+	/* eslint-disable @typescript-eslint/ban-types */
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
 		if ( autofocus ) {
