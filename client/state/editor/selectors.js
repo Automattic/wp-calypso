@@ -6,16 +6,21 @@ import { get, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, getSiteSlug } from 'state/sites/selectors';
-import { getEditedPost, getSitePost } from 'state/posts/selectors';
-import { getPreference } from 'state/preferences/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { isPublished, isBackDatedPublished, isFutureDated, getPreviewURL } from 'state/posts/utils';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import { addQueryArgs } from 'lib/route';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getEditedPost, getSitePost } from 'calypso/state/posts/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import {
+	isPublished,
+	isBackDatedPublished,
+	isFutureDated,
+	getPreviewURL,
+} from 'calypso/state/posts/utils';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { addQueryArgs } from 'calypso/lib/route';
 
-import 'state/editor/init';
+import 'calypso/state/editor/init';
 
 /**
  * Returns the current editor post ID, or `null` if a new post.
