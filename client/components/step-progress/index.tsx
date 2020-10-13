@@ -12,9 +12,10 @@ import './style.scss';
 interface Props {
 	steps: ( string | TranslateResult )[];
 	currentStep: number;
+	onStepClick?: ( newStep: number ) => void;
 }
 
-const StepProgress: FunctionComponent< Props > = ( { steps, currentStep } ) => {
+const StepProgress: FunctionComponent< Props > = ( { steps, currentStep, onStepClick } ) => {
 	const getElementNumberClass = ( stepNumber: number ) => {
 		if ( currentStep === stepNumber ) {
 			return 'step-progress__element-number-current';
@@ -38,7 +39,18 @@ const StepProgress: FunctionComponent< Props > = ( { steps, currentStep } ) => {
 			{ steps.map( ( stepName, index ) => (
 				<div className="step-progress__element" key={ `step-${ index }` }>
 					<div className="step-progress__element-visual">
-						<div className={ getElementNumberClass( index ) }>{ index + 1 }</div>
+						<button
+							className={ getElementNumberClass( index ) }
+							onClick={
+								onStepClick
+									? () => {
+											onStepClick( index );
+									  }
+									: undefined
+							}
+						>
+							<span>{ index + 1 }</span>
+						</button>
 					</div>
 					<div className={ getStepNameClass( index ) }>{ stepName }</div>
 				</div>

@@ -7,7 +7,7 @@ import React, { FunctionComponent, useState } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import StepProgress from 'components/step-progress';
+import StepProgress from 'calypso/components/step-progress';
 
 const steps = [ 'You got this!?', 'Host locator', 'Credentials', 'Verification' ];
 
@@ -17,7 +17,11 @@ const StepProgressExample: FunctionComponent = () => {
 	return (
 		<div>
 			<div style={ { background: 'var( --color-surface )', padding: '30px' } }>
-				<StepProgress steps={ steps } currentStep={ currentStep } />
+				<StepProgress
+					steps={ steps }
+					currentStep={ currentStep }
+					onStepClick={ ( newStep: number ) => setCurrentStep( newStep ) }
+				/>
 			</div>
 
 			<div style={ { 'margin-top': '30px' } }>
