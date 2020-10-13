@@ -37,7 +37,7 @@ class Sites extends Component {
 		}
 
 		// No support for Gutenberg on VIP.
-		if ( /^\/block-editor/.test( path ) ) {
+		if ( /^(\/post|\/page|\/edit)/.test( path ) ) {
 			return ! site.is_vip;
 		}
 
