@@ -1,9 +1,12 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import classNames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
 import Gridicon from 'calypso/components/gridicon';
 
 export default class extends React.Component {
