@@ -98,9 +98,13 @@ Each payment method is an object with the following properties:
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
-When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument.
+When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key.
 
-When the `submitButton` component has been clicked, it should do the following:
+Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument. However, for convenience, the `submitButton` will be provided with an `onClick` handler that can do this automatically. The `onClick` function takes two arguments, a string which is the key of the payment processor to be used, and an object that contains the data needed by the payment processor.
+
+If you use the `onClick` function, the payment processor function's response will control what happens next. Each payment processor function must return a Promise that either resolves to one of three results on success (see [makeNoopResponse](#makeNoopResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)), or rejects on failure.
+
+If not using the `onClick` function, or if the `NOOP` result is returned by the payment processor, when the `submitButton` component has been clicked, it should do the following (these are normally handled by `onClick`):
 
 1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
