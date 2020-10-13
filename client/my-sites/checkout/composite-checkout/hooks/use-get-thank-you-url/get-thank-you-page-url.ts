@@ -101,14 +101,6 @@ export default function getThankYouPageUrl( {
 		debug( 'ignorning redirectTo', redirectTo );
 	}
 
-	// If any product has an `after_purchase_url` set, redirect to the first one.
-	const productAfterPurchaseUrl = cart?.products?.find( ( product ) => product.after_purchase_url )
-		?.after_purchase_url;
-	if ( productAfterPurchaseUrl ) {
-		debug( 'found product with after_purchase_url', productAfterPurchaseUrl );
-		return productAfterPurchaseUrl;
-	}
-
 	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
 	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
