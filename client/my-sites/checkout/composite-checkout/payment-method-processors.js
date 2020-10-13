@@ -243,7 +243,11 @@ export async function freePurchaseProcessor(
 			postalCode: null,
 		},
 		wpcomTransaction
-	).then( saveTransactionResponseToWpcomStore );
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( ( response ) => {
+			return { type: 'SUCCESS', payload: response };
+		} );
 }
 
 export async function fullCreditsProcessor(
