@@ -30,7 +30,7 @@ export default function CheckoutSubmitButton( {
 	const paymentProcessors = usePaymentProcessors();
 	const { __ } = useI18n();
 	const redirectErrorMessage = __(
-		'There was an error redirecting you to the payment partner. Please try again or contact support.'
+		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
 	);
 
 	const onClick = useCallback(
