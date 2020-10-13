@@ -297,7 +297,7 @@ $jetpack-product-card-alt-icon-size: 55px;
 	&.gridicons-cloud-upload,
 	&.material-icon-security,
 	&.gridicons-bug {
-		background: #2371b1;
+		background: var( --studio-blue );
 		fill: white;
 		border-radius: 50%;
 		padding: 5px;
@@ -305,7 +305,7 @@ $jetpack-product-card-alt-icon-size: 55px;
 		height: 15px;
 	}
 	&.gridicons-lock {
-		background: #984a9c;
+		background: var( --studio-purple-50 );
 	}
 	&.gridicons-checkmark {
 		fill: $jetpack-product-card-alt-color;
