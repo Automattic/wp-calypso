@@ -9,10 +9,10 @@ import { invoke } from 'lodash';
  * Internal dependencies
  */
 import * as constants from './constants';
-import MaterialIcon from 'components/material-icon';
-import ExternalLink from 'components/external-link';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
-import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
+import MaterialIcon from 'calypso/components/material-icon';
+import ExternalLink from 'calypso/components/external-link';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
 export const FEATURE_CATEGORIES = {
 	[ constants.FEATURE_CATEGORY_SECURITY ]: {

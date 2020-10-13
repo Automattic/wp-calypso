@@ -21,13 +21,13 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { showInlineHelpPopover } from 'state/inline-help/actions';
-import PaymentChatButton from 'my-sites/checkout/checkout/payment-chat-button';
+import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
+import PaymentChatButton from 'calypso/my-sites/checkout/checkout/payment-chat-button';
 import getSupportVariation, {
 	SUPPORT_HAPPYCHAT,
 	SUPPORT_FORUM,
 	SUPPORT_DIRECTLY,
-} from 'state/selectors/get-inline-help-support-variation';
+} from 'calypso/state/selectors/get-inline-help-support-variation';
 import { useHasDomainsInCart, useDomainsInCart } from '../hooks/has-domains';
 import { useHasPlanInCart, usePlanInCart } from '../hooks/has-plan';
 import { useHasRenewalInCart } from '../hooks/has-renewal';
@@ -36,14 +36,14 @@ import {
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-} from 'lib/plans';
-import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
-import isSupportVariationDetermined from 'state/selectors/is-support-variation-determined';
-import { isEnabled } from 'config';
-import { isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+} from 'calypso/lib/plans';
+import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
+import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
+import { isEnabled } from 'calypso/config';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
