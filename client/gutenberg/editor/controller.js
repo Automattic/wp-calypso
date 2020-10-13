@@ -106,7 +106,7 @@ export const authenticate = ( context, next ) => {
 
 	let isAuthenticated =
 		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
-		! isJetpack || // Simple sites users are always authenticated.
+		! isJetpack || // If the site is not Jetpack (Atomic or self hosted) then it's a simple site and users are always authenticated.
 		( isJetpack && isSSOEnabled( state, siteId ) ) || // Assume we can authenticate with SSO
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
