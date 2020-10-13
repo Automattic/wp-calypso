@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
@@ -147,9 +148,9 @@ class RequestLoginEmailForm extends React.Component {
 								'with your account to log in instantly without your password.'
 						) }
 					</p>
-					<label htmlFor="usernameOrEmail" className="magic-login__form-label">
+					<FormLabel htmlFor="usernameOrEmail" className="magic-login__form-label">
 						{ this.props.translate( 'Email Address' ) }
-					</label>
+					</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
