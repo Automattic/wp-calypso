@@ -10,8 +10,8 @@ import { useTranslate } from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
