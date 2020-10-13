@@ -88,7 +88,7 @@ export default function () {
 
 	if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		page( '/block-editor/edit/:customPostType/:site/:post?', ( { params = {} } ) => {
-			const { customPostType, site, page: postId } = params;
+			const { customPostType, site, post: postId } = params;
 			if ( postId ) {
 				return page.redirect( `/edit/${ customPostType }/${ site }/${ postId }` );
 			}
