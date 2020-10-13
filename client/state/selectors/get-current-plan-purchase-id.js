@@ -21,7 +21,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
  * @returns {?number}        Purchase ID if known
  */
 export default function getCurrentPlanPurchaseId( state, siteId ) {
-	const result = getCurrentPlan( state, siteId )?.id;
+	const result = getCurrentPlan( state, siteId )?.id ?? null;
 
 	// getCurrentPlan uses an "assembler" which may have NaN in the `id`.
 	if ( isNaN( result ) ) {
