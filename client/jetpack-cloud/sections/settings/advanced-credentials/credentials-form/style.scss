@@ -14,6 +14,21 @@
 		background: initial;
 	}
 
+	h3 {
+		margin-bottom: 4px;
+	}
+
+	.credentials-form__intro-text {
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+	}
+
+	@media (min-width: 661px) {
+		.credentials-form__intro-text {
+			font-size: $font-body;
+		}
+	}
+
 	&__buttons {
 		display: flex;
 		flex-direction: row;
