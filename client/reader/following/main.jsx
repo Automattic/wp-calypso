@@ -43,7 +43,7 @@ function handleSearch( query ) {
 	}
 }
 
-const lastDayForVoteBanner = new Date( '2020-10-18T00:00:00' );
+const hideVoteBannerDate = new Date( '2020-10-18T00:00:00' );
 
 const FollowingStream = ( props ) => {
 	const suggestionList =
@@ -56,7 +56,7 @@ const FollowingStream = ( props ) => {
 		);
 	const placeholderText = getSearchPlaceholderText();
 	const now = new Date();
-	const showRegistrationMsg = props.userInNZ && now < lastDayForVoteBanner;
+	const showRegistrationMsg = props.userInNZ && now < hideVoteBannerDate;
 	const { translate } = props;
 	const dispatch = useDispatch();
 
