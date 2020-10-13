@@ -29,7 +29,7 @@
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
-		"plans/alternate-selector": false,
+		"plans/alternate-selector": true,
 		"oauth": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
