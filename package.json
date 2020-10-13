@@ -156,6 +156,7 @@
 		"whybundled:server": "whybundled client/stats-server.json",
 		"composite-checkout-demo": "webpack-dev-server --config ./packages/composite-checkout/webpack.config.demo.js --mode development",
 		"components:storybook:start": "start-storybook -c packages/components/.storybook",
+		"search:storybook:start": "start-storybook -c packages/search/.storybook",
 		"media-library:storybook:start": "start-storybook -c packages/media-library/.storybook -h calypso.localhost -p 3001"
 	},
 	"dependencies": {
