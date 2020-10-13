@@ -7,10 +7,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import JetpackLogo from 'components/jetpack-logo';
-import SocialLogo from 'components/social-logo';
-import StoreFooter from 'jetpack-connect/store-footer';
+import ExternalLink from 'calypso/components/external-link';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import SocialLogo from 'calypso/components/social-logo';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import StoreFooter from 'calypso/jetpack-connect/store-footer';
 
 /**
  * Style dependencies
@@ -44,6 +45,11 @@ const AnAutomatticAirline = () => (
 
 const JetpackComFooter = () => {
 	const translate = useTranslate();
+
+	const getTrackLinkClick = ( link: string ) => () => {
+		recordTracksEvent( 'calypso_jetpack_footer_link_click', { link } );
+	};
+
 	return (
 		<>
 			<StoreFooter />
@@ -56,35 +62,58 @@ const JetpackComFooter = () => {
 					<h4 className="jpcom-footer__col-header">{ translate( 'Product' ) }</h4>
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/features/">
+							<ExternalLink
+								href="https://jetpack.com/features/"
+								onClick={ getTrackLinkClick( 'tour' ) }
+							>
 								{ translate( 'Tour' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/pricing/">
+							<ExternalLink
+								href="https://jetpack.com/pricing/"
+								onClick={ getTrackLinkClick( 'pricing' ) }
+							>
 								{ translate( 'Pricing' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/blog/">{ translate( 'News' ) }</ExternalLink>
+							<ExternalLink
+								href="https://jetpack.com/blog/"
+								onClick={ getTrackLinkClick( 'news' ) }
+							>
+								{ translate( 'News' ) }
+							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/about/">
+							<ExternalLink
+								href="https://jetpack.com/about/"
+								onClick={ getTrackLinkClick( 'about' ) }
+							>
 								{ translate( 'About' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://apps.wordpress.com/get?utm_source=jetpack-com-footer&utm_medium=direct&utm_campaign=get-apps-promo">
+							<ExternalLink
+								href="https://apps.wordpress.com/get?utm_source=jetpack-com-footer&utm_medium=direct&utm_campaign=get-apps-promo"
+								onClick={ getTrackLinkClick( 'mobile_app' ) }
+							>
 								{ translate( 'Mobile app' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="http://automattic.com/privacy/">
+							<ExternalLink
+								href="http://automattic.com/privacy/"
+								onClick={ getTrackLinkClick( 'privacy_policy' ) }
+							>
 								{ translate( 'Privacy Policy' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="http://wordpress.com/tos/">
+							<ExternalLink
+								href="http://wordpress.com/tos/"
+								onClick={ getTrackLinkClick( 'terms_of_service' ) }
+							>
 								{ translate( 'Terms of Service' ) }
 							</ExternalLink>
 						</li>
@@ -94,42 +123,66 @@ const JetpackComFooter = () => {
 					<h4 className="jpcom-footer__col-header">{ translate( 'Support & Resources' ) }</h4>
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/support/">
+							<ExternalLink
+								href="https://jetpack.com/support/"
+								onClick={ getTrackLinkClick( 'knowledge_base' ) }
+							>
 								{ translate( 'Knowledge Base' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://wordpress.org/support/plugin/jetpack">
+							<ExternalLink
+								href="https://wordpress.org/support/plugin/jetpack"
+								onClick={ getTrackLinkClick( 'forums' ) }
+							>
 								{ translate( 'Forums' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/contact-support/">
+							<ExternalLink
+								href="https://jetpack.com/contact-support/"
+								onClick={ getTrackLinkClick( 'contact_us' ) }
+							>
 								{ translate( 'Contact Us' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://automattic.com/press/">
+							<ExternalLink
+								href="https://automattic.com/press/"
+								onClick={ getTrackLinkClick( 'press' ) }
+							>
 								{ translate( 'Press' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/features/design/themes/showcase">
+							<ExternalLink
+								href="https://jetpack.com/features/design/themes/showcase"
+								onClick={ getTrackLinkClick( 'theme_showcase' ) }
+							>
 								{ translate( 'Theme Showcase' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/features/security/library">
+							<ExternalLink
+								href="https://jetpack.com/features/security/library"
+								onClick={ getTrackLinkClick( 'security_library' ) }
+							>
 								{ translate( 'Security Library' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/business-guide">
+							<ExternalLink
+								href="https://jetpack.com/business-guide"
+								onClick={ getTrackLinkClick( 'business_guide' ) }
+							>
 								{ translate( 'Business Guide' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/hosting">
+							<ExternalLink
+								href="https://jetpack.com/hosting"
+								onClick={ getTrackLinkClick( 'hosting_guide' ) }
+							>
 								{ translate( 'Hosting Guide' ) }
 							</ExternalLink>
 						</li>
@@ -139,27 +192,42 @@ const JetpackComFooter = () => {
 					<h4 className="jpcom-footer__col-header">{ translate( 'Developers' ) }</h4>
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://developer.jetpack.com/">
+							<ExternalLink
+								href="https://developer.jetpack.com/"
+								onClick={ getTrackLinkClick( 'developers_site' ) }
+							>
 								{ translate( 'Developers Site' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/beta/">
+							<ExternalLink
+								href="https://jetpack.com/beta/"
+								onClick={ getTrackLinkClick( 'beta_program' ) }
+							>
 								{ translate( 'Beta Program' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.com/contribute/">
+							<ExternalLink
+								href="https://jetpack.com/contribute/"
+								onClick={ getTrackLinkClick( 'contribute_to_jetpack' ) }
+							>
 								{ translate( 'Contribute to Jetpack' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpack.pro/">
+							<ExternalLink
+								href="https://jetpack.pro/"
+								onClick={ getTrackLinkClick( 'developer_network' ) }
+							>
 								{ translate( 'Developer Network' ) }
 							</ExternalLink>
 						</li>
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://automattic.com/work-with-us/?utm_source=jetpackcom&utm_medium=link">
+							<ExternalLink
+								href="https://automattic.com/work-with-us/?utm_source=jetpackcom&utm_medium=link"
+								onClick={ getTrackLinkClick( 'work_with_us' ) }
+							>
 								{ translate( 'Work With Us' ) }
 							</ExternalLink>
 						</li>
@@ -170,7 +238,10 @@ const JetpackComFooter = () => {
 
 					<ul className="jpcom-footer__links">
 						<li className="jpcom-footer__link">
-							<ExternalLink href="https://jetpackcrm.com/">
+							<ExternalLink
+								href="https://jetpackcrm.com/"
+								onClick={ getTrackLinkClick( 'jetpack_crm' ) }
+							>
 								{ translate( 'Jetpack CRM' ) }
 							</ExternalLink>
 						</li>
@@ -179,22 +250,34 @@ const JetpackComFooter = () => {
 						<h4 className="jpcom-footer__col-header">{ translate( 'Partnership' ) }</h4>
 						<ul className="jpcom-footer__links">
 							<li className="jpcom-footer__link">
-								<ExternalLink href="https://jetpack.com/for/affiliates/">
+								<ExternalLink
+									href="https://jetpack.com/for/affiliates/"
+									onClick={ getTrackLinkClick( 'become_an_affiliate' ) }
+								>
 									{ translate( 'Become an Affiliate' ) }
 								</ExternalLink>
 							</li>
 							<li className="jpcom-footer__link">
-								<ExternalLink href="https://jetpack.com/for/agencies/">
+								<ExternalLink
+									href="https://jetpack.com/for/agencies/"
+									onClick={ getTrackLinkClick( 'become_an_agency' ) }
+								>
 									{ translate( 'Become an Agency' ) }
 								</ExternalLink>
 							</li>
 							<li className="jpcom-footer__link">
-								<ExternalLink href="https://jetpack.com/for/hosts/">
+								<ExternalLink
+									href="https://jetpack.com/for/hosts/"
+									onClick={ getTrackLinkClick( 'become_a_partner' ) }
+								>
 									{ translate( 'Become a Partner' ) }
 								</ExternalLink>
 							</li>
 							<li className="jpcom-footer__link">
-								<ExternalLink href="https://jetpack.com/hosting/#criteria">
+								<ExternalLink
+									href="https://jetpack.com/hosting/#criteria"
+									onClick={ getTrackLinkClick( 'listing_criteria' ) }
+								>
 									{ translate( 'Listing Criteria' ) }
 								</ExternalLink>
 							</li>
@@ -207,7 +290,11 @@ const JetpackComFooter = () => {
 				<div className="jpcom-footer__plugs-group">
 					<div className="jpcom-footer__a8c-services-plug">
 						<SocialLogo icon="wordpress" size={ 20 } />
-						<ExternalLink href="https://wordpress.com/" title="Powering WordPress.com">
+						<ExternalLink
+							href="https://wordpress.com/"
+							title="Powering WordPress.com"
+							onClick={ getTrackLinkClick( 'powering_wordpress_dot_com' ) }
+						>
 							{ translate( 'Powering WordPress.com' ) }
 						</ExternalLink>
 					</div>
@@ -216,6 +303,7 @@ const JetpackComFooter = () => {
 						<ExternalLink
 							href="http://automattic.com"
 							title={ translate( 'Automattic – makers of WordPress.com and more!' ) }
+							onClick={ getTrackLinkClick( 'an_automattic_airline' ) }
 						>
 							<AnAutomatticAirline />
 						</ExternalLink>
@@ -225,6 +313,7 @@ const JetpackComFooter = () => {
 					<ExternalLink
 						href="https://automattic.com/work-with-us/code-wrangler/?utm_source=jetpackcom&amp;utm_medium=link&amp;utm_campaign=cw-backend-a8c-anywhere"
 						title={ translate( 'We are super nice :)' ) }
+						onClick={ getTrackLinkClick( 'automattic_is_hiring' ) }
 					>
 						{ translate(
 							'Automattic is hiring backend developers anywhere in the world. Join us!'
