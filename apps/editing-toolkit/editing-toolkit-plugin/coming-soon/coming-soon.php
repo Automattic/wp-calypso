@@ -125,47 +125,6 @@ function coming_soon_page() {
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 
-	$should_show_fallback = false;
-
-	$id = (int) get_option( 'wpcom_public_coming_soon_page_id', 0 );
-	if ( empty( $id ) ) {
-		$should_show_fallback = true;
-	}
-
-	$custom_coming_soon_page = get_post( $id );
-	if ( ! $custom_coming_soon_page ) {
-		$should_show_fallback = true;
-	}
-
-	if ( $should_show_fallback ) {
-		render_fallback_coming_soon_page();
-		die();
-	}
-
-	?>
-	<!doctype html>
-	<html <?php language_attributes(); ?>>
-		<head>
-			<meta charset="<?php bloginfo( 'charset' ); ?>" />
-			<meta name="viewport" content="width=device-width, initial-scale=1" />
-			<?php wp_head(); ?>
-		</head>
-		<body>
-			<?php
-				// Replicates the core `the_content()` function except using the custom
-				// coming soon page instead of the current page.
-				$content = get_the_content( null, false, $custom_coming_soon_page );
-				$content = apply_filters( 'the_content', $content );
-
-				// Perform the same escaping done by the `the_content()` function.
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				echo str_replace( ']]>', ']]&gt;', $content );
-			?>
-			<?php wp_footer(); ?>
-		</body>
-	</html>
-	<?php
-
-	die();
+	render_fallback_coming_soon_page();
 }
 add_action( 'template_redirect', __NAMESPACE__ . '\coming_soon_page' );
