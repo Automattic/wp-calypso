@@ -92,14 +92,18 @@ export class PayButton extends React.Component {
 			} );
 		}
 
-		if ( cart.total_cost_display && isPaidForFullyInCredits( cart ) ) {
-			if ( hasRenewalItem( this.props.cart ) ) {
-				return this.props.translate( 'Purchase %(price)s subscription with Credits', {
-					args: { price: cart.total_cost_display },
-					context: 'Renew button on /checkout',
-				} );
-			}
+		if (
+			cart.total_cost_display &&
+			isPaidForFullyInCredits( cart ) &&
+			hasRenewalItem( this.props.cart )
+		) {
+			return this.props.translate( 'Purchase %(price)s subscription with Credits', {
+				args: { price: cart.total_cost_display },
+				context: 'Renew button on /checkout',
+			} );
+		}
 
+		if ( cart.total_cost_display && isPaidForFullyInCredits( cart ) ) {
 			return this.props.translate( 'Pay %(price)s with Credits', {
 				args: { price: cart.total_cost_display },
 				context: 'Pay button on /checkout',
