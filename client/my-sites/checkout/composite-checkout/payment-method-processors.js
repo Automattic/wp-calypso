@@ -94,9 +94,7 @@ export async function applePayProcessor(
 		transactionOptions
 	)
 		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return { type: 'SUCCESS', payload: response };
-		} );
+		.then( makeSuccessResponse );
 }
 
 export async function stripeCardProcessor(
