@@ -64,7 +64,7 @@ const getNoThreatsMessage = ( translate, filter ) => {
 	return null;
 };
 
-const ThreatHistoryList = ( { filter }: ThreatHistoryListProps ) => {
+const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 
