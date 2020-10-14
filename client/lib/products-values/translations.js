@@ -111,9 +111,15 @@ export const getJetpackProductsCallToAction = () => {
 			} ) }
 		</>
 	);
-	const search = translate( 'Get Search' );
-	const scan = translate( 'Get Scan' );
-	const antiSpam = <>{ translate( 'Get Anti-spam' ) }</>;
+	const search = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Get Jetpack Search' )
+		: translate( 'Get Search' );
+	const scan = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Get Jetpack Scan' )
+		: translate( 'Get Scan' );
+	const antiSpam = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Get Jetpack Anti-spam' )
+		: translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
