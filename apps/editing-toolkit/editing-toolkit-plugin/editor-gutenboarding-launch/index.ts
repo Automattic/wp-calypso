@@ -96,7 +96,8 @@ function updateEditor() {
 				isGutenboarding && ( ! isMobileViewport || ( isMobileViewport && isNewLaunchMobile ) );
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
-				is_new_flow: shouldOpenNewFlow,
+				// TODO: 'is_new_flow' flag — is it still relevant?
+				is_new_flow: shouldOpenNewFlowModal,
 				is_experimental: isExperimental,
 			} );
 
