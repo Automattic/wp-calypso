@@ -21,9 +21,7 @@ export default class PlansPage extends AsyncBaseContainer {
 
 	async openPlansTab() {
 		await driverHelper.ensureMobileMenuOpen( this.driver );
-		const selector = by.css(
-			'.current-plan a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link'
-		);
+		const selector = by.css( 'a[href*="plans"]:not([href*="my-plan"]).section-nav-tab__link' );
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
