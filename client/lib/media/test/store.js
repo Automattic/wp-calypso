@@ -22,7 +22,7 @@ describe( 'MediaStore', () => {
 	let Dispatcher, sandbox, MediaStore, handler;
 
 	beforeAll( function () {
-		Dispatcher = require( 'dispatcher' );
+		Dispatcher = require( 'calypso/dispatcher' );
 
 		sandbox = sinon.createSandbox();
 		sandbox.spy( Dispatcher, 'register' );
