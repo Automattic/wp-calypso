@@ -20,6 +20,7 @@ interface CalypsoifyWindow extends Window {
 	calypsoifyGutenberg?: {
 		launchUrl?: string;
 		isGutenboarding?: boolean;
+		isSiteUnlaunched?: boolean;
 		[ key: string ]: unknown;
 	};
 }
@@ -36,6 +37,7 @@ function updateEditor() {
 	if (
 		handled ||
 		! window?.calypsoifyGutenberg?.isGutenboarding ||
+		! window?.calypsoifyGutenberg?.isSiteUnlaunched ||
 		! window?.calypsoifyGutenberg?.launchUrl
 	) {
 		return;
