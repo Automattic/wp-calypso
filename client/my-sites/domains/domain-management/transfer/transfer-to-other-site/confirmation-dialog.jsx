@@ -16,6 +16,7 @@ import { Dialog } from '@automattic/components';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {
+		isMappedDomain: PropTypes.bool.isRequired,
 		isVisible: PropTypes.bool.isRequired,
 		targetSiteId: PropTypes.number.isRequired,
 		disableDialogButtons: PropTypes.bool.isRequired,
@@ -28,8 +29,35 @@ class TransferConfirmationDialog extends React.PureComponent {
 		this.props.onConfirmTransfer( this.props.targetSite, closeDialog );
 	};
 
+	getMessage() {
+		const { domainName, isMappedDomain, targetSite, translate } = this.props;
+		const targetSiteTitle = get( targetSite, 'title', '' );
+		if ( isMappedDomain ) {
+			return translate(
+				'Do you want to transfer mapping of {{strong}}%(domainName)s{{/strong}} ' +
+					'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
+				{
+					args: { domainName, targetSiteTitle },
+					components: { strong: <strong /> },
+				}
+			);
+		}
+
+		return translate(
+			'Do you want to transfer {{strong}}%(domainName)s{{/strong}} ' +
+				'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
+			{
+				args: { domainName, targetSiteTitle },
+				components: { strong: <strong /> },
+			}
+		);
+	}
+
 	render() {
-		const { domainName, translate } = this.props;
+		const { isMappedDomain, translate } = this.props;
+		const actionLabel = ! isMappedDomain
+			? translate( 'Confirm Transfer' )
+			: translate( 'Confirm Mapping Transfer' );
 		const buttons = [
 			{
 				action: 'cancel',
@@ -38,28 +66,17 @@ class TransferConfirmationDialog extends React.PureComponent {
 			},
 			{
 				action: 'confirm',
-				label: translate( 'Confirm Transfer' ),
+				label: actionLabel,
 				onClick: this.onConfirm,
 				disabled: this.props.disableDialogButtons,
 				isPrimary: true,
 			},
 		];
 
-		const targetSiteTitle = get( this.props.targetSite, 'title', '' );
-
 		return (
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } onClose={ this.props.onClose }>
 				<h1>{ translate( 'Confirm Transfer' ) }</h1>
-				<p>
-					{ translate(
-						'Do you want to transfer {{strong}}%(domainName)s{{/strong}} ' +
-							'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
-						{
-							args: { domainName, targetSiteTitle },
-							components: { strong: <strong /> },
-						}
-					) }
-				</p>
+				<p>{ this.getMessage() }</p>
 			</Dialog>
 		);
 	}

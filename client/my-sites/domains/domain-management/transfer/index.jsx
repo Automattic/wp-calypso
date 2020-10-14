@@ -25,7 +25,8 @@ import {
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { isMappedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 
 function Transfer( props ) {
 	const {
@@ -38,8 +39,15 @@ function Transfer( props ) {
 		currentRoute,
 		translate,
 	} = props;
-
 	const slug = get( selectedSite, 'slug' );
+
+	if ( props.isRequestingSiteDomains ) {
+		return (
+			<DomainMainPlaceholder
+				backHref={ domainManagementEdit( slug, selectedDomainName, currentRoute ) }
+			/>
+		);
+	}
 
 	return (
 		<Main>
@@ -57,7 +65,7 @@ function Transfer( props ) {
 						{ translate( 'Transfer to another registrar' ) }
 					</VerticalNavItem>
 				) }
-				{ ! isDomainOnly && (
+				{ ! isMappedDomain && ! isDomainOnly && (
 					<VerticalNavItem
 						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName, currentRoute ) }
 					>
@@ -78,13 +86,13 @@ function Transfer( props ) {
 }
 
 export default connect( ( state, ownProps ) => {
-	const domain = ownProps.domains.find( domain => domain.name === ownProps.selectedDomainName );
+	const domain = getSelectedDomain( ownProps );
 	const siteId = getSelectedSiteId( state );
 	return {
 		currentRoute: getCurrentRoute( state ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, siteId ),
-		isMappedDomain: isMappedDomain( domain ),
+		isMappedDomain: Boolean( domain ) && isMappedDomain( domain ),
 		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 	};
