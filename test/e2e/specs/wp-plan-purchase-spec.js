@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 import assert from 'assert';
 
@@ -124,7 +125,8 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			await securePaymentComponent.enterCouponCode( dataHelper.getTestCouponCode() );
 
 			const newCartAmount = await securePaymentComponent.cartTotalAmount();
-			const expectedCartAmount = parseFloat( ( originalCartAmount * 0.99 ).toFixed( 2 ) );
+			const expectedCartAmount =
+				Math.round( ( originalCartAmount * 0.99 + Number.EPSILON ) * 100 ) / 100;
 
 			assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 		} );
