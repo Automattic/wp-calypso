@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import PropTypes from 'prop-types';
 
 /**
  * Internal dependencies
  */
-import Image from 'components/image';
 import FormRadio from 'calypso/components/forms/form-radio';
+import Gridicon from 'calypso/components/gridicon';
+import Image from 'calypso/components/image';
 
 /**
  * Style dependencies
