@@ -69,7 +69,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				}
 				reduxDispatch( toggleSection( sectionId ) );
 			} }
-			expanded={ isExpanded || selected }
+			expanded={ isExpanded }
 			title={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
