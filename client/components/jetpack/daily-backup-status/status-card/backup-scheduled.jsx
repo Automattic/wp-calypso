@@ -8,13 +8,13 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import { applySiteOffset } from 'lib/site/timezone';
-import { useLocalizedMoment } from 'components/localized-moment';
-import { INDEX_FORMAT } from 'lib/jetpack/backup-utils';
-import { backupMainPath } from 'my-sites/backup/paths';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
+import { backupMainPath } from 'calypso/my-sites/backup/paths';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import ActionButtons from '../action-buttons';
 
 /**

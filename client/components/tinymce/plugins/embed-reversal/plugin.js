@@ -7,9 +7,9 @@ import { includes, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorRawContent } from 'state/editor/selectors';
+import wpcom from 'calypso/lib/wp';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorRawContent } from 'calypso/state/editor/selectors';
 
 function embedReversal( editor ) {
 	const store = editor.getParam( 'redux_store' );

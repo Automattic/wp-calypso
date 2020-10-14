@@ -6,7 +6,7 @@ import React, { FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import FormattedBlock from 'components/notes-formatted-block';
+import FormattedBlock from 'calypso/components/notes-formatted-block';
 
 // FUTURE WORK: move this to a shared location
 interface Activity {

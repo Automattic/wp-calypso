@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 export default class ChartLegendItem extends React.PureComponent {
 	static propTypes = {

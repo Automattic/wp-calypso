@@ -10,7 +10,7 @@ import { get, isEmpty, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import scrollbleed from './scrollbleed';
 import { Button } from '@automattic/components';
 

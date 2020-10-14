@@ -5,13 +5,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import HeaderCake from 'components/header-cake';
+import SectionHeader from 'calypso/components/section-header';
+import HeaderCake from 'calypso/components/header-cake';
 import { Button } from '@automattic/components';
 
 class SimplePaymentsDialogNavigation extends Component {

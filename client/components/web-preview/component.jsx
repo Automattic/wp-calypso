@@ -11,10 +11,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from 'calypso/lib/touch-detect';
 import { localize } from 'i18n-calypso';
 import { RootChild } from '@automattic/components';
-import { setPreviewShowing } from 'state/ui/actions';
+import { setPreviewShowing } from 'calypso/state/ui/actions';
 import WebPreviewContent from './content';
 
 /**

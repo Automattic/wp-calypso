@@ -12,20 +12,20 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormTextArea from 'components/forms/form-textarea';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gridicon from 'components/gridicon';
-import QueryRewindState from 'components/data/query-rewind-state';
-import { deleteCredentials, updateCredentials } from 'state/jetpack/credentials/actions';
-import { getSiteSlug } from 'state/sites/selectors';
-import getJetpackCredentialsUpdateStatus from 'state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'state/selectors/get-rewind-state';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextArea from 'calypso/components/forms/form-textarea';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Gridicon from 'calypso/components/gridicon';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 /**
  * Style dependencies

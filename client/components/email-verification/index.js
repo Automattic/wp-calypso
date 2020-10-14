@@ -8,8 +8,8 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 
-import { successNotice } from 'state/notices/actions';
-import user from 'lib/user';
+import { successNotice } from 'calypso/state/notices/actions';
+import user from 'calypso/lib/user';
 
 /**
  * Page middleware

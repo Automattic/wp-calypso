@@ -10,7 +10,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage } from 'calypso/lib/i18n-utils';
 
 class LocaleSuggestionsListItem extends Component {
 	static propTypes = {

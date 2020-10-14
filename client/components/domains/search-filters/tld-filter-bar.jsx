@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React, { Component } from 'react';
 import { includes, isEqual, pick } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,9 +13,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import Popover from 'components/popover';
-import TokenField from 'components/token-field';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import Popover from 'calypso/components/popover';
+import TokenField from 'calypso/components/token-field';
 import { recordTldFilterSelected } from './analytics';
 
 const HANDLED_FILTER_KEYS = [ 'tlds' ];

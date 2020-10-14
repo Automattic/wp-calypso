@@ -9,11 +9,11 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import ThreatItemHeader from 'components/jetpack/threat-item-header';
-import ServerCredentialsWizardDialog from 'components/jetpack/server-credentials-wizard-dialog';
-import { FixableThreat } from 'components/jetpack/threat-item/types';
-import { getThreatFix } from 'components/jetpack/threat-item/utils';
+import Gridicon from 'calypso/components/gridicon';
+import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
+import ServerCredentialsWizardDialog from 'calypso/components/jetpack/server-credentials-wizard-dialog';
+import { FixableThreat } from 'calypso/components/jetpack/threat-item/types';
+import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
 
 /**
  * Style dependencies

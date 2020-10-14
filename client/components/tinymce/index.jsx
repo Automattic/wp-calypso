@@ -46,7 +46,7 @@ import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
 import embedPlugin from './plugins/embed/plugin';
 import embedReversalPlugin from './plugins/embed-reversal/plugin';
-import EditorHtmlToolbar from 'post-editor/editor-html-toolbar';
+import EditorHtmlToolbar from 'calypso/post-editor/editor-html-toolbar';
 import mentionsPlugin from './plugins/mentions/plugin';
 import markdownPlugin from './plugins/markdown/plugin';
 import wpEmojiPlugin from './plugins/wpemoji/plugin';
@@ -82,13 +82,13 @@ import wpEmojiPlugin from './plugins/wpemoji/plugin';
 /**
  * Internal Dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import i18n from './i18n';
-import config from 'config';
-import { decodeEntities, wpautop, removep } from 'lib/formatting';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { getPreference } from 'state/preferences/selectors';
-import { isLocaleRtl } from 'lib/i18n-utils';
+import config from 'calypso/config';
+import { decodeEntities, wpautop, removep } from 'calypso/lib/formatting';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { isLocaleRtl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

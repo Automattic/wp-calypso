@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestJetpackProductInstallStatus } from 'state/jetpack-product-install/actions';
+import { requestJetpackProductInstallStatus } from 'calypso/state/jetpack-product-install/actions';
 
 class QueryJetpackProductInstallStatus extends Component {
 	static propTypes = {

@@ -8,15 +8,15 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import ExternalLink from 'components/external-link';
-import Button from 'components/forms/form-button';
-import contactSupportUrl from 'lib/jetpack/contact-support-url';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import getRawSite from 'state/selectors/get-raw-site';
-import getSiteAdminUrl from 'state/sites/selectors/get-site-admin-url';
-import getSiteUrl from 'state/sites/selectors/get-site-url';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
+import { isEnabled } from 'calypso/config';
+import ExternalLink from 'calypso/components/external-link';
+import Button from 'calypso/components/forms/form-button';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 /**
  * Style dependencies

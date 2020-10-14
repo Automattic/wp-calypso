@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingPageTemplates } from 'state/page-templates/selectors';
-import { getSiteOption } from 'state/sites/selectors';
-import { requestPageTemplates } from 'state/page-templates/actions';
+import { isRequestingPageTemplates } from 'calypso/state/page-templates/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { requestPageTemplates } from 'calypso/state/page-templates/actions';
 
 class QueryPageTemplates extends Component {
 	UNSAFE_componentWillMount() {

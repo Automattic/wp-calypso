@@ -5,12 +5,12 @@
 
 import React from 'react';
 import { string, node } from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies

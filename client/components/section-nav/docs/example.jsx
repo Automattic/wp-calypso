@@ -8,11 +8,11 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import NavTabs from 'components/section-nav/tabs';
-import NavSegmented from 'components/section-nav/segmented';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavSegmented from 'calypso/components/section-nav/segmented';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
 
 /**
  * Main

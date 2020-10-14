@@ -11,7 +11,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const testSiteId = 5089392;
 

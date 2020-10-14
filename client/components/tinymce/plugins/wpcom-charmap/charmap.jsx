@@ -20,7 +20,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 
 class CharMap extends React.Component {
 	static displayName = 'CharMap';

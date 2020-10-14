@@ -16,7 +16,7 @@ import { LanguagePickerModal } from '../modal';
 import {
 	LOCALIZED_LANGUAGE_NAMES_DATA_DE,
 	LOCALIZED_LANGUAGE_NAMES_DATA_IT,
-} from 'state/i18n/language-names/test/fixture';
+} from 'calypso/state/i18n/language-names/test/fixture';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from '../constants';
 
 describe( 'LanguagePickerModal', () => {

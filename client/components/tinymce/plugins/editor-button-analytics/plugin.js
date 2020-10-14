@@ -8,9 +8,9 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat } from 'lib/analytics/mc';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const debug = debugModule( 'calypso:posts:stats' );
 

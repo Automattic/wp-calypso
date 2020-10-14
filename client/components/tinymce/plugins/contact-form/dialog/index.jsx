@@ -11,15 +11,15 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 import FormSettings from './settings';
 import Navigation from './navigation';
 import FieldList from './field-list';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditorContactForm } from 'state/editor/contact-form/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditorContactForm } from 'calypso/state/editor/contact-form/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { validateFormFields, validateSettingsToEmail } from './validations';
 
 class ContactFormDialog extends React.Component {

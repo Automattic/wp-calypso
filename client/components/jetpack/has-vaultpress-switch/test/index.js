@@ -17,9 +17,9 @@ jest.mock( 'state/selectors/get-rewind-state' );
 /**
  * Internal dependencies
  */
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import getRewindState from 'state/selectors/get-rewind-state';
-import HasVaultPressSwitch from 'components/jetpack/has-vaultpress-switch';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 
 describe( 'HasVaultPressSwitch', () => {
 	beforeAll( () => {

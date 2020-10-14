@@ -5,13 +5,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import Count from 'components/count';
-import { preload } from 'sections-helper';
+import Count from 'calypso/components/count';
+import { preload } from 'calypso/sections-helper';
 
 /**
  * Style dependencies

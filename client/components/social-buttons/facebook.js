@@ -13,8 +13,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FacebookIcon from 'components/social-icons/facebook';
-import { isFormDisabled } from 'state/login/selectors';
+import FacebookIcon from 'calypso/components/social-icons/facebook';
+import { isFormDisabled } from 'calypso/state/login/selectors';
 
 /**
  * Style dependencies

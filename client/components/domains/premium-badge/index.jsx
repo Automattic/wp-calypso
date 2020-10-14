@@ -8,8 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import InfoPopover from 'components/info-popover';
+import Badge from 'calypso/components/badge';
+import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
 

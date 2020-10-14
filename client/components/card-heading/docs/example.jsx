@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
+import CardHeading from 'calypso/components/card-heading';
 
 export default class CardHeadingExample extends PureComponent {
 	static displayName = 'CardHeadingExample';

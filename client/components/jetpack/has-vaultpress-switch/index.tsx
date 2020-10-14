@@ -7,10 +7,10 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import getRewindState from 'state/selectors/get-rewind-state';
-import QueryRewindState from 'components/data/query-rewind-state';
-import RenderSwitch from 'components/jetpack/render-switch';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import RenderSwitch from 'calypso/components/jetpack/render-switch';
 
 const HasVaultPressSwitch = ( { loadingComponent, trueComponent, falseComponent } ) => {
 	const siteId = useSelector( getSelectedSiteId );

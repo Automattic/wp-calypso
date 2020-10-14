@@ -5,13 +5,13 @@ import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Dialog, Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
 import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';

@@ -9,8 +9,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { isFetchingSitePurchases } from 'state/purchases/selectors';
-import { fetchSitePurchases } from 'state/purchases/actions';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { fetchSitePurchases } from 'calypso/state/purchases/actions';
 
 const debug = debugFactory( 'calypso:query-site-purchases' );
 

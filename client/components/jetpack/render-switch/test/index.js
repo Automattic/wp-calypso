@@ -7,7 +7,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import RenderSwitch from 'components/jetpack/render-switch';
+import RenderSwitch from 'calypso/components/jetpack/render-switch';
 
 describe( 'RenderSwitch', () => {
 	test( 'if loadingCondition is true, renders the loading and query components', () => {

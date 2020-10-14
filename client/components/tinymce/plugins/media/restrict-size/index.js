@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import { deserialize } from 'lib/media-serialization';
-import resize from 'lib/resize-image-url';
+import { deserialize } from 'calypso/lib/media-serialization';
+import resize from 'calypso/lib/resize-image-url';
 
 /**
  * Module variables

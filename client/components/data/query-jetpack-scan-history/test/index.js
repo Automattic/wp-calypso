@@ -13,9 +13,9 @@ import { render } from '@testing-library/react';
 /**
  * Internal dependencies
  */
-import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
-import * as jetpackScanActions from 'state/jetpack-scan/history/actions';
-import { JETPACK_SCAN_HISTORY_REQUEST } from 'state/action-types';
+import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
+import * as jetpackScanActions from 'calypso/state/jetpack-scan/history/actions';
+import { JETPACK_SCAN_HISTORY_REQUEST } from 'calypso/state/action-types';
 
 function setup( siteId ) {
 	// Set spy on action creator to verify it gets called when the component renders.

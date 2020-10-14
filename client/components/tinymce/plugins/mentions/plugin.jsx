@@ -10,8 +10,8 @@ import React from 'react';
  * Internal dependencies
  */
 import Mentions from './mentions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { renderWithReduxStore } from 'calypso/lib/react-helpers';
 
 /**
  * Module variables

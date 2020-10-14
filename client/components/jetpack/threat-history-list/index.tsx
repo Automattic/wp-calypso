@@ -8,19 +8,19 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
-import ThreatDialog from 'components/jetpack/threat-dialog';
-import ThreatItem from 'components/jetpack/threat-item';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSite } from 'state/ui/selectors';
-import isRequestingJetpackScanHistory from 'state/selectors/is-requesting-jetpack-scan-history';
-import getSiteScanHistory from 'state/selectors/get-site-scan-history';
-import contactSupportUrl from 'lib/jetpack/contact-support-url';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { useThreats } from 'lib/jetpack/use-threats';
-import { Threat } from 'components/jetpack/threat-item/types';
-import { Site } from 'my-sites/scan/types';
+import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
+import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
+import ThreatItem from 'calypso/components/jetpack/threat-item';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteSlug, getSelectedSite } from 'calypso/state/ui/selectors';
+import isRequestingJetpackScanHistory from 'calypso/state/selectors/is-requesting-jetpack-scan-history';
+import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useThreats } from 'calypso/lib/jetpack/use-threats';
+import { Threat } from 'calypso/components/jetpack/threat-item/types';
+import { Site } from 'calypso/my-sites/scan/types';
 
 /**
  * Style dependencies

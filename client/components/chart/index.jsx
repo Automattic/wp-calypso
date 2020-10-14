@@ -10,10 +10,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { hasTouch } from 'lib/touch-detect';
-import { useWindowResizeCallback } from 'lib/track-element-size';
-import Tooltip from 'components/tooltip';
-import Notice from 'components/notice';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
+import Tooltip from 'calypso/components/tooltip';
+import Notice from 'calypso/components/notice';
 import BarContainer from './bar-container';
 
 /**

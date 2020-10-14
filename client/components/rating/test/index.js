@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Rating from 'components/rating';
+import Rating from 'calypso/components/rating';
 
 describe( '<Rating />', () => {
 	describe( 'check props size', () => {

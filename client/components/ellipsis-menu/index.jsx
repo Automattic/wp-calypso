@@ -7,13 +7,13 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import PopoverMenu from 'components/popover/menu';
+import PopoverMenu from 'calypso/components/popover/menu';
 
 /**
  * Style dependencies

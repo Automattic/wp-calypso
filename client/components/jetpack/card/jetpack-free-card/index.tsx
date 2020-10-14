@@ -9,16 +9,16 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { JPC_PATH_REMOTE_INSTALL } from 'jetpack-connect/constants';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
-import getJetpackWpAdminUrl from 'state/selectors/get-jetpack-wp-admin-url';
-import { addQueryArgs } from 'lib/route';
+import { JPC_PATH_REMOTE_INSTALL } from 'calypso/jetpack-connect/constants';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
+import { addQueryArgs } from 'calypso/lib/route';
 
 /**
  * Type dependencies
  */
-import type { JetpackFreeProps } from 'my-sites/plans-v2/types';
+import type { JetpackFreeProps } from 'calypso/my-sites/plans-v2/types';
 
 /**
  * Style dependencies
