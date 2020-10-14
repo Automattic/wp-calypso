@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import QueryMediaStorage from 'components/data/query-media-storage';
-import { getMediaStorage } from 'state/sites/media-storage/selectors';
-import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { planHasFeature, isBusinessPlan, isEcommercePlan } from 'lib/plans';
-import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
+import QueryMediaStorage from 'calypso/components/data/query-media-storage';
+import { getMediaStorage } from 'calypso/state/sites/media-storage/selectors';
+import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { planHasFeature, isBusinessPlan, isEcommercePlan } from 'calypso/lib/plans';
+import { FEATURE_UNLIMITED_STORAGE } from 'calypso/lib/plans/constants';
 import PlanStorageBar from './bar';
 import Tooltip from './tooltip';
 

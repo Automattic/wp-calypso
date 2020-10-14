@@ -10,11 +10,11 @@ import { find, get } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
-import ReaderPopover from 'reader/components/reader-popover';
-import SegmentedControl from 'components/segmented-control';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getReaderFollows } from 'state/reader/follows/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import ReaderPopover from 'calypso/reader/components/reader-popover';
+import SegmentedControl from 'calypso/components/segmented-control';
+import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
@@ -23,10 +23,10 @@ import {
 	unsubscribeToNewCommentEmail,
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
-} from 'state/reader/follows/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QueryUserSettings from 'components/data/query-user-settings';
-import getUserSetting from 'state/selectors/get-user-setting';
+} from 'calypso/state/reader/follows/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 /**
  * Style dependencies

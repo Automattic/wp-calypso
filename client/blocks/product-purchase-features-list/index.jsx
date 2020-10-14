@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getPlan } from 'lib/plans';
+import { getPlan } from 'calypso/lib/plans';
 import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -24,8 +24,8 @@ import {
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
 	TYPE_ALL,
-} from 'lib/plans/constants';
-import { PLANS_LIST } from 'lib/plans/plans-list';
+} from 'calypso/lib/plans/constants';
+import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
 import UploadPlugins from './upload-plugins';
 import AdvertisingRemoved from './advertising-removed';
@@ -42,15 +42,15 @@ import JetpackPublicize from './jetpack-publicize';
 import MobileApps from './mobile-apps';
 import SellOnlinePaypal from './sell-online-paypal';
 import SiteActivity from './site-activity';
-import { withLocalizedMoment } from 'components/localized-moment';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isEnabled } from 'config';
-import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { hasDomainCredit, getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isEnabled } from 'calypso/config';
+import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';
+import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 /**
  * Style dependencies
  */

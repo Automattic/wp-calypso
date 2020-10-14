@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import DisplayTypes from 'state/reader/posts/display-types';
+import DisplayTypes from 'calypso/state/reader/posts/display-types';
 
 export const posts = [
 	{

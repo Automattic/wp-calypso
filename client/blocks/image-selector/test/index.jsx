@@ -19,7 +19,7 @@ import { ImageSelector } from '../';
 
 jest.mock( 'event', () => {}, { virtual: true } );
 jest.mock( 'lib/media/store', () => ( {
-	dispatchToken: require( 'dispatcher' ).register( () => {} ),
+	dispatchToken: require( 'calypso/dispatcher' ).register( () => {} ),
 	get: ( siteId, itemId ) => require( './fixtures' ).DUMMY_MEDIA[ itemId ],
 	on: () => {},
 } ) );

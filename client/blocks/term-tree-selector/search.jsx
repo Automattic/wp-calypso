@@ -4,12 +4,12 @@
 import PropTypes from 'prop-types';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 /**
  * Style dependencies

@@ -4,13 +4,13 @@
 import React from 'react';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import ActionPanelLink from 'components/action-panel/link';
+import ExternalLink from 'calypso/components/external-link';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 
 interface ExternalProps {
 	context: string | null;

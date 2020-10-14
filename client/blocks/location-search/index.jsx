@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { loadScript } from '@automattic/load-script';
-import config from 'config';
+import config from 'calypso/config';
 import { getLocaleSlug } from 'i18n-calypso';
 import { identity, isEmpty, noop } from 'lodash';
 
@@ -12,10 +12,10 @@ import { identity, isEmpty, noop } from 'lodash';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import SearchCard from 'components/search-card';
-import Search from 'components/search';
+import SearchCard from 'calypso/components/search-card';
+import Search from 'calypso/components/search';
 import Prediction from './prediction';
-import { Input } from 'my-sites/domains/components/form';
+import { Input } from 'calypso/my-sites/domains/components/form';
 
 /**
  * Style dependencies

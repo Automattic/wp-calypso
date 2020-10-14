@@ -3,16 +3,16 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { StripeHookProvider } from 'lib/stripe';
-import { fetchStripeConfiguration } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
-import CompositeCheckout from 'my-sites/checkout/composite-checkout/composite-checkout';
-import { getSelectedSite } from 'state/ui/selectors';
+import { StripeHookProvider } from 'calypso/lib/stripe';
+import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
+import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies

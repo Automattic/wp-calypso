@@ -6,10 +6,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
-import withUserMentions from 'blocks/user-mentions/index';
-import withPasteToLink from 'lib/paste-to-link';
-import { isEnabled } from 'config';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import withUserMentions from 'calypso/blocks/user-mentions/index';
+import withPasteToLink from 'calypso/lib/paste-to-link';
+import { isEnabled } from 'calypso/config';
 
 /* eslint-disable jsx-a11y/no-autofocus */
 const PostCommentFormTextarea = React.forwardRef( ( props, ref ) => (

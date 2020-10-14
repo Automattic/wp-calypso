@@ -13,26 +13,26 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import CloseOnEscape from 'components/close-on-escape';
-import Notice from 'components/notice';
+import CloseOnEscape from 'calypso/components/close-on-escape';
+import Notice from 'calypso/components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import { getMimeType, url } from 'lib/media/utils';
+import { getMimeType, url } from 'calypso/lib/media/utils';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
 	setImageEditorFileInfo,
 	setImageEditorDefaultAspectRatio,
-} from 'state/editor/image-editor/actions';
+} from 'calypso/state/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
 	isImageEditorImageLoaded,
-} from 'state/editor/image-editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import QuerySites from 'components/data/query-sites';
-import { AspectRatios, AspectRatiosValues } from 'state/editor/image-editor/constants';
+} from 'calypso/state/editor/image-editor/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import QuerySites from 'calypso/components/data/query-sites';
+import { AspectRatios, AspectRatiosValues } from 'calypso/state/editor/image-editor/constants';
 import { getDefaultAspectRatio } from './utils';
 
 /**

@@ -8,11 +8,11 @@ import { startsWith, endsWith, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import SiteIcon from 'blocks/site-icon';
+import Gravatar from 'calypso/components/gravatar';
+import SiteIcon from 'calypso/blocks/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
-import safeImageUrl from 'lib/safe-image-url';
+import safeImageUrl from 'calypso/lib/safe-image-url';
 
 /**
  * Style dependencies

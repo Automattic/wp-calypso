@@ -7,7 +7,7 @@ import React, { PureComponent } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import ColorSchemePicker from 'blocks/color-scheme-picker';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 
 class ColorSchemePickerExample extends PureComponent {
 	static displayName = 'ColorSchemePicker';

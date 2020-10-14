@@ -9,8 +9,8 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import cssSafeUrl from 'lib/css-safe-url';
-import resizeImageUrl from 'lib/resize-image-url';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 
 /**
  * Style dependencies

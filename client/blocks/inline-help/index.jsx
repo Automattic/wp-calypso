@@ -8,23 +8,23 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
+import config from 'calypso/config';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
 import { Button, RootChild } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
-import HappychatButton from 'components/happychat/button';
-import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import AsyncLoad from 'components/async-load';
-import { showInlineHelpPopover, hideInlineHelpPopover } from 'state/inline-help/actions';
-import isInlineHelpPopoverVisible from 'state/inline-help/selectors/is-inline-help-popover-visible';
-import isInlineHelpVisible from 'state/selectors/is-inline-help-visible';
+import HappychatButton from 'calypso/components/happychat/button';
+import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import AsyncLoad from 'calypso/components/async-load';
+import { showInlineHelpPopover, hideInlineHelpPopover } from 'calypso/state/inline-help/actions';
+import isInlineHelpPopoverVisible from 'calypso/state/inline-help/selectors/is-inline-help-popover-visible';
+import isInlineHelpVisible from 'calypso/state/selectors/is-inline-help-visible';
 
 /**
  * Style dependencies
@@ -41,11 +41,11 @@ const globalKeyboardShortcuts = globalKeyBoardShortcutsEnabled
 const debug = debugFactory( 'calypso:inline-help' );
 
 const InlineHelpPopover = ( props ) => (
-	<AsyncLoad { ...props } require="blocks/inline-help/popover" placeholder={ null } />
+	<AsyncLoad { ...props } require="calypso/blocks/inline-help/popover" placeholder={ null } />
 );
 
 const InlineHelpDialog = ( props ) => (
-	<AsyncLoad { ...props } require="blocks/inline-help/dialog" placeholder={ null } />
+	<AsyncLoad { ...props } require="calypso/blocks/inline-help/dialog" placeholder={ null } />
 );
 
 class InlineHelp extends Component {
@@ -84,7 +84,7 @@ class InlineHelp extends Component {
 	// Preload the async chunk on mouse hover or touch start
 	preload = () => {
 		if ( ! this.preloaded ) {
-			asyncRequire( 'blocks/inline-help/popover' );
+			asyncRequire( 'calypso/blocks/inline-help/popover' );
 			this.preloaded = true;
 		}
 	};

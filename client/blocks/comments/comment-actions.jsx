@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 
@@ -16,12 +16,12 @@ import { Button } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { changeCommentStatus } from 'state/comments/actions';
+import { changeCommentStatus } from 'calypso/state/comments/actions';
 import CommentLikeButtonContainer from './comment-likes';
 import CommentApproveAction from './comment-approve-action';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 
 /**
  * Style dependencies
