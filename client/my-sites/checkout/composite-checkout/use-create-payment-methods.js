@@ -398,6 +398,15 @@ function useCreateApplePay( {
 		? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayAvailable
 		: isApplePayAvailable;
 
+	const shouldCreateApplePayMethod =
+		shouldLoadApplePay &&
+		! isStripeLoading &&
+		! stripeLoadingError &&
+		stripe &&
+		stripeConfiguration &&
+		! isApplePayLoading &&
+		isApplePayAvailable;
+
 	const applePayMethod = useMemo( () => {
 		if (
 			! (
