@@ -21,6 +21,9 @@ interface CalypsoifyWindow extends Window {
 		launchUrl?: string;
 		isGutenboarding?: boolean;
 		isSiteUnlaunched?: boolean;
+		isNewLaunchMobile?: boolean;
+		isExperimental?: boolean;
+		isPersistentLaunchButton?: boolean;
 		[ key: string ]: unknown;
 	};
 }
