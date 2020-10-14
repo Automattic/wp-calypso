@@ -37,11 +37,19 @@ domReady( () => {
 
 let handled = false;
 function updateEditor() {
+	const isGutenboarding = window?.calypsoifyGutenberg?.isGutenboarding;
+	const isPersistentLaunchButton = window?.calypsoifyGutenberg?.isPersistentLaunchButton;
+
 	if (
+		// Don't proceed if this function has already run
 		handled ||
-		! window?.calypsoifyGutenberg?.isGutenboarding ||
+		// Don't proceed if the site has already been launched
 		! window?.calypsoifyGutenberg?.isSiteUnlaunched ||
-		! window?.calypsoifyGutenberg?.launchUrl
+		// Don't proceed if the launch URL is missing
+		! window?.calypsoifyGutenberg?.launchUrl ||
+		// Don't proceed is the site wasn't created through Gutenbaording,
+		// or if the gutenboarding/persistent-launch-button flag is enabled
+		! ( isGutenboarding || isPersistentLaunchButton )
 	) {
 		return;
 	}
@@ -77,14 +85,22 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 
-			const shouldOpenNewFlow = ! isMobileViewport || ( isMobileViewport && isNewLaunchMobile );
+			// Clicking on the persisten "Launch" button (when added to the UI)
+			// would normally open the control launch flow by redirecting the
+			// page to `launchUrl`.
+			// But if the site was created via Gutenboarding (/new),
+			// and potentially depending on the browser's viewport, the control
+			// launch flow replaced by a new "Complete setup" flow, appering in a
+			// modal on top of the edittor (no redirect needed)
+			const shouldOpenNewFlowModal =
+				isGutenboarding && ( ! isMobileViewport || ( isMobileViewport && isNewLaunchMobile ) );
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_flow: shouldOpenNewFlow,
 				is_experimental: isExperimental,
 			} );
 
-			if ( shouldOpenNewFlow ) {
+			if ( shouldOpenNewFlowModal ) {
 				// If we want to load experimental features, for now '?latest' query param should be added in URL.
 				// TODO: update this in calypsoify-iframe.tsx depending on abtest or other conditions.
 				isExperimental && dispatch( 'automattic/launch' ).enableExperimental();
