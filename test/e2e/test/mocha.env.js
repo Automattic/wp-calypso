@@ -15,7 +15,6 @@ try {
 	} );
 } catch ( error ) {
 	if ( ! error.toString().includes( 'ChromeDriver is already available' )  ) {
-		console.log(error.message);
-		console.error(error);
+		console.error( error );
 	}
 }
