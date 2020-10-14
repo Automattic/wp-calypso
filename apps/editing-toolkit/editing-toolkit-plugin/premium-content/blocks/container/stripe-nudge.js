@@ -64,8 +64,6 @@ export default compose( [
 		 * Complicated to define the valid type with JSDoc
 		 *
 		 * @param dispatch
-		 * @param root0
-		 * @param root0.stripeConnectUrl
 		 */
 		// @ts-ignore
 		( dispatch, { stripeConnectUrl } ) => ( {
