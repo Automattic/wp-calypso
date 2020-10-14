@@ -11,26 +11,26 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import getEditorUrl from 'state/selectors/get-editor-url';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getNormalizedPost } from 'state/posts/selectors';
-import { isSingleUserSite } from 'state/sites/selectors';
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
-import { isSharePanelOpen } from 'state/ui/post-type-list/selectors';
-import { hideActiveSharePanel } from 'state/ui/post-type-list/actions';
-import { bumpStat } from 'state/analytics/actions';
-import ExternalLink from 'components/external-link';
-import PostShare from 'blocks/post-share';
-import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
-import PostActionCounts from 'my-sites/post-type-list/post-action-counts';
-import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
-import PostActionsEllipsisMenuEdit from 'my-sites/post-type-list/post-actions-ellipsis-menu/edit';
-import PostActionsEllipsisMenuTrash from 'my-sites/post-type-list/post-actions-ellipsis-menu/trash';
-import PostTypeSiteInfo from 'my-sites/post-type-list/post-type-site-info';
-import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
-import { preloadEditor } from 'sections-preloaders';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getNormalizedPost } from 'calypso/state/posts/selectors';
+import { isSingleUserSite } from 'calypso/state/sites/selectors';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
+import { isSharePanelOpen } from 'calypso/state/ui/post-type-list/selectors';
+import { hideActiveSharePanel } from 'calypso/state/ui/post-type-list/actions';
+import { bumpStat } from 'calypso/state/analytics/actions';
+import ExternalLink from 'calypso/components/external-link';
+import PostShare from 'calypso/blocks/post-share';
+import PostTypeListPostThumbnail from 'calypso/my-sites/post-type-list/post-thumbnail';
+import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
+import PostActionsEllipsisMenu from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu';
+import PostActionsEllipsisMenuEdit from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/edit';
+import PostActionsEllipsisMenuTrash from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/trash';
+import PostTypeSiteInfo from 'calypso/my-sites/post-type-list/post-type-site-info';
+import PostTypePostAuthor from 'calypso/my-sites/post-type-list/post-type-post-author';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 
 /**
  * Style dependencies

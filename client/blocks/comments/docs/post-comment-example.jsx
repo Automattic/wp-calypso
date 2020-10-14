@@ -7,8 +7,8 @@ import { repeat } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import PostComment from 'calypso/blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { Card } from '@automattic/components';
 
 const mockComment = {

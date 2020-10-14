@@ -7,17 +7,17 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get, noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import TermFormDialog from 'blocks/term-form-dialog';
-import QueryTaxonomies from 'components/data/query-taxonomies';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { getTerms } from 'state/terms/selectors';
+import TermFormDialog from 'calypso/blocks/term-form-dialog';
+import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { getTerms } from 'calypso/state/terms/selectors';
 
 /**
  * Style dependencies

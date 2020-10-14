@@ -10,7 +10,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FilePicker from 'components/file-picker';
+import FilePicker from 'calypso/components/file-picker';
 
 class VideoEditorUploadButton extends Component {
 	static propTypes = {

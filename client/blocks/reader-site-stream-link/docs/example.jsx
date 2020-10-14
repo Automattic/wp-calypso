@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import { Card } from '@automattic/components';
 
 export default class ReaderSiteStreamLinkExample extends React.Component {

@@ -8,13 +8,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { localizeUrl } from 'lib/i18n-utils';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Image dependencies
  */
-import paymentsImage from 'assets/images/illustrations/payments.svg';
+import paymentsImage from 'calypso/assets/images/illustrations/payments.svg';
 
 export default localize( ( { isJetpack, translate } ) => {
 	const supportDocLink = localizeUrl(

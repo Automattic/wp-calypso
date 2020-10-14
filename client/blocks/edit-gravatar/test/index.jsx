@@ -13,8 +13,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { AspectRatios } from 'state/editor/image-editor/constants';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'lib/oauth-token', () => ( {
@@ -37,12 +37,12 @@ describe( 'EditGravatar', () => {
 	} );
 
 	beforeAll( function () {
-		EditGravatar = require( 'blocks/edit-gravatar' ).EditGravatar;
-		FilePicker = require( 'components/file-picker' );
-		Gravatar = require( 'components/gravatar' ).default;
-		ImageEditor = require( 'blocks/image-editor' );
-		VerifyEmailDialog = require( 'components/email-verification/email-verification-dialog' );
-		DropZone = require( 'components/drop-zone' ).default;
+		EditGravatar = require( 'calypso/blocks/edit-gravatar' ).EditGravatar;
+		FilePicker = require( 'calypso/components/file-picker' );
+		Gravatar = require( 'calypso/components/gravatar' ).default;
+		ImageEditor = require( 'calypso/blocks/image-editor' );
+		VerifyEmailDialog = require( 'calypso/components/email-verification/email-verification-dialog' );
+		DropZone = require( 'calypso/components/drop-zone' ).default;
 	} );
 
 	describe( 'component rendering', () => {

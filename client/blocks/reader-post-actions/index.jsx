@@ -8,18 +8,18 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import CommentButton from 'blocks/comment-button';
-import LikeButton from 'reader/like-button';
-import ShareButton from 'blocks/reader-share';
-import PostEditButton from 'blocks/post-edit-button';
-import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
-import { shouldShowComments } from 'blocks/comments/helper';
-import { shouldShowLikes } from 'reader/like-helper';
-import { shouldShowShare } from 'blocks/reader-share/helper';
-import { userCan } from 'state/posts/utils';
-import * as stats from 'reader/stats';
+import CommentButton from 'calypso/blocks/comment-button';
+import LikeButton from 'calypso/reader/like-button';
+import ShareButton from 'calypso/blocks/reader-share';
+import PostEditButton from 'calypso/blocks/post-edit-button';
+import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
+import { shouldShowComments } from 'calypso/blocks/comments/helper';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
+import { userCan } from 'calypso/state/posts/utils';
+import * as stats from 'calypso/reader/stats';
 import { localize } from 'i18n-calypso';
-import ReaderVisitLink from 'blocks/reader-visit-link';
+import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 
 /**
  * Style dependencies

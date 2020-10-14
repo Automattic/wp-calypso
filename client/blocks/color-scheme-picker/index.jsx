@@ -10,11 +10,11 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { savePreference, setPreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import getColorSchemesData from './constants';
-import FormRadiosBar from 'components/forms/form-radios-bar';
+import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 
 /**
  * Style dependencies

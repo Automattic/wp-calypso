@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { union, includes, noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 
 /**
@@ -17,19 +17,19 @@ import {
 	FEATURE_PERFORMANCE,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_SFTP,
-} from 'lib/plans/constants';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getEligibility, isEligibleForAutomatedTransfer } from 'state/automated-transfer/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'calypso/lib/plans/constants';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getEligibility, isEligibleForAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { Button, CompactCard } from '@automattic/components';
-import QueryEligibility from 'components/data/query-atat-eligibility';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import HoldList, { hasBlockingHold } from './hold-list';
 import WarningList from './warning-list';
-import { launchSite } from 'state/sites/launch/actions';
-import { isSavingSiteSettings } from 'state/site-settings/selectors';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import getRequest from 'state/selectors/get-request';
+import { launchSite } from 'calypso/state/sites/launch/actions';
+import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import getRequest from 'calypso/state/selectors/get-request';
 
 /**
  * Style dependencies

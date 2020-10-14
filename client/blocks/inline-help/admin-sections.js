@@ -3,13 +3,13 @@
  */
 import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { getCustomizerUrl } from 'state/sites/selectors';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { getLocaleSlug } from 'lib/i18n-utils';
+import config from 'calypso/config';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
 /**
