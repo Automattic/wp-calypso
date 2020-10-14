@@ -320,7 +320,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar'
  * Coming soon
  */
 function load_coming_soon() {
-	if ( defined( 'WPCOM_PUBLIC_COMING_SOON' ) && WPCOM_PUBLIC_COMING_SOON ) {
+	if ( wpcom_is_proxied_request() ) {
 		require_once __DIR__ . '/coming-soon/coming-soon.php';
 	}
 }
