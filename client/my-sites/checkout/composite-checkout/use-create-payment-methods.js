@@ -394,7 +394,7 @@ function useCreateApplePay( {
 	isApplePayAvailable,
 	isApplePayLoading,
 } ) {
-	const shouldLoadApplePay = onlyLoadPaymentMethods.includes( 'apple-pay' ) ?? true;
+	const shouldLoadApplePay = onlyLoadPaymentMethods?.includes( 'apple-pay' ) ?? true;
 
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
