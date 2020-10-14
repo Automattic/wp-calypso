@@ -51,7 +51,6 @@ function updateEditor() {
 		clearInterval( awaitSettingsBar );
 
 		const isMobile = window.innerWidth < 782;
-		const isNewLaunch = window?.calypsoifyGutenberg?.isNewLaunch;
 		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
@@ -73,7 +72,7 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 
-			const shouldOpenNewFlow = isNewLaunch && ( ! isMobile || ( isMobile && isNewLaunchMobile ) );
+			const shouldOpenNewFlow = ! isMobile || ( isMobile && isNewLaunchMobile );
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_flow: shouldOpenNewFlow,
