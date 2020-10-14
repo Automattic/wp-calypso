@@ -55,7 +55,7 @@ function updateEditor() {
 		}
 		clearInterval( awaitSettingsBar );
 
-		const isMobile = window.innerWidth < 782;
+		const isMobileViewport = window.innerWidth < 782;
 		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
@@ -63,7 +63,7 @@ function updateEditor() {
 		const launchHref = window?.calypsoifyGutenberg?.launchUrl as string;
 
 		// On mobile there is not enough space to display "Complete setup" label.
-		const launchLabel = isMobile
+		const launchLabel = isMobileViewport
 			? __( 'Launch', 'full-site-editing' )
 			: __( 'Complete setup', 'full-site-editing' );
 
@@ -77,7 +77,7 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 
-			const shouldOpenNewFlow = ! isMobile || ( isMobile && isNewLaunchMobile );
+			const shouldOpenNewFlow = ! isMobileViewport || ( isMobileViewport && isNewLaunchMobile );
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_flow: shouldOpenNewFlow,
