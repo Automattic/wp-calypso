@@ -117,6 +117,10 @@ function updateEditor() {
 		};
 
 		const body = document.querySelector( 'body' );
+		if ( ! body ) {
+			return;
+		}
+
 		body.classList.add( 'editor-gutenberg-launch__fse-overrides' );
 
 		// 'Update'/'Publish' primary button to become 'Save' tertiary button.
