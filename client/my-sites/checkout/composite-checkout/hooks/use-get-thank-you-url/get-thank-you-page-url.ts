@@ -267,19 +267,23 @@ function maybeShowPlanBumpOffer( {
 	pendingOrReceiptId,
 	cart,
 	siteSlug,
+	orderId,
 	didPurchaseFail,
 	isTransactionResultEmpty,
 }: {
 	pendingOrReceiptId: string;
+	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	didPurchaseFail: boolean;
 	isTransactionResultEmpty: boolean;
 } ): string | undefined {
+	if ( orderId ) {
+		return;
+	}
 	if ( hasPremiumPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
 	}
-
 	return;
 }
 
@@ -322,6 +326,7 @@ function getRedirectUrlForConciergeNudge( {
 		const upgradePath = maybeShowPlanBumpOffer( {
 			pendingOrReceiptId,
 			cart,
+			orderId,
 			siteSlug,
 			didPurchaseFail,
 			isTransactionResultEmpty,
