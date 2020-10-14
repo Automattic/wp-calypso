@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Gridicon from 'calypso/components/gridicon';
 import UsersStore from 'calypso/lib/users/store';
@@ -213,7 +214,11 @@ class SharingConnection extends Component {
 		}
 
 		if ( content.length ) {
-			return <label className="sharing-connection__account-sitewide-connection">{ content }</label>;
+			return (
+				<FormLabel className="sharing-connection__account-sitewide-connection">
+					{ content }
+				</FormLabel>
+			);
 		}
 	}
 

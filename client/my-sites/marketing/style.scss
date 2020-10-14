@@ -401,8 +401,10 @@
 	color: var( --color-neutral-light );
 }
 
-.sharing-connection__account-sitewide-connection {
+.sharing-connection__account-sitewide-connection.form-label {
 	display: block;
+	margin-bottom: 0;
+	font-size: 1rem;
 }
 
 .sharing-connection__account-sitewide-connection input[type='checkbox'] {
