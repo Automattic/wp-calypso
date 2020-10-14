@@ -253,7 +253,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
+		const { site, isMigrationInProgress, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
@@ -272,12 +272,7 @@ export class SiteNotice extends React.Component {
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
 				{ showJitms && (
-					<AsyncLoad
-						require="calypso/blocks/jitm"
-						messagePath={ messagePath }
-						template="sidebar-banner"
-						placeholder={ null }
-					/>
+					<AsyncLoad require="calypso/blocks/jitm" template="sidebar-banner" placeholder={ null } />
 				) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ ! hasJITM && domainCreditNotice }
@@ -310,8 +305,7 @@ export default connect(
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
 			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
-			hasJITM: getTopJITM( state, messagePath ),
-			messagePath,
+			hasJITM: true, //getTopJITM( state, messagePath ),
 		};
 	},
 	( dispatch ) => {
