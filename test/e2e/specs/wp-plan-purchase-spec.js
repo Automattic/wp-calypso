@@ -126,7 +126,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 			const newCartAmount = await securePaymentComponent.cartTotalAmount();
 			const expectedCartAmount =
-				Math.round( ( originalCartAmount * .99 + Number.EPSILON ) * 100 ) / 100;
+				Math.round( ( originalCartAmount * 0.99 + Number.EPSILON ) * 100 ) / 100;
 
 			assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 		} );
