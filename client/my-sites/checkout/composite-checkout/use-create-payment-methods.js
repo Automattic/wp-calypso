@@ -408,11 +408,9 @@ function useCreateApplePay( {
 		isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
-		if ( ! shouldCreateApplePayMethod ) {
-			return null;
-		}
-		return createApplePayMethod( stripe, stripeConfiguration );
+		return shouldCreateApplePayMethod ? createApplePayMethod( stripe, stripeConfiguration ) : null;
 	}, [ shouldCreateApplePayMethod ] );
+
 	return applePayMethod;
 }
 
