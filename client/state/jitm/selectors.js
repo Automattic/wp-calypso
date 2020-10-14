@@ -49,3 +49,7 @@ export const getTopJITM = ( state, messagePath ) => {
 	// Return results.
 	return jitms[ 0 ];
 };
+
+export const hasJITM = ( state, messagePath ) => {
+	return !! getTopJITM( state, messagePath );
+};
