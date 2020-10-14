@@ -21,7 +21,6 @@ import {
 } from 'calypso/lib/plans/constants';
 
 export function generateSteps( {
-	addItemsToCart = noop,
 	addPlanToCart = noop,
 	createAccount = noop,
 	createSite = noop,
@@ -329,7 +328,6 @@ export function generateSteps( {
 			stepName: 'secure-your-brand',
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'cartItems' ],
-			apiRequestFunction: addItemsToCart,
 			fulfilledStepCallback: isSecureYourBrandFulfilled,
 		},
 

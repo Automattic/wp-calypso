@@ -362,9 +362,11 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		return;
 	}
 
+	const state = reduxStore.getState();
+	const cartItems = get( getSignupDependencyStore( state ), 'cartItems', [] );
 	const providedDependencies = { cartItem };
 
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem ].filter( ( item ) => item ).concat( cartItems );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -382,25 +384,6 @@ export function addDomainToCart(
 	const providedDependencies = stepProvidedDependencies || { domainItem };
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
-
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
-}
-
-export function addItemsToCart(
-	callback,
-	dependencies,
-	stepProvidedItems,
-	reduxStore,
-	siteSlug,
-	stepProvidedDependencies
-) {
-	const { cartItems } = stepProvidedItems;
-	if ( isEmpty( cartItems ) ) {
-		return defer( () => callback( undefined, stepProvidedDependencies ) );
-	}
-	const slug = siteSlug || dependencies.siteSlug;
-	const newCartItems = cartItems.filter( ( item ) => item );
-	const providedDependencies = stepProvidedDependencies || { cartItems };
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
