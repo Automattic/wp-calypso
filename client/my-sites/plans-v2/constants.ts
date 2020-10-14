@@ -296,7 +296,7 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
 	buttonLabel: isEnabled( 'plans/alternate-selector' )
-		? translate( 'Start using CRM for free' )
+		? translate( 'Get Jetpack CRM' )
 		: translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem(
