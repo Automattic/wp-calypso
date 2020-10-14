@@ -1087,3 +1087,16 @@ button.plan-features__scroll-button {
 		padding: 0 20px;
 	}
 }
+
+.plans-wrapper.is-monthly-pricing {
+	.plan-pill {
+		top: 10px;
+		bottom: unset;
+		right: 14px;
+		left: unset;
+		padding: 4px 10px;
+		border-radius: 10px;
+		text-transform: none;
+		background-color: var( --color-neutral-100 );
+	}
+}

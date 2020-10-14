@@ -236,3 +236,53 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 }
+
+.is-monthly-pricing-test {
+	&.segmented-control.is-compact {
+		margin-bottom: 0;
+
+		.segmented-control__item {
+			--color-primary: var( --color-neutral-100 );
+			--color-text-inverted: var( --color-neutral-0 );
+			--color-primary-light: var( --color-neutral-80 );
+			--item-padding: 3px;
+
+			padding: var( --item-padding ) 0;
+
+			&:first-child {
+				padding-left: var( --item-padding );
+			}
+
+			&:last-child {
+				padding-right: var( --item-padding );
+			}
+		}
+
+		.segmented-control__link {
+			border: none;
+			padding-top: 6px;
+			padding-bottom: 6px;
+		}
+	}
+}
+
+.plan-features__interval-type-popover {
+	transform: translate( 30px, 0 );
+
+	&.is-right .popover__arrow {
+		border-right-color: var( --color-neutral-100 );
+		&::before {
+			border-right-color: var( --color-neutral-100 );
+		}
+	}
+
+	.popover__inner {
+		padding: 8px 10px;
+		max-width: 210px;
+		background-color: var( --color-neutral-100 );
+		border-color: var( --color-neutral-100 );
+		color: var( --color-neutral-0 );
+		border-radius: 2px;
+		text-align: left;
+	}
+}
