@@ -45,9 +45,9 @@ import './style.scss';
 enum Step {
 	HostSelection = 0,
 	Credentials = 1,
-	// Verification = 2,
-	Connected = 2,
-	ConnectedEdit = 3,
+	Verification = 2,
+	Connected = 3,
+	ConnectedEdit = 4,
 }
 
 interface Props {
@@ -60,8 +60,15 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	const steps = [
-		translate( 'Host locator' ),
+		{
+			message: translate( 'Host locator' ),
+			onClick: () => page( settingsPath( siteSlug ) ),
+			show: 'onComplete',
+		},
 		translate( 'Credentials' ),
 		translate( 'Saved' ),
 		// TODO: moved Verification to future work
@@ -72,9 +79,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const [ formState, setFormState ] = useState( INITIAL_FORM_STATE );
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
-
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const [ startedWithoutConnection, setStartedWithoutConnection ] = useState( false );
 
 	const formSubmissionStatus = useSelector(
 		( state ) =>
@@ -122,10 +127,18 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			undefined === host
 		) {
 			return Step.HostSelection;
+		} else if ( 'pending' === formSubmissionStatus ) {
+			return Step.Verification;
 		}
-
 		return Step.Credentials;
 	} )();
+
+	// suppress the step progress until we are disconnected
+	useEffect( () => {
+		if ( statusState === StatusState.Disconnected ) {
+			setStartedWithoutConnection( true );
+		}
+	}, [ setStartedWithoutConnection, statusState ] );
 
 	// when credentials load, merge w/ the form state
 	useEffect( () => {
@@ -183,6 +196,13 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 					} )
 				);
 				break;
+			case Step.Verification:
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_verification_step_enter', {
+						host,
+					} )
+				);
+				break;
 			case Step.Connected:
 				dispatch(
 					recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_connected_step_enter' )
@@ -211,12 +231,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	};
 
 	const disableForm = 'pending' === formSubmissionStatus;
-
-	const onCredentialsStepClick = ( newStep: number ) => {
-		if ( 0 === newStep ) {
-			page( settingsPath( siteSlug ) );
-		}
-	};
 
 	const renderUnconnectedButtons = () => (
 		<>
@@ -282,6 +296,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.HostSelection:
 				return <HostSelection />;
 			case Step.Credentials:
+			case Step.Verification:
 				return renderCredentialsForm( false );
 			case Step.Connected:
 				return (
@@ -289,7 +304,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 						<Button
 							borderless
 							className="advanced-credentials__connected"
-							// onClick={ () => setRequestedCredentialsEdit( true ) }
 							href={ `${ settingsPath( siteSlug ) }?action=edit` }
 						>
 							{ translate(
@@ -326,11 +340,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				</div>
 			</Card>
 			<Card>
-				<StepProgress
-					currentStep={ currentStep }
-					onStepClick={ onCredentialsStepClick }
-					steps={ steps }
-				/>
+				{ startedWithoutConnection && <StepProgress currentStep={ currentStep } steps={ steps } /> }
 				{ render() }
 			</Card>
 		</Main>
