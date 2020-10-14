@@ -6,7 +6,7 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 } from '@automattic/composite-checkout';
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -268,12 +268,9 @@ export async function payPalProcessor(
 ) {
 	const { createUserAndSiteBeforeTransaction } = transactionOptions;
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
-	const successUrl = formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname: getThankYouUrl(),
-	} );
+
+	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );
+
 	const cancelUrl = formatUrl( {
 		protocol,
 		hostname,
