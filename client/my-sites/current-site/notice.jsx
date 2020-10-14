@@ -39,7 +39,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { getTopJITM } from 'calypso/state/jitm/selectors';
+import { hasJITM } from 'calypso/state/jitm/selectors';
 import AsyncLoad from 'calypso/components/async-load';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -305,7 +305,7 @@ export default connect(
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
 			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
-			hasJITM: true, //getTopJITM( state, messagePath ),
+			hasJITM: hasJITM( state, messagePath ),
 		};
 	},
 	( dispatch ) => {
