@@ -1,7 +1,11 @@
 /**
  * External dependencies
  */
-import { defaultRegistry } from '@automattic/composite-checkout';
+import {
+	defaultRegistry,
+	makeSuccessResponse,
+	makeRedirectResponse,
+} from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
@@ -128,9 +132,9 @@ export async function stripeCardProcessor(
 		} )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.redirect_url ) {
-				return { type: 'REDIRECT', payload: stripeResponse.redirect_url };
+				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
-			return { type: 'SUCCESS', payload: stripeResponse };
+			return makeSuccessResponse( stripeResponse );
 		} );
 }
 
@@ -157,7 +161,7 @@ export async function ebanxCardProcessor(
 	)
 		.then( saveTransactionResponseToWpcomStore )
 		.then( ( response ) => {
-			return { type: 'SUCCESS', payload: response };
+			return makeSuccessResponse( response );
 		} );
 }
 
@@ -215,9 +219,9 @@ export async function existingCardProcessor(
 		} )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.redirect_url ) {
-				return { type: 'REDIRECT', payload: stripeResponse.redirect_url };
+				return makeRedirectResponse( stripeResponse.redirect_url );
 			}
-			return { type: 'SUCCESS', payload: stripeResponse };
+			return makeSuccessResponse( stripeResponse );
 		} );
 }
 
