@@ -24,48 +24,47 @@ import './style.scss';
  */
 const SEARCH_DEBOUNCE_MS = 300;
 
-const keyListener = ( methodToCall: ( e: MouseEvent< HTMLDivElement > ) => void ) => (
-	event: KeyboardEvent
-) => {
+const keyListener = (
+	methodToCall: ( e: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => void
+) => ( event: KeyboardEvent< HTMLDivElement > ) => {
 	switch ( event.key ) {
 		case ' ':
 		case 'Enter':
-			methodToCall( ( event as unknown ) as MouseEvent< HTMLDivElement > );
+			methodToCall( event );
 			break;
 	}
 };
 
 type Props = {
+	autoFocus: boolean;
 	className?: string;
-	initialValue?: string;
-	value?: string;
-	placeholder?: string;
-	pinned: boolean;
+	compact: boolean;
 	delaySearch: boolean;
 	delayTimeout: number;
 	describedBy?: string;
-	onSearch: ( search: string ) => void;
-	onSearchChange: ( search: string ) => void;
-	onSearchOpen: ( event?: MouseEvent< HTMLDivElement > ) => void;
-	onSearchClose: ( event: MouseEvent< HTMLDivElement > ) => void;
-	analyticsGroup?: string;
-	overlayStyling?: ( search: string ) => void;
-	autoFocus: boolean;
-	disabled: boolean;
-	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
-	onClick?: () => void;
-	disableAutocorrect: boolean;
-	onBlur?: ( event: MouseEvent< HTMLInputElement > ) => void;
-	searching: boolean;
-	isOpen: boolean;
 	dir?: 'ltr' | 'rlt';
+	disableAutocorrect: boolean;
+	disabled: boolean;
 	fitsContainer: boolean;
+	hideClose: boolean;
+	hideOpenIcon: boolean;
+	initialValue?: string;
+	inputLabel?: string;
+	isOpen: boolean;
 	maxLength?: number;
 	minLength?: number;
-	hideClose: boolean;
-	compact: boolean;
-	hideOpenIcon: boolean;
-	inputLabel?: string;
+	onBlur?: ( event: MouseEvent< HTMLInputElement > ) => void;
+	onClick?: () => void;
+	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
+	onSearch: ( search: string ) => void;
+	onSearchChange: ( search: string ) => void;
+	onSearchOpen: ( event?: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => void;
+	onSearchClose: ( event: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => void;
+	overlayStyling?: ( search: string ) => React.ReactNode;
+	placeholder?: string;
+	pinned: boolean;
+	searching: boolean;
+	value?: string;
 };
 
 type State = {
@@ -76,36 +75,39 @@ type State = {
 
 class Search extends React.Component< Props, State > {
 	static defaultProps = {
-		pinned: false,
+		autoFocus: false,
+		compact: false,
 		delaySearch: false,
 		delayTimeout: SEARCH_DEBOUNCE_MS,
-		autoFocus: false,
-		disabled: false,
 		describedBy: null,
+		dir: undefined,
+		disableAutocorrect: false,
+		disabled: false,
+		fitsContainer: false,
+		hideClose: false,
+		hideOpenIcon: false,
+		isOpen: false,
+		onClick: noop,
+		onKeyDown: noop,
 		onSearchChange: noop,
 		onSearchOpen: noop,
 		onSearchClose: noop,
-		onKeyDown: noop,
-		onClick: noop,
 		//undefined value for overlayStyling is an optimization that will
 		//disable overlay scrolling calculation when no overlay is provided.
 		overlayStyling: undefined,
-		disableAutocorrect: false,
+		pinned: false,
 		searching: false,
-		isOpen: false,
-		dir: undefined,
-		fitsContainer: false,
-		hideClose: false,
-		compact: false,
-		hideOpenIcon: false,
 	};
 
-	instanceId: string = uniqueId();
+	instanceId = uniqueId();
 	searchInput = React.createRef< HTMLInputElement >();
 	openIcon = React.createRef< HTMLDivElement >();
 	overlay = React.createRef< HTMLDivElement >();
 
-	onSearch: ( ( search: string ) => void ) & { cancel?: () => void } = this.props.onSearch;
+	// debounced `onSearch` will have a `cancel` function
+	onSearch: ( ( search: string ) => void ) & { cancel?: () => void } = this.props.delaySearch
+		? debounce( this.props.onSearch, this.props.delayTimeout )
+		: this.props.onSearch;
 
 	state = {
 		keyword: this.props.initialValue ?? '',
@@ -114,15 +116,6 @@ class Search extends React.Component< Props, State > {
 	};
 
 	UNSAFE_componentWillReceiveProps( nextProps: Props ) {
-		if (
-			nextProps.onSearch !== this.props.onSearch ||
-			nextProps.delaySearch !== this.props.delaySearch
-		) {
-			this.onSearch = this.props.delaySearch
-				? debounce( this.props.onSearch, this.props.delayTimeout )
-				: this.props.onSearch;
-		}
-
 		if ( this.props.isOpen !== nextProps.isOpen ) {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
@@ -136,7 +129,7 @@ class Search extends React.Component< Props, State > {
 		}
 	}
 
-	openSearch = ( event: MouseEvent< HTMLDivElement > ) => {
+	openSearch = ( event: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => {
 		event.preventDefault();
 		this.setState( {
 			keyword: '',
@@ -145,7 +138,7 @@ class Search extends React.Component< Props, State > {
 		this.props.onSearchOpen( event );
 	};
 
-	closeSearch = ( event: MouseEvent< HTMLDivElement > ) => {
+	closeSearch = ( event: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => {
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
@@ -197,9 +190,7 @@ class Search extends React.Component< Props, State > {
 			// no need to debounce if ! this.state.keyword
 			if ( this.props.delaySearch ) {
 				// Cancel any pending debounce
-				if ( this.onSearch.cancel ) {
-					this.onSearch.cancel();
-				}
+				this.onSearch.cancel?.();
 			}
 			this.props.onSearch( this.state.keyword );
 		}
@@ -245,10 +236,10 @@ class Search extends React.Component< Props, State > {
 	focus = () => {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
 		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
-		setTimeout( () => this.searchInput?.current?.focus(), 0 );
+		setTimeout( () => this.searchInput?.current.focus(), 0 );
 	};
 
-	blur = () => this.searchInput?.current?.blur();
+	blur = () => this.searchInput?.current.blur();
 
 	clear = () => this.setState( { keyword: '' } );
 
@@ -385,7 +376,7 @@ class Search extends React.Component< Props, State > {
 							minLength={ this.props.minLength }
 							{ ...autocorrect }
 						/>
-						{ this.props.overlayStyling && this.renderStylingDiv() }
+						{ this.renderStylingDiv() }
 					</div>
 				) }
 				{ this.closeButton() }
@@ -394,11 +385,14 @@ class Search extends React.Component< Props, State > {
 	}
 
 	renderStylingDiv() {
-		return (
-			<div className="search__text-overlay" ref={ this.overlay }>
-				{ this.props.overlayStyling?.( this.state.keyword ) || null }
-			</div>
-		);
+		if ( this.props.overlayStyling ) {
+			return (
+				<div className="search__text-overlay" ref={ this.overlay }>
+					{ this.props.overlayStyling?.( this.state.keyword ) }
+				</div>
+			);
+		}
+		return null;
 	}
 
 	closeButton() {
