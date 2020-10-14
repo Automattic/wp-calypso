@@ -10,6 +10,34 @@
 
 namespace A8C\FSE\Coming_soon;
 
+$blog_locale = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+
+function get_redirect_to() {
+
+	// redirect_to is probably never set so this is almost pointless
+	if ( ! empty( $_REQUEST['redirect_to'] ) ) {
+		return rawurlencode( $_REQUEST['redirect_to'] );
+	}
+
+	if ( ! isset( $_SERVER['HTTP_HOST'] ) || ! isset( $_SERVER['REQUEST_URI'] ) ) {
+		return get_marketing_home_url();
+	}
+
+	return rawurlencode( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ); // This is almost always where we are going
+}
+
+function get_login_url() {
+	$locale              = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+	$redirect_to         = get_redirect_to();
+	$locale_url_fragment = 'en' === \$blog_locale ? '' : '/' . \$blog_locale;
+	return '//wordpress.com/log-in' . $locale_url_fragment . '?redirect_to=' . $redirect_to;
+}
+
+function get_marketing_home_url() {
+	$locale_subdomain = 'en' === \$blog_locale ? '' : \$blog_locale + '.';
+	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
+}
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -197,8 +225,8 @@ namespace A8C\FSE\Coming_soon;
 						<p class="copy"><?php echo esc_html( fix_widows( __( 'Build a website. Sell your stuff. Write a blog. And so much more.', 'full-site-editing' ), array( 'mobile_enable' => true ) ) ); ?></p>
 					</div>
 					<div class="marketing-buttons">
-						<p><a class="button button-secondary" href="<?php echo esc_url( $login_url ); ?>"><?php esc_html_e( 'Log in', 'full-site-editing' ); ?></a></p>
-						<p><a class="button button-primary " href="<?php echo esc_url( localized_wpcom_url( 'https://wordpress.com/?ref=coming_soon' ) ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
+						<p><a class="button button-secondary" href="<?php echo esc_url( get_login_url() ); ?>"><?php esc_html_e( 'Log in', 'full-site-editing' ); ?></a></p>
+						<p><a class="button button-primary " href="<?php echo esc_url( get_marketing_home_url() ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
 					</div>
 				<?php endif; ?>
 			</div>
