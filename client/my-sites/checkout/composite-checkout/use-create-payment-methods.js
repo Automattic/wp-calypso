@@ -394,9 +394,9 @@ function useCreateApplePay( {
 	isApplePayAvailable,
 	isApplePayLoading,
 } ) {
-	const shouldLoadApplePay =
-		isApplePayAvailable &&
-		( onlyLoadPaymentMethods ? onlyLoadPaymentMethods.includes( 'apple-pay' ) : true );
+	const shouldLoadApplePay = onlyLoadPaymentMethods
+		? onlyLoadPaymentMethods.includes( 'apple-pay' )
+		: true;
 
 	const shouldCreateApplePayMethod =
 		shouldLoadApplePay &&
