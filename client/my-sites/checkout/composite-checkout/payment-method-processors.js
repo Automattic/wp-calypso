@@ -298,9 +298,7 @@ export async function payPalProcessor(
 		transactionOptions
 	)
 		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return { type: 'REDIRECT', payload: response };
-		} );
+		.then( makeRedirectResponse );
 }
 
 async function saveTransactionResponseToWpcomStore( result ) {
