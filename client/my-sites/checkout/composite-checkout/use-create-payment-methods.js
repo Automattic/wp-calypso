@@ -408,29 +408,11 @@ function useCreateApplePay( {
 		isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
-		if (
-			! (
-				shouldLoadApplePay &&
-				! isStripeLoading &&
-				! stripeLoadingError &&
-				stripe &&
-				stripeConfiguration &&
-				! isApplePayLoading &&
-				isApplePayAvailable
-			)
-		) {
+		if ( ! shouldCreateApplePayMethod ) {
 			return null;
 		}
 		return createApplePayMethod( stripe, stripeConfiguration );
-	}, [
-		shouldLoadApplePay,
-		isApplePayLoading,
-		stripe,
-		stripeConfiguration,
-		isStripeLoading,
-		stripeLoadingError,
-		isApplePayAvailable,
-	] );
+	}, [ shouldCreateApplePayMethod ] );
 	return applePayMethod;
 }
 
