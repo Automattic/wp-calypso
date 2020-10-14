@@ -241,9 +241,7 @@ export async function freePurchaseProcessor(
 		wpcomTransaction
 	)
 		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return { type: 'SUCCESS', payload: response };
-		} );
+		.then( makeSuccessResponse );
 }
 
 export async function fullCreditsProcessor(
@@ -264,9 +262,7 @@ export async function fullCreditsProcessor(
 		transactionOptions
 	)
 		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return { type: 'SUCCESS', payload: response };
-		} );
+		.then( makeSuccessResponse );
 }
 
 export async function payPalProcessor(
