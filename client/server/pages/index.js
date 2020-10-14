@@ -17,39 +17,40 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 /**
  * Internal dependencies
  */
-import config from 'config';
-import sanitize from 'server/sanitize';
-import utils from 'server/bundler/utils';
-import { pathToRegExp } from 'utils';
-import sections from 'sections';
-import isSectionEnabled from 'sections-filter';
-import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
-import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
+import config from 'calypso/config';
+import sanitize from 'calypso/server/sanitize';
+import utils from 'calypso/server/bundler/utils';
+import { pathToRegExp } from 'calypso/utils';
+import sections from 'calypso/sections';
+import isSectionEnabled from 'calypso/sections-filter';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
+import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
 import {
 	serverRender,
 	renderJsx,
 	attachBuildTimestamp,
 	attachHead,
 	attachI18n,
-} from 'server/render';
-import stateCache from 'server/state-cache';
-import getBootstrappedUser from 'server/user-bootstrap';
-import { createReduxStore } from 'state';
-import { setDocumentHeadLink } from 'state/document-head/actions';
-import { setStore } from 'state/redux-store';
-import initialReducer from 'state/reducer';
-import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
-import { setCurrentUser } from 'state/current-user/actions';
-import { login } from 'lib/paths';
+} from 'calypso/server/render';
+import stateCache from 'calypso/server/state-cache';
+import getBootstrappedUser from 'calypso/server/user-bootstrap';
+import { createReduxStore } from 'calypso/state';
+import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { setStore } from 'calypso/state/redux-store';
+import initialReducer from 'calypso/state/reducer';
+import { DESERIALIZE, LOCALE_SET } from 'calypso/state/action-types';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
+import { login } from 'calypso/lib/paths';
 import { logSectionResponse } from './analytics';
-import analytics from 'server/lib/analytics';
-import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import wooDnaConfig from 'jetpack-connect/woo-dna-config';
+import analytics from 'calypso/server/lib/analytics';
+import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareAssets from '../middleware/assets.js';
+import middlewareCache from '../middleware/cache.js';
 
 const debug = debugFactory( 'calypso:pages' );
 
@@ -562,6 +563,7 @@ export default function pages() {
 	app.use( cookieParser() );
 	app.use( middlewareBuildTarget( calypsoEnv ) );
 	app.use( middlewareAssets() );
+	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
