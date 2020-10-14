@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Gridicon from 'calypso/components/gridicon';
 import Image from 'calypso/components/image';
@@ -25,7 +26,7 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 
 	return (
 		<li className={ classes }>
-			<label className="account-dialog-account__label">
+			<FormLabel className="account-dialog-account__label">
 				{ conflicting && <Gridicon icon="notice" /> }
 				{ ! account.isConnected && (
 					<FormRadio
@@ -49,7 +50,7 @@ const AccountDialogAccount = ( { account, conflicting, onChange, selected, defau
 						<div className="account-dialog-account__description">{ account.description }</div>
 					) }
 				</span>
-			</label>
+			</FormLabel>
 		</li>
 	);
 };
