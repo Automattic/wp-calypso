@@ -7,7 +7,7 @@ import { isUri } from 'valid-url';
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'lib/url';
+import { getUrlParts } from 'calypso/lib/url';
 
 /**
  * Given a media string, File, or object, returns the file extension.

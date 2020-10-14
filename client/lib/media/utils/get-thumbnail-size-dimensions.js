@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ThumbnailSizeDimensions } from 'lib/media/constants';
+import { ThumbnailSizeDimensions } from 'calypso/lib/media/constants';
 
 /**
  * Returns an object containing width and height dimenions in pixels for

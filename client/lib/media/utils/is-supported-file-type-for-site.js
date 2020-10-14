@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
-import { getAllowedFileTypesForSite } from 'lib/media/utils/get-allowed-file-types-for-site';
+import { isSiteAllowedFileTypesToBeTrusted } from 'calypso/lib/media/utils/is-site-allowed-file-types-to-be-trusted';
+import { getAllowedFileTypesForSite } from 'calypso/lib/media/utils/get-allowed-file-types-for-site';
 
 /**
  * Returns true if the specified item is a valid file for the given site,
