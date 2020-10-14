@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { parse } from 'url';
+import { parse } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
