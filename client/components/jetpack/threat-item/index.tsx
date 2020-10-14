@@ -28,11 +28,19 @@ import './style.scss';
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
-	onFixThreat?: Function;
-	onIgnoreThreat?: Function;
+	onFixThreat?: () => void;
+	onIgnoreThreat?: () => void;
 	isFixing: boolean;
 	contactSupportUrl?: string;
 }
+
+export const ThreatItemPlaceholder: React.FC = () => (
+	<LogItem
+		className={ classnames( 'threat-item', 'is-placeholder' ) }
+		header="Placeholder threat"
+		subheader="Placeholder sub header"
+	/>
+);
 
 const ThreatItem: React.FC< Props > = ( {
 	threat,
@@ -108,13 +116,7 @@ const ThreatItem: React.FC< Props > = ( {
 	} );
 
 	if ( isPlaceholder ) {
-		return (
-			<LogItem
-				className={ classnames( 'threat-item', 'is-placeholder' ) }
-				header="Placeholder threat"
-				subheader="Placeholder sub header"
-			></LogItem>
-		);
+		return <ThreatItemPlaceholder />;
 	}
 
 	return (
