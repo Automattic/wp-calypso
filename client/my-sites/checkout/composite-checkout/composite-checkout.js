@@ -689,6 +689,7 @@ CompositeCheckout.propTypes = {
 	plan: PropTypes.string,
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
+	isInEditor: PropTypes.bool,
 };
 
 function getPlanProductSlugs(
