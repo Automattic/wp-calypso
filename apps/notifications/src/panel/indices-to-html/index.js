@@ -321,17 +321,9 @@ function recurse_convert( text, ranges, options ) {
 	// to smallest gives us the proper order for descending recursively.
 	for ( i = 0; i < ranges_copy.length; i++ ) {
 		id = find_largest_range( ranges_copy );
-		if ( ranges[ id ].indices[ 1 ] === 0 && ranges[ id ].indices[ 1 ] === 0 ) {
-			// Indices covering 0,0 are special cases only. They always go at the very
-			// beginning of the document, are never nested, and are always "empty"
-			// If there are multiple zero-length ranges, they will return in the order
-			// they appear.
-			container.appendChild( render_range( '', [], ranges[ id ], ranges, options ) );
-		} else {
-			range_len = ranges[ id ].indices[ 1 ] - ranges[ id ].indices[ 0 ];
-			for ( n = ranges[ id ].indices[ 0 ]; n <= ranges[ id ].indices[ 1 ]; n++ ) {
-				t[ n ].index.push( { id: id, len: range_len } );
-			}
+		range_len = ranges[ id ].indices[ 1 ] - ranges[ id ].indices[ 0 ];
+		for ( n = ranges[ id ].indices[ 0 ]; n <= ranges[ id ].indices[ 1 ]; n++ ) {
+			t[ n ].index.push( { id: id, len: range_len } );
 		}
 		// Clear out the currently-selected range so that it won't
 		// return as the largest range in the next loop iteration
