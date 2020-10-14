@@ -396,14 +396,10 @@ function useCreateApplePay( {
 } ) {
 	const shouldLoadApplePay = onlyLoadPaymentMethods.includes( 'apple-pay' ) ?? true;
 
+	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
+
 	const shouldCreateApplePayMethod =
-		shouldLoadApplePay &&
-		! isStripeLoading &&
-		! stripeLoadingError &&
-		stripe &&
-		stripeConfiguration &&
-		! isApplePayLoading &&
-		isApplePayAvailable;
+		shouldLoadApplePay && isStripeReady && ! isApplePayLoading && isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
 		return shouldCreateApplePayMethod ? createApplePayMethod( stripe, stripeConfiguration ) : null;
