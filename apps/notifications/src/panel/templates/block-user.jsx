@@ -14,7 +14,7 @@ import { linkProps } from './functions';
 import FollowLink from './follow-link';
 
 function getDisplayURL( url ) {
-	var parser = document.createElement( 'a' );
+	const parser = document.createElement( 'a' );
 	parser.href = url;
 	return ( parser.hostname + parser.pathname ).replace( /\/$/, '' );
 }
@@ -35,18 +35,17 @@ export class UserBlock extends React.Component {
 	 * @returns {string} - Time stamp formatted for display or '' if input invalid
 	 */
 	getTimeString = ( timestamp ) => {
-		var DAY_IN_SECONDS = 3600 * 24,
-			MAX_LENGTH = 15,
-			parsedTime = Date.parse( timestamp ),
-			momentTime,
-			timeString;
+		const DAY_IN_SECONDS = 3600 * 24;
+		const MAX_LENGTH = 15;
+		const parsedTime = Date.parse( timestamp );
+		let timeString;
 
 		if ( isNaN( parsedTime ) ) {
 			return '';
 		}
 
 		const localeSlug = getLocaleSlug();
-		momentTime = moment( timestamp ).locale( localeSlug );
+		const momentTime = moment( timestamp ).locale( localeSlug );
 
 		if ( Date.now() - parsedTime > 1000 * DAY_IN_SECONDS * 5 ) {
 			// 30 Apr 2015
@@ -65,13 +64,12 @@ export class UserBlock extends React.Component {
 	};
 
 	render() {
-		var grav = this.props.block.media[ 0 ],
-			home_url = '',
-			home_title = '',
-			timeIndicator,
-			homeTemplate,
-			followLink,
-			noteActions;
+		const grav = this.props.block.media[ 0 ];
+		let home_url = '';
+		let home_title = '';
+		let timeIndicator;
+		let homeTemplate;
+		let followLink;
 
 		if ( this.props.block.meta ) {
 			if ( this.props.block.meta.links ) {
@@ -110,8 +108,8 @@ export class UserBlock extends React.Component {
 		}
 
 		if ( home_title ) {
-			var homeClassName =
-				timeIndicator != '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
+			const homeClassName =
+				timeIndicator !== '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
 			homeTemplate = (
 				<p className={ homeClassName }>
 					<span className="wpnc__user__ago">{ timeIndicator }</span>
@@ -134,7 +132,7 @@ export class UserBlock extends React.Component {
 			);
 		}
 
-		if ( this.props.block.actions && 'undefined' != this.props.block.meta.ids.site ) {
+		if ( this.props.block.actions && 'undefined' !== this.props.block.meta.ids.site ) {
 			followLink = (
 				<FollowLink
 					site={ this.props.block.meta.ids.site }
@@ -147,11 +145,11 @@ export class UserBlock extends React.Component {
 		if ( home_url ) {
 			return (
 				<div className="wpnc__user">
-					<a className="wpnc__user__site" href={ home_url } target="_blank">
+					<a className="wpnc__user__site" href={ home_url } target="_blank" rel="noreferrer">
 						<img src={ grav.url } height={ grav.height } width={ grav.width } />
 					</a>
 					<span className="wpnc__user__username">
-						<a className="wpnc__user__home" href={ home_url } target="_blank">
+						<a className="wpnc__user__home" href={ home_url } target="_blank" rel="noreferrer">
 							{ this.props.block.text }
 						</a>
 					</span>
@@ -159,16 +157,15 @@ export class UserBlock extends React.Component {
 					{ followLink }
 				</div>
 			);
-		} else {
-			return (
-				<div className="wpnc__user">
-					<img src={ grav.url } height={ grav.height } width={ grav.width } />
-					<span className="wpnc__user__username">{ this.props.block.text }</span>
-					{ homeTemplate }
-					{ followLink }
-				</div>
-			);
 		}
+		return (
+			<div className="wpnc__user">
+				<img src={ grav.url } height={ grav.height } width={ grav.width } />
+				<span className="wpnc__user__username">{ this.props.block.text }</span>
+				{ homeTemplate }
+				{ followLink }
+			</div>
+		);
 	}
 }
 

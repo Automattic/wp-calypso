@@ -63,7 +63,7 @@ function cleanupRepliesCache() {
 			const storedReplyKey = localStorage.key( i );
 
 			// cleanup caches replies older than a day
-			if ( 'reply_' == localStorage.key( i ).substring( 0, 6 ) ) {
+			if ( 'reply_' === localStorage.key( i ).substring( 0, 6 ) ) {
 				const storedReply = getItem( storedReplyKey );
 
 				if ( storedReply && Date.now() - storedReply[ 1 ] >= 24 * 60 * 60 * 1000 ) {
