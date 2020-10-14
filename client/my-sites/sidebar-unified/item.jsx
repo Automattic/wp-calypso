@@ -8,7 +8,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -31,15 +31,15 @@ export const MySitesSidebarUnifiedItem = ( {
 	selected = false,
 	isSubItem = false,
 } ) => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	// const selectedSiteId = useSelector( getSelectedSiteId );
 
-	let children = null;
+	const children = null;
 
-	// "Stats" item has sparkline inside of it
-	const isStats = typeof slug === 'string' && slug.includes( '-comstats' );
-	if ( isStats && selectedSiteId ) {
-		children = <StatsSparkline className="sidebar-unified__sparkline" siteId={ selectedSiteId } />;
-	}
+	// // "Stats" item has sparkline inside of it
+	// const isStats = typeof slug === 'string' && slug.includes( '-comstats' );
+	// if ( isStats && selectedSiteId ) {
+	// 	children = <StatsSparkline className="sidebar-unified__sparkline" siteId={ selectedSiteId } />;
+	// }
 
 	return (
 		<SidebarItem
@@ -62,4 +62,4 @@ MySitesSidebarUnifiedItem.propTypes = {
 	url: PropTypes.string,
 };
 
-export default MySitesSidebarUnifiedItem;
+export default memo( MySitesSidebarUnifiedItem );
