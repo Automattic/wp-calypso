@@ -11,17 +11,10 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import {
-	FormStatus,
-	useLineItems,
-	useEvents,
-	useTransactionStatus,
-	usePaymentProcessor,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
-import { showStripeModalAuth } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
@@ -110,6 +103,7 @@ const CardHolderName = styled.span`
 
 function ExistingCardPayButton( {
 	disabled,
+	onClick,
 	stripeConfiguration,
 	cardholderName,
 	storedDetailsId,
@@ -117,13 +111,6 @@ function ExistingCardPayButton( {
 	paymentPartnerProcessorId,
 } ) {
 	const [ items, total ] = useLineItems();
-	const {
-		setTransactionComplete,
-		setTransactionRedirecting,
-		setTransactionPending,
-		setTransactionError,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'existing-card' );
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 
@@ -133,41 +120,15 @@ function ExistingCardPayButton( {
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
 				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
-				setTransactionPending();
-				submitTransaction( {
+				onClick( 'existing-card', {
 					items,
 					total,
 					name: cardholderName,
 					storedDetailsId,
 					paymentMethodToken,
 					paymentPartnerProcessorId,
-				} )
-					.then( ( stripeResponse ) => {
-						// 3DS authentication required
-						if ( stripeResponse?.message?.payment_intent_client_secret ) {
-							debug( 'showing stripe authentication modal' );
-							onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-							return showStripeModalAuth( {
-								stripeConfiguration,
-								response: stripeResponse,
-							} );
-						}
-						return stripeResponse;
-					} )
-					.then( ( stripeResponse ) => {
-						// Redirect required
-						if ( stripeResponse?.redirect_url ) {
-							debug( 'stripe transaction requires redirect' );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-							return;
-						}
-						// Nothing more required
-						debug( 'stripe transaction is successful' );
-						setTransactionComplete();
-					} )
-					.catch( ( error ) => {
-						setTransactionError( error.message );
-					} );
+					stripeConfiguration,
+				} );
 			} }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
