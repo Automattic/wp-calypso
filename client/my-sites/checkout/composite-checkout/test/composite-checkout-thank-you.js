@@ -7,8 +7,8 @@
 /**
  * Internal dependencies
  */
-import { getThankYouPageUrl } from '../use-get-thank-you-url';
-import { isEnabled } from 'config';
+import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { isEnabled } from 'calypso/config';
 
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'lib/user', () =>

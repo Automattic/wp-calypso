@@ -2,20 +2,15 @@
  * External dependencies
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { isEmpty } from 'lodash';
 
-const { select } = defaultRegistry;
-const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
+const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
 /**
  * Internal dependencies
  */
-import { isExternal } from 'lib/url';
-import config from 'config';
+import { isExternal } from 'calypso/lib/url';
+import config from 'calypso/config';
 import {
 	hasRenewalItem,
 	getAllCartItems,
@@ -27,17 +22,19 @@ import {
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
-} from 'lib/cart-values/cart-items';
-import { managePurchase } from 'me/purchases/paths';
-import { isValidFeatureKey } from 'lib/plans/features-list';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
-import { persistSignupDestination, retrieveSignupDestination } from 'signup/storageUtils';
-import { getSelectedSite } from 'state/ui/selectors';
-import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
-import { abtest } from 'lib/abtest';
+} from 'calypso/lib/cart-values/cart-items';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
+import { abtest } from 'calypso/lib/abtest';
+import type { ResponseCart } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types';
 
-export function getThankYouPageUrl( {
+type SaveUrlToCookie = ( url: string ) => void;
+type GetUrlFromCookie = () => string | undefined;
+
+export default function getThankYouPageUrl( {
 	siteSlug,
 	adminUrl,
 	redirectTo,
@@ -45,7 +42,7 @@ export function getThankYouPageUrl( {
 	orderId,
 	purchaseId,
 	feature,
-	cart = {},
+	cart,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
@@ -54,8 +51,26 @@ export function getThankYouPageUrl( {
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
-} ) {
+}: {
+	siteSlug: string | undefined;
+	adminUrl: string | undefined;
+	redirectTo: string | undefined;
+	receiptId: number | undefined;
+	orderId: number | undefined;
+	purchaseId: number | undefined;
+	feature: string | undefined;
+	cart: ResponseCart | undefined;
+	isJetpackNotAtomic: boolean;
+	productAliasFromUrl: string | undefined;
+	getUrlFromCookie?: GetUrlFromCookie;
+	saveUrlToCookie?: SaveUrlToCookie;
+	isEligibleForSignupDestinationResult: boolean;
+	hideNudge: boolean;
+	didPurchaseFail: boolean;
+	isTransactionResultEmpty: boolean;
+} ): string {
 	debug( 'starting getThankYouPageUrl' );
+
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), or a Jetpack or WP.com site's block editor (in wp-admin).
 	// This is required for Jetpack's (and WP.com's) paid blocks Upgrade Nudge.
@@ -75,7 +90,7 @@ export function getThankYouPageUrl( {
 				port,
 				pathname,
 				query: {
-					post: parseInt( query.post, 10 ),
+					post: parseInt( String( query.post ), 10 ),
 					action: 'edit',
 					plan_upgraded: 1,
 				},
@@ -105,10 +120,10 @@ export function getThankYouPageUrl( {
 	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
 
 	// Fetch the thank-you page url from a cookie if it is set
-	const signupDestination = getUrlFromCookie();
-	debug( 'cookie url is', signupDestination );
+	const urlFromCookie = getUrlFromCookie();
+	debug( 'cookie url is', urlFromCookie );
 
-	if ( hasRenewalItem( cart ) ) {
+	if ( cart && hasRenewalItem( cart ) ) {
 		const renewalItem = getRenewalItems( cart )[ 0 ];
 		const managePurchaseUrl = managePurchase(
 			renewalItem.extra.purchaseDomain,
@@ -126,15 +141,16 @@ export function getThankYouPageUrl( {
 	// If cart is empty, then send the user to a generic page (not post-purchase related).
 	// For example, this case arises when a Skip button is clicked on a concierge upsell
 	// nudge opened by a direct link to /offer-support-session.
-	if ( ':receiptId' === pendingOrReceiptId && getAllCartItems( cart ).length === 0 ) {
-		const emptyCartUrl = signupDestination || fallbackUrl;
+	const isCartEmpty = cart && getAllCartItems( cart ).length === 0;
+	if ( ':receiptId' === pendingOrReceiptId && isCartEmpty ) {
+		const emptyCartUrl = urlFromCookie || fallbackUrl;
 		debug( 'cart is empty or receipt ID is pending, so returning', emptyCartUrl );
 		return emptyCartUrl;
 	}
 
 	// Domain only flow
-	if ( cart.create_new_blog ) {
-		const newBlogUrl = signupDestination || fallbackUrl;
+	if ( cart?.create_new_blog ) {
+		const newBlogUrl = urlFromCookie || fallbackUrl;
 		const newBlogReceiptUrl = `${ newBlogUrl }/${ pendingOrReceiptId }`;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
 		return newBlogReceiptUrl;
@@ -157,22 +173,29 @@ export function getThankYouPageUrl( {
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
 	// when purchasing a concierge session.
 	const displayModeParam = getDisplayModeParamFromCart( cart );
-	if ( isEligibleForSignupDestinationResult && signupDestination ) {
-		debug( 'is eligible for signup destination', signupDestination );
-		return getUrlWithQueryParam( signupDestination, displayModeParam );
+	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
+		debug( 'is eligible for signup destination', urlFromCookie );
+		return getUrlWithQueryParam( urlFromCookie, displayModeParam );
 	}
 	debug( 'returning fallback url', fallbackUrl );
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
-function getPendingOrReceiptId( receiptId, orderId, purchaseId ) {
+function getPendingOrReceiptId(
+	receiptId: number | undefined,
+	orderId: number | undefined,
+	purchaseId: number | undefined
+): string {
 	if ( receiptId ) {
-		return receiptId;
+		return String( receiptId );
 	}
 	if ( orderId ) {
 		return `pending/${ orderId }`;
 	}
-	return purchaseId ?? ':receiptId';
+	if ( purchaseId ) {
+		return String( purchaseId );
+	}
+	return ':receiptId';
 }
 
 function getFallbackDestination( {
@@ -182,8 +205,15 @@ function getFallbackDestination( {
 	cart,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
-} ) {
-	const isCartEmpty = getAllCartItems( cart ).length === 0;
+}: {
+	pendingOrReceiptId: string;
+	siteSlug: string | undefined;
+	feature: string | undefined;
+	cart: ResponseCart | undefined;
+	isJetpackNotAtomic: boolean;
+	productAliasFromUrl: string | undefined;
+} ): string {
+	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
 
 	// We will show the Thank You page if there's a site slug and either one of the following is true:
@@ -239,7 +269,13 @@ function maybeShowPlanBumpOffer( {
 	siteSlug,
 	didPurchaseFail,
 	isTransactionResultEmpty,
-} ) {
+}: {
+	pendingOrReceiptId: string;
+	cart: ResponseCart | undefined;
+	siteSlug: string | undefined;
+	didPurchaseFail: boolean;
+	isTransactionResultEmpty: boolean;
+} ): string | undefined {
 	if ( hasPremiumPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
 	}
@@ -255,7 +291,15 @@ function getRedirectUrlForConciergeNudge( {
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
-} ) {
+}: {
+	pendingOrReceiptId: string;
+	orderId: number | undefined;
+	cart: ResponseCart | undefined;
+	siteSlug: string | undefined;
+	hideNudge: boolean;
+	didPurchaseFail: boolean;
+	isTransactionResultEmpty: boolean;
+} ): string | undefined {
 	if ( hideNudge ) {
 		return;
 	}
@@ -264,6 +308,7 @@ function getRedirectUrlForConciergeNudge( {
 	// then skip this section so that we do not show further upsells.
 	if (
 		config.isEnabled( 'upsell/concierge-session' ) &&
+		cart &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
 		( hasBloggerPlan( cart ) ||
@@ -296,22 +341,29 @@ function getRedirectUrlForConciergeNudge( {
 	return;
 }
 
-function getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } ) {
+function getQuickstartUrl( {
+	pendingOrReceiptId,
+	siteSlug,
+	orderId,
+}: {
+	pendingOrReceiptId: string;
+	siteSlug: string | undefined;
+	orderId: number | undefined;
+} ): string | undefined {
 	if ( orderId ) {
 		return;
 	}
 	return `/checkout/offer-quickstart-session/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
-function getDisplayModeParamFromCart( cart ) {
-	if ( hasConciergeSession( cart ) ) {
+function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {
+	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
 	}
-
 	return {};
 }
 
-function getUrlWithQueryParam( url, queryParams ) {
+function getUrlWithQueryParam( url: string, queryParams: Record< string, string > ): string {
 	const { protocol, hostname, port, pathname, query } = parseUrl( url, true );
 
 	return formatUrl( {
@@ -336,95 +388,36 @@ function getUrlWithQueryParam( url, queryParams ) {
  * @param {object} cart The cart object
  * @param {string} destinationUrl The url to save
  */
-function saveUrlToCookieIfEcomm( saveUrlToCookie, cart, destinationUrl ) {
-	if ( hasEcommercePlan( cart ) ) {
+function saveUrlToCookieIfEcomm(
+	saveUrlToCookie: SaveUrlToCookie,
+	cart: ResponseCart | undefined,
+	destinationUrl: string
+): void {
+	if ( cart && hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( destinationUrl );
 	}
 }
 
-function modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug ) {
-	const signupDestination = getUrlFromCookie();
-	if ( ! signupDestination ) {
-		return;
-	}
-
+function modifyUrlIfAtomic( siteSlug: string | undefined, url: string ): string {
 	// If atomic site, then replace wordpress.com with wpcomstaging.com
-	if ( siteSlug && siteSlug.includes( '.wpcomstaging.com' ) ) {
-		const wpcomStagingDestination = signupDestination.replace(
-			/\b.wordpress.com/,
-			'.wpcomstaging.com'
-		);
-		saveUrlToCookie( wpcomStagingDestination );
+	if ( siteSlug?.includes( '.wpcomstaging.com' ) ) {
+		return url.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 	}
+	return url;
 }
 
-export function useGetThankYouUrl( {
-	siteSlug,
-	redirectTo,
-	purchaseId,
-	feature,
-	cart,
-	isJetpackNotAtomic,
-	productAliasFromUrl,
-	siteId,
-	hideNudge,
-	recordEvent,
-} ) {
-	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
-	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = useSelector( ( state ) =>
-		isEligibleForSignupDestination( state, siteId, cart )
-	);
+function modifyCookieUrlIfAtomic(
+	getUrlFromCookie: GetUrlFromCookie,
+	saveUrlToCookie: SaveUrlToCookie,
+	siteSlug: string | undefined
+): void {
+	const urlFromCookie = getUrlFromCookie();
+	if ( ! urlFromCookie ) {
+		return;
+	}
+	const updatedUrl = modifyUrlIfAtomic( siteSlug, urlFromCookie );
 
-	const getThankYouUrl = useCallback( () => {
-		const transactionResult = select( 'wpcom' ).getTransactionResult();
-		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
-		const didPurchaseFail = Object.keys( transactionResult.failed_purchases ?? {} ).length > 0;
-		const receiptId = transactionResult.receipt_id;
-		const orderId = transactionResult.order_id;
-		const isTransactionResultEmpty = isEmpty( transactionResult );
-
-		if ( siteSlug === 'no-user' || ! siteSlug ) {
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			siteSlug = select( 'wpcom' ).getSiteSlug();
-		}
-
-		const getThankYouPageUrlArguments = {
-			siteSlug,
-			adminUrl,
-			receiptId,
-			orderId,
-			redirectTo,
-			purchaseId,
-			feature,
-			cart,
-			isJetpackNotAtomic,
-			productAliasFromUrl,
-			isEligibleForSignupDestinationResult,
-			hideNudge,
-			didPurchaseFail,
-			isTransactionResultEmpty,
-		};
-		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
-		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
-		debug( 'getThankYouUrl returned', url );
-		recordEvent( {
-			type: 'THANK_YOU_URL_GENERATED',
-			payload: { arguments: getThankYouPageUrlArguments, url },
-		} );
-		return url;
-	}, [
-		recordEvent,
-		isEligibleForSignupDestinationResult,
-		siteSlug,
-		adminUrl,
-		isJetpackNotAtomic,
-		productAliasFromUrl,
-		redirectTo,
-		feature,
-		purchaseId,
-		cart,
-		hideNudge,
-	] );
-	return getThankYouUrl;
+	if ( updatedUrl !== urlFromCookie ) {
+		saveUrlToCookie( updatedUrl );
+	}
 }

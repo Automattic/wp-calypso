@@ -8,6 +8,7 @@ import { useRef } from 'react';
  */
 import {
 	WpcomStoreState,
+	TransactionResponse,
 	getInitialWpcomStoreState,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
@@ -26,7 +27,7 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
 	| { type: 'SET_SITE_SLUG'; payload: string }
-	| { type: 'TRANSACTION_COMPLETE'; payload: object }
+	| { type: 'TRANSACTION_COMPLETE'; payload: TransactionResponse }
 	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_EMAIL'; payload: string }
@@ -41,17 +42,19 @@ type WpcomStoreAction =
 			payload: PossiblyCompleteDomainContactDetails;
 	  };
 
+type WordPressDataStoreListener = () => void;
+
 type WordPressDataStore = {
-	getState: () => object;
-	subscribe: ( listener: Function ) => void;
-	dispatch: ( action: object ) => void;
+	getState: () => WpcomStoreState;
+	subscribe: ( listener: WordPressDataStoreListener ) => void;
+	dispatch: ( action: WpcomStoreAction ) => void;
 };
 
 export function useWpcomStore(
-	registerStore: ( key: string, storeOptions: object ) => WordPressDataStore,
+	registerStore: ( key: string, storeOptions: unknown ) => WordPressDataStore,
 	managedContactDetails: ManagedContactDetails,
 	updateContactDetailsCache: ( _: DomainContactDetails ) => void
-) {
+): void {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
 	if ( registerIsComplete.current ) {
@@ -120,7 +123,10 @@ export function useWpcomStore(
 		}
 	}
 
-	function transactionResultReducer( state: object, action: WpcomStoreAction ): object {
+	function transactionResultReducer(
+		state: TransactionResponse,
+		action: WpcomStoreAction
+	): TransactionResponse {
 		switch ( action.type ) {
 			case 'TRANSACTION_COMPLETE':
 				return action.payload;
@@ -157,7 +163,7 @@ export function useWpcomStore(
 				return { type: 'SET_SITE_SLUG', payload };
 			},
 
-			setTransactionResponse( payload: object ): WpcomStoreAction {
+			setTransactionResponse( payload: TransactionResponse ): WpcomStoreAction {
 				return { type: 'TRANSACTION_COMPLETE', payload };
 			},
 
@@ -217,7 +223,7 @@ export function useWpcomStore(
 				return state.siteSlug;
 			},
 
-			getTransactionResult( state: WpcomStoreState ): object {
+			getTransactionResult( state: WpcomStoreState ): TransactionResponse {
 				return state.transactionResult;
 			},
 

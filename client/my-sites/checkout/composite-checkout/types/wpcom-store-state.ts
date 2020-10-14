@@ -23,7 +23,7 @@ import {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
+import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { SignupValidationResponse } from './backend/signup-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
@@ -898,9 +898,17 @@ export type WpcomStoreState = {
 	siteId: string;
 	siteSlug: string;
 	recaptchaClientId: number;
-	transactionResult: object;
+	transactionResult: TransactionResponse;
 	contactDetails: ManagedContactDetails;
 };
+
+export interface TransactionResponse {
+	failed_purchases?: FailedPurchase[];
+	receipt_id?: number;
+	order_id?: number;
+}
+
+type FailedPurchase = unknown;
 
 export const emptyManagedContactDetails: ManagedContactDetails = {
 	firstName: getInitialManagedValue(),
