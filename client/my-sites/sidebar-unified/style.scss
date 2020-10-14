@@ -142,6 +142,31 @@ $font-size: rem( 14px );
 			}
 		}
 
+		// Is selected
+		.sidebar__menu.sidebar__menu--selected {
+			.sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+
+				&:hover,
+				&:focus {
+					color: var(--color-sidebar-text);
+					background: var( --color-sidebar-menu-selected-background ); // retain selected color
+
+					.sidebar__menu-icon {
+						color: var( --color-sidebar-menu-hover );
+					}
+				}
+
+				&::after {
+					display: block;
+				}
+
+				.sidebar__menu-icon {
+					color: #fff;
+				}
+			}
+		}
+
 		// Is toggled open
 		.sidebar__menu.is-toggle-open {
 			.sidebar__heading {
@@ -162,7 +187,8 @@ $font-size: rem( 14px );
 				}
 
 			}
-			// Is toggled open and selected
+
+			// Is toggled open *and* selected
 			&.sidebar__menu--selected .sidebar__heading {
 				background: var( --color-sidebar-menu-selected-background );
 				color: white;
