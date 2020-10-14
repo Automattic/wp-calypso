@@ -403,7 +403,7 @@ function useCreateApplePay( {
 
 	const applePayMethod = useMemo( () => {
 		return shouldCreateApplePayMethod ? createApplePayMethod( stripe, stripeConfiguration ) : null;
-	}, [ shouldCreateApplePayMethod ] );
+	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration ] );
 
 	return applePayMethod;
 }
