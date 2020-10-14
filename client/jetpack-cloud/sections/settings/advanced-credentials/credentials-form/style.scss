@@ -23,7 +23,7 @@
 		font-size: $font-body-small;
 	}
 
-	@media (min-width: 661px) {
+	@include breakpoint-deprecated( '>660px' ) {
 		.credentials-form__intro-text {
 			font-size: $font-body;
 		}

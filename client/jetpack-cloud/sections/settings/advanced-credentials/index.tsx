@@ -311,7 +311,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				title="Advanced Credentials"
 				properties={ { step: currentStep } }
 			/>
-			<Card className="advanced-credentials__server-connection-status">
+			<Card compact={ true } className="advanced-credentials__server-connection-status">
 				<div className="advanced-credentials__server-connection-status-content">
 					<h3>{ translate( 'Remote server credentials' ) }</h3>
 					<ConnectionStatus state={ statusState } />
