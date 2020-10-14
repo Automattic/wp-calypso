@@ -12,8 +12,9 @@ try {
 		env: {
 			CHROMEDRIVER_SKIP_DOWNLOAD: '',
 		},
-		stdio: 'inherit',
 	} );
 } catch ( error ) {
-	console.error( error );
+	if ( ! error.toString().includes( 'ChromeDriver is already available' ) ) {
+		console.error( error );
+	}
 }
