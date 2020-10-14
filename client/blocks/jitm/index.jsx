@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  */
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
 import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
@@ -83,7 +83,6 @@ function useDevTool( { currentSite }, dispatch ) {
 export function JITM( props ) {
 	const { jitm, currentSite, messagePath, isJetpack } = props;
 	const dispatch = useDispatch();
-
 	useDevTool( props, dispatch );
 
 	if ( ! currentSite || ! messagePath ) {
@@ -121,11 +120,15 @@ JITM.defaultProps = {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const currentSite = getSelectedSite( state );
-
+	const sectionName = getSectionName( state );
+	const messagePath = `calypso:${ sectionName }:sidebar_notice`;
+	const topJITM = getTopJITM( state, messagePath );
+	console.log( messagePath, topJITM );
 	return {
 		currentSite,
-		jitm: getTopJITM( state, ownProps.messagePath ),
+		jitm: topJITM,
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
+		messagePath,
 	};
 };
 
