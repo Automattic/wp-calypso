@@ -27,6 +27,7 @@ import { getSiteTypePropertyValue } from 'lib/signup/site-type';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { getUrlParts } from 'lib/url/url-parts';
 
 /**
  * Style dependencies
@@ -118,6 +119,18 @@ export class PlansStep extends Component {
 		return null;
 	}
 
+	getIntervalType() {
+		const urlParts = getUrlParts( window.location.href );
+		const intervalType = urlParts.searchParams.get( 'intervalType' );
+
+		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
+			return intervalType;
+		}
+
+		// Default value
+		return 'yearly';
+	}
+
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
@@ -137,6 +150,7 @@ export class PlansStep extends Component {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
+					intervalType={ this.getIntervalType() }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }

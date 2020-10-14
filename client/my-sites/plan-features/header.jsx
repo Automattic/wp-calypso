@@ -163,7 +163,14 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	getPerMonthDescription() {
-		const { discountPrice, rawPrice, translate, planType, currentSitePlan } = this.props;
+		const {
+			discountPrice,
+			rawPrice,
+			translate,
+			planType,
+			currentSitePlan,
+			isMonthlyPricingTest,
+		} = this.props;
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
 			return null;
 		}
@@ -173,10 +180,14 @@ export class PlanFeaturesHeader extends Component {
 		if ( ! currentSitePlan || ! isFreePlan( currentSitePlan.productSlug ) ) {
 			return null;
 		}
+		if ( isMonthlyPricingTest ) {
+		}
+
 		const discountPercent = Math.round( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );
 		if ( discountPercent <= 0 ) {
 			return null;
 		}
+
 		return translate(
 			'Save %(discountPercent)s%% for 12 months!{{br/}} Per month, billed yearly.',
 			{

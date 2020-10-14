@@ -86,7 +86,15 @@ import './style.scss';
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
+		const {
+			isInSignup,
+			isMonthlyPricingTest,
+			planProperties,
+			plans,
+			selectedPlan,
+			withScroll,
+			translate,
+		} = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -94,7 +102,10 @@ export class PlanFeatures extends Component {
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
-		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
+		const planWrapperClasses = classNames( {
+			'plans-wrapper': isInSignup,
+			'is-monthly-pricing': isMonthlyPricingTest,
+		} );
 		const mobileView = ! withScroll && (
 			<div className="plan-features__mobile">{ this.renderMobileView() }</div>
 		);
@@ -313,6 +324,7 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				isMonthly,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
 			return (
@@ -377,6 +389,7 @@ export class PlanFeatures extends Component {
 			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
+			isMonthlyPricingTest,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -430,6 +443,10 @@ export class PlanFeatures extends Component {
 				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
+			if ( isMonthlyPricingTest && isMonthly( planConstantObj ) ) {
+				billingTimeFrame = planConstantObj.getUpsellCopyForTest();
+			}
+
 			return (
 				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeaturesHeader
@@ -444,6 +461,7 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
+						isMonthlyPricingTest={ isMonthlyPricingTest }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
 						planType={ planName }
@@ -895,8 +913,8 @@ export default connect(
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
 				const isMonthlyObj = { isMonthly: showMonthlyPrice };
 				const rawPrice = siteId
-					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
-					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
+					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj ) || 10
+					: getPlanRawPrice( state, planProductId, showMonthlyPrice ) || 10;
 				const discountPrice = siteId
 					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
@@ -928,6 +946,7 @@ export default connect(
 					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
+					isMonthly: isMonthly( plan ),
 				};
 			} )
 		);
