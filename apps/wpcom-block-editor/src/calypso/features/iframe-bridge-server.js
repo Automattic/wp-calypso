@@ -756,13 +756,13 @@ function getGutenboardingStatus( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const {
 			isGutenboarding,
-			frankenflowUrl,
+			launchUrl,
 			isNewLaunchMobile,
 			isExperimental,
 			isPersistentLaunchButton,
 		} = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
-		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
+		calypsoifyGutenberg.launchUrl = launchUrl;
 		calypsoifyGutenberg.isNewLaunchMobile = isNewLaunchMobile;
 		calypsoifyGutenberg.isExperimental = isExperimental;
 		calypsoifyGutenberg.isPersistentLaunchButton = isPersistentLaunchButton;

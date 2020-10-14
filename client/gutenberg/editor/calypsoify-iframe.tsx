@@ -371,14 +371,14 @@ class CalypsoifyIframe extends Component<
 		if ( EditorActions.GetGutenboardingStatus === action ) {
 			const isGutenboarding =
 				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
-			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
+			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 			const isPersistentLaunchButton = config.isEnabled( 'gutenboarding/persistent-launch-button' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl,
+				launchUrl,
 				isNewLaunchMobile,
 				isExperimental,
 				isPersistentLaunchButton,

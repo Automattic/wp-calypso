@@ -18,7 +18,7 @@ import './index.scss';
 
 interface CalypsoifyWindow extends Window {
 	calypsoifyGutenberg?: {
-		frankenflowUrl?: string;
+		launchUrl?: string;
 		isGutenboarding?: boolean;
 		[ key: string ]: unknown;
 	};
@@ -36,7 +36,7 @@ function updateEditor() {
 	if (
 		handled ||
 		! window?.calypsoifyGutenberg?.isGutenboarding ||
-		! window?.calypsoifyGutenberg?.frankenflowUrl
+		! window?.calypsoifyGutenberg?.launchUrl
 	) {
 		return;
 	}
@@ -55,7 +55,7 @@ function updateEditor() {
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
 		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
-		const launchHref = window?.calypsoifyGutenberg?.frankenflowUrl as string;
+		const launchHref = window?.calypsoifyGutenberg?.launchUrl as string;
 
 		// On mobile there is not enough space to display "Complete setup" label.
 		const launchLabel = isMobile
@@ -104,7 +104,7 @@ function updateEditor() {
 		// leaving it in there until we can decide on the UX for this component
 		//saveButton && ( saveButton.innerText = __( 'Save' ) );
 
-		// Wrap 'Launch' button link to frankenflow.
+		// Wrap 'Launch' button link to control launch flow.
 		const launchLink = document.createElement( 'a' );
 
 		launchLink.href = launchHref;
