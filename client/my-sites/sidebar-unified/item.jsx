@@ -23,6 +23,17 @@ import StatsSparkline from 'calypso/blocks/stats-sparkline';
 
 const onNav = () => null;
 
+const MySitesSidebarUnifiedStatsSparkline = memo( ( { slug } ) => {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isStats = typeof slug === 'string' && slug.includes( '-comstats' );
+
+	if ( isStats && selectedSiteId ) {
+		return null;
+	}
+
+	return <StatsSparkline className="sidebar-unified__sparkline" siteId={ selectedSiteId } />;
+} );
+
 export const MySitesSidebarUnifiedItem = ( {
 	title,
 	icon,
@@ -31,16 +42,6 @@ export const MySitesSidebarUnifiedItem = ( {
 	selected = false,
 	isSubItem = false,
 } ) => {
-	// const selectedSiteId = useSelector( getSelectedSiteId );
-
-	const children = null;
-
-	// // "Stats" item has sparkline inside of it
-	// const isStats = typeof slug === 'string' && slug.includes( '-comstats' );
-	// if ( isStats && selectedSiteId ) {
-	// 	children = <StatsSparkline className="sidebar-unified__sparkline" siteId={ selectedSiteId } />;
-	// }
-
 	return (
 		<SidebarItem
 			label={ title }
@@ -51,7 +52,7 @@ export const MySitesSidebarUnifiedItem = ( {
 			forceInternalLink
 			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
 		>
-			{ children }
+			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
 		</SidebarItem>
 	);
 };
