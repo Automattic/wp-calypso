@@ -6,17 +6,13 @@ This component is distinguished from `Wizard` and `WizardProgressBar` in that in
 
 ## Properties
 
-### `steps { string[] }`
+### `steps { string | { message: string, onClick: () => void}[] }`
 
-A list of the display name of the steps to progress through
+A list of the display name of the steps to progress through. Optionally an object with a click handler
 
 ### `currentStep { number }`
 
 The zero-based index of the current step
-
-### `onStepClick { ( number ) => void } { optional }`
-
-Optional callback for clicking on the individual step numbers
 
 ## Usage
 
