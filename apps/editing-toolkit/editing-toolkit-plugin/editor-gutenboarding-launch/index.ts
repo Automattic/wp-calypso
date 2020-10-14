@@ -50,8 +50,9 @@ function updateEditor() {
 		}
 		clearInterval( awaitSettingsBar );
 
-		const isMobile = window.innerWidth < 768;
+		const isMobile = window.innerWidth < 782;
 		const isNewLaunch = window?.calypsoifyGutenberg?.isNewLaunch;
+		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
 		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
@@ -72,7 +73,7 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 
-			const shouldOpenNewFlow = isNewLaunch && ! isMobile;
+			const shouldOpenNewFlow = isNewLaunch && ( ! isMobile || ( isMobile && isNewLaunchMobile ) );
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_flow: shouldOpenNewFlow,

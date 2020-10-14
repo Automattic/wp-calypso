@@ -6,7 +6,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import DomainPicker from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
-import { Title, SubTitle, ActionButtons, NextButton } from '@automattic/onboarding';
+import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
@@ -18,7 +18,7 @@ import { useSite, useDomainSearch } from '../../hooks';
 import { FLOW_ID } from '../../constants';
 import './styles.scss';
 
-const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } ) => {
+const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { currentDomainName } = useSite();
 	const domainSearch = useDomainSearch();
@@ -34,6 +34,10 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 	const handleNext = () => {
 		confirmDomainSelection();
 		onNextStep?.();
+	};
+
+	const handlePrev = () => {
+		onPrevStep?.();
 	};
 
 	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
@@ -57,7 +61,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 	};
 
 	return (
-		<LaunchStepContainer className="nux-launch-domain-step">
+		<LaunchStepContainer>
 			<div className="nux-launch-step__header">
 				<div>
 					<Title>{ __( 'Choose a domain', 'full-site-editing' ) }</Title>
@@ -65,7 +69,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 						{ __( 'Free for the first year with any paid plan.', 'full-site-editing' ) }
 					</SubTitle>
 				</div>
-				<ActionButtons>
+				<ActionButtons sticky={ false }>
 					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />
 				</ActionButtons>
 			</div>
@@ -82,6 +86,12 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep } 
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
 				/>
+			</div>
+			<div className="nux-launch-step__footer">
+				<ActionButtons sticky={ true }>
+					<BackButton onClick={ handlePrev } />
+					<NextButton onClick={ handleNext } disabled={ ! domainSearch } />
+				</ActionButtons>
 			</div>
 		</LaunchStepContainer>
 	);
