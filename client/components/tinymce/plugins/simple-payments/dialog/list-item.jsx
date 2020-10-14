@@ -11,12 +11,13 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import { CompactCard } from '@automattic/components';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import log from 'calypso/lib/catch-js-errors/log';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import ProductImage from './product-image';
+import { CompactCard } from '@automattic/components';
 import { DEFAULT_CURRENCY } from 'calypso/lib/simple-payments/constants';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -77,10 +78,10 @@ class ProductListItem extends Component {
 					checked={ isSelected }
 					onChange={ this.handleRadioChange }
 				/>
-				<label className={ labelClasses } htmlFor={ radioId }>
+				<FormLabel className={ labelClasses } htmlFor={ radioId }>
 					<div className="editor-simple-payments-modal__list-name">{ title }</div>
 					<div>{ this.formatPrice( price, currency ) }</div>
-				</label>
+				</FormLabel>
 				<ProductImage siteId={ siteId } imageId={ featuredImageId } />
 				<EllipsisMenu
 					className="editor-simple-payments-modal__list-menu"
