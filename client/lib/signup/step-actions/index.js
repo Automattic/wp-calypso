@@ -363,7 +363,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const state = reduxStore.getState();
-	const cartItems = get( getSignupDependencyStore( state ), 'cartItems', [] );
+	const cartItems = get( getSignupDependencyStore( state ), 'cartItems', null ) || [];
 	const providedDependencies = { cartItem };
 
 	const newCartItems = [ cartItem ].filter( ( item ) => item ).concat( cartItems );
