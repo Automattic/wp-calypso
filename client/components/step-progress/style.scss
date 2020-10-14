@@ -50,7 +50,8 @@
 	height: 24px;
 	width: 24px;
 	z-index: 2;
-	&:hover {
+
+	&:not( :disabled ) {
 		cursor: pointer;
 	}
 }

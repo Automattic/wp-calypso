@@ -9,19 +9,30 @@ import React, { FunctionComponent, useState } from 'react';
 import { Button } from '@automattic/components';
 import StepProgress from 'calypso/components/step-progress';
 
-const steps = [ 'You got this!?', 'Host locator', 'Credentials', 'Verification' ];
-
 const StepProgressExample: FunctionComponent = () => {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+
+	const steps = [
+		{
+			message: 'You got this!',
+			onClick: () => setCurrentStep( 0 ),
+		},
+		{
+			message: 'Host locator ( clickable once complete )',
+			onClick: () => setCurrentStep( 1 ),
+			show: 'onComplete',
+		},
+		'Credentials ( no click handler )',
+		{
+			message: 'Verification',
+			onClick: () => setCurrentStep( 3 ),
+		},
+	];
 
 	return (
 		<div>
 			<div style={ { background: 'var( --color-surface )', padding: '30px' } }>
-				<StepProgress
-					steps={ steps }
-					currentStep={ currentStep }
-					onStepClick={ ( newStep: number ) => setCurrentStep( newStep ) }
-				/>
+				<StepProgress steps={ steps } currentStep={ currentStep } />
 			</div>
 
 			<div style={ { 'margin-top': '30px' } }>

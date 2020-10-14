@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
+import { find, isEmpty } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import React, { FunctionComponent, useState, useEffect } from 'react';
-import { find, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,8 +46,8 @@ enum Step {
 	HostSelection = 0,
 	Credentials = 1,
 	// Verification = 2,
-	Connected = 3,
-	ConnectedEdit = 4,
+	Connected = 2,
+	ConnectedEdit = 3,
 }
 
 interface Props {
@@ -62,6 +63,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const steps = [
 		translate( 'Host locator' ),
 		translate( 'Credentials' ),
+		translate( 'Saved' ),
 		// TODO: moved Verification to future work
 		// translate( 'Verification' ),
 		translate( 'Connected' ),
@@ -210,6 +212,12 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	const disableForm = 'pending' === formSubmissionStatus;
 
+	const onCredentialsStepClick = ( newStep: number ) => {
+		if ( 0 === newStep ) {
+			page( settingsPath( siteSlug ) );
+		}
+	};
+
 	const renderUnconnectedButtons = () => (
 		<>
 			<Button
@@ -318,7 +326,11 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				</div>
 			</Card>
 			<Card>
-				<StepProgress currentStep={ currentStep } steps={ steps } />
+				<StepProgress
+					currentStep={ currentStep }
+					onStepClick={ onCredentialsStepClick }
+					steps={ steps }
+				/>
 				{ render() }
 			</Card>
 		</Main>
