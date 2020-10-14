@@ -2,13 +2,12 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import { useI18n } from '@automattic/react-i18n';
 
 /**
  * WordPress dependencies
  */
-import { I18n } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Style dependencies
@@ -17,7 +16,7 @@ import './style.scss';
 
 export type LanguageGroup = {
 	id: string;
-	name: ( translate: I18n[ '__' ] ) => string;
+	name: () => string;
 	subTerritories?: string[];
 	countries?: string[];
 	default?: boolean;
@@ -53,7 +52,6 @@ const LanguagePicker = ( {
 	languageGroups,
 	defaultLananguageGroupId,
 }: Props ) => {
-	const { __ } = useI18n();
 	const [ filter, setFilter ] = useState( defaultLananguageGroupId );
 
 	const getFilteredLanguages = () => {
@@ -85,7 +83,7 @@ const LanguagePicker = ( {
 			return (
 				<div key={ languageGroup.id }>
 					<Button onClick={ onClick } className="language-picker__language-group">
-						<span className={ isSelected ? 'is-selected' : '' }>{ languageGroup.name( __ ) }</span>
+						<span className={ isSelected ? 'is-selected' : '' }>{ languageGroup.name() }</span>
 					</Button>
 				</div>
 			);

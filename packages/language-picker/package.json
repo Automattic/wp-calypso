@@ -28,7 +28,6 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/react-i18n": "file:../react-i18n",
 		"@babel/runtime": "^7.11.1",
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/components": "^10.0.5",
