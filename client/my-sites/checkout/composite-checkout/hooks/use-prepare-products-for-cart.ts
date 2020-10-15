@@ -9,19 +9,19 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRenewalItemFromCartItem, CartItemValue } from 'lib/cart-values/cart-items';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getRenewalItemFromCartItem, CartItemValue } from 'calypso/lib/cart-values/cart-items';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'lib/products-values/constants';
-import { requestPlans } from 'state/plans/actions';
-import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
-import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
-import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+} from 'calypso/lib/products-values/constants';
+import { requestPlans } from 'calypso/state/plans/actions';
+import { getPlanBySlug, getPlans, isRequestingPlans } from 'calypso/state/plans/selectors';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import { createItemToAddToCart } from '../add-items';
 import { RequestCartProduct } from './use-shopping-cart-manager/types';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
@@ -142,6 +142,36 @@ function preparedProductsReducer(
 		default:
 			return state;
 	}
+}
+
+function chooseAddHandler( {
+	isLoading,
+	originalPurchaseId,
+	planSlug,
+	productAliasFromUrl,
+}: {
+	isLoading: boolean;
+	originalPurchaseId: string | number | null | undefined;
+	planSlug: string;
+	productAliasFromUrl: string;
+} ): 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd' {
+	if ( ! isLoading ) {
+		return 'doNotAdd';
+	}
+
+	if ( originalPurchaseId ) {
+		return 'addRenewalItems';
+	}
+
+	if ( ! originalPurchaseId && planSlug ) {
+		return 'addPlanFromSlug';
+	}
+
+	if ( ! originalPurchaseId && productAliasFromUrl ) {
+		return 'addProductFromSlug';
+	}
+
+	return 'doNotAdd';
 }
 
 function useAddRenewalItems( {
