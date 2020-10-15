@@ -432,11 +432,12 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			isInSignup,
 			siteId,
+			siteSlug,
 			plansWithScroll,
 			isEligibleForMonthlyPricing,
 		} = this.props;
 		const shouldHideFreePlanBanner = hideFreePlan || ! plansWithScroll;
-		const basePlansPath = isInSignup ? location?.pathname : `/plans/${ siteSlug }`;
+		const basePlansPath = isInSignup ? window.location?.pathname : `/plans/${ siteSlug }`;
 
 		return (
 			<div className="plans-features-main">
@@ -552,7 +553,8 @@ export default connect(
 			'onboarding' === props.flowName &&
 			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
-		const isEligibleForMonthlyPricing = props.isInSignup && 'onboarding' === props.flowName;
+		const isEligibleForMonthlyPricing =
+			props.isInSignup && ! props.isJetpack && 'onboarding' === props.flowName;
 
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and

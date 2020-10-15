@@ -85,7 +85,7 @@
 
 .plans-features-main__heading {
 	margin: 0 0 12px;
-	font-size: 17px;
+	font-size: 17px; /* stylelint-disable-line */
 	line-height: 1;
 	font-weight: 600;
 	color: var( --color-text );
@@ -138,7 +138,7 @@ body.is-section-signup.is-white-signup {
 			padding: 20px;
 
 			.plan-features__header-title {
-				font-size: 18px;
+				font-size: 18px; /* stylelint-disable-line */
 			}
 
 			.plan-features__audience {
@@ -150,7 +150,7 @@ body.is-section-signup.is-white-signup {
 				text-transform: none;
 				background: var( --color-text );
 				color: var( --color-text-inverted );
-				font-size: 13px;
+				font-size: 13px; /* stylelint-disable-line */
 				left: 20px;
 				padding: 2px 8px 3px;
 			}
@@ -199,20 +199,20 @@ body.is-section-signup.is-white-signup {
 
 					.plan-price {
 						text-align: left;
-						font-size: 32px;
+						font-size: 32px; /* stylelint-disable-line */
 						color: var( --color-neutral-100 );
 						margin-top: 15px;
 
 						.plan-price__currency-symbol {
 							vertical-align: initial;
-							font-size: 32px;
+							font-size: 32px; /* stylelint-disable-line */
 							color: var( --color-neutral-100 );
 						}
 					}
 
 					.plan-features__header-billing-info {
 						text-align: left;
-						font-size: 10px;
+						font-size: 10px; /* stylelint-disable-line */
 						color: var( --color-neutral-50 );
 						font-weight: 400;
 					}
@@ -266,7 +266,7 @@ body.is-section-signup.is-white-signup {
 	}
 }
 
-.plan-features__interval-type-popover {
+.plan-type-selector__popover {
 	transform: translate( 30px, 0 );
 
 	&.is-right .popover__arrow {

@@ -21,7 +21,7 @@ import {
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_BUSINESS_2_YEARS = 'business-bundle-2y';
-export const PLAN_PREMIUM_MONTHLY = 'value_bundle-monthly';
+export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
 export const PLAN_PREMIUM = 'value_bundle';
 export const PLAN_PREMIUM_2_YEARS = 'value_bundle-2y';
 export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
@@ -299,7 +299,7 @@ export const TYPE_ALL = 'TYPE_ALL';
 export const TYPE_P2_PLUS = 'TYPE_P2_PLUS';
 
 export function isMonthly( plan ) {
-	return plan === WPCOM_MONTHLY_PLANS.includes( plan ) || JETPACK_MONTHLY_PLANS.includes( plan );
+	return WPCOM_MONTHLY_PLANS.includes( plan ) || JETPACK_MONTHLY_PLANS.includes( plan );
 }
 
 export function isNew( plan ) {
