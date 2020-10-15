@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Primitive } from 'utility-types';
@@ -10,10 +10,10 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import Popover from 'components/popover';
-import { addQueryArgs } from 'lib/url';
-import { plansLink } from 'lib/plans';
+import SegmentedControl from 'calypso/components/segmented-control';
+import Popover from 'calypso/components/popover';
+import { addQueryArgs } from 'calypso/lib/url';
+import { plansLink } from 'calypso/lib/plans';
 
 type Props = {
 	displayJetpackPlans: boolean;
@@ -31,32 +31,6 @@ type Props = {
 
 	isMonthlyPricingTest?: boolean;
 };
-
-const PlanTypeSelector: React.FunctionComponent< Props > = ( props ) => {
-	if ( props.plansWithScroll && ! props.isMonthlyPricingTest ) {
-		return null;
-	}
-
-	const generatePath = getGeneratePath( props );
-
-	if ( props.displayJetpackPlans || props.isMonthlyPricingTest ) {
-		return (
-			<IntervalTypeToggle
-				{ ...props }
-				generatePath={ generatePath }
-				isMonthlyPricingTest={ props.isMonthlyPricingTest }
-			/>
-		);
-	}
-
-	if ( props.withWPPlanTabs && ! props.hidePersonalPlan ) {
-		return <CustomerTypeToggle { ...props } generatePath={ generatePath } />;
-	}
-
-	return null;
-};
-
-export default PlanTypeSelector;
 
 interface PathArgs {
 	[ key: string ]: Primitive;
@@ -77,7 +51,7 @@ const getGeneratePath = ( props: Props ): GeneratePathFunction => {
 	return ( additionalArgs = {} ) => {
 		const { intervalType = '' } = additionalArgs;
 
-		if ( props.isInSignup ) {
+		if ( props.isInSignup || 'customerType' in additionalArgs ) {
 			return addQueryArgs(
 				{
 					...defaultArgs,
@@ -131,7 +105,7 @@ const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
 					context={ spanRef }
 					isVisible={ popupIsVisible }
 					position="right"
-					className="plan-features__interval-type-popover"
+					className="plan-type-selector__popover"
 				>
 					{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }
 				</Popover>
@@ -167,3 +141,29 @@ const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( {
 		</SegmentedControl>
 	);
 };
+
+const PlanTypeSelector: React.FunctionComponent< Props > = ( props ) => {
+	if ( props.plansWithScroll && ! props.isMonthlyPricingTest ) {
+		return null;
+	}
+
+	const generatePath = getGeneratePath( props );
+
+	if ( props.displayJetpackPlans || props.isMonthlyPricingTest ) {
+		return (
+			<IntervalTypeToggle
+				{ ...props }
+				generatePath={ generatePath }
+				isMonthlyPricingTest={ props.isMonthlyPricingTest }
+			/>
+		);
+	}
+
+	if ( props.withWPPlanTabs && ! props.hidePersonalPlan ) {
+		return <CustomerTypeToggle { ...props } generatePath={ generatePath } />;
+	}
+
+	return null;
+};
+
+export default PlanTypeSelector;

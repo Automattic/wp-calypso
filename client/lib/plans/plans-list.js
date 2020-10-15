@@ -137,6 +137,11 @@ const getPlanPersonalDetails = () => ( {
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
+	// Features only available for annual plans
+	getAnnualPlansOnlyFeatures: () => [
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
+		constants.FEATURE_FREE_DOMAIN,
+	],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -661,7 +666,7 @@ export const PLANS_LIST = {
 				[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ],
 				plan
 			),
-		getProductId: () => 10090,
+		getProductId: () => 1019,
 		getStoreSlug: () => constants.PLAN_PERSONAL_MONTHLY,
 		getPathSlug: () => 'personal-monthly',
 	},
@@ -715,7 +720,7 @@ export const PLANS_LIST = {
 				],
 				plan
 			),
-		getProductId: () => 10030,
+		getProductId: () => 1013,
 		getStoreSlug: () => constants.PLAN_PREMIUM_MONTHLY,
 		getPathSlug: () => 'premium-monthly',
 	},
@@ -858,7 +863,7 @@ export const PLANS_LIST = {
 				],
 				plan
 			),
-		getProductId: () => 10110,
+		getProductId: () => 1021,
 		getStoreSlug: () => constants.PLAN_ECOMMERCE,
 		getPathSlug: () => 'ecommerce-monthly',
 	},
