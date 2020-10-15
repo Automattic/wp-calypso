@@ -10,6 +10,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { render, fireEvent } from '@testing-library/react';
 import * as actions from 'calypso/state/jetpack/credentials/actions';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 /**
  * Internal dependencies
@@ -19,14 +20,19 @@ import withServerCredentialsForm from 'calypso/components/jetpack/with-server-cr
 /**
  * Mocks
  */
-jest.doMock( 'components/data/query-rewind-state', () => {
+jest.mock( 'components/data/query-rewind-state', () => {
 	const QueryRewindState = () => <div />;
 	return QueryRewindState;
 } );
 
+jest.mock( 'components/data/query-jetpack-scan', () => {
+	const QueryJetpackScan = () => <div />;
+	return QueryJetpackScan;
+} );
+
 jest.mock( 'state/selectors/get-rewind-state', () => ( {
 	__esModule: true,
-	default: () => ( {
+	default: jest.fn( () => ( {
 		credentials: [
 			{
 				role: 'main',
@@ -34,6 +40,21 @@ jest.mock( 'state/selectors/get-rewind-state', () => ( {
 				host: 'rewindHost',
 				port: 33,
 				path: 'rewindPath',
+			},
+		],
+	} ) ),
+} ) );
+
+jest.mock( 'state/selectors/get-site-scan-state', () => ( {
+	__esModule: true,
+	default: () => ( {
+		credentials: [
+			{
+				role: 'main',
+				user: 'scanUser',
+				host: 'scanHost',
+				port: 33,
+				path: 'scanPath',
 			},
 		],
 	} ),
@@ -198,6 +219,29 @@ describe( 'useWithServerCredentials HOC', () => {
 		expect( formDataContainer.innerHTML ).toContain( 'rewindHost' );
 		expect( formDataContainer.innerHTML ).toContain( 33 );
 		expect( formDataContainer.innerHTML ).toContain( 'rewindPath' );
+
+		fireEvent.click( submitButton );
+		expect( errorMessagesContainer.innerHTML ).not.toContain(
+			'Please enter your server username.'
+		);
+		expect( errorMessagesContainer.innerHTML ).not.toContain(
+			'Please enter a valid server address.'
+		);
+		expect( errorMessagesContainer.innerHTML ).toContain( 'Please enter your server password.' );
+	} );
+
+	it( 'should use scan state to prefill the form', async () => {
+		getRewindState.mockImplementationOnce( () => ( { credentials: [] } ) );
+		const { utils } = setup();
+		const submitButton = utils.getByText( 'Submit' );
+		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
+		const formDataContainer = utils.getByTestId( 'form-content' );
+
+		// Verify the form was pre-filled with the current store rewind state
+		expect( formDataContainer.innerHTML ).toContain( 'scanUser' );
+		expect( formDataContainer.innerHTML ).toContain( 'scanHost' );
+		expect( formDataContainer.innerHTML ).toContain( 33 );
+		expect( formDataContainer.innerHTML ).toContain( 'scanPath' );
 
 		fireEvent.click( submitButton );
 		expect( errorMessagesContainer.innerHTML ).not.toContain(
