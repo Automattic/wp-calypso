@@ -16,6 +16,7 @@ import {
 	registerStore,
 	useSelect,
 	useDispatch,
+	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
 
 /**
@@ -177,6 +178,10 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 						items,
 						total,
 						stripeConfiguration,
+					} ).then( ( processorResponse ) => {
+						if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
+							setStripeResponseWithCode( processorResponse.payload );
+						}
 					} );
 				}
 			} }
