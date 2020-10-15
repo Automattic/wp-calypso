@@ -3,16 +3,21 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import page from 'page';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import config from 'calypso/config';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import EmailProviderDetails from './email-provider-details';
-import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserCurrencyCode,
+	getCurrentUserLocale,
+} from 'calypso/state/current-user/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
 import { getAnnualPrice } from 'calypso/lib/gsuite';
@@ -148,7 +153,12 @@ class EmailProvidersComparison extends React.Component {
 	}
 
 	renderTitanDetails( className ) {
-		const { translate } = this.props;
+		const { currentUserLocale, translate } = this.props;
+		const isEnglish = includes( config( 'english_locales' ), currentUserLocale );
+		const billingFrequency =
+			isEnglish || i18n.hasTranslation( 'Annual or monthly billing' )
+				? translate( 'Annual or monthly billing' )
+				: translate( 'Monthly billing' );
 
 		return (
 			<EmailProviderDetails
@@ -158,7 +168,7 @@ class EmailProvidersComparison extends React.Component {
 				) }
 				image={ { path: titanLogo } }
 				features={ [
-					translate( 'Annual or monthly billing' ),
+					billingFrequency,
 					translate( 'Send and receive from your custom domain' ),
 					translate( '10GB storage' ),
 					translate( 'Email, calendars, and contacts' ),
@@ -243,6 +253,7 @@ export default connect(
 	( state ) => {
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
+			currentUserLocale: getCurrentUserLocale( state ),
 			gSuiteProduct: getProductBySlug( state, GSUITE_BASIC_SLUG ),
 			currentRoute: getCurrentRoute( state ),
 			selectedSiteSlug: getSelectedSiteSlug( state ),
