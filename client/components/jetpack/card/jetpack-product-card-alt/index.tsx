@@ -160,19 +160,12 @@ const JetpackProductCardAlt = ( {
 											</span>
 										) }
 
-										{ isDiscounted ? (
-											<PlanPrice
-												rawPrice={ discountedPrice }
-												discounted
-												currencyCode={ currencyCode }
-											/>
-										) : (
-											<PlanPrice
-												rawPrice={ originalPrice }
-												original={ isDiscounted }
-												currencyCode={ currencyCode }
-											/>
-										) }
+										<PlanPrice
+											rawPrice={ isDiscounted ? discountedPrice : originalPrice }
+											discounted
+											currencyCode={ currencyCode }
+										/>
+
 										{ searchRecordsDetails && (
 											<InfoPopover
 												className="jetpack-product-card-alt__search-price-popover"

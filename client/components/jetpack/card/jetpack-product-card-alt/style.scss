@@ -174,12 +174,12 @@ $jetpack-product-card-alt-icon-size: 55px;
 }
 
 .jetpack-product-card-alt .plan-price {
-	position: relative;
+	display: flex;
 
 	border-color: $jetpack-product-card-alt-color;
 
 	sup {
-		position: absolute;
+		margin-top: 13px;
 		top: 13px;
 
 		font-size: $font-title-small;
