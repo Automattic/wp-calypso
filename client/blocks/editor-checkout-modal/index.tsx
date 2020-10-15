@@ -31,7 +31,10 @@ interface CartData {
 }
 
 type Props = {
-	site: object;
+	site: {
+		ID: string;
+		slug: string;
+	};
 	cartData: CartData;
 	onClose: () => void;
 	isOpen: boolean;
@@ -82,7 +85,7 @@ class EditorCheckoutModal extends Component< Props > {
 	}
 }
 
-function fetchStripeConfigurationWpcom( args: object ) {
+function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
 	return fetchStripeConfiguration( args, wpcom );
 }
 
