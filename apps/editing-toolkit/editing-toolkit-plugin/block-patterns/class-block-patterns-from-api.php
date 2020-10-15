@@ -113,13 +113,15 @@ class Block_Patterns_From_API {
 
 		// Load fresh data if we don't have any patterns.
 		if ( false === $block_patterns || ( defined( 'WP_DISABLE_PATTERN_CACHE' ) && WP_DISABLE_PATTERN_CACHE ) ) {
-			$request_url = esc_url_raw( add_query_arg(
-				array(
-					'language' => $this->get_iso_639_locale(),
-					'tags'     => 'pattern',
-				),
-				'https://public-api.wordpress.com/rest/v1/ptk/patterns'
-			) );
+			$request_url = esc_url_raw(
+				add_query_arg(
+					array(
+						'language' => $this->get_iso_639_locale(),
+						'tags'     => 'pattern',
+					),
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns'
+				)
+			);
 
 			$args = array( 'timeout' => 20 );
 

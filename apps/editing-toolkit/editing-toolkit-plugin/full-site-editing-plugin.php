@@ -295,7 +295,7 @@ function load_block_patterns_from_api( $current_screen ) {
 		return;
 	}
 
-	require_once __DIR__ . '/block-patterns/class-block-patterns-api.php';
+	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
 	Block_Patterns_From_API::get_instance();
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
