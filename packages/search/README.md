@@ -10,6 +10,10 @@ Install the component.
 yarn add @automattic/search
 ```
 
+## Internationalization
+
+This package depends directly on `@wordpress/i18n` for translations. This means consumers must provide locale data prior to using the component.
+
 ## Development Workflow
 
 This package is developed as part of the Calypso monorepo. Run `yarn`
