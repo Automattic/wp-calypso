@@ -21,12 +21,15 @@ import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ScanBadge from 'calypso/components/jetpack/scan-badge';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { isEnabled } from 'calypso/config';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
+
+	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
@@ -59,7 +62,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			{
 				// Backup does not work in wp-desktop. Disable in the desktop app until
 				// it can be revisited: https://github.com/Automattic/wp-desktop/issues/943
-				! isDesktop && (
+				! isDesktop && ! isWPForTeamsSite && (
 					<SidebarItem
 						materialIcon={ showIcons ? 'backup' : undefined }
 						materialIconStyle="filled"
@@ -71,7 +74,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					/>
 				)
 			}
-			{ ! isWPCOM && (
+			{ ! isWPCOM && ! isWPForTeamsSite && (
 				<SidebarItem
 					materialIcon={ showIcons ? 'security' : undefined }
 					materialIconStyle="filled"

@@ -89,12 +89,12 @@ import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
 import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
 import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { isP2PlusPlan } from 'calypso/lib/plans';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { isP2PlusPlan } from 'calypso/lib/plans';
 
 export class MySitesSidebar extends Component {
 	static propTypes = {
