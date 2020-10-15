@@ -9,13 +9,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import {
-	FormStatus,
-	useTransactionStatus,
-	usePaymentProcessor,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { useFormStatus } from '../form-status';
 
 export function createFullCreditsMethod() {
@@ -39,35 +33,22 @@ function FullCreditsLabel() {
 	);
 }
 
-function FullCreditsSubmitButton( { disabled } ) {
+function FullCreditsSubmitButton( { disabled, onClick } ) {
 	const [ items, total ] = useLineItems();
-	const {
-		setTransactionComplete,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-	const submitTransaction = usePaymentProcessor( 'full-credits' );
 
-	const onClick = () => {
-		setTransactionPending();
+	const handleButtonPress = () => {
 		onEvent( { type: 'FULL_CREDITS_TRANSACTION_BEGIN' } );
-		submitTransaction( {
+		onClick( 'full-credits', {
 			items,
-		} )
-			.then( () => {
-				setTransactionComplete();
-			} )
-			.catch( ( error ) => {
-				setTransactionError( error.message );
-			} );
+		} );
 	};
 
 	return (
 		<Button
 			disabled={ disabled }
-			onClick={ onClick }
+			onClick={ handleButtonPress }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth

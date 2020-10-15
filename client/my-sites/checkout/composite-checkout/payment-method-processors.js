@@ -239,7 +239,9 @@ export async function freePurchaseProcessor(
 			postalCode: null,
 		},
 		wpcomTransaction
-	).then( saveTransactionResponseToWpcomStore );
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( makeSuccessResponse );
 }
 
 export async function fullCreditsProcessor(
@@ -258,7 +260,9 @@ export async function fullCreditsProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	).then( saveTransactionResponseToWpcomStore );
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( makeSuccessResponse );
 }
 
 export async function payPalProcessor(
