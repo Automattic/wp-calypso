@@ -82,7 +82,7 @@ import {
 	makeRedirectResponse,
 } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
-import { FormStatus, TransactionStatus } from './types';
+import { FormStatus, TransactionStatus, PaymentProcessorResponseType } from './types';
 
 // Re-export the public API
 export {
@@ -108,6 +108,7 @@ export {
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
+	PaymentProcessorResponseType,
 	SubmitButtonWrapper,
 	TransactionStatus,
 	checkoutTheme,

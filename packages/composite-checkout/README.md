@@ -298,6 +298,14 @@ Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
 
+### PaymentProcessorResponseType
+
+An enum that holds the values of the [payment processor function return value's `type` property](#payment-methods) (each payment processor function returns a Promise that resolves to `{type: PaymentProcessorResponseType, payload: string | unknown }` where the payload varies based on the response type).
+
+- `.SUCCESS` (the payload will be an `unknown` object that is the server response).
+- `.REDIRECT` (the payload will be a `string` that is the redirect URL).
+- `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
+
 ### SubmitButtonWrapper
 
 A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the submit button that's rendered by each [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.

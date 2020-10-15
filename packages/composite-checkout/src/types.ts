@@ -115,6 +115,12 @@ export type PaymentProcessorFunction = (
 	submitData: unknown
 ) => Promise< PaymentProcessorResponse >;
 
+export enum PaymentProcessorResponseType {
+	SUCCESS = 'SUCCESS',
+	REDIRECT = 'REDIRECT',
+	MANUAL = 'MANUAL',
+}
+
 export enum TransactionStatus {
 	NOT_STARTED = 'not-started',
 	PENDING = 'pending',
