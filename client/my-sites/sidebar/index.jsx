@@ -87,12 +87,14 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { isP2PlusPlan } from 'calypso/lib/plans';
 
 export class MySitesSidebar extends Component {
 	static propTypes = {
@@ -103,6 +105,7 @@ export class MySitesSidebar extends Component {
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
+		sitePlanSlug: PropTypes.string,
 	};
 
 	expandPlanSection = () => this.props.expandSection( SIDEBAR_SECTION_PLAN );
@@ -407,9 +410,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	jetpack() {
-		const { canUserManageOptions, isJetpackSectionOpen, path } = this.props;
+		const { canUserManageOptions, isJetpackSectionOpen, path, sitePlanSlug } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (
+			this.props.isSiteWPForTeams &&
+			( ! isEnabled( 'p2/p2-plus' ) ||
+				( isEnabled( 'p2/p2-plus' ) && ! isP2PlusPlan( sitePlanSlug ) ) )
+		) {
 			return null;
 		}
 
@@ -1117,6 +1124,7 @@ function mapStateToProps( state ) {
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),
 		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
 		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
+		sitePlanSlug: getSitePlanSlug( state, siteId ),
 	};
 }
 
