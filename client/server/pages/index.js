@@ -493,6 +493,8 @@ function setUpRoute( req, res, next ) {
 }
 
 const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
+	res.set( 'Cache-control', 'no-cache' );
+
 	const ctx = {
 		entrypoint: req.getFilesForEntrypoint( entrypoint ),
 	};
@@ -505,6 +507,8 @@ const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	 eslint-disable. */
 // eslint-disable-next-line no-unused-vars
 const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next ) => {
+	res.set( 'Cache-control', 'no-cache' );
+
 	if ( process.env.NODE_ENV !== 'production' ) {
 		console.error( err );
 	}
