@@ -7,10 +7,10 @@ import type { APIFetchOptions } from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import { supportedPlanSlugs } from './reducer';
-import { setPrices } from './actions';
-import type { APIPlan, PlanSlug } from './types';
+import { setPlansDetails, setPrices } from './actions';
+import type { APIPlan, PlanSlug, PlanDetail } from './types';
 import { currenciesFormats } from './constants';
+import { PLANS_LIST } from './plans-data';
 
 /**
  * Calculates the monthly price of a plan
@@ -49,7 +49,7 @@ export function* getPrices() {
 
 	// filter for supported plans
 	const WPCOMPlans: APIPlan[] = plans.filter(
-		( plan: APIPlan ) => -1 !== supportedPlanSlugs.indexOf( plan.product_slug as PlanSlug )
+		( plan: APIPlan ) => -1 !== Object.keys( PLANS_LIST ).indexOf( plan.product_slug as PlanSlug )
 	);
 
 	// create a [slug => price] map
@@ -59,4 +59,39 @@ export function* getPrices() {
 	}, {} as Record< string, string > );
 
 	yield setPrices( prices );
+}
+
+export function* getPlansDetails( locale = 'en' ) {
+	try {
+		const rawPlansDetails = yield apiFetch( {
+			global: true,
+			url: `https://public-api.wordpress.com/wpcom/v2/plans/mobile?locale=${ locale }`,
+			mode: 'cors',
+			credentials: 'omit',
+		} as APIFetchOptions );
+
+		const plansDetails = [];
+
+		const generalFeatures: PlanDetail = {
+			id: 'general',
+			name: null,
+			features: [],
+		};
+
+		rawPlansDetails.features.forEach( ( feature: Record< string, string > ) => {
+			generalFeatures.features.push( {
+				id: feature.id,
+				name: feature.name,
+				description: feature.description,
+				type: 'checkbox',
+				data: [ true, true, true, true, true ],
+			} );
+		} );
+
+		plansDetails.push( generalFeatures );
+
+		yield setPlansDetails( plansDetails );
+	} catch ( err ) {
+		return;
+	}
 }

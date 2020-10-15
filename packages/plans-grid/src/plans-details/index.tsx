@@ -24,11 +24,13 @@ type Props = {
 };
 
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
-	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );
+	const { __, i18nLocale } = useI18n();
+
+	const plansDetails = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlansDetails( i18nLocale )
+	);
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
-
-	const { __ } = useI18n();
 
 	return (
 		<div className="plans-details">

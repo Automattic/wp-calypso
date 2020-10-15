@@ -87,3 +87,19 @@ export interface APIPlan {
 	tagline: object;
 	currency_code: string;
 }
+
+export type PlanFeature = {
+	id?: string;
+	description?: string;
+	name: string;
+	type: string;
+	data: Array< boolean | string >;
+};
+
+export type PlanDetail = {
+	id: string;
+	name: string | null;
+	features: Array< PlanFeature >;
+};
+
+export type PlanDetails = Array< PlanDetail >;
