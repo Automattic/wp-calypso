@@ -148,6 +148,8 @@ function preparedProductsReducer(
 	}
 }
 
+type AddHandler = 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
+
 function chooseAddHandler( {
 	isLoading,
 	originalPurchaseId,
@@ -158,7 +160,7 @@ function chooseAddHandler( {
 	originalPurchaseId: string | number | null | undefined;
 	planSlug: string | null;
 	productAliasFromUrl: string | null | undefined;
-} ): 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd' {
+} ): AddHandler {
 	if ( ! isLoading ) {
 		return 'doNotAdd';
 	}
@@ -187,7 +189,7 @@ function useAddRenewalItems( {
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
-	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
+	addHandler: AddHandler;
 } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isFetchingProducts = useSelector( isProductsListFetching );
@@ -274,7 +276,7 @@ function useAddPlanFromSlug( {
 	planSlug: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
-	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
+	addHandler: AddHandler;
 } ) {
 	const isFetchingPlans = useSelector( isRequestingPlans );
 	const plans = useSelector( getPlans );
@@ -334,7 +336,7 @@ function useAddProductFromSlug( {
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
-	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
+	addHandler: AddHandler;
 } ) {
 	const isFetchingPlans = useSelector( isRequestingPlans );
 	const plans = useSelector( getPlans );
