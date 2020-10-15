@@ -170,7 +170,7 @@ class EmailProvidersComparison extends React.Component {
 				features={ [
 					billingFrequency,
 					translate( 'Send and receive from your custom domain' ),
-					translate( '10GB storage' ),
+					translate( '30GB storage' ),
 					translate( 'Email, calendars, and contacts' ),
 					translate( 'One-click import of existing emails and contacts' ),
 					translate( 'Read receipts to track email opens' ),
