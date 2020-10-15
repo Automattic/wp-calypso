@@ -14,7 +14,9 @@ import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/cred
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 
 const INITIAL_FORM_STATE = {
 	protocol: 'ssh',
@@ -58,8 +60,9 @@ function withServerCredentialsForm( WrappedComponent ) {
 
 		constructor( props ) {
 			super( props );
-			const { rewindState, role, siteSlug } = props;
-			const credentials = find( rewindState.credentials, { role: role } );
+			const { rewindState, scanState, role, siteSlug } = props;
+			const credentials =
+				find( rewindState.credentials, { role } ) || find( scanState.credentials, { role } );
 			const form = Object.assign( {}, INITIAL_FORM_STATE );
 
 			this.state = {
@@ -154,6 +157,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 			return (
 				<>
 					<QueryRewindState siteId={ siteId } />
+					<QueryJetpackScan siteId={ siteId } />
 					<WrappedComponent
 						form={ form }
 						formErrors={ formErrors }
@@ -179,6 +183,7 @@ function withServerCredentialsForm( WrappedComponent ) {
 			formIsSubmitting: 'pending' === formSubmissionStatus,
 			siteSlug: getSiteSlug( state, siteId ),
 			rewindState: getRewindState( state, siteId ),
+			scanState: getSiteScanState( state, siteId ),
 		};
 	};
 
