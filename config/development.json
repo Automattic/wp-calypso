@@ -68,6 +68,7 @@
 		"gutenboarding/new-launch": true,
 		"gutenboarding/new-launch-mobile": false,
 		"gutenboarding/show-vertical-input": false,
+		"gutenboarding/site-editor": true,
 		"help": true,
 		"help/courses": true,
 		"home/layout-dev": true,

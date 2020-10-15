@@ -36,6 +36,7 @@ const routeFragments = {
 	step: `:step(${ steps.join( '|' ) })?`,
 	plan: `:plan(${ plansPaths.join( '|' ) })?`,
 	lang: getLanguageRouteParam(),
+	flow: `:flow(single-page)?`,
 };
 
 export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
@@ -46,14 +47,16 @@ export type StepNameType = keyof typeof Step;
 export function usePath() {
 	const langParam = useLangRouteParam();
 	const planParam = usePlanRouteParam();
+	const flowParam = useFlowRouteParam();
 
-	return ( step?: StepType, lang?: string, plan?: string ) => {
+	return ( step?: StepType, lang?: string, plan?: string, flow?: string ) => {
 		// When lang is null, remove lang.
 		// When lang is empty or undefined, get lang from route param.
 		lang = lang === null ? '' : lang || langParam;
 		plan = plan === null ? '' : plan || planParam;
+		flow = flow === null ? '' : flow || flowParam;
 
-		if ( ! step && ! lang && ! plan ) {
+		if ( ! step && ! lang && ! plan && ! flow ) {
 			return '/';
 		}
 
@@ -62,6 +65,7 @@ export function usePath() {
 				step,
 				plan,
 				lang,
+				flow,
 			} );
 		} catch {
 			// If we get an invalid lang or plan, `generatePath` throws a TypeError.
@@ -83,6 +87,12 @@ export function useStepRouteParam() {
 export function usePlanRouteParam() {
 	const match = useRouteMatch< { plan?: string } >( path );
 	return match?.params.plan;
+}
+
+// Returns true if the url has e.g. `*/single-page` flow name
+export function useFlowRouteParam() {
+	const match = useRouteMatch< { flow?: string } >( path );
+	return match?.params.flow;
 }
 
 export function useCurrentStep() {
