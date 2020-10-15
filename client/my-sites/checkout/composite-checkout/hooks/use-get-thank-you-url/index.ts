@@ -30,6 +30,7 @@ export default function useGetThankYouUrl( {
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
+	isInEditor,
 }: {
 	siteSlug: string | undefined;
 	redirectTo: string | undefined;
@@ -39,6 +40,7 @@ export default function useGetThankYouUrl( {
 	isJetpackNotAtomic: boolean;
 	productAliasFromUrl: string | undefined;
 	hideNudge: boolean;
+	isInEditor?: boolean;
 } ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
@@ -72,6 +74,7 @@ export default function useGetThankYouUrl( {
 			hideNudge,
 			didPurchaseFail,
 			isTransactionResultEmpty,
+			isInEditor,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );

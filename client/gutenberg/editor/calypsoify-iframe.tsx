@@ -57,6 +57,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
+import type { CartData } from 'calypso/client/blocks/editor-checkout-modal';
 /**
  * Types
  */
@@ -93,7 +94,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: any;
+	cartData?: CartData;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -751,8 +752,9 @@ class CalypsoifyIframe extends Component<
 					<AsyncLoad
 						require="calypso/blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
-						isOpen={ isCheckoutModalVisible }
 						cartData={ cartData }
+						placeholder={ null }
+						isOpen
 					/>
 				) }
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />

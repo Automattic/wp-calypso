@@ -120,6 +120,7 @@ export default function CompositeCheckout( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
+	isInEditor,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -253,6 +254,7 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge,
+		isInEditor,
 	} );
 	const getThankYouUrl = useCallback(
 		( ...getThankYouPageUrlArguments ) => {
@@ -686,6 +688,7 @@ CompositeCheckout.propTypes = {
 	plan: PropTypes.string,
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
+	isInEditor: PropTypes.bool,
 };
 
 function getPlanProductSlugs(
