@@ -4,7 +4,6 @@
 import React, { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { debounce, noop, uniqueId } from 'lodash';
 import classNames from 'classnames';
-import i18n from 'i18n-calypso';
 import { isMobile } from '@automattic/viewport';
 
 /**
@@ -13,6 +12,7 @@ import { isMobile } from '@automattic/viewport';
 // @ts-ignore
 import { Spinner, __experimentalInputControl as InputControl } from '@wordpress/components';
 import { close, search, Icon } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Style dependencies
@@ -236,10 +236,10 @@ class Search extends React.Component< Props, State > {
 	focus = () => {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
 		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
-		setTimeout( () => this.searchInput?.current.focus(), 0 );
+		setTimeout( () => this.searchInput.current?.focus(), 0 );
 	};
 
-	blur = () => this.searchInput?.current.blur();
+	blur = () => this.searchInput.current?.blur();
 
 	clear = () => this.setState( { keyword: '' } );
 
@@ -251,9 +251,9 @@ class Search extends React.Component< Props, State > {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+	onChange = ( keyword: string ) => {
 		this.setState( {
-			keyword: event.target?.value,
+			keyword,
 		} );
 	};
 
@@ -289,12 +289,12 @@ class Search extends React.Component< Props, State > {
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
 	onFocus = () => {
-		if ( ! this.searchInput ) {
+		if ( ! this.searchInput.current ) {
 			return;
 		}
 
-		const setValue = this.searchInput?.current?.value ?? '';
-		if ( setValue && this.searchInput.current ) {
+		const setValue = this.searchInput.current.value ?? '';
+		if ( setValue ) {
 			// Firefox needs clear or won't move cursor to end
 			this.searchInput.current.value = '';
 			this.searchInput.current.value = setValue;
@@ -304,11 +304,9 @@ class Search extends React.Component< Props, State > {
 		this.props.onSearchOpen();
 	};
 
-	shouldBeOpen = () => this.state.keyword || this.state.isOpen;
-
 	render() {
 		const searchValue = this.state.keyword;
-		const placeholder = this.props.placeholder || i18n.translate( 'Search…' );
+		const placeholder = this.props.placeholder || __( 'Search…' );
 		const inputLabel = this.props.inputLabel;
 		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
 		const isOpenUnpinnedOrQueried =
@@ -344,41 +342,39 @@ class Search extends React.Component< Props, State > {
 					tabIndex={ enableOpenIcon ? 0 : undefined }
 					onKeyDown={ enableOpenIcon ? this.openListener : undefined }
 					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) as string }
+					aria-label={ __( 'Open Search' ) }
 				>
 					{ /* @ts-ignore */ }
 					{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
 				</div>
-				{ this.shouldBeOpen() && (
-					<div className={ fadeDivClass }>
-						<InputControl
-							type="search"
-							id={ 'search-component-' + this.instanceId }
-							autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-							aria-describedby={ this.props.describedBy }
-							aria-label={ inputLabel ? inputLabel : ( i18n.translate( 'Search' ) as string ) }
-							aria-hidden={ ! isOpenUnpinnedOrQueried }
-							className={ inputClass }
-							placeholder={ placeholder }
-							role="searchbox"
-							value={ searchValue }
-							ref={ this.searchInput }
-							onChange={ this.onChange }
-							onKeyUp={ this.keyUp }
-							onKeyDown={ this.keyDown }
-							onMouseUp={ this.props.onClick }
-							onFocus={ this.onFocus }
-							onBlur={ this.onBlur }
-							disabled={ this.props.disabled }
-							autoCapitalize="none"
-							dir={ this.props.dir }
-							maxLength={ this.props.maxLength }
-							minLength={ this.props.minLength }
-							{ ...autocorrect }
-						/>
-						{ this.renderStylingDiv() }
-					</div>
-				) }
+				<div className={ fadeDivClass }>
+					<InputControl
+						type="search"
+						id={ 'search-component-' + this.instanceId }
+						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+						aria-describedby={ this.props.describedBy }
+						aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
+						aria-hidden={ ! isOpenUnpinnedOrQueried }
+						className={ inputClass }
+						placeholder={ placeholder }
+						role="searchbox"
+						value={ searchValue }
+						ref={ this.searchInput }
+						onChange={ this.onChange }
+						onKeyUp={ this.keyUp }
+						onKeyDown={ this.keyDown }
+						onMouseUp={ this.props.onClick }
+						onFocus={ this.onFocus }
+						onBlur={ this.onBlur }
+						disabled={ this.props.disabled }
+						autoCapitalize="none"
+						dir={ this.props.dir }
+						maxLength={ this.props.maxLength }
+						minLength={ this.props.minLength }
+						{ ...autocorrect }
+					/>
+					{ this.renderStylingDiv() }
+				</div>
 				{ this.closeButton() }
 			</div>
 		);
@@ -388,7 +384,7 @@ class Search extends React.Component< Props, State > {
 		if ( this.props.overlayStyling ) {
 			return (
 				<div className="search__text-overlay" ref={ this.overlay }>
-					{ this.props.overlayStyling?.( this.state.keyword ) }
+					{ this.props.overlayStyling( this.state.keyword ) }
 				</div>
 			);
 		}
@@ -396,7 +392,7 @@ class Search extends React.Component< Props, State > {
 	}
 
 	closeButton() {
-		if ( ! this.props.hideClose && this.shouldBeOpen() ) {
+		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<div
 					role="button"
@@ -405,7 +401,7 @@ class Search extends React.Component< Props, State > {
 					tabIndex={ 0 }
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) as string }
+					aria-label={ __( 'Close Search' ) }
 				>
 					{ /* @ts-ignore */ }
 					<Icon icon={ close } className="search__close-icon" />

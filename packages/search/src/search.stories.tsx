@@ -13,7 +13,7 @@ const BoxedSearch = ( props ) => (
 			placeholder="Search..."
 			autoFocus
 			fitsContainer
-			onSearch={ () => console.log( 'searched!' ) }
+			onSearch={ ( search ) => console.log( 'Searched: ', search ) }
 			{ ...props }
 		/>
 	</div>
@@ -23,14 +23,22 @@ export const _default = () => {
 	return <BoxedSearch />;
 };
 
+export const Simple = () => {
+	return <BoxedSearch hideClose hideOpenIcon compact />;
+};
+
+export const Delayed = () => {
+	return <BoxedSearch delaySearch />;
+};
+
+export const Searching = () => {
+	return <BoxedSearch searching initialValue="Kiwi" />;
+};
+
 export const Disabled = () => <BoxedSearch disabled isOpen />;
 
 export const Pinned = () => <BoxedSearch pinned />;
 
-export const Compact = () => <Search compact />;
+export const Compact = () => <BoxedSearch compact />;
 
-export const CompactPinned = () => (
-	<div style={ { position: 'relative', width: '270px', height: '36px' } }>
-		<Search pinned compact fitsContainer />
-	</div>
-);
+export const CompactPinned = () => <BoxedSearch pinned compact fitsContainer />;
