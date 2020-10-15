@@ -31,7 +31,7 @@ interface AppWindow extends Window {
 	installedChunks?: string[];
 	i18nLocaleStrings?: string;
 	__requireChunkCallback__?: {
-		add( callback: Function ): void;
+		add( callback: Function ): void; // eslint-disable-line @typescript-eslint/ban-types
 		getInstalledChunks(): string[];
 	};
 	updateLocale: ( newLocale: string ) => Promise< void >; // fixme: this is just for demonstration purposes
