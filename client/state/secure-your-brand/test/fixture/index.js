@@ -9,7 +9,7 @@ import {
 } from 'calypso/state/action-types';
 
 export const SECURE_YOUR_BRAND = {
-	secureYourBrand: {
+	items: {
 		product_data: [
 			{
 				product_id: 6,
@@ -59,16 +59,16 @@ export const ACTION_SECURE_YOUR_BRAND_FAILURE = {
  * Return a whole state instance
  *
  * - requesting: false
- * - errors: false
+ * - error: false
  *
  * @returns {object} an state instance
  */
 export const getStateInstance = () => {
 	return {
 		secureYourBrand: {
-			secureYourBrand: SECURE_YOUR_BRAND,
+			items: SECURE_YOUR_BRAND,
 			requesting: false,
-			errors: null,
+			error: null,
 		},
 	};
 };
