@@ -94,7 +94,6 @@ export default function usePrepareProductsForCart( {
 	// Only one of these three should ever operate. The others should bail if
 	// they think another hook will handle the data.
 	useAddPlanFromSlug( {
-		isLoading: state.isLoading,
 		planSlug,
 		dispatch,
 		isJetpackNotAtomic,
@@ -102,17 +101,13 @@ export default function usePrepareProductsForCart( {
 		addHandler,
 	} );
 	useAddProductFromSlug( {
-		isLoading: state.isLoading,
 		productAlias,
-		planSlug,
 		dispatch,
 		isJetpackNotAtomic,
 		isPrivate,
-		originalPurchaseId,
 		addHandler,
 	} );
 	useAddRenewalItems( {
-		isLoading: state.isLoading,
 		originalPurchaseId,
 		productAlias,
 		dispatch,
@@ -185,13 +180,11 @@ function chooseAddHandler( {
 }
 
 function useAddRenewalItems( {
-	isLoading,
 	originalPurchaseId,
 	productAlias,
 	dispatch,
 	addHandler,
 }: {
-	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -264,7 +257,6 @@ function useAddRenewalItems( {
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
 	}, [
 		translate,
-		isLoading,
 		isFetchingProducts,
 		products,
 		originalPurchaseId,
@@ -275,18 +267,14 @@ function useAddRenewalItems( {
 }
 
 function useAddPlanFromSlug( {
-	isLoading,
 	planSlug,
 	dispatch,
 	isJetpackNotAtomic,
-	originalPurchaseId,
 	addHandler,
 }: {
-	isLoading: boolean;
 	planSlug: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
-	originalPurchaseId: string | number | null | undefined;
 	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
 } ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
@@ -333,36 +321,20 @@ function useAddPlanFromSlug( {
 			cartProduct
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
-	}, [
-		translate,
-		isLoading,
-		plans,
-		originalPurchaseId,
-		isFetchingPlans,
-		planSlug,
-		plan,
-		isJetpackNotAtomic,
-		dispatch,
-	] );
+	}, [ translate, plans, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, dispatch ] );
 }
 
 function useAddProductFromSlug( {
-	isLoading,
 	productAlias: productAliasFromUrl,
-	planSlug,
 	dispatch,
 	isJetpackNotAtomic,
 	isPrivate,
-	originalPurchaseId,
 	addHandler,
 }: {
-	isLoading: boolean;
 	productAlias: string | undefined | null;
-	planSlug: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
-	originalPurchaseId: string | number | undefined | null;
 	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
 } ) {
 	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
@@ -457,13 +429,10 @@ function useAddProductFromSlug( {
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
 		translate,
-		isLoading,
 		isPrivate,
 		plans,
 		products,
-		originalPurchaseId,
 		isFetchingPlans,
-		planSlug,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		validProducts,
