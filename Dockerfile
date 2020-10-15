@@ -35,7 +35,7 @@ RUN bash /tmp/env-config.sh
 # dependencies which end up bloating the image.
 # /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
-RUN rm -fr /calypso/apps/editing-tookit /calypso/apps/o2-blocks /calypso/apps/wpcom-block-editor /calypso/test /calypso/desktop \
+RUN rm -fr /calypso/apps/editing-toolkit /calypso/apps/o2-blocks /calypso/apps/wpcom-block-editor /calypso/test /calypso/desktop \
 	&& yarn install --frozen-lockfile
 
 # Build the final layer
