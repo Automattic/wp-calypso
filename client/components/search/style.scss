@@ -2,6 +2,10 @@
  * @component Search
  */
 
+.is-section-purchases .search {
+	z-index: z-index( 'root', '.is-section-purchases .search' );
+}
+
 .search {
 	border-radius: 2px;
 	display: flex;
