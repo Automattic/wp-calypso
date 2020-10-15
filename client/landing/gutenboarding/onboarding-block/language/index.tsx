@@ -12,10 +12,7 @@ import LanguagePicker from '@automattic/language-picker';
  */
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
 import { languages } from '../../../../languages';
-import {
-	LANGUAGE_GROUPS,
-	DEFAULT_LANGUAGE_GROUP,
-} from '../../../../components/language-picker/constants';
+import { LANGUAGE_GROUPS } from '../../../../components/language-picker/constants';
 
 /**
  * Style dependencies
@@ -43,7 +40,6 @@ const LanguageStep: React.FunctionComponent = () => {
 					</div>
 					<LanguagePicker
 						languageGroups={ LANGUAGE_GROUPS }
-						defaultLananguageGroupId={ DEFAULT_LANGUAGE_GROUP }
 						languages={ languages }
 						onSelectLanguage={ ( language ) => {
 							changeLocale( language.langSlug );
