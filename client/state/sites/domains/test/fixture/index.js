@@ -40,6 +40,9 @@ export const DOMAIN_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -106,6 +109,9 @@ export const DOMAIN_NOT_PRIMARY = {
 	expirySoon: false,
 	gdprConsentStatus: null,
 	googleAppsSubscription: {
+		status: 'no_subscription',
+	},
+	titanMailSubscription: {
 		status: 'no_subscription',
 	},
 	privacyAvailable: false,
