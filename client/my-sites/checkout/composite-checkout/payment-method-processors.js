@@ -300,7 +300,9 @@ export async function payPalProcessor(
 		},
 		wpcomPayPalExpress,
 		transactionOptions
-	).then( saveTransactionResponseToWpcomStore );
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( makeRedirectResponse );
 }
 
 async function saveTransactionResponseToWpcomStore( result ) {

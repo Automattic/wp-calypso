@@ -14,7 +14,6 @@ import {
 	FormStatus,
 	TransactionStatus,
 	useEvents,
-	usePaymentProcessor,
 	useTransactionStatus,
 	useLineItems,
 } from '../../public-api';
@@ -47,44 +46,22 @@ export function PaypalLabel() {
 	);
 }
 
-export function PaypalSubmitButton( { disabled } ) {
+export function PaypalSubmitButton( { disabled, onClick } ) {
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-	const {
-		transactionStatus,
-		setTransactionPending,
-		setTransactionRedirecting,
-		setTransactionError,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'paypal' );
+	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
-	const { __ } = useI18n();
 
-	const onClick = () => {
+	const handleButtonPress = () => {
 		onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'paypal' } } );
-		setTransactionPending();
-		submitTransaction( {
+		onClick( 'paypal', {
 			items,
-		} )
-			.then( ( response ) => {
-				if ( ! response ) {
-					setTransactionError(
-						__(
-							'An error occurred while redirecting to PayPal. Please try again or contact support.'
-						)
-					);
-					return;
-				}
-				setTransactionRedirecting( response );
-			} )
-			.catch( ( error ) => {
-				setTransactionError( error.message );
-			} );
+		} );
 	};
 	return (
 		<Button
 			disabled={ disabled }
-			onClick={ onClick }
+			onClick={ handleButtonPress }
 			buttonType="paypal"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
