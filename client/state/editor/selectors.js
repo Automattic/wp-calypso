@@ -161,6 +161,10 @@ export function isEditorIframeLoaded( state ) {
 	return state.editor.isIframeLoaded;
 }
 
+export function getEditorIframePort( state ) {
+	return state.editor.iframePort;
+}
+
 export function getEditorPublishButtonStatus( state ) {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );

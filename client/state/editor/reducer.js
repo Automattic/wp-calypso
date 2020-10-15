@@ -75,6 +75,17 @@ export function isIframeLoaded( state = false, action ) {
 	return state;
 }
 
+export function iframePort( state = null, action ) {
+	switch ( action.type ) {
+		case EDITOR_IFRAME_LOADED: {
+			const loaded = action.isIframeLoaded;
+			return loaded ? action.iframePort : null;
+		}
+	}
+
+	return state;
+}
+
 export function isAutosaving( state = false, action ) {
 	switch ( action.type ) {
 		case EDITOR_AUTOSAVE:
@@ -106,6 +117,7 @@ const combinedReducer = combineReducers( {
 	loadingError,
 	isLoading,
 	isIframeLoaded,
+	iframePort,
 	isAutosaving,
 	autosavePreviewUrl,
 	imageEditor,

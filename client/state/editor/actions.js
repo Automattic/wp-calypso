@@ -156,9 +156,10 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	};
 }
 
-export const setEditorIframeLoaded = ( isIframeLoaded = true ) => ( {
+export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null ) => ( {
 	type: EDITOR_IFRAME_LOADED,
 	isIframeLoaded,
+	iframePort,
 } );
 
 export const editorAutosaveReset = () => ( {

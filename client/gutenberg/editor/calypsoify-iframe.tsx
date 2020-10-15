@@ -12,7 +12,6 @@ import { localize, LocalizeProps } from 'i18n-calypso';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import MediaStore from 'calypso/lib/media/store';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getCustomizerUrl,
@@ -152,7 +151,6 @@ class CalypsoifyIframe extends Component<
 	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
-		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
 		const isDesktop = config.isEnabled( 'desktop' );
@@ -184,7 +182,6 @@ class CalypsoifyIframe extends Component<
 	}
 
 	componentWillUnmount() {
-		MediaStore.off( 'change', this.updateImageBlocks );
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
@@ -222,7 +219,7 @@ class CalypsoifyIframe extends Component<
 			this.pressThis();
 
 			// Notify external listeners that the iframe has loaded
-			this.props.setEditorIframeLoaded();
+			this.props.setEditorIframeLoaded( true, this.iframePort );
 
 			return;
 		}

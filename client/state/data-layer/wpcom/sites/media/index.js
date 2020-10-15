@@ -39,11 +39,20 @@ import {
 
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import getNextPageQuery from 'state/selectors/get-next-page-query';
+import { isEditorIframeLoaded, getEditorIframePort } from 'calypso/state/editor/selectors';
 
 /**
  * Module variables
  */
 const log = debug( 'calypso:middleware-media' );
+
+const createMediaGutenframePayload = ( status, mediaItem ) => ( {
+	id: mediaItem.ID,
+	height: mediaItem.height,
+	status,
+	url: mediaItem.URL,
+	width: mediaItem.width,
+} );
 
 export function updateMedia( action ) {
 	const { siteId, item } = action;
@@ -61,8 +70,15 @@ export function updateMedia( action ) {
 	];
 }
 
-export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
+export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch, getState ) => {
 	dispatch( receiveMedia( siteId, mediaItem ) );
+
+	if ( isEditorIframeLoaded( getState() ) ) {
+		const iframePort = getEditorIframePort( getState() );
+		const payload = createMediaGutenframePayload( 'updated', mediaItem );
+		iframePort.postMessage( { action: 'updateImageBlocks', payload } );
+	}
+
 	dispatchFluxUpdateMediaItemSuccess( siteId, mediaItem );
 };
 
@@ -173,9 +189,15 @@ export const requestDeleteMedia = ( action ) => {
 	];
 };
 
-export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
+export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch, getState ) => {
 	dispatch( deleteMedia( siteId, mediaItem.ID ) );
 	dispatch( requestMediaStorage( siteId ) );
+
+	if ( isEditorIframeLoaded( getState() ) ) {
+		const iframePort = getEditorIframePort( getState() );
+		const payload = createMediaGutenframePayload( 'deleted', mediaItem );
+		iframePort.postMessage( { action: 'updateImageBlocks', payload } );
+	}
 
 	dispatchFluxRemoveMediaItemSuccess( siteId, mediaItem );
 };
