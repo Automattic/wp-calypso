@@ -47,13 +47,20 @@ const ChangeLocaleContext = React.createContext< ChangeLocaleFunction >( () => {
 export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 
 export const LocaleContext: React.FunctionComponent = ( { children } ) => {
-	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >();
+	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >(
+		// Call loadInitialLocale() ASAP, but wrapped to ignore its Promise
+		() => {
+			loadInitalLocale();
+		}
+	);
+	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState< true | null >( null );
 
 	const setLocale = ( newLocaleData: LocaleData | undefined ) => {
 		// Translations done within react are made using the localData passed to the <I18nProvider/>.
 		// We must also set the locale for translations done outside of a react rendering cycle using setLocaleData.
 		setLocaleData( newLocaleData );
 		setContextLocaleData( newLocaleData );
+		setLocaleDataLoaded( true );
 	};
 
 	const changeLocale = async ( newLocale: string ) => {
@@ -74,19 +81,15 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 		}
 	};
 
-	const loadInitalLocale = async () => {
+	async function loadInitalLocale() {
 		// trigger changeLocale once to load the initial locale
 		const userLocale = await getLocale();
 		changeLocale( userLocale );
-	};
-
-	React.useEffect( () => {
-		loadInitalLocale();
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}
 
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
-			<I18nProvider localeData={ contextLocaleData }>{ children }</I18nProvider>
+			<I18nProvider localeData={ contextLocaleData }>{ localeDataLoaded && children }</I18nProvider>
 		</ChangeLocaleContext.Provider>
 	);
 };
