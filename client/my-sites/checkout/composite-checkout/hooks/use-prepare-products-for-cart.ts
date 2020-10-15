@@ -97,7 +97,6 @@ export default function usePrepareProductsForCart( {
 		planSlug,
 		dispatch,
 		isJetpackNotAtomic,
-		originalPurchaseId,
 		addHandler,
 	} );
 	useAddProductFromSlug( {
