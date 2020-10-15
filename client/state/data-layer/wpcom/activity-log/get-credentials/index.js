@@ -16,7 +16,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-const getCredentials = ( action ) =>
+export const getCredentials = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -26,13 +26,11 @@ const getCredentials = ( action ) =>
 		action
 	);
 
-export const getCredentialsSucceeded = ( { siteId, credentials } ) => [
-	{
-		type: JETPACK_CREDENTIALS_GET_SUCCESS,
-		credentials,
-		siteId,
-	},
-];
+export const getCredentialsSucceeded = ( { siteId }, { credentials } ) => ( {
+	type: JETPACK_CREDENTIALS_GET_SUCCESS,
+	credentials,
+	siteId,
+} );
 
 export const getCredentialsFailed = ( { siteId }, error ) => [
 	errorNotice(
@@ -45,7 +43,7 @@ export const getCredentialsFailed = ( { siteId }, error ) => [
 	},
 ];
 
-registerHandlers( 'state/data-layer/wpcom/activity-log/get-credentials/index.ts', {
+registerHandlers( 'state/data-layer/wpcom/activity-log/get-credentials', {
 	[ JETPACK_CREDENTIALS_GET ]: [
 		dispatchRequest( {
 			fetch: getCredentials,

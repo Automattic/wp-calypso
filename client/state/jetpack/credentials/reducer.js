@@ -16,7 +16,7 @@ import { itemsSchema } from './schema';
 export const items = withSchemaValidation(
 	itemsSchema,
 	keyedReducer( 'siteId', ( state, { type, credentials } ) => {
-		if ( JETPACK_CREDENTIALS_STORE === type ) {
+		if ( JETPACK_CREDENTIALS_STORE === type || JETPACK_CREDENTIALS_GET_SUCCESS === type ) {
 			return 'object' === typeof credentials ? credentials : {};
 		}
 
@@ -38,7 +38,7 @@ export const getRequestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	return state;
 } );
 
-export const requestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
+export const updateRequestStatus = keyedReducer( 'siteId', ( state, { type } ) => {
 	switch ( type ) {
 		case JETPACK_CREDENTIALS_UPDATE:
 			return 'pending';
@@ -67,7 +67,7 @@ export const errors = keyedReducer( 'siteId', ( state, { type, error } ) => {
 
 export const reducer = combineReducers( {
 	items,
-	requestStatus,
 	getRequestStatus,
+	updateRequestStatus,
 	errors,
 } );
