@@ -8,6 +8,10 @@ A language picker component extracted from Gutenboarding for the purposes of cod
 yarn add @automattic/language-picker
 ```
 
+## Internationalization
+
+This package depends directly on `@wordpress/i18n` for translations and the existence of locale data is assumed. This means consumers must provide the locale data for this package.
+
 ## Development Workflow
 
 This package is developed as part of the Calypso monorepo. Run `yarn`

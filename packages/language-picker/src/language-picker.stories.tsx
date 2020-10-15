@@ -56,7 +56,6 @@ export const _default = () => {
 			onSelectLanguage={ ( language ) => console.log( language ) }
 			languageGroups={ LANGUAGE_GROUPS }
 			languages={ LANGUAGES }
-			defaultLananguageGroupId="popular"
 		/>
 	);
 };

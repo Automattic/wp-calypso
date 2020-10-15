@@ -43,16 +43,10 @@ type Props = {
 	onSelectLanguage: ( language: Language ) => void;
 	languages: Language[];
 	languageGroups: LanguageGroup[];
-	defaultLananguageGroupId: string;
 };
 
-const LanguagePicker = ( {
-	onSelectLanguage,
-	languages,
-	languageGroups,
-	defaultLananguageGroupId,
-}: Props ) => {
-	const [ filter, setFilter ] = useState( defaultLananguageGroupId );
+const LanguagePicker = ( { onSelectLanguage, languages, languageGroups }: Props ) => {
+	const [ filter, setFilter ] = useState( languageGroups[ 0 ].id );
 
 	const getFilteredLanguages = () => {
 		switch ( filter ) {
