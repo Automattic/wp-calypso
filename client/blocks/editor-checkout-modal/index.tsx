@@ -36,10 +36,7 @@ export interface CartData {
 }
 
 type Props = {
-	site: {
-		ID: string;
-		slug: string;
-	};
+	site: Site;
 	cartData: CartData;
 	onClose: () => void;
 	isOpen: boolean;
