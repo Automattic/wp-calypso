@@ -10,31 +10,53 @@
 
 namespace A8C\FSE\Coming_soon;
 
-$blog_locale = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+/**
+ * Returns the current locale
+ *
+ * @return string Language slug
+ */
+function get_current_locale() {
+	return function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+}
 
+/**
+ * Returns a redirect URL for post-login flow
+ *
+ * @return string The redirect URL
+ */
 function get_redirect_to() {
 
-	// redirect_to is probably never set so this is almost pointless
-	if ( ! empty( $_REQUEST['redirect_to'] ) ) {
-		return rawurlencode( $_REQUEST['redirect_to'] );
-	}
-
-	if ( ! isset( $_SERVER['HTTP_HOST'] ) || ! isset( $_SERVER['REQUEST_URI'] ) ) {
+	// Redirect to the current URL.
+	// If, for any reason, the superglobals aren't available, set a default redirect.
+	if ( empty( $_SERVER['HTTP_HOST'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
 		return get_marketing_home_url();
 	}
 
-	return rawurlencode( 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ); // This is almost always where we are going
+	return rawurlencode( 'https://' . wp_unslash( $_SERVER['HTTP_HOST'] ) . wp_unslash( $_SERVER['REQUEST_URI'] ) );
 }
 
+/**
+ * Returns a localized login URL with redirect query param
+ *
+ * @return string The login URL
+ */
 function get_login_url() {
-	$locale              = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+	$locale              = get_current_locale();
 	$redirect_to         = get_redirect_to();
-	$locale_url_fragment = 'en' === \$blog_locale ? '' : '/' . \$blog_locale;
+	$locale_url_fragment = 'en' === $locale ? '' : '/' . $locale;
+
 	return '//wordpress.com/log-in' . $locale_url_fragment . '?redirect_to=' . $redirect_to;
 }
 
-function get_marketing_home_url() {
-	$locale_subdomain = 'en' === \$blog_locale ? '' : \$blog_locale + '.';
+/**
+ * Returns a localized onboarding URL with redirect query param
+ *
+ * @return string The URL
+ */
+function get_onboarding_url() {
+	$locale           = get_current_locale();
+	$locale_subdomain = 'en' === $locale ? '' : $locale . '.';
+
 	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
 }
 
@@ -222,11 +244,11 @@ function get_marketing_home_url() {
 				<?php if ( ! is_user_logged_in() ) : ?>
 					<div class="marketing-copy">
 						<img src="/wp-content/themes/a8c/domain-landing-page/wpcom-wmark-white.svg" alt="WordPress.com" class="logo" />
-						<p class="copy"><?php echo esc_html( fix_widows( __( 'Build a website. Sell your stuff. Write a blog. And so much more.', 'full-site-editing' ), array( 'mobile_enable' => true ) ) ); ?></p>
+						<p class="copy"><?php esc_html_e( 'Build a website. Sell your stuff. Write a blog. And so much more.', 'full-site-editing' ); ?></p>
 					</div>
 					<div class="marketing-buttons">
 						<p><a class="button button-secondary" href="<?php echo esc_url( get_login_url() ); ?>"><?php esc_html_e( 'Log in', 'full-site-editing' ); ?></a></p>
-						<p><a class="button button-primary " href="<?php echo esc_url( get_marketing_home_url() ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
+						<p><a class="button button-primary " href="<?php echo esc_url( get_onboarding_url() ); ?>"><?php esc_html_e( 'Start your website', 'full-site-editing' ); ?></a></p>
 					</div>
 				<?php endif; ?>
 			</div>
