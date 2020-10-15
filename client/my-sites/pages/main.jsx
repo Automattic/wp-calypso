@@ -7,6 +7,7 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import titlecase from 'to-title-case';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -26,6 +27,7 @@ import FormattedHeader from 'components/formatted-header';
 import { mapPostStatus as mapStatus } from 'lib/route';
 import { POST_STATUSES } from 'state/posts/constants';
 import { getPostTypeLabel } from 'state/post-types/selectors';
+import { Experiment } from 'components/experiment';
 
 /**
  * Style dependencies
@@ -135,6 +137,23 @@ class PagesMain extends React.Component {
 					) }
 				</SectionNav>
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
+
+				{ /* ExPlat's Evergreen A/A Test Experiment:
+				 *
+				 * This continually starts a new experiment every week that doesn't render anything and
+				 * shouldn't send any extra requests, just to help us ensure our experimentation system is
+				 * working smoothly.
+				 *
+				 * This particular spot isn't special, it just needs somewhere to live.
+				 *
+				 * We use iso-week and iso-week-year in order to consistently change the experiment name every week.
+				 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
+				 */ }
+				<Experiment
+					name={ `explat_test_aa_weekly_calypso_${ moment
+						.utc()
+						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+				/>
 			</Main>
 		);
 	}
