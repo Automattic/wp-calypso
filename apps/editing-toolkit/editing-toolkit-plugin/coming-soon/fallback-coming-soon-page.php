@@ -43,7 +43,7 @@ function get_login_url() {
 	$redirect_to = get_redirect_to();
 
 	if ( function_exists( 'localized_wpcom_url' ) ) {
-		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . $redirect_to  );
+		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . $redirect_to );
 	}
 
 	$locale              = get_current_locale();
