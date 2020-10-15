@@ -125,6 +125,7 @@ const ProductCardAltWrapper = ( {
 				isOwned,
 				isItemPlanFeature,
 				isUpgradeableToYearly,
+				translate,
 				sitePlan
 			) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }

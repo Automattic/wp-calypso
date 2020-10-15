@@ -181,6 +181,7 @@ export function productButtonLabelAlt(
 	isOwned: boolean,
 	isItemPlanFeature: boolean,
 	isUpgradeableToYearly: boolean,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
 	if ( isUpgradeableToYearly ) {
