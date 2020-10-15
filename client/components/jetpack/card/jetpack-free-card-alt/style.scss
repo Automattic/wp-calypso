@@ -58,6 +58,8 @@
 		height: 40px;
 		margin-top: 40px;
 
+		font-size: $font-body;
+
 		@include break-small {
 			margin-top: 7px;
 		}
