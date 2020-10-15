@@ -4,6 +4,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import {
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
+import { getSelectorProductCopy } from '../translated-copy';
 import useItemPrice from '../use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -53,6 +55,8 @@ const ProductCardAltWrapper = ( {
 	highlight = false,
 	selectedTerm,
 }: ProductCardProps ) => {
+	const translate = useTranslate();
+
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
@@ -97,7 +101,10 @@ const ProductCardAltWrapper = ( {
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
 
-	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
+	const selectorProductCopy = getSelectorProductCopy( item.productSlug, translate );
+
+	const description =
+		showExpiryNotice && purchase ? <PlanRenewalMessage /> : selectorProductCopy.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
 	// In the case of products that have options (daily and real-time), we want to display
@@ -109,10 +116,10 @@ const ProductCardAltWrapper = ( {
 			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
 			productName={ productName }
-			subheadline={ item.tagline }
+			subheadline={ selectorProductCopy.tagline }
 			description={ description }
 			currencyCode={ currencyCode }
-			billingTimeFrame={ durationToText( item.term ) }
+			billingTimeFrame={ durationToText( item.term, translate ) }
 			buttonLabel={ productButtonLabelAlt(
 				item,
 				isOwned,
@@ -121,7 +128,7 @@ const ProductCardAltWrapper = ( {
 				sitePlan
 			) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
-			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
+			badgeLabel={ productBadgeLabelAlt( item, isOwned, translate, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			searchRecordsDetails={

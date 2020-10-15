@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import { TranslateResult } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { compact, isArray, isObject } from 'lodash';
 import page from 'page';
-import React, { createElement, Fragment } from 'react';
+import { createElement, Fragment } from 'react';
 
 /**
  * Internal dependencies
@@ -13,7 +13,6 @@ import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/feat
 import {
 	ALL,
 	DAILY_PLAN_TO_REALTIME_PLAN,
-	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
 	FEATURED_PRODUCTS,
@@ -28,13 +27,13 @@ import {
 	PERFORMANCE,
 	PLAN_COMPARISON_PAGE,
 	PRODUCTS_WITH_OPTIONS,
-	REALTIME_PRODUCTS,
 	SECURITY,
 	SUBTYPE_TO_OPTION,
 	UPGRADEABLE_WITH_NUDGE,
 	UPSELL_PRODUCT_MATRIX,
 } from './constants';
 import RecordsDetails from './records-details';
+import { getSelectorProductCopy } from './translated-copy';
 import { addItems } from 'calypso/lib/cart/actions';
 import { jetpackProductItem } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -62,12 +61,6 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_SEARCH_PRODUCTS,
-	PRODUCT_JETPACK_ANTI_SPAM,
-	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
-	PRODUCT_JETPACK_SCAN,
-	PRODUCT_JETPACK_SCAN_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 import {
 	Product,
@@ -83,7 +76,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import type {
 	Duration,
 	SelectorProduct,
-	SelectorProductCopy,
 	SelectorProductSlug,
 	DurationString,
 	SelectorProductFeaturesItem,
@@ -122,10 +114,13 @@ export function durationToString( duration: Duration ): DurationString {
 	return duration === TERM_MONTHLY ? 'monthly' : 'annual';
 }
 
-export function durationToText( duration: Duration, translateFn: Function ): TranslateResult {
+export function durationToText(
+	duration: Duration,
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
 	return duration === TERM_MONTHLY
-		? translateFn( 'per month, billed monthly' )
-		: translateFn( 'per month, billed yearly' );
+		? translate( 'per month, billed monthly' )
+		: translate( 'per month, billed yearly' );
 }
 
 // In the case of products that have options (daily and real-time), we want to display
@@ -152,11 +147,11 @@ export function productButtonLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
 	isUpgradeableToYearly: boolean,
-	translateFn: Function,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
 	if ( isUpgradeableToYearly ) {
-		return translateFn( 'Upgrade to Yearly' );
+		return translate( 'Upgrade to Yearly' );
 	}
 
 	if (
@@ -164,15 +159,15 @@ export function productButtonLabel(
 		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
 	) {
 		return product.type !== ITEM_TYPE_PRODUCT
-			? translateFn( 'Manage Plan' )
-			: translateFn( 'Manage Subscription' );
+			? translate( 'Manage Plan' )
+			: translate( 'Manage Subscription' );
 	}
 
-	const { buttonLabel, displayName } = getSelectorProductCopy( product.productSlug, translateFn );
+	const { buttonLabel, displayName } = getSelectorProductCopy( product.productSlug, translate );
 
 	return (
 		buttonLabel ??
-		translateFn( 'Get {{name/}}', {
+		translate( 'Get {{name/}}', {
 			components: {
 				name: createElement( Fragment, {}, displayName ),
 			},
@@ -234,25 +229,28 @@ export function productBadgeLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
 	highlight: boolean,
-	translateFn: Function,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult | undefined {
 	if ( isOwned ) {
 		return slugIsJetpackPlanSlug( product.productSlug )
-			? translateFn( 'Your plan' )
-			: translateFn( 'You own this' );
+			? translate( 'Your plan' )
+			: translate( 'You own this' );
 	}
 
 	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
-		return translateFn( 'Included in your plan' );
+		return translate( 'Included in your plan' );
 	}
 
 	if ( highlight && slugIsFeaturedProduct( product.productSlug ) ) {
-		return translateFn( 'Best Value' );
+		return translate( 'Best Value' );
 	}
 }
 
-export function getMoreFeaturesLink( productSlug: string, translateFn: Function ) {
+export function getMoreFeaturesLink(
+	productSlug: string,
+	translate: ReturnType< typeof useTranslate >
+) {
 	switch ( productSlug ) {
 		case OPTIONS_JETPACK_SECURITY:
 		case OPTIONS_JETPACK_SECURITY_MONTHLY:
@@ -264,131 +262,34 @@ export function getMoreFeaturesLink( productSlug: string, translateFn: Function 
 		case PLAN_JETPACK_COMPLETE_MONTHLY:
 			return {
 				url: PLAN_COMPARISON_PAGE,
-				label: translateFn( 'See all features' ),
+				label: translate( 'See all features' ),
 			};
 		default:
 			return undefined;
 	}
 }
 
-export function getProductTypeOptions( translateFn: Function ) {
+export function getProductTypeOptions( translate: ReturnType< typeof useTranslate > ) {
 	return {
 		[ SECURITY ]: {
 			id: SECURITY,
-			label: translateFn( 'Security' ),
+			label: translate( 'Security' ),
 		},
 		[ PERFORMANCE ]: {
 			id: PERFORMANCE,
-			label: translateFn( 'Performance' ),
+			label: translate( 'Performance' ),
 		},
 		[ ALL ]: {
 			id: ALL,
-			label: translateFn( 'All' ),
+			label: translate( 'All' ),
 		},
 	};
-}
-
-export function getSelectorProductCopy(
-	productSlug: string,
-	translateFn: Function
-): SelectorProductCopy {
-	const securityCopy = {
-		displayName: translateFn( 'Jetpack Security' ),
-		shortName: translateFn( 'Security', {
-			comment: 'Short name of the Jetpack Security generic plan',
-		} ),
-		tagline: translateFn( 'Comprehensive WordPress protection' ),
-		description: translateFn(
-			'Enjoy the peace of mind of complete site security. ' +
-				'Easy-to-use, powerful security tools guard your site, so you can focus on your business.'
-		),
-	};
-
-	const backupCopy = {
-		displayName: translateFn( 'Jetpack Backup' ),
-		shortName: translateFn( 'Backup', {
-			comment: 'Short name of the Jetpack Backup generic product',
-		} ),
-		tagline: translateFn( 'Recommended for all sites' ),
-		description: translateFn( 'Never lose a word, image, page, or time worrying about your site.' ),
-		buttonLabel: translateFn( 'Get Backup' ),
-	};
-
-	const crmCopy = {
-		displayName: translateFn( 'Jetpack CRM' ),
-		shortName: translateFn( 'CRM', {
-			comment: 'Short name of the Jetpack CRM',
-		} ),
-		tagline: translateFn( 'Manage contacts effortlessly' ),
-		description: translateFn(
-			'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
-		),
-		buttonLabel: translateFn( 'Get CRM' ),
-	};
-
-	const completeCopy = {
-		displayName: translateFn( 'Jetpack Complete' ),
-		shortName: translateFn( 'Complete', {
-			comment: 'Short name of Jetpack Complete',
-		} ),
-		tagline: translateFn( 'For best-in-class WordPress sites' ),
-		description: translateFn(
-			'Superpower your site with everything Jetpack has to offer: real-time security, enhanced search, CRM, and marketing, growth, and design tools.'
-		),
-		buttonLabel: translateFn( 'Get Jetpack Complete' ),
-	};
-
-	const scanCopy = {
-		displayName: translateFn( 'Jetpack Scan' ),
-		shortName: translateFn( 'Scan', {
-			comment: 'Short name of Jetpack Scan',
-		} ),
-		tagline: translateFn( 'Protect your site' ),
-		description: translateFn(
-			'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
-		),
-		buttonLabel: translateFn( 'Get Scan' ),
-	};
-
-	const antiSpamCopy = {
-		displayName: translateFn( 'Jetpack Anti-spam' ),
-		shortName: translateFn( 'Anti-spam', {
-			comment: 'Short name of Jetpack Anti-spam',
-		} ),
-		tagline: translateFn( 'Block spam automatically' ),
-		description: translateFn(
-			'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
-		),
-		buttonLabel: translateFn( 'Get Anti-spam' ),
-	};
-
-	switch ( productSlug ) {
-		case OPTIONS_JETPACK_SECURITY:
-		case OPTIONS_JETPACK_SECURITY_MONTHLY:
-			return securityCopy;
-		case OPTIONS_JETPACK_BACKUP:
-		case OPTIONS_JETPACK_BACKUP_MONTHLY:
-			return backupCopy;
-		case PRODUCT_JETPACK_CRM:
-		case PRODUCT_JETPACK_CRM_MONTHLY:
-			return crmCopy;
-		case PLAN_JETPACK_COMPLETE:
-		case PLAN_JETPACK_COMPLETE_MONTHLY:
-			return completeCopy;
-		case PRODUCT_JETPACK_SCAN:
-		case PRODUCT_JETPACK_SCAN_MONTHLY:
-			return scanCopy;
-		case PRODUCT_JETPACK_ANTI_SPAM:
-		case PRODUCT_JETPACK_ANTI_SPAM_MONTHLY:
-			return antiSpamCopy;
-		default:
-			throw `Unknown SelectorProductSlug: ${ productSlug }`;
-	}
 }
 
 export function productBadgeLabelAlt(
 	product: SelectorProduct,
 	isOwned: boolean,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult | undefined {
 	if ( isOwned ) {
@@ -813,34 +714,3 @@ export function getPathToUpsell(
 
 	return addQueryArgs( urlQueryArgs, path );
 }
-
-/**
- * Append "Available Options: Real-time and Daily" to the product description.
- *
- * @param product SelectorProduct
- * @param translateFn Function The translate function, ideally retrieved from useTranslate().
- *
- * @returns ReactNode | TranslateResult
- */
-export const getJetpackDescriptionWithOptions = (
-	product: SelectorProduct,
-	translateFn: Function
-): React.ReactNode | TranslateResult => {
-	const em = React.createElement( 'em', null, null );
-
-	const { description } = getSelectorProductCopy( product.productSlug, translateFn );
-
-	// If the product has 'subtypes' (containing daily and real-time product slugs).
-	// then append "Available options: Real-time or Daily" to the product description.
-	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
-		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
-		? translateFn( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
-				args: {
-					productDescription: description,
-				},
-				components: {
-					em,
-				},
-		  } )
-		: description;
-};

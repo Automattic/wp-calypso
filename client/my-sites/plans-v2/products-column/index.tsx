@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getJetpackDescriptionWithOptions } from '../utils';
 import { PRODUCTS_TYPES } from '../constants';
 import ProductCard from '../product-card';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
@@ -54,10 +53,6 @@ const ProductsColumn = ( {
 					( product ): product is SelectorProduct =>
 						!! product && PRODUCTS_TYPES[ productType ].includes( product.productSlug )
 				)
-				.map( ( product ) => ( {
-					...product,
-					description: getJetpackDescriptionWithOptions( product as SelectorProduct, translate ),
-				} ) )
 		);
 	}, [ duration, availableProducts, includedInPlanProducts, purchasedProducts, productType ] );
 

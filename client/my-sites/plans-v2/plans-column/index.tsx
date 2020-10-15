@@ -9,11 +9,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { PRODUCTS_TYPES, SELECTOR_PLANS } from '../constants';
-import {
-	getAllOptionsFromSlug,
-	getJetpackDescriptionWithOptions,
-	slugToSelectorProduct,
-} from '../utils';
+import { getAllOptionsFromSlug, slugToSelectorProduct } from '../utils';
 import ProductCard from '../product-card';
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { JETPACK_LEGACY_PLANS, PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
@@ -60,11 +56,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					! currentPlanAllTerms.includes( product.productSlug ) &&
 					// Don't include a generic/option card if the user already owns a subtype
 					! optionsFromCurrentPlan.includes( product.productSlug )
-			)
-			.map( ( product: SelectorProduct ) => ( {
-				...product,
-				description: getJetpackDescriptionWithOptions( product, translate ),
-			} ) );
+			);
 
 		// If the user owns a plan, get it and insert it on the top of the plan array.
 		if (

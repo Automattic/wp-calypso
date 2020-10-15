@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,6 +18,7 @@ import JetpackComMasterbar from '../jpcom-masterbar';
 import './style.scss';
 
 const Header = () => {
+	const translate = useTranslate();
 	const isAlternateSelector = isEnabled( 'plans/alternate-selector' );
 	const header = isAlternateSelector
 		? translate( 'Security, performance, and growth tools for WordPress' )
