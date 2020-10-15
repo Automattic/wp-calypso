@@ -65,7 +65,6 @@
 		"google-drive": true,
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/feature-picker": true,
-		"gutenboarding/new-launch": true,
 		"gutenboarding/new-launch-mobile": false,
 		"gutenboarding/show-vertical-input": false,
 		"help": true,
