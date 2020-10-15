@@ -254,7 +254,6 @@ export default function CompositeCheckout( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge,
-		recordEvent,
 		isInEditor,
 	} );
 	const getThankYouUrl = useCallback(

@@ -51,6 +51,7 @@ export default function getThankYouPageUrl( {
 	hideNudge,
 	didPurchaseFail,
 	isTransactionResultEmpty,
+	isInEditor,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -68,7 +69,7 @@ export default function getThankYouPageUrl( {
 	hideNudge: boolean;
 	didPurchaseFail: boolean;
 	isTransactionResultEmpty: boolean;
-	isInEditor?: boolean
+	isInEditor?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
