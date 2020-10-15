@@ -17,7 +17,7 @@ import {
 	EDITOR_STOP,
 	POST_SAVE_SUCCESS,
 } from 'state/action-types';
-import { combineReducers, withStorageKey } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
@@ -75,7 +75,7 @@ export function isIframeLoaded( state = false, action ) {
 	return state;
 }
 
-export function iframePort( state = null, action ) {
+export const iframePort = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case EDITOR_IFRAME_LOADED: {
 			const loaded = action.isIframeLoaded;
@@ -84,7 +84,7 @@ export function iframePort( state = null, action ) {
 	}
 
 	return state;
-}
+} );
 
 export function isAutosaving( state = false, action ) {
 	switch ( action.type ) {
