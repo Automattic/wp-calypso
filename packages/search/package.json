@@ -28,12 +28,12 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/viewport": "file:../viewport",
+		"@automattic/viewport": "^1.0.0",
 		"@babel/runtime": "^7.11.1",
 		"@wordpress/components": "^10.0.5",
+		"@wordpress/i18n": "^3.14.0",
 		"@wordpress/icons": "^2.4.0",
 		"classnames": "^2.2.6",
-		"i18n-calypso": "file:../i18n-calypso",
 		"lodash": "^4.17.15"
 	},
 	"peerDependencies": {

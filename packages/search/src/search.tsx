@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
+import React, { KeyboardEvent, MouseEvent } from 'react';
 import { debounce, noop, uniqueId } from 'lodash';
 import classNames from 'classnames';
 import { isMobile } from '@automattic/viewport';
@@ -9,7 +9,6 @@ import { isMobile } from '@automattic/viewport';
 /**
  * WordPress dependencies
  */
-// @ts-ignore
 import { Spinner, __experimentalInputControl as InputControl } from '@wordpress/components';
 import { close, search, Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
@@ -180,20 +179,20 @@ class Search extends React.Component< Props, State > {
 		if ( this.state.keyword === prevState.keyword ) {
 			return;
 		}
+
 		// if there's a keyword change: trigger search
 		if ( this.state.keyword ) {
-			// this.onSearch is debounced when this.props.delaySearch === true
-			// this avoids unnecessary fetches while user types
 			this.onSearch( this.state.keyword );
 		} else {
-			// this.props.onSearch is _not_ debounced
-			// no need to debounce if ! this.state.keyword
+			// explicitly bypass debouncing when there is no keyword is empty
 			if ( this.props.delaySearch ) {
 				// Cancel any pending debounce
 				this.onSearch.cancel?.();
 			}
+
 			this.props.onSearch( this.state.keyword );
 		}
+
 		this.props.onSearchChange( this.state.keyword );
 	}
 
@@ -277,8 +276,6 @@ class Search extends React.Component< Props, State > {
 		this.scrollOverlay();
 
 		// @todo(saramarcondes) investigate why `target` doesn't have the expected type
-		// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-		// @ts-ignore
 		if ( event.key === 'Escape' && event.target?.value === '' ) {
 			this.closeListener( event );
 		}
