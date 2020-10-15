@@ -14,7 +14,7 @@ import QRCode from 'qrcode.react';
  */
 import page from 'page';
 import { WechatPaymentQRCode } from '../wechat-payment-qrcode';
-import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
+import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
 
 jest.mock( 'page', () => jest.fn() );
 

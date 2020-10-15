@@ -13,8 +13,8 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { Checkout } from '../';
-import { hasPendingPayment } from 'lib/cart-values';
-import { isEnabled } from 'config';
+import { hasPendingPayment } from 'calypso/lib/cart-values';
+import { isEnabled } from 'calypso/config';
 
 jest.mock( 'lib/transaction/actions', () => ( {
 	resetTransaction: jest.fn(),

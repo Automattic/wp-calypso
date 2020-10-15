@@ -8,7 +8,7 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 // The react-stripe-elements PaymentRequestButtonElement cannot have its
 // paymentRequest updated once it has been rendered, so this is a custom one.
