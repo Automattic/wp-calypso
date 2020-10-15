@@ -8,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QuerySiteCredentials from 'components/data/query-site-credentials';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 
 export default function ExampleSiteComponent( { siteCredentials, translate } ) {
 	return (
