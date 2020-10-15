@@ -16,7 +16,7 @@ import 'calypso/state/data-layer/wpcom/secure-your-brand/index';
  * @param {string} domain - The domain for which we look alternatives to secure
  * @returns {object} - Action objeect
  */
-export const getSecureYourBrand = ( domain ) => {
+export const secureYourBrandRequestAction = ( domain ) => {
 	const action = {
 		type: SECURE_YOUR_BRAND_REQUEST,
 		domain,
@@ -29,7 +29,7 @@ export const getSecureYourBrand = ( domain ) => {
  * @param {object} result - The results including domains, pricing, and a discount
  * @returns {object} Action object
  */
-export const getSecureYourBrandSuccess = ( result ) => {
+export const secureYourBrandSuccessAction = ( result ) => {
 	const action = {
 		type: SECURE_YOUR_BRAND_SUCCESS,
 		result,
@@ -43,7 +43,7 @@ export const getSecureYourBrandSuccess = ( result ) => {
  * @param {object} error - error message according to REST-API error response
  * @returns {object} Action object
  */
-export const getSecureYourBrandFailure = ( error ) => {
+export const secureYourBrandFailureAction = ( error ) => {
 	const action = {
 		type: SECURE_YOUR_BRAND_FAILURE,
 		error,
