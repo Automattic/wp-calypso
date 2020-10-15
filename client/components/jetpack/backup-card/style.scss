@@ -41,6 +41,17 @@ $cloud-icon-height: 24px;
 	}
 }
 
+.backup-scheduled__title {
+	@extend .backup-card__title;
+	font-weight: 400;
+	color: var( --studio-gray-40 );
+	margin-top: 3px;
+
+	img.backup-card__icon {
+		color: var( --studio-gray-30 );
+	}
+}
+
 .backup-card__icon {
 	margin-right: 6px;
 	height: $cloud-icon-height;
@@ -145,6 +156,9 @@ $cloud-icon-height: 24px;
 		// Prevent container from being larger than image
 		// Ref. https://stackoverflow.com/questions/11126685/why-does-container-div-insist-on-being-slightly-larger-than-img-or-svg-content
 		display: block;
+	}
+	svg.backup-card__jetpack-logo-muted path.jetpack-logo__icon-circle {
+		fill: #8c8f94;
 	}
 }
 
