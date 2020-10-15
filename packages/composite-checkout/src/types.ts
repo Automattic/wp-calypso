@@ -102,9 +102,18 @@ export interface PaymentProcessorProp {
 
 export type PaymentProcessorResponseData = unknown;
 
-export type PaymentProcessorSuccess = { type: 'SUCCESS'; payload: PaymentProcessorResponseData };
-export type PaymentProcessorRedirect = { type: 'REDIRECT'; payload: string };
-export type PaymentProcessorManual = { type: 'MANUAL'; payload: unknown };
+export type PaymentProcessorSuccess = {
+	type: PaymentProcessorResponseType.SUCCESS;
+	payload: PaymentProcessorResponseData;
+};
+export type PaymentProcessorRedirect = {
+	type: PaymentProcessorResponseType.REDIRECT;
+	payload: string;
+};
+export type PaymentProcessorManual = {
+	type: PaymentProcessorResponseType.MANUAL;
+	payload: unknown;
+};
 
 export type PaymentProcessorResponse =
 	| PaymentProcessorSuccess
