@@ -83,7 +83,12 @@ class JetpackCloudSidebar extends Component {
 }
 
 const getJetpackAdminUrl = ( state, siteId ) => {
-	const parts = getUrlParts( getSiteAdminUrl( state, siteId ) + 'admin.php' );
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	if ( null === siteAdminUrl ) {
+		return undefined;
+	}
+
+	const parts = getUrlParts( siteAdminUrl + 'admin.php' );
 	parts.searchParams.set( 'page', 'jetpack' );
 
 	return formatUrl( getUrlFromParts( parts ) );
