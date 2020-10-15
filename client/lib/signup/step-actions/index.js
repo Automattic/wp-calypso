@@ -860,10 +860,13 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 }
 
 export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { submitSignupStep } = nextProps;
 	const hasDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
 	if ( ( hasDomainItemInDependencyStore && isEmpty( domainItem ) ) || skipSecureYourBrand ) {
+		const cartItems = null;
+		submitSignupStep( { stepName, cartItems, wasSkipped: true }, { cartItems } );
 		flows.excludeStep( stepName );
 	}
 }
