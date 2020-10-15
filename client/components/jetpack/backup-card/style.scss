@@ -25,6 +25,11 @@ $cloud-icon-height: 24px;
 	}
 }
 
+.no-backups-on-selected-date__date {
+	font-size: 2.25rem;
+	font-weight: 600;
+}
+
 .backup-card__title {
 	display: flex;
 	justify-items: center;
@@ -49,6 +54,18 @@ $cloud-icon-height: 24px;
 
 	img.backup-card__icon {
 		color: var( --studio-gray-30 );
+	}
+}
+
+.no-backups-on-selected-date__title {
+	@extend .backup-card__title;
+	font-weight: 400;
+	color: var( --studio-orange-30 );
+	margin-top: 3px;
+	margin-bottom: 100px;
+
+	img.backup-card__icon {
+		color: var( --studio-orange-30 );
 	}
 }
 
@@ -142,7 +159,7 @@ $cloud-icon-height: 24px;
 
 	> li {
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 
 		margin: 16px 0;
 	}
@@ -158,7 +175,10 @@ $cloud-icon-height: 24px;
 		display: block;
 	}
 	svg.backup-card__jetpack-logo-muted path.jetpack-logo__icon-circle {
-		fill: #8c8f94;
+		fill: var( --studio-gray-30 );
+	}
+	svg.backup-card__jetpack-logo-warning path.jetpack-logo__icon-circle {
+		fill: var( --studio-orange-30 );
 	}
 }
 
