@@ -6,8 +6,8 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { SECURE_YOUR_BRAND_REQUEST } from 'calypso/state/action-types';
 import {
-	getSecureYourBrandSuccess,
-	getSecureYourBrandFailure,
+	secureYourBrandSuccessAction,
+	secureYourBrandFailureAction,
 } from 'calypso/state/secure-your-brand/actions';
 
 /**
@@ -39,7 +39,7 @@ export const requestSecureYourBrand = ( action ) => {
  * @returns {Array<object>} Redux actions
  */
 export const receiveSecureYourBrand = ( action, domains ) => [
-	getSecureYourBrandSuccess( domains ),
+	secureYourBrandSuccessAction( domains ),
 ];
 
 /**
@@ -50,7 +50,7 @@ export const receiveSecureYourBrand = ( action, domains ) => [
  * @returns {object} Redux action
  */
 export const receiveError = ( action, rawError ) =>
-	getSecureYourBrandFailure( rawError instanceof Error ? rawError.message : rawError );
+	secureYourBrandFailureAction( rawError instanceof Error ? rawError.message : rawError );
 
 export const dispatchSecureYourBrandRequest = dispatchRequest( {
 	fetch: requestSecureYourBrand,
