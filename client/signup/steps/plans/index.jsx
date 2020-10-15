@@ -13,21 +13,21 @@ import { parse as parseQs } from 'qs';
 /**
  * Internal dependencies
  */
-import { getTld, isSubdomain } from 'lib/domains';
-import { getSiteBySlug } from 'state/sites/selectors';
-import StepWrapper from 'signup/step-wrapper';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import GutenboardingHeader from 'my-sites/plans-features-main/gutenboarding-header';
-import QueryPlans from 'components/data/query-plans';
+import { getTld, isSubdomain } from 'calypso/lib/domains';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import GutenboardingHeader from 'calypso/my-sites/plans-features-main/gutenboarding-header';
+import QueryPlans from 'calypso/components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { getUrlParts } from 'lib/url/url-parts';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 /**
  * Style dependencies
@@ -120,8 +120,8 @@ export class PlansStep extends Component {
 	}
 
 	getIntervalType() {
-		const urlParts = getUrlParts( window.location.href );
-		const intervalType = urlParts.searchParams.get( 'intervalType' );
+		const urlParts = getUrlParts( window?.location?.href );
+		const intervalType = urlParts?.searchParams.get( 'intervalType' );
 
 		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
 			return intervalType;

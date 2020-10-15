@@ -72,17 +72,6 @@ const props = {
 	translate: ( x ) => x,
 };
 
-describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
-	test( 'Should return null when called with hideFreePlan props', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			hideFreePlan: true,
-		} );
-		const freePlanBanner = instance.renderFreePlanBanner();
-		expect( freePlanBanner ).toBeNull();
-	} );
-} );
-
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 	test( 'Should render <PlanFeatures /> with plans matching given planTypes when called with planTypes props', () => {
 		const instance = new PlansFeaturesMain( {

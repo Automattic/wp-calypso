@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Experiment, { Experiment as RawExperiment } from 'components/experiment';
-export { DefaultVariation, Variation } from 'components/experiment';
+import Experiment, { Experiment as RawExperiment } from 'calypso/components/experiment';
+export { DefaultVariation, Variation } from 'calypso/components/experiment';
 
 type OwnProps = {
 	name: string;
