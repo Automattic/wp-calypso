@@ -189,9 +189,9 @@ function useAddRenewalItems( {
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
 } ) {
-	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const isFetchingProducts = useSelector( isProductsListFetching );
+	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -276,8 +276,8 @@ function useAddPlanFromSlug( {
 	isJetpackNotAtomic: boolean;
 	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
 } ) {
-	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
-	const plans = useSelector( ( state ) => getPlans( state ) );
+	const isFetchingPlans = useSelector( isRequestingPlans );
+	const plans = useSelector( getPlans );
 	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
 	const translate = useTranslate();
 
@@ -336,10 +336,10 @@ function useAddProductFromSlug( {
 	isPrivate: boolean;
 	addHandler: 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
 } ) {
-	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
-	const plans = useSelector( ( state ) => getPlans( state ) );
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
+	const isFetchingPlans = useSelector( isRequestingPlans );
+	const plans = useSelector( getPlans );
+	const isFetchingProducts = useSelector( isProductsListFetching );
+	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
@@ -442,8 +442,8 @@ function useAddProductFromSlug( {
 
 function useFetchPlansIfNotLoaded() {
 	const reduxDispatch = useDispatch();
-	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
-	const plans = useSelector( ( state ) => getPlans( state ) );
+	const isFetchingPlans = useSelector( isRequestingPlans );
+	const plans = useSelector( getPlans );
 	useEffect( () => {
 		if ( ! isFetchingPlans && plans?.length < 1 ) {
 			debug( 'fetching plans list' );
