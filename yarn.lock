@@ -34,13 +34,6 @@
     schema-utils "^1.0.0"
     webpack-sources "^1.1.0"
 
-"@automattic/react-i18n@file:packages/react-i18n":
-  version "1.0.0-alpha.0"
-  dependencies:
-    "@wordpress/compose" "1.x.x - 3.x.x"
-    "@wordpress/i18n" "^3.14.0"
-    tslib "^1.10.0"
-
 "@automattic/react-virtualized@^9.21.2":
   version "9.21.2"
   resolved "https://registry.yarnpkg.com/@automattic/react-virtualized/-/react-virtualized-9.21.2.tgz#ea14243e7e7811eaa14daed3f0a6f4579208996f"
