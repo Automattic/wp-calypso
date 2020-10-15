@@ -25,14 +25,13 @@ function get_current_locale() {
  * @return string The redirect URL
  */
 function get_redirect_to() {
-
 	// Redirect to the current URL.
 	// If, for any reason, the superglobals aren't available, set a default redirect.
 	if ( empty( $_SERVER['HTTP_HOST'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
 		return get_marketing_home_url();
 	}
 
-	return rawurlencode( 'https://' . wp_unslash( $_SERVER['HTTP_HOST'] ) . wp_unslash( $_SERVER['REQUEST_URI'] ) );
+	return rawurlencode( 'https://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
 }
 
 /**
@@ -41,8 +40,13 @@ function get_redirect_to() {
  * @return string The login URL
  */
 function get_login_url() {
+	$redirect_to = get_redirect_to();
+
+	if ( function_exists( 'localized_wpcom_url' ) ) {
+		return localized_wpcom_url( rawurlencode( '//wordpress.com/log-in?redirect_to=' . $redirect_to ) );
+	}
+
 	$locale              = get_current_locale();
-	$redirect_to         = get_redirect_to();
 	$locale_url_fragment = 'en' === $locale ? '' : '/' . $locale;
 
 	return '//wordpress.com/log-in' . $locale_url_fragment . '?redirect_to=' . $redirect_to;
@@ -54,6 +58,10 @@ function get_login_url() {
  * @return string The URL
  */
 function get_onboarding_url() {
+	if ( function_exists( 'localized_wpcom_url' ) ) {
+		return localized_wpcom_url( 'https://wordpress.com/?ref=coming_soon' );
+	}
+
 	$locale           = get_current_locale();
 	$locale_subdomain = 'en' === $locale ? '' : $locale . '.';
 
