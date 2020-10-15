@@ -4,17 +4,39 @@
 import type { State } from './reducer';
 import { planDetails, PLANS_LIST } from './plans-data';
 import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
-import type { PlanSlug } from './types';
+import type { Plan, PlanSlug } from './types';
 
-function getPlan( slug: PlanSlug ) {
-	return PLANS_LIST[ slug ];
+function getPlan( state: State, slug: PlanSlug ): Plan | undefined {
+	const apiPlan = state?.plans.find( ( plan ) => plan.product_slug === slug );
+	if ( ! apiPlan ) {
+		return undefined;
+	}
+
+	const { product_name_short: title, product_id: productId, path_slug: pathSlug } = apiPlan;
+	const { description, features, isPopular } = PLANS_LIST[ slug ];
+
+	return {
+		title,
+		description,
+		productId,
+		storeSlug: apiPlan.product_slug,
+		pathSlug,
+		features,
+		isPopular,
+		isFree: apiPlan.raw_price === 0,
+	};
 }
 
-export const getPlanBySlug = ( _: State, slug: PlanSlug ) => getPlan( slug );
+export const getPlanBySlug = ( state: State, slug: PlanSlug ) => getPlan( state, slug );
 
-export const getDefaultPaidPlan = () => getPlan( DEFAULT_PAID_PLAN );
+export const getDefaultPaidPlan = ( state: State ) => getPlan( state, DEFAULT_PAID_PLAN );
 
-export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
+export const getSupportedPlans = ( state: State ) =>
+	state.supportedPlanSlugs.map( ( slug ) => getPlan( state, slug ) ).filter( isDefined );
+
+function isDefined< T >( t: T | undefined ): t is T {
+	return t !== undefined;
+}
 
 export const getPlanByPath = ( state: State, path?: string ) =>
 	path && getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path );
@@ -33,3 +55,5 @@ export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
 export const isPlanFree = ( _: State, planSlug?: PlanSlug ) => {
 	return planSlug === PLAN_FREE;
 };
+
+export const __internalGetPlans = ( state: State ) => state.plans;

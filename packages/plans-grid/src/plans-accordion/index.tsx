@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
@@ -58,16 +58,22 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const recommendedPlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
 	);
+
 	const primaryPlan = recommendedPlan || popularPlan;
 	const badge = recommendedPlan ? __( 'Recommended for you' ) : __( 'Popular' );
 
 	// Other plans
-	const otherPlans = supportedPlans.filter( ( plan ) => plan.storeSlug !== primaryPlan.storeSlug );
+	const otherPlans = supportedPlans.filter( ( plan ) => plan.storeSlug !== primaryPlan?.storeSlug );
 
 	// Handle toggling of all plan items
-	const defaultOpenPlans = [ primaryPlan.storeSlug ];
-	const [ openPlans, setOpenPlans ] = useState( defaultOpenPlans );
+	const defaultOpenPlans = primaryPlan ? [ primaryPlan.storeSlug ] : [];
+	const [ openPlans, setOpenPlans ] = useState< string[] >( defaultOpenPlans );
 	const allPlansOpened = openPlans.length >= supportedPlans.length;
+	useEffect( () => {
+		if ( primaryPlan && ! openPlans.length ) {
+			setOpenPlans( defaultOpenPlans );
+		}
+	}, [ primaryPlan, openPlans, defaultOpenPlans ] );
 
 	const handleToggle = ( slug: string, isOpen: boolean ) => {
 		setOpenPlans( isOpen ? [ ...openPlans, slug ] : openPlans.filter( ( s ) => s !== slug ) );

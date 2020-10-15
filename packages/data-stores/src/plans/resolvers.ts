@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import { apiFetch } from '@wordpress/data-controls';
+import { apiFetch, select } from '@wordpress/data-controls';
 import type { APIFetchOptions } from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
 import { supportedPlanSlugs } from './reducer';
-import { setPrices } from './actions';
+import { setPrices, __internalSetPlans } from './actions';
 import type { APIPlan, PlanSlug } from './types';
-import { currenciesFormats } from './constants';
+import { currenciesFormats, STORE_KEY } from './constants';
 
 /**
  * Calculates the monthly price of a plan
@@ -35,6 +35,21 @@ function getMonthlyPrice( plan: APIPlan ) {
 }
 
 export function* getPrices() {
+	const plans: APIPlan[] = yield select( STORE_KEY, '__internalGetPlans' );
+
+	// create a [slug => price] map
+	const prices = plans.reduce(
+		( acc, plan ) => ( {
+			...acc,
+			[ plan.product_slug ]: getMonthlyPrice( plan ),
+		} ),
+		{} as Record< string, string >
+	);
+
+	yield setPrices( prices );
+}
+
+export function* __internalGetPlans() {
 	/* the type below (APIFetchOptions) as a blatant lie to TypeScript :D
 	   the data-controls package is mistyped to demand APIFetchOptions
 	   as a parameter, while APIFetchOptions is meant for `@wordpress/api-fetch`,
@@ -52,11 +67,5 @@ export function* getPrices() {
 		( plan: APIPlan ) => -1 !== supportedPlanSlugs.indexOf( plan.product_slug as PlanSlug )
 	);
 
-	// create a [slug => price] map
-	const prices: Record< string, string > = WPCOMPlans.reduce( ( acc, plan ) => {
-		acc[ plan.product_slug ] = getMonthlyPrice( plan );
-		return acc;
-	}, {} as Record< string, string > );
-
-	yield setPrices( prices );
+	yield __internalSetPlans( WPCOMPlans );
 }

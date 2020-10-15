@@ -1,7 +1,19 @@
-export const setPrices = ( prices: Record< string, string > ) => {
+/**
+ * Internal dependencies
+ */
+import type { APIPlan, PlanSlug } from './types';
+
+export const setPrices = ( prices: Record< PlanSlug, string > ) => {
 	return {
 		type: 'SET_PRICES' as const,
 		prices,
+	};
+};
+
+export const __internalSetPlans = ( plans: APIPlan[] ) => {
+	return {
+		type: 'SET_PLANS' as const,
+		plans,
 	};
 };
 
@@ -11,4 +23,4 @@ export const resetPlan = () => {
 	};
 };
 
-export type PlanAction = ReturnType< typeof setPrices >;
+export type PlanAction = ReturnType< typeof setPrices | typeof __internalSetPlans >;

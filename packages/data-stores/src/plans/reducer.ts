@@ -3,7 +3,7 @@
  */
 import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
 import type { PlanAction } from './actions';
-import type { PlanSlug } from './types';
+import type { APIPlan, PlanSlug } from './types';
 import { PLANS_LIST } from './plans-data';
 
 type PricesMap = {
@@ -15,6 +15,7 @@ export const supportedPlanSlugs = Object.keys( PLANS_LIST );
 const DEFAUlT_STATE: {
 	supportedPlanSlugs: PlanSlug[];
 	prices: PricesMap;
+	plans: APIPlan[];
 } = {
 	supportedPlanSlugs,
 	prices: {
@@ -24,6 +25,7 @@ const DEFAUlT_STATE: {
 		[ PLAN_BUSINESS ]: '',
 		[ PLAN_ECOMMERCE ]: '',
 	},
+	plans: [],
 };
 
 const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
@@ -32,6 +34,11 @@ const reducer = function ( state = DEFAUlT_STATE, action: PlanAction ) {
 			return {
 				...state,
 				prices: action.prices,
+			};
+		case 'SET_PLANS':
+			return {
+				...state,
+				plans: action.plans,
 			};
 		default:
 			return state;
