@@ -29,8 +29,13 @@ RUN bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
+#
+# We remove apps, tests and desktop because they are not needed to
+# build or run calypso, but yarn will still install their
+# dependencies which end up bloating the image
 COPY . /calypso/
-RUN yarn install --frozen-lockfile
+RUN rm -fr /calypso/apps /calypso/test /calypso/desktop  \
+	&& yarn install --frozen-lockfile
 
 # Build the final layer
 #
