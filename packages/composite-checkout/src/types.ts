@@ -104,12 +104,12 @@ export type PaymentProcessorResponseData = unknown;
 
 export type PaymentProcessorSuccess = { type: 'SUCCESS'; payload: PaymentProcessorResponseData };
 export type PaymentProcessorRedirect = { type: 'REDIRECT'; payload: string };
-export type PaymentProcessorNoop = { type: 'NOOP' };
+export type PaymentProcessorManual = { type: 'MANUAL'; payload: unknown };
 
 export type PaymentProcessorResponse =
 	| PaymentProcessorSuccess
 	| PaymentProcessorRedirect
-	| PaymentProcessorNoop;
+	| PaymentProcessorManual;
 
 export type PaymentProcessorFunction = (
 	submitData: unknown

@@ -5,7 +5,7 @@ import {
 	defaultRegistry,
 	makeSuccessResponse,
 	makeRedirectResponse,
-	makeNoopResponse,
+	makeManualResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
@@ -134,7 +134,7 @@ export async function weChatProcessor(
 			if ( userAgent.isMobile ) {
 				return makeRedirectResponse( response?.redirect_url );
 			}
-			return makeNoopResponse();
+			return makeManualResponse( response );
 		} );
 }
 

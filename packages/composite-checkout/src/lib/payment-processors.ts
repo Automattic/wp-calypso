@@ -12,7 +12,7 @@ import {
 	PaymentProcessorResponseData,
 	PaymentProcessorSuccess,
 	PaymentProcessorRedirect,
-	PaymentProcessorNoop,
+	PaymentProcessorManual,
 } from '../types';
 
 export function usePaymentProcessor( key: string ): PaymentProcessorFunction {
@@ -38,6 +38,6 @@ export function makeRedirectResponse( url: string ): PaymentProcessorRedirect {
 	return { type: 'REDIRECT', payload: url };
 }
 
-export function makeNoopResponse(): PaymentProcessorNoop {
-	return { type: 'NOOP' };
+export function makeManualResponse( payload: unknown ): PaymentProcessorManual {
+	return { type: 'MANUAL', payload };
 }

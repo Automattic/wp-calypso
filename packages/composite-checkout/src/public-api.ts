@@ -77,7 +77,7 @@ import { useTransactionStatus } from './lib/transaction-status';
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
-	makeNoopResponse,
+	makeManualResponse,
 	makeSuccessResponse,
 	makeRedirectResponse,
 } from './lib/payment-processors';
@@ -138,7 +138,7 @@ export {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	makeNoopResponse,
+	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
 	registerStore,
