@@ -22,10 +22,10 @@ export default class MyPlanPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable( this.driver, selector );
 	}
 
-	async isPremium() {
+	async isSecurityPlan() {
 		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.css( 'img.is-jetpack-premium' )
+			By.xpath( `//h2[@class='my-plan-card__title' and contains(., 'Security')]` )
 		);
 	}
 }

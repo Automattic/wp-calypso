@@ -12,13 +12,14 @@ import * as driverHelper from '../../driver-helper';
 export default class JetpackComPricingPage extends AsyncBaseContainer {
 	constructor( driver, url ) {
 		if ( ! url ) {
-			url = 'https://jetpack.com/pricing/';
+			url = 'https://cloud.jetpack.com/pricing/';
 		}
-		super( driver, By.css( '.plans-pricing-comparison' ), url );
+		super( driver, By.css( '.is-section-jetpack-cloud-pricing .selector-alt__main' ), url );
 	}
 
-	async buyPremium() {
-		const buyPremiumSelector = By.css( 'a[href*="premium"]' );
-		return await driverHelper.clickWhenClickable( this.driver, buyPremiumSelector );
+	// To buy a Jetpack Plan, we search for `planName` in every CTA on the page.
+	async buyJetpackPlan( planName ) {
+		const planCTA = By.xpath( `//button[@type='button' and contains(., 'Get ${ planName }')]` );
+		return await driverHelper.clickWhenClickable( this.driver, planCTA );
 	}
 }

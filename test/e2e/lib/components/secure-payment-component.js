@@ -2,11 +2,12 @@
  * External dependencies
  */
 import { By, promise, until } from 'selenium-webdriver';
-import config from 'config';
 
 /**
  * Internal dependencies
  */
+// eslint-disable-next-line wpcalypso/no-package-relative-imports
+import config from 'config';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';
@@ -203,6 +204,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async containsBusinessPlan() {
 		return await this._cartContainsProduct( this.businessPlanSlug );
+	}
+
+	async containsPlan( planSlug ) {
+		return await this._cartContainsProduct( planSlug );
 	}
 
 	async containsDotLiveDomain() {
