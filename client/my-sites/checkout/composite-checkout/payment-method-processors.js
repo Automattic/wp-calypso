@@ -5,6 +5,7 @@ import {
 	defaultRegistry,
 	makeSuccessResponse,
 	makeRedirectResponse,
+	makeNoopResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
@@ -78,7 +79,7 @@ export async function genericRedirectProcessor(
 	)
 		.then( saveTransactionResponseToWpcomStore )
 		.then( ( response ) => {
-			return { type: 'REDIRECT', payload: response?.redirect_url };
+			return makeRedirectResponse( response?.redirect_url );
 		} );
 }
 
@@ -131,9 +132,9 @@ export async function weChatProcessor(
 			// The WeChat payment type should only redirect when on mobile as redirect urls
 			// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
 			if ( userAgent.isMobile ) {
-				return { type: 'REDIRECT', payload: response?.redirect_url };
+				return makeRedirectResponse( response?.redirect_url );
 			}
-			return { type: 'NOOP' };
+			return makeNoopResponse();
 		} );
 }
 
