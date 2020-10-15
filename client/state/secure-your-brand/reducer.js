@@ -9,19 +9,15 @@ import {
 import { secureYourBrandSchema } from './schema';
 import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
 
-export const secureYourBrand = withSchemaValidation(
-	secureYourBrandSchema,
-	( state = [], action ) => {
-		switch ( action.type ) {
-			case SECURE_YOUR_BRAND_SUCCESS:
-				return Object.assign( {}, action.result );
-		}
-
-		return state;
+export const items = withSchemaValidation( secureYourBrandSchema, ( state = [], action ) => {
+	switch ( action.type ) {
+		case SECURE_YOUR_BRAND_SUCCESS:
+			return Object.assign( {}, action.result );
 	}
-);
+	return state;
+} );
 
-export const errors = ( state = null, action ) => {
+export const error = ( state = null, action ) => {
 	switch ( action.type ) {
 		case SECURE_YOUR_BRAND_REQUEST:
 		case SECURE_YOUR_BRAND_SUCCESS:
@@ -48,8 +44,8 @@ export const requesting = ( state = false, action ) => {
 export default withStorageKey(
 	'secure-your-brand',
 	combineReducers( {
-		secureYourBrand,
+		items,
 		requesting,
-		errors,
+		error,
 	} )
 );
