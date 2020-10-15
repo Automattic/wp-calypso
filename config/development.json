@@ -146,7 +146,7 @@
 		"persist-redux": true,
 		"plans/alternate-selector": true,
 		"plans/personal-plan": true,
-		"post-editor/checkout-overlay": false,
+		"post-editor/checkout-overlay": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"press-this": true,
