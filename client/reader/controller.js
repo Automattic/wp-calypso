@@ -178,14 +178,11 @@ const exported = {
 
 	feedDiscovery( context, next ) {
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			waitForHttpData( () => ( { feeds: requestFeedDiscovery( context.params.feed_id ) } ) )
-				.then( ( { feeds } ) => {
-					const feed = feeds?.data?.feeds?.[ 0 ];
-					if ( feed && feed.feed_ID ) {
-						return page.redirect( `/read/feeds/${ feed.feed_ID }` );
-					}
+			waitForHttpData( () => ( { feedId: requestFeedDiscovery( context.params.feed_id ) } ) )
+				.then( ( { feedId } ) => {
+					page.redirect( `/read/feeds/${ feedId.data }` );
 				} )
-				.catch( function () {
+				.catch( () => {
 					renderFeedError( context, next );
 				} );
 		} else {

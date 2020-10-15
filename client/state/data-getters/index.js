@@ -196,7 +196,7 @@ export const requestFeedDiscovery = ( feedId ) => {
 			{}
 		),
 		{
-			fromApi: () => ( { feeds } ) => [ [ requestId, feeds ] ],
+			fromApi: () => ( response ) => [ [ requestId, response.feeds[ 0 ].feed_ID ] ],
 		}
 	);
 };
