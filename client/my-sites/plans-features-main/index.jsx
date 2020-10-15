@@ -448,7 +448,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 
 				<ExperimentActivator
-					name="monthly_pricing_test_demo2"
+					name="monthly_pricing_test_phase_1"
 					isActive={ isEligibleForMonthlyPricing }
 				>
 					<DefaultVariation name="control">
