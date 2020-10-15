@@ -94,6 +94,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'h4':
 		case 'h5':
 		case 'h6':
+		case 'a':
 			switch ( range_info_type ) {
 				case 'list':
 					range_info_type = 'span';

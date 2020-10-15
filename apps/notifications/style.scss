@@ -44,6 +44,29 @@
 		font-size: $font-title-medium;
 	}
 
+	.wp-block-button__link {
+		color: white;
+		font-weight: bold;
+		font-size: 1rem;
+		line-height: 1;
+		background-color: #1279be;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		padding: 16px 24px;
+
+		&:hover {
+			background-color: #303030;
+			cursor: pointer;
+		}
+	}
+
+	.wp-block-buttons
+	.wp-block-button {
+		display: inline-flex;
+		margin-right: 0.5rem;
+		margin-bottom: 0.5rem;
+	}
+
 	.uppercase {
 		text-transform: uppercase;
 	}

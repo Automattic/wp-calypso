@@ -44,7 +44,7 @@ const toBlocks = ( text ) =>
 			}
 
 			// Blockquote and list start/end tags do not need to be wrapped in div/p
-			const skipRegex = /(blockquote|ol|ul|li)(.*)>/i;
+			const skipRegex = /(blockquote|ol|ul|li|div)(.*)>/i;
 			const shouldSkipWrap = skipRegex.test( raw );
 			if ( shouldSkipWrap ) {
 				return {
