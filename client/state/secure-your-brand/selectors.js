@@ -10,7 +10,7 @@ import 'calypso/state/secure-your-brand/init';
  * @returns {Array} secureYourBrand data
  */
 export function getSecureYourBrand( state ) {
-	return state.secureYourBrand.secureYourBrand;
+	return state.secureYourBrand.items;
 }
 
 /**
@@ -30,5 +30,5 @@ export function isRequestingSecureYourBrand( state ) {
  * @returns {boolean} is secureYourBrand an error
  */
 export function hasSecureYourBrandError( state ) {
-	return state.secureYourBrand.errors !== null;
+	return state.secureYourBrand.error !== null;
 }
