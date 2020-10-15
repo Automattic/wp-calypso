@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { endsWith, get, includes, pick, snakeCase, split } from 'lodash';
+import { get, includes, pick, snakeCase, split } from 'lodash';
 import bodyParser from 'body-parser';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -526,7 +526,7 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
  * @returns {Function|undefined} res.redirect if not logged in
  */
 function handleLocaleSubdomains( req, res, next ) {
-	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
+	const langSlug = req.hostname?.endsWith( config( 'hostname' ) )
 		? split( req.hostname, '.' )[ 0 ]
 		: null;
 

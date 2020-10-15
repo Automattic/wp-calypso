@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import { find, isString, map, pickBy, includes, endsWith } from 'lodash';
+import { find, isString, map, pickBy, includes } from 'lodash';
 import i18n, { getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { languages } from 'languages';
-import { getUrlParts, getUrlFromParts } from 'lib/url/url-parts';
+import config from 'calypso/config';
+import { languages } from 'calypso/languages';
+import { getUrlParts, getUrlFromParts } from 'calypso/lib/url/url-parts';
 
 /**
  * a locale can consist of three component
@@ -252,7 +252,7 @@ export function localizeUrl( fullUrl, locale ) {
 	// Let's use `host` for everything.
 	delete urlParts.hostname;
 
-	if ( ! endsWith( urlParts.pathname, '.php' ) ) {
+	if ( ! urlParts.pathname.endsWith( '.php' ) ) {
 		urlParts.pathname = ( urlParts.pathname + '/' ).replace( /\/+$/, '/' );
 	}
 
