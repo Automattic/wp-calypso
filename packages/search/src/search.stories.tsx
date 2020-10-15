@@ -7,13 +7,13 @@ import Search from '.';
 
 export default { title: 'Search', component: Search };
 
-const BoxedSearch = ( props ) => (
+const BoxedSearch = ( props: any ) => (
 	<div style={ { position: 'relative', width: '270px', height: '50px' } }>
 		<Search
 			placeholder="Search..."
-			autoFocus
+			autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 			fitsContainer
-			onSearch={ ( search ) => console.log( 'Searched: ', search ) }
+			onSearch={ ( search ) => console.log( 'Searched: ', search ) } // eslint-disable-line no-console
 			{ ...props }
 		/>
 	</div>

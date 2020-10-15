@@ -9,6 +9,8 @@ import { isMobile } from '@automattic/viewport';
 /**
  * WordPress dependencies
  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { Spinner, __experimentalInputControl as InputControl } from '@wordpress/components';
 import { close, search, Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
@@ -276,6 +278,8 @@ class Search extends React.Component< Props, State > {
 		this.scrollOverlay();
 
 		// @todo(saramarcondes) investigate why `target` doesn't have the expected type
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		if ( event.key === 'Escape' && event.target?.value === '' ) {
 			this.closeListener( event );
 		}
