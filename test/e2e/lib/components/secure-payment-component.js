@@ -77,6 +77,14 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// SecurePaymentComponent.completeTaxDetailsInContactSection.
 		await this.completeTaxDetailsForCreditCard( { cardPostCode, cardCountryCode } );
 
+		// Sometimes the credit card form will be closed and it will require a click to be opened.
+		// This can happen when users have a credit card already associated with their account.
+		await driverHelper.selectElementByText(
+			this.driver,
+			By.css( 'label[for="card"]' ),
+			'Credit or debit card'
+		);
+
 		await driverHelper.setWhenSettable(
 			this.driver,
 			By.css( '#name,#cardholder-name' ),
