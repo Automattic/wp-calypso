@@ -92,7 +92,9 @@ export async function applePayProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	).then( saveTransactionResponseToWpcomStore );
+	)
+		.then( saveTransactionResponseToWpcomStore )
+		.then( makeSuccessResponse );
 }
 
 export async function stripeCardProcessor(
