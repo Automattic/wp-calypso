@@ -12,22 +12,22 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import DocumentHead from 'components/data/document-head';
-import urlSearch from 'lib/url-search';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import urlSearch from 'calypso/lib/url-search';
+import Main from 'calypso/components/main';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import PageList from './page-list';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import { mapPostStatus as mapStatus } from 'lib/route';
-import { POST_STATUSES } from 'state/posts/constants';
-import { getPostTypeLabel } from 'state/post-types/selectors';
-import { Experiment } from 'components/experiment';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { mapPostStatus as mapStatus } from 'calypso/lib/route';
+import { POST_STATUSES } from 'calypso/state/posts/constants';
+import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { Experiment } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
