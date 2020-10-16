@@ -20,10 +20,6 @@ import './style.scss';
 class FormPasswordInput extends React.Component {
 	static displayName = 'FormPasswordInput';
 
-	state = {
-		hidePassword: true,
-	};
-
 	textFieldRef = React.createRef();
 
 	constructor( props ) {
