@@ -1,8 +1,3 @@
-/**
- * External dependencies
- */
-import { drop, join, split } from 'lodash';
-
 export function parseDomainAgainstTldList( domainFragment, tldList ) {
 	if ( ! domainFragment ) {
 		return '';
@@ -12,8 +7,9 @@ export function parseDomainAgainstTldList( domainFragment, tldList ) {
 		return domainFragment;
 	}
 
-	const parts = split( domainFragment, '.' );
-	const suffix = join( drop( parts ), '.' );
+	const parts = domainFragment.split( '.' );
+	parts.shift();
+	const suffix = parts.join( '.' );
 
 	return parseDomainAgainstTldList( suffix, tldList );
 }
