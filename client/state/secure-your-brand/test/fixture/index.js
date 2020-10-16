@@ -8,41 +8,45 @@ import {
 	SECURE_YOUR_BRAND_FAILURE,
 } from 'calypso/state/action-types';
 
+export const WPCOM_RESPONSE = {
+	product_data: [
+		{
+			product_id: 6,
+			product_slug: 'domain_reg',
+			domain: 'some-domain.com',
+			cost: 20,
+			currency: 'EUR',
+		},
+		{
+			product_id: 6,
+			product_slug: 'domain_reg',
+			domain: 'some-domain.net',
+			cost: 20,
+			currency: 'EUR',
+		},
+		{
+			product_id: 6,
+			product_slug: 'domain_reg',
+			domain: 'some-domain.org',
+			cost: 20,
+			currency: 'EUR',
+		},
+	],
+	total_cost: 120,
+	discounted_cost: 60,
+	currency: 'EUR',
+};
+
 export const SECURE_YOUR_BRAND = {
-	items: {
-		product_data: [
-			{
-				product_id: 6,
-				product_slug: 'domain_reg',
-				domain: 'some-domain.com',
-				cost: 20,
-				currency: 'EUR',
-			},
-			{
-				product_id: 6,
-				product_slug: 'domain_reg',
-				domain: 'some-domain.net',
-				cost: 20,
-				currency: 'EUR',
-			},
-			{
-				product_id: 6,
-				product_slug: 'domain_reg',
-				domain: 'some-domain.org',
-				cost: 20,
-				currency: 'EUR',
-			},
-		],
-		total_cost: 120,
-		discounted_cost: 60,
-		currency: 'EUR',
-	},
+	items: WPCOM_RESPONSE,
+	requesting: false,
+	error: null,
 };
 
 // actions
 export const ACTION_SECURE_YOUR_BRAND_REQUEST = {
 	type: SECURE_YOUR_BRAND_REQUEST,
-	secureYourBrand: SECURE_YOUR_BRAND,
+	domain: 'some-domain.id',
 };
 
 export const ACTION_SECURE_YOUR_BRAND_SUCCESS = {

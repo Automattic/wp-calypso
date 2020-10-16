@@ -17,14 +17,13 @@ export const items = withSchemaValidation( secureYourBrandSchema, ( state = [], 
 	return state;
 } );
 
-export const error = ( state = null, action ) => {
+export const error = ( state = false, action ) => {
 	switch ( action.type ) {
 		case SECURE_YOUR_BRAND_REQUEST:
 		case SECURE_YOUR_BRAND_SUCCESS:
-			return null;
-
+			return false;
 		case SECURE_YOUR_BRAND_FAILURE:
-			return action.error;
+			return true;
 	}
 
 	return state;
@@ -33,9 +32,10 @@ export const error = ( state = null, action ) => {
 export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
 		case SECURE_YOUR_BRAND_REQUEST:
+			return true;
 		case SECURE_YOUR_BRAND_FAILURE:
 		case SECURE_YOUR_BRAND_SUCCESS:
-			return action.type === SECURE_YOUR_BRAND_REQUEST;
+			return false;
 	}
 
 	return state;

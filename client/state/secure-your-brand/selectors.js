@@ -30,5 +30,5 @@ export function isRequestingSecureYourBrand( state ) {
  * @returns {boolean} is secureYourBrand an error
  */
 export function hasSecureYourBrandError( state ) {
-	return state.secureYourBrand.error !== null;
+	return state.secureYourBrand.error === true;
 }
