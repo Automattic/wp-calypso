@@ -65,7 +65,7 @@ import {
 import { useProductVariants } from './hooks/product-variants';
 import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import useShoppingCartManager from './hooks/use-shopping-cart-manager';
+import useShoppingCart from './hooks/use-shopping-cart-manager/use-shopping-cart';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
 import { colors } from '@automattic/color-studio';
@@ -97,16 +97,12 @@ const wpcom = wp.undocumented();
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
-const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
-const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 
 export default function CompositeCheckout( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
-	getCart,
-	setCart,
 	getStoredCards,
 	allowedPaymentMethods,
 	onlyLoadPaymentMethods,
@@ -115,7 +111,6 @@ export default function CompositeCheckout( {
 	feature,
 	plan,
 	purchaseId,
-	cart,
 	couponCode: couponCodeFromUrl,
 	isComingFromUpsell,
 	isLoggedOutCart,
@@ -129,8 +124,6 @@ export default function CompositeCheckout( {
 	);
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const isLoadingCartSynchronizer =
-		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
@@ -204,12 +197,7 @@ export default function CompositeCheckout( {
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
 		replaceProductsInCart,
-	} = useShoppingCartManager( {
-		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart: ! isLoadingCartSynchronizer,
-		setCart: setCart || wpcomSetCart,
-		getCart: getCart || wpcomGetCart,
-	} );
+	} = useShoppingCart();
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
