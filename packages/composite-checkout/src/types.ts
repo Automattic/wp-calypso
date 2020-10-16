@@ -108,7 +108,7 @@ export type PaymentProcessorSuccess = {
 };
 export type PaymentProcessorRedirect = {
 	type: PaymentProcessorResponseType.REDIRECT;
-	payload: string;
+	payload: string | undefined;
 };
 export type PaymentProcessorManual = {
 	type: PaymentProcessorResponseType.MANUAL;
