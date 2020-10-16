@@ -550,7 +550,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__logged-in-card.card {
 	max-width: 360px;
 	margin: 0 auto 16px;
-	border-radius: 2px;
 }
 
 .jetpack-connect__sso-terms-dialog {
@@ -848,6 +847,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 
 	.logged-out-form {
+		border-radius: 0;
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
 	}
 
