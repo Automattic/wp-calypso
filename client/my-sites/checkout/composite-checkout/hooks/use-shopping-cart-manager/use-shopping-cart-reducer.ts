@@ -75,6 +75,9 @@ function shoppingCartReducer(
 
 	debug( 'processing requested action', action );
 	switch ( action.type ) {
+		case 'CART_RELOAD':
+			debug( 'reloading cart from server' );
+			return getInitialShoppingCartState();
 		case 'CLEAR_QUEUED_ACTIONS':
 			return { ...state, queuedActions: [] };
 		case 'REMOVE_CART_ITEM': {

@@ -34,6 +34,7 @@ export default function ShoppingCartProvider( {
 		loadingError,
 		loadingErrorType,
 		addProductsToCart,
+		reloadFromServer,
 		replaceProductsInCart,
 	} = useShoppingCartManager( {
 		cartKey,
@@ -55,6 +56,7 @@ export default function ShoppingCartProvider( {
 		loadingError,
 		loadingErrorType,
 		addProductsToCart,
+		reloadFromServer,
 		replaceProductsInCart,
 	};
 

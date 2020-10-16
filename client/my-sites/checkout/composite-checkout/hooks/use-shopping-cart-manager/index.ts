@@ -100,6 +100,10 @@ export default function useShoppingCartManager( {
 		hookDispatch( { type: 'REMOVE_COUPON' } );
 	}, [ hookDispatch ] );
 
+	const reloadFromServer: () => void = useCallback( () => {
+		hookDispatch( { type: 'CART_RELOAD' } );
+	}, [ hookDispatch ] );
+
 	return {
 		isLoading: cacheStatus === 'fresh',
 		loadingError: cacheStatus === 'error' ? loadingError : null,
@@ -113,6 +117,7 @@ export default function useShoppingCartManager( {
 		updateLocation,
 		replaceProductInCart,
 		replaceProductsInCart,
+		reloadFromServer,
 		responseCart,
 	};
 }
