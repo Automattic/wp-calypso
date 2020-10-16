@@ -351,8 +351,8 @@ function onload() {
 function onmessage( e ) {
 	debug( 'onmessage' );
 
-	// safeguard...
-	if ( e.origin !== proxyOrigin ) {
+	// Filter out messages from iframes not equal to the iframe variable, different origins
+	if ( e.origin !== proxyOrigin || e.source !== iframe.contentWindow ) {
 		debug( 'ignoring message... %o !== %o', e.origin, proxyOrigin );
 		return;
 	}
