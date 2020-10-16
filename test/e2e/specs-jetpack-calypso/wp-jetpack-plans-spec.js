@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -31,7 +30,6 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
-const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 
 let driver;
 
@@ -72,11 +70,7 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 
 		step( 'Can then see secure payment component and Search in the cart', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-			const searchInCart = await securePaymentComponent.containsPlan( 'jetpack_search' );
-			assert.strictEqual( searchInCart, true, "The cart doesn't contain the search product" );
-			await securePaymentComponent.payWithStoredCardIfPossible( testCreditCardDetails );
-			await securePaymentComponent.waitForCreditCardPaymentProcessing();
-			return await securePaymentComponent.waitForPageToDisappear();
+			return await securePaymentComponent.containsPlan( 'jetpack_search' );
 		} );
 
 		// Remove all items from basket for clean up

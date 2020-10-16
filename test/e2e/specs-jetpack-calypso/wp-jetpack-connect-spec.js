@@ -2,12 +2,12 @@
  * External dependencies
  */
 import assert from 'assert';
+// eslint-disable-next-line wpcalypso/no-package-relative-imports
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
-import config from 'config';
 
 import LoginFlow from '../lib/flows/login-flow';
 import SignUpFlow from '../lib/flows/sign-up-flow';
