@@ -58,6 +58,7 @@ import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
 import type { CartData } from 'calypso/client/blocks/editor-checkout-modal';
+
 /**
  * Types
  */
@@ -632,7 +633,7 @@ class CalypsoifyIframe extends Component<
 
 	getStatsPath = () => {
 		const { postId } = this.props;
-		return postId ? '/block-editor/:post_type/:site/:post_id' : '/block-editor/:post_type/:site';
+		return postId ? '/:post_type/:site/:post_id' : '/:post_type/:site';
 	};
 
 	getStatsProps = () => {
