@@ -104,7 +104,7 @@ Payment method components (probably the `submitButton`) can access these functio
 
 If you use the `onClick` function, the payment processor function's response will control what happens next. Each payment processor function must return a Promise that either resolves to one of three results on success (see [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)), or rejects on failure.
 
-If not using the `onClick` function, or if the `MANUAL` result is returned by the payment processor, when the `submitButton` component has been clicked, it should do the following (these are normally handled by `onClick`):
+If not using the `onClick` function, when the `submitButton` component has been clicked, it should do the following (these are normally handled by `onClick`):
 
 1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
@@ -400,15 +400,15 @@ Returns a step object whose properties can be added to a [CheckoutStep](Checkout
 
 ### makeManualResponse
 
-An action creator function to be used by a [payment processor function](#payment-methods) for a MANUAL response; it will do nothing but pass along its argument as a `payload` property to the resolved Promise of the `onClick` function.
+An action creator function to be used by a [payment processor function](#payment-methods) for a [MANUAL](#PaymentProcessorResponseType) response; it will do nothing but pass along its argument as a `payload` property to the resolved Promise of the `onClick` function.
 
 ### makeRedirectResponse
 
-An action creator function to be used by a [payment processor function](#payment-methods) for a REDIRECT response. It takes one string argument and will cause the page to redirect to the URL in that string.
+An action creator function to be used by a [payment processor function](#payment-methods) for a [REDIRECT](#PaymentProcessorResponseType) response. It takes one string argument and will cause the page to redirect to the URL in that string.
 
 ### makeSuccessResponse
 
-An action creator function to be used by a [payment processor function](#payment-methods) for a SUCCESS response. It takes one object argument which is the transaction response. It will cause checkout to mark the payment as complete and run the `onPaymentComplete` function on the [CheckoutProvider](#CheckoutProvider).
+An action creator function to be used by a [payment processor function](#payment-methods) for a [SUCCESS](#PaymentProcessorResponseType) response. It takes one object argument which is the transaction response. It will cause checkout to mark the payment as complete and run the `onPaymentComplete` function on the [CheckoutProvider](#CheckoutProvider).
 
 ### registerStore
 
