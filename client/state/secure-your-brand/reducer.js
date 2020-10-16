@@ -12,7 +12,7 @@ import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/s
 export const items = withSchemaValidation( secureYourBrandSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case SECURE_YOUR_BRAND_SUCCESS:
-			return Object.assign( {}, action.result );
+			return Object.assign( {}, action.secureYourBrand );
 	}
 	return state;
 } );

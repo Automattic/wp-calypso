@@ -24,6 +24,7 @@ describe( 'selectors', () => {
 			expect( isRequesting ).toEqual( false );
 		} );
 	} );
+
 	describe( '#hasSecureYourBrandError()', () => {
 		test( 'should return false if no error', () => {
 			const state = getStateInstance();
