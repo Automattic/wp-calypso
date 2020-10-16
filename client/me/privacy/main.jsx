@@ -9,6 +9,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 /**
+ * WordPress dependencies
+ */
+import { ToggleControl } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
@@ -16,7 +21,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import ExternalLink from 'calypso/components/external-link';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
 import Main from 'calypso/components/main';
 import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import { protectForm } from 'calypso/lib/protect-form';
@@ -133,12 +137,11 @@ const Privacy = createReactClass( {
 							</p>
 							<hr />
 							<p>
-								<FormToggle
+								<ToggleControl
 									id="tracks_opt_out"
 									checked={ isSendingTracksEvent }
 									onChange={ this.updateTracksOptOut }
-								>
-									{ translate(
+									label={ translate(
 										'Share information with our analytics tool about your use of services while ' +
 											'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
 											'{{/cookiePolicyLink}}.',
@@ -148,7 +151,7 @@ const Privacy = createReactClass( {
 											},
 										}
 									) }
-								</FormToggle>
+								/>
 							</p>
 						</FormFieldset>
 
