@@ -23,16 +23,14 @@ import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 
 export default function useShoppingCartManager( {
 	cartKey,
-	canInitializeCart,
 	setCart,
 	getCart,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
-	const cartKeyString = String( cartKey || 'no-site' );
-	const setServerCart = useCallback( ( cartParam ) => setCart( cartKeyString, cartParam ), [
-		cartKeyString,
+	const setServerCart = useCallback( ( cartParam ) => setCart( String( cartKey ), cartParam ), [
+		cartKey,
 		setCart,
 	] );
-	const getServerCart = useCallback( () => getCart( cartKeyString ), [ cartKeyString, getCart ] );
+	const getServerCart = useCallback( () => getCart( String( cartKey ) ), [ cartKey, getCart ] );
 
 	const [ hookState, hookDispatch ] = useShoppingCartReducer();
 
@@ -41,6 +39,8 @@ export default function useShoppingCartManager( {
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
+
+	const canInitializeCart = !! cartKey;
 
 	// Asynchronously initialize the cart. This should happen exactly once.
 	useInitializeCartFromServer(
@@ -105,10 +105,10 @@ export default function useShoppingCartManager( {
 	}, [ hookDispatch ] );
 
 	return {
-		isLoading: cacheStatus === 'fresh',
+		isLoading: cacheStatus === 'fresh' || ! canInitializeCart,
 		loadingError: cacheStatus === 'error' ? loadingError : null,
 		loadingErrorType,
-		isPendingUpdate: cacheStatus !== 'valid',
+		isPendingUpdate: cacheStatus !== 'valid' || ! canInitializeCart,
 		addProductsToCart,
 		removeProductFromCart,
 		applyCoupon,

@@ -17,7 +17,7 @@ export default function ShoppingCartProvider( {
 	children,
 }: {
 	cartKey: string | number | null | undefined;
-	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
+	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 	children: JSX.Element;
 } ): JSX.Element {
@@ -38,7 +38,6 @@ export default function ShoppingCartProvider( {
 		replaceProductsInCart,
 	} = useShoppingCartManager( {
 		cartKey,
-		canInitializeCart: true,
 		setCart,
 		getCart,
 	} );

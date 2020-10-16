@@ -13,9 +13,8 @@ export * from './shopping-cart-endpoint';
 export type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export interface ShoppingCartManagerArguments {
-	cartKey: string | number | null;
-	canInitializeCart: boolean;
-	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
+	cartKey: string | number | null | undefined;
+	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 }
 
