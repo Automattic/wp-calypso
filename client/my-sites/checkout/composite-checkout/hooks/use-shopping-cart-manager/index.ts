@@ -20,6 +20,7 @@ import {
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
+import useReloadCartIfCartKeyChanges from './use-reload-cart-if-cart-key-changes';
 
 export default function useShoppingCartManager( {
 	cartKey,
@@ -103,6 +104,8 @@ export default function useShoppingCartManager( {
 	const reloadFromServer: () => void = useCallback( () => {
 		hookDispatch( { type: 'CART_RELOAD' } );
 	}, [ hookDispatch ] );
+
+	useReloadCartIfCartKeyChanges( cartKey, reloadFromServer );
 
 	return {
 		isLoading: cacheStatus === 'fresh' || ! canInitializeCart,
