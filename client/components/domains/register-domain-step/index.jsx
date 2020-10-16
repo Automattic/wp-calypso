@@ -60,7 +60,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
-import QuerySecureYourBrand from 'components/data/query-secure-your-brand';
+import QuerySecureYourBrand from 'calypso/components/data/query-secure-your-brand';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
