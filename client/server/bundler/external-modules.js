@@ -1,8 +1,6 @@
 /**
  * External Dependencies
  */
-const fs = require( 'fs' );
-const path = require( 'path' );
 const { builtinModules } = require( 'module' );
 
 function getModule( request ) {
@@ -23,7 +21,7 @@ module.exports = class ExternalModulesWriter {
 	}
 
 	apply( compiler ) {
-		compiler.hooks.afterEmit.tapAsync( 'ExternalModulesWriter', ( compilation ) => {
+		compiler.hooks.emit.tapAsync( 'ExternalModulesWriter', ( compilation, callback ) => {
 			const externalModules = new Set();
 
 			for ( const module of compilation.modules ) {
@@ -46,11 +44,15 @@ module.exports = class ExternalModulesWriter {
 				externalModules.add( requestModule );
 			}
 
-			fs.writeFileSync(
-				path.join( this.options.path, this.options.filename ),
-				JSON.stringify( Array.from( externalModules ), null, 2 ),
-				'utf8'
-			);
+			const json = JSON.stringify( Array.from( externalModules ), null, 2 );
+			const { mkdirp, writeFile, join } = compiler.outputFileSystem;
+			const { path, filename } = this.options;
+			mkdirp( path, ( err ) => {
+				if ( err ) {
+					return callback( err );
+				}
+				writeFile( join( path, filename ), json, 'utf8', callback );
+			} );
 		} );
 	}
 };
