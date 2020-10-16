@@ -89,7 +89,7 @@ class DeleteSite extends Component {
 	};
 
 	closeConfirmDialog = () => {
-		this.setState( { showConfirmDialog: false } );
+		this.setState( { showConfirmDialog: false, confirmDomain: '' } );
 	};
 
 	closeWarningDialog = () => {
