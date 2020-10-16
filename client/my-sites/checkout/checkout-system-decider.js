@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import debugFactory from 'debug';
-import wp from 'calypso/lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
+import wp from 'calypso/lib/wp';
 import CheckoutContainer from './checkout/checkout-container';
 import PrePurchaseNotices from './checkout/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
@@ -19,9 +19,16 @@ import { StripeHookProvider } from 'calypso/lib/stripe';
 import config from 'calypso/config';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
+import ShoppingCartProvider from './composite-checkout/hooks/use-shopping-cart-manager/shopping-cart-provider';
+import getCartKey from './get-cart-key';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
+
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
 const wpcom = wp.undocumented();
+const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
+const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 
 // Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
@@ -39,9 +46,9 @@ export default function CheckoutSystemDecider( {
 	redirectTo,
 	upgradeIntent,
 	clearTransaction,
-	cart,
 	isLoggedOutCart,
 	isNoSiteCart,
+	cart: otherCart,
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
@@ -83,10 +90,19 @@ export default function CheckoutSystemDecider( {
 		[ reduxDispatch ]
 	);
 
-	if ( ! cart || ! cart.currency ) {
-		debug( 'not deciding yet; cart has not loaded' );
-		return null; // TODO: replace with loading page
-	}
+	const waitForOtherCartUpdates =
+		otherCart?.hasPendingServerUpdates || ! otherCart?.hasLoadedFromServer;
+	const cartKey = useMemo(
+		() =>
+			getCartKey( {
+				selectedSite,
+				isLoggedOutCart,
+				isNoSiteCart,
+				waitForOtherCartUpdates,
+			} ),
+		[ waitForOtherCartUpdates, selectedSite, isLoggedOutCart, isNoSiteCart ]
+	);
+	debug( 'cartKey is', cartKey );
 
 	if ( 'composite-checkout' === checkoutVariant ) {
 		let siteSlug = selectedSite?.slug;
@@ -99,30 +115,34 @@ export default function CheckoutSystemDecider( {
 			}
 		}
 
+		const getCart =
+			isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( otherCart ) : wpcomGetCart;
+		debug( 'getCart being controlled by', { isLoggedOutCart, isNoSiteCart, otherCart } );
+
 		return (
 			<>
 				<CheckoutErrorBoundary
 					errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 					onError={ logCheckoutError }
 				>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
-						<CompositeCheckout
-							siteSlug={ siteSlug }
-							siteId={ selectedSite?.ID }
-							productAliasFromUrl={ productAliasFromUrl }
-							purchaseId={ purchaseId }
-							couponCode={ couponCode }
-							redirectTo={ redirectTo }
-							feature={ selectedFeature }
-							plan={ plan }
-							cart={ cart }
-							isComingFromUpsell={ isComingFromUpsell }
-							infoMessage={ prepurchaseNotices }
-							isLoggedOutCart={ isLoggedOutCart }
-							isNoSiteCart={ isNoSiteCart }
-							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
-						/>
-					</StripeHookProvider>
+					<ShoppingCartProvider cartKey={ cartKey } getCart={ getCart } setCart={ wpcomSetCart }>
+						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+							<CompositeCheckout
+								siteSlug={ siteSlug }
+								siteId={ selectedSite?.ID }
+								productAliasFromUrl={ productAliasFromUrl }
+								purchaseId={ purchaseId }
+								couponCode={ couponCode }
+								redirectTo={ redirectTo }
+								feature={ selectedFeature }
+								plan={ plan }
+								isComingFromUpsell={ isComingFromUpsell }
+								infoMessage={ prepurchaseNotices }
+								isLoggedOutCart={ isLoggedOutCart }
+								isNoSiteCart={ isNoSiteCart }
+							/>
+						</StripeHookProvider>
+					</ShoppingCartProvider>
 				</CheckoutErrorBoundary>
 				{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 			</>
