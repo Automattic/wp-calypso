@@ -9,7 +9,7 @@ import { isMobile } from '@automattic/viewport';
 /**
  * WordPress dependencies
  */
-import { Spinner, TextControl } from '@wordpress/components';
+import { Button, Spinner, TextControl } from '@wordpress/components';
 import { close, search, Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -24,8 +24,8 @@ import './style.scss';
 const SEARCH_DEBOUNCE_MS = 300;
 
 const keyListener = (
-	methodToCall: ( e: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => void
-) => ( event: KeyboardEvent< HTMLDivElement > ) => {
+	methodToCall: ( e: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement > ) => void
+) => ( event: KeyboardEvent< HTMLButtonElement > ) => {
 	switch ( event.key ) {
 		case ' ':
 		case 'Enter':
@@ -57,8 +57,12 @@ type Props = {
 	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
 	onSearch: ( search: string ) => void;
 	onSearchChange: ( search: string ) => void;
-	onSearchOpen: ( event?: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => void;
-	onSearchClose: ( event: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => void;
+	onSearchOpen: (
+		event?: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement >
+	) => void;
+	onSearchClose: (
+		event: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement >
+	) => void;
 	overlayStyling?: ( search: string ) => React.ReactNode;
 	placeholder?: string;
 	pinned: boolean;
@@ -128,16 +132,18 @@ class Search extends React.Component< Props, State > {
 		}
 	}
 
-	openSearch = ( event: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => {
+	openSearch = ( event: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement > ) => {
 		event.preventDefault();
 		this.setState( {
 			keyword: '',
 			isOpen: true,
 		} );
 		this.props.onSearchOpen( event );
+		// prevent outlines around the open icon after being clicked
+		this.openIcon.current?.blur();
 	};
 
-	closeSearch = ( event: MouseEvent< HTMLDivElement > | KeyboardEvent< HTMLDivElement > ) => {
+	closeSearch = ( event: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement > ) => {
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
@@ -149,15 +155,15 @@ class Search extends React.Component< Props, State > {
 			isOpen: this.props.isOpen || false,
 		} );
 
-		if ( this.searchInput?.current ) {
+		if ( this.searchInput.current ) {
 			this.searchInput.current.value = ''; // will not trigger onChange
 		}
 
 		if ( this.props.pinned ) {
-			this.searchInput?.current?.blur();
-			this.openIcon?.current?.focus();
+			this.searchInput.current?.blur();
+			this.openIcon.current?.focus();
 		} else {
-			this.searchInput?.current?.focus();
+			this.searchInput.current?.focus();
 		}
 
 		this.props.onSearchClose( event );
@@ -194,12 +200,6 @@ class Search extends React.Component< Props, State > {
 		}
 
 		this.props.onSearchChange( this.state.keyword );
-	}
-
-	componentDidMount() {
-		this.onSearch = this.props.delaySearch
-			? debounce( this.props.onSearch, this.props.delayTimeout )
-			: this.props.onSearch;
 	}
 
 	scrollOverlay = () => {
@@ -288,6 +288,9 @@ class Search extends React.Component< Props, State > {
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
 	onFocus = () => {
+		this.setState( { hasFocus: true } );
+		this.props.onSearchOpen();
+
 		if ( ! this.searchInput.current ) {
 			return;
 		}
@@ -334,8 +337,7 @@ class Search extends React.Component< Props, State > {
 		return (
 			<div dir={ this.props.dir } className={ searchClass } role="search">
 				<Spinner />
-				<div
-					role="button"
+				<Button
 					className="search__icon-navigation"
 					ref={ this.openIcon }
 					onClick={ enableOpenIcon ? this.openSearch : this.focus }
@@ -346,7 +348,7 @@ class Search extends React.Component< Props, State > {
 				>
 					{ /* @ts-ignore */ }
 					{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
-				</div>
+				</Button>
 				<div className={ fadeDivClass }>
 					<form action="." onSubmit={ this.handleSubmit }>
 						<TextControl
@@ -396,8 +398,7 @@ class Search extends React.Component< Props, State > {
 	closeButton() {
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
-				<div
-					role="button"
+				<Button
 					className="search__icon-navigation"
 					onClick={ this.closeSearch }
 					tabIndex={ 0 }
@@ -407,7 +408,7 @@ class Search extends React.Component< Props, State > {
 				>
 					{ /* @ts-ignore */ }
 					<Icon icon={ close } className="search__close-icon" />
-				</div>
+				</Button>
 			);
 		}
 

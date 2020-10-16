@@ -66,6 +66,7 @@ $input-z-index: 20;
 	&.is-compact,
 	&.is-expanded-to-container.is-compact {
 		height: 36px;
+		justify-content: end;
 		.search__input {
 			display: flex;
 			align-items: center;
@@ -98,7 +99,7 @@ $input-z-index: 20;
 
 	.search__input-fade {
 		position: relative;
-		flex: 1 1 auto;
+		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
 	}
@@ -236,4 +237,12 @@ $input-z-index: 20;
 
 .search .components-base-control .components-base-control__field {
 	margin-bottom: 0;
+}
+
+.search .components-button {
+	padding: 0;
+
+	&:focus {
+		box-shadow: none;
+	}
 }
