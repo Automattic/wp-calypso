@@ -13,7 +13,7 @@ import LoginFlow from '../lib/flows/login-flow';
 import SignUpFlow from '../lib/flows/sign-up-flow';
 
 import JetpackAuthorizePage from '../lib/pages/jetpack-authorize-page';
-import PickAJetpackPlanPage from '../lib/pages/signup/pick-a-jetpack-plan-page';
+import PickAPlanPage from '../lib/pages/signup/pick-a-plan-page';
 import WPAdminJetpackPage from '../lib/pages/wp-admin/wp-admin-jetpack-page.js';
 import WPAdminDashboardPage from '../lib/pages/wp-admin/wp-admin-dashboard-page';
 import WPAdminNewUserPage from '../lib/pages/wp-admin/wp-admin-new-user-page';
@@ -89,7 +89,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await PickAJetpackPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
@@ -109,7 +109,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		step( 'Can select free plan', async function () {
-			const pickAPlanPage = await PickAJetpackPlanPage.Expect( driver );
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
 			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
