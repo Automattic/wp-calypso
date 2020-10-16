@@ -179,7 +179,7 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 						total,
 						stripeConfiguration,
 					} ).then( ( processorResponse ) => {
-						if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
+						if ( processorResponse?.type === PaymentProcessorResponseType.MANUAL ) {
 							setStripeResponseWithCode( processorResponse.payload );
 						}
 					} );
