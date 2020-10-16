@@ -69,6 +69,18 @@ $cloud-icon-height: 24px;
 	}
 }
 
+.backup-failed__title {
+	@extend .backup-card__title;
+	font-weight: 700;
+	color: var( --p2-color-error );
+	margin-top: 3px;
+	margin-bottom: 100px;
+
+	img.backup-card__icon {
+		color: var( --p2-color-error );
+	}
+}
+
 .backup-card__icon {
 	margin-right: 6px;
 	height: $cloud-icon-height;
@@ -179,6 +191,9 @@ $cloud-icon-height: 24px;
 	}
 	svg.backup-card__jetpack-logo-warning path.jetpack-logo__icon-circle {
 		fill: var( --studio-orange-30 );
+	}
+	svg.backup-card__jetpack-logo-danger path.jetpack-logo__icon-circle {
+		fill: var( --p2-color-error );
 	}
 }
 

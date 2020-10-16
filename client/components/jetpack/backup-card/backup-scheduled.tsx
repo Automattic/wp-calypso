@@ -34,7 +34,7 @@ type Props = { lastBackupDate: Moment; isLatest: boolean };
 
 const BackupScheduled: FunctionComponent< Props > = ( { lastBackupDate, isLatest } ) => {
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );

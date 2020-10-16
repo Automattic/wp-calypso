@@ -8,7 +8,7 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import BackupFailed from './status-card/backup-failed';
+import BackupFailed from 'calypso/components/jetpack/backup-card/backup-failed';
 import NoBackupsOnSelectedDate from 'calypso/components/jetpack/backup-card/no-backups-on-selected-date';
 import BackupScheduled from 'calypso/components/jetpack/backup-card/backup-scheduled';
 import NoBackupsYet from './status-card/no-backups-yet';
