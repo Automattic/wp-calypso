@@ -14,6 +14,7 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
+import Experiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -49,15 +50,17 @@ export default function WPCheckoutOrderReview( {
 			) }
 
 			<WPOrderReviewSection>
-				<WPOrderReviewLineItems
-					items={ items }
-					removeProductFromCart={ removeProductFromCart }
-					removeCoupon={ removeCouponAndClearField }
-					getItemVariants={ getItemVariants }
-					onChangePlanLength={ onChangePlanLength }
-					isSummary={ isSummary }
-					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-				/>
+				<MonthlyPricingTestWrapper>
+					<WPOrderReviewLineItems
+						items={ items }
+						removeProductFromCart={ removeProductFromCart }
+						removeCoupon={ removeCouponAndClearField }
+						getItemVariants={ getItemVariants }
+						onChangePlanLength={ onChangePlanLength }
+						isSummary={ isSummary }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					/>
+				</MonthlyPricingTestWrapper>
 			</WPOrderReviewSection>
 
 			<CouponFieldArea
@@ -118,6 +121,23 @@ function CouponFieldArea( {
 				{ translate( 'Add a coupon code' ) }
 			</CouponEnableButton>
 		</CouponLinkWrapper>
+	);
+}
+
+function MonthlyPricingTestWrapper( { children } ) {
+	return (
+		<Experiment name="monthly_pricing_test_phase_1">
+			<DefaultVariation name="control">
+				{ React.Children.map( children, ( child ) =>
+					React.cloneElement( child, { isMonthlyPricingTest: false } )
+				) }
+			</DefaultVariation>
+			<Variation name="treatment">
+				{ React.Children.map( children, ( child ) =>
+					React.cloneElement( child, { isMonthlyPricingTest: true } )
+				) }
+			</Variation>
+		</Experiment>
 	);
 }
 

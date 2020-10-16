@@ -43,6 +43,7 @@ function WPLineItem( {
 	onChangePlanLength,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	isMonthlyPricingTest,
 } ) {
 	const translate = useTranslate();
 	const hasDomainsInCart = useHasDomainsInCart();
@@ -82,7 +83,11 @@ function WPLineItem( {
 				{ item.label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice item={ item } isSummary={ isSummary } />
+				<LineItemPrice
+					item={ item }
+					isSummary={ isSummary }
+					isMonthlyPricingTest={ isMonthlyPricingTest }
+				/>
 			</span>
 			{ item.sublabel && (
 				<>
