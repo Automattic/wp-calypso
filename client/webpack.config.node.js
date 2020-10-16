@@ -7,6 +7,8 @@
 /**
  * External dependencies
  */
+const fs = require( 'fs' );
+const globby = require( 'globby' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
@@ -41,6 +43,16 @@ const fileLoader = FileConfig.loader( {
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
+function getMonorepoPackages() {
+	// find package.json files in all 1st level subdirectories of packages/
+	return globby.sync( 'packages/*/package.json' ).map( ( pkgJsonPath ) => {
+		// read the package.json file
+		const pkgJson = JSON.parse( fs.readFileSync( pkgJsonPath ) );
+		// create a package name regexp that matches all requests that start with it
+		return new RegExp( `^${ pkgJson.name }(/|$)` );
+	} );
+}
+
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
@@ -53,22 +65,14 @@ function getExternals() {
 		// with modules that are incompatible with webpack bundling.
 		nodeExternals( {
 			allowlist: [
-				'@automattic/calypso-analytics',
-				'@automattic/calypso-polyfills',
-				'@automattic/components',
-				'@automattic/format-currency',
-				'@automattic/load-script',
-				'@automattic/popup-monitor',
-				'@automattic/react-i18n',
-				'@automattic/request-external-access',
-				'@automattic/social-previews',
-				'@automattic/tree-select',
-				'@automattic/viewport',
-				'@automattic/viewport-react',
-				'i18n-calypso',
-				'photon',
-				'wpcom',
-				'wpcom-proxy-request',
+				// Force all monorepo packages to be bundled. We can guarantee that they are safe
+				// to bundle, and can avoid shipping the entire contents of the `packages/` folder
+				// (there are symlinks into `packages/` from the `node_modules` folder)
+				...getMonorepoPackages(),
+
+				// bundle the core-js polyfills. We pick only a very small subset of the library
+				// to polyfill a few things that are not supported by the latest LTS Node.js,
+				// and this avoids shipping the entire library which is fairly big.
 				/^core-js\//,
 
 				// Ensure that file-loader files imported from packages in node_modules are
