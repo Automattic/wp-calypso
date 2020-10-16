@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import config from 'calypso/config';
 import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
@@ -9,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal dependencies
  */
+import { CartItemValue } from 'calypso/lib/cart-values/types';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import { hasGSuiteWithUs } from './has-gsuite-with-us';
 
@@ -24,12 +26,14 @@ export interface GSuiteNewUser {
 	mailBox: GSuiteNewUserField;
 	firstName: GSuiteNewUserField;
 	lastName: GSuiteNewUserField;
+	password: GSuiteNewUserField;
 }
 
 export interface GSuiteProductUser {
 	firstname: string;
 	lastname: string;
 	email: string;
+	password: string;
 }
 
 /**
@@ -40,6 +44,7 @@ export interface GSuiteProductUser {
 const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
 	Object.keys( user )
 		.filter( ( key ) => 'uuid' !== key )
+		.filter( ( key ) => config.isEnabled( 'gsuite/passwords' ) || 'password' !== key )
 		.map( ( key ) => user[ key ] );
 
 /**
@@ -49,9 +54,17 @@ const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
  * @param {Function} callback - function to call for each field
  */
 const mapFieldValues = ( user: GSuiteNewUser, callback ): GSuiteNewUser =>
-	mapValues( user, ( fieldValue, fieldName ) =>
-		'uuid' === fieldName ? fieldValue : callback( fieldValue, fieldName, user )
-	);
+	mapValues( user, ( fieldValue, fieldName ) => {
+		if ( 'uuid' === fieldName ) {
+			return fieldValue;
+		}
+
+		if ( 'password' === fieldName && ! config.isEnabled( 'gsuite/passwords' ) ) {
+			return fieldValue;
+		}
+
+		return callback( fieldValue, fieldName, user );
+	} );
 
 /*
  * Clears all previous errors from the specified field.
@@ -137,14 +150,14 @@ const validateOverallEmailAgainstExistingEmails = (
 /*
  * Clears all previous errors from all fields for the specified user.
  */
-const clearPreviousErrors = ( users: GSuiteNewUser[] ) => {
+const clearPreviousErrors = ( users: GSuiteNewUser[] ): GSuiteNewUser[] => {
 	return users.map( ( user ) =>
 		mapFieldValues( user, ( field ) => removePreviousErrors( field ) )
 	);
 };
 
 /*
- *  Adds a new error if the specified mailbox field has no errors and appears more than once in the provided map.
+ * Adds a new error if the specified mailbox field has no errors and appears more than once in the provided map.
  */
 const validateNewUserMailboxIsUnique = (
 	{ value: mailBox, error: previousError }: GSuiteNewUserField,
@@ -160,30 +173,77 @@ const validateNewUserMailboxIsUnique = (
 /*
  * Adds a duplicate error to each mailBox with a duplicate mailbox
  */
-const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ) => {
+const validateNewUsersAreUnique = ( users: GSuiteNewUser[] ): GSuiteNewUser[] => {
 	const mailboxesByCount: { [ mailbox: string ]: number } = countBy(
 		users.map( ( { mailBox: { value: mailBox } } ) => mailBox )
 	);
 
-	return users.map( ( { uuid, domain, mailBox, firstName, lastName } ) => ( {
+	return users.map( ( { uuid, domain, mailBox, firstName, lastName, password } ) => ( {
 		uuid,
 		firstName,
 		lastName,
 		domain,
 		mailBox: validateNewUserMailboxIsUnique( mailBox, mailboxesByCount ),
+		password,
 	} ) );
 };
 
 /*
- * Run all validations on a user:
- * domain - required
- * mailBox - required, validEmailCharacters, valid overall email
- * firstName - required, less than sixty characters
- * lastName - required, less than sixty characters
+ * Validates the specified password field.
+ *
+ * @see https://support.google.com/accounts/answer/32040 for requirements
+ */
+const validatePasswordField = ( { value, error }: GSuiteNewUserField ): GSuiteNewUserField => {
+	if ( ! error && 12 > value.length ) {
+		return {
+			value,
+			error: translate( "This field can't be shorter than %s characters.", { args: '12' } ),
+		};
+	}
+
+	if ( ! error && 100 < value.length ) {
+		return {
+			value,
+			error: translate( "This field can't be longer than %s characters.", { args: '100' } ),
+		};
+	}
+
+	if ( ! error && value.startsWith( ' ' ) ) {
+		return {
+			value,
+			error: translate( "This field can't start with a white space." ),
+		};
+	}
+
+	// Checks that passwords only have ASCII characters (see https://en.wikipedia.org/wiki/ASCII#Character_set)
+	const regexp = /[^\x20-\x7E]/;
+
+	if ( ! error && regexp.test( value ) ) {
+		const firstForbiddenCharacter = [ ...value ].find( ( character ) => regexp.test( character ) );
+
+		return {
+			value,
+			error: translate( "This field can't accept '%s' as character.", {
+				args: firstForbiddenCharacter,
+			} ),
+		};
+	}
+
+	if ( ! error && value.endsWith( ' ' ) ) {
+		return {
+			value,
+			error: translate( "This field can't end with a white space." ),
+		};
+	}
+
+	return { value, error };
+};
+
+/*
+ * Run all validations on a user.
  */
 const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
-	// every field is required. Also scrubs previous errors.
-	const { domain, mailBox, firstName, lastName } = mapFieldValues( user, ( field ) =>
+	const { domain, mailBox, firstName, lastName, password } = mapFieldValues( user, ( field ) =>
 		requiredField( field )
 	);
 
@@ -193,6 +253,7 @@ const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 		mailBox: validateOverallEmail( validEmailCharacterField( mailBox ), domain ),
 		firstName: sixtyCharacterField( firstName ),
 		lastName: sixtyCharacterField( lastName ),
+		password: config.isEnabled( 'gsuite/passwords' ) ? validatePasswordField( password ) : password,
 	};
 };
 
@@ -202,7 +263,7 @@ const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 const validateUsers = (
 	users: GSuiteNewUser[],
 	extraValidation: ( user: GSuiteNewUser ) => GSuiteNewUser = ( user ) => user
-) => {
+): GSuiteNewUser[] => {
 	// 1. scrub all previous errors with clearPreviousErrors
 	// 2. first check for uniqueness with validateNewUsersAreUnique
 	// 3. then run the standard validateUser on each user
@@ -213,14 +274,15 @@ const validateUsers = (
 };
 
 const validateAgainstExistingUsers = (
-	{ uuid, domain, mailBox, firstName, lastName }: GSuiteNewUser,
+	{ uuid, domain, mailBox, firstName, lastName, password }: GSuiteNewUser,
 	existingGSuiteUsers: [  ]
-) => ( {
+): GSuiteNewUser => ( {
 	uuid,
 	firstName,
 	lastName,
 	domain,
 	mailBox: validateOverallEmailAgainstExistingEmails( mailBox, domain, existingGSuiteUsers ),
+	password,
 } );
 
 const newField = ( value = '' ): GSuiteNewUserField => ( {
@@ -235,6 +297,7 @@ const newUser = ( domain = '' ): GSuiteNewUser => {
 		lastName: newField(),
 		mailBox: newField(),
 		domain: newField( domain ),
+		password: newField(),
 	};
 };
 
@@ -267,17 +330,19 @@ const transformUserForCart = ( {
 	lastName: { value: lastname },
 	domain: { value: domain },
 	mailBox: { value: mailBox },
+	password: { value: password },
 }: GSuiteNewUser ): GSuiteProductUser => ( {
 	email: `${ mailBox }@${ domain }`.toLowerCase(),
 	firstname,
 	lastname,
+	password,
 } );
 
 const getItemsForCart = (
 	domains: { name: string },
 	productSlug: string,
 	users: GSuiteNewUser[]
-) => {
+): CartItemValue => {
 	const usersGroupedByDomain: { [ domain: string ]: GSuiteProductUser[] } = mapValues(
 		groupBy( users, 'domain.value' ),
 		( groupedUsers ) => groupedUsers.map( transformUserForCart )
@@ -285,11 +350,9 @@ const getItemsForCart = (
 
 	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
 		const domainInfo = find( domains, [ 'name', domain ] );
+
 		return domainInfo && hasGSuiteWithUs( domainInfo )
-			? googleAppsExtraLicenses( {
-					domain,
-					users: groupedUsers,
-			  } )
+			? googleAppsExtraLicenses( { domain, users: groupedUsers } )
 			: googleApps( { domain, product_slug: productSlug, users: groupedUsers } );
 	} );
 };
