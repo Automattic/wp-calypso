@@ -50,7 +50,7 @@ $cloud-icon-height: 24px;
 	@extend .backup-card__title;
 	font-weight: 400;
 	color: var( --studio-gray-40 );
-	margin-top: 3px;
+	margin-top: 4px;
 
 	img.backup-card__icon {
 		color: var( --studio-gray-30 );
@@ -61,7 +61,7 @@ $cloud-icon-height: 24px;
 	@extend .backup-card__title;
 	font-weight: 400;
 	color: var( --studio-orange-30 );
-	margin-top: 3px;
+	margin-top: 4px;
 	margin-bottom: 100px;
 
 	img.backup-card__icon {
@@ -73,11 +73,23 @@ $cloud-icon-height: 24px;
 	@extend .backup-card__title;
 	font-weight: 700;
 	color: var( --p2-color-error );
-	margin-top: 3px;
+	margin-top: 4px;
 	margin-bottom: 100px;
 
 	img.backup-card__icon {
 		color: var( --p2-color-error );
+	}
+}
+
+.no-backups-yet__title {
+	@extend .backup-card__title;
+	font-weight: 400;
+	color: var( --studio-gray-30 );
+	margin-top: 4px;
+	margin-bottom: 100px;
+
+	img.backup-card__icon {
+		color: var( --studio-gray-30 );
 	}
 }
 
