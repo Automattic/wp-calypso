@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { KeyboardEvent, MouseEvent } from 'react';
+import React, { KeyboardEvent, MouseEvent, FocusEvent, FormEvent } from 'react';
 import { debounce, noop, uniqueId } from 'lodash';
 import classNames from 'classnames';
 import { isMobile } from '@automattic/viewport';
@@ -9,9 +9,7 @@ import { isMobile } from '@automattic/viewport';
 /**
  * WordPress dependencies
  */
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { Spinner, __experimentalInputControl as InputControl } from '@wordpress/components';
+import { Spinner, TextControl } from '@wordpress/components';
 import { close, search, Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -54,7 +52,7 @@ type Props = {
 	isOpen: boolean;
 	maxLength?: number;
 	minLength?: number;
-	onBlur?: ( event: MouseEvent< HTMLInputElement > ) => void;
+	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
 	onClick?: () => void;
 	onKeyDown?: ( event: KeyboardEvent< HTMLInputElement > ) => void;
 	onSearch: ( search: string ) => void;
@@ -244,7 +242,7 @@ class Search extends React.Component< Props, State > {
 
 	clear = () => this.setState( { keyword: '' } );
 
-	onBlur = ( event: MouseEvent< HTMLInputElement > ) => {
+	onBlur = ( event: FocusEvent< HTMLInputElement > ) => {
 		if ( this.props.onBlur ) {
 			this.props.onBlur( event );
 		}
@@ -300,9 +298,10 @@ class Search extends React.Component< Props, State > {
 			this.searchInput.current.value = '';
 			this.searchInput.current.value = setValue;
 		}
+	};
 
-		this.setState( { hasFocus: true } );
-		this.props.onSearchOpen();
+	handleSubmit = ( event: FormEvent ) => {
+		event.preventDefault();
 	};
 
 	render() {
@@ -316,7 +315,7 @@ class Search extends React.Component< Props, State > {
 		const autocorrect = this.props.disableAutocorrect && {
 			autoComplete: 'off',
 			autoCorrect: 'off',
-			spellCheck: 'false',
+			spellCheck: 'false' as const,
 		};
 
 		const searchClass = classNames( this.props.className, this.props.dir, {
@@ -349,31 +348,33 @@ class Search extends React.Component< Props, State > {
 					{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
-					<InputControl
-						type="search"
-						id={ 'search-component-' + this.instanceId }
-						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-						aria-describedby={ this.props.describedBy }
-						aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
-						aria-hidden={ ! isOpenUnpinnedOrQueried }
-						className={ inputClass }
-						placeholder={ placeholder }
-						role="searchbox"
-						value={ searchValue }
-						ref={ this.searchInput }
-						onChange={ this.onChange }
-						onKeyUp={ this.keyUp }
-						onKeyDown={ this.keyDown }
-						onMouseUp={ this.props.onClick }
-						onFocus={ this.onFocus }
-						onBlur={ this.onBlur }
-						disabled={ this.props.disabled }
-						autoCapitalize="none"
-						dir={ this.props.dir }
-						maxLength={ this.props.maxLength }
-						minLength={ this.props.minLength }
-						{ ...autocorrect }
-					/>
+					<form action="." onSubmit={ this.handleSubmit }>
+						<TextControl
+							type="search"
+							id={ 'search-component-' + this.instanceId }
+							autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+							aria-describedby={ this.props.describedBy }
+							aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
+							aria-hidden={ ! isOpenUnpinnedOrQueried }
+							className={ inputClass }
+							placeholder={ placeholder }
+							role="searchbox"
+							value={ searchValue }
+							ref={ this.searchInput }
+							onChange={ this.onChange }
+							onKeyUp={ this.keyUp }
+							onKeyDown={ this.keyDown }
+							onMouseUp={ this.props.onClick }
+							onFocus={ this.onFocus }
+							onBlur={ this.onBlur }
+							disabled={ this.props.disabled }
+							autoCapitalize="none"
+							dir={ this.props.dir }
+							maxLength={ this.props.maxLength }
+							minLength={ this.props.minLength }
+							{ ...autocorrect }
+						/>
+					</form>
 					{ this.renderStylingDiv() }
 				</div>
 				{ this.closeButton() }

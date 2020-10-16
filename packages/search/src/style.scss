@@ -109,7 +109,7 @@ $input-z-index: 20;
 	}
 }
 
-.search__input input.components-input-control__input[type='search'], .components-input-control__backdrop {
+.search__input input.components-text-control__input[type='search'] {
 	flex: 1 1 auto;
 	display: none;
 	z-index: $input-z-index;
@@ -159,7 +159,7 @@ $input-z-index: 20;
 		opacity: 1;
 	}
 
-	.search__input input.components-input-control__input[type='search'] {
+	.search__input input.components-text-control__input[type='search'] {
 		display: block;
 	}
 
@@ -221,7 +221,7 @@ $input-z-index: 20;
 
 .search .components-spinner {
 	display: none;
-	margin: 5px 11px 5px;
+	margin: 5px 11px;
 }
 
 .search.is-searching .search__open-icon {
@@ -232,4 +232,8 @@ $input-z-index: 20;
 	flex: 0 0 auto;
 	display: flex;
 	z-index: 20;
+}
+
+.search .components-base-control .components-base-control__field {
+	margin-bottom: 0;
 }
