@@ -27,7 +27,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
-		this.businessPlanSlug = getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_business';
+		this.businessPlanSlug =
+			getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_security_daily';
 		this.dotLiveDomainSlug = 'dotlive_domain';
 	}
 

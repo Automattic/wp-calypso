@@ -74,9 +74,15 @@ export default class PlansPage extends AsyncBaseContainer {
 		);
 	}
 
-	async selectBusinessPlan() {
+	async selectPaidPlan() {
 		// Wait a little for loading animation
 		await this.driver.sleep( 1000 );
+
+		// Jetpack Business (Professional) no longer exist.
+		if ( host !== 'WPCOM' ) {
+			return await this.selectJetpackSecurity();
+		}
+
 		if ( currentScreenSize() === 'mobile' ) {
 			return await driverHelper.clickWhenClickable(
 				this.driver,
@@ -87,6 +93,13 @@ export default class PlansPage extends AsyncBaseContainer {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
 			by.css( 'td.is-top-buttons button.is-business-plan' )
+		);
+	}
+
+	async selectJetpackSecurity() {
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			by.xpath( `//button[@type='button' and contains(., 'Get Jetpack Security')]` )
 		);
 	}
 }
