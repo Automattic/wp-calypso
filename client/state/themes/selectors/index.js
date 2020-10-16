@@ -44,7 +44,6 @@ export { isRequestingTheme } from 'state/themes/selectors/is-requesting-theme';
 export { isRequestingThemesForQuery } from 'state/themes/selectors/is-requesting-themes-for-query';
 export { isRequestingThemesForQueryIgnoringPage } from 'state/themes/selectors/is-requesting-themes-for-query-ignoring-page';
 export { isThemeActive } from 'state/themes/selectors/is-theme-active';
-export { isThemeAvailableOnJetpackSite } from 'state/themes/selectors/is-theme-available-on-jetpack-site';
 export { isThemeGutenbergFirst } from 'state/themes/selectors/is-theme-gutenberg-first';
 export { isThemePremium } from 'state/themes/selectors/is-theme-premium';
 export { isThemePurchased } from 'state/themes/selectors/is-theme-purchased';

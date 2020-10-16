@@ -26,12 +26,7 @@ import notices from 'notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'state/themes/actions';
 import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import {
-	getSiteAdminUrl,
-	isJetpackSite,
-	isJetpackSiteMultiSite,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-} from 'state/sites/selectors';
+import { getSiteAdminUrl, isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -45,7 +40,6 @@ import {
 import { getCanonicalTheme } from 'state/themes/selectors';
 import { connectOptions } from 'my-sites/themes/theme-options';
 import EligibilityWarnings from 'blocks/eligibility-warnings';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import { hasFeature } from 'state/sites/plans/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'lib/plans/constants';
@@ -75,7 +69,6 @@ class Upload extends React.Component {
 		progressLoaded: PropTypes.number,
 		installing: PropTypes.bool,
 		isJetpack: PropTypes.bool,
-		upgradeJetpack: PropTypes.bool,
 		backPath: PropTypes.string,
 		showEligibility: PropTypes.bool,
 	};
@@ -240,15 +233,7 @@ class Upload extends React.Component {
 	}
 
 	render() {
-		const {
-			translate,
-			complete,
-			siteId,
-			themeId,
-			upgradeJetpack,
-			backPath,
-			isMultisite,
-		} = this.props;
+		const { backPath, complete, isMultisite, siteId, themeId, translate } = this.props;
 
 		const { showEligibility } = this.state;
 
@@ -265,18 +250,10 @@ class Upload extends React.Component {
 				<ThanksModal source="upload" />
 				<AutoLoadingHomepageModal source="upload" />
 				<HeaderCake backHref={ backPath }>{ translate( 'Install theme' ) }</HeaderCake>
-				{ upgradeJetpack && (
-					<JetpackManageErrorPage
-						template="updateJetpack"
-						siteId={ siteId }
-						featureExample={ this.renderUploadCard() }
-						version="4.7"
-					/>
-				) }
 				{ showEligibility && (
 					<EligibilityWarnings backUrl={ backPath } onProceed={ this.onProceedClick } />
 				) }
-				{ ! upgradeJetpack && ! showEligibility && this.renderUploadCard() }
+				{ ! showEligibility && this.renderUploadCard() }
 			</Main>
 		);
 	}
@@ -318,7 +295,6 @@ const mapStateToProps = ( state ) => {
 		progressTotal: getUploadProgressTotal( state, siteId ),
 		progressLoaded: getUploadProgressLoaded( state, siteId ),
 		installing: isInstallInProgress( state, siteId ),
-		upgradeJetpack: isJetpack && ! hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ),
 		backPath: getBackPath( state ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
