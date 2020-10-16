@@ -98,7 +98,6 @@
 		"signup/wpforteams": true,
 		"site-indicator": true,
 		"upgrades/checkout": true,
-		"upgrades/credit-cards": true,
 		"upgrades/domain-search": true,
 		"upgrades/redirect-payments": false,
 		"upgrades/premium-themes": true,

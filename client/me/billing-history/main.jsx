@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import { addCreditCard, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import config from 'calypso/config';
 import CreditCards from 'calypso/me/purchases/credit-cards';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import BillingHistoryTable from './billing-history-table';
@@ -40,9 +39,7 @@ const BillingHistory = ( { translate } ) => (
 		<QueryBillingTransactions />
 		<PurchasesHeader section={ 'billing' } />
 		<BillingHistoryList />
-		{ config.isEnabled( 'upgrades/credit-cards' ) && (
-			<CreditCards addPaymentMethodUrl={ addCreditCard } />
-		) }
+		<CreditCards addPaymentMethodUrl={ addCreditCard } />
 	</Main>
 );
 
