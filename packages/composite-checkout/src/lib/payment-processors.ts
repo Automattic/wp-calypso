@@ -12,7 +12,8 @@ import {
 	PaymentProcessorResponseData,
 	PaymentProcessorSuccess,
 	PaymentProcessorRedirect,
-	PaymentProcessorNoop,
+	PaymentProcessorManual,
+	PaymentProcessorResponseType,
 } from '../types';
 
 export function usePaymentProcessor( key: string ): PaymentProcessorFunction {
@@ -31,13 +32,13 @@ export function usePaymentProcessors(): Record< string, PaymentProcessorFunction
 export function makeSuccessResponse(
 	transaction: PaymentProcessorResponseData
 ): PaymentProcessorSuccess {
-	return { type: 'SUCCESS', payload: transaction };
+	return { type: PaymentProcessorResponseType.SUCCESS, payload: transaction };
 }
 
 export function makeRedirectResponse( url: string ): PaymentProcessorRedirect {
-	return { type: 'REDIRECT', payload: url };
+	return { type: PaymentProcessorResponseType.REDIRECT, payload: url };
 }
 
-export function makeNoopResponse(): PaymentProcessorNoop {
-	return { type: 'NOOP' };
+export function makeManualResponse( payload: unknown ): PaymentProcessorManual {
+	return { type: PaymentProcessorResponseType.MANUAL, payload };
 }
