@@ -51,6 +51,18 @@ describe( 'HasVaultPressSwitch', () => {
 		expect( hasVPSwitch.dive().contains( trueComponent ) ).toEqual( true );
 	} );
 
+	test( 'if rewindState is unavailable with reason=host_not_supported, show trueComponent', () => {
+		getRewindState.mockImplementation( () => ( {
+			state: 'unavailable',
+			reason: 'host_not_supported',
+		} ) );
+
+		const trueComponent = <span>true</span>;
+		const hasVPSwitch = shallow( <HasVaultPressSwitch trueComponent={ trueComponent } /> );
+
+		expect( hasVPSwitch.dive().contains( trueComponent ) ).toEqual( true );
+	} );
+
 	test( 'if rewindState is unavailable with other reason, show falseComponent', () => {
 		getRewindState.mockImplementation( () => ( {
 			state: 'unavailable',
