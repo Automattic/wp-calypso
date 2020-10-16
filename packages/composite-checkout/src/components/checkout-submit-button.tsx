@@ -49,11 +49,11 @@ export default function CheckoutSubmitButton( {
 							throw new Error( redirectErrorMessage );
 						}
 						setTransactionRedirecting( processorResponse.payload );
-						return;
+						return processorResponse;
 					}
 					if ( processorResponse.type === PaymentProcessorResponseType.SUCCESS ) {
 						setTransactionComplete( processorResponse.payload );
-						return;
+						return processorResponse;
 					}
 					if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
 						return processorResponse;
