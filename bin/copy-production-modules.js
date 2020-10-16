@@ -1,4 +1,4 @@
-const fs = require( 'fs' ); // eslint-disable-line  import/no-nodejs-modules
+const fs = require( 'fs' );
 const rcopy = require( 'recursive-copy' );
 const mkdirp = require( 'mkdirp' );
 const path = require( 'path' );
