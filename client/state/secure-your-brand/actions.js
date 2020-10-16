@@ -26,13 +26,13 @@ export const secureYourBrandRequestAction = ( domain ) => {
 /**
  * Returns an action object for signalling that a request was successful and domains received.
  *
- * @param {object} result - The results including domains, pricing, and a discount
+ * @param {object} secureYourBrand - The results including domains, pricing, and a discount
  * @returns {object} Action object
  */
-export const secureYourBrandSuccessAction = ( result ) => {
+export const secureYourBrandSuccessAction = ( secureYourBrand ) => {
 	const action = {
 		type: SECURE_YOUR_BRAND_SUCCESS,
-		result,
+		secureYourBrand,
 	};
 	return action;
 };

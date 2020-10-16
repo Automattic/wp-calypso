@@ -43,20 +43,23 @@ export const SECURE_YOUR_BRAND = {
 	error: null,
 };
 
+export const ERROR_MESSAGE_RESPONSE = 'Failure';
+export const SEARCH_DOMAIN = 'some-domain.id';
+
 // actions
 export const ACTION_SECURE_YOUR_BRAND_REQUEST = {
 	type: SECURE_YOUR_BRAND_REQUEST,
-	domain: 'some-domain.id',
+	domain: SEARCH_DOMAIN,
 };
 
 export const ACTION_SECURE_YOUR_BRAND_SUCCESS = {
 	type: SECURE_YOUR_BRAND_SUCCESS,
-	secureYourBrand: SECURE_YOUR_BRAND,
+	secureYourBrand: WPCOM_RESPONSE,
 };
 
 export const ACTION_SECURE_YOUR_BRAND_FAILURE = {
 	type: SECURE_YOUR_BRAND_FAILURE,
-	error: 'Something',
+	error: ERROR_MESSAGE_RESPONSE,
 };
 
 /**
