@@ -13,6 +13,7 @@ import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
+import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
 
 /**
  * Style dependencies
@@ -43,18 +44,16 @@ class TitanControlPanelLoginCard extends React.Component {
 		const { domain, translate } = this.props;
 		this.setState( { isFetchingAutoLoginLink: true } );
 
-		this.fetchTitanAutoLoginURL( domain.titanMailSubscription.orderId ).then(
-			( { error, loginURL } ) => {
-				this.setState( { isFetchingAutoLoginLink: false } );
-				if ( error ) {
-					this.props.errorNotice(
-						error ?? translate( 'An unknown error occurred. Please try again later.' )
-					);
-				} else {
-					window.location.href = loginURL;
-				}
+		this.fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
+			this.setState( { isFetchingAutoLoginLink: false } );
+			if ( error ) {
+				this.props.errorNotice(
+					error ?? translate( 'An unknown error occurred. Please try again later.' )
+				);
+			} else {
+				window.location.href = loginURL;
 			}
-		);
+		} );
 	};
 
 	render() {
