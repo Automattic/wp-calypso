@@ -2,9 +2,14 @@
  * External dependencies
  */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, pick } from 'lodash';
+
+/**
+ * WordPress dependencies
+ */
+import { Disabled, ToggleControl } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -50,29 +55,29 @@ class SiteSettingsFormDiscussion extends Component {
 			isSavingSettings,
 			translate,
 		} = this.props;
+		const DisabledComponent = isRequestingSettings || isSavingSettings ? Disabled : Fragment;
+
 		return (
 			<FormFieldset>
-				<CompactFormToggle
-					checked={ !! fields.default_pingback_flag }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'default_pingback_flag' ) }
-				>
-					{ translate( 'Attempt to notify any blogs linked to from the article' ) }
-				</CompactFormToggle>
-				<CompactFormToggle
-					checked={ !! fields.default_ping_status }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'default_ping_status' ) }
-				>
-					{ translate( 'Allow link notifications from other blogs (pingbacks and trackbacks)' ) }
-				</CompactFormToggle>
-				<CompactFormToggle
-					checked={ !! fields.default_comment_status }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'default_comment_status' ) }
-				>
-					{ translate( 'Allow people to post comments on new articles' ) }
-				</CompactFormToggle>
+				<DisabledComponent>
+					<ToggleControl
+						checked={ !! fields.default_pingback_flag }
+						onChange={ handleAutosavingToggle( 'default_pingback_flag' ) }
+						label={ translate( 'Attempt to notify any blogs linked to from the article' ) }
+					/>
+					<ToggleControl
+						checked={ !! fields.default_ping_status }
+						onChange={ handleAutosavingToggle( 'default_ping_status' ) }
+						label={ translate(
+							'Allow link notifications from other blogs (pingbacks and trackbacks)'
+						) }
+					/>
+					<ToggleControl
+						checked={ !! fields.default_comment_status }
+						onChange={ handleAutosavingToggle( 'default_comment_status' ) }
+						label={ translate( 'Allow people to post comments on new articles' ) }
+					/>
+				</DisabledComponent>
 				<FormSettingExplanation>
 					{ translate( 'These settings may be overridden for individual articles.' ) }
 				</FormSettingExplanation>

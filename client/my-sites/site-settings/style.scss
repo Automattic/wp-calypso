@@ -44,6 +44,15 @@
 		font-weight: 700;
 	}
 
+	.components-toggle-control__label {
+		font-weight: 400;
+		margin-bottom: 1px;
+	}
+
+	.components-toggle-control .components-base-control__field {
+		margin-bottom: 7px;
+	}
+
 	legend + label,
 	label + label,
 	li label,
