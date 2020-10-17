@@ -17,6 +17,7 @@ import { render, act, fireEvent } from '@testing-library/react';
  */
 import CompositeCheckout from '../composite-checkout';
 import { StripeHookProvider } from 'calypso/lib/stripe';
+import ShoppingCartProvider from '../hooks/use-shopping-cart-manager/shopping-cart-provider';
 
 /**
  * Mocked dependencies
@@ -235,18 +236,22 @@ describe( 'CompositeCheckout', () => {
 
 		MyCheckout = ( { cartChanges, additionalProps } ) => (
 			<ReduxProvider store={ store }>
-				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-					<CompositeCheckout
-						siteSlug={ 'foo.com' }
-						setCart={ mockSetCartEndpoint }
-						getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
-						getStoredCards={ async () => [] }
-						allowedPaymentMethods={ [ 'paypal' ] }
-						onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
-						overrideCountryList={ countryList }
-						{ ...additionalProps }
-					/>
-				</StripeHookProvider>
+				<ShoppingCartProvider
+					cartKey={ 'foo.com' }
+					setCart={ mockSetCartEndpoint }
+					getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
+				>
+					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+						<CompositeCheckout
+							siteSlug={ 'foo.com' }
+							getStoredCards={ async () => [] }
+							allowedPaymentMethods={ [ 'paypal' ] }
+							onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
+							overrideCountryList={ countryList }
+							{ ...additionalProps }
+						/>
+					</StripeHookProvider>
+				</ShoppingCartProvider>
 			</ReduxProvider>
 		);
 	} );
