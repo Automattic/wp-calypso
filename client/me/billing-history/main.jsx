@@ -32,7 +32,7 @@ export function BillingHistoryList( { siteId = null, getReceiptUrlFor = billingH
 }
 
 const BillingHistory = ( { translate } ) => (
-	<Main className="billing-history">
+	<Main className="billing-history is-wide-layout">
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 		<MeSidebarNavigation />

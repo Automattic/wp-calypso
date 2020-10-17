@@ -145,7 +145,7 @@ class PurchasesList extends Component {
 		}
 
 		return (
-			<Main className="purchases-list">
+			<Main className="purchases-list is-wide-layout">
 				<QueryUserPurchases userId={ this.props.userId } />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />

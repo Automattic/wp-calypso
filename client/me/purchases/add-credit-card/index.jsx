@@ -28,7 +28,7 @@ function AddCreditCard( props ) {
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 
 	return (
-		<Main>
+		<Main className="add-credit-card is-wide-layout">
 			<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
 			<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
