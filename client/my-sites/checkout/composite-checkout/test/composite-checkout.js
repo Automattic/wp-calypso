@@ -234,12 +234,13 @@ describe( 'CompositeCheckout', () => {
 			};
 		} );
 
-		MyCheckout = ( { cartChanges, additionalProps } ) => (
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => (
 			<ReduxProvider store={ store }>
 				<ShoppingCartProvider
 					cartKey={ 'foo.com' }
 					setCart={ mockSetCartEndpoint }
 					getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
+					{ ...additionalCartProps }
 				>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CompositeCheckout
@@ -752,23 +753,14 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
-	it( 'displays loading while old cart store is loading', async () => {
+	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
 		let renderResult;
-		const additionalProps = {
-			cart: { hasLoadedFromServer: false, hasPendingServerUpdates: false },
-		};
+		const additionalCartProps = { cartKey: undefined };
 		await act( async () => {
-			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();
-	} );
-
-	it( 'displays loading while old cart store has pending updates', async () => {
-		let renderResult;
-		const additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: true } };
-		await act( async () => {
-			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
+			renderResult = render(
+				<MyCheckout additionalCartProps={ additionalCartProps } />,
+				container
+			);
 		} );
 		const { getByText } = renderResult;
 		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();
