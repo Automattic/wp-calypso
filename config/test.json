@@ -25,7 +25,7 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
-		"async-payments": true,
+		"async-payments": false,
 		"ad-tracking": false,
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
