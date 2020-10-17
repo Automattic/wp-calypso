@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { RequestCart, ResponseCart } from './types';
-import useShoppingCartManager from './index';
+import useShoppingCartManager from './use-shopping-cart-manager';
 import ShoppingCartContext from './shopping-cart-context';
 
 export default function ShoppingCartProvider( {
