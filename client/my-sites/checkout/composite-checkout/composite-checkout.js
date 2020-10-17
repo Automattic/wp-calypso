@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -64,7 +65,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import useShoppingCart from './hooks/use-shopping-cart-manager/use-shopping-cart';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
 import { colors } from '@automattic/color-studio';

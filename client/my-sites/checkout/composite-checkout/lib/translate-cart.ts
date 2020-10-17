@@ -2,15 +2,15 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-
-/**
- * Internal dependencies
- */
 import {
 	ResponseCart,
 	ResponseCartProduct,
 	TempResponseCartProduct,
-} from '../hooks/use-shopping-cart-manager/types';
+} from '@automattic/shopping-cart';
+
+/**
+ * Internal dependencies
+ */
 import {
 	WPCOMCart,
 	WPCOMCartItem,

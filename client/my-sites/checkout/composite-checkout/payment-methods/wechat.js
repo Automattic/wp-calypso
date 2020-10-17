@@ -18,6 +18,7 @@ import {
 	useDispatch,
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -29,7 +30,6 @@ import {
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import WeChatPaymentQRcodeUnstyled from 'calypso/my-sites/checkout/checkout/wechat-payment-qrcode';
-import useShoppingCart from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/use-shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 

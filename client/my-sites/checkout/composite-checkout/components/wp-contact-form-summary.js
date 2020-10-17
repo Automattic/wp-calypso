@@ -4,12 +4,12 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useSelect } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { SummaryLine, SummaryDetails } from './summary-details';
-import useShoppingCart from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/use-shopping-cart';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 
 export default function WPContactFormSummary( {

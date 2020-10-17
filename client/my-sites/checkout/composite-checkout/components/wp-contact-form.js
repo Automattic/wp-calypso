@@ -13,6 +13,7 @@ import {
 	useLineItems,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -34,7 +35,6 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
-import useShoppingCart from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/use-shopping-cart';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
 import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
 import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';

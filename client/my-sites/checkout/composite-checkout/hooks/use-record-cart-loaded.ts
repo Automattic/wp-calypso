@@ -2,15 +2,11 @@
  * External dependencies
  */
 import { useRef, useEffect } from 'react';
-
-/**
- * Internal dependencies
- */
 import type {
 	ResponseCart,
 	RequestCartProduct,
 	ReactStandardAction,
-} from './use-shopping-cart-manager/types';
+} from '@automattic/shopping-cart';
 
 export default function useRecordCartLoaded( {
 	recordEvent,
