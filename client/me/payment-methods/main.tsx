@@ -15,7 +15,7 @@ import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
-export function PaymentMethods(): JSX.Element {
+export default function PaymentMethods(): JSX.Element {
 	const translate = useTranslate();
 
 	return (

@@ -7,6 +7,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
+import * as paymentMethodsController from 'calypso/me/payment-methods/controller';
 import * as billingController from 'calypso/me/billing-history/controller';
 import * as pendingController from 'calypso/me/pending-payments/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
@@ -18,6 +19,13 @@ import { siteSelection } from 'calypso/my-sites/controller';
 
 export default ( router ) => {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
+		router(
+			paths.paymentMethods,
+			sidebar,
+			paymentMethodsController.paymentMethods,
+			makeLayout,
+			clientRender
+		);
 		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 
 		// redirect legacy urls
