@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -619,7 +618,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	plans() {
-		const { canUserManageOptions, path, site, translate } = this.props;
+		const { canUserManageOptions, path, site, siteSuffix, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -637,25 +636,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		const planLink = '/plans' + this.props.siteSuffix;
-
-		const linkClass = classNames( {
-			selected: itemLinkMatches( [ '/plans' ], path ),
-		} );
-
-		const tipTarget = 'plan';
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className={ linkClass } data-tip-target={ tipTarget }>
-				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<span className="menu-link-text" data-e2e-sidebar="Plan">
-						{ translate( 'Plans', { context: 'noun' } ) }
-					</span>
-				</a>
-			</li>
+			<SidebarItem
+				label={ translate( 'Plans', { context: 'noun' } ) }
+				tipTarget="plan"
+				selected={ itemLinkMatches( '/plans', path ) }
+				link={ '/plans' + siteSuffix }
+				onNavigate={ this.trackPlanClick }
+				preloadSectionName="plans"
+				forceInternalLink
+				expandSection={ this.expandPlanSection }
+			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackStoreClick = () => {
