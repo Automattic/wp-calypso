@@ -11,7 +11,6 @@ import DISPLAY_TYPES from './display-types';
 /**
  * Rules
  */
-import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
 import detectSurveys from 'lib/post-normalizer/rule-content-detect-surveys';
@@ -28,7 +27,6 @@ import makeSiteIdSafeForApi from 'lib/post-normalizer/rule-make-site-id-safe-for
 import pickPrimaryTag from 'lib/post-normalizer/rule-pick-primary-tag';
 import preventWidows from 'lib/post-normalizer/rule-prevent-widows';
 import safeImageProperties from 'lib/post-normalizer/rule-safe-image-properties';
-import stripHtml from 'lib/post-normalizer/rule-strip-html';
 import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
@@ -99,7 +97,6 @@ export function classifyPost( post ) {
 
 const fastPostNormalizationRules = flow( [
 	decodeEntities,
-	stripHtml,
 	preventWidows,
 	makeSiteIdSafeForApi,
 	pickPrimaryTag,
@@ -118,7 +115,6 @@ const fastPostNormalizationRules = flow( [
 		detectSurveys,
 		linkJetpackCarousels,
 	] ),
-	createBetterExcerpt,
 	pickCanonicalImage,
 	pickCanonicalMedia,
 	classifyPost,
