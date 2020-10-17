@@ -63,7 +63,6 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useProductVariants } from './hooks/product-variants';
-import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useShoppingCart from './hooks/use-shopping-cart-manager/use-shopping-cart';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
@@ -619,46 +618,44 @@ export default function CompositeCheckout( {
 				selectedSite={ { slug: siteSlug } }
 				isLoadingCart={ isInitialCartLoading }
 			/>
-			<CartProvider cart={ responseCart }>
-				<CheckoutProvider
-					items={ itemsForCheckout }
-					total={ total }
-					onPaymentComplete={ onPaymentComplete }
-					showErrorMessage={ showErrorMessage }
-					showInfoMessage={ showInfoMessage }
-					showSuccessMessage={ showSuccessMessage }
-					onEvent={ recordEvent }
-					paymentMethods={ paymentMethods }
-					paymentProcessors={ paymentProcessors }
-					registry={ defaultRegistry }
-					isLoading={ isLoading }
-					isValidating={ isCartPendingUpdate }
-					theme={ theme }
-				>
-					<WPCheckout
-						removeProductFromCart={ removeProductFromCart }
-						updateLocation={ updateLocation }
-						applyCoupon={ applyCoupon }
-						removeCoupon={ removeCoupon }
-						couponStatus={ couponStatus }
-						changePlanLength={ changePlanLength }
-						siteId={ siteId }
-						siteUrl={ siteSlug }
-						countriesList={ countriesList }
-						StateSelect={ StateSelect }
-						getItemVariants={ getItemVariants }
-						responseCart={ responseCart }
-						addItemToCart={ addItemWithEssentialProperties }
-						subtotal={ subtotal }
-						isCartPendingUpdate={ isCartPendingUpdate }
-						CheckoutTerms={ CheckoutTerms }
-						showErrorMessageBriefly={ showErrorMessageBriefly }
-						isLoggedOutCart={ isLoggedOutCart }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						infoMessage={ infoMessage }
-					/>
-				</CheckoutProvider>
-			</CartProvider>
+			<CheckoutProvider
+				items={ itemsForCheckout }
+				total={ total }
+				onPaymentComplete={ onPaymentComplete }
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				onEvent={ recordEvent }
+				paymentMethods={ paymentMethods }
+				paymentProcessors={ paymentProcessors }
+				registry={ defaultRegistry }
+				isLoading={ isLoading }
+				isValidating={ isCartPendingUpdate }
+				theme={ theme }
+			>
+				<WPCheckout
+					removeProductFromCart={ removeProductFromCart }
+					updateLocation={ updateLocation }
+					applyCoupon={ applyCoupon }
+					removeCoupon={ removeCoupon }
+					couponStatus={ couponStatus }
+					changePlanLength={ changePlanLength }
+					siteId={ siteId }
+					siteUrl={ siteSlug }
+					countriesList={ countriesList }
+					StateSelect={ StateSelect }
+					getItemVariants={ getItemVariants }
+					responseCart={ responseCart }
+					addItemToCart={ addItemWithEssentialProperties }
+					subtotal={ subtotal }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					CheckoutTerms={ CheckoutTerms }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					isLoggedOutCart={ isLoggedOutCart }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					infoMessage={ infoMessage }
+				/>
+			</CheckoutProvider>
 		</React.Fragment>
 	);
 }

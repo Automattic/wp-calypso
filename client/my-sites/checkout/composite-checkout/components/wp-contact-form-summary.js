@@ -9,7 +9,7 @@ import { useSelect } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import { SummaryLine, SummaryDetails } from './summary-details';
-import { useCart } from 'calypso/my-sites/checkout/composite-checkout/cart-provider';
+import useShoppingCart from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/use-shopping-cart';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 
 export default function WPContactFormSummary( {
@@ -18,7 +18,7 @@ export default function WPContactFormSummary( {
 	isLoggedOutCart,
 } ) {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 	const isRenewal = cart && hasOnlyRenewalItems( cart );
 
 	// Check if paymentData is empty
