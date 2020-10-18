@@ -15,7 +15,10 @@ import { Card, Dialog } from '@automattic/components';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import notices from 'calypso/notices';
-import { domainManagementContactsPrivacy, domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementContactsPrivacy,
+	domainManagementEdit,
+} from 'calypso/my-sites/domains/paths';
 import wp from 'calypso/lib/wp';
 import { successNotice } from 'calypso/state/notices/actions';
 import { UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES } from 'calypso/lib/url/support';

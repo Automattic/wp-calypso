@@ -15,7 +15,10 @@ import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getPlanClass } from 'calypso/lib/plans';
-import { getCurrentUserEmail, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import user from 'calypso/lib/user';
 

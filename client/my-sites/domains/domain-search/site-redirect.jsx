@@ -18,7 +18,11 @@ import SiteRedirectStep from './site-redirect-step';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 

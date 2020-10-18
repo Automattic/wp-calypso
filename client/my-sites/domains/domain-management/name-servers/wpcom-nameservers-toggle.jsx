@@ -12,7 +12,11 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import Toggle from 'calypso/components/forms/form-toggle';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 class NameserversToggle extends React.PureComponent {
 	static propTypes = {

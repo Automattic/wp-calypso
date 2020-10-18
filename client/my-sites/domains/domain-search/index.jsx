@@ -31,11 +31,18 @@ import {
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'calypso/state/domains/actions';
+import {
+	recordAddDomainButtonClick,
+	recordRemoveDomainButtonClick,
+} from 'calypso/state/domains/actions';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';

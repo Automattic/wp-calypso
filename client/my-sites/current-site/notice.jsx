@@ -17,7 +17,10 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { hasDomainCredit, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import {
+	hasDomainCredit,
+	isCurrentUserCurrentPlanOwner,
+} from 'calypso/state/sites/plans/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForFreeToPaidUpsell from 'calypso/state/selectors/is-eligible-for-free-to-paid-upsell';

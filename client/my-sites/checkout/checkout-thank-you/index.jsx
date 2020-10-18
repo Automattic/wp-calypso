@@ -65,12 +65,19 @@ import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import TransferPending from './transfer-pending';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { isJetpackBusinessPlan, isWpComBusinessPlan, shouldFetchSitePlans } from 'calypso/lib/plans';
+import {
+	isJetpackBusinessPlan,
+	isWpComBusinessPlan,
+	shouldFetchSitePlans,
+} from 'calypso/lib/plans';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'calypso/components/notice';
-import { domainManagementList, domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementList,
+	domainManagementTransferInPrecheck,
+} from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';

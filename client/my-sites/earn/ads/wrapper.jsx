@@ -40,7 +40,11 @@ import {
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import ActionCard from 'calypso/components/action-card';
 

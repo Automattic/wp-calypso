@@ -13,7 +13,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
 import Main from 'calypso/components/main';
 import getSites from 'calypso/state/selectors/get-sites';
-import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import CartData from 'calypso/components/data/cart';
 import DomainSearch from './domain-search';

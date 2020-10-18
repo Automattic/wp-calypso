@@ -17,7 +17,11 @@ import FormFooter from 'calypso/my-sites/domains/domain-management/components/fo
 import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'calypso/lib/domains/nameservers';
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;

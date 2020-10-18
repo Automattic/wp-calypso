@@ -15,7 +15,11 @@ import LazyRender from 'react-lazily-render';
 import config from 'calypso/config';
 import { Button } from '@automattic/components';
 import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import DocumentHead from 'calypso/components/data/document-head';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';

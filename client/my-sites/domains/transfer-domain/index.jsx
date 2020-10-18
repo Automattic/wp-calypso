@@ -21,7 +21,11 @@ import { addItem, addItems } from 'calypso/lib/cart/actions';
 import Notice from 'calypso/components/notice';
 import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';

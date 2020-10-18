@@ -3,19 +3,20 @@
 	display: grid;
 }
 @mixin grid-template-columns( $cols, $gap, $fr ) {
-	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr;
+	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap
+		$fr $gap $fr $gap $fr;
 	grid-template-columns: repeat( $cols, [col-start] minmax( 0, $fr ) );
 	grid-column-gap: $gap;
 }
 @mixin grid-row( $row-start, $span ) {
 	-ms-grid-row: $row-start;
 	-ms-grid-row-span: $span;
-		grid-row: $row-start / span $span;
+	grid-row: $row-start / span $span;
 }
 @mixin grid-column( $col-start, $span ) {
 	-ms-grid-column: $col-start * 2 - 1;
-	-ms-grid-column-span: $span + ($span - 1);
-		grid-column: $col-start / span $span;
+	-ms-grid-column-span: $span + ( $span - 1 );
+	grid-column: $col-start / span $span;
 }
 
 .customer-home__heading {
@@ -104,7 +105,6 @@
 	color: var( --color-text-subtle );
 	margin: 0 0 1rem;
 }
-
 
 .customer-home__main .vertical-nav {
 	margin: -0.5rem 0;

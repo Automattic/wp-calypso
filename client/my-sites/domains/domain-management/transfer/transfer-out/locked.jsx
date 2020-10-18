@@ -9,7 +9,10 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { fetchWapiDomainInfo, requestTransferCode } from 'calypso/lib/domains/wapi-domain-info/actions';
+import {
+	fetchWapiDomainInfo,
+	requestTransferCode,
+} from 'calypso/lib/domains/wapi-domain-info/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 

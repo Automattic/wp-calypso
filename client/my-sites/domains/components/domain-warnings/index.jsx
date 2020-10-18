@@ -17,7 +17,11 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
-import { type as domainTypes, transferStatus, gdprConsentStatus } from 'calypso/lib/domains/constants';
+import {
+	type as domainTypes,
+	transferStatus,
+	gdprConsentStatus,
+} from 'calypso/lib/domains/constants';
 import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
 import { isSubdomain } from 'calypso/lib/domains';
 import {

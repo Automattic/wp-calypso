@@ -11,7 +11,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { acceptTransfer, cancelTransferRequest } from 'calypso/lib/domains/wapi-domain-info/actions';
+import {
+	acceptTransfer,
+	cancelTransferRequest,
+} from 'calypso/lib/domains/wapi-domain-info/actions';
 import notices from 'calypso/notices';
 import { getMaintenanceMessageFromError } from '../../../../../landing/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

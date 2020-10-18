@@ -88,7 +88,10 @@ class CurrentSite extends Component {
 					<AsyncLoad require="calypso/my-sites/current-site/domain-warnings" placeholder={ null } />
 				) }
 				{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
-					<AsyncLoad require="calypso/my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
+					<AsyncLoad
+						require="calypso/my-sites/current-site/stale-cart-items-notice"
+						placeholder={ null }
+					/>
 				) }
 				{ selectedSite && isEnabled( 'current-site/notice' ) && (
 					<AsyncLoad

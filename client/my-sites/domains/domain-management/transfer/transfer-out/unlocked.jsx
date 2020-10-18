@@ -17,7 +17,10 @@ import {
 } from 'calypso/lib/domains/wapi-domain-info/actions';
 import notices from 'calypso/notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from 'calypso/lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR,
+} from 'calypso/lib/url/support';
 
 class Unlocked extends React.Component {
 	state = {

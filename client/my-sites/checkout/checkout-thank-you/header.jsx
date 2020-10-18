@@ -25,7 +25,10 @@ import { isGSuiteExtraLicenseProductSlug, isGSuiteProductSlug } from 'calypso/li
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { localize } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
-import { domainManagementEdit, domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementTransferInPrecheck,
+} from 'calypso/my-sites/domains/paths';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import Gridicon from 'calypso/components/gridicon';

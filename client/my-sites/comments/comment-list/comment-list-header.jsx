@@ -20,7 +20,11 @@ import { getSiteComments } from 'calypso/state/comments/selectors';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 
 function goBack() {
 	window.history.back();

@@ -29,7 +29,11 @@ import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings'
 import FetchError from './fetch-error';
 import Notice from 'calypso/components/notice';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**

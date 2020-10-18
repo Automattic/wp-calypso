@@ -13,7 +13,10 @@ import { map, take } from 'lodash';
 import Comment from 'calypso/my-sites/comments/comment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { getSiteCommentParentDepth, getSiteCommentRepliesTree } from 'calypso/state/comments/selectors';
+import {
+	getSiteCommentParentDepth,
+	getSiteCommentRepliesTree,
+} from 'calypso/state/comments/selectors';
 
 /**
  * Style dependencies

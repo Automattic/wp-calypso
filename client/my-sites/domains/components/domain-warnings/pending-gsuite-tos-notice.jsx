@@ -14,7 +14,11 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

@@ -13,7 +13,11 @@ import { connect } from 'react-redux';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { Button } from '@automattic/components';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 class CustomNameserversRow extends React.PureComponent {
 	static propTypes = {

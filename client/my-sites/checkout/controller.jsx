@@ -25,7 +25,10 @@ import { sites } from 'calypso/my-sites/controller';
 import CartData from 'calypso/components/data/cart';
 import userFactory from 'calypso/lib/user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { retrieveSignupDestination, setSignupCheckoutPageUnloaded } from 'calypso/signup/storageUtils';
+import {
+	retrieveSignupDestination,
+	setSignupCheckoutPageUnloaded,
+} from 'calypso/signup/storageUtils';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;

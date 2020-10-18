@@ -17,7 +17,10 @@ import Notice from 'calypso/components/notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import Main from 'calypso/components/main';
-import { domainManagementEdit, domainManagementDomainConnectMapping } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEdit,
+	domainManagementDomainConnectMapping,
+} from 'calypso/my-sites/domains/paths';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import SectionHeader from 'calypso/components/section-header';
 import wp from 'calypso/lib/wp';

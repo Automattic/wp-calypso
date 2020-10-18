@@ -32,7 +32,11 @@ import {
 } from 'calypso/state/domains/site-redirect/actions';
 import { CompactCard as Card } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getSiteRedirectLocation } from 'calypso/state/domains/site-redirect/selectors';
 import { withoutHttp } from 'calypso/lib/url';
