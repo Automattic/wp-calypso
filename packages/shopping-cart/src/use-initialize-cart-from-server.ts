@@ -10,7 +10,7 @@ import debugFactory from 'debug';
 import { convertRawResponseCartToResponseCart } from './cart-functions';
 import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-initialize-cart-from-server' );
+const debug = debugFactory( 'shopping-cart:use-initialize-cart-from-server' );
 
 export default function useInitializeCartFromServer(
 	cacheStatus: CacheStatus,

@@ -13,7 +13,7 @@ import {
 } from './cart-functions';
 import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-cart-update-and-revalidate' );
+const debug = debugFactory( 'shopping-cart:use-cart-update-and-revalidate' );
 
 export default function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,

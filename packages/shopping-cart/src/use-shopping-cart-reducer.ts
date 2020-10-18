@@ -27,7 +27,7 @@ import {
 	CouponStatus,
 } from './types';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-shopping-cart-reducer' );
+const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
 
 export default function useShoppingCartReducer(): [
 	ShoppingCartState,
