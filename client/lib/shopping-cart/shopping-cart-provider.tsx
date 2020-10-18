@@ -21,43 +21,15 @@ export default function ShoppingCartProvider( {
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 	children: JSX.Element;
 } ): JSX.Element {
-	const {
-		removeProductFromCart,
-		couponStatus,
-		applyCoupon,
-		removeCoupon,
-		updateLocation,
-		replaceProductInCart,
-		isLoading,
-		isPendingUpdate,
-		responseCart,
-		loadingError,
-		loadingErrorType,
-		addProductsToCart,
-		reloadFromServer,
-		replaceProductsInCart,
-	} = useShoppingCartManager( {
+	const shoppingCartManager = useShoppingCartManager( {
 		cartKey,
 		setCart,
 		getCart,
 	} );
 
-	const value = {
-		removeProductFromCart,
-		couponStatus,
-		applyCoupon,
-		removeCoupon,
-		updateLocation,
-		replaceProductInCart,
-		isLoading,
-		isPendingUpdate,
-		responseCart,
-		loadingError,
-		loadingErrorType,
-		addProductsToCart,
-		reloadFromServer,
-		replaceProductsInCart,
-	};
-
-	return <ShoppingCartContext.Provider value={ value }>{ children }</ShoppingCartContext.Provider>;
+	return (
+		<ShoppingCartContext.Provider value={ shoppingCartManager }>
+			{ children }
+		</ShoppingCartContext.Provider>
+	);
 }

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 /**
  * Internal dependencies
@@ -107,20 +107,40 @@ export default function useShoppingCartManager( {
 
 	useReloadCartIfCartKeyChanges( cartKey, reloadFromServer );
 
-	return {
-		isLoading: cacheStatus === 'fresh' || ! canInitializeCart,
-		loadingError: cacheStatus === 'error' ? loadingError : null,
-		loadingErrorType,
-		isPendingUpdate: cacheStatus !== 'valid' || ! canInitializeCart,
-		addProductsToCart,
-		removeProductFromCart,
-		applyCoupon,
-		removeCoupon,
-		couponStatus,
-		updateLocation,
-		replaceProductInCart,
-		replaceProductsInCart,
-		reloadFromServer,
-		responseCart,
-	};
+	const shoppingCartManager = useMemo(
+		() => ( {
+			isLoading: cacheStatus === 'fresh' || ! canInitializeCart,
+			loadingError: cacheStatus === 'error' ? loadingError : null,
+			loadingErrorType,
+			isPendingUpdate: cacheStatus !== 'valid' || ! canInitializeCart,
+			addProductsToCart,
+			removeProductFromCart,
+			applyCoupon,
+			removeCoupon,
+			couponStatus,
+			updateLocation,
+			replaceProductInCart,
+			replaceProductsInCart,
+			reloadFromServer,
+			responseCart,
+		} ),
+		[
+			cacheStatus,
+			canInitializeCart,
+			loadingError,
+			loadingErrorType,
+			addProductsToCart,
+			removeProductFromCart,
+			applyCoupon,
+			removeCoupon,
+			couponStatus,
+			updateLocation,
+			replaceProductInCart,
+			replaceProductsInCart,
+			reloadFromServer,
+			responseCart,
+		]
+	);
+
+	return shoppingCartManager;
 }
