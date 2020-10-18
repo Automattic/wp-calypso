@@ -176,6 +176,7 @@
 		"@automattic/material-design-icons": "^1.0.0",
 		"@automattic/media-library": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@automattic/shopping-cart": "^1.0.0",
 		"@automattic/tree-select": "^1.0.3",
 		"@automattic/typography": "^1.0.0",
 		"@automattic/viewport": "^1.0.0",
