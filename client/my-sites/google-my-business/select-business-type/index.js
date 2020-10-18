@@ -6,31 +6,31 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ActionCard from 'components/action-card';
+import ActionCard from 'calypso/components/action-card';
 import { Button, Card } from '@automattic/components';
-import canCurrentUser from 'state/selectors/can-current-user';
-import CardHeading from 'components/card-heading';
-import DocumentHead from 'components/data/document-head';
-import ExternalLink from 'components/external-link';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import HeaderCake from 'components/header-cake';
-import KeyringConnectButton from 'blocks/keyring-connect-button';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { withEnhancers } from 'state/utils';
-import { connectGoogleMyBusinessAccount } from 'state/google-my-business/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import CardHeading from 'calypso/components/card-heading';
+import DocumentHead from 'calypso/components/data/document-head';
+import ExternalLink from 'calypso/components/external-link';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
+import HeaderCake from 'calypso/components/header-cake';
+import KeyringConnectButton from 'calypso/blocks/keyring-connect-button';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { withEnhancers } from 'calypso/state/utils';
+import { connectGoogleMyBusinessAccount } from 'calypso/state/google-my-business/actions';
 
 /**
  * Style dependencies

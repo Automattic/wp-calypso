@@ -11,26 +11,26 @@ import { includes, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
-import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Gridicon from 'components/gridicon';
-import SupportInfo from 'components/support-info';
-import ExternalLink from 'components/external-link';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import Gridicon from 'calypso/components/gridicon';
+import SupportInfo from 'calypso/components/support-info';
+import ExternalLink from 'calypso/components/external-link';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 	PLAN_JETPACK_PERSONAL,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,

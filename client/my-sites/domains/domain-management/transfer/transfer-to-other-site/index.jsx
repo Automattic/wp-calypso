@@ -12,23 +12,23 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import SiteSelector from 'components/site-selector';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import getSites from 'state/selectors/get-sites';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import { domainManagementList, domainManagementTransfer } from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
+import SiteSelector from 'calypso/components/site-selector';
+import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import getSites from 'calypso/state/selectors/get-sites';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import { domainManagementList, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import TransferConfirmationDialog from './confirmation-dialog';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import wp from 'lib/wp';
-import { isWpComFreePlan } from 'lib/plans';
-import { requestSites } from 'state/sites/actions';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import wp from 'calypso/lib/wp';
+import { isWpComFreePlan } from 'calypso/lib/plans';
+import { requestSites } from 'calypso/state/sites/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 const wpcom = wp.undocumented();
 

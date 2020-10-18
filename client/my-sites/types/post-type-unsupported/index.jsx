@@ -11,10 +11,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSiteSlug } from 'state/sites/selectors';
+import EmptyContent from 'calypso/components/empty-content';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Constants

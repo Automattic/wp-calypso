@@ -9,7 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isPlan } from 'lib/products-values';
+import { isPlan } from 'calypso/lib/products-values';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import TermsOfService from './terms-of-service';

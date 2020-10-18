@@ -9,31 +9,31 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
-import config from 'config';
-import { isPartnerPurchase } from 'lib/purchases';
+import Main from 'calypso/components/main';
+import CurrentTheme from 'calypso/my-sites/themes/current-theme';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import config from 'calypso/config';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
 import { connectOptions } from './theme-options';
-import UpsellNudge from 'blocks/upsell-nudge';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
-} from 'lib/plans/constants';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
+} from 'calypso/lib/plans/constants';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
-import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { getByPurchaseId } from 'state/purchases/selectors';
-import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (

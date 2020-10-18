@@ -8,19 +8,19 @@ import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import { intersection, difference, includes, flowRight as compose } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
-import KeyedSuggestions from 'components/keyed-suggestions';
-import StickyPanel from 'components/sticky-panel';
-import config from 'config';
+import Search from 'calypso/components/search';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
+import KeyedSuggestions from 'calypso/components/keyed-suggestions';
+import StickyPanel from 'calypso/components/sticky-panel';
+import config from 'calypso/config';
 import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
-import { getThemeFilters, getThemeFilterToTermTable } from 'state/themes/selectors';
+import { getThemeFilters, getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
 
 /**
  * Style dependencies

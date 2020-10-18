@@ -10,17 +10,17 @@ import { compact, find, flow, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
-import { getPostTypeLabel } from 'state/post-types/selectors';
-import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
-import urlSearch from 'lib/url-search';
-import QueryPostCounts from 'components/data/query-post-counts';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'calypso/state/posts/counts/selectors';
+import urlSearch from 'calypso/lib/url-search';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
 import AuthorSegmented from './author-segmented';
 
 /**

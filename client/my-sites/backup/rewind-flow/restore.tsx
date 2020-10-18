@@ -10,16 +10,16 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
  */
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
-import { rewindRestore } from 'state/activity-log/actions';
+import { rewindRestore } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
-import getInProgressRewindPercentComplete from 'state/selectors/get-in-progress-rewind-percent-complete';
-import getInProgressRewindStatus from 'state/selectors/get-in-progress-rewind-status';
-import getRewindState from 'state/selectors/get-rewind-state';
-import Gridicon from 'components/gridicon';
+import getInProgressRewindPercentComplete from 'calypso/state/selectors/get-in-progress-rewind-percent-complete';
+import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import Gridicon from 'calypso/components/gridicon';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
-import QueryRewindState from 'components/data/query-rewind-state';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 

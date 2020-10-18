@@ -10,11 +10,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import getNetworkSites from 'state/selectors/get-network-sites';
-import isConnectedSecondaryNetworkSite from 'state/selectors/is-connected-secondary-network-site';
-import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
-import PluginsStore from 'lib/plugins/store';
-import SectionHeader from 'components/section-header';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
+import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
+import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
+import PluginsStore from 'calypso/lib/plugins/store';
+import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies

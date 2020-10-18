@@ -8,11 +8,11 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Task from 'my-sites/customer-home/cards/tasks/task';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteUrl } from 'state/sites/selectors';
-import { TASK_SITE_SETUP_CHECKLIST_ECOMMERCE } from 'my-sites/customer-home/cards/constants';
-import earnSectionImage from 'assets/images/earn/earn-section.svg';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteUrl } from 'calypso/state/sites/selectors';
+import { TASK_SITE_SETUP_CHECKLIST_ECOMMERCE } from 'calypso/my-sites/customer-home/cards/constants';
+import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 
 export const SiteSetupListEcommerce = ( { siteUrl } ) => {
 	const translate = useTranslate();

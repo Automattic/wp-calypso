@@ -6,11 +6,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/lib/translate-cart';
-import type { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/types/checkout-cart';
-import type { DomainContactDetails } from 'my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
-import type { CartItemExtra } from 'lib/cart-values/types';
-import { isGSuiteProductSlug } from 'lib/gsuite';
+import { getNonProductWPCOMCartItemTypes } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
+import type { WPCOMCartItem } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-cart';
+import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
+import type { CartItemExtra } from 'calypso/lib/cart-values/types';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 
 const debug = debugFactory( 'calypso:composite-checkout:transaction-endpoint' );
 

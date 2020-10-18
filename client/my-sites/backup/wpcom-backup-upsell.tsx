@@ -10,22 +10,22 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { preventWidows } from 'lib/formatting';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PromoCard from 'components/promo-section/promo-card';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { preventWidows } from 'calypso/lib/formatting';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 /**
  * Asset dependencies
  */
-import JetpackBackupSVG from 'assets/images/illustrations/jetpack-backup.svg';
+import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import VaultPressLogo from './vaultpress-logo.svg';
 import './style.scss';
 

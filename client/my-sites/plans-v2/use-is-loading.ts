@@ -6,12 +6,12 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { isProductsListFetching, getProductsList } from 'state/products-list/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { isProductsListFetching, getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	isRequestingSiteProducts,
 	getAvailableProductsBySiteId,
-} from 'state/sites/products/selectors';
+} from 'calypso/state/sites/products/selectors';
 
 type RawData = {
 	isFetching: boolean | null;

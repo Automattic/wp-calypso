@@ -14,22 +14,22 @@ import {
 	FEATURE_GOOGLE_MY_BUSINESS,
 	PLAN_BUSINESS,
 	PLAN_JETPACK_BUSINESS,
-} from 'lib/plans/constants';
-import getGoogleMyBusinessConnectedLocation from 'state/selectors/get-google-my-business-connected-location';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite as getIsJetpackSite } from 'state/sites/selectors';
+} from 'calypso/lib/plans/constants';
+import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite as getIsJetpackSite } from 'calypso/state/sites/selectors';
 import MarketingToolsFeature from './feature';
 import MarketingToolsFeatureButtonWithPlanGate from './feature-button-with-plan-gate';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import QueryKeyringServices from 'components/data/query-keyring-services';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 
 /**
  * Types
  */
-import * as T from 'types';
+import * as T from 'calypso/types';
 
 interface Props {
 	connectedGoogleMyBusinessLocation?: null | any[];

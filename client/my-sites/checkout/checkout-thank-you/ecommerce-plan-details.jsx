@@ -10,19 +10,19 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isEnabled } from 'config';
-import { isEcommerce, isGoogleApps } from 'lib/products-values';
-import PurchaseDetail from 'components/purchase-detail';
+import { isEnabled } from 'calypso/config';
+import { isEcommerce, isGoogleApps } from 'calypso/lib/products-values';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**
  * Image dependencies
  */
-import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
-import conciergeImage from 'assets/images/illustrations/jetpack-concierge.svg';
-import updatesImage from 'assets/images/illustrations/updates.svg';
+import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
+import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
+import updatesImage from 'calypso/assets/images/illustrations/updates.svg';
 
 function trackOnboardingButtonClick() {
 	recordTracksEvent( 'calypso_checkout_thank_you_onboarding_click' );

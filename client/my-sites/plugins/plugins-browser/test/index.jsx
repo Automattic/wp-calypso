@@ -34,7 +34,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies

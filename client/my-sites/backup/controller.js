@@ -8,19 +8,19 @@ import React from 'react';
  */
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import BackupsPage from './main';
-import UpsellSwitch from 'components/jetpack/upsell-switch';
+import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import BackupUpsell from './backup-upsell';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
-import BackupPlaceholder from 'components/jetpack/backup-placeholder';
-import FormattedHeader from 'components/formatted-header';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import getRewindState from 'state/selectors/get-rewind-state';
-import isJetpackSiteMultiSite from 'state/sites/selectors/is-jetpack-site-multi-site';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import QueryRewindState from 'components/data/query-rewind-state';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { isJetpackBackupSlug } from 'lib/products-values';
-import HasVaultPressSwitch from 'components/jetpack/has-vaultpress-switch';
+import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
+import FormattedHeader from 'calypso/components/formatted-header';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isJetpackBackupSlug } from 'calypso/lib/products-values';
+import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 
 export function showUpsellIfNoBackup( context, next ) {
 	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;

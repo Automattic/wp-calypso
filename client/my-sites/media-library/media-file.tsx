@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isPrivateSite from 'state/selectors/is-private-site';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import ProxiedImage, { ProxiedImageProps, RenderedComponent } from './proxied-image';
-import { mediaURLToProxyConfig } from 'lib/media/utils';
+import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
 
 export interface MediaFileProps extends ProxiedImageProps {
 	src: string;

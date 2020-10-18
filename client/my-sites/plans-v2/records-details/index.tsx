@@ -11,18 +11,18 @@ import { useSelector } from 'react-redux';
  */
 import useItemPrice from '../use-item-price';
 import { slugToSelectorProduct, durationToText } from '../utils';
-import InfoPopover from 'components/info-popover';
-import { preventWidows } from 'lib/formatting';
-import { getJetpackProducts } from 'lib/products-values/translations';
-import PlanPrice from 'my-sites/plan-price';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getAvailableProductsBySiteId } from 'state/sites/products/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import InfoPopover from 'calypso/components/info-popover';
+import { preventWidows } from 'calypso/lib/formatting';
+import { getJetpackProducts } from 'calypso/lib/products-values/translations';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getAvailableProductsBySiteId } from 'calypso/state/sites/products/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Type dependencies
  */
-import type { ProductTranslations } from 'lib/products-values/types';
+import type { ProductTranslations } from 'calypso/lib/products-values/types';
 
 type Props = {
 	productSlug: string;

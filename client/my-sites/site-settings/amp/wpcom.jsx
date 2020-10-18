@@ -12,12 +12,12 @@ import page from 'page';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

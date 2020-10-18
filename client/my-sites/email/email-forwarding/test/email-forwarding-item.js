@@ -7,7 +7,7 @@ import renderer from 'react-test-renderer';
 /**
  * Internal dependencies
  */
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'calypso/state';
 import EmailForwardingItem from '../email-forwarding-item';
 
 describe( 'EmailForwardingItem', () => {

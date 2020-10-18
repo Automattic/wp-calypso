@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { CheckoutPaymentMethodSlug } from './checkout-payment-method-slug';
-import type { CartItemExtra } from 'lib/cart-values/types';
+import type { CartItemExtra } from 'calypso/lib/cart-values/types';
 
 /**
  * Amount object as used by composite-checkout. If that

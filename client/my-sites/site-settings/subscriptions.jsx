@@ -11,15 +11,15 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import SupportInfo from 'components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import SupportInfo from 'calypso/components/support-info';
 
 const Subscriptions = ( {
 	fields,

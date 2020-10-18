@@ -11,15 +11,15 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
-import { purchasesRoot } from 'me/purchases/paths';
-import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
-import { hasPendingGSuiteUsers } from 'lib/gsuite';
-import { isSubdomain } from 'lib/domains';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { type as domainTypes, transferStatus, gdprConsentStatus } from 'calypso/lib/domains/constants';
+import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
+import { isSubdomain } from 'calypso/lib/domains';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
@@ -28,15 +28,15 @@ import {
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-} from 'lib/url/support';
+} from 'calypso/lib/url/support';
 import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementTransferIn,
 	domainManagementManageConsent,
-} from 'my-sites/domains/paths';
-import TrackComponentView from 'lib/analytics/track-component-view';
+} from 'calypso/my-sites/domains/paths';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 /**
  * Style dependencies

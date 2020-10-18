@@ -7,7 +7,7 @@ import React, { ReactNode, FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
+import CardHeading from 'calypso/components/card-heading';
 
 interface Props {
 	children: ReactNode;

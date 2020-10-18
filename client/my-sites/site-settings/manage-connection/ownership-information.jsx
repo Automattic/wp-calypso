@@ -2,19 +2,19 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import HappychatButton from 'calypso/components/happychat/button';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 
 const OwnershipInformation = ( { isChatActive, isChatAvailable, translate } ) => (
 	<FormFieldset className="manage-connection__formfieldset has-divider is-top-only">

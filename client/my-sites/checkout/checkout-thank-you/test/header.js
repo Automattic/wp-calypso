@@ -14,12 +14,12 @@ jest.mock( 'lib/abtest', () => ( {
 } ) );
 
 jest.unmock( 'lib/plans' );
-const plans = require( 'lib/plans' );
+const plans = require( 'calypso/lib/plans' );
 plans.getFeatureByKey = () => null;
 plans.shouldFetchSitePlans = () => false;
 
 jest.unmock( 'lib/products-values' );
-const isDotComPlan = require( 'lib/products-values/is-dot-com-plan' );
+const isDotComPlan = require( 'calypso/lib/products-values/is-dot-com-plan' );
 isDotComPlan.isDotComPlan = jest.fn( () => false );
 
 jest.mock( 'lib/analytics/tracks', () => ( {

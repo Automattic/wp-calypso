@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
 
@@ -12,33 +12,33 @@ import { each, get, includes, isEqual, isUndefined, map } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import Count from 'components/count';
+import ButtonGroup from 'calypso/components/button-group';
+import Count from 'calypso/components/count';
 import CommentNavigationTab from './comment-navigation-tab';
-import FormCheckbox from 'components/forms/form-checkbox';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import SegmentedControl from 'components/segmented-control';
-import UrlSearch from 'lib/url-search';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import SegmentedControl from 'calypso/components/segmented-control';
+import UrlSearch from 'calypso/lib/url-search';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 import {
 	changeCommentStatus,
 	deleteComment,
 	requestCommentsList,
 	unlikeComment,
-} from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/comments/selectors';
-import hasPendingCommentRequests from 'state/selectors/has-pending-comment-requests';
+} from 'calypso/state/comments/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import hasPendingCommentRequests from 'calypso/state/selectors/has-pending-comment-requests';
 import { NEWEST_FIRST, OLDEST_FIRST } from '../constants';
-import { extendAction } from 'state/utils';
+import { extendAction } from 'calypso/state/utils';
 
 const bulkActions = {
 	unapproved: [ 'approve', 'spam', 'trash' ],

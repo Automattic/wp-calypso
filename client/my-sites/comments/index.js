@@ -6,9 +6,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { siteSelection, navigation, sites } from 'my-sites/controller';
+import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import { clearCommentNotices, comment, postComments, redirect, siteComments } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	// Site View

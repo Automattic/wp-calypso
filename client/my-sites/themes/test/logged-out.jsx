@@ -9,16 +9,16 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import LoggedOutShowcase from '../logged-out';
-import { createReduxStore } from 'state';
-import { setStore } from 'state/redux-store';
-import { THEMES_REQUEST_FAILURE } from 'state/themes/action-types';
-import { receiveThemes } from 'state/themes/actions';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
+import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
+import { THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
+import { receiveThemes } from 'calypso/state/themes/actions';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => require( 'components/empty-component' ) );
-jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
+jest.mock( 'lib/analytics/page-view-tracker', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'my-sites/themes/theme-preview', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'logged-out', () => {
 	describe( 'when calling renderToString()', () => {

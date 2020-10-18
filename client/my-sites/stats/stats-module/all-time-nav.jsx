@@ -10,13 +10,13 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 import DatePicker from '../stats-date-picker';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 export const StatsModuleSummaryLinks = ( props ) => {
 	const { translate, path, siteSlug, query, period, children } = props;

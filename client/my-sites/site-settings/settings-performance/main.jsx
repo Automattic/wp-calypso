@@ -10,26 +10,26 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import AmpJetpack from 'my-sites/site-settings/amp/jetpack';
-import AmpWpcom from 'my-sites/site-settings/amp/wpcom';
-import DocumentHead from 'components/data/document-head';
-import EligibilityWarnings from 'blocks/eligibility-warnings';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import Main from 'components/main';
-import MediaSettingsPerformance from 'my-sites/site-settings/media-settings-performance';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import Search from 'my-sites/site-settings/search';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import SpeedUpYourSite from 'my-sites/site-settings/speed-up-site-settings';
-import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
+import AmpJetpack from 'calypso/my-sites/site-settings/amp/jetpack';
+import AmpWpcom from 'calypso/my-sites/site-settings/amp/wpcom';
+import DocumentHead from 'calypso/components/data/document-head';
+import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
+import Main from 'calypso/components/main';
+import MediaSettingsPerformance from 'calypso/my-sites/site-settings/media-settings-performance';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import Search from 'calypso/my-sites/site-settings/search';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
+import SpeedUpYourSite from 'calypso/my-sites/site-settings/speed-up-site-settings';
+import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 
 class SiteSettingsPerformance extends Component {
 	render() {

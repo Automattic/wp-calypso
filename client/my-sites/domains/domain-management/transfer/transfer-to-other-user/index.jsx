@@ -12,22 +12,22 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { Card, Dialog } from '@automattic/components';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import { domainManagementEdit, domainManagementTransfer } from 'my-sites/domains/paths';
-import FormSelect from 'components/forms/form-select';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import wp from 'lib/wp';
-import { getSelectedDomain } from 'lib/domains';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import DesignatedAgentNotice from 'my-sites/domains/domain-management/components/designated-agent-notice';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { hasLoadedSiteDomains } from 'state/sites/domains/selectors';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import { domainManagementEdit, domainManagementTransfer } from 'calypso/my-sites/domains/paths';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import wp from 'calypso/lib/wp';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies

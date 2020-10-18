@@ -9,22 +9,22 @@ import { defaultRegistry } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/backend/payment-method';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasOnlyRenewalItems,
 	hasTransferProduct,
-} from 'lib/cart-values/cart-items';
-import { createStripePaymentMethod } from 'lib/stripe';
-import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
-import { getSavedVariations } from 'lib/abtest';
-import { stringifyBody } from 'state/login/utils';
-import { recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
+} from 'calypso/lib/cart-values/cart-items';
+import { createStripePaymentMethod } from 'calypso/lib/stripe';
+import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
+import { getSavedVariations } from 'calypso/lib/abtest';
+import { stringifyBody } from 'calypso/state/login/utils';
+import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;

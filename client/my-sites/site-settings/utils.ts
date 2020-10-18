@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { isEnterprise, isVipPlan } from 'lib/products-values';
-import { FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
-import { hasSiteFeature } from 'lib/site/utils';
+import { isEnterprise, isVipPlan } from 'calypso/lib/products-values';
+import { FEATURE_GOOGLE_ANALYTICS } from 'calypso/lib/plans/constants';
+import { hasSiteFeature } from 'calypso/lib/site/utils';
 
 /**
  * Type dependencies
  */
-import type { Plan } from 'state/plans/types';
+import type { Plan } from 'calypso/state/plans/types';
 
 type Site = {
 	plan: Plan;

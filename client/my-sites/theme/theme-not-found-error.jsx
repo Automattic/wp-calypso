@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import EmptyContentComponent from 'components/empty-content';
+import Main from 'calypso/components/main';
+import EmptyContentComponent from 'calypso/components/empty-content';
 
 function ThemeNotFoundError( { translate } ) {
 	const emptyContentTitle = translate( 'Looking for great WordPress designs?', {

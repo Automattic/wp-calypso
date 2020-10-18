@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { makeLayout } from 'controller';
+import { makeLayout } from 'calypso/controller';
 import {
 	fetchThemeData,
 	fetchThemeFilters,

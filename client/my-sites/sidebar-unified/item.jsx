@@ -16,10 +16,10 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 
-import { getSelectedSiteId } from 'state/ui/selectors';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarCustomIcon from 'layout/sidebar/custom-icon';
-import StatsSparkline from 'blocks/stats-sparkline';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
+import StatsSparkline from 'calypso/blocks/stats-sparkline';
 
 const onNav = () => null;
 

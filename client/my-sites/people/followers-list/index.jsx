@@ -11,24 +11,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import PeopleListItem from 'my-sites/people/people-list-item';
+import Gridicon from 'calypso/components/gridicon';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import FollowersActions from 'lib/followers/actions';
-import EmailFollowersActions from 'lib/email-followers/actions';
-import InfiniteList from 'components/infinite-list';
-import FollowersData from 'components/data/followers-data';
-import EmailFollowersData from 'components/data/email-followers-data';
-import NoResults from 'my-sites/no-results';
-import EmptyContent from 'components/empty-content';
-import FollowersStore from 'lib/followers/store';
-import EmailFollowersStore from 'lib/email-followers/store';
-import accept from 'lib/accept';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import ListEnd from 'components/list-end';
-import { preventWidows } from 'lib/formatting';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import FollowersActions from 'calypso/lib/followers/actions';
+import EmailFollowersActions from 'calypso/lib/email-followers/actions';
+import InfiniteList from 'calypso/components/infinite-list';
+import FollowersData from 'calypso/components/data/followers-data';
+import EmailFollowersData from 'calypso/components/data/email-followers-data';
+import NoResults from 'calypso/my-sites/no-results';
+import EmptyContent from 'calypso/components/empty-content';
+import FollowersStore from 'calypso/lib/followers/store';
+import EmailFollowersStore from 'calypso/lib/email-followers/store';
+import accept from 'calypso/lib/accept';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import ListEnd from 'calypso/components/list-end';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Stylesheet dependencies

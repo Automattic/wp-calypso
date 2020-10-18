@@ -6,22 +6,22 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import PeopleProfile from 'my-sites/people/people-profile';
-import config from 'config';
+import PeopleProfile from 'calypso/my-sites/people/people-profile';
+import config from 'calypso/config';
 import {
 	isRequestingInviteResend,
 	didInviteResendSucceed,
 	didInviteDeletionSucceed,
-} from 'state/invites/selectors';
-import { resendInvite } from 'state/invites/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
+} from 'calypso/state/invites/selectors';
+import { resendInvite } from 'calypso/state/invites/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

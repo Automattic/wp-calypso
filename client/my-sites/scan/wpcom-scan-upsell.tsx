@@ -10,24 +10,24 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import { addQueryArgs } from '@wordpress/url';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PromoCard from 'components/promo-section/promo-card';
-import PromoCardCTA from 'components/promo-section/promo-card/cta';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { preventWidows } from 'lib/formatting';
-import SecurityIcon from 'components/jetpack/security-icon';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { preventWidows } from 'calypso/lib/formatting';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 
 /**
  * Asset dependencies
  */
-import JetpackScanSVG from 'assets/images/illustrations/jetpack-scan.svg';
+import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import './style.scss';
 
 const ScanMultisiteBody: FunctionComponent = () => (

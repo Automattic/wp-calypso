@@ -10,14 +10,14 @@ import { has, identity, mapValues, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
 	showAutoLoadingHomepageWarning as showAutoLoadingHomepageWarningAction,
-} from 'state/themes/actions';
+} from 'calypso/state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
 	getThemeDetailsUrl,
@@ -29,12 +29,12 @@ import {
 	isThemeActive,
 	isThemeGutenbergFirst,
 	isThemePremium,
-} from 'state/themes/selectors';
+} from 'calypso/state/themes/selectors';
 
-import getCustomizeUrl from 'state/selectors/get-customize-url';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getCurrentUser } from 'state/current-user/selectors';
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 function getAllThemeOptions() {
 	const purchase = config.isEnabled( 'upgrades/checkout' )

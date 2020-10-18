@@ -8,8 +8,8 @@ import page from 'page';
  * Internal Dependencies
  */
 import Types from './main';
-import { mapPostStatus } from 'lib/route';
-import { POST_STATUSES } from 'state/posts/constants';
+import { mapPostStatus } from 'calypso/lib/route';
+import { POST_STATUSES } from 'calypso/state/posts/constants';
 
 export function redirect() {
 	page.redirect( '/posts' );

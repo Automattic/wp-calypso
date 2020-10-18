@@ -8,11 +8,11 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import Field from 'my-sites/checkout/composite-checkout/components/field';
+import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
+} from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import {
 	GridRow,
 	FieldRow,

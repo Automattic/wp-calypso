@@ -13,7 +13,7 @@ import React from 'react';
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import ListItem from 'my-sites/media-library/list-item';
+import ListItem from 'calypso/my-sites/media-library/list-item';
 
 describe( 'MediaLibraryListItem', () => {
 	let wrapper;

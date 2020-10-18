@@ -9,11 +9,11 @@ import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-chec
 /**
  * Internal dependencies
  */
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
+import { shouldRenderAdditionalCountryFields } from 'calypso/lib/checkout/processor-specific';
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
+} from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
 import {
 	GridRow,
 	Label,
@@ -21,7 +21,7 @@ import {
 	StripeFieldWrapper,
 	StripeErrorMessage,
 } from './form-layout-components';
-import { Input } from 'my-sites/domains/components/form';
+import { Input } from 'calypso/my-sites/domains/components/form';
 import CVVImage from './cvv-image';
 
 export default function CreditCardCvvField( {

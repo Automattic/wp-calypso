@@ -16,17 +16,17 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CurrentSite from 'my-sites/current-site';
+import CurrentSite from 'calypso/my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useSiteMenuItems from './use-site-menu-items';
 import useDomainsViewStatus from './use-domains-view-status';
-import { getIsRequestingAdminMenu } from 'state/admin-menu/selectors';
-import Sidebar from 'layout/sidebar';
-import SidebarSeparator from 'layout/sidebar/separator';
-import 'layout/sidebar-unified/style.scss';
-import 'state/admin-menu/init';
-import Spinner from 'components/spinner';
+import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import Sidebar from 'calypso/layout/sidebar';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import 'calypso/layout/sidebar-unified/style.scss';
+import 'calypso/state/admin-menu/init';
+import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
 import './style.scss';
 

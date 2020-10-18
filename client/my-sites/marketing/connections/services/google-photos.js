@@ -9,8 +9,8 @@ import { last, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
-import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 
 export class GooglePhotos extends SharingService {
 	static propTypes = {

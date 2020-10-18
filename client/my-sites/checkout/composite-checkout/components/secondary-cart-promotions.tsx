@@ -8,10 +8,10 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
-import UpcomingRenewalsReminder from 'my-sites/checkout/cart/upcoming-renewals-reminder';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import config from 'calypso/config';
+import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
+import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ResponseCart } from '../hooks/use-shopping-cart-manager/types';
 
 type PartialCart = Pick< ResponseCart, 'products' >;

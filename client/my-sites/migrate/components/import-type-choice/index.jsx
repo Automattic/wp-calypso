@@ -8,8 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import FormRadio from 'components/forms/form-radio';
+import Badge from 'calypso/components/badge';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 import './style.scss';
 import PropTypes from 'prop-types';

@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { preventWidows } from 'lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 import ThankYou from './thank-you';
 
 const JetpackSecurityRealtimeThankYou = ( { translate } ) => (

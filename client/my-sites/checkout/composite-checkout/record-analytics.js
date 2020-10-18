@@ -2,18 +2,18 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
-import { translateCheckoutPaymentMethodToTracksPaymentMethod } from 'my-sites/checkout/composite-checkout/types/checkout-payment-method-slug';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/backend/payment-method';
+import { translateCheckoutPaymentMethodToTracksPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { recordPurchase } from 'lib/analytics/record-purchase';
-import { recordAddEvent } from 'lib/analytics/cart';
-import { logToLogstash } from 'state/logstash/actions';
-import config from 'config';
+import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
+import { recordAddEvent } from 'calypso/lib/analytics/cart';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import config from 'calypso/config';
 
 const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );

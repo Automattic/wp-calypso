@@ -5,22 +5,22 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import AllSites from 'blocks/all-sites';
-import AsyncLoad from 'components/async-load';
+import AllSites from 'calypso/blocks/all-sites';
+import AsyncLoad from 'calypso/components/async-load';
 import { Button, Card } from '@automattic/components';
-import Site from 'blocks/site';
-import Gridicon from 'components/gridicon';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { hasAllSitesList } from 'state/sites/selectors';
+import Site from 'calypso/blocks/site';
+import Gridicon from 'calypso/components/gridicon';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { hasAllSitesList } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies
@@ -85,14 +85,14 @@ class CurrentSite extends Component {
 					<AllSites />
 				) }
 				{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
-					<AsyncLoad require="my-sites/current-site/domain-warnings" placeholder={ null } />
+					<AsyncLoad require="calypso/my-sites/current-site/domain-warnings" placeholder={ null } />
 				) }
 				{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
-					<AsyncLoad require="my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
+					<AsyncLoad require="calypso/my-sites/current-site/stale-cart-items-notice" placeholder={ null } />
 				) }
 				{ selectedSite && isEnabled( 'current-site/notice' ) && (
 					<AsyncLoad
-						require="my-sites/current-site/notice"
+						require="calypso/my-sites/current-site/notice"
 						placeholder={ null }
 						site={ selectedSite }
 					/>

@@ -8,9 +8,9 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import { type as domainTypes, transferStatus } from 'lib/domains/constants';
+import { type as domainTypes, transferStatus } from 'calypso/lib/domains/constants';
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 class DomainTransferFlag extends PureComponent {
 	static propTypes = {

@@ -10,17 +10,17 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { ProductIcon } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import FormattedHeader from 'components/formatted-header';
-import HeaderCake from 'components/header-cake';
-import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { preventWidows } from 'lib/formatting';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
-import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'lib/products-values/constants';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { preventWidows } from 'calypso/lib/formatting';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'calypso/lib/products-values/constants';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import QueryProducts from './query-products';
 import useIsLoading from './use-is-loading';
 import useItemPrice from './use-item-price';

@@ -8,9 +8,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import GuidedTransfer from './guided-transfer';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isEligibleForGuidedTransfer } from 'state/sites/guided-transfer/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { isEligibleForGuidedTransfer } from 'calypso/state/sites/guided-transfer/selectors';
 
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );

@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import { Button } from '@automattic/components';
 
 class ImporterError extends React.PureComponent {

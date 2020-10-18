@@ -10,23 +10,23 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { Card, Button } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormLegend from 'components/forms/form-legend';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { regeneratePostByEmail } from 'state/jetpack/settings/actions';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isJetpackModuleUnavailableInDevelopmentMode from 'state/selectors/is-jetpack-module-unavailable-in-development-mode';
-import isJetpackSiteInDevelopmentMode from 'state/selectors/is-jetpack-site-in-development-mode';
-import isRegeneratingJetpackPostByEmail from 'state/selectors/is-regenerating-jetpack-post-by-email';
-import SupportInfo from 'components/support-info';
-import ClipboardButtonInput from 'components/clipboard-button-input';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
+import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regenerating-jetpack-post-by-email';
+import SupportInfo from 'calypso/components/support-info';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import PressThis from '../press-this';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
 /**
  * Style dependencies

@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import InfoPopover from 'components/info-popover';
+import InfoPopover from 'calypso/components/info-popover';
 
 /**
  * Style dependencies

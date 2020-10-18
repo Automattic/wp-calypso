@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { startsWith } from 'lodash';
-import { isUnderDomainManagementAll, domainManagementRoot } from 'my-sites/domains/paths';
+import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
