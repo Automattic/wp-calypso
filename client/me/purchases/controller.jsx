@@ -144,6 +144,7 @@ export function managePurchase( context, next ) {
 
 	context.primary = (
 		<Main className={ classes }>
+			<PageViewTracker path="/me/purchases/:site/:purchaseId" title="Purchases > Manage Purchase" />
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
