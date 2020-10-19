@@ -24,8 +24,12 @@ import './style.scss';
 const SEARCH_DEBOUNCE_MS = 300;
 
 const keyListener = (
-	methodToCall: ( e: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement > ) => void
-) => ( event: KeyboardEvent< HTMLButtonElement > ) => {
+	methodToCall: (
+		e:
+			| MouseEvent< HTMLButtonElement | HTMLInputElement >
+			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
+	) => void
+) => ( event: KeyboardEvent< HTMLButtonElement | HTMLInputElement > ) => {
 	switch ( event.key ) {
 		case ' ':
 		case 'Enter':
@@ -58,10 +62,14 @@ type Props = {
 	onSearch: ( search: string ) => void;
 	onSearchChange: ( search: string ) => void;
 	onSearchOpen: (
-		event?: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement >
+		event?:
+			| MouseEvent< HTMLButtonElement | HTMLInputElement >
+			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
 	) => void;
 	onSearchClose: (
-		event: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement >
+		event:
+			| MouseEvent< HTMLButtonElement | HTMLInputElement >
+			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
 	) => void;
 	overlayStyling?: ( search: string ) => React.ReactNode;
 	placeholder?: string;
@@ -104,7 +112,7 @@ class Search extends React.Component< Props, State > {
 
 	instanceId = uniqueId();
 	searchInput = React.createRef< HTMLInputElement >();
-	openIcon = React.createRef< HTMLDivElement >();
+	openIcon = React.createRef< HTMLButtonElement >();
 	overlay = React.createRef< HTMLDivElement >();
 
 	// debounced `onSearch` will have a `cancel` function
@@ -132,7 +140,11 @@ class Search extends React.Component< Props, State > {
 		}
 	}
 
-	openSearch = ( event: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement > ) => {
+	openSearch = (
+		event:
+			| MouseEvent< HTMLButtonElement | HTMLInputElement >
+			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
+	) => {
 		event.preventDefault();
 		this.setState( {
 			keyword: '',
@@ -143,7 +155,11 @@ class Search extends React.Component< Props, State > {
 		this.openIcon.current?.blur();
 	};
 
-	closeSearch = ( event: MouseEvent< HTMLButtonElement > | KeyboardEvent< HTMLButtonElement > ) => {
+	closeSearch = (
+		event:
+			| MouseEvent< HTMLButtonElement | HTMLInputElement >
+			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
+	) => {
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
