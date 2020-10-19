@@ -639,7 +639,7 @@ export class MySitesSidebar extends Component {
 		return (
 			<SidebarItem
 				label={ translate( 'Plans', { context: 'noun' } ) }
-				tipTarget="plan"
+				tipTarget="plans"
 				selected={ itemLinkMatches( '/plans', path ) }
 				link={ '/plans' + siteSuffix }
 				onNavigate={ this.trackPlanClick }
