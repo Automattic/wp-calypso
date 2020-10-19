@@ -32,8 +32,11 @@ export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean =
 		return !! getSelectedPlan( state );
 	}
 	if ( step === LaunchStep.Name ) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const site: any = select( 'core' ).getEntityRecord( 'root', 'site', undefined );
+		const site: { title?: string } | undefined = select( 'core' ).getEntityRecord(
+			'root',
+			'site',
+			undefined
+		);
 		return !! site?.title;
 	}
 	if ( step === LaunchStep.Domain ) {
