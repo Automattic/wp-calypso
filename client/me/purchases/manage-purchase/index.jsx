@@ -660,7 +660,7 @@ class ManagePurchase extends Component {
 				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
 				{ showExpiryNotice ? (
 					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-						<NoticeAction href={ `/plans/${ site.slug || '' }` }>
+						<NoticeAction href={ `/plans/${ siteSlug || '' }` }>
 							{ translate( 'View plans' ) }
 						</NoticeAction>
 					</Notice>
