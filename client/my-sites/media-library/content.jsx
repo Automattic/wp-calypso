@@ -358,6 +358,14 @@ export class MediaLibraryContent extends React.Component {
 			return this.renderConnectExternalMedia();
 		}
 
+		const listKey = [
+			'list-',
+			this.props.site.ID,
+			this.props.search,
+			this.props.filter,
+			this.props.source,
+		].join( '-' );
+
 		return (
 			<MediaListData
 				siteId={ this.props.site.ID }
@@ -367,7 +375,7 @@ export class MediaLibraryContent extends React.Component {
 				source={ this.props.source }
 			>
 				<MediaLibraryList
-					key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
+					key={ listKey }
 					site={ this.props.site }
 					filter={ this.props.filter }
 					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
