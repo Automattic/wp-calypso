@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { KeyboardEvent, MouseEvent, FocusEvent, FormEvent } from 'react';
+import React, { KeyboardEvent, MouseEvent, FocusEvent, FormEvent, ChangeEvent } from 'react';
 import { debounce, noop, uniqueId } from 'lodash';
 import classNames from 'classnames';
 import { isMobile } from '@automattic/viewport';
@@ -9,7 +9,7 @@ import { isMobile } from '@automattic/viewport';
 /**
  * WordPress dependencies
  */
-import { Button, Spinner, TextControl } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { close, search, Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -266,9 +266,9 @@ class Search extends React.Component< Props, State > {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = ( keyword: string ) => {
+	onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
 		this.setState( {
-			keyword,
+			keyword: event.target?.value ?? this.state.keyword,
 		} );
 	};
 
@@ -291,10 +291,11 @@ class Search extends React.Component< Props, State > {
 	keyDown = ( event: KeyboardEvent< HTMLInputElement > ) => {
 		this.scrollOverlay();
 
-		// @todo(saramarcondes) investigate why `target` doesn't have the expected type
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		if ( event.key === 'Escape' && event.target?.value === '' ) {
+		if (
+			event.key === 'Escape' &&
+			// currentTarget will be the input element, rather than target which can be anything
+			event.currentTarget?.value === ''
+		) {
 			this.closeListener( event );
 		}
 
@@ -367,7 +368,7 @@ class Search extends React.Component< Props, State > {
 				</Button>
 				<div className={ fadeDivClass }>
 					<form action="." onSubmit={ this.handleSubmit }>
-						<TextControl
+						<input
 							type="search"
 							id={ 'search-component-' + this.instanceId }
 							autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus

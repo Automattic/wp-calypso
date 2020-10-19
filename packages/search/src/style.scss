@@ -104,15 +104,18 @@ $input-z-index: 20;
 		align-items: center;
 	}
 
-	.search__input[type='search'] {
+	.search__input {
 		flex: 1 1 auto;
 		display: flex;
 	}
 }
 
-.search__input input.components-text-control__input[type='search'] {
-	flex: 1 1 auto;
+.search:not( .is-open ) input.search__input[type='search'] {
 	display: none;
+}
+
+.search input.search__input[type='search'] {
+	flex: 1 1 auto;
 	z-index: $input-z-index;
 	top: 0;
 	border: none;
@@ -135,10 +138,12 @@ $input-z-index: 20;
 	&:focus {
 		box-shadow: none;
 		border: none;
+		outline: none;
 
 		&:hover {
 			border: none;
 			box-shadow: none;
+			outline: none;
 		}
 	}
 }
@@ -160,7 +165,7 @@ $input-z-index: 20;
 		opacity: 1;
 	}
 
-	.search__input input.components-text-control__input[type='search'] {
+	input.search__input[type='search'] {
 		display: block;
 	}
 
