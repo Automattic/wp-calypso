@@ -92,6 +92,7 @@ export type ShoppingCartAction =
 	| { type: 'REMOVE_COUPON' }
 	| { type: 'CART_RELOAD' }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
+	| { type: 'FETCH_INITIAL_RESPONSE_CART' }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartError; message: string };

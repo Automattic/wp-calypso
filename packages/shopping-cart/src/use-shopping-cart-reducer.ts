@@ -64,6 +64,7 @@ function shoppingCartReducer(
 	if (
 		state.cacheStatus === 'fresh' &&
 		action.type !== 'RECEIVE_INITIAL_RESPONSE_CART' &&
+		action.type !== 'FETCH_INITIAL_RESPONSE_CART' &&
 		action.type !== 'RAISE_ERROR'
 	) {
 		debug( 'cart has not yet loaded; queuing requested action', action );
@@ -75,6 +76,8 @@ function shoppingCartReducer(
 
 	debug( 'processing requested action', action );
 	switch ( action.type ) {
+		case 'FETCH_INITIAL_RESPONSE_CART':
+			return { ...state, cacheStatus: 'pending' };
 		case 'CART_RELOAD':
 			debug( 'reloading cart from server' );
 			return getInitialShoppingCartState();
