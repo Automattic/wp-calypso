@@ -2,8 +2,11 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { useI18n } from '@automattic/react-i18n';
 
 export const DomainNameExplanationImage: FunctionComponent = () => {
+	const { __ } = useI18n();
+
 	return (
 		<svg
 			version="1.1"
@@ -23,7 +26,10 @@ export const DomainNameExplanationImage: FunctionComponent = () => {
 				https://
 			</text>
 			<text x="133" y="26" fill="#515151">
-				example.com
+				{
+					/* translators: An example domain name. Used to describe what a domain name is. */
+					__( 'example.com' )
+				}
 			</text>
 		</svg>
 	);
