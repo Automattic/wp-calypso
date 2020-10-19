@@ -116,10 +116,9 @@ class Block_Patterns_From_API {
 			$request_url = esc_url_raw(
 				add_query_arg(
 					array(
-						'language' => $this->get_iso_639_locale(),
-						'tags'     => 'pattern',
+						'tags' => 'pattern',
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns'
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_iso_639_locale()
 				)
 			);
 
@@ -135,7 +134,7 @@ class Block_Patterns_From_API {
 				return array();
 			}
 			$block_patterns = json_decode( wp_remote_retrieve_body( $response ), true );
-			wp_cache_set( $this->patterns_cache_key, $block_patterns, 'ptk_patterns', DAY_IN_SECONDS );
+			wp_cache_add( $this->patterns_cache_key, $block_patterns, 'ptk_patterns', DAY_IN_SECONDS );
 		}
 
 		return $block_patterns;
