@@ -67,7 +67,7 @@ const Header: React.FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item">
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--wp-logo">
 					<Button href={ 'https://wordpress.com' }>
 						<div className="gutenboarding__header-wp-logo">
 							<Icon icon={ wordpress } size={ 28 } />
