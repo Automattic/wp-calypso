@@ -215,7 +215,7 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 
 		step( 'Can select buy Jetpack Security on Pricing Page', async function () {
 			const jetpackComPricingPage = await JetpackComPricingPage.Visit( driver );
-			return await jetpackComPricingPage.buyJetpackPlan( 'Jetpack Security' );
+			return await jetpackComPricingPage.buyJetpackPlan( 'jetpack_security_daily' );
 		} );
 
 		step( 'Can start connection flow using JN site', async function () {

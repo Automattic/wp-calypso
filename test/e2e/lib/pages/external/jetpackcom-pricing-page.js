@@ -17,9 +17,10 @@ export default class JetpackComPricingPage extends AsyncBaseContainer {
 		super( driver, By.css( '.is-section-jetpack-cloud-pricing .selector-alt__main' ), url );
 	}
 
-	// To buy a Jetpack Plan, we search for `planName` in every CTA on the page.
-	async buyJetpackPlan( planName ) {
-		const planCTA = By.xpath( `//button[@type='button' and contains(., 'Get ${ planName }')]` );
+	async buyJetpackPlan( planSlug ) {
+		const planCTA = By.css(
+			`[data-e2e-product-slug="${ planSlug }"] .jetpack-product-card-alt__button`
+		);
 		return await driverHelper.clickWhenClickable( this.driver, planCTA );
 	}
 }

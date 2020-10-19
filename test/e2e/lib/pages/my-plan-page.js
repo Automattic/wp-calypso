@@ -25,7 +25,7 @@ export default class MyPlanPage extends AsyncBaseContainer {
 	async isSecurityPlan() {
 		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.xpath( `//h2[@class='my-plan-card__title' and contains(., 'Security')]` )
+			By.css( '[data-e2e-product-slug="jetpack_security_daily"]' )
 		);
 	}
 }
