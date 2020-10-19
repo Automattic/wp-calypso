@@ -22,9 +22,9 @@ export interface RequestCart {
 	products: RequestCartProduct[];
 	tax: null | {
 		location: {
-			country_code: string | null;
-			postal_code: string | null;
-			subdivision_code: string | null;
+			country_code: string | undefined;
+			postal_code: string | undefined;
+			subdivision_code: string | undefined;
 		};
 	};
 	coupon: string;

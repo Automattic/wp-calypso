@@ -32,6 +32,16 @@ export function convertResponseCartToRequestCart( {
 	is_coupon_applied,
 	tax,
 }: ResponseCart ): RequestCart {
+	let requestCartTax = null;
+	if ( tax.location.country_code || tax.location.postal_code || tax.location.subdivision_code ) {
+		requestCartTax = {
+			location: {
+				country_code: tax.location.country_code,
+				postal_code: tax.location.postal_code,
+				subdivision_code: tax.location.subdivision_code,
+			},
+		};
+	}
 	return {
 		products: products.map( convertResponseCartProductToRequestCartProduct ),
 		currency,
@@ -39,9 +49,9 @@ export function convertResponseCartToRequestCart( {
 		coupon,
 		is_coupon_applied,
 		temporary: false,
-		tax,
+		tax: requestCartTax,
 		extra: '', // TODO: fix this
-	} as RequestCart;
+	};
 }
 
 export function removeItemFromResponseCart(
