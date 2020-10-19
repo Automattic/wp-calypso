@@ -66,6 +66,7 @@
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch-mobile": false,
+		"gutenboarding/persistent-launch-button": true,
 		"gutenboarding/show-vertical-input": false,
 		"help": true,
 		"help/courses": true,
