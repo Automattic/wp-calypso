@@ -1,0 +1,17 @@
+{
+  "name": "wpcom-gutenberg-utils",
+  "version": "1.0.0",
+  "description": "Tools for improving Gutenberg dev experience on WPCOM",
+  "repository": {},
+  "private": true,
+  "author": "Automattic Inc.",
+  "scripts": {
+    "cmd": "npx dotenv -- bash -c",
+    "sync": "yarn cmd './bin/sync.sh'",
+    "sync-cleanup": "yarn cmd 'ssh $REMOTE_SSH rm -rf $REMOTE_PATH'"
+  },
+  "dependencies": {
+    "chokidar-cli": "^2.1.0",
+    "dotenv-cli": "^4.0.0"
+  }
+}
