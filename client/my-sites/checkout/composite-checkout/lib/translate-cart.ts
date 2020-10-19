@@ -23,8 +23,8 @@ import {
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 	WPCOMPaymentMethodClass,
 } from '../types/backend/payment-method';
-import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
-import { isRenewal } from 'lib/cart-values/cart-items';
+import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
+import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
