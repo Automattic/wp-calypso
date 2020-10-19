@@ -7,10 +7,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addCreditCard, billingHistoryReceipt } from 'calypso/me/purchases/paths';
+import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import CreditCards from 'calypso/me/purchases/credit-cards';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import BillingHistoryTable from './billing-history-table';
 import Main from 'calypso/components/main';
@@ -32,14 +31,13 @@ export function BillingHistoryList( { siteId = null, getReceiptUrlFor = billingH
 }
 
 const BillingHistory = ( { translate } ) => (
-	<Main className="billing-history">
+	<Main className="billing-history is-wide-layout">
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 		<MeSidebarNavigation />
 		<QueryBillingTransactions />
 		<PurchasesHeader section={ 'billing' } />
 		<BillingHistoryList />
-		<CreditCards addPaymentMethodUrl={ addCreditCard } />
 	</Main>
 );
 
