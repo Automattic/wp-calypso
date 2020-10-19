@@ -42,6 +42,8 @@ type Props = {
 	autoFocus: boolean;
 	className?: string;
 	compact: boolean;
+	defaultIsOpen: boolean;
+	defaultValue?: string;
 	delaySearch: boolean;
 	delayTimeout: number;
 	describedBy?: string;
@@ -51,9 +53,7 @@ type Props = {
 	fitsContainer: boolean;
 	hideClose: boolean;
 	hideOpenIcon: boolean;
-	initialValue?: string;
 	inputLabel?: string;
-	isOpen: boolean;
 	maxLength?: number;
 	minLength?: number;
 	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
@@ -97,7 +97,7 @@ class Search extends React.Component< Props, State > {
 		fitsContainer: false,
 		hideClose: false,
 		hideOpenIcon: false,
-		isOpen: false,
+		defaultIsOpen: false,
 		onClick: noop,
 		onKeyDown: noop,
 		onSearchChange: noop,
@@ -121,24 +121,10 @@ class Search extends React.Component< Props, State > {
 		: this.props.onSearch;
 
 	state = {
-		keyword: this.props.initialValue ?? '',
-		isOpen: this.props.isOpen,
+		keyword: this.props.defaultValue ?? '',
+		isOpen: this.props.defaultIsOpen,
 		hasFocus: this.props.autoFocus,
 	};
-
-	UNSAFE_componentWillReceiveProps( nextProps: Props ) {
-		if ( this.props.isOpen !== nextProps.isOpen ) {
-			this.setState( { isOpen: nextProps.isOpen } );
-		}
-
-		if (
-			this.props.value !== nextProps.value &&
-			( nextProps.value || nextProps.value === '' ) &&
-			nextProps.value !== this.state.keyword
-		) {
-			this.setState( { keyword: nextProps.value } );
-		}
-	}
 
 	openSearch = (
 		event:
@@ -168,7 +154,7 @@ class Search extends React.Component< Props, State > {
 
 		this.setState( {
 			keyword: '',
-			isOpen: this.props.isOpen || false,
+			isOpen: false,
 		} );
 
 		if ( this.searchInput.current ) {
@@ -188,13 +174,10 @@ class Search extends React.Component< Props, State > {
 	closeListener = keyListener( this.closeSearch );
 	openListener = keyListener( this.openSearch );
 
-	componentDidUpdate( prevProps: Props, prevState: State ) {
+	componentDidUpdate( _: Props, prevState: State ) {
 		this.scrollOverlay();
-		// Focus if the search box was opened or the autoFocus prop has changed
-		if (
-			( this.state.isOpen && ! prevState.isOpen ) ||
-			( this.props.autoFocus && ! prevProps.autoFocus )
-		) {
+		// Focus if the search box was opened
+		if ( this.state.isOpen && ! prevState.isOpen ) {
 			this.focus();
 		}
 
@@ -329,8 +312,7 @@ class Search extends React.Component< Props, State > {
 		const placeholder = this.props.placeholder || __( 'Search…' );
 		const inputLabel = this.props.inputLabel;
 		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
-		const isOpenUnpinnedOrQueried =
-			this.state.isOpen || ! this.props.pinned || this.props.initialValue;
+		const isOpenUnpinnedOrQueried = this.state.isOpen || ! this.props.pinned || searchValue;
 
 		const autocorrect = this.props.disableAutocorrect && {
 			autoComplete: 'off',
