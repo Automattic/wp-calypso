@@ -28,7 +28,7 @@ export const DomainNameExplanationImage: FunctionComponent = () => {
 			<text x="133" y="26" fill="#515151">
 				{
 					/* translators: An example domain name. Used to describe what a domain name is. */
-					__( 'example.com' )
+					__( 'example.com', __i18n_text_domain__ )
 				}
 			</text>
 		</svg>
