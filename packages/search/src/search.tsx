@@ -328,43 +328,41 @@ class Search extends React.Component< Props, State > {
 			'has-open-icon': ! this.props.hideOpenIcon,
 		} );
 
-		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
+		const fadeClass = classNames( 'search__input-fade', this.props.dir );
 		const inputClass = classNames( 'search__input', this.props.dir );
 
 		return (
 			<div dir={ this.props.dir } className={ searchClass } role="search">
 				<Spinner />
 				{ this.renderOpenIcon() }
-				<div className={ fadeDivClass }>
-					<form action="." onSubmit={ this.handleSubmit }>
-						<input
-							type="search"
-							id={ 'search-component-' + this.instanceId }
-							autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
-							aria-describedby={ this.props.describedBy }
-							aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
-							aria-hidden={ ! isOpenUnpinnedOrQueried }
-							className={ inputClass }
-							placeholder={ placeholder }
-							role="searchbox"
-							value={ searchValue }
-							ref={ this.searchInput }
-							onChange={ this.onChange }
-							onKeyUp={ this.keyUp }
-							onKeyDown={ this.keyDown }
-							onMouseUp={ this.props.onClick }
-							onFocus={ this.onFocus }
-							onBlur={ this.onBlur }
-							disabled={ this.props.disabled }
-							autoCapitalize="none"
-							dir={ this.props.dir }
-							maxLength={ this.props.maxLength }
-							minLength={ this.props.minLength }
-							{ ...autocorrectProps }
-						/>
-					</form>
+				<form className={ fadeClass } action="." onSubmit={ this.handleSubmit }>
+					<input
+						type="search"
+						id={ 'search-component-' + this.instanceId }
+						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
+						aria-describedby={ this.props.describedBy }
+						aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
+						aria-hidden={ ! isOpenUnpinnedOrQueried }
+						className={ inputClass }
+						placeholder={ placeholder }
+						role="searchbox"
+						value={ searchValue }
+						ref={ this.searchInput }
+						onChange={ this.onChange }
+						onKeyUp={ this.keyUp }
+						onKeyDown={ this.keyDown }
+						onMouseUp={ this.props.onClick }
+						onFocus={ this.onFocus }
+						onBlur={ this.onBlur }
+						disabled={ this.props.disabled }
+						autoCapitalize="none"
+						dir={ this.props.dir }
+						maxLength={ this.props.maxLength }
+						minLength={ this.props.minLength }
+						{ ...autocorrectProps }
+					/>
 					{ this.renderStylingDiv() }
-				</div>
+				</form>
 				{ this.closeButton() }
 			</div>
 		);
