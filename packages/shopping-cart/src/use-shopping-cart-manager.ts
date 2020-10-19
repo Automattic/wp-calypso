@@ -21,7 +21,6 @@ import {
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
-import useReloadCartIfCartKeyChanges from './use-reload-cart-if-cart-key-changes';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
@@ -44,15 +43,7 @@ export default function useShoppingCartManager( {
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
 
-	const canInitializeCart = !! cartKey;
-
-	useInitializeCartFromServer(
-		cacheStatus,
-		canInitializeCart,
-		getServerCart,
-		setServerCart,
-		hookDispatch
-	);
+	useInitializeCartFromServer( cacheStatus, cartKey, getServerCart, setServerCart, hookDispatch );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
@@ -107,11 +98,9 @@ export default function useShoppingCartManager( {
 		hookDispatch( { type: 'CART_RELOAD' } );
 	}, [ hookDispatch ] );
 
-	useReloadCartIfCartKeyChanges( cartKey, reloadFromServer );
-
-	const isLoading = cacheStatus === 'fresh' || ! canInitializeCart;
+	const isLoading = cacheStatus === 'fresh' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
-	const isPendingUpdate = cacheStatus !== 'valid' || ! canInitializeCart;
+	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
 
 	const shoppingCartManager = useMemo(
 		() => ( {

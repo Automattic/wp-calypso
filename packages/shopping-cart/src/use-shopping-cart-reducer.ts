@@ -39,7 +39,7 @@ export default function useShoppingCartReducer(): [
 	);
 
 	useEffect( () => {
-		if ( hookState.queuedActions.length > 0 && hookState.cacheStatus !== 'fresh' ) {
+		if ( hookState.queuedActions.length > 0 && hookState.cacheStatus === 'valid' ) {
 			debug( 'cart is loaded; playing queued actions', hookState.queuedActions );
 			hookDispatch( { type: 'CLEAR_QUEUED_ACTIONS' } );
 			hookState.queuedActions.forEach( ( action: ShoppingCartAction ) => {
@@ -57,13 +57,14 @@ function shoppingCartReducer(
 ): ShoppingCartState {
 	const couponStatus = state.couponStatus;
 
-	// If the cacheStatus is 'fresh', then the initial cart has not yet loaded
-	// and so we cannot make changes to it yet. We therefore will queue any
-	// action that comes through during that time except for
+	// If the cacheStatus is 'fresh' or 'pending', then the initial cart has not
+	// yet loaded and so we cannot make changes to it yet. We therefore will
+	// queue any action that comes through during that time except for
 	// 'RECEIVE_INITIAL_RESPONSE_CART' or 'RAISE_ERROR'.
 	if (
-		state.cacheStatus === 'fresh' &&
+		( state.cacheStatus === 'fresh' || state.cacheStatus === 'pending' ) &&
 		action.type !== 'RECEIVE_INITIAL_RESPONSE_CART' &&
+		action.type !== 'RECEIVE_UPDATED_RESPONSE_CART' &&
 		action.type !== 'FETCH_INITIAL_RESPONSE_CART' &&
 		action.type !== 'RAISE_ERROR'
 	) {
