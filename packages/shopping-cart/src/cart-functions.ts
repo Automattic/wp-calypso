@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { emptyResponseCart } from './shopping-cart-endpoint';
 import type {
 	CartLocation,
 	RequestCart,
@@ -118,17 +119,32 @@ export function doesCartLocationDifferFromResponseCartLocation(
 }
 
 export function convertRawResponseCartToResponseCart(
-	rawResponseCart: ResponseCart
+	rawResponseCart: Partial< ResponseCart >
 ): ResponseCart {
+	if ( typeof rawResponseCart !== 'object' || rawResponseCart === null ) {
+		return emptyResponseCart;
+	}
+
+	// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
+	const taxLocation =
+		rawResponseCart.tax?.location && Array.isArray( rawResponseCart.tax.location )
+			? rawResponseCart.tax.location
+			: {};
+
+	const rawProducts =
+		rawResponseCart.products?.length && Array.isArray( rawResponseCart.products )
+			? rawResponseCart.products
+			: [];
+
 	return {
+		...emptyResponseCart,
 		...rawResponseCart,
-		// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
 		tax: {
-			location: Array.isArray( rawResponseCart.tax.location ) ? {} : rawResponseCart.tax.location,
-			display_taxes: rawResponseCart.tax.display_taxes,
+			location: taxLocation,
+			display_taxes: rawResponseCart.tax?.display_taxes ?? false,
 		},
 		// Add uuid to products returned by the server
-		products: rawResponseCart.products.map( ( product ) => {
+		products: rawProducts.map( ( product ) => {
 			return {
 				...product,
 				uuid: product.product_slug + lastUUID++,
