@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -21,6 +22,8 @@ import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 import useReloadCartIfCartKeyChanges from './use-reload-cart-if-cart-key-changes';
+
+const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
 
 export default function useShoppingCartManager( {
 	cartKey,
@@ -43,7 +46,6 @@ export default function useShoppingCartManager( {
 
 	const canInitializeCart = !! cartKey;
 
-	// Asynchronously initialize the cart. This should happen exactly once.
 	useInitializeCartFromServer(
 		cacheStatus,
 		canInitializeCart,
@@ -107,12 +109,16 @@ export default function useShoppingCartManager( {
 
 	useReloadCartIfCartKeyChanges( cartKey, reloadFromServer );
 
+	const isLoading = cacheStatus === 'fresh' || ! canInitializeCart;
+	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
+	const isPendingUpdate = cacheStatus !== 'valid' || ! canInitializeCart;
+
 	const shoppingCartManager = useMemo(
 		() => ( {
-			isLoading: cacheStatus === 'fresh' || ! canInitializeCart,
-			loadingError: cacheStatus === 'error' ? loadingError : null,
+			isLoading,
+			loadingError: loadingErrorForManager,
 			loadingErrorType,
-			isPendingUpdate: cacheStatus !== 'valid' || ! canInitializeCart,
+			isPendingUpdate,
 			addProductsToCart,
 			removeProductFromCart,
 			applyCoupon,
@@ -125,9 +131,9 @@ export default function useShoppingCartManager( {
 			responseCart,
 		} ),
 		[
-			cacheStatus,
-			canInitializeCart,
-			loadingError,
+			isLoading,
+			isPendingUpdate,
+			loadingErrorForManager,
 			loadingErrorType,
 			addProductsToCart,
 			removeProductFromCart,
@@ -141,6 +147,10 @@ export default function useShoppingCartManager( {
 			responseCart,
 		]
 	);
+
+	useEffect( () => {
+		debug( 'shoppingCartManager:', shoppingCartManager );
+	}, [ shoppingCartManager ] );
 
 	return shoppingCartManager;
 }
