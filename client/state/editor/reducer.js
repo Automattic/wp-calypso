@@ -79,7 +79,7 @@ export const iframePort = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {
 		case EDITOR_IFRAME_LOADED: {
 			const loaded = action.isIframeLoaded;
-			return loaded ? action.iframePort : null;
+			return loaded && action.iframePort ? action.iframePort : null;
 		}
 	}
 
