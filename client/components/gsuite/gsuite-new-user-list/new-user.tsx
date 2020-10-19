@@ -9,7 +9,6 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import config from 'calypso/config';
 import GSuiteDomainsSelect from './domains-select';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -169,27 +168,25 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
 					</div>
 
-					{ config.isEnabled( 'gsuite/passwords' ) && (
-						<div className="gsuite-new-user-list__new-user-password-container">
-							<FormPasswordInput
-								autoCapitalize="off"
-								autoCorrect="off"
-								placeholder={ translate( 'Password' ) }
-								value={ password }
-								maxLength={ 100 }
-								isError={ hasPasswordError }
-								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onUserValueChange( 'password', event.target.value );
-								} }
-								onBlur={ () => {
-									setPasswordFieldTouched( wasValidated );
-								} }
-								onKeyUp={ onReturnKeyPress }
-							/>
+					<div className="gsuite-new-user-list__new-user-password-container">
+						<FormPasswordInput
+							autoCapitalize="off"
+							autoCorrect="off"
+							placeholder={ translate( 'Password' ) }
+							value={ password }
+							maxLength={ 100 }
+							isError={ hasPasswordError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'password', event.target.value );
+							} }
+							onBlur={ () => {
+								setPasswordFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
 
-							{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
-						</div>
-					) }
+						{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
+					</div>
 				</div>
 			</FormFieldset>
 		</div>
