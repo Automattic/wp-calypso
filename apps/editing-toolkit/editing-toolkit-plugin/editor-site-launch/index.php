@@ -33,6 +33,8 @@ function enqueue_script_and_style() {
 		true
 	);
 
+	wp_set_script_translations( 'a8c-fse-editor-site-launch-script', 'full-site-editing' );
+
 	wp_enqueue_style(
 		'a8c-fse-editor-site-launch-style',
 		plugins_url( 'dist/editor-site-launch.css', __FILE__ ),
