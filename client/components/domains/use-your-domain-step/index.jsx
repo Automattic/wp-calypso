@@ -106,7 +106,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		let buildMapDomainUrl;
-		const basePathForMapping = basePath.endsWith( '/use-your-domain' )
+		const basePathForMapping = basePath?.endsWith( '/use-your-domain' )
 			? basePath.substring( 0, basePath.length - 16 )
 			: basePath;
 
@@ -135,7 +135,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		let buildTransferDomainUrl;
-		const basePathForTransfer = basePath.endsWith( '/use-your-domain' )
+		const basePathForTransfer = basePath?.endsWith( '/use-your-domain' )
 			? basePath.substring( 0, basePath.length - 16 )
 			: basePath;
 

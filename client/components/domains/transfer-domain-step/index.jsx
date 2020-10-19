@@ -143,7 +143,7 @@ class TransferDomainStep extends React.Component {
 		}
 
 		let buildMapDomainUrl;
-		const basePathForMapping = basePath.endsWith( '/transfer' )
+		const basePathForMapping = basePath?.endsWith( '/transfer' )
 			? basePath.substring( 0, basePath.length - 9 )
 			: basePath;
 
