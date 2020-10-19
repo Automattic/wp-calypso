@@ -204,7 +204,7 @@ class Search extends React.Component< Props, State > {
 	scrollOverlay = () => {
 		this.overlay &&
 			window.requestAnimationFrame( () => {
-				if ( this.overlay?.current && this.searchInput?.current ) {
+				if ( this.overlay.current && this.searchInput.current ) {
 					this.overlay.current.scrollLeft = this.getScrollLeft( this.searchInput.current );
 				}
 			} );
