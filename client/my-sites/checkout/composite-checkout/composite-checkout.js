@@ -408,7 +408,7 @@ export default function CompositeCheckout( {
 	useRedirectIfCartEmpty(
 		items,
 		cartEmptyRedirectUrl,
-		isInitialCartLoading,
+		isInitialCartLoading || isCartPendingUpdate,
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
