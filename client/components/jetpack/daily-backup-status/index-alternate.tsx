@@ -39,6 +39,7 @@ type Props = {
 	selectedDate: Moment;
 	lastBackupDate?: Moment;
 	backup: Activity;
+	isLatestBackup?: boolean;
 	dailyDeltas?: Activity[];
 };
 
@@ -46,6 +47,7 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 	selectedDate,
 	lastBackupDate,
 	backup,
+	isLatestBackup,
 	dailyDeltas,
 } ) => {
 	const moment = useLocalizedMoment();
@@ -68,7 +70,11 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 				: isSuccessfulDailyBackup;
 
 		return isSuccessful( backup ) ? (
-			<BackupCard activity={ backup } subActivities={ dailyDeltas } isLatest />
+			<BackupCard
+				activity={ backup }
+				subActivities={ dailyDeltas }
+				isLatest={ !! isLatestBackup }
+			/>
 		) : (
 			<BackupFailed backup={ backup } />
 		);

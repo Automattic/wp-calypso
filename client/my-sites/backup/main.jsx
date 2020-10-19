@@ -144,6 +144,20 @@ class BackupsPage extends Component {
 		return backupsOnSelectedDate;
 	};
 
+	getLatestBackup() {
+		const { logs, moment, siteCapabilities } = this.props;
+
+		const filteredLogs = includes( siteCapabilities, 'backup-realtime' )
+			? logs.filter( isSuccessfulRealtimeBackup )
+			: logs.filter( ( log ) => log.activityIsRewindable );
+
+		if ( filteredLogs.length > 0 ) {
+			return filteredLogs.sort( ( l1, l2 ) =>
+				moment( l1.activityDate ).isBefore( l2.activityDate )
+			)[ 0 ];
+		}
+	}
+
 	renderMain() {
 		const { siteId, isLoadingBackups, translate } = this.props;
 
@@ -227,8 +241,13 @@ class BackupsPage extends Component {
 
 	renderAlternateWrap() {
 		const { siteCapabilities, logs, moment, lastDateAvailable } = this.props;
-		const { lastBackup, rewindableActivities: realtimeBackups } = this.backupsFromSelectedDate();
+
+		const {
+			lastBackup: backup,
+			rewindableActivities: realtimeBackups,
+		} = this.backupsFromSelectedDate();
 		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
+		const latestBackup = this.getLatestBackup();
 
 		return (
 			<>
@@ -240,12 +259,13 @@ class BackupsPage extends Component {
 							{ ...{
 								selectedDate: this.getSelectedDate(),
 								lastBackupDate: lastDateAvailable,
-								backup: lastBackup,
+								backup,
+								isLatestBackup: latestBackup && latestBackup.activityId === backup.activityId,
 								dailyDeltas: getRawDailyBackupDeltas( logs, selectedDateString ),
 							} }
 						/>
 					</li>
-					{ includes( siteCapabilities, 'backup-realtime' ) && lastBackup && (
+					{ includes( siteCapabilities, 'backup-realtime' ) && backup && (
 						<>
 							{ realtimeBackups.map( ( activity ) => (
 								<li key={ activity.activityId }>
