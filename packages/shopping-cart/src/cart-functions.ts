@@ -50,7 +50,7 @@ export function convertResponseCartToRequestCart( {
 		is_coupon_applied,
 		temporary: false,
 		tax: requestCartTax,
-		extra: '', // TODO: fix this
+		extra: '', // This property doesn't appear to be used for anything
 	};
 }
 
