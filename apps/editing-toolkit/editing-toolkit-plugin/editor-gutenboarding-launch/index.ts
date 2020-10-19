@@ -63,7 +63,8 @@ function updateEditor() {
 		}
 		clearInterval( awaitSettingsBar );
 
-		const isMobileViewport = window.innerWidth < 782;
+		const BREAK_MEDIUM = 782;
+		const isMobileViewport = window.innerWidth < BREAK_MEDIUM;
 		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
