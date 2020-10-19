@@ -78,7 +78,6 @@ export default class PlansPage extends AsyncBaseContainer {
 		// Wait a little for loading animation
 		await this.driver.sleep( 1000 );
 
-		// Jetpack Business (Professional) no longer exist.
 		if ( host !== 'WPCOM' ) {
 			return await this.selectJetpackSecurity();
 		}
