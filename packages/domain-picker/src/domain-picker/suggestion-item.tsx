@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -47,7 +47,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	onRender,
 	selected,
 } ) => {
-	const { __ } = useI18n();
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const dotPos = domain.indexOf( '.' );

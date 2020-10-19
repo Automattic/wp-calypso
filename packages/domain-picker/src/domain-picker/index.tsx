@@ -10,6 +10,7 @@ import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-an
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -105,7 +106,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 } ) => {
-	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );

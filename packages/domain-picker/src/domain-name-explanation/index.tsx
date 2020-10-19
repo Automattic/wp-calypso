@@ -2,11 +2,9 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 
 export const DomainNameExplanationImage: FunctionComponent = () => {
-	const { __ } = useI18n();
-
 	return (
 		<svg
 			version="1.1"
