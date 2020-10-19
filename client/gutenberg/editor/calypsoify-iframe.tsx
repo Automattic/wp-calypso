@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+import { map, partial, pickBy, isArray, flowRight } from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -540,26 +540,6 @@ class CalypsoifyIframe extends Component<
 			action: 'pressThis',
 			payload: pressThis,
 		} );
-	};
-
-	updateImageBlocks = ( action: { data: { mime_type: string; URL: string }; type: string } ) => {
-		if (
-			! this.iframePort ||
-			! action ||
-			! startsWith( action.data.mime_type, 'image/' ) ||
-			startsWith( action.data.URL, 'blob:' )
-		) {
-			return;
-		}
-		const payload = {
-			id: get( action, 'data.ID' ),
-			height: get( action, 'data.height' ),
-			status: 'REMOVE_MEDIA_ITEM' === action.type ? 'deleted' : 'updated',
-			transientId: get( action, 'id' ),
-			url: get( action, 'data.URL' ),
-			width: get( action, 'data.width' ),
-		};
-		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
 	openPreviewModal = ( postUrl: string, previewPort: MessagePort ) => {
