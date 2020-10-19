@@ -439,7 +439,7 @@ describe( 'reducer', () => {
 					addLiker( 1, 1, 5, liker )
 				);
 
-				expect( state ).toEqual( initialState );
+				expect( state ).toBe( initialState );
 			} );
 		} );
 
@@ -523,7 +523,7 @@ describe( 'reducer', () => {
 					removeLiker( 1, 1, 5, liker )
 				);
 
-				expect( state ).toEqual( initialState );
+				expect( state ).toBe( initialState );
 			} );
 		} );
 	} );
