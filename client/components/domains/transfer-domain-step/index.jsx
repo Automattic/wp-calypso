@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, noop } from 'lodash';
+import { get, isEmpty, noop } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
 import classnames from 'classnames';
@@ -32,7 +32,11 @@ import DomainRegistrationSuggestion from 'calypso/components/domains/domain-regi
 import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import Notice from 'calypso/components/notice';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import TransferDomainPrecheck from './transfer-domain-precheck';
@@ -139,7 +143,7 @@ class TransferDomainStep extends React.Component {
 		}
 
 		let buildMapDomainUrl;
-		const basePathForMapping = endsWith( basePath, '/transfer' )
+		const basePathForMapping = basePath?.endsWith( '/transfer' )
 			? basePath.substring( 0, basePath.length - 9 )
 			: basePath;
 

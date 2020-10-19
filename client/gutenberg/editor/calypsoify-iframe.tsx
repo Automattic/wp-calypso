@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { endsWith, get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+import { get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -305,7 +305,7 @@ class CalypsoifyIframe extends Component<
 			const { postId } = payload;
 			const { siteId, currentRoute, postType } = this.props;
 
-			if ( ! endsWith( currentRoute, `/${ postId }` ) ) {
+			if ( ! currentRoute.endsWith( `/${ postId }` ) ) {
 				this.props.replaceHistory( `${ currentRoute }/${ postId }`, true );
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 

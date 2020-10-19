@@ -2,15 +2,15 @@
  * External dependencies
  */
 import deterministicStringify from 'fast-json-stable-stringify';
-import { endsWith, find, omit } from 'lodash';
+import { find, omit } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:users:store' );
 
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 
 const _fetchingUsersByNamespace = {}; // store fetching state (boolean)
 const _fetchingUpdatedUsersByNamespace = {}; // store fetching state (boolean)
@@ -99,7 +99,7 @@ function updateUser( siteId, id, user ) {
 function decrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
 		if (
-			endsWith( namespace, 'siteId=' + siteId ) &&
+			namespace.endsWith( 'siteId=' + siteId ) &&
 			_userIDsByNamespace[ namespace ].has( userId )
 		) {
 			_totalUsersByNamespace[ namespace ]--;
@@ -111,7 +111,7 @@ function decrementPaginationData( siteId, userId ) {
 function incrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
 		if (
-			endsWith( namespace, 'siteId=' + siteId ) &&
+			namespace.endsWith( 'siteId=' + siteId ) &&
 			_userIDsByNamespace[ namespace ].has( userId )
 		) {
 			_totalUsersByNamespace[ namespace ]++;
@@ -131,7 +131,7 @@ function deleteUserFromSite( siteId, userId ) {
 function deleteUserFromNamespaces( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function ( namespace ) {
 		if (
-			endsWith( namespace, 'siteId=' + siteId ) &&
+			namespace.endsWith( 'siteId=' + siteId ) &&
 			_userIDsByNamespace[ namespace ].has( userId )
 		) {
 			_userIDsByNamespace[ namespace ].delete( userId );
