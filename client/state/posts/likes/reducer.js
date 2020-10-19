@@ -76,7 +76,7 @@ export const itemReducer = withSchemaValidation(
 				const { likeCount, liker } = action;
 				const hasLiker = some( state.likes, ( like ) => like.ID === liker.ID );
 
-				if ( state.likeCount === likeCount && hasLiker ) {
+				if ( state.found === likeCount && hasLiker ) {
 					// if the like count matches and we already have this liker, bail
 					return state;
 				}
@@ -97,7 +97,7 @@ export const itemReducer = withSchemaValidation(
 				const { likeCount, liker } = action;
 				const hasLiker = some( state.likes, ( like ) => like.ID === liker.ID );
 
-				if ( state.likeCount === likeCount && ! hasLiker ) {
+				if ( state.found === likeCount && ! hasLiker ) {
 					// if the like count matches and we don't have this liker, bail
 					return state;
 				}
