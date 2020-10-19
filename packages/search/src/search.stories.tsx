@@ -41,3 +41,19 @@ export const Pinned = () => <BoxedSearch pinned />;
 export const Compact = () => <BoxedSearch compact />;
 
 export const CompactPinned = () => <BoxedSearch pinned compact fitsContainer />;
+
+export const WithOverlayStyling = () => {
+	const overlayStyling = ( input: string ) => {
+		const tokens = input.split( /(\s+)/ );
+
+		return tokens
+			.filter( ( token ) => token.trim() )
+			.map( ( token, i ) => (
+				<span style={ { borderBottom: '1px solid blue', fontSize: '0.9rem' } } key={ i }>
+					{ token }
+				</span>
+			) );
+	};
+
+	return <BoxedSearch overlayStyling={ overlayStyling } />;
+};

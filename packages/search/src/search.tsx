@@ -311,23 +311,21 @@ class Search extends React.Component< Props, State > {
 		const searchValue = this.state.keyword;
 		const placeholder = this.props.placeholder || __( 'Search…' );
 		const inputLabel = this.props.inputLabel;
-		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
 		const isOpenUnpinnedOrQueried = this.state.isOpen || ! this.props.pinned || searchValue;
 
-		const autocorrect = this.props.disableAutocorrect && {
+		const autocorrectProps = this.props.disableAutocorrect && {
 			autoComplete: 'off',
 			autoCorrect: 'off',
 			spellCheck: 'false' as const,
 		};
 
-		const searchClass = classNames( this.props.className, this.props.dir, {
+		const searchClass = classNames( 'search', this.props.className, this.props.dir, {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
 			'is-compact': this.props.compact,
 			'has-focus': this.state.hasFocus,
 			'has-open-icon': ! this.props.hideOpenIcon,
-			search: true,
 		} );
 
 		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
@@ -336,18 +334,7 @@ class Search extends React.Component< Props, State > {
 		return (
 			<div dir={ this.props.dir } className={ searchClass } role="search">
 				<Spinner />
-				<Button
-					className="search__icon-navigation"
-					ref={ this.openIcon }
-					onClick={ enableOpenIcon ? this.openSearch : this.focus }
-					tabIndex={ enableOpenIcon ? 0 : undefined }
-					onKeyDown={ enableOpenIcon ? this.openListener : undefined }
-					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ __( 'Open Search' ) }
-				>
-					{ /* @ts-ignore */ }
-					{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
-				</Button>
+				{ this.renderOpenIcon() }
 				<div className={ fadeDivClass }>
 					<form action="." onSubmit={ this.handleSubmit }>
 						<input
@@ -373,7 +360,7 @@ class Search extends React.Component< Props, State > {
 							dir={ this.props.dir }
 							maxLength={ this.props.maxLength }
 							minLength={ this.props.minLength }
-							{ ...autocorrect }
+							{ ...autocorrectProps }
 						/>
 					</form>
 					{ this.renderStylingDiv() }
@@ -383,8 +370,27 @@ class Search extends React.Component< Props, State > {
 		);
 	}
 
+	renderOpenIcon() {
+		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
+
+		return (
+			<Button
+				className="search__icon-navigation"
+				ref={ this.openIcon }
+				onClick={ enableOpenIcon ? this.openSearch : this.focus }
+				tabIndex={ enableOpenIcon ? 0 : undefined }
+				onKeyDown={ enableOpenIcon ? this.openListener : undefined }
+				aria-controls={ 'search-component-' + this.instanceId }
+				aria-label={ __( 'Open Search' ) }
+			>
+				{ /* @ts-ignore */ }
+				{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
+			</Button>
+		);
+	}
+
 	renderStylingDiv() {
-		if ( this.props.overlayStyling ) {
+		if ( typeof this.props.overlayStyling === 'function' ) {
 			return (
 				<div className="search__text-overlay" ref={ this.overlay }>
 					{ this.props.overlayStyling( this.state.keyword ) }
