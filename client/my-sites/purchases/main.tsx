@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Main from 'calypso/components/main';
 import Subscriptions from './subscriptions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
@@ -56,7 +57,7 @@ export function PurchaseDetails( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 
 	return (
@@ -67,6 +68,10 @@ export function PurchaseDetails( {
 				className="purchases__page-heading"
 				headerText={ translate( 'Billing' ) }
 				align="left"
+			/>
+			<PageViewTracker
+				path="/purchases/subscriptions/:site/:purchaseId"
+				title="Purchases > Manage Purchase"
 			/>
 
 			<ManagePurchase
