@@ -46,7 +46,7 @@ import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import config from 'calypso/config';
-import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
+import EditorDocumentHead from './editor-document-head';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import {
 	withStopPerformanceTrackingProp,
