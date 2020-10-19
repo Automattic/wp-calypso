@@ -214,6 +214,8 @@ function translateReponseCartProductToWPCOMCartItem(
 		if ( ! isRenewal( serverCartItem ) ) {
 			sublabel = product_name || '';
 		}
+	} else if ( isRenewal( serverCartItem ) ) {
+		sublabel = String( translate( 'Renewal' ) );
 	}
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
