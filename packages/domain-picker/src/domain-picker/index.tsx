@@ -302,7 +302,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">
 									<Button onClick={ () => setIsExpanded( true ) } isLink>
-										{ __( 'View more results' ) }
+										{ __( 'View more results', __i18n_text_domain__ ) }
 									</Button>
 								</div>
 							) }

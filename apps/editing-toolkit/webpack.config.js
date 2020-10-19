@@ -10,6 +10,7 @@ const _ = require( 'lodash' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const path = require( 'path' );
+const webpack = require( 'webpack' );
 
 const FSE_MODULE_PREFIX = 'a8c-fse';
 
@@ -74,6 +75,14 @@ function getWebpackConfig( env = {}, argv = {} ) {
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
+			new webpack.DefinePlugin( {
+				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
+				'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
+					!! process.env.FORCE_REDUCED_MOTION || false
+				),
+				__i18n_text_domain__: JSON.stringify( 'full-site-editing' ),
+				global: 'window',
+			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill: true,
 				requestToExternal( request ) {
