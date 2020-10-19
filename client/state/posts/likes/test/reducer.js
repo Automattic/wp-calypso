@@ -426,6 +426,21 @@ describe( 'reducer', () => {
 				} );
 				expect( state.likes ).toBe( initialState.likes );
 			} );
+
+			test( 'should return previous state if liker is already present and like count is the same', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 }, liker ],
+					found: 5,
+					iLike: false,
+				} );
+				const state = itemReducer(
+					initialState,
+					// same liker, same count!
+					addLiker( 1, 1, 5, liker )
+				);
+
+				expect( state ).toEqual( initialState );
+			} );
 		} );
 
 		describe( 'a POST_LIKES_REMOVE_LIKER action', () => {
@@ -493,6 +508,22 @@ describe( 'reducer', () => {
 					iLike: false,
 				} );
 				expect( state.likes ).toBe( initialState.likes );
+			} );
+
+			test( 'should return previous state if liker is not present and like count is the same', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 } ],
+					found: 5,
+					iLike: false,
+					lastUpdated: undefined,
+				} );
+				const state = itemReducer(
+					initialState,
+					// same liker, same count!
+					removeLiker( 1, 1, 5, liker )
+				);
+
+				expect( state ).toEqual( initialState );
 			} );
 		} );
 	} );
