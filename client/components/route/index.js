@@ -5,13 +5,16 @@ import React from 'react';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 const RouteContext = React.createContext( {
-	currentSection: null,
+	// TODO: a `null` value would be a better fit here, but existing code might access
+	// the properties of `currentSection` without guarding for `null`. Accessing properties
+	// of a boolean value is OK -- it's an object.
+	currentSection: false,
 	currentRoute: '',
 	currentQuery: false,
 } );
 
 export function RouteProvider( {
-	currentSection = null,
+	currentSection = false,
 	currentRoute = '',
 	currentQuery = false,
 	children,
