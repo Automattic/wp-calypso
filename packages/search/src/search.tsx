@@ -47,7 +47,7 @@ type Props = {
 	delaySearch: boolean;
 	delayTimeout: number;
 	describedBy?: string;
-	dir?: 'ltr' | 'rlt';
+	dir?: 'ltr' | 'rtl';
 	disableAutocorrect: boolean;
 	disabled: boolean;
 	fitsContainer: boolean;
