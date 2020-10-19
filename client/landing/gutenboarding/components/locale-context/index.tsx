@@ -19,6 +19,7 @@ import type { User } from '@automattic/data-stores';
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
+import { recordOnboardingError } from '../../lib/analytics';
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 const USE_TRANSLATION_CHUNKS: boolean =
@@ -47,13 +48,8 @@ const ChangeLocaleContext = React.createContext< ChangeLocaleFunction >( () => {
 export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 
 export const LocaleContext: React.FunctionComponent = ( { children } ) => {
-	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >(
-		// Call loadInitialLocale() ASAP, but wrapped to ignore its Promise
-		() => {
-			loadInitalLocale();
-		}
-	);
-	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState< true | null >( null );
+	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >();
+	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState< boolean >( false );
 
 	const setLocale = ( newLocaleData: LocaleData | undefined ) => {
 		// Translations done within react are made using the localData passed to the <I18nProvider/>.
@@ -77,19 +73,26 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 				setLocale( localeData );
 			}
 		} catch ( error ) {
-			console.error( error ); // eslint-disable-line no-console
+			recordOnboardingError( error );
+			setLocale( undefined );
 		}
 	};
 
-	async function loadInitalLocale() {
+	const loadInitalLocale = async () => {
 		// trigger changeLocale once to load the initial locale
 		const userLocale = await getLocale();
 		changeLocale( userLocale );
-	}
+	};
+
+	React.useEffect( () => {
+		loadInitalLocale();
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
-			<I18nProvider localeData={ contextLocaleData }>{ localeDataLoaded && children }</I18nProvider>
+			<I18nProvider localeData={ contextLocaleData }>
+				{ localeDataLoaded ? children : null }
+			</I18nProvider>
 		</ChangeLocaleContext.Provider>
 	);
 };
