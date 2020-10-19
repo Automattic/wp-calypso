@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
+import { noop } from 'lodash';
 import React, { useRef, FunctionComponent, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -18,6 +19,7 @@ import Badge from 'calypso/components/badge';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Tooltip from 'calypso/components/tooltip';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -36,6 +38,8 @@ import type { Activity } from 'calypso/state/activity-log/types';
 type Props = { activity: Activity; subActivities?: Activity[]; isLatest: boolean };
 
 const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLatest } ) => {
+	const { activityTs, activityTitle, rewindId } = activity;
+
 	const translate = useTranslate();
 	const getDisplayDate = useGetDisplayDate();
 	const moment = useLocalizedMoment();
@@ -54,8 +58,12 @@ const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLa
 	const onRestoreButtonLeave = useCallback( () => setTooltipVisibility( false ), [
 		setTooltipVisibility,
 	] );
-
-	const { activityTs, activityTitle, rewindId } = activity;
+	const onDownloadClick = useTrackCallback( noop, 'calypso_jetpack_backup_download', {
+		rewind_id: rewindId,
+	} );
+	const onRestoreClick = useTrackCallback( noop, 'calypso_jetpack_backup_restore', {
+		rewind_id: rewindId,
+	} );
 
 	return (
 		<Card
@@ -90,6 +98,7 @@ const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLa
 								href={ backupRestorePath( siteSlug, rewindId ) }
 								disabled={ ! hasCredentials }
 								primary={ hasCredentials }
+								onClick={ onRestoreClick }
 							>
 								{ translate( 'Restore to this point' ) }
 							</Button>
@@ -117,6 +126,7 @@ const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLa
 								className="backup-card__download-button"
 								href={ backupDownloadPath( siteSlug, rewindId ) }
 								primary={ ! hasCredentials }
+								onClick={ onDownloadClick }
 							>
 								{ translate( 'Download backup' ) }
 							</Button>
