@@ -8,8 +8,7 @@ export function parseDomainAgainstTldList( domainFragment, tldList ) {
 	}
 
 	const parts = domainFragment.split( '.' );
-	parts.shift();
-	const suffix = parts.join( '.' );
+	const suffix = parts.slice( 1 ).join( '.' );
 
 	return parseDomainAgainstTldList( suffix, tldList );
 }
