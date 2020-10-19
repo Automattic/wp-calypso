@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -67,9 +68,11 @@ const Header: React.FunctionComponent = () => {
 		>
 			<section className="gutenboarding__header-section">
 				<div className="gutenboarding__header-section-item">
-					<div className="gutenboarding__header-wp-logo">
-						<Icon icon={ wordpress } size={ 28 } />
-					</div>
+					<Button href={ 'https://wordpress.com' }>
+						<div className="gutenboarding__header-wp-logo">
+							<Icon icon={ wordpress } size={ 28 } />
+						</div>
+					</Button>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">
