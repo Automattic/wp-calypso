@@ -1,6 +1,6 @@
 /**
  * External dependencies
  */
-import { persistenceConfigFactory } from '@automattic/data-stores';
+import persistenceConfigFactory from '../persistence-config-factory';
 
 export default persistenceConfigFactory( 'WP_LAUNCH' );

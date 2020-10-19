@@ -8,28 +8,32 @@ import { select } from '@wordpress/data';
  */
 import { LaunchSequence, LaunchStep } from './data';
 import type { State } from './reducer';
-import { LaunchStepType } from './types';
+import type { LaunchStepType } from './types';
+import type * as DomainSuggestions from '../domain-suggestions';
+import type * as Plans from '../plans';
 
-export const getLaunchSequence = () => LaunchSequence;
-export const getLaunchStep = () => LaunchStep;
+export const getLaunchSequence = (): typeof LaunchSequence => LaunchSequence;
+export const getLaunchStep = (): typeof LaunchStep => LaunchStep;
 
-export const getState = ( state: State ) => state;
+export const getState = ( state: State ): State => state;
 export const hasPaidDomain = ( state: State ): boolean => {
 	if ( ! state.domain ) {
 		return false;
 	}
 	return ! state.domain.is_free;
 };
-export const getSelectedDomain = ( state: State ) => state.domain;
-export const getSelectedPlan = ( state: State ) => state.plan;
+export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSuggestion | undefined =>
+	state.domain;
+export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state.plan;
 
 // Completion status of steps is derived from the state of the launch flow
-export const isStepCompleted = ( state: State, step: LaunchStepType ) => {
+export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
 	if ( step === LaunchStep.Plan ) {
 		return !! getSelectedPlan( state );
 	}
 	if ( step === LaunchStep.Name ) {
-		const site = select( 'core' ).getEntityRecord( 'root', 'site', undefined );
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const site: any = select( 'core' ).getEntityRecord( 'root', 'site', undefined );
 		return !! site?.title;
 	}
 	if ( step === LaunchStep.Domain ) {
@@ -39,13 +43,13 @@ export const isStepCompleted = ( state: State, step: LaunchStepType ) => {
 };
 
 // Check if all steps are completed except the last one
-export const isFlowCompleted = ( state: State ) =>
+export const isFlowCompleted = ( state: State ): boolean =>
 	LaunchSequence.slice( 0, LaunchSequence.length - 1 ).every( ( step ) =>
 		isStepCompleted( state, step )
 	);
 
 // Check if at least one step is completed
-export const isFlowStarted = ( state: State ) =>
+export const isFlowStarted = ( state: State ): boolean =>
 	LaunchSequence.some( ( step ) => isStepCompleted( state, step ) );
 
 // Get first incomplete step
