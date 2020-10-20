@@ -237,6 +237,10 @@ $font-size: rem( 14px );
 			height: 34px;
 		}
 
+		.site-selector .search .search__open-icon {
+			width: auto;
+		}
+
 		.current-site__switch-sites-label {
 			display: none;
 		}
