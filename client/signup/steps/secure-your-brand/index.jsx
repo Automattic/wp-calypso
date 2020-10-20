@@ -41,17 +41,17 @@ export class SecureYourBrandStep extends Component {
 		const { additionalStepData, stepSectionName, stepName, secureYourBrand } = this.props;
 
 		this.props.recordTracksEvent( 'calypso_secure_your_brand_add' );
-		const cartItems = secureYourBrand?.product_data?.map( ( domain ) =>
+		const domainUpsellItems = secureYourBrand?.product_data?.map( ( domain ) =>
 			domainRegistration( { productSlug: domain.product_slug, domain: domain.domain } )
 		);
 		const step = {
 			stepName,
 			stepSectionName,
-			cartItems,
+			domainUpsellItems,
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItems } );
+		this.props.submitSignupStep( step, { domainUpsellItems } );
 		this.props.goToNextStep();
 	}
 
@@ -62,11 +62,11 @@ export class SecureYourBrandStep extends Component {
 		const step = {
 			stepName,
 			stepSectionName,
-			cartItems: null,
+			domainUpsellItems: null,
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, { cartItems: null } );
+		this.props.submitSignupStep( step, { domainUpsellItems: null } );
 		this.props.goToNextStep();
 	}
 

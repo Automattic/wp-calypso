@@ -327,7 +327,7 @@ export function generateSteps( {
 		'secure-your-brand': {
 			stepName: 'secure-your-brand',
 			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'cartItems' ],
+			providesDependencies: [ 'domainUpsellItems' ],
 			fulfilledStepCallback: isSecureYourBrandFulfilled,
 		},
 

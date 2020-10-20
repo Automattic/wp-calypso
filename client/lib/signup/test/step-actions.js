@@ -536,8 +536,8 @@ describe( 'isSecureYourBrandFulfilled()', () => {
 		isSecureYourBrandFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, cartItems: null, wasSkipped: true },
-			{ cartItems: null }
+			{ stepName, domainUpsellItems: null, wasSkipped: true },
+			{ domainUpsellItems: null }
 		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
@@ -556,8 +556,8 @@ describe( 'isSecureYourBrandFulfilled()', () => {
 		isSecureYourBrandFulfilled( stepName, undefined, nextProps );
 
 		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, cartItems: null, wasSkipped: true },
-			{ cartItems: null }
+			{ stepName, domainUpsellItems: null, wasSkipped: true },
+			{ domainUpsellItems: null }
 		);
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
