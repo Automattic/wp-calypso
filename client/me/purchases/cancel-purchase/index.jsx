@@ -38,6 +38,7 @@ import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -189,6 +190,8 @@ class CancelPurchase extends React.Component {
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+
 				<HeaderCake
 					backHref={ this.props.getManagePurchaseUrlFor(
 						this.props.siteSlug,

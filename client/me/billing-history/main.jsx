@@ -16,6 +16,8 @@ import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -35,6 +37,8 @@ const BillingHistory = ( { translate } ) => (
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 		<MeSidebarNavigation />
+
+		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 		<QueryBillingTransactions />
 		<PurchasesHeader section={ 'billing' } />
 		<BillingHistoryList />

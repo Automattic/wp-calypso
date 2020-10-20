@@ -15,6 +15,8 @@ import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -25,6 +27,8 @@ const UpcomingCharges = ( { translate } ) => (
 	<Main className="upcoming-charges is-wide-layout">
 		<DocumentHead title={ translate( 'Upcoming Charges' ) } />
 		<PageViewTracker path="/me/purchases/upcoming" title="Me > Upcoming Charges" />
+		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+
 		<MeSidebarNavigation />
 		<QueryBillingTransactions />
 		<PurchasesHeader section={ 'upcoming' } />
