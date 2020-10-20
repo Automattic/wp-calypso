@@ -84,6 +84,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'em':
 		case 'sub':
 		case 'sup':
+		case 'del':
 		case 's':
 		case 'ol':
 		case 'ul':
