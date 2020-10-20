@@ -16,7 +16,6 @@ import Header from 'calypso/my-sites/domains/domain-management/components/header
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
-	canUserPurchaseGSuite,
 	getEligibleGSuiteDomain,
 	hasGSuiteSupportedDomain,
 	hasGSuiteWithAnotherProvider,
@@ -36,7 +35,11 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import EmptyContent from 'calypso/components/empty-content';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagementForwarding } from 'calypso/my-sites/email/paths';
-import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers } from 'calypso/lib/domains';
+import {
+	getSelectedDomain,
+	isMappedDomain,
+	isMappedDomainWithWpcomNameservers,
+} from 'calypso/lib/domains';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEmailAccounts from 'calypso/components/data/query-email-accounts';
 import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
@@ -135,27 +138,13 @@ class EmailManagement extends React.Component {
 			return this.googleAppsUsersCard();
 		}
 
-		if ( config.isEnabled( 'email/titan-mvp' ) ) {
-			const selectedDomain = domainList[ 0 ];
-			return (
-				<EmailProvidersComparison
-					domain={ selectedDomain }
-					isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
-				/>
-			);
-		}
-
-		if ( hasGSuiteSupportedDomain( domainList ) ) {
-			return this.addGSuiteCta();
-		}
-
-		const emailForwardingDomain = getEligibleEmailForwardingDomain( selectedDomainName, domains );
-
-		if ( emailForwardingDomain && ! canUserPurchaseGSuite() && selectedDomainName ) {
-			return this.addEmailForwardingCard( emailForwardingDomain );
-		}
-
-		return this.emptyContent();
+		const selectedDomain = domainList[ 0 ];
+		return (
+			<EmailProvidersComparison
+				domain={ selectedDomain }
+				isGSuiteSupported={ hasGSuiteSupportedDomain( [ selectedDomain ] ) }
+			/>
+		);
 	}
 
 	emptyContent() {

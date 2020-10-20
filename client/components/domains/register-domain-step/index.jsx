@@ -7,7 +7,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	compact,
-	endsWith,
 	find,
 	flatten,
 	get,
@@ -1022,7 +1021,7 @@ class RegisterDomainStep extends React.Component {
 
 	handleSubdomainSuggestions = ( domain, vendor, timestamp ) => ( subdomainSuggestions ) => {
 		subdomainSuggestions = subdomainSuggestions.map( ( suggestion ) => {
-			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
+			suggestion.fetch_algo = suggestion.domain_name.endsWith( '.wordpress.com' )
 				? '/domains/search/wpcom'
 				: '/domains/search/dotblogsub';
 			suggestion.vendor = vendor;

@@ -12,20 +12,28 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import persistOptions from './persist';
-import type { SelectFromMap, DispatchFromMap } from '@automattic/data-stores';
+import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export type { State };
 export { STORE_KEY };
 
 use( plugins.persistence, persistOptions );
 
-registerStore< State >( STORE_KEY, {
-	actions,
-	controls,
-	reducer: reducer as any,
-	selectors,
-	persist: [ 'domain', 'domainSearch', 'plan', 'confirmedDomainSelection', 'isExperimental' ],
-} );
+let isRegistered = false;
+
+export function register(): typeof STORE_KEY {
+	if ( ! isRegistered ) {
+		isRegistered = true;
+		registerStore< State >( STORE_KEY, {
+			actions,
+			controls,
+			reducer: reducer as any,
+			selectors,
+			persist: [ 'domain', 'domainSearch', 'plan', 'confirmedDomainSelection', 'isExperimental' ],
+		} );
+	}
+	return STORE_KEY;
+}
 
 declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;

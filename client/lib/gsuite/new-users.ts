@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from 'calypso/config';
 import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { countBy, find, includes, groupBy, map, mapValues } from 'lodash';
@@ -44,7 +43,6 @@ export interface GSuiteProductUser {
 const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
 	Object.keys( user )
 		.filter( ( key ) => 'uuid' !== key )
-		.filter( ( key ) => config.isEnabled( 'gsuite/passwords' ) || 'password' !== key )
 		.map( ( key ) => user[ key ] );
 
 /**
@@ -56,10 +54,6 @@ const getFields = ( user: GSuiteNewUser ): GSuiteNewUserField[] =>
 const mapFieldValues = ( user: GSuiteNewUser, callback ): GSuiteNewUser =>
 	mapValues( user, ( fieldValue, fieldName ) => {
 		if ( 'uuid' === fieldName ) {
-			return fieldValue;
-		}
-
-		if ( 'password' === fieldName && ! config.isEnabled( 'gsuite/passwords' ) ) {
 			return fieldValue;
 		}
 
@@ -225,6 +219,7 @@ const validatePasswordField = ( { value, error }: GSuiteNewUserField ): GSuiteNe
 			value,
 			error: translate( "This field can't accept '%s' as character.", {
 				args: firstForbiddenCharacter,
+				comment: '%s denotes a single character that is not allowed in this field',
 			} ),
 		};
 	}
@@ -253,7 +248,7 @@ const validateUser = ( user: GSuiteNewUser ): GSuiteNewUser => {
 		mailBox: validateOverallEmail( validEmailCharacterField( mailBox ), domain ),
 		firstName: sixtyCharacterField( firstName ),
 		lastName: sixtyCharacterField( lastName ),
-		password: config.isEnabled( 'gsuite/passwords' ) ? validatePasswordField( password ) : password,
+		password: validatePasswordField( password ),
 	};
 };
 

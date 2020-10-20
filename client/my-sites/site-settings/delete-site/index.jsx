@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -18,6 +17,7 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button, Dialog } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -89,7 +89,7 @@ class DeleteSite extends Component {
 	};
 
 	closeConfirmDialog = () => {
-		this.setState( { showConfirmDialog: false } );
+		this.setState( { showConfirmDialog: false, confirmDomain: '' } );
 	};
 
 	closeWarningDialog = () => {

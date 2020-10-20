@@ -63,7 +63,7 @@ class BillingReceipt extends React.Component {
 		const { transaction, transactionId, translate } = this.props;
 
 		return (
-			<Main>
+			<Main className="receipt is-wide-layout">
 				<DocumentHead title={ translate( 'Billing History' ) } />
 				<PageViewTracker
 					path="/me/purchases/billing/:receipt"

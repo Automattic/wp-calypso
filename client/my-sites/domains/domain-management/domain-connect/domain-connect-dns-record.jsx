@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { endsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +26,7 @@ class DomainConnectDnsRecord extends Component {
 			return `${ service }.${ protocol }.${ isRoot ? '' : name + '.' }${ domain }`;
 		}
 
-		if ( endsWith( name, '.' ) ) {
+		if ( name.endsWith( '.' ) ) {
 			return name.slice( 0, -1 );
 		}
 

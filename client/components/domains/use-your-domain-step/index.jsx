@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, noop } from 'lodash';
+import { get, isEmpty, noop } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import { stringify } from 'qs';
@@ -23,11 +23,19 @@ import {
 import { Card, Button } from '@automattic/components';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { CALYPSO_CONTACT, INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from 'calypso/lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	INCOMING_DOMAIN_TRANSFER,
+	MAP_EXISTING_DOMAIN,
+} from 'calypso/lib/url/support';
 import HeaderCake from 'calypso/components/header-cake';
 import { errorNotice } from 'calypso/state/notices/actions';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import { getDomainPrice, getDomainProductSlug, getDomainTransferSalePrice } from 'calypso/lib/domains';
+import {
+	getDomainPrice,
+	getDomainProductSlug,
+	getDomainTransferSalePrice,
+} from 'calypso/lib/domains';
 import {
 	isDomainBundledWithPlan,
 	isDomainMappingFree,
@@ -98,7 +106,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		let buildMapDomainUrl;
-		const basePathForMapping = endsWith( basePath, '/use-your-domain' )
+		const basePathForMapping = basePath?.endsWith( '/use-your-domain' )
 			? basePath.substring( 0, basePath.length - 16 )
 			: basePath;
 
@@ -127,7 +135,7 @@ class UseYourDomainStep extends React.Component {
 		}
 
 		let buildTransferDomainUrl;
-		const basePathForTransfer = endsWith( basePath, '/use-your-domain' )
+		const basePathForTransfer = basePath?.endsWith( '/use-your-domain' )
 			? basePath.substring( 0, basePath.length - 16 )
 			: basePath;
 

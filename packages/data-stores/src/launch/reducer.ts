@@ -3,7 +3,8 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type * as DomainSuggestions from '../domain-suggestions';
+import type * as Plans from '../plans';
 
 /**
  * Internal dependencies

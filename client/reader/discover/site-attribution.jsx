@@ -5,19 +5,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { get, endsWith } from 'lodash';
+import { get } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { translate } from 'i18n-calypso';
-import FollowButton from 'reader/follow-button';
+import FollowButton from 'calypso/reader/follow-button';
 import { getLinkProps } from './helper';
 import { recordFollowToggle, recordSiteClick } from './stats';
-import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'reader/discover/helper';
-import SiteIcon from 'blocks/site-icon';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
+import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'calypso/reader/discover/helper';
+import SiteIcon from 'calypso/blocks/site-icon';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 
 /**
  * Style dependencies
@@ -44,7 +44,7 @@ class DiscoverSiteAttribution extends React.Component {
 
 		let avatarUrl = attribution.avatar_url;
 		// Drop default avatar
-		if ( endsWith( avatarUrl, 'defaultavatar.png' ) ) {
+		if ( avatarUrl.endsWith( 'defaultavatar.png' ) ) {
 			avatarUrl = null;
 		}
 

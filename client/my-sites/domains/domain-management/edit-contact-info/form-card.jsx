@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import page from 'page';
-import { endsWith, get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -252,7 +252,7 @@ class EditContactInfoFormCard extends React.Component {
 		const NETHERLANDS_TLD = '.nl';
 		const { fax } = this.getContactFormFieldValues();
 
-		return endsWith( this.props.selectedDomain.name, NETHERLANDS_TLD ) || !! fax;
+		return this.props.selectedDomain.name.endsWith( NETHERLANDS_TLD ) || !! fax;
 	}
 
 	onTransferLockOptOutChange = ( event ) =>

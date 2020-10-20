@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { some } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -13,12 +12,12 @@ import classNames from 'classnames';
 import { CompactCard } from '@automattic/components';
 import CredentialsConfigured from './credentials-configured';
 import Notice from 'calypso/components/notice';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies
@@ -45,11 +44,11 @@ class JetpackCredentials extends Component {
 			this.isSectionHighlighted() && 'is-highlighted'
 		);
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
-		const hasCredentials = some( credentials, { role: 'main' } );
+		const hasCredentials = !! credentials;
 
 		return (
 			<div className={ classes }>
-				<QueryRewindState siteId={ siteId } />
+				<QuerySiteCredentials siteId={ siteId } />
 				<SettingsSectionHeader title={ translate( 'Backups and security scans' ) }>
 					{ hasAuthorized && (
 						<Notice
@@ -85,12 +84,9 @@ class JetpackCredentials extends Component {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const { credentials, state: rewindState } = getRewindState( state, siteId );
-
 	return {
-		credentials,
-		rewindState,
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		credentials: getJetpackCredentials( state, siteId, 'main' ),
 	};
 } )( localize( JetpackCredentials ) );

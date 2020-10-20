@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
@@ -30,8 +29,6 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
-import { siteHasJetpackProductPurchase } from 'calypso/state/purchases/selectors';
 import { isEcommerce } from 'calypso/lib/products-values';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
@@ -621,14 +618,7 @@ export class MySitesSidebar extends Component {
 	}
 
 	plans() {
-		const {
-			canUserManageOptions,
-			hasPaidJetpackPlan,
-			hasPurchasedJetpackProduct,
-			path,
-			site,
-			translate,
-		} = this.props;
+		const { canUserManageOptions, path, site, siteSuffix, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -646,30 +636,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let planLink = '/plans' + this.props.siteSuffix;
-
-		// Show plan details for upgraded sites
-		if ( hasPaidJetpackPlan || hasPurchasedJetpackProduct ) {
-			planLink = '/plans/my-plan' + this.props.siteSuffix;
-		}
-
-		const linkClass = classNames( {
-			selected: itemLinkMatches( [ '/plans' ], path ),
-		} );
-
-		const tipTarget = 'plan';
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className={ linkClass } data-tip-target={ tipTarget }>
-				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<span className="menu-link-text" data-e2e-sidebar="Plan">
-						{ translate( 'Plans', { context: 'noun' } ) }
-					</span>
-				</a>
-			</li>
+			<SidebarItem
+				label={ translate( 'Plans', { context: 'noun' } ) }
+				tipTarget="plans"
+				selected={ itemLinkMatches( '/plans', path ) }
+				link={ '/plans' + siteSuffix }
+				onNavigate={ this.trackPlanClick }
+				preloadSectionName="plans"
+				forceInternalLink
+				expandSection={ this.expandPlanSection }
+			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackStoreClick = () => {
@@ -1087,8 +1065,6 @@ function mapStateToProps( state ) {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
-		hasPaidJetpackPlan: isCurrentPlanPaid( state, siteId ),
-		hasPurchasedJetpackProduct: siteHasJetpackProductPurchase( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),
