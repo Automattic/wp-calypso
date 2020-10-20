@@ -7,6 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	collapseSidebar,
+	expandSidebar,
 	navigate,
 	setAllSitesSelected,
 	setPreviewShowing,
@@ -18,9 +20,10 @@ import {
 	NAVIGATE,
 	NOTIFICATIONS_PANEL_TOGGLE,
 	PREVIEW_IS_SHOWING,
+	SIDEBAR_TOGGLE_VISIBILITY,
 	SECTION_SET,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
@@ -93,6 +96,24 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: NAVIGATE,
 				path,
+			} );
+		} );
+	} );
+
+	describe( 'expandSidebar', () => {
+		test( 'should return an action object with the action type and sidebarIsCollapsed= false', () => {
+			expect( expandSidebar() ).to.eql( {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				collapsed: false,
+			} );
+		} );
+	} );
+
+	describe( 'collapseSidebar', () => {
+		test( 'should return an action object with the action type and sidebarIsCollapsed= true', () => {
+			expect( collapseSidebar() ).to.eql( {
+				type: SIDEBAR_TOGGLE_VISIBILITY,
+				collapsed: true,
 			} );
 		} );
 	} );
