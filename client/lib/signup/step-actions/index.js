@@ -364,10 +364,11 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	}
 
 	const state = reduxStore.getState();
-	const cartItems = get( getSignupDependencyStore( state ), 'cartItems', null ) || [];
+	const domainUpsellItems =
+		get( getSignupDependencyStore( state ), 'domainUpsellItems', null ) || [];
 	const providedDependencies = { cartItem };
 
-	const newCartItems = [ cartItem ].filter( ( item ) => item ).concat( cartItems );
+	const newCartItems = [ cartItem ].filter( ( item ) => item ).concat( domainUpsellItems );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -868,8 +869,8 @@ export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextP
 	const isFree = hasDomainItemInDependencyStore && isEmpty( domainItem );
 	const isNotRegistration = ! isFree && ! isDomainRegistration( domainItem );
 	if ( isFree || isNotRegistration || skipSecureYourBrand ) {
-		const cartItems = null;
-		submitSignupStep( { stepName, cartItems, wasSkipped: true }, { cartItems } );
+		const domainUpsellItems = null;
+		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
 		flows.excludeStep( stepName );
 	}
 }
