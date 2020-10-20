@@ -29,7 +29,7 @@ export interface Plan {
 export interface APIPlan {
 	product_id: number;
 	product_name: string;
-	meta: object;
+	meta: Record< string, unknown >;
 	prices: {
 		AUD: number;
 		BRL: number;
@@ -85,9 +85,22 @@ export interface APIPlan {
 	price: string;
 	formatted_price: string;
 	raw_price: number;
-	tagline: object;
+	tagline: Record< string, unknown >;
 	currency_code: string;
 }
+
+export type APIPlanProduct = {
+	plan_id: number;
+};
+
+export type APIPlanDetail = {
+	short_name: string;
+	tagline: string;
+	products: Array< APIPlanProduct >;
+	nonlocalized_short_name: string;
+	highlighted_features: Array< string >;
+	features: Array< string >;
+};
 
 export type PlanFeature = {
 	id?: string;
@@ -102,11 +115,3 @@ export type PlanFeatureType = {
 	name: string;
 	features: Array< string >;
 };
-
-export type PlanDetail = {
-	id: string;
-	name: string | null;
-	features: Array< PlanFeature >;
-};
-
-export type PlanDetails = Array< PlanDetail >;

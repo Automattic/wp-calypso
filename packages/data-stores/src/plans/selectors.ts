@@ -20,8 +20,6 @@ export const getDefaultPaidPlan = ( state: State ): Plan => {
 export const getSupportedPlans = ( state: State ): Plan[] => {
 	const supportedPlans: Plan[] = [];
 
-	console.log( state );
-
 	state.supportedPlanSlugs.forEach( ( slug ) => {
 		if ( slug in state.plans ) {
 			supportedPlans.push( state.plans[ slug ] );
@@ -29,15 +27,13 @@ export const getSupportedPlans = ( state: State ): Plan[] => {
 	} );
 
 	return supportedPlans;
-
-	// return state.supportedPlanSlugs.map( ( slug ) => state.plans[ slug ] ?? undefined );
 };
 
 export const getPlanByPath = ( state: State, path?: string ): Plan | undefined => {
 	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
 };
 
-export const getPlansDetails = ( state: State, _: any ): State => state;
+export const getPlansDetails = ( state: State, _: string ): State => state; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export const getPlansPaths = ( state: State ) => {
 	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
