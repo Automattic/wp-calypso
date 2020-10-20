@@ -17,20 +17,19 @@ import { xorWith, isEqual, isEmpty, shuffle } from 'lodash';
 import Gutenboard from './gutenboard';
 import { LocaleContext } from './components/locale-context';
 import { setupWpDataDebug } from './devtools';
-import accessibleFocus from 'lib/accessible-focus';
+import accessibleFocus from 'calypso/lib/accessible-focus';
 import availableDesigns from './available-designs';
 import { Step, path } from './path';
 import { SITE_STORE } from './stores/site';
 import { STORE_KEY as ONBOARD_STORE } from './stores/onboard';
-import { addHotJarScript } from 'lib/analytics/hotjar';
 import { WindowLocaleEffectManager } from './components/window-locale-effect-manager';
 import type { Design } from './stores/onboard/types';
 
 /**
  * Style dependencies
  */
-import 'assets/stylesheets/gutenboarding.scss';
-import 'components/environment-badge/style.scss';
+import 'calypso/assets/stylesheets/gutenboarding.scss';
+import 'calypso/components/environment-badge/style.scss';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import './gutenberg-types-patch';
@@ -70,7 +69,6 @@ window.AppBoot = async () => {
 	// until after the user has completed the gutenboarding flow.
 	// This also saves us from having to pull in lib/user/user and it's dependencies.
 	initializeAnalytics( undefined, generateGetSuperProps() );
-	addHotJarScript();
 	// Add accessible-focus listener.
 	accessibleFocus();
 
