@@ -34,6 +34,7 @@ $font-size: rem( 14px );
 	// client/layout/style.scss | Workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/index.jsx).
 	.layout__secondary .site-selector {
 		transition: none;
+		overflow: hidden;
 	}
 }
 

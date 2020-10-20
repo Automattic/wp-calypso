@@ -41,6 +41,9 @@ class CurrentSite extends Component {
 	};
 
 	switchSites = ( event ) => {
+		if ( isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed ) {
+			this.props.expandTheSidebar();
+		}
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
