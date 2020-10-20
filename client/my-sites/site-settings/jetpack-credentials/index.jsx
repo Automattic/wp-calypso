@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -44,7 +45,7 @@ class JetpackCredentials extends Component {
 			this.isSectionHighlighted() && 'is-highlighted'
 		);
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
-		const hasCredentials = !! credentials;
+		const hasCredentials = ! isEmpty( credentials );
 
 		return (
 			<div className={ classes }>

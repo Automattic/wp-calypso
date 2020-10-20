@@ -131,13 +131,14 @@ export class RewindCredentialsForm extends Component {
 		const { credentials, siteSlug } = nextProps;
 
 		const nextForm = Object.assign( {}, this.state.form );
+		const hasCredentials = isEmpty( nextForm.host ) && ! isEmpty( credentials );
 
 		// Populate the fields with data from state if credentials are already saved
-		nextForm.protocol = credentials ? credentials.protocol : nextForm.protocol;
-		nextForm.host = isEmpty( nextForm.host ) && credentials ? credentials.host : nextForm.host;
-		nextForm.port = isEmpty( nextForm.port ) && credentials ? credentials.port : nextForm.port;
-		nextForm.user = isEmpty( nextForm.user ) && credentials ? credentials.user : nextForm.user;
-		nextForm.path = isEmpty( nextForm.path ) && credentials ? credentials.abspath : nextForm.path;
+		nextForm.protocol = ! isEmpty( credentials ) ? credentials.protocol : nextForm.protocol;
+		nextForm.host = hasCredentials ? credentials.host : nextForm.host;
+		nextForm.port = hasCredentials ? credentials.port : nextForm.port;
+		nextForm.user = hasCredentials ? credentials.user : nextForm.user;
+		nextForm.path = hasCredentials ? credentials.abspath : nextForm.path;
 
 		// Populate the host field with the site slug if needed
 		nextForm.host =
