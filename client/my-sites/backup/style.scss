@@ -169,4 +169,8 @@
 			@include banner-color( var( --color-primary-40 ) );
 		}
 	}
+
+	.backup__card-list {
+		margin-top: 32px;
+	}
 }
