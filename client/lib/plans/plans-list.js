@@ -233,8 +233,7 @@ const getPlanPremiumDetails = () => ( {
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for freelancers:{{/strong}}' +
-				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.',
 			plansDescriptionHeadingComponent
@@ -904,8 +903,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for small businesses:{{/strong}}' +
-					'Comprehensive, automated scanning for security vulnerabilities, ' +
+				'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
 					'fast video hosting, and marketing automation.',
 				plansDescriptionHeadingComponent
 			),
@@ -982,8 +980,7 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for small businesses:{{/strong}}' +
-					'Comprehensive, automated scanning for security vulnerabilities, ' +
+				'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
 					'fast video hosting, and marketing automation.',
 				plansDescriptionHeadingComponent
 			),
@@ -1053,8 +1050,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for personal use:{{/strong}}' +
-					'Security essentials for your WordPress site, including ' +
+				'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
 				plansDescriptionHeadingComponent
 			),
@@ -1102,8 +1098,7 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ constants.PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for personal use:{{/strong}}' +
-					'Security essentials for your WordPress site, including ' +
+				'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
 				plansDescriptionHeadingComponent
 			),
@@ -1162,8 +1157,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for organizations:{{/strong}}' +
-					'The most powerful WordPress sites: real-time backups ' +
+				'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 					'and unlimited premium themes.',
 				plansDescriptionHeadingComponent
 			),
@@ -1235,8 +1229,7 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for organizations:{{/strong}}' +
-					'The most powerful WordPress sites: real-time backups ' +
+				'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 					'and unlimited premium themes.',
 				plansDescriptionHeadingComponent
 			),
