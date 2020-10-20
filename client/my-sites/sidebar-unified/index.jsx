@@ -47,10 +47,12 @@ export const MySitesSidebarUnified = ( { path } ) => {
 			: document.body.classList.remove( 'is-sidebar-collapsed' );
 
 		// Needs to be queued for removal after is-sidebar-collapsed is removed
-		! collapsed &&
-			setTimeout( () => {
+		if ( ! collapsed ) {
+			const timer = setTimeout( () => {
 				document.body.classList.remove( 'clear-secondary-layout-transitions' );
 			} );
+			return () => clearTimeout( timer );
+		}
 	}, [ collapsed ] );
 
 	/**
