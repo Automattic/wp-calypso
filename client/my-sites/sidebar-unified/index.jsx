@@ -41,9 +41,16 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	);
 
 	useEffect( () => {
+		// Adding / removing clear-secondary-layout-transitions is a workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/style.scss).
 		collapsed
-			? document.body.classList.add( 'is-sidebar-collapsed' )
+			? document.body.classList.add( 'is-sidebar-collapsed', 'clear-secondary-layout-transitions' )
 			: document.body.classList.remove( 'is-sidebar-collapsed' );
+
+		// Needs to be queued for removal after is-sidebar-collapsed is removed
+		! collapsed &&
+			setTimeout( () => {
+				document.body.classList.remove( 'clear-secondary-layout-transitions' );
+			} );
 	}, [ collapsed ] );
 
 	/**

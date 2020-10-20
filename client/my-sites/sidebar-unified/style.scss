@@ -30,6 +30,13 @@
 $sidebar-item-padding: 8px 0;
 $font-size: rem( 14px );
 
+.clear-secondary-layout-transitions {
+	// client/layout/style.scss | Workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/index.jsx).
+	.layout__secondary .site-selector {
+		transition: none;
+	}
+}
+
 .is-nav-unification {
 	// client/layout/sidebar/style.scss
 	.sidebar {
