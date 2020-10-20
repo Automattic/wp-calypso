@@ -16,8 +16,8 @@ import { isWithinBreakpoint } from '@automattic/viewport';
  */
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
-import { getSidebarIsCollapsed } from 'calypso/state/ui/sidebar-visibility/selectors';
-import { collapseSidebar, expandSidebar } from 'calypso/state/ui/sidebar-visibility/actions';
+import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
+import { collapseSidebar, expandSidebar } from 'calypso/state/ui/actions';
 
 export const CollapseSidebar = ( {
 	title,
