@@ -17,7 +17,10 @@ import {
 	recordTracksEvent,
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
-import { removeEmailForward, resendVerificationEmail } from 'calypso/state/email-forwarding/actions';
+import {
+	removeEmailForward,
+	resendVerificationEmail,
+} from 'calypso/state/email-forwarding/actions';
 
 class EmailForwardingItem extends React.Component {
 	static propTypes = {

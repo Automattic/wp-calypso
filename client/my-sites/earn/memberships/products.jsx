@@ -10,7 +10,11 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import './style.scss';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import HeaderCake from 'calypso/components/header-cake';
 import SectionHeader from 'calypso/components/section-header';

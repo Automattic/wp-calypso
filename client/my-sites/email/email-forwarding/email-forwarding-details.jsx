@@ -9,7 +9,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import { EMAIL_FORWARDING } from 'calypso/lib/url/support';
 
 class EmailForwardingDetails extends React.Component {

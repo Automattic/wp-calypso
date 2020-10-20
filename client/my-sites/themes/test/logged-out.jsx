@@ -17,7 +17,9 @@ import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 
 jest.mock( 'lib/abtest', () => ( { abtest: () => {} } ) );
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'lib/analytics/page-view-tracker', () =>
+	require( 'calypso/components/empty-component' )
+);
 jest.mock( 'my-sites/themes/theme-preview', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'logged-out', () => {

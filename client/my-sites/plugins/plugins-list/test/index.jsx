@@ -27,7 +27,9 @@ jest.mock( 'lib/wp', () => ( {
 jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'my-sites/plugins/plugin-list-header', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 describe( 'PluginsList', () => {
 	describe( 'rendering bulk actions', () => {

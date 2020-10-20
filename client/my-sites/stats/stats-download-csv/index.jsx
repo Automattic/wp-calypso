@@ -15,7 +15,10 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import titlecase from 'to-title-case';
 import { Button } from '@automattic/components';
-import { getSiteStatsCSVData, isRequestingSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
+import {
+	getSiteStatsCSVData,
+	isRequestingSiteStatsForQuery,
+} from 'calypso/state/stats/lists/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

@@ -26,7 +26,11 @@ import titlecase from 'to-title-case';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WordAdsEarnings from './earnings';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { canCurrentUserUseAds } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

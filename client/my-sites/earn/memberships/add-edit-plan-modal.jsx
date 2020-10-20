@@ -24,7 +24,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormToggle from 'calypso/components/forms/form-toggle';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { requestAddProduct, requestUpdateProduct } from 'calypso/state/memberships/product-list/actions';
+import {
+	requestAddProduct,
+	requestUpdateProduct,
+} from 'calypso/state/memberships/product-list/actions';
 import SectionNav from 'calypso/components/section-nav';
 import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import SectionNavTabItem from 'calypso/components/section-nav/item';

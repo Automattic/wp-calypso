@@ -28,7 +28,11 @@ import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { receiveSite, updateSiteMigrationMeta, requestSite } from 'calypso/state/sites/actions';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { urlToSlug } from 'calypso/lib/url';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import wpcom from 'calypso/lib/wp';

@@ -29,7 +29,11 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
 import ThemesSelection from './themes-selection';
 import { addTracking } from './helpers';
-import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import {
+	getCurrentPlan,
+	hasFeature,
+	isRequestingSitePlans,
+} from 'calypso/state/sites/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

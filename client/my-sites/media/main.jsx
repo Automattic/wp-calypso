@@ -30,7 +30,11 @@ import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import searchUrl from 'calypso/lib/search-url';
 import { editMedia, deleteMedia } from 'calypso/state/media/thunks';
-import { setMediaLibrarySelectedItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
+import {
+	setMediaLibrarySelectedItems,
+	changeMediaSource,
+	clearSite,
+} from 'calypso/state/media/actions';
 
 /**
  * Style dependencies

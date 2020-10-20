@@ -11,7 +11,10 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getSiteStatsQueryDate, isRequestingSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
+import {
+	getSiteStatsQueryDate,
+	isRequestingSiteStatsForQuery,
+} from 'calypso/state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

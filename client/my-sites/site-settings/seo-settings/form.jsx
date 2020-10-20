@@ -24,7 +24,11 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import {
+	getSeoTitleFormatsForSite,
+	isJetpackSite,
+	isRequestingSite,
+} from 'calypso/state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,

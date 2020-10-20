@@ -21,7 +21,10 @@ import {
 	startJetpackProductInstall,
 } from 'calypso/state/jetpack-product-install/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { getPluginKeys, requestPluginKeys } from 'calypso/state/data-getters/wpcom/jetpack-blogs/keys';
+import {
+	getPluginKeys,
+	requestPluginKeys,
+} from 'calypso/state/data-getters/wpcom/jetpack-blogs/keys';
 import { SiteId, TimeoutMS } from 'calypso/types';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 

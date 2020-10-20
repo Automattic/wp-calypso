@@ -9,7 +9,10 @@ import { get, isEmpty, omit, pick } from 'lodash';
  * Internal Dependencies
  */
 import SectionImport from 'calypso/my-sites/importer/section-import';
-import { setImportingFromSignupFlow, setImportOriginSiteDetails } from 'calypso/state/importer-nux/actions';
+import {
+	setImportingFromSignupFlow,
+	setImportOriginSiteDetails,
+} from 'calypso/state/importer-nux/actions';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
 import { addQueryArgs } from 'calypso/lib/route';
 

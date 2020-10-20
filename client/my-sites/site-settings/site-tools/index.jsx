@@ -19,7 +19,10 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import { hasLoadedSitePurchasesFromServer, getPurchasesError } from 'calypso/state/purchases/selectors';
+import {
+	hasLoadedSitePurchasesFromServer,
+	getPurchasesError,
+} from 'calypso/state/purchases/selectors';
 import notices from 'calypso/notices';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 

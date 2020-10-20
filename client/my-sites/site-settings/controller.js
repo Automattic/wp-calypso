@@ -16,7 +16,11 @@ import SiteSettingsMain from 'calypso/my-sites/site-settings/main';
 import StartOver from './start-over';
 import ThemeSetup from './theme-setup';
 import ManageConnection from './manage-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';

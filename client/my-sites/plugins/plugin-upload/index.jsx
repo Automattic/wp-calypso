@@ -27,7 +27,11 @@ import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-p
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
-import { getSiteAdminUrl, isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteAdminUrl,
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+} from 'calypso/state/sites/selectors';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,

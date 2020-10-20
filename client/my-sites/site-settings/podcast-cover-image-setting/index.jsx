@@ -22,7 +22,10 @@ import Image from 'calypso/components/image';
 import { addMedia } from 'calypso/state/media/thunks';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
-import { getImageEditorCrop, getImageEditorTransform } from 'calypso/state/editor/image-editor/selectors';
+import {
+	getImageEditorCrop,
+	getImageEditorTransform,
+} from 'calypso/state/editor/image-editor/selectors';
 import { setEditorMediaModalView } from 'calypso/state/editor/actions';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import resizeImageUrl from 'calypso/lib/resize-image-url';

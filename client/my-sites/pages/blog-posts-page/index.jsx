@@ -14,7 +14,11 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { getSiteFrontPageType, getSitePostsPage, getSiteFrontPage } from 'calypso/state/sites/selectors';
+import {
+	getSiteFrontPageType,
+	getSitePostsPage,
+	getSiteFrontPage,
+} from 'calypso/state/sites/selectors';
 import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

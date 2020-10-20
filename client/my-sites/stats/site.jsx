@@ -29,7 +29,11 @@ import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
-import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import {
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+} from 'calypso/state/analytics/actions';
 import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';

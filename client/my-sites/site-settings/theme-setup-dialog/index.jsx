@@ -12,7 +12,10 @@ import page from 'page';
 import { Dialog } from '@automattic/components';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { toggleDialog, runThemeSetup as runThemeSetupAction } from 'calypso/state/theme-setup/actions';
+import {
+	toggleDialog,
+	runThemeSetup as runThemeSetupAction,
+} from 'calypso/state/theme-setup/actions';
 import {
 	isThemeSetupDialogVisible,
 	isThemeSetupActive,

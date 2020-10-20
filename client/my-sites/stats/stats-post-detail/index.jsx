@@ -30,7 +30,11 @@ import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/se
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Button } from '@automattic/components';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
-import { getSitePost, isRequestingSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import {
+	getSitePost,
+	isRequestingSitePost,
+	getPostPreviewUrl,
+} from 'calypso/state/posts/selectors';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
 import WebPreview from 'calypso/components/web-preview';
 

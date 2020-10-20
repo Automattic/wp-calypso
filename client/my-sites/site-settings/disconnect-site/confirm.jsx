@@ -18,7 +18,11 @@ import Main from 'calypso/components/main';
 import NavigationLink from 'calypso/components/wizard/navigation-link';
 import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 
 class ConfirmDisconnection extends PureComponent {

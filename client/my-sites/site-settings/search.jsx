@@ -21,7 +21,11 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
@@ -37,7 +41,10 @@ import {
 } from 'calypso/lib/products-values';
 import { planHasJetpackSearch } from 'calypso/lib/plans';
 import { FEATURE_SEARCH } from 'calypso/lib/plans/constants';
-import { PRODUCT_JETPACK_SEARCH, PRODUCT_WPCOM_SEARCH } from 'calypso/lib/products-values/constants';
+import {
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_WPCOM_SEARCH,
+} from 'calypso/lib/products-values/constants';
 
 class Search extends Component {
 	static defaultProps = {
@@ -149,9 +156,7 @@ class Search extends Component {
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="search"
-								label={ translate(
-									'Improve built-in WordPress search performance.'
-								) }
+								label={ translate( 'Improve built-in WordPress search performance.' ) }
 								disabled={ isRequestingSettings || isSavingSettings }
 							/>
 						) : (
@@ -160,9 +165,7 @@ class Search extends Component {
 								disabled={ isRequestingSettings || isSavingSettings }
 								onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
 							>
-								{ translate(
-									'Improve built-in WordPress search performance.'
-								) }
+								{ translate( 'Improve built-in WordPress search performance.' ) }
 							</CompactFormToggle>
 						) }
 

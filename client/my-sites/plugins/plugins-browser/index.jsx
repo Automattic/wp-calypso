@@ -31,7 +31,11 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';

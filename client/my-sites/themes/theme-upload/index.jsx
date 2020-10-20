@@ -25,8 +25,16 @@ import { localize } from 'i18n-calypso';
 import notices from 'calypso/notices';
 import debugFactory from 'debug';
 import { uploadTheme, clearThemeUpload, initiateThemeTransfer } from 'calypso/state/themes/actions';
-import { getSelectedSiteId, getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getSiteAdminUrl, isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import {
+	getSiteAdminUrl,
+	isJetpackSite,
+	isJetpackSiteMultiSite,
+} from 'calypso/state/sites/selectors';
 import {
 	isUploadInProgress,
 	isUploadComplete,
@@ -44,7 +52,10 @@ import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { FEATURE_UNLIMITED_PREMIUM_THEMES } from 'calypso/lib/plans/constants';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import { getEligibility, isEligibleForAutomatedTransfer } from 'calypso/state/automated-transfer/selectors';
+import {
+	getEligibility,
+	isEligibleForAutomatedTransfer,
+} from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
 

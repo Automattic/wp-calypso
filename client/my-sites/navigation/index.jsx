@@ -30,7 +30,9 @@ class MySitesNavigation extends React.Component {
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
 		} else if ( config.isEnabled( 'nav-unification' ) ) {
-			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar-unified/switcher" { ...asyncProps } />;
+			asyncSidebar = (
+				<AsyncLoad require="calypso/my-sites/sidebar-unified/switcher" { ...asyncProps } />
+			);
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
 		}

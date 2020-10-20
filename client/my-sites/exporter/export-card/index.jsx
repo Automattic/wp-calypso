@@ -20,7 +20,11 @@ import {
 	setPostType,
 	startExport,
 } from 'calypso/state/exporter/actions';
-import { shouldShowProgress, getSelectedPostType, isExporting } from 'calypso/state/exporter/selectors';
+import {
+	shouldShowProgress,
+	getSelectedPostType,
+	isExporting,
+} from 'calypso/state/exporter/selectors';
 
 class ExportCard extends Component {
 	UNSAFE_componentWillMount() {

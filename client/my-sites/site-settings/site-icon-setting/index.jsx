@@ -28,7 +28,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import InfoPopover from 'calypso/components/info-popover';
-import { getImageEditorCrop, getImageEditorTransform } from 'calypso/state/editor/image-editor/selectors';
+import {
+	getImageEditorCrop,
+	getImageEditorTransform,
+} from 'calypso/state/editor/image-editor/selectors';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';

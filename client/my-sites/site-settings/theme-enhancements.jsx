@@ -20,7 +20,11 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
-import { getCustomizerUrl, isJetpackSite, isJetpackMinimumVersion } from 'calypso/state/sites/selectors';
+import {
+	getCustomizerUrl,
+	isJetpackSite,
+	isJetpackMinimumVersion,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import Notice from 'calypso/components/notice';

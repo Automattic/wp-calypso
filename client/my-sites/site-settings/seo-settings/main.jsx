@@ -34,7 +34,10 @@ export class SeoSettings extends Component {
 			<div>
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySitePurchases siteId={ siteId } />
-				<AsyncLoad require="calypso/my-sites/site-settings/seo-settings/form" placeholder={ null } />
+				<AsyncLoad
+					require="calypso/my-sites/site-settings/seo-settings/form"
+					placeholder={ null }
+				/>
 			</div>
 		);
 	}

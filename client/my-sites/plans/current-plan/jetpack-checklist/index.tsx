@@ -33,7 +33,12 @@ import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import { URL } from 'calypso/types';
 import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
-import { isBusinessPlan, isPremiumPlan, isJetpackOfferResetPlan, planHasFeature } from 'calypso/lib/plans';
+import {
+	isBusinessPlan,
+	isPremiumPlan,
+	isJetpackOfferResetPlan,
+	planHasFeature,
+} from 'calypso/lib/plans';
 import { FEATURE_VIDEO_UPLOADS_JETPACK_PRO } from 'calypso/lib/plans/constants';
 import { isJetpackAntiSpam, isJetpackBackupSlug } from 'calypso/lib/products-values';
 import { JETPACK_BACKUP_PRODUCTS } from 'calypso/lib/products-values/constants';

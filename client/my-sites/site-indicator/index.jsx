@@ -15,7 +15,11 @@ import Gridicon from 'calypso/components/gridicon';
 import Animate from 'calypso/components/animate';
 import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import { getUpdatesBySiteId, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';

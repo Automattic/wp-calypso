@@ -32,7 +32,11 @@ import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'calypso/lib/plans/constants'
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';

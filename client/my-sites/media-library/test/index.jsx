@@ -15,11 +15,19 @@ import React from 'react';
 import MediaLibrary from '..';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
 
-jest.mock( 'components/data/query-preferences', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'components/data/query-preferences', () =>
+	require( 'calypso/components/empty-component' )
+);
 jest.mock( 'lib/media/actions', () => () => null );
-jest.mock( 'my-sites/media-library/content', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'my-sites/media-library/drop-zone', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'my-sites/media-library/filter-bar', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'my-sites/media-library/content', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'my-sites/media-library/drop-zone', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'my-sites/media-library/filter-bar', () =>
+	require( 'calypso/components/empty-component' )
+);
 jest.mock( 'state/sharing/keyring/actions', () => ( {
 	requestKeyringConnections: require( 'sinon' ).stub(),
 } ) );

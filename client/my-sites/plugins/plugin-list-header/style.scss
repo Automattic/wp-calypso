@@ -50,7 +50,7 @@
 	color: var( --color-neutral-60 );
 	cursor: pointer;
 	display: flex;
-		align-items: center;
+	align-items: center;
 
 	&:focus {
 		border-color: var( --color-accent );
@@ -72,7 +72,7 @@
 
 .plugin-list-header__mode-buttons {
 	display: flex;
-		justify-content: flex-end;
+	justify-content: flex-end;
 	flex-grow: 1;
 	text-align: right;
 }

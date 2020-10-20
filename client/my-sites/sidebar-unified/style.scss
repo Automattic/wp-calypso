@@ -160,7 +160,6 @@ $font-size: rem( 14px );
 				.sidebar__menu-icon {
 					color: #fff;
 				}
-
 			}
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
@@ -192,7 +191,6 @@ $font-size: rem( 14px );
 // Flyout menu (showing from >782px)
 @media screen and ( min-width: 783px ) {
 	.is-nav-unification {
-
 		// client/layout/style.scss
 		// layout/sidebar/style.scss
 		// TODO: For prototype only, this prevents the sidebar from being scrollable.

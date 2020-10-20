@@ -12,7 +12,10 @@ import page from 'page';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getAutomatedTransferStatus, getEligibility } from 'calypso/state/automated-transfer/selectors';
+import {
+	getAutomatedTransferStatus,
+	getEligibility,
+} from 'calypso/state/automated-transfer/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

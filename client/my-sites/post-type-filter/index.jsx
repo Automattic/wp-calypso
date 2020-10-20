@@ -14,7 +14,10 @@ import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
-import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'calypso/state/posts/counts/selectors';
+import {
+	getNormalizedMyPostCounts,
+	getNormalizedPostCounts,
+} from 'calypso/state/posts/counts/selectors';
 import urlSearch from 'calypso/lib/url-search';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import SectionNav from 'calypso/components/section-nav';

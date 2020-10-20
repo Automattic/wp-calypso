@@ -32,8 +32,16 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
-import { canJetpackSiteUpdateFiles, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	canJetpackSiteUpdateFiles,
+	isJetpackSite,
+	isRequestingSites,
+} from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { Button } from '@automattic/components';
 import { isEnabled } from 'calypso/config';
 

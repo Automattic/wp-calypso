@@ -18,7 +18,11 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import SupportInfo from 'calypso/components/support-info';
 import ExternalLink from 'calypso/components/external-link';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';

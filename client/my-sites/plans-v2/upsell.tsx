@@ -18,7 +18,10 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { JETPACK_SCAN_PRODUCTS, JETPACK_BACKUP_PRODUCTS } from 'calypso/lib/products-values/constants';
+import {
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_BACKUP_PRODUCTS,
+} from 'calypso/lib/products-values/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import QueryProducts from './query-products';
