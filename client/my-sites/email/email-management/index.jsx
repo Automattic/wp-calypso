@@ -267,7 +267,7 @@ class EmailManagement extends React.Component {
 		if ( selectedDomainName && previousRoute.startsWith( domainPath ) ) {
 			page( domainPath );
 		} else {
-			page( domainManagementList( selectedSiteSlug, previousRoute ) );
+			page( domainManagementList( selectedSiteSlug, currentRoute ) );
 		}
 	};
 }

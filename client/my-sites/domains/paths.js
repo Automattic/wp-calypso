@@ -69,7 +69,7 @@ export function domainManagementRoot() {
 }
 
 export function domainManagementList( siteName, relativeTo = null ) {
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
+	if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
 	}
 	return domainManagementRoot() + '/' + siteName;
