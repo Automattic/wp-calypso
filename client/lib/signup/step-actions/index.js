@@ -866,9 +866,8 @@ export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextP
 	const hasDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
-	const isFree = hasDomainItemInDependencyStore && isEmpty( domainItem );
-	const isNotRegistration = ! isFree && ! isDomainRegistration( domainItem );
-	if ( isFree || isNotRegistration || skipSecureYourBrand ) {
+	const isNotRegistration = hasDomainItemInDependencyStore && ! isDomainRegistration( domainItem );
+	if ( isNotRegistration || skipSecureYourBrand ) {
 		const domainUpsellItems = null;
 		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
 		flows.excludeStep( stepName );
