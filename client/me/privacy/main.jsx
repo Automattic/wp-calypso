@@ -30,6 +30,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { requestHttpData, getHttpData } from 'calypso/state/data-layer/http-data';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -97,11 +98,13 @@ const Privacy = createReactClass( {
 		);
 
 		return (
-			<Main className="privacy">
+			<Main className="privacy is-wide-layout">
 				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader brandFont headerText={ translate( 'Privacy' ) } align="left" />
+
 				<SectionHeader label={ translate( 'Usage information' ) } />
 				<Card className="privacy__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
