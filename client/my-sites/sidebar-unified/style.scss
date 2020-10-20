@@ -21,8 +21,8 @@
 	--color-sidebar-gridicon-fill: #a2aab2;
 
 	.is-sidebar-collapsed & {
-		--sidebar-width-max: 44px;
-		--sidebar-width-min: 44px;
+		--sidebar-width-max: 36px;
+		--sidebar-width-min: 36px;
 	}
 }
 
@@ -38,6 +38,15 @@ $font-size: rem( 14px );
 
 		.sidebar__separator {
 			margin: 0 0 11px;
+		}
+
+		.site__content {
+			padding: 10px 0 10px 8px;
+		}
+
+		.site__home {
+			left: 8px;
+			top: 11px;
 		}
 
 		.sidebar__heading,
@@ -60,6 +69,8 @@ $font-size: rem( 14px );
 		.sidebar__expandable-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
+			max-height: 34px;
+			box-sizing: border-box;
 		}
 
 		.sidebar__expandable-arrow,
@@ -203,26 +214,27 @@ $font-size: rem( 14px );
 		color: #000;
 	}
 
+	// client/my-sites/current-site/style.scss
+	.current-site__switch-sites .button.is-borderless {
+		color: var( --color-sidebar-text-alternative );
+		padding: 6px 8px 6px 38px;
+	}
+
+	.current-site__switch-sites .button.is-borderless .gridicon {
+		height: 20px;
+		width: 20px;
+		top: 9px;
+		left: 9px;
+	}
+
 	.is-sidebar-collapsed & {
 		.dashicons-admin-collapse::before {
 			transform: rotate( 180deg );
 		}
 
+		// client/my-sites/current-site/style.scss
 		.current-site__switch-sites .button.is-borderless {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			padding: 0;
-			height: 31px;
-		}
-
-		.current-site__switch-sites .button.is-borderless .gridicon {
-			width: 14px;
-			height: 14px;
-			position: static;
-			left: inherit;
-			top: inherit;
-			margin-right: 0;
+			height: 34px;
 		}
 
 		.current-site__switch-sites-label {
@@ -234,12 +246,16 @@ $font-size: rem( 14px );
 		}
 
 		.site__content {
-			padding: 9px 6px;
+			padding: 10px 2px;
 		}
 
 		.site__home {
-			top: 9px;
-			left: 5px;
+			top: 12px;
+			left: 2px;
+		}
+
+		.site .site-icon {
+			margin-bottom: 4px;
 		}
 
 		.current-site__notices > a::before {
@@ -261,8 +277,26 @@ $font-size: rem( 14px );
 		.sidebar__heading,
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
-			padding-left: 13px;
 			overflow: hidden;
+		}
+
+		// Is toggled open
+		.sidebar__menu {
+			// Is toggled open and selected
+			&.sidebar__menu--selected .sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: white;
+
+				.sidebar__menu-icon {
+					color: #fff;
+				}
+
+				&::after {
+					display: block;
+					border-width: 4px;
+					margin-top: -4px;
+				}
+			}
 		}
 	}
 
@@ -331,6 +365,19 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar {
+			// client/my-sites/current-site/style.scss
+			.site__content {
+				padding: 18px 0 18px 12px;
+			}
+
+			.current-site__switch-sites .button.is-borderless {
+				padding: 11px 8px 11px 38px;
+			}
+
+			.current-site__switch-sites .button.is-borderless .gridicon {
+				top: 14px;
+			}
+
 			.sidebar__separator {
 				margin: 0 0 11px;
 			}
@@ -355,6 +402,7 @@ $font-size: rem( 14px );
 			.sidebar__expandable-title,
 			.sidebar__menu-link-text {
 				padding: 13px 0;
+				max-height: inherit;
 			}
 
 			.sidebar__expandable-content {

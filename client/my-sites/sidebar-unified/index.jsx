@@ -36,7 +36,9 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
-	const [ collapsed, setCollapsed ] = useState( isWithinBreakpoint( '<960px' ) ? true : false );
+	const [ collapsed, setCollapsed ] = useState(
+		isWithinBreakpoint( '>780px' ) && isWithinBreakpoint( '<960px' ) ? true : false
+	);
 
 	useEffect( () => {
 		collapsed
