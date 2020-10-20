@@ -23,6 +23,7 @@ import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'calypso/state/notification-settings/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 class NotificationSettings extends Component {
 	componentDidMount() {
@@ -58,11 +59,17 @@ class NotificationSettings extends Component {
 			this.props.saveSettings( 'blogs', findSettingsForBlog( blogId ), true );
 
 		return (
-			<Main className="notification-settings">
+			<Main className="notification-settings is-wide-layout">
 				<PageViewTracker path="/me/notifications" title="Me > Notifications" />
 				<QueryUserDevices />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader
+					brandFont
+					headerText={ this.props.translate( 'Notification Settings' ) }
+					align="left"
+				/>
+
 				<Navigation path={ this.props.path } />
 				<PushNotificationSettings pushNotifications={ this.props.pushNotifications } />
 				<BlogsSettings

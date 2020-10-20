@@ -30,6 +30,7 @@ import Main from 'calypso/components/main';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /* eslint-disable react/prefer-es6-class */
 const NotificationSubscriptions = createReactClass( {
@@ -70,13 +71,19 @@ const NotificationSubscriptions = createReactClass( {
 
 	render() {
 		return (
-			<Main className="reader-subscriptions__notifications-settings">
+			<Main className="reader-subscriptions__notifications-settings is-wide-layout">
 				<PageViewTracker
 					path="/me/notifications/subscriptions"
 					title="Me > Notifications > Subscriptions Delivery"
 				/>
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
+				<FormattedHeader
+					brandFont
+					headerText={ this.props.translate( 'Notification Settings' ) }
+					align="left"
+				/>
 
 				<Navigation path={ this.props.path } />
 
