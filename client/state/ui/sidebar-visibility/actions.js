@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SIDEBAR_TOGGLE_VISIBILITY } from 'state/action-types';
+import { SIDEBAR_TOGGLE_VISIBILITY } from 'calypso/state/action-types';
 
 /**
  * Expand the sidebar.
@@ -10,7 +10,7 @@ import { SIDEBAR_TOGGLE_VISIBILITY } from 'state/action-types';
  */
 export const expandSidebar = () => ( {
 	type: SIDEBAR_TOGGLE_VISIBILITY,
-	sidebarIsCollapsed: false,
+	collapsed: false,
 } );
 
 /**
@@ -20,5 +20,5 @@ export const expandSidebar = () => ( {
  */
 export const collapseSidebar = () => ( {
 	type: SIDEBAR_TOGGLE_VISIBILITY,
-	sidebarIsCollapsed: true,
+	collapsed: true,
 } );

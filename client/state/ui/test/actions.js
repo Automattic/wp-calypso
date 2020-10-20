@@ -23,7 +23,7 @@ import {
 	SIDEBAR_TOGGLE_VISIBILITY,
 	SECTION_SET,
 	SELECTED_SITE_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
@@ -104,7 +104,7 @@ describe( 'actions', () => {
 		test( 'should return an action object with the action type and sidebarIsCollapsed= false', () => {
 			expect( expandSidebar() ).to.eql( {
 				type: SIDEBAR_TOGGLE_VISIBILITY,
-				sidebarIsCollapsed: false,
+				collapsed: false,
 			} );
 		} );
 	} );
@@ -113,7 +113,7 @@ describe( 'actions', () => {
 		test( 'should return an action object with the action type and sidebarIsCollapsed= true', () => {
 			expect( collapseSidebar() ).to.eql( {
 				type: SIDEBAR_TOGGLE_VISIBILITY,
-				sidebarIsCollapsed: true,
+				collapsed: true,
 			} );
 		} );
 	} );

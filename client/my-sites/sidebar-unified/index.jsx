@@ -10,9 +10,8 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState } from 'react';
-import { isWithinBreakpoint } from '@automattic/viewport';
-import { connect, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -30,33 +29,15 @@ import 'calypso/layout/sidebar-unified/style.scss';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
-import { expandSidebar, collapseSidebar } from 'calypso/state/ui/actions';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-export const MySitesSidebarUnified = ( { path, dispatch } ) => {
+export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
-	const [ collapsed, setCollapsed ] = useState(
-		isWithinBreakpoint( '>780px' ) && isWithinBreakpoint( '<960px' ) ? true : false
-	);
+	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 
-	useEffect( () => {
-		// Adding / removing clear-secondary-layout-transitions is a workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/style.scss).
-		collapsed
-			? document.body.classList.add( 'is-sidebar-collapsed', 'clear-secondary-layout-transitions' )
-			: document.body.classList.remove( 'is-sidebar-collapsed' );
-
-		// Needs to be queued for removal after is-sidebar-collapsed is removed
-		if ( ! collapsed ) {
-			const timer = setTimeout( () => {
-				document.body.classList.remove( 'clear-secondary-layout-transitions' );
-			} );
-			return () => clearTimeout( timer );
-		}
-	}, [ collapsed ] );
-	const sidebarCollapsed = useSelector( getSidebarIsCollapsed );
 	/**
 	 * If there are no menu items and we are currently requesting some,
 	 * then show a spinner. The check for menuItems is necessary because
@@ -84,7 +65,7 @@ export const MySitesSidebarUnified = ( { path, dispatch } ) => {
 							path={ path }
 							link={ item.url }
 							selected={ isSelected }
-							sidebarCollapsed={ collapsed }
+							sidebarCollapsed={ sidebarIsCollapsed }
 							{ ...item }
 						/>
 					);
@@ -99,18 +80,9 @@ export const MySitesSidebarUnified = ( { path, dispatch } ) => {
 					/>
 				);
 			} ) }
-			<CollapseSidebar
-				key="collapse"
-				title="Collapse menu"
-				icon="dashicons-admin-collapse"
-				onClick={ () =>
-					sidebarCollapsed
-						? dispatch( expandSidebar ) && setCollapsed( ! collapsed )
-						: dispatch( collapseSidebar ) && setCollapsed( collapsed )
-				}
-			/>
+			<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
 		</Sidebar>
 	);
 };
 
-export default connect()( MySitesSidebarUnified );
+export default MySitesSidebarUnified;

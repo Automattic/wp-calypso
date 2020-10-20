@@ -18,7 +18,6 @@ import mediaModal from './media-modal/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
-import sidebarVisibility from './sidebar-visibility/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -87,10 +86,9 @@ export const isNotificationsOpen = function ( state = false, { type } ) {
  * @returns {object}        Updated state
  */
 
-export const sidebarVisibility = ( state = false, { type, sidebarIsCollapsed } ) => {
-	switch ( type ) {
-		case SIDEBAR_TOGGLE_VISIBILITY:
-			return sidebarIsCollapsed;
+export const sidebarIsCollapsed = ( state = false, { type, collapsed } ) => {
+	if ( SIDEBAR_TOGGLE_VISIBILITY === type ) {
+		return collapsed;
 	}
 	return state;
 };
@@ -104,13 +102,12 @@ const reducer = combineReducers( {
 	language,
 	layoutFocus,
 	masterbarVisibility,
-	sidebarVisibility,
+	sidebarIsCollapsed,
 	mediaModal,
 	postTypeList,
 	preview,
 	section,
 	selectedSiteId,
-	sidebarVisibility,
 	siteSelectionInitialized,
 } );
 
