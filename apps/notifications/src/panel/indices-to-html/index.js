@@ -94,7 +94,6 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'h4':
 		case 'h5':
 		case 'h6':
-		case 'a':
 			switch ( range_info_type ) {
 				case 'list':
 					range_info_type = 'span';
@@ -123,11 +122,16 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			new_classes.push( 'is-primary' );
 		default:
 			// Most range types fall here
-			if ( options.links && range_info.url ) {
+			if ( ( options.links && range_info.url ) || range_info_type === 'a' ) {
 				// We are a link of some sort...
 				new_container = document.createElement( 'a' );
-
 				new_container.setAttribute( 'href', range_info.url );
+				if ( range_info.hasOwnProperty( 'class' ) ) {
+					new_classes.push( range_info.class );
+				}
+				if ( range_info.hasOwnProperty( 'style' ) ) {
+					new_container.setAttribute( 'style', range_info.style );
+				}
 				if ( range_info_type === 'stat' ) {
 					// Stat links should change the whole window/tab
 					new_container.setAttribute( 'target', '_parent' );
