@@ -20,7 +20,7 @@
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
 
-	.is-sidebar-collapsed & {
+	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
 		--sidebar-width-min: 36px;
 	}
