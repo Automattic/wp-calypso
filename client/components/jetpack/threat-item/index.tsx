@@ -28,11 +28,19 @@ import './style.scss';
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
-	onFixThreat?: Function;
-	onIgnoreThreat?: Function;
+	onFixThreat?: ( threat: Threat ) => void;
+	onIgnoreThreat?: () => void;
 	isFixing: boolean;
 	contactSupportUrl?: string;
 }
+
+export const ThreatItemPlaceholder: React.FC = () => (
+	<LogItem
+		className={ classnames( 'threat-item', 'is-placeholder' ) }
+		header="Placeholder threat"
+		subheader="Placeholder sub header"
+	/>
+);
 
 const ThreatItem: React.FC< Props > = ( {
 	threat,
@@ -55,7 +63,7 @@ const ThreatItem: React.FC< Props > = ( {
 			// entire ThreatItem element as well
 			const onClickHandler = ( e: React.MouseEvent< HTMLElement > ) => {
 				e.stopPropagation();
-				onFixThreat && onFixThreat();
+				onFixThreat && onFixThreat( threat );
 			};
 			return (
 				<Button
@@ -68,7 +76,7 @@ const ThreatItem: React.FC< Props > = ( {
 				</Button>
 			);
 		},
-		[ isFixing, onFixThreat ]
+		[ isFixing, onFixThreat, threat ]
 	);
 
 	const getFix = React.useCallback( (): i18nCalypso.TranslateResult | undefined => {
@@ -108,13 +116,7 @@ const ThreatItem: React.FC< Props > = ( {
 	} );
 
 	if ( isPlaceholder ) {
-		return (
-			<LogItem
-				className={ classnames( 'threat-item', 'is-placeholder' ) }
-				header="Placeholder threat"
-				subheader="Placeholder sub header"
-			></LogItem>
-		);
+		return <ThreatItemPlaceholder />;
 	}
 
 	return (

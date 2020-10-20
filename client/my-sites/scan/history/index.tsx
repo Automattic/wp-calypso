@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import ThreatHistoryList from 'calypso/components/jetpack/threat-history-list';
@@ -57,7 +56,6 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			) }
 			{ isAdmin && (
 				<>
-					<QueryJetpackScanHistory siteId={ siteId } />
 					<ScanNavigation section={ 'history' } />
 					<section className="history__body">
 						<p className="history__description">
