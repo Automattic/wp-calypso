@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/search",
-	"version": "1.0.0-alpha.3",
+	"version": "1.0.0",
 	"description": "Automattic Search",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -41,8 +41,7 @@
 		"react-dom": "^16.8"
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^5.3.18",
-		"enzyme": "^3.11.0"
+		"@storybook/addon-actions": "^5.3.18"
 	},
 	"scripts": {
 		"clean": "npx rimraf dist && tsc --build --clean",
