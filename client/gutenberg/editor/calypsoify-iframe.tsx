@@ -32,7 +32,7 @@ import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import wpcom from 'calypso/lib/wp';
-import EditorRevisionsDialog from 'calypso/post-editor/editor-revisions/dialog';
+import EditorRevisionsDialog from './editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import {

@@ -17,8 +17,8 @@ import { getPostRevisionsComparisons } from 'state/posts/selectors/get-post-revi
 import { getPostRevisionsSelectedRevisionId } from 'state/posts/selectors/get-post-revisions-selected-revision-id';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
-import EditorDiffViewer from 'post-editor/editor-diff-viewer';
-import EditorRevisionsList from 'post-editor/editor-revisions-list';
+import EditorDiffViewer from './diff-viewer';
+import EditorRevisionsList from './list/index';
 import QueryPostRevisions from 'components/data/query-post-revisions';
 import QueryPostRevisionAuthors from 'components/data/query-post-revision-authors';
 

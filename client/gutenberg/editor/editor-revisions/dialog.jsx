@@ -17,13 +17,13 @@ import { getEditorPostId } from 'state/editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { closePostRevisionsDialog, selectPostRevision } from 'state/posts/revisions/actions';
-import EditorRevisions from 'post-editor/editor-revisions';
+import EditorRevisions from './index';
 import CloseOnEscape from 'components/close-on-escape';
 
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {
 		/**
-		 * loadRevision is passed through from `post-editor/post-editor.jsx`
+		 * loadRevision is passed in from the parent component
 		 *
 		 * TODO untangle & reduxify
 		 */
