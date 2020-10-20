@@ -359,7 +359,7 @@ export class MediaLibraryContent extends React.Component {
 		}
 
 		const listKey = [
-			'list-',
+			'list',
 			this.props.site.ID,
 			this.props.search,
 			this.props.filter,
