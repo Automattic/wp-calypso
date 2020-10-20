@@ -24,7 +24,7 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'lib/gsuite/constants';
+import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'calypso/lib/gsuite/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -54,10 +54,10 @@ import {
 	isUnlimitedThemes,
 	isVideoPress,
 	isConciergeSession,
-} from 'lib/products-values';
-import sortProducts from 'lib/products-values/sort';
-import { getTld } from 'lib/domains';
-import { domainProductSlugs } from 'lib/domains/constants';
+} from 'calypso/lib/products-values';
+import sortProducts from 'calypso/lib/products-values/sort';
+import { getTld } from 'calypso/lib/domains';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import {
 	getPlan,
 	isBloggerPlan,
@@ -66,12 +66,13 @@ import {
 	isPremiumPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
-} from 'lib/plans';
-import { getTermDuration } from 'lib/plans/constants';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+} from 'calypso/lib/plans';
+import { getTermDuration } from 'calypso/lib/plans/constants';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
+ * @typedef { import("./types").CartItemExtra} CartItemExtra
  * @typedef { import("./types").CartValue } CartValue
  */
 
@@ -1126,7 +1127,7 @@ export function isPartialCredits( cartItem ) {
 /**
  * Determines whether a cart item is a renewal
  *
- * @param {CartItemValue} cartItem - `CartItemValue` object
+ * @param {{extra?: CartItemExtra}} cartItem - object with `CartItemExtra` `extra` property
  * @returns {boolean} true if item is a renewal
  */
 export function isRenewal( cartItem ) {
