@@ -332,10 +332,6 @@ module.exports = {
 					'comment_whitelist',
 					'blacklist_keys',
 
-					// For HotJar compatibility. HJ will reach out to @saramarcondes once a new
-					// and inclusive attribute name exists to be used: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
-					'data-hj-whitelist',
-
 					// Depends on https://github.com/Automattic/jetpack/blob/3dae8f80e5020338e84bfc20bb41786f056a2eec/json-endpoints/jetpack/class.wpcom-json-api-get-option-endpoint.php#L38
 					'option_name_not_in_whitelist',
 
