@@ -1,4 +1,4 @@
-.scan .formatted-header {
+.scan .formatted-header.is-left-align {
 	margin-top: 20px;
 
 	@include breakpoint-deprecated( '>660px' ) {
