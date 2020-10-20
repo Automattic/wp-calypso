@@ -245,6 +245,7 @@ body.is-section-signup.is-white-signup {
 			--color-primary: var( --color-neutral-100 );
 			--color-text-inverted: var( --color-neutral-0 );
 			--color-primary-light: var( --color-neutral-80 );
+			--color-primary-dark: var( --color-neutral-80 );
 			--item-padding: 3px;
 
 			padding: var( --item-padding ) 0;
@@ -262,17 +263,46 @@ body.is-section-signup.is-white-signup {
 			border: none;
 			padding-top: 6px;
 			padding-bottom: 6px;
+			color: var( --color-neutral-80 );
+		}
+
+		.segmented-control__item:not( .is-selected ) {
+			.segmented-control__link:hover {
+				background-color: var( --color-neutral-5 );
+			}
 		}
 	}
 }
 
 .plan-type-selector__popover {
-	transform: translate( 30px, 0 );
+	&.is-right {
+		transform: translate( 30px, 0 );
+		display: none;
 
-	&.is-right .popover__arrow {
-		border-right-color: var( --color-neutral-100 );
-		&::before {
+		.popover__arrow {
 			border-right-color: var( --color-neutral-100 );
+			&::before {
+				border-right-color: var( --color-neutral-100 );
+			}
+		}
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	&.is-bottom {
+		transform: translate( 0, 12px );
+
+		.popover__arrow {
+			border-bottom-color: var( --color-neutral-100 );
+			&::before {
+				border-bottom-color: var( --color-neutral-100 );
+			}
+		}
+
+		@include break-large {
+			display: none;
 		}
 	}
 

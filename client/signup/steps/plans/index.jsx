@@ -9,6 +9,7 @@ import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
+import Experiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
@@ -139,6 +141,7 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
+			isMonthlyPricingTest,
 		} = this.props;
 
 		return (
@@ -161,9 +164,24 @@ export class PlansStep extends Component {
 					planTypes={ planTypes }
 					flowName={ flowName }
 					customHeader={ this.getGutenboardingHeader() }
+					isMonthlyPricingTest={ isMonthlyPricingTest }
 				/>
 			</div>
 		);
+	}
+
+	getSubHeaderText() {
+		const { isMonthlyPricingTest, subHeaderText, translate } = this.props;
+
+		if ( isMonthlyPricingTest ) {
+			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
+				components: {
+					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+				},
+			} );
+		}
+
+		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
 
 	plansFeaturesSelection() {
@@ -177,8 +195,7 @@ export class PlansStep extends Component {
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText =
-			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+		const subHeaderText = this.getSubHeaderText();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl, backLabelText;
@@ -229,6 +246,22 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
+	isMonthlyPricingTest: PropTypes.bool,
+};
+
+const PlansStepWithMonthlyPricingTest = ( props ) => {
+	const isEligibleForMonthlyPricing = 'onboarding' === props.flowName;
+
+	return (
+		<Experiment name="monthly_pricing_test_phase_1">
+			<DefaultVariation name="control">
+				<PlansStep { ...props } isMonthlyPricingTest={ false } />
+			</DefaultVariation>
+			<Variation name="treatment">
+				<PlansStep { ...props } isMonthlyPricingTest={ isEligibleForMonthlyPricing } />
+			</Variation>
+		</Experiment>
+	);
 };
 
 /**
@@ -262,4 +295,4 @@ export default connect(
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
-)( localize( PlansStep ) );
+)( localize( PlansStepWithMonthlyPricingTest ) );
