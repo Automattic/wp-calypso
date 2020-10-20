@@ -70,7 +70,7 @@ module.exports = function ( mainWindow ) {
 			notification.on( 'click', function () {
 				if ( ! mainWindow.isVisible() ) {
 					mainWindow.show();
-					delay( 3000 );
+					delay( 300 );
 				}
 				mainWindow.focus();
 				mainWindow.webContents.send( 'notification-clicked', noteWithMeta );
