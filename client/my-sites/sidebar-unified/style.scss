@@ -117,7 +117,8 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__menu,
-		.sidebar__menu-item-parent {
+		.sidebar__menu-item-parent,
+		.sidebar__menu-link {
 			&:hover {
 				.sidebar__menu-icon {
 					color: var( --color-sidebar-menu-hover );
@@ -261,6 +262,16 @@ $font-size: rem( 14px );
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
 			padding-left: 13px;
+			overflow: hidden;
+		}
+	}
+
+	.collapse-sidebar__toggle .sidebar__menu-link {
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			background-color: transparent;
 		}
 	}
 }
