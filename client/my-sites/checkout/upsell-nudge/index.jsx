@@ -38,7 +38,6 @@ import { ConciergeSupportSession } from './concierge-support-session';
 import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import { PurchaseModal } from './purchase-modal';
-import { abtest } from 'calypso/lib/abtest';
 import { replaceCartWithItems } from 'calypso/lib/cart/actions';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -192,7 +191,7 @@ export class UpsellNudge extends React.Component {
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
-		if ( this.isEligibleForOneClickUpsellABTest( buttonAction ) ) {
+		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
 			this.setState( {
 				showPurchaseModal: true,
 				cartLastServerResponseDate: this.getCartUpdatedTime(),
@@ -206,7 +205,7 @@ export class UpsellNudge extends React.Component {
 			: page( `/checkout/${ upgradeItem }` );
 	};
 
-	isEligibleForOneClickUpsellABTest = ( buttonAction ) => {
+	isEligibleForOneClickUpsell = ( buttonAction ) => {
 		const { cards, siteSlug, upsellType } = this.props;
 
 		if ( 'accept' !== buttonAction || 'concierge-quickstart-session' !== upsellType ) {
@@ -222,7 +221,7 @@ export class UpsellNudge extends React.Component {
 			return false;
 		}
 
-		return 'test' === abtest( 'oneClickUpsell' );
+		return true;
 	};
 
 	handleOneClickUpsellComplete = () => {
