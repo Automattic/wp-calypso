@@ -35,9 +35,19 @@ import cloudIcon from 'calypso/components/jetpack/daily-backup-status/status-car
  */
 import type { Activity } from 'calypso/state/activity-log/types';
 
-type Props = { activity: Activity; subActivities?: Activity[]; isLatest: boolean };
+type Props = {
+	activity: Activity;
+	subActivities?: Activity[];
+	isLatest: boolean;
+	isFeatured: boolean;
+};
 
-const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLatest } ) => {
+const BackupCard: FunctionComponent< Props > = ( {
+	activity,
+	subActivities,
+	isLatest,
+	isFeatured,
+} ) => {
 	const { activityTs, activityTitle, rewindId } = activity;
 
 	const translate = useTranslate();
@@ -68,7 +78,7 @@ const BackupCard: FunctionComponent< Props > = ( { activity, subActivities, isLa
 	return (
 		<Card
 			className={ classNames( 'backup-card', {
-				'is-latest': isLatest,
+				'is-featured': isFeatured,
 			} ) }
 		>
 			<div className="backup-card__main">

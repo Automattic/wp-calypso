@@ -74,6 +74,7 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 				activity={ backup }
 				subActivities={ dailyDeltas }
 				isLatest={ !! isLatestBackup }
+				isFeatured
 			/>
 		) : (
 			<BackupFailed backup={ backup } />

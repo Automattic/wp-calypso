@@ -20,7 +20,7 @@ $cloud-icon-height: 24px;
 	font-weight: 600;
 	line-height: 1;
 
-	.is-latest & {
+	.is-featured & {
 		font-size: 2.25rem;
 	}
 }
@@ -36,7 +36,7 @@ $cloud-icon-height: 24px;
 	font-weight: 700;
 	line-height: $cloud-icon-height;
 
-	.is-latest & {
+	.is-featured & {
 		margin-bottom: 100px;
 	}
 }
