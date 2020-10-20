@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type * as DomainSuggestions from '../domain-suggestions';
+import type * as Plans from '../plans';
 import { dispatch, select } from '@wordpress/data-controls';
 
 /**
@@ -101,4 +102,6 @@ export type LaunchAction = ReturnType<
 	| typeof openSidebar
 	| typeof closeSidebar
 	| typeof enableExperimental
+	| typeof setSidebarFullscreen
+	| typeof unsetSidebarFullscreen
 >;

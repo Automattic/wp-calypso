@@ -6,6 +6,6 @@ import type { ValuesType } from 'utility-types';
 /**
  * Internal dependencies
  */
-import { LaunchStep } from './data';
+import type { LaunchStep } from './data';
 
 export type LaunchStepType = ValuesType< typeof LaunchStep >;
