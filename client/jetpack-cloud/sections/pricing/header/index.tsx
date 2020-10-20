@@ -7,9 +7,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import JetpackComMasterbar from '../jpcom-masterbar';
 
 /**
@@ -18,7 +18,8 @@ import JetpackComMasterbar from '../jpcom-masterbar';
 import './style.scss';
 
 const Header = () => {
-	const isAlternateSelector = isEnabled( 'plans/alternate-selector' );
+	const isAlternateSelector =
+		getJetpackCROActiveVersion() === 'v1' || getJetpackCROActiveVersion() === 'v2';
 	const header = isAlternateSelector
 		? translate( 'Security, performance, and growth tools for WordPress' )
 		: translate( 'Security, performance, and marketing tools for WordPress' );

@@ -6,8 +6,6 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
-import { slugToSelectorProduct } from './utils';
 import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
@@ -20,12 +18,14 @@ import {
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import {
 	OPTIONS_JETPACK_BACKUP,
 	OPTIONS_JETPACK_BACKUP_MONTHLY,
 } from 'calypso/my-sites/plans-v2/constants';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import { slugToSelectorProduct } from './utils';
 
 const useSelectorPageProducts = ( siteId: number | null ) => {
 	let availableProducts: string[] = [];
@@ -67,9 +67,25 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 		! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
 	) {
 		// The Alternative Selector page include Jetpack Backup Daily rather than the option card.
-		const backupProductsToShow = isEnabled( 'plans/alternate-selector' )
-			? [ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]
-			: [ OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY ];
+		const backupProductsToShow = [];
+		switch ( getJetpackCROActiveVersion() ) {
+			case 'v0':
+				backupProductsToShow.push( OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY );
+				break;
+			case 'v1':
+				backupProductsToShow.push(
+					PRODUCT_JETPACK_BACKUP_DAILY,
+					PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
+				);
+				break;
+			case 'v2':
+				// TODO: add Backup Real-time
+				backupProductsToShow.push(
+					PRODUCT_JETPACK_BACKUP_DAILY,
+					PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
+				);
+				break;
+		}
 		availableProducts = [ ...availableProducts, ...backupProductsToShow ];
 	}
 

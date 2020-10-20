@@ -9,6 +9,7 @@ import { numberFormat, translate } from 'i18n-calypso';
  */
 import { isEnabled } from 'calypso/config';
 import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
@@ -93,6 +94,7 @@ export const getJetpackProductsDisplayNames = () => {
 };
 
 export const getJetpackProductsCallToAction = () => {
+	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
 			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
@@ -111,15 +113,14 @@ export const getJetpackProductsCallToAction = () => {
 			} ) }
 		</>
 	);
-	const search = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Get Jetpack Search' )
-		: translate( 'Get Search' );
-	const scan = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Get Jetpack Scan' )
-		: translate( 'Get Scan' );
-	const antiSpam = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Get Jetpack Anti-spam' )
-		: translate( 'Get Anti-spam' );
+	const search =
+		currentCROvariant === 'v1' ? translate( 'Get Jetpack Search' ) : translate( 'Get Search' );
+	const scan =
+		currentCROvariant === 'v1' ? translate( 'Get Jetpack Scan' ) : translate( 'Get Scan' );
+	const antiSpam =
+		currentCROvariant === 'v1'
+			? translate( 'Get Jetpack Anti-spam' )
+			: translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -136,15 +137,18 @@ export const getJetpackProductsCallToAction = () => {
 };
 
 export const getJetpackProductsTaglines = () => {
-	const backupDailyTagline = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Automated backups with one-click restores' )
-		: translate( 'Best for sites with occasional updates' );
+	const currentCROvariant = getJetpackCROActiveVersion();
+	const backupDailyTagline =
+		currentCROvariant === 'v1'
+			? translate( 'Automated backups with one-click restores' )
+			: translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
 
-	const searchTagline = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Great for sites with a lot of content' )
-		: translate( 'Recommended for sites with lots of products or content' );
+	const searchTagline =
+		currentCROvariant === 'v1'
+			? translate( 'Great for sites with a lot of content' )
+			: translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
