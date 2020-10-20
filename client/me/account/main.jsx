@@ -58,6 +58,7 @@ import {
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -811,10 +812,12 @@ const Account = createReactClass( {
 		const renderUsernameForm = userSettings.isSettingUnsaved( 'user_login' );
 
 		return (
-			<Main className="account">
+			<Main className="account is-wide-layout">
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>
