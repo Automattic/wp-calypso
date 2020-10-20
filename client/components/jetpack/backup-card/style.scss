@@ -6,12 +6,19 @@
 $cloud-icon-height: 24px;
 
 .backup-card__header {
-	position: relative;
+	display: flex;
+}
+
+.backup-card__header-text {
+	flex: 1;
 }
 
 .backup-card__date {
+	margin-bottom: 8px;
+
 	font-size: 1.25rem;
 	font-weight: 600;
+	line-height: 1;
 
 	.is-latest & {
 		font-size: 2.25rem;
@@ -40,9 +47,7 @@ $cloud-icon-height: 24px;
 }
 
 .backup-card__badge {
-	position: absolute;
-	top: 0;
-	right: 0;
+	margin-left: 1rem;
 
 	&.badge {
 		background-color: var( --studio-jetpack-green-5 );
