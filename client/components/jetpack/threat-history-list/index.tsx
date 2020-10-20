@@ -14,10 +14,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
 import isRequestingJetpackScanHistory from 'calypso/state/selectors/is-requesting-jetpack-scan-history';
-import getScanSiteThreatCounts, {
+import getSiteScanThreatCounts, {
 	JetpackScanThreatCounts,
 } from 'calypso/state/selectors/get-site-scan-threat-counts';
-import getScanSiteHistory from 'calypso/state/selectors/get-site-scan-history';
+import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import Pagination from 'calypso/components/pagination';
@@ -73,7 +73,7 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => 
 	const isRequestingThreatCounts = useSelector( ( state ) =>
 		isRequestingJetpackScanThreatCounts( state, siteId )
 	);
-	const threatCounts = useSelector( ( state ) => getScanSiteThreatCounts( state, siteId ) );
+	const threatCounts = useSelector( ( state ) => getSiteScanThreatCounts( state, siteId ) );
 	const hasThreatsInHistory =
 		threatCounts && Object.values( threatCounts ).some( ( c ) => c && c > 0 );
 	const filteredThreatCount = getFilteredThreatCount( threatCounts, filter );
@@ -82,7 +82,7 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => 
 		isRequestingJetpackScanHistory( state, siteId )
 	);
 
-	const threats = useSelector( ( state ) => getScanSiteHistory( state, siteId ) );
+	const threats = useSelector( ( state ) => getSiteScanHistory( state, siteId ) );
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 	const showPagination = ! isRequestingThreatCounts && filteredThreatCount > THREATS_PER_PAGE;
 
