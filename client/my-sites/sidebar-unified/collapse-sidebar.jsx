@@ -21,6 +21,7 @@ export const CollapseSidebar = ( { title, icon, onClick } ) => {
 			className="collapse-sidebar__toggle"
 			onNavigate={ onClick }
 			label={ title }
+			link={ '' }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 		/>
 	);
