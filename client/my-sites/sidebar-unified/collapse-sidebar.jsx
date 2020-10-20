@@ -12,15 +12,15 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
-import SidebarCustomIcon from 'layout/sidebar/custom-icon';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 
 export const CollapseSidebar = ( { title, icon, onClick } ) => {
 	return (
-		<ExpandableSidebarMenu
+		<SidebarItem
 			className="collapse-sidebar__toggle"
-			onClick={ onClick }
-			title={ title }
+			onNavigate={ onClick }
+			label={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 		/>
 	);
