@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSegments } from 'state/signup/segments/actions';
-import { getSegments } from 'state/signup/segments/selectors';
+import { requestSegments } from 'calypso/state/signup/segments/actions';
+import { getSegments } from 'calypso/state/signup/segments/selectors';
 
 export class QuerySegments extends Component {
 	static propTypes = {

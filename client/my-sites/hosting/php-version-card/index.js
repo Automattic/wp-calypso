@@ -36,7 +36,7 @@ const PhpVersionCard = ( {
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 
-	const recommendedValue = '7.3';
+	const recommendedValue = '7.4';
 
 	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
@@ -58,16 +58,16 @@ const PhpVersionCard = ( {
 				disabled: true, // EOL 30th November, 2020
 			},
 			{
-				label: translate( '7.3 (recommended)', {
+				label: translate( '7.3', {
+					comment: 'PHP Version for a version switcher',
+				} ),
+				value: '7.3',
+			},
+			{
+				label: translate( '7.4 (recommended)', {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: recommendedValue,
-			},
-			{
-				label: translate( '7.4', {
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: '7.4',
 			},
 		];
 	};

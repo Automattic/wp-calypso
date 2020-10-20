@@ -9,7 +9,7 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { RegistrantExtraInfoUkForm } from '../uk-form';
-import FormInputValidation from 'components/forms/form-input-validation';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 
 const mockProps = {
 	contactDetails: {},

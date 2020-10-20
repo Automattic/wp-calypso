@@ -7,16 +7,16 @@ import React from 'react';
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	hasDomainRegistration,
 	hasPlan,
 	hasJetpackPlan,
 	isNextDomainFree,
-} from 'lib/cart-values/cart-items';
-import { getPlan, getBillingMonthsForTerm } from 'lib/plans';
-import { REGISTER_DOMAIN } from 'lib/url/support';
-import { translationExists } from 'lib/i18n-utils';
+} from 'calypso/lib/cart-values/cart-items';
+import { getPlan, getBillingMonthsForTerm } from 'calypso/lib/plans';
+import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
+import { translationExists } from 'calypso/lib/i18n-utils';
 
 function hasBiennialPlan( cart ) {
 	const plans = cart.products

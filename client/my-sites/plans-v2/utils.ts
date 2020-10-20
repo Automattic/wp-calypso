@@ -117,6 +117,22 @@ export function durationToText( duration: Duration ): TranslateResult {
 		: translate( 'per month, billed yearly' );
 }
 
+// In the case of products that have options (daily and real-time), we want to display
+// the name of the option, not the name of one of the variants.
+export function getProductWithOptionDisplayName(
+	item: SelectorProduct,
+	isOwned: boolean,
+	isItemPlanFeature: boolean
+): TranslateResult {
+	const optionSlug = getOptionFromSlug( item.productSlug );
+
+	if ( ! optionSlug || isOwned || isItemPlanFeature ) {
+		return item.displayName;
+	}
+
+	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
+}
+
 /**
  * Product UI utils.
  */
@@ -141,6 +157,51 @@ export function productButtonLabel(
 	}
 
 	const { buttonLabel, displayName } = product;
+
+	return (
+		buttonLabel ??
+		translate( 'Get {{name/}}', {
+			components: {
+				name: createElement( Fragment, {}, displayName ),
+			},
+			comment: '{{name/}} is the name of a product',
+		} )
+	);
+}
+
+export function productButtonLabelAlt(
+	product: SelectorProduct,
+	isOwned: boolean,
+	isItemPlanFeature: boolean,
+	isUpgradeableToYearly: boolean,
+	currentPlan?: SitePlan | null
+): TranslateResult {
+	if ( isUpgradeableToYearly ) {
+		return translate( 'Upgrade to Yearly' );
+	}
+
+	if (
+		isOwned ||
+		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
+	) {
+		return product.type !== ITEM_TYPE_PRODUCT
+			? translate( 'Manage Plan' )
+			: translate( 'Manage Subscription' );
+	}
+
+	const { buttonLabel } = product;
+
+	// If it's a product with options, we want to use the name of the option
+	// to label the button.
+	const displayName = getProductWithOptionDisplayName( product, isOwned, isItemPlanFeature );
+	if ( getOptionFromSlug( product.productSlug ) ) {
+		return translate( 'Get {{name/}}', {
+			components: {
+				name: createElement( Fragment, {}, displayName ),
+			},
+			comment: '{{name/}} is the name of a product',
+		} );
+	}
 
 	return (
 		buttonLabel ??

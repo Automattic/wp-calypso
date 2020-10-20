@@ -31,6 +31,7 @@ import {
 	useDispatch,
 	useMessages,
 	useFormStatus,
+	makeSuccessResponse,
 } from '@automattic/composite-checkout';
 import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
@@ -83,9 +84,7 @@ async function stripeCardProcessor( data ) {
 	window.console.log( 'Processing stripe transaction with data', data );
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
-	return {
-		success: true,
-	};
+	return makeSuccessResponse( { success: true } );
 }
 
 async function applePayProcessor( data ) {

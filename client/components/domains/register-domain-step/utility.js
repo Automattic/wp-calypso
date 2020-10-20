@@ -6,7 +6,7 @@ import { find, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { domainAvailability } from 'lib/domains/constants';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 
 function moveArrayElement( array, from, to ) {
 	if ( from !== to && from < array.length && to < array.length ) {

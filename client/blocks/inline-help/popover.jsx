@@ -7,7 +7,7 @@ import { flowRight as compose, noop } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
 import { __ } from '@wordpress/i18n';
 
@@ -15,17 +15,17 @@ import { __ } from '@wordpress/i18n';
  * Internal Dependencies
  */
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
-import { selectResult, resetInlineHelpContactForm } from 'state/inline-help/actions';
+import { selectResult, resetInlineHelpContactForm } from 'calypso/state/inline-help/actions';
 import { Button } from '@automattic/components';
-import Popover from 'components/popover';
+import Popover from 'calypso/components/popover';
 import InlineHelpSearchResults from './inline-help-search-results';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpRichResult from './inline-help-rich-result';
-import getSearchQuery from 'state/inline-help/selectors/get-search-query';
-import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
-import QuerySupportTypes from 'blocks/inline-help/inline-help-query-support-types';
-import InlineHelpContactView from 'blocks/inline-help/inline-help-contact-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import getSearchQuery from 'calypso/state/inline-help/selectors/get-search-query';
+import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
+import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
+import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class InlineHelpPopover extends Component {
 	static propTypes = {

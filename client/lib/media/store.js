@@ -6,9 +6,9 @@ import { values } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isItemBeingUploaded } from 'lib/media/utils';
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import { isItemBeingUploaded } from 'calypso/lib/media/utils';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 
 /**
  * @typedef {import('events').EventEmitter} Emitter

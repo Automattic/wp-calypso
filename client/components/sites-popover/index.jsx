@@ -9,9 +9,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import { hasTouch } from 'lib/touch-detect';
-import SiteSelector from 'components/site-selector';
+import Popover from 'calypso/components/popover';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import SiteSelector from 'calypso/components/site-selector';
 
 /**
  * Style dependencies

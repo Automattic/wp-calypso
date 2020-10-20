@@ -9,19 +9,19 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { getRenewalItemFromCartItem, CartItemValue } from 'lib/cart-values/cart-items';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getRenewalItemFromCartItem, CartItemValue } from 'calypso/lib/cart-values/cart-items';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'lib/products-values/constants';
-import { requestPlans } from 'state/plans/actions';
-import { getPlanBySlug, getPlans, isRequestingPlans } from 'state/plans/selectors';
-import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
-import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+} from 'calypso/lib/products-values/constants';
+import { requestPlans } from 'calypso/state/plans/actions';
+import { getPlanBySlug, getPlans, isRequestingPlans } from 'calypso/state/plans/selectors';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import { createItemToAddToCart } from '../add-items';
 import { RequestCartProduct } from './use-shopping-cart-manager/types';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
@@ -84,29 +84,33 @@ export default function usePrepareProductsForCart( {
 	useFetchProductsIfNotLoaded();
 	useFetchPlansIfNotLoaded();
 
+	const addHandler = chooseAddHandler( {
+		isLoading: state.isLoading,
+		originalPurchaseId,
+		planSlug,
+		productAliasFromUrl: productAlias,
+	} );
+
 	// Only one of these three should ever operate. The others should bail if
 	// they think another hook will handle the data.
 	useAddPlanFromSlug( {
-		isLoading: state.isLoading,
 		planSlug,
 		dispatch,
 		isJetpackNotAtomic,
-		originalPurchaseId,
+		addHandler,
 	} );
 	useAddProductFromSlug( {
-		isLoading: state.isLoading,
 		productAlias,
-		planSlug,
 		dispatch,
 		isJetpackNotAtomic,
 		isPrivate,
-		originalPurchaseId,
+		addHandler,
 	} );
 	useAddRenewalItems( {
-		isLoading: state.isLoading,
 		originalPurchaseId,
 		productAlias,
 		dispatch,
+		addHandler,
 	} );
 
 	return state;
@@ -144,28 +148,56 @@ function preparedProductsReducer(
 	}
 }
 
-function useAddRenewalItems( {
+type AddHandler = 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
+
+function chooseAddHandler( {
 	isLoading,
 	originalPurchaseId,
-	productAlias,
-	dispatch,
+	planSlug,
+	productAliasFromUrl,
 }: {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
+	planSlug: string | null;
+	productAliasFromUrl: string | null | undefined;
+} ): AddHandler {
+	if ( ! isLoading ) {
+		return 'doNotAdd';
+	}
+
+	if ( isLoading && originalPurchaseId ) {
+		return 'addRenewalItems';
+	}
+
+	if ( isLoading && ! originalPurchaseId && planSlug ) {
+		return 'addPlanFromSlug';
+	}
+
+	if ( isLoading && ! originalPurchaseId && productAliasFromUrl ) {
+		return 'addProductFromSlug';
+	}
+
+	return 'doNotAdd';
+}
+
+function useAddRenewalItems( {
+	originalPurchaseId,
+	productAlias,
+	dispatch,
+	addHandler,
+}: {
+	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
+	addHandler: AddHandler;
 } ) {
-	const selectedSiteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const isFetchingProducts = useSelector( isProductsListFetching );
+	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	useEffect( () => {
-		if ( ! isLoading ) {
-			// No need to run if we have completed already
-			return;
-		}
-		if ( ! originalPurchaseId ) {
+		if ( addHandler !== 'addRenewalItems' ) {
 			return;
 		}
 		if ( isFetchingProducts || Object.keys( products || {} ).length < 1 ) {
@@ -226,7 +258,6 @@ function useAddRenewalItems( {
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
 	}, [
 		translate,
-		isLoading,
 		isFetchingProducts,
 		products,
 		originalPurchaseId,
@@ -237,37 +268,27 @@ function useAddRenewalItems( {
 }
 
 function useAddPlanFromSlug( {
-	isLoading,
 	planSlug,
 	dispatch,
 	isJetpackNotAtomic,
-	originalPurchaseId,
+	addHandler,
 }: {
-	isLoading: boolean;
 	planSlug: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
-	originalPurchaseId: string | number | null | undefined;
+	addHandler: AddHandler;
 } ) {
-	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
-	const plans = useSelector( ( state ) => getPlans( state ) );
+	const isFetchingPlans = useSelector( isRequestingPlans );
+	const plans = useSelector( getPlans );
 	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
 	const translate = useTranslate();
 
 	useEffect( () => {
-		if ( ! isLoading ) {
-			// No need to run if we have completed already
-			return;
-		}
-		if ( ! planSlug ) {
+		if ( addHandler !== 'addPlanFromSlug' ) {
 			return;
 		}
 		if ( isFetchingPlans || plans?.length < 1 ) {
 			debug( 'waiting on plans fetch' );
-			return;
-		}
-		if ( originalPurchaseId ) {
-			// If this is a renewal, another hook will handle this
 			return;
 		}
 		if ( ! plan ) {
@@ -301,40 +322,26 @@ function useAddPlanFromSlug( {
 			cartProduct
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
-	}, [
-		translate,
-		isLoading,
-		plans,
-		originalPurchaseId,
-		isFetchingPlans,
-		planSlug,
-		plan,
-		isJetpackNotAtomic,
-		dispatch,
-	] );
+	}, [ translate, plans, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, dispatch ] );
 }
 
 function useAddProductFromSlug( {
-	isLoading,
 	productAlias: productAliasFromUrl,
-	planSlug,
 	dispatch,
 	isJetpackNotAtomic,
 	isPrivate,
-	originalPurchaseId,
+	addHandler,
 }: {
-	isLoading: boolean;
 	productAlias: string | undefined | null;
-	planSlug: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
-	originalPurchaseId: string | number | undefined | null;
+	addHandler: AddHandler;
 } ) {
-	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
-	const plans = useSelector( ( state ) => getPlans( state ) );
-	const isFetchingProducts = useSelector( ( state ) => isProductsListFetching( state ) );
-	const products = useSelector( ( state ) => getProductsList( state ) );
+	const isFetchingPlans = useSelector( isRequestingPlans );
+	const plans = useSelector( getPlans );
+	const isFetchingProducts = useSelector( isProductsListFetching );
+	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
@@ -361,19 +368,7 @@ function useAddProductFromSlug( {
 	);
 
 	useEffect( () => {
-		if ( ! isLoading ) {
-			// No need to run if we have completed already
-			return;
-		}
-		if ( ! productAliasFromUrl ) {
-			return;
-		}
-		if ( planSlug ) {
-			// If we already found a matching plan, another hook will handle this
-			return;
-		}
-		if ( originalPurchaseId ) {
-			// If this is a renewal, another hook will handle this
+		if ( addHandler !== 'addProductFromSlug' ) {
 			return;
 		}
 		if (
@@ -435,13 +430,10 @@ function useAddProductFromSlug( {
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
 		translate,
-		isLoading,
 		isPrivate,
 		plans,
 		products,
-		originalPurchaseId,
 		isFetchingPlans,
-		planSlug,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		validProducts,
@@ -452,8 +444,8 @@ function useAddProductFromSlug( {
 
 function useFetchPlansIfNotLoaded() {
 	const reduxDispatch = useDispatch();
-	const isFetchingPlans = useSelector( ( state ) => isRequestingPlans( state ) );
-	const plans = useSelector( ( state ) => getPlans( state ) );
+	const isFetchingPlans = useSelector( isRequestingPlans );
+	const plans = useSelector( getPlans );
 	useEffect( () => {
 		if ( ! isFetchingPlans && plans?.length < 1 ) {
 			debug( 'fetching plans list' );

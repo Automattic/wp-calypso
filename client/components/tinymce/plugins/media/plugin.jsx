@@ -7,33 +7,33 @@ import React from 'react';
 import tinymce from 'tinymce/tinymce';
 import { assign, debounce, find, findLast, pick, values } from 'lodash';
 import i18n from 'i18n-calypso';
-import { parse, stringify } from 'lib/shortcode';
+import { parse, stringify } from 'calypso/lib/shortcode';
 import closest from 'component-closest';
 
 /**
  * Internal dependencies
  */
-import * as MediaConstants from 'lib/media/constants';
-import { getThumbnailSizeDimensions } from 'lib/media/utils';
-import { deserialize } from 'lib/media-serialization';
-import MediaMarkup from 'post-editor/media-modal/markup';
-import EditorMediaModal from 'post-editor/editor-media-modal';
-import notices from 'notices';
+import * as MediaConstants from 'calypso/lib/media/constants';
+import { getThumbnailSizeDimensions } from 'calypso/lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
+import MediaMarkup from 'calypso/post-editor/media-modal/markup';
+import EditorMediaModal from 'calypso/post-editor/editor-media-modal';
+import notices from 'calypso/notices';
 import TinyMCEDropZone from './drop-zone';
 import restrictSize from './restrict-size';
-import config from 'config';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { setEditorMediaModalView } from 'state/editor/actions';
-import { unblockSave } from 'state/editor/save-blockers/actions';
-import { getEditorRawContent, isEditorSaveBlocked } from 'state/editor/selectors';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { renderWithReduxStore } from 'lib/react-helpers';
-import Gridicon from 'components/gridicon';
-import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'state/media/actions';
-import { fetchMediaItem } from 'state/media/thunks';
-import getMediaItem from 'state/selectors/get-media-item';
+import config from 'calypso/config';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { unblockSave } from 'calypso/state/editor/save-blockers/actions';
+import { getEditorRawContent, isEditorSaveBlocked } from 'calypso/state/editor/selectors';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { renderWithReduxStore } from 'calypso/lib/react-helpers';
+import Gridicon from 'calypso/components/gridicon';
+import { clearMediaItemErrors, setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import { fetchMediaItem } from 'calypso/state/media/thunks';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
 
-import getMedia from 'state/selectors/get-media';
+import getMedia from 'calypso/state/selectors/get-media';
 
 /**
  * Module variables

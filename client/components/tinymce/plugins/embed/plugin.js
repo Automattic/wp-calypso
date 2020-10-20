@@ -10,7 +10,7 @@ import tinymce from 'tinymce/tinymce';
  * Internal dependencies
  */
 import EmbedDialog from './dialog';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'calypso/lib/react-helpers';
 
 /**
  * Manages an EmbedDialog to allow editing the URL of an embed inside the editor.

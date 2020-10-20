@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
+import JetpackBundleCard from 'calypso/components/jetpack/card/jetpack-bundle-card';
 import { bundleCardWithBadge, bundleCardWithDiscount } from '../fixture';
 
 export default function JetpackBundleCardExample() {

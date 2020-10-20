@@ -1,7 +1,8 @@
 /**
  * Internal dependencies
  */
-import type { CartItemExtra } from 'lib/cart-values/types';
+import type { GSuiteProductUser } from 'calypso/lib/gsuite/new-users';
+import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 
 /**
  * There are three different concepts of "cart" relevant to the shopping cart endpoint:
@@ -48,7 +49,8 @@ export interface RequestCartProduct {
 	product_slug: string;
 	product_id: number;
 	meta: string;
-	extra: CartItemExtra;
+	extra: ResponseCartProductExtra;
+	after_purchase_url?: string;
 }
 
 /**
@@ -154,7 +156,7 @@ export interface ResponseCartProduct {
 	meta: string;
 	months_per_bill_period: number | null;
 	volume: number;
-	extra: object;
+	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;
 	price: number;
@@ -162,6 +164,7 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
+	after_purchase_url?: string;
 }
 
 /**
@@ -188,7 +191,7 @@ export interface TempResponseCartProduct {
 	months_per_bill_period: number | null;
 	meta: string;
 	volume: number;
-	extra: object;
+	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: null;
 	price: null;
@@ -196,6 +199,7 @@ export interface TempResponseCartProduct {
 	included_domain_purchase_amount: null;
 	is_renewal: undefined;
 	subscription_id: undefined;
+	after_purchase_url: undefined;
 }
 
 export interface CartLocation {
@@ -203,3 +207,16 @@ export interface CartLocation {
 	postalCode: string | null;
 	subdivisionCode: string | null;
 }
+
+export type ResponseCartProductExtra = {
+	context?: string;
+	source?: string;
+	domain_to_bundle?: string;
+	google_apps_users?: GSuiteProductUser[];
+	google_apps_registration_data?: DomainContactDetails;
+	purchaseId?: string;
+	purchaseDomain?: string;
+	purchaseType?: string;
+	includedDomain?: string;
+	privacy?: boolean;
+};

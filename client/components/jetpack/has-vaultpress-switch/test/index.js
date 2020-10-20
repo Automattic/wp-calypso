@@ -17,9 +17,9 @@ jest.mock( 'state/selectors/get-rewind-state' );
 /**
  * Internal dependencies
  */
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import getRewindState from 'state/selectors/get-rewind-state';
-import HasVaultPressSwitch from 'components/jetpack/has-vaultpress-switch';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 
 describe( 'HasVaultPressSwitch', () => {
 	beforeAll( () => {
@@ -43,6 +43,18 @@ describe( 'HasVaultPressSwitch', () => {
 		getRewindState.mockImplementation( () => ( {
 			state: 'unavailable',
 			reason: 'vp_active_on_site',
+		} ) );
+
+		const trueComponent = <span>true</span>;
+		const hasVPSwitch = shallow( <HasVaultPressSwitch trueComponent={ trueComponent } /> );
+
+		expect( hasVPSwitch.dive().contains( trueComponent ) ).toEqual( true );
+	} );
+
+	test( 'if rewindState is unavailable with reason=host_not_supported, show trueComponent', () => {
+		getRewindState.mockImplementation( () => ( {
+			state: 'unavailable',
+			reason: 'host_not_supported',
 		} ) );
 
 		const trueComponent = <span>true</span>;

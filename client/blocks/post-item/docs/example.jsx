@@ -9,11 +9,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
-import QuerySites from 'components/data/query-sites';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QuerySites from 'calypso/components/data/query-sites';
 import PostItem from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSitePosts } from 'state/posts/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSitePosts } from 'calypso/state/posts/selectors';
 
 function PostItemExample( { primarySiteId, globalId } ) {
 	return (

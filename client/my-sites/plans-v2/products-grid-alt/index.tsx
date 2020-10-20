@@ -3,24 +3,26 @@
  */
 import React, { ReactElement, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { sortBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
-import { JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import {
+	JETPACK_LEGACY_PLANS,
+	JETPACK_RESET_PLANS,
+	JETPACK_SECURITY_PLANS,
+} from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
 import { SELECTOR_PLANS_ALT } from '../constants';
-import {
-	getAllOptionsFromSlug,
-	getJetpackDescriptionWithOptions,
-	slugToSelectorProduct,
-} from '../utils';
+import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
+import PRODUCTS_ORDER_BY_SLUG from './products-order';
 import ProductCardAlt from '../product-card-alt';
 
 /**
@@ -45,8 +47,6 @@ const getPlansToDisplay = ( {
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
 
-	const currentPlanOptions = currentPlanSlug ? getAllOptionsFromSlug( currentPlanSlug ) : [];
-
 	const plansToDisplay = SELECTOR_PLANS_ALT.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
@@ -55,19 +55,18 @@ const getPlansToDisplay = ( {
 				product.term === duration &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug ) &&
-				// Don't include a plan option if the user already owns a related option
-				! currentPlanOptions.includes( product.productSlug )
+				! (
+					currentPlanSlug &&
+					JETPACK_SECURITY_PLANS.includes( currentPlanSlug ) &&
+					JETPACK_SECURITY_PLANS.includes( product.productSlug )
+				)
 		)
 		.map( ( product: SelectorProduct ) => ( {
 			...product,
 			description: getJetpackDescriptionWithOptions( product ),
 		} ) );
 
-	if (
-		currentPlanSlug &&
-		( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ||
-			SELECTOR_PLANS_ALT.includes( currentPlanSlug ) )
-	) {
+	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
 		if ( currentPlanSelectorProduct ) {
 			return [ currentPlanSelectorProduct, ...plansToDisplay ];
@@ -120,8 +119,8 @@ const ProductsGridAlt = ( {
 		siteId
 	);
 
-	const currentPlanSlug =
-		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
+	const currentPlanSlug = useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug;
+	const hasLegacyPlan = currentPlanSlug && JETPACK_LEGACY_PLANS.includes( currentPlanSlug );
 
 	const plansToDisplay = useMemo( () => getPlansToDisplay( { duration, currentPlanSlug } ), [
 		duration,
@@ -138,6 +137,15 @@ const ProductsGridAlt = ( {
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
 	);
 
+	const sortedGridItems = useMemo(
+		() =>
+			sortBy(
+				[ ...plansToDisplay, ...productsToDisplay ],
+				( item ) => PRODUCTS_ORDER_BY_SLUG[ item.productSlug ]
+			),
+		[ plansToDisplay, productsToDisplay ]
+	);
+
 	const isInConnectFlow = useMemo(
 		() =>
 			/jetpack\/connect\/plans/.test( window.location.href ) ||
@@ -148,19 +156,20 @@ const ProductsGridAlt = ( {
 
 	return (
 		<div className="products-grid-alt">
-			{ plansToDisplay.map( ( plan ) => (
+			{ hasLegacyPlan && (
 				<ProductCardAlt
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
-					key={ plan.iconSlug }
-					item={ plan }
-					siteId={ siteId }
+					key={ currentPlanSlug }
+					item={ slugToSelectorProduct( currentPlanSlug ) }
 					onClick={ onSelectProduct }
+					siteId={ siteId }
 					currencyCode={ currencyCode }
 					selectedTerm={ duration }
 				/>
-			) ) }
-			{ productsToDisplay.map( ( product ) => (
+			) }
+
+			{ sortedGridItems.map( ( product ) => (
 				<ProductCardAlt
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
@@ -169,8 +178,10 @@ const ProductsGridAlt = ( {
 					onClick={ onSelectProduct }
 					siteId={ siteId }
 					currencyCode={ currencyCode }
+					selectedTerm={ duration }
 				/>
 			) ) }
+
 			{ showJetpackFreeCard && <JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } /> }
 		</div>
 	);

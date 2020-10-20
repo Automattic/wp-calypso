@@ -394,32 +394,17 @@ function useCreateApplePay( {
 	isApplePayAvailable,
 	isApplePayLoading,
 } ) {
-	const shouldLoadApplePay = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayAvailable
-		: isApplePayAvailable;
+	const shouldLoadApplePay = onlyLoadPaymentMethods?.includes( 'apple-pay' ) ?? true;
+
+	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
+
+	const shouldCreateApplePayMethod =
+		shouldLoadApplePay && isStripeReady && ! isApplePayLoading && isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
-		if (
-			! shouldLoadApplePay ||
-			isStripeLoading ||
-			stripeLoadingError ||
-			! stripe ||
-			! stripeConfiguration ||
-			isApplePayLoading ||
-			! isApplePayAvailable
-		) {
-			return null;
-		}
-		return createApplePayMethod( stripe, stripeConfiguration );
-	}, [
-		shouldLoadApplePay,
-		isApplePayLoading,
-		stripe,
-		stripeConfiguration,
-		isStripeLoading,
-		stripeLoadingError,
-		isApplePayAvailable,
-	] );
+		return shouldCreateApplePayMethod ? createApplePayMethod( stripe, stripeConfiguration ) : null;
+	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration ] );
+
 	return applePayMethod;
 }
 

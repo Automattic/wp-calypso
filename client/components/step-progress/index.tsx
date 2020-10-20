@@ -1,48 +1,72 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
 import { TranslateResult } from 'i18n-calypso';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-interface Props {
-	steps: ( string | TranslateResult )[];
-	currentStep: number;
+interface ClickHandler {
+	onClick: () => void;
+	message: TranslateResult;
+	show?: 'always' | 'onComplete' | 'beforeComplete';
 }
 
-const StepProgress: FunctionComponent< Props > = ( { steps, currentStep } ) => {
-	const getElementNumberClass = ( stepNumber: number ) => {
+interface Props {
+	currentStep: number;
+	steps: ( TranslateResult | ClickHandler )[];
+}
+
+const isClickHandler = ( item: TranslateResult | ClickHandler ): item is ClickHandler =>
+	'object' === typeof item && item.hasOwnProperty( 'onClick' );
+
+const StepProgress: FunctionComponent< Props > = ( { currentStep, steps } ) => {
+	const getElementClass = ( stepNumber: number ) => {
 		if ( currentStep === stepNumber ) {
-			return 'step-progress__element-number-current';
+			return 'step-progress__element-current';
 		}
 		return stepNumber < currentStep
-			? 'step-progress__element-number-complete'
-			: 'step-progress__element-number';
+			? 'step-progress__element-complete'
+			: 'step-progress__element-future';
 	};
 
-	const getStepNameClass = ( stepNumber: number ) => {
-		if ( currentStep === stepNumber ) {
-			return 'step-progress__element-step-name-current';
+	const getClickHandler = ( step: TranslateResult | ClickHandler, stepNumber: number ) => {
+		if ( isClickHandler( step ) ) {
+			if ( undefined === step?.show || 'always' === step.show ) {
+				return step.onClick;
+			}
+			if ( stepNumber < currentStep && 'onComplete' === step.show ) {
+				return step.onClick;
+			}
+			if ( stepNumber > currentStep && 'beforeComplete' === step.show ) {
+				return step.onClick;
+			}
 		}
-		return stepNumber < currentStep
-			? 'step-progress__element-step-name-complete'
-			: 'step-progress__element-step-name';
+		return undefined;
 	};
 
 	return (
 		<div className="step-progress">
-			{ steps.map( ( stepName, index ) => (
-				<div className="step-progress__element" key={ `step-${ index }` }>
-					<div className="step-progress__element-visual">
-						<div className={ getElementNumberClass( index ) }>{ index + 1 }</div>
+			{ steps.map( ( step, index ) => {
+				const clickHandler = getClickHandler( step, index );
+				return (
+					<div className={ getElementClass( index ) } key={ `step-${ index }` }>
+						<button
+							className="step-progress__element-button"
+							disabled={ undefined === clickHandler }
+							onClick={ clickHandler }
+						>
+							<span>{ index + 1 }</span>
+						</button>
+						<span className="step-progress__element-step-name">
+							{ isClickHandler( step ) ? step.message : step }
+						</span>
 					</div>
-					<div className={ getStepNameClass( index ) }>{ stepName }</div>
-				</div>
-			) ) }
+				);
+			} ) }
 		</div>
 	);
 };

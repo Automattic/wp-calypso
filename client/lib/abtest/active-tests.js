@@ -192,7 +192,7 @@ export default {
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
 	reskinSignupFlow: {
-		datestamp: '20200928',
+		datestamp: '20300928',
 		variations: {
 			reskinned: 50,
 			control: 50,
@@ -201,10 +201,10 @@ export default {
 		allowExistingUsers: false,
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200911',
+		datestamp: '20201015',
 		variations: {
-			gutenberg: 50,
-			control: 50,
+			gutenberg: 100,
+			control: 0,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,

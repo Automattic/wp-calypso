@@ -18,7 +18,7 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies

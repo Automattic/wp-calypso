@@ -9,22 +9,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderAvatar from 'blocks/reader-avatar';
-import FollowButton from 'reader/follow-button';
-import { getStreamUrl } from 'reader/route';
-import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import FollowButton from 'calypso/reader/follow-button';
+import { getStreamUrl } from 'calypso/reader/route';
+import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import {
 	getSiteName,
 	getSiteDescription,
 	getSiteAuthorName,
 	getFeedUrl,
 	getSiteUrl,
-} from 'reader/get-helpers';
-import ReaderListItemPlaceholder from 'blocks/reader-list-item/placeholder';
-import { recordTrack, recordTrackWithRailcar } from 'reader/stats';
-import ExternalLink from 'components/external-link';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { formatUrlForDisplay } from 'reader/lib/feed-display-helper';
+} from 'calypso/reader/get-helpers';
+import ReaderListItemPlaceholder from 'calypso/blocks/reader-list-item/placeholder';
+import { recordTrack, recordTrackWithRailcar } from 'calypso/reader/stats';
+import ExternalLink from 'calypso/components/external-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 
 /**
  * Style dependencies

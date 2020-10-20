@@ -8,23 +8,23 @@ import ReactDom from 'react-dom';
 import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import ReaderVisitLink from 'blocks/reader-visit-link';
-import ReaderAuthorLink from 'blocks/reader-author-link';
-import { recordPermalinkClick } from 'reader/stats';
-import TimeSince from 'components/time-since';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import ReaderCombinedCardPostPlaceholder from 'blocks/reader-combined-card/placeholders/post';
-import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
-import QueryReaderPost from 'components/data/query-reader-post';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
+import { recordPermalinkClick } from 'calypso/reader/stats';
+import TimeSince from 'calypso/components/time-since';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
+import ReaderCombinedCardPostPlaceholder from 'calypso/blocks/reader-combined-card/placeholders/post';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
 
 class ReaderCombinedCardPost extends React.Component {
 	static propTypes = {

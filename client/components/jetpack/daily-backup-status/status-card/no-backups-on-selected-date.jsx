@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import contactSupportUrl from 'lib/jetpack/contact-support-url';
-import { INDEX_FORMAT } from 'lib/jetpack/backup-utils';
-import { backupMainPath } from 'my-sites/backup/paths';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getSiteUrl from 'state/sites/selectors/get-site-url';
-import Button from 'components/forms/form-button';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
+import { backupMainPath } from 'calypso/my-sites/backup/paths';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import Button from 'calypso/components/forms/form-button';
 
 /**
  * Style dependencies

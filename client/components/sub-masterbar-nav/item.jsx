@@ -10,7 +10,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 export const Item = ( props ) => {
 	const { isSelected, onClick, label, icon, href } = props;

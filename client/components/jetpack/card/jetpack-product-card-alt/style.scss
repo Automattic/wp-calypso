@@ -58,6 +58,9 @@ $jetpack-product-card-alt-icon-size: 55px;
 		background: var( --color-gray-0 );
 
 		box-shadow: none;
+		&.card.is-expanded {
+			margin-top: 0;
+		}
 	}
 
 	@media ( min-width: 660px ) {
@@ -72,6 +75,14 @@ $jetpack-product-card-alt-icon-size: 55px;
 		.foldable-card--square-border {
 			border-radius: 0;
 		}
+	}
+}
+
+.jetpack-product-card-alt__summary {
+	min-height: unset;
+
+	@media ( min-width: 600px ) {
+		min-height: 435px;
 	}
 }
 
@@ -163,12 +174,12 @@ $jetpack-product-card-alt-icon-size: 55px;
 }
 
 .jetpack-product-card-alt .plan-price {
-	position: relative;
+	display: flex;
 
 	border-color: $jetpack-product-card-alt-color;
 
 	sup {
-		position: absolute;
+		margin-top: 13px;
 		top: 13px;
 
 		font-size: $font-title-small;
@@ -305,9 +316,21 @@ $jetpack-product-card-alt-icon-size: 55px;
 
 .jetpack-product-card-alt__features-icon {
 	margin-right: 14px;
-
 	fill: var( --studio-gray-50 );
-
+	&.gridicons-lock,
+	&.gridicons-cloud-upload,
+	&.material-icon-security,
+	&.gridicons-bug {
+		background: var( --studio-blue );
+		fill: var( --studio-white );
+		border-radius: 50%;
+		padding: 5px;
+		width: 15px;
+		height: 15px;
+	}
+	&.gridicons-lock {
+		background: var( --studio-purple-50 );
+	}
 	&.gridicons-checkmark {
 		fill: $jetpack-product-card-alt-color;
 	}

@@ -10,8 +10,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import { NpsSurvey } from '../';
 import {
 	isNpsSurveySubmitted,
@@ -21,13 +21,13 @@ import {
 	getNpsSurveyName,
 	getNpsSurveyScore,
 	getNpsSurveyFeedback,
-} from 'state/nps-survey/selectors';
+} from 'calypso/state/nps-survey/selectors';
 import {
 	submitNpsSurvey,
 	submitNpsSurveyWithNoScore,
 	sendNpsSurveyFeedback,
-} from 'state/nps-survey/actions';
-import { successNotice } from 'state/notices/actions';
+} from 'calypso/state/nps-survey/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 class NpsSurveyExample extends PureComponent {
 	state = {

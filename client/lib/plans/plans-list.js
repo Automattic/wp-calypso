@@ -8,8 +8,8 @@ import i18n, { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'calypso/config';
 import * as constants from './constants';
-import { isEnabled } from 'config';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
 const WPComGetBiennialBillingTimeframe = () => i18n.translate( '/month, billed every two years' );
@@ -95,19 +95,19 @@ const getPlanPersonalDetails = () => ( {
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
 				' website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.',
+				'Unlock unlimited, expert email support.',
 			plansDescriptionHeadingComponent
 		),
 	getShortDescription: () =>
 		i18n.translate(
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
-				'Get access to high-quality email and live chat support.'
+				'Unlock unlimited, expert email support.'
 		),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
 		constants.FEATURE_CUSTOM_DOMAIN,
 		constants.FEATURE_JETPACK_ESSENTIAL,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		constants.FEATURE_EMAIL_SUPPORT,
 		constants.FEATURE_FREE_THEMES,
 		constants.FEATURE_BASIC_DESIGN,
 		constants.FEATURE_6GB_STORAGE,
@@ -116,18 +116,18 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
 	getSignupFeatures: () => [
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_DOMAIN,
 		constants.FEATURE_FREE_THEMES,
 	],
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
 	getPortfolioSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_ALL_FREE_FEATURES,
 	],
 	// Features not displayed but used for checking plan abilities
@@ -233,8 +233,7 @@ const getPlanPremiumDetails = () => ( {
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
 	getDescription: () =>
 		i18n.translate(
-			'{{strong}}Best for freelancers:{{/strong}}' +
-				' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.',
 			plansDescriptionHeadingComponent
@@ -383,7 +382,10 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 			'Enjoy the peace of mind of complete site protection. ' +
 				'Great for brochure sites, restaurants, blogs, and resume sites.'
 		),
-	getTagline: () => translate( 'Best for sites with occasional updates' ),
+	getTagline: () =>
+		isEnabled( 'plans/alternate-selector' )
+			? translate( 'Backup, Scan, and Anti-spam in one package' )
+			: translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () => ( {
 		[ constants.FEATURE_CATEGORY_SECURITY ]: [
@@ -493,7 +495,7 @@ const getPlanJetpackCompleteDetails = () => ( {
 		].includes( plan ),
 	getDescription: () =>
 		translate(
-			'Superpower your site with everything Jetpack has to offer: real-time security, enhanced search, CRM, and marketing, growth, and design tools.'
+			'Get the full Jetpack suite with real-time security, enhanced search, CRM, marketing, growth, and design tools.'
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCompareFeatures: () => [],
@@ -901,8 +903,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'premium',
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for small businesses:{{/strong}}' +
-					'Comprehensive, automated scanning for security vulnerabilities, ' +
+				'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
 					'fast video hosting, and marketing automation.',
 				plansDescriptionHeadingComponent
 			),
@@ -979,8 +980,7 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for small businesses:{{/strong}}' +
-					'Comprehensive, automated scanning for security vulnerabilities, ' +
+				'{{strong}}Best for small businesses:{{/strong}} Comprehensive, automated scanning for security vulnerabilities, ' +
 					'fast video hosting, and marketing automation.',
 				plansDescriptionHeadingComponent
 			),
@@ -1050,8 +1050,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'jetpack-personal',
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for personal use:{{/strong}}' +
-					'Security essentials for your WordPress site, including ' +
+				'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
 				plansDescriptionHeadingComponent
 			),
@@ -1099,8 +1098,7 @@ export const PLANS_LIST = {
 		availableFor: ( plan ) => includes( [ constants.PLAN_JETPACK_FREE ], plan ),
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for personal use:{{/strong}}' +
-					'Security essentials for your WordPress site, including ' +
+				'{{strong}}Best for personal use:{{/strong}} Security essentials for your WordPress site, including ' +
 					'automated backups and priority support.',
 				plansDescriptionHeadingComponent
 			),
@@ -1159,8 +1157,7 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'professional',
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for organizations:{{/strong}}' +
-					'The most powerful WordPress sites: real-time backups ' +
+				'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 					'and unlimited premium themes.',
 				plansDescriptionHeadingComponent
 			),
@@ -1232,8 +1229,7 @@ export const PLANS_LIST = {
 			),
 		getDescription: () =>
 			i18n.translate(
-				'{{strong}}Best for organizations:{{/strong}}' +
-					'The most powerful WordPress sites: real-time backups ' +
+				'{{strong}}Best for organizations:{{/strong}} The most powerful WordPress sites: real-time backups ' +
 					'and unlimited premium themes.',
 				plansDescriptionHeadingComponent
 			),
@@ -1332,6 +1328,39 @@ export const PLANS_LIST = {
 		getStoreSlug: () => constants.PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+	},
+
+	[ constants.PLAN_P2_PLUS ]: {
+		group: constants.GROUP_WPCOM,
+		type: constants.TYPE_P2_PLUS,
+		getTitle: () => i18n.translate( 'P2+' ),
+		getDescription: () => i18n.translate( 'Some long description' ),
+		getShortDescription: () => i18n.translate( 'Some short description' ),
+		getPlanCompareFeatures: () => [
+			// pay attention to ordering, shared features should align on /plan page
+			constants.FEATURE_EMAIL_SUPPORT,
+			constants.FEATURE_BASIC_DESIGN,
+			constants.FEATURE_13GB_STORAGE,
+			constants.FEATURE_NO_ADS,
+		],
+		getSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
+		getBlogSignupFeatures: () => [
+			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+			constants.FEATURE_ALL_FREE_FEATURES,
+		],
+		getPortfolioSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
+		// Features not displayed but used for checking plan abilities
+		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+		getInferiorHiddenFeatures: () => [],
+		getAudience: () => i18n.translate( 'Best for P2ers' ),
+		getBlogAudience: () => i18n.translate( 'Best for P2ers' ),
+		getPortfolioAudience: () => i18n.translate( 'Best for P2ers' ),
+		getStoreAudience: () => i18n.translate( 'Best for P2ers' ),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ), //TODO: only for P2 sites.
+		getProductId: () => 1040,
+		getStoreSlug: () => constants.PLAN_P2_PLUS,
+		getPathSlug: () => 'p2-plus',
 	},
 };
 

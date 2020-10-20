@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 export default class extends React.PureComponent {
 	static displayName = 'InlineSupportLink';

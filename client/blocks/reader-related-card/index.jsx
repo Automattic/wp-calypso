@@ -10,17 +10,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { getPostById } from 'state/reader/posts/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
+import { getPostById } from 'calypso/state/reader/posts/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import { CompactCard as Card } from '@automattic/components';
-import Gravatar from 'components/gravatar';
-import FollowButton from 'reader/follow-button';
-import { getPostUrl, getStreamUrl } from 'reader/route';
-import { areEqualIgnoringWhitespaceAndCase } from 'lib/string';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video';
-import ReaderFeaturedImage from 'blocks/reader-featured-image';
-import ReaderAuthorLink from 'blocks/reader-author-link';
+import Gravatar from 'calypso/components/gravatar';
+import FollowButton from 'calypso/reader/follow-button';
+import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
+import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 
 /**
  * Style dependencies

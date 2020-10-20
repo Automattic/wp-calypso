@@ -7,8 +7,8 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
-import SearchCard from 'components/search-card';
+import Search from 'calypso/components/search';
+import SearchCard from 'calypso/components/search-card';
 
 /**
  * Globals

@@ -14,7 +14,7 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_COMPLETE,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 export const wpcomFreePlan = {
 	product_slug: PLAN_FREE,

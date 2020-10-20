@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import MomentContext from './context';
 
 const debug = debugFactory( 'calypso:localized-moment' );

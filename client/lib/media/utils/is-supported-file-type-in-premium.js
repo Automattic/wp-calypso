@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { VideoPressFileTypes } from 'lib/media/constants';
-import { isSiteAllowedFileTypesToBeTrusted } from 'lib/media/utils/is-site-allowed-file-types-to-be-trusted';
+import { VideoPressFileTypes } from 'calypso/lib/media/constants';
+import { isSiteAllowedFileTypesToBeTrusted } from 'calypso/lib/media/utils/is-site-allowed-file-types-to-be-trusted';
 
 /**
  * Returns true if the specified item is a valid file in a Premium plan,

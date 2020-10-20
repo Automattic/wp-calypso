@@ -7,7 +7,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 
 export default class extends React.Component {
 	static displayName = 'ContactFormViewPreviewFieldset';

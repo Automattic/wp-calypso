@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Banner from 'components/banner';
+import Banner from 'calypso/components/banner';
 
 const BannerExample = () => (
 	<div>

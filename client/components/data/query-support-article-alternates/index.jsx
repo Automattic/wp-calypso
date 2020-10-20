@@ -9,10 +9,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
-import { fetchAlternates } from 'state/support-articles-alternates/actions';
-import { shouldRequestSupportArticleAlternates } from 'state/support-articles-alternates/selectors';
-import { isPostKeyLike } from 'reader/post-key';
+import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
+import { fetchAlternates } from 'calypso/state/support-articles-alternates/actions';
+import { shouldRequestSupportArticleAlternates } from 'calypso/state/support-articles-alternates/selectors';
+import { isPostKeyLike } from 'calypso/reader/post-key';
 
 class QuerySupportArticleAlternates extends Component {
 	static propTypes = {

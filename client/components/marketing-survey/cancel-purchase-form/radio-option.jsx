@@ -8,9 +8,9 @@ import React from 'react';
  * Internal Dependencies
  */
 
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 export const radioOption = (
 	key,

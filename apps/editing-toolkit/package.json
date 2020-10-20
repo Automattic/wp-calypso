@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.6.1",
+	"version": "2.7.2",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -92,6 +92,7 @@
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
 		"@babel/core": "^7.11.1",
 		"@testing-library/jest-dom": "^5.9.0",

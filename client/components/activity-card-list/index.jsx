@@ -10,18 +10,18 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isActivityBackup } from 'lib/jetpack/backup-utils';
-import { updateFilter } from 'state/activity-log/actions';
-import { withApplySiteOffset } from 'components/site-offset';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isActivityBackup } from 'calypso/lib/jetpack/backup-utils';
+import { updateFilter } from 'calypso/state/activity-log/actions';
+import { withApplySiteOffset } from 'calypso/components/site-offset';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { withMobileBreakpoint } from '@automattic/viewport-react';
-import ActivityCard from 'components/activity-card';
-import Filterbar from 'my-sites/activity/filterbar';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import Pagination from 'components/pagination';
-import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
-import QueryRewindState from 'components/data/query-rewind-state';
+import ActivityCard from 'calypso/components/activity-card';
+import Filterbar from 'calypso/my-sites/activity/filterbar';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import Pagination from 'calypso/components/pagination';
+import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 
 /**
  * Style dependencies

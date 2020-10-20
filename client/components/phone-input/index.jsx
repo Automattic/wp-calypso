@@ -11,8 +11,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import FormCountrySelect from 'components/forms/form-country-select';
-import FormTextInput from 'components/forms/form-text-input';
+import FormCountrySelect from 'calypso/components/forms/form-country-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import {
 	formatNumber,
 	toIcannFormat,
@@ -20,9 +20,9 @@ import {
 	processNumber,
 	getUpdatedCursorPosition,
 	MIN_LENGTH_TO_FORMAT,
-} from 'components/phone-input/phone-number';
-import CountryFlag from 'components/phone-input/country-flag';
-import { countries } from 'components/phone-input/data';
+} from 'calypso/components/phone-input/phone-number';
+import CountryFlag from 'calypso/components/phone-input/country-flag';
+import { countries } from 'calypso/components/phone-input/data';
 
 /**
  * Style dependencies

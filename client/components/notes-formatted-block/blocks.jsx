@@ -7,7 +7,7 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const blocksByType = {};
 export function getBlockByType( type ) {

@@ -7,8 +7,9 @@
 /**
  * Internal dependencies
  */
-import { getThankYouPageUrl } from '../use-get-thank-you-url';
-import { isEnabled } from 'config';
+import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { isEnabled } from 'calypso/config';
+import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
 
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'lib/user', () =>
@@ -336,6 +337,47 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/cookie' );
 	} );
 
+	it( 'Should store the current URL in the redirect cookie when called from the editor', () => {
+		const saveUrlToCookie = jest.fn();
+		const cart = {
+			products: [],
+		};
+		const url = 'http://localhost/editor';
+		Object.defineProperty( window, 'location', {
+			value: {
+				href: url,
+			},
+		} );
+		getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isInEditor: true,
+			saveUrlToCookie,
+		} );
+		expect( saveUrlToCookie ).toBeCalledWith( url );
+	} );
+
+	it( 'Should store the thank you URL in the redirect cookie when called from the editor with an e-commerce plan', () => {
+		const saveUrlToCookie = jest.fn();
+		const cart = {
+			products: [
+				{
+					product_slug: PLAN_ECOMMERCE,
+				},
+			],
+		};
+		window.one = 1;
+		getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isInEditor: true,
+			saveUrlToCookie,
+		} );
+		expect( saveUrlToCookie ).toBeCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
+	} );
+
 	it( 'redirects to url from cookie followed by purchase id if create_new_blog is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
@@ -530,6 +572,24 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
+	} );
+
+	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			orderId: '1234abcd',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
 	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {

@@ -9,10 +9,10 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import FollowersStore from 'lib/followers/store';
-import FollowersActions from 'lib/followers/actions';
-import passToChildren from 'lib/react-pass-to-children';
-import pollers from 'lib/data-poller';
+import FollowersStore from 'calypso/lib/followers/store';
+import FollowersActions from 'calypso/lib/followers/actions';
+import passToChildren from 'calypso/lib/react-pass-to-children';
+import pollers from 'calypso/lib/data-poller';
 
 /**
  * Module variables

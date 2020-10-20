@@ -5,22 +5,22 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import QuerySupportArticleAlternates from 'components/data/query-support-article-alternates';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import ExternalLink from 'calypso/components/external-link';
+import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { isDefaultLocale, localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/state/analytics/actions';
+import { isDefaultLocale, localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

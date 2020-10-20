@@ -9,21 +9,21 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { getLocationOrigin, getTaxPostalCode } from 'lib/cart-values';
-import { hasRenewalItem } from 'lib/cart-values/cart-items';
-import { setTaxPostalCode } from 'lib/cart/actions';
-import Input from 'my-sites/domains/components/form/input';
-import notices from 'notices';
-import PaymentCountrySelect from 'components/payment-country-select';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { getLocationOrigin, getTaxPostalCode } from 'calypso/lib/cart-values';
+import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
+import { setTaxPostalCode } from 'calypso/lib/cart/actions';
+import Input from 'calypso/my-sites/domains/components/form/input';
+import notices from 'calypso/notices';
+import PaymentCountrySelect from 'calypso/components/payment-country-select';
 import SubscriptionText from './subscription-text';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+import CartCoupon from 'calypso/my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
 import CartToggle from './cart-toggle';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import IncompatibleProductMessage from './incompatible-product-message';

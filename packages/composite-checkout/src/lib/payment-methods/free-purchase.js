@@ -8,13 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import {
-	FormStatus,
-	useLineItems,
-	useEvents,
-	useTransactionStatus,
-	usePaymentProcessor,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { useFormStatus } from '../form-status';
 
 export function createFreePaymentMethod() {
@@ -37,35 +31,22 @@ function FreePurchaseLabel() {
 	);
 }
 
-function FreePurchaseSubmitButton( { disabled } ) {
+function FreePurchaseSubmitButton( { disabled, onClick } ) {
 	const [ items ] = useLineItems();
-	const {
-		setTransactionComplete,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-	const submitTransaction = usePaymentProcessor( 'free-purchase' );
 
-	const onClick = () => {
-		setTransactionPending();
+	const handleButtonPress = () => {
 		onEvent( { type: 'FREE_TRANSACTION_BEGIN' } );
-		submitTransaction( {
+		onClick( 'free-purchase', {
 			items,
-		} )
-			.then( () => {
-				setTransactionComplete();
-			} )
-			.catch( ( error ) => {
-				setTransactionError( error.message );
-			} );
+		} );
 	};
 
 	return (
 		<Button
 			disabled={ disabled }
-			onClick={ onClick }
+			onClick={ handleButtonPress }
 			buttonType="primary"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth

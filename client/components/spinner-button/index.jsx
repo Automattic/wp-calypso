@@ -9,8 +9,8 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Button from 'components/forms/form-button';
-import Spinner from 'components/spinner';
+import Button from 'calypso/components/forms/form-button';
+import Spinner from 'calypso/components/spinner';
 
 /**
  * Style dependencies

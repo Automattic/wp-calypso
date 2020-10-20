@@ -8,12 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { settingsPath } from 'lib/jetpack/paths';
-import { itemLinkMatches } from 'my-sites/sidebar/utils';
-import SidebarItem from 'layout/sidebar/item';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import SidebarItem from 'calypso/layout/sidebar/item';
 import JetpackSidebarMenuItems from '.';
 
 export default ( { path } ) => {

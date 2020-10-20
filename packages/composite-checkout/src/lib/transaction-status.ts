@@ -70,16 +70,6 @@ export function useTransactionStatusManager(): TransactionStatusManager {
 			} ),
 		[]
 	);
-	const setTransactionAuthorizing = useCallback<
-		TransactionStatusManager[ 'setTransactionAuthorizing' ]
-	>(
-		( response ) =>
-			dispatch( {
-				type: 'STATUS_SET',
-				payload: { status: TransactionStatus.AUTHORIZING, response },
-			} ),
-		[]
-	);
 
 	const {
 		transactionStatus,
@@ -101,7 +91,6 @@ export function useTransactionStatusManager(): TransactionStatusManager {
 			setTransactionComplete,
 			setTransactionPending,
 			setTransactionRedirecting,
-			setTransactionAuthorizing,
 		} ),
 		[
 			transactionStatus,
@@ -114,7 +103,6 @@ export function useTransactionStatusManager(): TransactionStatusManager {
 			setTransactionComplete,
 			setTransactionPending,
 			setTransactionRedirecting,
-			setTransactionAuthorizing,
 		]
 	);
 }

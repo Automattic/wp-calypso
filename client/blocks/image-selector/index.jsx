@@ -13,11 +13,11 @@ import { noop } from 'lodash';
  */
 import ImageSelectorPreview from './preview';
 import ImageSelectorDropZone from './dropzone';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import MediaModal from 'post-editor/media-modal';
+import isDropZoneVisible from 'calypso/state/selectors/is-drop-zone-visible';
+import MediaModal from 'calypso/post-editor/media-modal';
 import { localize } from 'i18n-calypso';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies

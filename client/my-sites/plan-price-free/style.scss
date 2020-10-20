@@ -1,0 +1,31 @@
+.plan-price-free {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	margin-bottom: 20px;
+}
+
+.plan-price-free__main {
+	padding-bottom: 4px;
+
+	font-size: $font-headline-medium;
+	font-weight: 400;
+	line-height: 1.5;
+	color: var( --color-neutral-70 );
+
+	@include breakpoint-deprecated( '<960px' ) {
+		font-size: $font-title-medium;
+	}
+}
+
+.plan-price-free__content {
+	display: block;
+
+	color: var( --color-text-subtle );
+
+	font-size: $font-body-extra-small;
+	font-style: italic;
+	line-height: 1;
+}

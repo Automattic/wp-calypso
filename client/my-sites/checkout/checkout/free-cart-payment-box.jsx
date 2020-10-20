@@ -12,9 +12,9 @@ import React from 'react';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
 import CartToggle from './cart-toggle';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
-import { hasOnlyProductsOf } from 'lib/cart-values/cart-items';
-import { isBlogger } from 'lib/products-values';
+import CartCoupon from 'calypso/my-sites/checkout/cart/cart-coupon';
+import { hasOnlyProductsOf } from 'calypso/lib/cart-values/cart-items';
+import { isBlogger } from 'calypso/lib/products-values';
 import CheckoutTerms from './checkout-terms';
 
 class FreeCartPaymentBox extends React.Component {

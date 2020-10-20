@@ -8,14 +8,14 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import { withApplySiteOffset, applySiteOffsetType } from 'components/site-offset';
-import { useLocalizedMoment } from 'components/localized-moment';
+import Notice from 'calypso/components/notice';
+import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Type dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface ConnectedProps {
 	applySiteOffset: applySiteOffsetType;

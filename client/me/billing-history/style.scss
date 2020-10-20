@@ -244,7 +244,8 @@ textarea.billing-history__billing-details-editable {
 			margin: 0;
 		}
 
-		strong {
+		strong,
+		.form-label {
 			color: var( --color-neutral-50 );
 			display: block;
 			font-size: $font-body-extra-small;

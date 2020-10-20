@@ -10,10 +10,15 @@ import { __ } from '@wordpress/i18n';
  */
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
+import type { LaunchStepType } from '../../../common/data-stores/launch/types';
 
 import './styles.scss';
 
-const LaunchMenu = () => {
+interface Props {
+	onMenuItemClick: ( step: LaunchStepType ) => void;
+}
+
+const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => {
 	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
@@ -29,16 +34,22 @@ const LaunchMenu = () => {
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
+	const handleClick = ( step ) => {
+		setStep( step );
+		onMenuItemClick( step );
+	};
+
 	return (
 		<div className="nux-launch-menu">
 			<h4>{ __( 'Site Launch Steps', 'full-site-editing' ) }</h4>
 			<div className="nux-launch-menu__item-group">
 				{ LaunchSequence.map( ( step ) => (
 					<LaunchMenuItem
+						key={ step }
 						title={ LaunchStepMenuItemTitles[ step ] }
 						isCompleted={ isStepCompleted( step ) }
 						isCurrent={ step === currentStep }
-						onClick={ () => setStep( step ) }
+						onClick={ () => handleClick( step ) }
 						isDisabled={ step === LaunchStep.Final && ! isFlowStarted }
 					/>
 				) ) }

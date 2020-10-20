@@ -10,11 +10,11 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormattedDate from '../';
-import { setLocale } from 'state/ui/language/actions';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 
 class FormattedDateExample extends PureComponent {
 	static displayName = 'FormattedDateExample';

@@ -5,15 +5,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import FilePicker from 'components/file-picker';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import wpcom from 'calypso/lib/wp';
+import FilePicker from 'calypso/components/file-picker';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies

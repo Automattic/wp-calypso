@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { some, endsWith } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -53,6 +53,6 @@ export function iframeIsAllowed( iframe ) {
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();
 	return some( allowedIframeHosts, function ( allowedHost ) {
-		return endsWith( '.' + iframeSrc, '.' + allowedHost );
+		return `.${ iframeSrc }`.endsWith( '.' + allowedHost );
 	} );
 }

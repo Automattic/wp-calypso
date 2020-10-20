@@ -11,11 +11,11 @@ import { get, isNumber } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Count from 'components/count';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import Count from 'calypso/components/count';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 
 class FollowersCount extends Component {
 	render() {

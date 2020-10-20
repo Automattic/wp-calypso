@@ -9,7 +9,7 @@ import { union } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
+import SiteIcon from 'calypso/blocks/site-icon';
 
 /**
  * Style dependencies
