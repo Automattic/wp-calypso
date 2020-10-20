@@ -49,7 +49,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }
 							price={ prices[ plan.storeSlug ] }
-							name={ plan?.title.toString() }
+							name={ plan?.title?.toString() }
 							isSelected={ plan.storeSlug === selectedPlanSlug }
 							onSelect={ onPlanSelect }
 							onPickDomainClick={ onPickDomainClick }

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
@@ -24,7 +25,14 @@ type Props = {
 };
 
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
-	const plansDetails = useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails() );
+	const { i18nLocale } = useI18n();
+
+	const allPlansDetails = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPlansDetails( i18nLocale )
+	);
+
+	const { features, featuresByType, plans } = allPlansDetails;
+
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 
@@ -39,36 +47,33 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
 						) ) }
 					</tr>
 				</thead>
-				{ plansDetails.map( ( detail ) => (
-					<tbody key={ detail.id }>
-						{ detail.name && (
+
+				{ featuresByType.map( ( featureType ) => (
+					<tbody key={ featureType.id }>
+						{ featureType.name && (
 							<tr className="plans-details__header-row">
-								<th colSpan={ 6 }>{ detail.name }</th>
+								<th colSpan={ 6 }>{ featureType.name }</th>
 							</tr>
 						) }
-						{ detail.features.map( ( feature, i ) => (
+						{ featureType.features?.map( ( feature: string, i ) => (
 							<tr className="plans-details__feature-row" key={ i }>
-								<th>{ feature.name }</th>
-								{ feature.data.map( ( value, j ) => (
+								<th>{ features[ feature ].name }</th>
+								{ supportedPlans.map( ( plan, j ) => (
 									<td key={ j }>
-										{ feature.type === 'checkbox' &&
-											( value ? (
-												<>
-													{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-													<span className="hidden">
-														{ __( 'Available', __i18n_text_domain__ ) }
-													</span>
-													{ TickIcon }
-												</>
-											) : (
-												<>
-													{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-													<span className="hidden">
-														{ __( 'Unavailable', __i18n_text_domain__ ) }{ ' ' }
-													</span>
-												</>
-											) ) }
-										{ feature.type === 'text' && value }
+										{ plans[ plan.storeSlug ].featuresSlugs?.[ feature ] ? (
+											<>
+												{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+												<span className="hidden">{ __( 'Available', __i18n_text_domain__ ) }</span>
+												{ TickIcon }
+											</>
+										) : (
+											<>
+												{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+												<span className="hidden">
+													{ __( 'Unavailable', __i18n_text_domain__ ) }
+												</span>
+											</>
+										) }
 									</td>
 								) ) }
 							</tr>

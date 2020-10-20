@@ -2,27 +2,46 @@
  * Internal dependencies
  */
 import type { State } from './reducer';
-import { planDetails, PLANS_LIST } from './plans-data';
 import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
-import type { PlanSlug } from './types';
+import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
-function getPlan( slug: PlanSlug ) {
-	return PLANS_LIST[ slug ];
-}
+export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
 
-export const getPlanBySlug = ( _: State, slug: PlanSlug ) => getPlan( slug );
+export const getFeaturesByType = ( state: State ): Array< PlanFeatureType > => state.featuresByType;
 
-export const getDefaultPaidPlan = () => getPlan( DEFAULT_PAID_PLAN );
+export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
+	return state.plans[ slug ] ?? undefined;
+};
 
-export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
+export const getDefaultPaidPlan = ( state: State ): Plan => {
+	return state.plans[ DEFAULT_PAID_PLAN ] ?? undefined;
+};
 
-export const getPlanByPath = ( state: State, path?: string ) =>
-	path && getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path );
+export const getSupportedPlans = ( state: State ): Plan[] => {
+	const supportedPlans: Plan[] = [];
 
-export const getPlansDetails = () => planDetails;
+	console.log( state );
 
-export const getPlansPaths = ( state: State ) =>
-	getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
+	state.supportedPlanSlugs.forEach( ( slug ) => {
+		if ( slug in state.plans ) {
+			supportedPlans.push( state.plans[ slug ] );
+		}
+	} );
+
+	return supportedPlans;
+
+	// return state.supportedPlanSlugs.map( ( slug ) => state.plans[ slug ] ?? undefined );
+};
+
+export const getPlanByPath = ( state: State, path?: string ): Plan | undefined => {
+	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
+};
+
+export const getPlansDetails = ( state: State, _: any ): State => state;
+
+export const getPlansPaths = ( state: State ) => {
+	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
+};
 
 export const getPrices = ( state: State ) => state.prices;
 

@@ -65,7 +65,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const otherPlans = supportedPlans.filter( ( plan ) => plan.storeSlug !== primaryPlan.storeSlug );
 
 	// Handle toggling of all plan items
-	const defaultOpenPlans = [ primaryPlan.storeSlug ];
+	const defaultOpenPlans = [ primaryPlan?.storeSlug ];
 	const [ openPlans, setOpenPlans ] = useState( defaultOpenPlans );
 	const allPlansOpened = openPlans.length >= supportedPlans.length;
 
