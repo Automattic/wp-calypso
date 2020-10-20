@@ -33,6 +33,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
+import { isDomainRegistration } from 'calypso/lib/products-values';
 import { getUrlParts } from 'calypso/lib/url';
 
 // State actions and selectors
@@ -864,7 +865,9 @@ export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextP
 	const hasDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
-	if ( ( hasDomainItemInDependencyStore && isEmpty( domainItem ) ) || skipSecureYourBrand ) {
+	const isFree = hasDomainItemInDependencyStore && isEmpty( domainItem );
+	const isNotRegistration = ! isFree && ! isDomainRegistration( domainItem );
+	if ( isFree || isNotRegistration || skipSecureYourBrand ) {
 		const cartItems = null;
 		submitSignupStep( { stepName, cartItems, wasSkipped: true }, { cartItems } );
 		flows.excludeStep( stepName );
