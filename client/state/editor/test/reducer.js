@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import reducer, { postId, iframePort } from '../reducer';
-import { EDITOR_START, POST_SAVE_SUCCESS, EDITOR_IFRAME_LOADED } from 'state/action-types';
+import { EDITOR_START, POST_SAVE_SUCCESS, EDITOR_IFRAME_LOADED } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

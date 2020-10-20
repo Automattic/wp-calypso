@@ -16,8 +16,8 @@ import {
 	EDITOR_START,
 	EDITOR_STOP,
 	POST_SAVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
