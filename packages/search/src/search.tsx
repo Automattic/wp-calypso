@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -319,7 +320,7 @@ class Search extends React.Component< Props, State > {
 			spellCheck: 'false' as const,
 		};
 
-		const searchClass = classNames( 'search', this.props.className, this.props.dir, {
+		const searchClass = classNames( 'search-component', this.props.className, this.props.dir, {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
@@ -328,8 +329,8 @@ class Search extends React.Component< Props, State > {
 			'has-open-icon': ! this.props.hideOpenIcon,
 		} );
 
-		const fadeClass = classNames( 'search__input-fade', this.props.dir );
-		const inputClass = classNames( 'search__input', this.props.dir );
+		const fadeClass = classNames( 'search-component__input-fade', this.props.dir );
+		const inputClass = classNames( 'search-component__input', this.props.dir );
 
 		return (
 			<div dir={ this.props.dir } className={ searchClass } role="search">
@@ -373,7 +374,7 @@ class Search extends React.Component< Props, State > {
 
 		return (
 			<Button
-				className="search__icon-navigation"
+				className="search-component__icon-navigation"
 				ref={ this.openIcon }
 				onClick={ enableOpenIcon ? this.openSearch : this.focus }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
@@ -381,8 +382,10 @@ class Search extends React.Component< Props, State > {
 				aria-controls={ 'search-component-' + this.instanceId }
 				aria-label={ __( 'Open Search' ) }
 			>
-				{ /* @ts-ignore */ }
-				{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
+				{ ! this.props.hideOpenIcon && (
+					/* @ts-ignore */
+					<Icon icon={ search } className="search-component__open-icon" />
+				) }
 			</Button>
 		);
 	}
@@ -390,7 +393,7 @@ class Search extends React.Component< Props, State > {
 	renderStylingDiv() {
 		if ( typeof this.props.overlayStyling === 'function' ) {
 			return (
-				<div className="search__text-overlay" ref={ this.overlay }>
+				<div className="search-component__text-overlay" ref={ this.overlay }>
 					{ this.props.overlayStyling( this.state.keyword ) }
 				</div>
 			);
@@ -402,7 +405,7 @@ class Search extends React.Component< Props, State > {
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<Button
-					className="search__icon-navigation"
+					className="search-component__icon-navigation"
 					onClick={ this.closeSearch }
 					tabIndex={ 0 }
 					onKeyDown={ this.closeListener }
@@ -410,7 +413,7 @@ class Search extends React.Component< Props, State > {
 					aria-label={ __( 'Close Search' ) }
 				>
 					{ /* @ts-ignore */ }
-					<Icon icon={ close } className="search__close-icon" />
+					<Icon icon={ close } className="search-component__close-icon" />
 				</Button>
 			);
 		}
