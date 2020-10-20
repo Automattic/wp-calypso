@@ -43,6 +43,8 @@ const Header: React.FunctionComponent = () => {
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
 
+	const homeLink = '/';
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 	const changeLocaleButton = () => {
@@ -68,7 +70,7 @@ const Header: React.FunctionComponent = () => {
 		>
 			<section className="gutenboarding__header-section">
 				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--wp-logo">
-					<Button href={ 'https://wordpress.com' }>
+					<Button href={ homeLink }>
 						<div className="gutenboarding__header-wp-logo">
 							<Icon icon={ wordpress } size={ 28 } />
 						</div>
