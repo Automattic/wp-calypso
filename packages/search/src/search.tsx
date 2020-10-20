@@ -2,17 +2,17 @@
 /**
  * External dependencies
  */
-import React, { KeyboardEvent, MouseEvent, FocusEvent, FormEvent, ChangeEvent } from 'react';
-import { debounce, noop, uniqueId } from 'lodash';
 import classNames from 'classnames';
+import React, { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
 import { isMobile } from '@automattic/viewport';
+import { debounce, noop, uniqueId } from 'lodash';
 
 /**
  * WordPress dependencies
  */
 import { Button, Spinner } from '@wordpress/components';
-import { close, search, Icon } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
+import { close, search, Icon } from '@wordpress/icons';
 
 /**
  * Style dependencies
