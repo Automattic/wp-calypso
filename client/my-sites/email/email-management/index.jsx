@@ -46,6 +46,7 @@ import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import EmailProvidersComparison from '../email-providers-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
@@ -260,12 +261,13 @@ class EmailManagement extends React.Component {
 	}
 
 	goToEditOrList = () => {
-		const { selectedDomainName, selectedSiteSlug, currentRoute } = this.props;
+		const { selectedDomainName, selectedSiteSlug, currentRoute, previousRoute } = this.props;
+		const domainPath = domainManagementEdit( selectedSiteSlug, selectedDomainName, currentRoute );
 
-		if ( selectedDomainName ) {
-			page( domainManagementEdit( selectedSiteSlug, selectedDomainName, currentRoute ) );
+		if ( selectedDomainName && previousRoute.startsWith( domainPath ) ) {
+			page( domainPath );
 		} else {
-			page( domainManagementList( selectedSiteSlug ) );
+			page( domainManagementList( selectedSiteSlug, previousRoute ) );
 		}
 	};
 }
@@ -280,6 +282,7 @@ export default connect(
 			gsuiteUsers: getGSuiteUsers( state, selectedSiteId ),
 			hasGSuiteUsersLoaded: hasLoadedGSuiteUsers( state, selectedSiteId ),
 			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, selectedSiteId ),
+			previousRoute: getPreviousRoute( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 		};
