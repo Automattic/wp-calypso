@@ -77,7 +77,6 @@
 		"nav-unification": false,
 		"oauth": true,
 		"persist-redux": true,
-		"plans/alternate-selector": true,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
 		"post-editor/html-toolbar": true,

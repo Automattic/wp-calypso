@@ -104,7 +104,6 @@
 		"p2/p2-plus": true,
 		"perfmon": false,
 		"persist-redux": true,
-		"plans/alternate-selector": true,
 		"plans/personal-plan": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
