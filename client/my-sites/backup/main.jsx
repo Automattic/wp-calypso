@@ -240,7 +240,13 @@ class BackupsPage extends Component {
 	}
 
 	renderAlternateWrap() {
-		const { siteCapabilities, logs, moment, lastDateAvailable } = this.props;
+		const {
+			siteCapabilities,
+			logs,
+			moment,
+			lastDateAvailable,
+			doesRewindNeedCredentials,
+		} = this.props;
 
 		const {
 			lastBackup: backup,
@@ -251,7 +257,7 @@ class BackupsPage extends Component {
 
 		return (
 			<>
-				{ this.maybeRenderBanner() }
+				{ doesRewindNeedCredentials && <EnableRestoresBanner /> }
 				{ this.renderDatePicker() }
 				<ul className="backup__card-list">
 					<li key="daily-backup-status">
@@ -276,15 +282,6 @@ class BackupsPage extends Component {
 					) }
 				</ul>
 			</>
-		);
-	}
-
-	maybeRenderBanner() {
-		const { doesRewindNeedCredentials } = this.props;
-
-		return (
-			isEnabled( 'jetpack/backup-simplified-screens' ) &&
-			doesRewindNeedCredentials && <EnableRestoresBanner />
 		);
 	}
 
