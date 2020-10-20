@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 /**
  * External dependencies
  */
@@ -76,7 +77,7 @@ const LanguagePicker = ( { onSelectLanguage, languages, languageGroups }: Props 
 
 			return (
 				<div key={ languageGroup.id }>
-					<Button onClick={ onClick } className="language-picker__language-group">
+					<Button onClick={ onClick } className="language-picker-component__language-group">
 						<span className={ isSelected ? 'is-selected' : '' }>{ languageGroup.name() }</span>
 					</Button>
 				</div>
@@ -85,14 +86,16 @@ const LanguagePicker = ( { onSelectLanguage, languages, languageGroups }: Props 
 	};
 
 	return (
-		<>
-			<div className="language-picker__regions-label">{ __( 'regions' ) }</div>
-			<div className="language-picker__content">
-				<div className="language-picker__category-filters">{ renderCategoryButtons() }</div>
-				<div className="language-picker__language-buttons">
+		<div className="language-picker-component">
+			<div className="language-picker-component__regions-label">{ __( 'regions' ) }</div>
+			<div className="language-picker-component__content">
+				<div className="language-picker-component__category-filters">
+					{ renderCategoryButtons() }
+				</div>
+				<div className="language-picker-component__language-buttons">
 					{ getFilteredLanguages().map( ( language ) => (
 						<Button
-							className="language-picker__language-button"
+							className="language-picker-component__language-button"
 							key={ language.langSlug }
 							onClick={ () => onSelectLanguage( language ) }
 							title={ language.name }
@@ -102,7 +105,7 @@ const LanguagePicker = ( { onSelectLanguage, languages, languageGroups }: Props 
 					) ) }
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
