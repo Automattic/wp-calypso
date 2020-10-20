@@ -242,6 +242,7 @@ $font-size: rem( 14px );
 		// client/my-sites/current-site/style.scss
 		.current-site__switch-sites .button.is-borderless {
 			height: 34px;
+			padding: 0;
 		}
 
 		.site-selector .search .search__open-icon {
