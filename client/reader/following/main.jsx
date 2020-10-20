@@ -26,6 +26,7 @@ import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
 import FollowingVoteBanner from './vote-banner';
+
 /**
  * Style dependencies
  */
