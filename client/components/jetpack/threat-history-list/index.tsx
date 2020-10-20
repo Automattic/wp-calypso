@@ -14,7 +14,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
 import isRequestingJetpackScanHistory from 'calypso/state/selectors/is-requesting-jetpack-scan-history';
-import getScanSiteThreatCounts from 'calypso/state/selectors/get-site-scan-threat-counts';
+import getScanSiteThreatCounts, {
+	JetpackScanThreatCounts,
+} from 'calypso/state/selectors/get-site-scan-threat-counts';
 import getScanSiteHistory from 'calypso/state/selectors/get-site-scan-history';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
@@ -31,19 +33,15 @@ const trackFilterChange = ( siteId: number, filter: string ) =>
 	} );
 
 const getFilteredThreatCount = (
-	threatCounts: { [ key: string ]: number },
+	threatCounts: JetpackScanThreatCounts,
 	filter: FilterValue
-) => {
-	if ( ! threatCounts ) {
-		return undefined;
-	}
-
+): number => {
 	// In the context of threat history, "All" means "fixed or ignored"
 	if ( ! filter || filter === 'all' ) {
-		return ( threatCounts?.fixed || 0 ) + ( threatCounts?.ignored || 0 );
+		return ( threatCounts.fixed || 0 ) + ( threatCounts.ignored || 0 );
 	}
 
-	return threatCounts[ filter ];
+	return threatCounts[ filter ] || 0;
 };
 
 const getNoThreatsMessage = ( translate, filter ) => {
@@ -76,7 +74,8 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => 
 		isRequestingJetpackScanThreatCounts( state, siteId )
 	);
 	const threatCounts = useSelector( ( state ) => getScanSiteThreatCounts( state, siteId ) );
-	const hasThreatsInHistory = threatCounts && Object.values( threatCounts ).some( ( c ) => c > 0 );
+	const hasThreatsInHistory =
+		threatCounts && Object.values( threatCounts ).some( ( c ) => c && c > 0 );
 	const filteredThreatCount = getFilteredThreatCount( threatCounts, filter );
 
 	const isRequestingThreatHistory = useSelector( ( state ) =>
