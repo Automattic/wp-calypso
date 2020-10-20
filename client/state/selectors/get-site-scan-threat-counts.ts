@@ -8,17 +8,33 @@ import { AppState } from 'calypso/types';
  */
 import 'calypso/state/data-layer/wpcom/sites/scan';
 
+export type JetpackScanThreatCounts = {
+	// Just-discovered threats
+	new?: number;
+
+	// Threats from previous scans, but which haven't been addressed
+	notified?: number;
+
+	// Threats that have been ignored
+	ignored?: number;
+
+	// Threats that have successfully been fixed
+	fixed?: number;
+};
+
+const NO_INFO: JetpackScanThreatCounts = {};
+
 /**
- * Returns an array found threats in the current scan process of Jetpack Scan.
- * Returns an empty array if the site is unknown, or there is no information yet.
+ * Returns a count of all threats Jetpack Scan has discovered for a site, by status.
+ * Returns an empty object if the site is unknown, or there is no information yet.
  *
  * @param  {object}   state    		Global state tree
  * @param  {number}   siteId   		The ID of the site we're querying
- * @returns {[key: string]: number} Array of threat counts, by status
+ * @returns {JetpackScanThreatCounts} Threat counts, by status
  */
 export default function getSiteScanThreatCounts(
 	state: AppState,
 	siteId: number
-): { [ key: string ]: number } {
-	return state.jetpackScan.threatCounts.data?.[ siteId ] || [];
+): JetpackScanThreatCounts {
+	return state.jetpackScan.threatCounts.data?.[ siteId ] || NO_INFO;
 }
