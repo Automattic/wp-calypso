@@ -297,6 +297,11 @@ $font-size: rem( 14px );
 					margin-top: -4px;
 				}
 			}
+
+			&.is-togglable:not( .is-toggle-open ):hover .sidebar__heading::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
 		}
 	}
 
