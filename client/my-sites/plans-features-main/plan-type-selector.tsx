@@ -92,19 +92,30 @@ const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
 				selected={ intervalType === 'monthly' }
 				path={ generatePath( { intervalType: 'monthly' } ) }
 			>
-				{ isMonthlyPricingTest ? translate( 'Pay monthly' ) : translate( 'Monthly billing' ) }
+				<span>
+					{ isMonthlyPricingTest ? translate( 'Pay monthly' ) : translate( 'Monthly billing' ) }
+				</span>
 			</SegmentedControl.Item>
 
 			<SegmentedControl.Item
 				selected={ intervalType === 'yearly' }
 				path={ generatePath( { intervalType: 'yearly' } ) }
 			>
-				{ isMonthlyPricingTest ? translate( 'Pay annually' ) : translate( 'Yearly billing' ) }
-				<span ref={ ( ref ) => ref && setSpanRef( ref ) }></span>
+				<span ref={ ( ref ) => ref && setSpanRef( ref ) }>
+					{ isMonthlyPricingTest ? translate( 'Pay annually' ) : translate( 'Yearly billing' ) }
+				</span>
 				<Popover
 					context={ spanRef }
 					isVisible={ popupIsVisible }
 					position="right"
+					className="plan-type-selector__popover"
+				>
+					{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }
+				</Popover>
+				<Popover
+					context={ spanRef }
+					isVisible={ popupIsVisible }
+					position="bottom"
 					className="plan-type-selector__popover"
 				>
 					{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }

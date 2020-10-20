@@ -78,7 +78,6 @@ import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/action
 import { getABTestVariation } from 'calypso/lib/abtest';
 import FreePlanBanner from './free-plan-banner';
 import PlanTypeSelector from './plan-type-selector';
-import ExperimentActivator, { DefaultVariation, Variation } from './experiment-activator';
 
 /**
  * Style dependencies
@@ -434,7 +433,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			siteSlug,
 			plansWithScroll,
-			isEligibleForMonthlyPricing,
+			isMonthlyPricingTest,
 		} = this.props;
 		const shouldHideFreePlanBanner = hideFreePlan || ! plansWithScroll;
 		const basePlansPath = isInSignup ? window.location?.pathname : `/plans/${ siteSlug }`;
@@ -447,31 +446,13 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 
-				<ExperimentActivator
-					name="monthly_pricing_test_phase_1"
-					isActive={ isEligibleForMonthlyPricing }
-				>
-					<DefaultVariation name="control">
-						<PlanTypeSelector
-							{ ...this.props }
-							basePlansPath={ basePlansPath }
-							isMonthlyPricingTest={ false }
-						/>
-						<FreePlanBanner { ...this.props } hidden={ shouldHideFreePlanBanner } />
-						{ this.getPlanFeatures( { isMonthlyPricingTest: false } ) }
-						{ this.renderProductsSelector() }
-					</DefaultVariation>
-					<Variation name="treatment">
-						<PlanTypeSelector
-							{ ...this.props }
-							basePlansPath={ basePlansPath }
-							isMonthlyPricingTest={ true }
-						/>
-						{ this.getPlanFeatures( { isMonthlyPricingTest: true } ) }
-						{ this.renderProductsSelector() }
-						<FreePlanBanner { ...this.props } hidden={ shouldHideFreePlanBanner } />
-					</Variation>
-				</ExperimentActivator>
+				<PlanTypeSelector { ...this.props } basePlansPath={ basePlansPath } />
+				<FreePlanBanner
+					{ ...this.props }
+					hidden={ isMonthlyPricingTest || shouldHideFreePlanBanner }
+				/>
+				{ this.getPlanFeatures( { isMonthlyPricingTest } ) }
+				{ this.renderProductsSelector() }
 
 				<CartData>
 					<PaymentMethods />
@@ -518,7 +499,7 @@ PlansFeaturesMain.propTypes = {
 	planTypes: PropTypes.array,
 	customHeader: PropTypes.node,
 	isReskinned: PropTypes.bool,
-	isEligibleForMonthlyPricing: PropTypes.bool,
+	isMonthlyPricingTest: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -534,7 +515,7 @@ PlansFeaturesMain.defaultProps = {
 	withWPPlanTabs: false,
 	plansWithScroll: false,
 	isReskinned: false,
-	isEligibleForMonthlyPricing: false,
+	isMonthlyPricingTest: false,
 };
 
 export default connect(
@@ -553,9 +534,6 @@ export default connect(
 			'onboarding' === props.flowName &&
 			'reskinned' === getABTestVariation( 'reskinSignupFlow' );
 
-		const isEligibleForMonthlyPricing =
-			props.isInSignup && ! props.isJetpack && 'onboarding' === props.flowName;
-
 		return {
 			// This is essentially a hack - discounts are the only endpoint that we can rely on both on /plans and
 			// during the signup, and we're going to remove the code soon after the test. Also, since this endpoint is
@@ -573,7 +551,6 @@ export default connect(
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug: currentPlan && currentPlan.product_slug,
 			isReskinned,
-			isEligibleForMonthlyPricing,
 		};
 	},
 	{

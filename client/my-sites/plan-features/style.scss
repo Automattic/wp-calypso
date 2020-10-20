@@ -1091,6 +1091,10 @@ button.plan-features__scroll-button {
 }
 
 .plans-wrapper.is-monthly-pricing {
+	@media screen and ( max-width: 960px ) {
+		padding-top: 85px;
+	}
+
 	.plan-pill {
 		top: 10px;
 		bottom: unset;
@@ -1103,7 +1107,7 @@ button.plan-features__scroll-button {
 	}
 
 	.plan-features__item-annual-plan {
-		font-size: 0.5rem; /* stylelint-disable-line */
+		font-size: 0.6rem; /* stylelint-disable-line */
 		text-transform: uppercase;
 	}
 
