@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import url from 'url';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,6 +12,7 @@ import { get, reject, transform } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getUrlParts } from 'calypso/lib/url/url-parts';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
@@ -39,7 +39,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { hasJITM } from 'calypso/state/jitm/selectors';
+import { hasJITM as selectHasJITM } from 'calypso/state/jitm/selectors';
 import AsyncLoad from 'calypso/components/async-load';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -61,7 +61,7 @@ export class SiteNotice extends React.Component {
 		if ( ! ( site.options && site.options.is_redirect ) ) {
 			return null;
 		}
-		const { hostname } = url.parse( site.URL );
+		const { hostname } = getUrlParts( site.URL );
 		const { translate } = this.props;
 
 		return (
@@ -253,7 +253,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site, isMigrationInProgress, hasJITM } = this.props;
+		const { site, isMigrationInProgress, hasJITM, messageLocation } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
@@ -272,7 +272,12 @@ export class SiteNotice extends React.Component {
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
 				{ showJitms && (
-					<AsyncLoad require="calypso/blocks/jitm" template="sidebar-banner" placeholder={ null } />
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="sidebar-banner"
+						placeholder={ null }
+						messageLocation={ messageLocation }
+					/>
 				) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ ! hasJITM && domainCreditNotice }
@@ -286,7 +291,8 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 		const sectionName = getSectionName( state );
-		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
+		const messageLocation = 'sidebar_notice';
+		const messagePath = `calypso:${ sectionName }:${ messageLocation }`;
 
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
@@ -305,7 +311,8 @@ export default connect(
 			domainUpsellNudgeDismissedDate: getPreference( state, DOMAIN_UPSELL_NUDGE_DISMISS_KEY ),
 			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
-			hasJITM: hasJITM( state, messagePath ),
+			hasJITM: selectHasJITM( state, messagePath ),
+			messageLocation,
 		};
 	},
 	( dispatch ) => {

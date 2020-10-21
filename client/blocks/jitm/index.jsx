@@ -121,9 +121,16 @@ JITM.defaultProps = {
 const mapStateToProps = ( state, ownProps ) => {
 	const currentSite = getSelectedSite( state );
 	const sectionName = getSectionName( state );
-	const messagePath = `calypso:${ sectionName }:sidebar_notice`;
+	let messagePath = '';
+
+	if ( ownProps.messagePath ) {
+		messagePath = ownProps.messagePath;
+	} else if ( ownProps.messageLocation ) {
+		messagePath = `calypso:${ sectionName }:${ ownProps.messageLocation }`;
+	}
+
 	const topJITM = getTopJITM( state, messagePath );
-	console.log( messagePath, topJITM );
+
 	return {
 		currentSite,
 		jitm: topJITM,
