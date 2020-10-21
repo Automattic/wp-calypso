@@ -8,7 +8,7 @@ import { InnerBlocks } from '@wordpress/block-editor';
  */
 export default function Save() {
 	return (
-		<div className="wp-block-premium-content-logged-out-view">
+		<div className="wp-block-premium-content-logged-out-view entry-content">
 			<InnerBlocks.Content />
 		</div>
 	);
