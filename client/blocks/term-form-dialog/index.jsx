@@ -17,7 +17,7 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormToggle from 'calypso/components/forms/form-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle/compact';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
