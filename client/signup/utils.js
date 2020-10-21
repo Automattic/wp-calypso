@@ -15,7 +15,7 @@ import { abtest } from 'calypso/lib/abtest';
 const { defaultFlowName } = flows;
 
 function getDefaultFlowName() {
-	if ( 'test' === abtest( 'secureYourBrand' ) ) {
+	if ( ! user().get() && 'test' === abtest( 'secureYourBrand' ) ) {
 		return 'onboarding-secure-your-brand';
 	}
 	return defaultFlowName;
