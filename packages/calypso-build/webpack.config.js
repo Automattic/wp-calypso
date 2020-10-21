@@ -41,6 +41,7 @@ const cachePath = path.resolve( '.cache' );
  * @param  {object}  env                           environment options
  * @param  {object}  argv                          options map
  * @param  {object}  argv.entry                    Entry point(s)
+ * @param  {string}  argv.'output-chunk-filename'  Output chunk filename
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
