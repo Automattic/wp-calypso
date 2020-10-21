@@ -6,7 +6,8 @@
 	text-align: center;
 
 	img {
-		width: 72px;
+		height: 72px;
+		width: auto;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
