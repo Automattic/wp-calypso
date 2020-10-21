@@ -37,12 +37,12 @@ class CurrentSite extends Component {
 		anySiteSelected: PropTypes.array,
 		forceAllSitesView: PropTypes.bool,
 		sidebarIsCollapsed: PropTypes.bool,
-		expandTheSidebar: PropTypes.func.isRequired,
+		expandSidebar: PropTypes.func.isRequired,
 	};
 
 	switchSites = ( event ) => {
 		if ( isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed ) {
-			this.props.expandTheSidebar();
+			this.props.expandSidebar();
 		}
 		event.preventDefault();
 		event.stopPropagation();
@@ -78,7 +78,7 @@ class CurrentSite extends Component {
 					aria-hidden="true"
 					onClick={ () => {
 						return isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed
-							? this.props.expandTheSidebar()
+							? this.props.expandSidebar()
 							: null;
 					} }
 				>
@@ -136,6 +136,6 @@ export default connect(
 	{
 		recordGoogleEvent,
 		setLayoutFocus,
-		expandTheSidebar: () => expandSidebar(),
+		expandSidebar,
 	}
 )( localize( CurrentSite ) );
