@@ -1,5 +1,5 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
 import {
 	removeItemFromResponseCart,
@@ -9,7 +9,7 @@ import {
 	addItemsToResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
-} from '@automattic/shopping-cart';
+} from '../src/cart-functions';
 
 const cart = {
 	products: [],
