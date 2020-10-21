@@ -24,6 +24,7 @@ import {
 	WPCOMPaymentMethodClass,
 } from '../types/backend/payment-method';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
+import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -190,7 +191,11 @@ function translateReponseCartProductToWPCOMCartItem(
 	let label = product_name || '';
 	let sublabel;
 	if ( isPlan( serverCartItem ) ) {
-		sublabel = String( translate( 'Plan Subscription' ) );
+		if ( isRenewal( serverCartItem ) ) {
+			sublabel = String( translate( 'Plan Renewal' ) );
+		} else {
+			sublabel = String( translate( 'Plan Subscription' ) );
+		}
 	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
 		sublabel = '';
 	} else if (
@@ -198,7 +203,19 @@ function translateReponseCartProductToWPCOMCartItem(
 		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
 	) {
 		label = meta;
-		sublabel = product_name || '';
+		if ( isRenewal( serverCartItem ) && product_name ) {
+			sublabel = String(
+				translate( '%(productName)s Renewal', { args: { productName: product_name } } )
+			);
+		}
+		if ( isRenewal( serverCartItem ) && ! product_name ) {
+			sublabel = String( translate( 'Renewal' ) );
+		}
+		if ( ! isRenewal( serverCartItem ) ) {
+			sublabel = product_name || '';
+		}
+	} else if ( isRenewal( serverCartItem ) ) {
+		sublabel = String( translate( 'Renewal' ) );
 	}
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;

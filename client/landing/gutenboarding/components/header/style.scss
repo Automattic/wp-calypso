@@ -54,6 +54,12 @@ $padding--gutenboarding__header: $grid-unit-10;
 	}
 }
 
+.gutenboarding__header-section-item--wp-logo {
+	.components-button {
+		padding: 0;
+	}
+}
+
 .gutenboarding__header-wp-logo {
 	margin-left: 24px - $padding--gutenboarding__header -
 		$margin-left--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )

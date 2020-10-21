@@ -47,7 +47,7 @@ function domainManagementTransferBase(
 }
 
 export function isUnderDomainManagementAll( path ) {
-	return path?.startsWith( domainManagementAllRoot() + '/' );
+	return path?.startsWith( domainManagementAllRoot() + '/' ) || path === domainManagementRoot();
 }
 
 export function domainAddNew( siteName, searchTerm ) {
@@ -69,7 +69,7 @@ export function domainManagementRoot() {
 }
 
 export function domainManagementList( siteName, relativeTo = null ) {
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
+	if ( isUnderDomainManagementAll( relativeTo ) || isUnderEmailManagementAll( relativeTo ) ) {
 		return domainManagementRoot();
 	}
 	return domainManagementRoot() + '/' + siteName;

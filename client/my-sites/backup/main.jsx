@@ -12,11 +12,13 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
+import EnableRestoresBanner from './enable-restores-banner';
+import { backupMainPath } from './paths';
 import { isEnabled } from 'calypso/config';
-import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import { updateFilter, setFilter } from 'calypso/state/activity-log/actions';
 import {
+	getRawDailyBackupDeltas,
 	getDailyBackupDeltas,
 	// getMetaDiffForDailyBackup,
 	isActivityBackup,
@@ -32,6 +34,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import DailyBackupStatus from 'calypso/components/jetpack/daily-backup-status';
+import DailyBackupStatusAlternate from 'calypso/components/jetpack/daily-backup-status/index-alternate';
 import BackupDatePicker from 'calypso/components/jetpack/backup-date-picker';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
@@ -51,9 +54,9 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // Required to get site time offset
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
-import { backupMainPath } from './paths';
 import { emptyFilter } from 'calypso/state/activity-log/reducer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import BackupCard from 'calypso/components/jetpack/backup-card';
 
 /**
  * Style dependencies
@@ -132,7 +135,7 @@ class BackupsPage extends Component {
 				// Looking for the last backup on the date (any activity rewindable)
 				if ( ! backupsOnSelectedDate.lastBackup ) {
 					backupsOnSelectedDate.lastBackup = log;
-				} else {
+				} else if ( log ) {
 					backupsOnSelectedDate.rewindableActivities.push( log );
 				}
 			} );
@@ -141,36 +144,22 @@ class BackupsPage extends Component {
 		return backupsOnSelectedDate;
 	};
 
+	getLatestBackup() {
+		const { logs, moment, siteCapabilities } = this.props;
+
+		const filteredLogs = includes( siteCapabilities, 'backup-realtime' )
+			? logs.filter( isSuccessfulRealtimeBackup )
+			: logs.filter( ( log ) => log.activityIsRewindable );
+
+		if ( filteredLogs.length > 0 ) {
+			return filteredLogs.sort( ( l1, l2 ) =>
+				moment( l1.activityDate ).isBefore( l2.activityDate )
+			)[ 0 ];
+		}
+	}
+
 	renderMain() {
-		const {
-			allowRestore,
-			dispatchRecordTracksEvent,
-			doesRewindNeedCredentials,
-			siteCapabilities,
-			logs,
-			moment,
-			siteId,
-			siteSlug,
-			isLoadingBackups,
-			oldestDateAvailable,
-			lastDateAvailable,
-			timezone,
-			translate,
-			gmtOffset,
-		} = this.props;
-
-		const backupsFromSelectedDate = this.backupsFromSelectedDate();
-		const lastBackup = backupsFromSelectedDate.lastBackup;
-		const realtimeBackups = backupsFromSelectedDate.rewindableActivities;
-
-		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
-		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
-		const deltas = getDailyBackupDeltas( logs, selectedDateString );
-		// todo: commented as a quick fix before Jetpack Cloud launch. All the non-english account break here.
-		// See: 1169345694087188-as-1176670093007897
-		// const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
-		const hasRealtimeBackups = includes( siteCapabilities, 'backup-realtime' );
-		const isToday = today.isSame( this.getSelectedDate(), 'day' );
+		const { siteId, isLoadingBackups, translate } = this.props;
 
 		return (
 			<>
@@ -182,70 +171,147 @@ class BackupsPage extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 
-				{ isLoadingBackups && <BackupPlaceholder /> }
-
-				{ ! isLoadingBackups && (
+				{ isLoadingBackups ? (
+					<BackupPlaceholder />
+				) : (
 					<div className="backup__main-wrap">
-						<div className="backup__last-backup-status">
-							{ isEnabled( 'jetpack/backup-simplified-screens' ) && doesRewindNeedCredentials && (
-								<Banner
-									className="backup__restore-banner"
-									callToAction={ translate( 'Enable restores' ) }
-									title={ translate( 'Set up your server credentials to get back online quickly' ) }
-									description={ translate(
-										'Add SSH, SFTP or FTP credentials to enable one click site restores.'
-									) }
-									href={
-										isJetpackCloud()
-											? `/settings/${ siteSlug }`
-											: `/settings/jetpack/${ siteSlug }#credentials`
-									}
-									icon="cloud-upload"
-									event="calypso_backup_enable_restores_banner"
-									tracksImpressionName="calypso_backup_enable_restores_banner_view"
-									tracksClickName="calypso_backup_enable_restores_banner_click"
-								/>
-							) }
-
-							<BackupDatePicker
-								{ ...{
-									onDateChange: this.onDateChange,
-									selectedDate: this.getSelectedDate(),
-									siteId,
-									oldestDateAvailable,
-									today,
-									siteSlug,
-									dispatchRecordTracksEvent,
-								} }
-							/>
-
-							<DailyBackupStatus
-								{ ...{
-									selectedDate: this.getSelectedDate(),
-									lastBackupDate: lastDateAvailable,
-									backup: lastBackup,
-									deltas,
-									// metaDiff, todo: commented because the non-english account issue
-								} }
-							/>
-						</div>
-
-						{ hasRealtimeBackups && lastBackup && (
-							<BackupDelta
-								{ ...{
-									deltas,
-									realtimeBackups,
-									doesRewindNeedCredentials,
-									allowRestore,
-									moment,
-									siteSlug,
-									isToday,
-								} }
-							/>
-						) }
+						{ isEnabled( 'jetpack/backup-simplified-screens-i4' )
+							? this.renderAlternateWrap()
+							: this.renderWrap() }
 					</div>
 				) }
 			</>
+		);
+	}
+
+	renderWrap() {
+		const {
+			allowRestore,
+			doesRewindNeedCredentials,
+			siteCapabilities,
+			logs,
+			moment,
+			siteSlug,
+			lastDateAvailable,
+			timezone,
+			gmtOffset,
+		} = this.props;
+
+		const { lastBackup, rewindableActivities: realtimeBackups } = this.backupsFromSelectedDate();
+		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
+		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+		const deltas = getDailyBackupDeltas( logs, selectedDateString );
+		// todo: commented as a quick fix before Jetpack Cloud launch. All the non-english account break here.
+		// See: 1169345694087188-as-1176670093007897
+		// const metaDiff = getMetaDiffForDailyBackup( logs, selectedDateString );
+
+		return (
+			<>
+				<div className="backup__last-backup-status">
+					{ this.maybeRenderBanner() }
+					{ this.renderDatePicker() }
+
+					<DailyBackupStatus
+						{ ...{
+							selectedDate: this.getSelectedDate(),
+							lastBackupDate: lastDateAvailable,
+							backup: lastBackup,
+							deltas,
+							// metaDiff, todo: commented because the non-english account issue
+						} }
+					/>
+				</div>
+
+				{ includes( siteCapabilities, 'backup-realtime' ) && lastBackup && (
+					<BackupDelta
+						{ ...{
+							deltas,
+							realtimeBackups,
+							doesRewindNeedCredentials,
+							allowRestore,
+							moment,
+							siteSlug,
+							isToday: today.isSame( this.getSelectedDate(), 'day' ),
+						} }
+					/>
+				) }
+			</>
+		);
+	}
+
+	renderAlternateWrap() {
+		const { siteCapabilities, logs, moment, lastDateAvailable } = this.props;
+
+		const {
+			lastBackup: backup,
+			rewindableActivities: realtimeBackups,
+		} = this.backupsFromSelectedDate();
+		const selectedDateString = moment.parseZone( this.getSelectedDate() ).toISOString( true );
+		const latestBackup = this.getLatestBackup();
+
+		return (
+			<>
+				{ this.maybeRenderBanner() }
+				{ this.renderDatePicker() }
+				<ul className="backup__card-list">
+					<li key="daily-backup-status">
+						<DailyBackupStatusAlternate
+							{ ...{
+								selectedDate: this.getSelectedDate(),
+								lastBackupDate: lastDateAvailable,
+								backup,
+								isLatestBackup: latestBackup && latestBackup.activityId === backup.activityId,
+								dailyDeltas: getRawDailyBackupDeltas( logs, selectedDateString ),
+							} }
+						/>
+					</li>
+					{ includes( siteCapabilities, 'backup-realtime' ) && backup && (
+						<>
+							{ realtimeBackups.map( ( activity ) => (
+								<li key={ activity.activityId }>
+									<BackupCard activity={ activity } />
+								</li>
+							) ) }
+						</>
+					) }
+				</ul>
+			</>
+		);
+	}
+
+	maybeRenderBanner() {
+		const { doesRewindNeedCredentials } = this.props;
+
+		return (
+			isEnabled( 'jetpack/backup-simplified-screens' ) &&
+			doesRewindNeedCredentials && <EnableRestoresBanner />
+		);
+	}
+
+	renderDatePicker() {
+		const {
+			dispatchRecordTracksEvent,
+			moment,
+			siteId,
+			siteSlug,
+			oldestDateAvailable,
+			timezone,
+			gmtOffset,
+		} = this.props;
+		const today = applySiteOffset( moment(), { timezone, gmtOffset } );
+
+		return (
+			<BackupDatePicker
+				{ ...{
+					onDateChange: this.onDateChange,
+					selectedDate: this.getSelectedDate(),
+					siteId,
+					oldestDateAvailable,
+					today,
+					siteSlug,
+					dispatchRecordTracksEvent,
+				} }
+			/>
 		);
 	}
 

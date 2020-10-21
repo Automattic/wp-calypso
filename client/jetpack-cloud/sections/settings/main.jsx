@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
 import { Card } from '@automattic/components';
 
 /**
@@ -15,8 +16,10 @@ import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials
 import FoldableCard from 'calypso/components/foldable-card';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import getSiteCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -117,10 +120,11 @@ const SettingsPage = () => {
 
 	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
 	const backupState = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const credentials = useSelector( ( state ) => getSiteCredentials( state, siteId, 'main' ) );
 
 	const isInitialized =
 		backupState.state !== 'uninitialized' || scanState?.state !== 'provisioning';
-	const isConnected = backupState.state === 'active' || scanState?.credentials.length !== 0;
+	const isConnected = ! isEmpty( credentials );
 
 	const hasBackup = backupState?.state !== 'unavailable';
 	const hasScan = scanState?.state !== 'unavailable';
@@ -140,6 +144,7 @@ const SettingsPage = () => {
 			<SidebarNavigation />
 			<QueryRewindState siteId={ siteId } />
 			<QueryJetpackScan siteId={ siteId } />
+			<QuerySiteCredentials siteId={ siteId } />
 			<PageViewTracker path="/settings/:site" title="Settings" />
 
 			<div className="settings__title">
