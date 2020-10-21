@@ -33,17 +33,15 @@ import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-lev
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import config from 'calypso/config';
 
-export function Purchases() {
+function useLogPurchasesError( message: string ) {
 	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const logPurchasesError = useCallback(
+	return useCallback(
 		( error ) => {
 			reduxDispatch(
 				logToLogstash( {
 					feature: 'calypso_client',
-					message: 'site level purchases load error',
+					message,
 					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 					extra: {
 						env: config( 'env_id' ),
@@ -55,6 +53,12 @@ export function Purchases() {
 		},
 		[ reduxDispatch ]
 	);
+}
+
+export function Purchases() {
+	const translate = useTranslate();
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
 
 	return (
 		<Main className="purchases is-wide-layout">
