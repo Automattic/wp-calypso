@@ -49,7 +49,7 @@ export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 
 export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >();
-	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState< boolean >( false );
+	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState( false );
 
 	const setLocale = ( newLocaleData: LocaleData | undefined ) => {
 		// Translations done within react are made using the localData passed to the <I18nProvider/>.
