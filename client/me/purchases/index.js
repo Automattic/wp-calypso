@@ -40,7 +40,7 @@ export default ( router ) => {
 		clientRender
 	);
 
-	router( paths.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
+	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
 
 	if ( config.isEnabled( 'async-payments' ) ) {
 		router(

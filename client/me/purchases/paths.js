@@ -6,8 +6,6 @@ export const billingHistory = purchasesRoot + '/billing';
 
 export const paymentMethods = purchasesRoot + '/payment-methods';
 
-export const upcomingCharges = purchasesRoot + '/upcoming';
-
 export const pendingPayments = purchasesRoot + '/pending';
 
 export const myMemberships = purchasesRoot + '/other';
@@ -69,3 +67,7 @@ export function editCardDetails( siteName, purchaseId, cardId ) {
 	}
 	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
+
+export const deprecated = {
+	upcomingCharges: purchasesRoot + '/upcoming',
+};
