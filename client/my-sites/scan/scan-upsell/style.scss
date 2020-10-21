@@ -1,0 +1,17 @@
+.scan-upsell__content {
+	padding-top: 40px;
+
+
+}
+
+.scan-upsell__icon {
+	text-align: center;
+
+	img {
+		width: 72px;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: start;
+	}
+}
