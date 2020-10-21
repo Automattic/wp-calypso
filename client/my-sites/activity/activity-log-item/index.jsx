@@ -43,6 +43,8 @@ import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
 import { getSite } from 'state/sites/selectors';
 import { withLocalizedMoment } from 'components/localized-moment';
+import Image from 'components/image';
+import wpcom from 'lib/wp';
 
 /**
  * Style dependencies
@@ -156,8 +158,31 @@ class ActivityLogItem extends Component {
 				actorType,
 				activityMedia,
 				isBreakpointActive: isDesktop,
+				activityName,
+				backupPeriod,
 			},
+			siteId,
 		} = this.props;
+
+		if ( backupPeriod ) {
+			wpcom.req
+				.get( {
+					path: `/sites/${ siteId }/rewind/screenshots?period=${ backupPeriod }`,
+					apiNamespace: 'wpcom/v2',
+				} )
+				.then( resp => {
+					if ( null === resp.data ) {
+						return;
+					}
+					// inject the received response into the img
+					const URL = 'data:' + resp.contentType + ';base64,' + resp.data;
+					document.getElementById( `img_${ backupPeriod }` ).src = URL;
+				} )
+				.catch( err => {
+					return err;
+				} );
+		}
+
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
@@ -180,6 +205,14 @@ class ActivityLogItem extends Component {
 							activity={ this.props.activity }
 							rewindIsActive={ this.props.rewindIsActive }
 						/>
+						{ backupPeriod && 'rewind__backup_complete_full' === activityName && (
+							<Image
+								src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+								alt="Backup screenshot"
+								className="activity-log-item__screenshot-picture"
+								id={ `img_${ backupPeriod }` }
+							/>
+						) }
 					</div>
 					<div className="activity-log-item__description-summary">{ activityTitle }</div>
 				</div>
