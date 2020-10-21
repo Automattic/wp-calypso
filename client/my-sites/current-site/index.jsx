@@ -74,7 +74,7 @@ class CurrentSite extends Component {
 			<Card className="current-site">
 				<div
 					role="button"
-					tabIndex={ 0 }
+					tabIndex="0"
 					aria-hidden="true"
 					onClick={ () => {
 						return isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed
