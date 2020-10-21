@@ -18,9 +18,7 @@ export default function ( { section, children, subsection } ) {
 	const returnLink =
 		isEditorIFramed && ! isSimpleSite
 			? '&' +
-			  encodeURIComponent(
-					`return=https://wordpress.com/block-editor/${ postType }/${ hostname }/${ postId }`
-			  )
+			  encodeURIComponent( `return=https://wordpress.com/${ postType }/${ hostname }/${ postId }` )
 			: '';
 	const autofocus = `autofocus[section]=${ subsection }`;
 
