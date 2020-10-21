@@ -12,7 +12,6 @@ import { CURRENCIES } from '@automattic/format-currency';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -36,7 +35,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormToggle from 'calypso/components/forms/form-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle/compact';
 import getCountries from 'calypso/state/selectors/get-countries';
 import PhoneInput from 'calypso/components/phone-input';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
@@ -55,7 +54,6 @@ class FormFields extends React.PureComponent {
 	state = {
 		checkedRadio: 'first',
 		toggled: false,
-		compactToggled: false,
 		phoneInput: { countryCode: 'US', value: '' },
 		currencyInput: { currency: 'USD', value: '' },
 	};
@@ -68,12 +66,8 @@ class FormFields extends React.PureComponent {
 		this.setState( { toggled: ! this.state.toggled } );
 	};
 
-	handleCompactToggle = () => {
-		this.setState( { compactToggled: ! this.state.compactToggled } );
-	};
-
 	handleAction = () => {
-		alert( 'Thank you.' );
+		window.alert( 'Thank you.' );
 	};
 
 	handlePhoneInputChange = ( data ) => {
@@ -217,13 +211,6 @@ class FormFields extends React.PureComponent {
 					<FormToggle checked={ false } disabled />
 					<br />
 					<FormToggle checked={ true } disabled />
-					<br />
-					<CompactFormToggle
-						checked={ this.state.compactToggled }
-						onChange={ this.handleCompactToggle }
-					/>
-					<br />
-					<CompactFormToggle checked={ false } disabled />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>
