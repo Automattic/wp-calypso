@@ -102,6 +102,7 @@ export function confirmCancelDomain( context, next ) {
 
 	context.primary = (
 		<Main className={ classes }>
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<ConfirmCancelDomain
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
