@@ -68,6 +68,17 @@ const isSidebarOpen: Reducer< boolean, LaunchAction > = ( state = false, action 
 	return state;
 };
 
+const isFocusedLaunchOpen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'OPEN_FOCUSED_LAUNCH' ) {
+		return true;
+	}
+
+	if ( action.type === 'CLOSE_FOCUSED_LAUNCH' ) {
+		return false;
+	}
+	return state;
+};
+
 const isSidebarFullscreen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_SIDEBAR_FULLSCREEN' ) {
 		return true;
@@ -95,6 +106,7 @@ const reducer = combineReducers( {
 	isSidebarOpen,
 	isSidebarFullscreen,
 	isExperimental,
+	isFocusedLaunchOpen,
 } );
 
 export type State = ReturnType< typeof reducer >;

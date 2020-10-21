@@ -76,6 +76,16 @@ export function* launchSite() {
 	}
 }
 
+export const openFocusedLaunch = () =>
+	( {
+		type: 'OPEN_FOCUSED_LAUNCH',
+	} as const );
+
+export const closeFocusedLaunch = () =>
+	( {
+		type: 'CLOSE_FOCUSED_LAUNCH',
+	} as const );
+
 export const openSidebar = () =>
 	( {
 		type: 'OPEN_SIDEBAR',
@@ -101,6 +111,8 @@ export type LaunchAction = ReturnType<
 	| typeof unsetPlan
 	| typeof openSidebar
 	| typeof closeSidebar
+	| typeof openFocusedLaunch
+	| typeof closeFocusedLaunch
 	| typeof enableExperimental
 	| typeof setSidebarFullscreen
 	| typeof unsetSidebarFullscreen
