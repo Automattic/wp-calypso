@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import CSSTransition from 'react-transition-group/CSSTransition';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Primitive } from 'utility-types';
@@ -71,6 +72,43 @@ const getGeneratePath = ( props: Props ): GeneratePathFunction => {
 	};
 };
 
+type PopupMessageProps = {
+	context?: HTMLElement;
+	isVisible: boolean;
+};
+
+const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
+	context,
+	children,
+	isVisible,
+} ) => {
+	const transitionProps = {
+		classNames: 'plan-type-selector__popover',
+		timeout: { enter: 300, exit: 10 },
+		in: Boolean( isVisible && context ),
+	};
+	const sharedPopoverProps = {
+		className: 'plan-type-selector__popover',
+		context,
+		isVisible: true,
+	};
+
+	return (
+		<>
+			<CSSTransition { ...transitionProps }>
+				<Popover key="right" position="right" { ...sharedPopoverProps }>
+					{ children }
+				</Popover>
+			</CSSTransition>
+			<CSSTransition { ...transitionProps }>
+				<Popover key="bottom" position="bottom" { ...sharedPopoverProps }>
+					{ children }
+				</Popover>
+			</CSSTransition>
+		</>
+	);
+};
+
 type MonthlyPricingProps = { isMonthlyPricingTest?: boolean };
 type IntervalTypeProps = Pick< Props, 'intervalType' > & GeneratePathProps & MonthlyPricingProps;
 
@@ -84,7 +122,7 @@ const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-monthly-pricing-test': isMonthlyPricingTest,
 	} );
-	const popupIsVisible = isMonthlyPricingTest && intervalType === 'monthly';
+	const popupIsVisible = Boolean( isMonthlyPricingTest && intervalType === 'monthly' );
 
 	return (
 		<SegmentedControl compact className={ segmentClasses } primary={ true }>
@@ -104,22 +142,9 @@ const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
 				<span ref={ ( ref ) => ref && setSpanRef( ref ) }>
 					{ isMonthlyPricingTest ? translate( 'Pay annually' ) : translate( 'Yearly billing' ) }
 				</span>
-				<Popover
-					context={ spanRef }
-					isVisible={ popupIsVisible }
-					position="right"
-					className="plan-type-selector__popover"
-				>
+				<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
 					{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }
-				</Popover>
-				<Popover
-					context={ spanRef }
-					isVisible={ popupIsVisible }
-					position="bottom"
-					className="plan-type-selector__popover"
-				>
-					{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }
-				</Popover>
+				</PopupMessages>
 			</SegmentedControl.Item>
 		</SegmentedControl>
 	);

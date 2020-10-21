@@ -275,35 +275,28 @@ body.is-section-signup.is-white-signup {
 }
 
 .plan-type-selector__popover {
-	&.is-right {
-		transform: translate( 30px, 0 );
-		display: none;
+	display: none;
 
+	&.is-right {
 		.popover__arrow {
 			border-right-color: var( --color-neutral-100 );
 			&::before {
 				border-right-color: var( --color-neutral-100 );
 			}
 		}
-
-		@include break-large {
-			display: block;
-		}
 	}
 
 	&.is-bottom {
-		transform: translate( 0, 12px );
-
+		// transform: translate( 0, 12px );
 		.popover__arrow {
 			border-bottom-color: var( --color-neutral-100 );
 			&::before {
 				border-bottom-color: var( --color-neutral-100 );
 			}
 		}
-
-		@include break-large {
-			display: none;
-		}
+		// @include break-large {
+		// 	display: none;
+		// }
 	}
 
 	.popover__inner {
@@ -314,5 +307,59 @@ body.is-section-signup.is-white-signup {
 		color: var( --color-neutral-0 );
 		border-radius: 2px;
 		text-align: left;
+	}
+
+	// Animation
+	&.plan-type-selector__popover {
+		&-enter {
+			opacity: 0.01;
+
+			&.is-right {
+				transform: translate( 40px, 0 );
+				@include break-large {
+					display: block;
+				}
+			}
+
+			&.is-bottom {
+				display: block;
+				transform: translate( 0, 22px );
+				@include break-large {
+					display: none;
+				}
+			}
+		}
+		&-enter-active {
+			opacity: 1;
+			transition-property: opacity, transform;
+			transition-duration: 300ms;
+			transition-timing-function: ease-in;
+
+			&.is-right {
+				transform: translate( 30px, 0 );
+			}
+
+			&.is-bottom {
+				transform: translate( 0, 12px );
+			}
+		}
+		&-enter-done {
+			&.is-right {
+				display: none;
+				transform: translate( 30px, 0 );
+				@include break-large {
+					display: block;
+				}
+			}
+			&.is-bottom {
+				transform: translate( 0, 12px );
+				@include break-large {
+					display: none;
+				}
+			}
+		}
+		&-exit {
+			opacity: 1;
+		}
 	}
 }
