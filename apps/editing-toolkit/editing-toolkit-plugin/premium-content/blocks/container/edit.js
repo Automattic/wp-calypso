@@ -340,8 +340,6 @@ function Edit( props ) {
 	}
 
 	const shouldShowConnectButton = () => {
-		//const stripeConnectUrl = getConnectUrl( props, connectURL );
-
 		if ( ! shouldUpgrade && apiState !== API_STATE_CONNECTED && connectURL ) {
 			return true;
 		}
@@ -352,16 +350,16 @@ function Edit( props ) {
 	return (
 		<>
 			<BlockControls>
-				{ shouldShowConnectButton && (
+				{ shouldShowConnectButton() && (
 					<ToolbarGroup>
 						<ToolbarButton
 							icon={ flashIcon }
 							onClick={ ( e ) => {
 								props.autosaveAndRedirect( e, getConnectUrl( props, connectURL ) );
 							} }
-							className="components-tab-button"
+							className="connect-stripe components-tab-button"
 						>
-							{ __( 'Connect', 'full-site-editing' ) }
+							{ __( 'Connect Stripe', 'full-site-editing' ) }
 						</ToolbarButton>
 					</ToolbarGroup>
 				) }
@@ -404,7 +402,7 @@ function Edit( props ) {
 				) }
 				<Context.Provider
 					value={ {
-						selectedTab
+						selectedTab,
 					} }
 				>
 					<Blocks />
