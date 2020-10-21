@@ -15,7 +15,8 @@
 		"nohoist": [
 			"**/config",
 			"**/testarmada-magellan",
-			"**/testarmada-magellan-*"
+			"**/testarmada-magellan-*",
+			"calypso/@wordpress/interface"
 		]
 	},
 	"license": "GPL-2.0-or-later",
