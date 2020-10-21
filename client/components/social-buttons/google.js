@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
+import { createInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import Popover from 'calypso/components/popover';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
+import { localizeUrl } from 'lib/i18n-utils';
 
 let auth2InitDone = false;
 
@@ -123,8 +125,19 @@ class GoogleLoginButton extends Component {
 				if ( 'idpiframe_initialization_failed' === error.error ) {
 					// This error is caused by 3rd party cookies being blocked.
 					this.setState( {
-						error: translate(
-							'Please enable "third-party cookies" to connect your Google account.'
+						error: createInterpolateElement(
+							translate(
+								'Please enable "third-party cookies" to connect your Google account. To find out how to do this <learn_more_link>learn more here</learn_more_link>.'
+							),
+							{
+								learn_more_link: (
+									<a
+										target="_blank"
+										rel="noreferrer"
+										href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
+									/>
+								),
+							}
 						),
 					} );
 				}
@@ -213,7 +226,6 @@ class GoogleLoginButton extends Component {
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onMouseOver={ this.showError }
 						onFocus={ this.showError }
-						onMouseOut={ this.hideError }
 						onBlur={ this.hideError }
 						onClick={ this.handleClick }
 					>
