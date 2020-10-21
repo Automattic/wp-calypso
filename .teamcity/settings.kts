@@ -125,6 +125,10 @@ object BuildBaseImages : BuildType({
 		}
 	}
 
+	failureConditions {
+		executionTimeoutMin = 20
+	}
+
 	features {
 		perfmon {
 		}
@@ -348,6 +352,10 @@ object RunAllUnitTests : BuildType({
 		}
 	}
 
+	failureConditions {
+		executionTimeoutMin = 10
+	}
+
 	features {
 		feature {
 			type = "xml-report-plugin"
@@ -471,6 +479,10 @@ object CheckCodeStyle : BuildType({
 				-:pull*
 			""".trimIndent()
 		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
 	}
 
 	features {
