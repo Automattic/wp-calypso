@@ -29,7 +29,7 @@ const buildDefaultCollector = ( state ) => {
 	const siteIsAtomic = isSiteWpcomAtomic( state, siteId );
 	const sitesCount = getCurrentUserSiteCount( state );
 	const sitesVisibleCount = getCurrentUserVisibleSiteCount( state );
-	const countryCode = getCurrentUserCountryCode( state );
+	const userCountryCode = getCurrentUserCountryCode( state );
 
 	return ( report ) => {
 		report.data.set( 'siteId', siteId );
@@ -38,7 +38,7 @@ const buildDefaultCollector = ( state ) => {
 		report.data.set( 'siteIsAtomic', siteIsAtomic );
 		report.data.set( 'sitesCount', sitesCount );
 		report.data.set( 'sitesVisibleCount', sitesVisibleCount );
-		report.data.set( 'country', countryCode );
+		report.data.set( 'userCountryCode', userCountryCode );
 	};
 };
 

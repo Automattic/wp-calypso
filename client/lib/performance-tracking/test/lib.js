@@ -155,7 +155,7 @@ describe( 'stopPerformanceTracking', () => {
 		expect( report.data.get( 'siteIsAtomic' ) ).toBe( false );
 		expect( report.data.get( 'sitesCount' ) ).toBe( 2 );
 		expect( report.data.get( 'sitesVisibleCount' ) ).toBe( 1 );
-		expect( report.data.get( 'country' ) ).toBe( 'es' );
+		expect( report.data.get( 'userCountryCode' ) ).toBe( 'es' );
 	} );
 
 	it( 'uses metdata to generate a collector', () => {
