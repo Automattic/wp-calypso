@@ -208,7 +208,7 @@ class BackupsPage extends Component {
 		return (
 			<>
 				<div className="backup__last-backup-status">
-					{ this.maybeRenderBanner() }
+					{ doesRewindNeedCredentials && <EnableRestoresBanner /> }
 					{ this.renderDatePicker() }
 
 					<DailyBackupStatus
