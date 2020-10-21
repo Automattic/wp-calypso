@@ -2,11 +2,26 @@
 	display: inline-block;
 	cursor: pointer;
 	z-index: z-index( 'root', '.popover' );
-	&.is-untranslated {
-		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
+
+	@mixin text-glow( $color ) {
+		text-shadow: 0 0 10px $color, 0 0 2px desaturate( $color, 30% ) !important;
+		transition: text-shadow 0.2s;
+
+		&:hover {
+			text-shadow: 0 0 3px $color, 0 0 1px $color !important;
+		}
 	}
-	&:hover {
-		border-bottom: 1px dotted var( --color-neutral-0 );
+
+	&.is-translated {
+		@include text-glow( #0f0 );
+	}
+
+	&.is-untranslated {
+		@include text-glow( #f00 );
+	}
+
+	&.is-user-translated {
+		@include text-glow( #ff0 );
 	}
 }
 
@@ -42,7 +57,7 @@
 	border-top: 1px solid var( --color-neutral-0 );
 	padding-top: 10px;
 	&:first-child {
-		border-top : 0;
+		border-top: 0;
 	}
 	> span {
 		font-weight: 600;
@@ -81,4 +96,3 @@
 	margin-left: 7px;
 	cursor: pointer;
 }
-

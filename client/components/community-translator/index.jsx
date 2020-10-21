@@ -2,17 +2,23 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import { useI18n } from '@automattic/react-i18n';
 import debugModule from 'debug';
-import { isEmpty } from 'lodash';
+
 /**
  * Internal dependencies
  */
 import Translatable from './translatable';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import userSettings from 'calypso/lib/user-settings';
-import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
+import {
+	isCommunityTranslatorEnabled,
+	getOriginalKey,
+} from 'calypso/components/community-translator/utils';
+import { requestTranslationData } from 'calypso/state/community-translator/actions';
+import { getCommunityTranslatorTranslations } from 'calypso/state/community-translator/selectors';
 
 /**
  * Style dependencies
@@ -38,7 +44,7 @@ function useLocaleData() {
 	};
 }
 
-function CommunityTranslator() {
+function CommunityTranslator( props ) {
 	const { addFilter, removeFilter } = useI18n();
 	const { localeData, localeCode, currentLocale, setLocaleData } = useLocaleData();
 	const [ initialized, setInitialized ] = React.useState( false );
@@ -107,36 +113,30 @@ function CommunityTranslator() {
 				return displayedTranslationFromPage;
 			}
 
-			const props = {
+			const ownProps = {
 				singular: originalFromPage,
 				locale: currentLocale,
 			};
 
-			let key = originalFromPage;
-
-			// Has Context
-			if ( 'string' === typeof optionsFromPage.context ) {
-				props.context = optionsFromPage.context;
-
-				// see how Jed defines \u0004 as the delimiter here: https://messageformat.github.io/Jed/
-				key = `${ optionsFromPage.context }\u0004${ originalFromPage }`;
-			}
-
 			// Has Plural
 			if ( 'string' === typeof optionsFromPage.plural ) {
-				props.plural = optionsFromPage.plural;
+				ownProps.plural = optionsFromPage.plural;
 			}
 
-			// Has no translation in current locale
-			// Must be a string to be a valid DOM attribute value
-			if ( isEmpty( localeData[ key ] ) ) {
-				props.untranslated = 'true';
-			}
+			// Pass request translation data action to avoid connecting each component individually to the store
+			ownProps.requestTranslationData = props.requestTranslationData;
+
+			const translationDataKey = getOriginalKey( {
+				context: ownProps.context,
+				singular: ownProps.singular,
+				plural: ownProps.plural,
+			} );
+			ownProps.translationData = props.translationsData[ translationDataKey ];
 
 			// <Translatable> returns a frozen object, therefore we make a copy so that we can modify it below
 			const translatableElement = Object.assign(
 				{},
-				<Translatable { ...props }>{ displayedTranslationFromPage }</Translatable>
+				<Translatable { ...ownProps }>{ displayedTranslationFromPage }</Translatable>
 			);
 
 			// now we can override the toString function which would otherwise return [object Object]
@@ -181,9 +181,16 @@ function CommunityTranslator() {
 			i18n.translateHooks = i18n.translateHooks.filter( ( hook ) => hook !== translateHook );
 			removeFilter( 'translation', 'community-translator' );
 		};
-	}, [ localeData ] );
+	}, [ localeData, props.translationsData ] );
 
 	return null;
 }
 
-export default localize( CommunityTranslator );
+export default connect(
+	( state ) => ( {
+		translationsData: getCommunityTranslatorTranslations( state ),
+	} ),
+	{
+		requestTranslationData,
+	}
+)( localize( CommunityTranslator ) );

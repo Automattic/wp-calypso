@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { isMobile } from '@automattic/viewport';
-import { head, find, get } from 'lodash';
+import { head, find, get, mapValues, keyBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -98,6 +98,35 @@ export function getSingleTranslationData(
 	);
 }
 
+export function getTranslationsData(
+	locale,
+	originalsData,
+	apiBaseUrl = GP_BASE_URL + '/api',
+	project = GP_PROJECT,
+	post = postRequest
+) {
+	if ( ! Array.isArray( originalsData ) ) {
+		originalsData = [ originalsData ];
+	}
+
+	const glotPressUrl = `${ apiBaseUrl }/translations/-query-by-originals`;
+	const postFormData = [
+		`project=${ project }`,
+		`&locale_slug=${ locale.parentLangSlug || locale.langSlug }`,
+		`&translation_set_slug=${ GP_PROJECT_TRANSLATION_SET_SLUGS[ locale.langSlug ] || 'default' }`,
+		`&original_strings=${ encodeURIComponent( JSON.stringify( originalsData ) ) }`,
+	];
+
+	return post( glotPressUrl, postFormData.join( '' ) ).then( ( glotPressDataEntries ) => {
+		const { originals_not_found, ...translationsData } = glotPressDataEntries;
+
+		return mapValues(
+			keyBy( translationsData, ( { original } ) => getOriginalKey( original ) ),
+			normalizeDetailsFromTranslationData
+		);
+	} );
+}
+
 /**
  * Prepares and triggers a request to get GP string
  *
@@ -152,6 +181,24 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 		translatedPlural: get( translationDetails, 'translation_1', '' ),
 		lastModified: get( translationDetails, 'date_modified', '' ),
 	};
+}
+
+/**
+ * Get key identifier for original
+ *
+ * @param   {string|null} options.context  Original context
+ * @param   {string} options.singular Original singular
+ * @param   {string|null} [options.plural] Original plural
+ * @param   {string} separator Key separator
+ * @returns {string} Original key
+ */
+export function getOriginalKey(
+	{ context, singular, plural },
+	separator = String.fromCharCode( 4 )
+) {
+	const segments = [ context, singular, plural ];
+
+	return segments.filter( Boolean ).join( separator );
 }
 
 /**
