@@ -84,7 +84,7 @@ const NoBackupsYet: FunctionComponent< Props > = ( { isFeatured } ) => {
 				<div className="backup-card__about-content">
 					<ul className="backup-card__about-list">
 						<li>
-							<div className="backup-card__about-media">
+							<div className="backup-card__about-media backup-card__about-media--notice">
 								<JetpackLogo className="backup-card__jetpack-logo-muted" size={ 32 } />
 							</div>
 							<div className="backup-card__about-body">

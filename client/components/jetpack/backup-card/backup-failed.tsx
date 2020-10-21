@@ -93,14 +93,16 @@ const BackupFailed: FunctionComponent< Props > = ( { backup, isFeatured } ) => {
 				<div className="backup-card__about-content">
 					<ul className="backup-card__about-list">
 						<li>
-							<div className="backup-card__about-media">
+							<div className="backup-card__about-media backup-card__about-media--notice">
 								<JetpackLogo className="backup-card__jetpack-logo-danger" size={ 32 } />
 							</div>
 							<div className="backup-card__about-body">
 								{ translate(
 									'Jetpack failed to complete the backup. Jetpack returned the following error:'
-								) }{ ' ' }
-								<ActivityDescription activity={ backup } />
+								) }
+								<div>
+									<ActivityDescription activity={ backup } />
+								</div>
 							</div>
 						</li>
 					</ul>
