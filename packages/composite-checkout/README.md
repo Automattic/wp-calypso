@@ -414,10 +414,6 @@ An action creator function to be used by a [payment processor function](#payment
 
 The `registerStore` function on the [#defaultRegistry](default registry). Don't use this if you create a custom registry.
 
-### formatValueForCurrency
-
-Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
-
 ### useAllPaymentMethods
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
