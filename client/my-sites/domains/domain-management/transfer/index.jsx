@@ -27,6 +27,7 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 
 function Transfer( props ) {
 	const {
@@ -41,7 +42,7 @@ function Transfer( props ) {
 	} = props;
 	const slug = get( selectedSite, 'slug' );
 
-	if ( props.isRequestingSiteDomains ) {
+	if ( props.isRequestingSiteDomains || ! props.hasSiteDomainsLoaded ) {
 		return (
 			<DomainMainPlaceholder
 				backHref={ domainManagementEdit( slug, selectedDomainName, currentRoute ) }
@@ -90,6 +91,7 @@ export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		currentRoute: getCurrentRoute( state ),
+		hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, siteId ),
 		isMapping: Boolean( domain ) && isMappedDomain( domain ),
