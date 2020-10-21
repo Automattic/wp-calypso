@@ -37,7 +37,7 @@ export class TransferToOtherSite extends React.Component {
 		currentUser: PropTypes.object.isRequired,
 		currentUserCanManage: PropTypes.bool.isRequired,
 		isDomainOnly: PropTypes.bool.isRequired,
-		isMappedDomain: PropTypes.bool.isRequired,
+		isMapping: PropTypes.bool.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.object.isRequired,
@@ -121,12 +121,12 @@ export class TransferToOtherSite extends React.Component {
 		const {
 			selectedDomainName: domainName,
 			domainsWithPlansOnly,
-			isMappedDomain,
+			isMapping,
 			translate,
 		} = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 
-		if ( isMappedDomain ) {
+		if ( isMapping ) {
 			if ( domainsWithPlansOnly ) {
 				return translate(
 					'Please choose a site with a paid plan ' +
@@ -156,7 +156,7 @@ export class TransferToOtherSite extends React.Component {
 	}
 
 	render() {
-		const { selectedSite, selectedDomainName, currentRoute, isMappedDomain } = this.props;
+		const { selectedSite, selectedDomainName, currentRoute, isMapping } = this.props;
 		const { slug } = selectedSite;
 		if ( ! this.isDataReady() ) {
 			return (
@@ -172,7 +172,7 @@ export class TransferToOtherSite extends React.Component {
 					selectedDomainName={ selectedDomainName }
 					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				>
-					{ isMappedDomain
+					{ isMapping
 						? this.props.translate( 'Transfer Domain Mapping To Another Site' )
 						: this.props.translate( 'Transfer Domain To Another Site' ) }
 				</Header>
@@ -201,7 +201,7 @@ export class TransferToOtherSite extends React.Component {
 					<TransferConfirmationDialog
 						disableDialogButtons={ this.state.disableDialogButtons }
 						domainName={ selectedDomainName }
-						isMappedDomain={ this.props.isMappedDomain }
+						isMapping={ this.props.isMapping }
 						isVisible={ this.state.showConfirmationDialog }
 						onConfirmTransfer={ this.handleConfirmTransfer }
 						onClose={ this.handleDialogClose }
@@ -222,7 +222,7 @@ export default connect(
 			currentUserCanManage: domain && domain.currentUserCanManage,
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isDomainOnly: isDomainOnlySite( state, get( ownProps, 'selectedSite.ID', null ) ),
-			isMappedDomain: Boolean( domain ) && isMappedDomain( domain ),
+			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			sites: getSites( state ),
 		};
 	},

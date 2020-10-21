@@ -32,7 +32,7 @@ function Transfer( props ) {
 	const {
 		isAtomic,
 		isDomainOnly,
-		isMappedDomain,
+		isMapping,
 		isPrimaryDomain,
 		selectedSite,
 		selectedDomainName,
@@ -55,17 +55,17 @@ function Transfer( props ) {
 				selectedDomainName={ selectedDomainName }
 				backHref={ domainManagementEdit( slug, selectedDomainName, currentRoute ) }
 			>
-				{ isMappedDomain ? translate( 'Transfer Mapping' ) : translate( 'Transfer Domain' ) }
+				{ isMapping ? translate( 'Transfer Mapping' ) : translate( 'Transfer Domain' ) }
 			</Header>
 			<VerticalNav>
-				{ ! isMappedDomain && (
+				{ ! isMapping && (
 					<VerticalNavItem
 						path={ domainManagementTransferOut( slug, selectedDomainName, currentRoute ) }
 					>
 						{ translate( 'Transfer to another registrar' ) }
 					</VerticalNavItem>
 				) }
-				{ ! isMappedDomain && ! isDomainOnly && (
+				{ ! isMapping && ! isDomainOnly && (
 					<VerticalNavItem
 						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName, currentRoute ) }
 					>
@@ -92,7 +92,7 @@ export default connect( ( state, ownProps ) => {
 		currentRoute: getCurrentRoute( state ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, siteId ),
-		isMappedDomain: Boolean( domain ) && isMappedDomain( domain ),
+		isMapping: Boolean( domain ) && isMappedDomain( domain ),
 		isPrimaryDomain: isPrimaryDomainBySiteId( state, siteId, ownProps.selectedDomainName ),
 		primaryDomain: getPrimaryDomainBySiteId( state, siteId ),
 	};

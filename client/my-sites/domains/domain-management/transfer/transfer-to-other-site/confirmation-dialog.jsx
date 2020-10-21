@@ -16,7 +16,7 @@ import { Dialog } from '@automattic/components';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {
-		isMappedDomain: PropTypes.bool.isRequired,
+		isMapping: PropTypes.bool.isRequired,
 		isVisible: PropTypes.bool.isRequired,
 		targetSiteId: PropTypes.number.isRequired,
 		disableDialogButtons: PropTypes.bool.isRequired,
@@ -30,9 +30,9 @@ class TransferConfirmationDialog extends React.PureComponent {
 	};
 
 	getMessage() {
-		const { domainName, isMappedDomain, targetSite, translate } = this.props;
+		const { domainName, isMapping, targetSite, translate } = this.props;
 		const targetSiteTitle = get( targetSite, 'title', '' );
-		if ( isMappedDomain ) {
+		if ( isMapping ) {
 			return translate(
 				'Do you want to transfer mapping of {{strong}}%(domainName)s{{/strong}} ' +
 					'to site {{strong}}%(targetSiteTitle)s{{/strong}}?',
@@ -54,8 +54,8 @@ class TransferConfirmationDialog extends React.PureComponent {
 	}
 
 	render() {
-		const { isMappedDomain, translate } = this.props;
-		const actionLabel = ! isMappedDomain
+		const { isMapping, translate } = this.props;
+		const actionLabel = ! isMapping
 			? translate( 'Confirm Transfer' )
 			: translate( 'Confirm Mapping Transfer' );
 		const buttons = [
