@@ -15,6 +15,7 @@ import { concatTitle } from 'calypso/lib/react-helpers';
 import { createCardToken } from 'calypso/lib/store-transactions';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import titles from 'calypso/me/purchases/titles';
@@ -32,6 +33,7 @@ function AddCreditCard( props ) {
 			<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
 			<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake onClick={ goToPaymentMethods }>{ titles.addCreditCard }</HeaderCake>
 			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
 				<CreditCardForm

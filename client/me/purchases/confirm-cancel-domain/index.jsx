@@ -43,6 +43,7 @@ import titles from 'calypso/me/purchases/titles';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -282,6 +283,7 @@ class ConfirmCancelDomain extends React.Component {
 					path="/me/purchases/:site/:purchaseId/confirm-cancel-domain"
 					title="Purchases > Confirm Cancel Domain"
 				/>
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 				<HeaderCake
 					backHref={ this.props.getCancelPurchaseUrlFor(
 						this.props.siteSlug,

@@ -20,6 +20,8 @@ import { CompactCard } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -113,6 +115,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 		<Main className="memberships is-wide-layout">
 			<DocumentHead title={ translate( 'Other Sites' ) } />
 			<PageViewTracker path="/me/purchases/other" title="Me > Other Sites" />
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<MeSidebarNavigation />
 			<QueryMembershipsSubscriptions />
 			<PurchasesHeader section={ 'memberships' } />

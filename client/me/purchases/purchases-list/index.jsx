@@ -40,6 +40,8 @@ import {
 	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
 } from 'calypso/me/concierge/constants';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import FormattedHeader from 'calypso/components/formatted-header';
+import titles from 'calypso/me/purchases/titles';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -119,6 +121,7 @@ class PurchasesList extends Component {
 				return (
 					<Main>
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 						<PurchasesHeader section="purchases" />
 						<NoSitesMessage />
 					</Main>
@@ -149,6 +152,8 @@ class PurchasesList extends Component {
 				<QueryUserPurchases userId={ this.props.userId } />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
+
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 				<PurchasesHeader section="purchases" />
 				{ content }
 				<QueryConciergeInitial />
