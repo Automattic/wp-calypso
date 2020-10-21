@@ -867,9 +867,22 @@ export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextP
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
 	const isNotRegistration = hasDomainItemInDependencyStore && ! isDomainRegistration( domainItem );
+
 	if ( isNotRegistration || skipSecureYourBrand ) {
 		const domainUpsellItems = null;
 		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
 		flows.excludeStep( stepName );
+		return;
+	}
+
+	const hasDomainUpsellItems = has( nextProps, 'signupDependencies.domainUpsellItems' );
+	const existingDomainUpsellItems = get( nextProps, 'signupDependencies.domainUpsellItems', false );
+	if (
+		hasDomainUpsellItems &&
+		isEmpty( existingDomainUpsellItems ) &&
+		isDomainRegistration( domainItem )
+	) {
+		flows.resetExcludedStep( stepName );
+		// submitSignupStep( { stepName, wasSkipped: false }, {} );
 	}
 }
