@@ -3,7 +3,7 @@
  */
 import { isEditorIframeLoaded, getEditorIframePort } from 'calypso/state/editor/selectors';
 
-export const createMediaGutenframePayload = ( status, mediaItem ) => ( {
+const createMediaGutenframePayload = ( status, mediaItem ) => ( {
 	id: mediaItem.ID,
 	height: mediaItem.height,
 	status,
