@@ -29,7 +29,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	selected = false,
 	isSubItem = false,
 } ) => {
-    const reduxDispatch = useDispatch();
+	const reduxDispatch = useDispatch();
 
 	return (
 		<SidebarItem
