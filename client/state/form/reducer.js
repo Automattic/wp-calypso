@@ -6,6 +6,6 @@ import { reducer } from 'redux-form';
 /**
  * Internal dependencies
  */
-import { withStorageKey } from 'state/utils';
+import { withStorageKey } from 'calypso/state/utils';
 
 export default withStorageKey( 'form', reducer );

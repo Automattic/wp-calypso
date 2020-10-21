@@ -12,14 +12,14 @@ import {
 	EDITOR_TYPE_UPDATE,
 	GUTENBERG_OPT_IN_OUT_SET,
 	GUTENBERG_IFRAME_ELIGIBLE_SET,
-} from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { replaceHistory } from 'state/ui/actions';
+} from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { replaceHistory } from 'calypso/state/ui/actions';
 
-import 'state/gutenberg-opt-in-out/init';
-import 'state/gutenberg-iframe-eligible/init';
+import 'calypso/state/gutenberg-opt-in-out/init';
+import 'calypso/state/gutenberg-iframe-eligible/init';
 
 const fetchGutenbergOptInData = ( action ) =>
 	http(

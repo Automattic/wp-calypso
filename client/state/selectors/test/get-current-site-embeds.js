@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getCurrentSiteEmbeds from 'state/selectors/get-current-site-embeds';
+import getCurrentSiteEmbeds from 'calypso/state/selectors/get-current-site-embeds';
 
 describe( 'getCurrentSiteEmbeds()', () => {
 	const siteId = 12345678;

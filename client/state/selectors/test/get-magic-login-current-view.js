@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 
 describe( 'getMagicLoginCurrentView()', () => {
 	test( 'should return null if there is no information yet', () => {

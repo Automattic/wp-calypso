@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isRequestingMediaItem from 'state/selectors/is-requesting-media-item';
+import isRequestingMediaItem from 'calypso/state/selectors/is-requesting-media-item';
 
 describe( 'isRequestingMediaItem()', () => {
 	const state = {

@@ -13,8 +13,8 @@ import {
 	SITES_RECEIVE,
 	PLANS_RECEIVE,
 	PRODUCTS_LIST_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	capabilitiesSchema,
 	currencyCodeSchema,

@@ -4,10 +4,10 @@
 import {
 	READER_ORGANIZATIONS_REQUEST,
 	READER_ORGANIZATIONS_RECEIVE,
-} from 'state/reader/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+} from 'calypso/state/reader/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const handleOrganizationsRequest = ( action ) =>
 	http(

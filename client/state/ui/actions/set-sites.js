@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SELECTED_SITE_SET } from 'state/action-types';
+import { SELECTED_SITE_SET } from 'calypso/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that a site has been set

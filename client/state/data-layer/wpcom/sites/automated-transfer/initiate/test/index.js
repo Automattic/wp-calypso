@@ -11,10 +11,13 @@ import {
 	receiveError,
 	updateUploadProgress,
 } from '../';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
-import { pluginUploadError, updatePluginUploadProgress } from 'state/plugins/upload/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import {
+	pluginUploadError,
+	updatePluginUploadProgress,
+} from 'calypso/state/plugins/upload/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const siteId = 1916284;
 

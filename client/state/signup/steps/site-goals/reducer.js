@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_GOALS_SET } from 'state/action-types';
+import { SIGNUP_COMPLETE_RESET, SIGNUP_STEPS_SITE_GOALS_SET } from 'calypso/state/action-types';
 
-import { withSchemaValidation } from 'state/utils';
+import { withSchemaValidation } from 'calypso/state/utils';
 import { siteGoalsSchema } from './schema';
 
 export default withSchemaValidation( siteGoalsSchema, ( state = '', action ) => {

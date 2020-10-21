@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isJetpackSiteInStagingMode from 'state/selectors/is-jetpack-site-in-staging-mode';
+import isJetpackSiteInStagingMode from 'calypso/state/selectors/is-jetpack-site-in-staging-mode';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackSiteInStagingMode()', () => {

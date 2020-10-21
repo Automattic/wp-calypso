@@ -6,9 +6,9 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteComments } from 'state/comments/selectors';
+import { getSiteComments } from 'calypso/state/comments/selectors';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Returns a comment for the specified site and comment ID.

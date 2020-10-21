@@ -6,8 +6,8 @@ import { get, has } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PAYMENT_COUNTRY_CODE_SET, PAYMENT_POSTAL_CODE_SET } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
+import { PAYMENT_COUNTRY_CODE_SET, PAYMENT_POSTAL_CODE_SET } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
 import { paymentCountryCodeSchema, paymentPostalCodeSchema } from './schema';
 import { extractStoredCardMetaValue } from './util';
 
@@ -17,7 +17,7 @@ import { extractStoredCardMetaValue } from './util';
  * Tap into flux data flows and produce redux actions to track payment country
  * and postcode in order to calculate tax.
  */
-import { registerActionForward } from 'lib/redux-bridge';
+import { registerActionForward } from 'calypso/lib/redux-bridge';
 registerActionForward( 'TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET' );
 registerActionForward( 'TRANSACTION_PAYMENT_SET' );
 

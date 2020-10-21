@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/concierge/init';
+import 'calypso/state/concierge/init';
 
 export default ( state, appointmentId ) =>
 	get( state, [ 'concierge', 'appointmentDetails', appointmentId ], null );

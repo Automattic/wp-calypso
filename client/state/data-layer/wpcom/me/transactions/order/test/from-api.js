@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import fromApi, { convertProcessingStatus } from '../from-api';
-import { ORDER_TRANSACTION_STATUS } from 'state/order-transactions/constants';
+import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
 
 describe( 'wpcom-api', () => {
 	describe( 'fromApi()', () => {

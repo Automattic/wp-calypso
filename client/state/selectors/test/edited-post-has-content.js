@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import {
 	editedPostHasContent,
 	isEmptyContent,
-} from 'state/posts/selectors/edited-post-has-content';
-import PostQueryManager from 'lib/query-manager/post';
+} from 'calypso/state/posts/selectors/edited-post-has-content';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 
 describe( 'editedPostHasContent()', () => {
 	test( 'should return false if there are no edits and no post', () => {

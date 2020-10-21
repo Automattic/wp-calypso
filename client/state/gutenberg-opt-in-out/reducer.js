@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { GUTENBERG_OPT_IN_OUT_SET } from 'state/action-types';
-import { keyedReducer, withStorageKey } from 'state/utils';
+import { GUTENBERG_OPT_IN_OUT_SET } from 'calypso/state/action-types';
+import { keyedReducer, withStorageKey } from 'calypso/state/utils';
 
 export const gutenbergOptInOut = ( state, { type, optIn, optOut } ) =>
 	type === GUTENBERG_OPT_IN_OUT_SET ? { optIn, optOut } : state;

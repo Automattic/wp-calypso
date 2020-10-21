@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getCanonicalTheme } from 'state/themes/selectors/get-canonical-theme';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for a theme's demo.

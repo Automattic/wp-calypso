@@ -12,15 +12,15 @@ import {
 	withoutPersistence,
 	withSchemaValidation,
 	withStorageKey,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import {
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
 	SHORTCODE_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { registerActionForward } from 'lib/redux-bridge';
-import { parse } from 'lib/shortcode';
+} from 'calypso/state/action-types';
+import { registerActionForward } from 'calypso/lib/redux-bridge';
+import { parse } from 'calypso/lib/shortcode';
 
 registerActionForward( 'RECEIVE_MEDIA_ITEMS' );
 registerActionForward( 'RECEIVE_MEDIA_ITEM' );

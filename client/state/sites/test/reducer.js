@@ -29,9 +29,9 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

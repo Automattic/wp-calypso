@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { isPublished } from 'state/posts/utils/is-published';
-import { removeSlug } from 'state/posts/utils/remove-slug';
+import { isPublished } from 'calypso/state/posts/utils/is-published';
+import { removeSlug } from 'calypso/state/posts/utils/remove-slug';
 
 export function getPermalinkBasePath( post ) {
 	if ( ! post ) {

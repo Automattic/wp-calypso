@@ -7,8 +7,8 @@ import { findLast, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { ROUTE_SET } from 'state/action-types';
+import createSelector from 'calypso/lib/create-selector';
+import { ROUTE_SET } from 'calypso/state/action-types';
 
 /**
  * Returns a log of actions from certain types that have previously been

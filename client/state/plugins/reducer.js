@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import wporg from './wporg/reducer';
 import premium from './premium/reducer';
 import installed from './installed/reducer';

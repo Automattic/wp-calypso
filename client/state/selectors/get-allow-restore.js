@@ -6,9 +6,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
-import getRewindState from 'state/selectors/get-rewind-state';
+import createSelector from 'calypso/lib/create-selector';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 /**
  * Based on the transactions list, returns metadata for rendering the app filters with counts

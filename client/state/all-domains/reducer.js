@@ -5,10 +5,10 @@ import {
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_FAILURE,
 	ALL_DOMAINS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { allDomainsSchema } from './schema';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
-import { createLightSiteDomainObject } from 'state/all-domains/helpers';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { createLightSiteDomainObject } from 'calypso/state/all-domains/helpers';
 
 export const allDomains = withSchemaValidation( allDomainsSchema, ( state = [], action ) => {
 	switch ( action.type ) {

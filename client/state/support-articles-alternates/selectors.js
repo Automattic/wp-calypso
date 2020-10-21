@@ -6,9 +6,9 @@ import { get, has, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { keyToString } from 'reader/post-key';
+import { keyToString } from 'calypso/reader/post-key';
 
-import 'state/support-articles-alternates/init';
+import 'calypso/state/support-articles-alternates/init';
 
 /**
  * Whether it's currently requesting alternates for a post

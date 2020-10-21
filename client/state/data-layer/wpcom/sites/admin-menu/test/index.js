@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestFetchAdminMenu, handleSuccess } from '../';
-import { requestAdminMenu, receiveAdminMenu } from 'state/admin-menu/actions';
+import { requestAdminMenu, receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 
 describe( 'requestFetchAdminMenu', () => {
 	test( 'should create the correct http request action', () => {

@@ -1,15 +1,15 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	conciergeInitialFetchError,
 	fetchConciergeInitial,
 	storeFetchedConciergeInitial,
 	showConciergeInitialFetchError,
 } from '../';
-import { updateConciergeInitial } from 'state/concierge/actions';
-import { CONCIERGE_INITIAL_REQUEST } from 'state/action-types';
+import { updateConciergeInitial } from 'calypso/state/concierge/actions';
+import { CONCIERGE_INITIAL_REQUEST } from 'calypso/state/action-types';
 
 // we are mocking impure-lodash here, so that conciergeInitialFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {

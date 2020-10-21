@@ -6,9 +6,9 @@ import { every, filter, find, get, includes, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 
-import 'state/plugins/init';
+import 'calypso/state/plugins/init';
 
 export const isRequesting = function ( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,

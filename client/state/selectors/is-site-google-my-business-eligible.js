@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSitePlanSlug } from 'state/sites/selectors';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_GOOGLE_MY_BUSINESS } from 'lib/plans/constants';
+import createSelector from 'calypso/lib/create-selector';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { planHasFeature } from 'calypso/lib/plans';
+import { FEATURE_GOOGLE_MY_BUSINESS } from 'calypso/lib/plans/constants';
 
 /**
  * Returns true if site has business/ecommerce plan

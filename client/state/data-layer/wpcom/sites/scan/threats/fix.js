@@ -1,13 +1,13 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { JETPACK_SCAN_THREAT_FIX } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { requestScanStatus } from 'state/jetpack-scan/actions';
-import { requestJetpackScanHistory } from 'state/jetpack-scan/history/actions';
-import { updateThreat, updateThreatCompleted } from 'state/jetpack-scan/threats/actions';
-import * as sitesAlertsFixHandlers from 'state/data-layer/wpcom/sites/alerts/fix';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { JETPACK_SCAN_THREAT_FIX } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
+import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
+import { updateThreat, updateThreatCompleted } from 'calypso/state/jetpack-scan/threats/actions';
+import * as sitesAlertsFixHandlers from 'calypso/state/data-layer/wpcom/sites/alerts/fix';
 
 export const request = ( action ) => {
 	const defaultActions = sitesAlertsFixHandlers.request( action );

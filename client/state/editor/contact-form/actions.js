@@ -8,9 +8,9 @@ import {
 	EDITOR_CONTACT_FORM_FIELD_REMOVE,
 	EDITOR_CONTACT_FORM_FIELD_UPDATE,
 	EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/editor/init';
+import 'calypso/state/editor/init';
 
 export function formClear() {
 	return {

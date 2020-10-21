@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'state/action-types';
+import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import { counts, isLoading } from '../reducer';
 
 describe( 'reducer', () => {

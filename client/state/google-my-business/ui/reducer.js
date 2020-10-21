@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
-import { GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL } from 'state/action-types';
+import { withoutPersistence } from 'calypso/state/utils';
+import { GOOGLE_MY_BUSINESS_STATS_CHANGE_INTERVAL } from 'calypso/state/action-types';
 
 export const statsInterval = withoutPersistence( ( state = 'week', action ) => {
 	switch ( action.type ) {

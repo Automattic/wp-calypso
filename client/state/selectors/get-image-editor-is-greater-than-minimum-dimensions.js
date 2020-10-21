@@ -6,8 +6,8 @@ import { isInteger } from 'lodash';
 /**
  * Internal dependencies
  */
-import { MinimumImageDimensions } from 'state/editor/image-editor/constants';
-import getImageEditorOriginalAspectRatio from 'state/selectors/get-image-editor-original-aspect-ratio';
+import { MinimumImageDimensions } from 'calypso/state/editor/image-editor/constants';
+import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image-editor-original-aspect-ratio';
 
 /**
  * Returns whether the original image size is greater than minimumImageDimensions values.

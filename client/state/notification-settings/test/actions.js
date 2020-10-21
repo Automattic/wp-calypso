@@ -2,7 +2,10 @@
  * Internal dependencies
  */
 import { requestNotificationSettings, updateNotificationSettings } from '../actions';
-import { NOTIFICATION_SETTINGS_REQUEST, NOTIFICATION_SETTINGS_UPDATE } from 'state/action-types';
+import {
+	NOTIFICATION_SETTINGS_REQUEST,
+	NOTIFICATION_SETTINGS_UPDATE,
+} from 'calypso/state/action-types';
 
 describe( 'requestNotificationSettings()', () => {
 	test( 'should return an action object', () => {

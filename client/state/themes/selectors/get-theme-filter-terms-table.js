@@ -6,11 +6,11 @@ import { forIn, keys, mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
-import { isAmbiguousThemeFilterTerm } from 'state/themes/selectors/is-ambiguous-theme-filter-term';
+import createSelector from 'calypso/lib/create-selector';
+import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
+import { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Return a table of theme filter terms to taxonomies, with

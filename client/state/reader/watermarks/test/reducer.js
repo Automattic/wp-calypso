@@ -3,7 +3,7 @@
  */
 import { viewStream } from '../actions';
 import { watermarks } from '../reducer';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
 jest.mock( 'lib/warn', () => () => {} );
 

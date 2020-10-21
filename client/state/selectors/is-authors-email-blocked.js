@@ -6,7 +6,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSiteSetting from 'state/selectors/get-site-setting';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 
 /**
  * Check if an email address is disallowed according to

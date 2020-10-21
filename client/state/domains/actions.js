@@ -1,9 +1,13 @@
 /**
  * Internal dependencies
  */
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
-import 'state/domains/init';
+import 'calypso/state/domains/init';
 
 export const recordAddDomainButtonClick = ( domainName, section, isPremium = false ) =>
 	composeAnalytics(

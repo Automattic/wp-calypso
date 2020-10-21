@@ -8,12 +8,12 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import createSelector from 'calypso/lib/create-selector';
+import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 
-import 'state/billing-transactions/init';
+import 'calypso/state/billing-transactions/init';
 
 const PAGE_SIZE = 5;
 

@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getAllMedia from 'state/selectors/get-media';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getAllMedia from 'calypso/state/selectors/get-media';
 
 /**
  * Returns true if the selected site has any media files.

@@ -6,13 +6,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { updateDomainTransfer } from 'state/domains/transfer/actions';
-import { DOMAIN_TRANSFER_IPS_TAG_SAVE } from 'state/action-types';
-import { errorNotice } from 'state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { updateDomainTransfer } from 'calypso/state/domains/transfer/actions';
+import { DOMAIN_TRANSFER_IPS_TAG_SAVE } from 'calypso/state/action-types';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Generates actions to save the domain IPS tag at OpenSRS

@@ -9,11 +9,15 @@ import { castArray, noop, zip } from 'lodash';
 import {
 	dispatchFluxReceiveMediaItemError,
 	dispatchFluxReceiveMediaItemSuccess,
-} from 'state/media/utils/flux-adapter';
-import { receiveMedia, successMediaItemRequest, failMediaItemRequest } from 'state/media/actions';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
-import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
-import { isFileList } from 'state/media/utils/is-file-list';
+} from 'calypso/state/media/utils/flux-adapter';
+import {
+	receiveMedia,
+	successMediaItemRequest,
+	failMediaItemRequest,
+} from 'calypso/state/media/actions';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
+import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
+import { isFileList } from 'calypso/state/media/utils/is-file-list';
 
 /**
  * Add media items serially (one at a time) but dispatch creation

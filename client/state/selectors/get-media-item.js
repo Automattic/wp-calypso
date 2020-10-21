@@ -6,9 +6,9 @@ import isNil from 'lodash/isNil';
 /**
  * Internal dependencies
  */
-import getTransientMediaItem from 'state/selectors/get-transient-media-item';
-import getMediaItemServerIdFromTransientId from 'state/selectors/get-media-item-server-id-from-transient-id';
-import getMediaQueryManager from 'state/selectors/get-media-query-manager';
+import getTransientMediaItem from 'calypso/state/selectors/get-transient-media-item';
+import getMediaItemServerIdFromTransientId from 'calypso/state/selectors/get-media-item-server-id-from-transient-id';
+import getMediaQueryManager from 'calypso/state/selectors/get-media-query-manager';
 
 /**
  * Returns a media object by site ID, media ID, or null if not known.

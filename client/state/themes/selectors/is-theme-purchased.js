@@ -6,9 +6,9 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSitePurchases } from 'state/purchases/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns whether the theme has been purchased for the given site.

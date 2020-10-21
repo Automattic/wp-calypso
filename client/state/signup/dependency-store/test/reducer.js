@@ -7,7 +7,7 @@ import {
 	SIGNUP_PROGRESS_SUBMIT_STEP,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
 	SIGNUP_COMPLETE_RESET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should return an empty object at first', () => {

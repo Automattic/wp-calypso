@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 /**
  * Determines if site's permalinks are editable

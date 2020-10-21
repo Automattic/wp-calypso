@@ -8,20 +8,20 @@ import { find, includes, toLower } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLUGIN_UPLOAD } from 'state/action-types';
+import { PLUGIN_UPLOAD } from 'calypso/state/action-types';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
-} from 'state/plugins/upload/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSite } from 'state/sites/selectors';
-import Dispatcher from 'dispatcher';
+} from 'calypso/state/plugins/upload/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSite } from 'calypso/state/sites/selectors';
+import Dispatcher from 'calypso/dispatcher';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const uploadPlugin = ( action ) => {
 	const { siteId, file } = action;

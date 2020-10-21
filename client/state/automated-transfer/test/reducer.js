@@ -14,7 +14,7 @@ import {
 	AUTOMATED_TRANSFER_STATUS_REQUEST_FAILURE as REQUEST_STATUS_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'state', () => {
 	describe( 'automated-transfer', () => {

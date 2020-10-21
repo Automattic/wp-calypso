@@ -8,9 +8,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteOption } from 'state/sites/selectors';
-import getRawSite from 'state/selectors/get-raw-site';
-import { getSiteSettings } from 'state/site-settings/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
 /**
  * Returns the default post format of a site.

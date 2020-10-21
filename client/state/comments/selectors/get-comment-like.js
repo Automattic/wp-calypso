@@ -7,9 +7,9 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getPostCommentItems } from 'state/comments/selectors/get-post-comment-items';
+import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Gets likes stats for the comment

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getPaymentCountryCode from 'state/selectors/get-payment-country-code';
+import getPaymentCountryCode from 'calypso/state/selectors/get-payment-country-code';
 
 describe( 'getPaymentCountryCode()', () => {
 	test( 'should return null if there is no payment country available', () => {

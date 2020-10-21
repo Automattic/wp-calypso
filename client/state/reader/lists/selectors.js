@@ -6,8 +6,8 @@ import { filter, find, has, includes, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import 'state/reader/init';
+import createSelector from 'calypso/lib/create-selector';
+import 'calypso/state/reader/init';
 
 /**
  * Returns true if currently requesting Reader lists, or

@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/memberships/init';
+import 'calypso/state/memberships/init';
 
 export function getAllSubscriptions( state ) {
 	return get( state, [ 'memberships', 'subscriptions', 'items' ] );

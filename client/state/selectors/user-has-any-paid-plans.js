@@ -6,9 +6,9 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
-import { isPlan } from 'lib/products-values';
+import createSelector from 'calypso/lib/create-selector';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { isPlan } from 'calypso/lib/products-values';
 
 /**
  * Whether the user currently has any paid plans

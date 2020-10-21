@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getSelectedOrAllSites from 'state/selectors/get-selected-or-all-sites';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import createSelector from 'calypso/lib/create-selector';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Return an array with the selected site or all sites able to have plugins

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import isPluginActive from 'state/selectors/is-plugin-active';
+import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 
 /**
  * Returns a Boolean indicating if a site has an active plugin present

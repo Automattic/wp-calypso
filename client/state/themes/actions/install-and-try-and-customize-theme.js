@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { installTheme } from 'state/themes/actions/install-theme';
-import { tryAndCustomizeTheme } from 'state/themes/actions/try-and-customize-theme';
+import { installTheme } from 'calypso/state/themes/actions/install-theme';
+import { tryAndCustomizeTheme } from 'calypso/state/themes/actions/try-and-customize-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to install theme on Jetpack site.

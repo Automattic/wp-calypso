@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isBackDatedPublished } from 'state/posts/utils/is-back-dated-published';
+import { isBackDatedPublished } from 'calypso/state/posts/utils/is-back-dated-published';
 
 // Return published status of a post. Optionally, the `status` can be overridden
 // with a custom value: what would the post status be if a `status` edit was applied?

@@ -53,8 +53,8 @@ import {
 	hasDefaultSiteTitle,
 	getSiteComputedAttributes,
 } from '../selectors';
-import config from 'config';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import config from 'calypso/config';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	const createStateWithItems = ( items ) =>

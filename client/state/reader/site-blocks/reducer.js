@@ -12,8 +12,8 @@ import {
 	READER_SITE_BLOCKS_REQUEST,
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_UNBLOCK,
-} from 'state/reader/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 export const items = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

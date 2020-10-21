@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import safeImageUrl from 'lib/safe-image-url';
-import getMediaItem from 'state/selectors/get-media-item';
+import safeImageUrl from 'calypso/lib/safe-image-url';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**
  * Returns the URL for a media item, or null if not known

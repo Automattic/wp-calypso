@@ -5,12 +5,12 @@ import {
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP,
 	TWO_FACTOR_AUTHENTICATION_PUSH_POLL_COMPLETED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import { remoteLoginUser } from 'state/login/actions/remote-login-user';
+import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 
-import 'state/data-layer/wpcom/login-2fa';
-import 'state/login/init';
+import 'calypso/state/data-layer/wpcom/login-2fa';
+import 'calypso/state/login/init';
 
 export const startPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } );
 export const stopPollAppPushAuth = () => ( { type: TWO_FACTOR_AUTHENTICATION_PUSH_POLL_STOP } );

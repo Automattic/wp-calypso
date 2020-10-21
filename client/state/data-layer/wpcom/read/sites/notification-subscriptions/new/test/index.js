@@ -6,13 +6,13 @@ import {
 	receiveNotificationSubscriptionError,
 	fromApi,
 } from '../';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	subscribeToNewPostNotifications,
 	unsubscribeToNewPostNotifications,
-} from 'state/reader/follows/actions';
-import { NOTICE_CREATE } from 'state/action-types';
+} from 'calypso/state/reader/follows/actions';
+import { NOTICE_CREATE } from 'calypso/state/action-types';
 
 describe( 'notification-subscriptions-new', () => {
 	describe( 'requestNotificationSubscription', () => {

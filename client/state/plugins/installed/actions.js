@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ import {
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -43,7 +43,7 @@ import {
 	REMOVE_PLUGIN,
 } from './constants';
 
-import 'state/plugins/init';
+import 'calypso/state/plugins/init';
 
 /**
  * Return a SitePlugin instance used to handle the plugin

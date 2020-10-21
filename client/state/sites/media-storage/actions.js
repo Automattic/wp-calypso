@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 
-import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST } from 'state/action-types';
+import { SITE_MEDIA_STORAGE_RECEIVE, SITE_MEDIA_STORAGE_REQUEST } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/media-storage';
+import 'calypso/state/data-layer/wpcom/sites/media-storage';
 
 /**
  * Triggers a network reqeust to find media storage limits for a given site

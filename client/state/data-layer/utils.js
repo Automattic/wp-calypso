@@ -15,7 +15,7 @@ import {
 /**
  * Internal dependencies
  */
-import { extendAction } from 'state/utils';
+import { extendAction } from 'calypso/state/utils';
 
 const doBypassDataLayer = {
 	meta: {

@@ -7,18 +7,18 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { WORDADS_SETTINGS_REQUEST, WORDADS_SETTINGS_SAVE } from 'state/action-types';
-import getWordadsSettings from 'state/selectors/get-wordads-settings';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { WORDADS_SETTINGS_REQUEST, WORDADS_SETTINGS_SAVE } from 'calypso/state/action-types';
+import getWordadsSettings from 'calypso/state/selectors/get-wordads-settings';
 import {
 	saveWordadsSettingsFailure,
 	saveWordadsSettingsSuccess,
 	updateWordadsSettings,
-} from 'state/wordads/settings/actions';
+} from 'calypso/state/wordads/settings/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const fromApi = ( data ) => {
 	if ( ! data.hasOwnProperty( 'settings' ) ) {

@@ -6,8 +6,8 @@ import { createStore } from 'redux';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
-import { isEditorSaveBlocked } from 'state/editor/selectors';
+import { combineReducers } from 'calypso/state/utils';
+import { isEditorSaveBlocked } from 'calypso/state/editor/selectors';
 import { blockSave } from '../actions';
 import saveBlockers from '../reducer';
 

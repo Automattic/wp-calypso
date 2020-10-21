@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { doFetchJITM, doDismissJITM } from '..';
-import { fetchJITM, dismissJITM } from 'state/jitm/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { fetchJITM, dismissJITM } from 'calypso/state/jitm/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'jitms', () => {
 	describe( '#doFetchJITM', () => {

@@ -14,12 +14,12 @@ import {
 	READER_SEEN_MARK_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
-} from 'state/reader/action-types';
-import { SERIALIZE } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
-import { decodeEntities, stripHTML } from 'lib/formatting';
+} from 'calypso/state/reader/action-types';
+import { SERIALIZE } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { itemsSchema } from './schema';
-import { safeLink } from 'lib/post-normalizer/utils';
+import { safeLink } from 'calypso/lib/post-normalizer/utils';
 
 function handleSerialize( state ) {
 	// remove errors from the serialized state

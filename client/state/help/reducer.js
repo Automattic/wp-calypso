@@ -6,9 +6,9 @@ import {
 	HELP_LINKS_RECEIVE,
 	SUPPORT_HISTORY_SET,
 	SUPPORT_LEVEL_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import courses from './courses/reducer';
-import { combineReducers, withStorageKey } from 'state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 

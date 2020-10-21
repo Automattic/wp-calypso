@@ -11,8 +11,8 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
 	COMMENTS_TREE_SITE_ADD,
-} from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 const convertToTree = ( comments ) =>
 	map(

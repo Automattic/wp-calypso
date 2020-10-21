@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
+import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
 
 describe( 'getUserPurchasedPremiumThemes', () => {
 	const targetUserId = 123;

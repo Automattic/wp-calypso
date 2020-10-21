@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/countries/init';
+import 'calypso/state/countries/init';
 
 /**
  * Retrieves the list of countries from the specified type.

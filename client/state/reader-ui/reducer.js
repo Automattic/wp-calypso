@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { READER_VIEW_STREAM } from 'state/reader/action-types';
+import { READER_VIEW_STREAM } from 'calypso/state/reader/action-types';
 import sidebar from './sidebar/reducer';
-import { combineReducers, withStorageKey } from 'state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import cardExpansions from './card-expansions/reducer';
 import hasUnseenPosts from './seen-posts/reducer';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
 /**
  * Keep the last reader stream path selected by the user, for the purpose of autoselecting it

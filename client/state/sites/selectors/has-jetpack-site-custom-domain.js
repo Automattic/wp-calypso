@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
+import { withoutHttp } from 'calypso/lib/url';
 import getSiteDomain from './get-site-domain';
 import getSiteOption from './get-site-option';
 import isJetpackSite from './is-jetpack-site';

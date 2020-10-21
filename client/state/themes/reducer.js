@@ -6,13 +6,13 @@ import { mapValues, omit, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import ThemeQueryManager from 'lib/query-manager/theme';
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	combineReducers,
 	withSchemaValidation,
 	withStorageKey,
 	withoutPersistence,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
@@ -40,8 +40,8 @@ import {
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
-} from 'state/themes/action-types';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+} from 'calypso/state/themes/action-types';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import { getSerializedThemesQuery, getThemeIdFromStylesheet } from './utils';
 import {
 	queriesSchema,
@@ -51,7 +51,7 @@ import {
 } from './schema';
 import themesUI from './themes-ui/reducer';
 import uploadTheme from './upload-theme/reducer';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Returns the updated active theme state after an action has been

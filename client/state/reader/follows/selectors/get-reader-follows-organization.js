@@ -6,9 +6,9 @@ import { values, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import 'state/reader/init';
-import { sorter } from 'state/reader/follows/selectors/get-reader-followed-sites';
+import createSelector from 'calypso/lib/create-selector';
+import 'calypso/state/reader/init';
+import { sorter } from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 
 /**
  * Get sites by organization id

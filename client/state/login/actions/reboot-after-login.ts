@@ -6,9 +6,9 @@ import type { Dispatch } from 'redux';
 /**
  * Internal dependencies
  */
-import user from 'lib/user';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { getRedirectToSanitized, isTwoFactorEnabled } from 'state/login/selectors';
+import user from 'calypso/lib/user';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 
 export const rebootAfterLogin = ( tracksEventArgs: object ) => async (
 	dispatch: Dispatch,

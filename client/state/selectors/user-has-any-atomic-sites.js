@@ -6,9 +6,9 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import createSelector from 'calypso/lib/create-selector';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 /**
  * Whether the user currently has any Atomic sites

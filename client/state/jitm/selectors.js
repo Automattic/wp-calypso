@@ -4,7 +4,7 @@
 import { get } from 'lodash';
 
 /** Internal dependencies */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Get the list of available jitms for the current site/section

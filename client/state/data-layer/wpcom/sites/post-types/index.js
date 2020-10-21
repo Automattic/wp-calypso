@@ -6,12 +6,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { POST_TYPES_REQUEST } from 'state/action-types';
-import { receivePostTypes } from 'state/post-types/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { POST_TYPES_REQUEST } from 'calypso/state/action-types';
+import { receivePostTypes } from 'calypso/state/post-types/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const handlePostTypesRequest = dispatchRequest( {
 	fetch: ( action ) =>

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { CURRENT_USER_RECEIVE } from 'state/action-types';
+import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

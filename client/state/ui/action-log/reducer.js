@@ -14,8 +14,8 @@ import {
 	PREVIEW_IS_SHOWING,
 	ROUTE_SET,
 	SITE_SETTINGS_RECEIVE,
-} from 'state/action-types';
-import { THEMES_REQUEST_SUCCESS } from 'state/themes/action-types';
+} from 'calypso/state/action-types';
+import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
 
 const relevantAnalyticsEvents = [ 'calypso_themeshowcase_theme_click' ];
 
