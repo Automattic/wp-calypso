@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Toggle from 'calypso/components/forms/form-toggle';
+import Toggle from 'calypso/components/forms/form-toggle/compact';
 import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
