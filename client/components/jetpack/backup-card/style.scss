@@ -27,7 +27,7 @@ $cloud-icon-height: 24px;
 
 .backup-card__title {
 	display: flex;
-	justify-items: center;
+	align-items: center;
 
 	margin-bottom: 36px;
 
@@ -38,6 +38,38 @@ $cloud-icon-height: 24px;
 
 	.is-featured & {
 		margin-bottom: 100px;
+	}
+
+	&.backup-card__title--scheduled {
+		color: var( --studio-gray-40 );
+
+		img.backup-card__icon {
+			color: var( --studio-gray-30 );
+		}
+	}
+
+	&.backup-card__title--failed {
+		color: var( --p2-color-error );
+
+		img.backup-card__icon {
+			color: var( --p2-color-error );
+		}
+	}
+
+	&.backup-card__title--delayed {
+		color: var( --studio-orange-30 );
+
+		img.backup-card__icon {
+			color: var( --studio-orange-30 );
+		}
+	}
+
+	&.backup-card__title--preparing {
+		color: var( --studio-gray-40 );
+
+		img.backup-card__icon {
+			color: var( --studio-gray-30 );
+		}
 	}
 }
 
@@ -60,21 +92,28 @@ $cloud-icon-height: 24px;
 /* Actions */
 
 .backup-card__actions {
-	display: flex;
-	flex-wrap: wrap;
-
 	margin: 0 0 32px;
 	padding: 0;
 
 	list-style-type: none;
 
 	> li {
-		position: relative;
+		margin-bottom: 20px;
+		.button {
+			width: 100%;
+		}
+	}
 
-		margin-right: 24px;
+	@include break-mobile {
+		display: flex;
 
-		&:last-child {
-			margin-right: 0;
+		> li {
+			margin-bottom: 0;
+			margin-right: 24px;
+
+			&:last-child {
+				margin-right: 0;
+			}
 		}
 	}
 }
@@ -145,6 +184,18 @@ $cloud-icon-height: 24px;
 		// Prevent container from being larger than image
 		// Ref. https://stackoverflow.com/questions/11126685/why-does-container-div-insist-on-being-slightly-larger-than-img-or-svg-content
 		display: block;
+	}
+	svg.backup-card__jetpack-logo-muted path.jetpack-logo__icon-circle {
+		fill: var( --studio-gray-30 );
+	}
+	svg.backup-card__jetpack-logo-warning path.jetpack-logo__icon-circle {
+		fill: var( --studio-orange-30 );
+	}
+	svg.backup-card__jetpack-logo-danger path.jetpack-logo__icon-circle {
+		fill: var( --p2-color-error );
+	}
+	&.backup-card__about-media--notice {
+		align-self: center;
 	}
 }
 

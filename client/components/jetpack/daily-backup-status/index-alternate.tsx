@@ -8,10 +8,10 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import BackupFailed from './status-card/backup-failed';
-import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
-import BackupScheduled from './status-card/backup-scheduled';
-import NoBackupsYet from './status-card/no-backups-yet';
+import BackupFailed from 'calypso/components/jetpack/backup-card/backup-failed';
+import NoBackupsOnSelectedDate from 'calypso/components/jetpack/backup-card/no-backups-on-selected-date';
+import BackupScheduled from 'calypso/components/jetpack/backup-card/backup-scheduled';
+import NoBackupsYet from 'calypso/components/jetpack/backup-card/no-backups-yet';
 import BackupCard from 'calypso/components/jetpack/backup-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -77,7 +77,7 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 				isFeatured
 			/>
 		) : (
-			<BackupFailed backup={ backup } />
+			<BackupFailed backup={ backup } isFeatured />
 		);
 	}
 
@@ -88,13 +88,13 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 		} );
 
 		return selectedDate.isSame( today, 'day' ) ? (
-			<BackupScheduled lastBackupDate={ lastBackupDate } />
+			<BackupScheduled lastBackupDate={ lastBackupDate } isFeatured />
 		) : (
-			<NoBackupsOnSelectedDate selectedDate={ selectedDate } />
+			<NoBackupsOnSelectedDate selectedDate={ selectedDate } isFeatured />
 		);
 	}
 
-	return <NoBackupsYet />;
+	return <NoBackupsYet isFeatured />;
 };
 
 export default DailyBackupStatusAlternate;
