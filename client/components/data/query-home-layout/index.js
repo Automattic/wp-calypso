@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestHomeLayout } from 'state/home/actions';
+import { requestHomeLayout } from 'calypso/state/home/actions';
 
 export default function QueryHomeLayout( { isDev, forcedView, siteId } ) {
 	const dispatch = useDispatch();

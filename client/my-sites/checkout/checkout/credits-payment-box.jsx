@@ -9,13 +9,13 @@ import { overSome, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import WordPressLogo from 'components/wordpress-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
+import CartCoupon from 'calypso/my-sites/checkout/cart/cart-coupon';
 import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import IncompatibleProductMessage from './incompatible-product-message';

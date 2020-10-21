@@ -13,9 +13,9 @@ import { concat, first, last, mean, throttle, uniq } from 'lodash';
 /**
  * Internal dependencies
  */
-import D3Base from 'components/d3-base';
-import Tooltip from 'components/tooltip';
-import { withLocalizedMoment } from 'components/localized-moment';
+import D3Base from 'calypso/components/d3-base';
+import Tooltip from 'calypso/components/tooltip';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import LineChartLegend from './legend';
 
 /**

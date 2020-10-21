@@ -9,14 +9,14 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { applySiteOffset } from 'lib/site/timezone';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { Card } from '@automattic/components';
-import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
-import { useLocalizedMoment } from 'components/localized-moment';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
+import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import BackupFailed from './status-card/backup-failed';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';

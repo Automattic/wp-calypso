@@ -7,12 +7,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { getNormalizedPost } from 'state/posts/selectors';
+import { getNormalizedPost } from 'calypso/state/posts/selectors';
 
 /**
  * Style dependencies

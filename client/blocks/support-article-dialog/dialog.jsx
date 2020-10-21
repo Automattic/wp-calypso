@@ -6,7 +6,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { memoize, noop } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
@@ -14,25 +14,25 @@ import Gridicon from 'components/gridicon';
 import { Button, Dialog } from '@automattic/components';
 import SupportArticleHeader from './header';
 import Placeholders from './placeholders';
-import EmbedContainer from 'components/embed-container';
-import Emojify from 'components/emojify';
-import QueryReaderPost from 'components/data/query-reader-post';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QuerySupportArticleAlternates from 'components/data/query-support-article-alternates';
-import { isDefaultLocale } from 'lib/i18n-utils';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { getPostByKey } from 'state/reader/posts/selectors';
-import { SUPPORT_BLOG_ID } from 'blocks/inline-help/constants';
-import getInlineSupportArticlePostId from 'state/selectors/get-inline-support-article-post-id';
-import getInlineSupportArticleActionUrl from 'state/selectors/get-inline-support-article-action-url';
-import getInlineSupportArticleActionLabel from 'state/selectors/get-inline-support-article-action-label';
-import getInlineSupportArticleActionIsExternal from 'state/selectors/get-inline-support-article-action-is-external';
-import { closeSupportArticleDialog as closeDialog } from 'state/inline-support-article/actions';
+import EmbedContainer from 'calypso/components/embed-container';
+import Emojify from 'calypso/components/emojify';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QuerySupportArticleAlternates from 'calypso/components/data/query-support-article-alternates';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
+import getInlineSupportArticlePostId from 'calypso/state/selectors/get-inline-support-article-post-id';
+import getInlineSupportArticleActionUrl from 'calypso/state/selectors/get-inline-support-article-action-url';
+import getInlineSupportArticleActionLabel from 'calypso/state/selectors/get-inline-support-article-action-label';
+import getInlineSupportArticleActionIsExternal from 'calypso/state/selectors/get-inline-support-article-action-is-external';
+import { closeSupportArticleDialog as closeDialog } from 'calypso/state/inline-support-article/actions';
 import {
 	getSupportArticleAlternatesForLocale,
 	isRequestingSupportArticleAlternates,
 	shouldRequestSupportArticleAlternates,
-} from 'state/support-articles-alternates/selectors';
+} from 'calypso/state/support-articles-alternates/selectors';
 
 /**
  * Style Dependencies

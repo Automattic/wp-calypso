@@ -11,17 +11,17 @@ import { camelCase, debounce, difference, get, isEmpty, keys, map, pick } from '
 /**
  * Internal dependencies
  */
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { Input } from 'my-sites/domains/components/form';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { Input } from 'calypso/my-sites/domains/components/form';
 import { disableSubmitButton } from './with-contact-details-validation';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 const ciraAgreementUrl = 'https://cira.ca/agree';

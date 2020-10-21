@@ -6,15 +6,15 @@ import { compact } from 'lodash';
 /**
  * Image dependencies
  */
-import classicBrightImg from 'assets/images/color-schemes/color-scheme-thumbnail-classic-bright.svg';
-import classicBlueImg from 'assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
-import powderSnowImg from 'assets/images/color-schemes/color-scheme-thumbnail-powder-snow.svg';
-import nightfallImg from 'assets/images/color-schemes/color-scheme-thumbnail-nightfall.svg';
-import sakuraImg from 'assets/images/color-schemes/color-scheme-thumbnail-sakura.svg';
-import oceanImg from 'assets/images/color-schemes/color-scheme-thumbnail-ocean.svg';
-import sunsetImg from 'assets/images/color-schemes/color-scheme-thumbnail-sunset.svg';
-import midnightImg from 'assets/images/color-schemes/color-scheme-thumbnail-midnight.svg';
-import contrastImg from 'assets/images/color-schemes/color-scheme-thumbnail-contrast.svg';
+import classicBrightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-bright.svg';
+import classicBlueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
+import powderSnowImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-powder-snow.svg';
+import nightfallImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-nightfall.svg';
+import sakuraImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sakura.svg';
+import oceanImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-ocean.svg';
+import sunsetImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sunset.svg';
+import midnightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-midnight.svg';
+import contrastImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-contrast.svg';
 
 /**
  * !! Note !!

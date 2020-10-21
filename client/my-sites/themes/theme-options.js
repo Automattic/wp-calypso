@@ -27,7 +27,6 @@ import {
 	getThemeSupportUrl,
 	isPremiumThemeAvailable,
 	isThemeActive,
-	isThemeAvailableOnJetpackSite,
 	isThemeGutenbergFirst,
 	isThemePremium,
 } from 'state/themes/selectors';
@@ -92,9 +91,7 @@ function getAllThemeOptions() {
 			! getCurrentUser( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
 			isThemeActive( state, themeId, siteId ) ||
-			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			( isJetpackSite( state, siteId ) &&
-				! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ),
+			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
 	};
 
 	const deleteTheme = {
@@ -135,8 +132,6 @@ function getAllThemeOptions() {
 			( isThemePremium( state, themeId ) &&
 				isJetpackSite( state, siteId ) &&
 				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			( isJetpackSite( state, siteId ) &&
-				! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ) ||
 			isThemeGutenbergFirst( state, themeId ),
 	};
 

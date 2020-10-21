@@ -11,7 +11,7 @@ import { get, noop } from 'lodash';
  */
 import { Button, Card } from '@automattic/components';
 import EmbedDialog from '../dialog';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 class EmbedDialogExample extends PureComponent {
 	static propTypes = {

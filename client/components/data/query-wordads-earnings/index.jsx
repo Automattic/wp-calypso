@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestWordadsEarnings } from 'state/wordads/earnings/actions';
+import { requestWordadsEarnings } from 'calypso/state/wordads/earnings/actions';
 
 class QueryWordadsEarnings extends Component {
 	static propTypes = {

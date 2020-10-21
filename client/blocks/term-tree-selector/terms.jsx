@@ -2,43 +2,43 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import { AutoSizer, List } from '@automattic/react-virtualized';
+import { connect } from 'react-redux';
 import {
 	debounce,
 	difference,
+	filter,
 	includes,
 	isEqual,
-	filter,
 	map,
 	memoize,
 	range,
 	reduce,
 } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormRadio from 'components/forms/form-radio';
-import FormLabel from 'components/forms/form-label';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import NoResults from './no-results';
-import Search from './search';
-import { decodeEntities } from 'lib/formatting';
-import QueryTerms from 'components/data/query-terms';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 import {
-	isRequestingTermsForQueryIgnoringPage,
-	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
-import PodcastIndicator from 'components/podcast-indicator';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
+	getTermsLastPageForQuery,
+	isRequestingTermsForQueryIgnoringPage,
+} from 'calypso/state/terms/selectors';
+import NoResults from './no-results';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import Search from './search';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -342,13 +342,13 @@ class TermTreeSelectorList extends Component {
 
 		return (
 			<div key={ itemId } ref={ setItemRef } className="term-tree-selector__list-item">
-				<label>
+				<FormLabel>
 					{ input }
 					<span className="term-tree-selector__label">
 						{ name }
 						{ isPodcastingCategory && <PodcastIndicator size={ 18 } /> }
 					</span>
-				</label>
+				</FormLabel>
 				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
 						{ children.map( ( child ) => this.renderItem( child, true ) ) }

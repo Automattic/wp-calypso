@@ -8,13 +8,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
 	MANAGE_PURCHASES_AUTOMATIC_RENEWAL,
 	MANAGE_PURCHASES_FAQ_CANCELLING,
-} from 'lib/url/support';
-import Gridicon from 'components/gridicon';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/lib/url/support';
+import Gridicon from 'calypso/components/gridicon';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 class TermsOfService extends React.Component {
 	static displayName = 'TermsOfService';

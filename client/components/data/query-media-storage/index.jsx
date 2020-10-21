@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingMediaStorage } from 'state/sites/media-storage/selectors';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
+import { isRequestingMediaStorage } from 'calypso/state/sites/media-storage/selectors';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 
 class QueryMediaStorage extends Component {
 	componentDidMount() {

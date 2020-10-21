@@ -8,7 +8,7 @@ import { shallow } from 'enzyme';
  * Mock dependencies
  */
 jest.mock( 'lib/jetpack/is-jetpack-cloud' );
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 // NOTE: There's a repeating pattern in these tests that links to WordPress.com
 //       aren't rendered in the context of Jetpack Cloud. Best I can tell, this

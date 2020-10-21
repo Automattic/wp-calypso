@@ -100,16 +100,39 @@ export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
-export type PaymentProcessorResponse = unknown;
+export type PaymentProcessorResponseData = unknown;
+
+export type PaymentProcessorSuccess = {
+	type: PaymentProcessorResponseType.SUCCESS;
+	payload: PaymentProcessorResponseData;
+};
+export type PaymentProcessorRedirect = {
+	type: PaymentProcessorResponseType.REDIRECT;
+	payload: string | undefined;
+};
+export type PaymentProcessorManual = {
+	type: PaymentProcessorResponseType.MANUAL;
+	payload: unknown;
+};
+
+export type PaymentProcessorResponse =
+	| PaymentProcessorSuccess
+	| PaymentProcessorRedirect
+	| PaymentProcessorManual;
 
 export type PaymentProcessorFunction = (
-	...args: unknown[]
+	submitData: unknown
 ) => Promise< PaymentProcessorResponse >;
+
+export enum PaymentProcessorResponseType {
+	SUCCESS = 'SUCCESS',
+	REDIRECT = 'REDIRECT',
+	MANUAL = 'MANUAL',
+}
 
 export enum TransactionStatus {
 	NOT_STARTED = 'not-started',
 	PENDING = 'pending',
-	AUTHORIZING = 'authorizing',
 	COMPLETE = 'complete',
 	REDIRECTING = 'redirecting',
 	ERROR = 'error',
@@ -118,14 +141,14 @@ export enum TransactionStatus {
 export interface TransactionStatusState {
 	transactionStatus: TransactionStatus;
 	previousTransactionStatus: TransactionStatus;
-	transactionLastResponse: PaymentProcessorResponse | null;
+	transactionLastResponse: PaymentProcessorResponseData | null;
 	transactionError: string | null;
 	transactionRedirectUrl: string | null;
 }
 
 export interface TransactionStatusPayloads {
 	status: TransactionStatus;
-	response?: PaymentProcessorResponse;
+	response?: PaymentProcessorResponseData;
 	error?: string;
 	url?: string;
 }
@@ -138,11 +161,6 @@ export interface TransactionStatusPayloadNotStarted
 export interface TransactionStatusPayloadPending
 	extends Pick< TransactionStatusPayloads, 'status' > {
 	status: TransactionStatus.PENDING;
-}
-
-export interface TransactionStatusPayloadAuthorizing
-	extends Required< Pick< TransactionStatusPayloads, 'status' | 'response' > > {
-	status: TransactionStatus.AUTHORIZING;
 }
 
 export interface TransactionStatusPayloadComplete
@@ -163,7 +181,6 @@ export interface TransactionStatusPayloadError
 export type TransactionStatusPayload =
 	| TransactionStatusPayloadNotStarted
 	| TransactionStatusPayloadPending
-	| TransactionStatusPayloadAuthorizing
 	| TransactionStatusPayloadComplete
 	| TransactionStatusPayloadRedirecting
 	| TransactionStatusPayloadError;
@@ -173,10 +190,9 @@ export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', Transac
 export interface TransactionStatusManager extends TransactionStatusState {
 	resetTransaction: () => void;
 	setTransactionError: ( message: string ) => void;
-	setTransactionComplete: ( response: PaymentProcessorResponse ) => void;
+	setTransactionComplete: ( response: PaymentProcessorResponseData ) => void;
 	setTransactionPending: () => void;
 	setTransactionRedirecting: ( url: string ) => void;
-	setTransactionAuthorizing: ( response: PaymentProcessorResponse ) => void;
 }
 
 export interface LineItemsState {

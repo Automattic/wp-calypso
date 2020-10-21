@@ -11,19 +11,19 @@ import { get, includes, times, first } from 'lodash';
 /**
  * Internal dependencies
  */
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
-import DomainSuggestion from 'components/domains/domain-suggestion';
-import FeaturedDomainSuggestions from 'components/domains/featured-domain-suggestions';
-import { isDomainMappingFree, isNextDomainFree } from 'lib/cart-values/cart-items';
-import Notice from 'components/notice';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
+import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
+import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
+import Notice from 'calypso/components/notice';
 import { Card, ScreenReaderText } from '@automattic/components';
-import { getTld } from 'lib/domains';
-import { domainAvailability } from 'lib/domains/constants';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
-import { hideSitePreview } from 'state/signup/preview/actions';
-import { isSitePreviewVisible } from 'state/signup/preview/selectors';
+import { getTld } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
+import { hideSitePreview } from 'calypso/state/signup/preview/actions';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 
 /**
  * Style dependencies
@@ -118,7 +118,12 @@ class DomainSearchResults extends React.Component {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			// If the domain is available we shouldn't offer to let people purchase mappings for it.
-			if ( TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE === lastDomainStatus ) {
+			if (
+				includes(
+					[ TLD_NOT_SUPPORTED, TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE ],
+					lastDomainStatus
+				)
+			) {
 				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
 					offer = translate(
 						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
@@ -143,10 +148,13 @@ class DomainSearchResults extends React.Component {
 			}
 
 			let domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
-				? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
-						args: { tld: getTld( domain ) },
-						components: { strong: <strong /> },
-				  } )
+				? translate(
+						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
+						{
+							args: { tld: getTld( domain ) },
+							components: { strong: <strong /> },
+						}
+				  )
 				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
 						args: { domain },
 						components: { strong: <strong /> },

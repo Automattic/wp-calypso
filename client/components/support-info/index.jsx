@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
+import InfoPopover from 'calypso/components/info-popover';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies

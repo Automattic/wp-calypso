@@ -6,33 +6,33 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
-} from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
-} from 'components/domains/domain-registration-suggestion/utility';
+} from 'calypso/components/domains/domain-registration-suggestion/utility';
 import { ProgressBar } from '@automattic/components';
-import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/domains';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductsList } from 'state/products-list/selectors';
-import Badge from 'components/badge';
+import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import Badge from 'calypso/components/badge';
 import PremiumBadge from '../premium-badge';
-import InfoPopover from 'components/info-popover';
-import { HTTPS_SSL } from 'lib/url/support';
+import InfoPopover from 'calypso/components/info-popover';
+import { HTTPS_SSL } from 'calypso/lib/url/support';
 
 const NOTICE_GREEN = '#4ab866';
 

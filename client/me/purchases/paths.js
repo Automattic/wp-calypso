@@ -4,6 +4,8 @@ export const addCreditCard = purchasesRoot + '/add-credit-card';
 
 export const billingHistory = purchasesRoot + '/billing';
 
+export const paymentMethods = purchasesRoot + '/payment-methods';
+
 export const upcomingCharges = purchasesRoot + '/upcoming';
 
 export const pendingPayments = purchasesRoot + '/pending';

@@ -11,9 +11,9 @@ import { merge } from 'lodash';
  * Internal dependencies
  */
 import resizableView from '../../resizable-view';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { stringify, parse } from 'lib/shortcode';
-import Shortcode from 'blocks/shortcode';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { stringify, parse } from 'calypso/lib/shortcode';
+import Shortcode from 'calypso/blocks/shortcode';
 
 function VideoView( { siteId, content, width } ) {
 	if ( ! siteId || ! width ) {

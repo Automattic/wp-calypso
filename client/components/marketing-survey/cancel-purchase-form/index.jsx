@@ -11,29 +11,29 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { submitSurvey } from 'lib/purchases/actions';
+import config from 'calypso/config';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { Dialog, Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { recordTracksEvent } from 'state/analytics/actions';
-import getSiteImportEngine from 'state/selectors/get-site-import-engine';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
-import isPrecancellationChatAvailable from 'state/happychat/selectors/is-precancellation-chat-available';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import HappychatButton from 'components/happychat/button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
+import isPrecancellationChatAvailable from 'calypso/state/happychat/selectors/is-precancellation-chat-available';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import HappychatButton from 'calypso/components/happychat/button';
 import * as steps from './steps';
 import initialSurveyState from './initial-survey-state';
 import BusinessATStep from './step-components/business-at-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
-import { getName, isRefundable } from 'lib/purchases';
-import { isGoogleApps } from 'lib/products-values';
+import { getName, isRefundable } from 'calypso/lib/purchases';
+import { isGoogleApps } from 'calypso/lib/products-values';
 import { radioOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
@@ -45,9 +45,9 @@ import isSurveyFilledIn from './is-survey-filled-in';
 import stepsForProductAndSurvey from './steps-for-product-and-survey';
 import enrichedSurveyData from './enriched-survey-data';
 import { CANCEL_FLOW_TYPE } from './constants';
-import { getDowngradePlanRawPrice } from 'state/purchases/selectors';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
+import { getDowngradePlanRawPrice } from 'calypso/state/purchases/selectors';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 
 /**
  * Style dependencies

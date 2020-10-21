@@ -5,12 +5,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import DomainProductPrice from 'components/domains/domain-product-price';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import { Button } from '@automattic/components';
 
 /**

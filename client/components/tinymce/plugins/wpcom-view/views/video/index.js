@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { next } from 'lib/shortcode';
+import { next } from 'calypso/lib/shortcode';
 import VideoView from './view';
 
 export function match( content ) {

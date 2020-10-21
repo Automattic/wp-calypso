@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import GSuiteDomainsSelect from './domains-select';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
@@ -36,6 +37,7 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 		lastName: { value: lastName, error: lastNameError },
 		mailBox: { value: mailBox, error: mailBoxError },
 		domain: { value: domain, error: domainError },
+		password: { value: password, error: passwordError },
 	},
 } ) => {
 	const translate = useTranslate();
@@ -43,18 +45,20 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 	// use this to control setting the "touched" states below. That way the user will not see a bunch of
 	// "This field is required" errors pop at once
 	const wasValidated =
-		[ firstName, lastName, mailBox ].some( ( value ) => '' !== value ) ||
-		[ firstNameError, lastNameError, mailBoxError, domainError ].some(
+		[ firstName, lastName, mailBox, password ].some( ( value ) => '' !== value ) ||
+		[ firstNameError, lastNameError, mailBoxError, passwordError, domainError ].some(
 			( value ) => null !== value
 		);
 
 	const [ firstNameFieldTouched, setFirstNameFieldTouched ] = useState( false );
 	const [ lastNameFieldTouched, setLastNameFieldTouched ] = useState( false );
 	const [ mailBoxFieldTouched, setMailBoxFieldTouched ] = useState( false );
+	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 
 	const hasMailBoxError = mailBoxFieldTouched && null !== mailBoxError;
 	const hasFirstNameError = firstNameFieldTouched && null !== firstNameError;
 	const hasLastNameError = lastNameFieldTouched && null !== lastNameError;
+	const hasPasswordError = passwordFieldTouched && null !== passwordError;
 
 	const emailAddressPlaceholder = translate( 'Email' );
 
@@ -162,6 +166,26 @@ const GSuiteNewUser: FunctionComponent< Props > = ( {
 						</div>
 
 						{ hasMailBoxError && <FormInputValidation text={ mailBoxError } isError /> }
+					</div>
+
+					<div className="gsuite-new-user-list__new-user-password-container">
+						<FormPasswordInput
+							autoCapitalize="off"
+							autoCorrect="off"
+							placeholder={ translate( 'Password' ) }
+							value={ password }
+							maxLength={ 100 }
+							isError={ hasPasswordError }
+							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+								onUserValueChange( 'password', event.target.value );
+							} }
+							onBlur={ () => {
+								setPasswordFieldTouched( wasValidated );
+							} }
+							onKeyUp={ onReturnKeyPress }
+						/>
+
+						{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
 					</div>
 				</div>
 			</FormFieldset>

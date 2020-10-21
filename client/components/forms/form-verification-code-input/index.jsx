@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import constants from 'me/constants';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import constants from 'calypso/me/constants';
 
 /**
  * Style dependencies

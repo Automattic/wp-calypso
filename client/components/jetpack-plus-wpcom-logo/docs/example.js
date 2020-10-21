@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackPlusWpComLogo from 'components/jetpack-plus-wpcom-logo';
+import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 
 export default function JetpackPlusWpComLogoExample() {
 	return (

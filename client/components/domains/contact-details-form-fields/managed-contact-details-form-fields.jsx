@@ -12,22 +12,22 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getCountryStates } from 'state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import { countries } from 'components/phone-input/data';
-import { toIcannFormat } from 'components/phone-input/phone-number';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import { countries } from 'calypso/components/phone-input/data';
+import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import getCountries from 'state/selectors/get-countries';
-import QueryDomainCountries from 'components/data/query-countries/domains';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from './custom-form-fieldsets/constants';
 import { getPostCodeLabelText } from './custom-form-fieldsets/utils';
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
+import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 
 /**
  * Style dependencies

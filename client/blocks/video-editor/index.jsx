@@ -12,13 +12,13 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { ProgressBar } from '@automattic/components';
-import Notice from 'components/notice';
-import DetailPreviewVideo from 'post-editor/media-modal/detail/detail-preview-video';
+import Notice from 'calypso/components/notice';
+import DetailPreviewVideo from 'calypso/post-editor/media-modal/detail/detail-preview-video';
 import VideoEditorControls from './video-editor-controls';
-import { updatePoster } from 'state/editor/video-editor/actions';
-import getPosterUploadProgress from 'state/selectors/get-poster-upload-progress';
-import getPosterUrl from 'state/selectors/get-poster-url';
-import shouldShowVideoEditorError from 'state/selectors/should-show-video-editor-error';
+import { updatePoster } from 'calypso/state/editor/video-editor/actions';
+import getPosterUploadProgress from 'calypso/state/selectors/get-poster-upload-progress';
+import getPosterUrl from 'calypso/state/selectors/get-poster-url';
+import shouldShowVideoEditorError from 'calypso/state/selectors/should-show-video-editor-error';
 
 /**
  * Style dependencies

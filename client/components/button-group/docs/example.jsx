@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ButtonGroup from 'components/button-group';
+import ButtonGroup from 'calypso/components/button-group';
 import { Button, Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 class Buttons extends React.PureComponent {
 	static displayName = 'ButtonGroup';

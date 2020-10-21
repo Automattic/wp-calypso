@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 
@@ -12,11 +12,11 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 
-import AsyncLoad from 'components/async-load';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import EditorFeaturedImagePreviewContainer from 'post-editor/editor-featured-image/preview-container';
-import RemoveButton from 'components/remove-button';
-import { requestMediaItem, setMediaLibrarySelectedItems } from 'state/media/actions';
+import AsyncLoad from 'calypso/components/async-load';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EditorFeaturedImagePreviewContainer from 'calypso/post-editor/editor-featured-image/preview-container';
+import RemoveButton from 'calypso/components/remove-button';
+import { requestMediaItem, setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 
 class ProductImagePicker extends Component {
 	static propTypes = {
@@ -112,7 +112,7 @@ class ProductImagePicker extends Component {
 		return (
 			<div className="dialog__product-image-picker">
 				<AsyncLoad
-					require="post-editor/media-modal"
+					require="calypso/post-editor/media-modal"
 					siteId={ siteId }
 					onClose={ this.setImage }
 					enabledFilters={ [ 'images' ] }

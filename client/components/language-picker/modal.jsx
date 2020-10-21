@@ -22,23 +22,23 @@ import {
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { Dialog } from '@automattic/components';
-import QueryLanguageNames from 'components/data/query-language-names';
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
-import Search from 'components/search';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import QueryLanguageNames from 'calypso/components/data/query-language-names';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import LanguagePickerItemTooltip from './tooltip';
-import getLocalizedLanguageNames from 'state/selectors/get-localized-language-names';
+import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils/utils';
-import { requestGeoLocation } from 'state/data-getters';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
+import { requestGeoLocation } from 'calypso/state/data-getters';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

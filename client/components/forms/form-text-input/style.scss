@@ -12,8 +12,7 @@
 
 		input[type='url']#{&},
 		input[type='password']#{&},
-		input[type='email']#{&},
-		input[type='search']#{&} {
+		input[type='email']#{&} {
 			/*!rtl:ignore*/
 			direction: ltr;
 		}

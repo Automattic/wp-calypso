@@ -6,6 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'calypso/config';
 import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
@@ -294,7 +295,9 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
-	buttonLabel: translate( 'Get CRM' ),
+	buttonLabel: isEnabled( 'plans/alternate-selector' )
+		? translate( 'Get Jetpack CRM' )
+		: translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem(
 			[
@@ -333,6 +336,7 @@ export const EXTERNAL_PRODUCTS_LIST = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM
 // External Product slugs to SelectorProduct.
 export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, SelectorProduct > = {
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
+	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
 };
 
 /**

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Toggle from 'components/forms/form-toggle';
+import Toggle from 'calypso/components/forms/form-toggle';
 
 /**
  * Style dependencies

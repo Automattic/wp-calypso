@@ -1,26 +1,26 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import Gridicon from 'calypso/components/gridicon';
+import UsersStore from 'calypso/lib/users/store';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ScreenReaderText } from '@automattic/components';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import UsersStore from 'lib/users/store';
 
 class SharingConnection extends Component {
 	static propTypes = {
@@ -214,7 +214,11 @@ class SharingConnection extends Component {
 		}
 
 		if ( content.length ) {
-			return <label className="sharing-connection__account-sitewide-connection">{ content }</label>;
+			return (
+				<FormLabel className="sharing-connection__account-sitewide-connection">
+					{ content }
+				</FormLabel>
+			);
 		}
 	}
 

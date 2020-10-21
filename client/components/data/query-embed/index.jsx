@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestEmbed } from 'state/embeds/actions';
+import { requestEmbed } from 'calypso/state/embeds/actions';
 
 export default function QueryEmbed( { siteId, url } ) {
 	const dispatch = useDispatch();

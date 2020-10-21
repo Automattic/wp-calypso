@@ -18,12 +18,12 @@ import ActionButtons from '../action-buttons';
  * Mocked dependencies
  */
 jest.mock( 'state/ui/selectors' );
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 jest.mock( 'state/selectors/get-does-rewind-need-credentials' );
-import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 
-import * as record from 'state/analytics/actions/record';
+import * as record from 'calypso/state/analytics/actions/record';
 const recordTracksEvent = jest.spyOn( record, 'recordTracksEvent' );
 
 function render( component ) {

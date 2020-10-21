@@ -22,7 +22,7 @@ import QueryBillingTransactions from 'calypso/components/data/query-billing-tran
 import './style.scss';
 
 const UpcomingCharges = ( { translate } ) => (
-	<Main>
+	<Main className="upcoming-charges is-wide-layout">
 		<DocumentHead title={ translate( 'Upcoming Charges' ) } />
 		<PageViewTracker path="/me/purchases/upcoming" title="Me > Upcoming Charges" />
 		<MeSidebarNavigation />

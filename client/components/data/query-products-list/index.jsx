@@ -7,8 +7,8 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isProductsListFetching } from 'state/products-list/selectors';
-import { requestProductsList } from 'state/products-list/actions';
+import { isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { requestProductsList } from 'calypso/state/products-list/actions';
 
 const request = () => ( dispatch, getState ) => {
 	if ( ! isProductsListFetching( getState() ) ) {

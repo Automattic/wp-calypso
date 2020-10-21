@@ -9,11 +9,11 @@ import { map, mapValues, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import QueryPosts from 'components/data/query-posts';
+import QueryPosts from 'calypso/components/data/query-posts';
 import { Card } from '@automattic/components';
 import PostStatus from '../';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getPostsForQuery } from 'state/posts/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getPostsForQuery } from 'calypso/state/posts/selectors';
 
 function PostStatusExample( { queries, primarySiteId, primarySiteUrl, globalIdByQueryLabel } ) {
 	return (

@@ -260,12 +260,6 @@ const sections = [
 		enableLoggedOut: true,
 		group: 'me',
 	},
-	{
-		name: 'post-editor',
-		paths: [ '/post', '/page', '/edit' ],
-		module: 'calypso/post-editor',
-		group: 'editor',
-	},
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	{
 		name: 'reader',
@@ -379,7 +373,7 @@ const sections = [
 	},
 	{
 		name: 'gutenberg-editor',
-		paths: [ '/block-editor', '/site-editor' ],
+		paths: [ '/block-editor', '/site-editor', '/post', '/page', '/edit' ],
 		module: 'calypso/gutenberg/editor',
 		group: 'gutenberg',
 		trackLoadPerformance: true,

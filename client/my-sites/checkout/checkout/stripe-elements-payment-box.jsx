@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CreditCardPaymentBox from './credit-card-payment-box';
-import { StripeHookProvider } from 'lib/stripe';
+import { StripeHookProvider } from 'calypso/lib/stripe';
 
 export function StripeElementsPaymentBox( {
 	translate,

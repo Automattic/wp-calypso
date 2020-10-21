@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import DropZone from 'components/drop-zone';
+import DropZone from 'calypso/components/drop-zone';
 
 const DropZoneExample = localize(
 	class extends React.PureComponent {

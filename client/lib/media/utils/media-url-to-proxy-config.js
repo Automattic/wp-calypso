@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts } from 'lib/url';
+import { getUrlParts } from 'calypso/lib/url';
 
 /**
  * Given a media file URL (possibly served through photon) and site slug, returns information

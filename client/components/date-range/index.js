@@ -6,16 +6,16 @@ import { noop, isNil, isNull, has } from 'lodash';
 import { DateUtils } from 'react-day-picker';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import DatePicker from 'components/date-picker';
-import Popover from 'components/popover';
+import DatePicker from 'calypso/components/date-picker';
+import Popover from 'calypso/components/popover';
 import { Button } from '@automattic/components';
 import DateRangeInputs from './inputs';
 import DateRangeHeader from './header';

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'calypso/components/popover';
 
 const isInvalidTarget = ( target ) => {
 	return target.tagName === 'HR';

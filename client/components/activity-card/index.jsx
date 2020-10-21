@@ -10,24 +10,24 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { backupDownloadPath, backupRestorePath } from 'my-sites/backup/paths';
+import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { Card } from '@automattic/components';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isSuccessfulRealtimeBackup } from 'lib/jetpack/backup-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { settingsPath } from 'lib/jetpack/paths';
-import { withApplySiteOffset } from 'components/site-offset';
-import { withLocalizedMoment } from 'components/localized-moment';
-import ActivityActor from 'components/activity-card/activity-actor';
-import ActivityDescription from 'components/activity-card/activity-description';
-import ActivityMedia from 'components/activity-card/activity-media';
-import Button from 'components/forms/form-button';
-import ExternalLink from 'components/external-link';
-import getAllowRestore from 'state/selectors/get-allow-restore';
-import getDoesRewindNeedCredentials from 'state/selectors/get-does-rewind-need-credentials';
-import Gridicon from 'components/gridicon';
-import PopoverMenu from 'components/popover/menu';
-import QueryRewindState from 'components/data/query-rewind-state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { withApplySiteOffset } from 'calypso/components/site-offset';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ActivityActor from 'calypso/components/activity-card/activity-actor';
+import ActivityDescription from 'calypso/components/activity-card/activity-description';
+import ActivityMedia from 'calypso/components/activity-card/activity-media';
+import Button from 'calypso/components/forms/form-button';
+import ExternalLink from 'calypso/components/external-link';
+import getAllowRestore from 'calypso/state/selectors/get-allow-restore';
+import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
+import Gridicon from 'calypso/components/gridicon';
+import PopoverMenu from 'calypso/components/popover/menu';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import StreamsMediaPreview from './activity-card-streams-media-preview';
 
 /**
@@ -35,7 +35,7 @@ import StreamsMediaPreview from './activity-card-streams-media-preview';
  */
 import './style.scss';
 import downloadIcon from './download-icon.svg';
-import missingCredentialsIcon from 'components/jetpack/daily-backup-status/missing-credentials.svg';
+import missingCredentialsIcon from 'calypso/components/jetpack/daily-backup-status/missing-credentials.svg';
 
 class ActivityCard extends Component {
 	static propTypes = {

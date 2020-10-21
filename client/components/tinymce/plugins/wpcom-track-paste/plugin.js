@@ -7,8 +7,8 @@ import tinymce from 'tinymce/tinymce';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { pasteEvent } from 'state/editor/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { pasteEvent } from 'calypso/state/editor/actions';
 import { SOURCE_UNKNOWN, SOURCE_GOOGLE_DOCS } from './sources';
 
 const debug = debugFactory( 'calypso:tinymce-plugins:wpcom-track-paste' );

@@ -9,9 +9,9 @@ import { find, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import Translatable from './translatable';
-import { languages } from 'languages';
-import userSettings from 'lib/user-settings';
-import { isCommunityTranslatorEnabled } from 'components/community-translator/utils';
+import { languages } from 'calypso/languages';
+import userSettings from 'calypso/lib/user-settings';
+import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
 
 /**
  * Style dependencies

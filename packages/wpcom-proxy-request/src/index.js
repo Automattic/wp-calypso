@@ -351,9 +351,15 @@ function onload() {
 function onmessage( e ) {
 	debug( 'onmessage' );
 
-	// safeguard...
+	// Filter out messages from different origins
 	if ( e.origin !== proxyOrigin ) {
 		debug( 'ignoring message... %o !== %o', e.origin, proxyOrigin );
+		return;
+	}
+
+	// Filter out messages from different iframes
+	if ( e.source !== iframe.contentWindow ) {
+		debug( 'ignoring message... iframe elements do not match' );
 		return;
 	}
 

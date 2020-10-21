@@ -18,7 +18,6 @@ import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-moda
 import config from 'config';
 import { isPartnerPurchase } from 'lib/purchases';
 import JetpackReferrerMessage from './jetpack-referrer-message';
-import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import { connectOptions } from './theme-options';
 import UpsellNudge from 'blocks/upsell-nudge';
 import {
@@ -33,12 +32,8 @@ import { addTracking } from './helpers';
 import { getCurrentPlan, hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
 import { getByPurchaseId } from 'state/purchases/selectors';
 import { getLastThemeQuery, getThemesFoundForQuery } from 'state/themes/selectors';
-import {
-	hasJetpackSiteJetpackThemes,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-	isJetpackSiteMultiSite,
-} from 'state/sites/selectors';
 import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { isJetpackSiteMultiSite } from 'state/sites/selectors';
 
 const ConnectedThemesSelection = connectOptions( ( props ) => {
 	return (
@@ -62,7 +57,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		emptyContent,
 		filter,
 		getScreenshotOption,
-		hasJetpackThemes,
 		purchase,
 		showWpcomThemesList,
 		search,
@@ -84,9 +78,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				analyticsPageTitle={ analyticsPageTitle }
 			/>
 		);
-	}
-	if ( ! hasJetpackThemes ) {
-		return <JetpackUpgradeMessage siteId={ siteId } />;
 	}
 
 	const isPartnerPlan = purchase && isPartnerPurchase( purchase );
@@ -164,8 +155,7 @@ export default connect( ( state, { siteId, tier } ) => {
 	const siteSlug = getSelectedSiteSlug( state );
 	const currentPlan = getCurrentPlan( state, siteId );
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
-	const showWpcomThemesList =
-		hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId ) && ! isMultisite;
+	const showWpcomThemesList = ! isMultisite;
 	let emptyContent = null;
 	if ( showWpcomThemesList ) {
 		const siteQuery = getLastThemeQuery( state, siteId );
@@ -176,7 +166,6 @@ export default connect( ( state, { siteId, tier } ) => {
 	}
 	return {
 		currentPlan,
-		hasJetpackThemes: hasJetpackSiteJetpackThemes( state, siteId ),
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		tier,
 		showWpcomThemesList,

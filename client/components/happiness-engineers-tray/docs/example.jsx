@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import HappinessEngineersTray from 'components/happiness-engineers-tray';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 
 function HappinessEngineersTrayExample() {
 	return <HappinessEngineersTray />;

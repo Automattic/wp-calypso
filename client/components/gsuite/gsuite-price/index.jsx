@@ -9,8 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import { getAnnualPrice, getMonthlyPrice } from 'lib/gsuite';
+import Badge from 'calypso/components/badge';
+import { getAnnualPrice, getMonthlyPrice } from 'calypso/lib/gsuite';
 
 /**
  * Style dependencies

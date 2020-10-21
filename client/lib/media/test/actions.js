@@ -15,7 +15,7 @@ import { DUMMY_API_RESPONSE, DUMMY_QUERY, DUMMY_SITE_ID } from './fixtures';
 import { stubs } from './mocks/lib/wp';
 
 jest.mock( 'lib/media/store', () => ( {
-	dispatchToken: require( 'dispatcher' ).register( () => {} ),
+	dispatchToken: require( 'calypso/dispatcher' ).register( () => {} ),
 	get: () => require( './fixtures' ).DUMMY_ITEM,
 } ) );
 jest.mock( 'lib/user', () => () => {} );
@@ -46,7 +46,7 @@ describe( 'MediaActions', () => {
 	let MediaActions, sandbox, Dispatcher, savedCreateObjectURL;
 
 	beforeAll( function () {
-		Dispatcher = require( 'dispatcher' );
+		Dispatcher = require( 'calypso/dispatcher' );
 		MediaActions = require( '../actions' );
 	} );
 

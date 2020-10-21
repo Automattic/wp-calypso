@@ -8,14 +8,14 @@ import { map, take, filter } from 'lodash';
 /**
  * Internal Dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import Emojify from 'components/emojify';
-import resizeImageUrl from 'lib/resize-image-url';
-import cssSafeUrl from 'lib/css-safe-url';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
-import ReaderExcerpt from 'blocks/reader-excerpt';
-import { imageIsBigEnoughForGallery } from 'state/reader/posts/normalization-rules';
-import { READER_CONTENT_WIDTH } from 'state/reader/posts/sizes';
+import AutoDirection from 'calypso/components/auto-direction';
+import Emojify from 'calypso/components/emojify';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
+import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
+import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;

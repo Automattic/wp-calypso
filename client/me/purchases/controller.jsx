@@ -35,7 +35,7 @@ const userHasNoSites = ( state ) => getCurrentUserSiteCount( state ) <= 0;
 function noSites( context, analyticsPath ) {
 	setTitle( context );
 	context.primary = (
-		<Main>
+		<Main className="purchases__no-site is-wide-layout">
 			<PageViewTracker path={ analyticsPath } title="Purchases > No Sites" />
 			<PurchasesHeader section={ 'purchases' } />
 			<NoSitesMessage />
@@ -55,13 +55,13 @@ export function addCardDetails( context, next ) {
 	setTitle( context, titles.addCardDetails );
 
 	context.primary = (
-		<Main>
+		<Main className="purchases__add-cart-details is-wide-layout">
 			<AddCardDetails
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
 				purchaseListUrl={ purchasesRoot }
-				isFullWidth={ false }
+				isFullWidth={ true }
 			/>
 		</Main>
 	);
@@ -140,10 +140,11 @@ export function list( context, next ) {
 
 export function managePurchase( context, next ) {
 	setTitle( context, titles.managePurchase );
-	const classes = 'manage-purchase';
+	const classes = 'manage-purchase is-wide-layout';
 
 	context.primary = (
 		<Main className={ classes }>
+			<PageViewTracker path="/me/purchases/:site/:purchaseId" title="Purchases > Manage Purchase" />
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }

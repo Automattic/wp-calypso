@@ -14,6 +14,7 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import {
 	billingHistory,
+	paymentMethods,
 	upcomingCharges,
 	pendingPayments,
 	myMemberships,
@@ -34,6 +35,8 @@ const PurchasesHeader = ( { section, translate } ) => {
 		text = translate( 'Pending Payments' );
 	} else if ( section === 'memberships' ) {
 		text = translate( 'Other Sites' );
+	} else if ( section === 'payment-methods' ) {
+		text = translate( 'Payment Methods' );
 	}
 
 	return (
@@ -45,6 +48,10 @@ const PurchasesHeader = ( { section, translate } ) => {
 
 				<NavItem path={ billingHistory } selected={ section === 'billing' }>
 					{ translate( 'Billing History' ) }
+				</NavItem>
+
+				<NavItem path={ paymentMethods } selected={ section === 'payment-methods' }>
+					{ translate( 'Payment Methods' ) }
 				</NavItem>
 
 				<NavItem path={ upcomingCharges } selected={ section === 'upcoming' }>

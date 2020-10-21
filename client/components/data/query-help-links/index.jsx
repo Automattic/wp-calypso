@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestHelpLinks } from 'state/help/actions';
+import { requestHelpLinks } from 'calypso/state/help/actions';
 
 class QueryHelpLinks extends Component {
 	componentDidMount() {

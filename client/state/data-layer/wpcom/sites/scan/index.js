@@ -28,8 +28,10 @@ export const formatScanThreat = ( threat ) => ( {
 	signature: threat.signature,
 	description: threat.description,
 	status: threat.status,
-	firstDetected: new Date( threat.first_detected ),
-	fixedOn: new Date( threat.fixed_on ),
+	firstDetected: Number.isFinite( threat.first_detected )
+		? new Date( threat.first_detected )
+		: undefined,
+	fixedOn: Number.isFinite( threat.fixed_on ) ? new Date( threat.fixed_on ) : undefined,
 	fixable: threat.fixable,
 	fixerStatus: threat.fixer_status,
 	filename: threat.filename,

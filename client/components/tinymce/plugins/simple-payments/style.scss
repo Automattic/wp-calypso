@@ -239,11 +239,13 @@
 	}
 }
 
-.editor-simple-payments-modal__list-label {
+.editor-simple-payments-modal__list-label.form-label {
 	flex: auto;
 	min-width: 0;
 	font-family: $serif;
 	font-weight: 600;
+	font-size: 1rem;
+	margin-bottom: 0;
 
 	&.is-error {
 		color: var( --color-error );

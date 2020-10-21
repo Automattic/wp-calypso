@@ -9,24 +9,24 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import CartStore from 'lib/cart/store';
-import { fetchUsers } from 'lib/users/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
-import { getProductsList } from 'state/products-list/selectors';
-import NameserversStore from 'lib/domains/nameservers/store';
-import { fetchNameservers } from 'lib/domains/nameservers/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import StoreConnection from 'components/data/store-connection';
-import UsersStore from 'lib/users/store';
-import WapiDomainInfoStore from 'lib/domains/wapi-domain-info/store';
-import { fetchWapiDomainInfo } from 'lib/domains/wapi-domain-info/actions';
+import CartStore from 'calypso/lib/cart/store';
+import { fetchUsers } from 'calypso/lib/users/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import NameserversStore from 'calypso/lib/domains/nameservers/store';
+import { fetchNameservers } from 'calypso/lib/domains/nameservers/actions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import StoreConnection from 'calypso/components/data/store-connection';
+import UsersStore from 'calypso/lib/users/store';
+import WapiDomainInfoStore from 'calypso/lib/domains/wapi-domain-info/store';
+import { fetchWapiDomainInfo } from 'calypso/lib/domains/wapi-domain-info/actions';
 
 function getStateFromStores( props ) {
 	return {

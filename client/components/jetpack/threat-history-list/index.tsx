@@ -1,217 +1,191 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect, useDispatch, DefaultRootState } from 'react-redux';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import QueryJetpackScanHistory from 'components/data/query-jetpack-scan-history';
-import ThreatDialog from 'components/jetpack/threat-dialog';
-import ThreatItem from 'components/jetpack/threat-item';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteSlug, getSelectedSite } from 'state/ui/selectors';
-import isRequestingJetpackScanHistory from 'state/selectors/is-requesting-jetpack-scan-history';
-import getSiteScanHistory from 'state/selectors/get-site-scan-history';
-import contactSupportUrl from 'lib/jetpack/contact-support-url';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { useThreats } from 'lib/jetpack/use-threats';
-import { Threat } from 'components/jetpack/threat-item/types';
-import { Site } from 'my-sites/scan/types';
+import { useTranslate } from 'i18n-calypso';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isRequestingJetpackScanThreatCounts from 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts';
+import isRequestingJetpackScanHistory from 'calypso/state/selectors/is-requesting-jetpack-scan-history';
+import getSiteScanThreatCounts, {
+	JetpackScanThreatCounts,
+} from 'calypso/state/selectors/get-site-scan-threat-counts';
+import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
+import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
+import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
+import Pagination from 'calypso/components/pagination';
+import ThreatStatusFilter, { FilterValue, FilterOption } from './threat-status-filter';
+import ListItems, { ListItemsPlaceholder } from './list-items';
 
-/**
- * Style dependencies
- */
-import './style.scss';
+const THREATS_PER_PAGE = 10;
 
-type FilterValue = 'all' | 'fixed' | 'ignored';
-type FilterOption =
-	| {
-			value: 'all';
-			label: 'All';
-	  }
-	| {
-			value: 'fixed';
-			label: 'Fixed';
-	  }
-	| {
-			value: 'ignored';
-			label: 'Ignored';
-	  };
+const trackFilterChange = ( siteId: number, filter: string ) =>
+	recordTracksEvent( 'calypso_jetpack_scan_history_filter', {
+		site_id: siteId,
+		filter,
+	} );
 
-const filterOptions: FilterOption[] = [
-	{ value: 'all', label: 'All' },
-	{ value: 'fixed', label: 'Fixed' },
-	{ value: 'ignored', label: 'Ignored' },
-];
+const getFilteredThreatCount = (
+	threatCounts: JetpackScanThreatCounts,
+	filter: FilterValue
+): number => {
+	// In the context of threat history, "All" means "fixed or ignored"
+	if ( ! filter || filter === 'all' ) {
+		return ( threatCounts.fixed || 0 ) + ( threatCounts.ignored || 0 );
+	}
 
-interface ThreatStatusFilterProps {
-	isPlaceholder: boolean;
-	onSelect: ( ...args: any[] ) => void;
-	initialSelected: FilterValue;
-}
-
-const ThreatStatusFilter: React.FC< ThreatStatusFilterProps > = ( {
-	isPlaceholder,
-	onSelect,
-	initialSelected,
-} ) => {
-	return isPlaceholder ? (
-		<div className="threat-history-list__filters is-placeholder"></div>
-	) : (
-		<SimplifiedSegmentedControl
-			className="threat-history-list__filters"
-			options={ filterOptions }
-			onSelect={ onSelect }
-			initialSelected={ initialSelected }
-			primary
-		/>
-	);
+	return threatCounts[ filter ] || 0;
 };
 
-const mapStateToProps = ( state: DefaultRootState ) => {
-	const site = getSelectedSite( state ) as Site;
-	const siteId = site.ID;
-	const siteName = site.name;
-	const siteSlug = getSelectedSiteSlug( state ) as string;
-	const isRequestingHistory = isRequestingJetpackScanHistory( state, siteId );
-	const siteLogEntries = getSiteScanHistory( state, siteId );
+const getNoThreatsMessage = ( translate, filter ) => {
+	if ( ! filter || filter === '' ) {
+		return translate( 'So far, there are no archived threats on your site.' );
+	}
 
-	const showPlaceholders = !! isRequestingHistory && 0 === siteLogEntries.length;
-	const logEntries = showPlaceholders
-		? [
-				{ id: 1, status: 'fixed' },
-				{ id: 2, status: 'ignored' },
-				{ id: 3, status: 'fixed' },
-				{ id: 4, status: 'ignored' },
-		  ]
-		: siteLogEntries;
-	return {
-		siteId,
-		siteName,
-		siteSlug,
-		isRequestingHistory: showPlaceholders,
-		threats: logEntries as Threat[],
-	};
+	if ( filter === 'fixed' ) {
+		return translate( 'So far, there are no fixed threats on your site.', {
+			comment: '"fixed," as in the past tense of "to fix"',
+		} );
+	}
+
+	if ( filter === 'ignored' ) {
+		return translate( 'So far, there are no ignored threats on your site.' );
+	}
+
+	return null;
 };
 
-const mapDispatchToProps = { dispatchRecordTracksEvent: recordTracksEvent };
+const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => {
+	const translate = useTranslate();
+	const isMobile = useMobileBreakpoint();
 
-interface ExternalProps {
-	filter: FilterValue;
-}
-
-type ConnectedProps = typeof mapDispatchToProps & ReturnType< typeof mapStateToProps >;
-type Props = ExternalProps & ConnectedProps;
-
-const ThreatHistoryList: React.FC< Props > = ( {
-	siteId,
-	siteName,
-	siteSlug,
-	isRequestingHistory,
-	threats,
-	filter,
-	dispatchRecordTracksEvent,
-} ) => {
-	const { selectedThreat, setSelectedThreat, updateThreat, updatingThreats } = useThreats( siteId );
-	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const dispatch = useDispatch();
-	const handleOnFilterChange = React.useCallback(
-		( filterEntry: FilterOption ) => {
-			let filterValue: FilterValue | '' = filterEntry.value;
-			if ( 'all' === filterValue ) {
-				filterValue = '';
-			}
-			dispatchRecordTracksEvent( 'calypso_jetpack_scan_history_filter', {
-				site_id: siteId,
-				filter: filterValue,
-			} );
-			page.show( `/scan/history/${ siteSlug }/${ filterValue }` );
-		},
-		[ dispatchRecordTracksEvent, siteId, siteSlug ]
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const isRequestingThreatCounts = useSelector( ( state ) =>
+		isRequestingJetpackScanThreatCounts( state, siteId )
+	);
+	const threatCounts = useSelector( ( state ) => getSiteScanThreatCounts( state, siteId ) );
+	const hasThreatsInHistory =
+		threatCounts && Object.values( threatCounts ).some( ( c ) => c && c > 0 );
+	const filteredThreatCount = getFilteredThreatCount( threatCounts, filter );
+
+	const isRequestingThreatHistory = useSelector( ( state ) =>
+		isRequestingJetpackScanHistory( state, siteId )
 	);
 
-	const openDialog = React.useCallback(
-		( threat ) => {
-			const eventName = 'calypso_jetpack_scan_fixthreat_dialogopen';
-			dispatch(
-				recordTracksEvent( eventName, {
-					site_id: siteId,
-					threat_signature: threat.signature,
-				} )
-			);
-			setSelectedThreat( threat );
-			setShowThreatDialog( true );
-		},
-		[ dispatch, setSelectedThreat, siteId ]
-	);
+	const threats = useSelector( ( state ) => getSiteScanHistory( state, siteId ) );
+	const [ currentPage, setCurrentPage ] = useState( 1 );
+	const showPagination = ! isRequestingThreatCounts && filteredThreatCount > THREATS_PER_PAGE;
 
-	const closeDialog = React.useCallback( () => {
-		setShowThreatDialog( false );
-	}, [ setShowThreatDialog ] );
-
-	const fixThreat = React.useCallback( () => {
-		closeDialog();
-		updateThreat( 'fix' );
-	}, [ closeDialog, updateThreat ] );
-
-	const currentFilter = React.useMemo( () => {
-		if ( filter ) {
-			return filterOptions.find( ( { value } ) => value === filter ) || filterOptions[ 0 ];
-		}
-		return filterOptions[ 0 ];
-	}, [ filter ] );
-
-	const filteredEntries = React.useMemo( () => {
-		const { value: filterValue } = currentFilter;
-		if ( filterValue === 'all' ) {
+	const filteredThreats = useMemo( () => {
+		if ( ! filter || filter === 'all' ) {
 			return threats;
 		}
-		return threats.filter( ( entry ) => entry.status === filterValue );
-	}, [ currentFilter, threats ] );
+
+		return threats.filter( ( entry ) => entry.status === filter );
+	}, [ filter, threats ] );
+
+	const onFilterChange = useCallback(
+		( selected: FilterOption ) => {
+			if ( selected?.value === filter ) {
+				return;
+			}
+
+			let filterPathParam: FilterValue | '' = selected.value;
+			if ( filterPathParam === 'all' ) {
+				filterPathParam = '';
+			}
+
+			setCurrentPage( 1 );
+
+			dispatch( trackFilterChange( siteId, filterPathParam ) );
+			page.show( `/scan/history/${ siteSlug }/${ filterPathParam }` );
+		},
+		[ filter, dispatch, siteId, siteSlug ]
+	);
+
+	const currentPageThreats = filteredThreats.slice(
+		( currentPage - 1 ) * THREATS_PER_PAGE,
+		currentPage * THREATS_PER_PAGE
+	);
 
 	return (
 		<div className="threat-history-list">
+			<QueryJetpackScanThreatCounts siteId={ siteId } />
 			<QueryJetpackScanHistory siteId={ siteId } />
-			{ threats.length > 0 && (
-				<div className="threat-history-list__filters-wrapper">
-					<ThreatStatusFilter
-						isPlaceholder={ isRequestingHistory }
-						initialSelected={ currentFilter.value }
-						onSelect={ handleOnFilterChange }
-					/>
+
+			{ /* Loading threat counts should be pretty quick,
+			     so no need to show any indicators while it's happening
+			*/ }
+
+			{
+				// We can safely show the filter selector without having specific threat info
+				! isRequestingThreatCounts && hasThreatsInHistory && (
+					<div className="threat-history-list__filters-wrapper">
+						<ThreatStatusFilter initialSelected={ filter } onSelect={ onFilterChange } />
+					</div>
+				)
+			}
+
+			{ ! isRequestingThreatCounts && filteredThreatCount === 0 && (
+				<p className="threat-history-list__no-entries">
+					{ getNoThreatsMessage( translate, filter ) }
+				</p>
+			) }
+
+			{ ! isRequestingThreatCounts && filteredThreatCount > 0 && (
+				<div className="threat-history-list__entries">
+					{ isRequestingThreatHistory && (
+						<ListItemsPlaceholder count={ filteredThreatCount } perPage={ THREATS_PER_PAGE } />
+					) }
+					{ ! isRequestingThreatHistory && (
+						<>
+							{ showPagination && (
+								<Pagination
+									compact={ isMobile }
+									className="threat-history-list__pagination--top"
+									total={ threats.length }
+									perPage={ THREATS_PER_PAGE }
+									page={ currentPage }
+									pageClick={ setCurrentPage }
+									nextLabel={ translate( 'Older' ) }
+									prevLabel={ translate( 'Newer' ) }
+								/>
+							) }
+
+							<ListItems items={ currentPageThreats } />
+
+							{ showPagination && (
+								<Pagination
+									compact={ isMobile }
+									className="threat-history-list__pagination--bottom"
+									total={ threats.length }
+									perPage={ THREATS_PER_PAGE }
+									page={ currentPage }
+									pageClick={ setCurrentPage }
+									nextLabel={ translate( 'Older' ) }
+									prevLabel={ translate( 'Newer' ) }
+								/>
+							) }
+						</>
+					) }
 				</div>
 			) }
-			<div className="threat-history-list__entries">
-				{ filteredEntries.map( ( threat ) => (
-					<ThreatItem
-						key={ threat.id }
-						threat={ threat }
-						onFixThreat={ () => openDialog( threat ) }
-						isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
-						contactSupportUrl={ contactSupportUrl( siteSlug ) }
-						isPlaceholder={ isRequestingHistory }
-					/>
-				) ) }
-				{ selectedThreat && (
-					<ThreatDialog
-						showDialog={ showThreatDialog }
-						onCloseDialog={ closeDialog }
-						onConfirmation={ fixThreat }
-						siteName={ siteName }
-						threat={ selectedThreat }
-						action={ 'fix' }
-					/>
-				) }
-			</div>
 		</div>
 	);
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)( withLocalizedMoment( ThreatHistoryList ) );
+type ThreatHistoryListProps = {
+	filter: FilterValue;
+};
+
+export default ThreatHistoryList;

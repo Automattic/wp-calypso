@@ -59,6 +59,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 		switch ( currentTarget.name ) {
 			case 'protocol':
 				onFormStateChange( { ...formState, protocol: currentTarget.value as 'ftp' | 'ssh' } );
+				onModeChange( FormMode.Password );
 				break;
 			case 'host':
 				setFormInteractions( { ...interactions, host: true } );
@@ -318,7 +319,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	return (
 		<div className="credentials-form">
 			<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-			<p>{ getSubHeaderText() }</p>
+			<p class="credentials-form__intro-text">{ getSubHeaderText() }</p>
 			{ renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">
@@ -441,34 +442,36 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				) }
 			</FormFieldset>
 
-			<div className="credentials-form__mode-control">
-				<div className="credentials-form__support-info">
-					<SegmentedControl disabled={ disabled }>
-						<SegmentedControl.Item
-							selected={ formMode === FormMode.Password }
-							onClick={ () => onModeChange( FormMode.Password ) }
-						>
-							{ translate( 'Use password' ) }
-						</SegmentedControl.Item>
-						<SegmentedControl.Item
-							selected={ formMode === FormMode.PrivateKey }
-							onClick={ () => onModeChange( FormMode.PrivateKey ) }
-						>
-							{ translate( 'Use private key' ) }
-						</SegmentedControl.Item>
-					</SegmentedControl>
-					{ hostInfo?.inline?.mode && (
-						<InfoPopover>
-							<InlineInfo
-								field="mode"
-								host={ host }
-								info={ hostInfo.inline.mode }
-								protocol={ formState.protocol }
-							/>
-						</InfoPopover>
-					) }
+			{ 'ftp' !== formState.protocol && (
+				<div className="credentials-form__mode-control">
+					<div className="credentials-form__support-info">
+						<SegmentedControl disabled={ disabled }>
+							<SegmentedControl.Item
+								selected={ formMode === FormMode.Password }
+								onClick={ () => onModeChange( FormMode.Password ) }
+							>
+								{ translate( 'Use password' ) }
+							</SegmentedControl.Item>
+							<SegmentedControl.Item
+								selected={ formMode === FormMode.PrivateKey }
+								onClick={ () => onModeChange( FormMode.PrivateKey ) }
+							>
+								{ translate( 'Use private key' ) }
+							</SegmentedControl.Item>
+						</SegmentedControl>
+						{ hostInfo?.inline?.mode && (
+							<InfoPopover>
+								<InlineInfo
+									field="mode"
+									host={ host }
+									info={ hostInfo.inline.mode }
+									protocol={ formState.protocol }
+								/>
+							</InfoPopover>
+						) }
+					</div>
 				</div>
-			</div>
+			) }
 
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 

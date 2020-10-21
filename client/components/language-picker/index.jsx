@@ -11,7 +11,7 @@ import { find, isString, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import LanguagePickerModal from './modal';
 import { getLanguageCodeLabels } from './utils';
 

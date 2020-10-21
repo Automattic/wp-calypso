@@ -9,10 +9,10 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'calypso/components/popover';
 import PostLikes from './index';
-import { getPostLikes } from 'state/posts/selectors/get-post-likes';
-import { countPostLikes } from 'state/posts/selectors/count-post-likes';
+import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
+import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 
 /**
  * Style dependencies

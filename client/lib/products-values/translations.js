@@ -111,9 +111,15 @@ export const getJetpackProductsCallToAction = () => {
 			} ) }
 		</>
 	);
-	const search = translate( 'Get Search' );
-	const scan = translate( 'Get Scan' );
-	const antiSpam = <>{ translate( 'Get Anti-spam' ) }</>;
+	const search = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Get Jetpack Search' )
+		: translate( 'Get Search' );
+	const scan = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Get Jetpack Scan' )
+		: translate( 'Get Scan' );
+	const antiSpam = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Get Jetpack Anti-spam' )
+		: translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -130,7 +136,9 @@ export const getJetpackProductsCallToAction = () => {
 };
 
 export const getJetpackProductsTaglines = () => {
-	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
+	const backupDailyTagline = isEnabled( 'plans/alternate-selector' )
+		? translate( 'Automated backups with one-click restores' )
+		: translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
 

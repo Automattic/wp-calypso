@@ -10,8 +10,9 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
  */
 import {
 	durationToText,
+	getProductWithOptionDisplayName,
 	productBadgeLabelAlt,
-	productButtonLabel,
+	productButtonLabelAlt,
 	slugIsFeaturedProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
@@ -74,6 +75,8 @@ const ProductCardAltWrapper = ( {
 		item?.monthlyProductSlug || ''
 	);
 
+	const isFree = originalPrice === -1 && discountedPrice === -1;
+
 	// Handles expiry.
 	const moment = useLocalizedMoment();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
@@ -97,16 +100,26 @@ const ProductCardAltWrapper = ( {
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
+	// In the case of products that have options (daily and real-time), we want to display
+	// the name of the option, not the name of one of the variants.
+	const productName = getProductWithOptionDisplayName( item, isOwned, isItemPlanFeature );
+
 	return (
 		<JetpackProductCardAlt
 			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
-			productName={ item.displayName }
+			productName={ productName }
 			subheadline={ item.tagline }
 			description={ description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={ productButtonLabelAlt(
+				item,
+				isOwned,
+				isItemPlanFeature,
+				isUpgradeableToYearly,
+				sitePlan
+			) }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
@@ -120,13 +133,13 @@ const ProductCardAltWrapper = ( {
 				// Search has several pricing tiers
 				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.productSlug )
 			}
+			isFree={ isFree }
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={ false }
 			productSlug={ item.productSlug }
 		/>
 	);

@@ -96,8 +96,10 @@ const FeaturesStep: React.FunctionComponent = () => {
 								<FeatureIcon featureId={ feature.id } />
 							</div>
 							<div className="features__item-heading">
-								<div className="features__item-name">{ feature.name }</div>
-								<div className="features__item-description">{ feature.description }</div>
+								<div className="features__item-name">{ getFeatureText( feature.id, __ ).name }</div>
+								<div className="features__item-description">
+									{ getFeatureText( feature.id, __ ).description }
+								</div>
 							</div>
 						</Button>
 					) ) }
@@ -106,5 +108,52 @@ const FeaturesStep: React.FunctionComponent = () => {
 		</div>
 	);
 };
+
+function getFeatureText( featureId: FeatureId, __: ReturnType< typeof useI18n >[ '__' ] ) {
+	switch ( featureId ) {
+		case 'domain':
+			return {
+				name: __( 'Custom domains' ),
+				description: __( 'Help your site stand out. The first year is free with a plan.' ),
+			};
+		case 'store':
+			return {
+				name: __( 'Store' ),
+				description: __(
+					'Sell unlimited products or services with a powerful, flexible online store.'
+				),
+			};
+		case 'seo':
+			return {
+				name: __( 'SEO tools' ),
+				description: __( 'Boost your SEO and connect a Google Analytics account.' ),
+			};
+		case 'plugins':
+			return {
+				name: __( 'Plugins' ),
+				description: __( 'Install plugins to extend the power of your site.' ),
+			};
+		case 'ad-free':
+			return {
+				name: __( 'Ad-free' ),
+				description: __( 'Remove advertisements and own your brand.' ),
+			};
+		case 'image-storage':
+			return {
+				name: __( 'Image storage' ),
+				description: __( 'Extended storage space for hi-res images.' ),
+			};
+		case 'video-storage':
+			return {
+				name: __( 'Video storage' ),
+				description: __( 'Host your own ad-free videos' ),
+			};
+		case 'support':
+			return {
+				name: __( 'Priority support' ),
+				description: __( 'Chat with an expert live.' ),
+			};
+	}
+}
 
 export default FeaturesStep;

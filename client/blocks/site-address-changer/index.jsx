@@ -7,31 +7,31 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { debounce, get, flow, inRange, isEmpty } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import ConfirmationDialog from './dialog';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	requestSiteAddressChange,
 	requestSiteAddressAvailability,
 	clearValidationError,
-} from 'state/site-address-change/actions';
-import getSiteAddressAvailabilityPending from 'state/selectors/get-site-address-availability-pending';
-import getSiteAddressValidationError from 'state/selectors/get-site-address-validation-error';
-import isRequestingSiteAddressChange from 'state/selectors/is-requesting-site-address-change';
-import { getSelectedSite } from 'state/ui/selectors';
+} from 'calypso/state/site-address-change/actions';
+import getSiteAddressAvailabilityPending from 'calypso/state/selectors/get-site-address-availability-pending';
+import getSiteAddressValidationError from 'calypso/state/selectors/get-site-address-validation-error';
+import isRequestingSiteAddressChange from 'calypso/state/selectors/is-requesting-site-address-change';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies

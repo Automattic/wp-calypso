@@ -7,15 +7,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { DOMAIN_CANCEL, REFUNDS } from 'lib/url/support';
-import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	hasDomainBeingUsedForPlan,
 	hasDomainRegistration,
 	hasDomainRenewal,
 	hasNewDomainRegistration,
-} from 'lib/cart-values/cart-items';
+} from 'calypso/lib/cart-values/cart-items';
 
 class DomainRefundPolicy extends React.Component {
 	recordCancelDomainSupportClick = () => {

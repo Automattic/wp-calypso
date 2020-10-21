@@ -8,9 +8,9 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { fetchExperiments } from 'state/data-layer/wpcom/experiments';
-import { nextRefresh } from 'state/experiments/selectors';
-import { AppState } from 'types';
+import { fetchExperiments } from 'calypso/state/data-layer/wpcom/experiments';
+import { nextRefresh } from 'calypso/state/experiments/selectors';
+import { AppState } from 'calypso/types';
 
 type QueryProps = {
 	doFetchExperiments: typeof fetchExperiments;

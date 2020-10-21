@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Main from 'components/main';
-import SiteSelector from 'components/site-selector';
-import VisitSite from 'blocks/visit-site';
+import Main from 'calypso/components/main';
+import SiteSelector from 'calypso/components/site-selector';
+import VisitSite from 'calypso/blocks/visit-site';
 /**
  * Style dependencies
  */
@@ -34,11 +34,6 @@ class Sites extends Component {
 		// Plans are for not Jetpack or Jetpack upgradeable sites.
 		if ( /^\/plans/.test( path ) ) {
 			return ! site.jetpack || site.isSiteUpgradeable;
-		}
-
-		// No support for Gutenberg on VIP.
-		if ( /^\/block-editor/.test( path ) ) {
-			return ! site.is_vip;
 		}
 
 		if ( /^\/hosting-config/.test( path ) ) {

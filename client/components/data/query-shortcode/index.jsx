@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingShortcode } from 'state/shortcodes/selectors';
-import { fetchShortcode } from 'state/shortcodes/actions';
+import { isRequestingShortcode } from 'calypso/state/shortcodes/selectors';
+import { fetchShortcode } from 'calypso/state/shortcodes/actions';
 
 class QueryShortcode extends Component {
 	static propTypes = {

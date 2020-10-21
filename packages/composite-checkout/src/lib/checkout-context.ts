@@ -22,7 +22,6 @@ const defaultTransactionStatusManager: TransactionStatusManager = {
 	setTransactionComplete: noop,
 	setTransactionPending: noop,
 	setTransactionRedirecting: noop,
-	setTransactionAuthorizing: noop,
 };
 
 interface CheckoutContext {

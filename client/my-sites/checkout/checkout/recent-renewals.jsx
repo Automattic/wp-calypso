@@ -9,10 +9,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { useLocalizedMoment } from 'components/localized-moment';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 
 function RecentRenewalListItem( { domain, productName, expiryString, translate } ) {
 	return (

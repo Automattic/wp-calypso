@@ -10,30 +10,30 @@ import { overSome, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import PaymentCountrySelect from 'components/payment-country-select';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
-import Input from 'my-sites/domains/components/form/input';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'lib/cart-values';
-import { hasRenewalItem } from 'lib/cart-values/cart-items';
-import { isWpComBusinessPlan, isWpComEcommercePlan } from 'lib/plans';
+import Gridicon from 'calypso/components/gridicon';
+import PaymentCountrySelect from 'calypso/components/payment-country-select';
+import CartCoupon from 'calypso/my-sites/checkout/cart/cart-coupon';
+import Input from 'calypso/my-sites/domains/components/form/input';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getTaxCountryCode, getTaxPostalCode, shouldShowTax } from 'calypso/lib/cart-values';
+import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
+import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
 import {
 	detectWebPaymentMethod,
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
-} from 'lib/web-payment';
-import { webPayment } from 'lib/transaction/payments';
-import { setPayment, setStripeObject } from 'lib/transaction/actions';
-import { setTaxCountryCode, setTaxPostalCode } from 'lib/cart/actions';
+} from 'calypso/lib/web-payment';
+import { webPayment } from 'calypso/lib/transaction/payments';
+import { setPayment, setStripeObject } from 'calypso/lib/transaction/actions';
+import { setTaxCountryCode, setTaxPostalCode } from 'calypso/lib/cart/actions';
 import CartToggle from './cart-toggle';
 import CheckoutTerms from './checkout-terms';
 import PaymentChatButton from './payment-chat-button';
 import RecentRenewals from './recent-renewals';
 import PaymentRequestButton from './payment-request-button';
 import SubscriptionText from './subscription-text';
-import { useDebounce } from 'blocks/credit-card-form/helpers';
-import { useStripe, StripeHookProvider } from 'lib/stripe';
+import { useDebounce } from 'calypso/blocks/credit-card-form/helpers';
+import { useStripe, StripeHookProvider } from 'calypso/lib/stripe';
 
 const debug = debugFactory( 'calypso:checkout:payment:web-payment-box' );
 

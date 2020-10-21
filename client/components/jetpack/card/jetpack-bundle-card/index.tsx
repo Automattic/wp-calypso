@@ -9,7 +9,7 @@ import React, { FunctionComponent } from 'react';
  */
 import JetpackProductCard, {
 	Props as JetpackProductCardProps,
-} from 'components/jetpack/card/jetpack-product-card';
+} from 'calypso/components/jetpack/card/jetpack-product-card';
 
 /**
  * Style dependencies
