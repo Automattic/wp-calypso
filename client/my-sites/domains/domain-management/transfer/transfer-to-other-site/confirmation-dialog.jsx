@@ -11,8 +11,10 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getSite } from 'calypso/state/sites/selectors';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import { getSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { Dialog } from '@automattic/components';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 
 class TransferConfirmationDialog extends React.PureComponent {
 	static propTypes = {
@@ -23,6 +25,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 		domainName: PropTypes.string.isRequired,
 		onConfirmTransfer: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
+		primaryWithPlansOnly: PropTypes.bool,
 	};
 
 	onConfirm = ( closeDialog ) => {
@@ -77,6 +80,14 @@ class TransferConfirmationDialog extends React.PureComponent {
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } onClose={ this.props.onClose }>
 				<h1>{ translate( 'Confirm Transfer' ) }</h1>
 				<p>{ this.getMessage() }</p>
+				<p>
+					{ this.props.primaryWithPlansOnly &&
+						! this.props.isTargetSiteOnPaidPlan &&
+						translate(
+							"The target site is not a paid plan, so you'll have to pay the full price for the domain mapping subscription on renewal. " +
+								'Consider upgrading the site to a paid plan to have the mapping for free.'
+						) }
+				</p>
 			</Dialog>
 		);
 	}
@@ -84,4 +95,6 @@ class TransferConfirmationDialog extends React.PureComponent {
 
 export default connect( ( state, ownProps ) => ( {
 	targetSite: getSite( state, ownProps.targetSiteId ),
+	isTargetSiteOnPaidPlan: isCurrentPlanPaid( state, ownProps.targetSiteId ),
+	primaryWithPlansOnly: currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ),
 } ) )( localize( TransferConfirmationDialog ) );
