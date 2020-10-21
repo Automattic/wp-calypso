@@ -76,12 +76,7 @@ function getWebpackConfig( env = {}, argv = {} ) {
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
 			new webpack.DefinePlugin( {
-				'process.env.NODE_ENV': JSON.stringify( process.env.NODE_ENV ),
-				'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
-					!! process.env.FORCE_REDUCED_MOTION || false
-				),
 				__i18n_text_domain__: JSON.stringify( 'full-site-editing' ),
-				global: 'window',
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill: true,
