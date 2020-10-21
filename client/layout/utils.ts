@@ -12,5 +12,5 @@ export function getShouldShowAppBanner( site: any ): boolean {
 
 		return olderThanAWeek && isLaunched;
 	}
-	return false;
+	return true;
 }
