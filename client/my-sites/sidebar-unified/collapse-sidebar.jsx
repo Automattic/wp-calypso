@@ -6,7 +6,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isWithinBreakpoint } from '@automattic/viewport';
@@ -28,7 +28,7 @@ export const CollapseSidebar = ( {
 } ) => {
 	const collapsed = sidebarIsCollapsed && isWithinBreakpoint( '>800px' );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		// Adding / removing clear-secondary-layout-transitions is a workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/style.scss).
 		collapsed
 			? document.body.classList.add( 'is-sidebar-collapsed', 'clear-secondary-layout-transitions' )
