@@ -75,10 +75,9 @@ export function addCreditCard( context, next ) {
 
 export function cancelPurchase( context, next ) {
 	setTitle( context, titles.cancelPurchase );
-	const classes = 'cancel-purchase';
 
 	context.primary = (
-		<Main className={ classes }>
+		<Main className="purchases__cancel is-wide-layout">
 			<CancelPurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
@@ -119,14 +118,16 @@ export function editCardDetails( context, next ) {
 	setTitle( context, titles.editCardDetails );
 
 	context.primary = (
-		<EditCardDetails
-			cardId={ context.params.cardId }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-			getManagePurchaseUrlFor={ managePurchaseUrl }
-			purchaseListUrl={ purchasesRoot }
-			isFullWidth={ false }
-		/>
+		<Main className="purchases__change is-wide-layout">
+			<EditCardDetails
+				cardId={ context.params.cardId }
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+				siteSlug={ context.params.site }
+				getManagePurchaseUrlFor={ managePurchaseUrl }
+				purchaseListUrl={ purchasesRoot }
+				isFullWidth={ true }
+			/>
+		</Main>
 	);
 	next();
 }
