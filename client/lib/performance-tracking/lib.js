@@ -13,6 +13,7 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import {
 	getCurrentUserSiteCount,
 	getCurrentUserVisibleSiteCount,
+	getCurrentUserCountryCode,
 } from 'calypso/state/current-user/selectors';
 
 /**
@@ -28,6 +29,7 @@ const buildDefaultCollector = ( state ) => {
 	const siteIsAtomic = isSiteWpcomAtomic( state, siteId );
 	const sitesCount = getCurrentUserSiteCount( state );
 	const sitesVisibleCount = getCurrentUserVisibleSiteCount( state );
+	const countryCode = getCurrentUserCountryCode( state );
 
 	return ( report ) => {
 		report.data.set( 'siteId', siteId );
@@ -36,6 +38,7 @@ const buildDefaultCollector = ( state ) => {
 		report.data.set( 'siteIsAtomic', siteIsAtomic );
 		report.data.set( 'sitesCount', sitesCount );
 		report.data.set( 'sitesVisibleCount', sitesVisibleCount );
+		report.data.set( 'country', countryCode );
 	};
 };
 

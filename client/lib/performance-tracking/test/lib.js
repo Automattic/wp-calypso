@@ -6,27 +6,37 @@ import { start, stop } from '@automattic/browser-data-collector';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { startPerformanceTracking, stopPerformanceTracking } from '../lib';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import {
+	getCurrentUserCountryCode,
+	getCurrentUserSiteCount,
+	getCurrentUserVisibleSiteCount,
+} from 'calypso/state/current-user/selectors';
 
-jest.mock( 'config', () => ( {
+jest.mock( 'calypso/config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 jest.mock( '@automattic/browser-data-collector', () => ( {
 	start: jest.fn(),
 	stop: jest.fn(),
 } ) );
-jest.mock( 'state/ui/selectors', () => ( {
+jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn(),
 } ) );
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: jest.fn(),
 	isSingleUserSite: jest.fn(),
 } ) );
-jest.mock( 'state/selectors/is-site-wpcom-atomic', () => jest.fn() );
+jest.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUserCountryCode: jest.fn(),
+	getCurrentUserSiteCount: jest.fn(),
+	getCurrentUserVisibleSiteCount: jest.fn(),
+} ) );
+jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => jest.fn() );
 
 const withFeatureEnabled = () =>
 	config.isEnabled.mockImplementation( ( key ) => key === 'rum-tracking/logstash' );
@@ -128,6 +138,9 @@ describe( 'stopPerformanceTracking', () => {
 		isSingleUserSite.mockImplementation( () => false );
 		isSiteWpcomAtomic.mockImplementation( () => false );
 		getSelectedSiteId.mockImplementation( () => 42 );
+		getCurrentUserSiteCount.mockImplementation( () => 2 );
+		getCurrentUserVisibleSiteCount.mockImplementation( () => 1 );
+		getCurrentUserCountryCode.mockImplementation( () => 'es' );
 
 		// Run the default collector
 		stopPerformanceTracking( 'pageName', { state } );
@@ -140,6 +153,9 @@ describe( 'stopPerformanceTracking', () => {
 		expect( report.data.get( 'siteIsJetpack' ) ).toBe( false );
 		expect( report.data.get( 'siteIsSingleUser' ) ).toBe( false );
 		expect( report.data.get( 'siteIsAtomic' ) ).toBe( false );
+		expect( report.data.get( 'sitesCount' ) ).toBe( 2 );
+		expect( report.data.get( 'sitesVisibleCount' ) ).toBe( 1 );
+		expect( report.data.get( 'country' ) ).toBe( 'es' );
 	} );
 
 	it( 'uses metdata to generate a collector', () => {
