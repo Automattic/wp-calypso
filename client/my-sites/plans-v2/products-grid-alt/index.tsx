@@ -20,7 +20,7 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
 import { SELECTOR_PLANS_ALT } from '../constants';
-import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
+import { slugToSelectorProduct } from '../utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import PRODUCTS_ORDER_BY_SLUG from './products-order';
 import ProductCardAlt from '../product-card-alt';
@@ -60,11 +60,7 @@ const getPlansToDisplay = ( {
 					JETPACK_SECURITY_PLANS.includes( currentPlanSlug ) &&
 					JETPACK_SECURITY_PLANS.includes( product.productSlug )
 				)
-		)
-		.map( ( product: SelectorProduct ) => ( {
-			...product,
-			description: getJetpackDescriptionWithOptions( product ),
-		} ) );
+		);
 
 	if ( currentPlanSlug && JETPACK_RESET_PLANS.includes( currentPlanSlug ) ) {
 		const currentPlanSelectorProduct = slugToSelectorProduct( currentPlanSlug );
@@ -96,10 +92,6 @@ const getProductsToDisplay = ( {
 		[ ...purchasedProducts, ...filteredProducts ]
 			// Make sure we don't allow any null or invalid products
 			.filter( ( product ): product is SelectorProduct => !! product )
-			.map( ( product ) => ( {
-				...product,
-				description: getJetpackDescriptionWithOptions( product as SelectorProduct ),
-			} ) )
 	);
 };
 

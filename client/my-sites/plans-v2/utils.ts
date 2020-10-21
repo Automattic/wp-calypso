@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-import { translate, TranslateResult } from 'i18n-calypso';
-import { compact, get, isArray, isObject } from 'lodash';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { compact, isArray, isObject } from 'lodash';
 import page from 'page';
-import React, { createElement, Fragment } from 'react';
+import { createElement, Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
 import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
 import {
+	ALL,
 	DAILY_PLAN_TO_REALTIME_PLAN,
-	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
 	FEATURED_PRODUCTS,
@@ -24,13 +24,16 @@ import {
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
 	OPTIONS_SLUG_MAP,
+	PERFORMANCE,
+	PLAN_COMPARISON_PAGE,
 	PRODUCTS_WITH_OPTIONS,
-	REALTIME_PRODUCTS,
+	SECURITY,
 	SUBTYPE_TO_OPTION,
 	UPGRADEABLE_WITH_NUDGE,
 	UPSELL_PRODUCT_MATRIX,
 } from './constants';
 import RecordsDetails from './records-details';
+import { getSelectorProductCopy } from './translated-copy';
 import { addItems } from 'calypso/lib/cart/actions';
 import { jetpackProductItem } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -41,6 +44,12 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import {
 	getPlan,
@@ -49,9 +58,9 @@ import {
 	planHasFeature,
 } from 'calypso/lib/plans';
 import {
-	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCT_PRICE_MATRIX,
+	JETPACK_SEARCH_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
 import {
 	Product,
@@ -59,12 +68,6 @@ import {
 	objectIsProduct,
 	PRODUCTS_LIST,
 } from 'calypso/lib/products-values/products-list';
-import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
-import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpack-product-tagline';
-import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
-import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
-import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
-import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 
 /**
@@ -111,7 +114,10 @@ export function durationToString( duration: Duration ): DurationString {
 	return duration === TERM_MONTHLY ? 'monthly' : 'annual';
 }
 
-export function durationToText( duration: Duration ): TranslateResult {
+export function durationToText(
+	duration: Duration,
+	translate: ReturnType< typeof useTranslate >
+): TranslateResult {
 	return duration === TERM_MONTHLY
 		? translate( 'per month, billed monthly' )
 		: translate( 'per month, billed yearly' );
@@ -141,6 +147,7 @@ export function productButtonLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
 	isUpgradeableToYearly: boolean,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
 	if ( isUpgradeableToYearly ) {
@@ -156,7 +163,7 @@ export function productButtonLabel(
 			: translate( 'Manage Subscription' );
 	}
 
-	const { buttonLabel, displayName } = product;
+	const { buttonLabel, displayName } = getSelectorProductCopy( product.productSlug, translate );
 
 	return (
 		buttonLabel ??
@@ -174,6 +181,7 @@ export function productButtonLabelAlt(
 	isOwned: boolean,
 	isItemPlanFeature: boolean,
 	isUpgradeableToYearly: boolean,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult {
 	if ( isUpgradeableToYearly ) {
@@ -222,6 +230,7 @@ export function productBadgeLabel(
 	product: SelectorProduct,
 	isOwned: boolean,
 	highlight: boolean,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult | undefined {
 	if ( isOwned ) {
@@ -239,9 +248,49 @@ export function productBadgeLabel(
 	}
 }
 
+export function getMoreFeaturesLink(
+	productSlug: string,
+	translate: ReturnType< typeof useTranslate >
+) {
+	switch ( productSlug ) {
+		case OPTIONS_JETPACK_SECURITY:
+		case OPTIONS_JETPACK_SECURITY_MONTHLY:
+		case PLAN_JETPACK_SECURITY_DAILY:
+		case PLAN_JETPACK_SECURITY_DAILY_MONTHLY:
+		case PLAN_JETPACK_SECURITY_REALTIME:
+		case PLAN_JETPACK_SECURITY_REALTIME_MONTHLY:
+		case PLAN_JETPACK_COMPLETE:
+		case PLAN_JETPACK_COMPLETE_MONTHLY:
+			return {
+				url: PLAN_COMPARISON_PAGE,
+				label: translate( 'See all features' ),
+			};
+		default:
+			return undefined;
+	}
+}
+
+export function getProductTypeOptions( translate: ReturnType< typeof useTranslate > ) {
+	return {
+		[ SECURITY ]: {
+			id: SECURITY,
+			label: translate( 'Security' ),
+		},
+		[ PERFORMANCE ]: {
+			id: PERFORMANCE,
+			label: translate( 'Performance' ),
+		},
+		[ ALL ]: {
+			id: ALL,
+			label: translate( 'All' ),
+		},
+	};
+}
+
 export function productBadgeLabelAlt(
 	product: SelectorProduct,
 	isOwned: boolean,
+	translate: ReturnType< typeof useTranslate >,
 	currentPlan?: SitePlan | null
 ): TranslateResult | undefined {
 	if ( isOwned ) {
@@ -287,14 +336,7 @@ export function slugToItem( slug: string ): Plan | Product | SelectorProduct | n
 function objectIsSelectorProduct(
 	item: Record< string, unknown > | SelectorProduct
 ): item is SelectorProduct {
-	const requiredKeys = [
-		'productSlug',
-		'iconSlug',
-		'displayName',
-		'tagline',
-		'description',
-		'term',
-	];
+	const requiredKeys = [ 'productSlug', 'iconSlug', 'term' ];
 	return requiredKeys.every( ( k ) => k in item );
 }
 
@@ -341,16 +383,11 @@ export function itemToSelectorProduct(
 			productSlug: item.product_slug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: `${ yearlyProductSlug || item.product_slug }_v2`,
-			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],
-			shortName: getJetpackProductShortName( item ) || '',
-			tagline: getJetpackProductTagline( item ),
-			description: getJetpackProductDescription( item ),
 			children: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug )
 				? createElement( RecordsDetails, { productSlug: item.product_slug } )
 				: undefined,
-			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
 			hidePrice: JETPACK_SEARCH_PRODUCTS.includes( item.product_slug ),
@@ -379,17 +416,12 @@ export function itemToSelectorProduct(
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
-			displayName: item.getTitle(),
 			type,
 			subtypes: [],
-			shortName: item.getTitle(),
-			tagline: get( item, 'getTagline', () => '' )(),
-			description: item.getDescription(),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
-				more: MORE_FEATURES_LINK,
 			},
 			legacy: ! isResetPlan,
 		};
@@ -683,30 +715,3 @@ export function getPathToUpsell(
 
 	return addQueryArgs( urlQueryArgs, path );
 }
-
-/**
- * Append "Available Options: Real-time and Daily" to the product description.
- *
- * @param product SelectorProduct
- *
- * @returns ReactNode | TranslateResult
- */
-export const getJetpackDescriptionWithOptions = (
-	product: SelectorProduct
-): React.ReactNode | TranslateResult => {
-	const em = React.createElement( 'em', null, null );
-
-	// If the product has 'subtypes' (containing daily and real-time product slugs).
-	// then append "Available options: Real-time or Daily" to the product description.
-	return product.subtypes.some( ( subtype ) => DAILY_PRODUCTS.includes( subtype ) ) &&
-		product.subtypes.some( ( subtype ) => REALTIME_PRODUCTS.includes( subtype ) )
-		? translate( '%(productDescription)s {{em}}Available options: Real-time or Daily.{{/em}}', {
-				args: {
-					productDescription: product.description,
-				},
-				components: {
-					em,
-				},
-		  } )
-		: product.description;
-};

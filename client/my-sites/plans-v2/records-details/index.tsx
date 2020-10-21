@@ -99,7 +99,9 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 						<PlanPrice rawPrice={ discountedPrice } discounted currencyCode={ currencyCode } />
 					) }
 				</div>
-				<p className="records-details__timeframe">{ durationToText( selectorProduct.term ) }</p>
+				<p className="records-details__timeframe">
+					{ durationToText( selectorProduct.term, translate ) }
+				</p>
 			</div>
 		</div>
 	);

@@ -3,7 +3,7 @@
  */
 import React, { useRef, useState } from 'react';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,7 +20,7 @@ import useDetectWindowBoundary from 'calypso/my-sites/plans-v2/use-detect-window
 import './style.scss';
 
 const JETPACK_COM_BASE_URL = 'https://jetpack.com';
-const MENU_ITEMS = [
+const getMenuItems = ( translate: ReturnType< typeof useTranslate > ) => [
 	{
 		title: translate( 'Product Tour' ),
 		path: 'features',
@@ -40,6 +40,7 @@ const MENU_ITEMS = [
 ];
 
 const JetpackComMasterbar = () => {
+	const translate = useTranslate();
 	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
 	const barRef = useRef< HTMLDivElement | null >( null );
 	const hasCrossed = useDetectWindowBoundary( barRef );
@@ -78,7 +79,7 @@ const JetpackComMasterbar = () => {
 				</Button>
 
 				<ul className={ classNames( 'jpcom-masterbar__nav', { 'is-open': isMenuOpen } ) }>
-					{ MENU_ITEMS.map( ( { title, path }, index ) => (
+					{ getMenuItems( translate ).map( ( { title, path }, index ) => (
 						<li className="jpcom-masterbar__nav-item" key={ index }>
 							<a
 								className={ path === 'pricing' ? 'current' : '' }

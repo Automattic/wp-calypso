@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -9,11 +9,7 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { PRODUCTS_TYPES, SELECTOR_PLANS } from '../constants';
-import {
-	getAllOptionsFromSlug,
-	getJetpackDescriptionWithOptions,
-	slugToSelectorProduct,
-} from '../utils';
+import { getAllOptionsFromSlug, slugToSelectorProduct } from '../utils';
 import ProductCard from '../product-card';
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { JETPACK_LEGACY_PLANS, PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
@@ -34,6 +30,8 @@ interface PlanColumnType {
 }
 
 const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumnType ) => {
+	const translate = useTranslate();
+
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
@@ -58,11 +56,7 @@ const PlansColumn = ( { duration, onPlanClick, productType, siteId }: PlanColumn
 					! currentPlanAllTerms.includes( product.productSlug ) &&
 					// Don't include a generic/option card if the user already owns a subtype
 					! optionsFromCurrentPlan.includes( product.productSlug )
-			)
-			.map( ( product: SelectorProduct ) => ( {
-				...product,
-				description: getJetpackDescriptionWithOptions( product ),
-			} ) );
+			);
 
 		// If the user owns a plan, get it and insert it on the top of the plan array.
 		if (

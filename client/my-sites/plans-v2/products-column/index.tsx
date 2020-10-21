@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { getJetpackDescriptionWithOptions } from '../utils';
 import { PRODUCTS_TYPES } from '../constants';
 import ProductCard from '../product-card';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
@@ -33,6 +32,8 @@ const ProductsColumn = ( {
 	productType,
 	siteId,
 }: ProductsColumnType ) => {
+	const translate = useTranslate();
+
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
@@ -52,10 +53,6 @@ const ProductsColumn = ( {
 					( product ): product is SelectorProduct =>
 						!! product && PRODUCTS_TYPES[ productType ].includes( product.productSlug )
 				)
-				.map( ( product ) => ( {
-					...product,
-					description: getJetpackDescriptionWithOptions( product as SelectorProduct ),
-				} ) )
 		);
 	}, [ duration, availableProducts, includedInPlanProducts, purchasedProducts, productType ] );
 
