@@ -216,10 +216,20 @@ $font-size: rem( 14px );
 	.upsell-nudge.banner.card.is-compact {
 		background-color: #fff;
 		color: #000;
+		padding: 7px 12px 7px 4px;
+		line-height: 26px;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__content {
+		padding-left: 3px;
 	}
 
 	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
 		color: #000;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__action {
+		margin-left: 0;
 	}
 
 	// client/my-sites/current-site/style.scss
@@ -270,6 +280,7 @@ $font-size: rem( 14px );
 			margin-bottom: 4px;
 		}
 
+		// client/blocks/upsell-nudge/style.scss
 		.current-site__notices > a::before {
 			content: '\f534';
 			font-family: 'dashicons';
@@ -279,7 +290,7 @@ $font-size: rem( 14px );
 			background-color: #a7aaad;
 			color: white;
 			border-radius: 50%;
-			margin-left: 1px;
+			margin: 3px 0 3px 1px;
 		}
 
 		.upsell-nudge.banner.card.is-compact .banner__content {
