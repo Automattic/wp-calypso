@@ -19,7 +19,7 @@ function Edit( { parentClientId, isSelected } ) {
 		if ( isSelected ) {
 			selectBlock( parentClientId );
 		}
-	} );
+	}, [ selectBlock, isSelected, parentClientId ] );
 
 	return (
 		<Context.Consumer>

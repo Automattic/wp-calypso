@@ -19,7 +19,7 @@ function Edit( { hasInnerBlocks, parentClientId, isSelected } ) {
 		if ( isSelected ) {
 			selectBlock( parentClientId );
 		}
-	} );
+	}, [ selectBlock, isSelected, parentClientId ] );
 
 	return (
 		<Context.Consumer>
