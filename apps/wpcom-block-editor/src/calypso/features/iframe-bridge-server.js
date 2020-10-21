@@ -549,6 +549,10 @@ function handleCloseEditor( calypsoPort ) {
 
 	handleCloseInLegacyEditors( dispatchAction );
 
+	if ( typeof MainDashboardButton !== 'undefined' ) {
+		return;
+	}
+
 	if ( isNavSidebarPresent() ) {
 		return;
 	}
