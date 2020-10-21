@@ -150,7 +150,7 @@ function CheckoutSummaryFeaturesList( props ) {
 	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
 		refundText = translate( '30 day money back guarantee' );
 		if ( isMonthlyPricingTest && hasMonthlyPlan ) {
-			refundText = translate( '4 day money back guarantee' );
+			refundText = translate( '7 day money back guarantee' );
 		}
 	}
 

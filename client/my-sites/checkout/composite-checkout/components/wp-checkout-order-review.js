@@ -15,6 +15,7 @@ import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
 import Experiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
+import { isWpComPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -50,7 +51,7 @@ export default function WPCheckoutOrderReview( {
 			) }
 
 			<WPOrderReviewSection>
-				<MonthlyPricingTestWrapper>
+				<MonthlyPricingTestWrapper items={ items }>
 					<WPOrderReviewLineItems
 						items={ items }
 						removeProductFromCart={ removeProductFromCart }
@@ -124,7 +125,9 @@ function CouponFieldArea( {
 	);
 }
 
-function MonthlyPricingTestWrapper( { children } ) {
+function MonthlyPricingTestWrapper( { children, items } ) {
+	const translate = useTranslate();
+
 	return (
 		<Experiment name="monthly_pricing_test_phase_1">
 			<DefaultVariation name="control">
@@ -134,11 +137,39 @@ function MonthlyPricingTestWrapper( { children } ) {
 			</DefaultVariation>
 			<Variation name="treatment">
 				{ React.Children.map( children, ( child ) =>
-					React.cloneElement( child, { isMonthlyPricingTest: true } )
+					React.cloneElement( child, {
+						isMonthlyPricingTest: true,
+						items: items.map( ( item ) => overrideItemSublabel( item, translate ) ),
+					} )
 				) }
 			</Variation>
 		</Experiment>
 	);
+}
+
+/*
+ * WARNING:
+ * Please update item's sublabel in the `translateReponseCartProductToWPCOMCartItem` function
+ * when the treatment is rolled out as a winner.
+ */
+function overrideItemSublabel( item, translate ) {
+	if ( item?.type !== 'plan' || ! isWpComPlan( item?.wpcom_meta?.product_slug ) ) {
+		return item;
+	}
+
+	const billingMonths = getBillingMonthsForPlan( item?.wpcom_meta?.product_slug );
+
+	let sublabel = translate( 'Monthly subscription' );
+	if ( billingMonths === 12 ) {
+		sublabel = translate( 'One year subscription' );
+	} else if ( billingMonths === 24 ) {
+		sublabel = translate( 'Two year subscription' );
+	}
+
+	return {
+		...item,
+		sublabel,
+	};
 }
 
 const DomainURL = styled.div`
