@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -30,9 +31,9 @@ import cloudErrorIcon from 'calypso/components/jetpack/daily-backup-status/statu
  */
 import type { Activity } from 'calypso/state/activity-log/types';
 
-type Props = { backup: Activity };
+type Props = { backup: Activity; isFeatured: boolean };
 
-const BackupFailed: FunctionComponent< Props > = ( { backup } ) => {
+const BackupFailed: FunctionComponent< Props > = ( { backup, isFeatured } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
@@ -46,12 +47,16 @@ const BackupFailed: FunctionComponent< Props > = ( { backup } ) => {
 	const displayTime = backupDate.format( 'H:mma' );
 
 	return (
-		<Card className="backup-card">
+		<Card
+			className={ classNames( 'backup-card', {
+				'is-featured': isFeatured,
+			} ) }
+		>
 			<div className="backup-card__main">
 				<div className="backup-card__header">
 					<div className="backup-card__header-text">
-						<h2 className="backup-failed__date">{ translate( 'Backup failed' ) }</h2>
-						<p className="backup-failed__title">
+						<h2 className="backup-card__date">{ translate( 'Backup failed' ) }</h2>
+						<p className="backup-card__title backup-card__title--failed">
 							<img className="backup-card__icon" src={ cloudErrorIcon } alt="" />
 							{ translate( 'Backup attempted on %(displayDate)s, %(displayTime)s and failed', {
 								args: { displayDate, displayTime },

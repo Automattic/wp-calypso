@@ -260,7 +260,8 @@ class BackupsPage extends Component {
 								selectedDate: this.getSelectedDate(),
 								lastBackupDate: lastDateAvailable,
 								backup,
-								isLatestBackup: latestBackup && latestBackup.activityId === backup.activityId,
+								isLatestBackup:
+									latestBackup && backup && latestBackup.activityId === backup.activityId,
 								dailyDeltas: getRawDailyBackupDeltas( logs, selectedDateString ),
 							} }
 						/>

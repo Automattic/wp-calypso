@@ -25,14 +25,9 @@ $cloud-icon-height: 24px;
 	}
 }
 
-.no-backups-on-selected-date__date {
-	font-size: 2.25rem;
-	font-weight: 600;
-}
-
 .backup-card__title {
 	display: flex;
-	justify-items: center;
+	align-items: center;
 
 	margin-bottom: 36px;
 
@@ -44,52 +39,41 @@ $cloud-icon-height: 24px;
 	.is-featured & {
 		margin-bottom: 100px;
 	}
-}
 
-.backup-scheduled__title {
-	@extend .backup-card__title;
-	font-weight: 400;
-	color: var( --studio-gray-40 );
-	margin-top: 4px;
+	&.backup-card__title--scheduled {
+		color: var( --studio-gray-40 );
+		margin-top: 5px;
 
-	img.backup-card__icon {
-		color: var( --studio-gray-30 );
+		img.backup-card__icon {
+			color: var( --studio-gray-30 );
+		}
 	}
-}
 
-.no-backups-on-selected-date__title {
-	@extend .backup-card__title;
-	font-weight: 400;
-	color: var( --studio-orange-30 );
-	margin-top: 4px;
-	margin-bottom: 100px;
-
-	img.backup-card__icon {
-		color: var( --studio-orange-30 );
-	}
-}
-
-.backup-failed__title {
-	@extend .backup-card__title;
-	font-weight: 700;
-	color: var( --p2-color-error );
-	margin-top: 4px;
-	margin-bottom: 100px;
-
-	img.backup-card__icon {
+	&.backup-card__title--failed {
 		color: var( --p2-color-error );
+		margin-top: 5px;
+
+		img.backup-card__icon {
+			color: var( --p2-color-error );
+		}
 	}
-}
 
-.no-backups-yet__title {
-	@extend .backup-card__title;
-	font-weight: 400;
-	color: var( --studio-gray-30 );
-	margin-top: 4px;
-	margin-bottom: 100px;
+	&.backup-card__title--delayed {
+		color: var( --studio-orange-30 );
+		margin-top: 5px;
 
-	img.backup-card__icon {
-		color: var( --studio-gray-30 );
+		img.backup-card__icon {
+			color: var( --studio-orange-30 );
+		}
+	}
+
+	&.backup-card__title--preparing {
+		color: var( --studio-gray-40 );
+		margin-top: 5px;
+
+		img.backup-card__icon {
+			color: var( --studio-gray-30 );
+		}
 	}
 }
 
@@ -112,21 +96,27 @@ $cloud-icon-height: 24px;
 /* Actions */
 
 .backup-card__actions {
-	display: flex;
-	flex-wrap: wrap;
-
 	margin: 0 0 32px;
 	padding: 0;
 
 	list-style-type: none;
 
 	> li {
-		position: relative;
+		margin-bottom: 20px;
+		.button {
+			width: 100%;
+		}
+	}
 
-		margin-right: 24px;
+	@include break-mobile {
+		display: flex;
 
-		&:last-child {
-			margin-right: 0;
+		> li {
+			margin-right: 24px;
+
+			&:last-child {
+				margin-right: 0;
+			}
 		}
 	}
 }

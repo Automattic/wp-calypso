@@ -30,9 +30,9 @@ import cloudScheduleIcon from 'calypso/components/jetpack/daily-backup-status/st
  */
 import type { Moment } from 'moment';
 
-type Props = { lastBackupDate: Moment; isLatest: boolean };
+type Props = { lastBackupDate: Moment; isFeatured: boolean };
 
-const BackupScheduled: FunctionComponent< Props > = ( { lastBackupDate, isLatest } ) => {
+const BackupScheduled: FunctionComponent< Props > = ( { lastBackupDate, isFeatured } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
@@ -69,14 +69,14 @@ const BackupScheduled: FunctionComponent< Props > = ( { lastBackupDate, isLatest
 	return (
 		<Card
 			className={ classNames( 'backup-card', {
-				'is-latest': isLatest,
+				'is-featured': isFeatured,
 			} ) }
 		>
 			<div className="backup-card__main">
 				<div className="backup-card__header">
 					<div className="backup-card__header-text">
 						<h2 className="backup-card__date">{ nextBackupHoursText }</h2>
-						<p className="backup-scheduled__title">
+						<p className="backup-card__title backup-card__title--scheduled">
 							<img className="backup-card__icon" src={ cloudScheduleIcon } alt="" />
 							{ translate( 'Your next backup has been scheduled' ) }
 						</p>

@@ -3,6 +3,7 @@
  */
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -20,16 +21,16 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
  * Style dependencies
  */
 import './style.scss';
-import cloudWarningIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-warning.svg';
+import cloudWarningIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-warning-orange-30.svg';
 
 /**
  * Type dependencies
  */
 import type { Moment } from 'moment';
 
-type Props = { selectedDate: Moment };
+type Props = { selectedDate: Moment; isFeatured: boolean };
 
-const NoBackupsOnSelectedDate: FunctionComponent< Props > = ( { selectedDate } ) => {
+const NoBackupsOnSelectedDate: FunctionComponent< Props > = ( { selectedDate, isFeatured } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
@@ -40,16 +41,20 @@ const NoBackupsOnSelectedDate: FunctionComponent< Props > = ( { selectedDate } )
 	const displayNextDate = nextDate.format( 'll' );
 
 	return (
-		<Card className="backup-card">
+		<Card
+			className={ classNames( 'backup-card', {
+				'is-featured': isFeatured,
+			} ) }
+		>
 			<div className="backup-card__main">
 				<div className="backup-card__header">
 					<div className="backup-card__header-text">
-						<h2 className="no-backups-on-selected-date__date">
+						<h2 className="backup-card__date">
 							{ translate( 'No Backup for %(displayDate)s', {
 								args: { displayDate },
 							} ) }
 						</h2>
-						<p className="no-backups-on-selected-date__title">
+						<p className="backup-card__title backup-card__title--delayed">
 							<img className="backup-card__icon" src={ cloudWarningIcon } alt="" />
 							{ translate( 'Backup was delayed' ) }
 						</p>

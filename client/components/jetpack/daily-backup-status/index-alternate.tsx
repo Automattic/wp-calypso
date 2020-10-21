@@ -77,7 +77,7 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 				isFeatured
 			/>
 		) : (
-			<BackupFailed backup={ backup } />
+			<BackupFailed backup={ backup } isFeatured />
 		);
 	}
 
@@ -88,13 +88,13 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 		} );
 
 		return selectedDate.isSame( today, 'day' ) ? (
-			<BackupScheduled lastBackupDate={ lastBackupDate } isLatest />
+			<BackupScheduled lastBackupDate={ lastBackupDate } isFeatured />
 		) : (
-			<NoBackupsOnSelectedDate selectedDate={ selectedDate } />
+			<NoBackupsOnSelectedDate selectedDate={ selectedDate } isFeatured />
 		);
 	}
 
-	return <NoBackupsYet />;
+	return <NoBackupsYet isFeatured />;
 };
 
 export default DailyBackupStatusAlternate;

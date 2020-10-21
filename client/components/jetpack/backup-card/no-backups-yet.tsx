@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,11 +22,12 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import './style.scss';
 import cloudPendingIcon from 'calypso/components/jetpack/daily-backup-status/status-card/icons/cloud-pending-gray-30.svg';
 
+type Props = { isFeatured: boolean };
 interface rawSite {
 	name: string;
 }
 
-const NoBackupsYet = () => {
+const NoBackupsYet: FunctionComponent< Props > = ( { isFeatured } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
@@ -34,14 +36,18 @@ const NoBackupsYet = () => {
 	const siteName = rawSite?.name;
 
 	return (
-		<Card className="backup-card">
+		<Card
+			className={ classNames( 'backup-card', {
+				'is-featured': isFeatured,
+			} ) }
+		>
 			<div className="backup-card__main">
 				<div className="backup-card__header">
 					<div className="backup-card__header-text">
-						<h2 className="no-backups-yet__date">
+						<h2 className="backup-card__date">
 							{ translate( 'Your first backup will be ready soon' ) }
 						</h2>
-						<p className="no-backups-yet__title">
+						<p className="backup-card__title backup-card__title--preparing">
 							<img className="backup-card__icon" src={ cloudPendingIcon } alt="" />
 							{ translate( 'We are preparing to backup %s', {
 								args: siteName,
