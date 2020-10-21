@@ -104,7 +104,7 @@ export function PurchaseCancel( {
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Cancel purchase' ) }
+				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
 

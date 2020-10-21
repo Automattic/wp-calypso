@@ -32,7 +32,6 @@ import {
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { StripeHookProvider } from 'calypso/lib/stripe';
-import FormattedHeader from 'calypso/components/formatted-header';
 
 function EditCardDetails( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
@@ -81,7 +80,6 @@ function EditCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
 				title="Purchases > Edit Card Details"
 			/>
-			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.editCardDetails }

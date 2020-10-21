@@ -24,6 +24,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { managePurchase as managePurchaseUrl, purchasesRoot } from 'calypso/me/purchases/paths';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {
@@ -56,6 +57,7 @@ export function addCardDetails( context, next ) {
 
 	context.primary = (
 		<Main className="purchases__add-cart-details is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<AddCardDetails
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
@@ -78,6 +80,7 @@ export function cancelPurchase( context, next ) {
 
 	context.primary = (
 		<Main className="purchases__cancel is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<CancelPurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
@@ -99,6 +102,7 @@ export function confirmCancelDomain( context, next ) {
 
 	context.primary = (
 		<Main className={ classes }>
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<ConfirmCancelDomain
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
@@ -119,6 +123,7 @@ export function editCardDetails( context, next ) {
 
 	context.primary = (
 		<Main className="purchases__change is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<EditCardDetails
 				cardId={ context.params.cardId }
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
@@ -145,6 +150,7 @@ export function managePurchase( context, next ) {
 
 	context.primary = (
 		<Main className={ classes }>
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<PageViewTracker path="/me/purchases/:site/:purchaseId" title="Purchases > Manage Purchase" />
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
