@@ -13,8 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import SiteSelector from 'calypso/components/site-selector';
-import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import getSites from 'calypso/state/selectors/get-sites';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
@@ -29,13 +27,15 @@ import wp from 'calypso/lib/wp';
 import { isWpComFreePlan } from 'calypso/lib/plans';
 import { requestSites } from 'calypso/state/sites/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const wpcom = wp.undocumented();
 
 export class TransferToOtherSite extends React.Component {
 	static propTypes = {
-		currentUser: PropTypes.object.isRequired,
 		currentUserCanManage: PropTypes.bool.isRequired,
+		hasSiteDomainsLoaded: PropTypes.bool.isRequired,
 		isDomainOnly: PropTypes.bool.isRequired,
 		isMapping: PropTypes.bool.isRequired,
 		isRequestingSiteDomains: PropTypes.bool.isRequired,
@@ -50,7 +50,7 @@ export class TransferToOtherSite extends React.Component {
 	};
 
 	isDataReady() {
-		return ! this.props.isRequestingSiteDomains;
+		return ! this.props.isRequestingSiteDomains && this.props.hasSiteDomainsLoaded;
 	}
 
 	isSiteEligible = ( site ) => {
@@ -61,9 +61,6 @@ export class TransferToOtherSite extends React.Component {
 			site.capabilities.manage_options &&
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
 			! get( site, 'options.is_domain_only', false ) &&
-			! (
-				this.props.domainsWithPlansOnly && isWpComFreePlan( get( site, 'plan.product_slug' ) )
-			) &&
 			site.ID !== this.props.selectedSite.ID
 		);
 	};
@@ -120,31 +117,14 @@ export class TransferToOtherSite extends React.Component {
 	getMessage() {
 		const {
 			selectedDomainName: domainName,
-			domainsWithPlansOnly,
 			isMapping,
 			translate,
 		} = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 
 		if ( isMapping ) {
-			if ( domainsWithPlansOnly ) {
-				return translate(
-					'Please choose a site with a paid plan ' +
-						"you're an administrator on to transfer domain mapping for {{strong}}%(domainName)s{{/strong}} to:",
-					translateArgs
-				);
-			}
-
 			return translate(
 				"Please choose a site you're an administrator on to transfer domain mapping for {{strong}}%(domainName)s{{/strong}} to:",
-				translateArgs
-			);
-		}
-
-		if ( domainsWithPlansOnly ) {
-			return translate(
-				'Please choose a site with a paid plan ' +
-					"you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
 				translateArgs
 			);
 		}
@@ -216,12 +196,12 @@ export class TransferToOtherSite extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const domain = ! ownProps.isRequestingSiteDomains && getSelectedDomain( ownProps );
+		const siteId = getSelectedSiteId( state );
 		return {
 			currentRoute: getCurrentRoute( state ),
-			currentUser: getCurrentUser( state ),
-			currentUserCanManage: domain && domain.currentUserCanManage,
-			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-			isDomainOnly: isDomainOnlySite( state, get( ownProps, 'selectedSite.ID', null ) ),
+			currentUserCanManage: Boolean( domain ) && domain.currentUserCanManage,
+			hasSiteDomainsLoaded: hasLoadedSiteDomains( state, siteId ),
+			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			sites: getSites( state ),
 		};
