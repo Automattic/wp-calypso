@@ -16,7 +16,8 @@
 			"**/config",
 			"**/testarmada-magellan",
 			"**/testarmada-magellan-*",
-			"calypso/@wordpress/interface"
+			"calypso/@wordpress/interface",
+			"calypso/@wordpress/edit-post"
 		]
 	},
 	"license": "GPL-2.0-or-later",
