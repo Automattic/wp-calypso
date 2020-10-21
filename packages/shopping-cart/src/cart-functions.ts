@@ -13,7 +13,7 @@ import type {
 
 let lastUUID = 100;
 
-export function convertResponseCartProductToRequestCartProduct(
+function convertResponseCartProductToRequestCartProduct(
 	product: ResponseCartProduct | TempResponseCartProduct
 ): RequestCartProduct {
 	const { product_slug, meta, product_id, extra } = product;
