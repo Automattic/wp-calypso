@@ -16,7 +16,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import ExternalLink from 'calypso/components/external-link';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle/compact';
 import Main from 'calypso/components/main';
 import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import { protectForm } from 'calypso/lib/protect-form';
