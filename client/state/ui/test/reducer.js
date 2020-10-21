@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -103,27 +104,28 @@ describe( 'reducer', () => {
 
 	describe( '#getSidebarIsCollapsed()', () => {
 		test( 'should default to false', () => {
-			const state = sidebarIsCollapsed( undefined, {} );
-
-			expect( state ).to.be.false;
+			const defaultState = deepFreeze( false );
+			expect( sidebarIsCollapsed( undefined, {} ) ).equal( defaultState );
 		} );
 
 		test( 'should be true when collapsed', () => {
-			const state = sidebarIsCollapsed( null, {
+			const defaultState = deepFreeze( true );
+			const state = sidebarIsCollapsed( false, {
 				type: SIDEBAR_TOGGLE_VISIBILITY,
 				collapsed: true,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).equal( defaultState );
 		} );
 
 		test( 'should be false when expanded', () => {
-			const state = sidebarIsCollapsed( null, {
+			const defaultState = deepFreeze( false );
+			const state = sidebarIsCollapsed( true, {
 				type: SIDEBAR_TOGGLE_VISIBILITY,
 				collapsed: false,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).equal( defaultState );
 		} );
 	} );
 } );
