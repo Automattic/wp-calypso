@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import CurrentSite from 'calypso/my-sites/current-site';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
+import CollapseSidebar from './collapse-sidebar';
 import useSiteMenuItems from './use-site-menu-items';
 import useDomainsViewStatus from './use-domains-view-status';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
@@ -28,12 +29,14 @@ import 'calypso/layout/sidebar-unified/style.scss';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
+import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
+	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -62,6 +65,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 							path={ path }
 							link={ item.url }
 							selected={ isSelected }
+							sidebarCollapsed={ sidebarIsCollapsed }
 							{ ...item }
 						/>
 					);
@@ -69,7 +73,9 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 				return <MySitesSidebarUnifiedItem key={ item.slug } selected={ isSelected } { ...item } />;
 			} ) }
+			<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
 		</Sidebar>
 	);
 };
+
 export default MySitesSidebarUnified;

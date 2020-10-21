@@ -37,6 +37,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	path,
 	link,
 	selected,
+	sidebarCollapsed,
 } ) => {
 	const hasAutoExpanded = useRef( false );
 	const reduxDispatch = useDispatch();
@@ -52,11 +53,11 @@ export const MySitesSidebarUnifiedMenu = ( {
 	 * which contains the current active item.
 	 */
 	useEffect( () => {
-		if ( ! hasAutoExpanded.current && ( selected || childIsSelected ) ) {
+		if ( ! hasAutoExpanded.current && ( selected || childIsSelected ) && ! sidebarCollapsed ) {
 			reduxDispatch( expandSection( sectionId ) );
 			hasAutoExpanded.current = true;
 		}
-	}, [ selected, childIsSelected, reduxDispatch, sectionId ] );
+	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
 
 	return (
 		<ExpandableSidebarMenu
@@ -69,10 +70,12 @@ export const MySitesSidebarUnifiedMenu = ( {
 					}
 					page( link );
 				}
-				reduxDispatch( collapseAllMySitesSidebarSections() );
-				reduxDispatch( toggleSection( sectionId ) );
+				if ( ! sidebarCollapsed ) {
+					reduxDispatch( collapseAllMySitesSidebarSections() );
+					reduxDispatch( toggleSection( sectionId ) );
+				}
 			} }
-			expanded={ isExpanded }
+			expanded={ ! sidebarCollapsed && isExpanded }
 			title={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
@@ -99,6 +102,7 @@ MySitesSidebarUnifiedMenu.propTypes = {
 	icon: PropTypes.string,
 	children: PropTypes.array.isRequired,
 	link: PropTypes.string,
+	sidebarCollapsed: PropTypes.bool,
 	/*
 	Example of children shape:
 	[

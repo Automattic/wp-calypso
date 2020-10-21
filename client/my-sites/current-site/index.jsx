@@ -6,21 +6,22 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { isEnabled } from 'calypso/config';
+import { Button, Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
 import AllSites from 'calypso/blocks/all-sites';
 import AsyncLoad from 'calypso/components/async-load';
-import { Button, Card } from '@automattic/components';
 import Site from 'calypso/blocks/site';
 import Gridicon from 'calypso/components/gridicon';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
+import { expandSidebar } from 'calypso/state/ui/actions';
 
 /**
  * Style dependencies
@@ -35,9 +36,14 @@ class CurrentSite extends Component {
 		translate: PropTypes.func.isRequired,
 		anySiteSelected: PropTypes.array,
 		forceAllSitesView: PropTypes.bool,
+		sidebarIsCollapsed: PropTypes.bool,
+		expandSidebar: PropTypes.func.isRequired,
 	};
 
 	switchSites = ( event ) => {
+		if ( isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed ) {
+			this.props.expandSidebar();
+		}
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
@@ -66,40 +72,54 @@ class CurrentSite extends Component {
 
 		return (
 			<Card className="current-site">
-				{ this.props.siteCount > 1 && (
-					<span className="current-site__switch-sites">
-						<Button borderless onClick={ this.switchSites }>
-							<Gridicon icon="chevron-left" />
-							<span className="current-site__switch-sites-label">
-								{ translate( 'Switch Site' ) }
-							</span>
-						</Button>
-					</span>
-				) }
+				<div
+					role="button"
+					tabIndex="0"
+					aria-hidden="true"
+					onClick={ () => {
+						return isEnabled( 'nav-unification' ) && this.props.sidebarIsCollapsed
+							? this.props.expandSidebar()
+							: null;
+					} }
+				>
+					{ this.props.siteCount > 1 && (
+						<span className="current-site__switch-sites">
+							<Button borderless onClick={ this.switchSites }>
+								<Gridicon icon="chevron-left" />
+								<span className="current-site__switch-sites-label">
+									{ translate( 'Switch Site' ) }
+								</span>
+							</Button>
+						</span>
+					) }
 
-				{ selectedSite ? (
-					<div>
-						<Site site={ selectedSite } homeLink={ true } />
-					</div>
-				) : (
-					<AllSites />
-				) }
-				{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
-					<AsyncLoad require="calypso/my-sites/current-site/domain-warnings" placeholder={ null } />
-				) }
-				{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
-					<AsyncLoad
-						require="calypso/my-sites/current-site/stale-cart-items-notice"
-						placeholder={ null }
-					/>
-				) }
-				{ selectedSite && isEnabled( 'current-site/notice' ) && (
-					<AsyncLoad
-						require="calypso/my-sites/current-site/notice"
-						placeholder={ null }
-						site={ selectedSite }
-					/>
-				) }
+					{ selectedSite ? (
+						<div>
+							<Site site={ selectedSite } homeLink={ true } />
+						</div>
+					) : (
+						<AllSites />
+					) }
+					{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
+						<AsyncLoad
+							require="calypso/my-sites/current-site/domain-warnings"
+							placeholder={ null }
+						/>
+					) }
+					{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
+						<AsyncLoad
+							require="calypso/my-sites/current-site/stale-cart-items-notice"
+							placeholder={ null }
+						/>
+					) }
+					{ selectedSite && isEnabled( 'current-site/notice' ) && (
+						<AsyncLoad
+							require="calypso/my-sites/current-site/notice"
+							placeholder={ null }
+							site={ selectedSite }
+						/>
+					) }
+				</div>
 			</Card>
 		);
 	}
@@ -111,6 +131,11 @@ export default connect(
 		anySiteSelected: getSelectedOrAllSites( state ),
 		siteCount: getCurrentUserSiteCount( state ),
 		hasAllSitesList: hasAllSitesList( state ),
+		sidebarIsCollapsed: getSidebarIsCollapsed( state ),
 	} ),
-	{ recordGoogleEvent, setLayoutFocus }
+	{
+		recordGoogleEvent,
+		setLayoutFocus,
+		expandSidebar,
+	}
 )( localize( CurrentSite ) );
