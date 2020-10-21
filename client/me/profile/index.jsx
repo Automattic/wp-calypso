@@ -30,6 +30,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -65,10 +66,16 @@ const Profile = createReactClass( {
 			'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
 
 		return (
-			<Main className="profile">
+			<Main className="profile is-wide-layout">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader
+					brandFont
+					headerText={ this.props.translate( 'My Profile' ) }
+					align="left"
+				/>
+
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
 					<EditGravatar />
