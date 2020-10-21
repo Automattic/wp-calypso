@@ -388,6 +388,7 @@ function Edit( props ) {
 
 			<div className={ className } ref={ wrapperRef }>
 				{ props.noticeUI }
+
 				{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
 					<Controls
 						{ ...props }
