@@ -21,8 +21,13 @@ import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
 import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
-import { planMatches } from 'calypso/lib/plans';
-import { GROUP_WPCOM, TERM_ANNUALLY, TERM_BIENNIALLY } from 'calypso/lib/plans/constants';
+import { planMatches, isWpComPlan } from 'calypso/lib/plans';
+import {
+	isMonthly as isMonthlyPlan,
+	GROUP_WPCOM,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+} from 'calypso/lib/plans/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 
@@ -83,7 +88,7 @@ function WPLineItem( {
 				{ item.label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice
+				<LineItemPriceWithMonthlyPricingTest
 					item={ item }
 					isSummary={ isSummary }
 					isMonthlyPricingTest={ isMonthlyPricingTest }
@@ -173,6 +178,42 @@ WPLineItem.propTypes = {
 	onChangePlanLength: PropTypes.func,
 };
 
+function LineItemPriceWithMonthlyPricingTest( { isMonthlyPricingTest, ...props } ) {
+	const translate = useTranslate();
+	const planSlug = props.item?.wpcom_meta?.product_slug;
+	let discountLabel = null;
+
+	if ( isMonthlyPricingTest && isWpComPlan( planSlug ) && ! isMonthlyPlan( planSlug ) ) {
+		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
+			discountLabel = translate( 'Annual discount' );
+		} else if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
+			discountLabel = translate( 'Biennial discount' );
+		}
+	}
+
+	return (
+		<>
+			<LineItemPrice { ...props } />
+			{ discountLabel && <DiscountDescription>{ discountLabel }</DiscountDescription> }
+		</>
+	);
+}
+
+const DiscountDescription = styled.span`
+	position: absolute;
+	top: 23px;
+	right: 0;
+	white-space: nowrap;
+	font-size: 0.875rem;
+	color: var( --color-success );
+
+	.rtl & {
+		right: auto;
+		left: 0;
+		top: 1.5em;
+	}
+`;
+
 function LineItemPrice( { item, isSummary } ) {
 	const originalAmountDisplay =
 		item.wpcom_meta?.related_monthly_plan_cost_display ||
@@ -211,6 +252,10 @@ export const LineItem = styled( WPLineItem )`
 	.is-summary & {
 		padding: 10px 0;
 		border-bottom: 0;
+	}
+
+	.checkout-line-item__price {
+		position: relative;
 	}
 `;
 
@@ -323,6 +368,7 @@ export function WPOrderReviewLineItems( {
 	getItemVariants,
 	onChangePlanLength,
 	createUserAndSiteBeforeTransaction,
+	isMonthlyPricingTest,
 } ) {
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -347,6 +393,7 @@ export function WPOrderReviewLineItems( {
 								onChangePlanLength={ onChangePlanLength }
 								isSummary={ isSummary }
 								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+								isMonthlyPricingTest={ isMonthlyPricingTest }
 							/>
 						</WPOrderReviewListItem>
 					);
@@ -370,6 +417,7 @@ WPOrderReviewLineItems.propTypes = {
 	),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	isMonthlyPricingTest: PropTypes.bool,
 };
 
 const WPOrderReviewList = styled.ul`
@@ -480,13 +528,24 @@ function shouldLineItemBeShownWhenStepInactive( item ) {
 	return ! itemTypesToIgnore.includes( item.type );
 }
 
-function LineItemSublabelAndPrice( { item } ) {
+function LineItemSublabelAndPrice( { item, isMonthlyPricingTest = false } ) {
 	const translate = useTranslate();
 	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
 	const isDomainMap = item.type === 'domain_map';
 	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
+		if ( isMonthlyPricingTest ) {
+			return translate( '%(sublabel)s: %(monthlyPrice)s /month × %(monthsPerBillPeriod)s', {
+				args: {
+					sublabel: item.sublabel,
+					monthlyPrice: item.wpcom_meta.item_subtotal_monthly_cost_display,
+					monthsPerBillPeriod: item.wpcom_meta.months_per_bill_period,
+				},
+				comment: 'product type and monthly breakdown of total cost, separated by a colon',
+			} );
+		}
+
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month × %(monthsPerBillPeriod)s', {
 			args: {
 				sublabel: item.sublabel,
@@ -498,6 +557,10 @@ function LineItemSublabelAndPrice( { item } ) {
 	}
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period === 1 ) {
+		if ( isMonthlyPricingTest ) {
+			return translate( 'Monthly subscription' );
+		}
+
 		return translate( '%(sublabel)s: %(monthlyPrice)s per month', {
 			args: {
 				sublabel: item.sublabel,

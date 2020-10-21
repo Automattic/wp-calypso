@@ -22,6 +22,7 @@ import {
 } from 'calypso/lib/plans/constants';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { myFormatCurrency } from 'calypso/blocks/subscription-length-picker';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -30,6 +31,10 @@ export function useProductVariants( { siteId, productSlug } ) {
 	const reduxDispatch = useDispatch();
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
+	const monthlyPricingVariant = useSelector( ( state ) =>
+		getVariationForUser( state, 'monthly_pricing_test_phase_1' )
+	);
+	const isMonthlyPricingTest = monthlyPricingVariant === 'treatment';
 
 	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices(
@@ -59,12 +64,55 @@ export function useProductVariants( { siteId, productSlug } ) {
 			return [];
 		}
 
-		return productsWithPrices.map( ( variant ) => ( {
-			variantLabel: getTermText( variant.plan.term, translate ),
-			variantDetails: <VariantPrice variant={ variant } />,
-			productSlug: variant.planSlug,
-			productId: variant.product.product_id,
-		} ) );
+		/*
+		 * WARNING:
+		 * The prices should be processed on the server-side when we roll out the treatment as winner.
+		 */
+		return productsWithPrices.map(
+			overridePriceForMonthlyPricingTest(
+				( variant ) => ( {
+					variantLabel: getTermText( variant.plan.term, translate ),
+					variantDetails: <VariantPrice variant={ variant } />,
+					productSlug: variant.planSlug,
+					productId: variant.product.product_id,
+				} ),
+				isMonthlyPricingTest
+			)
+		);
+	};
+}
+
+/*
+ * WARNING:
+ * The prices should be processed on the server-side when we roll out the treatment as winner.
+ */
+function overridePriceForMonthlyPricingTest( callback, override ) {
+	if ( ! override ) {
+		return callback;
+	}
+
+	return ( originalVariant, _, productsWithPrices ) => {
+		const plan = originalVariant.plan;
+
+		if ( ! plan || plan?.term === TERM_MONTHLY || plan?.group !== GROUP_WPCOM ) {
+			return callback( originalVariant );
+		}
+
+		const monthlyPlan = productsWithPrices.filter(
+			( product ) => product.plan?.term === TERM_MONTHLY
+		)?.[ 0 ];
+		if ( ! monthlyPlan ) {
+			return callback( originalVariant );
+		}
+
+		const monthlyPlanPrice = monthlyPlan.priceFinal || monthlyPlan.priceFull;
+		const months = plan.term === TERM_ANNUALLY ? 12 : 24;
+		const priceFullBeforeDiscount = monthlyPlanPrice * months;
+
+		return callback( {
+			...originalVariant,
+			priceFullBeforeDiscount,
+		} );
 	};
 }
 
