@@ -50,6 +50,10 @@ function EditCardDetails( props ) {
 
 				<QueryUserPurchases userId={ props.userId } />
 
+				{ props.showTitle && (
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+				) }
+
 				<CreditCardFormLoadingPlaceholder
 					title={ titles.editCardDetails }
 					isFullWidth={ props.isFullWidth }
@@ -81,7 +85,10 @@ function EditCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
 				title="Purchases > Edit Card Details"
 			/>
-			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+
+			{ props.showTitle && (
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			) }
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.editCardDetails }

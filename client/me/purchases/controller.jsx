@@ -81,6 +81,7 @@ export function cancelPurchase( context, next ) {
 			<CancelPurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
+				showTitle={ true }
 			/>
 		</Main>
 	);
@@ -126,6 +127,7 @@ export function editCardDetails( context, next ) {
 				getManagePurchaseUrlFor={ managePurchaseUrl }
 				purchaseListUrl={ purchasesRoot }
 				isFullWidth={ true }
+				showTitle={ true }
 			/>
 		</Main>
 	);

@@ -190,7 +190,10 @@ class CancelPurchase extends React.Component {
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+
+				{ this.props.showTitle && (
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+				) }
 
 				<HeaderCake
 					backHref={ this.props.getManagePurchaseUrlFor(

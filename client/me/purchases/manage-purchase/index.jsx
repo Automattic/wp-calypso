@@ -625,6 +625,7 @@ class ManagePurchase extends Component {
 			getAddPaymentMethodUrlFor,
 			getEditPaymentMethodUrlFor,
 			isProductOwner,
+			showHeader,
 		} = this.props;
 
 		let editCardDetailsPath = false;
@@ -654,7 +655,9 @@ class ManagePurchase extends Component {
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
-				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+				{ showHeader && (
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+				) }
 
 				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
 				{ showExpiryNotice ? (
