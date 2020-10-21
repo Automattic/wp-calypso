@@ -171,9 +171,9 @@ export class TransferToOtherSite extends React.Component {
 					selectedDomainName={ selectedDomainName }
 					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				>
-					{ ! isMappedDomain
-						? this.props.translate( 'Transfer Domain To Another Site' )
-						: this.props.translate( 'Transfer Domain Mapping To Another Site' ) }
+					{ isMappedDomain
+						? this.props.translate( 'Transfer Domain Mapping To Another Site' )
+						: this.props.translate( 'Transfer Domain To Another Site' ) }
 				</Header>
 				{ this.renderSection() }
 			</Main>
@@ -226,7 +226,7 @@ export default connect(
 			currentUserCanManage: domain && domain.currentUserCanManage,
 			domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
 			isDomainOnly: isDomainOnlySite( state, get( ownProps, 'selectedSite.ID', null ) ),
-			isMappedDomain: domain && isMappedDomain( domain ),
+			isMappedDomain: Boolean( domain ) && isMappedDomain( domain ),
 			sites: getSites( state ),
 		};
 	},

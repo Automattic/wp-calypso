@@ -55,7 +55,7 @@ function Transfer( props ) {
 				selectedDomainName={ selectedDomainName }
 				backHref={ domainManagementEdit( slug, selectedDomainName, currentRoute ) }
 			>
-				{ ! isMappedDomain ? translate( 'Transfer Domain' ) : translate( 'Transfer Mapping' ) }
+				{ isMappedDomain ? translate( 'Transfer Mapping' ) : translate( 'Transfer Domain' ) }
 			</Header>
 			<VerticalNav>
 				{ ! isMappedDomain && (
