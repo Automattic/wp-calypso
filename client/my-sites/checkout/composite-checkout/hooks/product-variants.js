@@ -10,18 +10,18 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { requestPlans } from 'state/plans/actions';
-import { computeProductsWithPrices } from 'state/products-list/selectors';
-import { getPlan, findPlansKeys } from 'lib/plans';
+import { requestPlans } from 'calypso/state/plans/actions';
+import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
+import { getPlan, findPlansKeys } from 'calypso/lib/plans';
 import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
-} from 'lib/plans/constants';
-import { requestProductsList } from 'state/products-list/actions';
-import { myFormatCurrency } from 'blocks/subscription-length-picker';
+} from 'calypso/lib/plans/constants';
+import { requestProductsList } from 'calypso/state/products-list/actions';
+import { myFormatCurrency } from 'calypso/blocks/subscription-length-picker';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 

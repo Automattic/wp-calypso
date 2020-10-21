@@ -8,25 +8,25 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { preventWidows } from 'lib/formatting';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Task from 'my-sites/customer-home/cards/tasks/task';
-import { TASK_EDITOR_DEPRECATION } from 'my-sites/customer-home/cards/constants';
+import { preventWidows } from 'calypso/lib/formatting';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { TASK_EDITOR_DEPRECATION } from 'calypso/my-sites/customer-home/cards/constants';
 
-import { setSelectedEditor } from 'state/selected-editor/actions';
+import { setSelectedEditor } from 'calypso/state/selected-editor/actions';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 	withAnalytics,
 	bumpStat,
-} from 'state/analytics/actions';
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import blockEditorImage from 'assets/images/illustrations/block-editor-fade.svg';
-import FormattedDate from 'components/formatted-date';
-import { localizeUrl } from 'lib/i18n-utils';
-import InlineSupportLink from 'components/inline-support-link';
-import { useLocalizedMoment } from 'components/localized-moment';
+} from 'calypso/state/analytics/actions';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import blockEditorImage from 'calypso/assets/images/illustrations/block-editor-fade.svg';
+import FormattedDate from 'calypso/components/formatted-date';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 const DeprecateEditor = ( { siteId, gutenbergUrl, optIn } ) => {
 	const translate = useTranslate();

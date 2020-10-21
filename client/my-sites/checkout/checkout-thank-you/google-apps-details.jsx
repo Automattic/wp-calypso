@@ -7,12 +7,12 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CONTACT, GOOGLE_APPS_LEARNING_CENTER } from 'lib/url/support';
-import PurchaseDetail from 'components/purchase-detail';
+import { CONTACT, GOOGLE_APPS_LEARNING_CENTER } from 'calypso/lib/url/support';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 import { useSelector } from 'react-redux';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { isGoogleApps } from 'lib/products-values';
-import { isGSuiteExtraLicenseProductSlug } from 'lib/gsuite';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { isGoogleApps } from 'calypso/lib/products-values';
+import { isGSuiteExtraLicenseProductSlug } from 'calypso/lib/gsuite';
 
 const GoogleAppsDetails = ( { purchases } ) => {
 	const email = useSelector( getCurrentUserEmail );

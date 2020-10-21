@@ -8,8 +8,8 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { MySitesSidebar } from '..';
-import config from 'config';
-import { abtest } from 'lib/abtest';
+import config from 'calypso/config';
+import { abtest } from 'calypso/lib/abtest';
 
 jest.mock( 'lib/user', () => () => null );
 jest.mock( 'lib/user/index', () => () => {} );

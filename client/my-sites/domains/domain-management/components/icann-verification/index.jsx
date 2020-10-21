@@ -9,13 +9,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { EMAIL_VALIDATION_AND_VERIFICATION } from 'lib/url/support';
-import { resendIcannVerification } from 'lib/domains';
-import { errorNotice } from 'state/notices/actions';
-import { domainManagementEditContactInfo } from 'my-sites/domains/paths';
-import getRegistrantWhois from 'state/selectors/get-registrant-whois';
-import QueryWhois from 'components/data/query-whois';
-import EmailVerificationCard from 'my-sites/domains/domain-management/components/email-verification';
+import { EMAIL_VALIDATION_AND_VERIFICATION } from 'calypso/lib/url/support';
+import { resendIcannVerification } from 'calypso/lib/domains';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';
+import getRegistrantWhois from 'calypso/state/selectors/get-registrant-whois';
+import QueryWhois from 'calypso/components/data/query-whois';
+import EmailVerificationCard from 'calypso/my-sites/domains/domain-management/components/email-verification';
 
 class IcannVerificationCard extends React.Component {
 	static propTypes = {

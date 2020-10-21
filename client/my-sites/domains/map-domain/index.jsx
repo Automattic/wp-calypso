@@ -11,20 +11,24 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import MapDomainStep from 'components/domains/map-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { domainRegistration, domainMapping } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
-import wp from 'lib/wp';
-import { domainManagementList } from 'my-sites/domains/paths';
-import Notice from 'components/notice';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
-import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+import HeaderCake from 'calypso/components/header-cake';
+import MapDomainStep from 'calypso/components/domains/map-domain-step';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { domainRegistration, domainMapping } from 'calypso/lib/cart-values/cart-items';
+import { addItem } from 'calypso/lib/cart/actions';
+import wp from 'calypso/lib/wp';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import Notice from 'calypso/components/notice';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 
 const wpcom = wp.undocumented();
 

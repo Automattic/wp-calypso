@@ -10,22 +10,22 @@ import React from 'react';
  * Internal dependencies
  */
 import EmailForwardingLimit from './email-forwarding-limit';
-import { validateAllFields } from 'lib/domains/email-forwarding';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import formState from 'lib/form-state';
-import { addEmailForward } from 'state/email-forwarding/actions';
+import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormFooter from 'calypso/my-sites/domains/domain-management/components/form-footer';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import formState from 'calypso/lib/form-state';
+import { addEmailForward } from 'calypso/state/email-forwarding/actions';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 
 class EmailForwardingAddNew extends React.Component {
 	static propTypes = {

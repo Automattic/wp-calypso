@@ -5,21 +5,21 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
-import { userCan } from 'lib/site/utils';
-import MediaModalSecondaryActions from 'post-editor/media-modal/secondary-actions';
+import { userCan } from 'calypso/lib/site/utils';
+import MediaModalSecondaryActions from 'calypso/post-editor/media-modal/secondary-actions';
 import { Card, Button, ScreenReaderText } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import StickyPanel from 'components/sticky-panel';
+import ButtonGroup from 'calypso/components/button-group';
+import StickyPanel from 'calypso/components/sticky-panel';
 
 class MediaLibraryHeader extends React.Component {
 	static displayName = 'MediaLibraryHeader';

@@ -4,36 +4,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import EmptyContent from 'components/empty-content';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import PeopleSectionNav from 'my-sites/people/people-section-nav';
-import PeopleListItem from 'my-sites/people/people-list-item';
+import Main from 'calypso/components/main';
+import EmptyContent from 'calypso/components/empty-content';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card, Button, Dialog } from '@automattic/components';
-import QuerySiteInvites from 'components/data/query-site-invites';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import InvitesListEnd from './invites-list-end';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isPrivateSite from 'state/selectors/is-private-site';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
 	getAcceptedInvitesForSite,
 	getNumberOfInvitesFoundForSite,
 	isDeletingAnyInvite,
-} from 'state/invites/selectors';
-import { deleteInvites } from 'state/invites/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+} from 'calypso/state/invites/selectors';
+import { deleteInvites } from 'calypso/state/invites/actions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies

@@ -8,10 +8,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import Gridicon from 'components/gridicon';
-import PluginsActions from 'lib/plugins/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import PluginsActions from 'calypso/lib/plugins/actions';
 
 /**
  * Style dependencies

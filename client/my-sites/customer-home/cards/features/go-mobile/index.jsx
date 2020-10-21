@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import AppsBadge from 'blocks/get-apps/apps-badge';
-import userAgent from 'lib/user-agent';
-import CardHeading from 'components/card-heading';
-import { sendEmailLogin } from 'state/auth/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
+import config from 'calypso/config';
+import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
+import userAgent from 'calypso/lib/user-agent';
+import CardHeading from 'calypso/components/card-heading';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies

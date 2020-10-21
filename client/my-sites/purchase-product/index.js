@@ -6,10 +6,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import userFactory from 'lib/user';
+import userFactory from 'calypso/lib/user';
 import * as controller from './controller';
-import { login } from 'lib/paths';
-import { makeLayout, render as clientRender } from 'controller';
+import { login } from 'calypso/lib/paths';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 /**
  * Style dependencies

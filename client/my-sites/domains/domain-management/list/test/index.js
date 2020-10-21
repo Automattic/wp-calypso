@@ -15,7 +15,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { List as DomainList } from '..';
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'calypso/state';
 
 jest.mock( 'lib/wp', () => ( {
 	undocumented: () => ( {

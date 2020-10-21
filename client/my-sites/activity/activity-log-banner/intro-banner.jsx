@@ -5,23 +5,23 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import DismissibleCard from 'blocks/dismissible-card';
-import ExternalLink from 'components/external-link';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { FEATURE_JETPACK_ESSENTIAL, PLAN_PERSONAL } from 'lib/plans/constants';
-import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { isFreePlan } from 'lib/plans';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
+import CardHeading from 'calypso/components/card-heading';
+import DismissibleCard from 'calypso/blocks/dismissible-card';
+import ExternalLink from 'calypso/components/external-link';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { FEATURE_JETPACK_ESSENTIAL, PLAN_PERSONAL } from 'calypso/lib/plans/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isFreePlan } from 'calypso/lib/plans';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
 
 /**
  * Style dependencies
@@ -31,7 +31,7 @@ import './intro-banner.scss';
 /**
  * Image dependencies
  */
-import activityImage from 'assets/images/illustrations/site-activity.svg';
+import activityImage from 'calypso/assets/images/illustrations/site-activity.svg';
 
 class IntroBanner extends Component {
 	recordLearnMore = () =>

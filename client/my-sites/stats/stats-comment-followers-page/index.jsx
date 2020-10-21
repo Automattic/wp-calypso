@@ -15,16 +15,16 @@ import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import ErrorPanel from '../stats-error';
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
-} from 'state/stats/lists/selectors';
+} from 'calypso/state/stats/lists/selectors';
 
 class StatModuleFollowersPage extends Component {
 	render() {

@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import PostSelector from '../';
-import FormLabel from 'components/forms/form-label';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 class PostSelectorExample extends Component {
 	state = {

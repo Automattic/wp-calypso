@@ -10,15 +10,19 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import './style.scss';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getProductsForSiteId } from 'state/memberships/product-list/selectors';
-import HeaderCake from 'components/header-cake';
-import SectionHeader from 'components/section-header';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import SectionHeader from 'calypso/components/section-header';
 import { Button, CompactCard } from '@automattic/components';
-import QueryMembershipProducts from 'components/data/query-memberships';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'components/gridicon';
+import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import Gridicon from 'calypso/components/gridicon';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 

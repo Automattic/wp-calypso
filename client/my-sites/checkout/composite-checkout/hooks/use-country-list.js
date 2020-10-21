@@ -8,8 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getCountries from 'state/selectors/get-countries';
-import { fetchPaymentCountries } from 'state/countries/actions';
+import getCountries from 'calypso/state/selectors/get-countries';
+import { fetchPaymentCountries } from 'calypso/state/countries/actions';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );
 

@@ -4,12 +4,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import MaterialIcon from 'components/material-icon';
+import MaterialIcon from 'calypso/components/material-icon';
 import { Card } from '@automattic/components';
 import PremiumBadge from 'calypso/components/domains/premium-badge';
 

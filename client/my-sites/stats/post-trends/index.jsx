@@ -12,15 +12,15 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import compareProps from 'lib/compare-props';
+import compareProps from 'calypso/lib/compare-props';
 import Month from './month';
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getSiteOption } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteStatsPostStreakData } from 'state/stats/lists/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteStatsPostStreakData } from 'calypso/state/stats/lists/selectors';
 
 /**
  * Style dependencies

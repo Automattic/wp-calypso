@@ -12,14 +12,14 @@ import page from 'page';
  * Internal dependencies
  */
 import ImporterActionButton from './action-button';
-import { resetImport } from 'lib/importer/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { resetImport } from 'calypso/lib/importer/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	clearImportingFromSignupFlow,
 	setImportOriginSiteDetails,
-} from 'state/importer-nux/actions';
-import { isImportingFromSignupFlow } from 'state/importer-nux/temp-selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'calypso/state/importer-nux/actions';
+import { isImportingFromSignupFlow } from 'calypso/state/importer-nux/temp-selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class DoneButton extends React.PureComponent {
 	static displayName = 'DoneButton';

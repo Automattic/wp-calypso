@@ -10,21 +10,25 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import TransferDomainStep from 'components/domains/transfer-domain-step';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import {
 	domainRegistration,
 	domainTransfer,
 	updatePrivacyForDomain,
-} from 'lib/cart-values/cart-items';
-import { addItem, addItems } from 'lib/cart/actions';
-import Notice from 'components/notice';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getProductsList } from 'state/products-list/selectors';
-import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
+} from 'calypso/lib/cart-values/cart-items';
+import { addItem, addItems } from 'calypso/lib/cart/actions';
+import Notice from 'calypso/components/notice';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
 
 export class TransferDomain extends Component {
 	static propTypes = {

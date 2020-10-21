@@ -39,10 +39,10 @@ import {
 	redirectToPlansIfNotJetpack,
 } from '../controller';
 import { currentPlan } from '../current-plan/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
-import plansV2 from 'my-sites/plans-v2';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import plansV2 from 'calypso/my-sites/plans-v2';
 
 import router from '../index';
 

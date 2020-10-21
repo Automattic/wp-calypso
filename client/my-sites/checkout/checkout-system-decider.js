@@ -4,7 +4,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import debugFactory from 'debug';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 
@@ -15,10 +15,10 @@ import CheckoutContainer from './checkout/checkout-container';
 import PrePurchaseNotices from './checkout/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import { StripeHookProvider } from 'lib/stripe';
-import config from 'config';
-import { logToLogstash } from 'state/logstash/actions';
-import Recaptcha from 'signup/recaptcha';
+import { StripeHookProvider } from 'calypso/lib/stripe';
+import config from 'calypso/config';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import Recaptcha from 'calypso/signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 const wpcom = wp.undocumented();

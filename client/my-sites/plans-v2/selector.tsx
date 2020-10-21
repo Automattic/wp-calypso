@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions/record';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import PlansFilterBar from './plans-filter-bar';
 import PlansColumn from './plans-column';
 import ProductsColumn from './products-column';
@@ -16,17 +16,17 @@ import { EXTERNAL_PRODUCTS_LIST, SECURITY } from './constants';
 import { getPathToDetails, getPathToUpsell, checkout } from './utils';
 import QueryProducts from './query-products';
 import useHasProductUpsell from './use-has-product-upsell';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { getYearlyPlanByMonthly } from 'lib/plans';
-import { TERM_ANNUALLY } from 'lib/plans/constants';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { managePurchase } from 'me/purchases/paths';
-import Main from 'components/main';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import QuerySites from 'components/data/query-sites';
-import QueryProductsList from 'components/data/query-products-list';
-import JetpackFreeCard from 'components/jetpack/card/jetpack-free-card';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import Main from 'calypso/components/main';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySites from 'calypso/components/data/query-sites';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card';
 
 /**
  * Type dependencies
@@ -38,7 +38,7 @@ import type {
 	SelectorProduct,
 	PurchaseCallback,
 } from './types';
-import type { ProductSlug } from 'lib/products-values/types';
+import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 

@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { TERM_MONTHLY } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions/record';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import {
 	OPTIONS_JETPACK_SECURITY,
 	OPTIONS_JETPACK_SECURITY_MONTHLY,
@@ -30,19 +30,19 @@ import {
 import QueryProducts from './query-products';
 import useIsLoading from './use-is-loading';
 import useHasProductUpsell from './use-has-product-upsell';
-import ProductCardPlaceholder from 'components/jetpack/card/product-card-placeholder';
-import FormattedHeader from 'components/formatted-header';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
+import ProductCardPlaceholder from 'calypso/components/jetpack/card/product-card-placeholder';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import withRedirectToSelector from './with-redirect-to-selector';
 
 /**
  * Type dependencies
  */
 import type { Duration, DetailsPageProps, PurchaseCallback, SelectorProduct } from './types';
-import type { ProductSlug } from 'lib/products-values/types';
+import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 

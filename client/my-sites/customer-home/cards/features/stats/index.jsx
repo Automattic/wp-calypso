@@ -11,24 +11,24 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import Chart from 'components/chart';
-import Spinner from 'components/spinner';
-import QuerySiteStats from 'components/data/query-site-stats';
-import InlineSupportLink from 'components/inline-support-link';
-import { localizeUrl } from 'lib/i18n-utils';
-import { preventWidows } from 'lib/formatting';
-import { buildChartData } from 'my-sites/stats/stats-chart-tabs/utility';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import { getSiteOption } from 'state/sites/selectors';
-import { requestChartCounts } from 'state/stats/chart-tabs/actions';
-import { getCountRecords, getLoadingTabs } from 'state/stats/chart-tabs/selectors';
+import CardHeading from 'calypso/components/card-heading';
+import Chart from 'calypso/components/chart';
+import Spinner from 'calypso/components/spinner';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
+import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
+import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import {
 	getMostPopularDatetime,
 	getTopPostAndPage,
 	isRequestingSiteStatsForQuery,
-} from 'state/stats/lists/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+} from 'calypso/state/stats/lists/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies

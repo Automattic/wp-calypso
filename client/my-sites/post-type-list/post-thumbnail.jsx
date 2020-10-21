@@ -10,11 +10,11 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import resizeImageUrl from 'lib/resize-image-url';
-import safeImageUrl from 'lib/safe-image-url';
-import { getNormalizedPost } from 'state/posts/selectors';
-import { getEditorPath } from 'state/editor/selectors';
-import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import safeImageUrl from 'calypso/lib/safe-image-url';
+import { getNormalizedPost } from 'calypso/state/posts/selectors';
+import { getEditorPath } from 'calypso/state/editor/selectors';
+import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
 
 function PostTypeListPostThumbnail( { onClick, thumbnail, postLink } ) {
 	const classes = classnames( 'post-type-list__post-thumbnail-wrapper', {

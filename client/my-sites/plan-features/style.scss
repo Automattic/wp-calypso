@@ -354,8 +354,8 @@ $plan-features-sidebar-width: 272px;
 
 .info-popover.plan-features__header-tip-info {
 	position: relative;
-		top: 4px;
-		left: 3px;
+	top: 4px;
+	left: 3px;
 	margin-top: -10px;
 	margin-bottom: -10px;
 	display: inline-block;
@@ -364,19 +364,19 @@ $plan-features-sidebar-width: 272px;
 .plan-features__price {
 	&.is-placeholder {
 		@include placeholder( --color-neutral-10 );
-			width: 45px;
-			height: 25px;
-			margin-top: 9px;
-			margin-bottom: 5px;
+		width: 45px;
+		height: 25px;
+		margin-top: 9px;
+		margin-bottom: 5px;
 	}
 }
 .plan-features__price-jetpack {
 	&.is-placeholder {
 		@include placeholder( --color-neutral-10 );
-			width: 140px;
-			height: 32px;
-			margin-top: 5px;
-			margin-bottom: 5px;
+		width: 140px;
+		height: 32px;
+		margin-top: 5px;
+		margin-bottom: 5px;
 
 		@include breakpoint-deprecated( '<960px' ) {
 			height: 26px;
@@ -538,9 +538,8 @@ $plan-features-sidebar-width: 272px;
 /* stylelint-disable selector-max-id */
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	margin: 0 auto 16px;
-	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ),
-				0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
-				0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
+	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
+		0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
 
 	.segmented-control__item a {
 		text-decoration: underline;
@@ -907,7 +906,9 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 			vertical-align: top;
 		}
 
-		&.has-border-top, &.is-top-buttons, &.is-description {
+		&.has-border-top,
+		&.is-top-buttons,
+		&.is-description {
 			border-top: none;
 			border-bottom: none;
 			padding-top: 0;
@@ -1003,7 +1004,9 @@ button.plan-features__scroll-button {
 	color: var( --color-text-inverted );
 	cursor: pointer;
 
-	&:hover, &:active, &:focus {
+	&:hover,
+	&:active,
+	&:focus {
 		color: var( --color-text-inverted );
 	}
 
@@ -1018,12 +1021,14 @@ button.plan-features__scroll-button {
 		padding: 0;
 	}
 
-	&:disabled, &[disabled] {
+	&:disabled,
+	&[disabled] {
 		background-color: rgba( var( --color-neutral-rgb ), 0.5 );
 		color: var( --color-neutral-5 );
 	}
 
-	:root body.is-section-signup &:disabled, .is-section-signup &[disabled] {
+	:root body.is-section-signup &:disabled,
+	.is-section-signup &[disabled] {
 		background-color: rgba( var( --color-surface-rgb ), 0.5 );
 		color: var( --color-primary );
 	}

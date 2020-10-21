@@ -65,7 +65,7 @@ import {
 	TYPE_PERSONAL,
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 const props = {
 	selectedPlan: PLAN_FREE,

@@ -9,14 +9,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import UploadButton from './upload-button';
-import { userCan } from 'lib/site/utils';
+import { userCan } from 'calypso/lib/site/utils';
 
 /**
  * Image dependencies
  */
-import mediaImage from 'assets/images/illustrations/media.svg';
+import mediaImage from 'calypso/assets/images/illustrations/media.svg';
 
 class MediaLibraryListNoContent extends Component {
 	static propTypes = {

@@ -9,22 +9,22 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
+import Accordion from 'calypso/components/accordion';
 import { Card, Button } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import MaterialIcon from 'components/material-icon';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import CardHeading from 'calypso/components/card-heading';
+import MaterialIcon from 'calypso/components/material-icon';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getHttpData, requestHttpData, resetHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import RestorePasswordDialog from './restore-db-password';
 import {
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
-} from 'state/analytics/actions';
-import ExternalLink from 'components/external-link';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/state/analytics/actions';
+import ExternalLink from 'calypso/components/external-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

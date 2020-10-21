@@ -7,7 +7,7 @@ import renderer from 'react-test-renderer';
 /**
  * Internal dependencies
  */
-import GSuiteUserItem from 'my-sites/email/email-management/gsuite-user-item';
+import GSuiteUserItem from 'calypso/my-sites/email/email-management/gsuite-user-item';
 
 const noop = () => {};
 

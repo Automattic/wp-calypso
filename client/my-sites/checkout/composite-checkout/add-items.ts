@@ -12,10 +12,13 @@ import {
 	planItem,
 	themeItem,
 	jetpackProductItem,
-} from 'lib/cart-values/cart-items';
-import { JETPACK_PRODUCTS_LIST, JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
+} from 'calypso/lib/cart-values/cart-items';
+import {
+	JETPACK_PRODUCTS_LIST,
+	JETPACK_SEARCH_PRODUCTS,
+} from 'calypso/lib/products-values/constants';
 import type { RequestCartProduct } from './hooks/use-shopping-cart-manager/types';
-import config from 'config';
+import config from 'calypso/config';
 
 const debug = debugFactory( 'calypso:composite-checkout:add-items' );
 

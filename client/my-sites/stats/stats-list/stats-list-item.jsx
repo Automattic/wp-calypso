@@ -4,7 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,17 +12,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import Emojify from 'components/emojify';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import Emojify from 'calypso/components/emojify';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Follow from './action-follow';
 import Page from './action-page';
 import Spam from './action-spam';
 import OpenLink from './action-link';
 import titlecase from 'to-title-case';
-import { flagUrl } from 'lib/flags';
-import { recordTrack } from 'reader/stats';
-import { decodeEntities } from 'lib/formatting';
+import { flagUrl } from 'calypso/lib/flags';
+import { recordTrack } from 'calypso/reader/stats';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
 

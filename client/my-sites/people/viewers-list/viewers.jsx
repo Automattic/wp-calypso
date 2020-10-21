@@ -8,16 +8,16 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PeopleListItem from 'my-sites/people/people-list-item';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card } from '@automattic/components';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import ViewersActions from 'lib/viewers/actions';
-import ViewersStore from 'lib/viewers/store';
-import InfiniteList from 'components/infinite-list';
-import EmptyContent from 'components/empty-content';
-import accept from 'lib/accept';
-import ListEnd from 'components/list-end';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import ViewersActions from 'calypso/lib/viewers/actions';
+import ViewersStore from 'calypso/lib/viewers/store';
+import InfiniteList from 'calypso/components/infinite-list';
+import EmptyContent from 'calypso/components/empty-content';
+import accept from 'calypso/lib/accept';
+import ListEnd from 'calypso/components/list-end';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';

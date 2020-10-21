@@ -7,16 +7,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { debounce, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/range';
-import SegmentedControl from 'components/segmented-control';
-import { setPreference, savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { SCALE_CHOICES } from 'lib/media/constants';
+import FormRange from 'calypso/components/forms/range';
+import SegmentedControl from 'calypso/components/segmented-control';
+import { setPreference, savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { SCALE_CHOICES } from 'calypso/lib/media/constants';
 
 /**
  * Constants

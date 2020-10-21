@@ -12,20 +12,20 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Content from './content';
-import getMediaErrors from 'state/selectors/get-media-errors';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
+import getMediaErrors from 'calypso/state/selectors/get-media-errors';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import MediaLibraryDropZone from './drop-zone';
-import { filterItemsByMimePrefix } from 'lib/media/utils';
+import { filterItemsByMimePrefix } from 'calypso/lib/media/utils';
 import filterToMimePrefix from './filter-to-mime-prefix';
 import FilterBar from './filter-bar';
-import QueryPreferences from 'components/data/query-preferences';
-import searchUrl from 'lib/search-url';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import searchUrl from 'calypso/lib/search-url';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnections,
-} from 'state/sharing/keyring/selectors';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+} from 'calypso/state/sharing/keyring/selectors';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
+import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies

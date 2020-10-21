@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import Gridicon from 'components/gridicon';
+import SectionHeader from 'calypso/components/section-header';
+import Gridicon from 'calypso/components/gridicon';
 
 class CartSummaryBar extends React.Component {
 	render() {

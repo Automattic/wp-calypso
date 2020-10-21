@@ -8,14 +8,14 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { getProductUpsell } from './utils';
-import { getProductTermVariants } from 'lib/products-values';
-import { getSiteProducts } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getProductTermVariants } from 'calypso/lib/products-values';
+import { getSiteProducts } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Type dependencies
  */
-import type { ProductSlug } from 'lib/products-values/types';
+import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 /**
  * Returns a function that checks if a product upsells another product. Note that a product that

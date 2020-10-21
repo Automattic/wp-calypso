@@ -11,7 +11,7 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { Dialog } from '@automattic/components';
 
 class TransferConfirmationDialog extends React.PureComponent {

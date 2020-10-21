@@ -8,22 +8,22 @@ import React, { FunctionComponent, useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import { applySiteOffsetType, useApplySiteOffset } from 'components/site-offset';
+import { applySiteOffsetType, useApplySiteOffset } from 'calypso/components/site-offset';
 import { Card } from '@automattic/components';
-import { getHttpData, DataState } from 'state/data-layer/http-data';
-import { getRequestActivityId, requestActivity } from 'state/data-getters';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getHttpData, DataState } from 'calypso/state/data-layer/http-data';
+import { getRequestActivityId, requestActivity } from 'calypso/state/data-getters';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { RewindFlowPurpose } from './types';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import BackupDownloadFlow from './download';
 import BackupRestoreFlow from './restore';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import Error from './error';
-import getSiteUrl from 'state/sites/selectors/get-site-url';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import Loading from './loading';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Spinner from 'components/spinner';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import Spinner from 'calypso/components/spinner';
 
 /**
  * Style dependencies

@@ -12,17 +12,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import { Button, CompactCard as Card } from '@automattic/components';
-import Header from 'my-sites/domains/domain-management/components/header';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import Notice from 'components/notice';
-import { domainManagementEdit } from 'my-sites/domains/paths';
-import { setPrimaryDomain } from 'state/sites/domains/actions';
-import { getSelectedDomain } from 'lib/domains';
-import SectionHeader from 'components/section-header';
-import { SETTING_PRIMARY_DOMAIN } from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import FormFooter from 'calypso/my-sites/domains/domain-management/components/form-footer';
+import Notice from 'calypso/components/notice';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import SectionHeader from 'calypso/components/section-header';
+import { SETTING_PRIMARY_DOMAIN } from 'calypso/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

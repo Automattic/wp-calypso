@@ -7,9 +7,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { importSite } from 'my-sites/importer/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, redirectWithoutSite, sites, siteSelection } from 'my-sites/controller';
+import { importSite } from 'calypso/my-sites/importer/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, redirectWithoutSite, sites, siteSelection } from 'calypso/my-sites/controller';
 
 export default function () {
 	page( '/import', siteSelection, navigation, sites, makeLayout, clientRender );

@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
-import { localizeUrl } from 'lib/i18n-utils';
+import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export class Facebook extends SharingService {
 	static propTypes = {

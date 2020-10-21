@@ -7,8 +7,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import FormattedBlock from 'components/notes-formatted-block';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import FormattedBlock from 'calypso/components/notes-formatted-block';
 
 class ActivityDescription extends Component {
 	trackContentLinkClick = ( {

@@ -19,16 +19,16 @@ import {
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
-import Spinner from 'my-sites/checkout/composite-checkout/components/spinner';
+} from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
+import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
-import { paymentMethodClassName } from 'lib/cart-values';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
+import { paymentMethodClassName } from 'calypso/lib/cart-values';
+import { useCart } from 'calypso/my-sites/checkout/composite-checkout/cart-provider';
 
 export default function CreditCardFields() {
 	const { __ } = useI18n();

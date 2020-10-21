@@ -6,11 +6,11 @@
 	align-items: center;
 
 	&.embed {
-			color: var( --color-neutral-light );
-			height: 100%;
-			position: initial;
-			margin: 18px 16px 0 0;
-		}
+		color: var( --color-neutral-light );
+		height: 100%;
+		position: initial;
+		margin: 18px 16px 0 0;
+	}
 
 	@include breakpoint-deprecated( '<480px' ) {
 		margin: 0;
@@ -46,7 +46,7 @@
 .plugin-install-button__warning {
 	margin-right: 8px;
 	font-size: $font-body-extra-small;
-	color:  var( --color-neutral-light );
+	color: var( --color-neutral-light );
 	text-transform: uppercase;
 	white-space: nowrap;
 }

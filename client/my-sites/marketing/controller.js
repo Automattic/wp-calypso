@@ -9,24 +9,24 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import MarketingTools from './tools';
-import notices from 'notices';
+import notices from 'calypso/notices';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
 import SharingConnections from './connections/connections';
 import Traffic from './traffic/';
-import { requestSite } from 'state/sites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSiteSlug,
 	isJetpackSite,
 	isJetpackModuleActive,
 	getSiteOption,
-} from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { fetchPreferences } from 'state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import versionCompare from 'lib/version-compare';
-import { setExpandedService } from 'state/sharing/actions';
+} from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { fetchPreferences } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import versionCompare from 'calypso/lib/version-compare';
+import { setExpandedService } from 'calypso/state/sharing/actions';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';

@@ -7,8 +7,8 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
-import Gridicon from 'components/gridicon';
+import Badge from 'calypso/components/badge';
+import Gridicon from 'calypso/components/gridicon';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (

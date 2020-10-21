@@ -10,16 +10,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DisconnectJetpack from 'blocks/disconnect-jetpack';
-import DocumentHead from 'components/data/document-head';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import NavigationLink from 'components/wizard/navigation-link';
-import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { submitSurvey } from 'lib/purchases/actions';
+import DisconnectJetpack from 'calypso/blocks/disconnect-jetpack';
+import DocumentHead from 'calypso/components/data/document-head';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import NavigationLink from 'calypso/components/wizard/navigation-link';
+import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
 
 class ConfirmDisconnection extends PureComponent {
 	static propTypes = {

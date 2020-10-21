@@ -9,10 +9,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import ActivityLogItem from '../activity-log-item';
-import FeatureExample from 'components/feature-example';
-import FormattedHeader from 'components/formatted-header';
+import FeatureExample from 'calypso/components/feature-example';
+import FormattedHeader from 'calypso/components/formatted-header';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
 /**
  * Style dependencies

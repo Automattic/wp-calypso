@@ -8,15 +8,15 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PlansNavigation from 'my-sites/plans/navigation';
-import CartData from 'components/data/cart';
-import FormattedHeader from 'components/formatted-header';
-import Notice from 'components/notice';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getSitePlan from 'state/sites/selectors/get-site-plan';
-import getSiteProducts from 'state/sites/selectors/get-site-products';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
+import PlansNavigation from 'calypso/my-sites/plans/navigation';
+import CartData from 'calypso/components/data/cart';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Notice from 'calypso/components/notice';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 
 const StandardPlansHeader = () => (
 	<>

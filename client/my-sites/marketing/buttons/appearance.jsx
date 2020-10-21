@@ -14,15 +14,15 @@ import { localize } from 'i18n-calypso';
 import ButtonsPreview from './preview';
 import ButtonsPreviewPlaceholder from './preview-placeholder';
 import ButtonsStyle from './style';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import SupportInfo from 'components/support-info';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import isPrivateSite from 'state/selectors/is-private-site';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import SupportInfo from 'calypso/components/support-info';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class SharingButtonsAppearance extends Component {
 	static propTypes = {

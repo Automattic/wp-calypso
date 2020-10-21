@@ -8,7 +8,7 @@ import { noop, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getAllCartItems } from 'lib/cart-values/cart-items';
+import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import PopoverCart from './popover-cart';
 
 class HeaderCart extends React.Component {

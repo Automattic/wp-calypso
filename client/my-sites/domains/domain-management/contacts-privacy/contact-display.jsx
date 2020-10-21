@@ -9,9 +9,9 @@ import { isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getWhoisData } from 'state/domains/management/selectors';
-import { requestWhois } from 'state/domains/management/actions';
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
+import { getWhoisData } from 'calypso/state/domains/management/selectors';
+import { requestWhois } from 'calypso/state/domains/management/actions';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 
 class ContactDisplay extends React.PureComponent {
 	static propTypes = {
