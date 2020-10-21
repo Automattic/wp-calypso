@@ -867,22 +867,22 @@ export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextP
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
 	const isNotRegistration = hasDomainItemInDependencyStore && ! isDomainRegistration( domainItem );
+	console.log( 'isNotRegistration: ' + isNotRegistration );
+	console.log( 'skipSecureYourBrand: ' + skipSecureYourBrand + ' stepName: ' + stepName );
+	console.log( 'flows.excludedSteps' );
+	console.log( flows.excludedSteps );
 
 	if ( isNotRegistration || skipSecureYourBrand ) {
-		const domainUpsellItems = null;
-		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
-		flows.excludeStep( stepName );
-		return;
-	}
+		if ( includes( flows.excludedSteps, stepName ) ) {
+			return;
+		}
 
-	const hasDomainUpsellItems = has( nextProps, 'signupDependencies.domainUpsellItems' );
-	const existingDomainUpsellItems = get( nextProps, 'signupDependencies.domainUpsellItems', false );
-	if (
-		hasDomainUpsellItems &&
-		isEmpty( existingDomainUpsellItems ) &&
-		isDomainRegistration( domainItem )
-	) {
+		const domainUpsellItems = null;
+		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, {} );
+		flows.excludeStep( stepName );
+	} else if ( includes( flows.excludedSteps, stepName ) ) {
+		console.log( 'resetting' );
 		flows.resetExcludedStep( stepName );
-		// submitSignupStep( { stepName, wasSkipped: false }, {} );
+		nextProps.removeStep( { stepName } );
 	}
 }
