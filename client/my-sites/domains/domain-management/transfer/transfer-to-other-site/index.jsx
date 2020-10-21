@@ -130,13 +130,13 @@ export class TransferToOtherSite extends React.Component {
 			if ( domainsWithPlansOnly ) {
 				return translate(
 					'Please choose a site with a paid plan ' +
-						"you're an administrator on to transfer mapping of {{strong}}%(domainName)s{{/strong}} to:",
+						"you're an administrator on to transfer domain mapping for {{strong}}%(domainName)s{{/strong}} to:",
 					translateArgs
 				);
 			}
 
 			return translate(
-				"Please choose a site you're an administrator on to transfer mapping of {{strong}}%(domainName)s{{/strong}} to:",
+				"Please choose a site you're an administrator on to transfer domain mapping for {{strong}}%(domainName)s{{/strong}} to:",
 				translateArgs
 			);
 		}
