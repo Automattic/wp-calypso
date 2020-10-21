@@ -213,7 +213,7 @@ class PurchaseMeta extends Component {
 				( isExpired( purchase ) || isExpiring( purchase ) ) &&
 				! isPaidWithCredits( purchase )
 			) {
-				return '—';
+				return translate( 'None' );
 			}
 
 			if ( isPaidWithCreditCard( purchase ) ) {
