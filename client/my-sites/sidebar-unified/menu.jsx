@@ -82,7 +82,6 @@ export const MySitesSidebarUnifiedMenu = ( {
 				return (
 					<MySitesSidebarUnifiedItem
 						key={ item.slug }
-						path={ path }
 						{ ...item }
 						selected={ isSelected }
 						isSubItem={ true }
