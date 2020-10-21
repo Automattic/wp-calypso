@@ -29,8 +29,14 @@ RUN bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
+#
+# We remove apps, tests and desktop because they are not needed to
+# build or run calypso, but yarn will still install their
+# dependencies which end up bloating the image.
+# /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
-RUN yarn install --frozen-lockfile
+RUN rm -fr /calypso/apps/editing-toolkit /calypso/apps/o2-blocks /calypso/apps/wpcom-block-editor /calypso/test /calypso/desktop \
+	&& yarn install --frozen-lockfile
 
 # Build the final layer
 #
