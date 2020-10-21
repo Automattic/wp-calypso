@@ -172,15 +172,6 @@ export default {
 			'ZA',
 		],
 	},
-	offerResetFlow: {
-		datestamp: '20200916',
-		variations: {
-			showOfferResetFlow: 100,
-			control: 0,
-		},
-		defaultVariation: 'showOfferResetFlow',
-		allowExistingUsers: true,
-	},
 	userlessCheckout: {
 		datestamp: '20210806',
 		variations: {
@@ -226,6 +217,16 @@ export default {
 			control: 50,
 		},
 		defaultVariation: 'control',
+		allowExistingUsers: true,
+	},
+	jetpackConversionRateOptimization: {
+		datestamp: '20201020',
+		variations: {
+			'v0 - Offer Reset': 0, // Offer Reset
+			'v1 - 3 cols layout': 100, // first Offer Reset iteration (3 layout columns + simpler cards)
+			'v2 - slide outs': 0, // second Offer Reset iteration (reorder & slide outs)
+		},
+		defaultVariation: 'v1 - 3 cols layout',
 		allowExistingUsers: true,
 	},
 };

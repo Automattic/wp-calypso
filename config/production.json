@@ -104,7 +104,6 @@
 		"nps-survey/dev-trigger": false,
 		"perfmon": true,
 		"persist-redux": true,
-		"plans/alternate-selector": true,
 		"plans/personal-plan": true,
 		"post-editor/author-selector": true,
 		"post-editor/html-toolbar": true,

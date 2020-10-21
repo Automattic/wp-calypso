@@ -64,6 +64,7 @@ import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpac
 import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -337,10 +338,16 @@ export function itemToSelectorProduct(
 		} else if ( item.term === TERM_MONTHLY ) {
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
+
+		const currentCROvariant = getJetpackCROActiveVersion();
+		const iconSlug = [ 'v1', 'v2' ].includes( currentCROvariant )
+			? `${ yearlyProductSlug || item.product_slug }_v2_dark`
+			: `${ yearlyProductSlug || item.product_slug }_v2`;
+
 		return {
 			productSlug: item.product_slug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
-			iconSlug: `${ yearlyProductSlug || item.product_slug }_v2`,
+			iconSlug,
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],

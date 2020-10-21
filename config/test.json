@@ -82,7 +82,6 @@
 		"network-connection": true,
 		"perfmon": false,
 		"persist-redux": true,
-		"plans/alternate-selector": true,
 		"plans/personal-plan": true,
 		"post-editor/image-editor": true,
 		"press-this": true,

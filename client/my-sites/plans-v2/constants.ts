@@ -6,7 +6,6 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
 import {
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_ANTI_SPAM_PRODUCTS,
@@ -50,6 +49,7 @@ import {
 	FEATURE_CRM_NO_CONTACT_LIMITS,
 	FEATURE_CRM_PRIORITY_SUPPORT,
 } from 'calypso/lib/plans/constants';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { buildCardFeaturesFromItem } from './utils';
 
 /**
@@ -286,7 +286,9 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM,
 	monthlyProductSlug: PRODUCT_JETPACK_CRM,
-	iconSlug: 'jetpack_crm',
+	iconSlug: [ 'v1', 'v2' ].includes( getJetpackCROActiveVersion() )
+		? 'jetpack_crm_dark'
+		: 'jetpack_crm',
 	displayName: translate( 'Jetpack CRM' ),
 	shortName: translate( 'CRM', {
 		comment: 'Short name of the Jetpack CRM',
@@ -295,9 +297,8 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
-	buttonLabel: isEnabled( 'plans/alternate-selector' )
-		? translate( 'Get Jetpack CRM' )
-		: translate( 'Get CRM' ),
+	buttonLabel:
+		getJetpackCROActiveVersion() === 'v1' ? translate( 'Get Jetpack CRM' ) : translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem(
 			[

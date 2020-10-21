@@ -9,6 +9,7 @@ import i18n, { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import * as constants from './constants';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
@@ -383,7 +384,7 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 				'Great for brochure sites, restaurants, blogs, and resume sites.'
 		),
 	getTagline: () =>
-		isEnabled( 'plans/alternate-selector' )
+		getJetpackCROActiveVersion() === 'v1'
 			? translate( 'Backup, Scan, and Anti-spam in one package' )
 			: translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
