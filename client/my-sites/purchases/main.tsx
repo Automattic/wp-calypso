@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -29,10 +29,32 @@ import AddCardDetails from 'calypso/me/purchases/payment/add-card-details';
 import EditCardDetails from 'calypso/me/purchases/payment/edit-card-details';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import config from 'calypso/config';
 
 export function Purchases() {
+	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const logPurchasesError = useCallback(
+		( error ) => {
+			reduxDispatch(
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'site level purchases load error',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'site_level_purchases',
+						message: String( error ),
+					},
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
 
 	return (
 		<Main className="purchases is-wide-layout">
@@ -46,7 +68,12 @@ export function Purchases() {
 			/>
 			<PurchasesNavigation sectionTitle={ 'Purchases' } siteSlug={ siteSlug } />
 
-			<Subscriptions />
+			<SiteLevelPurchasesErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logPurchasesError }
+			>
+				<Subscriptions />
+			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);
 }
