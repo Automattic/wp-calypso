@@ -1,3 +1,3 @@
-export default function getSidebarIsCollapsed( state = false ) {
+export default function getSidebarIsCollapsed( state ) {
 	return state.ui.sidebarIsCollapsed;
 }
