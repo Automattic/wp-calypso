@@ -98,15 +98,16 @@ function applyMiddlewares( context, ...middlewares ) {
 				// There is an error and this middleware can handle errors
 				return middleware( err, context, next );
 			}
+			// At this point we are in either of these scenarios:
+			// * There is an error but this middlware is not an error handler
+			// * There is not an error but this middleware is an error handler
+			// In both cases this middleware shouldn't run, so we just skip to the next one.
+			next( err );
 		} catch ( error ) {
+			// The middleware throw an error, capture it and pass it to the next
+			// middleware in the chain.
 			next( error );
 		}
-
-		// At this point we are in either of these scenarios:
-		// * There is an error but this middlware is not an error handler
-		// * There is not an error but this middleware is an error handler
-		// In both cases this middleware shouldn't run, so we just skip to the next one.
-		next( err );
 	} );
 
 	compose( ...liftedMiddlewares )();
