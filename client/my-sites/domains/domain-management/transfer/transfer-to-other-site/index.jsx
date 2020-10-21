@@ -125,6 +125,7 @@ export class TransferToOtherSite extends React.Component {
 			translate,
 		} = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
+
 		if ( isMappedDomain ) {
 			if ( domainsWithPlansOnly ) {
 				return translate(
@@ -132,12 +133,12 @@ export class TransferToOtherSite extends React.Component {
 						"you're an administrator on to transfer mapping of {{strong}}%(domainName)s{{/strong}} to:",
 					translateArgs
 				);
-			} else {
-				return translate(
-					"Please choose a site you're an administrator on to transfer mapping of {{strong}}%(domainName)s{{/strong}} to:",
-					translateArgs
-				);
 			}
+
+			return translate(
+				"Please choose a site you're an administrator on to transfer mapping of {{strong}}%(domainName)s{{/strong}} to:",
+				translateArgs
+			);
 		}
 
 		if ( domainsWithPlansOnly ) {
@@ -146,12 +147,12 @@ export class TransferToOtherSite extends React.Component {
 					"you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
 				translateArgs
 			);
-		} else {
-			return translate(
-				"Please choose a site you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
-				translateArgs
-			);
 		}
+
+		return translate(
+			"Please choose a site you're an administrator on to transfer {{strong}}%(domainName)s{{/strong}} to:",
+			translateArgs
+		);
 	}
 
 	render() {
@@ -181,12 +182,7 @@ export class TransferToOtherSite extends React.Component {
 	}
 
 	renderSection() {
-		const {
-			currentUserCanManage,
-			domainsWithPlansOnly,
-			selectedDomainName,
-			translate,
-		} = this.props;
+		const { currentUserCanManage, selectedDomainName } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...omit( this.props, [ 'children' ] ) } />;
 		}
