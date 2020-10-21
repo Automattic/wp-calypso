@@ -7,7 +7,7 @@
  * External dependencies
  */
 import React, { useLayoutEffect } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { isWithinBreakpoint } from '@automattic/viewport';
 
@@ -19,13 +19,9 @@ import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import { collapseSidebar, expandSidebar } from 'calypso/state/ui/actions';
 
-export const CollapseSidebar = ( {
-	title,
-	icon,
-	sidebarIsCollapsed,
-	collapseTheSidebar,
-	expandTheSidebar,
-} ) => {
+export const CollapseSidebar = ( { title, icon } ) => {
+	const reduxDispatch = useDispatch();
+	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const collapsed = sidebarIsCollapsed && isWithinBreakpoint( '>800px' );
 
 	useLayoutEffect( () => {
@@ -46,7 +42,11 @@ export const CollapseSidebar = ( {
 	return (
 		<SidebarItem
 			className="collapse-sidebar__toggle"
-			onNavigate={ sidebarIsCollapsed ? expandTheSidebar : collapseTheSidebar }
+			onNavigate={
+				sidebarIsCollapsed
+					? () => reduxDispatch( expandSidebar() )
+					: () => reduxDispatch( collapseSidebar() )
+			}
 			label={ title }
 			link={ '' }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
@@ -57,14 +57,6 @@ export const CollapseSidebar = ( {
 CollapseSidebar.propTypes = {
 	title: PropTypes.string.isRequired,
 	icon: PropTypes.string.isRequired,
-	sidebarIsCollapsed: PropTypes.bool.isRequired,
-	collapseTheSidebar: PropTypes.func.isRequired,
-	expandTheSidebar: PropTypes.func.isRequired,
 };
 
-export default connect(
-	( state ) => {
-		return { sidebarIsCollapsed: getSidebarIsCollapsed( state ) };
-	},
-	{ collapseTheSidebar: () => collapseSidebar(), expandTheSidebar: () => expandSidebar() }
-)( CollapseSidebar );
+export default CollapseSidebar;
