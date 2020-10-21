@@ -27,7 +27,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { StripeHookProvider } from 'calypso/lib/stripe';
-import FormattedHeader from 'calypso/components/formatted-header';
 
 function AddCardDetails( props ) {
 	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );
@@ -73,7 +72,6 @@ function AddCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/add"
 				title="Purchases > Add Card Details"
 			/>
-			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.addCardDetails }

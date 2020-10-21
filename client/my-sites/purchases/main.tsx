@@ -104,7 +104,7 @@ export function PurchaseCancel( {
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Cancel purchase' ) }
+				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
 
@@ -114,7 +114,6 @@ export function PurchaseCancel( {
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-				showTitle={ false }
 			/>
 		</Main>
 	);
@@ -178,7 +177,6 @@ export function PurchaseEditPaymentMethod( {
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				isFullWidth={ true }
-				showTitle={ false }
 			/>
 		</Main>
 	);

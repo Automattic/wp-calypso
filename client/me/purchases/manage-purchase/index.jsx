@@ -96,7 +96,6 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
-import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -625,7 +624,6 @@ class ManagePurchase extends Component {
 			getAddPaymentMethodUrlFor,
 			getEditPaymentMethodUrlFor,
 			isProductOwner,
-			showHeader,
 		} = this.props;
 
 		let editCardDetailsPath = false;
@@ -654,10 +652,6 @@ class ManagePurchase extends Component {
 				<QueryUserPurchases userId={ this.props.userId } />
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
-
-				{ showHeader && (
-					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-				) }
 
 				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
 				{ showExpiryNotice ? (
