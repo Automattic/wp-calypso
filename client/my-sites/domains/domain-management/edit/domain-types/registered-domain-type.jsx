@@ -243,7 +243,6 @@ class RegisteredDomainType extends React.Component {
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
-				compact={ true }
 				withTextStatus={ true }
 				toggleSource="registered-domain-status"
 			/>
