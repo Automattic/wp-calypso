@@ -5,7 +5,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import Notice from 'calypso/components/notice';
 import formatCurrency from '@automattic/format-currency';
 import classnames from 'classnames';
 
@@ -21,13 +20,14 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle/compact';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {
 	requestAddProduct,
 	requestUpdateProduct,
 } from 'calypso/state/memberships/product-list/actions';
+import Notice from 'calypso/components/notice';
 import SectionNav from 'calypso/components/section-nav';
 import SectionNavTabs from 'calypso/components/section-nav/tabs';
 import SectionNavTabItem from 'calypso/components/section-nav/item';
