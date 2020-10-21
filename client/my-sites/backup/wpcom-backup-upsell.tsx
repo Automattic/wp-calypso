@@ -52,7 +52,7 @@ const BackupVPActiveBody: FunctionComponent = () => {
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Your backups are powered by VaultPress' ) ) }
-			image={ <img src={ VaultPressLogo } width="155" alt="VaultPress logo" /> }
+			image={ { path: VaultPressLogo } }
 			isPrimary
 		>
 			<p>{ preventWidows( translate( 'You can access them on your VaultPress Dashboard.' ) ) }</p>
