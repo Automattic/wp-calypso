@@ -19,6 +19,8 @@
 	margin-bottom: 9px;
 	.secure-your-brand__domain-name {
 		flex: 2;
+		max-width: 75%;
+		overflow-wrap: break-word;
 		span {
 			color: var( --color-primary-60 );
 			font-weight: 600;
@@ -33,6 +35,7 @@
 	border-bottom: 1px solid var( --color-border-subtle );
 	padding: 20px 33px 20px 23px;
 	text-align: center;
+	overflow-wrap: break-word;
 	span {
 		font-size: $font-body;
 		padding: 0 7px;
