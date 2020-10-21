@@ -9,7 +9,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 /**
@@ -20,8 +20,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
-
-const onNav = () => null;
+import { collapseAllMySitesSidebarSections } from 'calypso/state/my-sites/sidebar/actions';
 
 export const MySitesSidebarUnifiedItem = ( {
 	title,
@@ -32,7 +31,7 @@ export const MySitesSidebarUnifiedItem = ( {
 	isSubItem = false,
 } ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-
+	const reduxDispatch = useDispatch();
 	let children = null;
 
 	// "Stats" item has sparkline inside of it
@@ -45,7 +44,7 @@ export const MySitesSidebarUnifiedItem = ( {
 		<SidebarItem
 			label={ title }
 			link={ url }
-			onNavigate={ onNav }
+			onNavigate={ () => reduxDispatch( collapseAllMySitesSidebarSections() ) }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink

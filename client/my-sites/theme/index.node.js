@@ -13,8 +13,10 @@ export default function ( router ) {
 			'/theme/:slug/:section(setup|support)?/:site_id?',
 			fetchThemeDetailsData,
 			details,
-			makeLayout
+			makeLayout,
+
+			// Error handlers
+			notFoundError
 		);
-		router( notFoundError );
 	}
 }

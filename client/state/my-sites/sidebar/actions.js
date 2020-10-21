@@ -6,7 +6,8 @@ import {
 	MY_SITES_SIDEBAR_SECTION_TOGGLE,
 	MY_SITES_SIDEBAR_SECTION_EXPAND,
 	MY_SITES_SIDEBAR_SECTION_COLLAPSE,
-} from 'state/action-types';
+	MY_SITES_SIDEBAR_SECTIONS_COLLAPSE_ALL,
+} from 'calypso/state/action-types';
 
 const createSidebarAction = ( type ) => ( sidebarSection ) => ( {
 	type,
@@ -20,3 +21,9 @@ export const expandMySitesSidebarSection = createSidebarAction( MY_SITES_SIDEBAR
 export const collapseMySitesSidebarSection = createSidebarAction(
 	MY_SITES_SIDEBAR_SECTION_COLLAPSE
 );
+
+export const collapseAllMySitesSidebarSections = () => {
+	return {
+		type: MY_SITES_SIDEBAR_SECTIONS_COLLAPSE_ALL,
+	};
+};

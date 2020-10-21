@@ -20,6 +20,7 @@ import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import {
 	toggleMySitesSidebarSection as toggleSection,
 	expandMySitesSidebarSection as expandSection,
+	collapseAllMySitesSidebarSections,
 } from 'calypso/state/my-sites/sidebar/actions';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import MySitesSidebarUnifiedItem from './item';
@@ -41,6 +42,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const reduxDispatch = useDispatch();
 	const sectionId = 'SIDEBAR_SECTION_' + slug;
 	const isExpanded = useSelector( ( state ) => isSidebarSectionOpen( state, sectionId ) );
+
 	const selectedMenuItem =
 		children && children.find( ( menuItem ) => itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
@@ -67,9 +69,10 @@ export const MySitesSidebarUnifiedMenu = ( {
 					}
 					page( link );
 				}
+				reduxDispatch( collapseAllMySitesSidebarSections() );
 				reduxDispatch( toggleSection( sectionId ) );
 			} }
-			expanded={ isExpanded || selected }
+			expanded={ isExpanded }
 			title={ title }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
