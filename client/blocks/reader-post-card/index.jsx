@@ -262,6 +262,7 @@ class ReaderPostCard extends React.Component {
 		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
+				{ ! compact && postByline }
 				{ showPrimaryFollowButton && followUrl && (
 					<FollowButton
 						siteUrl={ followUrl }
@@ -270,7 +271,6 @@ class ReaderPostCard extends React.Component {
 					/>
 				) }
 				{ readerPostCard }
-				{ ! compact && postByline }
 				{ this.props.children }
 			</Card>
 		);

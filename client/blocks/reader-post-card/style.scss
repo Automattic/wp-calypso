@@ -9,8 +9,6 @@
 	margin: 0 15px;
 	padding: 18px 0 20px;
 	position: relative;
-	display: flex;
-	flex-direction: column;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		margin: 0;
@@ -255,7 +253,6 @@
 }
 
 .reader-post-card__byline {
-	order: 1;
 	display: flex;
 	font-size: $font-body-small;
 }
@@ -400,7 +397,6 @@
 }
 
 .reader-post-card__post {
-	order: 2;
 	clear: both;
 	display: flex;
 	flex-direction: row;
