@@ -3,13 +3,13 @@
 }
 
 .backup-upsell__icon-header {
-	display: flex;
-	justify-content: center;
-	@include breakpoint-deprecated( '>660px' ) {
-		justify-content: flex-start;
-	}
+	text-align: center;
 
 	img {
 		width: 72px;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: start;
 	}
 }
