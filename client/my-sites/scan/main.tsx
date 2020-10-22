@@ -38,6 +38,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import ScanNavigation from './navigation';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
  * Type dependencies
@@ -280,6 +281,7 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scan" />
 				<SidebarNavigation />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
+				<TimeMismatchWarning siteId={ siteId } />
 				{ ! isJetpackPlatform && (
 					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
 				) }

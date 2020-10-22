@@ -29,6 +29,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
  * Style dependencies
@@ -95,6 +96,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
+			<TimeMismatchWarning siteId={ siteId } />
 			{ isJetpackCloud() ? (
 				jetpackCloudHeader
 			) : (
