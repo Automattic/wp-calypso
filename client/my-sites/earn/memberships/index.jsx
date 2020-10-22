@@ -406,10 +406,11 @@ class MembershipsSection extends Component {
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
 			return this.props.translate(
-				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				'Paying %(amount)s/year%(title)ssince %(formattedDate)s. Total of %(total)s.',
 				{
 					args: {
 						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						title: subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : '',
 						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
 						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
 					},
@@ -417,10 +418,11 @@ class MembershipsSection extends Component {
 			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
 			return this.props.translate(
-				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				'Paying %(amount)s/month%(title)ssince %(formattedDate)s. Total of %(total)s.',
 				{
 					args: {
 						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
+						title: subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : '',
 						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
 						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
 					},
