@@ -6,8 +6,15 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 export const storeJITM = ( state = {}, { type, jitms } ) => ( type === JITM_SET ? jitms : state );
 
-const jitmCache = ( state = {}, action ) => {
-	return action.type === JITM_SET && action.jitms?.length ? action.jitms[ 0 ] : state;
+const jitmCache = ( state = null, action ) => {
+	if ( action.type === JITM_SET ) {
+		if ( ! action.jitms || ! action.jitms.length ) {
+			return null;
+		}
+
+		return action.jitms[ 0 ];
+	}
+	return state;
 };
 
 const sitePathJITMCache = keyedReducer( 'siteId', jitmCache );
