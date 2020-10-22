@@ -81,7 +81,7 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 			await navbarComponent.clickMySites();
 
 			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.selectPlan();
+			await sidebarComponent.selectPlans();
 
 			await PlansPage.Expect( driver );
 			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );
