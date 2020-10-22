@@ -40,8 +40,6 @@ export default ( router ) => {
 		clientRender
 	);
 
-	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
-
 	if ( config.isEnabled( 'async-payments' ) ) {
 		router(
 			paths.purchasesRoot + '/pending',
@@ -52,8 +50,6 @@ export default ( router ) => {
 		);
 	}
 
-	router( paths.deprecated.otherPurchases, () => page.redirect( paths.purchasesRoot ) );
-
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
 		sidebar,
@@ -61,16 +57,20 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
+
 	// Legacy:
+
+	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
+	router( paths.deprecated.otherPurchases, () => page.redirect( paths.purchasesRoot ) );
+
 	router(
 		paths.purchasesRoot + '/memberships/:subscriptionId',
 		( { params: { subscriptionId } } ) => {
 			page.redirect( paths.purchasesRoot + '/other/' + subscriptionId );
 		}
 	);
-	router( paths.purchasesRoot + '/memberships', () =>
-		page.redirect( paths.purchasesRoot + '/other' )
-	);
+
+	router( paths.purchasesRoot + '/memberships', () => page.redirect( paths.purchasesRoot ) );
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),
