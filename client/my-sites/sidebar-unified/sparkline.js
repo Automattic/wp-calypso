@@ -1,11 +1,4 @@
 /**
- * MySitesSidebarUnifiedItem
- *
- * Renders a sidebar menu item with no child items.
- * This could be a top level item, or a child item nested under a top level menu.
- * These two cases might be to be split up?
- */
-/**
  * External dependencies
  */
 import React, { memo } from 'react';
