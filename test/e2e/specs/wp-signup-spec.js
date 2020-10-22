@@ -3,7 +3,7 @@
  */
 
 // eslint-disable-next-line
-import config from 'calypso/config';
+import config from 'config';
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
 
