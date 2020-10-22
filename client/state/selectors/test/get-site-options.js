@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSiteOptions from 'state/selectors/get-site-options';
+import getSiteOptions from 'calypso/state/selectors/get-site-options';
 import { userState } from './fixtures/user-state';
 
 describe( 'getSiteOptions()', () => {

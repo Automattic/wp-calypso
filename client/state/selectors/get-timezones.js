@@ -6,9 +6,9 @@ import { get, map, toPairs } from 'lodash';
 /**
  * Internal dependencies
  */
-import getTimezonesLabel from 'state/selectors/get-timezones-label';
+import getTimezonesLabel from 'calypso/state/selectors/get-timezones-label';
 
-import 'state/timezones/init';
+import 'calypso/state/timezones/init';
 
 /**
  * Return all timezones ordered by arrays with

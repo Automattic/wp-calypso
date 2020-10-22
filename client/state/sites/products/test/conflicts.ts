@@ -10,13 +10,13 @@ import { default as isProductConflictingWithSite, isAntiSpamConflicting } from '
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-} from 'lib/products-values/constants';
-import { PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL } from 'lib/plans/constants';
+} from 'calypso/lib/products-values/constants';
+import { PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL } from 'calypso/lib/plans/constants';
 
 /**
  * Type dependencies
  */
-import type { AppState } from 'types';
+import type { AppState } from 'calypso/types';
 
 describe( 'conflicts', () => {
 	const getStateForSite = ( {

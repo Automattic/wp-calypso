@@ -5,11 +5,11 @@ import {
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
 	NOTICE_CREATE,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'calypso/state/action-types';
+import wpcom from 'calypso/lib/wp';
 
-import 'state/data-layer/wpcom/sites/memberships';
-import 'state/memberships/init';
+import 'calypso/state/data-layer/wpcom/sites/memberships';
+import 'calypso/state/memberships/init';
 
 export const requestSettings = ( siteId ) => ( {
 	siteId,

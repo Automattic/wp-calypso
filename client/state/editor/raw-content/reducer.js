@@ -6,8 +6,8 @@ import {
 	EDITOR_RESET_RAW_CONTENT,
 	EDITOR_EDIT_RAW_CONTENT,
 	EDITOR_INIT_RAW_CONTENT,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 const initial = ( state = null, action ) => {
 	switch ( action.type ) {

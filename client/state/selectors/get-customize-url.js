@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { getThemeCustomizeUrl } from 'state/themes/selectors';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
-import getFrontPageEditorUrl from 'state/selectors/get-front-page-editor-url';
+import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
+import getFrontPageEditorUrl from 'calypso/state/selectors/get-front-page-editor-url';
 /**
  * Returns the URL for clicking on "Customize". The block editor URL is returned for sites with
  * Full Site Editing or if they are using the Core Site Editor. Otherwise we return the

@@ -7,7 +7,7 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { createReduxStore } from '../';
-import currentUser from 'state/current-user/reducer';
+import currentUser from 'calypso/state/current-user/reducer';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );

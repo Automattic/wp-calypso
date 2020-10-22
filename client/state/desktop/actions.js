@@ -6,7 +6,7 @@ import {
 	EDITOR_VIEW_POST_CLICKED,
 	SEND_TO_PRINTER,
 	NOTIFICATIONS_PANEL_NEW_NOTE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Notify the desktop that the editor cannot be opened.

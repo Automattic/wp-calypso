@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { isEqual, omit, some } from 'lodash';
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 
 /**
  * Internal dependencies
@@ -11,9 +11,9 @@ import {
 	getDeserializedThemesQueryDetails,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
-} from 'state/themes/utils';
+} from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns true if currently requesting themes for the themes query, regardless

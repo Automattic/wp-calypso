@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	SHARING_BUTTONS_RECEIVE,
 	SHARING_BUTTONS_REQUEST,
@@ -12,7 +12,7 @@ import {
 	SHARING_BUTTONS_SAVE_FAILURE,
 	SHARING_BUTTONS_SAVE_SUCCESS,
 	SHARING_BUTTONS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns an action object to be used in signalling that sharing buttons have been received.

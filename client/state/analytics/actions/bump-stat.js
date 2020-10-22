@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ANALYTICS_STAT_BUMP } from 'state/action-types';
+import { ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 
 export function bumpStat( group, name ) {
 	return {

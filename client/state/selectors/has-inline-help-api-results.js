@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/inline-help/init';
+import 'calypso/state/inline-help/init';
 
 /**
  * Indicates whether the current search results came from the API or are

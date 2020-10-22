@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	READER_LIST_CREATE,
 	READER_LIST_DISMISS_NOTICE,
@@ -30,14 +30,14 @@ import {
 	READER_LISTS_UNFOLLOW,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_FAILURE,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/read/lists';
-import 'state/data-layer/wpcom/read/lists/items';
-import 'state/data-layer/wpcom/read/lists/feeds/delete';
-import 'state/data-layer/wpcom/read/lists/tags/delete';
-import 'state/data-layer/wpcom/read/lists/feeds/new';
-import 'state/reader/init';
+import 'calypso/state/data-layer/wpcom/read/lists';
+import 'calypso/state/data-layer/wpcom/read/lists/items';
+import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
+import 'calypso/state/reader/init';
 
 /**
  * Returns an action object to signal that list objects have been received.

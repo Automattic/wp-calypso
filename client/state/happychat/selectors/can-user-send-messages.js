@@ -12,10 +12,10 @@ import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_MISSED,
 	HAPPYCHAT_CHAT_STATUS_PENDING,
-} from 'state/happychat/constants';
+} from 'calypso/state/happychat/constants';
 
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
+import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
+import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 
 /**
  * Returns true if the user should be able to send messages to operators based on

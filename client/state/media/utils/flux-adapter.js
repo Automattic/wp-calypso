@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 export const dispatchFluxCreateMediaItem = ( transientMedia, site ) =>
 	Dispatcher.handleViewAction( {

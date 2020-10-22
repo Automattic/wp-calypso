@@ -1,5 +1,5 @@
 {
-    "sideEffects": [
-        "./init.js"
-    ]
+	"sideEffects": [
+		"./init.js"
+	]
 }

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import { getInitialState } from './get-initial-state';
 
 /**

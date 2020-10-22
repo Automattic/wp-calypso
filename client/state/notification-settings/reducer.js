@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'state/utils';
-import toggleState from 'state/notification-settings/toggle-state';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import toggleState from 'calypso/state/notification-settings/toggle-state';
 import {
 	NOTIFICATION_SETTINGS_FETCH,
 	NOTIFICATION_SETTINGS_FETCH_COMPLETE,
@@ -11,7 +11,7 @@ import {
 	NOTIFICATION_SETTINGS_SAVE,
 	NOTIFICATION_SETTINGS_SAVE_COMPLETE,
 	NOTIFICATION_SETTINGS_SAVE_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 function toggleSetting( state, source ) {
 	if ( toggleState[ source ] ) {

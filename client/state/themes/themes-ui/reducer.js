@@ -6,8 +6,8 @@ import {
 	THEME_BACK_PATH_SET,
 	THEMES_SHOWCASE_OPEN,
 	THEMES_BOOKMARK_SET,
-} from 'state/themes/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/themes/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 // Destination for 'back' button on theme sheet
 export function backPath( state = '/themes', action ) {

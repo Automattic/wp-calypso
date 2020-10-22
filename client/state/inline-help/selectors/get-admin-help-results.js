@@ -5,9 +5,9 @@
 /**
  * Internal dependencies
  */
-import { adminSections, filterListBySearchTerm } from 'blocks/inline-help/admin-sections';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { adminSections, filterListBySearchTerm } from 'calypso/blocks/inline-help/admin-sections';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Returns a filtered site admin collection using the memoized adminSections.

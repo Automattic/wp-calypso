@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/route/init';
+import 'calypso/state/route/init';
 
 /**
  * Gets the last route set by a ROUTE_SET action

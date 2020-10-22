@@ -15,8 +15,8 @@ import {
 	JETPACK_SYNC_STATUS_REQUEST,
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 import { getExpectedResponseKeys } from './utils';
 
 export function fullSyncRequest( state = {}, action ) {

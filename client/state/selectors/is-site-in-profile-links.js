@@ -6,8 +6,8 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getProfileLinks from 'state/selectors/get-profile-links';
+import createSelector from 'calypso/lib/create-selector';
+import getProfileLinks from 'calypso/state/selectors/get-profile-links';
 
 /**
  * Whether the site with the domain in question is currently in the user's profile links.

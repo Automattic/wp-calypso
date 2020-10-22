@@ -6,16 +6,16 @@ import { random, map, includes, get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import warn from 'lib/warn';
-import { READER_STREAMS_PAGE_REQUEST } from 'state/reader/action-types';
-import { receivePage, receiveUpdates } from 'state/reader/streams/actions';
-import { receivePosts } from 'state/reader/posts/actions';
-import { keyForPost } from 'reader/post-key';
-import { recordTracksEvent } from 'state/analytics/actions';
-import XPostHelper from 'reader/xpost-helper';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import warn from 'calypso/lib/warn';
+import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
+import { receivePage, receiveUpdates } from 'calypso/state/reader/streams/actions';
+import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { keyForPost } from 'calypso/reader/post-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import XPostHelper from 'calypso/reader/xpost-helper';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Pull the suffix off of a stream key

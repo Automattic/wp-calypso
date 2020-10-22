@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
-import { EMBED_RECEIVE, EMBEDS_RECEIVE } from 'state/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import { EMBED_RECEIVE, EMBEDS_RECEIVE } from 'calypso/state/action-types';
 import { normalizeEmbeds } from './utils';
 
 /**

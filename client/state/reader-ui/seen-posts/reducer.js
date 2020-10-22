@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SERIALIZE, READER_UNSEEN_STATUS_RECEIVE } from 'state/action-types';
+import { SERIALIZE, READER_UNSEEN_STATUS_RECEIVE } from 'calypso/state/action-types';
 
 /**
  * Reader Unseen status for any section (used global reader unseen bubble)

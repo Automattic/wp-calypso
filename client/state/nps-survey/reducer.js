@@ -14,8 +14,8 @@ import {
 	NPS_SURVEY_SEND_FEEDBACK_REQUESTING,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_FAILURE,
 	NPS_SURVEY_SEND_FEEDBACK_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
 import notice from './notice/reducer';
 

@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
 	EMAIL_VERIFY_STATE_RESET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const status = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

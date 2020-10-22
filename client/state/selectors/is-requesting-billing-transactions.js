@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/billing-transactions/init';
+import 'calypso/state/billing-transactions/init';
 
 /**
  * Returns true if we are currently making a request to get the billing transactions.

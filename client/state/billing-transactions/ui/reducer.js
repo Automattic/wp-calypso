@@ -6,8 +6,8 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_MONTH,
 	BILLING_TRANSACTIONS_FILTER_SET_PAGE,
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
-} from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 /**
  * Returns the updated app filter state after an action has been dispatched

@@ -9,9 +9,9 @@ import moment from 'moment';
  */
 import treeSelect from '@automattic/tree-select';
 import { getSerializedStatsQuery, normalizers, buildExportArray } from './utils';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 
-import 'state/stats/init';
+import 'calypso/state/stats/init';
 
 /**
  * Returns true if currently requesting stats for the statType and query combo, or false

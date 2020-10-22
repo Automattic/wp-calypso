@@ -14,7 +14,7 @@ import {
 	EDITOR_CONTACT_FORM_FIELD_REMOVE,
 	EDITOR_CONTACT_FORM_FIELD_UPDATE,
 	EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { CONTACT_FORM_DEFAULT, CONTACT_FORM_DEFAULT_NEW_FIELD } from './constants';
 
 const initialState = cloneDeep( CONTACT_FORM_DEFAULT );

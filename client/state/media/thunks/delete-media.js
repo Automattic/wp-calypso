@@ -7,8 +7,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { deleteMediaItem } from 'state/media/actions';
-import { dispatchFluxRemoveMediaItem } from 'state/media/utils/flux-adapter';
+import { deleteMediaItem } from 'calypso/state/media/actions';
+import { dispatchFluxRemoveMediaItem } from 'calypso/state/media/utils/flux-adapter';
 
 const debug = debugFactory( 'calypso:media' );
 

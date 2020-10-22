@@ -7,12 +7,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 import {
 	getAccountRecoveryPhone,
 	getAccountRecoveryEmail,
-} from 'state/account-recovery/settings/selectors';
+} from 'calypso/state/account-recovery/settings/selectors';
 
 const getUpdateSuccessMessage = ( target, getState ) => {
 	switch ( target ) {

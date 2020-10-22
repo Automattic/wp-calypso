@@ -12,8 +12,8 @@ import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
 	PRODUCTS_LIST_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

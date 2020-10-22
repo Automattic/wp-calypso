@@ -6,8 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getRequest from 'state/selectors/get-request';
-import { saveJetpackSettings } from 'state/jetpack/settings/actions';
+import getRequest from 'calypso/state/selectors/get-request';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 
 /**
  * Returns the status of the last Jetpack site settings save request

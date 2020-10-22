@@ -6,11 +6,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { READER_LIST_ITEM_DELETE_TAG } from 'state/reader/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { READER_LIST_ITEM_DELETE_TAG } from 'calypso/state/reader/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/tags/delete/index.js', {
 	[ READER_LIST_ITEM_DELETE_TAG ]: [

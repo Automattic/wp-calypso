@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { isCurrentUserCurrentPlanOwner } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isCurrentPlanPaid from './is-current-plan-paid';
 
 /**

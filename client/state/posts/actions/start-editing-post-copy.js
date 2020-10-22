@@ -6,12 +6,16 @@ import { includes, pick, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import wpcom from 'lib/wp';
-import { getFeaturedImageId } from 'state/posts/utils';
-import { editorSetLoadingError, startEditingNewPost, startEditingPost } from 'state/editor/actions';
+import { decodeEntities } from 'calypso/lib/formatting';
+import wpcom from 'calypso/lib/wp';
+import { getFeaturedImageId } from 'calypso/state/posts/utils';
+import {
+	editorSetLoadingError,
+	startEditingNewPost,
+	startEditingPost,
+} from 'calypso/state/editor/actions';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 export const startEditingPostCopy = ( siteId, postToCopyId ) => ( dispatch ) => {
 	dispatch( startEditingPost( siteId, null ) );

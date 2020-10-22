@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import chat from './chat/reducer';
 import connection from './connection/reducer';
 import ui from './ui/reducer';

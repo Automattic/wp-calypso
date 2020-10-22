@@ -1,13 +1,13 @@
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { requestRewindState } from 'state/rewind/state/actions';
-import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'state/action-types';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { requestRewindState } from 'calypso/state/rewind/state/actions';
+import { REWIND_STATE_REQUEST, REWIND_STATE_UPDATE } from 'calypso/state/action-types';
 import { rewindStatus } from './schema';
 import { transformApi } from './api-transformer';
 

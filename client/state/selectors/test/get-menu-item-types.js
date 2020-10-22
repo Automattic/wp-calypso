@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getMenuItemTypes from 'state/selectors/get-menu-item-types';
+import getMenuItemTypes from 'calypso/state/selectors/get-menu-item-types';
 
 describe( 'getMenuItemTypes()', () => {
 	const defaultItems = [

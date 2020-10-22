@@ -6,35 +6,35 @@ import { assign, clone, get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { receivePost } from 'state/posts/actions/receive-post';
-import { savePostSuccess } from 'state/posts/actions/save-post-success';
-import { getEditedPost, getPostEdits } from 'state/posts/selectors';
-import { recordSaveEvent } from 'state/posts/stats';
+import wpcom from 'calypso/lib/wp';
+import { receivePost } from 'calypso/state/posts/actions/receive-post';
+import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
+import { getEditedPost, getPostEdits } from 'calypso/state/posts/selectors';
+import { recordSaveEvent } from 'calypso/state/posts/stats';
 import {
 	isBackDated,
 	isFutureDated,
 	normalizePostForActions,
 	normalizeTermsForApi,
-} from 'state/posts/utils';
-import { editedPostHasContent } from 'state/posts/selectors/edited-post-has-content';
+} from 'calypso/state/posts/utils';
+import { editedPostHasContent } from 'calypso/state/posts/selectors/edited-post-has-content';
 import {
 	editorAutosaveReset,
 	editorInitRawContent,
 	editorLoadingErrorReset,
 	editorSave,
-} from 'state/editor/actions';
+} from 'calypso/state/editor/actions';
 import {
 	getEditorInitialRawContent,
 	getEditorPostId,
 	getEditorRawContent,
 	isEditorSaveBlocked,
-} from 'state/editor/selectors';
-import { resetEditorLastDraft, setEditorLastDraft } from 'state/editor/last-draft/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPreference } from 'state/preferences/selectors';
+} from 'calypso/state/editor/selectors';
+import { resetEditorLastDraft, setEditorLastDraft } from 'calypso/state/editor/last-draft/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 let saveMarkerId = 0;
 

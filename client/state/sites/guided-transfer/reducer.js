@@ -9,8 +9,8 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { guidedTransferStatusSchema } from './schema';
 
 // Stores the status of guided transfers per site

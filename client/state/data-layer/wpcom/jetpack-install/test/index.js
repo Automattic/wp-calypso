@@ -10,8 +10,8 @@ import {
 import {
 	jetpackRemoteInstallComplete,
 	jetpackRemoteInstallUpdateError,
-} from 'state/jetpack-remote-install/actions';
-import { JETPACK_REMOTE_INSTALL, JETPACK_REMOTE_INSTALL_FAILURE } from 'state/action-types';
+} from 'calypso/state/jetpack-remote-install/actions';
+import { JETPACK_REMOTE_INSTALL, JETPACK_REMOTE_INSTALL_FAILURE } from 'calypso/state/action-types';
 
 const url = 'https://yourgroovydomain.com';
 const user = 'blah123';

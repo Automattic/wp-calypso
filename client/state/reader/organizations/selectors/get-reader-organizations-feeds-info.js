@@ -6,9 +6,9 @@ import { forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import 'state/reader/init';
-import getOrganizationSites from 'state/reader/follows/selectors/get-reader-follows-organization';
+import createSelector from 'calypso/lib/create-selector';
+import 'calypso/state/reader/init';
+import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
 
 /**
  * Get sites by organization id

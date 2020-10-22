@@ -1,9 +1,9 @@
 /**
  * Internal Dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getRawSite from 'state/selectors/get-raw-site';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 /**
  * Returns true if hosting section should be viewable

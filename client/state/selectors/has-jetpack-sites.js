@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 
-import createSelector from 'lib/create-selector';
-import { isJetpackSite } from 'state/sites/selectors';
-import getSitesItems from 'state/selectors/get-sites-items';
+import createSelector from 'calypso/lib/create-selector';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 /**
  * Returns true if the user has one or more Jetpack sites, and false otherwise.

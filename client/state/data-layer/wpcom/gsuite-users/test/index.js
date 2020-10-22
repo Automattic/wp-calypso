@@ -11,10 +11,10 @@ import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_SUCCESS,
 	GSUITE_USERS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { isErrorNotice } from '../test-utils';
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'g suite users get users request', () => {

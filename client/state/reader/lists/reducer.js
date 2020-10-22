@@ -27,8 +27,8 @@ import {
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
-} from 'state/reader/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
 
 /**

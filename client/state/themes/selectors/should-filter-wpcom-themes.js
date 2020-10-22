@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Determine whether wpcom themes should be removed from

@@ -13,9 +13,9 @@ import {
 	SITE_CONNECTION_STATUS_REQUEST,
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

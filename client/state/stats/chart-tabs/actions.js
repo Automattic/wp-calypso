@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'state/action-types';
-import 'state/data-layer/wpcom/sites/stats/visits';
+import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
+import 'calypso/state/data-layer/wpcom/sites/stats/visits';
 
-import 'state/stats/init';
+import 'calypso/state/stats/init';
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to

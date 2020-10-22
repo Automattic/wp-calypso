@@ -11,13 +11,13 @@ import { useFakeTimers } from 'sinon';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import * as browserStorage from 'lib/browser-storage';
-import userFactory from 'lib/user';
-import { isSupportSession } from 'lib/user/support-user-interop';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { createReduxStore } from 'state';
-import signupReducer from 'state/signup/reducer';
+import { isEnabled } from 'calypso/config';
+import * as browserStorage from 'calypso/lib/browser-storage';
+import userFactory from 'calypso/lib/user';
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { createReduxStore } from 'calypso/state';
+import signupReducer from 'calypso/state/signup/reducer';
 import {
 	getInitialState,
 	getStateFromCache,
@@ -25,13 +25,13 @@ import {
 	loadAllState,
 	MAX_AGE,
 	SERIALIZE_THROTTLE,
-} from 'state/initial-state';
-import { combineReducers, withStorageKey } from 'state/utils';
-import { addReducerToStore } from 'state/add-reducer';
+} from 'calypso/state/initial-state';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { addReducerToStore } from 'calypso/state/add-reducer';
 
-import currentUser from 'state/current-user/reducer';
-import postTypes from 'state/post-types/reducer';
-import reader from 'state/reader/reducer';
+import currentUser from 'calypso/state/current-user/reducer';
+import postTypes from 'calypso/state/post-types/reducer';
+import reader from 'calypso/state/reader/reducer';
 
 // Create a legacy initial reducer, with no modularization.
 const initialReducer = combineReducers( {

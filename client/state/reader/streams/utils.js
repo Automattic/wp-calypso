@@ -6,7 +6,7 @@ import { last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { sameXPost } from 'reader/stream/utils';
+import { sameXPost } from 'calypso/reader/stream/utils';
 
 /**
  * Add the post URL from a duplicate x-post to an existing post key

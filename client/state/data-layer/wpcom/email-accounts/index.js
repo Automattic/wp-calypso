@@ -6,17 +6,17 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { convertToCamelCase } from 'state/data-layer/utils';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { EMAIL_ACCOUNTS_REQUEST } from 'state/action-types';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import config from 'calypso/config';
+import { convertToCamelCase } from 'calypso/state/data-layer/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { EMAIL_ACCOUNTS_REQUEST } from 'calypso/state/action-types';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	receiveGetEmailAccountsSuccess,
 	receiveGetEmailAccountsFailure,
-} from 'state/email-accounts/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+} from 'calypso/state/email-accounts/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const getEmailAccounts = ( action ) => {
 	if ( config.isEnabled( 'email-accounts/enabled' ) ) {

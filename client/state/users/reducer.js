@@ -7,8 +7,8 @@
  */
 
 import suggestions from './suggestions/reducer';
-import { combineReducers } from 'state/utils';
-import { CURRENT_USER_RECEIVE } from 'state/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 
 /**
  * Tracks user objects, indexed by user ID.

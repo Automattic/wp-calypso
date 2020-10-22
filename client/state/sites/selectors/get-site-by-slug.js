@@ -6,8 +6,8 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getSitesItems from 'state/selectors/get-sites-items';
+import createSelector from 'calypso/lib/create-selector';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import getSiteSlug from './get-site-slug';
 
 /**

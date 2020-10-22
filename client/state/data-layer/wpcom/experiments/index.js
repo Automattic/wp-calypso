@@ -1,15 +1,15 @@
 /**
  * Internal Dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import schema from './schema.json';
-import { EXPERIMENT_FETCH } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { assignToExperiments } from 'state/experiments/actions';
-import config from 'config';
-import { getAnonIdFromCookie } from 'state/experiments/reducer';
+import { EXPERIMENT_FETCH } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { assignToExperiments } from 'calypso/state/experiments/actions';
+import config from 'calypso/config';
+import { getAnonIdFromCookie } from 'calypso/state/experiments/reducer';
 
 /**
  * Transform the result from the API into the action we can use

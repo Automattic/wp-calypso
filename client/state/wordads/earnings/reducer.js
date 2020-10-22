@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import { WORDADS_EARNINGS_RECEIVE } from 'state/action-types';
-import { keyedReducer } from 'state/utils';
+import { WORDADS_EARNINGS_RECEIVE } from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 export const items = keyedReducer( 'siteId', ( state, action ) => {
 	switch ( action.type ) {

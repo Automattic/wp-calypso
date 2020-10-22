@@ -6,12 +6,12 @@ import { pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { AppState } from 'types';
-import { getSiteAdminUrl } from 'state/sites/selectors';
-import { addQueryArgs } from 'lib/route';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
-import wpcom from 'lib/wp';
+import { AppState } from 'calypso/types';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPostValue } from 'calypso/state/posts/selectors/get-edited-post-value';
+import wpcom from 'calypso/lib/wp';
 
 export default function getWpAdminClassicEditorRedirectionUrl( state: AppState, siteId: number ) {
 	const postId = getEditorPostId( state ) as number;

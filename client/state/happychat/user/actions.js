@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
+import config from 'calypso/config';
+import wpcom from 'calypso/lib/wp';
 import {
 	HAPPYCHAT_ELIGIBILITY_SET,
 	PRESALE_PRECANCELLATION_CHAT_AVAILABILITY_SET,
-} from 'state/action-types';
-import { errorNotice } from 'state/notices/actions';
-import { setSupportLevel } from 'state/help/actions';
+} from 'calypso/state/action-types';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { setSupportLevel } from 'calypso/state/help/actions';
 
 export const setHappyChatEligibility = ( isEligible ) => ( {
 	type: HAPPYCHAT_ELIGIBILITY_SET,

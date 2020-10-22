@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
+import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
 
 /**
  * Returns true if the site is the target of an active migration.

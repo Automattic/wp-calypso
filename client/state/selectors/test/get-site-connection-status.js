@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 
 describe( 'getSiteConnectionStatus()', () => {
 	const siteId = 2916284;

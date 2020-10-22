@@ -7,7 +7,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { receiveGravatarImageFailed, uploadGravatar } from '../actions';
-import { GRAVATAR_RECEIVE_IMAGE_FAILURE, GRAVATAR_UPLOAD_REQUEST } from 'state/action-types';
+import {
+	GRAVATAR_RECEIVE_IMAGE_FAILURE,
+	GRAVATAR_UPLOAD_REQUEST,
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#uploadGravatar', () => {

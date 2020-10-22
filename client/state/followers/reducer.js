@@ -14,10 +14,10 @@ import {
 	FOLLOWER_REMOVE_ERROR,
 	FOLLOWER_REMOVE_REQUEST,
 	FOLLOWER_REMOVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers } from 'state/utils';
-import { getSerializedQuery, normalizeFollower } from 'state/followers/utils';
-import { FOLLOWERS_PER_PAGE } from 'state/followers/constants';
+} from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import { getSerializedQuery, normalizeFollower } from 'calypso/state/followers/utils';
+import { FOLLOWERS_PER_PAGE } from 'calypso/state/followers/constants';
 
 export function items( state = {}, action ) {
 	switch ( action.type ) {

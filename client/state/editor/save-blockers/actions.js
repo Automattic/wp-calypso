@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { EDITOR_SAVE_BLOCK, EDITOR_SAVE_UNBLOCK } from 'state/action-types';
+import { EDITOR_SAVE_BLOCK, EDITOR_SAVE_UNBLOCK } from 'calypso/state/action-types';
 
-import 'state/editor/init';
+import 'calypso/state/editor/init';
 
 export const blockSave = ( key ) => ( {
 	type: EDITOR_SAVE_BLOCK,

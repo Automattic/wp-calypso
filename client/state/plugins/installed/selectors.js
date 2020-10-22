@@ -11,9 +11,9 @@ import {
 	getSiteTitle,
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
-} from 'state/sites/selectors';
+} from 'calypso/state/sites/selectors';
 
-import 'state/plugins/init';
+import 'calypso/state/plugins/init';
 
 const _filters = {
 	none: function () {

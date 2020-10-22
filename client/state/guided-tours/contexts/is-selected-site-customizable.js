@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Returns true if the current user can run customizer for the selected site

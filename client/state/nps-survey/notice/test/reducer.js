@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer, { isNpsSurveyDialogShowing } from '../reducer';
-import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'state/action-types';
+import { NPS_SURVEY_DIALOG_IS_SHOWING } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

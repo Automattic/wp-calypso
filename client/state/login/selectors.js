@@ -6,7 +6,7 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Retrieve the user ID for the two factor authentication process.

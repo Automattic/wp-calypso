@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { IMMEDIATE_LOGIN_SAVE_INFO } from 'state/action-types';
+import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 
 /**
  * Stores immediate link-related information in state so it can be reused later

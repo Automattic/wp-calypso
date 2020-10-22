@@ -3,7 +3,7 @@
  */
 import { getPurchases } from './get-purchases';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Returns a Purchase object from the state using its id

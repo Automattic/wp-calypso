@@ -19,8 +19,8 @@ import {
 	PURCHASES_USER_FETCH_COMPLETED,
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const purchases = [ { ID: 1 } ],

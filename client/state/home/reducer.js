@@ -5,8 +5,13 @@ import {
 	HOME_LAYOUT_SET,
 	HOME_QUICK_LINKS_EXPAND,
 	HOME_QUICK_LINKS_COLLAPSE,
-} from 'state/action-types';
-import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
+} from 'calypso/state/action-types';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 
 export const layout = ( state = {}, action ) =>
 	action.type === HOME_LAYOUT_SET ? action.layout : state;

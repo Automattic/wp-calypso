@@ -7,7 +7,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { keyedReducer, combineReducers } from 'state/utils';
+import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import {
 	READER_STREAMS_PAGE_REQUEST,
 	READER_STREAMS_PAGE_RECEIVE,
@@ -17,8 +17,8 @@ import {
 	READER_STREAMS_SELECT_PREV_ITEM,
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
-} from 'state/reader/action-types';
-import { keysAreEqual } from 'reader/post-key';
+} from 'calypso/state/reader/action-types';
+import { keysAreEqual } from 'calypso/reader/post-key';
 import { combineXPosts } from './utils';
 
 /*

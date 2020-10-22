@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { getPlan, applyTestFiltersToPlansList } from 'lib/plans';
+import { abtest } from 'calypso/lib/abtest';
+import { getPlan, applyTestFiltersToPlansList } from 'calypso/lib/plans';
 
 /**
  * Computes a plan object and a related product object based on plan slug/constant

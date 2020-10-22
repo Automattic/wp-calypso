@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 /**
  * Returns the front page type.

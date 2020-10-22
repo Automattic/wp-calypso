@@ -7,8 +7,8 @@ import { combineReducers as combine } from 'redux'; // eslint-disable-line no-re
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { SerializationResult } from 'state/serialization-result';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { SerializationResult } from 'calypso/state/serialization-result';
 import { withoutPersistence } from './without-persistence';
 
 /**
