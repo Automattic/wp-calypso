@@ -139,9 +139,8 @@ const ProductsGridAlt = ( {
 
 	const sortedGridItems = useMemo(
 		() =>
-			sortBy(
-				[ ...plansToDisplay, ...productsToDisplay ],
-				( item ) => PRODUCTS_ORDER_BY_SLUG[ item.productSlug ]
+			sortBy( [ ...plansToDisplay, ...productsToDisplay ], ( item ) =>
+				getProductPosition( item.productSlug )
 			),
 		[ plansToDisplay, productsToDisplay ]
 	);

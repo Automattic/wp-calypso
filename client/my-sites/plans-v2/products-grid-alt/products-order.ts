@@ -1,24 +1,47 @@
 /**
  * Internal dependencies
  */
-import * as PlanConstants from 'calypso/lib/plans/constants';
-import * as ProductConstants from 'calypso/lib/products-values/constants';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import {
+	JETPACK_COMPLETE_PLANS,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+} from 'calypso/lib/plans/constants';
+import {
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_CRM_PRODUCTS,
+	JETPACK_ANTI_SPAM_PRODUCTS,
+	PRODUCT_JETPACK_BACKUP_DAILY,
+	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+} from 'calypso/lib/products-values/constants';
 
-export const PRODUCTS_ORDER = [
-	[ ...PlanConstants.JETPACK_SECURITY_PLANS ],
-	[ ...ProductConstants.JETPACK_BACKUP_PRODUCTS ],
-	[ ...ProductConstants.JETPACK_SCAN_PRODUCTS ],
-	[ ...ProductConstants.JETPACK_SEARCH_PRODUCTS ],
-	[ ...ProductConstants.JETPACK_CRM_PRODUCTS ],
-	[ ...ProductConstants.JETPACK_ANTI_SPAM_PRODUCTS ],
-	[ ...PlanConstants.JETPACK_COMPLETE_PLANS ],
-];
-
-const PRODUCTS_ORDER_BY_SLUG: { [ key: string ]: number } = {};
-for ( let i = 0; i < PRODUCTS_ORDER.length; i++ ) {
-	const currentPositionSlugs = PRODUCTS_ORDER[ i ];
-
-	currentPositionSlugs.forEach( ( s ) => ( PRODUCTS_ORDER_BY_SLUG[ s ] = i ) );
+export function getProductPosition( slug: string ): number {
+	if ( [ PLAN_JETPACK_SECURITY_DAILY, PLAN_JETPACK_SECURITY_DAILY_MONTHLY ].includes( slug ) ) {
+		return 1;
+	} else if (
+		[ PLAN_JETPACK_SECURITY_REALTIME, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ].includes( slug )
+	) {
+		return 10;
+	} else if (
+		[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes( slug )
+	) {
+		return 20;
+	} else if ( JETPACK_BACKUP_PRODUCTS.includes( slug ) ) {
+		return 25;
+	} else if ( JETPACK_SCAN_PRODUCTS.includes( slug ) ) {
+		return 30;
+	} else if ( JETPACK_SEARCH_PRODUCTS.includes( slug ) ) {
+		return 40;
+	} else if ( JETPACK_CRM_PRODUCTS.includes( slug ) ) {
+		return 50;
+	} else if ( JETPACK_ANTI_SPAM_PRODUCTS.includes( slug ) ) {
+		return 60;
+	} else if ( JETPACK_COMPLETE_PLANS.includes( slug ) ) {
+		return getJetpackCROActiveVersion() === 'v1' ? 70 : 15;
+	}
+	return 100;
 }
-
-export default PRODUCTS_ORDER_BY_SLUG;
