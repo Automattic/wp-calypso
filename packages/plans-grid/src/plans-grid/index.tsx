@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import type { Plans, DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import debugFactory from 'debug';
@@ -45,8 +45,6 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	disabledPlans,
 	isExperimental,
 } ) => {
-	const { __ } = useI18n();
-
 	// Note: isExperimental prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
 	// and Gutenboarding flow is started with ?latest query param
 	isExperimental && debug( 'PlansGrid experimental version is active' );
@@ -80,7 +78,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-grid__details">
 				<div className="plans-grid__details-heading">
-					<Title>{ __( 'Detailed comparison' ) }</Title>
+					<Title>{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
 				</div>
 				<div className="plans-grid__details-container">
 					<PlansDetails onSelect={ onPlanSelect } />
