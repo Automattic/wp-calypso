@@ -11,7 +11,6 @@ import { RequestCartProduct } from '@automattic/shopping-cart';
  * Internal dependencies
  */
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getRenewalItemFromCartItem, CartItemValue } from 'calypso/lib/cart-values/cart-items';
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
@@ -257,6 +256,7 @@ function useAddRenewalItems( {
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
 	}, [
+		addHandler,
 		translate,
 		isFetchingProducts,
 		products,
@@ -302,7 +302,7 @@ function useAddPlanFromSlug( {
 			return;
 		}
 		const cartProduct = createItemToAddToCart( {
-			planSlug,
+			planSlug: planSlug || undefined,
 			product_id: plan.product_id,
 			isJetpackNotAtomic,
 		} );
@@ -322,7 +322,16 @@ function useAddPlanFromSlug( {
 			cartProduct
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
-	}, [ translate, plans, isFetchingPlans, planSlug, plan, isJetpackNotAtomic, dispatch ] );
+	}, [
+		addHandler,
+		translate,
+		plans,
+		isFetchingPlans,
+		planSlug,
+		plan,
+		isJetpackNotAtomic,
+		dispatch,
+	] );
 }
 
 function useAddProductFromSlug( {
@@ -402,7 +411,6 @@ function useAddProductFromSlug( {
 					productAlias: product.product_alias,
 					product_id: product.product_id,
 					isJetpackNotAtomic,
-					isPrivate,
 				} )
 			)
 			.filter( doesValueExist );
@@ -429,6 +437,7 @@ function useAddProductFromSlug( {
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
+		addHandler,
 		translate,
 		isPrivate,
 		plans,
@@ -485,27 +494,17 @@ function createRenewalItemToAddToCart(
 		return null;
 	}
 
-	const renewalItem = getRenewalItemFromCartItem(
-		{
-			meta,
-			product_slug: productSlug,
-			product_id: parseInt( String( productId ), 10 ),
-		},
-		{
-			id: purchaseId,
-			domain: selectedSiteSlug,
-		}
-	);
-	if ( ! isRequestCartProduct( renewalItem ) ) {
-		return null;
-	}
-	return renewalItem;
-}
-
-function isRequestCartProduct(
-	product: CartItemValue | RequestCartProduct
-): product is RequestCartProduct {
-	return ( product as RequestCartProduct ).product_slug !== undefined;
+	const renewalItemExtra = {
+		purchaseId: String( purchaseId ),
+		purchaseDomain: selectedSiteSlug ? String( selectedSiteSlug ) : undefined,
+		purchaseType: 'renewal',
+	};
+	return {
+		meta,
+		product_slug: productSlug,
+		product_id: parseInt( String( productId ), 10 ),
+		extra: renewalItemExtra,
+	};
 }
 
 /*
