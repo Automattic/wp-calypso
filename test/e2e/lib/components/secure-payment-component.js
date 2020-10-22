@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line wpcalypso/no-package-relative-imports
+import config from 'config';
 import { By, promise, until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
-import config from 'config';
 import AsyncBaseContainer from '../async-base-container';
 import * as driverHelper from '../driver-helper.js';
 import { currentScreenSize } from '../driver-manager';

@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line wpcalypso/no-package-relative-imports
+import config from 'config';
 
 /**
  * Internal dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
-import config from 'config';
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
 import * as dataHelper from '../lib/data-helper';
