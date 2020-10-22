@@ -5,11 +5,12 @@ import React, { Component } from 'react';
 import i18n, { localize } from 'i18n-calypso';
 import debugModule from 'debug';
 import { find, isEmpty } from 'lodash';
+
 /**
  * Internal dependencies
  */
 import Translatable from './translatable';
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import userSettings from 'calypso/lib/user-settings';
 import { isCommunityTranslatorEnabled } from 'calypso/components/community-translator/utils';
 
@@ -87,8 +88,9 @@ class CommunityTranslator extends Component {
 
 	/**
 	 * Wraps translation in a DOM object and attaches `toString()` method in case in can't be rendered
-	 * @param { String } originalFromPage - original string
-	 * @param { String } displayedTranslationFromPage - translated string
+	 *
+	 * @param {string} originalFromPage - original string
+	 * @param {string} displayedTranslationFromPage - translated string
 	 * @param  { Object } optionsFromPage - i18n.translate options
 	 * @returns {object} DOM object
 	 */

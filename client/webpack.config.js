@@ -8,7 +8,6 @@
  * External dependencies
  */
 const path = require( 'path' );
-const fs = require( 'fs' );
 const webpack = require( 'webpack' );
 const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -66,9 +65,6 @@ const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
-const hasLanguagesMeta = fs.existsSync(
-	path.join( __dirname, 'languages', 'languages-meta.json' )
-);
 
 function filterEntrypoints( entrypoints ) {
 	/* eslint-disable no-console */
@@ -373,15 +369,6 @@ const webpackConfig = {
 					),
 			  ]
 			: [] ),
-
-		/*
-		 * When available, replace fallback-languages-meta.json with languages-meta.json
-		 */
-		hasLanguagesMeta &&
-			new webpack.NormalModuleReplacementPlugin(
-				new RegExp( path.join( __dirname, 'languages/fallback-languages-meta.json' ) ),
-				'./languages-meta.json'
-			),
 
 		/*
 		 * Replace `lodash` with `lodash-es`
