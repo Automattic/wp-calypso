@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
-import Toggle from 'calypso/components/forms/form-toggle';
+import Toggle from 'calypso/components/forms/form-toggle/compact';
 import { domainConnect } from 'calypso/lib/domains/constants';
 import { getNormalizedData } from 'calypso/state/domains/dns/utils';
 import DnsRecordsList from '../dns-records/list';
