@@ -50,7 +50,6 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 						autoComplete="off"
 						placeholder={ __( 'Enter site name', 'full-site-editing' ) }
 						autoCorrect="off"
-						data-hj-whitelist
 					/>
 					<div className="nux-launch-step__input-hint">
 						<Tip size={ 18 } />
