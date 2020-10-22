@@ -98,7 +98,10 @@ $cloud-icon-height: 24px;
 	list-style-type: none;
 
 	> li {
+		position: relative;
+
 		margin-bottom: 20px;
+
 		.button {
 			width: 100%;
 		}
