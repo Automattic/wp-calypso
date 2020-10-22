@@ -9,34 +9,25 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Notice from 'calypso/components/notice';
-import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-
-/**
- * Type dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
-interface ConnectedProps {
-	applySiteOffset: applySiteOffsetType;
-}
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 
 interface ExternalProps {
 	status?: string;
+	siteId?: number;
 }
 
-export const TimeMismatchWarning: FC< ExternalProps & ConnectedProps > = ( {
-	applySiteOffset,
+export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	status = 'is-warning',
-}: ExternalProps & ConnectedProps ) => {
+	siteId,
+}: ExternalProps ) => {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( ( state ) => siteId && getSiteSlug( state, siteId ) );
 	const settingsUrl = siteSlug ? `/settings/general/${ siteSlug }` : '#';
-	const now = moment();
-	const siteOffset = applySiteOffset( now );
+	const userOffset = new Date().getTimezoneOffset() / 60;
+	const siteOffset = useSelector( ( state ) => siteId && getSiteGmtOffset( state, siteId ) );
 
-	if ( ! siteOffset || now.isSame( siteOffset ) ) {
+	if ( ! siteId || siteOffset === null || userOffset === siteOffset ) {
 		return null;
 	}
 
@@ -56,4 +47,4 @@ export const TimeMismatchWarning: FC< ExternalProps & ConnectedProps > = ( {
 	);
 };
 
-export default withApplySiteOffset( TimeMismatchWarning );
+export default TimeMismatchWarning;
