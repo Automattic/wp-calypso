@@ -54,8 +54,7 @@ const ActivityActor: FunctionComponent< Props > = ( {
 	if ( actorName === 'Jetpack' && actorType === 'Application' ) {
 		return (
 			<div className="activity-card__actor">
-				{ ( ! isEnabled( 'jetpack/backup-simplified-screens' ) ||
-					isEnabled( 'jetpack/backup-simplified-screens-i4' ) ) && <JetpackLogo size={ size } /> }
+				{ isEnabled( 'jetpack/backup-simplified-screens-i4' ) && <JetpackLogo size={ size } /> }
 				{ ! withoutInfo && (
 					<div className="activity-card__actor-info">
 						<div className="activity-card__actor-name">Jetpack</div>
@@ -68,8 +67,7 @@ const ActivityActor: FunctionComponent< Props > = ( {
 	if ( actorName === 'Happiness Engineer' && actorType === 'Happiness Engineer' ) {
 		return (
 			<div className="activity-card__actor">
-				{ ( ! isEnabled( 'jetpack/backup-simplified-screens' ) ||
-					isEnabled( 'jetpack/backup-simplified-screens-i4' ) ) && <JetpackLogo size={ size } /> }
+				{ isEnabled( 'jetpack/backup-simplified-screens-i4' ) && <JetpackLogo size={ size } /> }
 				{ ! withoutInfo && (
 					<div className="activity-card__actor-info">
 						<div className="activity-card__actor-name">Happiness Engineer</div>
