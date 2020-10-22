@@ -16,7 +16,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import JITMAsyncLoader from 'calypso/blocks/jitm-async-loader/';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
@@ -345,7 +345,7 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
-					<JITMAsyncLoader messagePathSuffix="admin_notices" />
+					<AsyncLoad require="calypso/blocks/jitm/loader" messagePathSuffix="admin_notices" />
 				) }
 				{ this.renderSectionNav( section ) }
 				{ activeSection }
