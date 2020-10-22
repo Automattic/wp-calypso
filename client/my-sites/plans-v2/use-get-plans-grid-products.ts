@@ -12,6 +12,8 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_REALTIME,
+	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
@@ -61,33 +63,54 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 		availableProducts = [ ...availableProducts, PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 	}
 
+	const backupProductsToShow = [];
+	const currentCROvariant = getJetpackCROActiveVersion();
+	if ( currentCROvariant === 'v0' ) {
+		if (
+			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
+		) {
+			backupProductsToShow.push( OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY );
+		}
+	} else if ( currentCROvariant === 'v1' ) {
+		if (
+			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
+		) {
+			backupProductsToShow.push(
+				PRODUCT_JETPACK_BACKUP_DAILY,
+				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
+			);
+		}
+	} else {
+		if (
+			! ownedProducts.some( ( ownedProduct ) =>
+				[ PRODUCT_JETPACK_BACKUP_DAILY, PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ].includes(
+					ownedProduct
+				)
+			)
+		) {
+			backupProductsToShow.push(
+				PRODUCT_JETPACK_BACKUP_DAILY,
+				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
+			);
+		}
+
+		if (
+			! ownedProducts.some( ( ownedProduct ) =>
+				[ PRODUCT_JETPACK_BACKUP_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ].includes(
+					ownedProduct
+				)
+			)
+		) {
+			backupProductsToShow.push(
+				PRODUCT_JETPACK_BACKUP_REALTIME,
+				PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY
+			);
+		}
+	}
+	availableProducts = [ ...availableProducts, ...backupProductsToShow ];
+
 	// If Jetpack Backup is directly or indirectly owned, continue, otherwise make it available by displaying
 	// the option cards.
-	if (
-		! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
-	) {
-		// The Alternative Selector page include Jetpack Backup Daily rather than the option card.
-		const backupProductsToShow = [];
-		switch ( getJetpackCROActiveVersion() ) {
-			case 'v0':
-				backupProductsToShow.push( OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY );
-				break;
-			case 'v1':
-				backupProductsToShow.push(
-					PRODUCT_JETPACK_BACKUP_DAILY,
-					PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-				);
-				break;
-			case 'v2':
-				// TODO: add Backup Real-time
-				backupProductsToShow.push(
-					PRODUCT_JETPACK_BACKUP_DAILY,
-					PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
-				);
-				break;
-		}
-		availableProducts = [ ...availableProducts, ...backupProductsToShow ];
-	}
 
 	// If Jetpack Scan is directly or indirectly owned, continue, otherwise make it available.
 	if (

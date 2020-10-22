@@ -16,13 +16,14 @@ import {
 	JETPACK_SECURITY_PLANS,
 } from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
-import { SELECTOR_PLANS_ALT } from '../constants';
+import { SELECTOR_PLANS_ALT_V1, SELECTOR_PLANS_ALT_V2 } from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import PRODUCTS_ORDER_BY_SLUG from './products-order';
+import { getProductPosition } from './products-order';
 import ProductCardAlt from '../product-card-alt';
 
 /**
@@ -47,7 +48,9 @@ const getPlansToDisplay = ( {
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
 
-	const plansToDisplay = SELECTOR_PLANS_ALT.map( slugToSelectorProduct )
+	const isCROv1 = getJetpackCROActiveVersion() === 'v1';
+	const plansToDisplay = ( isCROv1 ? SELECTOR_PLANS_ALT_V1 : SELECTOR_PLANS_ALT_V2 )
+		.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
 			( product: SelectorProduct | null ): product is SelectorProduct =>
@@ -55,7 +58,9 @@ const getPlansToDisplay = ( {
 				product.term === duration &&
 				// Don't include a plan the user already owns, regardless of the term
 				! currentPlanTerms.includes( product.productSlug ) &&
+				// In v1, we don't show both versions of Jetpack Security
 				! (
+					isCROv1 &&
 					currentPlanSlug &&
 					JETPACK_SECURITY_PLANS.includes( currentPlanSlug ) &&
 					JETPACK_SECURITY_PLANS.includes( product.productSlug )
