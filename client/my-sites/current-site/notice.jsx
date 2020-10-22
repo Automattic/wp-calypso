@@ -41,10 +41,10 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
-import AsyncLoad from 'calypso/components/async-load';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import JITMAsyncLoader from 'calypso/blocks/jitm-async-loader/';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
@@ -254,7 +254,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
+		const { site, isMigrationInProgress, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
@@ -273,12 +273,7 @@ export class SiteNotice extends React.Component {
 				<QueryActivePromotions />
 				{ siteRedirectNotice }
 				{ showJitms && (
-					<AsyncLoad
-						require="calypso/blocks/jitm"
-						messagePath={ messagePath }
-						template="sidebar-banner"
-						placeholder={ null }
-					/>
+					<JITMAsyncLoader messagePathSuffix="sidebar_notice" template="sidebar-banner" />
 				) }
 				<QuerySitePlans siteId={ site.ID } />
 				{ ! hasJITM && domainCreditNotice }
@@ -312,7 +307,6 @@ export default connect(
 			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
-			messagePath,
 		};
 	},
 	( dispatch ) => {
