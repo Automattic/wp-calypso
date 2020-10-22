@@ -14,7 +14,11 @@ import { localize } from 'i18n-calypso';
  */
 import config from 'calypso/config';
 import { Card } from '@automattic/components';
-import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'calypso/state/login/actions';
+import {
+	loginSocialUser,
+	createSocialUser,
+	createSocialUserFailed,
+} from 'calypso/state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
@@ -90,16 +94,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'unknown_user' ) {
-					return this.props.createSocialUser( socialInfo, 'login' ).then(
-						() => this.recordEvent( 'calypso_login_social_signup_success', 'google' ),
-						( createAccountError ) =>
-							this.recordEvent( 'calypso_login_social_signup_failure', 'google', {
-								error_code: createAccountError.code,
-								error_message: createAccountError.message,
-							} )
-					);
-				} else if ( error.code === 'user_exists' ) {
+				if ( error.code === 'user_exists' ) {
 					this.props.createSocialUserFailed( socialInfo, error );
 				}
 
@@ -142,16 +137,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'unknown_user' ) {
-					return this.props.createSocialUser( socialInfo, 'login' ).then(
-						() => this.recordEvent( 'calypso_login_social_signup_success', 'apple' ),
-						( createAccountError ) =>
-							this.recordEvent( 'calypso_login_social_signup_failure', 'apple', {
-								error_code: createAccountError.code,
-								error_message: createAccountError.message,
-							} )
-					);
-				} else if ( error.code === 'user_exists' ) {
+				if ( error.code === 'user_exists' ) {
 					this.props.createSocialUserFailed( socialInfo, error );
 				}
 
