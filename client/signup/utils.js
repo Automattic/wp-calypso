@@ -10,14 +10,10 @@ import { translate } from 'i18n-calypso';
 import steps from 'calypso/signup/config/steps-pure';
 import flows from 'calypso/signup/config/flows';
 import user from 'calypso/lib/user';
-import { abtest } from 'calypso/lib/abtest';
 
 const { defaultFlowName } = flows;
 
 function getDefaultFlowName() {
-	if ( ! user().get() && 'test' === abtest( 'secureYourBrand' ) ) {
-		return 'onboarding-secure-your-brand';
-	}
 	return defaultFlowName;
 }
 
