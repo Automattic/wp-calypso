@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { ResponseCartProductExtra } from '@automattic/shopping-cart';
+
+/**
  * Internal dependencies
  */
 import { CheckoutPaymentMethodSlug } from './checkout-payment-method-slug';
-import type { CartItemExtra } from 'calypso/lib/cart-values/types';
 
 /**
  * Amount object as used by composite-checkout. If that
@@ -36,7 +40,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		plan_length?: string;
 		product_id: number;
 		product_slug: string;
-		extra: CartItemExtra;
+		extra: ResponseCartProductExtra;
 		volume?: number;
 		item_original_cost_display: string;
 		item_original_cost_integer: number;
