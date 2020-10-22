@@ -36,7 +36,8 @@ import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
 import { getPathToDetails } from 'calypso/my-sites/plans-v2/utils';
 
-const validateGoogleAnalyticsCode = ( code ) => ! code || code.match( /^UA-\d+-\d+$/i );
+const validateGoogleAnalyticsCode = ( code ) =>
+	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
 
 export class GoogleAnalyticsForm extends Component {
 	state = {
