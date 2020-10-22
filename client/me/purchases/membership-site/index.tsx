@@ -8,9 +8,13 @@ import React from 'react';
  */
 import MembershipSiteHeader from './header';
 import MembershipItem from '../membership-item';
-import { MembershipSubscription } from 'calypso/lib/purchases/types';
+import { MembershipSubscriptionsSite, MembershipSubscription } from 'calypso/lib/purchases/types';
 
-export default function MembershipSite( { site }: { site: any } ): JSX.Element {
+export default function MembershipSite( {
+	site,
+}: {
+	site: MembershipSubscriptionsSite;
+} ): JSX.Element {
 	return (
 		<div className="membership-site">
 			<MembershipSiteHeader name={ site.name } domain={ site.domain } />

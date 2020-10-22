@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useTranslate, LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -24,8 +24,8 @@ const getMembershipTerms = ( {
 	moment,
 }: {
 	subscription: MembershipSubscription;
-	translate: LocalizeProps[ 'translate' ];
-	moment: any;
+	translate: ReturnType< typeof useTranslate >;
+	moment: ReturnType< typeof useLocalizedMoment >;
 } ) => {
 	/* $5 - never expires. */
 	if ( subscription.end_date === null ) {

@@ -29,3 +29,10 @@ export interface MembershipSubscription {
 	status: string;
 	title: string;
 }
+
+export interface MembershipSubscriptionsSite {
+	id: string;
+	name: string;
+	domain: string;
+	subscriptions: MembershipSubscription[];
+}
