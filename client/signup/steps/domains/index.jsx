@@ -166,6 +166,14 @@ class DomainsStep extends React.Component {
 		return this.showTestCopy;
 	}
 
+	isEligibleForSecureYourBrandTest( isPurchasingItem ) {
+		return (
+			includes( [ 'onboarding', 'onboarding-secure-your-brand' ], this.props.flowName ) &&
+			isPurchasingItem &&
+			'test' === abtest( 'secureYourBrand' )
+		);
+	}
+
 	getMapDomainUrl = () => {
 		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
 	};
@@ -301,7 +309,12 @@ class DomainsStep extends React.Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-		this.props.goToNextStep();
+
+		if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
+			this.props.goToNextStep( 'onboarding-secure-your-brand' );
+		} else {
+			this.props.goToNextStep();
+		}
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );

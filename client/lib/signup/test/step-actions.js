@@ -10,7 +10,6 @@ import {
 	isPlanFulfilled,
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
-	isSecureYourBrandFulfilled,
 } from '../step-actions';
 import { useNock } from 'calypso/test-helpers/use-nock';
 import flows from 'calypso/signup/config/flows';
@@ -511,69 +510,5 @@ describe( 'isSiteTopicFulfilled()', () => {
 		isSiteTopicFulfilled( stepName, undefined, nextProps );
 
 		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-survey-question' );
-	} );
-} );
-
-describe( 'isSecureYourBrandFulfilled()', () => {
-	const submitSignupStep = jest.fn();
-
-	beforeEach( () => {
-		flows.excludeStep.mockClear();
-		submitSignupStep.mockClear();
-	} );
-
-	test( 'should remove the step if the domainItem is free', () => {
-		const stepName = 'secure-your-brand';
-		const nextProps = {
-			signupDependencies: { domainItem: false },
-			sitePlanSlug: 'sitePlanSlug',
-			submitSignupStep,
-		};
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
-
-		isSecureYourBrandFulfilled( stepName, undefined, nextProps );
-
-		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, domainUpsellItems: null, wasSkipped: true },
-			{ domainUpsellItems: null }
-		);
-		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
-	} );
-
-	test( 'should remove the step if skipSecureYourBrand is true', () => {
-		const stepName = 'secure-your-brand';
-		const nextProps = {
-			signupDependencies: { domainItem: { domain: 'test' } },
-			skipSecureYourBrand: true,
-			submitSignupStep,
-		};
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
-
-		isSecureYourBrandFulfilled( stepName, undefined, nextProps );
-
-		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, domainUpsellItems: null, wasSkipped: true },
-			{ domainUpsellItems: null }
-		);
-		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
-	} );
-
-	test( 'should not remove unfulfilled step', () => {
-		const stepName = 'secure-your-brand';
-		const nextProps = {
-			submitSignupStep,
-		};
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
-
-		isSecureYourBrandFulfilled( stepName, undefined, nextProps );
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
 	} );
 } );
