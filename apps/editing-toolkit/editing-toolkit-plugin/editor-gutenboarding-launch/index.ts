@@ -96,7 +96,15 @@ function updateEditor() {
 				is_experimental: isExperimental,
 			} );
 
-			if ( shouldOpenNewFlowModal ) {
+			// TODO: this flag should come from A/B testing
+			const shouldOpenFocusedLaunch = true;
+
+			if ( shouldOpenFocusedLaunch ) {
+				dispatch( 'automattic/launch' ).openFocusedLaunch();
+				setTimeout( () => {
+					dispatch( 'core/editor' ).savePost();
+				}, 1000 );
+			} else if ( shouldOpenNewFlowModal ) {
 				// If we want to load experimental features, for now '?latest' query param should be added in URL.
 				// TODO: update this in calypsoify-iframe.tsx depending on abtest or other conditions.
 				isExperimental && dispatch( 'automattic/launch' ).enableExperimental();
