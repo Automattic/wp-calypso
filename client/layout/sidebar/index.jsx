@@ -10,18 +10,22 @@ import SidebarRegion from './region';
  */
 import './style.scss';
 
-export default function Sidebar( { children, onClick, className } ) {
+const Sidebar = React.forwardRef( ( { children, onClick, className, ...props }, ref ) => {
 	const hasRegions = React.Children.toArray( children ).some( ( el ) => el.type === SidebarRegion );
 	const finalClassName = classNames( 'sidebar', className, { 'has-regions': hasRegions } );
 
 	return (
 		<div
+			ref={ ref }
 			role="presentation"
 			className={ finalClassName }
 			onClick={ onClick }
 			data-tip-target="sidebar"
+			{ ...props }
 		>
 			{ children }
 		</div>
 	);
-}
+} );
+
+export default Sidebar;
