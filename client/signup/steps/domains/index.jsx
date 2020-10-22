@@ -13,8 +13,10 @@ import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import Notice from 'calypso/components/notice';
 import { getABTestVariation } from 'calypso/lib/abtest';
 import {
-	domainMapping, domainRegistration,
-	domainTransfer, themeItem
+	domainMapping,
+	domainRegistration,
+	domainTransfer,
+	themeItem,
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -27,13 +29,13 @@ import { getStepUrl } from 'calypso/signup/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
-	recordTracksEvent
+	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
-	recordAddDomainButtonClickInUseYourDomain
+	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
@@ -52,20 +54,11 @@ import { defer, get, includes, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { isPlanStepExistsAndSkipped } from 'state/signup/preview/selectors';
+import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 /**
  * Style dependencies
  */
 import './style.scss';
-
-
-
-
-
-
-
-
-
 
 class DomainsStep extends React.Component {
 	static propTypes = {
