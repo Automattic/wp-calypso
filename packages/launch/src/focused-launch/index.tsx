@@ -24,18 +24,18 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	return (
 		<>
 			<div className="focused-launch__section">
-				<Title>{ __( "You're almost there", 'full-site-editing' ) }</Title>
+				<Title>{ __( "You're almost there", 'launch' ) }</Title>
 				<p className="focused-launch__caption">
 					{ __(
 						'Prepare for launch! Confirm a few final things before you take it live.',
-						'full-site-editing'
+						'launch'
 					) }
 				</p>
 			</div>
 			<div className="focused-launch__section">
 				<TextControl
 					className="focused-launch__input"
-					label={ __( '1. Name your site', 'full-site-editing' ) }
+					label={ __( '1. Name your site', 'launch' ) }
 					value={ siteTitle }
 					onChange={ ( value ) => setSiteTitle( value ) }
 				/>
@@ -44,7 +44,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 				<DomainPicker
 					header={
 						<label className="focused-launch__label">
-							{ __( '2. Confirm your domain', 'full-site-editing' ) }
+							{ __( '2. Confirm your domain', 'launch' ) }
 						</label>
 					}
 					existingSubdomain={ siteDomainName }
@@ -59,9 +59,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 				/>
 			</div>
 			<div className="focused-launch__section">
-				<label className="focused-launch__label">
-					{ __( '3. Confirm your plan', 'full-site-editing' ) }
-				</label>
+				<label className="focused-launch__label">{ __( '3. Confirm your plan', 'launch' ) }</label>
 			</div>
 		</>
 	);

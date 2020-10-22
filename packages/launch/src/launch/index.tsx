@@ -33,7 +33,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => 
 							isLink
 							className="launch__focused-modal-close-button"
 							onClick={ onClose }
-							aria-label={ __( 'Close dialog', 'full-site-editing' ) }
+							aria-label={ __( 'Close dialog', 'launch' ) }
 							disabled={ ! onClose }
 						>
 							<span>

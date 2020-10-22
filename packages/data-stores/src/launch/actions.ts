@@ -86,6 +86,16 @@ export const closeSidebar = () =>
 		type: 'CLOSE_SIDEBAR',
 	} as const );
 
+export const openFocusedLaunch = () =>
+	( {
+		type: 'OPEN_FOCUSED_LAUNCH',
+	} as const );
+
+export const closeFocusedLaunch = () =>
+	( {
+		type: 'CLOSE_FOCUSED_LAUNCH',
+	} as const );
+
 export const enableExperimental = () =>
 	( {
 		type: 'ENABLE_EXPERIMENTAL',
@@ -98,6 +108,8 @@ export type LaunchAction = ReturnType<
 	| typeof confirmDomainSelection
 	| typeof setDomainSearch
 	| typeof setPlan
+	| typeof openFocusedLaunch
+	| typeof closeFocusedLaunch
 	| typeof unsetPlan
 	| typeof openSidebar
 	| typeof closeSidebar
