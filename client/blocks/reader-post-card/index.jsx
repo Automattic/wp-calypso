@@ -261,7 +261,7 @@ class ReaderPostCard extends React.Component {
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
 		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
-			<Card className={ classes } onClick={ onClick }>
+			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
 				{ showPrimaryFollowButton && followUrl && (
 					<FollowButton
