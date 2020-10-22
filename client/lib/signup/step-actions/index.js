@@ -7,7 +7,6 @@ import {
 	defer,
 	difference,
 	get,
-	has,
 	includes,
 	isEmpty,
 	isNull,
@@ -33,7 +32,6 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { isDomainRegistration } from 'calypso/lib/products-values';
 import { getUrlParts } from 'calypso/lib/url';
 
 // State actions and selectors
@@ -858,31 +856,5 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
-	}
-}
-
-export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { submitSignupStep } = nextProps;
-	const hasDomainItemInDependencyStore = has( nextProps, 'signupDependencies.domainItem' );
-	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
-	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
-	const isNotRegistration = hasDomainItemInDependencyStore && ! isDomainRegistration( domainItem );
-
-	if ( isNotRegistration || skipSecureYourBrand ) {
-		const domainUpsellItems = null;
-		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
-		flows.excludeStep( stepName );
-		return;
-	}
-
-	const hasDomainUpsellItems = has( nextProps, 'signupDependencies.domainUpsellItems' );
-	const existingDomainUpsellItems = get( nextProps, 'signupDependencies.domainUpsellItems', false );
-	if (
-		hasDomainUpsellItems &&
-		isEmpty( existingDomainUpsellItems ) &&
-		isDomainRegistration( domainItem )
-	) {
-		flows.resetExcludedStep( stepName );
-		// submitSignupStep( { stepName, wasSkipped: false }, {} );
 	}
 }

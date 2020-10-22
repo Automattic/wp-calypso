@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -166,6 +167,25 @@ class DomainsStep extends React.Component {
 		}
 	}
 
+	isEligibleVariantForDomainTest() {
+		return this.showTestCopy;
+	}
+
+	getGeoLocationFromCookie() {
+		const cookies = cookie.parse( document.cookie );
+
+		return cookies.country_code;
+	}
+
+	isEligibleForSecureYourBrandTest( isPurchasingItem ) {
+		return (
+			includes( [ 'onboarding', 'onboarding-secure-your-brand' ], this.props.flowName ) &&
+			isPurchasingItem &&
+			! this.props.skipSecureYourBrand &&
+			'test' === abtest( 'secureYourBrand', this.getGeoLocationFromCookie() )
+		);
+	}
+
 	getMapDomainUrl = () => {
 		return getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
 	};
@@ -310,7 +330,12 @@ class DomainsStep extends React.Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-		this.props.goToNextStep();
+
+		if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
+			this.props.goToNextStep( 'onboarding-secure-your-brand' );
+		} else {
+			this.props.goToNextStep();
+		}
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
