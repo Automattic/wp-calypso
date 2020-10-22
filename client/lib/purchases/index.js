@@ -87,6 +87,7 @@ function getSubscriptionsBySite( subscriptions ) {
 					{
 						id: currentValue.site_id,
 						name: currentValue.site_title,
+						domain: currentValue.site_url,
 						subscriptions: [ currentValue ],
 					},
 				];
