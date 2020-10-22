@@ -21,7 +21,7 @@ import PurchasesSite from '../purchases-site';
 import MembershipItem from '../membership-item';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getPurchasesBySite } from 'calypso/lib/purchases';
+import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -100,9 +100,17 @@ class PurchasesList extends Component {
 			return null;
 		}
 
-		return subscriptions.map( ( subscription ) => (
-			<MembershipItem subscription={ subscription } key={ subscription.ID } />
-		) );
+		return getSubscriptionsBySite( subscriptions ).map( ( site ) => {
+			return (
+				<div key={ site.id }>
+					<CompactCard>{ site.name }</CompactCard>
+
+					{ site.subscriptions.map( ( subscription ) => (
+						<MembershipItem subscription={ subscription } key={ subscription.ID } />
+					) ) }
+				</div>
+			);
+		} );
 	}
 
 	render() {
