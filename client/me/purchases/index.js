@@ -52,13 +52,8 @@ export default ( router ) => {
 		);
 	}
 
-	router(
-		paths.purchasesRoot + '/other',
-		sidebar,
-		membershipsController.myMemberships,
-		makeLayout,
-		clientRender
-	);
+	router( paths.purchasesRoot + '/other', () => page.redirect( paths.purchasesRoot ) );
+
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
 		sidebar,
