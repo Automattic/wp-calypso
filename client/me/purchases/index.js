@@ -40,13 +40,7 @@ export default ( router ) => {
 		clientRender
 	);
 
-	router(
-		paths.upcomingCharges,
-		sidebar,
-		billingController.upcomingCharges,
-		makeLayout,
-		clientRender
-	);
+	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
 
 	if ( config.isEnabled( 'async-payments' ) ) {
 		router(

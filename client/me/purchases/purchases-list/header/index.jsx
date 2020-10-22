@@ -15,7 +15,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import {
 	billingHistory,
 	paymentMethods,
-	upcomingCharges,
 	pendingPayments,
 	myMemberships,
 	purchasesRoot,
@@ -29,8 +28,6 @@ const PurchasesHeader = ( { section, translate } ) => {
 
 	if ( section === 'purchases' ) {
 		text = translate( 'Purchases' );
-	} else if ( section === 'upcoming' ) {
-		text = translate( 'Upcoming Charges' );
 	} else if ( section === 'pending' ) {
 		text = translate( 'Pending Payments' );
 	} else if ( section === 'memberships' ) {
@@ -52,10 +49,6 @@ const PurchasesHeader = ( { section, translate } ) => {
 
 				<NavItem path={ paymentMethods } selected={ section === 'payment-methods' }>
 					{ translate( 'Payment Methods' ) }
-				</NavItem>
-
-				<NavItem path={ upcomingCharges } selected={ section === 'upcoming' }>
-					{ translate( 'Upcoming Charges' ) }
 				</NavItem>
 
 				{ config.isEnabled( 'async-payments' ) && (
