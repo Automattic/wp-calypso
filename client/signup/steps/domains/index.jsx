@@ -42,7 +42,6 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { getDomainProductSlug } from 'calypso/lib/domains';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
@@ -801,7 +800,6 @@ export default connect(
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isReskinned,
-			countryCode: getCurrentUserCountryCode( state ),
 		};
 	},
 	{
