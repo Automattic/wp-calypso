@@ -47,7 +47,9 @@ ENV NODE_ENV production
 WORKDIR /calypso
 
 RUN apk add --no-cache tini
-COPY --from=builder --chown=nobody:nobody /calypso/ /calypso/
+COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
+COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
+COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
