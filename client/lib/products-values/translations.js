@@ -145,10 +145,9 @@ export const getJetpackProductsTaglines = () => {
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
 
-	const searchTagline =
-		currentCROvariant === 'v1'
-			? translate( 'Great for sites with a lot of content' )
-			: translate( 'Recommended for sites with lots of products or content' );
+	const searchTagline = [ 'v1', 'v2' ].includes( currentCROvariant )
+		? translate( 'Great for sites with a lot of content' )
+		: translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
