@@ -1,0 +1,27 @@
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/z-index';
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+
+.focused-launch-input {
+	.components-base-control__label {
+		font-weight: bold;
+	}
+}
+
+.focused-launch-label {
+	font-weight: bold;
+	margin-bottom: 8px;
+	display: block;
+}
+
+.focused-launch-section {
+	margin: 20px 0;
+}
+
+.focused-launch-caption {
+	margin: 0;
+}

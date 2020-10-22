@@ -1,0 +1,154 @@
+// @import '~@automattic/calypso-color-schemes';
+// @import '~@automattic/onboarding/styles/mixins';
+// @import '~@automattic/typography/styles/fonts';
+
+// .nux-launch {
+// 	// Your stylesheet here
+// }
+
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/z-index';
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+
+body.has-focused-launch-modal {
+	overflow: hidden;
+}
+
+.focused-launch-modal {
+	&.components-modal__frame {
+		transform: none;
+	}
+
+	.components-modal__header {
+		display: none;
+	}
+
+	.components-modal__content {
+		position: fixed;
+		top: 0;
+		left: 0;
+		background: var( --studio-white );
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		// Using overflow-y: scroll for consistent viewport width has an unintended
+		// consequence where if the content height is shorter than the viewport height
+		// the modal header overlaps the scrollbar on Chrome.
+		overflow: auto;
+	}
+}
+
+.focused-launch-modal-header {
+	justify-content: space-between;
+	display: flex;
+}
+
+.focused-launch-body {
+	display: flex;
+	width: 100%;
+	margin: 0 auto;
+	justify-content: center;
+}
+
+.focused-launch-modal-header__wp-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 60px;
+}
+
+.focused-launch-modal-body {
+	position: relative;
+	flex-grow: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.focused-launch-modal-aside {
+	// Instead of display: none, the sidebar hides off-screen
+	// on mobile view, this is to prevents "Get Started" button
+	// from disappearing when clicked, causing the modal to blur
+	// itself out and abruptly closes the modal.
+	position: absolute;
+	top: 0;
+	left: -200%;
+	width: 100%;
+	height: 100%;
+	background: var( --studio-white );
+	z-index: z-index( '.components-modal__header' ) + 2;
+
+	@media ( max-width: $break-medium ) {
+		// This brings the sidebar that is hiding offscreen into view.
+		.is-sidebar-fullscreen & {
+			left: 0;
+		}
+	}
+
+	@include break-medium {
+		// Use sticky or relative positioning because fixed or absolute
+		// positioning causes the vertical scrollbar from the parent element
+		// to overlap the content on the sidebar.
+		position: sticky;
+		top: 0;
+		left: auto;
+		width: $sidebar-width;
+		min-width: $sidebar-width;
+		max-width: $sidebar-width;
+		border-left: 1px solid var( --studio-gray-5 );
+	}
+}
+
+.focused-launch-modal__close-button.components-button.is-link {
+	// This keeps the button on the top right corner even when scrolled down
+	position: sticky;
+	top: 0;
+	z-index: z-index( '.components-modal__header' ) + 3;
+
+	// Give it no dimension so it doesn't take any flex space
+	// but overflow it so the close button is visible
+	width: 0;
+	height: 0;
+	overflow: visible;
+
+	// Anchor the inline content to the top right (instead of middle).
+	display: flex;
+	align-items: flex-start;
+
+	// Close button icon color
+	color: var( --studio-gray-50 );
+	&:hover {
+		color: var( --studio-gray-40 );
+	}
+
+	> span {
+		// Push the icon back out from the right side
+		position: relative;
+		right: $onboarding-header-height;
+
+		// Use padding to create width
+		// (18px left padding + 24px icon width + 18px right padding = 60px width)
+		padding: 0 #{( $onboarding-header-height - 24px ) / 2};
+		height: $onboarding-header-height;
+
+		// Vertically align icon
+		display: flex;
+		align-items: center;
+	}
+}
+
+.focused-launch-modal-aside {
+	height: 100%;
+	flex: 0.5;
+	padding: 1%;
+}
+.focused-launch-inputs {
+	flex: 0.5;
+	padding: 1%;
+}
