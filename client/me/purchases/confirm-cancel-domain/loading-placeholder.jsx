@@ -21,9 +21,9 @@ const ConfirmCancelDomainLoadingPlaceholder = ( { purchaseId, selectedSite } ) =
 	}
 
 	return (
-		<LoadingPlaceholder title={ titles.confirmCancelDomain } path={ path }>
+		<LoadingPlaceholder title={ titles.confirmCancelDomain } path={ path } isFullWidth={ true }>
 			<Card className="confirm-cancel-domain__loading-placeholder-card">
-				<h2 className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-header" />
+				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-header" />
 				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-subheader" />
 				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason" />
 				<div className="loading-placeholder__content confirm-cancel-domain__loading-placeholder-reason" />
