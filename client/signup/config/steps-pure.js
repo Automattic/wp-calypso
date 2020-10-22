@@ -7,6 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 import {
 	PLAN_PERSONAL,
@@ -18,7 +19,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 export function generateSteps( {
 	addPlanToCart = noop,

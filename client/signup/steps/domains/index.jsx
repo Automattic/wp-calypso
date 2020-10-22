@@ -1,60 +1,61 @@
 /**
  * External dependencies
  */
-import CartData from 'calypso/components/data/cart';
-import QueryProductsList from 'calypso/components/data/query-products-list';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { defer, get, includes, isEmpty } from 'lodash';
+import { localize, getLocaleSlug } from 'i18n-calypso';
+
 /**
  * Internal dependencies
  */
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
-import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
-import Notice from 'calypso/components/notice';
-import { getABTestVariation } from 'calypso/lib/abtest';
-import {
-	domainMapping,
-	domainRegistration,
-	domainTransfer,
-	themeItem,
-} from 'calypso/lib/cart-values/cart-items';
-import { getDomainProductSlug } from 'calypso/lib/domains';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import { getStepModuleName } from 'calypso/signup/config/step-components';
-import { isDomainStepSkippable } from 'calypso/signup/config/steps';
-import StepWrapper from 'calypso/signup/step-wrapper';
+import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
+import CartData from 'calypso/components/data/cart';
 import { getStepUrl } from 'calypso/signup/utils';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
+	domainRegistration,
+	themeItem,
+	domainMapping,
+	domainTransfer,
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
-import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import Notice from 'calypso/components/notice';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
+import { getDomainProductSlug } from 'calypso/lib/domains';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSite } from 'calypso/state/sites/selectors';
-import { getLocaleSlug, localize } from 'i18n-calypso';
-import { defer, get, includes, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
+import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
+import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
+import { getABTestVariation } from 'calypso/lib/abtest';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
+import { getStepModuleName } from 'calypso/signup/config/step-components';
 /**
  * Style dependencies
  */
