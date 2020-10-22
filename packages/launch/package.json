@@ -32,8 +32,12 @@
 	"dependencies": {
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/domain-picker": "^1.0.0-alpha.0",
+		"@automattic/onboarding": "^1.0.0",
 		"@wordpress/components": "^10.0.5",
+		"@wordpress/core-data": "^2.16.0",
 		"@wordpress/icons": "^2.4.0",
+		"@wordpress/url": "^2.17.0",
 		"classnames": "^2.2.6"
 	},
 	"devDependencies": {
@@ -42,6 +46,7 @@
 		"copyfiles": "^2.3.0"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "^4.22.3",
 		"@wordpress/i18n": "^3.14.0",
 		"react": "^16.8"
 	},

@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { doAction, hasAction } from '@wordpress/hooks';
+import FocusedLaunchModal from '@automattic/launch';
 
 /**
  * Internal dependencies
@@ -43,6 +44,12 @@ registerPlugin( 'a8c-editor-site-launch', {
 			return null;
 		}
 
-		return <LaunchModal onClose={ closeSidebar } />;
+		// TODO: this flag should come from A/B testing
+		const isFocusedLaunch = true;
+		return isFocusedLaunch ? (
+			<FocusedLaunchModal onClose={ closeSidebar } />
+		) : (
+			<LaunchModal onClose={ closeSidebar } />
+		);
 	},
 } );
