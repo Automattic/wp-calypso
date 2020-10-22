@@ -192,7 +192,6 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
 			await sidebarComponent.selectPlans();
 			const plansPage = await PlansPage.Expect( driver );
-			// await plansPage.openPlansTab();
 			return await plansPage.selectPaidPlan();
 		} );
 
