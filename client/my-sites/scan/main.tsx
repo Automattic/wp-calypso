@@ -40,6 +40,11 @@ import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/sit
 import ScanNavigation from './navigation';
 
 /**
+ * Type dependencies
+ */
+import type { utc } from 'moment';
+
+/**
  * Style dependencies
  */
 import './style.scss';
@@ -56,11 +61,11 @@ interface Props {
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
-		utc: Function;
+		utc: typeof utc;
 	};
 	applySiteOffset: applySiteOffsetType;
-	dispatchRecordTracksEvent: Function;
-	dispatchScanRun: Function;
+	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
+	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;
 }
 
