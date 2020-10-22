@@ -18,9 +18,12 @@ import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
+import MembershipItem from '../membership-item';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getPurchasesBySite } from 'calypso/lib/purchases';
+import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
+import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
 	getUserPurchases,
@@ -90,6 +93,18 @@ class PurchasesList extends Component {
 		);
 	}
 
+	renderMembershipSubscriptions() {
+		const { subscriptions } = this.props;
+
+		if ( ! subscriptions.length ) {
+			return null;
+		}
+
+		return subscriptions.map( ( subscription ) => (
+			<MembershipItem subscription={ subscription } key={ subscription.ID } />
+		) );
+	}
+
 	render() {
 		let content;
 
@@ -99,7 +114,7 @@ class PurchasesList extends Component {
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
 			content = (
-				<div>
+				<>
 					{ this.renderConciergeBanner() }
 
 					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( ( site ) => (
@@ -112,7 +127,7 @@ class PurchasesList extends Component {
 							purchases={ site.purchases }
 						/>
 					) ) }
-				</div>
+				</>
 			);
 		}
 
@@ -150,12 +165,14 @@ class PurchasesList extends Component {
 		return (
 			<Main className="purchases-list is-wide-layout">
 				<QueryUserPurchases userId={ this.props.userId } />
+				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 				<PurchasesHeader section="purchases" />
 				{ content }
+				{ this.renderMembershipSubscriptions() }
 				<QueryConciergeInitial />
 			</Main>
 		);
@@ -166,6 +183,7 @@ PurchasesList.propTypes = {
 	isBusinessPlanUser: PropTypes.bool.isRequired,
 	noticeType: PropTypes.string,
 	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	subscriptions: PropTypes.array,
 	sites: PropTypes.array.isRequired,
 	userId: PropTypes.number.isRequired,
 };
@@ -178,6 +196,7 @@ export default connect(
 			isBusinessPlanUser: isBusinessPlanUser( state ),
 			isFetchingUserPurchases: isFetchingUserPurchases( state ),
 			purchases: getUserPurchases( state, userId ),
+			subscriptions: getAllSubscriptions( state ),
 			sites: getSites( state ),
 			nextAppointment: getConciergeNextAppointment( state ),
 			scheduleId: getConciergeScheduleId( state ),
