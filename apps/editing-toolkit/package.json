@@ -59,7 +59,6 @@
 		"dev:premium-content": "yarn run premium-content",
 		"build:premium-content": "NODE_ENV=production yarn run premium-content",
 		"block-inserter-modifications": "npm-run-all --parallel block-inserter-modifications-*",
-		"block-inserter-modifications-new-blocks-showcase": "calypso-build --source='block-inserter-modifications/new-blocks-showcase'",
 		"block-inserter-modifications-contextual-tips": "calypso-build --source='block-inserter-modifications/contextual-tips'",
 		"dev:block-inserter-modifications": "yarn run block-inserter-modifications",
 		"build:block-inserter-modifications": "NODE_ENV=production yarn run block-inserter-modifications",
