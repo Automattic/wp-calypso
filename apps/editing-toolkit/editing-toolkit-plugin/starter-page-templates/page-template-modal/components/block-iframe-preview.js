@@ -75,7 +75,7 @@ const copyStylesToIframe = ( srcDocument, targetiFrameDocument ) => {
  * @param {Array} props.blocks array of Gutenberg Block objects
  * @param {object} props.settings block Editor settings object
  * @param {Function} props.setTimeout safe version of window.setTimeout via `withSafeTimeout`
- * @param props.title Template Title - see #39831 for details.
+ * @param {string} props.title Template Title - see #39831 for details.
  */
 const BlockFramePreview = ( {
 	className = 'block-iframe-preview',
