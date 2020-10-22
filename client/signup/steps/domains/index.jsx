@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import classNames from 'classnames';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -41,6 +42,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { getDomainProductSlug } from 'calypso/lib/domains';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
@@ -166,11 +168,18 @@ class DomainsStep extends React.Component {
 		return this.showTestCopy;
 	}
 
+	getGeoLocationFromCookie() {
+		const cookies = cookie.parse( document.cookie );
+
+		return cookies.country_code;
+	}
+
 	isEligibleForSecureYourBrandTest( isPurchasingItem ) {
 		return (
 			includes( [ 'onboarding', 'onboarding-secure-your-brand' ], this.props.flowName ) &&
 			isPurchasingItem &&
-			'test' === abtest( 'secureYourBrand' )
+			! this.props.skipSecureYourBrand &&
+			'test' === abtest( 'secureYourBrand', this.getGeoLocationFromCookie() )
 		);
 	}
 
@@ -792,6 +801,7 @@ export default connect(
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isReskinned,
+			countryCode: getCurrentUserCountryCode( state ),
 		};
 	},
 	{
