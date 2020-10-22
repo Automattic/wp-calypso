@@ -69,12 +69,18 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 			disabled={ ! canRestore }
 			onClick={ onRestore }
 		>
-			<div className="daily-backup-status__restore-button-icon">
-				{ needsCredentials && ! isEnabled( 'jetpack/backup-simplified-screens' ) && (
-					<img src={ missingCredentialsIcon } alt="" role="presentation" />
-				) }
-				<div>{ translate( 'Restore to this point' ) }</div>
-			</div>
+			{ needsCredentials && ! isEnabled( 'jetpack/backup-simplified-screens' ) ? (
+				<div className="daily-backup-status__restore-button-icon">
+					{ needsCredentials && ! isEnabled( 'jetpack/backup-simplified-screens' ) && (
+						<img src={ missingCredentialsIcon } alt="" role="presentation" />
+					) }
+					<div>{ translate( 'Restore to this point' ) }</div>
+				</div>
+			) : (
+				<div className="daily-backup-status__restore-button">
+					<div>{ translate( 'Restore to this point' ) }</div>
+				</div>
+			) }
 		</Button>
 	);
 };

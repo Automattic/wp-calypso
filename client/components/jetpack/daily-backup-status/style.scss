@@ -14,6 +14,7 @@
 }
 
 .form-button.daily-backup-status__restore-button img {
+	display: none;
 	width: 22px;
 	height: 22px;
 	filter: grayscale( 100% ) contrast( 70% );
@@ -21,8 +22,9 @@
 
 .daily-backup-status__restore-button-icon {
 	display: flex;
-	justify-content: flex-start;
+	justify-content: center;
 	align-items: center;
+	padding-right: 10px;
 }
 
 .daily-backup-status__download-button {
@@ -215,7 +217,12 @@
 		padding-right: 2rem;
 	}
 
+	.daily-backup-status__restore-button-icon {
+		justify-content: flex-start;
+	}
+
 	.form-button.daily-backup-status__restore-button img {
+		display: inline-block;
 		margin-right: 1rem;
 	}
 
@@ -223,7 +230,6 @@
 		padding: 0;
 	}
 }
-
 
 /* Jetpack Cloud-specific rules */
 .is_jetpackcom .daily-backup-status {
