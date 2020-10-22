@@ -5,6 +5,7 @@ module.exports = {
 	modulePaths: [ '<rootDir>/test', '<rootDir>/client', '<rootDir>/client/extensions' ],
 	rootDir: '../..',
 	testEnvironment: 'node',
+	resolver: '<rootDir>/test/module-resolver.js',
 	testMatch: [
 		'<rootDir>/bin/**/integration/*.[jt]s',
 		'<rootDir>/client/**/integration/*.[jt]s',

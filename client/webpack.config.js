@@ -256,6 +256,7 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: Object.assign(
 			{

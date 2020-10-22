@@ -4,4 +4,5 @@ module.exports = {
 	testEnvironment: 'jsdom',
 	globals: { window: { navigator: { userAgent: 'jest' } } },
 	cacheDirectory: '<rootDir>/../../.cache/jest',
+	resolver: '<rootDir>/../../test/module-resolver.js',
 };

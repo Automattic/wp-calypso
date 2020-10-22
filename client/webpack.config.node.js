@@ -25,6 +25,7 @@ const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpac
 const nodeExternals = require( 'webpack-node-externals' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const ExternalModulesWriter = require( './server/bundler/external-modules' );
+const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
 
 /**
  * Internal variables
@@ -80,6 +81,11 @@ function getExternals() {
 				fileLoader.test,
 
 				/^calypso\//,
+
+				// Packages in the monorepo that have a `calypso:src` field
+				...packagesInMonorepo()
+					.filter( ( pkg ) => pkg[ 'calypso:src' ] )
+					.map( ( pkg ) => pkg.name ),
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
@@ -144,6 +150,7 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
 			'calypso/config': 'server/config',

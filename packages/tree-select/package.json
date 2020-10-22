@@ -11,6 +11,7 @@
 	"license": "GPL-2.0-or-later",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -29,7 +30,7 @@
 	],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }
