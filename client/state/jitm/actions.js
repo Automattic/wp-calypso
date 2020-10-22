@@ -49,6 +49,7 @@ export const insertJITM = ( siteId, messagePath, jitms ) => ( {
 export const clearJITM = ( siteId, messagePath ) => ( {
 	type: JITM_SET,
 	keyedPath: messagePath + siteId,
+	siteId,
 	jitms: null,
 } );
 
