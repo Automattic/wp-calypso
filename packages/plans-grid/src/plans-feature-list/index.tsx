@@ -30,7 +30,7 @@ const ChevronDown = (
 function domainMessageStateMachine(
 	isFreePlan: boolean,
 	domain: DomainSuggestions.DomainSuggestion | undefined,
-	__: Function
+	__: typeof import('@wordpress/i18n').__
 ) {
 	const states = {
 		NO_DOMAIN: {

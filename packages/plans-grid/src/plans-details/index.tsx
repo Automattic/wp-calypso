@@ -20,7 +20,7 @@ import './style.scss';
 const TickIcon = <Icon icon={ check } size={ 25 } />;
 
 type Props = {
-	onSelect: Function;
+	onSelect: ( storeSlug: string ) => void;
 };
 
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
