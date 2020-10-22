@@ -9,16 +9,18 @@ import { useSelector } from 'react-redux';
  */
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
 
-const rewindStateImpliesVaultPress = ( rewindState?: { state?: string; reason?: string } ) => {
-	if ( ! rewindState ) {
+const productStateImpliesVaultPress = ( productState?: { state?: string; reason?: string } ) => {
+	if ( ! productState ) {
 		return undefined;
 	}
 
-	// VaultPress sites always return a Rewind status of 'unavailable'
-	if ( rewindState.state !== 'unavailable' ) {
+	// VaultPress sites always return a Rewind/Scan status of 'unavailable'
+	if ( productState.state !== 'unavailable' ) {
 		return false;
 	}
 
@@ -26,8 +28,11 @@ const rewindStateImpliesVaultPress = ( rewindState?: { state?: string; reason?: 
 	// this site uses VaultPress instead of Rewind.
 	const vaultPressReasons = [ 'vp_active_on_site', 'host_not_supported' ];
 
-	return rewindState.reason && vaultPressReasons.includes( rewindState.reason );
+	return productState.reason && vaultPressReasons.includes( productState.reason );
 };
+
+const isInitialized = ( productState: { state?: string } | null ) =>
+	productState && productState.state !== 'uninitialized';
 
 const HasVaultPressSwitch: React.FC< Props > = ( {
 	loadingComponent,
@@ -36,19 +41,31 @@ const HasVaultPressSwitch: React.FC< Props > = ( {
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
 
-	const isLoading = useCallback( () => ! rewindState || rewindState.state === 'uninitialized', [
-		rewindState,
-	] );
-	const hasVaultPress = useCallback( () => rewindStateImpliesVaultPress( rewindState ), [
-		rewindState,
-	] );
+	const hasVaultPress = useCallback(
+		() => [ rewindState, scanState ].some( productStateImpliesVaultPress ),
+		[ rewindState, scanState ]
+	);
+
+	const isLoading = useCallback( () => {
+		if ( hasVaultPress() ) {
+			return false;
+		}
+
+		return [ rewindState, scanState ].some( ( state ) => ! isInitialized( state ) );
+	}, [ hasVaultPress, rewindState, scanState ] );
 
 	return (
 		<RenderSwitch
 			loadingCondition={ isLoading }
 			renderCondition={ hasVaultPress }
-			queryComponent={ <QueryRewindState siteId={ siteId } /> }
+			queryComponent={
+				<>
+					<QueryRewindState siteId={ siteId } />
+					<QueryJetpackScan siteId={ siteId } />
+				</>
+			}
 			loadingComponent={ loadingComponent }
 			trueComponent={ trueComponent }
 			falseComponent={ falseComponent }

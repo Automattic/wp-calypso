@@ -19,6 +19,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 /**
  * Style dependencies
  */
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
 const BackupsUpsellIcon: FunctionComponent = () => (
@@ -27,6 +28,12 @@ const BackupsUpsellIcon: FunctionComponent = () => (
 			src="/calypso/images/illustrations/jetpack-cloud-backup-error.svg"
 			alt="jetpack cloud backup error"
 		/>
+	</div>
+);
+
+const VaultPressIcon = () => (
+	<div className="backup-upsell__icon-header">
+		<img src={ VaultPressLogo } alt="VaultPress logo" />
 	</div>
 );
 
@@ -48,14 +55,12 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 	const dispatch = useDispatch();
 	return (
 		<Upsell
-			headerText={ translate( 'Your site has VaultPress' ) }
-			bodyText={ translate(
-				'Your site is already backed up by VaultPress. You can find a link to your VaultPress dashboard below.'
-			) }
+			headerText={ translate( 'Your backups are powered by VaultPress' ) }
+			bodyText={ translate( 'You can access them on your VaultPress Dashboard.' ) }
 			buttonLink="https://dashboard.vaultpress.com/"
 			buttonText={ translate( 'Visit Dashboard' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) ) }
-			iconComponent={ <BackupsUpsellIcon /> }
+			iconComponent={ <VaultPressIcon /> }
 		/>
 	);
 };

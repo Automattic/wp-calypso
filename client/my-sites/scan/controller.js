@@ -10,7 +10,7 @@ import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import ScanPage from './main';
 import ScanHistoryPage from './history';
-import ScanUpsellPage from './upsell';
+import ScanUpsellPage from './scan-upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
 import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
