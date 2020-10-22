@@ -65,9 +65,7 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 			disabled={ ! canRestore }
 			onClick={ onRestore }
 		>
-			<div className="daily-backup-status__restore-button-icon">
-				<div>{ translate( 'Restore to this point' ) }</div>
-			</div>
+			{ translate( 'Restore to this point' ) }
 		</Button>
 	);
 };
