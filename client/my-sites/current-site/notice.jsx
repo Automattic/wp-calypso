@@ -41,10 +41,10 @@ import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
+import AsyncLoad from 'calypso/components/async-load';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import AsyncLoad from 'calypso/components/async-load';
 
 const DOMAIN_UPSELL_NUDGE_DISMISS_KEY = 'domain_upsell_nudge_dismiss';
 
