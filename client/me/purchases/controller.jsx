@@ -92,7 +92,6 @@ export function cancelPurchase( context, next ) {
 
 export function confirmCancelDomain( context, next ) {
 	const state = context.store.getState();
-	const classes = 'confirm-cancel-domain';
 
 	if ( userHasNoSites( state ) ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
@@ -101,7 +100,7 @@ export function confirmCancelDomain( context, next ) {
 	setTitle( context, titles.confirmCancelDomain );
 
 	context.primary = (
-		<Main className={ classes }>
+		<Main className="purchases__cancel-domain confirm-cancel-domain is-wide-layout">
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<ConfirmCancelDomain
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
