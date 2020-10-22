@@ -6,22 +6,22 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 
-.focused-launch-input {
+.focused-launch__input {
 	.components-base-control__label {
 		font-weight: bold;
 	}
 }
 
-.focused-launch-label {
+.focused-launch__label {
 	font-weight: bold;
 	margin-bottom: 8px;
 	display: block;
 }
 
-.focused-launch-section {
+.focused-launch__section {
 	margin: 20px 0;
 }
 
-.focused-launch-caption {
+.focused-launch__caption {
 	margin: 0;
 }

@@ -17,21 +17,21 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => 
 	return (
 		<Modal
 			open={ true }
-			className="focused-launch-modal"
-			overlayClassName="focused-launch-modal-overlay"
+			className="launch__focused-modal"
+			overlayClassName="launch__focused-modal-overlay"
 			bodyOpenClassName="has-focused-launch-modal"
 			onRequestClose={ onClose }
 			title=""
 		>
 			<>
-				<div className="focused-launch-modal-body">
-					<div className="focused-launch-modal-header">
-						<div className="focused-launch-modal-header__wp-logo">
+				<div className="launch__focused-modal-wrapper ">
+					<div className="launch__focused-modal-header">
+						<div className="launch__focused-modal-header-wp-logo">
 							<Icon icon={ wordpress } size={ 36 } />
 						</div>
 						<Button
 							isLink
-							className="focused-launch-modal__close-button"
+							className="launch__focused-modal-close-button"
 							onClick={ onClose }
 							aria-label={ __( 'Close dialog', 'full-site-editing' ) }
 							disabled={ ! onClose }
@@ -41,11 +41,11 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => 
 							</span>
 						</Button>
 					</div>
-					<div className="focused-launch-body">
-						<div className="focused-launch-inputs">
+					<div className="launch__focused-modal-body">
+						<div className="launch__focused-modal-inputs">
 							<FocusedLaunch />
 						</div>
-						<div className="focused-launch-modal-aside">
+						<div className="launch__focused-modal-aside">
 							<div>
 								<strong>46.9%</strong> of globally registered domains are <strong>.com</strong>
 							</div>

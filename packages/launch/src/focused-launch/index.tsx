@@ -23,27 +23,27 @@ const FocusedLaunch: React.FunctionComponent = () => {
 
 	return (
 		<>
-			<div className="focused-launch-section">
+			<div className="focused-launch__section">
 				<Title>{ __( "You're almost there", 'full-site-editing' ) }</Title>
-				<p className="focused-launch-caption">
+				<p className="focused-launch__caption">
 					{ __(
 						'Prepare for launch! Confirm a few final things before you take it live.',
 						'full-site-editing'
 					) }
 				</p>
 			</div>
-			<div className="focused-launch-section">
+			<div className="focused-launch__section">
 				<TextControl
-					className="focused-launch-input"
+					className="focused-launch__input"
 					label={ __( '1. Name your site', 'full-site-editing' ) }
 					value={ siteTitle }
 					onChange={ ( value ) => setSiteTitle( value ) }
 				/>
 			</div>
-			<div className="focused-launch-section">
+			<div className="focused-launch__section">
 				<DomainPicker
 					header={
-						<label className="focused-launch-label">
+						<label className="focused-launch__label">
 							{ __( '2. Confirm your domain', 'full-site-editing' ) }
 						</label>
 					}
@@ -58,8 +58,8 @@ const FocusedLaunch: React.FunctionComponent = () => {
 					onSetDomainSearch={ () => console.log( 'TODO: on set domain search' ) }
 				/>
 			</div>
-			<div className="focused-launch-section">
-				<label className="focused-launch-label">
+			<div className="focused-launch__section">
+				<label className="focused-launch__label">
 					{ __( '3. Confirm your plan', 'full-site-editing' ) }
 				</label>
 			</div>
