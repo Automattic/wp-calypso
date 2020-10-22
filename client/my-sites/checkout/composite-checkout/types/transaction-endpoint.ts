@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { ResponseCartProductExtra } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -9,7 +10,6 @@ import debugFactory from 'debug';
 import { getNonProductWPCOMCartItemTypes } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
 import type { WPCOMCartItem } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-cart';
 import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
-import type { CartItemExtra } from 'calypso/lib/cart-values/types';
 import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 
 const debug = debugFactory( 'calypso:composite-checkout:transaction-endpoint' );
@@ -76,7 +76,7 @@ type WPCOMTransactionEndpointCartItem = {
 	meta?: string;
 	currency: string;
 	volume: number;
-	extra?: CartItemExtra;
+	extra?: ResponseCartProductExtra;
 };
 
 // Create cart object as required by the WPCOM transactions endpoint
