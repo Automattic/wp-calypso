@@ -9,11 +9,11 @@
 .form-toggle__switch {
 	position: relative;
 	display: inline-block;
-	border-radius: 12px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	box-sizing: border-box;
 	padding: 2px;
-	width: 40px;
-	height: 24px;
+	width: 24px;
+	height: 16px;
 	vertical-align: middle;
 	align-self: flex-start;
 	outline: 0;
@@ -25,8 +25,8 @@
 		position: relative;
 		display: block;
 		content: '';
-		width: 20px;
-		height: 20px;
+		width: 12px;
+		height: 12px;
 	}
 	&::after {
 		left: 0;
@@ -81,7 +81,7 @@
 			background: var( --color-primary );
 
 			&::after {
-				left: 16px;
+				left: 8px;
 			}
 		}
 	}
@@ -108,7 +108,7 @@
 			background: var( --color-primary );
 			animation: loading-fade 1.6s ease-in-out infinite;
 			&::after {
-				left: 16px;
+				left: 8px;
 			}
 		}
 		&:checked {
