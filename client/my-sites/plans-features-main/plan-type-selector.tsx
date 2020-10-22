@@ -40,7 +40,7 @@ interface PathArgs {
 type GeneratePathFunction = ( args: PathArgs ) => string;
 type GeneratePathProps = { generatePath: GeneratePathFunction };
 
-const getGeneratePath = ( props: Props ): GeneratePathFunction => {
+export const getGeneratePath = ( props: Props ): GeneratePathFunction => {
 	const plansUrl = props.basePlansPath || '/plans';
 	const defaultArgs = {
 		customerType: null,
@@ -53,12 +53,13 @@ const getGeneratePath = ( props: Props ): GeneratePathFunction => {
 		const { intervalType = '' } = additionalArgs;
 
 		if ( props.isInSignup || 'customerType' in additionalArgs ) {
+			const pathname = typeof location !== 'undefined' ? location.pathname : '';
 			return addQueryArgs(
 				{
 					...defaultArgs,
 					...additionalArgs,
 				},
-				location.pathname
+				pathname
 			);
 		}
 
@@ -77,7 +78,7 @@ type PopupMessageProps = {
 	isVisible: boolean;
 };
 
-const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
+export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	context,
 	children,
 	isVisible,
@@ -112,7 +113,7 @@ const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 type MonthlyPricingProps = { isMonthlyPricingTest?: boolean };
 type IntervalTypeProps = Pick< Props, 'intervalType' > & GeneratePathProps & MonthlyPricingProps;
 
-const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
+export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
 	intervalType,
 	generatePath,
 	isMonthlyPricingTest,
@@ -152,7 +153,7 @@ const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
 
 type CustomerTypeProps = Pick< Props, 'customerType' > & GeneratePathProps;
 
-const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( {
+export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( {
 	customerType,
 	generatePath,
 } ) => {

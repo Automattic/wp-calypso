@@ -129,7 +129,7 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	getPlanFeatures( { isMonthlyPricingTest } ) {
+	getPlanFeatures( { isMonthlyPricingTest } = {} ) {
 		const {
 			basePlansPath,
 			customerType,
@@ -213,7 +213,7 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	getPlansForPlanFeatures( { isMonthlyPricingTest } ) {
+	getPlansForPlanFeatures( { isMonthlyPricingTest } = {} ) {
 		const {
 			displayJetpackPlans,
 			intervalType,

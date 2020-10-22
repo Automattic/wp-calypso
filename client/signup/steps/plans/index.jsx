@@ -122,7 +122,7 @@ export class PlansStep extends Component {
 	}
 
 	getIntervalType() {
-		const urlParts = getUrlParts( window?.location?.href );
+		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
 		const intervalType = urlParts?.searchParams.get( 'intervalType' );
 
 		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
