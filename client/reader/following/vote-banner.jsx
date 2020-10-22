@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { sample } from 'lodash';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,24 +14,26 @@ import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors'
 
 const electionDayStart = new Date( '2020-11-03T00:00:00' );
 const electionDayEnd = new Date( '2020-11-03T23:59:59' );
-const earlyVotingMessage = translate( 'Early voting is open now in most states.' );
-const electionDayMessages = [
-	translate( 'Remember to vote.' ),
-	translate( "Don't forget to vote." ),
-	translate( 'Make your voice heard!' ),
-	translate( 'Your vote is important.' ),
-	translate( 'Your participation is important.' ),
-	translate( 'Make a plan to vote.' ),
-	translate( 'Do you have a plan to vote?' ),
-];
 
 const FollowingVoteBanner = ( props ) => {
+	const { translate, userInUS } = props;
 	const now = new Date();
-	const showRegistrationMsg = props.userInUS && now < electionDayEnd;
+	const showRegistrationMsg = userInUS && now < electionDayEnd;
 
 	if ( ! showRegistrationMsg ) {
 		return null;
 	}
+
+	const earlyVotingMessage = translate( 'Early voting is open now in most states.' );
+	const electionDayMessages = [
+		translate( 'Remember to vote.' ),
+		translate( "Don't forget to vote." ),
+		translate( 'Make your voice heard!' ),
+		translate( 'Your vote is important.' ),
+		translate( 'Your participation is important.' ),
+		translate( 'Make a plan to vote.' ),
+		translate( 'Do you have a plan to vote?' ),
+	];
 
 	// Show the early voting message if it's not election day yet
 	const electionDayMessage = sample( electionDayMessages );
@@ -56,4 +58,4 @@ const FollowingVoteBanner = ( props ) => {
 
 export default connect( ( state ) => ( {
 	userInUS: getCurrentUserCountryCode( state ) === 'US',
-} ) )( FollowingVoteBanner );
+} ) )( localize( FollowingVoteBanner ) );
