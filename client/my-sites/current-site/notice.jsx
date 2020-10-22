@@ -3,7 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import url from 'url';
+
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,6 +13,7 @@ import { get, reject, transform } from 'lodash';
 /**
  * Internal dependencies
  */
+import { getUrlParts } from 'calypso/lib/url/url-parts';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
@@ -61,7 +62,7 @@ export class SiteNotice extends React.Component {
 		if ( ! ( site.options && site.options.is_redirect ) ) {
 			return null;
 		}
-		const { hostname } = url.parse( site.URL );
+		const { hostname } = getUrlParts( site.URL );
 		const { translate } = this.props;
 
 		return (
