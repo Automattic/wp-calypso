@@ -65,12 +65,15 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 
 	const backupProductsToShow = [];
 	const currentCROvariant = getJetpackCROActiveVersion();
+	// In v0 (Offer Reset), we show the Backup product the site owns or the Jetpack Backup option card.
 	if ( currentCROvariant === 'v0' ) {
 		if (
 			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
 		) {
 			backupProductsToShow.push( OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY );
 		}
+
+		// In v1, we show the Backup product the site owns or Jetpack Backup Daily.
 	} else if ( currentCROvariant === 'v1' ) {
 		if (
 			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
@@ -80,6 +83,8 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
 			);
 		}
+		// In v2, we show the Backup product the site owns and the one the site doesn't own. In other words,
+		// we always show both Backup Daily and Backup Real-time.
 	} else {
 		if (
 			! ownedProducts.some( ( ownedProduct ) =>
