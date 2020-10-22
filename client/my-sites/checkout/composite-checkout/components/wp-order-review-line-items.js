@@ -87,7 +87,7 @@ function WPLineItem( {
 			{ item.sublabel && (
 				<>
 					<LineItemMeta>
-						<LineItemSublabelAndPrice item={ item } />
+						<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
 						<DomainDiscountCallout item={ item } />
 					</LineItemMeta>
 					<LineItemMeta>
@@ -169,15 +169,19 @@ WPLineItem.propTypes = {
 };
 
 function LineItemPrice( { item, isSummary } ) {
-	const originalAmount = item.wpcom_meta?.item_original_subtotal_display;
-	const isDiscounted =
-		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer && originalAmount;
+	const originalAmountDisplay =
+		item.wpcom_meta?.related_monthly_plan_cost_display ||
+		item.wpcom_meta?.item_original_subtotal_display;
+	const originalAmountInteger =
+		item.wpcom_meta?.related_monthly_plan_cost_integer ||
+		item.wpcom_meta?.item_original_subtotal_integer;
+	const isDiscounted = item.amount.value < originalAmountInteger && originalAmountDisplay;
 	const actualAmount = item.amount.displayValue;
 	return (
 		<LineItemPriceWrapper isSummary={ isSummary }>
 			{ isDiscounted ? (
 				<>
-					<s>{ originalAmount }</s> { actualAmount }
+					<s>{ originalAmountDisplay }</s> { actualAmount }
 				</>
 			) : (
 				actualAmount
