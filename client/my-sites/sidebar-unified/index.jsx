@@ -4,7 +4,7 @@
  *   driven off a WPCom endpoint: /sites/${sideId}/admin-menu, which is loaded
  *   into state.adminMenu in a data layer.
  *
- *    Currently experimental/WIP.
+ *   Currently experimental/WIP.
  **/
 
 /**
@@ -25,7 +25,6 @@ import useDomainsViewStatus from './use-domains-view-status';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
-import 'calypso/layout/sidebar-unified/style.scss';
 import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
