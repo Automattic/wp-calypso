@@ -47,7 +47,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	onRender,
 	selected,
 } ) => {
-	const { __ } = useI18n();
+	const { __, i18nLocale } = useI18n();
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const dotPos = domain.indexOf( '.' );
@@ -58,6 +58,10 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
 
 	const labelId = uuid();
+
+	const learnMoreUrl = () => {
+		return `https://wordpress.com/${ i18nLocale }/support/https-ssl`;
+	};
 
 	useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
@@ -123,13 +127,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 								),
 								{
 									tld: <b>{ domainTld }</b>,
-									learn_more_link: (
-										<a
-											target="_blank"
-											rel="noreferrer"
-											href="https://wordpress.com/support/https-ssl"
-										/>
-									), // TODO Wrap this in `localizeUrl` from lib/i18n-utils
+									learn_more_link: <a target="_blank" rel="noreferrer" href={ learnMoreUrl() } />,
 								}
 							) }
 						</InfoTooltip>
