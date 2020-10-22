@@ -60,6 +60,7 @@ function getMonorepoPackages() {
  *
  * @returns {Array} list of externals
  */
+
 function getExternals() {
 	return [
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
@@ -82,10 +83,8 @@ function getExternals() {
 
 				/^calypso\//,
 
-				// Packages in the monorepo that have a `calypso:src` field
-				...packagesInMonorepo()
-					.filter( ( pkg ) => pkg[ 'calypso:src' ] )
-					.map( ( pkg ) => pkg.name ),
+				// Packages in the monorepo
+				...packagesInMonorepo().map( ( pkg ) => pkg.name ),
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
