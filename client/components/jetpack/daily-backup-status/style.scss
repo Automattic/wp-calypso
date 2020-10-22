@@ -13,18 +13,6 @@
 	margin-left: 0;
 }
 
-.form-button.daily-backup-status__restore-button img {
-	width: 22px;
-	height: 22px;
-	filter: grayscale( 100% ) contrast( 70% );
-}
-
-.daily-backup-status__restore-button-icon {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-}
-
 .daily-backup-status__download-button {
 	margin: 24px 0 1rem;
 	color: var( --studio-jetpack-green-60 );
@@ -215,15 +203,10 @@
 		padding-right: 2rem;
 	}
 
-	.form-button.daily-backup-status__restore-button img {
-		margin-right: 1rem;
-	}
-
 	.daily-backup-status__credentials-warning {
 		padding: 0;
 	}
 }
-
 
 /* Jetpack Cloud-specific rules */
 .is_jetpackcom .daily-backup-status {
