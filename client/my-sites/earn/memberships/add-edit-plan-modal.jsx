@@ -20,7 +20,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import {

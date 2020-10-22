@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import CompactToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import InfoPopover from 'calypso/components/info-popover';
 
 /**
@@ -71,7 +71,7 @@ class PluginAction extends React.Component {
 
 	renderToggle() {
 		return (
-			<CompactToggle
+			<FormToggle
 				onChange={ this.props.action }
 				checked={ this.props.status }
 				toggling={ this.props.inProgress }
@@ -79,7 +79,7 @@ class PluginAction extends React.Component {
 				id={ this.props.htmlFor }
 			>
 				{ this.renderLabel() }
-			</CompactToggle>
+			</FormToggle>
 		);
 	}
 

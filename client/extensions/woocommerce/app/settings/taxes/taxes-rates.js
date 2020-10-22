@@ -29,7 +29,7 @@ import ExternalLink from 'calypso/components/external-link';
 import Gridicon from 'calypso/components/gridicon';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchTaxRates } from 'woocommerce/state/sites/meta/taxrates/actions';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import Notice from 'calypso/components/notice';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';

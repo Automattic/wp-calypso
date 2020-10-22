@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { CompactCard } from '@automattic/components';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
@@ -54,7 +54,7 @@ const Subscriptions = ( {
 					/>
 
 					<div className="subscriptions__module-settings site-settings__child-settings">
-						<CompactFormToggle
+						<FormToggle
 							checked={ !! fields.stb_enabled }
 							disabled={
 								isRequestingSettings ||
@@ -65,9 +65,9 @@ const Subscriptions = ( {
 							onChange={ handleAutosavingToggle( 'stb_enabled' ) }
 						>
 							{ translate( 'Enable the "subscribe to site" option on your comment form' ) }
-						</CompactFormToggle>
+						</FormToggle>
 
-						<CompactFormToggle
+						<FormToggle
 							checked={ !! fields.stc_enabled }
 							disabled={
 								isRequestingSettings ||
@@ -78,7 +78,7 @@ const Subscriptions = ( {
 							onChange={ handleAutosavingToggle( 'stc_enabled' ) }
 						>
 							{ translate( 'Enable the "subscribe to comments" option on your comment form' ) }
-						</CompactFormToggle>
+						</FormToggle>
 					</div>
 				</FormFieldset>
 			</CompactCard>

@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
 
@@ -39,7 +39,7 @@ const CustomerNotification = ( { item, checked, onChange, loaded } ) => {
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
 				{ loaded ? (
-					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
+					<FormToggle checked={ checked } onChange={ toggle } id={ item.field } />
 				) : (
 					<p className="components__is-placeholder" />
 				) }
