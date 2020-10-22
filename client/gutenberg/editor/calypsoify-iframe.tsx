@@ -4,7 +4,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { get, map, partial, pickBy, startsWith, isArray, flowRight } from 'lodash';
+import { map, partial, pickBy, isArray, flowRight } from 'lodash';
 /* eslint-disable no-restricted-imports */
 import url from 'url';
 import { localize, LocalizeProps } from 'i18n-calypso';
@@ -12,7 +12,6 @@ import { localize, LocalizeProps } from 'i18n-calypso';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import MediaStore from 'calypso/lib/media/store';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getCustomizerUrl,
@@ -152,7 +151,6 @@ class CalypsoifyIframe extends Component<
 	waitForIframeToLoad: ReturnType< typeof setTimeout > | undefined = undefined;
 
 	componentDidMount() {
-		MediaStore.on( 'change', this.updateImageBlocks );
 		window.addEventListener( 'message', this.onMessage, false );
 
 		const isDesktop = config.isEnabled( 'desktop' );
@@ -184,7 +182,6 @@ class CalypsoifyIframe extends Component<
 	}
 
 	componentWillUnmount() {
-		MediaStore.off( 'change', this.updateImageBlocks );
 		window.removeEventListener( 'message', this.onMessage, false );
 	}
 
@@ -222,7 +219,7 @@ class CalypsoifyIframe extends Component<
 			this.pressThis();
 
 			// Notify external listeners that the iframe has loaded
-			this.props.setEditorIframeLoaded();
+			this.props.setEditorIframeLoaded( true, this.iframePort );
 
 			return;
 		}
@@ -543,26 +540,6 @@ class CalypsoifyIframe extends Component<
 			action: 'pressThis',
 			payload: pressThis,
 		} );
-	};
-
-	updateImageBlocks = ( action: { data: { mime_type: string; URL: string }; type: string } ) => {
-		if (
-			! this.iframePort ||
-			! action ||
-			! startsWith( action.data.mime_type, 'image/' ) ||
-			startsWith( action.data.URL, 'blob:' )
-		) {
-			return;
-		}
-		const payload = {
-			id: get( action, 'data.ID' ),
-			height: get( action, 'data.height' ),
-			status: 'REMOVE_MEDIA_ITEM' === action.type ? 'deleted' : 'updated',
-			transientId: get( action, 'id' ),
-			url: get( action, 'data.URL' ),
-			width: get( action, 'data.width' ),
-		};
-		this.iframePort.postMessage( { action: 'updateImageBlocks', payload } );
 	};
 
 	openPreviewModal = ( postUrl: string, previewPort: MessagePort ) => {

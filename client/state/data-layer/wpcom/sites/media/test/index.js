@@ -9,8 +9,8 @@ import {
 	requestMediaError,
 	requestMediaSuccess,
 } from '../';
-import { MEDIA_ITEM_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { MEDIA_ITEM_REQUEST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	failMediaItemRequest,
 	failMediaRequest,
@@ -18,7 +18,7 @@ import {
 	setNextPageHandle,
 	successMediaItemRequest,
 	successMediaRequest,
-} from 'state/media/actions';
+} from 'calypso/state/media/actions';
 
 describe( 'media request', () => {
 	test( 'should dispatch SUCCESS action when request completes', () => {
