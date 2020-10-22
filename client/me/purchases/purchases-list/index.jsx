@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
@@ -19,7 +18,7 @@ import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
-import MembershipItem from '../membership-item';
+import MembershipSite from '../membership-site';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
@@ -46,11 +45,6 @@ import {
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import FormattedHeader from 'calypso/components/formatted-header';
 import titles from 'calypso/me/purchases/titles';
-
-/**
- * Style dependencies
- */
-import './style.scss';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -106,25 +100,9 @@ class PurchasesList extends Component {
 			return null;
 		}
 
-		return getSubscriptionsBySite( subscriptions ).map( ( site ) => {
-			return (
-				<div key={ site.id }>
-					<CompactCard className="purchases-list__site-header">
-						<div className="purchases-list__site-icon">
-							<Gridicon icon="globe" />
-						</div>
-						<div className="purchases-list__site-info">
-							<div className="purchases-list__site-title">{ site.name }</div>
-							<div className="purchases-list__site-domain">{ site.domain }</div>
-						</div>
-					</CompactCard>
-
-					{ site.subscriptions.map( ( subscription ) => (
-						<MembershipItem subscription={ subscription } key={ subscription.ID } />
-					) ) }
-				</div>
-			);
-		} );
+		return getSubscriptionsBySite( subscriptions ).map( ( site ) => (
+			<MembershipSite site={ site } key={ site.id } />
+		) );
 	}
 
 	render() {
