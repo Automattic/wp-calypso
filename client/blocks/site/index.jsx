@@ -18,6 +18,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 
 /**
  * Style dependencies
@@ -116,6 +117,11 @@ class Site extends React.Component {
 			'is-compact': this.props.compact,
 		} );
 
+		const isPublicComingSoon =
+			isEnabled( 'coming-soon-v2' ) &&
+			! this.props.site.is_private &&
+			this.props.site.is_coming_soon;
+
 		return (
 			<div className={ siteClass }>
 				<a
@@ -155,11 +161,16 @@ class Site extends React.Component {
 								: site.domain }
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						{ this.props.site.is_private && (
+						{ this.props.site.is_private && ( // Coming Soon v1
 							<span className="site__badge site__badge-private">
 								{ this.props.site.is_coming_soon
 									? translate( 'Coming Soon' )
 									: translate( 'Private' ) }
+							</span>
+						) }
+						{ isPublicComingSoon && ( // Coming Soon v2
+							<span className="site__badge site__badge-coming-soon">
+								{ translate( 'Coming Soon' ) }
 							</span>
 						) }
 						{ site.options && site.options.is_redirect && (
@@ -193,6 +204,7 @@ function mapStateToProps( state, ownProps ) {
 		site,
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
 	};
 }
 
