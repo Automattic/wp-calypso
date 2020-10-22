@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { loadScript } from '@automattic/load-script';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import { createInterpolateElement } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -125,18 +124,18 @@ class GoogleLoginButton extends Component {
 				if ( 'idpiframe_initialization_failed' === error.error ) {
 					// This error is caused by 3rd party cookies being blocked.
 					this.setState( {
-						error: createInterpolateElement(
-							translate(
-								'Please enable "third-party cookies" to connect your Google account. To find out how to do this <learn_more_link>learn more here</learn_more_link>.'
-							),
+						error: translate(
+							'Please enable "third-party cookies" to connect your Google account. To learn how to do this, {{learnMoreLink}}click here{{/learnMoreLink}}.',
 							{
-								learn_more_link: (
-									<a
-										target="_blank"
-										rel="noreferrer"
-										href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
-									/>
-								),
+								components: {
+									learnMoreLink: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
+										/>
+									),
+								},
 							}
 						),
 					} );
