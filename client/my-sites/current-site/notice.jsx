@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -252,9 +251,24 @@ export class SiteNotice extends React.Component {
 		const format = 'YYYYMMDD';
 		return moment( now ).format( format ) === moment( endsAt ).format( format );
 	}
+	/**
+	 * `sectionName` changes frequently and therefore we want to avoid
+	 * passing it (or a messagePath composed from `sectionName`) as a
+	 * prop to this component otherwise it will re-render on
+	 * each section/route change. We optimise by providing the JITM compoent
+	 * with the function version of the messagePath prop which will lazily
+	 * build the messagePath when called from within the JITM component.
+	 
+	 * see: `client/blocks/jitm/`.
+	 *
+	 * @param sectionName String value returned by the getSectionName selector
+	 */
+	buildMessagePath = ( sectionName ) => {
+		return `calypso:${ sectionName }:sidebar_notice`;
+	};
 
 	render() {
-		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
+		const { site, isMigrationInProgress, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
@@ -275,9 +289,9 @@ export class SiteNotice extends React.Component {
 				{ showJitms && (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
-						messagePath={ messagePath }
 						template="sidebar-banner"
 						placeholder={ null }
+						messagePath={ this.buildMessagePath }
 					/>
 				) }
 				<QuerySitePlans siteId={ site.ID } />
@@ -292,7 +306,15 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 		const sectionName = getSectionName( state );
-		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
+
+		// `messagePath` changes on a per section basis. Therefore to avoid `JITM`
+		// (`calypso/blocks/jitm`) re-rendering due to `messagePath` props change
+		// we pass only the location portion of the messagePath and allow the component
+		// to build the remainder of the path _internally_.
+		const messageLocation = 'sidebar_notice';
+
+		// `messagePath` is required here to ensure the correct call to the JITM selectors
+		const messagePath = `calypso:${ sectionName }:${ messageLocation }`;
 
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
@@ -312,7 +334,6 @@ export default connect(
 			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
-			messagePath,
 		};
 	},
 	( dispatch ) => {

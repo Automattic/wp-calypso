@@ -5,13 +5,14 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useDispatch } from 'react-redux';
 import debugFactory from 'debug';
+import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
 import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
@@ -83,7 +84,6 @@ function useDevTool( { currentSite }, dispatch ) {
 export function JITM( props ) {
 	const { jitm, currentSite, messagePath, isJetpack } = props;
 	const dispatch = useDispatch();
-
 	useDevTool( props, dispatch );
 
 	if ( ! currentSite || ! messagePath ) {
@@ -121,10 +121,20 @@ JITM.defaultProps = {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const currentSite = getSelectedSite( state );
+	const sectionName = getSectionName( state );
+
+	// As the messagePath often changes on a per route basis, the *consuming* component
+	// may choose to optimise itself by passing a function which when called will return
+	// a built messagePath. For an example see `buildMessagePath` in:
+	// client/my-sites/current-site/notice.jsx
+	const messagePath = isFunction( ownProps.messagePath )
+		? ownProps.messagePath( sectionName )
+		: ownProps.messagePath;
 
 	return {
 		currentSite,
-		jitm: getTopJITM( state, ownProps.messagePath ),
+		messagePath,
+		jitm: getTopJITM( state, messagePath ),
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
 	};
 };
