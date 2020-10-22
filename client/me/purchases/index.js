@@ -52,7 +52,7 @@ export default ( router ) => {
 		);
 	}
 
-	router( paths.purchasesRoot + '/other', () => page.redirect( paths.purchasesRoot ) );
+	router( paths.deprecated.otherPurchases, () => page.redirect( paths.purchasesRoot ) );
 
 	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
