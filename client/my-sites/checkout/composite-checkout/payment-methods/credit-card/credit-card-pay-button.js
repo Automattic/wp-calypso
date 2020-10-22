@@ -13,12 +13,12 @@ import {
 	useFormStatus,
 	useSelect,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
-import { useCart } from 'calypso/my-sites/checkout/composite-checkout/cart-provider';
 import { paymentMethodClassName } from 'calypso/lib/cart-values';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
@@ -37,7 +37,7 @@ export default function CreditCardPayButton( {
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 	const contactCountryCode = useSelect(
 		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);

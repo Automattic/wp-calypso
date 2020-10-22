@@ -34,6 +34,7 @@
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/react-virtualized": "^9.21.2",
 		"@automattic/request-external-access": "^1.0.0",
+		"@automattic/shopping-cart": "^1.0.0",
 		"@automattic/social-previews": "^1.0.1",
 		"@automattic/tree-select": "^1.0.3",
 		"@automattic/viewport": "^1.0.0",

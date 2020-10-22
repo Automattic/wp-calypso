@@ -3,6 +3,7 @@
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import debugFactory from 'debug';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -29,7 +30,6 @@ import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
-import type { ResponseCart } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types';
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;

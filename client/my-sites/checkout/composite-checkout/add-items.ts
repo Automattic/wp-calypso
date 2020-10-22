@@ -2,6 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -17,8 +18,6 @@ import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_SEARCH_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
-import type { RequestCartProduct } from './hooks/use-shopping-cart-manager/types';
-import config from 'calypso/config';
 
 const debug = debugFactory( 'calypso:composite-checkout:add-items' );
 

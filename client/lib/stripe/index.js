@@ -273,11 +273,11 @@ function useStripeJs( stripeConfiguration ) {
  * the configuration to reload by setting a value by calling `setStripeError()`
  * with a value for that error.
  *
- * @param {object} requestArgs (optional) Can include `country` or `needs_intent`
+ * @param {object} [requestArgs] (optional) Can include `country` or `needs_intent`
  * @param {Function} fetchStripeConfiguration (optional) If provided, will call instead of getStripeConfiguration
  * @returns {object} See above
  */
-function useStripeConfiguration( requestArgs, fetchStripeConfiguration ) {
+function useStripeConfiguration( requestArgs = null, fetchStripeConfiguration ) {
 	const [ stripeError, setStripeError ] = useState();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState();
 	useEffect( () => {
@@ -300,7 +300,7 @@ const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
 
 export function StripeHookProvider( {
 	children,
-	configurationArgs,
+	configurationArgs = null,
 	fetchStripeConfiguration = null,
 } ) {
 	debug( 'rendering StripeHookProvider' );

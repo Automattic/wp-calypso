@@ -6,13 +6,13 @@ import { useSelector } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import type { ResponseCart } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types';
 import { TransactionResponse } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import getThankYouPageUrl from './get-thank-you-page-url';
 

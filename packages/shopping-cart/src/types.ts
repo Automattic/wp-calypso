@@ -10,12 +10,9 @@ import {
 
 export * from './shopping-cart-endpoint';
 
-export type ReactStandardAction = { type: string; payload?: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
-
 export interface ShoppingCartManagerArguments {
-	cartKey: string | number | null;
-	canInitializeCart: boolean;
-	setCart: ( cartKey: string, arg1: RequestCart ) => Promise< ResponseCart >;
+	cartKey: string | number | null | undefined;
+	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
 }
 
@@ -32,6 +29,7 @@ export interface ShoppingCartManager {
 	updateLocation: UpdateTaxLocationInCart;
 	replaceProductInCart: ReplaceProductInCart;
 	replaceProductsInCart: ReplaceProductsInCart;
+	reloadFromServer: ReloadCartFromServer;
 	responseCart: ResponseCart;
 }
 
@@ -39,6 +37,8 @@ export type ReplaceProductInCart = (
 	uuidToReplace: string,
 	productPropertiesToChange: Partial< RequestCartProduct >
 ) => void;
+
+export type ReloadCartFromServer = () => void;
 
 export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => void;
 
@@ -88,7 +88,9 @@ export type ShoppingCartAction =
 	  }
 	| { type: 'ADD_COUPON'; couponToAdd: string }
 	| { type: 'REMOVE_COUPON' }
+	| { type: 'CART_RELOAD' }
 	| { type: 'RECEIVE_INITIAL_RESPONSE_CART'; initialResponseCart: ResponseCart }
+	| { type: 'FETCH_INITIAL_RESPONSE_CART' }
 	| { type: 'REQUEST_UPDATED_RESPONSE_CART' }
 	| { type: 'RECEIVE_UPDATED_RESPONSE_CART'; updatedResponseCart: ResponseCart }
 	| { type: 'RAISE_ERROR'; error: ShoppingCartError; message: string };

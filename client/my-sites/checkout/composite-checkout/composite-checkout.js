@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -63,9 +64,7 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useProductVariants } from './hooks/product-variants';
-import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import useShoppingCartManager from './hooks/use-shopping-cart-manager';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
 import { colors } from '@automattic/color-studio';
@@ -97,26 +96,21 @@ const wpcom = wp.undocumented();
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
-const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
-const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 
 export default function CompositeCheckout( {
-	siteSlug,
-	siteId,
-	productAliasFromUrl,
-	getCart,
-	setCart,
+	siteSlug = null,
+	siteId = null,
+	productAliasFromUrl = null,
 	getStoredCards,
-	allowedPaymentMethods,
-	onlyLoadPaymentMethods,
-	overrideCountryList,
-	redirectTo,
-	feature,
-	plan,
-	purchaseId,
-	cart,
-	couponCode: couponCodeFromUrl,
+	allowedPaymentMethods = null,
+	onlyLoadPaymentMethods = null,
+	overrideCountryList = null,
+	redirectTo = null,
+	feature = null,
+	plan = null,
+	purchaseId = null,
+	couponCode: couponCodeFromUrl = null,
 	isComingFromUpsell,
 	isLoggedOutCart,
 	isNoSiteCart,
@@ -129,8 +123,6 @@ export default function CompositeCheckout( {
 	);
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const isLoadingCartSynchronizer =
-		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
@@ -204,12 +196,7 @@ export default function CompositeCheckout( {
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
 		replaceProductsInCart,
-	} = useShoppingCartManager( {
-		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart: ! isLoadingCartSynchronizer,
-		setCart: setCart || wpcomSetCart,
-		getCart: getCart || wpcomGetCart,
-	} );
+	} = useShoppingCart();
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
@@ -421,7 +408,7 @@ export default function CompositeCheckout( {
 	useRedirectIfCartEmpty(
 		items,
 		cartEmptyRedirectUrl,
-		isInitialCartLoading,
+		isInitialCartLoading || isCartPendingUpdate,
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
@@ -631,46 +618,44 @@ export default function CompositeCheckout( {
 				selectedSite={ { slug: siteSlug } }
 				isLoadingCart={ isInitialCartLoading }
 			/>
-			<CartProvider cart={ responseCart }>
-				<CheckoutProvider
-					items={ itemsForCheckout }
-					total={ total }
-					onPaymentComplete={ onPaymentComplete }
-					showErrorMessage={ showErrorMessage }
-					showInfoMessage={ showInfoMessage }
-					showSuccessMessage={ showSuccessMessage }
-					onEvent={ recordEvent }
-					paymentMethods={ paymentMethods }
-					paymentProcessors={ paymentProcessors }
-					registry={ defaultRegistry }
-					isLoading={ isLoading }
-					isValidating={ isCartPendingUpdate }
-					theme={ theme }
-				>
-					<WPCheckout
-						removeProductFromCart={ removeProductFromCart }
-						updateLocation={ updateLocation }
-						applyCoupon={ applyCoupon }
-						removeCoupon={ removeCoupon }
-						couponStatus={ couponStatus }
-						changePlanLength={ changePlanLength }
-						siteId={ siteId }
-						siteUrl={ siteSlug }
-						countriesList={ countriesList }
-						StateSelect={ StateSelect }
-						getItemVariants={ getItemVariants }
-						responseCart={ responseCart }
-						addItemToCart={ addItemWithEssentialProperties }
-						subtotal={ subtotal }
-						isCartPendingUpdate={ isCartPendingUpdate }
-						CheckoutTerms={ CheckoutTerms }
-						showErrorMessageBriefly={ showErrorMessageBriefly }
-						isLoggedOutCart={ isLoggedOutCart }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						infoMessage={ infoMessage }
-					/>
-				</CheckoutProvider>
-			</CartProvider>
+			<CheckoutProvider
+				items={ itemsForCheckout }
+				total={ total }
+				onPaymentComplete={ onPaymentComplete }
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				onEvent={ recordEvent }
+				paymentMethods={ paymentMethods }
+				paymentProcessors={ paymentProcessors }
+				registry={ defaultRegistry }
+				isLoading={ isLoading }
+				isValidating={ isCartPendingUpdate }
+				theme={ theme }
+			>
+				<WPCheckout
+					removeProductFromCart={ removeProductFromCart }
+					updateLocation={ updateLocation }
+					applyCoupon={ applyCoupon }
+					removeCoupon={ removeCoupon }
+					couponStatus={ couponStatus }
+					changePlanLength={ changePlanLength }
+					siteId={ siteId }
+					siteUrl={ siteSlug }
+					countriesList={ countriesList }
+					StateSelect={ StateSelect }
+					getItemVariants={ getItemVariants }
+					responseCart={ responseCart }
+					addItemToCart={ addItemWithEssentialProperties }
+					subtotal={ subtotal }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					CheckoutTerms={ CheckoutTerms }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					isLoggedOutCart={ isLoggedOutCart }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					infoMessage={ infoMessage }
+				/>
+			</CheckoutProvider>
 		</React.Fragment>
 	);
 }

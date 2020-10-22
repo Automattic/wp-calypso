@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { useCallback } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -21,18 +22,18 @@ import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
 
+const debug = debugFactory( 'shopping-cart:use-shopping-cart-manager' );
+
 export default function useShoppingCartManager( {
 	cartKey,
-	canInitializeCart,
 	setCart,
 	getCart,
 }: ShoppingCartManagerArguments ): ShoppingCartManager {
-	const cartKeyString = String( cartKey || 'no-site' );
-	const setServerCart = useCallback( ( cartParam ) => setCart( cartKeyString, cartParam ), [
-		cartKeyString,
+	const setServerCart = useCallback( ( cartParam ) => setCart( String( cartKey ), cartParam ), [
+		cartKey,
 		setCart,
 	] );
-	const getServerCart = useCallback( () => getCart( cartKeyString ), [ cartKeyString, getCart ] );
+	const getServerCart = useCallback( () => getCart( String( cartKey ) ), [ cartKey, getCart ] );
 
 	const [ hookState, hookDispatch ] = useShoppingCartReducer();
 
@@ -42,14 +43,7 @@ export default function useShoppingCartManager( {
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
 
-	// Asynchronously initialize the cart. This should happen exactly once.
-	useInitializeCartFromServer(
-		cacheStatus,
-		canInitializeCart,
-		getServerCart,
-		setServerCart,
-		hookDispatch
-	);
+	useInitializeCartFromServer( cacheStatus, cartKey, getServerCart, setServerCart, hookDispatch );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
@@ -100,19 +94,52 @@ export default function useShoppingCartManager( {
 		hookDispatch( { type: 'REMOVE_COUPON' } );
 	}, [ hookDispatch ] );
 
-	return {
-		isLoading: cacheStatus === 'fresh',
-		loadingError: cacheStatus === 'error' ? loadingError : null,
-		loadingErrorType,
-		isPendingUpdate: cacheStatus !== 'valid',
-		addProductsToCart,
-		removeProductFromCart,
-		applyCoupon,
-		removeCoupon,
-		couponStatus,
-		updateLocation,
-		replaceProductInCart,
-		replaceProductsInCart,
-		responseCart,
-	};
+	const reloadFromServer: () => void = useCallback( () => {
+		hookDispatch( { type: 'CART_RELOAD' } );
+	}, [ hookDispatch ] );
+
+	const isLoading = cacheStatus === 'fresh' || ! cartKey;
+	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
+	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
+
+	const shoppingCartManager = useMemo(
+		() => ( {
+			isLoading,
+			loadingError: loadingErrorForManager,
+			loadingErrorType,
+			isPendingUpdate,
+			addProductsToCart,
+			removeProductFromCart,
+			applyCoupon,
+			removeCoupon,
+			couponStatus,
+			updateLocation,
+			replaceProductInCart,
+			replaceProductsInCart,
+			reloadFromServer,
+			responseCart,
+		} ),
+		[
+			isLoading,
+			isPendingUpdate,
+			loadingErrorForManager,
+			loadingErrorType,
+			addProductsToCart,
+			removeProductFromCart,
+			applyCoupon,
+			removeCoupon,
+			couponStatus,
+			updateLocation,
+			replaceProductInCart,
+			replaceProductsInCart,
+			reloadFromServer,
+			responseCart,
+		]
+	);
+
+	useEffect( () => {
+		debug( 'shoppingCartManager:', shoppingCartManager );
+	}, [ shoppingCartManager ] );
+
+	return shoppingCartManager;
 }

@@ -1,10 +1,4 @@
 /**
- * Internal dependencies
- */
-import type { GSuiteProductUser } from 'calypso/lib/gsuite/new-users';
-import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
-
-/**
  * There are three different concepts of "cart" relevant to the shopping cart endpoint:
  *
  *     1. The response format of the cart endpoint (GET)
@@ -28,9 +22,9 @@ export interface RequestCart {
 	products: RequestCartProduct[];
 	tax: null | {
 		location: {
-			country_code: string | null;
-			postal_code: string | null;
-			subdivision_code: string | null;
+			country_code: string | undefined;
+			postal_code: string | undefined;
+			subdivision_code: string | undefined;
 		};
 	};
 	coupon: string;
@@ -50,7 +44,6 @@ export interface RequestCartProduct {
 	product_id: number;
 	meta: string;
 	extra: ResponseCartProductExtra;
-	after_purchase_url?: string;
 }
 
 /**
@@ -164,7 +157,6 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
-	after_purchase_url?: string;
 }
 
 /**
@@ -199,7 +191,6 @@ export interface TempResponseCartProduct {
 	included_domain_purchase_amount: null;
 	is_renewal: undefined;
 	subscription_id: undefined;
-	after_purchase_url: undefined;
 }
 
 export interface CartLocation {
@@ -219,4 +210,54 @@ export type ResponseCartProductExtra = {
 	purchaseType?: string;
 	includedDomain?: string;
 	privacy?: boolean;
+};
+
+export interface GSuiteProductUser {
+	firstname: string;
+	lastname: string;
+	email: string;
+	password: string;
+}
+
+export type DomainContactDetails = {
+	firstName?: string;
+	lastName?: string;
+	organization?: string;
+	email?: string;
+	alternateEmail?: string;
+	phone?: string;
+	address1?: string;
+	address2?: string;
+	city?: string;
+	state?: string;
+	postalCode?: string;
+	countryCode?: string;
+	fax?: string;
+	vatId?: string;
+	extra?: DomainContactDetailsExtra;
+};
+
+export type DomainContactDetailsExtra = {
+	ca?: CaDomainContactExtraDetails | null;
+	uk?: UkDomainContactExtraDetails | null;
+	fr?: FrDomainContactExtraDetails | null;
+};
+
+export type CaDomainContactExtraDetails = {
+	lang?: string;
+	legalType?: string;
+	ciraAgreementAccepted?: boolean;
+};
+
+export type UkDomainContactExtraDetails = {
+	registrantType?: string;
+	registrationNumber?: string;
+	tradingName?: string;
+};
+
+export type FrDomainContactExtraDetails = {
+	registrantType?: string;
+	registrantVatId?: string;
+	trademarkNumber?: string;
+	sirenSiret?: string;
 };
