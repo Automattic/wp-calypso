@@ -63,7 +63,7 @@ This wraps up the more introductory part; if you're interested in more details, 
 
 ## Section Definitions
 
-More formally, sections are defined in [`client/sections.js`](../client/sections.js). While that file's format should be intuitive enough to understand, we use quite a bit of magic to turn it into actual routing and code-splitting code. Most of it is documented in [`server/bundler/README.md`](../server/bundler/README.md).
+More formally, sections are defined in [`client/sections.js`](../client/sections.js). While that file's format should be intuitive enough to understand, we use quite a bit of magic to turn it into actual routing and code-splitting code. Most of it is documented in [`client/server/bundler/README.md`](../client/server/bundler/README.md).
 
 ## Site-specific URLs
 
