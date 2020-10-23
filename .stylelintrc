@@ -1,5 +1,5 @@
 {
-	"plugins": ["@signal-noise/stylelint-scales"],
+	"plugins": ["@signal-noise/stylelint-scales","stylelint-csstree-validator"],
 	"rules": {
 		"scales/font-weight": [[ 400, 600, 700, "normal", "bold", "inherit" ]],
 		"scales/font-size": [[ 0.75, 0.875, 1, 1.25, 1.5, 2, 2.25, 3, 3.375 ], { unit: "rem" }],
@@ -7,6 +7,8 @@
 
 		"color-hex-case": "lower",
 		"color-no-invalid-hex": true,
+
+		"csstree/validator": true,
 
 		"function-calc-no-unspaced-operator": true,
 		"function-comma-space-after": "always-single-line",
