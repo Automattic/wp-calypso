@@ -146,6 +146,7 @@
 		"@types/wordpress__plugins": "^2.3.6",
 		"@babel/preset-typescript": "^7.10.4",
 		"@wordpress/eslint-plugin": "^7.1.0",
-		"babel-jest": "^26.3.0"
+		"babel-jest": "^26.3.0",
+		"webpack": "^4.44.1"
 	}
 }
