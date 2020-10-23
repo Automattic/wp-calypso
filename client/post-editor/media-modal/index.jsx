@@ -22,29 +22,33 @@ import {
 /**
  * Internal dependencies
  */
-import MediaLibrary from 'my-sites/media-library';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat as mcBumpStat } from 'lib/analytics/mc';
-import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
+import MediaLibrary from 'calypso/my-sites/media-library';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
+import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
 import MediaModalGallery from './gallery';
-import MediaActions from 'lib/media/actions';
-import * as MediaUtils from 'lib/media/utils';
-import CloseOnEscape from 'components/close-on-escape';
-import accept from 'lib/accept';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import { getMediaModalView } from 'state/ui/media-modal/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { resetMediaModalView } from 'state/ui/media-modal/actions';
-import { setEditorMediaModalView } from 'state/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { editMedia, deleteMedia, addExternalMedia } from 'state/media/thunks';
-import { setMediaLibrarySelectedItems, changeMediaSource, setQuery } from 'state/media/actions';
-import ImageEditor from 'blocks/image-editor';
-import VideoEditor from 'blocks/video-editor';
+import MediaActions from 'calypso/lib/media/actions';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import CloseOnEscape from 'calypso/components/close-on-escape';
+import accept from 'calypso/lib/accept';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { getMediaModalView } from 'calypso/state/ui/media-modal/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { resetMediaModalView } from 'calypso/state/ui/media-modal/actions';
+import { setEditorMediaModalView } from 'calypso/state/editor/actions';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { editMedia, deleteMedia, addExternalMedia } from 'calypso/state/media/thunks';
+import {
+	changeMediaSource,
+	setMediaLibrarySelectedItems,
+	setQuery,
+} from 'calypso/state/media/actions';
+import ImageEditor from 'calypso/blocks/image-editor';
+import VideoEditor from 'calypso/blocks/video-editor';
 import MediaModalDialog from './dialog';
 import MediaModalDetail from './detail';
-import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
