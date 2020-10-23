@@ -14,28 +14,28 @@ import {
 	getListItems,
 	isCreatingList as isCreatingListSelector,
 	isUpdatingList as isUpdatingListSelector,
-} from 'state/reader/lists/selectors';
-import FormattedHeader from 'components/formatted-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormButton from 'components/forms/form-button';
-import QueryReaderList from 'components/data/query-reader-list';
-import QueryReaderListItems from 'components/data/query-reader-list-items';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Main from 'components/main';
+} from 'calypso/state/reader/lists/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormButton from 'calypso/components/forms/form-button';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import Main from 'calypso/components/main';
 import {
 	addReaderListFeedByUrl,
 	createReaderList,
 	updateReaderList,
-} from 'state/reader/lists/actions';
-import ReaderExportButton from 'blocks/reader-export-button';
-import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
+} from 'calypso/state/reader/lists/actions';
+import ReaderExportButton from 'calypso/blocks/reader-export-button';
+import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
 import ListItem from './list-item';
 import ListForm from './list-form';
 

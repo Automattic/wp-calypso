@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { fillGap } from 'state/reader/streams/actions';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { fillGap } from 'calypso/state/reader/streams/actions';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 /**
  * Style dependencies
