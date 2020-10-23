@@ -122,7 +122,7 @@ const JetpackProductCardAlt = ( {
 				'is-deprecated': isDeprecated,
 				'is-featured': isHighlighted,
 			} ) }
-			data-icon={ iconSlug }
+			data-e2e-product-slug={ productSlug }
 		>
 			<div className="jetpack-product-card-alt__summary">
 				<header className="jetpack-product-card-alt__header">
