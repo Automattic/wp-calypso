@@ -3,12 +3,12 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 
 /**
  * Style dependencies
@@ -47,6 +47,7 @@ type Props = {
 };
 
 const LanguagePicker = ( { onSelectLanguage, languages, languageGroups }: Props ) => {
+	const { __ } = useI18n();
 	const [ filter, setFilter ] = useState( languageGroups[ 0 ].id );
 
 	const getFilteredLanguages = () => {
@@ -87,7 +88,9 @@ const LanguagePicker = ( { onSelectLanguage, languages, languageGroups }: Props 
 
 	return (
 		<div className="language-picker-component">
-			<div className="language-picker-component__regions-label">{ __( 'regions' ) }</div>
+			<div className="language-picker-component__regions-label">
+				{ __( 'regions', __i18n_text_domain__ ) }
+			</div>
 			<div className="language-picker-component__content">
 				<div className="language-picker-component__category-filters">
 					{ renderCategoryButtons() }

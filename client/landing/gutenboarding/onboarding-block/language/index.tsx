@@ -5,14 +5,13 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useI18n } from '@automattic/react-i18n';
 import { ActionButtons, BackButton, Title } from '@automattic/onboarding';
-import LanguagePicker from '@automattic/language-picker';
+import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
 
 /**
  * Internal dependencies
  */
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
 import { languages } from '../../../../languages';
-import { LANGUAGE_GROUPS } from '../../../../components/language-picker/constants';
 
 /**
  * Style dependencies
@@ -39,7 +38,7 @@ const LanguageStep: React.FunctionComponent = () => {
 						</ActionButtons>
 					</div>
 					<LanguagePicker
-						languageGroups={ LANGUAGE_GROUPS }
+						languageGroups={ createLanguageGroups( __ ) }
 						languages={ languages }
 						onSelectLanguage={ ( language ) => {
 							changeLocale( language.langSlug );
