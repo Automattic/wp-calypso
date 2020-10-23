@@ -25,6 +25,7 @@ import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../util
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import { getProductPosition } from './products-order';
 import ProductCardAlt from '../product-card-alt';
+import ProductCardAlt2 from '../product-card-alt-2';
 
 /**
  * Type dependencies
@@ -117,6 +118,8 @@ const ProductsGridAlt = ( {
 	onSelectProduct: PurchaseCallback;
 	urlQueryArgs: QueryArgs;
 } ): ReactElement => {
+	const croVersion = getJetpackCROActiveVersion();
+
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
@@ -141,6 +144,10 @@ const ProductsGridAlt = ( {
 			} ),
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
 	);
+	const ProductCardComponent = useMemo(
+		() => ( croVersion === 'v2' ? ProductCardAlt2 : ProductCardAlt ),
+		[ croVersion ]
+	);
 
 	const sortedGridItems = useMemo(
 		() =>
@@ -161,7 +168,7 @@ const ProductsGridAlt = ( {
 	return (
 		<div className="products-grid-alt">
 			{ hasLegacyPlan && (
-				<ProductCardAlt
+				<ProductCardComponent
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
 					key={ currentPlanSlug }
@@ -174,7 +181,7 @@ const ProductsGridAlt = ( {
 			) }
 
 			{ sortedGridItems.map( ( product ) => (
-				<ProductCardAlt
+				<ProductCardComponent
 					// iconSlug has the same value for all durations.
 					// Using this value as a key prevents unnecessary DOM updates.
 					key={ product.iconSlug }
