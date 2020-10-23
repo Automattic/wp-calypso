@@ -48,7 +48,7 @@ const product3 = {
 };
 
 describe( 'replaceItemInResponseCart', function () {
-	it( 'replaces an item in the  with a matching uuid', function () {
+	it( 'replaces an item in the cart with a matching uuid', function () {
 		const product1B = { ...product3, uuid: product1.uuid };
 		const result = replaceItemInResponseCart(
 			{ ...cart, products: [ product1, product2 ] },
@@ -68,39 +68,11 @@ describe( 'replaceItemInResponseCart', function () {
 } );
 
 describe( 'addItemsToResponseCart', function () {
-	it( 'adds the requested item to the product list with placeholder properties', function () {
+	it( 'adds the requested item to the product list', function () {
 		const result = addItemsToResponseCart( { ...cart, products: [ product1, product2 ] }, [
 			product3,
 		] );
-		const product3B = {
-			...product3,
-			cost: null,
-			currency: null,
-			extra: undefined,
-			included_domain_purchase_amount: null,
-			is_bundled: null,
-			is_domain_registration: null,
-			is_sale_coupon_applied: false,
-			is_renewal: undefined,
-			item_subtotal_display: null,
-			item_subtotal_integer: null,
-			item_subtotal_monthly_cost_display: null,
-			item_subtotal_monthly_cost_integer: null,
-			months_per_bill_period: null,
-			meta: undefined,
-			price: null,
-			item_original_cost_display: null,
-			item_original_cost_integer: null,
-			item_original_subtotal_display: null,
-			item_original_subtotal_integer: null,
-			product_cost_display: null,
-			product_cost_integer: null,
-			product_name: '',
-			product_type: null,
-			subscription_id: undefined,
-			uuid: 'calypso-shopping-cart-endpoint-uuid-100',
-			volume: 1,
-		};
+		const product3B = { ...product3 }; // Make a copy
 		expect( result.products[ 0 ] ).toEqual( product1 );
 		expect( result.products[ 1 ] ).toEqual( product2 );
 		expect( result.products[ 2 ] ).toEqual( product3B );
