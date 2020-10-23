@@ -27,7 +27,6 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
 import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
 import MediaModalGallery from './gallery';
-import MediaActions from 'calypso/lib/media/actions';
 import * as MediaUtils from 'calypso/lib/media/utils';
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import accept from 'calypso/lib/accept';
@@ -180,7 +179,6 @@ export class EditorMediaModal extends Component {
 			() => {
 				// Reset the query so that we're adding the new media items to the correct
 				// list, with no external source.
-				MediaActions.setQuery( site.ID, {} );
 				this.props.setQuery( site.ID, {} );
 				this.props.addExternalMedia( selectedMedia, site, originalSource );
 			}
