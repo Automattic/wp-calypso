@@ -40,7 +40,7 @@ const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
 const ExtractManifestPlugin = require( '../build-tools/webpack/extract-manifest-plugin' );
-const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js/index.js.js' );
+const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 
 /**
  * Internal variables
