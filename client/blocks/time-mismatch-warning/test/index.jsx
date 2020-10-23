@@ -18,12 +18,12 @@ jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
 	useTranslate: jest.fn( () => ( text ) => text ),
 } ) );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () => jest.fn( () => 0 ) );
+jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () => jest.fn( () => -4 ) );
 jest.mock( 'calypso/state/sites/selectors/get-site-slug', () => jest.fn( () => 'wordpress.test' ) );
 
 describe( 'TimeMismatchWarning', () => {
 	beforeAll( () => {
-		jest.spyOn( global, 'Date' ).mockImplementation( () => ( { getTimezoneOffset: () => 0 } ) );
+		jest.spyOn( global, 'Date' ).mockImplementation( () => ( { getTimezoneOffset: () => 240 } ) );
 	} );
 
 	afterAll( () => {

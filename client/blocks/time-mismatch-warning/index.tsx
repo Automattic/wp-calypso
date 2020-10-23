@@ -24,7 +24,7 @@ export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => siteId && getSiteSlug( state, siteId ) );
 	const settingsUrl = siteSlug ? `/settings/general/${ siteSlug }` : '#';
-	const userOffset = new Date().getTimezoneOffset() / 60;
+	const userOffset = new Date().getTimezoneOffset() / -60; // Negative as function returns minutes *behind* UTC.
 	const siteOffset = useSelector( ( state ) => siteId && getSiteGmtOffset( state, siteId ) );
 
 	if ( ! siteId || siteOffset === null || userOffset === siteOffset ) {
