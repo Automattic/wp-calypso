@@ -16,16 +16,10 @@ import {
 	removeCouponFromResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
+	doesResponseCartContainProductMatching,
 } from './cart-functions';
-import {
-	emptyResponseCart,
-	ResponseCart,
-	ResponseCartProduct,
-	TempResponseCartProduct,
-	ShoppingCartState,
-	ShoppingCartAction,
-	CouponStatus,
-} from './types';
+import { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
+import { emptyResponseCart } from './empty-carts';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
 
@@ -283,16 +277,4 @@ function getUpdatedCouponStatus( currentCouponStatus: CouponStatus, responseCart
 		default:
 			return currentCouponStatus;
 	}
-}
-
-function doesResponseCartContainProductMatching(
-	responseCart: ResponseCart,
-	productProperties: Partial< ResponseCartProduct >
-): boolean {
-	return responseCart.products.some( ( product: ResponseCartProduct | TempResponseCartProduct ) => {
-		return Object.keys( productProperties ).every( ( key ) => {
-			const typedKey = key as keyof ResponseCartProduct;
-			return product[ typedKey ] === productProperties[ typedKey ];
-		} );
-	} );
 }
