@@ -18,9 +18,9 @@ export interface Purchase {
 export interface MembershipSubscription {
 	ID: string;
 	currency: string;
-	end_date?: string;
+	end_date: string | null;
 	product_id: string;
-	renew_interval?: null;
+	renew_interval: string | null;
 	renewal_price: string;
 	site_id: string;
 	site_title: string;

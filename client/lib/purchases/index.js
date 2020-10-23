@@ -27,6 +27,7 @@ import {
 	isConciergeSession,
 } from 'calypso/lib/products-values';
 import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
+import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -72,17 +73,15 @@ function getPurchasesBySite( purchases, sites ) {
 /**
  * Returns an array of sites objects, each of which contains an array of subscriptions.
  *
- * @param {Array} subscriptions An array of subscription objects.
- * @returns {Array} An array of sites with subscriptions attached.
+ * @param {MembershipSubscription[]} subscriptions An array of subscription objects.
+ * @returns {MembershipSubscriptionsSite[]} An array of sites with subscriptions attached.
  */
 function getSubscriptionsBySite( subscriptions ) {
 	return subscriptions
 		.reduce( ( result, currentValue ) => {
-			const site = find( result, { id: currentValue.site_id } );
-			if ( site ) {
-				site.subscriptions = [ ...site.subscriptions, currentValue ];
-			} else {
-				result = [
+			const site = result.find( ( subscription ) => subscription.id === currentValue.site_id );
+			if ( ! site ) {
+				return [
 					...result,
 					{
 						id: currentValue.site_id,
@@ -93,6 +92,7 @@ function getSubscriptionsBySite( subscriptions ) {
 				];
 			}
 
+			site.subscriptions = [ ...site.subscriptions, currentValue ];
 			return result;
 		}, [] )
 		.sort( ( a, b ) => ( a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 ) );

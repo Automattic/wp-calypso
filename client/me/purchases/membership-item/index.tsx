@@ -18,43 +18,50 @@ import { MembershipSubscription } from 'calypso/lib/purchases/types';
  */
 import './style.scss';
 
-const getMembershipTerms = ( {
-	subscription,
-	translate,
-	moment,
-}: {
-	subscription: MembershipSubscription;
-	translate: ReturnType< typeof useTranslate >;
-	moment: ReturnType< typeof useLocalizedMoment >;
-} ) => {
+const MembershipTerms = ( { subscription }: { subscription: MembershipSubscription } ) => {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	/* $5 - never expires. */
 	if ( subscription.end_date === null ) {
-		return translate( '%(amount)s - never expires.', {
-			args: {
-				amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-			},
-		} );
+		return (
+			<div className="membership-item__term-label">
+				{ translate( '%(amount)s - never expires.', {
+					args: {
+						amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
+					},
+				} ) }
+			</div>
+		);
 	}
 
 	/* Renews every month for $5. Next renewal on November 22, 2020. */
 	if ( subscription.renew_interval ) {
-		return translate( 'Renews every %(interval)s for %(amount)s. Next renewal on %(date)s.', {
-			args: {
-				interval: subscription.renew_interval,
-				amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-				date: moment( subscription.end_date ).format( 'LL' ),
-			},
-		} );
+		return (
+			<div className="membership-item__term-label">
+				{ translate( 'Renews every %(interval)s for %(amount)s. Next renewal on %(date)s.', {
+					args: {
+						interval: subscription.renew_interval,
+						amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
+						date: moment( subscription.end_date ).format( 'LL' ),
+					},
+				} ) }
+			</div>
+		);
 	}
 
 	/* Renews at $5 on November 22, 2020. */
 	/* I'm not sure we can have a renewal without an interval, so this might not get called. */
-	return translate( 'Renews at %(amount)s on %(date)s.', {
-		args: {
-			amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-			date: moment( subscription.end_date ).format( 'LL' ),
-		},
-	} );
+	return (
+		<div className="membership-item__term-label">
+			{ translate( 'Renews at %(amount)s on %(date)s.', {
+				args: {
+					amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
+					date: moment( subscription.end_date ).format( 'LL' ),
+				},
+			} ) }
+		</div>
+	);
 };
 
 export default function MembershipItem( {
@@ -63,7 +70,6 @@ export default function MembershipItem( {
 	subscription: MembershipSubscription;
 } ): JSX.Element {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 
 	return (
 		<CompactCard
@@ -80,9 +86,7 @@ export default function MembershipItem( {
 					<div className="membership-item__site">
 						{ translate( 'On %s', { args: subscription.site_title } ) }
 					</div>
-					<div className="membership-item__term-label">
-						{ getMembershipTerms( { subscription, translate, moment } ) }
-					</div>
+					<MembershipTerms subscription={ subscription } />
 				</div>
 			</span>
 		</CompactCard>
