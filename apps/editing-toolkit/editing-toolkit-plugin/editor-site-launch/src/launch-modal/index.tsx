@@ -16,7 +16,7 @@ import { LAUNCH_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
-import { useSite } from '../hooks';
+import { hooks as launchHooks } from '@automattic/launch';
 
 import './styles.scss';
 
@@ -32,7 +32,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
 
-	const { isPaidPlan } = useSite();
+	const { isPaidPlan } = launchHooks.useSite();
 
 	const handleLaunch = () => {
 		setIsLaunching( true );
