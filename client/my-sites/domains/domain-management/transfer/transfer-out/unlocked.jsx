@@ -282,7 +282,7 @@ class Unlocked extends React.Component {
 		return (
 			<div>
 				<Card className="transfer-out__card">
-					<div>
+					<div className="transfer-out__content">
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						{ this.renderBody( domain ) }
