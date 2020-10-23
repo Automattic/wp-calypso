@@ -134,4 +134,8 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-export default withSectionMessagePath( connect( mapStateToProps, mapDispatchToProps )( JITM ) );
+// Export the unwrapped component to allow for providing a custom `messagePath`.
+export const JITMConnected = connect( mapStateToProps, mapDispatchToProps )( JITM );
+
+// Export a wrapped component which automatically provides the `messagePath`
+export default withSectionMessagePath( JITMConnected );
