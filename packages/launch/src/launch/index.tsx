@@ -42,14 +42,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => 
 						</Button>
 					</div>
 					<div className="launch__focused-modal-body">
-						<div className="launch__focused-modal-inputs">
-							<FocusedLaunch />
-						</div>
-						<div className="launch__focused-modal-aside">
-							<div>
-								<strong>46.9%</strong> of globally registered domains are <strong>.com</strong>
-							</div>
-						</div>
+						<FocusedLaunch />
 					</div>
 				</div>
 			</>

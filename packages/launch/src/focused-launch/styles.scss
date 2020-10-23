@@ -25,3 +25,36 @@
 .focused-launch__caption {
 	margin: 0;
 }
+
+.focused-launch__step {
+	display: flex;
+	justify-content: center;
+	gap: 10%;
+	opacity: 0.5;
+	transition: opacity 0.5s ease-in-out;
+}
+
+// default highlighting the all steps when nothing is in focus
+.focused-launch__container:not( :focus-within ) {
+	.focused-launch__step {
+		opacity: 1;
+	}
+}
+
+// highlight the focused step
+.focused-launch__step:focus-within {
+	opacity: 1;
+}
+
+.focused-launch__commentary {
+	margin-left: 10px;
+	border-left: 1px solid #eee;
+	display: flex;
+	align-items: center;
+	flex: 0.4;
+	padding: 0 5%;
+}
+
+.focused-launch__data-input {
+	flex: 0.6;
+}
