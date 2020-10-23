@@ -10,7 +10,7 @@
 	margin: 0;
 	padding-top: 16px;
 	position: relative;
-	font-size: 17px;
+	font-size: 1rem;
 	line-height: 1.7;
 	overflow-wrap: break-word;
 	word-wrap: break-word;
@@ -196,7 +196,7 @@
 		position: relative;
 		margin-bottom: 24px;
 		padding: 11px 24px;
-		border-radius: 1px;
+		border-radius: 2px;
 		background: var( --color-neutral-0 );
 		box-sizing: border-box;
 		font-size: $font-body-small;
@@ -213,7 +213,7 @@
 	sub {
 		vertical-align: baseline;
 		position: relative;
-		font-size: 0.83em;
+		font-size: 0.875rem;
 	}
 
 	sup {
@@ -248,28 +248,17 @@
 		margin: auto;
 	}
 
-	.wp-block-buttons {
-		margin: 0;
-	}
-
-	.wp-block-button {
-		border-style: solid;
+	.wp-block-button__link {
+		// Styles forced with !important in order to override the inline styles present in the post content.
+		border: 1px solid var( --color-neutral-10 ) !important;
+		background-color: inherit !important;
+		color: inherit !important;
+		border-radius: 2px !important;
+		padding: 8px 14px !important;
+		font-size: 0.875rem !important;
 		font-family: $sans;
-		border-width: 1px;
-		cursor: pointer;
-		display: inline-block;
-		margin: 0;
-		margin-right: 0.25em;
-		margin-bottom: 0.6em;
-		outline: 0;
-		overflow: hidden;
-		vertical-align: top;
-		font-size: 14px;
 		font-weight: 600;
 		line-height: 22px;
-		border-radius: 2px;
-		padding: 8px 14px;
-		border-color: var( --color-neutral-10 );
 	}
 
 	.wp-block-table table {
@@ -279,18 +268,13 @@
 	.wp-block-table td,
 	.wp-block-table th {
 		border: 1px solid var( --color-neutral-10 );
-		font-size: 1em;
+		font-size: 1rem;
 		line-height: 1.8;
 	}
 
 	.wp-block-table th {
 		font-weight: bold;
 		background: var( --color-neutral-0 );
-	}
-
-	.wp-block-button__link,
-	.wp-block-button__link:hover {
-		color: inherit;
 	}
 
 	// Import Gutenberg gallery styles
@@ -321,7 +305,7 @@
 		&:first-child::first-letter {
 			float: left;
 			margin: 10px 12px 0 0;
-			font-size: 66px;
+			font-size: 66px; /* stylelint-disable-line scales/font-size */
 			font-weight: 400;
 			line-height: 0.7;
 		}
@@ -493,7 +477,7 @@
     display: block;
     width: 36px;
     height: 36px;
-    border-radius: 36px;
+    border-radius: 36px; /* stylelint-disable-line scales/radii */
     margin-right: 8px;
     transition: transform 0.1s ease;
 }
