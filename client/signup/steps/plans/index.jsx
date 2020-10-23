@@ -171,9 +171,9 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { isMonthlyPricingTest, subHeaderText, translate } = this.props;
+		const { hideFreePlan, isMonthlyPricingTest, subHeaderText, translate } = this.props;
 
-		if ( isMonthlyPricingTest ) {
+		if ( isMonthlyPricingTest && ! hideFreePlan ) {
 			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
 				components: {
 					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
