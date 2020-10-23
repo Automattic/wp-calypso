@@ -47,7 +47,7 @@ describe( 'TimeMismatchWarning', () => {
 		<Localized(Notice)
 		  status="is-warning"
 		>
-		  Looks like your computer time and site time don’t match! We’re going to show you times based on your site. If that doesn’t look right, you can {{SiteSettings}}go here to update it{{/SiteSettings}}.
+		  This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
 		</Localized(Notice)>
 	` );
 	} );
