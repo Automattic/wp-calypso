@@ -262,60 +262,69 @@ function getPlanFeatures(
 ) {
 	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart;
 	const productSlug = plan.wpcom_meta?.product_slug;
-	const annualPlansOnly = translate( '(annual plans only)', {
-		comment: 'Label attached to a feature',
-	} );
 
 	if ( ! productSlug ) {
 		return [];
 	}
 
-	if ( [ 'personal-bundle', 'personal-bundle-2y' ].includes( productSlug ) ) {
+	const isMonthlyPlan = isMonthly( productSlug );
+	const freeOneYearDomain = showFreeDomainFeature && translate( 'Free domain for one year' );
+	const googleAnalytics = translate( 'Track your stats with Google Analytics' );
+	const annualPlanOnly = ( feature ) => {
+		if ( ! feature ) {
+			return null;
+		}
+
+		const label = translate( '(annual plans only)', {
+			comment: 'Label attached to a feature',
+		} );
+
+		return `~~${ feature } ${ label }`;
+	};
+
+	if ( isWpComPersonalPlan( productSlug ) ) {
+		if ( isMonthlyPlan ) {
+			return [
+				annualPlanOnly( translate( 'Live chat support' ) ),
+				annualPlanOnly( freeOneYearDomain ),
+				translate( 'Email support' ),
+				translate( 'Dozens of Free Themes' ),
+			];
+		}
+
 		return [
 			isMonthlyPricingTest && translate( 'Live chat and email support' ),
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
+			freeOneYearDomain,
 			translate( 'Dozens of Free Themes' ),
 			translate( 'Remove WordPress.com ads' ),
 			translate( 'Limit your content to paying subscribers.' ),
 		];
 	}
 
-	if ( 'personal-bundle-monthly' === productSlug ) {
+	if ( isWpComPremiumPlan( productSlug ) ) {
 		return [
-			`~~${ translate( 'Live chat support' ) } ${ annualPlansOnly }`,
-			showFreeDomainFeature &&
-				`~~${ translate( 'Free domain for one year' ) } ${ annualPlansOnly }`,
-			translate( 'Email support' ),
-			translate( 'Dozens of Free Themes' ),
-		];
-	}
-
-	if ( [ 'value_bundle', 'value_bundle-2y' ].includes( productSlug ) ) {
-		return [
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
+			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
 			translate( 'Unlimited access to our library of Premium Themes' ),
 			isEnabled( 'earn/pay-with-paypal' )
 				? translate( 'Subscriber-only content and Pay with PayPal buttons' )
 				: translate( 'Subscriber-only content and payment buttons' ),
-			translate( 'Track your stats with Google Analytics' ),
+			googleAnalytics,
 		];
-	} else if (
-		'business-bundle' === plan.wpcom_meta?.product_slug ||
-		'business-bundle-2y' === plan.wpcom_meta?.product_slug
-	) {
+	}
+
+	if ( isWpComBusinessPlan( productSlug ) ) {
 		return [
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
+			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Drive traffic to your site with our advanced SEO tools' ),
 			translate( 'Track your stats with Google Analytics' ),
 			translate( 'Real-time backups and activity logs' ),
 		];
-	} else if (
-		'ecommerce-bundle' === plan.wpcom_meta?.product_slug ||
-		'ecommerce-bundle-2y' === plan.wpcom_meta?.product_slug
-	) {
+	}
+
+	if ( isWpComEcommercePlan( productSlug ) ) {
 		return [
-			showFreeDomainFeature && translate( 'Free domain for one year' ),
+			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Accept payments in 60+ countries' ),
 			translate( 'Integrations with top shipping carriers' ),
@@ -323,6 +332,7 @@ function getPlanFeatures(
 			translate( 'eCommerce marketing tools for emails and social networks' ),
 		];
 	}
+
 	return [];
 }
 
