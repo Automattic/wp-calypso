@@ -16,7 +16,3 @@ This package depends directly on `@wordpress/i18n` for translations and the exis
 
 This package is developed as part of the Calypso monorepo. Run `yarn`
 in the root of the repository to get the required `devDependencies`.
-
-### Using [Storybook](https://storybook.js.org/)
-
-`yarn run language-picker:storybook:start`
