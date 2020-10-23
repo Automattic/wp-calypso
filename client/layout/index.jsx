@@ -124,29 +124,25 @@ class Layout extends Component {
 	}
 
 	render() {
-		const sectionClass = classnames(
-			'layout',
-			`is-group-${ this.props.sectionGroup }`,
-			`is-section-${ this.props.sectionName }`,
-			`focus-${ this.props.currentLayoutFocus }`,
-			{
-				'is-support-session': this.props.isSupportSession,
-				'has-no-sidebar': ! this.props.secondary,
-				'has-chat': this.props.chatIsOpen,
-				'has-no-masterbar': this.props.masterbarIsHidden,
-				'is-jetpack-login': this.props.isJetpackLogin,
-				'is-jetpack-site': this.props.isJetpack,
-				'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-				'is-jetpack-woocommerce-flow':
-					config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
-				'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
-				'is-wccom-oauth-flow':
-					config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
-					isWooOAuth2Client( this.props.oauth2Client ) &&
-					this.props.wccomFrom,
-				'is-nav-unification': config.isEnabled( 'nav-unification' ),
-			}
-		);
+		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
+			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
+			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
+			'is-support-session': this.props.isSupportSession,
+			'has-no-sidebar': ! this.props.secondary,
+			'has-chat': this.props.chatIsOpen,
+			'has-no-masterbar': this.props.masterbarIsHidden,
+			'is-jetpack-login': this.props.isJetpackLogin,
+			'is-jetpack-site': this.props.isJetpack,
+			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
+			'is-jetpack-woocommerce-flow':
+				config.isEnabled( 'jetpack/connect/woocommerce' ) && this.props.isJetpackWooCommerceFlow,
+			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
+			'is-wccom-oauth-flow':
+				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
+				isWooOAuth2Client( this.props.oauth2Client ) &&
+				this.props.wccomFrom,
+			'is-nav-unification': config.isEnabled( 'nav-unification' ),
+		} );
 
 		const optionalBodyProps = () => {
 			const optionalProps = {};
@@ -245,8 +241,8 @@ class Layout extends Component {
 export default compose(
 	withCurrentRoute,
 	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
-		const sectionGroup = currentSection?.group;
-		const sectionName = currentSection?.name;
+		const sectionGroup = currentSection?.group ?? null;
+		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
 		const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
