@@ -334,6 +334,9 @@ class DomainsStep extends React.Component {
 		if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
 			this.props.goToNextStep( 'onboarding-secure-your-brand' );
 		} else if ( this.props.flowName === 'onboarding-secure-your-brand' ) {
+			// TODO: This is a temp fix for the A/B test. If we roll out to all users,
+			// then we need to find out a way to know the user's original flow name,
+			// and we cannot assume they always came from the onboarding flow.
 			this.props.goToNextStep( 'onboarding' );
 		} else {
 			this.props.goToNextStep();
