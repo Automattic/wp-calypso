@@ -9,51 +9,45 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Notice from 'calypso/components/notice';
-import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-
-/**
- * Type dependencies
- */
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-
-interface ConnectedProps {
-	applySiteOffset: applySiteOffsetType;
-}
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
+import { preventWidows } from 'calypso/lib/formatting';
 
 interface ExternalProps {
 	status?: string;
+	siteId?: number;
 }
 
-export const TimeMismatchWarning: FC< ExternalProps & ConnectedProps > = ( {
-	applySiteOffset,
+export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	status = 'is-warning',
-}: ExternalProps & ConnectedProps ) => {
+	siteId,
+}: ExternalProps ) => {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( ( state ) => siteId && getSiteSlug( state, siteId ) );
 	const settingsUrl = siteSlug ? `/settings/general/${ siteSlug }` : '#';
-	const now = moment();
-	const siteOffset = applySiteOffset( now );
+	const userOffset = new Date().getTimezoneOffset() / -60; // Negative as function returns minutes *behind* UTC.
+	const siteOffset = useSelector( ( state ) => siteId && getSiteGmtOffset( state, siteId ) );
 
-	if ( ! siteOffset || now.isSame( siteOffset ) ) {
+	if ( ! siteId || siteOffset === null || userOffset === siteOffset ) {
 		return null;
 	}
 
 	return (
 		<Notice status={ status }>
-			{ translate(
-				'Looks like your computer time and site time don’t match! ' +
-					'We’re going to show you times based on your site. ' +
-					'If that doesn’t look right, you can {{SiteSettings}}go here to update it{{/SiteSettings}}.',
-				{
-					components: {
-						SiteSettings: <a href={ settingsUrl } />,
-					},
-				}
+			{ preventWidows(
+				translate(
+					'This page reflects the time zone set on your site. ' +
+						'It looks like that does not match your current time zone. ' +
+						'{{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.',
+					{
+						components: {
+							SiteSettings: <a href={ settingsUrl } />,
+						},
+					}
+				)
 			) }
 		</Notice>
 	);
 };
 
-export default withApplySiteOffset( TimeMismatchWarning );
+export default TimeMismatchWarning;

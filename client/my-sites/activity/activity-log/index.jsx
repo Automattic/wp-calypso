@@ -75,6 +75,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
  * Style dependencies
@@ -550,6 +551,7 @@ class ActivityLog extends Component {
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+				{ siteId && <TimeMismatchWarning siteId={ siteId } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }

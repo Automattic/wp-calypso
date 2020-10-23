@@ -57,6 +57,7 @@ import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabiliti
 import { emptyFilter } from 'calypso/state/activity-log/reducer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import BackupCard from 'calypso/components/jetpack/backup-card';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
  * Style dependencies
@@ -362,6 +363,7 @@ class BackupsPage extends Component {
 					} ) }
 				>
 					<SidebarNavigation />
+					<TimeMismatchWarning siteId={ this.props.siteId } />
 					{ ! isJetpackCloud() && (
 						<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
 					) }
