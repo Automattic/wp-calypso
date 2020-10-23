@@ -397,32 +397,50 @@ class MembershipsSection extends Component {
 	}
 
 	renderSubscriberSubscriptionSummary( subscriber ) {
+		const title = subscriber.plan.title ? ` (${ subscriber.plan.title }) ` : ' ';
 		if ( subscriber.plan.renew_interval === 'one-time' ) {
-			return this.props.translate( 'Paid %(amount)s once on %(formattedDate)s', {
+			/* translators: Information about a one-time payment made by a subscriber to a site owner.
+				%(amount)s - the amount paid,
+				%(formattedDate) - the date it was paid
+				%(title) - description of the payment plan, or a blank space if no description available. */
+			return this.props.translate( 'Paid %(amount)s once on %(formattedDate)s%(title)s', {
 				args: {
 					amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 					formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
+					title,
 				},
 			} );
 		} else if ( subscriber.plan.renew_interval === '1 year' ) {
+			/* translators: Information about a recurring yearly payment made by a subscriber to a site owner.
+				%(amount)s - the amount paid,
+				%(formattedDate)s - the date it was first paid
+				%(title)s - description of the payment plan, or a blank space if no description available
+				%(total)s - the total amount subscriber has paid thus far */
 			return this.props.translate(
-				'Paying %(amount)s/year since %(formattedDate)s. Total of %(total)s.',
+				'Paying %(amount)s/year%(title)ssince %(formattedDate)s. Total of %(total)s.',
 				{
 					args: {
 						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
 						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+						title,
 					},
 				}
 			);
 		} else if ( subscriber.plan.renew_interval === '1 month' ) {
+			/* translators: Information about a recurring monthly payment made by a subscriber to a site owner.
+				%(amount)s - the amount paid,
+				%(formattedDate)s - the date it was first paid
+				%(title)s - description of the payment plan, or a blank space if no description available
+				%(total)s - the total amount subscriber has paid thus far */
 			return this.props.translate(
-				'Paying %(amount)s/month since %(formattedDate)s. Total of %(total)s.',
+				'Paying %(amount)s/month%(title)ssince %(formattedDate)s. Total of %(total)s.',
 				{
 					args: {
 						amount: formatCurrency( subscriber.plan.renewal_price, subscriber.plan.currency ),
 						formattedDate: this.props.moment( subscriber.start_date ).format( 'll' ),
 						total: formatCurrency( subscriber.all_time_total, subscriber.plan.currency ),
+						title,
 					},
 				}
 			);
