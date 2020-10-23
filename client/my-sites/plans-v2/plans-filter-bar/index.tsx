@@ -96,7 +96,7 @@ const PlansFilterBar = ( {
 			{ showDiscountMessage && (
 				<span className="plans-filter-bar__discount-message">
 					{ translate( 'You save %(discount)s by paying yearly', {
-						args: { discount: '17%' },
+						args: { discount: '20%' },
 					} ) }
 				</span>
 			) }
