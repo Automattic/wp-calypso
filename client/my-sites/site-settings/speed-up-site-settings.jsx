@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -78,13 +78,13 @@ class SpeedUpSiteSettings extends Component {
 									'and static files (like CSS and JavaScript) from our global network of servers.'
 							) }
 						</FormSettingExplanation>
-						<CompactFormToggle
+						<FormToggle
 							checked={ siteAcceleratorStatus }
 							disabled={ isRequestingOrSaving || photonModuleUnavailable }
 							onChange={ this.handleCdnChange }
 						>
 							{ translate( 'Enable site accelerator' ) }
-						</CompactFormToggle>
+						</FormToggle>
 						<div className="site-settings__child-settings">
 							<JetpackModuleToggle
 								siteId={ selectedSiteId }

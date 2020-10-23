@@ -9,11 +9,11 @@ import { pick } from 'lodash';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
-import Notice from 'components/notice';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import SectionHeader from 'calypso/components/section-header';
+import Notice from 'calypso/components/notice';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const Miscellaneous = ( {

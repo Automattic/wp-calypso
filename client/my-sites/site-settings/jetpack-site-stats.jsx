@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
@@ -96,7 +96,7 @@ class JetpackSiteStats extends Component {
 		}
 
 		return (
-			<CompactFormToggle
+			<FormToggle
 				checked={ checked }
 				disabled={
 					isRequestingSettings || isSavingSettings || moduleUnavailable || ! statsModuleActive
@@ -105,7 +105,7 @@ class JetpackSiteStats extends Component {
 				key={ name }
 			>
 				{ label }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 

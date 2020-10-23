@@ -7,7 +7,7 @@ import React, { useState } from 'react';
  * Internal dependencies
  */
 import FormLabel from 'calypso/components/forms/form-label';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { CompactCard as Card } from '@automattic/components';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {

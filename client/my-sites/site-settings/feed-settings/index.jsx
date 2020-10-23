@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -80,13 +80,13 @@ class FeedSettings extends Component {
 							) }
 						</FormSettingExplanation>
 					</FormFieldset>
-					<CompactFormToggle
+					<FormToggle
 						checked={ !! fields.rss_use_excerpt }
 						disabled={ isDisabled }
 						onChange={ handleToggle( 'rss_use_excerpt' ) }
 					>
 						{ translate( 'Limit feed to excerpt only' ) }
-					</CompactFormToggle>
+					</FormToggle>
 					<FormSettingExplanation isIndented className="feed-settings__excerpt-explanation">
 						{ translate(
 							'Enable this to include only an excerpt of your content. ' +

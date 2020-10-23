@@ -15,7 +15,7 @@ import { isBoolean } from 'lodash';
  */
 import { Card } from '@automattic/components';
 import ExtendedHeader from 'woocommerce/components/extended-header';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import LabelSettings from './label-settings';
 import QueryLabelSettings from 'woocommerce/woocommerce-services/components/query-label-settings';
 import { setFormDataValue, restorePristineSettings } from '../../state/label-settings/actions';

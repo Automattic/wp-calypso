@@ -12,7 +12,7 @@ import { isEmpty, partial } from 'lodash';
  */
 import config from 'calypso/config';
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SupportInfo from 'calypso/components/support-info';
@@ -65,7 +65,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		const { monitorActive, translate } = this.props;
 
 		return (
-			<CompactFormToggle
+			<FormToggle
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'email_notifications' ) }
 				checked={ !! this.state.email_notifications }
@@ -82,20 +82,20 @@ class SiteSettingsFormJetpackMonitor extends Component {
 						),
 					},
 				} ) }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 
 	settingsMonitorWpNoteCheckbox() {
 		const { monitorActive, translate } = this.props;
 		return (
-			<CompactFormToggle
+			<FormToggle
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'wp_note_notifications' ) }
 				checked={ !! this.state.wp_note_notifications }
 			>
 				{ translate( 'Send notifications via WordPress.com notification' ) }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 

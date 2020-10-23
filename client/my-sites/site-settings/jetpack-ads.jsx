@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
  */
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { Card, CompactCard } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -69,13 +69,13 @@ class JetpackAds extends Component {
 	renderToggle( name, isDisabled, label ) {
 		const { fields, handleAutosavingToggle } = this.props;
 		return (
-			<CompactFormToggle
+			<FormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
 				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 
