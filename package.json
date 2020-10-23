@@ -299,7 +299,7 @@
 		"typescript": "^4.0.3",
 		"webpack": "^4.44.1",
 		"webpack-bundle-analyzer": "^3.7.0",
-		"webpack-cli": "^3.3.11",
+		"webpack-cli": "^3.3.12",
 		"webpack-dev-server": "^3.10.3",
 		"whybundled": "^1.4.2",
 		"wpcom": "^6.0.0",
