@@ -55,6 +55,7 @@ class DomainSearchResults extends React.Component {
 		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
 		isSignupStep: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		railcarId: PropTypes.string,
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
@@ -233,7 +234,7 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice } = this.props;
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
@@ -261,7 +262,7 @@ class DomainSearchResults extends React.Component {
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					isDomainOnly={ isDomainOnly }
 					fetchAlgo={ this.props.fetchAlgo }
-					isSignupStep={ this.props.isSignupStep }
+					showStrikedOutPrice={ showStrikedOutPrice }
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
@@ -272,7 +273,6 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
-					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				/>
 			);
 
@@ -287,7 +287,7 @@ class DomainSearchResults extends React.Component {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
-						isSignupStep={ this.props.isSignupStep }
+						showStrikedOutPrice={ this.props.showStrikedOutPrice }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						railcarId={ this.props.railcarId + '-' + ( i + 2 ) }
@@ -298,7 +298,6 @@ class DomainSearchResults extends React.Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
 			} );

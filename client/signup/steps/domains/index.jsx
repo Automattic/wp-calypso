@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -53,9 +52,10 @@ import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { abtest, getABTestVariation } from 'calypso/lib/abtest';
+import { getABTestVariation } from 'calypso/lib/abtest';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-
+import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
+import { getStepModuleName } from 'calypso/signup/config/step-components';
 /**
  * Style dependencies
  */
@@ -125,22 +125,6 @@ class DomainsStep extends React.Component {
 
 			props.goToNextStep();
 		}
-
-		this.showTestCopy = false;
-
-		const isEligibleFlowForDomainTest = includes(
-			[ 'onboarding', 'onboarding-registrationless' ],
-			props.flowName
-		);
-
-		// Do not assign user to the test if either in the launch flow or in /start/{PLAN_SLUG} flow
-		if (
-			false !== this.props.shouldShowDomainTestCopy &&
-			isEligibleFlowForDomainTest &&
-			'variantShowUpdates' === abtest( 'domainStepCopyUpdates' )
-		) {
-			this.showTestCopy = true;
-		}
 	}
 
 	static getDerivedStateFromProps( nextProps ) {
@@ -148,6 +132,26 @@ class DomainsStep extends React.Component {
 			previousStepSectionName: nextProps.stepSectionName,
 		};
 	}
+
+	/**
+	 * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
+	 */
+	getIsPlanSelectionAvailableLaterInFlow = () => {
+		const { steps, isPlanStepSkipped } = this.props;
+
+		/**
+		 * Caveat here even though "plans" step maybe available in a flow it might not be active
+		 * i.e. Check flow "domain"
+		 */
+
+		const plansIndex = steps.findIndex( ( stepName ) => getStepModuleName( stepName ) === 'plans' );
+		const domainsIndex = steps.findIndex(
+			( stepName ) => getStepModuleName( stepName ) === 'domains'
+		);
+		const isPlansStepExistsInFutureOfFlow = plansIndex > 0 && plansIndex > domainsIndex;
+
+		return isPlansStepExistsInFutureOfFlow && ! isPlanStepSkipped;
+	};
 
 	componentDidUpdate( prevProps ) {
 		// If the signup site preview is visible and there's a sub step, e.g., mapping, transfer, use-your-domain
@@ -160,10 +164,6 @@ class DomainsStep extends React.Component {
 				this.props.showSitePreview();
 			}
 		}
-	}
-
-	isEligibleVariantForDomainTest() {
-		return this.showTestCopy;
 	}
 
 	getMapDomainUrl = () => {
@@ -229,18 +229,26 @@ class DomainsStep extends React.Component {
 		return this.getThemeSlug() ? true : false;
 	}
 
-	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const hideFreePlanTracksProp = this.isEligibleVariantForDomainTest()
-			? { should_hide_free_plan: shouldHideFreePlan }
-			: {};
+	isDependencyShouldHideFreePlanProvided = () => {
+		/**
+		 * This prop is used to supress providing the dependency - shouldHideFreePlan - when the plans step is in the current flow
+		 */
+		return (
+			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
+			this.getIsPlanSelectionAvailableLaterInFlow()
+		);
+	};
 
+	handleSkip = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: this.getAnalyticsSection(),
 				flow: this.props.flowName,
 				step: this.props.stepName,
 			},
-			hideFreePlanTracksProp
+			this.isDependencyShouldHideFreePlanProvided()
+				? { should_hide_free_plan: shouldHideFreePlan }
+				: {}
 		);
 
 		this.props.recordTracksEvent( 'calypso_signup_skip_step', tracksProperties );
@@ -258,9 +266,6 @@ class DomainsStep extends React.Component {
 	};
 
 	submitWithDomain = ( googleAppsCartItem, shouldHideFreePlan = false ) => {
-		const shouldHideFreePlanItem = this.isEligibleVariantForDomainTest()
-			? { shouldHideFreePlan }
-			: {};
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
 			? { useThemeHeadstart: shouldUseThemeAnnotation }
@@ -297,7 +302,11 @@ class DomainsStep extends React.Component {
 				},
 				this.getThemeArgs()
 			),
-			Object.assign( { domainItem }, shouldHideFreePlanItem, useThemeHeadstartItem )
+			Object.assign(
+				{ domainItem },
+				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
+				useThemeHeadstartItem
+			)
 		);
 
 		this.props.setDesignType( this.getDesignType() );
@@ -460,6 +469,7 @@ class DomainsStep extends React.Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
+		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableLaterInFlow();
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
@@ -480,8 +490,8 @@ class DomainsStep extends React.Component {
 				includeWordPressDotCom={ includeWordPressDotCom }
 				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
+				isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
 				showExampleSuggestions={ showExampleSuggestions }
-				isEligibleVariantForDomainTest={ this.isEligibleVariantForDomainTest() }
 				suggestion={ initialQuery }
 				designType={ this.getDesignType() }
 				vendor={ getSuggestionsVendor( { isSignup: true, isDomainOnly: this.props.isDomainOnly } ) }
@@ -491,6 +501,9 @@ class DomainsStep extends React.Component {
 				vertical={ this.props.vertical }
 				onSkip={ this.handleSkip }
 				hideFreePlan={ this.handleSkip }
+				forceHideFreeDomainExplainerAndStrikeoutUi={
+					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+				}
 				isReskinned={ this.props.isReskinned }
 			/>
 		);
@@ -575,9 +588,7 @@ class DomainsStep extends React.Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		const subHeaderPropertyName = this.isEligibleVariantForDomainTest()
-			? 'domainsStepSubheaderTestCopy'
-			: 'domainsStepSubheader';
+		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
 		const onboardingSubHeaderCopy =
 			siteType &&
 			includes( [ 'onboarding', 'ecommerce-onboarding' ], flowName ) &&
@@ -599,9 +610,7 @@ class DomainsStep extends React.Component {
 			return translate( 'Your next big idea starts here' );
 		}
 
-		const headerPropertyName = this.isEligibleVariantForDomainTest()
-			? 'domainsStepHeaderTestCopy'
-			: 'domainsStepHeader';
+		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
 		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
 	}
@@ -640,12 +649,11 @@ class DomainsStep extends React.Component {
 			);
 		}
 
-		const stepContentClassName = classNames( 'domains__step-content', {
-			'domains__step-content-domain-step-test': this.isEligibleVariantForDomainTest(),
-		} );
-
 		return (
-			<div key={ this.props.step + this.props.stepSectionName } className={ stepContentClassName }>
+			<div
+				key={ this.props.step + this.props.stepSectionName }
+				className="domains__step-content domains__step-content-domain-step"
+			>
 				{ content }
 			</div>
 		);
@@ -779,6 +787,7 @@ export default connect(
 			isSitePreviewVisible: isSitePreviewVisible( state ),
 			sites: getSitesItems( state ),
 			isReskinned,
+			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
 		};
 	},
 	{
