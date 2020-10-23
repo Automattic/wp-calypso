@@ -269,6 +269,7 @@
 		"jest-enzyme": "^7.1.2",
 		"jest-junit": "^9.0.0",
 		"lerna": "^3.20.2",
+		"loader-utils": "^1.2.3",
 		"lodash": "^4.17.15",
 		"lunr": "^2.3.8",
 		"mixedindentlint": "^1.2.0",
