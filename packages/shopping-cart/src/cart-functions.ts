@@ -65,7 +65,7 @@ export function convertTempResponseCartToResponseCart( cart: TempResponseCart ):
 function isValidResponseCartProduct(
 	product: RequestCartProduct | ResponseCartProduct
 ): product is ResponseCartProduct {
-	return 'product_cost_integer' in product;
+	return 'uuid' in product;
 }
 
 export function removeItemFromResponseCart(
