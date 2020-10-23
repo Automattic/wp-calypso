@@ -16,7 +16,6 @@ import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
 import detectSurveys from 'calypso/lib/post-normalizer/rule-content-detect-surveys';
 import makeEmbedsSafe from 'calypso/lib/post-normalizer/rule-content-make-embeds-safe';
-import removeStyles from 'calypso/lib/post-normalizer/rule-content-remove-styles';
 import makeImagesSafe from 'calypso/lib/post-normalizer/rule-content-make-images-safe';
 import {
 	disableAutoPlayOnMedia,
@@ -106,7 +105,6 @@ const fastPostNormalizationRules = flow( [
 	safeImageProperties( READER_CONTENT_WIDTH ),
 	makeLinksSafe,
 	withContentDom( [
-		removeStyles,
 		removeElementsBySelector,
 		makeImagesSafe(),
 		makeEmbedsSafe,
