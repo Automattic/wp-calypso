@@ -11,6 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
+import { preventWidows } from 'calypso/lib/formatting';
 
 interface ExternalProps {
 	status?: string;
@@ -33,15 +34,17 @@ export const TimeMismatchWarning: FC< ExternalProps > = ( {
 
 	return (
 		<Notice status={ status }>
-			{ translate(
-				'This page reflects the time zone set on your site. ' +
-					'It looks like that does not match your current time zone. ' +
-					'{{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.',
-				{
-					components: {
-						SiteSettings: <a href={ settingsUrl } />,
-					},
-				}
+			{ preventWidows(
+				translate(
+					'This page reflects the time zone set on your site. ' +
+						'It looks like that does not match your current time zone. ' +
+						'{{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.',
+					{
+						components: {
+							SiteSettings: <a href={ settingsUrl } />,
+						},
+					}
+				)
 			) }
 		</Notice>
 	);

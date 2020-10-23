@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 /**
  * External dependencies
  */
@@ -47,7 +48,7 @@ describe( 'TimeMismatchWarning', () => {
 		<Localized(Notice)
 		  status="is-warning"
 		>
-		  This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
+		  This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
 		</Localized(Notice)>
 	` );
 	} );
