@@ -21,7 +21,7 @@
 	},
 	"scripts": {},
 	"peerDependencies": {
-		"webpack": "^4.44.1"
+		"webpack": "^4.44.2"
 	},
 	"devDependencies": {
 		"rimraf": "^3.0.0"
