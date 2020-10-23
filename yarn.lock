@@ -12204,10 +12204,10 @@ eslint-plugin-import@^2.22.1:
     resolve "^1.17.0"
     tsconfig-paths "^3.9.0"
 
-eslint-plugin-inclusive-language@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-inclusive-language/-/eslint-plugin-inclusive-language-1.2.0.tgz#968c873b64dd60b70b11ec9d231fd8b60ab98ba4"
-  integrity sha512-RNCQNqeMaiUT0nYpVEzdlF2ZTig7cU3C4wdt/6tzkfiD439DYH/QTRvwc73t2aiW5z9U7WntKXo3saTjqTiDYg==
+eslint-plugin-inclusive-language@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-inclusive-language/-/eslint-plugin-inclusive-language-1.2.1.tgz#57229372d21779ec11803b7353ac969a29583910"
+  integrity sha512-WFXME2g/rEm/ex9HCfptZXJVm6/IrBks4+0rZft24zve4RH196PPuCFvd36aidc2IaHrvVAZHeyahODc7ueoNw==
 
 eslint-plugin-jest@^23.20.0:
   version "23.20.0"
