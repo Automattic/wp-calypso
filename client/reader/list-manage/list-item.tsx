@@ -16,7 +16,7 @@ import {
 	deleteReaderListFeed,
 	deleteReaderListSite,
 	deleteReaderListTag,
-} from 'state/reader/lists/actions';
+} from 'calypso/state/reader/lists/actions';
 
 export default function ListItem( props: { item: Item; owner: string; list: any } ) {
 	const { item, owner, list } = props;

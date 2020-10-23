@@ -8,9 +8,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FollowButton from 'reader/follow-button';
+import FollowButton from 'calypso/reader/follow-button';
 import { recordFollowToggle } from './stats';
-import { DISCOVER_POST } from 'reader/follow-sources';
+import { DISCOVER_POST } from 'calypso/reader/follow-sources';
 
 class DiscoverFollowButton extends React.Component {
 	static propTypes = {

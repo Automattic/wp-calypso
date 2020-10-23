@@ -8,8 +8,8 @@ import { defer } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { trackPageLoad } from 'reader/controller-helper';
-import AsyncLoad from 'components/async-load';
+import { trackPageLoad } from 'calypso/reader/controller-helper';
+import AsyncLoad from 'calypso/components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
@@ -34,7 +34,7 @@ export function blogPost( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="blocks/reader-full-post"
+			require="calypso/blocks/reader-full-post"
 			blogId={ blogId }
 			postId={ postId }
 			referral={ referral }
@@ -62,7 +62,7 @@ export function feedPost( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="blocks/reader-full-post"
+			require="calypso/blocks/reader-full-post"
 			feedId={ feedId }
 			postId={ postId }
 			onClose={ closer }

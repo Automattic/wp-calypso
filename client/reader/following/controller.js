@@ -7,9 +7,9 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { sectionify } from 'lib/route';
-import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
-import AsyncLoad from 'components/async-load';
+import { sectionify } from 'calypso/lib/route';
+import { trackPageLoad, setPageTitle } from 'calypso/reader/controller-helper';
+import AsyncLoad from 'calypso/components/async-load';
 
 const analyticsPageTitle = 'Reader';
 
@@ -26,7 +26,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/following-manage"
+				require="calypso/reader/following-manage"
 				key="following-manage"
 				initialFollowUrl={ context.query.follow }
 				sitesQuery={ sitesQuery }

@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import QueryUserSettings from 'components/data/query-user-settings';
-import config from 'config';
-import getUserSetting from 'state/selectors/get-user-setting';
+import AsyncLoad from 'calypso/components/async-load';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import config from 'calypso/config';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } ) => {
 	return (
@@ -24,7 +24,7 @@ export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } 
 			{ shouldRenderAppPromo && (
 				<div className="sidebar__app-promo">
 					<AsyncLoad
-						require="blocks/app-promo"
+						require="calypso/blocks/app-promo"
 						placeholder={ null }
 						location="reader"
 						locale={ currentUserLocale }
