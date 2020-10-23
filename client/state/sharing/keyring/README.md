@@ -12,8 +12,8 @@ Get a list of keyring connections.
 
 ```js
 import { connect } from 'react-redux';
-import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 
 class QueryKeyringConnections extends Component {
 	componentWillMount() {
@@ -57,7 +57,7 @@ Selectors are intended to assist in extracting data from the global state tree f
 Returns an array of keyring connection objects.
 
 ```js
-import { getKeyringConnections } from 'state/sharing/keyring/selectors';
+import { getKeyringConnections } from 'calypso/state/sharing/keyring/selectors';
 
 const connections = getKeyringConnections( state );
 ```
@@ -67,7 +67,7 @@ const connections = getKeyringConnections( state );
 Returns a keyring connection object with a specified ID.
 
 ```js
-import { getKeyringConnectionById } from 'state/sharing/keyring/selectors';
+import { getKeyringConnectionById } from 'calypso/state/sharing/keyring/selectors';
 
 const connection = getKeyringConnectionById( state, 23353 );
 ```
@@ -77,7 +77,7 @@ const connection = getKeyringConnectionById( state, 23353 );
 Returns an array of keyring connection objects for a specified service.
 
 ```js
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
+import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 
 const twitterConnections = getKeyringConnectionsByName( state, 'twitter' );
 ```
@@ -87,7 +87,7 @@ const twitterConnections = getKeyringConnectionsByName( state, 'twitter' );
 Returns an array of keyring connection objects for a specific user.
 
 ```js
-import { getUserConnections } from 'state/sharing/keyring/selectors';
+import { getUserConnections } from 'calypso/state/sharing/keyring/selectors';
 
 const userConnections = getUserConnections( state, 344325 );
 ```
@@ -97,7 +97,7 @@ const userConnections = getUserConnections( state, 344325 );
 Returns true if keyring connections are currently being requested.
 
 ```js
-import { isKeyringConnectionsFetching } from 'state/sharing/keyring/selectors';
+import { isKeyringConnectionsFetching } from 'calypso/state/sharing/keyring/selectors';
 
 const isRequesting = isKeyringConnectionsFetching( state );
 ```

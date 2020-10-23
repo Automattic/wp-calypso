@@ -5,7 +5,7 @@ This component is used to display the detail of how the ratings of a plugin are 
 ## How to use
 
 ```js
-import PluginRatings from 'my-sites/plugins/plugin-ratings';
+import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings';
 
 function render() {
 	return <PluginRatings plugin={ this.props.plugin } barWidth={ 100 } />;

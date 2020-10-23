@@ -8,7 +8,7 @@ TextDiff should be passed an array of 'operations'. These operations might be ad
 In the following example the operations array represents a title rename by including the deletion of the old title and addition of a new title:
 
 ```jsx
-import TextDiff from 'components/text-diff';
+import TextDiff from 'calypso/components/text-diff';
 
 export default function RenamedTitle() {
 	const operations = [

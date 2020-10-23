@@ -8,7 +8,7 @@ EmptyContent is used when a customer has no data to show. This is an opportunity
 
 ```jsx
 // import the component
-import EmptyContentComponent from 'components/empty-content';
+import EmptyContentComponent from 'calypso/components/empty-content';
 
 // Render the component
 function show( context, next ) {
@@ -20,7 +20,7 @@ function show( context, next ) {
 ### As an inline component
 
 ```jsx
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 
 // Use it inline inside the render method of another component
 function render() {

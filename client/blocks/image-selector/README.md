@@ -9,7 +9,7 @@ Pass an array of image IDs that will be shown in the preview and preselected in 
 Changes to the selection of images will be passed back in various props for setting images, dropping images, and removing images. See the example.jsx file for a more complete example.
 
 ```jsx
-import ImageSelector from 'blocks/image-selector';
+import ImageSelector from 'calypso/blocks/image-selector';
 
 export default function MyFeaturedImages() {
 	return <ImageSelector imageIds={ [ 34, 105 ] } multiple />;

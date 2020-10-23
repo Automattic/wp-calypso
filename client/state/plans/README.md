@@ -32,7 +32,7 @@ import {
 	plansRequestSuccessAction,
 	plansRequestFailureAction,
 	requestPlans,
-} from 'state/plans/actions';
+} from 'calypso/state/plans/actions';
 
 dispatch( requestPlans() );
 

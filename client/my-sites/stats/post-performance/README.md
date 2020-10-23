@@ -5,7 +5,7 @@ This component creates an insights card that displays stats about the last post 
 ## How to use
 
 ```js
-import PostPerformance from 'my-sites/stats/post-performance';
+import PostPerformance from 'calypso/my-sites/stats/post-performance';
 
 function render() {
 	return <PostPerformance site={ site /*object*/ } />;

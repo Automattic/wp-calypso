@@ -5,7 +5,7 @@ This component is used to display the meta information of a single plugin. Inclu
 ## How to use
 
 ```js
-import PluginMeta from 'my-sites/plugins/plugin-meta';
+import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
 
 function render() {
 	return <PluginMeta plugin={ plugin } />;

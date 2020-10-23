@@ -11,7 +11,7 @@ Notices should be added by dispatching a notice action. See [notice actions](../
 Dispatching a notice from a component might look like this:
 
 ```js
-import { successNotices } from 'state/notices/actions';
+import { successNotices } from 'calypso/state/notices/actions';
 
 function MyComponent() {
 	return <button onClick={ this.props.successNotice( 'Objective achieved!' ) }>Click me!</button>;
@@ -27,7 +27,7 @@ It's unlikely you'll need to render GlobalNotices, because that will be handled 
 Rendering GlobalNotices is straightforward:
 
 ```js
-import GlobalNotices from 'components/global-notices';
+import GlobalNotices from 'calypso/components/global-notices';
 
 function Layout() {
 	return (

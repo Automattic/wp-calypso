@@ -39,7 +39,7 @@ Also reqires the `gaEventCategory` attribute.
 Turns into this even when opened:
 
 ```js
-import { gaRecordEvent } from 'lib/analytics/ga';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 gaRecordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + 'Opened' );
 ```

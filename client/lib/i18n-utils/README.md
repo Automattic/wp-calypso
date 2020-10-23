@@ -5,7 +5,7 @@ I18n-related utilities, for use both client- and server-side.
 ## Usage
 
 ```js
-import i18nUtils from 'lib/i18n-utils';
+import i18nUtils from 'calypso/lib/i18n-utils';
 ```
 
 ### Loading Waiting User Translations

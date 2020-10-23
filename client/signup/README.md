@@ -52,7 +52,7 @@ The React component for a step should be implemented in `/signup/steps/`, in its
 Steps must use the `SignupActions` module, by requiring it as an internal dependency:
 
 ```javascript
-import SignupActions from 'lib/signup/actions';
+import SignupActions from 'calypso/lib/signup/actions';
 ```
 
 `SignupActions` allows the Modular Framework to handle the data collected by a step. This means your step must include a UI element that allows users to move to the next step in the flow, and that the function handling this element must use the method `submitSignupStep` from `SignupActions`.
@@ -182,7 +182,7 @@ function render() {
 Make sure to require `SignupActions`:
 
 ```javascript
-import SignupActions from 'lib/signup/actions';
+import SignupActions from 'calypso/lib/signup/actions';
 ```
 
 ... and to create a function to handle what happens when the form is submitted:

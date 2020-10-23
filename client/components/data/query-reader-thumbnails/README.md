@@ -8,8 +8,8 @@ Render the component. It does not accept any children, nor does it render any el
 
 ```jsx
 import React from 'react';
-import QueryReaderThumbnails from 'components/data/query-reader-thumbnail';
-import { getThumbnailForIframe } from 'state/reader/thumbnails/selectors';
+import QueryReaderThumbnails from 'calypso/components/data/query-reader-thumbnail';
+import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
 
 function MyFeaturedAsset( { embedUrl, thumbnailUrl } ) {
 	return (

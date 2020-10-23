@@ -16,7 +16,7 @@ You'll need to declare `site` which is simply the current site object.
 You can optionally declare `version` to display what version is necessary (defaults to 3.4).
 
 ```jsx
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 
 <JetpackManageErrorPage template="updateJetpack" siteId={ jetpackSiteId } version="3.4" />;
 ```
@@ -30,7 +30,7 @@ As stated above, this component renders an `emptyContent` component by default. 
 If you initialize the component with a property `featureExample` containing jsx, it will be added in the bottom of the Jetpack Manage Error Page as an example of what the user could be viewing if there weren't any access errors.
 
 ```jsx
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
 
 // create the component using properties accepted by EmptyContent
 <JetpackManageErrorPage

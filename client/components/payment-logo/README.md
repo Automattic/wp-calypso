@@ -3,7 +3,7 @@
 ## Usage
 
 ```js
-import PaymentLogo from 'components/payment-logo';
+import PaymentLogo from 'calypso/components/payment-logo';
 
 <>
 	<p>Empty Placeholder</p>

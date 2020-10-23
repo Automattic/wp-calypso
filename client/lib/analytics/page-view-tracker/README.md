@@ -18,7 +18,7 @@ This component is aware of the selected site and, if the current URL contains a 
 ### Immediate Page View Tracking
 
 ```js
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 function render() {
 	return (

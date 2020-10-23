@@ -8,7 +8,7 @@ The exposed method expects to receive the current react element instance, and an
 
 ```js
 import React from 'react';
-import passToChildren from 'lib/react-pass-to-children';
+import passToChildren from 'calypso/lib/react-pass-to-children';
 
 export default class extends React.Component {
 	render() {

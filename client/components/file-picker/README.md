@@ -7,7 +7,7 @@ It is a very thin wrapper around
 ## How to use
 
 ```js
-import FilePicker from 'components/file-picker';
+import FilePicker from 'calypso/components/file-picker';
 
 function render() {
 	return (

@@ -59,8 +59,8 @@ The function to call when the action button is clicked.
 ---
 
 ```jsx
-import Timeline from 'components/timeline';
-import TimelineEvent from 'components/timeline/timeline-item';
+import Timeline from 'calypso/components/timeline';
+import TimelineEvent from 'calypso/components/timeline/timeline-item';
 
 export default class extends React.Component {
 	// ...

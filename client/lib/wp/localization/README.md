@@ -7,7 +7,7 @@ This module enables the extension of a `wpcom.js` instance to automatically mark
 The helper is already bound for the global instance of `wpcom.js` used in Calypso and should work automatically:
 
 ```js
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 wpcom
 	.site( siteId )

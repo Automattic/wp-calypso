@@ -31,7 +31,7 @@ To enable monitoring for a page, import and run `recordPlaceholdersTiming` as
 part of its load:
 
 ```js
-import { recordPlaceholdersTiming } from 'lib/perfmon';
+import { recordPlaceholdersTiming } from 'calypso/lib/perfmon';
 
 recordPlaceholdersTiming();
 ```

@@ -8,7 +8,7 @@ Render the component, passing `siteId`, `postId` and `fields`. It does not accep
 
 ```jsx
 import React from 'react';
-import QueryPostStats from 'components/data/query-post-stats';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
 
 export default function Component( { statValue } ) {
 	return (

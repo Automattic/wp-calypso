@@ -5,7 +5,7 @@ Provides an HTML `<head>` prefilled with boilerplate (such as `meta`s and `links
 ## Usage
 
 ```jsx
-import Head from 'components/head';
+import Head from 'calypso/components/head';
 
 <Head title="Calypso">
 	<meta property="myCustomMeta" content="foobar" />

@@ -5,7 +5,7 @@
 ## Usage
 
 ```jsx
-import SpinnerButton from 'components/spinner-button';
+import SpinnerButton from 'calypso/components/spinner-button';
 
 export default function MyComponent() {
 	return <SpinnerButton />;

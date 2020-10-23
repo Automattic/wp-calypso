@@ -49,7 +49,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import UsersStore from 'lib/users/store';
+import UsersStore from 'calypso/lib/users/store';
 
 export default class extends React.Component {
 	static displayName = 'yourComponent';

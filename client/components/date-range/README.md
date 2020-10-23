@@ -7,7 +7,7 @@ A DateRange component for displaying and selecting a range of dates using a pick
 First, display a `jsx` code block to show an example of usage, including import statements and a React component.
 
 ```jsx
-import DateRange from 'components/date-range';
+import DateRange from 'calypso/components/date-range';
 
 export default class extends React.Component {
 	render() {

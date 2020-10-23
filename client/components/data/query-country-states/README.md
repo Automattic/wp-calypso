@@ -8,7 +8,7 @@ Render the component, passing `countryCode`. It does not accept any children, no
 
 ```jsx
 import React from 'react';
-import QueryCountryStates from 'components/data/query-country-states';
+import QueryCountryStates from 'calypso/components/data/query-country-states';
 
 export default function MyStatesList( { countryStates } ) {
 	return (
