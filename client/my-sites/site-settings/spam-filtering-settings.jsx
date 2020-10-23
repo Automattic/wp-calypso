@@ -21,18 +21,18 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import Gridicon from 'calypso/components/gridicon';
 import SupportInfo from 'calypso/components/support-info';
 import ExternalLink from 'calypso/components/external-link';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
-import { isJetpackAntiSpam } from 'calypso/lib/products-values';
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
-import { getSiteProducts } from 'calypso/state/sites/selectors';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 } from 'calypso/lib/plans/constants';
+import { isJetpackAntiSpam } from 'calypso/lib/products-values';
 import { PRODUCT_JETPACK_ANTI_SPAM } from 'calypso/lib/products-values/constants';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import { getSiteProducts } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,
