@@ -18,6 +18,7 @@ import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';
 import 'calypso/state/data-layer/wpcom/marketing';
+import withSectionMessagePath from './with-section-message-path';
 
 /**
  * Style dependencies
@@ -133,4 +134,4 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( JITM );
+export default withSectionMessagePath( connect( mapStateToProps, mapDispatchToProps )( JITM ) );
