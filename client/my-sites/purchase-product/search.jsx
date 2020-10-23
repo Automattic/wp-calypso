@@ -125,11 +125,8 @@ export class SearchPurchase extends Component {
 		// Track that connection was started by button-click, so we can auto-approve at auth step.
 		persistSession( this.state.currentUrl );
 
-		if ( this.props.isRequestingSites ) {
-			this.setState( { waitingForSites: true } );
-		} else {
-			this.checkUrl( this.state.currentUrl, true );
-		}
+		// TODO: Look into fixing waitingForSites state handling.
+		this.checkUrl( this.state.currentUrl, true );
 	};
 
 	handleOnClickTos = () => this.props.recordTracksEvent( 'calypso_jpc_tos_link_click' );
