@@ -53,7 +53,49 @@ export interface ResponseCart {
 	blog_id: number | string;
 	create_new_blog: boolean;
 	cart_key: string;
-	products: ( TempResponseCartProduct | ResponseCartProduct )[];
+	products: ResponseCartProduct[];
+	total_tax_integer: number;
+	total_tax_display: string;
+	total_cost: number; // Please try not to use this
+	total_cost_integer: number;
+	total_cost_display: string;
+	coupon_savings_total_integer: number;
+	coupon_savings_total_display: string;
+	savings_total_integer: number;
+	savings_total_display: string;
+	sub_total_integer: number;
+	sub_total_display: string;
+	currency: string;
+	credits_integer: number;
+	credits_display: string;
+	allowed_payment_methods: string[];
+	coupon: string;
+	is_coupon_applied: boolean;
+	coupon_discounts_integer: number[];
+	locale: string;
+	is_signup: boolean;
+	messages?: ResponseCartMessages;
+	cart_generated_at_timestamp: number;
+	tax: {
+		location: {
+			country_code?: string;
+			postal_code?: string;
+			subdivision_code?: string;
+		};
+		display_taxes: boolean;
+	};
+}
+
+/**
+ * Local schema for response cart that can contain incomplete products. This
+ * schema is only used inside the reducer and will only differ from a
+ * ResponseCart if the cacheStatus is invalid.
+ */
+export interface TempResponseCart {
+	blog_id: number | string;
+	create_new_blog: boolean;
+	cart_key: string;
+	products: ( RequestCartProduct | ResponseCartProduct )[];
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_cost: number; // Please try not to use this
@@ -157,44 +199,6 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
-
-	// Temporary optional properties for the monthly pricing test
-	related_monthly_plan_cost_display?: string;
-	related_monthly_plan_cost_integer?: number;
-}
-
-/**
- * A way to add an item to the response cart with incomplete data while the data is loading.
- */
-export interface TempResponseCartProduct {
-	product_name: string | null;
-	product_slug: string;
-	product_id: number;
-	currency: string | null;
-	product_cost_integer: null;
-	product_cost_display: null;
-	item_subtotal_integer: null;
-	item_subtotal_display: null;
-	item_subtotal_monthly_cost_display: null;
-	item_subtotal_monthly_cost_integer: null;
-	item_original_cost_display: null;
-	item_original_cost_integer: null;
-	item_original_subtotal_display: null;
-	item_original_subtotal_integer: null;
-	is_domain_registration: boolean | null;
-	is_bundled: boolean | null;
-	is_sale_coupon_applied: boolean | null;
-	months_per_bill_period: number | null;
-	meta: string;
-	volume: number;
-	extra: ResponseCartProductExtra;
-	uuid: string;
-	cost: null;
-	price: null;
-	product_type: null;
-	included_domain_purchase_amount: null;
-	is_renewal: undefined;
-	subscription_id: undefined;
 
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
