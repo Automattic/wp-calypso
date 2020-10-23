@@ -11,17 +11,23 @@ import {
 	convertResponseCartToRequestCart,
 	convertRawResponseCartToResponseCart,
 } from './cart-functions';
-import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
+import {
+	TempResponseCart,
+	RequestCart,
+	ResponseCart,
+	CacheStatus,
+	ShoppingCartAction,
+} from './types';
 
 const debug = debugFactory( 'shopping-cart:use-cart-update-and-revalidate' );
 
 export default function useCartUpdateAndRevalidate(
 	cacheStatus: CacheStatus,
-	responseCart: ResponseCart,
+	responseCart: TempResponseCart,
 	setServerCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
-	const pendingResponseCart = useRef< ResponseCart >( responseCart );
+	const pendingResponseCart = useRef< TempResponseCart >( responseCart );
 
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
