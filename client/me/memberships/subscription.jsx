@@ -41,12 +41,11 @@ class Subscription extends React.Component {
 
 		return (
 			<Main className="memberships__subscription is-wide-layout">
-				<DocumentHead title={ translate( 'Other Sites' ) } />
+				<DocumentHead title={ translate( 'Subscription Details' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-
-				<HeaderCake backHref={ purchasesRoot + '/other' }>
+				<HeaderCake backHref={ purchasesRoot }>
 					{ subscription ? subscription.title : translate( 'All subscriptions' ) }
 				</HeaderCake>
 				{ stoppingStatus === 'start' && (

@@ -1,0 +1,66 @@
+.membership-item.card {
+	&.is-expired {
+		.membership-item__plan-icon,
+		.membership-item__title,
+		.membership-item__site {
+			opacity: 0.7;
+		}
+	}
+
+	.membership-item__wrapper {
+		display: flex;
+	}
+
+	.membership-item__details,
+	.membership-item__icon {
+		flex: 1;
+	}
+}
+
+.membership-item__icon {
+	margin: 0 8px 0 0;
+	max-width: 32px;
+	width: 32px;
+
+	.gridicon {
+		padding: 4px;
+		border-radius: 50%;
+		background: var( --color-neutral );
+		fill: var( --color-text-inverted );
+	}
+}
+
+.membership-item__term-label,
+.membership-item__site {
+	line-height: 14px;
+	margin-top: 2px;
+}
+
+.membership-item__title {
+	color: var( --color-text );
+	display: block;
+	font-size: $font-body-small;
+	line-height: 1.2em;
+	margin: 4px 20px 4px 0;
+	overflow: hidden;
+	position: relative;
+	white-space: nowrap;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		font-size: $font-title-small;
+		max-width: none;
+	}
+}
+
+.membership-item__site {
+	color: var( --color-text-subtle );
+	font-size: $font-body-extra-small;
+	margin: 0 0 4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.membership-item__term-label {
+	color: var( --color-neutral-70 );
+	font-size: $font-body-extra-small;
+}
