@@ -7,7 +7,7 @@ Nothing will appear if we don't detect a discrepancy.
 ## How to use
 
 ```jsx
-import TimeMismatchWarning from 'blocks/time-mismatch-warning';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 const Test = () => (
 	<>

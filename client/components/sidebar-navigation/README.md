@@ -7,8 +7,8 @@ This component is used to display the mobile sidebar navigation header at the to
 Put the component in your `Main` component, and wrap it around any components you want it to display as its children. It relies on the [`document-head`](/client/state/document-head) Redux subtree, whose fields you can set through the [`DocumentHead`](/client/components/data/document-head) component. It handles detecting the selected site.
 
 ```js
-import SidebarNavigation from 'components/sidebar-navigation';
-import Gridicon from 'components/gridicons';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import Gridicon from 'calypso/components/gridicons';
 
 function render() {
 	return (

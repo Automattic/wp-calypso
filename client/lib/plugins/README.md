@@ -87,7 +87,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PluginsStore from 'lib/plugins/store';
+import PluginsStore from 'calypso/lib/plugins/store';
 
 export default class extends React.Component {
 	static displayName = 'yourComponent';
@@ -181,7 +181,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
+import PluginsActions from 'calypso/lib/plugins/actions';
 
 export default class extends React.Component {
 	static displayName = 'yourComponent';

@@ -61,7 +61,7 @@ First we'll need to create a directory tour, under `tours`. In there, we create 
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
+import { and } from 'calypso/layout/guided-tours/utils';
 
 export default {};
 ```
@@ -85,8 +85,12 @@ import {
 	ButtonRow,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/guided-tours/contexts';
+} from 'calypso/layout/guided-tours/config-elements';
+import {
+	isNewUser,
+	isEnabled,
+	isSelectedSitePreviewable,
+} from 'calypso/state/guided-tours/contexts';
 
 export const TutorialSitePreviewTour = makeTour();
 ```

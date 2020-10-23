@@ -37,8 +37,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FollowersStore from 'lib/followers/wpcom-followers-store';
-import FollowersActions from 'lib/followers/actions';
+import FollowersStore from 'calypso/lib/followers/wpcom-followers-store';
+import FollowersActions from 'calypso/lib/followers/actions';
 
 export default class extends React.Component {
 	static displayName = 'yourComponent';

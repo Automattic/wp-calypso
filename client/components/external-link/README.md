@@ -8,7 +8,7 @@ External Link is a React component for rendering an external link.
 
 ```jsx
 import React from 'react';
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 
 class MyComponent extends React.Component {
 	render() {
@@ -43,7 +43,7 @@ and is capable of recording Tracks events.
 
 ```jsx
 import React from 'react';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
 class MyComponent extends React.Component {
 	render() {

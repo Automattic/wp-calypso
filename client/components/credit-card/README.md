@@ -9,7 +9,7 @@ The `CreditCard` component serves as a container for a selectable credit card li
 Example credit card selection list:
 
 ```jsx
-import CreditCard from 'components/credit-card';
+import CreditCard from 'calypso/components/credit-card';
 
 export default ( { cards, selectedId, onSelectCard } ) => {
 	return cards.map( ( card ) => (
@@ -41,7 +41,7 @@ The `StoredCard` component is a representation of a single credit card, used int
 Example usage within `<CreditCard>`:
 
 ```jsx
-import StoredCard from 'components/stored-card';
+import StoredCard from 'calypso/components/stored-card';
 
 export default ( cardData, onRemoveCard ) => {
 	return (

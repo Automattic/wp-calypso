@@ -6,7 +6,7 @@ back to `localStorage` otherwise.
 ## Usage
 
 ```js
-import { getStoredItem, setStoredItem, clearStorage } from 'lib/browser-storage';
+import { getStoredItem, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
 
 setStoredItem( 'my-stored-key', { complex: value } ).then( () => doSomething() );
 getStoredItem( 'my-stored-key' ).then( ( val ) => doSomethingWithVal( val ) );
@@ -22,7 +22,7 @@ a volatile memory store instead. The `bypassPersistentStorage` method exists to 
 on and off.
 
 ```js
-import { setStoredItem, bypassPersistentStorage } from 'lib/browser-storage';
+import { setStoredItem, bypassPersistentStorage } from 'calypso/lib/browser-storage';
 
 async function demo() {
 	// Use persistent storage.

@@ -9,7 +9,7 @@ These tools will automatically record page views to both Google Analytics and Tr
 ### `PageViewTracker`
 
 ```js
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 function render() {
 	return (
@@ -30,7 +30,7 @@ For more information about `PageViewTracker`, refer to [its own documentation](h
 _Note: Unless you have a strong reason to record a page view with Redux, you should use the `PageViewTracker` component instead._
 
 ```js
-import { recordPageView } from 'state/analytics/actions';
+import { recordPageView } from 'calypso/state/analytics/actions';
 
 dispatch( recordPageView( '/section/page', 'My Cool Section > My Cool Page' ) );
 ```
@@ -40,7 +40,7 @@ dispatch( recordPageView( '/section/page', 'My Cool Section > My Cool Page' ) );
 _Note: Unless you have a strong reason to directly record a page view, you should use the `PageViewTracker` component instead._
 
 ```js
-import { recordPageView } from 'lib/analytics/page-view';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 
 recordPageView( '/section/page', 'My Cool Section > My Cool Page' );
 ```

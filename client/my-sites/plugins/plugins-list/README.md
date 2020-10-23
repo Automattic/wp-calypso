@@ -5,7 +5,7 @@ This component is used to represent a list `PluginItem`s, with a `PluginsListHea
 ## How to use
 
 ```jsx
-import PluginsList from 'my-sites/plugins/plugins-list';
+import PluginsList from 'calypso/my-sites/plugins/plugins-list';
 
 return (
 	<PluginsList

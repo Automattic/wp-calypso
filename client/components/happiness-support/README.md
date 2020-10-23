@@ -6,7 +6,7 @@ This component renders a card presenting our support resources, including links 
 
 ```js
 import React from 'react';
-import HappinessSupport from 'components/happiness-support';
+import HappinessSupport from 'calypso/components/happiness-support';
 
 export default () => {
 	return (

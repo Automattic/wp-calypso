@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `postIds`. It does not accept any chi
 
 ```jsx
 import React from 'react';
-import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
+import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
 
 export default function ViewCount( { viewCount } ) {
 	return (

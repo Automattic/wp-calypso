@@ -8,7 +8,7 @@ In most cases, the component can be treated much like any other text input eleme
 
 ```jsx
 import React from 'react';
-import ClipboardButtonInput from 'components/clipboard-button-input';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 
 export default function MyComponent() {
 	return <ClipboardButtonInput value="https://example.wordpress.com/" />;

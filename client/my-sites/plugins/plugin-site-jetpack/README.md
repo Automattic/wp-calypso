@@ -5,7 +5,7 @@ This component is used to display a single instance of a plugin within a jetpack
 ## How to use
 
 ```js
-import PluginSiteJetpack from 'my-sites/plugins/plugin-site/plugin-site-jetpack';
+import PluginSiteJetpack from 'calypso/my-sites/plugins/plugin-site/plugin-site-jetpack';
 
 function render() {
 	return <PluginSiteJetpack site={ site } plugin={ plugin } notices={ notices } />;

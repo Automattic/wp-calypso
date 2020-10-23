@@ -5,7 +5,7 @@ The `StatsSparkline` block renders an image of a chart representing hourly views
 ## Usage
 
 ```jsx
-import StatsSparkline from 'blocks/stats-sparkline';
+import StatsSparkline from 'calypso/blocks/stats-sparkline';
 
 <StatsSparkline className="my-awesome-component__sparkline" siteId="777" />;
 ```

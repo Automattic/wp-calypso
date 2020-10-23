@@ -119,10 +119,10 @@ Let's look at a full example:
 /**
  * Internal dependencies
  */
-import { addSplines } from 'state/splines/actions';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { addSplines } from 'calypso/state/splines/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * Transform the API response into consumble data

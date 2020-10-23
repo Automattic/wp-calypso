@@ -7,7 +7,7 @@ Accordion is a React component to display collapsible content panels.
 At a minimum, you must provide a `title` for your Accordion, and a child or set of children to be shown in the expanded panel.
 
 ```jsx
-import Accordion from 'components/accordion';
+import Accordion from 'calypso/components/accordion';
 
 export default function MyComponent() {
 	return (

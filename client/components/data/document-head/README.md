@@ -8,7 +8,7 @@ Render the component, passing `title`, `skipTitleFormatting`, `unreadCount`, `li
 
 ```jsx
 import React from 'react';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 
 export default function HomeSection() {
 	const count = 123;

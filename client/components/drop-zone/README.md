@@ -10,7 +10,7 @@ Render the component in the context of a parent element which is assigned a `rel
 
 ```jsx
 import React, { Component } from 'react';
-import DropZone from 'components/drop-zone';
+import DropZone from 'calypso/components/drop-zone';
 
 class MyComponent extends Component {
 	onFilesDrop( files ) {

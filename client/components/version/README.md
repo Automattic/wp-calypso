@@ -6,7 +6,7 @@ Version is a React component for rendering a version number
 
 ```jsx
 import React from 'react';
-import Version from 'components/version';
+import Version from 'calypso/components/version';
 
 class MyComponent extends React.Component {
 	render() {

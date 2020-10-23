@@ -5,7 +5,7 @@ This component is used to implement toggle switches.
 ## How to use
 
 ```js
-import FormToggle from 'components/forms/form-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle';
 
 export default function MyComponent() {
 	return (

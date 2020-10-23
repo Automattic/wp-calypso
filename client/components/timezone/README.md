@@ -5,7 +5,7 @@ Select timezone react component.
 ---
 
 ```jsx
-import Timezone from 'components/timezone';
+import Timezone from 'calypso/components/timezone';
 
 export default class extends React.Component {
 	// ...

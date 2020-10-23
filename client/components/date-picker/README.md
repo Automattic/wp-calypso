@@ -8,7 +8,7 @@ React component used to display a Date Picker.
 
 ```js
 import React from 'react';
-import DatePicker from 'components/date-picker';
+import DatePicker from 'calypso/components/date-picker';
 
 export default class extends React.Component {
 	// ...

@@ -5,7 +5,7 @@ This is a [`Card` component](../../components/card) that has a call-to-action bu
 ## Usage
 
 ```jsx
-import ActionCard from 'components/action-card';
+import ActionCard from 'calypso/components/action-card';
 
 function render() {
 	return (

@@ -28,7 +28,7 @@ Then in the component file, enhance with `urlSearch`:
 /**
  * Internal dependencies
  */
-import urlSearch from 'lib/url-search';
+import urlSearch from 'calypso/lib/url-search';
 
 class SomeComponentWithSearch extends Component {
 	/*...*/

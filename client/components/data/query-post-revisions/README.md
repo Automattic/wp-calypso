@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `postId`. It does not accept any chil
 
 ```jsx
 import React from 'react';
-import QueryPostRevisions from 'components/data/query-post-revisions';
+import QueryPostRevisions from 'calypso/components/data/query-post-revisions';
 
 export default function PostRevisions( { revisions } ) {
 	return (

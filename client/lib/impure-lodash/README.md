@@ -17,7 +17,7 @@ In this new module we export a single object instead of separate named exports.
 When importing this works the same way…
 
 ```js
-import impureLodash from 'lib/impure-lodash';
+import impureLodash from 'calypso/lib/impure-lodash';
 const { uniqueId } = impureLodash;
 ```
 

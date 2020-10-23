@@ -10,8 +10,8 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
-import getSiteMonitorSettings from 'state/selectors/get-site-monitor-settings';
+import QuerySiteMonitorSettings from 'calypso/components/data/query-site-monitor-settings';
+import getSiteMonitorSettings from 'calypso/state/selectors/get-site-monitor-settings';
 
 function ExampleSiteComponent( { siteMonitorSettings, translate } ) {
 	return (

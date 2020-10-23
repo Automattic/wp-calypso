@@ -8,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import MyJetpackModulesListItem from './list-item';
 
 export default function MyJetpackModulesList( { jetpackModules } ) {

@@ -5,7 +5,7 @@ This component is a wrapper module for interacting with the wpcom.js `/me` endpo
 ## User
 
 ```js
-import user from 'lib/user';
+import user from 'calypso/lib/user';
 
 function clearUser() {
 	user().clear();
@@ -31,7 +31,7 @@ Clears user stored data and handles relevant redirects based on type of authenti
 ## UserUtilities
 
 ```js
-import user from 'lib/user/utilities';
+import user from 'calypso/lib/user/utilities';
 ```
 
 ### `UserUtilities#logout()`

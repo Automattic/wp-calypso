@@ -9,7 +9,7 @@ and optional actions buttons.
 import React from 'react';
 import { localize } from 'i18n-calypso';
 
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
 
 const MyHeader = ( { translate } ) => (
