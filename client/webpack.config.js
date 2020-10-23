@@ -10,7 +10,6 @@
 const path = require( 'path' );
 const fs = require( 'fs' );
 const webpack = require( 'webpack' );
-const AssetsWriter = require( './server/bundler/assets-writer' );
 const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
@@ -34,13 +33,14 @@ const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './webpack-utils/extensions' );
-const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
-const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
-const ExtractManifestPlugin = require( './webpack-utils/extract-manifest-plugin' );
+const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
+const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const ExtractManifestPlugin = require( '../build-tools/webpack/extract-manifest-plugin' );
+const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js/index.js.js' );
 
 /**
  * Internal variables
@@ -234,7 +234,7 @@ const webpackConfig = {
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+				loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
 				},

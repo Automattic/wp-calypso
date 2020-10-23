@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' ); // eslint-disable-line
+const fs = require( 'fs' );
 const path = require( 'path' );
 
 /**

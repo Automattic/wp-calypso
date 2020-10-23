@@ -6,7 +6,7 @@ const { getOptions } = require( 'loader-utils' );
 /**
  * Internal dependencies
  */
-const config = require( '../config' );
+const config = require( '../../client/server/config' );
 
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
