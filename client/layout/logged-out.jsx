@@ -17,10 +17,9 @@ import notices from 'notices';
 import OauthClientMasterbar from 'layout/masterbar/oauth-client';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client, showOAuth2Layout } from 'state/oauth2-clients/ui/selectors';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
 import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import { getSection, masterbarIsVisible } from 'state/ui/selectors';
+import { masterbarIsVisible } from 'state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import GdprBanner from 'blocks/gdpr-banner';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
@@ -41,12 +40,12 @@ const LayoutLoggedOut = ( {
 	oauth2Client,
 	primary,
 	secondary,
-	section,
+	sectionGroup,
+	sectionName,
+	sectionTitle,
 	redirectUri,
 	useOAuth2Layout,
 } ) => {
-	const sectionGroup = get( section, 'group', null );
-	const sectionName = get( section, 'name', null );
 	const isCheckout = sectionName === 'checkout';
 
 	const classes = {
@@ -93,8 +92,8 @@ const LayoutLoggedOut = ( {
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
-				title={ section.title }
-				sectionName={ section.name }
+				title={ sectionTitle }
+				sectionName={ sectionName }
 				isCheckout={ isCheckout }
 				redirectUri={ redirectUri }
 			/>
@@ -137,15 +136,16 @@ LayoutLoggedOut.propTypes = {
 	showOAuth2Layout: PropTypes.bool,
 };
 
-export default connect( ( state ) => {
-	const section = getSection( state );
-	const currentRoute = getCurrentRoute( state );
+export default connect( ( state, { currentSection, currentRoute } ) => {
+	const sectionGroup = currentSection?.group ?? null;
+	const sectionName = currentSection?.name ?? null;
+	const sectionTitle = currentSection?.title ?? '';
 	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
 	const isGutenboardingLogin = startsWith( currentRoute, '/log-in/new' );
 	const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 	const noMasterbarForRoute = isJetpackLogin || isGutenboardingLogin || isJetpackWooDnaFlow;
 	const isPopup = '1' === get( getCurrentQueryArguments( state ), 'is_popup' );
-	const noMasterbarForSection = 'signup' === section.name || 'jetpack-connect' === section.name;
+	const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 	const isJetpackWooCommerceFlow =
 		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
 	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
@@ -160,7 +160,9 @@ export default connect( ( state ) => {
 		wccomFrom,
 		masterbarIsHidden:
 			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
-		section,
+		sectionGroup,
+		sectionName,
+		sectionTitle,
 		oauth2Client: getCurrentOAuth2Client( state ),
 		useOAuth2Layout: showOAuth2Layout( state ),
 	};
