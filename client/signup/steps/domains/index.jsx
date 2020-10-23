@@ -333,6 +333,8 @@ class DomainsStep extends React.Component {
 
 		if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
 			this.props.goToNextStep( 'onboarding-secure-your-brand' );
+		} else if ( this.props.flowName === 'onboarding-secure-your-brand' ) {
+			this.props.goToNextStep( 'onboarding' );
 		} else {
 			this.props.goToNextStep();
 		}
