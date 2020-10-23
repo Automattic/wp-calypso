@@ -39,7 +39,7 @@ import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { editMedia, deleteMedia, addExternalMedia } from 'state/media/thunks';
-import { setMediaLibrarySelectedItems, changeMediaSource } from 'state/media/actions';
+import { setMediaLibrarySelectedItems, changeMediaSource, setQuery } from 'state/media/actions';
 import ImageEditor from 'blocks/image-editor';
 import VideoEditor from 'blocks/video-editor';
 import MediaModalDialog from './dialog';
@@ -177,6 +177,7 @@ export class EditorMediaModal extends Component {
 				// Reset the query so that we're adding the new media items to the correct
 				// list, with no external source.
 				MediaActions.setQuery( site.ID, {} );
+				this.props.setQuery( site.ID, {} );
 				this.props.addExternalMedia( selectedMedia, site, originalSource );
 			}
 		);
@@ -202,6 +203,7 @@ export class EditorMediaModal extends Component {
 			// This has to happen _after_ the external files are added, or else they
 			// don't show up.
 			MediaActions.setQuery( site.ID, {} );
+			this.props.setQuery( site.ID, {} );
 		}
 	}
 
@@ -640,6 +642,7 @@ export default connect(
 		recordEditorStat,
 		editMedia,
 		setMediaLibrarySelectedItems,
+		setQuery,
 		addExternalMedia,
 		changeMediaSource,
 	}
