@@ -79,9 +79,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		await this.completeTaxDetailsForCreditCard( { cardPostCode, cardCountryCode } );
 
 		const creditCardHandleSelector = By.css( 'label[for="card"]' );
-		if ( currentScreenSize() === 'mobile' ) {
-			await driverHelper.scrollIntoView( this.driver, creditCardHandleSelector );
-		}
+		await driverHelper.scrollIntoView( this.driver, creditCardHandleSelector );
 
 		// Sometimes the credit card form will be closed and it will require a click to be opened.
 		// This can happen when users have a credit card already associated with their account.
