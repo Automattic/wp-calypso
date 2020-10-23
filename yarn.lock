@@ -59,6 +59,13 @@
   optionalDependencies:
     chokidar "^2.1.8"
 
+"@babel/code-frame@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
+  integrity sha512-OfC2uemaknXr87bdLUkWog7nYuliM9Ij5HUcajsVcMCpQrcLmtxRbVFTIqmcSkSeYRBFBRxs2FiUqFJDLdiebA==
+  dependencies:
+    "@babel/highlight" "^7.0.0"
+
 "@babel/code-frame@7.5.5":
   version "7.5.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.5.5.tgz#bc0782f6d69f7b7d49531219699b988f669a8f9d"
@@ -1529,6 +1536,14 @@
   integrity sha512-tAag0jEcjwH+P2quUfipd7liWCNX2F8NvYjQp2wtInsZxnMlypdw0FtAOLxtvvkO+GSRRbmNi8m/5y42PQJYCQ==
   dependencies:
     "@hapi/hoek" "^8.3.0"
+
+"@ianvs/eslint-stats@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ianvs/eslint-stats/-/eslint-stats-2.0.0.tgz#068a4a1508cfdfc21fd0b9931ae0921c5053ac29"
+  integrity sha512-DnIVVAiXR4tfWERTiQxr1Prrs/uFEbC1C4gTGORMvbF4k7ENyVQeLcoUfNyhlAj2MB/OeorCrN3wSnYuDOUS6Q==
+  dependencies:
+    chalk "^2.4.2"
+    lodash "^4.17.15"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
@@ -7155,7 +7170,7 @@ axobject-query@^2.0.2:
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-2.1.2.tgz#2bdffc0371e643e5f03ba99065d5179b9ca79799"
   integrity sha512-ICt34ZmrVt8UQnvPl6TVyDTkmhXmAyAT4Jh5ugfGUX4MOrZ+U/ZY6/sdylRw3qGNr9Ub5AJsaHeDMzNLehRdOQ==
 
-babel-code-frame@6.26.0, babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
+babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-code-frame/-/babel-code-frame-6.26.0.tgz#63fd43f7dc1e3bb7ce35947db8fe369a3f58c74b"
   integrity sha1-Y/1D99weO7fONZR9uP42mj9Yx0s=
@@ -12055,16 +12070,16 @@ eslint-filtered-fix@^0.1.1:
   dependencies:
     optionator "^0.8.2"
 
-eslint-formatter-friendly@^6.0.0:
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-formatter-friendly/-/eslint-formatter-friendly-6.0.0.tgz#8363888f7b50f992dfaed72a849a604fc97d598f"
-  integrity sha512-fOBwGn2r8BPQ1KSKyVzjXP8VFxJ2tWKxxn2lIF+k1ezN/pFB44HDlrn5kBm1vxbyyRa/LC+1vHJwc7WETUAZ2Q==
+eslint-formatter-friendly@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-formatter-friendly/-/eslint-formatter-friendly-7.0.0.tgz#32a4998ababa0a39994aed629b831fda7dabc864"
+  integrity sha512-WXg2D5kMHcRxIZA3ulxdevi8/BGTXu72pfOO5vXHqcAfClfIWDSlOljROjCSOCcKvilgmHz1jDWbvFCZHjMQ5w==
   dependencies:
-    babel-code-frame "6.26.0"
-    chalk "^2.0.1"
-    extend "^3.0.0"
-    strip-ansi "^4.0.0"
-    text-table "^0.2.0"
+    "@babel/code-frame" "7.0.0"
+    chalk "2.4.2"
+    extend "3.0.2"
+    strip-ansi "5.2.0"
+    text-table "0.2.0"
 
 eslint-import-resolver-node@^0.3.2:
   version "0.3.3"
@@ -12082,18 +12097,18 @@ eslint-module-utils@^2.4.1:
     debug "^2.6.9"
     pkg-dir "^2.0.0"
 
-eslint-nibble@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-nibble/-/eslint-nibble-5.1.0.tgz#f279b6ae0d60a61636c7f95142bdd43f913f68e2"
-  integrity sha512-wgmhwlMaNBbaDHrxg8/Os0LCOOatfzy6IaU07HFk6/UirfsTCqD9XoH0+9UNk2V16uPZXgLSiUIwGBtxliXnHw==
+eslint-nibble@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-nibble/-/eslint-nibble-6.0.0.tgz#66e82f68710c59e2ab0b5f4688bb941cc1ca7222"
+  integrity sha512-MmhcXSSHsdivi5GLny3wtEg+ZjUe2Hw3AxADKw6y6WfeWIjYnqYOaXPfrhzjEL4hiiv4jn9qSFAEZxXi7FNYRQ==
   dependencies:
-    chalk "^2.4.1"
+    "@ianvs/eslint-stats" "^2.0.0"
+    chalk "^2.4.2"
     eslint-filtered-fix "^0.1.1"
-    eslint-formatter-friendly "^6.0.0"
-    eslint-stats ianvs/eslint-stats#cb1ff8251b50c7f0cb431a2b395431ebfdeb10c8
+    eslint-formatter-friendly "^7.0.0"
     eslint-summary "^1.0.0"
-    inquirer "^6.2.0"
-    optionator "^0.8.2"
+    inquirer "7.0.1 - 7.2.0"
+    optionator "^0.8.3"
 
 eslint-plugin-import@^2.20.0:
   version "2.20.0"
@@ -12245,13 +12260,6 @@ eslint-scope@^5.0.0:
   dependencies:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
-
-eslint-stats@ianvs/eslint-stats#cb1ff8251b50c7f0cb431a2b395431ebfdeb10c8:
-  version "1.0.0"
-  resolved "https://codeload.github.com/ianvs/eslint-stats/tar.gz/cb1ff8251b50c7f0cb431a2b395431ebfdeb10c8"
-  dependencies:
-    chalk "^2.4.1"
-    lodash "^4.17.4"
 
 eslint-summary@^1.0.0:
   version "1.0.0"
@@ -12746,7 +12754,7 @@ extend-shallow@^3.0.0, extend-shallow@^3.0.2:
     assign-symbols "^1.0.0"
     is-extendable "^1.0.1"
 
-extend@^3.0.0, extend@~3.0.2:
+extend@3.0.2, extend@^3.0.0, extend@~3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
   integrity sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==
@@ -15285,6 +15293,25 @@ inquirer@6.5.0:
     rxjs "^6.4.0"
     string-width "^2.1.0"
     strip-ansi "^5.1.0"
+    through "^2.3.6"
+
+"inquirer@7.0.1 - 7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-7.2.0.tgz#63ce99d823090de7eb420e4bb05e6f3449aa389a"
+  integrity sha512-E0c4rPwr9ByePfNlTIB8z51kK1s2n6jrHuJeEHENl/sbq2G/S1auvibgEwNR4uSyiU+PiYHqSwsgGiXjG8p5ZQ==
+  dependencies:
+    ansi-escapes "^4.2.1"
+    chalk "^3.0.0"
+    cli-cursor "^3.1.0"
+    cli-width "^2.0.0"
+    external-editor "^3.0.3"
+    figures "^3.0.0"
+    lodash "^4.17.15"
+    mute-stream "0.0.8"
+    run-async "^2.4.0"
+    rxjs "^6.5.3"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
     through "^2.3.6"
 
 inquirer@^6.2.0:
