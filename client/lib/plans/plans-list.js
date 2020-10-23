@@ -120,8 +120,8 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
 	getSignupFeatures: () => [
-		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_DOMAIN,
+		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_THEMES,
 	],
 	getBlogSignupFeatures: () => [
@@ -139,8 +139,8 @@ const getPlanPersonalDetails = () => ( {
 	getInferiorHiddenFeatures: () => [],
 	// Features only available for annual plans
 	getAnnualPlansOnlyFeatures: () => [
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 		constants.FEATURE_FREE_DOMAIN,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
 	],
 } );
 
