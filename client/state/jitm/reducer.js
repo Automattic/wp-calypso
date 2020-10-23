@@ -6,13 +6,13 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 export const storeJITM = ( state = {}, { type, jitms } ) => ( type === JITM_SET ? jitms : state );
 
-const jitmCache = ( state = null, action ) => {
-	if ( action.type === JITM_SET ) {
-		if ( ! action.jitms || ! action.jitms.length ) {
+const jitmCache = ( state = null, { type, jitms } ) => {
+	if ( type === JITM_SET ) {
+		if ( ! jitms || ! jitms.length ) {
 			return null;
 		}
-
-		return action.jitms[ 0 ];
+		// Cache the first item only
+		return jitms[ 0 ];
 	}
 	return state;
 };
