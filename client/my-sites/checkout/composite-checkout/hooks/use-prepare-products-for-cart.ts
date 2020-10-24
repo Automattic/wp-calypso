@@ -362,7 +362,9 @@ function useAddProductFromSlug( {
 				?.split( ',' )
 				// Special treatment for Jetpack Search products
 				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) )
-				// Get the product information if it exists, and keep a reference to its product alias
+				// Get the product information if it exists, and keep a reference to
+				// its product alias which we may need to get additional information like
+				// the domain name or theme (eg: 'theme:ovation').
 				.map( ( productAlias ) => {
 					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
 					return validProduct ? { ...validProduct, product_alias: productAlias } : validProduct;
@@ -466,14 +468,14 @@ function useFetchPlansIfNotLoaded() {
 
 // Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
 function getProductSlugFromAlias( productAlias: string ): string {
-	if ( productAlias?.startsWith?.( 'domain-mapping:' ) ) {
+	if ( productAlias.startsWith( 'domain-mapping:' ) ) {
 		return 'domain_map';
 	}
-	if ( productAlias?.startsWith?.( 'theme:' ) ) {
+	if ( productAlias.startsWith( 'theme:' ) ) {
 		return 'premium_theme';
 	}
-	if ( productAlias === 'concierge-session' ) {
-		return 'concierge-session';
+	if ( productAlias === 'no-ads' ) {
+		return 'no-adverts/no-adverts.php';
 	}
 	return productAlias;
 }
