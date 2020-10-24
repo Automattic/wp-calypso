@@ -2,10 +2,11 @@
  * External dependencies
  */
 import { useEffect, useMemo, useReducer } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { RequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct } from '@automattic/shopping-cart';
+import { createRequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -18,11 +19,8 @@ import {
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from 'calypso/lib/products-values/constants';
-import { requestPlans } from 'calypso/state/plans/actions';
-import { getPlanBySlug, getPlans, isRequestingPlans } from 'calypso/state/plans/selectors';
+import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
-import { createItemToAddToCart } from '../add-items';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
@@ -46,27 +44,21 @@ function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined 
 }
 
 export default function usePrepareProductsForCart( {
-	siteId,
 	productAliasFromUrl: productAlias,
 	purchaseId: originalPurchaseId,
 	isJetpackNotAtomic,
 	isPrivate,
 }: {
-	siteId: number;
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
 } ): PreparedProductsForCart {
-	const planSlug = useSelector( ( state ) =>
-		productAlias ? getUpgradePlanSlugFromPath( state, siteId, productAlias ) : null
-	);
-
 	const initializePreparedProductsState = (
 		initialState: PreparedProductsForCart
 	): PreparedProductsForCart => ( {
 		...initialState,
-		isLoading: !! ( planSlug || productAlias ),
+		isLoading: !! productAlias,
 	} );
 	const [ state, dispatch ] = useReducer(
 		preparedProductsReducer,
@@ -81,23 +73,15 @@ export default function usePrepareProductsForCart( {
 	);
 
 	useFetchProductsIfNotLoaded();
-	useFetchPlansIfNotLoaded();
 
 	const addHandler = chooseAddHandler( {
 		isLoading: state.isLoading,
 		originalPurchaseId,
-		planSlug,
 		productAliasFromUrl: productAlias,
 	} );
 
-	// Only one of these three should ever operate. The others should bail if
-	// they think another hook will handle the data.
-	useAddPlanFromSlug( {
-		planSlug,
-		dispatch,
-		isJetpackNotAtomic,
-		addHandler,
-	} );
+	// Only one of these should ever operate. The others should bail if they
+	// think another hook will handle the data.
 	useAddProductFromSlug( {
 		productAlias,
 		dispatch,
@@ -147,17 +131,15 @@ function preparedProductsReducer(
 	}
 }
 
-type AddHandler = 'addPlanFromSlug' | 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
+type AddHandler = 'addProductFromSlug' | 'addRenewalItems' | 'doNotAdd';
 
 function chooseAddHandler( {
 	isLoading,
 	originalPurchaseId,
-	planSlug,
 	productAliasFromUrl,
 }: {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
-	planSlug: string | null;
 	productAliasFromUrl: string | null | undefined;
 } ): AddHandler {
 	if ( ! isLoading ) {
@@ -166,10 +148,6 @@ function chooseAddHandler( {
 
 	if ( isLoading && originalPurchaseId ) {
 		return 'addRenewalItems';
-	}
-
-	if ( isLoading && ! originalPurchaseId && planSlug ) {
-		return 'addPlanFromSlug';
 	}
 
 	if ( isLoading && ! originalPurchaseId && productAliasFromUrl ) {
@@ -267,73 +245,6 @@ function useAddRenewalItems( {
 	] );
 }
 
-function useAddPlanFromSlug( {
-	planSlug,
-	dispatch,
-	isJetpackNotAtomic,
-	addHandler,
-}: {
-	planSlug: string | null | undefined;
-	dispatch: ( action: PreparedProductsAction ) => void;
-	isJetpackNotAtomic: boolean;
-	addHandler: AddHandler;
-} ) {
-	const isFetchingPlans = useSelector( isRequestingPlans );
-	const plans = useSelector( getPlans );
-	const plan = useSelector( ( state ) => getPlanBySlug( state, planSlug ) );
-	const translate = useTranslate();
-
-	useEffect( () => {
-		if ( addHandler !== 'addPlanFromSlug' ) {
-			return;
-		}
-		if ( isFetchingPlans || plans?.length < 1 ) {
-			debug( 'waiting on plans fetch' );
-			return;
-		}
-		if ( ! plan ) {
-			debug( 'there is a request to add a plan but no plan was found', planSlug );
-			dispatch( {
-				type: 'PRODUCTS_ADD_ERROR',
-				message: String(
-					translate( "Could not find plan matching '%(planSlug)s'", { args: { planSlug } } )
-				),
-			} );
-			return;
-		}
-		const cartProduct = createItemToAddToCart( {
-			planSlug: planSlug || undefined,
-			product_id: plan.product_id,
-			isJetpackNotAtomic,
-		} );
-		if ( ! cartProduct ) {
-			debug( 'there is a request to add a plan but creating an item failed', planSlug );
-			dispatch( {
-				type: 'PRODUCTS_ADD_ERROR',
-				message: String(
-					translate( "Creating a plan failed for '%(planSlug)s'", { args: { planSlug } } )
-				),
-			} );
-			return;
-		}
-		debug(
-			'preparing plan that was requested in url',
-			{ planSlug, plan, isJetpackNotAtomic },
-			cartProduct
-		);
-		dispatch( { type: 'PRODUCTS_ADD', products: [ cartProduct ] } );
-	}, [
-		addHandler,
-		translate,
-		plans,
-		isFetchingPlans,
-		planSlug,
-		plan,
-		isJetpackNotAtomic,
-		dispatch,
-	] );
-}
-
 function useAddProductFromSlug( {
 	productAlias: productAliasFromUrl,
 	dispatch,
@@ -347,9 +258,6 @@ function useAddProductFromSlug( {
 	isPrivate: boolean;
 	addHandler: AddHandler;
 } ) {
-	const isFetchingPlans = useSelector( isRequestingPlans );
-	const plans = useSelector( getPlans );
-	const isFetchingProducts = useSelector( isProductsListFetching );
 	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
@@ -367,28 +275,22 @@ function useAddProductFromSlug( {
 				// the domain name or theme (eg: 'theme:ovation').
 				.map( ( productAlias ) => {
 					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
-					return validProduct ? { ...validProduct, product_alias: productAlias } : validProduct;
-				} )
-				// Remove plans since they are handled in another hook and there is no need to support
-				// combinations of plans and products in the cart
-				.filter(
-					( product ) =>
-						product && ! plans.find( ( plan ) => plan.product_slug === product.product_slug )
-				) ?? [],
-		[ isJetpackNotAtomic, plans, productAliasFromUrl, products ]
+					return validProduct
+						? { ...validProduct, internal_product_alias: productAlias }
+						: validProduct;
+				} ) ?? [],
+		[ isJetpackNotAtomic, productAliasFromUrl, products ]
 	);
 
 	useEffect( () => {
 		if ( addHandler !== 'addProductFromSlug' ) {
 			return;
 		}
-		if (
-			isFetchingPlans ||
-			isFetchingProducts ||
-			plans?.length < 1 ||
-			Object.keys( products || {} ).length < 1
-		) {
-			debug( 'waiting on products/plans fetch' );
+		// There is a selector for isFetchingProducts, but it seems to be sometimes
+		// inaccurate (possibly before the fetch has started) so instead we just
+		// wait for there to be products.
+		if ( Object.keys( products || {} ).length < 1 ) {
+			debug( 'waiting on products fetch' );
 			return;
 		}
 		if ( validProducts.length < 1 ) {
@@ -407,15 +309,14 @@ function useAddProductFromSlug( {
 			return;
 		}
 
-		const cartProducts = validProducts
-			.map( ( product ) =>
-				createItemToAddToCart( {
-					productAlias: product.product_alias,
-					product_id: product.product_id,
-					isJetpackNotAtomic,
-				} )
-			)
-			.filter( doesValueExist );
+		const cartProducts = validProducts.map( ( product ) =>
+			// Transform the product data into a RequestCartProduct
+			createItemToAddToCart( {
+				productSlug: product.product_slug,
+				productAlias: product.internal_product_alias,
+				productId: product.product_id,
+			} )
+		);
 
 		if ( cartProducts.length < 1 ) {
 			debug(
@@ -442,28 +343,12 @@ function useAddProductFromSlug( {
 		addHandler,
 		translate,
 		isPrivate,
-		plans,
 		products,
-		isFetchingPlans,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		validProducts,
-		isFetchingProducts,
 		dispatch,
 	] );
-}
-
-function useFetchPlansIfNotLoaded() {
-	const reduxDispatch = useDispatch();
-	const isFetchingPlans = useSelector( isRequestingPlans );
-	const plans = useSelector( getPlans );
-	useEffect( () => {
-		if ( ! isFetchingPlans && plans?.length < 1 ) {
-			debug( 'fetching plans list' );
-			reduxDispatch( requestPlans() );
-			return;
-		}
-	}, [ isFetchingPlans, plans, reduxDispatch ] );
 }
 
 // Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
@@ -476,6 +361,11 @@ function getProductSlugFromAlias( productAlias: string ): string {
 	}
 	if ( productAlias === 'no-ads' ) {
 		return 'no-adverts/no-adverts.php';
+	}
+	const plan = getPlanByPathSlug( productAlias );
+	const planSlug = plan?.getStoreSlug();
+	if ( planSlug ) {
+		return planSlug;
 	}
 	return productAlias;
 }
@@ -503,6 +393,7 @@ function createRenewalItemToAddToCart(
 	};
 	return {
 		meta,
+		volume: 1,
 		product_slug: productSlug,
 		product_id: parseInt( String( productId ), 10 ),
 		extra: renewalItemExtra,
@@ -529,4 +420,54 @@ function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: bool
 		}
 	}
 	return productAlias;
+}
+
+function createItemToAddToCart( {
+	productSlug,
+	productAlias,
+	productId,
+}: {
+	productSlug: string;
+	productId: number;
+	productAlias: string;
+} ): RequestCartProduct {
+	debug( 'creating product with', productSlug, productAlias, productId );
+
+	if ( productAlias.startsWith( 'theme:' ) ) {
+		debug( 'creating theme product' );
+		const cartMeta = productAlias.split( ':' )[ 1 ];
+		return addContextToProduct(
+			createRequestCartProduct( {
+				product_id: productId,
+				product_slug: productSlug,
+				meta: cartMeta,
+			} )
+		);
+	}
+
+	if ( productAlias.startsWith( 'domain-mapping:' ) ) {
+		debug( 'creating domain mapping product' );
+		const cartMeta = productAlias.split( ':' )[ 1 ];
+		return addContextToProduct(
+			createRequestCartProduct( {
+				product_id: productId,
+				product_slug: productSlug,
+				meta: cartMeta,
+			} )
+		);
+	}
+
+	return addContextToProduct(
+		createRequestCartProduct( {
+			product_id: productId,
+			product_slug: productSlug,
+		} )
+	);
+}
+
+function addContextToProduct( product: RequestCartProduct ): RequestCartProduct {
+	return {
+		...product,
+		extra: { ...product.extra, context: 'calypstore' },
+	};
 }
