@@ -102,6 +102,10 @@ export default function useShoppingCartManager( {
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
 	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
+	const responseCartWithoutTempProducts = useMemo(
+		() => convertTempResponseCartToResponseCart( responseCart ),
+		[ responseCart ]
+	);
 
 	const shoppingCartManager = useMemo(
 		() => ( {
@@ -118,9 +122,10 @@ export default function useShoppingCartManager( {
 			replaceProductInCart,
 			replaceProductsInCart,
 			reloadFromServer,
-			responseCart: convertTempResponseCartToResponseCart( responseCart ),
+			responseCart: responseCartWithoutTempProducts,
 		} ),
 		[
+			responseCartWithoutTempProducts,
 			isLoading,
 			isPendingUpdate,
 			loadingErrorForManager,
@@ -134,7 +139,6 @@ export default function useShoppingCartManager( {
 			replaceProductInCart,
 			replaceProductsInCart,
 			reloadFromServer,
-			responseCart,
 		]
 	);
 
