@@ -40,6 +40,13 @@ import {
 } from './constants';
 import { PLANS_LIST } from './plans-list';
 
+/**
+ * @typedef Plan
+ * @property {() => number} getProductId the product id
+ * @property {() => string} getStoreSlug the product slug
+ * @property {() => string} [getPathSlug] the product alias used in URLs
+ */
+
 export function getPlans() {
 	return PLANS_LIST;
 }
@@ -61,8 +68,8 @@ export function getPlan( planKey ) {
  * Find a plan by its path slug
  *
  * @param {string} pathSlug Path slug
- * @param {string?} group Group to search in
- * @returns {object} The plan
+ * @param {string} [group] Group to search in
+ * @returns {Plan|undefined} The plan
  */
 export function getPlanByPathSlug( pathSlug, group ) {
 	return Object.values( PLANS_LIST )
