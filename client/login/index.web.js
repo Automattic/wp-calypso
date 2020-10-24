@@ -20,6 +20,7 @@ import { setLocaleMiddleware, setSectionMiddleware, makeLayoutMiddleware } from 
 import { redirectLoggedIn } from 'controller/web-util';
 import LayoutLoggedOut from 'layout/logged-out';
 import { getLanguageRouteParam } from 'lib/i18n-utils';
+import { RouteProvider } from 'calypso/components/route';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -29,11 +30,25 @@ export const LOGIN_SECTION_DEFINITION = {
 	isomorphic: true,
 };
 
-const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+const ReduxWrappedLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => {
 	return (
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		</ReduxProvider>
+		<RouteProvider
+			currentSection={ currentSection }
+			currentRoute={ currentRoute }
+			currentQuery={ currentQuery }
+		>
+			<ReduxProvider store={ store }>
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</ReduxProvider>
+		</RouteProvider>
 	);
 };
 
