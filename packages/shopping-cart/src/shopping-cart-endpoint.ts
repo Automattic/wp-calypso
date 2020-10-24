@@ -43,6 +43,7 @@ export interface RequestCartProduct {
 	product_slug: string;
 	product_id: number;
 	meta: string;
+	volume: number;
 	extra: ResponseCartProductExtra;
 }
 
